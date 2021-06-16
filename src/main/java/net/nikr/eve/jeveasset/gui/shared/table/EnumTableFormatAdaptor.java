@@ -464,6 +464,10 @@ public class EnumTableFormatAdaptor<T extends Enum<T> & EnumTableColumn<Q>, Q> i
 		}
 	}
 
+	public EnumTableColumn<Q> valueOf(String column) {
+		return orderColumnsName.get(column);
+	}
+
 	@Override public Object getColumnValue(final Q e, final int i) {
 		try {
 			return getColumnValue(e, getColumn(i));

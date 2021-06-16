@@ -30,7 +30,9 @@ import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 
 public abstract class ExportFilterControl<E> {
 
-	protected abstract EnumTableColumn<E> toColumn(String column);
+	protected abstract EnumTableColumn<E> valueOf(String column) throws IllegalArgumentException;
+	protected abstract Object getColumnValue(E item, String column);
+	protected abstract List<EnumTableColumn<E>> getColumns();
 	protected abstract List<EnumTableColumn<E>> getShownColumns();
 	protected abstract void saveSettings(final String msg);
 

@@ -729,7 +729,7 @@ public class MarketOrdersTab extends JMainTabPrimary {
 
 		@Override
 		protected EnumTableColumn<MyMarketOrder> valueOf(final String column) {
-			return MarketTableFormat.valueOf(column);
+			return tableFormat.valueOf(column);
 		}
 
 		@Override

@@ -63,7 +63,6 @@ import net.nikr.eve.jeveasset.gui.shared.components.ListComboBoxModel;
 import net.nikr.eve.jeveasset.gui.shared.filter.ExportDialog;
 import net.nikr.eve.jeveasset.gui.shared.filter.ExportFilterControl;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
-import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo.InfoItem;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
@@ -677,13 +676,18 @@ public class OverviewTab extends JMainTabSecondary {
 	private class OverviewFilterControl extends ExportFilterControl<Overview> {
 
 		@Override
-		protected EnumTableColumn<Overview> toColumn(final String column) {
-			try {
-				return OverviewTableFormat.valueOf(column);
-			} catch (IllegalArgumentException exception) {
+		protected Object getColumnValue(Overview item, String column) {
+			return tableFormat.getColumnValue(item, column);
+		}
 
-			}
-			return FilterControl.toColumn(column, NAME);
+		@Override
+		protected EnumTableColumn<Overview> valueOf(final String column) {
+			return tableFormat.valueOf(column);
+		}
+
+		@Override
+		protected List<EnumTableColumn<Overview>> getColumns() {
+			return new ArrayList<>(tableFormat.getOrderColumns());
 		}
 
 		@Override
