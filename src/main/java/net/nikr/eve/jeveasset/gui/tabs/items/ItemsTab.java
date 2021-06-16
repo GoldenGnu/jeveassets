@@ -179,7 +179,7 @@ public class ItemsTab extends JMainTabPrimary {
 
 		@Override
 		protected EnumTableColumn<Item> valueOf(final String column) {
-			return ItemTableFormat.valueOf(column);
+			return tableFormat.valueOf(column);
 		}
 
 		@Override

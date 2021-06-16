@@ -62,7 +62,6 @@ import net.nikr.eve.jeveasset.gui.shared.components.JTextDialog;
 import net.nikr.eve.jeveasset.gui.shared.components.ListComboBoxModel;
 import net.nikr.eve.jeveasset.gui.shared.filter.ExportDialog;
 import net.nikr.eve.jeveasset.gui.shared.filter.ExportFilterControl;
-import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
@@ -613,18 +612,28 @@ public class LoadoutsTab extends JMainTabSecondary {
 
 	private class LoadoutsFilterControl extends ExportFilterControl<Loadout> {
 		@Override
-		protected EnumTableColumn<Loadout> toColumn(final String column) {
+		protected Object getColumnValue(Loadout item, String column) {
 			try {
-				return LoadoutTableFormat.valueOf(column);
+				return LoadoutExtendedTableFormat.valueOf(column).getColumnValue(item);
 			} catch (IllegalArgumentException exception) {
 
 			}
+			return tableFormat.getColumnValue(item, column);
+		}
+
+		@Override
+		protected EnumTableColumn<Loadout> valueOf(final String column) {
 			try {
 				return LoadoutExtendedTableFormat.valueOf(column);
 			} catch (IllegalArgumentException exception) {
 
 			}
-			return FilterControl.toColumn(column, NAME);
+			return tableFormat.valueOf(column);
+		}
+
+		@Override
+		protected List<EnumTableColumn<Loadout>> getColumns() {
+			return new ArrayList<>(tableFormat.getOrderColumns());
 		}
 
 		@Override

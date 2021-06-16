@@ -242,7 +242,7 @@ public class IndustryJobsTab extends JMainTabPrimary {
 
 		@Override
 		protected EnumTableColumn<MyIndustryJob> valueOf(final String column) {
-			return IndustryJobTableFormat.valueOf(column);
+			return tableFormat.valueOf(column);
 		}
 
 		@Override
