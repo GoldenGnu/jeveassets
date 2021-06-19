@@ -47,6 +47,11 @@ import net.nikr.eve.jeveasset.gui.shared.menu.JFormulaDialog;
 import net.nikr.eve.jeveasset.gui.shared.menu.JFormulaDialog.Formula;
 import net.nikr.eve.jeveasset.gui.shared.table.ColumnManager.IndexColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.NumberValue;
+import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
+import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileTotal;
+import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.SubpileItem;
+import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.SubpileStock;
+import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileTableFormat;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -509,39 +514,78 @@ public class EnumTableFormatAdaptor<T extends Enum<T> & EnumTableColumn<Q>, Q> i
 			}
 		}
 		//Set variables
-		for (T t : enumClass.getEnumConstants()) {
+		if (e instanceof StockpileTotal) {
+			if (formula.isBoolean()) {
+				return null;
+			}
+			StockpileTotal totalItem = (StockpileTotal) e;
+			Map<Integer, StockpileItem> map = new HashMap<>();
+			//Items
+			for (StockpileItem item : totalItem.getStockpile().getItems()) {
+				if (item.getTypeID() == 0) {
+					continue;
+				}
+				map.put(item.getItemTypeID(), item);
+			}
+			//SubpileItem (Overwrites StockpileItem items)
+			for (SubpileItem item : totalItem.getStockpile().getSubpileItems()) {
+				if (item instanceof SubpileStock) {
+					continue;
+				}
+				map.put(item.getItemTypeID(), item);
+			}
+			Double total = 0.0;
+			for (StockpileItem item : map.values()) {
+				if (item.getItemTypeID() == 0) {
+					continue;
+				}
+				setVariables(formula, StockpileTableFormat.values(), item);
+				total = total + expression.eval().doubleValue();
+			}
+			return total;
+		} else { //Default
+			setVariables(formula, enumClass.getEnumConstants(), e);
+			//Eval
+			if (formula.isBoolean()) {
+				return expression.eval().compareTo(BigDecimal.ZERO) > 0 ? "True" : "False";
+			} else {
+				return expression.eval().doubleValue();
+			}
+		}
+	}
+
+	private static <T extends Enum<T> & EnumTableColumn<Q>, Q> void setVariables(Formula formula, T[] enumColumns, Q e) {
+		final Expression expression = formula.getExpression();
+		for (T t : enumColumns) {
 			if (!formula.getVariableColumns().contains(t.name())) {
 				continue;
 			}
-			if (Number.class.isAssignableFrom(t.getType())) {
-				Number number = (Number) t.getColumnValue(e);
-				String hardName = JFormulaDialog.getHardName(t);
-				if (number == null) { //Handle null
-					expression.setVariable(hardName, new BigDecimal(0));
-					continue; //Done
-				}
-				expression.setVariable(hardName, new BigDecimal(number.toString()));
-			} else if (NumberValue.class.isAssignableFrom(t.getType())) {
-				NumberValue numberValue = (NumberValue) t.getColumnValue(e);
-				String hardName = JFormulaDialog.getHardName(t);
-				if (numberValue == null) { //Handle null
-					expression.setVariable(hardName, new BigDecimal(0));
-					continue; //Done
-				}
-				Number number = numberValue.getNumber();
-				if (number == null) { //Handle null
-					expression.setVariable(hardName, new BigDecimal(0));
-					continue; //Done
-				}
-				expression.setVariable(hardName, new BigDecimal(number.toString()));
+			Number number = getValue(t, e);
+			if (number != null) {
+				expression.setVariable(JFormulaDialog.getHardName(t), new BigDecimal(number.toString()));
 			}
 		}
-		//Eval
-		if (formula.isBoolean()) {
-			return expression.eval().compareTo(BigDecimal.ZERO) > 0 ? "True" : "False";
-		} else {
-			return expression.eval().doubleValue();
+	}
+
+	private static <T extends Enum<T> & EnumTableColumn<Q>, Q> Number getValue(T t, Q e) {
+		if (Number.class.isAssignableFrom(t.getType())) {
+			Number number = (Number) t.getColumnValue(e);
+			if (number == null) { //Handle null
+				return 0;
+			}
+			return number;
+		} else if (NumberValue.class.isAssignableFrom(t.getType())) {
+			NumberValue numberValue = (NumberValue) t.getColumnValue(e);
+			if (numberValue == null) { //Handle null
+				return 0;
+			}
+			Number number = numberValue.getNumber();
+			if (number == null) { //Handle null
+				return 0;
+			}
+			return number;
 		}
+		return null; //Not a valid numeric column
 	}
 
 	//Used by the JSeparatorTable
