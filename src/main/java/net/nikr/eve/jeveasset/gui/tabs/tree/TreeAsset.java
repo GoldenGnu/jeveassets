@@ -61,7 +61,7 @@ public class TreeAsset extends MyAsset {
 	public TreeAsset(final MyAsset asset, final TreeType treeType, final List<TreeAsset> tree, final String compare, final boolean parent) {
 		super(asset);
 		this.treeName = createSpace(tree.size()) + asset.getName();
-		this.tree = new ArrayList<TreeAsset>(tree); //Copy
+		this.tree = new ArrayList<>(tree); //Copy
 		this.compare = compare + asset.getName() + " #" + asset.getItemID();
 		this.ownerName = asset.getOwnerName();
 		this.parent = parent;
@@ -77,12 +77,12 @@ public class TreeAsset extends MyAsset {
 				this.icon = Images.LOC_SHIP.getIcon();
 			} else if (asset.getItem().getTypeID() == 27) { //Office
 				this.icon = Images.LOC_OFFICE.getIcon();
-			} else if (asset.getItem().getCategory().equals("Planetary Interaction")) {
+			} else if (asset.getItem().getCategory().equals("Planetary Industry")) {
 				switch (asset.getItem().getGroup()) {
 					case "Command Centers":
 						this.icon = Images.LOC_PIN_COMMAND.getIcon();
 						break;
-					case "Extractors":
+					case "Extractor Control Units":
 						this.icon = Images.LOC_PIN_EXTRACTOR.getIcon();
 						break;
 					case "Processors":
@@ -114,7 +114,7 @@ public class TreeAsset extends MyAsset {
 	public TreeAsset(final MyLocation location, final String treeName, final String compare, final Icon icon, List<TreeAsset> tree, final int depthOffset) {
 		super(location);
 		this.treeName = createSpace(tree.size()) + treeName;
-		this.tree = new ArrayList<TreeAsset>(tree); //Copy
+		this.tree = new ArrayList<>(tree); //Copy
 		this.compare = compare;
 		this.ownerName = "";
 		this.icon = icon;
