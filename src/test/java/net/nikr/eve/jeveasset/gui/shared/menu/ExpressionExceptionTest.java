@@ -21,6 +21,7 @@
 package net.nikr.eve.jeveasset.gui.shared.menu;
 
 import com.udojava.evalex.Expression;
+import java.math.MathContext;
 import java.util.HashSet;
 import net.nikr.eve.jeveasset.TestUtil;
 import org.junit.Test;
@@ -54,7 +55,7 @@ public class ExpressionExceptionTest extends TestUtil {
 	}
 
 	private void eval(String eval) {
-		JFormulaDialog.safeEval(new HashSet<>(), new Expression(eval));
+		JFormulaDialog.safeEval(new HashSet<>(), new Expression(eval, MathContext.UNLIMITED));
 	}
-	
+
 }

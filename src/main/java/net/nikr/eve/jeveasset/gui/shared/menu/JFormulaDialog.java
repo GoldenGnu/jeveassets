@@ -27,6 +27,7 @@ import com.udojava.evalex.LazyOperator;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.math.BigDecimal;
+import java.math.MathContext;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -306,7 +307,7 @@ public class JFormulaDialog<T extends Enum<T> & EnumTableColumn<Q>, Q> extends J
 	}
 
 	private Expression getExpression() {
-		return new Expression(getExpressionString());
+		return new Expression(getExpressionString(), MathContext.UNLIMITED);
 	}
 
 	private boolean isFomulaValid() {
@@ -396,7 +397,7 @@ public class JFormulaDialog<T extends Enum<T> & EnumTableColumn<Q>, Q> extends J
 		private Integer index;
 
 		public Formula(String columnName, String expressionString, Integer index) {
-			this.expression = new Expression(expressionString);
+			this.expression = new Expression(expressionString, MathContext.UNLIMITED);
 			this.columnName = columnName;
 			this.index = index;
 			this.usedVariables = expression.getUsedVariables();
