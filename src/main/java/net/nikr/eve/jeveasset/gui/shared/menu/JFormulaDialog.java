@@ -21,7 +21,6 @@
 package net.nikr.eve.jeveasset.gui.shared.menu;
 
 import com.udojava.evalex.Expression;
-import com.udojava.evalex.Expression.ExpressionException;
 import com.udojava.evalex.LazyFunction;
 import com.udojava.evalex.LazyOperator;
 import java.awt.event.ActionEvent;
@@ -330,7 +329,7 @@ public class JFormulaDialog<T extends Enum<T> & EnumTableColumn<Q>, Q> extends J
 			}
 			expression.eval();
 			return true;
-		} catch (StringIndexOutOfBoundsException | ExpressionException | NumberFormatException | ArithmeticException | NullPointerException ex) {
+		} catch (RuntimeException ex) {
 			return false;
 		}
 	}
