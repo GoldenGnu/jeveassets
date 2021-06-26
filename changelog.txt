@@ -16,6 +16,18 @@
                   #### #  # #  # #  # #### #### #### #### ####
 
 ________________________________________________________________________________
+_6.9.3__________________________________________________________________________
+
+Bug Fixes:
+-Formula column precision was set to 7 (now use unlimited)
+-Tree tool was missing icons for Planetary Industry
+-Stockpile total row did not work correctly with formula columns (Issue #261)
+-Fixed ArithmeticException in EnumTableFormatAdaptor (BugId: 951, 952)
+
+Code:
+-Updated eve-esi to version 4.5.0
+
+________________________________________________________________________________
 _6.9.2__________________________________________________________________________
 
 Bug Fixes:
