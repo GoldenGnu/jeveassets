@@ -91,6 +91,8 @@ public class EnumTableFormatAdaptor<T extends Enum<T> & EnumTableColumn<Q>, Q> i
 		}
 	}
 
+	private final static Object NULL_PLACEHOLDER = new Object();
+
 	private final List<ColumnValueChangeListener> listeners = new ArrayList<>();
 
 	private final Class<T> enumClass;
@@ -495,7 +497,12 @@ public class EnumTableFormatAdaptor<T extends Enum<T> & EnumTableColumn<Q>, Q> i
 			Object value = formula.getValues().get(e);
 			if (value == null) {
 				value = eval(formula, e);
+				if (value == null) {
+					value = NULL_PLACEHOLDER;
+				}
 				formula.getValues().put(e, value);
+			} else if (value.equals(NULL_PLACEHOLDER)) {
+				return null;
 			}
 			return value;
 		} else {
@@ -540,17 +547,31 @@ public class EnumTableFormatAdaptor<T extends Enum<T> & EnumTableColumn<Q>, Q> i
 					continue;
 				}
 				setVariables(formula, StockpileTableFormat.values(), item);
-				total = total + expression.eval().doubleValue();
+				BigDecimal value = safeEval(expression);
+				if (value != null) {
+					total = total + value.doubleValue();
+				}
 			}
 			return total;
 		} else { //Default
 			setVariables(formula, enumClass.getEnumConstants(), e);
 			//Eval
-			if (formula.isBoolean()) {
-				return expression.eval().compareTo(BigDecimal.ZERO) > 0 ? "True" : "False";
+			BigDecimal value = safeEval(expression);
+			if (value == null) {
+				return null;
+			} else if (formula.isBoolean()) {
+				return value.compareTo(BigDecimal.ZERO) > 0 ? "True" : "False";
 			} else {
-				return expression.eval().doubleValue();
+				return value.doubleValue();
 			}
+		}
+	}
+
+	public static BigDecimal safeEval(Expression expression) {
+		try {
+			return expression.eval();
+		} catch (RuntimeException ex) {
+			return null;
 		}
 	}
 
