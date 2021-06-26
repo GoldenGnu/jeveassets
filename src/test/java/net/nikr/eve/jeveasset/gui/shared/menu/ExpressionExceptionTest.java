@@ -24,6 +24,7 @@ import com.udojava.evalex.Expression;
 import java.math.MathContext;
 import java.util.HashSet;
 import net.nikr.eve.jeveasset.TestUtil;
+import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import org.junit.Test;
 
 
@@ -55,7 +56,13 @@ public class ExpressionExceptionTest extends TestUtil {
 	}
 
 	private void eval(String eval) {
+		//Re-use expression
+		Expression expression = new Expression(eval, MathContext.UNLIMITED);
+		JFormulaDialog.safeEval(new HashSet<>(), expression);
+		EnumTableFormatAdaptor.safeEval(expression);
+		//One time use
 		JFormulaDialog.safeEval(new HashSet<>(), new Expression(eval, MathContext.UNLIMITED));
+		EnumTableFormatAdaptor.safeEval(new Expression(eval, MathContext.UNLIMITED));
 	}
 
 }
