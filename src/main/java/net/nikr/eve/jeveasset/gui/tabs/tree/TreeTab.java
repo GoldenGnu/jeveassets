@@ -191,17 +191,18 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate {
 		myEventList.getReadWriteLock().readLock().lock();
 		sortedListEmpty = new SortedList<>(myEventList);
 		myEventList.getReadWriteLock().readLock().unlock();
+		//Filter (must be done before sorting for totals to match up - for reason beyond my comprehension)
 		eventList.getReadWriteLock().readLock().lock();
-		sortedList = new SortedList<>(eventList);
+		filterList = new FilterList<>(eventList);
 		eventList.getReadWriteLock().readLock().unlock();
-		//Filter
+		//Sorting
 		eventList.getReadWriteLock().readLock().lock();
-		filterList = new FilterList<>(sortedList);
+		sortedList = new SortedList<>(filterList);
 		eventList.getReadWriteLock().readLock().unlock();
 		filterList.addListEventListener(listener);
 		//Tree
 		expansionModel = new AssetTreeExpansionModel();
-		treeList = new TreeList<>(filterList, new AssetTreeFormat(sortedList), expansionModel);
+		treeList = new TreeList<>(sortedList, new AssetTreeFormat(sortedList), expansionModel);
 		//Table Model
 		tableModel = EventModels.createTableModel(treeList, tableFormat);
 		//Table
@@ -372,6 +373,7 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate {
 						parentKey = parentKey + cacheKey;
 						locationTree.add(divisionAsset);
 					}
+					//Flags
 					if (parent == null) {
 						for (Map.Entry<Flag, Set<String>> entry: flags.entrySet()) {
 							if (entry.getValue().contains(parentAsset.getFlag())) {
