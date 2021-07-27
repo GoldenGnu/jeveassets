@@ -52,6 +52,7 @@ import net.nikr.eve.jeveasset.data.api.raw.RawIndustryJob;
 import net.nikr.eve.jeveasset.data.api.raw.RawJournal;
 import net.nikr.eve.jeveasset.data.api.raw.RawJournalRefType;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder;
+import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder.Change;
 import net.nikr.eve.jeveasset.data.api.raw.RawSkill;
 import net.nikr.eve.jeveasset.data.api.raw.RawTransaction;
 import net.nikr.eve.jeveasset.data.profile.Profile;
@@ -527,19 +528,28 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 		if (haveAttribute(element, "corp")) {
 			corp = getBoolean(element, "corp");
 		}
+		NodeList changeNodes = element.getElementsByTagName("change");
+		Set<Change> changes = new HashSet<>();
+		for (int a = 0; a < changeNodes.getLength(); a++) {
+			Element changeNode = (Element) changeNodes.item(a);
+			Date date = getDate(changeNode, "date");
+			Double changePrice = getDoubleOptional(changeNode, "price");
+			Integer changeVolRemaining = getIntOptional(changeNode, "volremaining");
+			changes.add(new Change(date, changePrice, changeVolRemaining));
+		}
 		apiMarketOrder.setWalletDivision(accountID);
 		apiMarketOrder.setDuration(duration);
 		apiMarketOrder.setEscrow(escrow);
 		apiMarketOrder.setBuyOrder(bid > 0);
 		apiMarketOrder.setCorp(corp);
 		apiMarketOrder.setIssued(issued);
-		apiMarketOrder.addChanged(created);
+		apiMarketOrder.addChanges(changes);
+		apiMarketOrder.addChangesLegacy(created);
 		if (changed != null) {
 			String[] array = changed.split(",");
 			for (String s : array) {
 				try {
-					Date date = new Date(Long.valueOf(s));
-					apiMarketOrder.addChanged(date);
+					apiMarketOrder.addChangesLegacy(new Date(Long.valueOf(s)));
 				} catch (NumberFormatException ex) {
 					//No problem....
 				}

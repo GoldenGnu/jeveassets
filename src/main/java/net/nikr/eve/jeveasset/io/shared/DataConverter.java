@@ -22,7 +22,6 @@ package net.nikr.eve.jeveasset.io.shared;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -47,6 +46,7 @@ import net.nikr.eve.jeveasset.data.api.raw.RawContractItem;
 import net.nikr.eve.jeveasset.data.api.raw.RawIndustryJob;
 import net.nikr.eve.jeveasset.data.api.raw.RawJournal;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder;
+import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder.Change;
 import net.nikr.eve.jeveasset.data.api.raw.RawTransaction;
 import net.nikr.eve.jeveasset.data.sde.Item;
 
@@ -257,14 +257,14 @@ public abstract class DataConverter {
 
 	public static Set<MyMarketOrder> convertRawMarketOrders(List<RawMarketOrder> rawMarketOrders, OwnerType owner, boolean saveHistory) {
 		Set<MyMarketOrder> marketOrders = new HashSet<MyMarketOrder>();
-		Map<Long, Set<Date>> changed = new HashMap<>();
+		Map<Long, Set<Change>> changed = new HashMap<>();
 		for (MyMarketOrder marketOrder : owner.getMarketOrders()) {
-			changed.put(marketOrder.getOrderID(), marketOrder.getChanged());
+			changed.put(marketOrder.getOrderID(), marketOrder.getChanges());
 		}
 		for (RawMarketOrder rawMarketOrder : rawMarketOrders) {
 			MyMarketOrder marketOrder = toMyMarketOrder(rawMarketOrder, owner);
 			marketOrders.add(marketOrder);
-			marketOrder.addChanged(changed.get(marketOrder.getOrderID()));
+			marketOrder.addChanges(changed.get(marketOrder.getOrderID()));
 		}
 		if (saveHistory) {
 			for (MyMarketOrder marketOrder : owner.getMarketOrders()) {

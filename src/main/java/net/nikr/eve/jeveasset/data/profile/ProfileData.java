@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.SplashUpdater;
@@ -43,7 +44,7 @@ import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.api.raw.RawBlueprint;
 import net.nikr.eve.jeveasset.data.api.raw.RawJournalRefType;
-import net.nikr.eve.jeveasset.data.api.raw.RawPublicMarketOrder;
+import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder.Change;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.sde.ReprocessedMaterial;
@@ -329,12 +330,7 @@ public class ProfileData {
 		for (OwnerType ownerType : owners.values()) {
 			for (MyMarketOrder order : ownerType.getMarketOrders()) { // getMarketOrders() is thread safe
 				order.setOutbid(output.getOutbids().get(order.getOrderID()));
-				RawPublicMarketOrder response = output.getUpdates().get(order.getOrderID());
-				if (response != null) {
-					order.setPrice(response.getPrice());
-					order.setVolumeRemain(response.getVolumeRemain());
-					order.addChanged(response.getIssued());
-				}
+				order.addChanges(output.getUpdates().get(order.getOrderID()));
 			}
 		}
 		Program.ensureEDT(new Runnable() {
@@ -961,24 +957,37 @@ public class ProfileData {
 		Date lastTaxDate = null;
 		Date maxAge = new Date(System.currentTimeMillis() - ((long)Settings.get().getMaximumPurchaseAge() * 24L * 60L * 60L * 1000L));
 		for (OwnerType owner : profileManager.getOwnerTypes()) {
-			Map<Date, Double> taxes = new HashMap<>();
-			Map<Date, Double> fees = new HashMap<>();
+			//Journal
+			Map<Date, List<Double>> taxes = new HashMap<>();
+			Map<Date, List<Double>> fees = new HashMap<>();
 			for (MyJournal journal : owner.getJournal()) {
 				if (journal.getRefType() == RawJournalRefType.TRANSACTION_TAX) {
-					taxes.put(journal.getDate(), journal.getAmount());
+					List<Double> list = taxes.get(journal.getDate());
+					if (list == null) {
+						list = new ArrayList<>();
+						taxes.put(journal.getDate(), list);
+					}
+					list.add(journal.getAmount());
 				}
 				if (journal.getRefType() == RawJournalRefType.BROKERS_FEE) {
-					fees.put(journal.getDate(), journal.getAmount());
+					List<Double> list = fees.get(journal.getDate());
+					if (list == null) {
+						list = new ArrayList<>();
+						fees.put(journal.getDate(), list);
+					}
+					list.add(journal.getAmount());
 				}
 			}
+			//Transactions
+			Map<Date, List<MyTransaction>> transactions = new HashMap<>();
 			for (MyTransaction transaction : owner.getTransactions()) {
-				Double tax = taxes.get(transaction.getDate());
-				if (tax != null) {
-					transactionSellTax.put(transaction.getTransactionID(), tax);
-					if ((lastTaxDate == null || lastTaxDate.before(transaction.getDate()))) {
-						transactionBuyTax.put(transaction.getTypeID(), tax / transaction.getItemCount());
-						lastTaxDate = transaction.getDate();
+				if (transaction.isSell()) {
+					List<MyTransaction> list = transactions.get(transaction.getDate());
+					if (list == null) {
+						list = new ArrayList<>();
+						transactions.put(transaction.getDate(), list);
 					}
+					list.add(transaction);
 				}
 				if (transaction.getDate().before(maxAge) && Settings.get().getMaximumPurchaseAge() != 0){
 					continue; //Date out of range and not unlimited
@@ -989,16 +998,75 @@ public class ProfileData {
 					createTransactionsPriceData(transactionBuyPriceData, transaction);
 				}
 			}
-			for (MyMarketOrder marketOrder : owner.getMarketOrders()) {
-				double fee = 0;
-				for (Date date : marketOrder.getChanged()) {
-					Double f = fees.get(date);
-					if (f != null) {
-						fee += f;
+			//Tax
+			for (Map.Entry<Date, List<MyTransaction>> entry : transactions.entrySet()) {
+				List<Double> list = taxes.get(entry.getKey());
+				if (list == null) {
+					continue;
+				}
+				List<Match<MyTransaction>> matchs = new ArrayList<>();
+				for (MyTransaction transaction : entry.getValue()) {
+					double expected = transaction.getQuantity() * transaction.getPrice() / 100.0 * 5.0; //5%
+					for (Double tax : list) {
+						double diff = Math.abs(tax + expected); //Tax is negative and expected is possitive: Add them together for diff
+						matchs.add(new Match<>(transaction, tax, diff));
 					}
 				}
-				if (fee != 0) {
-					marketOrdersBrokersFee.put(marketOrder.getOrderID(), fee);
+				Collections.sort(matchs);
+				Set<MyTransaction> found = new HashSet<>();
+				for (Match<MyTransaction> match : matchs) {
+					MyTransaction transaction = match.get();
+					if (!found.contains(transaction) && found.size() <= list.size()) {
+						found.add(transaction);
+						double tax = match.getAmount();
+						transactionSellTax.put(transaction.getTransactionID(), tax);
+						if ((lastTaxDate == null || lastTaxDate.before(transaction.getDate()))) {
+							transactionBuyTax.put(transaction.getTypeID(), tax / transaction.getItemCount());
+							lastTaxDate = transaction.getDate();
+						}
+					}
+				}
+			}
+			//Market Orders
+			Map<Date, List<MyMarketOrder>> marketOrders = new HashMap<>();
+			for (MyMarketOrder marketOrder : owner.getMarketOrders()) {
+				for (Change change : marketOrder.getChanges()) {
+					Date date = change.getDate();
+					List<MyMarketOrder> list = marketOrders.get(date);
+					if (list == null) {
+						list = new ArrayList<>();
+						marketOrders.put(date, list);
+					}
+					list.add(marketOrder);
+				}
+			}
+			//Fees
+			for (Map.Entry<Date, List<MyMarketOrder>> entry : marketOrders.entrySet()) {
+				List<Double> list = fees.get(entry.getKey());
+				if (list == null) {
+					continue;
+				}
+				List<Match<MyMarketOrder>> matchs = new ArrayList<>();
+				for (MyMarketOrder marketOrder : entry.getValue()) {
+					double expected = Math.max(marketOrder.getVolumeTotal() * marketOrder.getPrice() / 100.0 * 5.0, 100); //5% or 100isk
+					for (Double fee : list) {
+						double diff = Math.abs(fee + expected); //Fee is negative and expected is possitive: Add them together for diff
+						matchs.add(new Match<>(marketOrder, fee, diff));
+					}
+				}
+				Collections.sort(matchs);
+				Set<MyMarketOrder> found = new HashSet<>();
+				for (Match<MyMarketOrder> match : matchs) {
+					MyMarketOrder marketOrder = match.get();
+					if (!found.contains(marketOrder) && found.size() <= list.size()) {
+						found.add(marketOrder);
+						Double fee = marketOrdersBrokersFee.get(marketOrder.getOrderID());
+						if (fee == null) {
+							fee = 0.0;
+						}
+						fee = fee + match.getAmount();
+						marketOrdersBrokersFee.put(marketOrder.getOrderID(), fee);
+					}
 				}
 			}
 		}
@@ -1222,6 +1290,68 @@ public class ProfileData {
 			return asset.getName() + " #" + asset.getItemID();
 		} else {
 			return asset.getName();
+		}
+	}
+
+	private static class Match<T> implements Comparable<Match<T>>{
+		private final T t;
+		private final double amount;
+		private final double diff;
+
+		public Match(T t, double amount, double diff) {
+			this.t = t;
+			this.amount = amount;
+			this.diff = diff;
+		}
+
+		public T get() {
+			return t;
+		}
+
+		public double getAmount() {
+			return amount;
+		}
+
+		public Double getDiff() {
+			return diff;
+		}
+
+		@Override
+		public int hashCode() {
+			int hash = 3;
+			hash = 41 * hash + Objects.hashCode(this.t);
+			hash = 41 * hash + (int) (Double.doubleToLongBits(this.amount) ^ (Double.doubleToLongBits(this.amount) >>> 32));
+			hash = 41 * hash + (int) (Double.doubleToLongBits(this.diff) ^ (Double.doubleToLongBits(this.diff) >>> 32));
+			return hash;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj) {
+				return true;
+			}
+			if (obj == null) {
+				return false;
+			}
+			if (getClass() != obj.getClass()) {
+				return false;
+			}
+			final Match<?> other = (Match<?>) obj;
+			if (Double.doubleToLongBits(this.amount) != Double.doubleToLongBits(other.amount)) {
+				return false;
+			}
+			if (Double.doubleToLongBits(this.diff) != Double.doubleToLongBits(other.diff)) {
+				return false;
+			}
+			if (!Objects.equals(this.t, other.t)) {
+				return false;
+			}
+			return true;
+		}
+
+		@Override
+		public int compareTo(Match<T> match) {
+			return this.getDiff().compareTo(match.getDiff());
 		}
 	}
 }
