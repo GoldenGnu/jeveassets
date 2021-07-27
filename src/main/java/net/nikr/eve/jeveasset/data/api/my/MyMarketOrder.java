@@ -313,8 +313,8 @@ public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarket
 	}
 
 	public Date getCreatedOrIssued() {
-		if (!getChanged().isEmpty()) {
-			return getChanged().iterator().next();
+		if (!getChanges().isEmpty()) {
+			return getChanges().iterator().next().getDate();
 		} else {
 			return getIssued();
 		}
