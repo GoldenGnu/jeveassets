@@ -21,6 +21,7 @@
 package net.nikr.eve.jeveasset.data.api.raw;
 
 import java.util.Date;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 import net.nikr.eve.jeveasset.i18n.TabsOrders;
@@ -103,7 +104,7 @@ public class RawMarketOrder {
 	private Boolean isBuyOrder = null;
 	private Boolean isCorp = null;
 	private Date issued = null;
-	private final Set<Date> changed = new TreeSet<>();
+	private final Set<Change> changes = new TreeSet<>();
 	private Integer issuedBy = null;
 	private Long locationId = null;
 	private Integer minVolume = null;
@@ -140,7 +141,7 @@ public class RawMarketOrder {
 		isBuyOrder = marketOrder.isBuyOrder;
 		isCorp = marketOrder.isCorp;
 		issued = marketOrder.issued;
-		changed.addAll(marketOrder.changed);
+		changes.addAll(marketOrder.changes);
 		issuedBy = marketOrder.issuedBy;
 		locationId = marketOrder.locationId;
 		minVolume = marketOrder.minVolume;
@@ -168,7 +169,6 @@ public class RawMarketOrder {
 		isBuyOrder = RawConverter.toBoolean(marketOrder.getIsBuyOrder());
 		isCorp = marketOrder.getIsCorporation();
 		issued = RawConverter.toDate(marketOrder.getIssued());
-		changed.add(issued);
 		issuedBy = null;
 		locationId = marketOrder.getLocationId();
 		minVolume = RawConverter.toInteger(marketOrder.getMinVolume(), 0);
@@ -182,6 +182,7 @@ public class RawMarketOrder {
 		typeId = marketOrder.getTypeId();
 		volumeRemain = marketOrder.getVolumeRemain();
 		volumeTotal = marketOrder.getVolumeTotal();
+		changes.add(new Change(issued, price, volumeRemain));
 	}
 
 	/**
@@ -196,7 +197,6 @@ public class RawMarketOrder {
 		isBuyOrder = RawConverter.toBoolean(marketOrder.getIsBuyOrder());
 		isCorp = marketOrder.getIsCorporation();
 		issued = RawConverter.toDate(marketOrder.getIssued());
-		changed.add(issued);
 		issuedBy = null;
 		locationId = marketOrder.getLocationId();
 		minVolume = RawConverter.toInteger(marketOrder.getMinVolume(), 0);
@@ -210,6 +210,7 @@ public class RawMarketOrder {
 		typeId = marketOrder.getTypeId();
 		volumeRemain = marketOrder.getVolumeRemain();
 		volumeTotal = marketOrder.getVolumeTotal();
+		changes.add(new Change(issued, price, volumeRemain));
 	}
 
 	/**
@@ -224,7 +225,6 @@ public class RawMarketOrder {
 		isBuyOrder = RawConverter.toBoolean(marketOrder.getIsBuyOrder());
 		isCorp = true;
 		issued = RawConverter.toDate(marketOrder.getIssued());
-		changed.add(issued);
 		issuedBy = marketOrder.getIssuedBy();
 		locationId = marketOrder.getLocationId();
 		minVolume = RawConverter.toInteger(marketOrder.getMinVolume(), 0);
@@ -238,6 +238,7 @@ public class RawMarketOrder {
 		typeId = marketOrder.getTypeId();
 		volumeRemain = marketOrder.getVolumeRemain();
 		volumeTotal = marketOrder.getVolumeTotal();
+		changes.add(new Change(issued, price, volumeRemain));
 	}
 	
 	/**
@@ -252,7 +253,6 @@ public class RawMarketOrder {
 		isBuyOrder = RawConverter.toBoolean(marketOrder.getIsBuyOrder());
 		isCorp = true;
 		issued = RawConverter.toDate(marketOrder.getIssued());
-		changed.add(issued);
 		issuedBy = marketOrder.getIssuedBy();
 		locationId = marketOrder.getLocationId();
 		minVolume = RawConverter.toInteger(marketOrder.getMinVolume(), 0);
@@ -266,6 +266,7 @@ public class RawMarketOrder {
 		typeId = marketOrder.getTypeId();
 		volumeRemain = marketOrder.getVolumeRemain();
 		volumeTotal = marketOrder.getVolumeTotal();
+		changes.add(new Change(issued, price, volumeRemain));
 	}
 
 	public Integer getWalletDivision() {
@@ -314,22 +315,39 @@ public class RawMarketOrder {
 
 	public void setIssued(Date issued) {
 		this.issued = issued;
-		this.changed.add(issued);
 	}
 
-	public Set<Date> getChanged() {
-		return changed;
-	}
-
-	public void addChanged(Set<Date> changed) {
-		if (changed != null) {
-			this.changed.addAll(changed);
+	public int getEdits() {
+		if (changes.isEmpty() || changes.size() == 1) { //0 or 1 = 0;
+			return 0;
+		} else {
+			return changes.size() - 1; // > 1
 		}
 	}
 
-	public void addChanged(Date changed) {
-		if (changed != null) {
-			this.changed.add(changed);
+	public Set<Change> getChanges() {
+		return changes;
+	}
+
+	public void addChangesLegacy(Date date) {
+		if (date != null) {
+			changes.add(new Change(date, null, null));
+		}
+	}
+
+	public void addChanges(Set<Change> change) {
+		if (change != null) {
+			changes.add(new Change(issued, price, volumeRemain)); //Add current
+			changes.addAll(change);
+		}
+	}
+
+	public void addChanges(RawPublicMarketOrder response) {
+		if (response != null) {
+			setPrice(response.getPrice());
+			setVolumeRemain(response.getVolumeRemain());
+			setIssued(response.getIssued());
+			changes.add(new Change(response.getIssued(), response.getPrice(), response.getVolumeRemain()));
 		}
 	}
 
@@ -437,4 +455,57 @@ public class RawMarketOrder {
 		this.volumeTotal = volumeTotal;
 	}
 
+	static public class Change implements Comparable<Change> {
+		private final Date date;
+		private final Double price;
+		private final Integer volumeRemaining;
+
+		public Change(Date date, Double price, Integer volumeRemaining) {
+			this.date = date;
+			this.price = price;
+			this.volumeRemaining = volumeRemaining;
+		}
+
+		public Date getDate() {
+			return date;
+		}
+
+		public Double getPrice() {
+			return price;
+		}
+
+		public Integer getVolumeRemaining() {
+			return volumeRemaining;
+		}
+
+		@Override
+		public int hashCode() {
+			int hash = 5;
+			hash = 17 * hash + Objects.hashCode(this.date);
+			return hash;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj) {
+				return true;
+			}
+			if (obj == null) {
+				return false;
+			}
+			if (getClass() != obj.getClass()) {
+				return false;
+			}
+			final Change other = (Change) obj;
+			if (!Objects.equals(this.date, other.date)) {
+				return false;
+			}
+			return true;
+		}
+
+		@Override
+		public int compareTo(Change change) {
+			return date.compareTo(change.date);
+		}
+	}
 }
