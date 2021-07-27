@@ -39,6 +39,7 @@ import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
 import net.nikr.eve.jeveasset.data.api.my.MyShip;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.api.raw.RawBlueprint;
+import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder.Change;
 import net.nikr.eve.jeveasset.data.api.raw.RawSkill;
 import net.nikr.eve.jeveasset.data.profile.Profile;
 import net.nikr.eve.jeveasset.data.profile.ProfileManager;
@@ -322,10 +323,15 @@ public final class ProfileWriter extends AbstractXmlWriter {
 			setAttribute(childNode, "price", marketOrder.getPrice());
 			setAttribute(childNode, "bid", RawConverter.fromMarketOrderIsBuyOrder(marketOrder.isBuyOrder()));
 			setAttribute(childNode, "issued", marketOrder.getIssued());
-			setAttributeOptional(childNode, "changed", marketOrder.getChanged());
 			setAttributeOptional(childNode, "issuedby", marketOrder.getIssuedBy());
 			setAttribute(childNode, "corp", marketOrder.isCorp());
 			node.appendChild(childNode);
+			for (Change change : marketOrder.getChanges()) {
+				Element changeNode = xmldoc.createElement("change");
+				setAttribute(changeNode, "date", change.getDate());
+				setAttributeOptional(changeNode, "price", change.getPrice());
+				setAttributeOptional(changeNode, "volremaining", change.getVolumeRemaining());
+			}
 		}
 	}
 
