@@ -111,7 +111,7 @@ public class RawUtil {
 			if (value.getName().equals("isCorporation") && raw.equals(RawMarketOrder.class)) { //Only in character endpoint
 				continue;
 			}
-			if (value.getName().equals("changed") && raw.equals(RawMarketOrder.class)) { //jEveAssets value
+			if (value.getName().equals("changes") && raw.equals(RawMarketOrder.class)) { //jEveAssets value
 				continue;
 			}
 			if (value.getName().equals("systemId") && raw.equals(RawPublicMarketOrder.class)) { //Only in RawPublicMarketOrder
@@ -185,7 +185,7 @@ public class RawUtil {
 			if (value.getName().equals("stateEnum") && raw.equals(RawMarketOrder.class)) { //Only in history endpoints
 				continue;
 			}
-			if (value.getName().equals("changed") && raw.equals(RawMarketOrder.class)) { //jEveAssets value
+			if (value.getName().equals("changes") && raw.equals(RawMarketOrder.class)) { //jEveAssets value
 				continue;
 			}
 			if (value.getName().equals("systemId") && raw.equals(RawPublicMarketOrder.class)) { //Only in RawPublicMarketOrder
