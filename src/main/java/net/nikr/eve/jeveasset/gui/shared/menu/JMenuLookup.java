@@ -303,7 +303,7 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 			public Set<String> getLinks(MenuData<?> menuData) {
 				Set<String> urls = new HashSet<>();
 				for (int typeID : menuData.getBlueprintTypeIDs()) {
-					urls.add("https://www.evecookbook.com/?blueprintTypeId=" + typeID);
+					urls.add("https://evecookbook.com/?blueprintTypeId=" + typeID);
 				}
 				return urls;
 			}
