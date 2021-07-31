@@ -71,7 +71,7 @@ public class JMenuSum<T> extends JAutoMenuComponent<T> {
 	}
 
 	private void show(BigDecimal bigDecimal) {
-		if (bigDecimal.longValue() != 0L) {
+		if (bigDecimal.compareTo(BigDecimal.ZERO) != 0) {
 			double doubleValue = bigDecimal.doubleValue();
 			JMenuInfo.NumberFormat format;
 			if (doubleValue % 1 == 0) {
