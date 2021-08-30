@@ -115,6 +115,20 @@ public class MenuManager<T extends Enum<T> & EnumTableColumn<Q>, Q> {
 		}
 	}
 
+	public static void lock(final Class<?> clazz) {
+		MenuManager<?, ?> menuManager = MANAGERS.get(clazz);
+		if (menuManager != null) {
+			menuManager.columnManager.lock();
+		}
+	}
+
+	public static void unlock(final Class<?> clazz) {
+		MenuManager<?, ?> menuManager = MANAGERS.get(clazz);
+		if (menuManager != null) {
+			menuManager.columnManager.unlock();
+		}
+	}
+
 	public static void updateJumps(final Class<?> clazz) {
 		MenuManager<?, ?> menuManager = MANAGERS.get(clazz);
 		if (menuManager != null) {
