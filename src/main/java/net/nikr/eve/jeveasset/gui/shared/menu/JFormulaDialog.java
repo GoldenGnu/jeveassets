@@ -306,7 +306,7 @@ public class JFormulaDialog<T extends Enum<T> & EnumTableColumn<Q>, Q> extends J
 	}
 
 	private Expression getExpression() {
-		return new Expression(getExpressionString(), MathContext.UNLIMITED);
+		return new Expression(getExpressionString(), MathContext.DECIMAL64); //64bit == Double size
 	}
 
 	private boolean isFomulaValid() {
