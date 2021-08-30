@@ -145,6 +145,14 @@ public abstract class JMainTab {
 	}
 
 	public final void beforeUpdateData() {
+		beforeUpdateData(true);
+	}
+
+	public final void beforeUpdateDataKeepCache() {
+		beforeUpdateData(false);
+	}
+
+	private void beforeUpdateData(boolean resetFormulaCache) {
 		if (eventSelectionModel != null) {
 			selected = new ArrayList<>(eventSelectionModel.getSelected());
 		}
@@ -158,11 +166,16 @@ public abstract class JMainTab {
 			JSeparatorTable jSeparatorTable = (JSeparatorTable) jTable;
 			jSeparatorTable.saveExpandedState();
 		}
-		MenuManager.updateFormula(clazz);
+		if (resetFormulaCache) {
+			MenuManager.updateFormula(clazz);
+		} else {
+			MenuManager.lock(clazz);
+		}
 	}
 
 	public final void afterUpdateData() {
 		MenuManager.updateJumps(clazz);
+		MenuManager.unlock(clazz);
 		if (eventSelectionModel != null && eventTableModel != null && selected != null) {
 			eventSelectionModel.setValueIsAdjusting(true);
 			for (int i = 0; i < eventTableModel.getRowCount(); i++) {

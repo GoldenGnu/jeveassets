@@ -28,7 +28,9 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.JComponent;
@@ -66,23 +68,14 @@ public class JMenuInfo {
 	}
 
 	public static void treeAsset(final JComponent jComponent, final List<TreeAsset> list) {
-		List<InfoItem> items = new ArrayList<>();
+		Set<TreeAsset> items = new HashSet<>();
 		for (TreeAsset asset : list) {
-			boolean add = true;
-			for (TreeAsset tree : asset.getTree()) {
-				if (tree.isItem()) { //Container
-					continue;
-				}
-				if (list.contains(tree)) {
-					add = false;
-					break;
-				}
-			}
-			if (add) {
+			items.addAll(asset.getItems());
+			if (asset.isItem()) {
 				items.add(asset);
 			}
 		}
-		infoItem(jComponent, items);
+		infoItem(jComponent, new ArrayList<>(items));
 	}
 
 	public static void asset(final JComponent jComponent, final List<MyAsset> list) {
@@ -263,6 +256,9 @@ public class JMenuInfo {
 					continue;
 				}
 				if (object instanceof StockpileTotal) {
+					continue;
+				}
+				if (object == null) {
 					continue;
 				}
 				StockpileItem item = (StockpileItem) object;

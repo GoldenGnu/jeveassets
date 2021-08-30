@@ -21,13 +21,21 @@
 package net.nikr.eve.jeveasset.gui.tabs.tree;
 
 import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import javax.swing.Icon;
 import net.nikr.eve.jeveasset.data.api.my.MyAsset;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.HierarchyColumn;
+import net.nikr.eve.jeveasset.gui.shared.table.containers.Percent;
+import net.nikr.eve.jeveasset.gui.shared.table.containers.Runs;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.Security;
+import net.nikr.eve.jeveasset.gui.tabs.assets.AssetTableFormat;
 
 
 public class TreeAsset extends MyAsset {
@@ -38,7 +46,9 @@ public class TreeAsset extends MyAsset {
 	}
 
 	public static final String SPACE = "    ";
-	private final Security EMPTY_SECURITY = Security.create("");
+	private final static Object NULL_PLACEHOLDER = new Object();
+	private static final Security EMPTY_SECURITY = Security.create("");
+	private static final Map<TreeTableFormat, AssetTableFormat> columns = new EnumMap<>(TreeTableFormat.class);
 	private final List<TreeAsset> tree;
 	private final String compare;
 	private final String ownerName;
@@ -47,14 +57,11 @@ public class TreeAsset extends MyAsset {
 	private final int depthOffset;
 	private final Icon icon;
 
-	private long count = 0;
-	private double value = 0;
-	private double valueBase = 0;
-	private double valueBuyMax = 0;
-	private double valueContract = 0;
-	private double valueReprocessed = 0;
-	private double valueSellMin = 0;
-	private double volumnTotal = 0;
+	private final Set<TreeAsset> items = new HashSet<>();
+	private final Map<TreeTableFormat, Object> totals = new HashMap<>();
+	private final Map<TreeTableFormat, Object> averages = new HashMap<>();
+	private final Map<TreeTableFormat, Total> calcTotals = new HashMap<>();
+	private final Map<TreeTableFormat, Average> calcAverages = new HashMap<>();
 	private String treeName;
 	private HierarchyColumn hierarchyColumn;
 
@@ -171,41 +178,6 @@ public class TreeAsset extends MyAsset {
 		this.hierarchyColumn = new HierarchyColumn(this.treeName, this.parent);
 	}
 
-	@Override
-	public long getCount() {
-		if (!isParent()) {
-			return super.getCount();
-		} else {
-			return count;
-		}
-	}
-
-	@Override
-	public Double getDynamicPrice() {
-		if (isItem()) {
-			return super.getDynamicPrice();
-		} else {
-			if (value > 0 && count > 0) {
-				return value / count;
-			} else {
-				return 0.0;
-			}
-		}
-	}
-
-	@Override
-	public double getContractPrice() {
-		if (isItem()) {
-			return super.getContractPrice();
-		} else {
-			if (valueContract > 0 && count > 0) {
-				return valueContract / count;
-			} else {
-				return 0.0;
-			}
-		}
-	}
-
 	public Integer getMeta() {
 		if (isItem()) {
 			return super.getItem().getMeta();
@@ -217,31 +189,6 @@ public class TreeAsset extends MyAsset {
 	@Override
 	public String getOwnerName() {
 		return ownerName;
-	}
-
-	public double getPriceBase() {
-		if (isItem()) {
-			return super.getItem().getPriceBase();
-		} else {
-			if (valueBase > 0 && count > 0) {
-				return valueBase / count;
-			} else {
-				return 0.0;
-			}
-		}
-	}
-
-	@Override
-	public double getPriceBuyMax() {
-		if (isItem()) {
-			return super.getPriceBuyMax();
-		} else {
-			if (valueBuyMax > 0 && count > 0) {
-				return valueBuyMax / count;
-			} else {
-				return 0.0;
-			}
-		}
 	}
 
 	public Double getPriceMarketLatest() {
@@ -276,41 +223,6 @@ public class TreeAsset extends MyAsset {
 		}
 	}
 
-	@Override
-	public double getPriceReprocessed() {
-		if (isItem()) {
-			return super.getPriceReprocessed();
-		} else {
-			if (valueReprocessed > 0 && count > 0) {
-				return valueReprocessed / count;
-			} else {
-				return 0.0;
-			}
-		}
-	}
-
-	@Override
-	public double getPriceSellMin() {
-		if (isItem()) {
-			return super.getPriceSellMin();
-		} else {
-			if (valueSellMin > 0 && count > 0) {
-				return valueSellMin / count;
-			} else {
-				return 0.0;
-			}
-		}
-	}
-
-	@Override
-	public double getValue() {
-		if (!isParent()) {
-			return super.getValue();
-		} else {
-			return value;
-		}
-	}
-
 	public Security getSecurity() {
 		if (!getLocation().isEmpty() && !getLocation().isRegion()) {
 			return getLocation().getSecurityObject();
@@ -328,62 +240,230 @@ public class TreeAsset extends MyAsset {
 		}
 	}
 
-	@Override
-	public double getValueReprocessed() {
+	public Object getTotal(TreeTableFormat column) {
 		if (!isParent()) {
-			return super.getValueReprocessed();
+			return getValue(column, this);
 		} else {
-			return valueReprocessed;
-		}
-	}
-
-	@Override
-	public float getVolume() {
-		if (isItem()) {
-			return super.getVolume();
-		} else {
-			if (volumnTotal > 0 && count > 0) {
-				return (float) volumnTotal / count;
+			Object object = totals.get(column);
+			if (object == null) { //Create data
+				if (Percent.class.isAssignableFrom(column.getType())) {
+					Total total = calcTotals.get(column);
+					if (total == null) {
+						totals.put(column, NULL_PLACEHOLDER);
+						return null;
+					}
+					Double t = total.getTotal();
+					if (t == null) {
+						totals.put(column, NULL_PLACEHOLDER);
+						return null;
+					}
+					Percent percent = Percent.create(t);
+					totals.put(column, percent);
+					return percent;
+				} else if (Runs.class.isAssignableFrom(column.getType())) {
+					Total total = calcTotals.get(column);
+					if (total == null) {
+						totals.put(column, NULL_PLACEHOLDER);
+						return null;
+					}
+					Double t = total.getTotal();
+					if (t == null) {
+						totals.put(column, NULL_PLACEHOLDER);
+						return null;
+					}
+					Runs runs = new Runs(t.intValue());
+					totals.put(column, runs);
+					return runs;
+				} else if (Number.class.isAssignableFrom(column.getType())) {
+					Total total = calcTotals.get(column);
+					if (total == null) {
+						totals.put(column, NULL_PLACEHOLDER);
+						return null;
+					}
+					Double t = total.getTotal();
+					if (t == null) {
+						totals.put(column, NULL_PLACEHOLDER);
+						return null;
+					}
+					totals.put(column, t);
+					return t;
+				} else {
+					return null;
+				}
+			} else if (object == NULL_PLACEHOLDER) {
+				return null;
 			} else {
-				return 0.0f;
+				return object;
 			}
 		}
 	}
 
-	@Override
-	public double getVolumeTotal() {
+	public Object getAverage(TreeTableFormat column) {
 		if (!isParent()) {
-			return super.getVolumeTotal();
+			return getValue(column, this);
 		} else {
-			return volumnTotal;
+			Object object = averages.get(column);
+			if (object == null) { //Create data
+				if (Percent.class.isAssignableFrom(column.getType())) {
+					Average average = calcAverages.get(column);
+					if (average == null) {
+						totals.put(column, NULL_PLACEHOLDER);
+						return null;
+					}
+					Double a = average.getAverage();
+					if (a == null) {
+						totals.put(column, NULL_PLACEHOLDER);
+						return null;
+					}
+					Percent percent = Percent.create(a);
+					totals.put(column, percent);
+					return percent;
+				} else if (Runs.class.isAssignableFrom(column.getType())) {
+					Average average = calcAverages.get(column);
+					if (average == null) {
+						totals.put(column, NULL_PLACEHOLDER);
+						return null;
+					}
+					Double a = average.getAverage();
+					if (a == null) {
+						totals.put(column, NULL_PLACEHOLDER);
+						return null;
+					}
+					Runs runs = new Runs(a.intValue());
+					totals.put(column, runs);
+					return runs;
+				} else if (Number.class.isAssignableFrom(column.getType())) {
+					Average average = calcAverages.get(column);
+					if (average == null) {
+						totals.put(column, NULL_PLACEHOLDER);
+						return null;
+					}
+					Double a = average.getAverage();
+					if (a == null) {
+						totals.put(column, NULL_PLACEHOLDER);
+						return null;
+					}
+					totals.put(column, a);
+					return a;
+				} else {
+					return null; //Should never happen
+				}
+			} else if (object == NULL_PLACEHOLDER) {
+				return null;
+			} else {
+				return object;
+			}
 		}
 	}
 
-	private void add(MyAsset asset) {
-		this.count = this.count + asset.getCount();
-		this.value = this.value + asset.getValue();
-		this.valueBase = this.valueBase + (asset.getItem().getPriceBase() * asset.getCount());
-		this.valueBuyMax = this.valueBuyMax + (asset.getPriceBuyMax() * asset.getCount());
-		this.valueContract = this.valueContract + (asset.getContractPrice() * asset.getCount());
-		this.valueReprocessed = this.valueReprocessed + asset.getValueReprocessed();
-		this.valueSellMin = this.valueSellMin + (asset.getPriceSellMin() * asset.getCount());
-		this.volumnTotal = this.volumnTotal + asset.getVolumeTotal();
+	private Object getValue(TreeTableFormat column, TreeAsset asset) {
+		try {
+			AssetTableFormat assetColumn = columns.get(column);
+			if (assetColumn == null) {
+				assetColumn = AssetTableFormat.valueOf(column.name());
+				columns.put(column, assetColumn);
+			}
+			return assetColumn.getColumnValue(asset);
+		} catch (IllegalArgumentException ex) {
+			return null;
+		}
+	}
+
+	private void add(TreeTableFormat column, Percent percent, Number count) {
+		Average average  = calcAverages.get(column);
+		if (average == null) {
+			average = new Average();
+			calcAverages.put(column, average);
+		}
+		Total total  = calcTotals.get(column);
+		if (total == null) {
+			total = new Total();
+			calcTotals.put(column, total);
+		}
+		Double d = percent.getDouble() / 100.0;
+		average.add(d, count);
+		total.add(d);
+	}
+
+	private void add(TreeTableFormat column, Runs runs, Number count) {
+		Average average  = calcAverages.get(column);
+		if (average == null) {
+			average = new Average();
+			calcAverages.put(column, average);
+		}
+		Total total  = calcTotals.get(column);
+		if (total == null) {
+			total = new Total();
+			calcTotals.put(column, total);
+		}
+		Long l = runs.getLong();
+		average.add(l, count);
+		total.add(l);
+	}
+
+	private void add(TreeTableFormat column, Number value, Number count) {
+		Average average  = calcAverages.get(column);
+		if (average == null) {
+			average = new Average();
+			calcAverages.put(column, average);
+		}
+		Total total  = calcTotals.get(column);
+		if (total == null) {
+			total = new Total();
+			calcTotals.put(column, total);
+		}
+		average.add(value, count);
+		total.add(value);
+	}
+
+	public Set<TreeAsset> getItems() {
+		return items;
 	}
 
 	public void resetValues() {
-		this.count = 0;
-		this.value = 0;
-		this.valueBase = 0;
-		this.valueBuyMax = 0;
-		this.valueContract = 0;
-		this.valueReprocessed = 0;
-		this.valueSellMin = 0;
-		this.volumnTotal = 0;
+		items.clear();
+		totals.clear();
+		averages.clear();
+		calcAverages.clear();
+		calcTotals.clear();
 	}
 
 	public void updateParents() {
+		Object objCount = getValue(TreeTableFormat.COUNT, this);
+		//Ignore null
+		if (objCount == null || !(objCount instanceof Number)) {
+			return;
+		}
+		Number count = (Number) objCount;
+		for (TreeTableFormat column : TreeTableFormat.values()) {
+			if (!Percent.class.isAssignableFrom(column.getType())
+				&& !Runs.class.isAssignableFrom(column.getType())	
+				&& !Number.class.isAssignableFrom(column.getType())
+				) {
+				continue;
+			}
+			Object objValue = getValue(column, this);
+			//Ignore null
+			if (objValue == null) {
+				continue;
+			}
+			if (objValue instanceof Percent) {
+				for (TreeAsset treeAsset : tree) {
+					treeAsset.add(column, (Percent) objValue, count);
+				}
+			} else if (objValue instanceof Runs) {
+				for (TreeAsset treeAsset : tree) {
+					treeAsset.add(column, (Runs) objValue, count);
+				}
+			} else if (Number.class.isAssignableFrom(objValue.getClass())) {
+				for (TreeAsset treeAsset : tree) {
+					treeAsset.add(column, (Number) objValue, count);
+				}
+			}
+			
+		}
 		for (TreeAsset treeAsset : tree) {
-			treeAsset.add(this);
+			treeAsset.items.add(this);
 		}
 	}
 
@@ -414,5 +494,50 @@ public class TreeAsset extends MyAsset {
 		}
 		final TreeAsset other = (TreeAsset) obj;
 		return !((this.compare == null) ? (other.compare != null) : !this.compare.equals(other.compare));
+	}
+
+	private static class Total {
+		private Double total = null;
+
+		public void add(Number value) {
+			if (value != null) {
+				if (total == null) {
+					total = 0.0;
+				}
+				this.total = this.total + value.doubleValue();
+			}
+		}
+
+		public Double getTotal() {
+			return total;
+		}
+	}
+
+	private static class Average {
+		private Double total = null;
+		private Long count = null;
+
+		public void add(Number value, Number count) {
+			if (value != null && count != null) {
+				if (total == null) {
+					total = 0.0;
+				}
+				if (this.count == null) {
+					this.count = 0L;
+				}
+				this.count = this.count + count.longValue();
+				this.total = this.total + (value.doubleValue() * count.longValue());
+			}
+		}
+
+		public Double getAverage() {
+			if (total == null || count == null) {
+				return null;
+			} else if (total > 0 && count > 0) {
+				return total / count;
+			} else {
+				return 0.0;
+			}
+		}
 	}
 }
