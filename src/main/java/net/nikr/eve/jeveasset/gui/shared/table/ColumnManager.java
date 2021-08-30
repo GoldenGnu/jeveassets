@@ -64,6 +64,8 @@ public class ColumnManager<T extends Enum<T> & EnumTableColumn<Q>, Q> {
 	private final Map<Formula, FormulaColumn<Q>> formulaColumns = new HashMap<>();
 	private final Map<Jump, JumpColumn<Q>> jumpColumns = new HashMap<>();
 
+	private boolean locked = false;
+
 	public ColumnManager(Program program, String toolName, EnumTableFormatAdaptor<T, Q> tableFormat, DefaultEventTableModel<Q> tableModel, JAutoColumnTable jTable, EventList<Q> eventList, FilterControl<Q> filterControl) {
 		this.program = program;
 		this.toolName = toolName;
@@ -80,6 +82,9 @@ public class ColumnManager<T extends Enum<T> & EnumTableColumn<Q>, Q> {
 		eventList.addListEventListener(new ListEventListener<Q>() {
 			@Override @SuppressWarnings("deprecation")
 			public void listChanged(ListEvent<Q> listChanges) {
+				if (locked) {
+					return;
+				}
 				try {
 					eventList.getReadWriteLock().readLock().lock();
 					List<Q> reset = new ArrayList<>();
@@ -333,6 +338,14 @@ public class ColumnManager<T extends Enum<T> & EnumTableColumn<Q>, Q> {
 		for (Formula formula : formulaColumns.keySet()) {
 			formula.getValues().clear(); //Reset calculations
 		}
+	}
+
+	public void lock() {
+		locked = true;
+	}
+
+	public void unlock() {
+		locked = false;
 	}
 
 	public void updateJumpsData(Jump jump) {
