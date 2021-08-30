@@ -26,8 +26,6 @@ import ca.odell.glazedlists.FilterList;
 import ca.odell.glazedlists.ListSelection;
 import ca.odell.glazedlists.SortedList;
 import ca.odell.glazedlists.TreeList;
-import ca.odell.glazedlists.event.ListEvent;
-import ca.odell.glazedlists.event.ListEventListener;
 import ca.odell.glazedlists.swing.DefaultEventSelectionModel;
 import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import ca.odell.glazedlists.swing.TableComparatorChooser;
@@ -121,7 +119,6 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate {
 	private final EventList<TreeAsset> eventList;
 	private final EventList<TreeAsset> exportEventList;
 	private final SortedList<TreeAsset> sortedList;
-	private final SortedList<TreeAsset> sortedListEmpty;
 	private final FilterList<TreeAsset> filterList;
 	private final TreeList<TreeAsset> treeList;
 	private final TreeFilterControl filterControl;
@@ -180,17 +177,26 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate {
 		jExpand.addActionListener(listener);
 		jToolBarRight.addButton(jExpand);
 
+		jVolume = StatusPanel.createLabel(TabsAssets.get().totalVolume(), Images.ASSETS_VOLUME.getIcon());
+		this.addStatusbarLabel(jVolume);
+
+		jCount = StatusPanel.createLabel(TabsAssets.get().totalCount(), Images.EDIT_ADD.getIcon()); //Add
+		this.addStatusbarLabel(jCount);
+
+		jAverage = StatusPanel.createLabel(TabsAssets.get().average(), Images.ASSETS_AVERAGE.getIcon());
+		this.addStatusbarLabel(jAverage);
+
+		jReprocessed = StatusPanel.createLabel(TabsAssets.get().totalReprocessed(), Images.SETTINGS_REPROCESSING.getIcon());
+		this.addStatusbarLabel(jReprocessed);
+
+		jValue = StatusPanel.createLabel(TabsAssets.get().totalValue(), Images.TOOL_VALUES.getIcon());
+		this.addStatusbarLabel(jValue);
 
 		//Table Format
 		tableFormat = new EnumTableFormatAdaptor<>(TreeTableFormat.class);
 		//Backend
 		eventList = EventListManager.create();
 		exportEventList = EventListManager.create();
-		//Sorting (per column)
-		EventList<TreeAsset> myEventList = EventListManager.create();
-		myEventList.getReadWriteLock().readLock().lock();
-		sortedListEmpty = new SortedList<>(myEventList);
-		myEventList.getReadWriteLock().readLock().unlock();
 		//Filter (must be done before sorting for totals to match up - for reason beyond my comprehension)
 		eventList.getReadWriteLock().readLock().lock();
 		filterList = new FilterList<>(eventList);
@@ -199,7 +205,6 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate {
 		eventList.getReadWriteLock().readLock().lock();
 		sortedList = new SortedList<>(filterList);
 		eventList.getReadWriteLock().readLock().unlock();
-		filterList.addListEventListener(listener);
 		//Tree
 		expansionModel = new AssetTreeExpansionModel();
 		treeList = new TreeList<>(sortedList, new AssetTreeFormat(sortedList), expansionModel);
@@ -212,7 +217,7 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate {
 		jTable.setRowHeight(22);
 		jTable.addMouseListener(listener);
 		//Sorting
-		TableComparatorChooser<TreeAsset> tableComparatorChooser = TableComparatorChooser.install(jTable, sortedListEmpty, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
+		TableComparatorChooser<TreeAsset> tableComparatorChooser = TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
 		tableComparatorChooser.addSortActionListener(new ListenerSorter());
 		//Tree
 		TreeTableSupport install = TreeTableSupport.install(jTable, treeList, 0);
@@ -234,21 +239,6 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate {
 		filterControl = new TreeFilterControl();
 		//Menu
 		installTableTool(new TreeTableMenu(), tableFormat, tableModel, jTable, filterControl, TreeAsset.class);
-
-		jVolume = StatusPanel.createLabel(TabsAssets.get().totalVolume(), Images.ASSETS_VOLUME.getIcon());
-		this.addStatusbarLabel(jVolume);
-
-		jCount = StatusPanel.createLabel(TabsAssets.get().totalCount(), Images.EDIT_ADD.getIcon()); //Add
-		this.addStatusbarLabel(jCount);
-
-		jAverage = StatusPanel.createLabel(TabsAssets.get().average(), Images.ASSETS_AVERAGE.getIcon());
-		this.addStatusbarLabel(jAverage);
-
-		jReprocessed = StatusPanel.createLabel(TabsAssets.get().totalReprocessed(), Images.SETTINGS_REPROCESSING.getIcon());
-		this.addStatusbarLabel(jReprocessed);
-
-		jValue = StatusPanel.createLabel(TabsAssets.get().totalValue(), Images.TOOL_VALUES.getIcon());
-		this.addStatusbarLabel(jValue);
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()
@@ -437,7 +427,7 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate {
 			categories.add(category);
 			categoriesExport.add(category);
 		}
-		updateTable();
+		updateTableFull();
 	}
 
 	@Override
@@ -471,13 +461,29 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate {
 		return eventList;
 	}
 
-	public void updateTable() {
-		jTable.lock();
-		Set<TreeAsset> treeAssets = locations;
-		Set<TreeAsset> treeAssetsExport = locationsExport;
+	public void updateTableFull() {
+		beforeUpdateData();
+		updateTable(true);
+		updateTotals();
+		updateStatusbar();
+		afterUpdateData();
+	}
+
+	public void resetTable() {
+		beforeUpdateDataKeepCache();
+		updateTable(false);
+		afterUpdateData();
+	}
+
+	public void updateTable(boolean export) {
+		final Set<TreeAsset> treeAssets;
+		final Set<TreeAsset> treeAssetsExport;
 		if (jCategories.isSelected()) {
 			treeAssets = categories;
 			treeAssetsExport = categoriesExport;
+		} else {
+			treeAssets = locations;
+			treeAssetsExport = locationsExport;
 		}
 		//Update Jumps
 		eventList.getReadWriteLock().writeLock().lock();
@@ -487,15 +493,15 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate {
 		} finally {
 			eventList.getReadWriteLock().writeLock().unlock();
 		}
-		exportEventList.getReadWriteLock().writeLock().lock();
-		try {
-			exportEventList.clear();
-			exportEventList.addAll(treeAssetsExport);
-		} finally {
-			exportEventList.getReadWriteLock().writeLock().unlock();
+		if (export) {
+			exportEventList.getReadWriteLock().writeLock().lock();
+			try {
+				exportEventList.clear();
+				exportEventList.addAll(treeAssetsExport);
+			} finally {
+				exportEventList.getReadWriteLock().writeLock().unlock();
+			}
 		}
-		updateTotals();
-		jTable.unlock();
 	}
 
 	public void updateReprocessColors() {
@@ -503,41 +509,26 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate {
 	}
 
 	private void updateTotals() {
+		//Reset
 		if (jCategories.isSelected()) {
 			for (TreeAsset treeAsset : categoriesExport) {
 				treeAsset.resetValues();
-			}
-			try {
-				filterList.getReadWriteLock().readLock().lock();
-				for (TreeAsset treeAsset : filterList) {
-					treeAsset.updateParents();
-				}
-			} finally {
-				filterList.getReadWriteLock().readLock().unlock();
 			}
 		} else {
 			for (TreeAsset treeAsset : locationsExport) {
 				treeAsset.resetValues();
 			}
-			try {
-				filterList.getReadWriteLock().readLock().lock();
-				for (TreeAsset treeAsset : filterList) {
-					if (treeAsset.isItem()) {
-						treeAsset.updateParents();
-					}
-				}
-			} finally {
-				filterList.getReadWriteLock().readLock().unlock();
-			}
 		}
-	}
-
-	private void updateSort() {
+		//Calculate
 		try {
-			sortedList.getReadWriteLock().writeLock().lock();
-			sortedList.setComparator(sortedListEmpty.getComparator());
+			filterList.getReadWriteLock().readLock().lock();
+			for (TreeAsset treeAsset : filterList) {
+				if (treeAsset.isItem()) {
+					treeAsset.updateParents();
+				}
+			}
 		} finally {
-			sortedList.getReadWriteLock().writeLock().unlock();
+			filterList.getReadWriteLock().readLock().unlock();
 		}
 	}
 
@@ -551,7 +542,7 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate {
 			if (!asset.isItem()) {
 				continue;
 			}
-			totalValue = totalValue + (asset.getDynamicPrice() * asset.getCount()) ;
+			totalValue = totalValue + asset.getValue() ;
 			totalCount = totalCount + asset.getCount();
 			totalVolume = totalVolume + asset.getVolumeTotal();
 			totalReprocessed = totalReprocessed + asset.getValueReprocessed();
@@ -591,21 +582,21 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate {
 		public void addToolMenu(JComponent jComponent) { }
 	}
 
-	private class ListenerClass implements ActionListener, MouseListener, ListEventListener<TreeAsset> {
+	private class ListenerClass implements ActionListener, MouseListener {
 		private final int WIDTH = UIManager.getIcon("Tree.expandedIcon").getIconWidth();
 		
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			if (TreeAction.UPDATE.name().equals(e.getActionCommand())) {
 				expansionModel.setState(ExpandedState.LOAD);
-				updateTable();
+				updateTableFull();
 			} else if (TreeAction.COLLAPSE.name().equals(e.getActionCommand())) {
 				expansionModel.setState(ExpandedState.COLLAPSE);
-				updateTable();
+				resetTable();
 				expansionModel.setState(ExpandedState.LOAD);
 			} else if (TreeAction.EXPAND.name().equals(e.getActionCommand())) {
 				expansionModel.setState(ExpandedState.EXPAND);
-				updateTable();
+				resetTable();
 				expansionModel.setState(ExpandedState.LOAD);
 			} else if (TreeAction.REPROCESS_COLORS.name().equals(e.getActionCommand())) {
 				boolean oldValue = Settings.get().isReprocessColors();
@@ -645,12 +636,6 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate {
 
 		@Override
 		public void mouseExited(MouseEvent e) { }
-		
-		@Override
-		public void listChanged(final ListEvent<TreeAsset> listChanges) {
-			updateStatusbar();
-			program.getOverviewTab().updateTable();
-		}
 	}
 
 	private class ListenerSorter implements ActionListener {
@@ -661,7 +646,6 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate {
 				@Override
 				public void run() {
 					expansionModel.setState(ExpandedState.LOAD);
-					updateSort();
 				}
 			});
 		}
@@ -884,14 +868,14 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate {
 
 		@Override
 		protected void beforeFilter() {
-			jTable.lock();
+			beforeUpdateData();
 		}
 
 		@Override
 		protected void afterFilter() {
 			updateTotals();
-			updateSort();
-			jTable.unlock();
+			updateStatusbar();
+			afterUpdateData();
 		}
 
 		@Override
