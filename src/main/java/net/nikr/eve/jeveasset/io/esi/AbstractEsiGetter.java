@@ -154,8 +154,6 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner> {
 			logInfo(null, "Cancelled");
 		} catch (InvalidAuthException ex) {
 			addError("INVALID AUTHORIZATION (API)", "Account Authorization Invalid\r\n(Fix: Options > Accounts... > Edit the account)");
-		} catch (Error ex) {
-			throw ex;
 		} catch (Exception ex) {
 			addError(ex.getMessage(), "Unknown Error: " + ex.getMessage(), ex);
 		}
