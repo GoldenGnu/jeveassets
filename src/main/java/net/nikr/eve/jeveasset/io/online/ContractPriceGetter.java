@@ -118,8 +118,6 @@ public class ContractPriceGetter extends AbstractGetter<EsiOwner> {
 			logInfo(null, "Cancelled");
 		} catch (InterruptedException ex) {
 			addError(ex.getMessage(), ex.getMessage(), ex);
-		} catch (Error ex) {
-			throw ex;
 		} catch (Exception ex) {
 			addError(ex.getMessage(), "Unknown Error: " + ex.getMessage(), ex);
 		}
