@@ -188,7 +188,7 @@ public class TableFormatTest extends TestUtil {
 			for (ValueTableFormat tableFormat : ValueTableFormat.values()) {
 				test(tableFormat, tableFormat.getType(), tableFormat.getColumnValue(value));
 			}
-			TreeAsset treeAsset = new TreeAsset(asset, TreeAsset.TreeType.CATEGORY, new ArrayList<>(), STRING_VALUE, BOOLEAN_VALUE);
+			TreeAsset treeAsset = new TreeAsset(asset, TreeAsset.TreeType.CATEGORY, new ArrayList<>(), STRING_VALUE, false);
 			for (TreeTableFormat tableFormat : TreeTableFormat.values()) {
 				test(tableFormat, tableFormat.getType(), tableFormat.getColumnValue(treeAsset));
 			}
