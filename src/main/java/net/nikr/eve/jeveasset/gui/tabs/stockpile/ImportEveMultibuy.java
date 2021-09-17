@@ -25,7 +25,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import net.nikr.eve.jeveasset.i18n.TabsStockpile;
 
 
@@ -85,6 +84,7 @@ public class ImportEveMultibuy extends StockpileImport {
 		}
 		return items;
 	}
+
 	private int findCountIndex(String[] values) {
 		// The idea here is to look through first and last 3 values we got and find first one which consists only of
 		// digits or x and digits
