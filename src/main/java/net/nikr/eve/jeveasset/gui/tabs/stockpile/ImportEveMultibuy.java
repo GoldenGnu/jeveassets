@@ -26,7 +26,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import kotlin.Pair;
 import net.nikr.eve.jeveasset.i18n.TabsStockpile;
 
 
@@ -44,58 +43,48 @@ public class ImportEveMultibuy extends StockpileImport {
 
 	@Override
 	protected Map<String, Double> doImport(String data) {
-		List<String> lines = new ArrayList<String>(Arrays.asList(data.split("[\r\n]+")));
-		Map<String, Double> items = new HashMap<String, Double>();
+		List<String> lines = new ArrayList<>(Arrays.asList(data.split("[\r\n]+")));
+		Map<String, Double> items = new HashMap<>();
 		for (String line : lines) {
-			Pair<String, Double> itemAndCount = parseItemAndCount(line);
+			String[] values = line.split("[\\s]");
 
-			if (itemAndCount == null) {
+			if (values.length < 2) {
 				continue;
 			}
 
-			String item = itemAndCount.component1();
+			int countIndex = findCountIndex(values);
+			if (countIndex == -1) {
+				continue;
+			}
+
+			String countStr = values[countIndex];
+			if (countStr.startsWith("x")) {
+				countStr = countStr.substring(1);
+			}
+
+			double count;
+			try {
+				count = Integer.parseInt(countStr);
+			} catch (NumberFormatException ex) {
+				continue;
+			}
+
+			String item;
+			if (countIndex == 0) { //leading count
+				item = String.join(" ", Arrays.copyOfRange(values, 1, values.length));
+			} else { //trailing count
+				item = String.join(" ", Arrays.copyOfRange(values, 0, countIndex));
+			}
 
 			//Search for item name
 			Double d = items.get(item);
 			if (d == null) {
 				d = 0.0;
 			}
-			items.put(item, itemAndCount.component2() + d);
+			items.put(item, count + d);
 		}
 		return items;
 	}
-
-	private Pair<String, Double> parseItemAndCount(String line) {
-		String[] values = line.split("[\t ]");
-
-		if (values.length < 2) {
-			return null;
-		}
-
-		int countIndex = findCountIndex(values);
-		if (countIndex == -1) {
-			return null;
-		}
-
-		String countStr = values[countIndex];
-		if (countStr.startsWith("x")) {
-			countStr = countStr.substring(1);
-		}
-
-		double count;
-		try {
-			count = Integer.parseInt(countStr);
-		} catch (NumberFormatException ex) {
-			return null;
-		}
-
-		String item = countIndex == 0
-				? String.join(" ", Arrays.copyOfRange(values, 1, values.length))
-				: String.join(" ", Arrays.copyOfRange(values, 0, countIndex));
-
-		return new Pair<>(item, count);
-	}
-
 	private int findCountIndex(String[] values) {
 		// The idea here is to look through first and last 3 values we got and find first one which consists only of
 		// digits or x and digits
