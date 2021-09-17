@@ -16,6 +16,20 @@
                   #### #  # #  # #  # #### #### #### #### ####
 
 ________________________________________________________________________________
+_6.9.4__________________________________________________________________________
+
+Bug Fixes:
+-Fixed tree tool totals (parent items, statusbar, table menu)
+-Fixed Formula columns not working with results like 1.333...
+-Fixed price update failing (now fail when 25% of all price are zero, was 10%)
+-Table menu sum did not work correct for values between 0.0 and 1.0 (Ex: 0.14)
+
+Code:
+-Better handling of error throwables during update
+-Optimized Tree tool collapse and expand all
+-Hopefully fixed very slow sorting with many active filters in the Tree tool 
+
+________________________________________________________________________________
 _6.9.3__________________________________________________________________________
 
 Bug Fixes:
