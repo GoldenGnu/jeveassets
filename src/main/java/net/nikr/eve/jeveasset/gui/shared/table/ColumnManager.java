@@ -425,11 +425,6 @@ public class ColumnManager<T extends Enum<T> & EnumTableColumn<Q>, Q> {
 		}
 
 		@Override
-		public String getColumnToolTip() {
-			return GuiShared.get().jumpsColumnToolTip(formula.getColumnName());
-		}
-
-		@Override
 		public Object getColumnValue(Q from) {
 			return formula;
 		}
