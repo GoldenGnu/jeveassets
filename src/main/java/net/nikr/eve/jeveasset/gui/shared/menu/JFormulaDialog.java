@@ -60,6 +60,8 @@ import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 public class JFormulaDialog<T extends Enum<T> & EnumTableColumn<Q>, Q> extends JDialogCentered {
 
+	public static MathContext FORMULA_PRECISION = MathContext.DECIMAL64; //64bit == Double size
+
 	private enum FormulaDialogAction {
 		OK, CANCEL
 	}
@@ -78,16 +80,16 @@ public class JFormulaDialog<T extends Enum<T> & EnumTableColumn<Q>, Q> extends J
 		super(program, GuiShared.get().formulaTitle(), Images.MISC_FORMULA.getImage());
 
 		this.columnManager = columnManager;
-		
+
 		ListenerClass listener = new ListenerClass();
 
 		JLabel jNameLabel = new JLabel(GuiShared.get().formulaName());
-		
+
 		jName = new JTextField();
 		jName.addCaretListener(listener);
 
 		JLabel jFormulaLabel = new JLabel(GuiShared.get().formulaString());
-		
+
 		jFormula = new JTextField();
 		jFormula.addCaretListener(listener);
 
@@ -113,7 +115,7 @@ public class JFormulaDialog<T extends Enum<T> & EnumTableColumn<Q>, Q> extends J
 		}
 		JDropDownButton jFunctions = new JDropDownButton(GuiShared.get().formulaFunctions());
 
-		ExpressionValues expression = new ExpressionValues("");
+		ExpressionValues expression = new ExpressionValues();
 		for (LazyFunction function : expression.getFunctions()) {
 			StringBuilder builder = new StringBuilder();
 			for (int i = 1; i < function.getNumParams(); i++) {
@@ -198,7 +200,6 @@ public class JFormulaDialog<T extends Enum<T> & EnumTableColumn<Q>, Q> extends J
 						)
 					)
 				)
-				
 		);
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
@@ -248,6 +249,7 @@ public class JFormulaDialog<T extends Enum<T> & EnumTableColumn<Q>, Q> extends J
 		setVisible(true);
 		return returnValue;
 	}
+
 	public Formula add() {
 		reset("", "");
 		setVisible(true);
@@ -306,7 +308,7 @@ public class JFormulaDialog<T extends Enum<T> & EnumTableColumn<Q>, Q> extends J
 	}
 
 	private Expression getExpression() {
-		return new Expression(getExpressionString(), MathContext.DECIMAL64); //64bit == Double size
+		return new Expression(getExpressionString(), FORMULA_PRECISION);
 	}
 
 	private boolean isFomulaValid() {
@@ -356,6 +358,7 @@ public class JFormulaDialog<T extends Enum<T> & EnumTableColumn<Q>, Q> extends J
 	}
 
 	private class ListenerClass implements ActionListener, CaretListener {
+
 		@Override
 		public void actionPerformed(final ActionEvent e) {
 			if (FormulaDialogAction.OK.name().equals(e.getActionCommand())) {
@@ -363,7 +366,7 @@ public class JFormulaDialog<T extends Enum<T> & EnumTableColumn<Q>, Q> extends J
 			} else if (FormulaDialogAction.CANCEL.name().equals(e.getActionCommand())) {
 				setVisible(false);
 			}
-		}	
+		}
 
 		@Override
 		public void caretUpdate(CaretEvent e) {
@@ -371,10 +374,10 @@ public class JFormulaDialog<T extends Enum<T> & EnumTableColumn<Q>, Q> extends J
 		}
 	}
 
-	public static class ExpressionValues extends Expression {
-		
-		public ExpressionValues(String expression) {
-			super(expression);
+	private static class ExpressionValues extends Expression {
+
+		public ExpressionValues() {
+			super("", FORMULA_PRECISION);
 		}
 
 		public Collection<LazyOperator> getOperators() {
@@ -396,7 +399,7 @@ public class JFormulaDialog<T extends Enum<T> & EnumTableColumn<Q>, Q> extends J
 		private Integer index;
 
 		public Formula(String columnName, String expressionString, Integer index) {
-			this.expression = new Expression(expressionString, MathContext.UNLIMITED);
+			this.expression = new Expression(expressionString, FORMULA_PRECISION);
 			this.columnName = columnName;
 			this.index = index;
 			this.usedVariables = expression.getUsedVariables();
@@ -463,6 +466,5 @@ public class JFormulaDialog<T extends Enum<T> & EnumTableColumn<Q>, Q> extends J
 			}
 			return true;
 		}
-
 	}
 }
