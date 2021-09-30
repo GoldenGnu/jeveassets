@@ -30,9 +30,6 @@ import net.nikr.eve.jeveasset.i18n.TabsStockpile;
 
 public class ImportEveMultibuy extends StockpileImport {
 
-	private final static int MODULE = 0;
-	private final static int COUNT = 1;
-	
 	@Override
 	public String getTitle() {
 		return TabsStockpile.get().importEveMultibuyTitle();
@@ -45,27 +42,71 @@ public class ImportEveMultibuy extends StockpileImport {
 
 	@Override
 	protected Map<String, Double> doImport(String data) {
-		List<String> lines = new ArrayList<String>(Arrays.asList(data.split("[\r\n]+")));
-		Map<String, Double> items = new HashMap<String, Double>();
+		List<String> lines = new ArrayList<>(Arrays.asList(data.split("[\r\n]+")));
+		Map<String, Double> items = new HashMap<>();
 		for (String line : lines) {
-			String[] values = line.split("\t");
+			String[] values = line.split("[\\s]");
+
 			if (values.length < 2) {
 				continue;
 			}
+
+			int countIndex = findCountIndex(values);
+			if (countIndex == -1) {
+				continue;
+			}
+
+			String countStr = values[countIndex];
+			if (countStr.startsWith("x")) {
+				countStr = countStr.substring(1);
+			}
+
 			double count;
 			try {
-				count = Integer.valueOf(values[COUNT]);
+				count = Integer.parseInt(countStr);
 			} catch (NumberFormatException ex) {
 				continue;
 			}
-			String module = values[MODULE];
+
+			String item;
+			if (countIndex == 0) { //leading count
+				item = String.join(" ", Arrays.copyOfRange(values, 1, values.length));
+			} else { //trailing count
+				item = String.join(" ", Arrays.copyOfRange(values, 0, countIndex));
+			}
+
 			//Search for item name
-			Double d = items.get(module);
+			Double d = items.get(item);
 			if (d == null) {
 				d = 0.0;
 			}
-			items.put(module, count + d);
+			items.put(item, count + d);
 		}
 		return items;
+	}
+
+	private int findCountIndex(String[] values) {
+		// The idea here is to look through first and last 3 values we got and find first one which consists only of
+		// digits or x and digits
+		// It is safe to assume that found value corresponds to item count because it can't be part of item name
+
+		String itemCountRegex = "^x?(\\d+)$";
+
+		int n = values.length;
+		for (int i = n - 3; i < n; ++i) {
+			if (i <= 0) {
+				continue;
+			}
+
+			if (values[i].matches(itemCountRegex)) {
+				return i;
+			}
+		}
+
+		if (values[0].matches(itemCountRegex)) {
+			return 0;
+		}
+
+		return -1;
 	}
 }
