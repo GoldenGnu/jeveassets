@@ -68,6 +68,41 @@ Total:			14.399.957,10
 		assertEquals(10, data.get("Hammerhead II"), 0.1);
 	}
 
+	@Test
+	public void testXNotation() {
+		String text = "Veldspar	x10";
+		Map<String, Double> data = importEveMultibuy.doImport(text);
+		assertNotNull(data);
+		assertEquals(1, data.size());
+		assertEquals(10, data.get("Veldspar"), 0.1);
+	}
+
+	@Test
+	public void testSimpleNotation() {
+		String text = "Capacitor Power Relay II 10";
+		Map<String, Double> data = importEveMultibuy.doImport(text);
+		assertNotNull(data);
+		assertEquals(1, data.size());
+		assertEquals(10, data.get("Capacitor Power Relay II"), 0.1);
+	}
+
+	@Test
+	public void testItemCountInFront() {
+		String text = "10 Capacitor Power Relay II\n" +
+				"50	Veldspar\n" +
+				"x3 Dominix\n" +
+				"x100	Tritanium";
+
+		Map<String, Double> data = importEveMultibuy.doImport(text);
+
+		assertNotNull(data);
+		assertEquals(4, data.size());
+		assertEquals(10, data.get("Capacitor Power Relay II"), 0.1);
+		assertEquals(50, data.get("Veldspar"), 0.1);
+		assertEquals(3, data.get("Dominix"), 0.1);
+		assertEquals(100, data.get("Tritanium"), 0.1);
+	}
+
 	private Map<String, Double> test(String text, int size) {
 		Map<String, Double> data = importEveMultibuy.doImport(text);
 		assertNotNull(data);
@@ -75,5 +110,4 @@ Total:			14.399.957,10
 		assertEquals(data.size(), importEveMultibuy.importText(text).size());
 		return data;
 	}
-	
 }
