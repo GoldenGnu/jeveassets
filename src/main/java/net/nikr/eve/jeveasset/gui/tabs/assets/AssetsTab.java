@@ -53,7 +53,6 @@ import net.nikr.eve.jeveasset.gui.shared.components.JFixedToolBar;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTabPrimary;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
-import net.nikr.eve.jeveasset.gui.shared.filter.FilterLogicalMatcher;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuName.AssetMenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
@@ -216,13 +215,6 @@ public class AssetsTab extends JMainTabPrimary implements TagUpdate {
 	public String getCurrentFilterName() {
 		return filterControl.getCurrentFilterName();
 	}
-	public FilterLogicalMatcher<MyAsset> getFilterLogicalMatcher(final List<Filter> filters) {
-		return new FilterLogicalMatcher<>(filterControl, filters);
-	}
-	public FilterLogicalMatcher<MyAsset> getFilterLogicalMatcher() {
-		return new FilterLogicalMatcher<>(filterControl, getFilters());
-	}
-
 	private void updateStatusbar() {
 		double averageValue = 0;
 		double totalValue = 0;
@@ -248,11 +240,6 @@ public class AssetsTab extends JMainTabPrimary implements TagUpdate {
 	public void updateReprocessColors() {
 		jReprocessColors.setSelected(Settings.get().isReprocessColors());
 	}
-
-	public MyAsset getSelectedAsset() {
-		return tableModel.getElementAt(jTable.getSelectedRow());
-	}
-
 	/**
 	 * returns a new list of the filtered assets, thus the list is modifiable.
 	 * @return a list of the filtered assets.
