@@ -54,7 +54,7 @@ public class FilterMatcher<E> implements Matcher<E> {
 	private final boolean empty;
 
 	FilterMatcher(final FilterControl<E> filterControl, final Filter filter) {
-		this(filterControl, filter.getGroup(), filter.getLogic(), filter.getColumn(), filter.getCompareType(), filter.getText(), true);
+		this(filterControl, filter.getGroup(), filter.getLogic(), filter.getColumn(), filter.getCompareType(), filter.getText(), filter.isEnabled());
 	}
 
 	FilterMatcher(final FilterControl<E> filterControl, int group, final LogicType logic, final EnumTableColumn<?> enumColumn, final CompareType compare, final String text, final boolean enabled) {
