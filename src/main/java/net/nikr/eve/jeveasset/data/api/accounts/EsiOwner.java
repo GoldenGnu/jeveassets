@@ -40,7 +40,6 @@ import net.troja.eve.esi.api.CorporationApi;
 import net.troja.eve.esi.api.IndustryApi;
 import net.troja.eve.esi.api.LocationApi;
 import net.troja.eve.esi.api.MarketApi;
-import net.troja.eve.esi.api.MetaApi;
 import net.troja.eve.esi.api.PlanetaryInteractionApi;
 import net.troja.eve.esi.api.SkillsApi;
 import net.troja.eve.esi.api.UniverseApi;
@@ -53,7 +52,6 @@ import net.troja.eve.esi.model.CharacterRolesResponse.RolesEnum;
 public class EsiOwner extends AbstractOwner implements OwnerType {
 
 	private final ApiClient apiClient = new ApiClientBuilder().okHttpClient(AbstractEsiGetter.getHttpClient()).build();
-	private final MetaApi metaApi = new MetaApi(apiClient);
 	private final MarketApi marketApi = new MarketApi(apiClient);
 	private final IndustryApi industryApi = new IndustryApi(apiClient);
 	private final CharacterApi characterApi = new CharacterApi(apiClient);
@@ -356,10 +354,6 @@ public class EsiOwner extends AbstractOwner implements OwnerType {
 
 	public synchronized ApiClient getApiClient() {
 		return apiClient;
-	}
-
-	public MetaApi getMetaApiAuth() {
-		return metaApi;
 	}
 
 	public MarketApi getMarketApiAuth() {
