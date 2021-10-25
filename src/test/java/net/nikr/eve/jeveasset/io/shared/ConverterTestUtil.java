@@ -81,7 +81,6 @@ import net.troja.eve.esi.api.CorporationApi;
 import net.troja.eve.esi.api.IndustryApi;
 import net.troja.eve.esi.api.LocationApi;
 import net.troja.eve.esi.api.MarketApi;
-import net.troja.eve.esi.api.MetaApi;
 import net.troja.eve.esi.api.PlanetaryInteractionApi;
 import net.troja.eve.esi.api.SkillsApi;
 import net.troja.eve.esi.api.UniverseApi;
@@ -568,9 +567,6 @@ public class ConverterTestUtil {
 			return true;
 		}
 		if (type.equals(ApiClient.class)) {
-			return true;
-		}
-		if (type.equals(MetaApi.class)) {
 			return true;
 		}
 		if (type.equals(MarketApi.class)) {
