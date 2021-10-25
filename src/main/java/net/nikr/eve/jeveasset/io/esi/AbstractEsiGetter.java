@@ -52,7 +52,6 @@ import net.troja.eve.esi.api.LocationApi;
 import net.troja.eve.esi.api.MarketApi;
 import net.troja.eve.esi.api.PlanetaryInteractionApi;
 import net.troja.eve.esi.api.SovereigntyApi;
-import net.troja.eve.esi.api.MetaApi;
 import net.troja.eve.esi.api.SkillsApi;
 import net.troja.eve.esi.api.UniverseApi;
 import net.troja.eve.esi.api.UserInterfaceApi;
@@ -257,10 +256,6 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner> {
 			LOG.warn("Error limit: " + errorLimit);
 		}
 	}
-
-	protected MetaApi getMetaApiAuth() {
-		return owner.getMetaApiAuth();
- 	}
  
 	public MarketApi getMarketApiAuth() {
 		return owner.getMarketApiAuth();
