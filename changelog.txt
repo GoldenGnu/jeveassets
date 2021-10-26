@@ -16,6 +16,17 @@
                   #### #  # #  # #  # #### #### #### #### ####
 
 ________________________________________________________________________________
+_6.9.5__________________________________________________________________________
+
+Bug Fixes:
+-Removed incorrect column tooltip for formula columns
+-Formula columns did not work with infinity decimals (1.333) AGAIN! (Issue #268)
+-Exporting table data used disabled filters resulting in incomplete output
+
+Code:
+-Updated eve-esi library to version 4.6.0 (fixing account update)
+
+________________________________________________________________________________
 _6.9.4__________________________________________________________________________
 
 Bug Fixes:
