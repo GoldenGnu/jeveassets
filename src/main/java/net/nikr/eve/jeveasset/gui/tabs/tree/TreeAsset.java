@@ -166,6 +166,10 @@ public class TreeAsset extends MyAsset {
 		return item;
 	}
 
+	public boolean isShip() {
+		return getItem().getCategory().equals("Ship");
+	}
+
 	public boolean isParent() {
 		return parent;
 	}
@@ -446,16 +450,31 @@ public class TreeAsset extends MyAsset {
 				continue;
 			}
 			if (objValue instanceof Percent) {
+				//Add this to parents
 				for (TreeAsset treeAsset : tree) {
 					treeAsset.add(column, (Percent) objValue, count);
 				}
+				//Include ship in value
+				if (isShip()) {
+					add(column, (Percent) objValue, count);
+				}
 			} else if (objValue instanceof Runs) {
+				//Add this to parents
 				for (TreeAsset treeAsset : tree) {
 					treeAsset.add(column, (Runs) objValue, count);
 				}
+				//Include ship in value
+				if (isShip()) {
+					add(column, (Runs) objValue, count);
+				}
 			} else if (Number.class.isAssignableFrom(objValue.getClass())) {
+				//Add this to parents
 				for (TreeAsset treeAsset : tree) {
 					treeAsset.add(column, (Number) objValue, count);
+				}
+				//Include ship in value
+				if (isShip()) {
+					add(column, (Number) objValue, count);
 				}
 			}
 		}
