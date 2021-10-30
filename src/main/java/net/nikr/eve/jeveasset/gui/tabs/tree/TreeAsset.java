@@ -58,7 +58,7 @@ public class TreeAsset extends MyAsset {
 	private final Icon icon;
 
 	private final Set<TreeAsset> items = new HashSet<>();
-	private final Map<TreeTableFormat, Object> totals = new HashMap<>();
+	private final Map<TreeTableFormat, Object> values = new HashMap<>();
 	private final Map<TreeTableFormat, Total> calcTotals = new HashMap<>();
 	private final Map<TreeTableFormat, Average> calcAverages = new HashMap<>();
 	private String treeName;
@@ -243,48 +243,48 @@ public class TreeAsset extends MyAsset {
 		if (!isParent()) {
 			return getValue(column, this);
 		} else {
-			Object object = totals.get(column);
+			Object object = values.get(column);
 			if (object == null) { //Create data
 				if (Percent.class.isAssignableFrom(column.getType())) {
 					Total total = calcTotals.get(column);
 					if (total == null) {
-						totals.put(column, NULL_PLACEHOLDER);
+						values.put(column, NULL_PLACEHOLDER);
 						return null;
 					}
 					Double t = total.getTotal();
 					if (t == null) {
-						totals.put(column, NULL_PLACEHOLDER);
+						values.put(column, NULL_PLACEHOLDER);
 						return null;
 					}
 					Percent percent = Percent.create(t);
-					totals.put(column, percent);
+					values.put(column, percent);
 					return percent;
 				} else if (Runs.class.isAssignableFrom(column.getType())) {
 					Total total = calcTotals.get(column);
 					if (total == null) {
-						totals.put(column, NULL_PLACEHOLDER);
+						values.put(column, NULL_PLACEHOLDER);
 						return null;
 					}
 					Double t = total.getTotal();
 					if (t == null) {
-						totals.put(column, NULL_PLACEHOLDER);
+						values.put(column, NULL_PLACEHOLDER);
 						return null;
 					}
 					Runs runs = new Runs(t.intValue());
-					totals.put(column, runs);
+					values.put(column, runs);
 					return runs;
 				} else if (Number.class.isAssignableFrom(column.getType())) {
 					Total total = calcTotals.get(column);
 					if (total == null) {
-						totals.put(column, NULL_PLACEHOLDER);
+						values.put(column, NULL_PLACEHOLDER);
 						return null;
 					}
 					Double t = total.getTotal();
 					if (t == null) {
-						totals.put(column, NULL_PLACEHOLDER);
+						values.put(column, NULL_PLACEHOLDER);
 						return null;
 					}
-					totals.put(column, t);
+					values.put(column, t);
 					return t;
 				} else {
 					return null;
@@ -301,48 +301,48 @@ public class TreeAsset extends MyAsset {
 		if (!isParent()) {
 			return getValue(column, this);
 		} else {
-			Object object = totals.get(column);
+			Object object = values.get(column);
 			if (object == null) { //Create data
 				if (Percent.class.isAssignableFrom(column.getType())) {
 					Average average = calcAverages.get(column);
 					if (average == null) {
-						totals.put(column, NULL_PLACEHOLDER);
+						values.put(column, NULL_PLACEHOLDER);
 						return null;
 					}
 					Double a = average.getAverage();
 					if (a == null) {
-						totals.put(column, NULL_PLACEHOLDER);
+						values.put(column, NULL_PLACEHOLDER);
 						return null;
 					}
 					Percent percent = Percent.create(a);
-					totals.put(column, percent);
+					values.put(column, percent);
 					return percent;
 				} else if (Runs.class.isAssignableFrom(column.getType())) {
 					Average average = calcAverages.get(column);
 					if (average == null) {
-						totals.put(column, NULL_PLACEHOLDER);
+						values.put(column, NULL_PLACEHOLDER);
 						return null;
 					}
 					Double a = average.getAverage();
 					if (a == null) {
-						totals.put(column, NULL_PLACEHOLDER);
+						values.put(column, NULL_PLACEHOLDER);
 						return null;
 					}
 					Runs runs = new Runs(a.intValue());
-					totals.put(column, runs);
+					values.put(column, runs);
 					return runs;
 				} else if (Number.class.isAssignableFrom(column.getType())) {
 					Average average = calcAverages.get(column);
 					if (average == null) {
-						totals.put(column, NULL_PLACEHOLDER);
+						values.put(column, NULL_PLACEHOLDER);
 						return null;
 					}
 					Double a = average.getAverage();
 					if (a == null) {
-						totals.put(column, NULL_PLACEHOLDER);
+						values.put(column, NULL_PLACEHOLDER);
 						return null;
 					}
-					totals.put(column, a);
+					values.put(column, a);
 					return a;
 				} else {
 					return null; //Should never happen
@@ -421,7 +421,7 @@ public class TreeAsset extends MyAsset {
 
 	public void resetValues() {
 		items.clear();
-		totals.clear();
+		values.clear();
 		calcAverages.clear();
 		calcTotals.clear();
 	}
