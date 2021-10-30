@@ -495,18 +495,19 @@ public class EnumTableFormatAdaptor<T extends Enum<T> & EnumTableColumn<Q>, Q> i
 		if (object instanceof Formula) {
 			Formula formula = (Formula) object;
 			Object value = formula.getValues().get(e);
-			if (value == null) {
+			if (value == null) { //eval
 				value = eval(formula, e);
 				if (value == null) {
 					value = NULL_PLACEHOLDER;
 				}
 				formula.getValues().put(e, value);
-			} else if (value.equals(NULL_PLACEHOLDER)) {
+			}
+			if (value.equals(NULL_PLACEHOLDER)) { //Handle NULL_PLACEHOLDER
 				return null;
 			}
 			return value;
 		} else {
-			return column.getColumnValue(e);
+			return object;
 		}
 	}
 
