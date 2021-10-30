@@ -46,7 +46,7 @@ public class TreeAsset extends MyAsset {
 	}
 
 	public static final String SPACE = "    ";
-	private final static Object NULL_PLACEHOLDER = new Object();
+	private static final Object NULL_PLACEHOLDER = new Object();
 	private static final Security EMPTY_SECURITY = Security.create("");
 	private static final Map<TreeTableFormat, AssetTableFormat> columns = new EnumMap<>(TreeTableFormat.class);
 	private final List<TreeAsset> tree;
@@ -59,7 +59,6 @@ public class TreeAsset extends MyAsset {
 
 	private final Set<TreeAsset> items = new HashSet<>();
 	private final Map<TreeTableFormat, Object> totals = new HashMap<>();
-	private final Map<TreeTableFormat, Object> averages = new HashMap<>();
 	private final Map<TreeTableFormat, Total> calcTotals = new HashMap<>();
 	private final Map<TreeTableFormat, Average> calcAverages = new HashMap<>();
 	private String treeName;
@@ -290,7 +289,7 @@ public class TreeAsset extends MyAsset {
 				} else {
 					return null;
 				}
-			} else if (object == NULL_PLACEHOLDER) {
+			} else if (object.equals(NULL_PLACEHOLDER)) {
 				return null;
 			} else {
 				return object;
@@ -302,7 +301,7 @@ public class TreeAsset extends MyAsset {
 		if (!isParent()) {
 			return getValue(column, this);
 		} else {
-			Object object = averages.get(column);
+			Object object = totals.get(column);
 			if (object == null) { //Create data
 				if (Percent.class.isAssignableFrom(column.getType())) {
 					Average average = calcAverages.get(column);
@@ -348,7 +347,7 @@ public class TreeAsset extends MyAsset {
 				} else {
 					return null; //Should never happen
 				}
-			} else if (object == NULL_PLACEHOLDER) {
+			} else if (object.equals(NULL_PLACEHOLDER)) {
 				return null;
 			} else {
 				return object;
@@ -423,7 +422,6 @@ public class TreeAsset extends MyAsset {
 	public void resetValues() {
 		items.clear();
 		totals.clear();
-		averages.clear();
 		calcAverages.clear();
 		calcTotals.clear();
 	}
@@ -460,7 +458,6 @@ public class TreeAsset extends MyAsset {
 					treeAsset.add(column, (Number) objValue, count);
 				}
 			}
-			
 		}
 		for (TreeAsset treeAsset : tree) {
 			treeAsset.items.add(this);
