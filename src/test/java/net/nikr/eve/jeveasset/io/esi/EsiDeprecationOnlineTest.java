@@ -41,6 +41,7 @@ import net.troja.eve.esi.api.BookmarksApi;
 import net.troja.eve.esi.api.CharacterApi;
 import net.troja.eve.esi.api.ContractsApi;
 import net.troja.eve.esi.api.CorporationApi;
+import net.troja.eve.esi.api.FactionWarfareApi;
 import net.troja.eve.esi.api.IndustryApi;
 import net.troja.eve.esi.api.LocationApi;
 import net.troja.eve.esi.api.MarketApi;
@@ -54,8 +55,8 @@ import net.troja.eve.esi.api.WalletApi;
 import net.troja.eve.esi.auth.JWT;
 import net.troja.eve.esi.auth.JWT.Payload;
 import net.troja.eve.esi.auth.OAuth;
-import net.troja.eve.esi.model.CharacterAffiliationResponse;
-import net.troja.eve.esi.model.CharacterAssetsLocationsResponse;
+import net.troja.eve.esi.model.CategoryResponse;
+import net.troja.eve.esi.model.CharacterAssetsNamesResponse;
 import net.troja.eve.esi.model.CharacterAssetsResponse;
 import net.troja.eve.esi.model.CharacterBlueprintsResponse;
 import net.troja.eve.esi.model.CharacterBookmarksResponse;
@@ -67,6 +68,8 @@ import net.troja.eve.esi.model.CharacterOrdersHistoryResponse;
 import net.troja.eve.esi.model.CharacterOrdersResponse;
 import net.troja.eve.esi.model.CharacterPlanetResponse;
 import net.troja.eve.esi.model.CharacterPlanetsResponse;
+import net.troja.eve.esi.model.CharacterResponse;
+import net.troja.eve.esi.model.CharacterRolesResponse;
 import net.troja.eve.esi.model.CharacterShipResponse;
 import net.troja.eve.esi.model.CharacterSkillsResponse;
 import net.troja.eve.esi.model.CharacterWalletJournalResponse;
@@ -78,14 +81,24 @@ import net.troja.eve.esi.model.CorporationBookmarksResponse;
 import net.troja.eve.esi.model.CorporationContainersLogsResponse;
 import net.troja.eve.esi.model.CorporationContractsItemsResponse;
 import net.troja.eve.esi.model.CorporationContractsResponse;
+import net.troja.eve.esi.model.CorporationDivisionsResponse;
 import net.troja.eve.esi.model.CorporationIndustryJobsResponse;
 import net.troja.eve.esi.model.CorporationOrdersHistoryResponse;
 import net.troja.eve.esi.model.CorporationOrdersResponse;
+import net.troja.eve.esi.model.CorporationResponse;
 import net.troja.eve.esi.model.CorporationWalletJournalResponse;
 import net.troja.eve.esi.model.CorporationWalletTransactionsResponse;
 import net.troja.eve.esi.model.CorporationWalletsResponse;
+import net.troja.eve.esi.model.FactionWarfareSystemsResponse;
+import net.troja.eve.esi.model.FactionsResponse;
+import net.troja.eve.esi.model.GroupResponse;
+import net.troja.eve.esi.model.MarketGroupResponse;
+import net.troja.eve.esi.model.MarketOrdersResponse;
+import net.troja.eve.esi.model.MarketStructuresResponse;
+import net.troja.eve.esi.model.PlanetResponse;
 import net.troja.eve.esi.model.SovereigntyStructuresResponse;
 import net.troja.eve.esi.model.StructureResponse;
+import net.troja.eve.esi.model.TypeResponse;
 import net.troja.eve.esi.model.UniverseNamesResponse;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -114,6 +127,7 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 	private final static LocationApi LOCATION_API = new LocationApi(API_CLIENT);
 	private final static UserInterfaceApi USER_INTERFACE_API = new UserInterfaceApi(API_CLIENT);
 	private final static SkillsApi SKILLS_API = new SkillsApi(API_CLIENT);
+	private static final FactionWarfareApi FACTION_WARFARE_API = new FactionWarfareApi(API_CLIENT);
 
 	public EsiDeprecationOnlineTest() { }
 
@@ -304,6 +318,36 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 	}
 
 	@Test
+	public void esiDivisionsGetter() {
+		try {
+			ApiResponse<CorporationDivisionsResponse> apiResponse = CORPORATION_API.getCorporationsCorporationIdDivisionsWithHttpInfo(1, DATASOURCE, null, null);
+			validate(apiResponse.getHeaders());
+		} catch (ApiException ex) {
+			validate(ex.getResponseHeaders());
+		}
+	}
+
+	@Test
+	public void esiFactionWarfareGetterSystems() {
+		try {
+			ApiResponse<List<FactionWarfareSystemsResponse>> apiResponse = FACTION_WARFARE_API.getFwSystemsWithHttpInfo(DATASOURCE, null);
+			validate(apiResponse.getHeaders());
+		} catch (ApiException ex) {
+			validate(ex.getResponseHeaders());
+		}
+	}
+
+	@Test
+	public void esiFactionWarfareGetterFactions() {
+		try {
+			ApiResponse<List<FactionsResponse>> apiResponse = UNIVERSE_API.getUniverseFactionsWithHttpInfo(null, DATASOURCE, null, null);
+			validate(apiResponse.getHeaders());
+		} catch (ApiException ex) {
+			validate(ex.getResponseHeaders());
+		}
+	}
+	
+	@Test
 	public void esiIndustryJobsGetterCharacter() {
 		try {
 			ApiResponse<List<CharacterIndustryJobsResponse>> apiResponse = INDUSTRY_API.getCharactersCharacterIdIndustryJobsWithHttpInfo(1, DATASOURCE, null, true, null);
@@ -317,6 +361,46 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 	public void esiIndustryJobsGetterCorporation() {
 		try {
 			ApiResponse<List<CorporationIndustryJobsResponse>> apiResponse = INDUSTRY_API.getCorporationsCorporationIdIndustryJobsWithHttpInfo(1, DATASOURCE, null, true, null, null);
+			validate(apiResponse.getHeaders());
+		} catch (ApiException ex) {
+			validate(ex.getResponseHeaders());
+		}
+	}
+
+	@Test
+	public void esiItemsGetterTypes() {
+		try {
+			ApiResponse<TypeResponse> apiResponse = UNIVERSE_API.getUniverseTypesTypeIdWithHttpInfo(1, null, DATASOURCE, null, null);
+			validate(apiResponse.getHeaders());
+		} catch (ApiException ex) {
+			validate(ex.getResponseHeaders());
+		}
+	}
+
+	@Test
+	public void esiItemsGetterGroups() {
+		try {
+			ApiResponse<GroupResponse> apiResponse = UNIVERSE_API.getUniverseGroupsGroupIdWithHttpInfo(1, null, DATASOURCE, null, null);
+			validate(apiResponse.getHeaders());
+		} catch (ApiException ex) {
+			validate(ex.getResponseHeaders());
+		}
+	}
+
+	@Test
+	public void esiItemsGetterCategories() {
+		try {
+			ApiResponse<CategoryResponse> apiResponse = UNIVERSE_API.getUniverseCategoriesCategoryIdWithHttpInfo(1, null, DATASOURCE, null, null);
+			validate(apiResponse.getHeaders());
+		} catch (ApiException ex) {
+			validate(ex.getResponseHeaders());
+		}
+	}
+
+	@Test
+	public void esiItemsGetterMarketGroups() {
+		try {
+			ApiResponse<MarketGroupResponse> apiResponse = MARKET_API.getMarketsGroupsMarketGroupIdWithHttpInfo(1, null, DATASOURCE, null, null);
 			validate(apiResponse.getHeaders());
 		} catch (ApiException ex) {
 			validate(ex.getResponseHeaders());
@@ -344,9 +428,9 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 	}
 
 	@Test
-	public void esiLocationsGetterCharacter() {
+	public void esiLocationsGetterCharacterLocations() {
 		try {
-			ApiResponse<List<CharacterAssetsLocationsResponse>> apiResponse = ASSETS_API.postCharactersCharacterIdAssetsLocationsWithHttpInfo(1, Collections.singletonList(1L), DATASOURCE, null);
+			ApiResponse<List<CharacterAssetsNamesResponse>> apiResponse = ASSETS_API.postCharactersCharacterIdAssetsNamesWithHttpInfo(1, Collections.singletonList(1L), DATASOURCE, null);
 			validate(apiResponse.getHeaders());
 		} catch (ApiException ex) {
 			validate(ex.getResponseHeaders());
@@ -404,6 +488,36 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 	}
 
 	@Test
+	public void esiPublicMarketOrdersGetterStructureOrders() {
+		try {
+			ApiResponse<List<MarketStructuresResponse>> apiResponse = MARKET_API.getMarketsStructuresStructureIdWithHttpInfo(1L, DATASOURCE, null, null, null);
+			validate(apiResponse.getHeaders());
+		} catch (ApiException ex) {
+			validate(ex.getResponseHeaders());
+		}
+	}
+
+	@Test
+	public void esiPublicMarketOrdersGetterPublicStructures() {
+		try {
+			ApiResponse<List<Long>> apiResponse = UNIVERSE_API.getUniverseStructuresWithHttpInfo(DATASOURCE, null, null);
+			validate(apiResponse.getHeaders());
+		} catch (ApiException ex) {
+			validate(ex.getResponseHeaders());
+		}
+	}
+
+	@Test
+	public void esiPublicMarketOrdersGetterPublicOrders() {
+		try {
+			ApiResponse<List<MarketOrdersResponse>> apiResponse = MARKET_API.getMarketsRegionIdOrdersWithHttpInfo("all", 1, DATASOURCE, null, null, null);
+			validate(apiResponse.getHeaders());
+		} catch (ApiException ex) {
+			validate(ex.getResponseHeaders());
+		}
+	}
+
+	@Test
 	public void esiNameGetter() {
 		try {
 			ApiResponse<List<UniverseNamesResponse>> apiResponse = UNIVERSE_API.postUniverseNamesWithHttpInfo(Collections.singletonList(1), DATASOURCE);
@@ -414,9 +528,29 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 	}
 
 	@Test
-	public void esiOwnerGetterAffiliation() {
+	public void esiOwnerGetterCharacter() {
 		try {
-			ApiResponse<List<CharacterAffiliationResponse>> apiResponse = CHARACTER_API.postCharactersAffiliationWithHttpInfo(Collections.singletonList(1), DATASOURCE);
+			ApiResponse<CharacterResponse> apiResponse = CHARACTER_API.getCharactersCharacterIdWithHttpInfo(1, DATASOURCE, null);
+			validate(apiResponse.getHeaders());
+		} catch (ApiException ex) {
+			validate(ex.getResponseHeaders());
+		}
+	}
+
+	@Test
+	public void esiOwnerGetterCorporation() {
+		try {
+			ApiResponse<CorporationResponse> apiResponse = CORPORATION_API.getCorporationsCorporationIdWithHttpInfo(1, DATASOURCE, null);
+			validate(apiResponse.getHeaders());
+		} catch (ApiException ex) {
+			validate(ex.getResponseHeaders());
+		}
+	}
+
+	@Test
+	public void esiOwnerGetterRoles() {
+		try {
+			ApiResponse<CharacterRolesResponse> apiResponse = CHARACTER_API.getCharactersCharacterIdRolesWithHttpInfo(1, DATASOURCE, null, null);
 			validate(apiResponse.getHeaders());
 		} catch (ApiException ex) {
 			validate(ex.getResponseHeaders());
@@ -437,6 +571,16 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 	public void esiPlanetaryInteractionGetterPlanets() {
 		try {
 			ApiResponse<List<CharacterPlanetsResponse>> apiResponse = PLANETARY_INTERACTION_API.getCharactersCharacterIdPlanetsWithHttpInfo(1, DATASOURCE, null, null);
+			validate(apiResponse.getHeaders());
+		} catch (ApiException ex) {
+			validate(ex.getResponseHeaders());
+		}
+	}
+
+	@Test
+	public void esiPlanetaryInteractionGetterPublicPlanets() {
+		try {
+			ApiResponse<PlanetResponse> apiResponse = UNIVERSE_API.getUniversePlanetsPlanetIdWithHttpInfo(1, DATASOURCE, null);
 			validate(apiResponse.getHeaders());
 		} catch (ApiException ex) {
 			validate(ex.getResponseHeaders());
