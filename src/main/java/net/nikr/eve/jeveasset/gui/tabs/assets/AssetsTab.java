@@ -221,11 +221,16 @@ public class AssetsTab extends JMainTabPrimary implements TagUpdate {
 		long totalCount = 0;
 		double totalVolume = 0;
 		double totalReprocessed = 0;
-		for (MyAsset asset : filterList) {
-			totalValue = totalValue + (asset.getDynamicPrice() * asset.getCount()) ;
-			totalCount = totalCount + asset.getCount();
-			totalVolume = totalVolume + asset.getVolumeTotal();
-			totalReprocessed = totalReprocessed + asset.getValueReprocessed();
+		try {
+			filterList.getReadWriteLock().readLock().lock();
+			for (MyAsset asset : filterList) {
+				totalValue = totalValue + (asset.getDynamicPrice() * asset.getCount());
+				totalCount = totalCount + asset.getCount();
+				totalVolume = totalVolume + asset.getVolumeTotal();
+				totalReprocessed = totalReprocessed + asset.getValueReprocessed();
+			}
+		} finally {
+			filterList.getReadWriteLock().readLock().unlock();
 		}
 		if (totalCount > 0 && totalValue > 0) {
 			averageValue = totalValue / totalCount;

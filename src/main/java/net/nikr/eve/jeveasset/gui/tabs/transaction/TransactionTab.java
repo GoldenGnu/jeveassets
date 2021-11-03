@@ -243,14 +243,19 @@ public class TransactionTab extends JMainTabPrimary {
 			double buyTotal = 0;
 			long sellCount = 0;
 			long buyCount = 0;
-			for (MyTransaction transaction : filterList) {
-				if (transaction.isSell()) { //Sell
-					sellTotal += transaction.getPrice() * transaction.getQuantity();
-					sellCount += transaction.getQuantity();
-				} else { //Buy
-					buyTotal += transaction.getPrice() * transaction.getQuantity();
-					buyCount += transaction.getQuantity();
+			try {
+				filterList.getReadWriteLock().readLock().lock();
+				for (MyTransaction transaction : filterList) {
+					if (transaction.isSell()) { //Sell
+						sellTotal += transaction.getPrice() * transaction.getQuantity();
+						sellCount += transaction.getQuantity();
+					} else { //Buy
+						buyTotal += transaction.getPrice() * transaction.getQuantity();
+						buyCount += transaction.getQuantity();
+					}
 				}
+			} finally {
+				filterList.getReadWriteLock().readLock().unlock();
 			}
 			double sellAvg = 0;
 			if (sellTotal > 0 && sellCount > 0) {

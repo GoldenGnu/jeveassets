@@ -1114,7 +1114,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 	private class ListenerClass implements ActionListener, ListEventListener<StockpileItem>, ColumnValueChangeListener {
 		@Override
 		public void listChanged(final ListEvent<StockpileItem> listChanges) {
-			List<StockpileItem> items = new ArrayList<>(filterList);
+			List<StockpileItem> items = EventListManager.safeList(filterList);
 			//Remove StockpileTotal and SeparatorList.Separator
 			for (int i = 0; i < items.size(); i++) {
 				Object object = items.get(i);
