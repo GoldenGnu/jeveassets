@@ -538,14 +538,19 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate {
 		long totalCount = 0;
 		double totalVolume = 0;
 		double totalReprocessed = 0;
-		for (TreeAsset asset : filterList) {
-			if (!asset.isItem()) {
-				continue;
+		try {
+			filterList.getReadWriteLock().readLock().lock();
+			for (TreeAsset asset : filterList) {
+				if (!asset.isItem()) {
+					continue;
+				}
+				totalValue = totalValue + asset.getValue();
+				totalCount = totalCount + asset.getCount();
+				totalVolume = totalVolume + asset.getVolumeTotal();
+				totalReprocessed = totalReprocessed + asset.getValueReprocessed();
 			}
-			totalValue = totalValue + asset.getValue() ;
-			totalCount = totalCount + asset.getCount();
-			totalVolume = totalVolume + asset.getVolumeTotal();
-			totalReprocessed = totalReprocessed + asset.getValueReprocessed();
+		} finally {
+			filterList.getReadWriteLock().readLock().unlock();
 		}
 		if (totalCount > 0 && totalValue > 0) {
 			averageValue = totalValue / totalCount;
