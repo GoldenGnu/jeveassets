@@ -36,9 +36,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-public class AssetAddedData {
+public class AddedData {
 
-	private static final Logger LOG = LoggerFactory.getLogger(AssetAddedData.class);
+	private static final Logger LOG = LoggerFactory.getLogger(AddedData.class);
 
 	private static enum TempDirs {
 		DEFAULT(System.getProperty("java.io.tmpdir")), //Default
@@ -68,15 +68,69 @@ public class AssetAddedData {
 			System.setProperty("java.io.tmpdir", dir);
 		}
 	}
+
+	private static enum DataSettings {
+		ASSETS("assetadded"){
+			@Override
+			public void load() {
+				AssetAddedReader.load();
+			}
+		},
+		TRANSACTIONS("transactionadded"),
+		JOURNALS("journaladded"),
+		;
+
+		
+		private DataSettings(String tableName) {
+			this.tableName = tableName;
+			this.addedData = new AddedData(this);
+		}
+
+		private final AddedData addedData;
+		private final String tableName;
+
+		public String getTableName() {
+			return tableName;
+		}
+
+		public AddedData getInstance() {
+			return addedData;
+		}
+
+		public void load() { }
+	}
 	
 	private static final String CONNECTION_URL = "jdbc:sqlite:" + FileUtil.getPathAssetAddedDatabase();
-	private static Map<Long, Date> insert = null;
-	private static Map<Long, Date> update = null;
+	private Map<Long, Date> insert = null;
+	private Map<Long, Date> update = null;
+	private final DataSettings dataSettings;
+
+	private AddedData(DataSettings data) {
+		this.dataSettings = data;
+	}
+
+	public static synchronized AddedData getAssets() {
+		return DataSettings.ASSETS.getInstance();
+	}
+
+	public static synchronized AddedData getTransactions() {
+		return DataSettings.TRANSACTIONS.getInstance();
+	}
+
+	public static synchronized AddedData getJournals() {
+		return DataSettings.JOURNALS.getInstance();
+	}
 
 	public static void load() {
 		fixTempDir();
+		for (DataSettings dataSettings : DataSettings.values()) {
+			dataSettings.getInstance().init();
+		}
+	}
+
+	private void init() {
 		if (!tableExist()) { //New database: Import from added.json
-			AssetAddedReader.load();
+			dataSettings.load();
 		}
 		if (!tableExist()) { //New database: Empty
 			createTable();
@@ -93,8 +147,8 @@ public class AssetAddedData {
 		}
 	}
 
-	public static Date getAdd(Map<Long, Date> assetAdded, Long itemID, Date added) {
-		Date date = assetAdded.get(itemID);
+	public Date getAdd(Map<Long, Date> data, Long itemID, Date added) {
+		Date date = data.get(itemID);
 		if (date == null) { //Insert
 			date = added;
 			insertQueue(itemID, date);
@@ -106,29 +160,29 @@ public class AssetAddedData {
 		return date;
 	}
 
-	private static void insertQueue(Long itemID, Date date) {
+	private void insertQueue(Long itemID, Date date) {
 		if (insert == null) {
 			insert = new HashMap<>();
 		}
 		insert.put(itemID, date);
 	}
 
-	private static void updateQueue(Long itemID, Date date) {
+	private void updateQueue(Long itemID, Date date) {
 		if (update == null) {
 			update = new HashMap<>();
 		}
 		update.put(itemID, date);
 	}
 
-	public static void commitQueue() {
+	public void commitQueue() {
 		insert(insert);
 		update(update);
 		update = null;
 		insert = null;
 	}
 
-	public static boolean isEmpty() {
-		String sql = "SELECT * FROM assetadded";
+	public boolean isEmpty() {
+		String sql = "SELECT * FROM " + dataSettings.getTableName();
 		try (Connection connection = DriverManager.getConnection(CONNECTION_URL);
 				PreparedStatement statement = connection.prepareStatement(sql);
 				ResultSet rs = statement.executeQuery()) {
@@ -141,30 +195,30 @@ public class AssetAddedData {
 		return true;
 	}
 
-	public static void set(Map<Long, Date> assetAdded) {
-		if (assetAdded == null || assetAdded.isEmpty() || tableExist()) {
+	public void set(Map<Long, Date> data) {
+		if (data == null || data.isEmpty() || tableExist()) {
 			return;
 		}
 		createTable();
-		insert(assetAdded);
+		insert(data);
 	}
 
-	private static void insert(Map<Long, Date> assetAdded) {
-		if (assetAdded == null || assetAdded.isEmpty()) {
+	private void insert(Map<Long, Date> data) {
+		if (data == null || data.isEmpty()) {
 			return;
 		}
-		String sql = "INSERT INTO assetadded(itemid,date) VALUES(?,?)";
+		String sql = "INSERT INTO " + dataSettings.getTableName() + "(itemid,date) VALUES(?,?)";
 		try (Connection connection = DriverManager.getConnection(CONNECTION_URL);
 				PreparedStatement statement = connection.prepareStatement(sql)) {
 			int i = 0;
 			connection.setAutoCommit(false);
-			for (Map.Entry<Long, Date> entry : assetAdded.entrySet()) {
+			for (Map.Entry<Long, Date> entry : data.entrySet()) {
 				statement.setLong(1, entry.getKey());
 				statement.setLong(2, entry.getValue().getTime());
 
 				statement.addBatch();
 				i++;
-				if (i % 1000 == 0 || i == assetAdded.size()) {
+				if (i % 1000 == 0 || i == data.size()) {
 					statement.executeBatch(); // Execute every 1000 items.
 				}
 			}
@@ -175,22 +229,22 @@ public class AssetAddedData {
 		}
 	}
 
-	public static void update(Map<Long, Date> assetAdded) {
-		if (assetAdded == null || assetAdded.isEmpty()) {
+	public void update(Map<Long, Date> data) {
+		if (data == null || data.isEmpty()) {
 			return;
 		}
-		String sql = "UPDATE assetadded SET date = ? WHERE itemid = ?";
+		String sql = "UPDATE " + dataSettings.getTableName() + " SET date = ? WHERE itemid = ?";
 		try (Connection connection = DriverManager.getConnection(CONNECTION_URL);
 				PreparedStatement statement = connection.prepareStatement(sql)) {
 			int i = 0;
 			connection.setAutoCommit(false);
-			for (Map.Entry<Long, Date> entry : assetAdded.entrySet()) {
+			for (Map.Entry<Long, Date> entry : data.entrySet()) {
 				statement.setLong(1, entry.getValue().getTime());
 				statement.setLong(2, entry.getKey());
 
 				statement.addBatch();
 				i++;
-				if (i % 1000 == 0 || i == assetAdded.size()) {
+				if (i % 1000 == 0 || i == data.size()) {
 					statement.executeBatch(); // Execute every 1000 items.
 				}
 			}
@@ -201,9 +255,9 @@ public class AssetAddedData {
 		}
 	}
 
-	public static Map<Long, Date> getAll() {
+	public Map<Long, Date> getAll() {
 		Map<Long, Date> map = new HashMap<>();
-		String sql = "SELECT * FROM assetadded";
+		String sql = "SELECT * FROM " + dataSettings.getTableName();
 		try (Connection connection = DriverManager.getConnection(CONNECTION_URL);
 				PreparedStatement statement = connection.prepareStatement(sql);
 				ResultSet rs = statement.executeQuery();) {
@@ -216,8 +270,8 @@ public class AssetAddedData {
 		return map; //can not return null
 	}
 
-	private static void createTable() {
-		String sql = "CREATE TABLE IF NOT EXISTS assetadded (\n"
+	private void createTable() {
+		String sql = "CREATE TABLE IF NOT EXISTS " + dataSettings.getTableName() + " (\n"
 				+ "	itemid integer PRIMARY KEY,\n"
 				+ "	date integer NOT NULL\n"
 				+ ");";
@@ -229,8 +283,8 @@ public class AssetAddedData {
 		}
 	}
 
-	private static boolean tableExist() {
-		String sql = "SELECT name FROM sqlite_master WHERE type='table' AND name='assetadded'";
+	private boolean tableExist() {
+		String sql = "SELECT name FROM sqlite_master WHERE type='table' AND name='" + dataSettings.getTableName() + "'";
 		try (Connection connection = DriverManager.getConnection(CONNECTION_URL);
 				Statement statement = connection.createStatement();
 				ResultSet rs = statement.executeQuery(sql)) {

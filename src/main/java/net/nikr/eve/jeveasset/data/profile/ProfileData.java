@@ -49,7 +49,7 @@ import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.sde.ReprocessedMaterial;
 import net.nikr.eve.jeveasset.data.sde.RouteFinder;
 import net.nikr.eve.jeveasset.data.sde.StaticData;
-import net.nikr.eve.jeveasset.data.settings.AssetAddedData;
+import net.nikr.eve.jeveasset.data.settings.AddedData;
 import net.nikr.eve.jeveasset.data.settings.ContractPriceManager;
 import net.nikr.eve.jeveasset.data.settings.ContractPriceManager.ContractPriceItem;
 import net.nikr.eve.jeveasset.data.settings.MarketPriceData;
@@ -384,7 +384,7 @@ public class ProfileData {
 		updateEventLists(new Date());
 	}
 
-	public synchronized void updateEventLists(Date assetAddedData) {
+	public synchronized void updateEventLists(Date addedDate) {
 		uniqueAssetsDuplicates = new HashMap<>();
 		Set<String> uniqueOwnerNames = new HashSet<>();
 		Map<Long, OwnerType> uniqueOwners = new HashMap<>();
@@ -552,6 +552,7 @@ public class ProfileData {
 		}
 
 		//Update Transaction dynamic values
+		Map<Long, Date> transactionsAdded = AddedData.getTransactions().getAll();
 		for (MyTransaction transaction : transactions) {
 			//Client Name
 			transaction.setClientName(ApiIdConverter.getOwnerName(transaction.getClientID()));
@@ -571,38 +572,43 @@ public class ProfileData {
 				} 
 				setLastTransaction(transaction, transaction.getTypeID(), transaction.isBuy(), transaction.getPrice(), tax);
 			}
+			transaction.setAdded(AddedData.getTransactions().getAdd(transactionsAdded, transaction.getTransactionID(), addedDate));
 		}
+		AddedData.getTransactions().commitQueue();
 		//Update Journal dynamic values
+		Map<Long, Date> journalsAdded = AddedData.getJournals().getAll();
 		for (MyJournal journal : journals) {
 			journal.setFirstPartyName(ApiIdConverter.getOwnerName(journal.getFirstPartyID()));
 			journal.setSecondPartyName(ApiIdConverter.getOwnerName(journal.getSecondPartyID()));
+			journal.setAdded(AddedData.getJournals().getAdd(journalsAdded, journal.getRefID(), addedDate));
 		}
+		AddedData.getJournals().commitQueue();
 
 		//Update Items dynamic values
 		for (Item item : StaticData.get().getItems().values()) {
 			item.setPriceReprocessed(ApiIdConverter.getPriceReprocessed(item));
 		}
 
-		Map<Long, Date> assetAdded = AssetAddedData.getAll();
+		Map<Long, Date> assetAdded = AddedData.getAssets().getAll();
 		Program.ensureEDT(new Runnable() {
 			@Override
 			public void run() {
 				//Add Market Orders to Assets
-				addAssets(DataConverter.assetMarketOrder(marketOrders, Settings.get().isIncludeSellOrders(), Settings.get().isIncludeBuyOrders()), assets, blueprints, assetAdded, assetAddedData);
+				addAssets(DataConverter.assetMarketOrder(marketOrders, Settings.get().isIncludeSellOrders(), Settings.get().isIncludeBuyOrders()), assets, blueprints, assetAdded, addedDate);
 
 				//Add Industry Jobs to Assets
-				addAssets(DataConverter.assetIndustryJob(industryJobs, Settings.get().isIncludeManufacturing()), assets, blueprints, assetAdded, assetAddedData);
+				addAssets(DataConverter.assetIndustryJob(industryJobs, Settings.get().isIncludeManufacturing()), assets, blueprints, assetAdded, addedDate);
 
 				//Add Contract Items to Assets
-				addAssets(DataConverter.assetContracts(contractItems, uniqueOwners, Settings.get().isIncludeSellContracts(), Settings.get().isIncludeBuyContracts()), assets, blueprints, assetAdded, assetAddedData);
+				addAssets(DataConverter.assetContracts(contractItems, uniqueOwners, Settings.get().isIncludeSellContracts(), Settings.get().isIncludeBuyContracts()), assets, blueprints, assetAdded, addedDate);
 
 				//Add Assets to Assets
 				for (OwnerType owner : assetsMap.values()) {
-					addAssets(owner.getAssets(), assets, blueprints, assetAdded, assetAddedData);
+					addAssets(owner.getAssets(), assets, blueprints, assetAdded, addedDate);
 				}
 			}
 		});
-		AssetAddedData.commitQueue();
+		AddedData.getAssets().commitQueue();
 
 		//Update Locations
 		List<EditableLocationType> editableLocationTypes = new ArrayList<>();
@@ -1132,7 +1138,7 @@ public class ProfileData {
 			Tags tags = Settings.get().getTags(asset.getTagID());
 			asset.setTags(tags);
 			//Date added
-			asset.setAdded(AssetAddedData.getAdd(assetAdded, asset.getItemID(), assetAddedDate));
+			asset.setAdded(AddedData.getAssets().getAdd(assetAdded, asset.getItemID(), assetAddedDate));
 			//Price
 			updatePrice(asset);
 			//Reprocessed price
