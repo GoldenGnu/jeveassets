@@ -129,6 +129,20 @@ public enum JournalTableFormat implements EnumTableColumn<MyJournal> {
 		public Object getColumnValue(final MyJournal from) {
 			return from.getReason();
 		}
+	},
+	ADDED(Date.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsJournal.get().columnAdded();
+		}
+		@Override
+		public String getColumnToolTip() {
+			return TabsJournal.get().columnAddedToolTip();
+		}
+		@Override
+		public Object getColumnValue(final MyJournal from) {
+			return from.getAdded();
+		}
 	};
 	private final Class<?> type;
 	private final Comparator<?> comparator;

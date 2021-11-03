@@ -51,4 +51,6 @@ public abstract class TabsJournal  extends Bundle {
 	public abstract String columnRefType();
 	public abstract String columnTaxAmount();
 	public abstract String columnTaxReceiverID();
+	public abstract String columnAdded();
+	public abstract String columnAddedToolTip();
 }

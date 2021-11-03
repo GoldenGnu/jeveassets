@@ -75,5 +75,7 @@ public abstract class TabsTransaction extends Bundle {
 	public abstract String columnOwner();
 	public abstract String columnLocation();
 	public abstract String columnAccountKey();
+	public abstract String columnAdded();
+	public abstract String columnAddedToolTip();
 
 }

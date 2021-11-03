@@ -29,7 +29,7 @@ import net.nikr.eve.jeveasset.data.profile.Profile;
 import net.nikr.eve.jeveasset.data.profile.ProfileData;
 import net.nikr.eve.jeveasset.data.profile.ProfileManager;
 import net.nikr.eve.jeveasset.data.sde.StaticData;
-import net.nikr.eve.jeveasset.data.settings.AssetAddedData;
+import net.nikr.eve.jeveasset.data.settings.AddedData;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.TrackerData;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateDialog.PriceDataTask;
@@ -52,7 +52,7 @@ public class BackgroundUpdate {
 		StaticData.load();
 		Settings.load();
 		TrackerData.load();
-		AssetAddedData.load();
+		AddedData.load();
 
 		PriceDataGetter priceDataGetter = new PriceDataGetter();
 		priceDataGetter.load();
