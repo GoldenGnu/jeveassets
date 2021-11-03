@@ -40,6 +40,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import javax.swing.ButtonGroup;
@@ -53,10 +54,10 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.settings.ColorTheme;
 import net.nikr.eve.jeveasset.data.settings.ColorTheme.ColorThemeTypes;
 import net.nikr.eve.jeveasset.data.settings.ColorSettings.ColorRow;
 import net.nikr.eve.jeveasset.data.settings.ColorSettings.PredefinedLookAndFeel;
+import net.nikr.eve.jeveasset.data.settings.ColorTheme.ColorThemeEntry;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.JSimpleColorPicker;
@@ -78,6 +79,7 @@ public class ColorSettingsPanel extends JSettingsPanel {
 	private final EventList<ColorRow> eventList;
 	private final DefaultEventSelectionModel<ColorRow> selectionModel;
 	private ColorThemeTypes colorThemeTypes;
+	private Collection<ColorThemeEntry> colors;
 	private String lookAndFeelClass;
 	private boolean updateLock = false;
 	private final List<JThemeMenuItem> jThemeMenuItems = new ArrayList<>();
@@ -305,11 +307,10 @@ public class ColorSettingsPanel extends JSettingsPanel {
 
 	@Override
 	public boolean save() {
-		ColorTheme colorTheme = colorThemeTypes.getInstance();
 		boolean lookAndfeelChanged = !Settings.get().getColorSettings().getLookAndFeelClass().equals(lookAndFeelClass);
-		boolean update = !colorTheme.equals(Settings.get().getColorSettings().getColorTheme())
-						|| lookAndfeelChanged;
-		Settings.get().getColorSettings().setColorTheme(colorTheme, true); //Later overwritten by table values, but, set uneditable values
+		boolean colorChanged = !Settings.get().getColorSettings().getColorTheme().getColors().values().equals(colors);
+		boolean update = lookAndfeelChanged || colorChanged;
+		Settings.get().getColorSettings().setColorTheme(colorThemeTypes.getInstance(), true); //Later overwritten by table values, but, set uneditable values
 		Settings.get().getColorSettings().setLookAndFeelClass(lookAndFeelClass);
 		try {
 			eventList.getReadWriteLock().readLock().lock();
@@ -319,6 +320,7 @@ public class ColorSettingsPanel extends JSettingsPanel {
 		} finally {
 			eventList.getReadWriteLock().readLock().unlock();
 		}
+		colors = new ArrayList<>(colorThemeTypes.getInstance().getColors().values()); //Copy to check for changes on save
 		if (lookAndfeelChanged && !UIManager.getLookAndFeel().getClass().getName().equals(lookAndFeelClass)) {
 			JOptionPane.showMessageDialog(parent, DialoguesSettings.get().lookAndFeelMsg(), DialoguesSettings.get().lookAndFeelTitle(), JOptionPane.PLAIN_MESSAGE);
 		}
@@ -331,6 +333,7 @@ public class ColorSettingsPanel extends JSettingsPanel {
 		updateTable(Settings.get().getColorSettings().get());
 		colorThemeTypes = Settings.get().getColorSettings().getColorTheme().getType();
 		select(colorThemeTypes);
+		colors = new ArrayList<>(colorThemeTypes.getInstance().getColors().values()); //Copy to check for changes on save
 		lookAndFeelClass = Settings.get().getColorSettings().getLookAndFeelClass();
 		select(lookAndFeelClass);
 		updateLock = false;
