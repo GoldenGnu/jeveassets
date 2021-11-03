@@ -668,14 +668,19 @@ public class MarketOrdersTab extends JMainTabPrimary {
 			double buyOrdersTotal = 0;
 			double toCoverTotal = 0;
 			double escrowTotal = 0;
-			for (MyMarketOrder marketOrder : filterList) {
-				if (!marketOrder.isBuyOrder()) { //Sell
-					sellOrdersTotal += marketOrder.getPrice() * marketOrder.getVolumeRemain();
-				} else { //Buy
-					buyOrdersTotal += marketOrder.getPrice() * marketOrder.getVolumeRemain();
-					escrowTotal += marketOrder.getEscrow();
-					toCoverTotal += (marketOrder.getPrice() * marketOrder.getVolumeRemain()) - marketOrder.getEscrow();
+			try {
+				filterList.getReadWriteLock().readLock().lock();
+				for (MyMarketOrder marketOrder : filterList) {
+					if (!marketOrder.isBuyOrder()) { //Sell
+						sellOrdersTotal += marketOrder.getPrice() * marketOrder.getVolumeRemain();
+					} else { //Buy
+						buyOrdersTotal += marketOrder.getPrice() * marketOrder.getVolumeRemain();
+						escrowTotal += marketOrder.getEscrow();
+						toCoverTotal += (marketOrder.getPrice() * marketOrder.getVolumeRemain()) - marketOrder.getEscrow();
+					}
 				}
+			} finally {
+				filterList.getReadWriteLock().readLock().unlock();
 			}
 			jSellOrdersTotal.setText(Formater.iskFormat(sellOrdersTotal));
 			jBuyOrdersTotal.setText(Formater.iskFormat(buyOrdersTotal));

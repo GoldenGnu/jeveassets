@@ -200,17 +200,22 @@ public class IndustryJobsTab extends JMainTabPrimary {
 			long count = 0;
 			double success = 0;
 			double outputValue = 0;
-			for (MyIndustryJob industryJob : filterList) {
-				count++;
-				if (industryJob.isInvention() && industryJob.isCompleted()) {
-					inventionCount++;
-					if (industryJob.isDelivered()) {
-						success++;
+			try {
+				filterList.getReadWriteLock().readLock().lock();
+				for (MyIndustryJob industryJob : filterList) {
+					count++;
+					if (industryJob.isInvention() && industryJob.isCompleted()) {
+						inventionCount++;
+						if (industryJob.isDelivered()) {
+							success++;
+						}
+					}
+					if (!industryJob.isDelivered()) { //Only include active jobs
+						outputValue += industryJob.getOutputValue();
 					}
 				}
-				if (!industryJob.isDelivered()) { //Only include active jobs
-					outputValue += industryJob.getOutputValue();
-				}
+			} finally {
+				filterList.getReadWriteLock().readLock().unlock();
 			}
 			if (inventionCount <= 0) {
 				jInventionSuccess.setText(Formater.percentFormat(0.0));
