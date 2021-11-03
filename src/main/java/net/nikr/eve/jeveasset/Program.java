@@ -59,7 +59,7 @@ import net.nikr.eve.jeveasset.data.profile.ProfileData;
 import net.nikr.eve.jeveasset.data.profile.ProfileManager;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.sde.StaticData;
-import net.nikr.eve.jeveasset.data.settings.AssetAddedData;
+import net.nikr.eve.jeveasset.data.settings.AddedData;
 import net.nikr.eve.jeveasset.data.settings.LogManager;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.TrackerData;
@@ -195,7 +195,7 @@ public class Program implements ActionListener {
 		StaticData.load();
 		Settings.load();
 		TrackerData.load();
-		AssetAddedData.load();
+		AddedData.load();
 		ContractPriceManager.load();
 
 		initLookAndFeel(Settings.get().getColorSettings().getLookAndFeelClass());

@@ -38,7 +38,7 @@ import java.util.TreeMap;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder.MarketOrderRange;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
-import net.nikr.eve.jeveasset.data.settings.AssetAddedData;
+import net.nikr.eve.jeveasset.data.settings.AddedData;
 import net.nikr.eve.jeveasset.data.settings.ColorEntry;
 import net.nikr.eve.jeveasset.data.settings.ColorTheme.ColorThemeTypes;
 import net.nikr.eve.jeveasset.data.settings.ContractPriceManager.ContractPriceSettings;
@@ -1990,7 +1990,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			Date date = getDate(currentNode, "date");
 			assetAdded.put(itemID, date);
 		}
-		AssetAddedData.set(assetAdded); //Import from settings.xml
+		AddedData.getAssets().set(assetAdded); //Import from settings.xml
 	}
 
 	public enum RegionTypeBackwardCompatibility {
