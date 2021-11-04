@@ -84,8 +84,7 @@ import net.troja.eve.esi.model.Skill;
 
 public class EsiConverter extends DataConverter {
 
-	private EsiConverter() {
-	}
+	private EsiConverter() { }
 
 	public static List<MyAccountBalance> toAccountBalance(Double responses, OwnerType owner, Integer accountKey) {
 		return convertRawAccountBalance(Collections.singletonList(new RawAccountBalance(responses, accountKey)), owner);
@@ -180,20 +179,20 @@ public class EsiConverter extends DataConverter {
 		return convertRawJournals(rawJournals, owner, saveHistory);
 	}
 
-	public static Map<MyContract, List<MyContractItem>> toContracts(List<CharacterContractsResponse> responses, OwnerType owner) {
+	public static Map<MyContract, List<MyContractItem>> toContracts(List<CharacterContractsResponse> responses, OwnerType owner, boolean saveHistory) {
 		List<RawContract> rawContracts = new ArrayList<>();
 		for (CharacterContractsResponse response : responses) {
 			rawContracts.add(new RawContract(response));
 		}
-		return convertRawContracts(rawContracts, owner);
+		return convertRawContracts(rawContracts, owner, saveHistory);
 	}
 
-	public static Map<MyContract, List<MyContractItem>> toContractsCorporation(List<CorporationContractsResponse> responses, OwnerType owner) {
+	public static Map<MyContract, List<MyContractItem>> toContractsCorporation(List<CorporationContractsResponse> responses, OwnerType owner, boolean saveHistory) {
 		List<RawContract> rawContracts = new ArrayList<>();
 		for (CorporationContractsResponse response : responses) {
 			rawContracts.add(new RawContract(response));
 		}
-		return convertRawContracts(rawContracts, owner);
+		return convertRawContracts(rawContracts, owner, saveHistory);
 	}
 
 	public static Map<MyContract, List<MyContractItem>> toContractItems(MyContract contract, List<CharacterContractsItemsResponse> responses, OwnerType owner) {

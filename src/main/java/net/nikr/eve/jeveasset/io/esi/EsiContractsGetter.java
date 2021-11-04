@@ -32,8 +32,11 @@ import net.troja.eve.esi.model.CorporationContractsResponse;
 
 public class EsiContractsGetter extends AbstractEsiGetter {
 
-	public EsiContractsGetter(UpdateTask updateTask, EsiOwner owner) {
+	private final boolean saveHistory;
+
+	public EsiContractsGetter(UpdateTask updateTask, EsiOwner owner, boolean saveHistory) {
 		super(updateTask, owner, false,  owner.getContractsNextUpdate(), TaskType.CONTRACTS);
+		this.saveHistory = saveHistory;
 	}
 
 	@Override
@@ -45,7 +48,7 @@ public class EsiContractsGetter extends AbstractEsiGetter {
 					return getContractsApiAuth().getCorporationsCorporationIdContractsWithHttpInfo((int) owner.getOwnerID(), DATASOURCE, null, page, null);
 				}
 			});
-			owner.setContracts(EsiConverter.toContractsCorporation(contracts, owner));
+			owner.setContracts(EsiConverter.toContractsCorporation(contracts, owner, saveHistory));
 		} else {
 			List<CharacterContractsResponse> contracts = updatePages(DEFAULT_RETRIES, new EsiPagesHandler<CharacterContractsResponse>() {
 				@Override
@@ -53,7 +56,7 @@ public class EsiContractsGetter extends AbstractEsiGetter {
 					return getContractsApiAuth().getCharactersCharacterIdContractsWithHttpInfo((int) owner.getOwnerID(), DATASOURCE, null, page, null);
 				}
 			});
-			owner.setContracts(EsiConverter.toContracts(contracts, owner));
+			owner.setContracts(EsiConverter.toContracts(contracts, owner, saveHistory));
 		}
 	}
 

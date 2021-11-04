@@ -863,7 +863,7 @@ public class UpdateDialog extends JDialogCentered {
 			if (contracts) {
 				//Esi
 				for (EsiOwner esiOwner : profileManager.getEsiOwners()) {
-					updates.add(new EsiContractsGetter(this, esiOwner));
+					updates.add(new EsiContractsGetter(this, esiOwner, Settings.get().isContractHistory()));
 				}
 			}
 			if (blueprints) {

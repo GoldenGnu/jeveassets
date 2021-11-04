@@ -79,7 +79,8 @@ public class Settings {
 		FLAG_ASKED_CHECK_ALL_TRACKER,
 		FLAG_TRACKER_USE_ASSET_PRICE_FOR_SELL_ORDERS,
 		FLAG_FOCUS_EVE_ONLINE_ON_ESI_UI_CALLS,
-		FLAG_SAVE_TOOLS_ON_EXIT
+		FLAG_SAVE_TOOLS_ON_EXIT,
+		FLAG_SAVE_CONTRACT_HISTORY
 	}
 
 	public static enum TransactionProfitPrice {
@@ -263,6 +264,7 @@ public class Settings {
 		flags.put(SettingFlag.FLAG_TRACKER_USE_ASSET_PRICE_FOR_SELL_ORDERS, false);
 		flags.put(SettingFlag.FLAG_FOCUS_EVE_ONLINE_ON_ESI_UI_CALLS, true);
 		flags.put(SettingFlag.FLAG_SAVE_TOOLS_ON_EXIT, false);
+		flags.put(SettingFlag.FLAG_SAVE_CONTRACT_HISTORY, true);
 		cacheFlags();
 	}
 
@@ -761,6 +763,14 @@ public class Settings {
 
 	public void setMarketOrderHistory(final boolean marketOrderHistory) {
 		flags.put(SettingFlag.FLAG_MARKET_ORDER_HISTORY, marketOrderHistory);
+	}
+
+	public boolean isContractHistory() {
+		return flags.get(SettingFlag.FLAG_SAVE_CONTRACT_HISTORY);
+	}
+
+	public void setContractHistory(final boolean contractHistory) {
+		flags.put(SettingFlag.FLAG_SAVE_CONTRACT_HISTORY, contractHistory);
 	}
 
 	public MarketOrdersSettings getMarketOrdersSettings() {

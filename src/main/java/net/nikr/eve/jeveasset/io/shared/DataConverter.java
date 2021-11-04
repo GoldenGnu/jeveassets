@@ -53,7 +53,7 @@ import net.nikr.eve.jeveasset.data.sde.Item;
 public abstract class DataConverter {
 
 	public static List<MyAsset> assetIndustryJob(final Collection<MyIndustryJob> industryJobs, boolean includeManufacturing) {
-		List<MyAsset> assets = new ArrayList<MyAsset>();
+		List<MyAsset> assets = new ArrayList<>();
 		for (MyIndustryJob industryJob : industryJobs) {
 			if (!industryJob.isDelivered()) {
 				MyAsset asset = new MyAsset(industryJob, false);
@@ -68,7 +68,7 @@ public abstract class DataConverter {
 	}
 
 	public static List<MyAsset> assetMarketOrder(final Collection<MyMarketOrder> marketOrders, boolean includeSellOrders, boolean includeBuyOrders) {
-		List<MyAsset> assets = new ArrayList<MyAsset>();
+		List<MyAsset> assets = new ArrayList<>();
 		for (MyMarketOrder marketOrder : marketOrders) {
 			if (marketOrder.isActive() && marketOrder.getVolumeRemain() > 0
 					&& ((!marketOrder.isBuyOrder() && includeSellOrders)
@@ -81,7 +81,7 @@ public abstract class DataConverter {
 	}
 
 	public static List<MyAsset> assetContracts(final Collection<MyContractItem> contractItems, final Map<Long, OwnerType> owners, boolean includeSellContracts, boolean includeBuyContracts) {
-		List<MyAsset> list = new ArrayList<MyAsset>();
+		List<MyAsset> list = new ArrayList<>();
 		//Only includes issuer buying and selling items
 		//TODO Could add issuer bought/sold and acceptor bought/sold items to the assets list 
 		for (MyContractItem contractItem : contractItems) {
@@ -112,7 +112,7 @@ public abstract class DataConverter {
 	}
 
 	public static List<MyAccountBalance> convertRawAccountBalance(List<RawAccountBalance> rawAccountBalances, OwnerType owner) {
-		List<MyAccountBalance> accountBalances = new ArrayList<MyAccountBalance>();
+		List<MyAccountBalance> accountBalances = new ArrayList<>();
 		for (RawAccountBalance rawAccountBalance : rawAccountBalances) { //Lookup by ItemID
 			accountBalances.add(toMyAccountBalance(rawAccountBalance, owner));
 		}
@@ -124,14 +124,14 @@ public abstract class DataConverter {
 	}
 
 	protected static List<MyAsset> convertRawAssets(List<RawAsset> rawAssets, OwnerType owner) {
-		List<MyAsset> assets = new ArrayList<MyAsset>();
+		List<MyAsset> assets = new ArrayList<>();
 
-		Map<Long, RawAsset> lookup = new HashMap<Long, RawAsset>();
-		Map<Long, List<RawAsset>> childMap = new HashMap<Long, List<RawAsset>>();
-		List<RawAsset> root = new ArrayList<RawAsset>();
+		Map<Long, RawAsset> lookup = new HashMap<>();
+		Map<Long, List<RawAsset>> childMap = new HashMap<>();
+		List<RawAsset> root = new ArrayList<>();
 		for (RawAsset rawAsset : rawAssets) { //Lookup by ItemID
 			lookup.put(rawAsset.getItemID(), rawAsset);
-			childMap.put(rawAsset.getItemID(), new ArrayList<RawAsset>());
+			childMap.put(rawAsset.getItemID(), new ArrayList<>());
 		}
 		for (RawAsset rawAsset : rawAssets) { //Create child map
 			RawAsset parent = lookup.get(rawAsset.getLocationID());
@@ -151,7 +151,7 @@ public abstract class DataConverter {
 	}
 
 	private static MyAsset deepAsset(RawAsset rawAsset, OwnerType owner, Map<Long, List<RawAsset>> childMap, MyAsset parent) {
-		List<MyAsset> parents = new ArrayList<MyAsset>();
+		List<MyAsset> parents = new ArrayList<>();
 		if (parent != null) {
 			parents.addAll(parent.getParents());
 			parents.add(parent);
@@ -189,27 +189,30 @@ public abstract class DataConverter {
 				|| rawAsset.getLocationID() == owner.getOwnerID();  //Other stuff
 	}
 
-	public static Map<MyContract, List<MyContractItem>> convertRawContracts(List<RawContract> rawContracts, OwnerType owner) {
-		Map<MyContract, List<MyContractItem>> contracts = new HashMap<MyContract, List<MyContractItem>>();
+	public static Map<MyContract, List<MyContractItem>> convertRawContracts(List<RawContract> rawContracts, OwnerType owner, boolean saveHistory) {
+		Map<MyContract, List<MyContractItem>> contracts = new HashMap<>();
+		if (saveHistory) { //Will be overwritten by new contracts
+			contracts.putAll(owner.getContracts());
+		}
 		for (RawContract rawContract : rawContracts) {
 			MyContract myContract = toMyContract(rawContract);
 			List<MyContractItem> contractItems = owner.getContracts().get(myContract); //Load ContractItems
 			if (contractItems == null) { //New
-				contractItems = new ArrayList<MyContractItem>();
+				contractItems = new ArrayList<>();
 			} else { //Old, update contract items
 				for (MyContractItem contractItem : contractItems) {
 					contractItem.setContract(myContract);
 				}
 			}
-			contracts.remove(myContract); //Remove old value
-			contracts.put(myContract, contractItems);
+			contracts.remove(myContract); //Remove old value (if present)
+			contracts.put(myContract, contractItems); 
 		}
 		return contracts;
 	}
 
 	public static Map<MyContract, List<MyContractItem>> convertRawContractItems(MyContract contract, List<RawContractItem> rawContractItems, OwnerType owner) {
-		Map<MyContract, List<MyContractItem>> contracts = new HashMap<MyContract, List<MyContractItem>>(owner.getContracts()); //Copy list
-		List<MyContractItem> contractItems = new ArrayList<MyContractItem>();
+		Map<MyContract, List<MyContractItem>> contracts = new HashMap<>(owner.getContracts()); //Copy list
+		List<MyContractItem> contractItems = new ArrayList<>();
 		for (RawContractItem rawContract : rawContractItems) {
 			contractItems.add(toMyContractItem(rawContract, contract));
 		}
@@ -228,7 +231,7 @@ public abstract class DataConverter {
 	}
 
 	public static List<MyIndustryJob> convertRawIndustryJobs(List<RawIndustryJob> rawIndustryJobs, OwnerType owner) {
-		List<MyIndustryJob> industryJobs = new ArrayList<MyIndustryJob>();
+		List<MyIndustryJob> industryJobs = new ArrayList<>();
 		for (RawIndustryJob rawIndustryJob : rawIndustryJobs) {
 			industryJobs.add(toMyIndustryJob(rawIndustryJob, owner));
 		}
@@ -241,7 +244,7 @@ public abstract class DataConverter {
 	}
 
 	public static Set<MyJournal> convertRawJournals(List<RawJournal> rawJournals, OwnerType owner, boolean saveHistory) {
-		Set<MyJournal> journals = new HashSet<MyJournal>();
+		Set<MyJournal> journals = new HashSet<>();
 		for (RawJournal rawJournal : rawJournals) {
 			journals.add(toMyJournal(rawJournal, owner));
 		}
@@ -256,7 +259,7 @@ public abstract class DataConverter {
 	}
 
 	public static Set<MyMarketOrder> convertRawMarketOrders(List<RawMarketOrder> rawMarketOrders, OwnerType owner, boolean saveHistory) {
-		Set<MyMarketOrder> marketOrders = new HashSet<MyMarketOrder>();
+		Set<MyMarketOrder> marketOrders = new HashSet<>();
 		Map<Long, Set<Change>> changed = new HashMap<>();
 		for (MyMarketOrder marketOrder : owner.getMarketOrders()) {
 			changed.put(marketOrder.getOrderID(), marketOrder.getChanges());
@@ -281,7 +284,7 @@ public abstract class DataConverter {
 	}
 
 	public static Set<MyTransaction> convertRawTransactions(List<RawTransaction> rawTransactions, OwnerType owner, boolean saveHistory) {
-		Set<MyTransaction> myTransactions = new HashSet<MyTransaction>();
+		Set<MyTransaction> myTransactions = new HashSet<>();
 		for (RawTransaction rawTransaction : rawTransactions) {
 			myTransactions.add(toMyTransaction(rawTransaction, owner));
 		}
