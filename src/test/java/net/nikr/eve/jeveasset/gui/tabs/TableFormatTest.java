@@ -189,9 +189,14 @@ public class TableFormatTest extends TestUtil {
 			for (ValueTableFormat tableFormat : ValueTableFormat.values()) {
 				test(tableFormat, tableFormat.getType(), tableFormat.getColumnValue(value));
 			}
-			TreeAsset treeAsset = new TreeAsset(asset, TreeAsset.TreeType.CATEGORY, new ArrayList<>(), STRING_VALUE, false);
+			TreeAsset treeAsset = new TreeAsset(asset, TreeAsset.TreeType.CATEGORY, new ArrayList<>(), STRING_VALUE, true);
+			TreeAsset sub = new TreeAsset(asset, TreeAsset.TreeType.CATEGORY, Collections.singletonList(treeAsset), STRING_VALUE, false);
+			treeAsset.addAsset(sub);
+			treeAsset.updateParents();
+			sub.updateParents();
 			for (TreeTableFormat tableFormat : TreeTableFormat.values()) {
 				test(tableFormat, tableFormat.getType(), tableFormat.getColumnValue(treeAsset));
+				test(tableFormat, tableFormat.getType(), tableFormat.getColumnValue(sub));
 			}
 		}
 	}
@@ -203,6 +208,8 @@ public class TableFormatTest extends TestUtil {
 			//No problem
 		} else if (((actual.isAssignableFrom(Long.class) || actual.isAssignableFrom(Integer.class)) && (expecteds.isAssignableFrom(Long.class) | expecteds.isAssignableFrom(Integer.class)))) {
 			//No problem
+		} else if (Number.class.isAssignableFrom(actual)) {
+			fail("Unsupported number type used");
 		} else if (String.class.isAssignableFrom(actual)) {
 			//No problem
 		} else if (String.class.isAssignableFrom(expecteds)) {
