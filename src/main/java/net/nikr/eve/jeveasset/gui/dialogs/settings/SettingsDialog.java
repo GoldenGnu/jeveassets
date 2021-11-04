@@ -100,57 +100,45 @@ public class SettingsDialog extends JDialogCentered {
 
 		DefaultMutableTreeNode toolNode = addGroup(DialoguesSettings.get().tools(), Images.SETTINGS_TOOLS.getIcon());
 
-		ShowToolSettingsPanel showToolSettingsPanel = new ShowToolSettingsPanel(program, this);
-		add(showToolSettingsPanel, toolNode);
+		add(toolNode, new ShowToolSettingsPanel(program, this));
 
-		AssetsToolSettingsPanel assetsToolSettingsPanel = new AssetsToolSettingsPanel(program, this);
-		add(assetsToolSettingsPanel, toolNode);
+		add(toolNode, new AssetsToolSettingsPanel(program, this));
 
-		OverviewToolSettingsPanel overviewToolSettingsPanel = new OverviewToolSettingsPanel(program, this);
-		add(overviewToolSettingsPanel, toolNode);
+		add(toolNode, new OverviewToolSettingsPanel(program, this));
 
-		StockpileToolSettingsPanel stockpileToolSettingsPanel = new StockpileToolSettingsPanel(program, this);
-		add(stockpileToolSettingsPanel, toolNode);
+		add(toolNode, new StockpileToolSettingsPanel(program, this));
 
-		MarketOrdersToolSettingsPanel marketOrdersToolSettingsPanel = new MarketOrdersToolSettingsPanel(program, this);
-		add(marketOrdersToolSettingsPanel, toolNode);
+		add(toolNode, new MarketOrdersToolSettingsPanel(program, this));
 
-		TransactionsToolSettingsPanel transactionsToolSettingsPanel = new TransactionsToolSettingsPanel(program, this);
-		add(transactionsToolSettingsPanel, toolNode);
+		add(toolNode, new TransactionsToolSettingsPanel(program, this));
 
-		JournalToolSettingsPanel journalToolSettingsPanel = new JournalToolSettingsPanel(program, this);
-		add(journalToolSettingsPanel, toolNode);
+		add(toolNode, new JournalToolSettingsPanel(program, this));
 
-		TrackerToolSettingsPanel trackerToolSettingsPanel = new TrackerToolSettingsPanel(program, this);
-		add(trackerToolSettingsPanel, toolNode);
+		add(toolNode, new ContractToolSettingsPanel(program, this));
+
+		add(toolNode, new TrackerToolSettingsPanel(program, this));
 		
 		DefaultMutableTreeNode valuesNode = addGroup(DialoguesSettings.get().values(), Images.EDIT_RENAME.getIcon());
 		userPriceSettingsPanel = new UserPriceSettingsPanel(program, this);
-		add(userPriceSettingsPanel, valuesNode);
+		add(valuesNode, userPriceSettingsPanel);
 		userNameSettingsPanel = new UserNameSettingsPanel(program, this);
-		add(userNameSettingsPanel, valuesNode);
+		add(valuesNode, userNameSettingsPanel);
 		locationSettingsPanel = new UserLocationSettingsPanel(program, this);
-		add(locationSettingsPanel, valuesNode);
-		TagsSettingsPanel tagsSettingsPanel = new TagsSettingsPanel(program, this);
-		add(tagsSettingsPanel, valuesNode);
+		add(valuesNode, locationSettingsPanel);
 
-		ColorSettingsPanel colorSettingsPanel = new ColorSettingsPanel(program, this);
-		add(colorSettingsPanel);
+		add(valuesNode, new TagsSettingsPanel(program, this));
 
-		PriceDataSettingsPanel priceDataSettingsPanel = new PriceDataSettingsPanel(program, this);
-		add(priceDataSettingsPanel);
+		add(new ColorSettingsPanel(program, this));
 
-		ContractPriceSettingsPanel contractPriceSettingsPanel = new ContractPriceSettingsPanel(program, this);
-		add(contractPriceSettingsPanel);
+		add(new PriceDataSettingsPanel(program, this));
 
-		ReprocessingSettingsPanel reprocessingSettingsPanel = new ReprocessingSettingsPanel(program, this);
-		add(reprocessingSettingsPanel);
+		add(new ContractPriceSettingsPanel(program, this));
 
-		ProxySettingsPanel proxySettingsPanel = new ProxySettingsPanel(program, this);
-		add(proxySettingsPanel);
+		add(new ReprocessingSettingsPanel(program, this));
 
-		WindowSettingsPanel windowSettingsPanel = new WindowSettingsPanel(program, this);
-		add(windowSettingsPanel);
+		add(new ProxySettingsPanel(program, this));
+
+		add(new WindowSettingsPanel(program, this));
 
 		JScrollPane jTreeScroller = new JScrollPane(jTree);
 
@@ -203,7 +191,7 @@ public class SettingsDialog extends JDialogCentered {
 	}
 
 	private void add(final JSettingsPanel jSettingsPanel) {
-		add(jSettingsPanel, null);
+		add(null, jSettingsPanel);
 	}
 
 	protected void addCard(final JPanel jPanel, final String title) {
@@ -214,7 +202,7 @@ public class SettingsDialog extends JDialogCentered {
 		jContent.remove(jPanel);
 	}
 
-	private void add(final JSettingsPanel jSettingsPanel, final DefaultMutableTreeNode parentNode) {
+	private void add(final DefaultMutableTreeNode parentNode, final JSettingsPanel jSettingsPanel) {
 		settingsPanels.put(jSettingsPanel.getTitle(), jSettingsPanel);
 		icons.put(jSettingsPanel.getTitle(), jSettingsPanel.getIcon());
 		jContent.add(jSettingsPanel.getPanel(), jSettingsPanel.getTitle());
