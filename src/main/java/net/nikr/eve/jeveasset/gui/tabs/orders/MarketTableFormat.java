@@ -124,7 +124,7 @@ public enum MarketTableFormat implements EnumTableColumn<MyMarketOrder> {
 			return from.getOutbidCount();
 		}
 	},
-	OUTBID_DELTA(Long.class, GlazedLists.comparableComparator()) {
+	OUTBID_DELTA(Double.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
 			return TabsOrders.get().columnOutbidDelta();
