@@ -234,7 +234,8 @@ public class Settings {
 	//Lock OK
 	private final Map<String, Tag> tags = new HashMap<>();
 	private final Map<TagID, Tags> tagIds = new HashMap<>();
-
+//Changed
+	private final Map<String, Date> tableChanged = new HashMap<>();
 //Tools
 	private final List<String> showTools = new ArrayList<>();
 //Colors
@@ -425,6 +426,19 @@ public class Settings {
 			tableJumps.put(toolName, jumps);
 		}
 		return jumps;
+	}
+
+	public Map<String, Date> getTableChanged() {
+		return tableChanged;
+	}
+
+	public Date getTableChanged(String toolName) {
+		Date date = tableChanged.get(toolName);
+		if (date == null) {
+			date = new Date();
+			tableChanged.put(toolName, date);
+		}
+		return date;
 	}
 
 	public ProxyData getProxyData() {

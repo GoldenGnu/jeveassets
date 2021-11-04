@@ -118,6 +118,8 @@ public class RawMarketOrder {
 	private Integer typeId = null;
 	private Integer volumeRemain = null;
 	private Integer volumeTotal = null;
+	private Date changed;
+	private boolean updateChanged = false;
 
 	/**
 	 * New
@@ -182,7 +184,7 @@ public class RawMarketOrder {
 		typeId = marketOrder.getTypeId();
 		volumeRemain = marketOrder.getVolumeRemain();
 		volumeTotal = marketOrder.getVolumeTotal();
-		changes.add(new Change(issued, price, volumeRemain));
+		changes.add(new Change(this));
 	}
 
 	/**
@@ -210,7 +212,7 @@ public class RawMarketOrder {
 		typeId = marketOrder.getTypeId();
 		volumeRemain = marketOrder.getVolumeRemain();
 		volumeTotal = marketOrder.getVolumeTotal();
-		changes.add(new Change(issued, price, volumeRemain));
+		changes.add(new Change(this));
 	}
 
 	/**
@@ -238,7 +240,7 @@ public class RawMarketOrder {
 		typeId = marketOrder.getTypeId();
 		volumeRemain = marketOrder.getVolumeRemain();
 		volumeTotal = marketOrder.getVolumeTotal();
-		changes.add(new Change(issued, price, volumeRemain));
+		changes.add(new Change(this));
 	}
 	
 	/**
@@ -266,7 +268,7 @@ public class RawMarketOrder {
 		typeId = marketOrder.getTypeId();
 		volumeRemain = marketOrder.getVolumeRemain();
 		volumeTotal = marketOrder.getVolumeTotal();
-		changes.add(new Change(issued, price, volumeRemain));
+		changes.add(new Change(this));
 	}
 
 	public Integer getWalletDivision() {
@@ -325,6 +327,19 @@ public class RawMarketOrder {
 		}
 	}
 
+	public Date getChanged() {
+		return changed;
+	}
+
+	public void setChanged(Date changed) {
+		this.changed = changed;
+		updateChanged = false;
+	}
+
+	public boolean isUpdateChanged() {
+		return updateChanged;
+	}
+
 	public Set<Change> getChanges() {
 		return changes;
 	}
@@ -337,18 +352,23 @@ public class RawMarketOrder {
 
 	public void addChanges(Set<Change> change) {
 		if (change != null) {
-			changes.add(new Change(issued, price, volumeRemain)); //Add current
-			changes.addAll(change);
+			Change current = new Change(this);
+			updateChanged = !change.contains(current);
+			changes.add(current); //Add current
+			changes.addAll(change); //Add old
 		}
 	}
 
-	public void addChanges(RawPublicMarketOrder response) {
+	public boolean addChanges(RawPublicMarketOrder response) {
 		if (response != null) {
+			//Set new data
 			setPrice(response.getPrice());
 			setVolumeRemain(response.getVolumeRemain());
 			setIssued(response.getIssued());
-			changes.add(new Change(response.getIssued(), response.getPrice(), response.getVolumeRemain()));
+			//Add change
+			return changes.add(new Change(response));
 		}
+		return false;
 	}
 
 	public Integer getIssuedBy() {
@@ -455,10 +475,18 @@ public class RawMarketOrder {
 		this.volumeTotal = volumeTotal;
 	}
 
-	static public class Change implements Comparable<Change> {
+	public static class Change implements Comparable<Change> {
 		private final Date date;
 		private final Double price;
 		private final Integer volumeRemaining;
+
+		public Change(RawPublicMarketOrder response) {
+			this(response.getIssued(), response.getPrice(), response.getVolumeRemain());
+		}
+
+		public Change(RawMarketOrder response) {
+			this(response.getIssued(), response.getPrice(), response.getVolumeRemain());
+		}
 
 		public Change(Date date, Double price, Integer volumeRemaining) {
 			this.date = date;
@@ -480,8 +508,10 @@ public class RawMarketOrder {
 
 		@Override
 		public int hashCode() {
-			int hash = 5;
-			hash = 17 * hash + Objects.hashCode(this.date);
+			int hash = 7;
+			hash = 53 * hash + Objects.hashCode(this.date);
+			hash = 53 * hash + Objects.hashCode(this.price);
+			hash = 53 * hash + Objects.hashCode(this.volumeRemaining);
 			return hash;
 		}
 
@@ -498,6 +528,12 @@ public class RawMarketOrder {
 			}
 			final Change other = (Change) obj;
 			if (!Objects.equals(this.date, other.date)) {
+				return false;
+			}
+			if (!Objects.equals(this.price, other.price)) {
+				return false;
+			}
+			if (!Objects.equals(this.volumeRemaining, other.volumeRemaining)) {
 				return false;
 			}
 			return true;

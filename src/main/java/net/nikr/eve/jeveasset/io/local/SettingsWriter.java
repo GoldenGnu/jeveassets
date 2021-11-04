@@ -161,10 +161,11 @@ public class SettingsWriter extends AbstractXmlWriter {
 		writeCurrentTableFilters(xmldoc, settings.getCurrentTableFilters(), settings.getCurrentTableFiltersShown());
 		writeTableColumns(xmldoc, settings.getTableColumns());
 		writeTableColumnsWidth(xmldoc, settings.getTableColumnsWidth());
-		writeTablesResize(xmldoc, settings.getTableResize());
-		writeTablesViews(xmldoc, settings.getTableViews());
-		writeTablesJumps(xmldoc, settings.getTableJumps());
-		writeTablesFormula(xmldoc, settings.getTableFormulas());
+		writeTableResize(xmldoc, settings.getTableResize());
+		writeTableViews(xmldoc, settings.getTableViews());
+		writeTableJumps(xmldoc, settings.getTableJumps());
+		writeTableFormulas(xmldoc, settings.getTableFormulas());
+		writeTableChanges(xmldoc, settings.getTableChanged());
 		writeExportSettings(xmldoc, settings.getExportSettings(), settings.getCopySettings());
 		writeTrackerNotes(xmldoc, settings.getTrackerSettings().getNotes());
 		writeTrackerFilters(xmldoc, settings.getTrackerSettings().getFilters(), settings.getTrackerSettings().isSelectNew(), settings.getTrackerSettings().getSkillPointFilters());
@@ -188,14 +189,14 @@ public class SettingsWriter extends AbstractXmlWriter {
 	}
 
 	private void writeFactionWarfareSystemOwners(Document xmldoc, Settings settings) {
-		Element FactionWarfareSystemOwnersNode = xmldoc.createElementNS(null, "factionwarfaresystemowners");
-		xmldoc.getDocumentElement().appendChild(FactionWarfareSystemOwnersNode);
-		setAttribute(FactionWarfareSystemOwnersNode, "factionwarfarenextupdate", settings.getFactionWarfareNextUpdate());
+		Element factionWarfareSystemOwnersNode = xmldoc.createElementNS(null, "factionwarfaresystemowners");
+		xmldoc.getDocumentElement().appendChild(factionWarfareSystemOwnersNode);
+		setAttribute(factionWarfareSystemOwnersNode, "factionwarfarenextupdate", settings.getFactionWarfareNextUpdate());
 		for (Map.Entry<Long, String> entry : settings.getFactionWarfareSystemOwners().entrySet()) {
-			Element colorNode = xmldoc.createElementNS(null, "system");
-			setAttribute(colorNode, "system", entry.getKey());
-			setAttributeOptional(colorNode, "faction", entry.getValue());
-			FactionWarfareSystemOwnersNode.appendChild(colorNode);
+			Element systemNode = xmldoc.createElementNS(null, "system");
+			setAttribute(systemNode, "system", entry.getKey());
+			setAttributeOptional(systemNode, "faction", entry.getValue());
+			factionWarfareSystemOwnersNode.appendChild(systemNode);
 		}
 	}
 
@@ -371,16 +372,16 @@ public class SettingsWriter extends AbstractXmlWriter {
 	 * @param tableFilters Saved filters to be written to the document zero to many for each table.
 	 */
 	private void writeTableFilters(final Document xmldoc, final Map<String, Map<String, List<Filter>>> tableFilters) {
-		Element tablefiltersNode = xmldoc.createElementNS(null, "tablefilters");
-		xmldoc.getDocumentElement().appendChild(tablefiltersNode);
+		Element tableFiltersNode = xmldoc.createElementNS(null, "tablefilters");
+		xmldoc.getDocumentElement().appendChild(tableFiltersNode);
 		for (Map.Entry<String, Map<String, List<Filter>>> entry : tableFilters.entrySet()) {
-			Element nameNode = xmldoc.createElementNS(null, "table");
-			setAttribute(nameNode, "name", entry.getKey());
-			tablefiltersNode.appendChild(nameNode);
+			Element tableNode = xmldoc.createElementNS(null, "table");
+			setAttribute(tableNode, "name", entry.getKey());
+			tableFiltersNode.appendChild(tableNode);
 			for (Map.Entry<String, List<Filter>> filters : entry.getValue().entrySet()) {
 				Element filterNode = xmldoc.createElementNS(null, "filter");
 				setAttribute(filterNode, "name", filters.getKey());
-				nameNode.appendChild(filterNode);
+				tableNode.appendChild(filterNode);
 				writeFilters(xmldoc, filterNode, filters);
 			}
 		}
@@ -394,15 +395,15 @@ public class SettingsWriter extends AbstractXmlWriter {
 	 * @param tableFiltersShow Current filters visibility state to be written to the document one per table.
 	 */
 	private void writeCurrentTableFilters(final Document xmldoc, final Map<String, List<Filter>> tableFilters, final Map<String, Boolean> tableFiltersShow) {
-		Element currenttablefiltersNode = xmldoc.createElementNS(null, "currenttablefilters");
-		xmldoc.getDocumentElement().appendChild(currenttablefiltersNode);
+		Element currentTableFiltersNode = xmldoc.createElementNS(null, "currenttablefilters");
+		xmldoc.getDocumentElement().appendChild(currentTableFiltersNode);
 		for (Map.Entry<String, List<Filter>> filters : tableFilters.entrySet()) {
-			Element nameNode = xmldoc.createElementNS(null, "table");
-			setAttribute(nameNode, "name", filters.getKey());
-			currenttablefiltersNode.appendChild(nameNode);
+			Element tableNode = xmldoc.createElementNS(null, "table");
+			setAttribute(tableNode, "name", filters.getKey());
+			currentTableFiltersNode.appendChild(tableNode);
 			Element filterNode = xmldoc.createElementNS(null, "filter");
 			setAttribute(filterNode, "show", tableFiltersShow.getOrDefault(filters.getKey(), true));
-			nameNode.appendChild(filterNode);
+			tableNode.appendChild(filterNode);
 			writeFilters(xmldoc, filterNode, filters);
 		}
 	}
@@ -416,83 +417,83 @@ public class SettingsWriter extends AbstractXmlWriter {
 	 */
 	private void writeFilters(final Document xmldoc, final Element parentNode, final Map.Entry<String, List<Filter>> filters) {
 		for (Filter filter : filters.getValue()) {
-			Element childNode = xmldoc.createElementNS(null, "row");
-			setAttribute(childNode, "group", filter.getGroup());
-			setAttribute(childNode, "text", filter.getText());
-			setAttribute(childNode, "column", filter.getColumn().name());
-			setAttribute(childNode, "compare", filter.getCompareType());
-			setAttribute(childNode, "logic", filter.getLogic());
-			setAttribute(childNode, "enabled", filter.isEnabled());
-			parentNode.appendChild(childNode);
+			Element rowNode = xmldoc.createElementNS(null, "row");
+			setAttribute(rowNode, "group", filter.getGroup());
+			setAttribute(rowNode, "text", filter.getText());
+			setAttribute(rowNode, "column", filter.getColumn().name());
+			setAttribute(rowNode, "compare", filter.getCompareType());
+			setAttribute(rowNode, "logic", filter.getLogic());
+			setAttribute(rowNode, "enabled", filter.isEnabled());
+			parentNode.appendChild(rowNode);
 		}
 	}
 
 	private void writeTableColumns(final Document xmldoc, final Map<String, List<SimpleColumn>> tableColumns) {
-		Element tablecolumnsNode = xmldoc.createElementNS(null, "tablecolumns");
-		xmldoc.getDocumentElement().appendChild(tablecolumnsNode);
+		Element tableColumnsNode = xmldoc.createElementNS(null, "tablecolumns");
+		xmldoc.getDocumentElement().appendChild(tableColumnsNode);
 		for (Map.Entry<String, List<SimpleColumn>> entry : tableColumns.entrySet()) {
-			Element nameNode = xmldoc.createElementNS(null, "table");
-			setAttribute(nameNode, "name", entry.getKey());
-			tablecolumnsNode.appendChild(nameNode);
+			Element tableNode = xmldoc.createElementNS(null, "table");
+			setAttribute(tableNode, "name", entry.getKey());
+			tableColumnsNode.appendChild(tableNode);
 			for (SimpleColumn column : entry.getValue()) {
-				Element node = xmldoc.createElementNS(null, "column");
-				setAttribute(node, "name", column.getEnumName());
-				setAttribute(node, "shown", column.isShown());
-				nameNode.appendChild(node);
+				Element columnNode = xmldoc.createElementNS(null, "column");
+				setAttribute(columnNode, "name", column.getEnumName());
+				setAttribute(columnNode, "shown", column.isShown());
+				tableNode.appendChild(columnNode);
 			}
 		}
 	}
 
 	private void writeTableColumnsWidth(final Document xmldoc, final Map<String, Map<String, Integer>> tableColumnsWidth) {
-		Element tablecolumnsNode = xmldoc.createElementNS(null, "tablecolumnswidth");
-		xmldoc.getDocumentElement().appendChild(tablecolumnsNode);
+		Element tableColumnsWidthNode = xmldoc.createElementNS(null, "tablecolumnswidth");
+		xmldoc.getDocumentElement().appendChild(tableColumnsWidthNode);
 		for (Map.Entry<String, Map<String, Integer>> table : tableColumnsWidth.entrySet()) {
-			Element nameNode = xmldoc.createElementNS(null, "table");
-			setAttribute(nameNode, "name", table.getKey());
-			tablecolumnsNode.appendChild(nameNode);
+			Element tableNode = xmldoc.createElementNS(null, "table");
+			setAttribute(tableNode, "name", table.getKey());
+			tableColumnsWidthNode.appendChild(tableNode);
 			for (Map.Entry<String, Integer> column : table.getValue().entrySet()) {
-				Element node = xmldoc.createElementNS(null, "column");
-				setAttribute(node, "column", column.getKey());
-				setAttribute(node, "width", column.getValue());
-				nameNode.appendChild(node);
+				Element columnNode = xmldoc.createElementNS(null, "column");
+				setAttribute(columnNode, "column", column.getKey());
+				setAttribute(columnNode, "width", column.getValue());
+				tableNode.appendChild(columnNode);
 			}
 		}
 	}
 
-	private void writeTablesResize(final Document xmldoc, final Map<String, ResizeMode> tableColumns) {
-		Element tablecolumnsNode = xmldoc.createElementNS(null, "tableresize");
-		xmldoc.getDocumentElement().appendChild(tablecolumnsNode);
-		for (Map.Entry<String, ResizeMode> entry : tableColumns.entrySet()) {
-			Element nameNode = xmldoc.createElementNS(null, "table");
-			setAttribute(nameNode, "name", entry.getKey());
-			setAttribute(nameNode, "resize", entry.getValue());
-			tablecolumnsNode.appendChild(nameNode);
+	private void writeTableResize(final Document xmldoc, final Map<String, ResizeMode> tableResize) {
+		Element tableResizeNode = xmldoc.createElementNS(null, "tableresize");
+		xmldoc.getDocumentElement().appendChild(tableResizeNode);
+		for (Map.Entry<String, ResizeMode> entry : tableResize.entrySet()) {
+			Element tableNode = xmldoc.createElementNS(null, "table");
+			setAttribute(tableNode, "name", entry.getKey());
+			setAttribute(tableNode, "resize", entry.getValue());
+			tableResizeNode.appendChild(tableNode);
 		}
 	}
 
-	private void writeTablesViews(final Document xmldoc, final Map<String, Map<String ,View>> tableViews) {
-		Element tableviewsNode = xmldoc.createElementNS(null, "tableviews");
-		xmldoc.getDocumentElement().appendChild(tableviewsNode);
+	private void writeTableViews(final Document xmldoc, final Map<String, Map<String ,View>> tableViews) {
+		Element tableViewsNode = xmldoc.createElementNS(null, "tableviews");
+		xmldoc.getDocumentElement().appendChild(tableViewsNode);
 		for (Map.Entry<String, Map<String ,View>> entry : tableViews.entrySet()) {
-			Element nameNode = xmldoc.createElementNS(null, "viewtool");
-			setAttribute(nameNode, "tool", entry.getKey());
-			tableviewsNode.appendChild(nameNode);
+			Element viewToolNode = xmldoc.createElementNS(null, "viewtool");
+			setAttribute(viewToolNode, "tool", entry.getKey());
+			tableViewsNode.appendChild(viewToolNode);
 			for (View view : entry.getValue().values()) {
-				Element tableviewNode = xmldoc.createElementNS(null, "view");
-				setAttribute(tableviewNode, "name", view.getName());
-				nameNode.appendChild(tableviewNode);
+				Element viewNode = xmldoc.createElementNS(null, "view");
+				setAttribute(viewNode, "name", view.getName());
+				viewToolNode.appendChild(viewNode);
 				for (SimpleColumn column : view.getColumns()) {
 					Element viewColumnNode = xmldoc.createElementNS(null, "viewcolumn");
 					setAttribute(viewColumnNode, "name", column.getEnumName());
 					setAttribute(viewColumnNode, "shown", column.isShown());
-					tableviewNode.appendChild(viewColumnNode);
+					viewNode.appendChild(viewColumnNode);
 				}
 			}
 			
 		}
 	}
 
-	private void writeTablesFormula(final Document xmldoc, final Map<String, List<Formula>> formulas) {
+	private void writeTableFormulas(final Document xmldoc, final Map<String, List<Formula>> formulas) {
 		Element tableFormulasNode = xmldoc.createElementNS(null, "tableformulas");
 		xmldoc.getDocumentElement().appendChild(tableFormulasNode);
 		for (Map.Entry<String, List<Formula>> entry : formulas.entrySet()) {
@@ -509,7 +510,18 @@ public class SettingsWriter extends AbstractXmlWriter {
 		}
 	}
 
-	private void writeTablesJumps(final Document xmldoc, final Map<String, List<Jump>> jumps) {
+	private void writeTableChanges(final Document xmldoc, final Map<String, Date> changes) {
+		Element tableChangesNode = xmldoc.createElementNS(null, "tablechanges");
+		xmldoc.getDocumentElement().appendChild(tableChangesNode);
+		for (Map.Entry<String, Date> entry : changes.entrySet()) {
+			Element changesNode = xmldoc.createElementNS(null, "changes");
+			setAttribute(changesNode, "tool", entry.getKey());
+			setAttribute(changesNode, "date", entry.getValue());
+			tableChangesNode.appendChild(changesNode);
+		}
+	}
+
+	private void writeTableJumps(final Document xmldoc, final Map<String, List<Jump>> jumps) {
 		Element tableJumpsNode = xmldoc.createElementNS(null, "tablejumps");
 		xmldoc.getDocumentElement().appendChild(tableJumpsNode);
 		for (Map.Entry<String, List<Jump>> entry : jumps.entrySet()) {

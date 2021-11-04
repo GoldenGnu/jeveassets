@@ -43,6 +43,7 @@ public abstract class TabsTransaction extends Bundle {
 	public abstract String buyCount();
 	public abstract String buyTitle();
 	public abstract String buyTotal();
+	public abstract String clearNew();
 	public abstract String corporation();
 	public abstract String personal();
 	public abstract String sell();

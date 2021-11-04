@@ -40,6 +40,7 @@ public class ColorThemeColorblind extends ColorTheme {
 
 	@Override
 	protected void createColors(Map<ColorEntry, ColorThemeEntry> colors) {
+		colors.put(ColorEntry.ASSETS_NEW, new ColorThemeEntry(Colors.COLORBLIND_YELLOW));
 		colors.put(ColorEntry.ASSETS_REPROCESSING_EQUAL, new ColorThemeEntry(Colors.COLORBLIND_ORANGE));
 		colors.put(ColorEntry.ASSETS_REPROCESSING_REPROCES, new ColorThemeEntry(Colors.COLORBLIND_MAGENTA));
 		colors.put(ColorEntry.ASSETS_REPROCESSING_SELL, new ColorThemeEntry(Colors.COLORBLIND_YELLOW));
@@ -63,13 +64,16 @@ public class ColorThemeColorblind extends ColorTheme {
 		colors.put(ColorEntry.MARKET_ORDERS_EXPIRED, new ColorThemeEntry(Colors.COLORBLIND_MAGENTA));
 		colors.put(ColorEntry.MARKET_ORDERS_NEAR_EXPIRED, new ColorThemeEntry(Colors.COLORBLIND_YELLOW));
 		colors.put(ColorEntry.MARKET_ORDERS_NEAR_FILLED, new ColorThemeEntry(Colors.COLORBLIND_YELLOW));
+		colors.put(ColorEntry.MARKET_ORDERS_NEW, new ColorThemeEntry(Colors.COLORBLIND_YELLOW));
 		colors.put(ColorEntry.INDUSTRY_JOBS_DELIVERED, new ColorThemeEntry(Colors.COLORBLIND_ORANGE));
 		colors.put(ColorEntry.INDUSTRY_JOBS_DONE, new ColorThemeEntry(Colors.COLORBLIND_YELLOW));
 		colors.put(ColorEntry.INDUSTRY_SLOTS_FREE, new ColorThemeEntry(Colors.COLORBLIND_YELLOW));
 		colors.put(ColorEntry.INDUSTRY_SLOTS_DONE, new ColorThemeEntry(Colors.COLORBLIND_ORANGE));
 		colors.put(ColorEntry.INDUSTRY_SLOTS_FULL, new ColorThemeEntry(Colors.COLORBLIND_MAGENTA));
+		colors.put(ColorEntry.JOURNAL_NEW, new ColorThemeEntry(Colors.COLORBLIND_YELLOW));
 		colors.put(ColorEntry.TRANSACTIONS_BOUGHT, new ColorThemeEntry(Colors.COLORBLIND_MAGENTA));
 		colors.put(ColorEntry.TRANSACTIONS_SOLD, new ColorThemeEntry(Colors.COLORBLIND_YELLOW));
+		colors.put(ColorEntry.TRANSACTIONS_NEW, new ColorThemeEntry(Colors.COLORBLIND_YELLOW));
 		colors.put(ColorEntry.GLOBAL_BPC, new ColorThemeEntry(Colors.COLORBLIND_MAGENTA));
 		colors.put(ColorEntry.GLOBAL_BPO, new ColorThemeEntry(Colors.COLORBLIND_ORANGE));
 		colors.put(ColorEntry.GLOBAL_VALUE_NEGATIVE, new ColorThemeEntry(null, Colors.COLORBLIND_FOREGROUND_RED));

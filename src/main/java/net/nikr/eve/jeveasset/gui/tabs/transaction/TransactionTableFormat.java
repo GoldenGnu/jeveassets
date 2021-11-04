@@ -41,6 +41,20 @@ public enum TransactionTableFormat implements EnumTableColumn<MyTransaction> {
 			return from.getDate();
 		}
 	},
+	ADDED(Date.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsTransaction.get().columnAdded();
+		}
+		@Override
+		public String getColumnToolTip() {
+			return TabsTransaction.get().columnAddedToolTip();
+		}
+		@Override
+		public Object getColumnValue(final MyTransaction from) {
+			return from.getAdded();
+		}
+	},
 	NAME(String.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
@@ -235,20 +249,6 @@ public enum TransactionTableFormat implements EnumTableColumn<MyTransaction> {
 		@Override
 		public Object getColumnValue(final MyTransaction from) {
 			return from.getAccountKeyFormated();
-		}
-	},
-	ADDED(Date.class, GlazedLists.comparableComparator()) {
-		@Override
-		public String getColumnName() {
-			return TabsTransaction.get().columnAdded();
-		}
-		@Override
-		public String getColumnToolTip() {
-			return TabsTransaction.get().columnAddedToolTip();
-		}
-		@Override
-		public Object getColumnValue(final MyTransaction from) {
-			return from.getAdded();
 		}
 	};
 

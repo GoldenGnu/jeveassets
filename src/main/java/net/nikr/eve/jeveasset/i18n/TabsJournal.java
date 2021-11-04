@@ -35,6 +35,7 @@ public abstract class TabsJournal  extends Bundle {
 	}
 
 	public abstract String title();
+	public abstract String clearNew();
 	public abstract String columnAccountKey();
 	public abstract String columnAmount();
 	public abstract String columnArgID1();

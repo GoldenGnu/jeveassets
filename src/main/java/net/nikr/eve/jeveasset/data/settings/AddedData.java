@@ -78,16 +78,16 @@ public class AddedData {
 		},
 		TRANSACTIONS("transactionadded"),
 		JOURNALS("journaladded"),
+		MARKET_ORDERS("marketorderadded"),
 		;
 
-		
+		private final AddedData addedData;
+		private final String tableName;
+
 		private DataSettings(String tableName) {
 			this.tableName = tableName;
 			this.addedData = new AddedData(this);
 		}
-
-		private final AddedData addedData;
-		private final String tableName;
 
 		public String getTableName() {
 			return tableName;
@@ -105,20 +105,24 @@ public class AddedData {
 	private Map<Long, Date> update = null;
 	private final DataSettings dataSettings;
 
-	private AddedData(DataSettings data) {
-		this.dataSettings = data;
+	private AddedData(DataSettings dataSettings) {
+		this.dataSettings = dataSettings;
 	}
 
-	public static synchronized AddedData getAssets() {
+	public static AddedData getAssets() {
 		return DataSettings.ASSETS.getInstance();
 	}
 
-	public static synchronized AddedData getTransactions() {
+	public static AddedData getTransactions() {
 		return DataSettings.TRANSACTIONS.getInstance();
 	}
 
-	public static synchronized AddedData getJournals() {
+	public static AddedData getJournals() {
 		return DataSettings.JOURNALS.getInstance();
+	}
+
+	public static AddedData getMarketOrders() {
+		return DataSettings.MARKET_ORDERS.getInstance();
 	}
 
 	public static void load() {
@@ -147,31 +151,58 @@ public class AddedData {
 		}
 	}
 
-	public Date getAdd(Map<Long, Date> data, Long itemID, Date added) {
-		Date date = data.get(itemID);
+	/**
+	 * Update if date is before the current value.
+	 * @param data current data
+	 * @param id unique id
+	 * @param added
+	 * @return 
+	 */
+	public Date getAdd(Map<Long, Date> data, Long id, Date added) {
+		Date date = data.get(id);
 		if (date == null) { //Insert
 			date = added;
-			insertQueue(itemID, date);
+			insertQueue(id, date);
 		}
 		if (date.after(added)) { //Update
 			date = added;
-			updateQueue(itemID, date);
+			updateQueue(id, date);
 		}
 		return date;
 	}
 
-	private void insertQueue(Long itemID, Date date) {
+	/**
+	 * Update if date is after the current value.
+	 * @param data current data
+	 * @param id unique id
+	 * @param added
+	 * @return 
+	 */
+	public Date getPut(Map<Long, Date> data, Long id, Date added) {
+		Date date = data.get(id);
+		if (date == null) { //Insert
+			date = added;
+			insertQueue(id, date);
+		}
+		if (date.before(added)) { //Update
+			date = added;
+			updateQueue(id, date);
+		}
+		return date;
+	}
+
+	private void insertQueue(Long id, Date date) {
 		if (insert == null) {
 			insert = new HashMap<>();
 		}
-		insert.put(itemID, date);
+		insert.put(id, date);
 	}
 
-	private void updateQueue(Long itemID, Date date) {
+	private void updateQueue(Long id, Date date) {
 		if (update == null) {
 			update = new HashMap<>();
 		}
-		update.put(itemID, date);
+		update.put(id, date);
 	}
 
 	public void commitQueue() {
