@@ -244,118 +244,86 @@ public class TreeAsset extends MyAsset {
 	}
 
 	public Object getTotal(TreeTableFormat column) {
-		if (!isParent()) {
-			return getValue(column, this);
-		} else {
-			Object object = values.get(column);
-			if (object == null) { //Create data
-				if (Percent.class.isAssignableFrom(column.getType())) {
-					Total total = calcTotals.get(column);
-					if (total == null) {
-						values.put(column, NULL_PLACEHOLDER);
-						return null;
-					}
-					Double t = total.getTotal();
-					if (t == null) {
-						values.put(column, NULL_PLACEHOLDER);
-						return null;
-					}
-					Percent percent = Percent.create(t);
-					values.put(column, percent);
-					return percent;
-				} else if (Runs.class.isAssignableFrom(column.getType())) {
-					Total total = calcTotals.get(column);
-					if (total == null) {
-						values.put(column, NULL_PLACEHOLDER);
-						return null;
-					}
-					Double t = total.getTotal();
-					if (t == null) {
-						values.put(column, NULL_PLACEHOLDER);
-						return null;
-					}
-					Runs runs = new Runs(t.intValue());
-					values.put(column, runs);
-					return runs;
-				} else if (Number.class.isAssignableFrom(column.getType())) {
-					Total total = calcTotals.get(column);
-					if (total == null) {
-						values.put(column, NULL_PLACEHOLDER);
-						return null;
-					}
-					Double t = total.getTotal();
-					if (t == null) {
-						values.put(column, NULL_PLACEHOLDER);
-						return null;
-					}
-					values.put(column, t);
-					return t;
-				} else {
-					return null;
-				}
-			} else if (object.equals(NULL_PLACEHOLDER)) {
-				return null;
-			} else {
-				return object;
-			}
-		}
+		return getValue(column, calcTotals);
 	}
 
 	public Object getAverage(TreeTableFormat column) {
-		if (!isParent()) {
-			return getValue(column, this);
-		} else {
-			Object object = values.get(column);
-			if (object == null) { //Create data
-				if (Percent.class.isAssignableFrom(column.getType())) {
-					Average average = calcAverages.get(column);
-					if (average == null) {
-						values.put(column, NULL_PLACEHOLDER);
-						return null;
-					}
-					Double a = average.getAverage();
-					if (a == null) {
-						values.put(column, NULL_PLACEHOLDER);
-						return null;
-					}
-					Percent percent = Percent.create(a);
-					values.put(column, percent);
-					return percent;
-				} else if (Runs.class.isAssignableFrom(column.getType())) {
-					Average average = calcAverages.get(column);
-					if (average == null) {
-						values.put(column, NULL_PLACEHOLDER);
-						return null;
-					}
-					Double a = average.getAverage();
-					if (a == null) {
-						values.put(column, NULL_PLACEHOLDER);
-						return null;
-					}
-					Runs runs = new Runs(a.intValue());
-					values.put(column, runs);
-					return runs;
-				} else if (Number.class.isAssignableFrom(column.getType())) {
-					Average average = calcAverages.get(column);
-					if (average == null) {
-						values.put(column, NULL_PLACEHOLDER);
-						return null;
-					}
-					Double a = average.getAverage();
-					if (a == null) {
-						values.put(column, NULL_PLACEHOLDER);
-						return null;
-					}
-					values.put(column, a);
-					return a;
+		return getValue(column, calcAverages);
+	}
+
+	public <T extends DoubleValue> Object getValue(TreeTableFormat column, Map<TreeTableFormat, T> calc) {
+		Object object = values.get(column);
+		if (object == null) { //Create data
+			if (!isParent()) {
+				object = getValue(column, this);
+				if (object == null) {
+					values.put(column, NULL_PLACEHOLDER);
+					return null;
 				} else {
-					return null; //Should never happen
+					values.put(column, object);
+					return object;
 				}
-			} else if (object.equals(NULL_PLACEHOLDER)) {
-				return null;
+			} else if (Percent.class.isAssignableFrom(column.getType())) {
+				DoubleValue value = calc.get(column);
+				if (value == null) {
+					values.put(column, NULL_PLACEHOLDER);
+					return null;
+				}
+				Double t = value.getDouble();
+				if (t == null) {
+					values.put(column, NULL_PLACEHOLDER);
+					return null;
+				}
+				Percent percent = Percent.create(t);
+				values.put(column, percent);
+				return percent;
+			} else if (Runs.class.isAssignableFrom(column.getType())) {
+				DoubleValue value = calc.get(column);
+				if (value == null) {
+					values.put(column, NULL_PLACEHOLDER);
+					return null;
+				}
+				Double t = value.getDouble();
+				if (t == null) {
+					values.put(column, NULL_PLACEHOLDER);
+					return null;
+				}
+				Runs runs = new Runs(t.intValue());
+				values.put(column, runs);
+				return runs;
+			} else if (Number.class.isAssignableFrom(column.getType())) {
+				DoubleValue value = calc.get(column);
+				if (value == null) {
+					values.put(column, NULL_PLACEHOLDER);
+					return null;
+				}
+				Double t = value.getDouble();
+				if (t == null) {
+					values.put(column, NULL_PLACEHOLDER);
+					return null;
+				}
+				if (Double.class.isAssignableFrom(column.getType())) {
+					values.put(column, t);
+					return t;
+				} else if (Long.class.isAssignableFrom(column.getType())) {
+					values.put(column, t.longValue());
+					return t.longValue();
+				} else if (Integer.class.isAssignableFrom(column.getType())) {
+					values.put(column, t.intValue());
+					return t.intValue();
+				} else if (Float.class.isAssignableFrom(column.getType())) {
+					values.put(column, t.floatValue());
+					return t.floatValue();
+				} else {
+					throw new RuntimeException(column.getType() + " not supported by TreeAsset");
+				}
 			} else {
-				return object;
+				return null;
 			}
+		} else if (object.equals(NULL_PLACEHOLDER)) {
+			return null;
+		} else {
+			return object;
 		}
 	}
 
@@ -512,7 +480,11 @@ public class TreeAsset extends MyAsset {
 		return !((this.compare == null) ? (other.compare != null) : !this.compare.equals(other.compare));
 	}
 
-	private static class Total {
+	private static interface DoubleValue {
+		public Double getDouble();
+	}
+
+	private static class Total implements DoubleValue {
 		private Double total = null;
 
 		public void add(Number value) {
@@ -524,12 +496,13 @@ public class TreeAsset extends MyAsset {
 			}
 		}
 
-		public Double getTotal() {
+		@Override
+		public Double getDouble() {
 			return total;
 		}
 	}
 
-	private static class Average {
+	private static class Average implements DoubleValue {
 		private Double total = null;
 		private Long count = null;
 
@@ -546,7 +519,8 @@ public class TreeAsset extends MyAsset {
 			}
 		}
 
-		public Double getAverage() {
+		@Override
+		public Double getDouble() {
 			if (total == null || count == null) {
 				return null;
 			} else if (total > 0 && count > 0) {
