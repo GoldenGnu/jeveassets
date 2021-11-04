@@ -28,6 +28,7 @@ import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.settings.ColorEntry;
 import net.nikr.eve.jeveasset.data.settings.ColorSettings;
+import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 
 
@@ -61,6 +62,10 @@ public class JTransactionTable extends JAutoColumnTable {
 		if (transaction.getLocation().isUserLocation() && columnName.equals(TransactionTableFormat.LOCATION.getColumnName())) {
 			ColorSettings.configCell(component, ColorEntry.CUSTOM_USER_LOCATION, isSelected);
 			return component;
+		}
+		//Added date
+		if (columnName.equals(TransactionTableFormat.ADDED.getColumnName()) && Settings.get().getTableChanged(TransactionTab.NAME).before(transaction.getAdded())) {
+			ColorSettings.configCell(component, ColorEntry.TRANSACTIONS_NEW, isSelected);
 		}
 		return component;
 	}

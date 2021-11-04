@@ -140,6 +140,7 @@ public class MarketOrdersTab extends JMainTabPrimary {
 	private final JLabel jLastEsiUpdate;
 	private final JLabel jLastLogUpdate;
 	private final JLabel jClipboard;
+	private final JButton jClearNew;
 	private final JComboBox<MarketOrderRange> jOrderRangeNext;
 	private final JComboBox<String> jOrderType;
 	private final MarketOrdersErrorDialog jMarketOrdersErrorDialog;
@@ -167,6 +168,18 @@ public class MarketOrdersTab extends JMainTabPrimary {
 		jMarketOrdersErrorDialog = new MarketOrdersErrorDialog(program);
 
 		JFixedToolBar jToolBar = new JFixedToolBar();
+
+		jClearNew = new JButton(TabsOrders.get().clearNew(), Images.UPDATE_DONE_OK.getIcon());
+		jClearNew.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Settings.get().getTableChanged().put(NAME, new Date());
+				jTable.repaint();
+				jClearNew.setEnabled(false);
+				program.saveSettings("Table Changed (market orders cleared)");
+			}
+		});
+		jToolBar.addButton(jClearNew);
 
 		jOrderRangeNext = new JComboBox<>(MarketOrderRange.valuesSorted());
 		jOrderRangeNext.setSelectedItem(Settings.get().getOutbidOrderRange());
@@ -368,6 +381,20 @@ public class MarketOrdersTab extends JMainTabPrimary {
 
 	@Override
 	public void updateCache() {
+		Date current = Settings.get().getTableChanged(NAME);
+		boolean newFound = false;
+		try {
+			eventList.getReadWriteLock().readLock().lock();
+			for (MyMarketOrder marketOrder : eventList) {
+				if (current.before(marketOrder.getChanged())) {
+					newFound = true;
+					break;
+				}
+			}
+		} finally {
+			eventList.getReadWriteLock().readLock().unlock();
+		}
+		jClearNew.setEnabled(newFound);
 		filterControl.createCache();
 	}
 

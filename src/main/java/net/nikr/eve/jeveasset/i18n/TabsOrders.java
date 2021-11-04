@@ -37,6 +37,7 @@ public abstract class TabsOrders extends Bundle {
 	public abstract String activeBuyOrders();
 	public abstract String activeSellOrders();
 	public abstract String buy();
+	public abstract String clearNew();
 	public abstract String columnOrderType();
 	public abstract String columnName();
 	public abstract String columnGroup();
@@ -61,6 +62,8 @@ public abstract class TabsOrders extends Bundle {
 	public abstract String columnIssuedFirst();
 	public abstract String columnIssuedFirstToolTip();
 	public abstract String columnExpires();
+	public abstract String columnChanged();
+	public abstract String columnChangedToolTip();
 	public abstract String columnRange();
 	public abstract String columnRemainingValue();
 	public abstract String columnStatus();

@@ -35,6 +35,7 @@ public abstract class DataColors extends Bundle {
 		super(locale);
 	}
 
+	public abstract String assetsNew();
 	public abstract String assetsReprocessingEqual();
 	public abstract String assetsReprocessingReproces();
 	public abstract String assetsReprocessingSell();
@@ -58,13 +59,16 @@ public abstract class DataColors extends Bundle {
 	public abstract String marketOrdersExpired();
 	public abstract String marketOrdersNearExpired();
 	public abstract String marketOrdersNearFilled();
+	public abstract String marketOrdersNew();
 	public abstract String industryJobsDelivered();
 	public abstract String industryJobsDone();
 	public abstract String industrySlotsFree();
 	public abstract String industrySlotsDone();
 	public abstract String industrySlotsFull();
+	public abstract String journalNew();
 	public abstract String transactionsBought();
 	public abstract String transactionsSold();
+	public abstract String transactionsNew();
 	public abstract String globalBPC();
 	public abstract String globalBPO();
 	public abstract String globalValueNegative();
@@ -95,6 +99,7 @@ public abstract class DataColors extends Bundle {
 	public abstract String groupMarketOrders();
 	public abstract String groupIndustryJobs();
 	public abstract String groupIndustrySlots();
+	public abstract String groupJournal();
 	public abstract String groupTransactions();
 	public abstract String groupGlobal();
 	public abstract String groupFilters();

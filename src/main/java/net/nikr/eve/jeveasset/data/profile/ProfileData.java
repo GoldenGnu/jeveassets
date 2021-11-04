@@ -327,12 +327,18 @@ public class ProfileData {
 	}
 
 	public synchronized void updateMarketOrders(OutbidProcesserOutput output) { //synchronized as owners are modified by updateEventLists
+		Date addedDate = new Date();
+		Map<Long, Date> marketOrdersAdded = AddedData.getMarketOrders().getAll();
 		for (OwnerType ownerType : owners.values()) {
 			for (MyMarketOrder order : ownerType.getMarketOrders()) { // getMarketOrders() is thread safe
 				order.setOutbid(output.getOutbids().get(order.getOrderID()));
-				order.addChanges(output.getUpdates().get(order.getOrderID()));
+				boolean updated = order.addChanges(output.getUpdates().get(order.getOrderID()));
+				if (updated) { //If Market Order have been updated
+					order.setChanged(AddedData.getMarketOrders().getPut(marketOrdersAdded, order.getOrderID(), addedDate));
+				}
 			}
 		}
+		AddedData.getMarketOrders().commitQueue();
 		Program.ensureEDT(new Runnable() {
 			@Override
 			public void run() {
@@ -524,6 +530,7 @@ public class ProfileData {
 			transactions.add(transaction);
 		}
 		//Update MarketOrders dynamic values
+		Map<Long, Date> marketOrdersAdded = AddedData.getMarketOrders().getAll();
 		for (MyMarketOrder order : marketOrders) {
 			//Last Transaction
 			if (order.isBuyOrder()) { //Buy
@@ -535,7 +542,20 @@ public class ProfileData {
 			order.setBrokersFee(marketOrdersBrokersFee.get(order.getOrderID()));
 			order.setOutbid(Settings.get().getMarketOrdersOutbid().get(order.getOrderID()));
 			order.setPriceReprocessed(ApiIdConverter.getPriceReprocessed(order.getItem()));
+			//Changed date
+			if (order.isUpdateChanged()) { //Update!
+				order.setChanged(AddedData.getMarketOrders().getPut(marketOrdersAdded, order.getOrderID(), addedDate));
+			} else {
+				Date changed;
+				if (!marketOrdersAdded.containsKey(order.getOrderID())) { //New (use issued as a best guess)
+					changed = order.getIssued();
+				} else { //Updating
+					changed = addedDate;
+				}
+				order.setChanged(AddedData.getMarketOrders().getAdd(marketOrdersAdded, order.getOrderID(), changed));
+			}
 		}
+		AddedData.getMarketOrders().commitQueue();
 		//Update IndustryJobs dynamic values
 		for (MyIndustryJob industryJob : industryJobs) {
 			//Update Owners
@@ -587,14 +607,17 @@ public class ProfileData {
 				} 
 				setLastTransaction(transaction, transaction.getTypeID(), transaction.isBuy(), transaction.getPrice(), tax);
 			}
+			//Date added
 			transaction.setAdded(AddedData.getTransactions().getAdd(transactionsAdded, transaction.getTransactionID(), addedDate));
 		}
 		AddedData.getTransactions().commitQueue();
 		//Update Journal dynamic values
 		Map<Long, Date> journalsAdded = AddedData.getJournals().getAll();
 		for (MyJournal journal : journals) {
+			//Names
 			journal.setFirstPartyName(ApiIdConverter.getOwnerName(journal.getFirstPartyID()));
 			journal.setSecondPartyName(ApiIdConverter.getOwnerName(journal.getSecondPartyID()));
+			//Date added
 			journal.setAdded(AddedData.getJournals().getAdd(journalsAdded, journal.getRefID(), addedDate));
 		}
 		AddedData.getJournals().commitQueue();
