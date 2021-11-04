@@ -114,6 +114,12 @@ public class RawUtil {
 			if (value.getName().equals("changes") && raw.equals(RawMarketOrder.class)) { //jEveAssets value
 				continue;
 			}
+			if (value.getName().equals("changed") && raw.equals(RawMarketOrder.class)) { //jEveAssets value
+				continue;
+			}
+			if (value.getName().equals("updateChanged") && raw.equals(RawMarketOrder.class)) { //jEveAssets value
+				continue;
+			}
 			if (value.getName().equals("systemId") && raw.equals(RawPublicMarketOrder.class)) { //Only in RawPublicMarketOrder
 				continue;
 			}
@@ -186,6 +192,12 @@ public class RawUtil {
 				continue;
 			}
 			if (value.getName().equals("changes") && raw.equals(RawMarketOrder.class)) { //jEveAssets value
+				continue;
+			}
+			if (value.getName().equals("changed") && raw.equals(RawMarketOrder.class)) { //jEveAssets value
+				continue;
+			}
+			if (value.getName().equals("updateChanged") && raw.equals(RawMarketOrder.class)) { //jEveAssets value
 				continue;
 			}
 			if (value.getName().equals("systemId") && raw.equals(RawPublicMarketOrder.class)) { //Only in RawPublicMarketOrder

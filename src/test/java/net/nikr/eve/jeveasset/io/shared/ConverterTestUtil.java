@@ -59,6 +59,7 @@ import net.nikr.eve.jeveasset.data.api.raw.RawJournal;
 import net.nikr.eve.jeveasset.data.api.raw.RawJournal.ContextType;
 import net.nikr.eve.jeveasset.data.api.raw.RawJournalRefType;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder;
+import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder.Change;
 import net.nikr.eve.jeveasset.data.api.raw.RawTransaction;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.ItemFlag;
@@ -493,6 +494,8 @@ public class ConverterTestUtil {
 			}
 			marketOrder.setStateString(options.getString());
 			marketOrder.setIssuedBy(options.getInteger());
+			marketOrder.setChanged(options.getDate());
+			marketOrder.addChanges(Collections.singleton(new Change(new Date(), 0.0, 0)));
 		}
 		if (object instanceof MyJournal) {
 			MyJournal journal = (MyJournal) object;

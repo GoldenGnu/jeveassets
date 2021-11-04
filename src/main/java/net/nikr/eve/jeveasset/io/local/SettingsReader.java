@@ -450,6 +450,12 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		Element flagsElement = getNode(element, "flags");
 		parseFlags(flagsElement, settings);
 
+		//Table Changes
+		Element tableChangesElement = getNodeOptional(element, "tablechanges");
+		if (tableChangesElement != null) {
+			parseTableChanges(tableChangesElement, settings);
+		}
+
 		//Table Formulas (Must be loaded before filters)
 		Element tableFormulasElement = getNodeOptional(element, "tableformulas");
 		if (tableFormulasElement != null) {
@@ -1411,6 +1417,16 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 				Integer index = getIntOptional(formulaNode, "index");
 				tableFormulas.add(new Formula(name, expression, index));
 			}
+		}
+	}
+
+	private void parseTableChanges(final Element element, final Settings settings) throws XmlException {
+		NodeList changesList = element.getElementsByTagName("changes");
+		for (int a = 0; a < changesList.getLength(); a++) {
+			Element changesNode = (Element) changesList.item(a);
+			String toolName = getString(changesNode, "tool");
+			Date date = getDate(changesNode, "date");
+			settings.getTableChanged().put(toolName, date);
 		}
 	}
 

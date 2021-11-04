@@ -28,6 +28,7 @@ import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.my.MyJournal;
 import net.nikr.eve.jeveasset.data.settings.ColorEntry;
 import net.nikr.eve.jeveasset.data.settings.ColorSettings;
+import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 
 
@@ -52,6 +53,10 @@ public class JJournalTable extends JAutoColumnTable {
 		}
 		if (columnName.equals(JournalTableFormat.BALANCE.getColumnName()) && journal.getBalance() < 0) {
 			ColorSettings.configCell(component, ColorEntry.GLOBAL_VALUE_NEGATIVE, isSelected);
+		}
+		//Added date
+		if (columnName.equals(JournalTableFormat.ADDED.getColumnName()) && Settings.get().getTableChanged(JournalTab.NAME).before(journal.getAdded())) {
+			ColorSettings.configCell(component, ColorEntry.JOURNAL_NEW, isSelected);
 		}
 		return component;
 	}
