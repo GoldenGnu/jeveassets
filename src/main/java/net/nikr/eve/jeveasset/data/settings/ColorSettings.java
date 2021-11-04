@@ -350,6 +350,46 @@ public class ColorSettings {
 			return Objects.equals(background, defaultBackground);
 		}
 
+		@Override
+		public int hashCode() {
+			int hash = 7;
+			hash = 37 * hash + java.util.Objects.hashCode(this.colorEntry);
+			hash = 37 * hash + java.util.Objects.hashCode(this.defaultBackground);
+			hash = 37 * hash + java.util.Objects.hashCode(this.defaultForeground);
+			hash = 37 * hash + java.util.Objects.hashCode(this.background);
+			hash = 37 * hash + java.util.Objects.hashCode(this.foreground);
+			return hash;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj) {
+				return true;
+			}
+			if (obj == null) {
+				return false;
+			}
+			if (getClass() != obj.getClass()) {
+				return false;
+			}
+			final ColorRow other = (ColorRow) obj;
+			if (this.colorEntry != other.colorEntry) {
+				return false;
+			}
+			if (!java.util.Objects.equals(this.defaultBackground, other.defaultBackground)) {
+				return false;
+			}
+			if (!java.util.Objects.equals(this.defaultForeground, other.defaultForeground)) {
+				return false;
+			}
+			if (!java.util.Objects.equals(this.background, other.background)) {
+				return false;
+			}
+			if (!java.util.Objects.equals(this.foreground, other.foreground)) {
+				return false;
+			}
+			return true;
+		}
 	}
 
 	/**
