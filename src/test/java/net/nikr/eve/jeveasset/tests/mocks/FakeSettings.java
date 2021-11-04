@@ -663,4 +663,14 @@ public abstract class FakeSettings extends Settings {
 	public Map<String, Date> getTableChanged() {
 		throw new UnsupportedOperationException("not implemented");
 	}
+
+	@Override
+	public void setContractHistory(boolean contractHistory) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public boolean isContractHistory() {
+		throw new UnsupportedOperationException("not implemented");
+	}
 }

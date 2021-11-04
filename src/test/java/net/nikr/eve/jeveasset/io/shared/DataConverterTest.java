@@ -152,7 +152,7 @@ public class DataConverterTest extends TestUtil {
 	@Test
 	public void testConvertRawAssets() {
 		for (ConverterTestOptions options : ConverterTestOptionsGetter.getConverterOptions()) {
-			List<RawAsset> rawAssets = new ArrayList<RawAsset>();
+			List<RawAsset> rawAssets = new ArrayList<>();
 			RawAsset rootRawAsset = ConverterTestUtil.getRawAsset(false, options);
 			rawAssets.add(rootRawAsset);
 
@@ -183,7 +183,7 @@ public class DataConverterTest extends TestUtil {
 		for (ConverterTestOptions options : ConverterTestOptionsGetter.getConverterOptions()) {
 			RawAsset rawAsset = ConverterTestUtil.getRawAsset(false, options);
 			EsiOwner owner = ConverterTestUtil.getEsiOwner(options);
-			MyAsset asset = DataConverter.toMyAsset(rawAsset, owner, new ArrayList<MyAsset>());
+			MyAsset asset = DataConverter.toMyAsset(rawAsset, owner, new ArrayList<>());
 			if (asset != null) {
 				assertNotNull("Object null @" + options.getIndex(), asset);
 				ConverterTestUtil.testValues(asset, options);
@@ -197,9 +197,47 @@ public class DataConverterTest extends TestUtil {
 	@Test
 	public void testConvertRawContracts() {
 		for (ConverterTestOptions options : ConverterTestOptionsGetter.getConverterOptions()) {
-			Map<MyContract, List<MyContractItem>> contracts = DataConverter.convertRawContracts(Collections.singletonList(ConverterTestUtil.getRawContract(false, options)), ConverterTestUtil.getEsiOwner(options));
+			Map<MyContract, List<MyContractItem>> contracts = DataConverter.convertRawContracts(Collections.singletonList(ConverterTestUtil.getRawContract(false, options)), ConverterTestUtil.getEsiOwner(options), false);
 			ConverterTestUtil.testValues(contracts.keySet().iterator().next(), options);
 		}
+	}
+
+	@Test
+	public void testConvertRawContractsHistory() {
+		List<ConverterTestOptions> converterOptions = ConverterTestOptionsGetter.getConverterOptions();
+		ConverterTestOptions options = converterOptions.get(0);
+		ConverterTestOptions options1 = converterOptions.get(1);
+		EsiOwner esiOwner = ConverterTestUtil.getEsiOwner(options);
+		MyContract contract = ConverterTestUtil.getMyContract(true, true, options);
+		MyContractItem contractItem = ConverterTestUtil.getMyContractItem(contract, false, true, options);
+		esiOwner.getContracts().put(contract, Collections.singletonList(contractItem));
+		List<RawContract> rawContracts = new ArrayList<>();
+		RawContract rawContract = ConverterTestUtil.getRawContract(false, options);
+		rawContracts.add(rawContract);
+		RawContract rawContract1 = ConverterTestUtil.getRawContract(false, options1);
+		rawContracts.add(rawContract1);
+		//Add old
+		rawContract.setContractID(0);
+		rawContract1.setContractID(1);
+		contract.setContractID(2);
+		Map<MyContract, List<MyContractItem>> contracts = DataConverter.convertRawContracts(rawContracts, esiOwner, true);
+		assertEquals(contracts.size(), 3);
+		//Add overwrite
+		rawContract.setContractID(0);
+		rawContract1.setContractID(1);
+		contract.setContractID(0); //Duplicate
+		contract.setAssigneeID(100); //Wrong
+		rawContract.setAssigneeID(200); //Expected
+		contracts = DataConverter.convertRawContracts(rawContracts, esiOwner, true);
+		assertEquals(contracts.size(), 2);
+		boolean found = false;
+		for (MyContract myContract : contracts.keySet()) {
+			if (myContract.getAssigneeID() > 50) {
+				assertEquals(myContract.getAssigneeID(), 200);
+				found = true;
+			}
+		}
+		assertTrue(found);
 	}
 
 	@Test
@@ -266,7 +304,7 @@ public class DataConverterTest extends TestUtil {
 				myJournal.setRefID(i);
 				esiOwner.getJournal().add(myJournal);
 			}
-			List<RawJournal> rawJournals = new ArrayList<RawJournal>();
+			List<RawJournal> rawJournals = new ArrayList<>();
 			for (long i = 11; i <= 20; i++) {
 				RawJournal rawJournal = ConverterTestUtil.getRawJournal(true, options);
 				rawJournal.setRefID(i);
@@ -314,7 +352,7 @@ public class DataConverterTest extends TestUtil {
 				esiOwner.getMarketOrders().add(myMarketOrder);
 				
 			}
-			List<RawMarketOrder> rawMarketOrders = new ArrayList<RawMarketOrder>();
+			List<RawMarketOrder> rawMarketOrders = new ArrayList<>();
 			for (long i = 11; i <= 20; i++) {
 				RawMarketOrder rawMarketOrder = ConverterTestUtil.getRawMarketOrder(true, options);
 				rawMarketOrder.setOrderID(i);
@@ -373,7 +411,7 @@ public class DataConverterTest extends TestUtil {
 				myTransaction.setTransactionID(i);
 				esiOwner.getTransactions().add(myTransaction);
 			}
-			List<RawTransaction> rawTransactions = new ArrayList<RawTransaction>();
+			List<RawTransaction> rawTransactions = new ArrayList<>();
 			for (long i = 11; i <= 20; i++) {
 				RawTransaction rawTransaction = ConverterTestUtil.getRawTransaction(true, options);
 				rawTransaction.setTransactionID(i);
