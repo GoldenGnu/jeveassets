@@ -300,16 +300,15 @@ class FilterPanel<E> implements Comparable<FilterPanel<E>> {
 				dateColumns.add(object);
 			}
 		}
+		jColumn.setActionCommand("comboBoxChanged");
 		jColumn.setModel(new ListComboBoxModel<>(allColumns));
 		if (allColumns.contains(selectedItem)) {
 			jColumn.setSelectedItem(selectedItem);
+			jColumn.setActionCommand(FilterPanelAction.FILTER.name()); //After: Do not refilter
 		} else if (!allColumns.isEmpty()) {
-			jColumn.setActionCommand(FilterPanelAction.FILTER.name());
+			jColumn.setActionCommand(FilterPanelAction.FILTER.name()); //Before: refilter
 			jColumn.setSelectedIndex(0);
-		} else {
-			jColumn.setActionCommand(FilterPanelAction.FILTER.name());
 		}
-		
 	}
 
 	boolean isAnd() {
@@ -601,6 +600,7 @@ class FilterPanel<E> implements Comparable<FilterPanel<E>> {
 	}
 
 	private void groupChanged() {
+		System.out.println("groupChanged");
 		refilter();
 		if (!loading) {
 			if (gui.fade(FilterPanel.this)) {
@@ -639,6 +639,7 @@ class FilterPanel<E> implements Comparable<FilterPanel<E>> {
 		@Override
 		public void keyPressed(final KeyEvent e) {
 			if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+				System.out.println("keyPressed");
 				refilter();
 			}
 		}
@@ -672,6 +673,7 @@ class FilterPanel<E> implements Comparable<FilterPanel<E>> {
 
 		@Override
 		public void dateChanged(DateChangeEvent e) {
+			System.out.println("dateChanged");
 			refilter();
 		}
 
