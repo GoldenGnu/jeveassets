@@ -119,6 +119,7 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate {
 	private final EventList<TreeAsset> eventList;
 	private final EventList<TreeAsset> exportEventList;
 	private final SortedList<TreeAsset> sortedList;
+	private final SortedList<TreeAsset> emptySortedList;
 	private final FilterList<TreeAsset> filterList;
 	private final TreeList<TreeAsset> treeList;
 	private final TreeFilterControl filterControl;
@@ -202,6 +203,10 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate {
 		filterList = new FilterList<>(eventList);
 		eventList.getReadWriteLock().readLock().unlock();
 		//Sorting
+		EventList<TreeAsset> emptyEventList = EventListManager.create();
+		emptyEventList.getReadWriteLock().readLock().lock();
+		emptySortedList = new SortedList<>(emptyEventList);
+		emptyEventList.getReadWriteLock().readLock().unlock();
 		eventList.getReadWriteLock().readLock().lock();
 		sortedList = new SortedList<>(filterList);
 		eventList.getReadWriteLock().readLock().unlock();
@@ -217,7 +222,7 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate {
 		jTable.setRowHeight(22);
 		jTable.addMouseListener(listener);
 		//Sorting
-		TableComparatorChooser<TreeAsset> tableComparatorChooser = TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
+		TableComparatorChooser<TreeAsset> tableComparatorChooser = TableComparatorChooser.install(jTable, emptySortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
 		tableComparatorChooser.addSortActionListener(new ListenerSorter());
 		//Tree
 		TreeTableSupport install = TreeTableSupport.install(jTable, treeList, 0);
@@ -651,6 +656,16 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate {
 				@Override
 				public void run() {
 					expansionModel.setState(ExpandedState.LOAD);
+					try {
+						jTable.lock();
+						emptySortedList.getReadWriteLock().readLock().lock();
+						sortedList.getReadWriteLock().writeLock().lock();
+						sortedList.setComparator(emptySortedList.getComparator());
+					} finally {
+						emptySortedList.getReadWriteLock().readLock().unlock();
+						sortedList.getReadWriteLock().writeLock().unlock();
+						jTable.unlock();
+					}
 				}
 			});
 		}
