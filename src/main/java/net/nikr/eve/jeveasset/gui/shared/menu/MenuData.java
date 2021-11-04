@@ -137,7 +137,7 @@ public class MenuData<T> {
 					price = ApiIdConverter.getPriceSimple(item.getTypeID(), false);
 				}
 				if (price == null || price == 0) {
-					price = (double) item.getPriceBase();
+					price = item.getPriceBase();
 				}
 			}
 

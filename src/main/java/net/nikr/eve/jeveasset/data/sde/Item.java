@@ -141,7 +141,7 @@ public class Item implements Comparable<Item>, ItemType {
 		return name;
 	}
 
-	public long getPriceBase() {
+	public double getPriceBase() {
 		return price;
 	}
 

@@ -20,9 +20,7 @@
  */
 package net.nikr.eve.jeveasset.gui.tabs;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -74,6 +72,9 @@ import net.nikr.eve.jeveasset.gui.tabs.values.ValueTableFormat;
 import net.nikr.eve.jeveasset.io.shared.ConverterTestOptions;
 import net.nikr.eve.jeveasset.io.shared.ConverterTestOptionsGetter;
 import net.nikr.eve.jeveasset.io.shared.ConverterTestUtil;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import org.junit.Test;
 
 
@@ -195,18 +196,33 @@ public class TableFormatTest extends TestUtil {
 		}
 	}
 
-	private void test(EnumTableColumn<?> enumColumn, Class<?> expecteds, Object actual) {
-		assertNotNull(enumColumn.getClass().getSuperclass().getSimpleName() + "->" + enumColumn.name() + " was null", actual);
-		if ((Number.class.isAssignableFrom(actual.getClass()) && Number.class.isAssignableFrom(expecteds))) {
-			//assertTrue(tableFormat.getClass().getSuperclass().getSimpleName() + "->" + tableFormat.name() + " expected: " + expecteds.getSimpleName() + " was: " + actual.getClass().getSimpleName(), expecteds.isAssignableFrom(actual.getClass()));
+	private void test(EnumTableColumn<?> enumColumn, Class<?> expecteds, Object object) {
+		assertNotNull(enumColumn.getClass().getSuperclass().getSimpleName() + "->" + enumColumn.name() + " was null", object);
+		Class<?> actual = object.getClass();
+		if (((actual.isAssignableFrom(Double.class) || actual.isAssignableFrom(Float.class)) && (expecteds.isAssignableFrom(Double.class) | expecteds.isAssignableFrom(Float.class)))) {
+			//No problem
+		} else if (((actual.isAssignableFrom(Long.class) || actual.isAssignableFrom(Integer.class)) && (expecteds.isAssignableFrom(Long.class) | expecteds.isAssignableFrom(Integer.class)))) {
+			//No problem
+		} else if (String.class.isAssignableFrom(actual)) {
+			//No problem
 		} else if (String.class.isAssignableFrom(expecteds)) {
-			//Handled by toString()
-		} else {
-			assertTrue(enumColumn.getClass().getSuperclass().getSimpleName() + "->" + enumColumn.name() + " expected: " + expecteds.getSimpleName() + " was: " + actual.getClass().getSimpleName(), expecteds.isAssignableFrom(actual.getClass()));
 			try {
-				assertTrue(actual.getClass() + " does not implement hashCode", actual.getClass().getMethod("hashCode").getDeclaringClass() == actual.getClass());
-				assertTrue(actual.getClass() + " does not implement equals", actual.getClass().getMethod("equals").getDeclaringClass() == actual.getClass());
-				assertTrue(actual.getClass() + " does not implement compareTo", actual.getClass().getMethod("compareTo").getDeclaringClass() == actual.getClass());
+				if (actual.getSuperclass().isEnum()) {
+					actual = actual.getSuperclass();
+				}
+				Method method = actual.getMethod("toString");
+				assertTrue(actual + " does not implement toString: " + method.getDeclaringClass() , method.getDeclaringClass().equals(actual));
+			} catch (NoSuchMethodException ex) {
+				fail("no toString method");
+			} catch (SecurityException ex) {
+				fail("no toString method");
+			}
+		} else {
+			assertTrue(enumColumn.getClass().getSuperclass().getSimpleName() + "->" + enumColumn.name() + " expected: " + expecteds.getSimpleName() + " was: " + actual.getSimpleName(), expecteds.isAssignableFrom(actual));
+			try {
+				assertTrue(actual + " does not implement hashCode", actual.getMethod("hashCode").getDeclaringClass() == actual);
+				assertTrue(actual + " does not implement equals", actual.getMethod("equals").getDeclaringClass() == actual);
+				assertTrue(actual + " does not implement compareTo", actual.getMethod("compareTo").getDeclaringClass() == actual);
 			} catch (NoSuchMethodException | SecurityException ex) {
 				//fail(ex.getMessage());
 			}
