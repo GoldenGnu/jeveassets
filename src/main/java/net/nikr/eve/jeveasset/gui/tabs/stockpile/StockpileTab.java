@@ -529,7 +529,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 	protected void editItem(StockpileItem item) {
 		StockpileItem editItem = stockpileItemDialog.showEdit(item);
 		if (editItem != null) {
-			program.getStockpileTool().addToStockpile(editItem.getStockpile(), editItem);
+			addToStockpile(editItem.getStockpile(), editItem);
 		}
 	}
 
