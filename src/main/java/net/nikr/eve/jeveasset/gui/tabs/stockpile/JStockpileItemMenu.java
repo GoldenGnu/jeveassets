@@ -183,7 +183,7 @@ public class JStockpileItemMenu extends JMenu {
 							items.add(item);
 						}
 					}
-					program.getStockpileTool().addToStockpile(jMenuItem.getStockpile(), items, true);
+					program.getStockpileTab().addToStockpile(jMenuItem.getStockpile(), items, true);
 				}
 			} else if (StockpileItemMenuAction.RUNS.name().equals(e.getActionCommand())) { //Runs
 				Object source = e.getSource();
@@ -207,7 +207,7 @@ public class JStockpileItemMenu extends JMenu {
 						for (StockpileItem item : entry.getValue()) {
 							entry.getKey().remove(item);
 						}
-						program.getStockpileTool().removeItems(entry.getValue());
+						program.getStockpileTab().removeItems(entry.getValue());
 					}
 					//Change items
 					for (Map.Entry<Stockpile, List<StockpileItem>> entry : update.entrySet()) {
@@ -218,7 +218,7 @@ public class JStockpileItemMenu extends JMenu {
 					Settings.unlock("Stokcpile (Stockpile Menu)"); //Lock for Stokcpile (Stockpile Menu)
 					//Add changed items
 					for (Map.Entry<Stockpile, List<StockpileItem>> entry : update.entrySet()) {
-						program.getStockpileTool().addToStockpile(entry.getKey(), entry.getValue(), true);
+						program.getStockpileTab().addToStockpile(entry.getKey(), entry.getValue(), true);
 					}
 				}
 			} else if (StockpileItemMenuAction.ORIGINAL.name().equals(e.getActionCommand())) { //Original
@@ -243,7 +243,7 @@ public class JStockpileItemMenu extends JMenu {
 						for (StockpileItem item : entry.getValue()) {
 							entry.getKey().remove(item);
 						}
-						program.getStockpileTool().removeItems(entry.getValue());
+						program.getStockpileTab().removeItems(entry.getValue());
 					}
 					//Change items
 					for (Map.Entry<Stockpile, List<StockpileItem>> entry : update.entrySet()) {
@@ -254,7 +254,7 @@ public class JStockpileItemMenu extends JMenu {
 					Settings.unlock("Stokcpile (Stockpile Menu)"); //Lock for Stokcpile (Stockpile Menu)
 					//Add changed items
 					for (Map.Entry<Stockpile, List<StockpileItem>> entry : update.entrySet()) {
-						program.getStockpileTool().addToStockpile(entry.getKey(), entry.getValue(), true);
+						program.getStockpileTab().addToStockpile(entry.getKey(), entry.getValue(), true);
 					}
 				}
 			} else if (StockpileItemMenuAction.COPY.name().equals(e.getActionCommand())) { //Copy
@@ -279,7 +279,7 @@ public class JStockpileItemMenu extends JMenu {
 						for (StockpileItem item : entry.getValue()) {
 							entry.getKey().remove(item);
 						}
-						program.getStockpileTool().removeItems(entry.getValue());
+						program.getStockpileTab().removeItems(entry.getValue());
 					}
 					//Change items
 					for (Map.Entry<Stockpile, List<StockpileItem>> entry : update.entrySet()) {
@@ -290,7 +290,7 @@ public class JStockpileItemMenu extends JMenu {
 					Settings.unlock("Stokcpile (Stockpile Menu)"); //Lock for Stokcpile (Stockpile Menu)
 					//Add changed items
 					for (Map.Entry<Stockpile, List<StockpileItem>> entry : update.entrySet()) {
-						program.getStockpileTool().addToStockpile(entry.getKey(), entry.getValue(), true);
+						program.getStockpileTab().addToStockpile(entry.getKey(), entry.getValue(), true);
 					}
 				}
 			} else if (StockpileItemMenuAction.EDIT_ITEM.name().equals(e.getActionCommand())) { //Edit item
@@ -299,7 +299,7 @@ public class JStockpileItemMenu extends JMenu {
 					JStockpileMenuItem jMenuItem = (JStockpileMenuItem) source;
 					List<Stockpile.StockpileItem> items = jMenuItem.getItems();
 					if (items.size() == 1) {
-						program.getStockpileTool().editItem(items.get(0));
+						program.getStockpileTab().editItem(items.get(0));
 					}
 				}
 			} else if (StockpileItemMenuAction.DELETE_ITEM.name().equals(e.getActionCommand())) { //Delete item
@@ -321,7 +321,7 @@ public class JStockpileItemMenu extends JMenu {
 							}
 							Settings.unlock("Stokcpile (Stockpile Menu)"); //Unlock for Stokcpile (Stockpile Menu)
 							program.saveSettings("Stokcpile (Stockpile Menu)"); //Save Stokcpile (Stockpile Menu)
-							program.getStockpileTool().removeItems(items);
+							program.getStockpileTab().removeItems(items);
 						}
 					}
 				}

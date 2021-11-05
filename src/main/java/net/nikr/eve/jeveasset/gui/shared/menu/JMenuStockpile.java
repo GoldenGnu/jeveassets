@@ -150,11 +150,11 @@ public class JMenuStockpile<T> extends JAutoMenu<T> {
 							items.add(new StockpileItem(stockpile, item, typeID, DEFAULT_ADD_COUNT, false));
 						}
 					}
-					stockpile = program.getStockpileTool().addToStockpile(stockpile, items);
+					stockpile = program.getStockpileTab().addToStockpile(stockpile, items);
 					if (stockpile != null) {
-						program.getMainWindow().addTab(program.getStockpileTool(), Settings.get().isStockpileFocusTab());
+						program.getMainWindow().addTab(program.getStockpileTab(), Settings.get().isStockpileFocusTab());
 						if (Settings.get().isStockpileFocusTab()) {
-							program.getStockpileTool().scrollToSctockpile(stockpile); //Updated when other tools gain focus
+							program.getStockpileTab().scrollToSctockpile(stockpile); //Updated when other tools gain focus
 						} else {
 							program.updateTableMenu(); //Needs update (to include new stockpile)
 						}

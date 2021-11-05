@@ -117,7 +117,7 @@ public abstract class FakeProgram extends Program {
 	}
 
 	@Override
-	public StockpileTab getStockpileTool() {
+	public StockpileTab getStockpileTab() {
 		throw new UnsupportedOperationException("Not implemented");
 	}
 

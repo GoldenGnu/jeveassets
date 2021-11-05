@@ -782,6 +782,26 @@ public class Program implements ActionListener {
 		return treeTab;
 	}
 
+	public StockpileTab getStockpileTab() {
+		return stockpileTab;
+	}
+
+	public ReprocessedTab getReprocessedTab() {
+		return reprocessedTab;
+	}
+
+	public RoutingTab getRoutingTab() {
+		return routingTab;
+	}
+
+	public TrackerTab getTrackerTab() {
+		return trackerTab;
+	}
+
+	public ValueTableTab getValueTableTab() {
+		return valueTableTab;
+	}
+
 	public TransactionTab getTransactionsTab() {
 		return transactionsTab;
 	}
@@ -814,24 +834,6 @@ public class Program implements ActionListener {
 		}
 	}
 
-	public StockpileTab getStockpileTool() {
-		return stockpileTab;
-	}
-	public ReprocessedTab getReprocessedTab() {
-		return reprocessedTab;
-	}
-	public RoutingTab getRoutingTab() {
-		return routingTab;
-	}
-
-	public TrackerTab getTrackerTab() {
-		return trackerTab;
-	}
-
-	public ValueTableTab getValueTableTab() {
-		return valueTableTab;
-	}
-
 	public ProfileData getProfileData() {
 		return profileData;
 	}
@@ -839,42 +841,55 @@ public class Program implements ActionListener {
 	public List<MyAsset> getAssetList() {
 		return profileData.getAssetsList();
 	}
+
 	public List<MyContract> getContractList() {
 		return profileData.getContractList();
 	}
+
 	public List<MyContractItem> getContractItemList() {
 		return profileData.getContractItemList();
 	}
+
 	public List<MyIndustryJob> getIndustryJobsList() {
 		return profileData.getIndustryJobsList();
 	}
+
 	public List<MyMarketOrder> getMarketOrdersList() {
 		return profileData.getMarketOrdersList();
 	}
+
 	public List<MyJournal> getJournalList() {
 		return profileData.getJournalList();
 	}
+
 	public List<MyTransaction> getTransactionsList() {
 		return profileData.getTransactionsList();
 	}
+
 	public List<MyAccountBalance> getAccountBalanceList() {
 		return profileData.getAccountBalanceList();
 	}
+
 	public List<String> getOwnerNames(boolean all) {
 		return profileData.getOwnerNames(all);
 	}
+
 	public Map<Long, OwnerType> getOwners() {
 		return profileData.getOwners();
 	}
+
 	public List<OwnerType> getOwnerTypes() {
 		return profileManager.getOwnerTypes();
 	}
+
 	public ProfileManager getProfileManager() {
 		return profileManager;
 	}
+
 	public PriceDataGetter getPriceDataGetter() {
 		return priceDataGetter;
 	}
+
 	public void createTrackerDataPoint() {
 		DataSetCreator.createTrackerDataPoint(profileData, Settings.getNow());
 		TrackerData.save("Added", true);
