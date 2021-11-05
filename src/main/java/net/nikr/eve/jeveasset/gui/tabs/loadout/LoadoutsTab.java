@@ -96,8 +96,6 @@ public class LoadoutsTab extends JMainTabSecondary {
 		EXPAND
 	}
 
-	private static final String SHIP_CATEGORY = "Ship";
-
 	//GUI
 	private final JComboBox<String> jOwners;
 	private final JComboBox<String> jShips;
@@ -472,7 +470,7 @@ public class LoadoutsTab extends JMainTabSecondary {
 		List<Loadout> ship = new ArrayList<>();
 		for (MyAsset asset : program.getAssetList()) {
 			String key = asset.getName() + " #" + asset.getItemID();
-			if (!asset.getItem().getCategory().equals(SHIP_CATEGORY) || !asset.isSingleton()) {
+			if (!asset.getItem().isShip() || !asset.isSingleton()) {
 				continue;
 			}
 			Loadout moduleShip = new Loadout(asset.getItem(), asset.getLocation(), asset.getOwner(), TabsLoadout.get().totalShip(), key, TabsLoadout.get().flagTotalValue(), null, asset.getDynamicPrice(), 1, true);
@@ -551,7 +549,7 @@ public class LoadoutsTab extends JMainTabSecondary {
 				List<String> charShips = new ArrayList<>();
 				for (MyAsset asset : program.getAssetList()) {
 					String key = asset.getName() + " #" + asset.getItemID();
-					if (!asset.getItem().getCategory().equals(SHIP_CATEGORY) || !asset.isSingleton()) {
+					if (!asset.getItem().isShip() || !asset.isSingleton()) {
 						continue;
 					}
 					if (!owner.equals(asset.getOwnerName()) && !owner.equals(General.get().all())) {
@@ -594,7 +592,7 @@ public class LoadoutsTab extends JMainTabSecondary {
 				String filename = browse();
 				List<MyAsset> ships = new ArrayList<>();
 				for (MyAsset asset : program.getAssetList()) {
-					if (!asset.getItem().getCategory().equals(SHIP_CATEGORY) || !asset.isSingleton() || asset.getAssets().isEmpty()) {
+					if (!asset.getItem().isShip() || !asset.isSingleton() || asset.getAssets().isEmpty()) {
 						continue;
 					}
 					ships.add(asset);

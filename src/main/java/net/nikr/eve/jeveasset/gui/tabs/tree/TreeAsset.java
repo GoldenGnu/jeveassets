@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.Set;
 import javax.swing.Icon;
 import net.nikr.eve.jeveasset.data.api.my.MyAsset;
+import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.HierarchyColumn;
@@ -74,30 +75,27 @@ public class TreeAsset extends MyAsset {
 		this.item = true;
 		this.depthOffset = 0;
 		if (treeType == TreeType.LOCATION && parent) {
-			if (asset.getItem().getGroup().equals("Audit Log Secure Container") 
-					|| asset.getItem().getGroup().equals("Freight Container")
-					|| asset.getItem().getGroup().equals("Cargo Container")
-					|| asset.getItem().getGroup().equals("Secure Cargo Container")) {
+			if (asset.getItem().isContainer()) {
 				this.icon = Images.LOC_CONTAINER.getIcon();
-			} else if (asset.getItem().getCategory().equals("Ship")) {
+			} else if (asset.getItem().isShip()) {
 				this.icon = Images.LOC_SHIP.getIcon();
 			} else if (asset.getItem().getTypeID() == 27) { //Office
 				this.icon = Images.LOC_OFFICE.getIcon();
-			} else if (asset.getItem().getCategory().equals("Planetary Industry")) {
+			} else if (asset.getItem().getCategory().equals(Item.CATEGORY_PLANETARY_INDUSTRY)) {
 				switch (asset.getItem().getGroup()) {
-					case "Command Centers":
+					case Item.GROUP_COMMAND_CENTERS:
 						this.icon = Images.LOC_PIN_COMMAND.getIcon();
 						break;
-					case "Extractor Control Units":
+					case Item.GROUP_EXTRACTOR_CONTROL_UNITS:
 						this.icon = Images.LOC_PIN_EXTRACTOR.getIcon();
 						break;
-					case "Processors":
+					case Item.GROUP_PROCESSORS:
 						this.icon = Images.LOC_PIN_PROCESSOR.getIcon();
 						break;
-					case "Spaceports":
+					case Item.GROUP_SPACEPORTS:
 						this.icon = Images.LOC_PIN_SPACEPORT.getIcon();
 						break;
-					case "Storage Facilities":
+					case Item.GROUP_STORAGE_FACILITIES:
 						this.icon = Images.LOC_PIN_STORAGE.getIcon();
 						break;
 					default:
@@ -164,10 +162,6 @@ public class TreeAsset extends MyAsset {
 
 	public boolean isItem() {
 		return item;
-	}
-
-	public boolean isShip() {
-		return getItem().getCategory().equals("Ship");
 	}
 
 	public boolean isParent() {
@@ -423,7 +417,7 @@ public class TreeAsset extends MyAsset {
 					treeAsset.add(column, (Percent) objValue, count);
 				}
 				//Include ship in value
-				if (isShip()) {
+				if (getItem().isShip()) {
 					add(column, (Percent) objValue, count);
 				}
 			} else if (objValue instanceof Runs) {
@@ -432,7 +426,7 @@ public class TreeAsset extends MyAsset {
 					treeAsset.add(column, (Runs) objValue, count);
 				}
 				//Include ship in value
-				if (isShip()) {
+				if (getItem().isShip()) {
 					add(column, (Runs) objValue, count);
 				}
 			} else if (Number.class.isAssignableFrom(objValue.getClass())) {
@@ -441,7 +435,7 @@ public class TreeAsset extends MyAsset {
 					treeAsset.add(column, (Number) objValue, count);
 				}
 				//Include ship in value
-				if (isShip()) {
+				if (getItem().isShip()) {
 					add(column, (Number) objValue, count);
 				}
 			}

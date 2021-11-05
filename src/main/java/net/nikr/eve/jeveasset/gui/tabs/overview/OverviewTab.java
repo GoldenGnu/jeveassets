@@ -49,6 +49,7 @@ import javax.swing.JToggleButton;
 import javax.swing.SwingConstants;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.my.MyAsset;
+import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.types.LocationType;
@@ -399,14 +400,10 @@ public class OverviewTab extends JMainTabSecondary {
 		}
 		final boolean all = owner.equals(General.get().all());
 		for (MyAsset asset : input) {
-			if ((asset.getItem().getGroup().equals("Audit Log Secure Container")
-					|| asset.getItem().getGroup().equals("Cargo Container")
-					|| asset.getItem().getGroup().equals("Freight Container")
-					|| asset.getItem().getGroup().equals("Secure Cargo Container"))
-					&& Settings.get().isIgnoreSecureContainers()) {
+			if (asset.getItem().isContainer() && Settings.get().isIgnoreSecureContainers()) {
 				continue;
 			}
-			if (asset.getItem().getGroup().equals("Station Services")) {
+			if (asset.getItem().getGroup().equals(Item.GROUP_STATION_SERVICES)) {
 				continue;
 			}
 			//Filters

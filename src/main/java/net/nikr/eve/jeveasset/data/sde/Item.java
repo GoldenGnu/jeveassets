@@ -28,6 +28,41 @@ import net.nikr.eve.jeveasset.data.settings.types.ItemType;
 
 public class Item implements Comparable<Item>, ItemType {
 
+	//PI
+	public static final String CATEGORY_PLANETARY_INDUSTRY = "Planetary Industry";
+	public static final String CATEGORY_PLANETARY_COMMODITIES = "Planetary Commodities";
+	public static final String CATEGORY_PLANETARY_RESOURCES = "Planetary Resources";
+	public static final String GROUP_COMMAND_CENTERS = "Command Centers";
+	public static final String GROUP_EXTRACTOR_CONTROL_UNITS = "Extractor Control Units";
+	public static final String GROUP_PROCESSORS = "Processors";
+	public static final String GROUP_SPACEPORTS = "Spaceports";
+	public static final String GROUP_STORAGE_FACILITIES = "Storage Facilities";
+
+	//Containers
+	public static final String GROUP_AUDIT_LOG_SECURE_CONTAINER = "Audit Log Secure Container";
+	public static final String GROUP_FREIGHT_CONTAINER = "Freight Container";
+	public static final String GROUP_CARGO_CONTAINER = "Cargo Container";
+	public static final String GROUP_SECURE_CARGO_CONTAINER = "Secure Cargo Container";
+
+	//Blueprint
+	public static final String CATEGORY_BLUEPRINT = "Blueprint";
+	//Ship
+	private static final String CATEGORY_SHIP = "Ship";
+	//Asteroid
+	private static final String CATEGORY_ASTEROID = "Asteroid";
+	//Module
+	public static final String CATEGORY_MODULE = "Module";
+	//Structure
+	public static final String CATEGORY_STRUCTURE = "Structure";
+	//Material
+	public static final String CATEGORY_MATERIAL = "Material";
+	//Deployable
+	public static final String CATEGORY_DEPLOYABLE = "Deployable";
+	//Biomass
+	public static final String GROUP_BIOMASS = "Biomass";
+	//
+	public static final String GROUP_STATION_SERVICES = "Station Services";
+
 	private final int typeID; //TypeID : int
 	private final String name;
 	private final String group;
@@ -72,12 +107,12 @@ public class Item implements Comparable<Item>, ItemType {
 		this.meta = meta;
 		this.tech = tech.intern();
 		this.marketGroup = marketGroup;
-		this.piMaterial = category.equals("Planetary Commodities") || category.equals("Planetary Resources");
+		this.piMaterial = category.equals(CATEGORY_PLANETARY_COMMODITIES) || category.equals(CATEGORY_PLANETARY_RESOURCES);
 		this.portion = portion;
 		this.productTypeID = productTypeID;
 		this.productQuantity = productQuantity;
-		this.blueprint = this.category.toLowerCase().equals("blueprint") && group.toLowerCase().contains("blueprint");
-		this.formula = this.category.toLowerCase().equals("blueprint") && group.toLowerCase().contains("reaction formula");
+		this.blueprint = this.category.equals(CATEGORY_BLUEPRINT) && group.toLowerCase().contains("blueprint");
+		this.formula = this.category.equals(CATEGORY_BLUEPRINT) && group.toLowerCase().contains("reaction formulas");
 		this.version = version;
 	}
 
@@ -86,7 +121,18 @@ public class Item implements Comparable<Item>, ItemType {
 	}
 
 	public boolean isOre() {
-		return category.equals("Asteroid");
+		return category.equals(CATEGORY_ASTEROID);
+	}
+
+	public boolean isShip() {
+		return category.equals(CATEGORY_SHIP);
+	}
+
+	public boolean isContainer() {
+		return group.equals(GROUP_AUDIT_LOG_SECURE_CONTAINER) 
+					|| group.equals(GROUP_FREIGHT_CONTAINER)
+					|| group.equals(GROUP_CARGO_CONTAINER)
+					|| group.equals(GROUP_SECURE_CARGO_CONTAINER);
 	}
 
 	public void addReprocessedMaterial(final ReprocessedMaterial material) {
