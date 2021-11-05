@@ -61,7 +61,7 @@ public class JMenuName<T> extends JAutoMenu<T> {
 
 		ListenerClass listener = new ListenerClass();
 
-		jContainerDialog = new JSelectionDialog<MyAsset>(program);
+		jContainerDialog = new JSelectionDialog<>(program);
 
 		jEditItem = new JMenuItem(GuiShared.get().itemEdit());
 		jEditItem.setIcon(Images.EDIT_EDIT.getIcon());
@@ -92,14 +92,16 @@ public class JMenuName<T> extends JAutoMenu<T> {
 
 	@Override
 	public void updateMenuData() {
-		itemNames = new ArrayList<UserItem<Long, String>>();
-		containerNames = new ArrayList<UserItem<Long, String>>();
+		itemNames = new ArrayList<>();
+		containerNames = new ArrayList<>();
 		for (MyAsset asset : menuData.getAssets()) {
+			if (asset.getOwner() == null) { 
+				continue; //Ignore TreeAsset for Location/Group/Category
+			}
 			itemNames.add(new UserName(asset));
 			for (MyAsset parent : asset.getParents()) {
 				containerNames.add(new UserName(parent));
 			}
-				
 		}
 		jEditItem.setEnabled(itemNames.size() == 1);
 		jResetItem.setEnabled(program.getUserNameSettingsPanel() != null && program.getUserNameSettingsPanel().contains(itemNames));
@@ -132,14 +134,6 @@ public class JMenuName<T> extends JAutoMenu<T> {
 			if (MenuNameAction.DELETE_CONTAINERS.name().equals(e.getActionCommand())) {
 				program.getUserNameSettingsPanel().delete(containerNames);
 			}
-		}
-	}
-
-	public static class AssetMenuData extends MenuData<MyAsset> {
-
-		public AssetMenuData(List<MyAsset> items) {
-			super(items);
-			setAssets(items);
 		}
 	}
 }

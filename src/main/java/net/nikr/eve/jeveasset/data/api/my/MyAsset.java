@@ -116,7 +116,7 @@ public class MyAsset extends RawAsset implements Comparable<MyAsset>, InfoItem, 
 		this.rawAsset = RawAsset.create();
 		this.item = new Item(0);
 		this.owner = null;
-		this.parents = null;
+		this.parents = new ArrayList<>();
 		this.location = location;
 		this.owners = new HashSet<>();
 		this.generated = true;

@@ -363,7 +363,7 @@ public class MenuData<T> {
 		return ownerIDs;
 	}
 
-	public void setAssets(List<MyAsset> assets) {
+	public <T extends MyAsset> void setAssets(List<T> assets) {
 		this.assets.clear();
 		this.assets.addAll(assets);
 	}
@@ -383,5 +383,13 @@ public class MenuData<T> {
 
 	public Map<Item, Long> getItemCounts() {
 		return itemCounts;
+	}
+
+	public static class AssetMenuData <T extends MyAsset> extends MenuData<T> {
+
+		public AssetMenuData(List<T> items) {
+			super(items);
+			setAssets(items);
+		}
 	}
 }
