@@ -32,6 +32,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
 import net.nikr.eve.jeveasset.data.api.my.MyAsset;
+import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.Updatable;
@@ -318,14 +319,11 @@ public abstract class AbstractGetter<O extends OwnerType> implements Runnable {
 
 	private void addItemIDs(Map<Long, MyAsset> itemIDs, List<MyAsset> assets) {
 		for (MyAsset asset : assets) {
-			if ((asset.getItem().getGroup().equals("Audit Log Secure Container")
-					|| asset.getItem().getGroup().equals("Cargo Container")
-					|| asset.getItem().getGroup().equals("Freight Container")
-					|| asset.getItem().getGroup().equals("Secure Cargo Container")
-					|| asset.getItem().getGroup().equals("Biomass")
-					|| asset.getItem().getCategory().equals("Deployable")
-					|| asset.getItem().getCategory().equals("Ship")
-					|| asset.getItem().getCategory().equals("Structure"))
+			if ((asset.getItem().isContainer()
+					|| asset.getItem().getGroup().equals(Item.GROUP_BIOMASS)
+					|| asset.getItem().getCategory().equals(Item.CATEGORY_DEPLOYABLE)
+					|| asset.getItem().isShip()
+					|| asset.getItem().getCategory().equals(Item.CATEGORY_STRUCTURE))
 					&& asset.isSingleton()) {
 				itemIDs.put(asset.getItemID(), asset);
 			}

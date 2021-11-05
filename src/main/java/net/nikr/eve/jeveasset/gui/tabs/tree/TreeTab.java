@@ -373,7 +373,7 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate {
 						for (Map.Entry<Flag, Set<String>> entry: flags.entrySet()) {
 							if (entry.getValue().contains(parentAsset.getFlag())) {
 								final Flag flag;
-								if (entry.getKey().getName().equals("Item Hangar") && parentAsset.getItem().getCategory().equals("Ship")) {
+								if (entry.getKey().getName().equals("Item Hangar") && parentAsset.getItem().isShip()) {
 									flag = shipHangar;
 								} else {
 									flag = entry.getKey();
