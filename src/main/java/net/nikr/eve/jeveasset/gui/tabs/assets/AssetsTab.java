@@ -56,8 +56,8 @@ import net.nikr.eve.jeveasset.gui.shared.components.JMainTabPrimary;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
-import net.nikr.eve.jeveasset.gui.shared.menu.JMenuName.AssetMenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
+import net.nikr.eve.jeveasset.gui.shared.menu.MenuData.AssetMenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
@@ -285,7 +285,7 @@ public class AssetsTab extends JMainTabPrimary implements TagUpdate {
 	private class AssetTableMenu implements TableMenu<MyAsset> {
 		@Override
 		public MenuData<MyAsset> getMenuData() {
-			return new AssetMenuData(selectionModel.getSelected());
+			return new AssetMenuData<>(selectionModel.getSelected());
 		}
 
 		@Override

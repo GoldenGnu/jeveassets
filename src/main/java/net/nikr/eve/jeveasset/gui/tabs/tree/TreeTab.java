@@ -79,6 +79,7 @@ import net.nikr.eve.jeveasset.gui.shared.components.JMainTabSecondary;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
+import net.nikr.eve.jeveasset.gui.shared.menu.MenuData.AssetMenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
@@ -570,7 +571,7 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate {
 	private class TreeTableMenu implements TableMenu<TreeAsset> {
 		@Override
 		public MenuData<TreeAsset> getMenuData() {
-			return new MenuData<>(selectionModel.getSelected());
+			return new AssetMenuData<>(selectionModel.getSelected());
 		}
 
 		@Override
