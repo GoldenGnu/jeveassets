@@ -45,6 +45,7 @@ import javax.swing.JMenu;
 import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.my.MyAsset;
+import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.settings.types.LocationType;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JFixedToolBar;
@@ -247,7 +248,7 @@ public class MaterialsTab extends JMainTabSecondary {
 		Material summaryTotalAllMaterial = new Material(MaterialType.SUMMARY_ALL, null, TabsMaterials.get().summary(), TabsMaterials.get().grandTotal(), General.get().all());
 		for (MyAsset asset : program.getAssetList()) {
 			//Skip none-material + none Pi Material (if not enabled)
-			if (!asset.getItem().getCategory().equals("Material") && (!asset.getItem().isPiMaterial() || !jPiMaterial.isSelected())) {
+			if (!asset.getItem().getCategory().equals(Item.CATEGORY_MATERIAL) && (!asset.getItem().isPiMaterial() || !jPiMaterial.isSelected())) {
 				continue;
 			}
 			//Skip not selected owners

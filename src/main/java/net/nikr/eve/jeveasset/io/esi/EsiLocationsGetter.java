@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.data.api.my.MyAsset;
+import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.settings.Citadel;
 import net.nikr.eve.jeveasset.data.settings.Citadel.CitadelSource;
 import net.nikr.eve.jeveasset.data.settings.Settings;
@@ -63,7 +64,7 @@ public class EsiLocationsGetter extends AbstractEsiGetter {
 						if (!eveName.isEmpty()) { //Set name
 							Settings.get().getEveNames().put(itemID, eveName);
 							MyAsset asset = iDs.get(itemID);
-							if (asset.getItem().getCategory().equals("Structure")) {
+							if (asset.getItem().getCategory().equals(Item.CATEGORY_STRUCTURE)) {
 								CitadelGetter.set(new Citadel(asset.getItemID(), eveName, asset.getLocationID(), false, true, CitadelSource.ESI_LOCATIONS));
 							}
 						} else { //Remove name (Empty)
@@ -90,7 +91,7 @@ public class EsiLocationsGetter extends AbstractEsiGetter {
 						if (!eveName.isEmpty()) { //Set name
 							Settings.get().getEveNames().put(itemID, eveName);
 							MyAsset asset = iDs.get(itemID);
-							if (asset.getItem().getCategory().equals("Structure")) {
+							if (asset.getItem().getCategory().equals(Item.CATEGORY_STRUCTURE)) {
 								CitadelGetter.set(new Citadel(asset.getItemID(), eveName, asset.getLocationID(), false, true, CitadelSource.ESI_LOCATIONS));
 							}
 						} else { //Remove name (Empty)

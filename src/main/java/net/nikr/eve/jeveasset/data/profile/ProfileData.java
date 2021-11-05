@@ -1164,7 +1164,7 @@ public class ProfileData {
 				continue;
 			}
 			//Handle Asset Structures
-			if (asset.getItem().getCategory().equals("Structure")) {
+			if (asset.getItem().getCategory().equals(Item.CATEGORY_STRUCTURE)) {
 				for (MyAsset childAsset:  asset.getAssets()) {
 					updateStructureAssets(childAsset, asset);
 				}
