@@ -291,6 +291,17 @@ public class LoadoutsTab extends JMainTabSecondary {
 		}
 	}
 
+	public void selectShip(MyAsset asset) {
+		String owner = (String) jOwners.getSelectedItem();
+		//Select the owner (if all is not selected)
+		if (!owner.equals(General.get().all())) {
+			jOwners.setSelectedItem(asset.getOwnerName());
+		}
+		//Select Ship
+		String selecctedShip = asset.getName() + " #" + asset.getItemID();
+		jShips.setSelectedItem(selecctedShip);
+	}
+
 	private String browse() {
 		File windows = new File(javax.swing.filechooser.FileSystemView.getFileSystemView().getDefaultDirectory()
 							+ File.separator + "EVE"

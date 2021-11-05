@@ -782,6 +782,10 @@ public class Program implements ActionListener {
 		return treeTab;
 	}
 
+	public LoadoutsTab getLoadoutsTab() {
+		return loadoutsTab;
+	}
+
 	public StockpileTab getStockpileTab() {
 		return stockpileTab;
 	}
