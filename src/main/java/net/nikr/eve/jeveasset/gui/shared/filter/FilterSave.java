@@ -22,6 +22,7 @@
 package net.nikr.eve.jeveasset.gui.shared.filter;
 
 import ca.odell.glazedlists.EventList;
+import ca.odell.glazedlists.matchers.TextMatcherEditor;
 import ca.odell.glazedlists.swing.AutoCompleteSupport;
 import java.awt.AWTException;
 import java.awt.Robot;
@@ -69,7 +70,8 @@ public class FilterSave extends JDialogCentered {
 
 		jName = new JComboBox<>();
 		filters = EventListManager.create();
-		AutoCompleteSupport.install(jName, EventModels.createSwingThreadProxyList(filters), new StringFilterator());
+		AutoCompleteSupport<String> nameAutoComplete = AutoCompleteSupport.install(jName, EventModels.createSwingThreadProxyList(filters), new StringFilterator());
+		nameAutoComplete.setFilterMode(TextMatcherEditor.CONTAINS);
 		jSave = new JButton(GuiShared.get().save());
 		jSave.setActionCommand(FilterSaveAction.SAVE.name());
 		jSave.addActionListener(listener);
