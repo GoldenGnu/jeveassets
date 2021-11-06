@@ -132,6 +132,9 @@ public abstract class TabsStockpile extends Bundle {
 	public abstract String includeSoldContractsTip();
 	public abstract String item();
 	public abstract String items();
+	public abstract String itemsMissing();
+	public abstract String itemsOwned();
+	public abstract String itemsRequired();
 	public abstract String itemsShoppingList();
 	public abstract String location();
 	public abstract String matchExclude();
