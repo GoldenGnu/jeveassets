@@ -21,10 +21,12 @@
 package net.nikr.eve.jeveasset.gui.shared.table;
 
 import ca.odell.glazedlists.EventList;
+import ca.odell.glazedlists.TextFilterator;
 import ca.odell.glazedlists.gui.TableFormat;
 import ca.odell.glazedlists.swing.DefaultEventSelectionModel;
 import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import ca.odell.glazedlists.swing.GlazedListsSwing;
+import java.util.List;
 import javax.swing.JTable;
 
 
@@ -79,5 +81,14 @@ public class EventModels {
 		}
 
 		
+	}
+
+	public static class StringFilterator implements TextFilterator<String> {
+		@Override
+		public void getFilterStrings(final List<String> baseList, final String element) {
+			if (element.length() > 0) {
+				baseList.add(element);
+			}
+		}
 	}
 }
