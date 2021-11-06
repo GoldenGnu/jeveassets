@@ -24,6 +24,7 @@ package net.nikr.eve.jeveasset.gui.shared.components;
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.SortedList;
 import ca.odell.glazedlists.TextFilterator;
+import ca.odell.glazedlists.matchers.TextMatcherEditor;
 import ca.odell.glazedlists.swing.AutoCompleteSupport;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
@@ -76,6 +77,9 @@ public abstract class JAutoCompleteDialog<T> extends JDialogCentered {
 		eventList.getReadWriteLock().readLock().unlock();
 		
 		autoComplete = AutoCompleteSupport.install(jItems, EventModels.createSwingThreadProxyList(sortedList), getFilterator());
+		if (!strict) {
+			autoComplete.setFilterMode(TextMatcherEditor.CONTAINS);
+		}
 		autoComplete.setStrict(strict);
 
 		jOK = new JButton(GuiShared.get().ok());

@@ -714,8 +714,8 @@ public class StockpileDialog extends JDialogCentered {
 				jContainer = new JComboBox<>();
 				jIncludeContainer = new JCheckBox(TabsStockpile.get().includeContainer());
 				TextManager.installTextComponent((JTextComponent) jContainer.getEditor().getEditorComponent());
-				AutoCompleteSupport<String> install = AutoCompleteSupport.install(jContainer, EventModels.createSwingThreadProxyList(containerEventList), new StringFilterator());
-				install.setFilterMode(TextMatcherEditor.CONTAINS);
+				AutoCompleteSupport<String> containerAutoComplete =  AutoCompleteSupport.install(jContainer, EventModels.createSwingThreadProxyList(containerEventList), new StringFilterator());
+				containerAutoComplete.setFilterMode(TextMatcherEditor.CONTAINS);
 				((JTextComponent) jContainer.getEditor().getEditorComponent()).getDocument().addDocumentListener(listener);
 				jContainer.setActionCommand(StockpileDialogAction.VALIDATE.name());
 				jContainer.addActionListener(listener);
@@ -1391,7 +1391,6 @@ public class StockpileDialog extends JDialogCentered {
 					jLocation.setEnabled(true);
 					autoComplete = AutoCompleteSupport.install(jLocation, EventModels.createSwingThreadProxyList(filterList), new LocationsFilterator());
 					autoComplete.setStrict(true);
-					autoComplete.setCorrectsCase(true);
 					jLocation.addItemListener(listener); //Must be added after AutoCompleteSupport
 				}
 			} else {

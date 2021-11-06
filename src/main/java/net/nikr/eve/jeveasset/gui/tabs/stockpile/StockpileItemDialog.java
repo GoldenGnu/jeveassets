@@ -122,7 +122,6 @@ public class StockpileItemDialog extends JDialogCentered {
 		jItems = new JComboBox<>();
 		AutoCompleteSupport<Item> itemAutoComplete = AutoCompleteSupport.install(jItems, EventModels.createSwingThreadProxyList(items), new ItemFilterator());
 		itemAutoComplete.setStrict(true);
-		itemAutoComplete.setCorrectsCase(true);
 		jItems.addItemListener(listener); //Must be added after AutoCompleteSupport
 
 		jSubpile = new JLabel();

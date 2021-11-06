@@ -147,27 +147,21 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 		jRegions.setPrototypeDisplayValue(region);
 		jRegions.getEditor().getEditorComponent().addFocusListener(listener);
 		regionsAutoComplete = AutoCompleteSupport.install(jRegions, EventModels.createSwingThreadProxyList(regionsEventList), new LocationsFilterator());
-		systemsEventList.getReadWriteLock().readLock().lock();
 		regionsAutoComplete.setStrict(true);
-		systemsEventList.getReadWriteLock().readLock().unlock();
 
 		JLabel jSystemsLabel = new JLabel(DialoguesSettings.get().includeSystems());
 		jSystems = new JComboBox<>();
 		jSystems.setPrototypeDisplayValue(system);
 		jSystems.getEditor().getEditorComponent().addFocusListener(listener);
 		systemsAutoComplete = AutoCompleteSupport.install(jSystems, EventModels.createSwingThreadProxyList(systemsSortedList), new LocationsFilterator());
-		systemsEventList.getReadWriteLock().readLock().lock();
 		systemsAutoComplete.setStrict(true);
-		systemsEventList.getReadWriteLock().readLock().unlock();
 
 		JLabel jStationsLabel = new JLabel(DialoguesSettings.get().includeStations());
 		jStations = new JComboBox<>();
 		jStations.setPrototypeDisplayValue(station);
 		jStations.getEditor().getEditorComponent().addFocusListener(listener);
 		stationsAutoComplete = AutoCompleteSupport.install(jStations, EventModels.createSwingThreadProxyList(stationsSortedList), new LocationsFilterator());
-		stationsEventList.getReadWriteLock().readLock().lock();
 		stationsAutoComplete.setStrict(true);
-		stationsEventList.getReadWriteLock().readLock().unlock();
 
 		JLabel jPriceTypeLabel = new JLabel(DialoguesSettings.get().price());
 		jPriceType = new JComboBox<>(PriceMode.values());
