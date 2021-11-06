@@ -23,7 +23,6 @@
 package net.nikr.eve.jeveasset.data.settings;
 
 import net.nikr.eve.jeveasset.data.sde.ReprocessedMaterial;
-import net.nikr.eve.jeveasset.data.settings.ReprocessSettings;
 import net.nikr.eve.jeveasset.data.sde.StaticData;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.TestUtil;
