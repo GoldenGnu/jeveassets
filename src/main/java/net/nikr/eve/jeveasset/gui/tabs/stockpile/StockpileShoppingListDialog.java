@@ -30,6 +30,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.GroupLayout;
 import javax.swing.Icon;
@@ -60,9 +61,13 @@ import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.SubpileStock;
 import net.nikr.eve.jeveasset.i18n.TabsStockpile;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 class StockpileShoppingListDialog extends JDialogCentered {
+
+	private static final Logger LOG = LoggerFactory.getLogger(StockpileShoppingListDialog.class);
 
 	private enum StockpileShoppingListAction {
 		CLIPBOARD_STOCKPILE,
@@ -76,10 +81,15 @@ class StockpileShoppingListDialog extends JDialogCentered {
 	private final JButton jClose;
 	private final JTextField jPercentFull;
 	private final JTextField jPercentIgnore;
-	private final JComboBox<String> jEveMultiBuy;
+	private final JComboBox<String> jFormat;
+	private final JComboBox<String> jOutput;
 
-	private String shoppingList = "";
-	private String eveMultibuy = "";
+	private String missingShoppingList = "";
+	private String missingEveMultibuy = "";
+	private String requiredShoppingList = "";
+	private String requiredEveMultibuy = "";
+	private String ownedShoppingList = "";
+	private String ownedEveMultibuy = "";
 	private List<Stockpile> stockpiles;
 	private boolean updating = false;
 
@@ -95,13 +105,18 @@ class StockpileShoppingListDialog extends JDialogCentered {
 		jCopyToClipboard.addActionListener(listener);
 
 		String[] formats = {TabsStockpile.get().shoppingList(), TabsStockpile.get().eveMultibuy()};
-		jEveMultiBuy = new JComboBox<>(formats);
+		jFormat = new JComboBox<>(formats);
 		IconListCellRendererRenderer renderer = new IconListCellRendererRenderer();
 		renderer.add(TabsStockpile.get().shoppingList(), Images.STOCKPILE_SHOPPING_LIST.getIcon());
 		renderer.add(TabsStockpile.get().eveMultibuy(), Images.MISC_EVE.getIcon());
-		jEveMultiBuy.setRenderer(renderer);
-		jEveMultiBuy.setActionCommand(StockpileShoppingListAction.FORMAT_CHANGED.name());
-		jEveMultiBuy.addActionListener(listener);
+		jFormat.setRenderer(renderer);
+		jFormat.setActionCommand(StockpileShoppingListAction.FORMAT_CHANGED.name());
+		jFormat.addActionListener(listener);
+
+		String[] types = {TabsStockpile.get().itemsMissing(), TabsStockpile.get().itemsRequired(), TabsStockpile.get().itemsOwned()};
+		jOutput = new JComboBox<>(types);
+		jOutput.setActionCommand(StockpileShoppingListAction.FORMAT_CHANGED.name());
+		jOutput.addActionListener(listener);
 
 		JLabel jFullLabel = new JLabel(TabsStockpile.get().percentFull());
 		JLabel jFullPercentLabel = new JLabel(TabsStockpile.get().percent());
@@ -131,8 +146,9 @@ class StockpileShoppingListDialog extends JDialogCentered {
 				.addGroup(layout.createSequentialGroup()
 					.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
 						.addComponent(jCopyToClipboard)
-						.addComponent(jEveMultiBuy)
+						.addComponent(jFormat)
 					)
+					.addComponent(jOutput)
 					.addGap(0, 0, Integer.MAX_VALUE)
 					.addGroup(layout.createParallelGroup()
 						.addComponent(jFullLabel)
@@ -161,7 +177,8 @@ class StockpileShoppingListDialog extends JDialogCentered {
 					.addComponent(jFullPercentLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				)
 				.addGroup(layout.createParallelGroup()
-					.addComponent(jEveMultiBuy, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jFormat, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jOutput, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jIgnoreLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jPercentIgnore, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jIgnorePercentLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
@@ -180,7 +197,7 @@ class StockpileShoppingListDialog extends JDialogCentered {
 		this.stockpiles = addStockpiles;
 		jPercentFull.setText("100");
 		jPercentIgnore.setText("100");
-		jEveMultiBuy.setSelectedIndex(0);
+		jFormat.setSelectedIndex(0);
 		updateList();
 		updating = false;
 		super.setVisible(true);
@@ -272,18 +289,60 @@ class StockpileShoppingListDialog extends JDialogCentered {
 			add(new TypeIdentifier(typeID, false), contractItem, claims, items);
 		}
 
+	//Owned before claming
+		StringBuilder ownedShoppingListBuilder = new StringBuilder();
+		StringBuilder ownedEveMultibuyBuilder = new StringBuilder();
+		double ownedVolume = 0;
+		double ownedValue = 0;
+		for (Map.Entry<TypeIdentifier, List<StockItem>> entry : items.entrySet()) {
+			boolean bpc = false;
+			boolean bpo = false;
+			boolean runs = false;
+			Item item;
+			if (entry.getKey().isBPC()) {
+				item = ApiIdConverter.getItem(Math.abs(entry.getKey().getTypeID()));
+				bpc = true;
+				runs = entry.getKey().isRuns();
+			} else {
+				item = ApiIdConverter.getItem(entry.getKey().getTypeID());
+				bpo = item.isBlueprint();
+			}
+			float volume = ApiIdConverter.getVolume(item, true);
+			double price = ApiIdConverter.getPriceSimple(entry.getKey().getTypeID(), bpc);
+			long ownedCount = 0;
+			for (StockItem stockItem : entry.getValue()) {
+				Set<Count> counts = stockItem.getCounts();
+				if (counts.size() != 1) {
+					LOG.error("StockpileShoppingListDialog counts size was: " + counts.size() + " expected: 1", new Exception());
+				}
+				if (counts.isEmpty()) {
+					continue;
+				}
+				Count count = counts.iterator().next();
+				//Required count
+				ownedCount = ownedCount + count.getCount();
+				//Required volume
+				ownedVolume = ownedVolume + (count.getCount() * volume);
+				//Required value
+				ownedValue = ownedValue + (count.getCount() * price);
+			}
+			printItem(ownedEveMultibuyBuilder, ownedShoppingListBuilder, ownedCount, item, bpc, bpo, runs);
+		}
 	//Claim items
 		for (Map.Entry<TypeIdentifier, List<StockItem>> entry : items.entrySet()) {
 			for (StockItem stockItem : entry.getValue()) {
 				stockItem.claim();
 			}
 		}
-
 	//Show missing
-		StringBuilder shoppingListBuilder = new StringBuilder();
-		StringBuilder eveMultibuyBuilder = new StringBuilder();
-		double volume = 0;
-		double value = 0;
+		StringBuilder missingShoppingListBuilder = new StringBuilder();
+		StringBuilder missingEveMultibuyBuilder = new StringBuilder();
+		StringBuilder requiredShoppingListBuilder = new StringBuilder();
+		StringBuilder requiredEveMultibuyBuilder = new StringBuilder();
+		double missingVolume = 0;
+		double missingValue = 0;
+		double requiredVolume = 0;
+		double requiredValue = 0;
 		for (Map.Entry<TypeIdentifier, List<StockClaim>> entry : claims.entrySet()) {
 			boolean bpc = false;
 			boolean bpo = false;
@@ -297,39 +356,27 @@ class StockpileShoppingListDialog extends JDialogCentered {
 				item = ApiIdConverter.getItem(entry.getKey().getTypeID());
 				bpo = item.isBlueprint();
 			}
-			long countMinimum = 0;
+			long missingCount = 0;
+			long requiredCount = 0;
 			for (StockClaim stockClaim : entry.getValue()) {
 				if (stockClaim.getPercentFull() > hide) {
 					continue; //Ignore everything above x% percent
 				}
-				//Add missing
-				countMinimum = countMinimum + stockClaim.getCountMinimum();
-				//Add volume (will add zero if nothing is needed)
-				volume = volume + (stockClaim.getCountMinimum() * stockClaim.getVolume());
-				//Add value (will add zero if nothing is needed)
-				value = value + (stockClaim.getCountMinimum() * stockClaim.getDynamicPrice());
+				//Missing count
+				missingCount = missingCount + stockClaim.getCountMinimum();
+				//Missing volume (will add zero if nothing is needed)
+				missingVolume = missingVolume + (stockClaim.getCountMinimum() * stockClaim.getVolume());
+				//Missing value (will add zero if nothing is needed)
+				missingValue = missingValue + (stockClaim.getCountMinimum() * stockClaim.getDynamicPrice());
+				//Required count
+				requiredCount = requiredCount + stockClaim.getTotalNeed();
+				//Required volume
+				requiredVolume = requiredVolume + (stockClaim.getTotalNeed() * stockClaim.getVolume());
+				//Required value
+				requiredValue = requiredValue + (stockClaim.getTotalNeed() * stockClaim.getDynamicPrice());
 			}
-			if (countMinimum > 0) { //Add type string (if anything is needed)
-				//Multibuy
-				eveMultibuyBuilder.append(item.getTypeName());
-				eveMultibuyBuilder.append(" ");
-				eveMultibuyBuilder.append(number.format(countMinimum));
-				eveMultibuyBuilder.append("\r\n");
-				//Shopping List
-				shoppingListBuilder.append(Formater.longFormat(countMinimum));
-				shoppingListBuilder.append("x ");
-				shoppingListBuilder.append(item.getTypeName());
-				if (bpc) {
-					if (runs) {
-						shoppingListBuilder.append(" (Runs)");
-					} else {
-						shoppingListBuilder.append(" (BPC)");
-					}
-				} else if (bpo) {
-					shoppingListBuilder.append(" (BPO)");
-				}
-				shoppingListBuilder.append("\r\n");
-			}
+			printItem(missingEveMultibuyBuilder, missingShoppingListBuilder, missingCount, item, bpc, bpo, runs);
+			printItem(requiredEveMultibuyBuilder, requiredShoppingListBuilder, requiredCount, item, bpc, bpo, runs);
 		}
 		StringBuilder subpileNamesBuilder = new StringBuilder();
 		for (Map.Entry<String, Double> entry : subpiles.entrySet()) {
@@ -338,6 +385,44 @@ class StockpileShoppingListDialog extends JDialogCentered {
 			subpileNamesBuilder.append(entry.getKey());
 			subpileNamesBuilder.append("\r\n");
 		}
+		printTotals(ownedShoppingListBuilder, ownedVolume, ownedValue);
+		printTotals(missingShoppingListBuilder, missingVolume, missingValue);
+		printTotals(requiredShoppingListBuilder, requiredVolume, requiredValue);
+
+		missingShoppingList = printResult(stockpileNamesBuilder, subpileNamesBuilder, missingShoppingListBuilder, subpiles, percent);
+		missingEveMultibuy = missingEveMultibuyBuilder.toString();
+		requiredShoppingList = printResult(stockpileNamesBuilder, subpileNamesBuilder, requiredShoppingListBuilder, subpiles, percent);
+		requiredEveMultibuy = requiredEveMultibuyBuilder.toString();
+		ownedShoppingList = printResult(stockpileNamesBuilder, subpileNamesBuilder, ownedShoppingListBuilder, subpiles, percent);
+		ownedEveMultibuy = ownedEveMultibuyBuilder.toString();
+		setText();
+	}
+
+	private void printItem(StringBuilder eveMultibuyBuilder, StringBuilder shoppingListBuilder, long count, Item item, boolean bpc, boolean bpo, boolean runs) {
+		if (count > 0) { //Add type string (if anything is needed)
+			//Multibuy
+			eveMultibuyBuilder.append(item.getTypeName());
+			eveMultibuyBuilder.append(" ");
+			eveMultibuyBuilder.append(number.format(count));
+			eveMultibuyBuilder.append("\r\n");
+			//Shopping List
+			shoppingListBuilder.append(Formater.longFormat(count));
+			shoppingListBuilder.append("x ");
+			shoppingListBuilder.append(item.getTypeName());
+			if (bpc) {
+				if (runs) {
+					shoppingListBuilder.append(" (Runs)");
+				} else {
+					shoppingListBuilder.append(" (BPC)");
+				}
+			} else if (bpo) {
+				shoppingListBuilder.append(" (BPO)");
+			}
+			shoppingListBuilder.append("\r\n");
+		}
+	}
+
+	private void printTotals(StringBuilder shoppingListBuilder, double volume, double value) {
 		if (shoppingListBuilder.length() == 0) { //if string is empty, nothing is needed
 			shoppingListBuilder.append(TabsStockpile.get().nothingNeeded());
 		} else { //Add total volume and value
@@ -348,6 +433,9 @@ class StockpileShoppingListDialog extends JDialogCentered {
 			shoppingListBuilder.append(TabsStockpile.get().estimatedMarketValue());
 			shoppingListBuilder.append(Formater.iskFormat(Math.abs(value)));
 		}
+	}
+
+	private String printResult(StringBuilder stockpileNames, StringBuilder subpileNames, StringBuilder shoppingList, Map<String, Double> subpiles, long percent) {
 		StringBuilder resultBuilder = new StringBuilder();
 		//Add stockpile
 		resultBuilder.append(TabsStockpile.get().stockpileShoppingList());
@@ -358,21 +446,19 @@ class StockpileShoppingListDialog extends JDialogCentered {
 			resultBuilder.append(")");
 		}
 		resultBuilder.append(":\r\n");
-		resultBuilder.append(stockpileNamesBuilder.toString());
+		resultBuilder.append(stockpileNames.toString());
 		resultBuilder.append("\r\n");
 		//Add subpiles
 		if (!subpiles.isEmpty()) {
 			resultBuilder.append(TabsStockpile.get().subpileShoppingList());
 			resultBuilder.append("\r\n");
-			resultBuilder.append(subpileNamesBuilder.toString());
+			resultBuilder.append(subpileNames.toString());
 			resultBuilder.append("\r\n");
 		}
 		resultBuilder.append(TabsStockpile.get().itemsShoppingList());
 		resultBuilder.append("\r\n");
-		resultBuilder.append(shoppingListBuilder.toString());
-		shoppingList = resultBuilder.toString();
-		eveMultibuy = eveMultibuyBuilder.toString();
-		setText();
+		resultBuilder.append(shoppingList.toString());
+		return resultBuilder.toString();
 	}
 
 	//Add claims to item
@@ -404,11 +490,24 @@ class StockpileShoppingListDialog extends JDialogCentered {
 	}
 
 	private void setText() {
-		Object selectedItem = jEveMultiBuy.getSelectedItem();
-		if (TabsStockpile.get().eveMultibuy().equals(selectedItem)) {
-			jText.setText(eveMultibuy);
+		Object format = jFormat.getSelectedItem();
+		Object output = jOutput.getSelectedItem();
+		if (TabsStockpile.get().eveMultibuy().equals(format)) {
+			if (TabsStockpile.get().itemsMissing().equals(output)) {
+				jText.setText(missingEveMultibuy);
+			} else if (TabsStockpile.get().itemsOwned().equals(output)) {
+				jText.setText(ownedEveMultibuy);
+			} else {
+				jText.setText(requiredEveMultibuy);
+			}
 		} else { //Default
-			jText.setText(shoppingList);
+			if (TabsStockpile.get().itemsMissing().equals(output)) {
+				jText.setText(missingShoppingList);
+			} else if (TabsStockpile.get().itemsOwned().equals(output)) {
+				jText.setText(ownedShoppingList);
+			} else {
+				jText.setText(requiredShoppingList);
+			}
 		}
 	}
 
@@ -479,6 +578,10 @@ class StockpileShoppingListDialog extends JDialogCentered {
 			return stockpileItem.matches(object);
 		}
 
+		public long getTotalNeed() {
+			return totalNeed;
+		}
+
 		public long getCountMinimum() {
 			return countMinimum;
 		}
@@ -520,6 +623,10 @@ class StockpileShoppingListDialog extends JDialogCentered {
 			}
 			claimList.add(stockMinimum);
 			stockMinimum.addAvailable(count);
+		}
+
+		public Set<Count> getCounts() {
+			return claims.keySet();
 		}
 
 		public void claim() {
