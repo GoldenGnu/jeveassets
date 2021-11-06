@@ -319,10 +319,10 @@ public class RoutingTab extends JMainTabSecondary {
 		jStart.setEnabled(false);
 		startEventList = EventListManager.create();
 		AutoCompleteSupport<String> startAutoComplete = AutoCompleteSupport.install(jStart, EventModels.createSwingThreadProxyList(startEventList), new StringFilterator());
+		startAutoComplete.setStrict(true);
 		try {
 			startEventList.getReadWriteLock().writeLock().lock();
 			startEventList.add(TabsRouting.get().startEmpty());
-			startAutoComplete.setStrict(true);
 		} finally {
 			startEventList.getReadWriteLock().writeLock().unlock();
 		}
