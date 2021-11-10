@@ -30,6 +30,8 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
 import javax.swing.JComponent;
@@ -37,6 +39,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.settings.ColorSettings;
@@ -65,8 +68,7 @@ public class JColorTable extends JSeparatorTable {
 		super(program, tableModel, separatorList);
 		
 		this.tableModel = tableModel;
-		IconTableCellRenderer headerRenderer = new IconTableCellRenderer(this.getTableHeader().getDefaultRenderer());
-		this.getTableHeader().setDefaultRenderer(headerRenderer);
+		this.getTableHeader().setDefaultRenderer(new IconTableCellRenderer(this));
 
 		this.setDefaultRenderer(Color.class, new ColorCellRenderer());
 
@@ -193,19 +195,43 @@ public class JColorTable extends JSeparatorTable {
 		}
 	}
 
-	
-	private class IconTableCellRenderer implements TableCellRenderer {
+	private static class IconTableCellRenderer implements TableCellRenderer {
 
-		private final TableCellRenderer tableCellRenderer;
+		private final JTable jTable;
+		private TableCellRenderer tableCellRenderer;
 
-		public IconTableCellRenderer(TableCellRenderer tableCellRenderer) {
-			this.tableCellRenderer = tableCellRenderer;
+		public IconTableCellRenderer(JTable jTable) {
+			this.jTable = jTable;
+			this.tableCellRenderer = jTable.getTableHeader().getDefaultRenderer();
+			System.out.println(tableCellRenderer.getClass().getName());
+			if (tableCellRenderer.getClass().getName().contains("XPDefaultRenderer")) {
+				installWorkaround();
+			}
+		}
+
+		private void installWorkaround() {
+			jTable.getTableHeader().addPropertyChangeListener("UI", new PropertyChangeListener() {
+				@Override
+				public void propertyChange(PropertyChangeEvent evt) {
+					/**
+					* Workaround for: https://github.com/GoldenGnu/jeveassets/issues/279 (JDK-6429812)
+					* On TableHeader UI update:
+					* Create decoupled DefaultTableCellHeaderRenderer to replace the now defunct wrapped renderer
+					*/
+				   IconTableCellRenderer.this.tableCellRenderer = new JTableHeader() {
+					   @Override
+					   public TableCellRenderer createDefaultRenderer() {
+						   return super.createDefaultRenderer();
+					   }
+				   }.createDefaultRenderer();
+				}
+			});
 		}
 
 		@Override
 		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
 			Component component = tableCellRenderer.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-			String columnName = (String) getTableHeader().getColumnModel().getColumn(column).getHeaderValue();
+			String columnName = (String) jTable.getTableHeader().getColumnModel().getColumn(column).getHeaderValue();
 			if (component instanceof JLabel) {
 				JLabel jLabel = (JLabel) component;
 				if (columnName.equals(ColorsTableFormat.NAME.getColumnName())) {
