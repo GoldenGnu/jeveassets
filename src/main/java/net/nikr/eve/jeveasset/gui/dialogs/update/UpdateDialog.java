@@ -708,8 +708,7 @@ public class UpdateDialog extends JDialogCentered {
 							jTransactions.isSelected(),
 							jSkills.isSelected()));
 					updateTasks.add(new Step3Task(program.getProfileManager(),
-							jAssets.isSelected(),
-							jContracts.isSelected()));
+							jAssets.isSelected()));
 				}
 				if (jContracts.isSelected()) {
 					updateTasks.add(new Step4Task(program.getProfileManager(), jContracts.isSelected()));
@@ -903,7 +902,7 @@ public class UpdateDialog extends JDialogCentered {
 
 		private final List<Runnable> updates = new ArrayList<>();
 
-		public Step3Task(final ProfileManager profileManager, final boolean assets, final boolean contracts) {
+		public Step3Task(final ProfileManager profileManager, final boolean assets) {
 			super(DialoguesUpdate.get().step3());
 			//Locations
 			if (assets) {
