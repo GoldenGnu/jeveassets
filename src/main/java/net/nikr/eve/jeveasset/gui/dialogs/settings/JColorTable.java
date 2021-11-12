@@ -203,7 +203,6 @@ public class JColorTable extends JSeparatorTable {
 		public IconTableCellRenderer(JTable jTable) {
 			this.jTable = jTable;
 			this.tableCellRenderer = jTable.getTableHeader().getDefaultRenderer();
-			System.out.println(tableCellRenderer.getClass().getName());
 			if (tableCellRenderer.getClass().getName().contains("XPDefaultRenderer")) {
 				installWorkaround();
 			}
