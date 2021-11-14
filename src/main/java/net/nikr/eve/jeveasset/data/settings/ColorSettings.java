@@ -41,7 +41,7 @@ import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 public class ColorSettings {
 
 	public static enum PredefinedLookAndFeel {
-		DEFAULT(DialoguesSettings.get().lookAndFeelDefault(), UIManager.getSystemLookAndFeelClassName(), true),
+		DEFAULT(null, UIManager.getSystemLookAndFeelClassName(), true),
 		FLAT_LIGHT(DialoguesSettings.get().lookAndFeelFlatLight(), "com.formdev.flatlaf.FlatLightLaf"),
 		FLAT_INTELLIJ(DialoguesSettings.get().lookAndFeelFlatIntelliJ(), "com.formdev.flatlaf.FlatIntelliJLaf"),
 		FLAT_DARK(DialoguesSettings.get().lookAndFeelFlatDark(), "com.formdev.flatlaf.FlatDarkLaf"),
@@ -58,6 +58,17 @@ public class ColorSettings {
 		}
 
 		private PredefinedLookAndFeel(String name, String className, boolean selected) {
+			if (name == null) {
+				for (LookAndFeelInfo laf : UIManager.getInstalledLookAndFeels()) {
+					if (laf.getClassName().equals(UIManager.getSystemLookAndFeelClassName())){
+						name = DialoguesSettings.get().lookAndFeelDefaultName(laf.getName());
+						break;
+					}
+				}
+				if (name == null) {
+					name = DialoguesSettings.get().lookAndFeelDefault();
+				}
+			}
 			this.name = name;
 			this.className = className;
 			this.selected = selected;
