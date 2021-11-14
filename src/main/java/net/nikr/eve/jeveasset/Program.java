@@ -379,43 +379,65 @@ public class Program implements ActionListener {
 				initLookAndFeel(UIManager.getSystemLookAndFeelClassName(), false);
 			}
 		}
-		setMacKeys(); // This must be performed immediately after the LaF has been set
+		setKeys(); // This must be performed immediately after the LaF has been set
 
 		//Make sure we have nice window decorations.
 		JFrame.setDefaultLookAndFeelDecorated(true);
 		JDialog.setDefaultLookAndFeelDecorated(true);
 	}
 
-	private void setMacKeys() {
-		// Ensure Max OSX key bindings are useable for copy, cut, paste, and select all
-		addMacKeysText(UIManager.get("EditorPane.focusInputMap"));
-		addMacKeysText(UIManager.get("FormattedTextField.focusInputMap"));
-		addMacKeysText(UIManager.get("PasswordField.focusInputMap"));
-		addMacKeysText(UIManager.get("TextField.focusInputMap"));
-		addMacKeysText(UIManager.get("TextPane.focusInputMap"));
-		addMacKeysText(UIManager.get("TextArea.focusInputMap"));
-		addMacKeysMisc(UIManager.get("Table.ancestorInputMap"));
-		addMacKeysMisc(UIManager.get("Tree.focusInputMap"));
-		addMacKeysMisc(UIManager.get("List.focusInputMap"));
+	private void setKeys() {
+		// Ensure Max OSX/Windows/Linux key bindings are useable for copy, cut, paste, and select all
+		addKeysText(UIManager.get("EditorPane.focusInputMap"));
+		addKeysText(UIManager.get("FormattedTextField.focusInputMap"));
+		addKeysText(UIManager.get("PasswordField.focusInputMap"));
+		addKeysText(UIManager.get("TextField.focusInputMap"));
+		addKeysText(UIManager.get("TextPane.focusInputMap"));
+		addKeysText(UIManager.get("TextArea.focusInputMap"));
+		addKeysMisc(UIManager.get("Table.ancestorInputMap"));
+		addKeysMisc(UIManager.get("Tree.focusInputMap"));
+		addKeysMisc(UIManager.get("List.focusInputMap"));
 	}
 
-	private void addMacKeysText(Object object) {
+	private void addKeysText(Object object) {
 		if (object instanceof InputMap) { //Better safe than sorry
 			InputMap inputMap = (InputMap) object;
+			//Mac Keys
 			inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.META_DOWN_MASK), DefaultEditorKit.copyAction);
 			inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_X, KeyEvent.META_DOWN_MASK), DefaultEditorKit.cutAction);
 			inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_V, KeyEvent.META_DOWN_MASK), DefaultEditorKit.pasteAction);
 			inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_A, KeyEvent.META_DOWN_MASK), DefaultEditorKit.selectAllAction);
+			//Win Keys
+			inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.CTRL_MASK), DefaultEditorKit.copyAction);
+			inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_X, KeyEvent.CTRL_MASK), DefaultEditorKit.cutAction);
+			inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_V, KeyEvent.CTRL_MASK), DefaultEditorKit.pasteAction);
+			inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_A, KeyEvent.CTRL_MASK), DefaultEditorKit.selectAllAction);
+			//Other
+			inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_INSERT, KeyEvent.CTRL_MASK), DefaultEditorKit.copyAction);
+			inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, KeyEvent.SHIFT_MASK), DefaultEditorKit.cutAction);
+			inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_INSERT, KeyEvent.SHIFT_MASK), DefaultEditorKit.pasteAction);
+			inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_SLASH, KeyEvent.CTRL_MASK), DefaultEditorKit.selectAllAction);
 		}
 	}
 
-	private void addMacKeysMisc(Object object) {
+	private void addKeysMisc(Object object) {
 		if (object instanceof InputMap) { //Better safe than sorry
 			InputMap inputMap = (InputMap) object;
+			//Mac Keys
 			inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.META_DOWN_MASK), "copy");
 			inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_X, KeyEvent.META_DOWN_MASK), "cut");
 			inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_V, KeyEvent.META_DOWN_MASK), "parse");
 			inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_A, KeyEvent.META_DOWN_MASK), "selectAll");
+			//Win Keys
+			inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.CTRL_MASK), "copy");
+			inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_X, KeyEvent.CTRL_MASK), "cut");
+			inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_V, KeyEvent.CTRL_MASK), "parse");
+			inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_A, KeyEvent.CTRL_MASK), "selectAll");
+			//Other
+			inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_INSERT, KeyEvent.CTRL_MASK), "copy");
+			inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, KeyEvent.SHIFT_MASK), "cut");
+			inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_INSERT, KeyEvent.SHIFT_MASK), "parse");
+			inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_SLASH, KeyEvent.CTRL_MASK), "selectAll");
 		}
 	}
 
