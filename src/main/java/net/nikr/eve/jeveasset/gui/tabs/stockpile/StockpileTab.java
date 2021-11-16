@@ -857,7 +857,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 	}
 	private void importText(StockpileImport stockpileImport) {
 		//Get string from clipboard
-		String text = jTextDialog.importText();
+		String text = jTextDialog.importText("", stockpileImport.getExample());
 		if (text == null) {
 			return; //Cancelled
 		}

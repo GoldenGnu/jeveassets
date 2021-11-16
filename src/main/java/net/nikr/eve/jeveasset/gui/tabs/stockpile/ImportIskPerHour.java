@@ -40,7 +40,39 @@ public class ImportIskPerHour extends StockpileImport{
 	public String getHelp() {
 		return TabsStockpile.get().importIskPerHourHelp();
 	}
-	
+ 
+	@Override
+	public String getExample() {
+		return "Supported formats:\n"
+				+ "\n"
+				//Default
+				+ "<item name><me> - <number>\n"
+				+  "10000MN Afterburner I (ME: 0, NumBPs: 1) - 1\n"
+				+ "\n"
+				//EveList
+				+ "<item name><space><number>\n"
+				+ "Tritanium 2932280\n"
+				+ "\n"
+				//Csv |
+				+ "<headers>\n"
+				+ "<item name>|<number>|<whatever>\n"
+				+ "Material|Quantity|Cost Per Item|Min Sell|Max Buy|Buy Type|Total m3|Isk/m3|TotalCost\n"
+				+ "Tritanium|2932280.00|0.00|0.00|0.00|Unknown|29322.80|0.00|0.00\n"
+				+ "\n"
+				//Csv ,
+				+ "<headers>\n"
+				+ "<item name>,<number>,<whatever>\n"
+				+ "Material, Quantity, Cost Per Item, Total Cost, Location\n"
+				+ "Tritanium, 2932280, 2, 5864560\n"
+				+ "\n"
+				//Csv ;
+				+ "<headers>\n"
+				+ "<item name>;<number>;<whatever>\n"
+				+ "Material; Quantity; Cost Per Item; Total Cost; Location\n"
+				+ "Tritanium; 2932280; 2; 5864560\n"
+				;
+	}
+
 	@Override
 	protected Map<String, Double> doImport(String text) {
 		//Get lines:
@@ -65,7 +97,7 @@ public class ImportIskPerHour extends StockpileImport{
 	}
 
 	private Map<String, Double> processDefaultCopy(String[] lines) {
-		Map<String, Double> data = new HashMap<String, Double>();
+		Map<String, Double> data = new HashMap<>();
 		for (String line : lines) {
 			if (line.trim().isEmpty() || (line.contains(":") && !line.contains(" (") && !line.contains(") ")) || line.contains("Material - Quantity")) {
 				continue;
@@ -93,7 +125,7 @@ public class ImportIskPerHour extends StockpileImport{
 	}
 
 	private Map<String, Double> processCsv(String[] lines, String separator, boolean decimalComma) {
-		Map<String, Double> data = new HashMap<String, Double>();
+		Map<String, Double> data = new HashMap<>();
 		for (String line : lines) {
 			if (line.trim().isEmpty() || line.contains(":") || !Pattern.compile(separator).matcher(line).find() || line.startsWith("Material") || line.startsWith("Item") || line.startsWith("Build Item")) {
 				continue;
@@ -120,7 +152,7 @@ public class ImportIskPerHour extends StockpileImport{
 	}
 
 	private Map<String, Double> processEveList(String[] lines) {
-		Map<String, Double> data = new HashMap<String, Double>();
+		Map<String, Double> data = new HashMap<>();
 		for (String line : lines) {
 			if (line.trim().isEmpty()) {
 				continue;

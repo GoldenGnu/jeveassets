@@ -34,11 +34,11 @@ public abstract class StockpileImport {
 		if (input == null) {
 			return null;
 		}
-		Map<String, Integer> lookup = new HashMap<String, Integer>();
+		Map<String, Integer> lookup = new HashMap<>();
 		for (Item item : StaticData.get().getItems().values()) {
 			lookup.put(item.getTypeName().toLowerCase(), item.getTypeID());
 		}
-		Map<Integer, Double> data = new HashMap<Integer, Double>();
+		Map<Integer, Double> data = new HashMap<>();
 		for (Map.Entry<String, Double> entry : input.entrySet()) {
 			Integer typeID = lookup.get(entry.getKey().toLowerCase());
 			if (typeID != null) {
@@ -51,6 +51,7 @@ public abstract class StockpileImport {
 	protected abstract Map<String, Double> doImport(String data);
 	public abstract String getTitle();
 	public abstract String getHelp();
+	public abstract String getExample();
 
 	public String getName() {
 		return name;

@@ -43,9 +43,33 @@ public class ImportShoppingList extends StockpileImport {
 	}
 
 	@Override
+	public String getExample() {
+		return "Stockpiles:\n"
+				+ "1x Rifter alpha\n"
+				+ "\n"
+				+ "Items:\n"
+				+ "3x 200mm AutoCannon I\n"
+				+ "1x Small Projectile Collision Accelerator I\n"
+				+ "1x Gyrostabilizer I\n"
+				+ "1x Small Projectile Burst Aerator I\n"
+				+ "1x Small Armor Repairer I\n"
+				+ "1x Rifter\n"
+				+ "1x Stasis Webifier I\n"
+				+ "1x Small Capacitor Booster I\n"
+				+ "1x Damage Control I\n"
+				+ "11x Cap Booster 200\n"
+				+ "2.360x Fusion S\n"
+				+ "1x 1MN Afterburner I\n"
+				+ "\n"
+				+ "Total m3 to be hauled: 2.648,90\n"
+				+ "Estimated market value: 256.613,00 isk"
+				;
+	}
+
+	@Override
 	protected Map<String, Double> doImport(String data) {
-		List<String> lines = new ArrayList<String>(Arrays.asList(data.split("[\r\n]+")));
-		Map<String, Double> items = new HashMap<String, Double>();
+		List<String> lines = new ArrayList<>(Arrays.asList(data.split("[\r\n]+")));
+		Map<String, Double> items = new HashMap<>();
 		if (!lines.isEmpty()) {
 			setName(lines.get(0));
 		}
