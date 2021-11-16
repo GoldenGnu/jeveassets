@@ -1237,14 +1237,7 @@ public class ProfileData {
 	}
 
 	private void updateName(MyAsset asset) {
-		if (Settings.get().getUserItemNames().containsKey(asset.getItemID())) {
-			asset.setName(Settings.get().getUserItemNames().get(asset.getItemID()).getValue(), true, false);
-		} else if (Settings.get().getEveNames().containsKey(asset.getItemID())) {
-			String eveName = Settings.get().getEveNames().get(asset.getItemID());
-			asset.setName(eveName + " (" + asset.getTypeName() + ")", false, true);
-		} else {
-			asset.setName(asset.getTypeName(), false, false);
-		}
+		asset.setName(Settings.get().getUserItemNames().get(asset.getItemID()), Settings.get().getEveNames().get(asset.getItemID()));
 	}
 
 	private void updateContainerChildren(List<MyAsset> found, List<MyAsset> assets) {

@@ -31,6 +31,7 @@ import javax.swing.Icon;
 import net.nikr.eve.jeveasset.data.api.my.MyAsset;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
+import net.nikr.eve.jeveasset.data.settings.UserItem;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.HierarchyColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.Percent;
@@ -169,9 +170,9 @@ public class TreeAsset extends MyAsset {
 	}
 
 	@Override
-	public void setName(String name, boolean userNameSet, boolean eveNameSet) {
-		super.setName(name, userNameSet, eveNameSet);
-		this.treeName = createSpace(tree.size()) + name;
+	public void setName(UserItem<Long, String> customeItem, String eveName) {
+		super.setName(customeItem, eveName);
+		this.treeName = createSpace(tree.size()) + getName();
 		this.hierarchyColumn = new HierarchyColumn(this.treeName, this.parent);
 	}
 
