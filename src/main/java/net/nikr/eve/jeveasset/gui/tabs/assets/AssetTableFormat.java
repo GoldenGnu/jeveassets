@@ -46,6 +46,34 @@ public enum AssetTableFormat implements EnumTableColumn<MyAsset> {
 			return from.getName();
 		}
 	},
+	NAME_TYPE(String.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsAssets.get().columnNameType();
+		}
+		@Override
+		public Object getColumnValue(final MyAsset from) {
+			return from.getTypeName();
+		}
+		@Override
+		public boolean isShowDefault() {
+			return false;
+		}
+	},
+	NAME_CUSTOM(String.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsAssets.get().columnNameCustom();
+		}
+		@Override
+		public Object getColumnValue(final MyAsset from) {
+			return from.getCustomName();
+		}
+		@Override
+		public boolean isShowDefault() {
+			return false;
+		}
+	},
 	TAGS(Tags.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
