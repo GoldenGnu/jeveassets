@@ -41,6 +41,24 @@ public class ImportEveMultibuy extends StockpileImport {
 	}
 
 	@Override
+	public String getExample() {
+		return "Supported formats:\n"
+				+ "\n"
+				+ "<item name><space><number><whatever>\n"
+				+ "Hammerhead II	10	1.189.997,05	11.899.970,50\n"
+				+ "\n"
+				+ "<item name><space>x<number>\n"
+				+ "Veldspar	x10\n"
+				+ "\n"
+				+ "<number><space><item name>\n"
+				+ "10 Veldspar\n"
+				+ "\n"
+				+ "x<number><space><item name>\n"
+				+ "x10 Veldspar\n"
+				;
+	}
+
+	@Override
 	protected Map<String, Double> doImport(String data) {
 		List<String> lines = new ArrayList<>(Arrays.asList(data.split("[\r\n]+")));
 		Map<String, Double> items = new HashMap<>();

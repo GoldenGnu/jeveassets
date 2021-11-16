@@ -36,7 +36,6 @@ import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.settings.Colors;
 import net.nikr.eve.jeveasset.gui.images.Images;
@@ -55,7 +54,7 @@ public class JTextDialog extends JDialogCentered {
 		OK
 	}
 
-	private final JTextArea jText;
+	private final JTextAreaPlaceholder jText;
 	private final JButton jToClipboard;
 	private final JButton jFromClipboard;
 	private final JButton jToFile;
@@ -100,7 +99,9 @@ public class JTextDialog extends JDialogCentered {
 		jCancel.setActionCommand(TextDialogAction.CANCEL.name());
 		jCancel.addActionListener(listener);
 		
-		jText = new JTextArea();
+		jText = new JTextAreaPlaceholder();
+		jText.setTabSize(4);
+		jText.setLineWrap(true);
 		jText.setEditable(false);
 		jText.setFont(jPanel.getFont());
 
@@ -160,20 +161,28 @@ public class JTextDialog extends JDialogCentered {
 		
 	}
 
-	public String importText() {
-		return importText("");
-	}
-
 	public void setLineWrap(boolean wrap) {
 		jText.setLineWrap(wrap);
 	}
 
+	public String importText() {
+		return importText("", "");
+	}
+
 	public String importText(String text) {
+		return importText(text, "");
+	}
+
+	public String importText(String text, String example) {
 		getDialog().setTitle(GuiShared.get().textImport());
 		jText.setEditable(true);
 		jText.setOpaque(true);
 		jText.setBackground(importColor);
 		jText.setText(text);
+		if (example == null) {
+			example = ""; //null not allowed!
+		}
+		jText.setPlaceholderText(example);
 		jOK.setText(GuiShared.get().ok());
 		jCancel.setVisible(true);
 		jFromClipboard.setVisible(true);

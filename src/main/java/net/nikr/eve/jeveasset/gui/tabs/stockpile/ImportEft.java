@@ -45,6 +45,30 @@ public class ImportEft extends StockpileImport {
 	}
 
 	@Override
+	public String getExample() {
+		return "[Rifter, Rifter alpha]\n"
+				+ "\n"
+				+ "200mm AutoCannon I\n"
+				+ "200mm AutoCannon I\n"
+				+ "200mm AutoCannon I\n"
+				+ "\n"
+				+ "1MN Afterburner I\n"
+				+ "Stasis Webifier I\n"
+				+ "Small Capacitor Booster I\n"
+				+ "\n"
+				+ "Gyrostabilizer I\n"
+				+ "Small Armor Repairer I\n"
+				+ "Damage Control I\n"
+				+ "\n"
+				+ "Small Projectile Collision Accelerator I\n"
+				+ "Small Projectile Burst Aerator I\n"
+				+ "\n"
+				+ "Cap Booster 200 x11\n"
+				+ "Fusion S x2360"
+				;
+	}
+
+	@Override
 	protected Map<String, Double> doImport(String data) {
 		//Format and split
 		List<String> modules = new ArrayList<>(Arrays.asList(data.split("[\r\n]+")));
