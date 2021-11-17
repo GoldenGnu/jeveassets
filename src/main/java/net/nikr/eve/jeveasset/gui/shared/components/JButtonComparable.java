@@ -20,31 +20,82 @@
  */
 package net.nikr.eve.jeveasset.gui.shared.components;
 
+import com.formdev.flatlaf.ui.FlatButtonBorder;
+import java.awt.Color;
+import java.awt.Component;
 import java.util.Objects;
 import javax.swing.Icon;
 import javax.swing.JButton;
+import javax.swing.border.Border;
 
 
-public class JButtonComparable extends JButton implements Comparable<JButtonComparable> {
+public class JButtonComparable extends JButton implements Comparable<Component> {
+
+	private boolean lock = false;
 
 	public JButtonComparable() {
+		this(null, null);
 	}
 
 	public JButtonComparable(Icon icon) {
-		super(icon);
+		this(null, icon);
 	}
 
-	public JButtonComparable(String string) {
-		super(string);
+	public JButtonComparable(String text) {
+		this(text, null);
 	}
 
-	public JButtonComparable(String string, Icon icon) {
-		super(string, icon);
+	public JButtonComparable(String text, Icon icon) {
+		super(text, icon);
+		updateBorder();
+		lock();
 	}
 
 	@Override
-	public int compareTo(JButtonComparable o) {
-		return getText().compareTo(o.getText());
+	public void setBackground(Color bg) {
+		if (lock) {
+			return;
+		}
+		super.setBackground(bg);
+	}
+
+	@Override
+	public void setForeground(Color fg) {
+		if (lock) {
+			return;
+		}
+		super.setForeground(fg);
+	}
+
+	@Override
+	public void setBorder(Border border) {
+		if (lock) {
+			return;
+		}
+		super.setBorder(border);
+	}
+
+	/**
+	 * Workaround for: https://github.com/JFormDesigner/FlatLaf/issues/331
+	 */
+	private void updateBorder() {
+		if (getBorder() instanceof FlatButtonBorder) {
+			super.setBorder(new FlatButtonBorder() {
+				@Override
+				protected boolean isCellEditor(Component c) {
+					return false;
+				}
+			});
+		}
+	}
+
+	private void lock() {
+		this.lock = true;
+	}
+
+	@Override
+	public int compareTo(Component o) {
+		return 0;
 	}
 
 	@Override
@@ -76,5 +127,5 @@ public class JButtonComparable extends JButton implements Comparable<JButtonComp
 		}
 		return true;
 	}
-	
+
 }
