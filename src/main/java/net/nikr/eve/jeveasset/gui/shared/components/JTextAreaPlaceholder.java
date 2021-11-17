@@ -222,7 +222,7 @@ public class JTextAreaPlaceholder extends JTextArea {
 	}
 
 	public void setPlaceholderForeground(Color fg) {
-		jPlaceholder.setForeground(fg);
+		getMock().setForeground(fg);
 		revalidate();
         repaint();
 	}
