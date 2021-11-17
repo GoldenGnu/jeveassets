@@ -32,6 +32,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellEditor;
 import net.nikr.eve.jeveasset.data.settings.tag.Tags;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
+import net.nikr.eve.jeveasset.gui.shared.components.JButtonComparable;
 
 
 public class TableCellRenderers {
@@ -165,7 +166,17 @@ public class TableCellRenderers {
 
 		@Override
 		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-			if (value instanceof Component) {
+			if (value instanceof JButtonComparable) {
+				JButtonComparable jButton = (JButtonComparable) value;
+				if (isSelected && table.getSelectedColumns().length == 1 && table.getSelectedRows().length == 1) {
+					jButton.getModel().setRollover(true);
+					jButton.getModel().setSelected(true);
+				} else {
+					jButton.getModel().setRollover(false);
+					jButton.getModel().setSelected(false);
+				}
+				return jButton;
+			} else if (value instanceof Component) {
 				return (Component) value;
 			} else {
 				return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
