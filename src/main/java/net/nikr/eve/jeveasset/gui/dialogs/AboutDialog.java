@@ -96,6 +96,7 @@ public class AboutDialog extends JDialogCentered {
 				+ "<br>"
 				+ "<b>One-time Contributors</b><br>"
 				+ "&nbsp;Madetara (Ray Kavier)<br>"
+				+ "&nbsp;Kaylee Syntax<br>"
 				+ "<br>"
 				+ "<b>Retired Developers</b><br>"
 				+ "&nbsp;Flaming Candle<br>"
