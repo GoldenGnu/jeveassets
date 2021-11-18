@@ -26,6 +26,7 @@ import java.util.Date;
 import java.util.Objects;
 import java.util.Set;
 import javax.management.timer.Timer;
+import javax.swing.JButton;
 import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder;
 import net.nikr.eve.jeveasset.data.sde.Item;
@@ -37,13 +38,14 @@ import net.nikr.eve.jeveasset.data.settings.types.EditableLocationType;
 import net.nikr.eve.jeveasset.data.settings.types.EditablePriceType;
 import net.nikr.eve.jeveasset.data.settings.types.ItemType;
 import net.nikr.eve.jeveasset.data.settings.types.LastTransactionType;
+import net.nikr.eve.jeveasset.data.settings.types.MarketDetailType;
 import net.nikr.eve.jeveasset.data.settings.types.OwnersType;
 import net.nikr.eve.jeveasset.gui.shared.components.JButtonComparable;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.Percent;
 import net.nikr.eve.jeveasset.gui.tabs.orders.Outbid;
 import net.nikr.eve.jeveasset.i18n.TabsOrders;
 
-public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarketOrder>, EditableLocationType, ItemType, BlueprintType, EditablePriceType, ContractPriceType, OwnersType, LastTransactionType {
+public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarketOrder>, EditableLocationType, ItemType, BlueprintType, EditablePriceType, ContractPriceType, OwnersType, LastTransactionType, MarketDetailType {
 
 	public enum OrderStatus {
 		ACTIVE() {
@@ -123,7 +125,8 @@ public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarket
 	private Double brokersFee;
 	private Outbid outbid;
 	private double priceReprocessed;
-	private JButtonComparable jButton = new JButtonComparable(TabsOrders.get().eveUiOpen());
+	//soft init
+	private JButton jButton;
 
 	public MyMarketOrder(final RawMarketOrder rawMarketOrder, final Item item, final OwnerType owner) {
 		super(rawMarketOrder);
@@ -438,7 +441,11 @@ public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarket
 		this.priceReprocessed = priceReprocessed;
 	}
 
-	public JButtonComparable getButton() {
+	@Override
+	public JButton getButton() {
+		if (jButton == null) {
+			jButton = new JButtonComparable(TabsOrders.get().eveUiOpen());
+		}
 		return jButton;
 	}
 
