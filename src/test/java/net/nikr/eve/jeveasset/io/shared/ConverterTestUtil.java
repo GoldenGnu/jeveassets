@@ -34,6 +34,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import javax.swing.JButton;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.data.api.accounts.EveApiAccount;
 import net.nikr.eve.jeveasset.data.api.accounts.EveApiAccount.KeyType;
@@ -708,6 +709,8 @@ public class ConverterTestUtil {
 			return options.getMarketOrdersOutbid();
 		} else if (type.equals(MyShip.class)) {
 			return options.getMyShip();
+		} else if (type.equals(JButton.class)) {
+			return options.getButton();
 		} else {
 			fail("No test value for: " + type.getSimpleName());
 			return null;

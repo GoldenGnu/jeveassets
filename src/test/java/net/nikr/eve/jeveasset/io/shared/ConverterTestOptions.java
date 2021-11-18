@@ -24,6 +24,7 @@ import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.Date;
+import javax.swing.JButton;
 import net.nikr.eve.jeveasset.data.api.accounts.EveApiAccount;
 import net.nikr.eve.jeveasset.data.api.accounts.EveApiAccount.KeyType;
 import net.nikr.eve.jeveasset.data.api.my.MyShip;
@@ -80,6 +81,8 @@ public interface ConverterTestOptions {
 	public UserItem<Integer, Double> getUserPrice();
 
 	public MyShip getMyShip();
+
+	public JButton getButton();
 
 	public MarketPriceData getMarketPriceData();
 
