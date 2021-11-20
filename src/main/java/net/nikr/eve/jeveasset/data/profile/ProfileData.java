@@ -1111,6 +1111,20 @@ public class ProfileData {
 		data.update(transaction.getPrice(), transaction.getItemCount(), transaction.getDate());
 	}
 
+	public Double getTransactionAveragePrice(int typeID) {
+		MarketPriceData buy = transactionBuyPriceData.get(typeID);
+		MarketPriceData sell = transactionSellPriceData.get(typeID);
+		if (buy != null && sell != null) {
+			return MarketPriceData.getAverage(buy, sell);
+		} else if (buy != null) {
+			return buy.getAverage();
+		} else if (sell != null) {
+			return sell.getAverage();
+		} else {
+			return null;
+		}
+	}
+
 	private void setLastTransaction(LastTransactionType item, int typeID, boolean buy, double price, Double tax) {
 		if (tax == null) {
 			tax = 0.0;
