@@ -203,6 +203,16 @@ public enum IndustryJobTableFormat implements EnumTableColumn<MyIndustryJob> {
 		public Object getColumnValue(final MyIndustryJob from) {
 			return from.getTimeEfficiency();
 		}
+	},
+	COST(Double.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+		    return TabsJobs.get().columnCost();
+		}
+		@Override
+		public Object getColumnValue(final MyIndustryJob from) {
+		    return from.getCost();
+		}
 	};
 
 	private final Class<?> type;
