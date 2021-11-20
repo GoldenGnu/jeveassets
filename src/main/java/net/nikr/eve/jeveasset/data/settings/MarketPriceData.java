@@ -77,4 +77,14 @@ public class MarketPriceData {
 			return 0;
 		}
 	}
+
+	public static double getAverage(MarketPriceData buy, MarketPriceData sell) {
+		double total = buy.total + sell.total;
+		double count = buy.count + sell.count;
+		if (total > 0 && count > 0) {
+			return total / count;
+		} else {
+			return 0;
+		}
+	}
 }

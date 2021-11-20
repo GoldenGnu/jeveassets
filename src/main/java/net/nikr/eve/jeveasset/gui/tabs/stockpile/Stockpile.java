@@ -524,6 +524,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 		//Updated values
 		private double price = 0.0;
 		private double volume = 0.0f;
+		private Double transactionAveragePrice; //can be null!
 
 		//Dynamic values
 		private Tags tags;
@@ -601,9 +602,10 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 			volume = 0.0f;
 		}
 
-		public void updateValues(final double updatePrice, final float updateVolume) {
+		public void updateValues(final double updatePrice, final float updateVolume, Double transactionAveragePrice) {
 			this.price = updatePrice;
 			this.volume = updateVolume;
+			this.transactionAveragePrice = transactionAveragePrice;
 		}
 
 		Long matches(Object object) {
@@ -1161,6 +1163,10 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 		@Override
 		public Double getDynamicPrice() {
 			return price;
+		}
+
+		public Double getTransactionAveragePrice() {
+			return transactionAveragePrice;
 		}
 
 		public int getItemTypeID() {

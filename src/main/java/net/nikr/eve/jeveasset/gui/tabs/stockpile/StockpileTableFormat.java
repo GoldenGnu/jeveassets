@@ -252,6 +252,21 @@ public enum StockpileTableFormat implements EnumTableColumn<StockpileItem> {
 			return from.getDynamicPrice();
 		}
 	},
+	PRICE_TRANSACTION_AVERAGE(Double.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsStockpile.get().columnPriceTransactionAverage();
+		}
+
+		@Override
+		public String getColumnToolTip() {
+			return TabsStockpile.get().columnPriceTransactionAverageToolTip();
+		}
+		@Override
+		public Object getColumnValue(final StockpileItem from) {
+			return from.getTransactionAveragePrice();
+		}
+	},
 	EVE_UI(Component.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
