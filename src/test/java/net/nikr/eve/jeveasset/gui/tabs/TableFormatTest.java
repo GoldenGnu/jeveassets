@@ -172,6 +172,7 @@ public class TableFormatTest extends TestUtil {
 			stockpile.setFlagName(Collections.singleton(asset.getItemFlag()));
 			StockpileItem stockpileItem = new StockpileItem(stockpile, item, INTEGER_VALUE, DOUBLE_VALUE, BOOLEAN_VALUE);
 			stockpileItem.setTags(tags);
+			stockpileItem.updateValues(0, 0, DOUBLE_VALUE);
 			for (StockpileTableFormat tableFormat : StockpileTableFormat.values()) {
 				test(tableFormat, tableFormat.getType(), tableFormat.getColumnValue(stockpileItem));
 			}
