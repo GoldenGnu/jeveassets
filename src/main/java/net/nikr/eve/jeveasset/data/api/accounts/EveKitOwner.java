@@ -264,7 +264,7 @@ public class EveKitOwner extends DeprecatedOwner implements OwnerType {
 	}
 
 	@Override
-	public boolean isInvalid() {
+	public synchronized boolean isInvalid() {
 		return false;
 	}
 

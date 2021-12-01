@@ -89,7 +89,7 @@ public class StockpileDataReader extends AbstractBackup {
 			//Stockpile
 			JsonObject stockpileObject = json.getAsJsonObject();
 			String name = stockpileObject.get("n").getAsString();
-			Double multiplier = stockpileObject.get("m").getAsDouble();
+			double multiplier = stockpileObject.get("m").getAsDouble();
 
 			//Filters
 			List<StockpileFilter> filters = new ArrayList<>();

@@ -20,6 +20,7 @@
  */
 package net.nikr.eve.jeveasset.data.settings;
 
+import java.util.Objects;
 import javax.swing.Icon;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.i18n.DataModelPriceDataSettings;
@@ -373,7 +374,10 @@ public class PriceDataSettings {
 	}
 
 	@Override
-	public boolean equals(final Object obj) {
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
 		if (obj == null) {
 			return false;
 		}
@@ -384,7 +388,7 @@ public class PriceDataSettings {
 		if (this.locationType != other.locationType) {
 			return false;
 		}
-		if (this.locationID != other.locationID && (this.locationID == null || !this.locationID.equals(other.locationID))) {
+		if (!Objects.equals(this.locationID, other.locationID)) {
 			return false;
 		}
 		if (this.priceSource != other.priceSource) {
@@ -395,10 +399,10 @@ public class PriceDataSettings {
 
 	@Override
 	public int hashCode() {
-		int hash = 7;
-		hash = 19 * hash + (this.locationType != null ? this.locationType.hashCode() : 0);
-		hash = 19 * hash + (this.locationID != null ? this.locationID.hashCode() : 0);
-		hash = 19 * hash + (this.priceSource != null ? this.priceSource.hashCode() : 0);
+		int hash = 5;
+		hash = 29 * hash + Objects.hashCode(this.locationType);
+		hash = 29 * hash + Objects.hashCode(this.locationID);
+		hash = 29 * hash + Objects.hashCode(this.priceSource);
 		return hash;
 	}
 }

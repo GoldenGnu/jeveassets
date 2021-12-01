@@ -542,7 +542,7 @@ public class EnumTableFormatAdaptor<T extends Enum<T> & EnumTableColumn<Q>, Q> i
 				}
 				map.put(item.getItemTypeID(), item);
 			}
-			Double total = 0.0;
+			double total = 0.0;
 			for (StockpileItem item : map.values()) {
 				if (item.getItemTypeID() == 0) {
 					continue;
