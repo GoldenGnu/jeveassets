@@ -155,10 +155,19 @@ public enum RawJournalRefType {
 	EXTERNAL_TRADE_FREEZE(136, "External Trade Freeze"),
 	EXTERNAL_TRADE_THAW(137, "External Trade Thaw"),
 	EXTERNAL_TRADE_DELIVERY(138, "External Trade Delivery"),
+	SEASON_CHALLENGE_REWARD(139, "Season Challenge Reward"),
 	STRUCTURE_GATE_JUMP(140, "Structure Gate Jump"),
 	SKILL_PURCHASE(141, "Skill Purchase"),
 	ITEM_TRADER_PAYMENT(142, "Item Trader Payment"),
+	FLUX_TICKET_SALE(143, "Flux Ticket Sale"), //hypernet ref group
+	FLUX_PAYOUT(144, "Flux Payout"), //hypernet ref group
+	FLUX_TAX(145, "Flux Tax"), //hypernet ref group
+	FLUX_TICKET_REPAYMENT(146, "Flux Ticket Repayment"), //hypernet ref group
+	REDEEMED_ISK_TOKEN(147, "Redeemed Isk Token"),
+	DAILY_CHALLENGE_REWARD(148, "Daily Challenge Reward"),
+	MARKET_PROVIDER_TAX(149, "Market Provider Tax"),
 	ESS_ESCROW_TRANSFER(155, "ESS Escrow Transfer"),
+	MILESTONE_REWARD_PAYMENT(156, "Milestone Reward Payment"),
 	MODIFY_ISK(10001, "Modify ISK"),
 	PRIMARY_MARKETPLACE_PURCHASE(10002, "Primary Marketplace Purchase"),
 	BATTLE_REWARD(10003, "Battle Reward"),
@@ -198,9 +207,8 @@ public enum RawJournalRefType {
 	PLANETARY_CONQUEST_DK(13002, "Planetary conquest DK"),
 	USE_DK_FOR_PURCHASING_ITEMS(13003, "Use DK for purchasing items"),
 	USE_DK_FOR_REROLLING_MARKET(13004, "Use DK for rerolling market"),
-	SELLING_CLONES_DK(13005, "Selling Clones DK"), /*
-	CONTRACT("contract"),
-	 */;
+	SELLING_CLONES_DK(13005, "Selling Clones DK"),
+	;
 
 	private final int id;
 	private final String value;
