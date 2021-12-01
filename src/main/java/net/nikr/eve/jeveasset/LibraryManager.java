@@ -112,7 +112,7 @@ public class LibraryManager {
 			files.add("swagger-annotations-1.6.2.jar");
 			files.add("annotations-13.0.jar");
 			files.add("hamcrest-core-1.3.jar");
-			files.add("eve-esi-4.6.0.jar");
+			files.add("eve-esi-4.6.1.jar");
 			files.add("hamcrest-core-1.3.jar");
 			files.add("jaxb-api-2.3.1.jar");
 			files.add("sqlite-jdbc-3.32.3.2.jar");
