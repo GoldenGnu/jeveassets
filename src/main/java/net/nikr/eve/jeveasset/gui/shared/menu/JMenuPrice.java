@@ -84,7 +84,7 @@ public class JMenuPrice<T> extends JAutoMenu<T> {
 	}
 
 	private List<UserItem<Integer, Double>> createList() {
-		List<UserItem<Integer, Double>> itemPrices = new ArrayList<UserItem<Integer, Double>>();
+		List<UserItem<Integer, Double>> itemPrices = new ArrayList<>();
 		for (Map.Entry<Integer, Double> entry : menuData.getPrices().entrySet()) {
 			Item item = ApiIdConverter.getItem(Math.abs(entry.getKey()));
 			String name = "";
@@ -161,7 +161,7 @@ public class JMenuPrice<T> extends JAutoMenu<T> {
 		}
 		UserItem<Integer, Double> userPrice = getUserPrice(contractPriceItem);
 		if (userPrice != null) {
-			if (contractPriceItem.isBpc()) {
+			if (contractPriceItem.isBpc() && userPrice.getValue() > 0 && contractPriceItem.getRuns() > 0) {
 				feedback.setSuggestedPricePerUnit(userPrice.getValue() / contractPriceItem.getRuns());
 			} else {
 				feedback.setSuggestedPricePerUnit(userPrice.getValue());
