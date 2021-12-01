@@ -131,7 +131,7 @@ public class LibraryManager {
 			files.add("jna-5.6.0.jar");
 			files.add("jsr250-api-1.0.jar");
 			files.add("jsr305-3.0.2.jar");
-			files.add("flatlaf-0.43.jar");
+			files.add("flatlaf-1.6.4.jar");
 			files.add("kotlin-stdlib-jdk7-1.4.10.jar");
 			files.add("kotlin-stdlib-1.4.10.jar");
 			files.add("kotlin-stdlib-jdk8-1.4.10.jar");
