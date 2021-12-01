@@ -837,7 +837,7 @@
 			<!-- https://github.com/JFormDesigner/FlatLaf/blob/master/CHANGELOG.md -->
 			<groupId>com.formdev</groupId>
 			<artifactId>flatlaf</artifactId>
-			<version>0.43</version>
+			<version>1.6.4</version>
 		</dependency>
 		<dependency>
 			<groupId>com.udojava</groupId>
