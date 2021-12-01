@@ -162,7 +162,7 @@ public class EveApiOwner extends DeprecatedOwner implements OwnerType {
 	}
 
 	@Override
-	public boolean isInvalid() {
+	public synchronized boolean isInvalid() {
 		return getParentAccount().isInvalid();
 	}
 

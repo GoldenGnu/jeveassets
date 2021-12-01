@@ -1136,7 +1136,7 @@ public class ProfileData {
 			marketPriceData = transactionBuyPriceData.get(typeID); 
 		}
 		if (marketPriceData != null) {
-			Double transactionPrice;
+			double transactionPrice;
 			switch (Settings.get().getTransactionProfitPrice()) {
 				case AVERAGE: 
 					transactionPrice = marketPriceData.getAverage();
