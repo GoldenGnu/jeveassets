@@ -291,23 +291,31 @@ public class Updater {
 	}
 
 	public static String getPackageMaintainers() {
-		Properties prop = new Properties();
-		try {
-			prop.load(new FileInputStream(new File(FileUtil.getPathPackageManager())));
-		} catch (IOException ex) {
-			//No problem
-		}
-		return prop.getProperty("maintainers", null);
+		return readProperties(FileUtil.getPathPackageManager()).getProperty("maintainers", null);
 	}
 
 	public static boolean getPackageNotifyUpdates() {
-		Properties prop = new Properties();
+		return "true".equals(readProperties(FileUtil.getPathPackageManager()).getProperty("notifyUpdates", "").toLowerCase());
+	}
+
+	private static Properties readProperties(String filename) {
+		Properties properties = new Properties();
+		FileInputStream inputStream = null;
 		try {
-			prop.load(new FileInputStream(new File(FileUtil.getPathPackageManager())));
+			inputStream = new FileInputStream(new File(filename));
+			properties.load(inputStream);
 		} catch (IOException ex) {
 			//No problem
+		} finally {
+			if (inputStream != null) {
+				try {
+					inputStream.close();
+				} catch (IOException ex) {
+					//No problem
+				}
+			}
 		}
-		return "true".equals(prop.getProperty("notifyUpdates", "").toLowerCase());
+		return properties; //Never null
 	}
 
 	private boolean downloadUpdater() {

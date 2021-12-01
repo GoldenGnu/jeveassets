@@ -139,7 +139,7 @@ public class MarketLogReader {
 			if (retries < RETRIES) {
 				retries++;
 				try {
-					Thread.sleep(retries * 500);
+					Thread.sleep(retries * 500L);
 				} catch (InterruptedException ex1) {
 					//Keep calm and carry on
 				}
