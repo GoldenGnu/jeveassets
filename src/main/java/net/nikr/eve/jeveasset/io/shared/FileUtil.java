@@ -22,7 +22,6 @@ package net.nikr.eve.jeveasset.io.shared;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.nio.file.FileSystems;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
@@ -37,7 +36,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-public class FileUtil {
+public class FileUtil extends FileUtilSimple {
 	private static final Logger LOG = LoggerFactory.getLogger(FileUtil.class);
 
 	private static final String PATH_ASSET_ADDED = "data" + File.separator + "added.json";
@@ -61,7 +60,6 @@ public class FileUtil {
 	private static final String PATH_PROFILES = "profiles";
 	private static final String PATH_DATA = "data";
 	private static final String PATH_DATA_VERSION = "data" + File.separator + "data.dat";
-	private static final String PATH_JAR = "jeveassets.jar";
 	private static final String PATH_PACKAGE_MANAGER = "packagemanager.properties";
 	private static final String PATH_MEMORY = "jmemory.jar";
 
@@ -70,27 +68,15 @@ public class FileUtil {
 	}
 
 	public static String getPathDataVersion() {
-		return FileUtil.getLocalFile(PATH_DATA_VERSION, false);
-	}
-
-	public static String getPathRunJar() {
-		return FileUtil.getLocalFile(PATH_JAR, false);
+		return getLocalFile(PATH_DATA_VERSION, false);
 	}
 
 	public static String getPathRunMemory() {
-		return FileUtil.getLocalFile(PATH_MEMORY, false);
+		return getLocalFile(PATH_MEMORY, false);
 	}
 
 	public static String getPathPackageManager() {
-		return FileUtil.getLocalFile(PATH_PACKAGE_MANAGER, false);
-	}
-
-	public static String getPathLib() {
-		return getPathLib("");
-	}
-
-	public static String getPathLib(String filename) {
-		return FileUtil.getLocalFile("lib" + File.separator + filename, false);
+		return getLocalFile(PATH_PACKAGE_MANAGER, false);
 	}
 
 	public static String getPathInstaller(String filename) {
@@ -137,13 +123,7 @@ public class FileUtil {
 				throw new RuntimeException("failed to create directories for " + parent.getAbsolutePath());
 			}
 		} else {
-			URL location = net.nikr.eve.jeveasset.Program.class.getProtectionDomain().getCodeSource().getLocation();
-			try {
-				file = new File(location.toURI());
-			} catch (Exception ex) {
-				file = new File(location.getPath());
-			}
-			ret = new File(file.getParentFile().getAbsolutePath() + File.separator + filename);
+			ret = new File(FileUtilSimple.getLocalFile(filename));
 		}
 		return ret.getAbsolutePath();
 	}
@@ -164,25 +144,25 @@ public class FileUtil {
 	public static void autoImportFileUtil() {
 		if (Program.PROGRAM_DEV_BUILD && !Settings.isTestMode()) { //Need import
 			Program.setPortable(false);
-			Path settingsFrom = Paths.get(FileUtil.getPathSettings());
-			Path trackerFrom = Paths.get(FileUtil.getPathTrackerData());
-			Path assetAddedFrom = Paths.get(FileUtil.getPathAssetAdded());
-			Path assetAddedDatabaseFrom = Paths.get(FileUtil.getPathAssetAddedDatabase());
-			Path citadelFrom = Paths.get(FileUtil.getPathCitadel());
-			Path priceFrom = Paths.get(FileUtil.getPathPriceData());
-			Path profilesFrom = Paths.get(FileUtil.getPathProfilesDirectory());
-			Path contractPricesFrom = Paths.get(FileUtil.getPathContractPrices());
-			Path itemsUpdatesFrom = Paths.get(FileUtil.getPathItemsUpdates());
+			Path settingsFrom = Paths.get(getPathSettings());
+			Path trackerFrom = Paths.get(getPathTrackerData());
+			Path assetAddedFrom = Paths.get(getPathAssetAdded());
+			Path assetAddedDatabaseFrom = Paths.get(getPathAssetAddedDatabase());
+			Path citadelFrom = Paths.get(getPathCitadel());
+			Path priceFrom = Paths.get(getPathPriceData());
+			Path profilesFrom = Paths.get(getPathProfilesDirectory());
+			Path contractPricesFrom = Paths.get(getPathContractPrices());
+			Path itemsUpdatesFrom = Paths.get(getPathItemsUpdates());
 			Program.setPortable(true);
-			Path settingsTo = Paths.get(FileUtil.getPathSettings());
-			Path trackerTo = Paths.get(FileUtil.getPathTrackerData());
-			Path assetAddedTo = Paths.get(FileUtil.getPathAssetAdded());
-			Path assetAddedDatabaseTo = Paths.get(FileUtil.getPathAssetAddedDatabase());
-			Path citadelTo = Paths.get(FileUtil.getPathCitadel());
-			Path priceTo = Paths.get(FileUtil.getPathPriceData());
-			Path profilesTo = Paths.get(FileUtil.getPathProfilesDirectory());
-			Path contractPricesTo = Paths.get(FileUtil.getPathContractPrices());
-			Path itemsUpdatesTo = Paths.get(FileUtil.getPathItemsUpdates());
+			Path settingsTo = Paths.get(getPathSettings());
+			Path trackerTo = Paths.get(getPathTrackerData());
+			Path assetAddedTo = Paths.get(getPathAssetAdded());
+			Path assetAddedDatabaseTo = Paths.get(getPathAssetAddedDatabase());
+			Path citadelTo = Paths.get(getPathCitadel());
+			Path priceTo = Paths.get(getPathPriceData());
+			Path profilesTo = Paths.get(getPathProfilesDirectory());
+			Path contractPricesTo = Paths.get(getPathContractPrices());
+			Path itemsUpdatesTo = Paths.get(getPathItemsUpdates());
 			if (Files.exists(settingsFrom) && !Files.exists(settingsTo)) {
 				LOG.info("Importing settings");
 				try {
@@ -287,87 +267,87 @@ public class FileUtil {
 	}
 
 	public static String getPathSettings() {
-		return FileUtil.getLocalFile(FileUtil.PATH_SETTINGS, !Program.isPortable());
+		return getLocalFile(PATH_SETTINGS, !Program.isPortable());
 	}
 
 	public static String getPathTrackerData() {
-		return FileUtil.getLocalFile(FileUtil.PATH_TRACKER_DATA, !Program.isPortable());
+		return getLocalFile(PATH_TRACKER_DATA, !Program.isPortable());
 	}
 
 	public static String getPathContractPrices() {
-		return FileUtil.getLocalFile(FileUtil.PATH_CONTRACT_PRICES, !Program.isPortable());
+		return getLocalFile(PATH_CONTRACT_PRICES, !Program.isPortable());
 	}
 
 	public static String getPathAssetAdded() {
-		return FileUtil.getLocalFile(FileUtil.PATH_ASSET_ADDED, !Program.isPortable());
+		return getLocalFile(PATH_ASSET_ADDED, !Program.isPortable());
 	}
 
 	public static String getPathAssetAddedDatabase() {
-		return FileUtil.getLocalFile(FileUtil.PATH_ASSET_ADDED_DATABASE, !Program.isPortable());
+		return getLocalFile(PATH_ASSET_ADDED_DATABASE, !Program.isPortable());
 	}
 
 	public static String getPathConquerableStations() {
-		return FileUtil.getLocalFile(FileUtil.PATH_CONQUERABLE_STATIONS, !Program.isPortable());
+		return getLocalFile(PATH_CONQUERABLE_STATIONS, !Program.isPortable());
 	}
 
 	public static String getPathCitadel() {
-		return FileUtil.getLocalFile(FileUtil.PATH_CITADEL, !Program.isPortable());
+		return getLocalFile(PATH_CITADEL, !Program.isPortable());
 	}
 
 	public static String getPathJumps() {
-		return FileUtil.getLocalFile(FileUtil.PATH_JUMPS, false);
+		return getLocalFile(PATH_JUMPS, false);
 	}
 
 	public static String getPathFlags() {
-		return FileUtil.getLocalFile(FileUtil.PATH_FLAGS, false);
+		return getLocalFile(PATH_FLAGS, false);
 	}
 
 	public static String getPathPriceData() {
-		return FileUtil.getLocalFile(FileUtil.PATH_PRICE_DATA, !Program.isPortable());
+		return getLocalFile(PATH_PRICE_DATA, !Program.isPortable());
 	}
 
 	public static String getPathAssetsOld() {
-		return FileUtil.getLocalFile(FileUtil.PATH_ASSETS, !Program.isPortable());
+		return getLocalFile(PATH_ASSETS, !Program.isPortable());
 	}
 
 	public static String getPathProfilesDirectory() {
-		return FileUtil.getLocalFile(FileUtil.PATH_PROFILES, !Program.isPortable());
+		return getLocalFile(PATH_PROFILES, !Program.isPortable());
 	}
 
 	public static String getPathStaticDataDirectory() {
-		return FileUtil.getLocalFile(FileUtil.PATH_DATA, false);
+		return getLocalFile(PATH_DATA, false);
 	}
 
 	public static String getPathDataDirectory() {
-		return FileUtil.getLocalFile(FileUtil.PATH_DATA, !Program.isPortable());
+		return getLocalFile(PATH_DATA, !Program.isPortable());
 	}
 
 	public static String getPathItems() {
-		return FileUtil.getLocalFile(FileUtil.PATH_ITEMS, false);
+		return getLocalFile(PATH_ITEMS, false);
 	}
 	
 	public static String getPathItemsUpdates() {
-		return FileUtil.getLocalFile(FileUtil.PATH_ITEMS_UPDATES, !Program.isPortable());
+		return getLocalFile(PATH_ITEMS_UPDATES, !Program.isPortable());
 	}
 
 	public static String getPathLocations() {
-		return FileUtil.getLocalFile(FileUtil.PATH_LOCATIONS, false);
+		return getLocalFile(PATH_LOCATIONS, false);
 	}
 
 	public static String getPathReadme() {
-		return FileUtil.getLocalFile(FileUtil.PATH_README, false);
+		return getLocalFile(PATH_README, false);
 	}
 
 	public static String getPathLicense() {
-		return FileUtil.getLocalFile(FileUtil.PATH_LICENSE, false);
+		return getLocalFile(PATH_LICENSE, false);
 	}
 
 	public static String getPathCredits() {
-		return FileUtil.getLocalFile(FileUtil.PATH_CREDITS, false);
+		return getLocalFile(PATH_CREDITS, false);
 	}
 
 	public static String getPathChangeLog() {
-		return FileUtil.getLocalFile(FileUtil.PATH_CHANGELOG, false);
+		return getLocalFile(PATH_CHANGELOG, false);
 	}
 
 	public static String getUserDirectory() {

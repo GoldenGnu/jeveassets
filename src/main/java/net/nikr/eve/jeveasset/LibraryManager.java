@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Set;
 import javax.swing.JOptionPane;
 import net.nikr.eve.jeveasset.io.online.Updater;
-import net.nikr.eve.jeveasset.io.shared.FileUtil;
+import net.nikr.eve.jeveasset.io.shared.FileUtilSimple;
 
 
 public class LibraryManager {
@@ -40,7 +40,7 @@ public class LibraryManager {
 	}
 
 	private static void purge() {
-		File lib = new File(FileUtil.getPathLib());
+		File lib = new File(FileUtilSimple.getPathLib());
 		List<File> delete = new ArrayList<>();
 		int libsFiles = 0;
 		for (File file : lib.listFiles()) {
@@ -61,7 +61,7 @@ public class LibraryManager {
 	}
 
 	private static void checkMissing() {
-		File jar = new File(FileUtil.getPathRunJar());
+		File jar = new File(FileUtilSimple.getPathRunJar());
 		boolean temp = false;
 		//Check if trying to run from inside zip file (Windows only)
 		if (jar.getAbsolutePath().contains(".zip") && jar.getAbsolutePath().contains(System.getProperty("java.io.tmpdir")) && System.getProperty("os.name").startsWith("Windows")) {
@@ -70,7 +70,7 @@ public class LibraryManager {
 		boolean missing = false;
 		//Check if all libraries are pressent
 		for (String filename : getLibFiles()) {
-			File file = new File(FileUtil.getPathLib(filename));
+			File file = new File(FileUtilSimple.getPathLib(filename));
 			if (!file.exists()) {
 				missing = true;
 				break;
