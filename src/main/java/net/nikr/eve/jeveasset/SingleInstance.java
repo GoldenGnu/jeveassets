@@ -55,7 +55,7 @@ public class SingleInstance {
 	private void test() {
 		if (!msgShown && findExisting()) {
 			msgShown = true;
-			int value = JOptionPane.showConfirmDialog(null, General.get().singleInstanceMsg(), General.get().singleInstanceTitle(), JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+			int value = JOptionPane.showConfirmDialog(Main.getTop(), General.get().singleInstanceMsg(), General.get().singleInstanceTitle(), JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
 			if (value != JOptionPane.YES_OPTION) {
 				System.exit(0);
 			}

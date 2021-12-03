@@ -83,7 +83,7 @@ public class NikrUncaughtExceptionHandler implements Thread.UncaughtExceptionHan
 				error = false;
 				return;
 			} else if (causes.contains(UnsupportedClassVersionError.class)) { //Old Java
-				JOptionPane.showMessageDialog(null,
+				JOptionPane.showMessageDialog(Main.getTop(),
 						"Please update Java to the latest version.\r\n"
 						+ "The minimum supported version is " + JAVA + "\r\n"
 						+ "\r\n"
@@ -92,7 +92,7 @@ public class NikrUncaughtExceptionHandler implements Thread.UncaughtExceptionHan
 						+ "\r\n"
 						, Program.PROGRAM_NAME + " - Critical Error", JOptionPane.ERROR_MESSAGE);
 			} else if (causes.contains(OutOfMemoryError.class)) { //Out of memory
-				int value = JOptionPane.showConfirmDialog(null,
+				int value = JOptionPane.showConfirmDialog(Main.getTop(),
 						"Java has run out of memory. jEveAssets will now close\r\n"
 						+ "Do you want to browse to the wiki article explaining how to fix this?\r\n"
 						+ "\r\n"
@@ -109,7 +109,7 @@ public class NikrUncaughtExceptionHandler implements Thread.UncaughtExceptionHan
 					Updater updater = new Updater();
 					updater.fixMissingClasses();
 				} catch (Throwable ex) { //Better safe than sorry...
-					JOptionPane.showMessageDialog(null,
+					JOptionPane.showMessageDialog(Main.getTop(),
 							"Please, re-download jEveAssets and leave the unzipped directory intact\r\n"
 							+ "Press OK to close jEveAssets"
 							, Program.PROGRAM_NAME + " - Critical Error", JOptionPane.ERROR_MESSAGE);
@@ -120,7 +120,7 @@ public class NikrUncaughtExceptionHandler implements Thread.UncaughtExceptionHan
 				System.out.println("ERROR: Your version of java does not support a GUI");
 				System.out.println("       Please, install in non-headless version of " + JAVA + " (or later) to run jEveAssets");
 				try {
-					JOptionPane.showMessageDialog(null, "Your version of java does not support a GUI\r\n"
+					JOptionPane.showMessageDialog(Main.getTop(), "Your version of java does not support a GUI\r\n"
 							+ "Please, install in non-headless version of " + JAVA + " (or later) to run jEveAssets",
 							Program.PROGRAM_NAME + " - Critical Error",
 							JOptionPane.ERROR_MESSAGE);
@@ -129,7 +129,7 @@ public class NikrUncaughtExceptionHandler implements Thread.UncaughtExceptionHan
 				}
 			} else { //Bug
 				if (isJavaBug(t)) { //Java Bug
-					JOptionPane.showMessageDialog(null,
+					JOptionPane.showMessageDialog(Main.getTop(),
 						"You have encountered a bug that is most likely a java bug.\r\n"
 						+ "Updating to the latest version of java may fix this problem.\r\n"
 						+ "It's still very helpful to send the the bug report.\r\n"
@@ -139,7 +139,7 @@ public class NikrUncaughtExceptionHandler implements Thread.UncaughtExceptionHan
 						+ "\r\n"
 						, Program.PROGRAM_NAME + " - Critical Error", JOptionPane.ERROR_MESSAGE);
 				}
-				int value = JOptionPane.showConfirmDialog(null,
+				int value = JOptionPane.showConfirmDialog(Main.getTop(),
 						"Send bug report?\r\n"
 						+ "\r\n"
 						+ "Data send and saved:\r\n"
@@ -153,7 +153,7 @@ public class NikrUncaughtExceptionHandler implements Thread.UncaughtExceptionHan
 						, Program.PROGRAM_NAME + " - Critical Error", JOptionPane.OK_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE);
 				if (value == JOptionPane.OK_OPTION) {
 					String result = send(t);
-					JOptionPane.showMessageDialog(null, result, "Bug Report", JOptionPane.PLAIN_MESSAGE);
+					JOptionPane.showMessageDialog(Main.getTop(), result, "Bug Report", JOptionPane.PLAIN_MESSAGE);
 				}
 			}
 			System.exit(-1);

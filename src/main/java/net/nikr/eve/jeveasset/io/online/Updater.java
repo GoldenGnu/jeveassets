@@ -40,6 +40,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import net.nikr.eve.jeveasset.Main;
+import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.settings.ProxyData;
 import net.nikr.eve.jeveasset.io.shared.FileUtil;
 
@@ -93,19 +94,19 @@ public class Updater {
 
 	public void fixData() {
 		if (isPackageManager()) {
-			JOptionPane.showMessageDialog(null, 
+			JOptionPane.showMessageDialog(Main.getTop(), 
 				"One of the data files in the data folder is corrupted or missing\r\n"
 				+ "jEveAssets will not work without it\r\n"
 				+ "Please use your package manager to correct the problem\r\n"
-				, "jEveAssets - Critical Error", JOptionPane.ERROR_MESSAGE);
+				, Program.PROGRAM_NAME + " - Critical Error", JOptionPane.ERROR_MESSAGE);
 			System.exit(-1);
 		}
-		int value = JOptionPane.showConfirmDialog(null, 
+		int value = JOptionPane.showConfirmDialog(Main.getTop(), 
 				"One of the data files in the data folder is corrupted or missing\r\n"
 				+ "jEveAssets will not work without it\r\n"
 				+ "Download the latest version with auto update?\r\n"
 				,
-				"jEveAssets - Critical Error",
+				Program.PROGRAM_NAME + " - Critical Error",
 				JOptionPane.OK_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE);
 		if (value == JOptionPane.OK_OPTION) {
 			LOG.info("Updating data");
@@ -113,18 +114,18 @@ public class Updater {
 			if (download) {
 				runUpdate(DATA, null);
 			} else {
-				JOptionPane.showMessageDialog(null, "Auto update failed\r\n"
+				JOptionPane.showMessageDialog(Main.getTop(), "Auto update failed\r\n"
 						+ "Please, re-download jEveAssets and leave the unzipped directory intact\r\n"
 						+ "Press OK to close jEveAssets",
-						"jEveAssets - Critical Error",
+						Program.PROGRAM_NAME + " - Critical Error",
 						JOptionPane.ERROR_MESSAGE);
 				System.exit(-1);
 			}
 		} else {
-			JOptionPane.showMessageDialog(null, "Please, re-download jEveAssets and leave the unzipped directory intact\r\n"
+			JOptionPane.showMessageDialog(Main.getTop(), "Please, re-download jEveAssets and leave the unzipped directory intact\r\n"
 					+ "Restart jEveAssets to use auto update to fix the problem\r\n"
 					+ "Press OK to close jEveAssets",
-					"jEveAssets - Critical Error",
+					Program.PROGRAM_NAME + " - Critical Error",
 					JOptionPane.ERROR_MESSAGE);
 			System.exit(-1);
 		}
@@ -132,19 +133,19 @@ public class Updater {
 
 	public void fixLibs() {
 		if (isPackageManager()) {
-			JOptionPane.showMessageDialog(null, 
+			JOptionPane.showMessageDialog(Main.getTop(), 
 				"One of the libraies in the lib folder is corrupted or missing\r\n"
 				+ "jEveAssets will not work without it\r\n"
 				+ "Please use your package manager to correct the problem\r\n"
-				, "jEveAssets - Critical Error", JOptionPane.ERROR_MESSAGE);
+				, Program.PROGRAM_NAME + " - Critical Error", JOptionPane.ERROR_MESSAGE);
 			System.exit(-1);
 		}
-		int value = JOptionPane.showConfirmDialog(null, 
+		int value = JOptionPane.showConfirmDialog(Main.getTop(), 
 				"One of the libraies in the lib folder is corrupted or missing\r\n"
 				+ "jEveAssets will not work without it\r\n"
 				+ "Download the latest version with auto update?\r\n"
 				,
-				"jEveAssets - Critical Error",
+				Program.PROGRAM_NAME + " - Critical Error",
 				JOptionPane.OK_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE);
 		if (value == JOptionPane.OK_OPTION) {
 			LOG.info("Updating program");
@@ -152,18 +153,18 @@ public class Updater {
 			if (download) {
 				runUpdate(PROGRAM, null);
 			} else {
-				JOptionPane.showMessageDialog(null, "Auto update failed\r\n"
+				JOptionPane.showMessageDialog(Main.getTop(), "Auto update failed\r\n"
 						+ "Please, re-download jEveAssets and leave the unzipped directory intact\r\n"
 						+ "Press OK to close jEveAssets",
-						"jEveAssets - Critical Error",
+						Program.PROGRAM_NAME + " - Critical Error",
 						JOptionPane.ERROR_MESSAGE);
 				System.exit(-1);
 			}
 		} else {
-			JOptionPane.showMessageDialog(null, "Please, re-download jEveAssets and leave the unzipped directory intact\r\n"
+			JOptionPane.showMessageDialog(Main.getTop(), "Please, re-download jEveAssets and leave the unzipped directory intact\r\n"
 					+ "Restart jEveAssets to use auto update to fix the problem\r\n"
 					+ "Press OK to close jEveAssets",
-					"jEveAssets - Critical Error",
+					Program.PROGRAM_NAME + " - Critical Error",
 					JOptionPane.ERROR_MESSAGE);
 			System.exit(-1);
 		}
@@ -171,36 +172,36 @@ public class Updater {
 
 	public void fixMissingClasses() {
 		if (isPackageManager()) {
-			JOptionPane.showMessageDialog(null, 
+			JOptionPane.showMessageDialog(Main.getTop(), 
 				"jEveAssets have been corrupted\r\n"
 				+ "Please use your package manager to correct the problem\r\n"
-				, "jEveAssets - Critical Error", JOptionPane.ERROR_MESSAGE);
+				, Program.PROGRAM_NAME + " - Critical Error", JOptionPane.ERROR_MESSAGE);
 			System.exit(-1);
 		}
-		int value = JOptionPane.showConfirmDialog(null, 
+		int value = JOptionPane.showConfirmDialog(Main.getTop(), 
 				"jEveAssets have been corrupted\r\n"
 				+ "You may be able to use auto update to fix the problem\r\n"
 				+ "Download the latest version with auto update?\r\n"
-				, "jEveAssets - Critical Error", JOptionPane.OK_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE);
+				, Program.PROGRAM_NAME + " - Critical Error", JOptionPane.OK_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE);
 		if (value == JOptionPane.OK_OPTION) {
 			LOG.info("Updating program");
 			boolean download = downloadUpdater();
 			if (download) {
 				runUpdate(PROGRAM, null);
 			} else {
-				JOptionPane.showMessageDialog(null,
+				JOptionPane.showMessageDialog(Main.getTop(),
 						"Auto update failed\r\n"
 						+ "Please, re-download jEveAssets and leave the unzipped directory intact\r\n"
 						+ "Press OK to close jEveAssets"
-						, "jEveAssets - Critical Error", JOptionPane.ERROR_MESSAGE);
+						, Program.PROGRAM_NAME + " - Critical Error", JOptionPane.ERROR_MESSAGE);
 				System.exit(-1);
 			}
 		} else {
-			JOptionPane.showMessageDialog(null,
+			JOptionPane.showMessageDialog(Main.getTop(),
 					"Please, re-download jEveAssets and leave the unzipped directory intact\r\n"
 					+ "Restart jEveAssets to use auto update to fix the problem\r\n"
 					+ "Press OK to close jEveAssets"
-					, "jEveAssets - Critical Error", JOptionPane.ERROR_MESSAGE);
+					, Program.PROGRAM_NAME + " - Critical Error", JOptionPane.ERROR_MESSAGE);
 			System.exit(-1);
 		}
 	}
@@ -214,7 +215,7 @@ public class Updater {
 		LOG.log(Level.INFO, "{0} Online: {1} Local: {2}", new Object[]{title.toUpperCase(), online, local});
 		if (online != null && !online.equals(local)) {
 			if (isPackageManager()) {
-				JOptionPane.showMessageDialog(null, 
+				JOptionPane.showMessageDialog(Main.getTop(), 
 					title + " update available\r\n"
 					+ "\r\n"
 					+ "Your version: " + local + "\r\n"
@@ -223,11 +224,11 @@ public class Updater {
 					+ "Please use your package manager to update\r\n"
 					+ "\r\n"
 					,
-					"jEveAssets - Auto Update",
+					Program.PROGRAM_NAME + " - Auto Update",
 					JOptionPane.PLAIN_MESSAGE);
 				return;
 			}
-			int value = JOptionPane.showConfirmDialog(null, 
+			int value = JOptionPane.showConfirmDialog(Main.getTop(), 
 					title + " update available\r\n"
 					+ "\r\n"
 					+ "Your version: " + local + "\r\n"
@@ -236,7 +237,7 @@ public class Updater {
 					+ "Update " + title.toLowerCase() + " now?\r\n"
 					+ "\r\n"
 					,
-					"jEveAssets - Auto Update",
+					Program.PROGRAM_NAME + " - Auto Update",
 					JOptionPane.OK_CANCEL_OPTION);
 			if (value == JOptionPane.OK_OPTION) {
 				LOG.log(Level.INFO, "Updating {0}", title);
@@ -244,7 +245,7 @@ public class Updater {
 				if (download) {
 					runUpdate(link, proxyData);
 				} else {
-					JOptionPane.showMessageDialog(null, "Auto update failed\r\n"
+					JOptionPane.showMessageDialog(Main.getTop(), "Auto update failed\r\n"
 							+ "Restart jEveAssets to try again...",
 							"jEveAssets - Auto Update",
 							JOptionPane.ERROR_MESSAGE);
@@ -270,7 +271,7 @@ public class Updater {
 	}
 
 	private List<String> getArgsString(String link, ProxyData proxyData) {
-		List<String> list = new ArrayList<String>();
+		List<String> list = new ArrayList<>();
 		list.add("java");
 		if (proxyData != null) {
 			list.addAll(proxyData.getArgs());
