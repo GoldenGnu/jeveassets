@@ -77,7 +77,7 @@ public class LibraryManager {
 			}
 		}
 		if (temp && missing) { //Running from zip file...
-			JOptionPane.showMessageDialog(null, "You need to unzip jEveAssets to run it\r\nIt will not work from inside the zip file", "Critical Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(Main.getTop(), "You need to unzip jEveAssets to run it\r\nIt will not work from inside the zip file", Program.PROGRAM_NAME + " - Critical Error", JOptionPane.ERROR_MESSAGE);
 			System.exit(-1);
 		} else if (missing) { //Missing libraries
 			Updater updater = new Updater();
