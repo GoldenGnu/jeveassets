@@ -34,6 +34,7 @@ import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.TextManager;
 import net.nikr.eve.jeveasset.gui.shared.components.JLockWindow;
+import net.nikr.eve.jeveasset.gui.shared.components.JLockWindow.LockWorkerAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
 import net.nikr.eve.jeveasset.i18n.GuiFrame;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
@@ -129,13 +130,11 @@ public class MainWindow {
 			jMainTab.updateData();
 			jMainTab.afterUpdateData();
 			if (jFrame.isVisible()) {
-				jLockWindow.show(GuiShared.get().updating(), new JLockWindow.LockWorker() {
+				jLockWindow.show(GuiShared.get().updating(), new LockWorkerAdaptor() {
 					@Override
 					public void task() {
 						jMainTab.updateCache();
 					}
-					@Override
-					public void gui() { }
 				});
 			} else {
 				jMainTab.updateCache();
