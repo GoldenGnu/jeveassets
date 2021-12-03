@@ -9,17 +9,17 @@ jobs:
         include:
           #Linux
           - os: ubuntu-latest
-            java: 14
+            java: 17
             profile: jpackager-deploy
             name: Linux
           #Windows
           - os: windows-latest
-            java: 14
+            java: 17
             profile: jpackager-deploy
             name: Windows
           #MacOS
           - os: macos-latest
-            java: 14
+            java: 17
             profile: jpackager-deploy
             name: MacOS
           #Java 8

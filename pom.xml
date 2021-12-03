@@ -1019,23 +1019,13 @@
 			</properties>
 		</profile>
 		<profile>
-			<id>jdk13</id>
+			<id>jdk17</id>
 			<activation>
 				<activeByDefault>false</activeByDefault>
-				<jdk>13</jdk>
+				<jdk>17</jdk>
 			</activation>
 			<properties>
-				<project.build.sourceVersion>13</project.build.sourceVersion>
-			</properties>
-		</profile>
-		<profile>
-			<id>jdk14</id>
-			<activation>
-				<activeByDefault>false</activeByDefault>
-				<jdk>14</jdk>
-			</activation>
-			<properties>
-				<project.build.sourceVersion>14</project.build.sourceVersion>
+				<project.build.sourceVersion>17</project.build.sourceVersion>
 			</properties>
 		</profile>
 	</profiles>
