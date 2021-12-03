@@ -388,6 +388,7 @@
 				<version>5.0.3</version>
 				<executions>
 					<execution>
+						<id>izpack</id>
 						<phase>package</phase>
 						<goals>
 							<goal>izpack</goal>
@@ -690,13 +691,8 @@
 						<version>5.0.3</version>
 						<executions>
 							<execution>
-								<phase>package</phase>
-								<goals>
-									<goal>izpack</goal>
-								</goals>
-								<configuration>
-									<skip>true</skip>
-								</configuration>
+								<id>izpack</id>
+								<phase>none</phase>
 							</execution>
 						</executions>
 					</plugin>
