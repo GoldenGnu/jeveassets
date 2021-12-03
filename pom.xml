@@ -1017,6 +1017,21 @@
 			<properties>
 				<project.build.sourceVersion>17</project.build.sourceVersion>
 			</properties>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.izpack</groupId>
+						<artifactId>izpack-maven-plugin</artifactId>
+						<version>5.0.3</version>
+						<executions>
+							<execution>
+								<id>izpack</id>
+								<phase>none</phase>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
 		</profile>
 	</profiles>
 
