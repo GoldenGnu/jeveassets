@@ -99,6 +99,7 @@ import net.nikr.eve.jeveasset.gui.tabs.values.ValueTableTab;
 import net.nikr.eve.jeveasset.i18n.GuiFrame;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 import net.nikr.eve.jeveasset.data.settings.ContractPriceManager;
+import net.nikr.eve.jeveasset.gui.shared.components.JLockWindow.LockWorkerAdaptor;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustrySlotsTab;
 import net.nikr.eve.jeveasset.gui.tabs.orders.OutbidProcesser.OutbidProcesserOutput;
 import net.nikr.eve.jeveasset.io.online.PriceDataGetter;
@@ -489,14 +490,11 @@ public class Program implements ActionListener {
 
 	public final void updateMarketOrdersWithProgress(OutbidProcesserOutput output) {
 		JLockWindow jLockWindow = new JLockWindow(getMainWindow().getFrame());
-		jLockWindow.show(GuiShared.get().updating(), new JLockWindow.LockWorker() {
+		jLockWindow.show(GuiShared.get().updating(), new LockWorkerAdaptor() {
 			@Override
 			public void task() {
 				updateEventLists(null, null, null, output);
 			}
-
-			@Override
-			public void gui() { }
 		});
 	}
 
@@ -506,40 +504,31 @@ public class Program implements ActionListener {
 
 	public final void updateLocations(Set<Long> locationIDs) {
 		JLockWindow jLockWindow = new JLockWindow(getMainWindow().getFrame());
-		jLockWindow.show(GuiShared.get().updating(), new JLockWindow.LockWorker() {
+		jLockWindow.show(GuiShared.get().updating(), new LockWorkerAdaptor() {
 			@Override
 			public void task() {
 				updateEventLists(null, locationIDs, null, null);
 			}
-
-			@Override
-			public void gui() { }
 		});
 	}
 
 	public final void updatePrices(Set<Integer> typeIDs) {
 		JLockWindow jLockWindow = new JLockWindow(getMainWindow().getFrame());
-		jLockWindow.show(GuiShared.get().updating(), new JLockWindow.LockWorker() {
+		jLockWindow.show(GuiShared.get().updating(), new LockWorkerAdaptor() {
 			@Override
 			public void task() {
 				updateEventLists(null, null, typeIDs, null);
 			}
-
-			@Override
-			public void gui() { }
 		});
 	}
 
 	public final void updateNames(Set<Long> itemIDs) {
 		JLockWindow jLockWindow = new JLockWindow(getMainWindow().getFrame());
-		jLockWindow.show(GuiShared.get().updating(), new JLockWindow.LockWorker() {
+		jLockWindow.show(GuiShared.get().updating(), new LockWorkerAdaptor() {
 			@Override
 			public void task() {
 				updateEventLists(itemIDs, null, null, null);
 			}
-
-			@Override
-			public void gui() { }
 		});
 	}
 
@@ -549,14 +538,11 @@ public class Program implements ActionListener {
 
 	public final void updateEventListsWithProgress(final Window parent) {
 		JLockWindow jLockWindow = new JLockWindow(parent);
-		jLockWindow.show(GuiShared.get().updating(), new JLockWindow.LockWorker() {
+		jLockWindow.show(GuiShared.get().updating(), new LockWorkerAdaptor() {
 			@Override
 			public void task() {
 				updateEventLists();
 			}
-
-			@Override
-			public void gui() { }
 		});
 	}
 
@@ -934,7 +920,7 @@ public class Program implements ActionListener {
 	 */
 	public void updateTags() {
 		JLockWindow jLockWindow = new JLockWindow(getMainWindow().getFrame());
-		jLockWindow.show(GuiShared.get().updating(), new JLockWindow.LockWorker() {
+		jLockWindow.show(GuiShared.get().updating(), new LockWorkerAdaptor() {
 			@Override
 			public void task() {
 				for (JMainTab mainTab : jMainTabs.values()) {

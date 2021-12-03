@@ -41,6 +41,7 @@ import net.nikr.eve.jeveasset.gui.frame.StatusPanel.Progress;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel.UpdateType;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.components.JLockWindow;
+import net.nikr.eve.jeveasset.gui.shared.components.JLockWindow.LockWorkerAdaptor;
 import net.nikr.eve.jeveasset.i18n.DialoguesUpdate;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 
@@ -278,7 +279,7 @@ public class TaskDialog {
 
 	private void done() {
 		if (!auto || jWindow.isVisible()) {
-			jLockWindow.show(GuiShared.get().updating(), new JLockWindow.LockWorkerAdvanced() {
+			jLockWindow.show(GuiShared.get().updating(), new LockWorkerAdaptor() {
 				@Override
 				public void task() {
 					completed.tasksCompleted(TaskDialog.this);
@@ -301,7 +302,7 @@ public class TaskDialog {
 			});
 		} else {
 			JLockWindow jLockMainFrame = new JLockWindow(getTopWindow(program.getMainWindow().getFrame()));
-			jLockMainFrame.show(GuiShared.get().updating(), new JLockWindow.LockWorkerAdvanced() {
+			jLockMainFrame.show(GuiShared.get().updating(), new LockWorkerAdaptor() {
 				@Override
 				public void task() {
 					completed.tasksCompleted(TaskDialog.this);
