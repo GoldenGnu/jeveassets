@@ -41,6 +41,7 @@ import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.JOptionInput;
 import net.nikr.eve.jeveasset.gui.shared.NativeUtil;
 import net.nikr.eve.jeveasset.gui.shared.components.JLockWindow;
+import net.nikr.eve.jeveasset.gui.shared.components.JLockWindow.LockWorkerAdaptor;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 import net.nikr.eve.jeveasset.io.esi.AbstractEsiGetter;
 import net.troja.eve.esi.api.UserInterfaceApi;
@@ -369,7 +370,7 @@ public class JMenuUI <T> extends MenuManager.JAutoMenu<T> {
 		}
 	}
 
-	public static abstract class EsiUpdate implements JLockWindow.LockWorker {
+	public static abstract class EsiUpdate extends LockWorkerAdaptor {
 
 		private boolean ok;
 

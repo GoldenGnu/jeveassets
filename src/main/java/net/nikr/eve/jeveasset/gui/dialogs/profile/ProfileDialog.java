@@ -35,7 +35,7 @@ import net.nikr.eve.jeveasset.data.profile.Profile;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
 import net.nikr.eve.jeveasset.gui.shared.components.JLockWindow;
-import net.nikr.eve.jeveasset.gui.shared.components.JLockWindow.LockWorker;
+import net.nikr.eve.jeveasset.gui.shared.components.JLockWindow.LockWorkerAdaptor;
 import net.nikr.eve.jeveasset.i18n.DialoguesProfiles;
 
 
@@ -63,7 +63,7 @@ public class ProfileDialog extends JDialogCentered {
 
 		ListenerClass listener = new ListenerClass();
 
-		jProfiles = new JList<Profile>();
+		jProfiles = new JList<>();
 		jProfiles.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		jProfiles.setVisibleRowCount(-1);
 		jProfiles.setCellRenderer(new JProfileListRenderer(jProfiles.getCellRenderer()));
@@ -125,7 +125,7 @@ public class ProfileDialog extends JDialogCentered {
 	}
 
 	private void updateProfiles() {
-		DefaultListModel<Profile> listModel = new DefaultListModel<Profile>();
+		DefaultListModel<Profile> listModel = new DefaultListModel<>();
 		List<Profile> profiles = program.getProfileManager().getProfiles();
 		Collections.sort(profiles);
 		for (Profile profile : profiles) {
@@ -341,7 +341,7 @@ public class ProfileDialog extends JDialogCentered {
 
 
 
-	private class NewProfile implements LockWorker {
+	private class NewProfile extends LockWorkerAdaptor {
 
 		private final String profileName;
 
@@ -358,12 +358,12 @@ public class ProfileDialog extends JDialogCentered {
 		}
 
 		@Override
-		public void gui() {
+		public void hidden() {
 			loadProfileGui();
 		}
 	}
 
-	private class LoadProfile implements LockWorker {
+	private class LoadProfile extends LockWorkerAdaptor {
 
 		private final Profile profile;
 
@@ -377,7 +377,7 @@ public class ProfileDialog extends JDialogCentered {
 		}
 
 		@Override
-		public void gui() {
+		public void hidden() {
 			loadProfileGui();
 		}
 	}

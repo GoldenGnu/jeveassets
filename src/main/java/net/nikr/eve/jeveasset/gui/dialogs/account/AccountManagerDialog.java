@@ -51,6 +51,7 @@ import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
 import net.nikr.eve.jeveasset.gui.shared.components.JDropDownButton;
 import net.nikr.eve.jeveasset.gui.shared.components.JLockWindow;
+import net.nikr.eve.jeveasset.gui.shared.components.JLockWindow.LockWorkerAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
@@ -300,14 +301,12 @@ public class AccountManagerDialog extends JDialogCentered {
 			updated = !ownersShownNow.equals(ownersShownCache);
 		}
 		if (updated) {
-			jLockWindow.show(GuiShared.get().updating(), new JLockWindow.LockWorker() {
+			jLockWindow.show(GuiShared.get().updating(), new LockWorkerAdaptor() {
 				@Override
 				public void task() {
 					program.saveProfile();
 					program.updateEventLists();
 				}
-				@Override
-				public void gui() { }
 			});
 		}
 	}
