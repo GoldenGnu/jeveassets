@@ -999,16 +999,6 @@
 			</build>
 		</profile>
 		<profile>
-			<id>jdk8</id>
-			<activation>
-				<activeByDefault>false</activeByDefault>
-				<jdk>8</jdk>
-			</activation>
-			<properties>
-				<project.build.sourceVersion>8</project.build.sourceVersion>
-			</properties>
-		</profile>
-		<profile>
 			<id>jdk11</id>
 			<activation>
 				<activeByDefault>false</activeByDefault>

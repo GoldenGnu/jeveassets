@@ -8,7 +8,7 @@ jobs:
     strategy:
       matrix:
         os: [macOS-latest, ubuntu-latest, windows-latest]
-        java: [ 8, 11, 13 ]
+        java: [ 8, 11, 17 ]
     name: ${{ matrix.os }} (Java ${{ matrix.java }})
     steps:
     - name: Checkout
