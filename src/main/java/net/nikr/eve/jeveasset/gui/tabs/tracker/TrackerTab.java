@@ -100,6 +100,7 @@ import net.nikr.eve.jeveasset.gui.shared.components.JCustomFileChooser;
 import net.nikr.eve.jeveasset.gui.shared.components.JDateChooser;
 import net.nikr.eve.jeveasset.gui.shared.components.JDropDownButton;
 import net.nikr.eve.jeveasset.gui.shared.components.JLockWindow;
+import net.nikr.eve.jeveasset.gui.shared.components.JLockWindow.LockWorkerAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTabSecondary;
 import net.nikr.eve.jeveasset.gui.shared.components.JMultiSelectionList;
 import net.nikr.eve.jeveasset.gui.shared.components.JSelectionDialog;
@@ -1836,7 +1837,7 @@ public class TrackerTab extends JMainTabSecondary {
 		}
 	}
 
-	private class ImportFileLockWorker implements JLockWindow.LockWorkerAdvanced {
+	private class ImportFileLockWorker extends LockWorkerAdaptor {
 
 		private File file;
 		private Map<String, List<Value>> trackerData = null;
@@ -1905,9 +1906,6 @@ public class TrackerTab extends JMainTabSecondary {
 		}
 
 		@Override
-		public void gui() { }
-
-		@Override
 		public void hidden() {
 			if (trackerData == null) { //Invalid file
 				JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsTracker.get().importFileInvalidMsg(), TabsTracker.get().importFileInvalidTitle(), JOptionPane.WARNING_MESSAGE);
@@ -1921,7 +1919,7 @@ public class TrackerTab extends JMainTabSecondary {
 			SwingUtilities.invokeLater(new Runnable() {
 				@Override
 				public void run() {
-					jLockWindow.show(TabsTracker.get().importFileImport(), new JLockWindow.LockWorker() {
+					jLockWindow.show(TabsTracker.get().importFileImport(), new LockWorkerAdaptor() {
 						@Override
 						public void task() {
 							TrackerData.addAll(trackerData);
