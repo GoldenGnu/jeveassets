@@ -25,12 +25,14 @@ import java.io.File;
 import java.net.URISyntaxException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JDialog;
 import net.nikr.eve.jeveasset.io.local.FileLock;
 import net.nikr.eve.jeveasset.io.online.Updater;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
 public final class Main {
 
+	private static JDialog top;
 	private static boolean debug = false;
 	private static boolean portable = false;
 	private static boolean forceNoUpdate = false;
@@ -82,6 +84,14 @@ public final class Main {
 
 	public static boolean isJmemory() {
 		return jmemory;
+	}
+
+	public static JDialog getTop() {
+		if (top == null) {
+			top = new JDialog();
+			top.setAlwaysOnTop(true);    
+		}
+		return top;
 	}
 
 	/**
