@@ -21,6 +21,7 @@
 package net.nikr.eve.jeveasset.io.esi;
 
 import java.util.Date;
+import java.util.List;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import static net.nikr.eve.jeveasset.io.esi.AbstractEsiGetter.DATASOURCE;
@@ -37,7 +38,10 @@ import net.troja.eve.esi.model.TypeResponse;
 
 public class EsiItemsGetter extends AbstractEsiGetter {
 
-	public final static String ESI_ITEM_VERSION = "1.0.0";
+	/**
+	 * Change ESI_ITEM_VERSION to force items_updates.xml items to be updated again.
+	 */
+	public final static String ESI_ITEM_VERSION = "1.0.1";
 	public final static String ESI_ITEM_EMPTY = "EMPTY";
 
 	private final int typeID;
@@ -88,32 +92,32 @@ public class EsiItemsGetter extends AbstractEsiGetter {
 		float volume = getNotNull(typeResponse.getVolume());
 		float packagedVolume = getNotNull(typeResponse.getPackagedVolume());
 		float capacity = getNotNull(typeResponse.getCapacity());
-		TypeDogmaAttribute techLevel = null;
-		TypeDogmaAttribute metaLevel = null;
-		TypeDogmaAttribute metaGroup = null;
-		if (typeResponse.getDogmaAttributes() != null) {
-			for (TypeDogmaAttribute attribute : typeResponse.getDogmaAttributes()) {
-				if (attribute.getAttributeId() == 422) { //422 = tech level
-					techLevel = attribute;
+	//Meta
+		Integer metaGroupID = null;
+		int metaLevel = 0;
+		List<TypeDogmaAttribute> dogmaAttributes = typeResponse.getDogmaAttributes();
+		if (dogmaAttributes != null) {
+			for (TypeDogmaAttribute attribute : dogmaAttributes) {
+				if (attribute.getAttributeId() == 1692) { //1692 = meta group
+					metaGroupID = attribute.getValue().intValue();
 				}
 				if (attribute.getAttributeId() == 633) { //633 = meta level
-					metaLevel = attribute;
-				}
-				if (attribute.getAttributeId() == 1692) { //1692 = meta group
-					metaGroup = attribute;
+					metaLevel = attribute.getValue().intValue();
 				}
 			}
 		}
-		//Tech Level
-		String tech;
-		if (metaGroup != null) {
-			switch (metaGroup.getValue().intValue()) {
-				case 1:  tech = "Tech I"; break;
-				case 2:  tech = "Tech II"; break;
-				case 3:  tech = "Storyline"; break;
-				case 4:  tech = "Faction"; break;
-				case 5:  tech = "Officer"; break;
-				case 6:  tech = "Deadspace"; break;
+	//Tech Level
+		final String techLevel;
+		if (metaGroupID != null) {
+			switch (metaGroupID) {
+				case 1:  techLevel = "Tech I"; break;
+				case 2:  techLevel = "Tech II"; break;
+				case 3:  techLevel = "Storyline"; break;
+				case 4:  techLevel = "Faction"; break;
+				case 5:  techLevel = "Officer"; break;
+				case 6:  techLevel = "Deadspace"; break;
+				/*
+				//No longer in use
 				case 7:  tech = "Frigates"; break;
 				case 8:  tech = "Elite Frigates"; break;
 				case 9:  tech = "Commander Frigates"; break;
@@ -121,30 +125,19 @@ public class EsiItemsGetter extends AbstractEsiGetter {
 				case 11: tech = "Cruiser"; break;
 				case 12: tech = "Elite Cruiser"; break;
 				case 13: tech = "Commander Cruiser"; break;
-				case 14: tech = "Tech III"; break;
-				case 15: tech = "Abyssal"; break;
-				case 17: tech = "Premium"; break;
-				case 19: tech = "Limited Time"; break;
-				default: tech = "Tech I"; break;
-			}
-		} else if (techLevel != null) {
-			switch (techLevel.getValue().intValue()) {
-				case 1:  tech = "Tech I";   break;
-				case 2:  tech = "Tech II";  break;
-				case 3:  tech = "Tech III"; break;
-				default: tech = "Tech I";   break;
+				*/
+				case 14: techLevel = "Tech III"; break;
+				case 15: techLevel = "Abyssal"; break;
+				case 17: techLevel = "Premium"; break;
+				case 19: techLevel = "Limited Time"; break;
+				case 52: techLevel = "Faction"; break; //Structure Faction
+				case 53: techLevel = "Tech II"; break; //Structure Tech II
+				case 54: techLevel = "Tech I"; break; //Structure Tech I
+				default: techLevel = "Tech I"; break;
 			}
 		} else {
-			tech = "Tech 1"; 
+			techLevel = "Tech 1"; 
 		}
-		//Meta Level
-		int meta;
-		if (metaLevel != null) {
-			meta = metaLevel.getValue().intValue(); //Meta Level
-		} else {
-			meta = 0;
-		}
-
 		boolean marketGroup;
 		if (marketGroupResponse != null) {
 			marketGroup = marketGroupResponse.getTypes().contains(typeID);
@@ -154,7 +147,7 @@ public class EsiItemsGetter extends AbstractEsiGetter {
 		int portion = typeResponse.getPortionSize();
 		int productTypeID = 0; //Product
 		int productQuantity = 1; //Product Quantity
-		item = new Item(typeID, name, group, category, price, volume, packagedVolume, capacity, meta, tech, marketGroup, portion, productTypeID, productQuantity, ESI_ITEM_VERSION);
+		item = new Item(typeID, name, group, category, price, volume, packagedVolume, capacity, metaLevel, techLevel, marketGroup, portion, productTypeID, productQuantity, ESI_ITEM_VERSION);
 		
 	}
 
