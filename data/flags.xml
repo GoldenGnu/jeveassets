@@ -89,7 +89,7 @@
     <row flagid="131" flagname="SubSystem6" flagtext="Sub system slot 6"/>
     <row flagid="132" flagname="SubSystem7" flagtext="Sub system slot 7"/>
     <row flagid="133" flagname="SpecializedFuelBay" flagtext="Specialized Fuel Bay"/>
-    <row flagid="134" flagname="SpecializedOreHold" flagtext="Specialized Ore Hold"/>
+    <row flagid="134" flagname="SpecializedAsteroidHold" flagtext="Specialized Asteroid Hold"/>
     <row flagid="135" flagname="SpecializedGasHold" flagtext="Specialized Gas Hold"/>
     <row flagid="136" flagname="SpecializedMineralHold" flagtext="Specialized Mineral Hold"/>
     <row flagid="137" flagname="SpecializedSalvageHold" flagtext="Specialized Salvage Hold"/>
@@ -135,4 +135,6 @@
     <row flagid="178" flagname="Raffles" flagtext="Raffles Hangar"/>
     <row flagid="179" flagname="FrigateEscapeBay" flagtext="Frigate escape bay Hangar"/>
     <row flagid="180" flagname="StructureDeedBay" flagtext="Structure Deed Bay"/>
+    <row flagid="181" flagname="SpecializedIceHold" flagtext="Specialized Ice Hold"/>
+    <row flagid="182" flagname="SpecializedAsteroidHold" flagtext="Specialized Asteroid Hold"/>
 </rows>
