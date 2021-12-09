@@ -75,6 +75,7 @@ public class RawConverterTest extends TestUtil {
 					|| locationFlagEnum.toString().toLowerCase().equals(itemFlag.getFlagName().toLowerCase())
 					|| (locationFlagEnum.toString().equals("CorpseBay") && itemFlag.getFlagName().equals("CrateLoot"))
 					|| (locationFlagEnum.toString().equals("Module") && itemFlag.getFlagName().equals("Skill"))
+					|| (locationFlagEnum.toString().equals("SpecializedOreHold") && itemFlag.getFlagName().equals("SpecializedAsteroidHold"))
 			);
 
 		}
@@ -103,6 +104,7 @@ public class RawConverterTest extends TestUtil {
 					|| (locationFlagEnum.toString().equals("DustDatabank") && itemFlag.getFlagName().equals("DustCharacterDatabank"))
 					|| (locationFlagEnum.toString().equals("HiddenModifers") && itemFlag.getFlagName().equals("HiddenModifiers"))
 					|| (locationFlagEnum.toString().equals("QuantumCoreRoom") && itemFlag.getFlagName().equals("StructureDeedBay"))
+					|| (locationFlagEnum.toString().equals("SpecializedOreHold") && itemFlag.getFlagName().equals("SpecializedAsteroidHold"))
 			);
 		}
 	}
@@ -118,6 +120,7 @@ public class RawConverterTest extends TestUtil {
 					|| locationFlagEnum.toString().toLowerCase().equals(itemFlag.getFlagName().toLowerCase())
 					|| (locationFlagEnum.toString().equals("CorpseBay") && itemFlag.getFlagName().equals("CrateLoot"))
 					|| (locationFlagEnum.toString().equals("Module") && itemFlag.getFlagName().equals("Skill"))
+					|| (locationFlagEnum.toString().equals("SpecializedOreHold") && itemFlag.getFlagName().equals("SpecializedAsteroidHold"))
 			);
 		}
 	}
@@ -145,6 +148,7 @@ public class RawConverterTest extends TestUtil {
 					|| (locationFlagEnum.toString().equals("DustDatabank") && itemFlag.getFlagName().equals("DustCharacterDatabank"))
 					|| (locationFlagEnum.toString().equals("HiddenModifers") && itemFlag.getFlagName().equals("HiddenModifiers"))
 					|| (locationFlagEnum.toString().equals("QuantumCoreRoom") && itemFlag.getFlagName().equals("StructureDeedBay"))
+					|| (locationFlagEnum.toString().equals("SpecializedOreHold") && itemFlag.getFlagName().equals("SpecializedAsteroidHold"))
 			);
 		}
 	}
