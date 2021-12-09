@@ -171,7 +171,7 @@ public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarket
 					case CHARACTER_DELETED: //character deleted
 						status = OrderStatus.CHARACTER_DELETED;
 						break;
-					case UNKNOWN: //character deleted
+					case UNKNOWN: //Unknown or Auto Closed
 						status = OrderStatus.UNKNOWN;
 						break;
 				}
