@@ -801,7 +801,7 @@ public class RawConverter {
 		SUBSYSTEMSLOT6("SubSystemSlot6", 131),
 		SUBSYSTEMSLOT7("SubSystemSlot7", 132),
 		SPECIALIZEDFUELBAY("SpecializedFuelBay", 133),
-		SPECIALIZEDOREHOLD("SpecializedOreHold", 134),
+		SPECIALIZEDOREHOLD("SpecializedAsteroidHold", 134),
 		SPECIALIZEDGASHOLD("SpecializedGasHold", 135),
 		SPECIALIZEDMINERALHOLD("SpecializedMineralHold", 136),
 		SPECIALIZEDSALVAGEHOLD("SpecializedSalvageHold", 137),
