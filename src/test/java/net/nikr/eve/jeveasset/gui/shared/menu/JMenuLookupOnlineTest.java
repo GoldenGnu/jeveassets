@@ -68,7 +68,7 @@ public class JMenuLookupOnlineTest extends TestUtil {
 		for (Lookup lookup : lookups) {
 			try {
 				lookup.join();
-				assertEquals(lookup.lookupLinks.name() + " returned " + lookup.code + " for " + lookup.link, lookup.code, HttpURLConnection.HTTP_OK);
+				assertEquals(lookup.lookupLinks.name() + " returned " + lookup.code + " for " + lookup.link, HttpURLConnection.HTTP_OK, lookup.code);
 			} catch (InterruptedException ex) {
 				fail(ex.getMessage());
 			}
