@@ -24,10 +24,10 @@ package net.nikr.eve.jeveasset.gui.tabs.routing;
 import ca.odell.glazedlists.GlazedLists;
 import ca.odell.glazedlists.TextFilterator;
 import java.util.Comparator;
-import java.util.List;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JAutoCompleteDialog;
+import net.nikr.eve.jeveasset.gui.shared.table.EventModels.StringFilterator;
 import net.nikr.eve.jeveasset.i18n.TabsRouting;
 
 
@@ -44,19 +44,11 @@ public class JSaveAvoidDialog extends JAutoCompleteDialog<String> {
 
 	@Override
 	protected TextFilterator<String> getFilterator() {
-		return new Filterator();
+		return new StringFilterator();
 	}
 
 	@Override
 	protected String getValue(Object object) {
 		return String.valueOf(object);
 	}
-
-	private static class Filterator implements TextFilterator<String> {
-		@Override
-		public void getFilterStrings(final List<String> baseList, final String element) {
-			baseList.add(element);
-		}
-	}
-	
 }

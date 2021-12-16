@@ -653,4 +653,24 @@ public abstract class FakeSettings extends Settings {
 	public Map<String, List<JMenuJumps.Jump>> getTableJumps() {
 		throw new UnsupportedOperationException("not implemented");
 	}
+
+	@Override
+	public Date getTableChanged(String toolName) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public Map<String, Date> getTableChanged() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public void setContractHistory(boolean contractHistory) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public boolean isContractHistory() {
+		throw new UnsupportedOperationException("not implemented");
+	}
 }

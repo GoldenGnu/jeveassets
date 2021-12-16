@@ -34,8 +34,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import javax.swing.GroupLayout;
+import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -54,8 +56,8 @@ import net.nikr.eve.jeveasset.gui.shared.components.JMainTabPrimary;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
-import net.nikr.eve.jeveasset.gui.shared.menu.JMenuName.AssetMenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
+import net.nikr.eve.jeveasset.gui.shared.menu.MenuData.AssetMenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
@@ -78,6 +80,7 @@ public class AssetsTab extends JMainTabPrimary implements TagUpdate {
 	private final JLabel jCount;
 	private final JLabel jAverage;
 	private final JLabel jVolume;
+	private final JButton jClearNew;
 
 	//Table
 	private final AssetFilterControl filterControl;
@@ -96,6 +99,18 @@ public class AssetsTab extends JMainTabPrimary implements TagUpdate {
 		ListenerClass listener = new ListenerClass();
 
 		JFixedToolBar jToolBar = new JFixedToolBar();
+
+		jClearNew = new JButton(TabsAssets.get().clearNew(), Images.UPDATE_DONE_OK.getIcon());
+		jClearNew.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Settings.get().getTableChanged().put(NAME, new Date());
+				jTable.repaint();
+				jClearNew.setEnabled(false);
+				program.saveSettings("Table Changed (assets cleared)");
+			}
+		});
+		jToolBar.addButton(jClearNew);
 
 		jReprocessColors = new JToggleButton(TabsAssets.get().reprocessColors(), Images.TOOL_REPROCESSED.getIcon());
 		jReprocessColors.setToolTipText(TabsAssets.get().reprocessColorsToolTip());
@@ -184,6 +199,20 @@ public class AssetsTab extends JMainTabPrimary implements TagUpdate {
 
 	@Override
 	public void updateCache() {
+		Date current = Settings.get().getTableChanged(NAME);
+		boolean newFound = false;
+		try {
+			eventList.getReadWriteLock().readLock().lock();
+			for (MyAsset asset : eventList) {
+				if (current.before(asset.getAdded())) {
+					newFound = true;
+					break;
+				}
+			}
+		} finally {
+			eventList.getReadWriteLock().readLock().unlock();
+		}
+		jClearNew.setEnabled(newFound);
 		filterControl.createCache();
 	}
 
@@ -256,7 +285,7 @@ public class AssetsTab extends JMainTabPrimary implements TagUpdate {
 	private class AssetTableMenu implements TableMenu<MyAsset> {
 		@Override
 		public MenuData<MyAsset> getMenuData() {
-			return new AssetMenuData(selectionModel.getSelected());
+			return new AssetMenuData<>(selectionModel.getSelected());
 		}
 
 		@Override

@@ -34,6 +34,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import javax.swing.JButton;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.data.api.accounts.EveApiAccount;
 import net.nikr.eve.jeveasset.data.api.accounts.EveApiAccount.KeyType;
@@ -59,6 +60,7 @@ import net.nikr.eve.jeveasset.data.api.raw.RawJournal;
 import net.nikr.eve.jeveasset.data.api.raw.RawJournal.ContextType;
 import net.nikr.eve.jeveasset.data.api.raw.RawJournalRefType;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder;
+import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder.Change;
 import net.nikr.eve.jeveasset.data.api.raw.RawTransaction;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.ItemFlag;
@@ -493,6 +495,8 @@ public class ConverterTestUtil {
 			}
 			marketOrder.setStateString(options.getString());
 			marketOrder.setIssuedBy(options.getInteger());
+			marketOrder.setChanged(options.getDate());
+			marketOrder.addChanges(Collections.singleton(new Change(new Date(), 0.0, 0)));
 		}
 		if (object instanceof MyJournal) {
 			MyJournal journal = (MyJournal) object;
@@ -705,6 +709,8 @@ public class ConverterTestUtil {
 			return options.getMarketOrdersOutbid();
 		} else if (type.equals(MyShip.class)) {
 			return options.getMyShip();
+		} else if (type.equals(JButton.class)) {
+			return options.getButton();
 		} else {
 			fail("No test value for: " + type.getSimpleName());
 			return null;

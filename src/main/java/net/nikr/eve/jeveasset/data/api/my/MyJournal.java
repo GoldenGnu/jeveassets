@@ -20,6 +20,7 @@
  */
 package net.nikr.eve.jeveasset.data.api.my;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -36,7 +37,8 @@ public class MyJournal extends RawJournal implements Comparable<MyJournal>, Owne
 	private final OwnerType owner;
 	private String firstPartyName = "";
 	private String secondPartyName = "";
-	private final Set<Long> owners = new HashSet<Long>();
+	private final Set<Long> owners = new HashSet<>();
+	private Date added;
 
 	public MyJournal(RawJournal rawJournal, OwnerType owner) {
 		super(rawJournal);
@@ -92,6 +94,14 @@ public class MyJournal extends RawJournal implements Comparable<MyJournal>, Owne
 	@Override
 	public Set<Long> getOwners() {
 		return owners;
+	}
+
+	public Date getAdded() {
+		return added;
+	}
+
+	public void setAdded(Date added) {
+		this.added = added;
 	}
 
 	private String capitalizeAll(String in) {

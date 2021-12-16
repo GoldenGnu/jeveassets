@@ -57,7 +57,7 @@ import net.nikr.eve.jeveasset.data.profile.ProfileData;
 import net.nikr.eve.jeveasset.data.profile.ProfileManager;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.sde.StaticData;
-import net.nikr.eve.jeveasset.data.settings.AssetAddedData;
+import net.nikr.eve.jeveasset.data.settings.AddedData;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.TrackerData;
 import net.nikr.eve.jeveasset.data.settings.tag.TagUpdate;
@@ -117,7 +117,7 @@ public class Program implements ActionListener {
 		TIMER
 	}
 	//Major.Minor.Bugfix [Release Candidate n] [BETA n] [DEV BUILD #n];
-	public static final String PROGRAM_VERSION = "6.9.7 DEV BUILD 1";
+	public static final String PROGRAM_VERSION = "7.0.0";
 	public static final String PROGRAM_NAME = "jEveAssets";
 	public static final String PROGRAM_HOMEPAGE = "https://eve.nikr.net/jeveasset";
 	public static final boolean PROGRAM_DEV_BUILD = false;
@@ -191,7 +191,7 @@ public class Program implements ActionListener {
 		StaticData.load();
 		Settings.load();
 		TrackerData.load();
-		AssetAddedData.load();
+		AddedData.load();
 		ContractPriceManager.load();
 
 		initLookAndFeel(Settings.get().getColorSettings().getLookAndFeelClass());
@@ -771,6 +771,30 @@ public class Program implements ActionListener {
 		return treeTab;
 	}
 
+	public LoadoutsTab getLoadoutsTab() {
+		return loadoutsTab;
+	}
+
+	public StockpileTab getStockpileTab() {
+		return stockpileTab;
+	}
+
+	public ReprocessedTab getReprocessedTab() {
+		return reprocessedTab;
+	}
+
+	public RoutingTab getRoutingTab() {
+		return routingTab;
+	}
+
+	public TrackerTab getTrackerTab() {
+		return trackerTab;
+	}
+
+	public ValueTableTab getValueTableTab() {
+		return valueTableTab;
+	}
+
 	public TransactionTab getTransactionsTab() {
 		return transactionsTab;
 	}
@@ -803,24 +827,6 @@ public class Program implements ActionListener {
 		}
 	}
 
-	public StockpileTab getStockpileTool() {
-		return stockpileTab;
-	}
-	public ReprocessedTab getReprocessedTab() {
-		return reprocessedTab;
-	}
-	public RoutingTab getRoutingTab() {
-		return routingTab;
-	}
-
-	public TrackerTab getTrackerTab() {
-		return trackerTab;
-	}
-
-	public ValueTableTab getValueTableTab() {
-		return valueTableTab;
-	}
-
 	public ProfileData getProfileData() {
 		return profileData;
 	}
@@ -828,42 +834,55 @@ public class Program implements ActionListener {
 	public List<MyAsset> getAssetList() {
 		return profileData.getAssetsList();
 	}
+
 	public List<MyContract> getContractList() {
 		return profileData.getContractList();
 	}
+
 	public List<MyContractItem> getContractItemList() {
 		return profileData.getContractItemList();
 	}
+
 	public List<MyIndustryJob> getIndustryJobsList() {
 		return profileData.getIndustryJobsList();
 	}
+
 	public List<MyMarketOrder> getMarketOrdersList() {
 		return profileData.getMarketOrdersList();
 	}
+
 	public List<MyJournal> getJournalList() {
 		return profileData.getJournalList();
 	}
+
 	public List<MyTransaction> getTransactionsList() {
 		return profileData.getTransactionsList();
 	}
+
 	public List<MyAccountBalance> getAccountBalanceList() {
 		return profileData.getAccountBalanceList();
 	}
+
 	public List<String> getOwnerNames(boolean all) {
 		return profileData.getOwnerNames(all);
 	}
+
 	public Map<Long, OwnerType> getOwners() {
 		return profileData.getOwners();
 	}
+
 	public List<OwnerType> getOwnerTypes() {
 		return profileManager.getOwnerTypes();
 	}
+
 	public ProfileManager getProfileManager() {
 		return profileManager;
 	}
+
 	public PriceDataGetter getPriceDataGetter() {
 		return priceDataGetter;
 	}
+
 	public void createTrackerDataPoint() {
 		DataSetCreator.createTrackerDataPoint(profileData, Settings.getNow());
 		TrackerData.save("Added", true);

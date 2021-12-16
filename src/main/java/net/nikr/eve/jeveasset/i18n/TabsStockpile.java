@@ -76,6 +76,7 @@ public abstract class TabsStockpile extends Bundle {
 	public abstract String editStockpileTitle();
 	public abstract String estimatedMarketValue();
 	public abstract String eveMultibuy();
+	public abstract String eveUiOpen();
 	public abstract String expand();
 	public abstract String exportStockpilesXml();
 	public abstract String exportStockpilesText();
@@ -132,6 +133,9 @@ public abstract class TabsStockpile extends Bundle {
 	public abstract String includeSoldContractsTip();
 	public abstract String item();
 	public abstract String items();
+	public abstract String itemsMissing();
+	public abstract String itemsOwned();
+	public abstract String itemsRequired();
 	public abstract String itemsShoppingList();
 	public abstract String location();
 	public abstract String matchExclude();
@@ -185,6 +189,8 @@ public abstract class TabsStockpile extends Bundle {
 	public abstract String columnName();
 	public abstract String columnGroup();
 	public abstract String columnMeta();
+	public abstract String columnEveUi();
+	public abstract String columnEveUiToolTip();
 	public abstract String columnCountNow();
 	public abstract String columnCountNowInventory();
 	public abstract String columnCountNowBuyOrders();
@@ -201,6 +207,8 @@ public abstract class TabsStockpile extends Bundle {
 	public abstract String columnCountMinimumMultiplied();
 	public abstract String columnPercentNeeded();
 	public abstract String columnPrice();
+	public abstract String columnPriceTransactionAverage();
+	public abstract String columnPriceTransactionAverageToolTip();
 	public abstract String columnTags();
 	public abstract String columnValueNow();
 	public abstract String columnValueNeeded();

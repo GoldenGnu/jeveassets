@@ -49,7 +49,7 @@ import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.sde.ReprocessedMaterial;
 import net.nikr.eve.jeveasset.data.sde.RouteFinder;
 import net.nikr.eve.jeveasset.data.sde.StaticData;
-import net.nikr.eve.jeveasset.data.settings.AssetAddedData;
+import net.nikr.eve.jeveasset.data.settings.AddedData;
 import net.nikr.eve.jeveasset.data.settings.ContractPriceManager;
 import net.nikr.eve.jeveasset.data.settings.ContractPriceManager.ContractPriceItem;
 import net.nikr.eve.jeveasset.data.settings.MarketPriceData;
@@ -319,12 +319,18 @@ public class ProfileData {
 	}
 
 	public synchronized void updateMarketOrders(OutbidProcesserOutput output) { //synchronized as owners are modified by updateEventLists
+		Date addedDate = new Date();
+		Map<Long, Date> marketOrdersAdded = AddedData.getMarketOrders().getAll();
 		for (OwnerType ownerType : owners.values()) {
 			for (MyMarketOrder order : ownerType.getMarketOrders()) { // getMarketOrders() is thread safe
 				order.setOutbid(output.getOutbids().get(order.getOrderID()));
-				order.addChanges(output.getUpdates().get(order.getOrderID()));
+				boolean updated = order.addChanges(output.getUpdates().get(order.getOrderID()));
+				if (updated) { //If Market Order have been updated
+					order.setChanged(AddedData.getMarketOrders().getPut(marketOrdersAdded, order.getOrderID(), addedDate));
+				}
 			}
 		}
+		AddedData.getMarketOrders().commitQueue();
 		Program.ensureEDT(new Runnable() {
 			@Override
 			public void run() {
@@ -384,7 +390,7 @@ public class ProfileData {
 		updateEventLists(new Date());
 	}
 
-	public synchronized void updateEventLists(Date assetAddedData) {
+	public synchronized void updateEventLists(Date addedDate) {
 		uniqueAssetsDuplicates = new HashMap<>();
 		Set<String> uniqueOwnerNames = new HashSet<>();
 		Map<Long, OwnerType> uniqueOwners = new HashMap<>();
@@ -509,6 +515,7 @@ public class ProfileData {
 			transactions.add(transaction);
 		}
 		//Update MarketOrders dynamic values
+		Map<Long, Date> marketOrdersAdded = AddedData.getMarketOrders().getAll();
 		for (MyMarketOrder order : marketOrders) {
 			//Last Transaction
 			if (order.isBuyOrder()) { //Buy
@@ -520,7 +527,20 @@ public class ProfileData {
 			order.setBrokersFee(marketOrdersBrokersFee.get(order.getOrderID()));
 			order.setOutbid(Settings.get().getMarketOrdersOutbid().get(order.getOrderID()));
 			order.setPriceReprocessed(ApiIdConverter.getPriceReprocessed(order.getItem()));
+			//Changed date
+			if (order.isUpdateChanged()) { //Update!
+				order.setChanged(AddedData.getMarketOrders().getPut(marketOrdersAdded, order.getOrderID(), addedDate));
+			} else {
+				Date changed;
+				if (!marketOrdersAdded.containsKey(order.getOrderID())) { //New (use issued as a best guess)
+					changed = order.getIssued();
+				} else { //Updating
+					changed = addedDate;
+				}
+				order.setChanged(AddedData.getMarketOrders().getAdd(marketOrdersAdded, order.getOrderID(), changed));
+			}
 		}
+		AddedData.getMarketOrders().commitQueue();
 		//Update IndustryJobs dynamic values
 		for (MyIndustryJob industryJob : industryJobs) {
 			//Update Owners
@@ -552,6 +572,7 @@ public class ProfileData {
 		}
 
 		//Update Transaction dynamic values
+		Map<Long, Date> transactionsAdded = AddedData.getTransactions().getAll();
 		for (MyTransaction transaction : transactions) {
 			//Client Name
 			transaction.setClientName(ApiIdConverter.getOwnerName(transaction.getClientID()));
@@ -571,38 +592,46 @@ public class ProfileData {
 				} 
 				setLastTransaction(transaction, transaction.getTypeID(), transaction.isBuy(), transaction.getPrice(), tax);
 			}
+			//Date added
+			transaction.setAdded(AddedData.getTransactions().getAdd(transactionsAdded, transaction.getTransactionID(), addedDate));
 		}
+		AddedData.getTransactions().commitQueue();
 		//Update Journal dynamic values
+		Map<Long, Date> journalsAdded = AddedData.getJournals().getAll();
 		for (MyJournal journal : journals) {
+			//Names
 			journal.setFirstPartyName(ApiIdConverter.getOwnerName(journal.getFirstPartyID()));
 			journal.setSecondPartyName(ApiIdConverter.getOwnerName(journal.getSecondPartyID()));
+			//Date added
+			journal.setAdded(AddedData.getJournals().getAdd(journalsAdded, journal.getRefID(), addedDate));
 		}
+		AddedData.getJournals().commitQueue();
 
 		//Update Items dynamic values
 		for (Item item : StaticData.get().getItems().values()) {
 			item.setPriceReprocessed(ApiIdConverter.getPriceReprocessed(item));
 		}
 
-		Map<Long, Date> assetAdded = AssetAddedData.getAll();
+		Map<Long, Date> assetAdded = AddedData.getAssets().getAll();
 		Program.ensureEDT(new Runnable() {
 			@Override
 			public void run() {
 				//Add Market Orders to Assets
-				addAssets(DataConverter.assetMarketOrder(marketOrders, Settings.get().isIncludeSellOrders(), Settings.get().isIncludeBuyOrders()), assets, blueprints, assetAdded, assetAddedData);
+				addAssets(DataConverter.assetMarketOrder(marketOrders, Settings.get().isIncludeSellOrders(), Settings.get().isIncludeBuyOrders()), assets, blueprints, assetAdded, addedDate);
 
 				//Add Industry Jobs to Assets
-				addAssets(DataConverter.assetIndustryJob(industryJobs, Settings.get().isIncludeManufacturing()), assets, blueprints, assetAdded, assetAddedData);
+				addAssets(DataConverter.assetIndustryJob(industryJobs, Settings.get().isIncludeManufacturing()), assets, blueprints, assetAdded, addedDate);
 
 				//Add Contract Items to Assets
-				addAssets(DataConverter.assetContracts(contractItems, uniqueOwners, Settings.get().isIncludeSellContracts(), Settings.get().isIncludeBuyContracts()), assets, blueprints, assetAdded, assetAddedData);
+				addAssets(DataConverter.assetContracts(contractItems, uniqueOwners, Settings.get().isIncludeSellContracts(), Settings.get().isIncludeBuyContracts()), assets, blueprints, assetAdded, addedDate);
 
 				//Add Assets to Assets
 				for (OwnerType owner : assetsMap.values()) {
-					addAssets(owner.getAssets(), assets, blueprints, assetAdded, assetAddedData);
+					addAssets(owner.getAssets(), assets, blueprints, assetAdded, addedDate);
 				}
 			}
 		});
-		AssetAddedData.commitQueue();
+		AddedData.getAssets().commitQueue();
 
 		//Update Locations
 		List<EditableLocationType> editableLocationTypes = new ArrayList<>();
@@ -1067,6 +1096,20 @@ public class ProfileData {
 		data.update(transaction.getPrice(), transaction.getItemCount(), transaction.getDate());
 	}
 
+	public Double getTransactionAveragePrice(int typeID) {
+		MarketPriceData buy = transactionBuyPriceData.get(typeID);
+		MarketPriceData sell = transactionSellPriceData.get(typeID);
+		if (buy != null && sell != null) {
+			return MarketPriceData.getAverage(buy, sell);
+		} else if (buy != null) {
+			return buy.getAverage();
+		} else if (sell != null) {
+			return sell.getAverage();
+		} else {
+			return null;
+		}
+	}
+
 	private void setLastTransaction(LastTransactionType item, int typeID, boolean buy, double price, Double tax) {
 		if (tax == null) {
 			tax = 0.0;
@@ -1120,7 +1163,7 @@ public class ProfileData {
 				continue;
 			}
 			//Handle Asset Structures
-			if (asset.getItem().getCategory().equals("Structure")) {
+			if (asset.getItem().getCategory().equals(Item.CATEGORY_STRUCTURE)) {
 				for (MyAsset childAsset:  asset.getAssets()) {
 					updateStructureAssets(childAsset, asset);
 				}
@@ -1132,7 +1175,7 @@ public class ProfileData {
 			Tags tags = Settings.get().getTags(asset.getTagID());
 			asset.setTags(tags);
 			//Date added
-			asset.setAdded(AssetAddedData.getAdd(assetAdded, asset.getItemID(), assetAddedDate));
+			asset.setAdded(AddedData.getAssets().getAdd(assetAdded, asset.getItemID(), assetAddedDate));
 			//Price
 			updatePrice(asset);
 			//Reprocessed price
@@ -1208,14 +1251,7 @@ public class ProfileData {
 	}
 
 	private void updateName(MyAsset asset) {
-		if (Settings.get().getUserItemNames().containsKey(asset.getItemID())) {
-			asset.setName(Settings.get().getUserItemNames().get(asset.getItemID()).getValue(), true, false);
-		} else if (Settings.get().getEveNames().containsKey(asset.getItemID())) {
-			String eveName = Settings.get().getEveNames().get(asset.getItemID());
-			asset.setName(eveName + " (" + asset.getTypeName() + ")", false, true);
-		} else {
-			asset.setName(asset.getTypeName(), false, false);
-		}
+		asset.setName(Settings.get().getUserItemNames().get(asset.getItemID()), Settings.get().getEveNames().get(asset.getItemID()));
 	}
 
 	private void updateContainerChildren(List<MyAsset> found, List<MyAsset> assets) {

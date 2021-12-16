@@ -32,6 +32,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicLong;
+import javax.swing.JButton;
 import net.nikr.eve.jeveasset.data.api.my.MyAsset;
 import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
@@ -49,10 +50,13 @@ import net.nikr.eve.jeveasset.data.settings.tag.Tags;
 import net.nikr.eve.jeveasset.data.settings.types.BlueprintType;
 import net.nikr.eve.jeveasset.data.settings.types.ItemType;
 import net.nikr.eve.jeveasset.data.settings.types.LocationsType;
+import net.nikr.eve.jeveasset.data.settings.types.MarketDetailType;
 import net.nikr.eve.jeveasset.data.settings.types.OwnersType;
 import net.nikr.eve.jeveasset.data.settings.types.PriceType;
 import net.nikr.eve.jeveasset.data.settings.types.TagsType;
 import net.nikr.eve.jeveasset.gui.shared.CopyHandler.CopySeparator;
+import net.nikr.eve.jeveasset.gui.shared.components.JButtonComparable;
+import net.nikr.eve.jeveasset.gui.shared.components.JButtonNull;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter.StockpileContainer;
 import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.i18n.TabsStockpile;
@@ -504,7 +508,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 		return this.getName().compareToIgnoreCase(o.getName());
 	}
 
-	public static class StockpileItem implements Comparable<StockpileItem>, LocationsType, ItemType, BlueprintType, PriceType, CopySeparator, TagsType, OwnersType {
+	public static class StockpileItem implements Comparable<StockpileItem>, LocationsType, ItemType, BlueprintType, PriceType, CopySeparator, TagsType, OwnersType, MarketDetailType {
 		private static final AtomicLong TS = new AtomicLong();
 		//Constructor
 		private final long id;
@@ -514,9 +518,13 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 		private double countMinimum;
 		private boolean runs;
 
+		//soft init
+		protected JButton jButton;
+
 		//Updated values
 		private double price = 0.0;
 		private double volume = 0.0f;
+		private Double transactionAveragePrice; //can be null!
 
 		//Dynamic values
 		private Tags tags;
@@ -563,6 +571,14 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 			this.runs = stockpileItem.runs;
 		}
 
+		@Override
+		public JButton getButton() {
+			if (jButton == null) { //Soft init
+				jButton = new JButtonComparable(TabsStockpile.get().eveUiOpen());
+			}
+			return jButton;
+		}
+
 		private void updateTags() {
 			setTags(Settings.get().getTags(getTagID()));
 		}
@@ -586,9 +602,10 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 			volume = 0.0f;
 		}
 
-		public void updateValues(final double updatePrice, final float updateVolume) {
+		public void updateValues(final double updatePrice, final float updateVolume, Double transactionAveragePrice) {
 			this.price = updatePrice;
 			this.volume = updateVolume;
+			this.transactionAveragePrice = transactionAveragePrice;
 		}
 
 		Long matches(Object object) {
@@ -1148,6 +1165,10 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 			return price;
 		}
 
+		public Double getTransactionAveragePrice() {
+			return transactionAveragePrice;
+		}
+
 		public int getItemTypeID() {
 			return typeID;
 		}
@@ -1379,6 +1400,14 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 			if (item.getVolumeNeeded() < 0) {
 				volumeNeeded = volumeNeeded + item.getVolumeNeeded();
 			}
+		}
+
+		@Override
+		public JButton getButton() {
+			if (jButton == null) { //Soft init
+				jButton = new JButtonNull();
+			}
+			return jButton;
 		}
 
 		@Override
@@ -1684,7 +1713,6 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 		private String name = "";
 		private String space = "";
 		private int level;
-		
 
 		public SubpileItem(Stockpile stockpile, StockpileItem parentItem, SubpileStock subpileStock, int level, String path) {
 			super(stockpile, parentItem);
@@ -1700,6 +1728,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 			this.path = path;
 			updateText();
 		}
+
 		private String getPath() {
 			return path;
 		}
@@ -1809,6 +1838,14 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 			this.originalParentStockpile = originalParentStockpile;
 			this.parentStock = parentStock;
 			this.subMultiplier = subMultiplier;
+		}
+
+		@Override
+		public JButton getButton() {
+			if (jButton == null) { //Soft init
+				jButton = new JButtonNull();
+			}
+			return jButton;
 		}
 
 		@Override

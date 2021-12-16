@@ -29,11 +29,15 @@ import ca.odell.glazedlists.event.ListEventListener;
 import ca.odell.glazedlists.swing.DefaultEventSelectionModel;
 import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import ca.odell.glazedlists.swing.TableComparatorChooser;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -45,6 +49,7 @@ import net.nikr.eve.jeveasset.data.settings.types.LocationType;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
+import net.nikr.eve.jeveasset.gui.shared.components.JFixedToolBar;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTabPrimary;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.CompareType;
@@ -72,6 +77,7 @@ public class TransactionTab extends JMainTabPrimary {
 	private final JLabel jBuyOrdersCount;
 	private final JLabel jBuyOrdersTotal;
 	private final JLabel jBuyOrdersAverage;
+	private final JButton jClearNew;
 
 	//Table
 	private final TransactionsFilterControl filterControl;
@@ -87,6 +93,21 @@ public class TransactionTab extends JMainTabPrimary {
 		super(program, NAME, TabsTransaction.get().title(), Images.TOOL_TRANSACTION.getIcon(), true);
 
 		ListenerClass listener = new ListenerClass();
+
+		JFixedToolBar jToolBar = new JFixedToolBar();
+
+		jClearNew = new JButton(TabsTransaction.get().clearNew(), Images.UPDATE_DONE_OK.getIcon());
+		jClearNew.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Settings.get().getTableChanged().put(NAME, new Date());
+				jTable.repaint();
+				jClearNew.setEnabled(false);
+				program.saveSettings("Table Changed (transaction cleared)");
+			}
+		});
+		jToolBar.addButton(jClearNew);
+		
 		//Table Format
 		tableFormat = new EnumTableFormatAdaptor<>(TransactionTableFormat.class);
 		//Backend
@@ -171,11 +192,13 @@ public class TransactionTab extends JMainTabPrimary {
 		layout.setHorizontalGroup(
 				layout.createParallelGroup()
 						.addComponent(filterControl.getPanel())
+						.addComponent(jToolBar)
 						.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
 		);
 		layout.setVerticalGroup(
 				layout.createSequentialGroup()
 						.addComponent(filterControl.getPanel())
+						.addComponent(jToolBar)
 						.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
 		);
 	}
@@ -187,6 +210,20 @@ public class TransactionTab extends JMainTabPrimary {
 
 	@Override
 	public void updateCache() {
+		Date current = Settings.get().getTableChanged(NAME);
+		boolean newFound = false;
+		try {
+			eventList.getReadWriteLock().readLock().lock();
+			for (MyTransaction transaction : eventList) {
+				if (current.before(transaction.getAdded())) {
+					newFound = true;
+					break;
+				}
+			}
+		} finally {
+			eventList.getReadWriteLock().readLock().unlock();
+		}
+		jClearNew.setEnabled(newFound);
 		filterControl.createCache();
 	}
 

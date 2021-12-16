@@ -112,6 +112,10 @@ public class JAssetTable extends JAutoColumnTable {
 			ColorSettings.configCell(component, ColorEntry.ASSETS_REPROCESS, isSelected);
 			return component;
 		}
+		//Added date
+		if (columnName.equals(AssetTableFormat.ADDED.getColumnName()) && Settings.get().getTableChanged(AssetsTab.NAME).before(asset.getAdded())) {
+			ColorSettings.configCell(component, ColorEntry.ASSETS_NEW, isSelected);
+		}
 		return component;
 	}
 }

@@ -24,7 +24,7 @@ import java.io.File;
 import java.net.URISyntaxException;
 import java.net.URL;
 import net.nikr.eve.jeveasset.TestUtil;
-import net.nikr.eve.jeveasset.data.settings.AssetAddedData;
+import net.nikr.eve.jeveasset.data.settings.AddedData;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -34,7 +34,7 @@ public class AssetAddedReaderTest extends TestUtil {
 	@Test
 	public void testAddedJson() {
 		TestAssetAddedReader.load();
-		Assert.assertTrue(!AssetAddedData.isEmpty());
+		Assert.assertTrue(!AddedData.getAssets().isEmpty());
 	}
 
 	private static class TestAssetAddedReader extends AssetAddedReader {

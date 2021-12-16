@@ -88,6 +88,7 @@ import net.nikr.eve.jeveasset.gui.shared.components.JFixedToolBar;
 import net.nikr.eve.jeveasset.gui.shared.components.ListComboBoxModel;
 import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
+import net.nikr.eve.jeveasset.gui.shared.table.EventModels.StringFilterator;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter.StockpileContainer;
 import net.nikr.eve.jeveasset.i18n.DataModelAsset;
@@ -713,8 +714,8 @@ public class StockpileDialog extends JDialogCentered {
 				jContainer = new JComboBox<>();
 				jIncludeContainer = new JCheckBox(TabsStockpile.get().includeContainer());
 				TextManager.installTextComponent((JTextComponent) jContainer.getEditor().getEditorComponent());
-				AutoCompleteSupport<String> install = AutoCompleteSupport.install(jContainer, EventModels.createSwingThreadProxyList(containerEventList), new Filterator());
-				install.setFilterMode(TextMatcherEditor.CONTAINS);
+				AutoCompleteSupport<String> containerAutoComplete =  AutoCompleteSupport.install(jContainer, EventModels.createSwingThreadProxyList(containerEventList), new StringFilterator());
+				containerAutoComplete.setFilterMode(TextMatcherEditor.CONTAINS);
 				((JTextComponent) jContainer.getEditor().getEditorComponent()).getDocument().addDocumentListener(listener);
 				jContainer.setActionCommand(StockpileDialogAction.VALIDATE.name());
 				jContainer.addActionListener(listener);
@@ -1390,7 +1391,6 @@ public class StockpileDialog extends JDialogCentered {
 					jLocation.setEnabled(true);
 					autoComplete = AutoCompleteSupport.install(jLocation, EventModels.createSwingThreadProxyList(filterList), new LocationsFilterator());
 					autoComplete.setStrict(true);
-					autoComplete.setCorrectsCase(true);
 					jLocation.addItemListener(listener); //Must be added after AutoCompleteSupport
 				}
 			} else {
@@ -1732,15 +1732,6 @@ public class StockpileDialog extends JDialogCentered {
 
 		public JPanel getPanel() {
 			return jPanel;
-		}
-	}
-
-	private static class Filterator implements TextFilterator<String> {
-		@Override
-		public void getFilterStrings(final List<String> baseList, final String element) {
-			if (element.length() > 0) {
-				baseList.add(element);
-			}
 		}
 	}
 }

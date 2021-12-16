@@ -27,7 +27,7 @@ import java.io.File;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.*;
-import net.nikr.eve.jeveasset.data.settings.AssetAddedData;
+import net.nikr.eve.jeveasset.data.settings.AddedData;
 import net.nikr.eve.jeveasset.data.settings.ExportSettings;
 import net.nikr.eve.jeveasset.data.settings.PriceDataSettings;
 import net.nikr.eve.jeveasset.data.settings.ProxyData;
@@ -138,7 +138,7 @@ public class BackwardCompatibilitySettings extends FakeSettings implements Setti
 					TrackerData.readUnlock();
 				}
 			case GET_ASSET_ADDED:
-				return !AssetAddedData.isEmpty();
+				return !AddedData.getAssets().isEmpty();
 			default:
 				return ok.get(function);
 		}

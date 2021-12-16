@@ -34,7 +34,7 @@ import java.lang.reflect.Type;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import net.nikr.eve.jeveasset.data.settings.AssetAddedData;
+import net.nikr.eve.jeveasset.data.settings.AddedData;
 import net.nikr.eve.jeveasset.io.shared.FileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,7 +62,7 @@ public class AssetAddedReader extends AbstractBackup {
 			Gson gson = new GsonBuilder().registerTypeAdapter(Date.class, new DateDeserializer()).create();
 			Map<Long, Date> assetAddedData = gson.fromJson(fileReader, new TypeToken<HashMap<Long, Date>>() {}.getType());
 			if (assetAddedData != null) {
-				AssetAddedData.set(assetAddedData); //Import from added.json
+				AddedData.getAssets().set(assetAddedData); //Import from added.json
 				LOG.info("Asset added data loaded");
 			}
 		} catch (IOException | JsonParseException ex) {

@@ -103,6 +103,9 @@ public abstract class GuiShared extends Bundle {
 	public abstract String lazyBlacksmithInvention();
 	public abstract String lazyBlacksmithManufacturing();
 	public abstract String lazyBlacksmithResearch();
+	public abstract String loadout();
+	public abstract String loadoutOpen();
+	public abstract String loadoutSelectShip();
 	public abstract String location();
 	public abstract String locationClear();
 	public abstract String locationClearConfirm(String location);

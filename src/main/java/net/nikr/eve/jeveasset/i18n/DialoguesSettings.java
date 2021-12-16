@@ -99,6 +99,10 @@ public abstract class DialoguesSettings extends Bundle {
 	public abstract String journal();
 	public abstract String journalSaveHistory();
 
+	// used in ContractToolSettingsPanel
+	public abstract String contracts();
+	public abstract String contractsSaveHistory();
+
 	// used in TrackerToolSettingsPanel
 	public abstract String tracker();
 	public abstract String useAssetPriceForSellOrders();

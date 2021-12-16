@@ -57,6 +57,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
 import net.nikr.eve.jeveasset.data.api.my.MyAsset;
 import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
@@ -72,6 +73,8 @@ import net.nikr.eve.jeveasset.data.settings.types.LocationType;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
+import net.nikr.eve.jeveasset.gui.shared.MarketDetailsColumn;
+import net.nikr.eve.jeveasset.gui.shared.MarketDetailsColumn.MarketDetailsActionListener;
 import net.nikr.eve.jeveasset.gui.shared.components.JCustomFileChooser;
 import net.nikr.eve.jeveasset.gui.shared.components.JDropDownButton;
 import net.nikr.eve.jeveasset.gui.shared.components.JFixedToolBar;
@@ -82,6 +85,7 @@ import net.nikr.eve.jeveasset.gui.shared.components.JMultiSelectionDialog;
 import net.nikr.eve.jeveasset.gui.shared.components.JTextDialog;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
+import net.nikr.eve.jeveasset.gui.shared.menu.JMenuUI;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
@@ -301,10 +305,10 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		tableModel = EventModels.createTableModel(separatorList, tableFormat);
 		//Table
 		jTable = new JStockpileTable(program, tableModel, separatorList);
-		//jTable = new JSeparatorTable(program, tableModel, separatorList);
 		jTable.setSeparatorRenderer(new StockpileSeparatorTableCell(program, jTable, separatorList, listener));
 		jTable.setSeparatorEditor(new StockpileSeparatorTableCell(program, jTable, separatorList, listener));
 		jTable.setCellSelectionEnabled(true);
+		//Padding
 		PaddingTableCellRenderer.install(jTable, 3);
 		//Sorting
 		TableComparatorChooser.install(jTable, sortedListColumn, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
@@ -312,6 +316,14 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		selectionModel = EventModels.createSelectionModel(separatorList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
+		//Market Details
+		MarketDetailsColumn.install(eventList, new MarketDetailsActionListener<StockpileItem>() {
+			@Override
+			public void openMarketDetails(StockpileItem stockpileItem) {
+				EsiOwner esiOwner = JMenuUI.selectOwner(program, JMenuUI.EsiOwnerRequirement.OPEN_WINDOW);
+				JMenuUI.openMarketDetails(program, esiOwner, stockpileItem.getTypeID(), false);
+			}
+		});
 		//Listeners
 		installTable(jTable);
 		//Scroll
@@ -529,7 +541,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 	protected void editItem(StockpileItem item) {
 		StockpileItem editItem = stockpileItemDialog.showEdit(item);
 		if (editItem != null) {
-			program.getStockpileTool().addToStockpile(editItem.getStockpile(), editItem);
+			addToStockpile(editItem.getStockpile(), editItem);
 		}
 	}
 
@@ -735,7 +747,8 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		final int TYPE_ID = item.getItemTypeID();
 		double price = ApiIdConverter.getPrice(TYPE_ID, item.isBPC(), item);
 		float volume = ApiIdConverter.getVolume(item.getItem(), true);
-		item.updateValues(price, volume);
+		Double transactionAveragePrice = program.getProfileData().getTransactionAveragePrice(TYPE_ID);
+		item.updateValues(price, volume, transactionAveragePrice);
 		//ContractItems
 		if (stockpile.isContracts()) {
 			Set<MyContractItem> items = contractItems.get(TYPE_ID);
@@ -857,7 +870,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 	}
 	private void importText(StockpileImport stockpileImport) {
 		//Get string from clipboard
-		String text = jTextDialog.importText();
+		String text = jTextDialog.importText("", stockpileImport.getExample());
 		if (text == null) {
 			return; //Cancelled
 		}

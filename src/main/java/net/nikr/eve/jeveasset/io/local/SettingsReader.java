@@ -38,7 +38,7 @@ import java.util.TreeMap;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder.MarketOrderRange;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
-import net.nikr.eve.jeveasset.data.settings.AssetAddedData;
+import net.nikr.eve.jeveasset.data.settings.AddedData;
 import net.nikr.eve.jeveasset.data.settings.ColorEntry;
 import net.nikr.eve.jeveasset.data.settings.ColorTheme.ColorThemeTypes;
 import net.nikr.eve.jeveasset.data.settings.ContractPriceManager.ContractPriceSettings;
@@ -449,6 +449,12 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		//Flags
 		Element flagsElement = getNode(element, "flags");
 		parseFlags(flagsElement, settings);
+
+		//Table Changes
+		Element tableChangesElement = getNodeOptional(element, "tablechanges");
+		if (tableChangesElement != null) {
+			parseTableChanges(tableChangesElement, settings);
+		}
 
 		//Table Formulas (Must be loaded before filters)
 		Element tableFormulasElement = getNodeOptional(element, "tableformulas");
@@ -1414,6 +1420,16 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		}
 	}
 
+	private void parseTableChanges(final Element element, final Settings settings) throws XmlException {
+		NodeList changesList = element.getElementsByTagName("changes");
+		for (int a = 0; a < changesList.getLength(); a++) {
+			Element changesNode = (Element) changesList.item(a);
+			String toolName = getString(changesNode, "tool");
+			Date date = getDate(changesNode, "date");
+			settings.getTableChanged().put(toolName, date);
+		}
+	}
+
 	private void parseTableJumps(final Element element, final Settings settings) throws XmlException {
 		NodeList jumpsNodeList = element.getElementsByTagName("jumps");
 		for (int a = 0; a < jumpsNodeList.getLength(); a++) {
@@ -1990,7 +2006,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			Date date = getDate(currentNode, "date");
 			assetAdded.put(itemID, date);
 		}
-		AssetAddedData.set(assetAdded); //Import from settings.xml
+		AddedData.getAssets().set(assetAdded); //Import from settings.xml
 	}
 
 	public enum RegionTypeBackwardCompatibility {

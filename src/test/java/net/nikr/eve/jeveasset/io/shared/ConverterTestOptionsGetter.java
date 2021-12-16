@@ -27,6 +27,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import javax.swing.JButton;
 import net.nikr.eve.jeveasset.data.api.accounts.EveApiAccount;
 import net.nikr.eve.jeveasset.data.api.accounts.EveApiAccount.KeyType;
 import net.nikr.eve.jeveasset.data.api.my.MyShip;
@@ -105,6 +106,7 @@ public class ConverterTestOptionsGetter {
 		private static final Percent[] PERCENT = {Percent.create(5.1)};
 		private static final UserPrice[] USER_ITEM = {new UserPrice(DOUBLE[0], INTEGER[0], STRING[0])};
 		private static final MyShip MY_SHIP = new MyShip(LONG[0], INTEGER[0], 60003466L);
+		private static final JButton BUTTON = new JButton();
 		//LocationType
 		private static final CharacterAssetsResponse.LocationTypeEnum[] ESI_LOCATION_TYPE_CHARACTER = CharacterAssetsResponse.LocationTypeEnum.values();
 		private static final CorporationAssetsResponse.LocationTypeEnum[] ESI_LOCATION_TYPE_CORPORATION = CorporationAssetsResponse.LocationTypeEnum.values();
@@ -427,6 +429,11 @@ public class ConverterTestOptionsGetter {
 		@Override
 		public MyShip getMyShip() {
 			return MY_SHIP;
+		}
+
+		@Override
+		public JButton getButton() {
+			return BUTTON;
 		}
 
 		@Override

@@ -24,6 +24,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import javax.swing.JComponent;
 import net.nikr.eve.jeveasset.TestUtil;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.data.api.my.MyAsset;
@@ -171,6 +172,7 @@ public class TableFormatTest extends TestUtil {
 			stockpile.setFlagName(Collections.singleton(asset.getItemFlag()));
 			StockpileItem stockpileItem = new StockpileItem(stockpile, item, INTEGER_VALUE, DOUBLE_VALUE, BOOLEAN_VALUE);
 			stockpileItem.setTags(tags);
+			stockpileItem.updateValues(0, 0, DOUBLE_VALUE);
 			for (StockpileTableFormat tableFormat : StockpileTableFormat.values()) {
 				test(tableFormat, tableFormat.getType(), tableFormat.getColumnValue(stockpileItem));
 			}
@@ -210,6 +212,8 @@ public class TableFormatTest extends TestUtil {
 			//No problem
 		} else if (Number.class.isAssignableFrom(actual)) {
 			fail("Unsupported number type used");
+		} else if (JComponent.class.isAssignableFrom(actual)) {
+			//No problem
 		} else if (String.class.isAssignableFrom(actual)) {
 			//No problem
 		} else if (String.class.isAssignableFrom(expecteds)) {

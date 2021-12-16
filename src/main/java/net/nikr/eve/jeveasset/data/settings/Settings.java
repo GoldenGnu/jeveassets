@@ -79,7 +79,8 @@ public class Settings {
 		FLAG_ASKED_CHECK_ALL_TRACKER,
 		FLAG_TRACKER_USE_ASSET_PRICE_FOR_SELL_ORDERS,
 		FLAG_FOCUS_EVE_ONLINE_ON_ESI_UI_CALLS,
-		FLAG_SAVE_TOOLS_ON_EXIT
+		FLAG_SAVE_TOOLS_ON_EXIT,
+		FLAG_SAVE_CONTRACT_HISTORY
 	}
 
 	public static enum TransactionProfitPrice {
@@ -234,7 +235,8 @@ public class Settings {
 	//Lock OK
 	private final Map<String, Tag> tags = new HashMap<>();
 	private final Map<TagID, Tags> tagIds = new HashMap<>();
-
+//Changed
+	private final Map<String, Date> tableChanged = new HashMap<>();
 //Tools
 	private final List<String> showTools = new ArrayList<>();
 //Colors
@@ -262,6 +264,7 @@ public class Settings {
 		flags.put(SettingFlag.FLAG_TRACKER_USE_ASSET_PRICE_FOR_SELL_ORDERS, false);
 		flags.put(SettingFlag.FLAG_FOCUS_EVE_ONLINE_ON_ESI_UI_CALLS, true);
 		flags.put(SettingFlag.FLAG_SAVE_TOOLS_ON_EXIT, false);
+		flags.put(SettingFlag.FLAG_SAVE_CONTRACT_HISTORY, true);
 		cacheFlags();
 	}
 
@@ -425,6 +428,19 @@ public class Settings {
 			tableJumps.put(toolName, jumps);
 		}
 		return jumps;
+	}
+
+	public Map<String, Date> getTableChanged() {
+		return tableChanged;
+	}
+
+	public Date getTableChanged(String toolName) {
+		Date date = tableChanged.get(toolName);
+		if (date == null) {
+			date = new Date();
+			tableChanged.put(toolName, date);
+		}
+		return date;
 	}
 
 	public ProxyData getProxyData() {
@@ -747,6 +763,14 @@ public class Settings {
 
 	public void setMarketOrderHistory(final boolean marketOrderHistory) {
 		flags.put(SettingFlag.FLAG_MARKET_ORDER_HISTORY, marketOrderHistory);
+	}
+
+	public boolean isContractHistory() {
+		return flags.get(SettingFlag.FLAG_SAVE_CONTRACT_HISTORY);
+	}
+
+	public void setContractHistory(final boolean contractHistory) {
+		flags.put(SettingFlag.FLAG_SAVE_CONTRACT_HISTORY, contractHistory);
 	}
 
 	public MarketOrdersSettings getMarketOrdersSettings() {

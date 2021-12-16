@@ -21,7 +21,6 @@
 package net.nikr.eve.jeveasset.gui.tabs.routing;
 
 import ca.odell.glazedlists.EventList;
-import ca.odell.glazedlists.TextFilterator;
 import ca.odell.glazedlists.swing.AutoCompleteSupport;
 import java.awt.Color;
 import java.awt.Font;
@@ -89,6 +88,7 @@ import net.nikr.eve.jeveasset.gui.shared.components.ListComboBoxModel;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuUI;
 import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
+import net.nikr.eve.jeveasset.gui.shared.table.EventModels.StringFilterator;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewGroup;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewLocation;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewLocation.LocationType;
@@ -319,10 +319,10 @@ public class RoutingTab extends JMainTabSecondary {
 		jStart.setEnabled(false);
 		startEventList = EventListManager.create();
 		AutoCompleteSupport<String> startAutoComplete = AutoCompleteSupport.install(jStart, EventModels.createSwingThreadProxyList(startEventList), new StringFilterator());
+		startAutoComplete.setStrict(true);
 		try {
 			startEventList.getReadWriteLock().writeLock().lock();
 			startEventList.add(TabsRouting.get().startEmpty());
-			startAutoComplete.setStrict(true);
 		} finally {
 			startEventList.getReadWriteLock().writeLock().unlock();
 		}
@@ -1961,13 +1961,6 @@ public class RoutingTab extends JMainTabSecondary {
 
 		public Set<Long> getSystemIDs() {
 			return systemIDs;
-		}
-	}
-
-	static class StringFilterator implements TextFilterator<String> {
-		@Override
-		public void getFilterStrings(final List<String> baseList, final String element) {
-			baseList.add(element);
 		}
 	}
 }

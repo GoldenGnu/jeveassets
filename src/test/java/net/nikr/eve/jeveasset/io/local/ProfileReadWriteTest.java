@@ -29,7 +29,7 @@ import net.nikr.eve.jeveasset.data.api.accounts.EveApiOwner;
 import net.nikr.eve.jeveasset.data.api.accounts.EveKitOwner;
 import net.nikr.eve.jeveasset.data.profile.ProfileData;
 import net.nikr.eve.jeveasset.data.profile.ProfileManager;
-import net.nikr.eve.jeveasset.data.settings.AssetAddedData;
+import net.nikr.eve.jeveasset.data.settings.AddedData;
 import net.nikr.eve.jeveasset.io.shared.ConverterTestOptions;
 import net.nikr.eve.jeveasset.io.shared.ConverterTestOptionsGetter;
 import net.nikr.eve.jeveasset.io.shared.ConverterTestUtil;
@@ -53,7 +53,7 @@ public class ProfileReadWriteTest extends TestUtil {
 	}
 
 	private void test(boolean setNull) {
-		AssetAddedData.load();
+		AddedData.load();
 		for (ConverterTestOptions options : ConverterTestOptionsGetter.getConverterOptions()) {
 			ProfileManager saveManager = new ProfileManager();
 			//ESI

@@ -21,11 +21,14 @@
 package net.nikr.eve.jeveasset.gui.tabs.stockpile;
 
 import ca.odell.glazedlists.GlazedLists;
+import java.awt.Component;
 import java.util.Comparator;
 import net.nikr.eve.jeveasset.data.settings.tag.Tags;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.Percent;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
+import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileTotal;
+import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.SubpileStock;
 import net.nikr.eve.jeveasset.i18n.TabsStockpile;
 
 
@@ -247,6 +250,42 @@ public enum StockpileTableFormat implements EnumTableColumn<StockpileItem> {
 		@Override
 		public Object getColumnValue(final StockpileItem from) {
 			return from.getDynamicPrice();
+		}
+	},
+	PRICE_TRANSACTION_AVERAGE(Double.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsStockpile.get().columnPriceTransactionAverage();
+		}
+
+		@Override
+		public String getColumnToolTip() {
+			return TabsStockpile.get().columnPriceTransactionAverageToolTip();
+		}
+		@Override
+		public Object getColumnValue(final StockpileItem from) {
+			return from.getTransactionAveragePrice();
+		}
+	},
+	EVE_UI(Component.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsStockpile.get().columnEveUi();
+		}
+		@Override
+		public String getColumnToolTip() {
+			return TabsStockpile.get().columnEveUiToolTip();
+		}
+		@Override
+		public boolean isColumnEditable(Object baseObject) {
+			if (baseObject instanceof StockpileTotal || baseObject instanceof SubpileStock) {
+				return false;
+			}
+			return true;
+		}
+		@Override
+		public Object getColumnValue(final StockpileItem from) {
+			return from.getButton();
 		}
 	},
 	VALUE_NOW(Double.class, GlazedLists.comparableComparator()) {

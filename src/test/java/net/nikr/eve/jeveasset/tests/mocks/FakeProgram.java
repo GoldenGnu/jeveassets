@@ -46,6 +46,7 @@ import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
 import net.nikr.eve.jeveasset.gui.tabs.assets.AssetsTab;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustrySlotsTab;
+import net.nikr.eve.jeveasset.gui.tabs.loadout.LoadoutsTab;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewTab;
 import net.nikr.eve.jeveasset.gui.tabs.reprocessed.ReprocessedTab;
 import net.nikr.eve.jeveasset.gui.tabs.routing.RoutingTab;
@@ -117,7 +118,7 @@ public abstract class FakeProgram extends Program {
 	}
 
 	@Override
-	public StockpileTab getStockpileTool() {
+	public StockpileTab getStockpileTab() {
 		throw new UnsupportedOperationException("Not implemented");
 	}
 
@@ -303,6 +304,11 @@ public abstract class FakeProgram extends Program {
 
 	@Override
 	public void addMainTab(String toolName, JMainTab jMainTab) {
+		throw new UnsupportedOperationException("Not implemented");
+	}
+
+	@Override
+	public LoadoutsTab getLoadoutsTab() {
 		throw new UnsupportedOperationException("Not implemented");
 	}
 }

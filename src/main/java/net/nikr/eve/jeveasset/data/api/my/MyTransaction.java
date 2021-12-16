@@ -46,6 +46,7 @@ public class MyTransaction extends RawTransaction implements EditableLocationTyp
 	private double transactionProfit;
 	private Percent transactionProfitPercent;
 	private Double tax;
+	private Date added;
 
 	public MyTransaction(final RawTransaction rawTransaction, final Item item, final OwnerType owner) {
 		super(rawTransaction);
@@ -155,6 +156,14 @@ public class MyTransaction extends RawTransaction implements EditableLocationTyp
 
 	public void setTax(Double tax) {
 		this.tax = tax;
+	}
+
+	public Date getAdded() {
+		return added;
+	}
+
+	public void setAdded(Date added) {
+		this.added = added;
 	}
 
 	@Override

@@ -79,6 +79,7 @@ import net.nikr.eve.jeveasset.gui.shared.components.JMainTabSecondary;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
+import net.nikr.eve.jeveasset.gui.shared.menu.MenuData.AssetMenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
@@ -373,7 +374,7 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate {
 						for (Map.Entry<Flag, Set<String>> entry: flags.entrySet()) {
 							if (entry.getValue().contains(parentAsset.getFlag())) {
 								final Flag flag;
-								if (entry.getKey().getName().equals("Item Hangar") && parentAsset.getItem().getCategory().equals("Ship")) {
+								if (entry.getKey().getName().equals("Item Hangar") && parentAsset.getItem().isShip()) {
 									flag = shipHangar;
 								} else {
 									flag = entry.getKey();
@@ -570,7 +571,7 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate {
 	private class TreeTableMenu implements TableMenu<TreeAsset> {
 		@Override
 		public MenuData<TreeAsset> getMenuData() {
-			return new MenuData<>(selectionModel.getSelected());
+			return new AssetMenuData<>(selectionModel.getSelected());
 		}
 
 		@Override

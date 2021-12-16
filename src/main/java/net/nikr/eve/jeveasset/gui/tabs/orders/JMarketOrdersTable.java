@@ -28,6 +28,7 @@ import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
 import net.nikr.eve.jeveasset.data.settings.ColorEntry;
 import net.nikr.eve.jeveasset.data.settings.ColorSettings;
+import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 
 
@@ -74,6 +75,11 @@ public class JMarketOrdersTable extends JAutoColumnTable {
 		//User set location
 		if (marketOrder.getLocation().isUserLocation() && columnName.equals(MarketTableFormat.LOCATION.getColumnName())) {
 			ColorSettings.configCell(component, ColorEntry.CUSTOM_USER_LOCATION, isSelected);
+			return component;
+		}
+		//Changed date
+		if (columnName.equals(MarketTableFormat.CHANGED.getColumnName()) && Settings.get().getTableChanged(MarketOrdersTab.NAME).before(marketOrder.getChanged())) {
+			ColorSettings.configCell(component, ColorEntry.MARKET_ORDERS_NEW, isSelected);
 			return component;
 		}
 

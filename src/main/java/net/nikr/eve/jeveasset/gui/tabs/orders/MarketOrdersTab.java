@@ -36,8 +36,6 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -67,9 +65,6 @@ import javax.swing.JMenu;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.Timer;
-import javax.swing.event.CellEditorListener;
-import javax.swing.event.ChangeEvent;
-import javax.swing.table.TableCellEditor;
 import javax.swing.text.StyledDocument;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
@@ -88,6 +83,8 @@ import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.CopyHandler;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.InstantToolTip;
+import net.nikr.eve.jeveasset.gui.shared.MarketDetailsColumn;
+import net.nikr.eve.jeveasset.gui.shared.MarketDetailsColumn.MarketDetailsActionListener;
 import net.nikr.eve.jeveasset.gui.shared.Updatable;
 import net.nikr.eve.jeveasset.gui.shared.components.JFixedToolBar;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTabPrimary;
@@ -140,6 +137,7 @@ public class MarketOrdersTab extends JMainTabPrimary {
 	private final JLabel jLastEsiUpdate;
 	private final JLabel jLastLogUpdate;
 	private final JLabel jClipboard;
+	private final JButton jClearNew;
 	private final JComboBox<MarketOrderRange> jOrderRangeNext;
 	private final JComboBox<String> jOrderType;
 	private final MarketOrdersErrorDialog jMarketOrdersErrorDialog;
@@ -167,6 +165,18 @@ public class MarketOrdersTab extends JMainTabPrimary {
 		jMarketOrdersErrorDialog = new MarketOrdersErrorDialog(program);
 
 		JFixedToolBar jToolBar = new JFixedToolBar();
+
+		jClearNew = new JButton(TabsOrders.get().clearNew(), Images.UPDATE_DONE_OK.getIcon());
+		jClearNew.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Settings.get().getTableChanged().put(NAME, new Date());
+				jTable.repaint();
+				jClearNew.setEnabled(false);
+				program.saveSettings("Table Changed (market orders cleared)");
+			}
+		});
+		jToolBar.addButton(jClearNew);
 
 		jOrderRangeNext = new JComboBox<>(MarketOrderRange.valuesSorted());
 		jOrderRangeNext.setSelectedItem(Settings.get().getOutbidOrderRange());
@@ -234,6 +244,7 @@ public class MarketOrdersTab extends JMainTabPrimary {
 		//Table
 		jTable = new JMarketOrdersTable(program, tableModel);
 		jTable.setCellSelectionEnabled(true);
+		//Padding
 		PaddingTableCellRenderer.install(jTable, 1);
 		//Sorting
 		TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
@@ -241,54 +252,13 @@ public class MarketOrdersTab extends JMainTabPrimary {
 		selectionModel = EventModels.createSelectionModel(filterList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
-		jTable.addMouseListener(new MouseAdapter() {
+		//Market Details
+		MarketDetailsColumn.install(eventList, new MarketDetailsActionListener<MyMarketOrder>() {
 			@Override
-			public void mousePressed(MouseEvent e) {
-				int row = jTable.rowAtPoint(e.getPoint());
-				int column = jTable.columnAtPoint(e.getPoint());
-
-				if (row < 0 || row > jTable.getRowCount() || column < 0 || column > jTable.getColumnCount()) {
-					return;
-				}
-				Object value = jTable.getValueAt(row, column);
-				String columnName = (String) jTable.getTableHeader().getColumnModel().getColumn(column).getHeaderValue();
-				if (!columnName.equals(MarketTableFormat.EVE_UI.getColumnName())) {
-					return;
-				}
-				TableCellEditor cellEditor = jTable.getCellEditor();
-				if ((value instanceof JButton) && cellEditor != null) {
-					JButton jButton = (JButton) value;
-					MyMarketOrder marketOrder = tableModel.getElementAt(row);
-
-					ActionListener actionListener = new ActionListener() {
-						@Override
-						public void actionPerformed(ActionEvent e) {
-							openEve(marketOrder);
-						}
-					};
-
-					jButton.addActionListener(actionListener);
-
-					cellEditor.addCellEditorListener(new CellEditorListener() {
-						@Override
-						public void editingStopped(ChangeEvent e) {
-							cellEditor.removeCellEditorListener(this);
-							jButton.removeActionListener(actionListener);
-							jTable.requestFocusInWindow();
-						}
-
-						@Override
-						public void editingCanceled(ChangeEvent e) {
-							cellEditor.removeCellEditorListener(this);
-							jButton.removeActionListener(actionListener);
-							jTable.requestFocusInWindow();
-						}
-					});
-					jButton.doClick();
-				}
+			public void openMarketDetails(MyMarketOrder marketOrder) {
+				openEve(marketOrder);
 			}
 		});
-
 		//Listeners
 		installTable(jTable);
 		//Scroll Panels
@@ -368,6 +338,20 @@ public class MarketOrdersTab extends JMainTabPrimary {
 
 	@Override
 	public void updateCache() {
+		Date current = Settings.get().getTableChanged(NAME);
+		boolean newFound = false;
+		try {
+			eventList.getReadWriteLock().readLock().lock();
+			for (MyMarketOrder marketOrder : eventList) {
+				if (current.before(marketOrder.getChanged())) {
+					newFound = true;
+					break;
+				}
+			}
+		} finally {
+			eventList.getReadWriteLock().readLock().unlock();
+		}
+		jClearNew.setEnabled(newFound);
 		filterControl.createCache();
 	}
 

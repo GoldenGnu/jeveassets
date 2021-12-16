@@ -69,6 +69,7 @@ public class MenuManager<T extends Enum<T> & EnumTableColumn<Q>, Q> {
 		COPY_PLUS,
 		SUM,
 		FORMULA,
+		LOADOUT,
 	}
 
 	private boolean priceSupported = false;
@@ -76,6 +77,7 @@ public class MenuManager<T extends Enum<T> & EnumTableColumn<Q>, Q> {
 	private boolean locationSupported = false;
 	private boolean jumpsSupported = false;
 	private boolean assets = false;
+	private boolean tree = false;
 	private boolean transactions = false;
 	private boolean stockpile = false;
 	private boolean tagsSupported = false;
@@ -141,7 +143,8 @@ public class MenuManager<T extends Enum<T> & EnumTableColumn<Q>, Q> {
 		this.tableMenu = tableMenu;
 		this.jTable = jTable;
 		this.columnManager = columnManager;
-		assets = MyAsset.class.isAssignableFrom(clazz) && !TreeAsset.class.isAssignableFrom(clazz);
+		assets = MyAsset.class.equals(clazz);
+		tree = TreeAsset.class.equals(clazz);
 		transactions = MyTransaction.class.isAssignableFrom(clazz);
 		stockpile = Stockpile.StockpileItem.class.isAssignableFrom(clazz);
 		locationSupported = LocationType.class.isAssignableFrom(clazz) || LocationsType.class.isAssignableFrom(clazz);
@@ -184,11 +187,15 @@ public class MenuManager<T extends Enum<T> & EnumTableColumn<Q>, Q> {
 		if (priceSupported) {
 			menus.put(MenuEnum.PRICE, new JMenuPrice<>(program));
 		}
-		if (assets) {
+		if (assets || tree) {
 			menus.put(MenuEnum.NAME, new JMenuName<>(program));
 		}
 		if (tagsSupported) {
 			menus.put(MenuEnum.TAGS, new JMenuTags<>(program));
+		}
+	//LOADOUT
+		if (assets || tree) {
+			menus.put(MenuEnum.LOADOUT, new JMenuLoadout<>(program));
 		}
 	//REPROCESSED
 		if (itemSupported) {
@@ -301,6 +308,12 @@ public class MenuManager<T extends Enum<T> & EnumTableColumn<Q>, Q> {
 		AutoMenu<Q> jTags = menus.get(MenuEnum.TAGS);
 		if (jTags != null) {
 			jComponent.add(jTags.getComponent());
+			notEmpty = true;
+		}
+	//LOADOUT
+		AutoMenu<Q> jLoadout = menus.get(MenuEnum.LOADOUT);
+		if (jLoadout != null) {
+			jComponent.add(jLoadout.getComponent());
 			notEmpty = true;
 		}
 	//REPROCESSED

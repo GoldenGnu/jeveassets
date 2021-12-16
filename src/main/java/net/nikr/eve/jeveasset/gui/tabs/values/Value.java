@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.Map;
 import net.nikr.eve.jeveasset.data.api.my.MyAsset;
 import net.nikr.eve.jeveasset.data.api.my.MyShip;
+import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.settings.types.LocationType;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
@@ -367,7 +368,7 @@ public class Value implements Comparable<Value>, LocationType {
 	}
 
 	private void setBestShip(MyAsset bestShip) {
-		if (!bestShip.getItem().getCategory().equals("Ship")) {
+		if (!bestShip.getItem().isShip()) {
 			return; //Not a ship
 		}
 		if (this.bestShip == null) { //First
@@ -378,7 +379,7 @@ public class Value implements Comparable<Value>, LocationType {
 	}
 
 	private void setBestShipFitted(MyAsset bestShipFitted) {
-		if (!bestShipFitted.getItem().getCategory().equals("Ship")) {
+		if (!bestShipFitted.getItem().isShip()) {
 			return; //Not a ship
 		}
 		if (this.bestShipFitted == null) { //First
@@ -389,7 +390,7 @@ public class Value implements Comparable<Value>, LocationType {
 	}
 
 	private void setBestModule(MyAsset bestModule) {
-		if (!bestModule.getItem().getCategory().equals("Module")) {
+		if (!bestModule.getItem().getCategory().equals(Item.CATEGORY_MODULE)) {
 			return; //Not a Module
 		}
 		if (this.bestModule == null) { //First

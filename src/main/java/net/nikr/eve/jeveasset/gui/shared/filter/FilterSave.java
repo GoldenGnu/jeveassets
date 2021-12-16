@@ -22,7 +22,7 @@
 package net.nikr.eve.jeveasset.gui.shared.filter;
 
 import ca.odell.glazedlists.EventList;
-import ca.odell.glazedlists.TextFilterator;
+import ca.odell.glazedlists.matchers.TextMatcherEditor;
 import ca.odell.glazedlists.swing.AutoCompleteSupport;
 import java.awt.AWTException;
 import java.awt.Robot;
@@ -44,6 +44,7 @@ import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
 import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
+import net.nikr.eve.jeveasset.gui.shared.table.EventModels.StringFilterator;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 
@@ -69,7 +70,8 @@ public class FilterSave extends JDialogCentered {
 
 		jName = new JComboBox<>();
 		filters = EventListManager.create();
-		AutoCompleteSupport.install(jName, EventModels.createSwingThreadProxyList(filters), new Filterator());
+		AutoCompleteSupport<String> nameAutoComplete = AutoCompleteSupport.install(jName, EventModels.createSwingThreadProxyList(filters), new StringFilterator());
+		nameAutoComplete.setFilterMode(TextMatcherEditor.CONTAINS);
 		jSave = new JButton(GuiShared.get().save());
 		jSave.setActionCommand(FilterSaveAction.SAVE.name());
 		jSave.addActionListener(listener);
@@ -194,15 +196,6 @@ public class FilterSave extends JDialogCentered {
 			}
 			if (FilterSaveAction.CANCEL.name().equals(e.getActionCommand())) {
 				setVisible(false);
-			}
-		}
-	}
-
-	private static class Filterator implements TextFilterator<String> {
-		@Override
-		public void getFilterStrings(final List<String> baseList, final String element) {
-			if (element.length() > 0) {
-				baseList.add(element);
 			}
 		}
 	}
