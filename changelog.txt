@@ -16,6 +16,53 @@
                   #### #  # #  # #  # #### #### #### #### ####
 
 ________________________________________________________________________________
+_7.0.0__________________________________________________________________________
+
+New Features:
+-Added support for more multibuy formats (contributed by madetara)
+-Added 'Added date' columns to Transactions/Journal tool (Issue #269)
+-Highlight recent changes in the Market Orders tool (Issue #265)
+-Highlight new items in Assets/Journal/Transactions tool (Issue #269)
+-Save contract history (optional, on be default) (Issue #258)
+-Table menu: Select ship in the Fitting Tool from Assets/Tree Tools (Issue #264)
+-Allow renaming assets in the Tree tool
+-Added Required and Owned options for the Stockpiles shopping list (Issue #235)
+-Added placeholder examples for Stockpile imports (Issue #276)
+-Added Type Name column to Assets/Tree tools (Hidden by default, issue #181)
+-Added Item Name column to Assets/Tree tools (Hidden by default, issue #181)
+-Made Market Details column's button clickable with the space key (Issue #137)
+-Added Market Details column to the Stockpile tool (Issue #256)
+-Added Average Transaction Price column to the Stockpile tool (Issue #256)
+-Add Job Cost column to Industry Jobs (Issue #284, contributed by Kaylee Syntax)
+
+Changed:
+-Use AutoCompleteSupport Filter Mode Contains (Issue #274)
+-Show critical error messages always on top
+
+Code:
+-Updated FlatLaf library to 1.6.4
+-Updated eve-esi library to 4.6.1
+-Fixed lgtm.com alerts (issue #275)
+
+Bug Fixes:
+-Fixed a case where the changed theme colors was not applied
+-Fixed changing color settings triggering an eventList update when not needed
+-Fixed wrong class types in TableFormats (BugId:  969, 971, 972, 979 and more)
+-Fixed tree table sorting columns really slowly
+-Fixed settings being saved while columns was being moved
+-Fixed NPE in XPDefaultRenderer (JDK-6429812, BugId: 959, Issue #279)
+-Fixed system look and feel being listed twice in the color settings
+-CDE/Motif did not have windows Copy/Paste/Cut/Select All shortcuts
+-Fixed Market Detail column's button rendering on various look and feels
+-Fixed NPE in FlatTitlePane (BugId: 980, Issue #281)
+-Journal is missing entries (Issue #218, Fixed in ESI by CCP! <3)
+-Possible fix for CtD on when setting a new price (Issue #277)
+-Fixed CtD before warning for "in zip file" and "library missing" was shown
+-Fixed jEveAssets losing focus when loading/creating profiles
+-Fixed meta and tech level for esi updated items
+-Added missing read lock for FilterList when updating statusbar
+
+________________________________________________________________________________
 _6.9.6__________________________________________________________________________
 
 Bug Fixes:
