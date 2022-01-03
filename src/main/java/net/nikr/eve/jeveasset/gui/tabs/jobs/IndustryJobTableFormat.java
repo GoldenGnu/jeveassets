@@ -170,6 +170,16 @@ public enum IndustryJobTableFormat implements EnumTableColumn<MyIndustryJob> {
 			return from.getOutputValue();
 		}
 	},
+	OUTPUT_TYPE(String.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsJobs.get().columnOutputType();
+		}
+		@Override
+		public Object getColumnValue(final MyIndustryJob from) {
+			return from.getOutputType();
+		}
+	},
 	BPO(String.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {

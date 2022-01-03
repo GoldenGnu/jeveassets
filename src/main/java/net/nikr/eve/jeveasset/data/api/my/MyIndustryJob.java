@@ -196,6 +196,7 @@ public class MyIndustryJob extends RawIndustryJob implements Comparable<MyIndust
 	private IndustryActivity activity;
 	private IndustryJobState state;
 	private final Item item;
+	private final Item output;
 	private final OwnerType owner;
 	private final String name;
 	private final Set<Long> owners = new HashSet<>();
@@ -207,9 +208,10 @@ public class MyIndustryJob extends RawIndustryJob implements Comparable<MyIndust
 	private RawBlueprint blueprint;
 	private MyLocation location;
 
-	public MyIndustryJob(final RawIndustryJob rawIndustryJob, final Item item, final OwnerType owner) {
+	public MyIndustryJob(final RawIndustryJob rawIndustryJob, final Item item, final Item output, final OwnerType owner) {
 		super(rawIndustryJob);
 		this.item = item;
+		this.output = output;
 		this.owner = owner;
 		owners.add(getInstallerID());
 		owners.add(owner.getOwnerID());
@@ -430,6 +432,10 @@ public class MyIndustryJob extends RawIndustryJob implements Comparable<MyIndust
 
 	public int getOutputCount() {
 		return outputCount;
+	}
+
+	public String getOutputType() {
+		return output.getTypeName();
 	}
 
 	public String getInstaller() {

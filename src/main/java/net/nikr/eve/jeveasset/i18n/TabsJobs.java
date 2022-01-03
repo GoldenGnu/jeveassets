@@ -60,6 +60,7 @@ public abstract class TabsJobs extends Bundle {
 	public abstract String columnRuns();
 	public abstract String columnOutputCount();
 	public abstract String columnOutputValue();
+	public abstract String columnOutputType();
 	public abstract String columnBPO();
 	public abstract String columnMaterialEfficiency();
 	public abstract String columnTimeEfficiency();
