@@ -240,7 +240,8 @@ public abstract class DataConverter {
 
 	public static MyIndustryJob toMyIndustryJob(RawIndustryJob rawIndustryJob, OwnerType owner) {
 		Item item = ApiIdConverter.getItemUpdate(rawIndustryJob.getBlueprintTypeID());
-		return new MyIndustryJob(rawIndustryJob, item, owner);
+		Item output = ApiIdConverter.getItemUpdate(rawIndustryJob.getProductTypeID());
+		return new MyIndustryJob(rawIndustryJob, item, output, owner);
 	}
 
 	public static Set<MyJournal> convertRawJournals(List<RawJournal> rawJournals, OwnerType owner, boolean saveHistory) {
