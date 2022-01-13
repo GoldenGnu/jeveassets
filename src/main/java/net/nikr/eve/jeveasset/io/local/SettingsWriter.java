@@ -784,16 +784,16 @@ public class SettingsWriter extends AbstractXmlWriter {
 			//CSV
 			Element csvNode = xmldoc.createElementNS(null, "csv");
 			setAttribute(csvNode, "decimal", exportSetting.getValue().getCsvDecimalSeparator());
-			setAttribute(csvNode, "field", exportSetting.getValue().getFieldDelimiter());
-			setAttribute(csvNode, "line", exportSetting.getValue().getLineDelimiter());
+			setAttribute(csvNode, "field", exportSetting.getValue().getCsvFieldDelimiter());
+			setAttribute(csvNode, "line", exportSetting.getValue().getCsvLineDelimiter());
 			exportNode.appendChild(csvNode);
 
 			//SQL
 			Element sqlNode = xmldoc.createElementNS(null, "sql");
-			setAttribute(sqlNode, "tablename", exportSetting.getValue().getTableName());
-			setAttribute(sqlNode, "createtable", exportSetting.getValue().isCreateTable());
-			setAttribute(sqlNode, "droptable", exportSetting.getValue().isDropTable());
-			setAttribute(sqlNode, "extendedinserts", exportSetting.getValue().isExtendedInserts());
+			setAttribute(sqlNode, "tablename", exportSetting.getValue().getSqlTableName());
+			setAttribute(sqlNode, "createtable", exportSetting.getValue().isSqlCreateTable());
+			setAttribute(sqlNode, "droptable", exportSetting.getValue().isSqlDropTable());
+			setAttribute(sqlNode, "extendedinserts", exportSetting.getValue().isSqlExtendedInserts());
 			exportNode.appendChild(sqlNode);
 
 			//Html
