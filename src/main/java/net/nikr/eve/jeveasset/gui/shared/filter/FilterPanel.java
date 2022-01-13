@@ -107,6 +107,7 @@ class FilterPanel<E> implements Comparable<FilterPanel<E>> {
 
 	private final FilterGui<E> gui;
 	private final FilterControl<E> filterControl;
+	private final SimpleTableFormat<E> tableFormat;
 	private final List<EnumTableColumn<E>> allColumns;
 	private final List<EnumTableColumn<E>> numericColumns;
 	private final List<EnumTableColumn<E>> dateColumns;
@@ -116,9 +117,10 @@ class FilterPanel<E> implements Comparable<FilterPanel<E>> {
 	private boolean loading = false;
 	private boolean moving = false;
 
-	FilterPanel(final FilterGui<E> gui, final FilterControl<E> filterControl) {
+	FilterPanel(final FilterGui<E> gui, final FilterControl<E> filterControl, SimpleTableFormat<E> tableFormat) {
 		this.gui = gui;
 		this.filterControl = filterControl;
+		this.tableFormat = tableFormat;
 
 		ListenerClass listener = new ListenerClass();
 
@@ -132,17 +134,17 @@ class FilterPanel<E> implements Comparable<FilterPanel<E>> {
 
 		allColumns = new ArrayList<>();
 		allColumns.add(new AllColumn<>());
-		allColumns.addAll(filterControl.getColumns());
+		allColumns.addAll(tableFormat.getFilterableColumns());
 
 		numericColumns = new ArrayList<>();
-		for (EnumTableColumn<E> object : filterControl.getColumns()) {
+		for (EnumTableColumn<E> object : tableFormat.getFilterableColumns()) {
 			if (filterControl.isNumeric(object)) {
 				numericColumns.add(object);
 			}
 		}
 
 		dateColumns = new ArrayList<>();
-		for (EnumTableColumn<E> object : filterControl.getColumns()) {
+		for (EnumTableColumn<E> object : tableFormat.getFilterableColumns()) {
 			if (filterControl.isDate(object)) {
 				dateColumns.add(object);
 			}
@@ -286,16 +288,16 @@ class FilterPanel<E> implements Comparable<FilterPanel<E>> {
 		EnumTableColumn<E> selectedItem = jColumn.getItemAt(jColumn.getSelectedIndex());
 		allColumns.clear();
 		allColumns.add(new AllColumn<>());
-		allColumns.addAll(filterControl.getColumns());
+		allColumns.addAll(tableFormat.getFilterableColumns());
 		numericColumns.clear();
-		for (EnumTableColumn<E> object : filterControl.getColumns()) {
+		for (EnumTableColumn<E> object : tableFormat.getFilterableColumns()) {
 			if (filterControl.isNumeric(object)) {
 				numericColumns.add(object);
 			}
 		}
 
 		dateColumns.clear();
-		for (EnumTableColumn<E> object : filterControl.getColumns()) {
+		for (EnumTableColumn<E> object : tableFormat.getFilterableColumns()) {
 			if (filterControl.isDate(object)) {
 				dateColumns.add(object);
 			}
@@ -342,7 +344,7 @@ class FilterPanel<E> implements Comparable<FilterPanel<E>> {
 		} else {
 			text = jText.getText();
 		}
-		return new FilterMatcher<>(filterControl, group, logic, column, compare, text, enabled);
+		return new FilterMatcher<>(tableFormat, filterControl, group, logic, column, compare, text, enabled);
 	}
 
 	Filter getFilter() {
@@ -374,7 +376,7 @@ class FilterPanel<E> implements Comparable<FilterPanel<E>> {
 		jCompare.setSelectedItem(filter.getCompareType());
 		if (isColumnCompare()) {
 			try {
-				EnumTableColumn<E> enumColumn = filterControl.valueOf(filter.getText());
+				EnumTableColumn<E> enumColumn = tableFormat.valueOf(filter.getText());
 				if (enumColumn != null) {
 					jCompareColumn.setSelectedItem(enumColumn);
 				}
@@ -499,7 +501,7 @@ class FilterPanel<E> implements Comparable<FilterPanel<E>> {
 		} else if (isDateCompare()) {
 			compareColumns = new ArrayList<>(dateColumns);
 		} else {
-			compareColumns = new ArrayList<>(filterControl.getColumns());
+			compareColumns = new ArrayList<>(tableFormat.getFilterableColumns());
 		}
 		jCompareColumn.setModel(new ListComboBoxModel<>(compareColumns));
 		for (Object column : compareColumns) {

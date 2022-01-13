@@ -59,7 +59,6 @@ import net.nikr.eve.jeveasset.gui.shared.menu.JMenuColumns;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
-import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
@@ -326,6 +325,7 @@ public class TransactionTab extends JMainTabPrimary {
 		public TransactionsFilterControl(EventList<MyTransaction> exportEventList, Map<String, List<Filter>> defaultFilters) {
 			super(program.getMainWindow().getFrame(),
 					NAME,
+					tableFormat,
 					eventList,
 					exportEventList,
 					filterList,
@@ -335,27 +335,7 @@ public class TransactionTab extends JMainTabPrimary {
 		}
 
 		@Override
-		protected Object getColumnValue(final MyTransaction transaction, final String column) {
-			return tableFormat.getColumnValue(transaction, column);
-		}
-
-		@Override
-		protected EnumTableColumn<MyTransaction> valueOf(final String column) {
-			return tableFormat.valueOf(column);
-		}
-
-		@Override
-		protected List<EnumTableColumn<MyTransaction>> getColumns() {
-			return new ArrayList<>(tableFormat.getOrderColumns());
-		}
-
-		@Override
-		protected List<EnumTableColumn<MyTransaction>> getShownColumns() {
-			return new ArrayList<>(tableFormat.getShownColumns());
-		}
-
-		@Override
-		protected void saveSettings(final String msg) {
+		public void saveSettings(final String msg) {
 			program.saveSettings("Transaction Table: " + msg); //Save Transaction Filters and Export Setttings
 		}
 	}

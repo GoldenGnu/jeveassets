@@ -44,6 +44,7 @@ import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileTableFormat;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import net.nikr.eve.jeveasset.gui.shared.filter.SimpleTableFormat;
 
 /**
  *
@@ -51,7 +52,7 @@ import org.slf4j.LoggerFactory;
  * @param <T>
  * @param <Q>
  */
-public class EnumTableFormatAdaptor<T extends Enum<T> & EnumTableColumn<Q>, Q> implements AdvancedTableFormat<Q>, WritableTableFormat<Q> {
+public class EnumTableFormatAdaptor<T extends Enum<T> & EnumTableColumn<Q>, Q> implements AdvancedTableFormat<Q>, WritableTableFormat<Q>, SimpleTableFormat<Q> {
 
 	private static final  Logger LOG = LoggerFactory.getLogger(EnumTableFormatAdaptor.class);
 
@@ -85,15 +86,26 @@ public class EnumTableFormatAdaptor<T extends Enum<T> & EnumTableColumn<Q>, Q> i
 	private final List<ColumnValueChangeListener> listeners = new ArrayList<>();
 
 	private final Class<T> enumClass;
+	private final Map<String, EnumTableColumn<Q>> extendedTableFormats = new HashMap<>();
 	private List<EnumTableColumn<Q>> shownColumns;
 	private Map<String, EnumTableColumn<Q>> orderColumnsName;
+	private List<EnumTableColumn<Q>> allColumns;
 	private List<EnumTableColumn<Q>> orderColumns;
 	private List<EnumTableColumn<Q>> tempColumns = new ArrayList<>();
 	private final ColumnComparator columnComparator;
 	private ResizeMode resizeMode;
 
 	public EnumTableFormatAdaptor(final Class<T> enumClass) {
+		this(enumClass, new ArrayList<>());
+	}
+
+	public EnumTableFormatAdaptor(final Class<T> enumClass, final List<EnumTableColumn<Q>> enumTableColumns) {
 		this.enumClass = enumClass;
+		for (EnumTableColumn<Q> column : enumTableColumns) {
+			extendedTableFormats.put(column.name(), column);
+		}
+		allColumns = new ArrayList<>(Arrays.asList(enumClass.getEnumConstants()));
+		allColumns.addAll(extendedTableFormats.values());
 		columnComparator = new ColumnComparator();
 		resizeMode = ResizeMode.TEXT;
 		reset();
@@ -153,11 +165,17 @@ public class EnumTableFormatAdaptor<T extends Enum<T> & EnumTableColumn<Q>, Q> i
 		tempColumns.remove(column);
 	}
 
+	@Override
 	public List<EnumTableColumn<Q>> getShownColumns() {
 		return shownColumns;
 	}
 
 	public List<EnumTableColumn<Q>> getOrderColumns() {
+		return orderColumns;
+	}
+
+	@Override
+	public List<EnumTableColumn<Q>> getFilterableColumns() {
 		return orderColumns;
 	}
 
@@ -324,7 +342,12 @@ public class EnumTableFormatAdaptor<T extends Enum<T> & EnumTableColumn<Q>, Q> i
 		}
 	}
 
+	@Override
 	public EnumTableColumn<Q> valueOf(String column) {
+		EnumTableColumn<Q> enumTableColumn = extendedTableFormats.get(column);
+		if (enumTableColumn != null) {
+			return enumTableColumn;
+		}
 		return orderColumnsName.get(column);
 	}
 
@@ -336,11 +359,16 @@ public class EnumTableFormatAdaptor<T extends Enum<T> & EnumTableColumn<Q>, Q> i
 		}
 	}
 
+	@Override
 	public Object getColumnValue(final Q e, final String columnName) {
-		return getColumnValue(e, orderColumnsName.get(columnName));
+		EnumTableColumn<Q> column = extendedTableFormats.get(columnName);
+		if (column == null) {
+			column = orderColumnsName.get(columnName);
+		}
+		return getColumnValue(e, column);
 	}
 
-	public Object getColumnValue(final Q e, final EnumTableColumn<Q> column) {
+	private Object getColumnValue(final Q e, final EnumTableColumn<Q> column) {
 		if (column == null) { //Better safe than sorry
 			return null;
 		}
