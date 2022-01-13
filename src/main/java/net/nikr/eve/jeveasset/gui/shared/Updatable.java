@@ -78,6 +78,9 @@ public class Updatable {
 			if (owner.isContainerLogs() && isUpdatable(owner.getContainerLogsNextUpdate())){
 				return true;
 			}
+			if (owner.isSkills() && isUpdatable(owner.getSkillsNextUpdate())){
+				return true;
+			}
 		}
 		return false;
 	}
