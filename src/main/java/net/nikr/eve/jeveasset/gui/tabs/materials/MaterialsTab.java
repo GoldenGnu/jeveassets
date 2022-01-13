@@ -166,7 +166,7 @@ public class MaterialsTab extends JMainTabSecondary {
 		installTableTool(new MaterialTableMenu(), tableFormat, tableModel, jTable, eventList, Material.class);
 
 		List<EnumTableColumn<Material>> enumColumns = new ArrayList<>();
-		enumColumns.addAll(Arrays.asList(MaterialExtenedTableFormat.values()));
+		enumColumns.addAll(Arrays.asList(MateriaExtendedTableFormat.values()));
 		enumColumns.addAll(Arrays.asList(MaterialTableFormat.values()));
 		exportDialog = new ExportDialog<>(program.getMainWindow().getFrame(), NAME, null, new MaterialsFilterControl(), Collections.singletonList(eventList), enumColumns);
 
@@ -390,7 +390,7 @@ public class MaterialsTab extends JMainTabSecondary {
 		@Override
 		protected Object getColumnValue(final Material item, final String column) {
 			try {
-				return MaterialExtenedTableFormat.valueOf(column).getColumnValue(item);
+				return MateriaExtendedTableFormat.valueOf(column).getColumnValue(item);
 			} catch (IllegalArgumentException exception) {
 
 			}
@@ -400,7 +400,7 @@ public class MaterialsTab extends JMainTabSecondary {
 		@Override
 		protected EnumTableColumn<Material> valueOf(final String column) {
 			try {
-				return MaterialExtenedTableFormat.valueOf(column);
+				return MateriaExtendedTableFormat.valueOf(column);
 			} catch (IllegalArgumentException exception) {
 
 			}
