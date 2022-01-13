@@ -442,7 +442,7 @@ public class UpdateDialog extends JDialogCentered {
 		Date assetsLast = null;
 		Date blueprintsLast = null;
 		Date bookmarksLast = null;
-		Date skillsksLast = null;
+		Date skillsLast = null;
 		Date accountBalanceLast = null;
 
 		Date priceData = program.getPriceDataGetter().getNextUpdate();
@@ -489,7 +489,7 @@ public class UpdateDialog extends JDialogCentered {
 			}
 			if (owner.isSkills()) {
 				skillsFirst = updateFirst(skillsFirst, owner.getSkillsNextUpdate());
-				skillsksLast = updateLast(skillsksLast, owner.getSkillsNextUpdate());
+				skillsLast = updateLast(skillsLast, owner.getSkillsNextUpdate());
 			}
 		}
 		if (program.getOwnerTypes().isEmpty()) {
@@ -528,7 +528,7 @@ public class UpdateDialog extends JDialogCentered {
 		setUpdateLabel(jAssetsLeftFirst, jAssetsLeftLast, jAssets, assetsFirst, assetsLast, check);
 		setUpdateLabel(jBlueprintsLeftFirst, jBlueprintsLeftLast, jBlueprints, blueprintsFirst, blueprintsLast, check);
 		setUpdateLabel(jBookmarksLeftFirst, jBookmarksLeftLast, jBookmarks, bookmarksFirst, bookmarksLast, check);
-		setUpdateLabel(jSkillsLeftFirst, jSkillLeftLast, jSkills, skillsFirst, skillsksLast, check);
+		setUpdateLabel(jSkillsLeftFirst, jSkillLeftLast, jSkills, skillsFirst, skillsLast, check);
 		changed();
 
 	}
