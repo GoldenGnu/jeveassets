@@ -177,15 +177,15 @@ public class ExportSettings {
 	private String viewName;
 
 	//CSV
-	private FieldDelimiter fieldDelimiter;
-	private LineDelimiter lineDelimiter;
+	private FieldDelimiter csvFieldDelimiter;
+	private LineDelimiter csvLineDelimiter;
 	private DecimalSeparator csvDecimalSeparator;
 
 	//SQL
-	private boolean createTable; 
-	private boolean dropTable;
-	private boolean extendedInserts;
-	private String tableName;
+	private boolean sqlCreateTable; 
+	private boolean sqlDropTable;
+	private boolean sqlExtendedInserts;
+	private String sqlTableName;
 
 	//HTML
 	private boolean htmlStyled;
@@ -201,66 +201,86 @@ public class ExportSettings {
 		filterName = "";
 		viewName = "";
 
-		fieldDelimiter = FieldDelimiter.COMMA;
-		lineDelimiter = LineDelimiter.DOS;
+		csvFieldDelimiter = FieldDelimiter.COMMA;
+		csvLineDelimiter = LineDelimiter.DOS;
 		csvDecimalSeparator = DecimalSeparator.DOT;
 
-		createTable = true;
-		dropTable = true;
-		extendedInserts = true;
-		tableName = "";
+		sqlCreateTable = true;
+		sqlDropTable = true;
+		sqlExtendedInserts = true;
+		sqlTableName = "";
 
 		htmlStyled = true;
 		htmlRepeatHeader = 0;
 		htmlIGB = false;
 	}
 
+	public boolean isCsv() {
+		return exportFormat == ExportFormat.CSV;
+	}
+
 	public DecimalSeparator getCsvDecimalSeparator() {
 		return csvDecimalSeparator;
 	}
 
-	public void setCsvDecimalSeparator(final DecimalSeparator decimalSeparator) {
-		this.csvDecimalSeparator = decimalSeparator;
+	public void setCsvDecimalSeparator(final DecimalSeparator csvDecimalSeparator) {
+		this.csvDecimalSeparator = csvDecimalSeparator;
 	}
 
-	public FieldDelimiter getFieldDelimiter() {
-		return fieldDelimiter;
+	public FieldDelimiter getCsvFieldDelimiter() {
+		return csvFieldDelimiter;
 	}
 
-	public void setFieldDelimiter(final FieldDelimiter fieldDelimiter) {
-		this.fieldDelimiter = fieldDelimiter;
+	public void setCsvFieldDelimiter(final FieldDelimiter csvFieldDelimiter) {
+		this.csvFieldDelimiter = csvFieldDelimiter;
 	}
 
-	public LineDelimiter getLineDelimiter() {
-		return lineDelimiter;
+	public LineDelimiter getCsvLineDelimiter() {
+		return csvLineDelimiter;
 	}
 
-	public void setLineDelimiter(final LineDelimiter lineDelimiter) {
-		this.lineDelimiter = lineDelimiter;
+	public void setCsvLineDelimiter(final LineDelimiter csvLineDelimiter) {
+		this.csvLineDelimiter = csvLineDelimiter;
 	}
 
-	public boolean isCreateTable() {
-		return createTable;
+	public boolean isSql() {
+		return exportFormat == ExportFormat.SQL;
 	}
 
-	public void setCreateTable(final boolean createTable) {
-		this.createTable = createTable;
+	public boolean isSqlCreateTable() {
+		return sqlCreateTable;
 	}
 
-	public boolean isDropTable() {
-		return dropTable;
+	public void setSqlCreateTable(final boolean sqlCreateTable) {
+		this.sqlCreateTable = sqlCreateTable;
 	}
 
-	public void setDropTable(final boolean dropTable) {
-		this.dropTable = dropTable;
+	public boolean isSqlDropTable() {
+		return sqlDropTable;
 	}
 
-	public boolean isExtendedInserts() {
-		return extendedInserts;
+	public void setSqlDropTable(final boolean sqlDropTable) {
+		this.sqlDropTable = sqlDropTable;
 	}
 
-	public void setExtendedInserts(final boolean extendedInserts) {
-		this.extendedInserts = extendedInserts;
+	public boolean isSqlExtendedInserts() {
+		return sqlExtendedInserts;
+	}
+
+	public void setSqlExtendedInserts(final boolean sqlExtendedInserts) {
+		this.sqlExtendedInserts = sqlExtendedInserts;
+	}
+
+	public String getSqlTableName() {
+		return sqlTableName;
+	}
+
+	public void setSqlTableName(String sqlTableName) {
+		this.sqlTableName = sqlTableName;
+	}
+
+	public boolean isHtml() {
+		return exportFormat == ExportFormat.HTML;
 	}
 
 	public boolean isHtmlStyled() {
@@ -309,14 +329,6 @@ public class ExportSettings {
 
 	public void setColumnSelection(ColumnSelection columnSelection) {
 		this.columnSelection = columnSelection;
-	}
-
-	public String getTableName() {
-		return tableName;
-	}
-
-	public void setTableName(String tableName) {
-		this.tableName = tableName;
 	}
 
 	public String getFilterName() {

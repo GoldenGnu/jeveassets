@@ -511,14 +511,14 @@ public class ExportDialog<E> extends JDialogCentered {
 	private void saveSettings() {
 		Settings.lock("Export Settings (Save)"); //Lock for Export Settings (Save)
 		//CSV
-		Settings.get().getExportSettings(toolName).setFieldDelimiter((FieldDelimiter) jFieldDelimiter.getSelectedItem());
-		Settings.get().getExportSettings(toolName).setLineDelimiter((LineDelimiter) jLineDelimiter.getSelectedItem());
+		Settings.get().getExportSettings(toolName).setCsvFieldDelimiter((FieldDelimiter) jFieldDelimiter.getSelectedItem());
+		Settings.get().getExportSettings(toolName).setCsvLineDelimiter((LineDelimiter) jLineDelimiter.getSelectedItem());
 		Settings.get().getExportSettings(toolName).setCsvDecimalSeparator((DecimalSeparator) jDecimalSeparator.getSelectedItem());
 		//SQL
-		Settings.get().getExportSettings(toolName).setTableName(jTableName.getText());
-		Settings.get().getExportSettings(toolName).setDropTable(jDropTable.isSelected());
-		Settings.get().getExportSettings(toolName).setCreateTable(jCreateTable.isSelected());
-		Settings.get().getExportSettings(toolName).setExtendedInserts(jExtendedInserts.isSelected());
+		Settings.get().getExportSettings(toolName).setSqlTableName(jTableName.getText());
+		Settings.get().getExportSettings(toolName).setSqlDropTable(jDropTable.isSelected());
+		Settings.get().getExportSettings(toolName).setSqlCreateTable(jCreateTable.isSelected());
+		Settings.get().getExportSettings(toolName).setSqlExtendedInserts(jExtendedInserts.isSelected());
 		//HTML
 		Settings.get().getExportSettings(toolName).setHtmlStyled(jHtmlStyle.isSelected());
 		Settings.get().getExportSettings(toolName).setHtmlIGB(jHtmlIGB.isSelected());
@@ -549,14 +549,14 @@ public class ExportDialog<E> extends JDialogCentered {
 
 	private void loadSettings() {
 		//CSV
-		jFieldDelimiter.setSelectedItem(Settings.get().getExportSettings(toolName).getFieldDelimiter());
-		jLineDelimiter.setSelectedItem(Settings.get().getExportSettings(toolName).getLineDelimiter());
+		jFieldDelimiter.setSelectedItem(Settings.get().getExportSettings(toolName).getCsvFieldDelimiter());
+		jLineDelimiter.setSelectedItem(Settings.get().getExportSettings(toolName).getCsvLineDelimiter());
 		jDecimalSeparator.setSelectedItem(Settings.get().getExportSettings(toolName).getCsvDecimalSeparator());
 		//SQL
-		jTableName.setText(Settings.get().getExportSettings(toolName).getTableName());
-		jDropTable.setSelected(Settings.get().getExportSettings(toolName).isDropTable());
-		jCreateTable.setSelected(Settings.get().getExportSettings(toolName).isCreateTable());
-		jExtendedInserts.setSelected(Settings.get().getExportSettings(toolName).isExtendedInserts());
+		jTableName.setText(Settings.get().getExportSettings(toolName).getSqlTableName());
+		jDropTable.setSelected(Settings.get().getExportSettings(toolName).isSqlDropTable());
+		jCreateTable.setSelected(Settings.get().getExportSettings(toolName).isSqlCreateTable());
+		jExtendedInserts.setSelected(Settings.get().getExportSettings(toolName).isSqlExtendedInserts());
 		//HTML
 		jHtmlStyle.setSelected(Settings.get().getExportSettings(toolName).isHtmlStyled());
 		jHtmlIGB.setSelected(Settings.get().getExportSettings(toolName).isHtmlIGB());
@@ -618,14 +618,14 @@ public class ExportDialog<E> extends JDialogCentered {
 	private void resetSettings() {
 		Settings.lock("Export Settings (Reset)"); //Lock for Export Settings (Reset)
 		//CSV
-		Settings.get().getExportSettings(toolName).setFieldDelimiter(FieldDelimiter.COMMA);
-		Settings.get().getExportSettings(toolName).setLineDelimiter(LineDelimiter.DOS);
+		Settings.get().getExportSettings(toolName).setCsvFieldDelimiter(FieldDelimiter.COMMA);
+		Settings.get().getExportSettings(toolName).setCsvLineDelimiter(LineDelimiter.DOS);
 		Settings.get().getExportSettings(toolName).setCsvDecimalSeparator(DecimalSeparator.DOT);
 		//SQL
-		Settings.get().getExportSettings(toolName).setTableName("");
-		Settings.get().getExportSettings(toolName).setDropTable(true);
-		Settings.get().getExportSettings(toolName).setCreateTable(true);
-		Settings.get().getExportSettings(toolName).setExtendedInserts(true);
+		Settings.get().getExportSettings(toolName).setSqlTableName("");
+		Settings.get().getExportSettings(toolName).setSqlDropTable(true);
+		Settings.get().getExportSettings(toolName).setSqlCreateTable(true);
+		Settings.get().getExportSettings(toolName).setSqlExtendedInserts(true);
 		//HTML
 		Settings.get().getExportSettings(toolName).setHtmlStyled(true);
 		Settings.get().getExportSettings(toolName).setHtmlRepeatHeader(0);
@@ -780,7 +780,7 @@ public class ExportDialog<E> extends JDialogCentered {
 			return;
 		}
 	//Bad options
-		if (jCsv.isSelected() && Settings.get().getExportSettings(toolName).getCsvDecimalSeparator() == DecimalSeparator.COMMA && Settings.get().getExportSettings(toolName).getFieldDelimiter() == FieldDelimiter.COMMA) {
+		if (jCsv.isSelected() && Settings.get().getExportSettings(toolName).getCsvDecimalSeparator() == DecimalSeparator.COMMA && Settings.get().getExportSettings(toolName).getCsvFieldDelimiter() == FieldDelimiter.COMMA) {
 			int nReturn = JOptionPane.showConfirmDialog(
 					getDialog(),
 					DialoguesExport.get().confirmStupidDecision(),
@@ -866,7 +866,7 @@ public class ExportDialog<E> extends JDialogCentered {
 					rows,
 					headerStrings.toArray(new String[headerStrings.size()]),
 					headerKeys.toArray(new String[headerKeys.size()]),
-					new CsvPreference.Builder('\"', Settings.get().getExportSettings(toolName).getFieldDelimiter().getValue(), Settings.get().getExportSettings(toolName).getLineDelimiter().getValue()).build());
+					new CsvPreference.Builder('\"', Settings.get().getExportSettings(toolName).getCsvFieldDelimiter().getValue(), Settings.get().getExportSettings(toolName).getCsvLineDelimiter().getValue()).build());
 		} else if (jHtml.isSelected()) {
 	//HTML
 			//Create data
@@ -901,10 +901,10 @@ public class ExportDialog<E> extends JDialogCentered {
 			saved = SqlWriter.save(Settings.get().getExportSettings(toolName).getFilename(),
 					rows,
 					new ArrayList<>(header),
-					Settings.get().getExportSettings(toolName).getTableName(),
-					Settings.get().getExportSettings(toolName).isDropTable(),
-					Settings.get().getExportSettings(toolName).isCreateTable(),
-					Settings.get().getExportSettings(toolName).isExtendedInserts());
+					Settings.get().getExportSettings(toolName).getSqlTableName(),
+					Settings.get().getExportSettings(toolName).isSqlDropTable(),
+					Settings.get().getExportSettings(toolName).isSqlCreateTable(),
+					Settings.get().getExportSettings(toolName).isSqlExtendedInserts());
 		} else {
 			saved = false;
 		}
