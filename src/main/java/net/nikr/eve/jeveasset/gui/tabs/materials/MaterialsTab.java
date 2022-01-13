@@ -52,12 +52,11 @@ import net.nikr.eve.jeveasset.gui.shared.components.JFixedToolBar;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTabSecondary;
 import net.nikr.eve.jeveasset.gui.shared.components.ListComboBoxModel;
 import net.nikr.eve.jeveasset.gui.shared.filter.ExportDialog;
-import net.nikr.eve.jeveasset.gui.shared.filter.ExportFilterControl;
+import net.nikr.eve.jeveasset.gui.shared.filter.SimpleFilterControl;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuColumns;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
-import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
@@ -140,7 +139,7 @@ public class MaterialsTab extends JMainTabSecondary {
 		jToolBarRight.addButton(jExpand);
 
 		//Table Format
-		tableFormat = new EnumTableFormatAdaptor<>(MaterialTableFormat.class);
+		tableFormat = new EnumTableFormatAdaptor<>(MaterialTableFormat.class, Arrays.asList(MaterialExtendedTableFormat.values()));
 		//Backend
 		eventList = EventListManager.create();
 		//Separator
@@ -165,10 +164,7 @@ public class MaterialsTab extends JMainTabSecondary {
 		//Menu
 		installTableTool(new MaterialTableMenu(), tableFormat, tableModel, jTable, eventList, Material.class);
 
-		List<EnumTableColumn<Material>> enumColumns = new ArrayList<>();
-		enumColumns.addAll(Arrays.asList(MaterialExtendedTableFormat.values()));
-		enumColumns.addAll(Arrays.asList(MaterialTableFormat.values()));
-		exportDialog = new ExportDialog<>(program.getMainWindow().getFrame(), NAME, null, new MaterialsFilterControl(), Collections.singletonList(eventList), enumColumns);
+		exportDialog = new ExportDialog<>(program.getMainWindow().getFrame(), NAME, null, new MaterialsFilterControl(), tableFormat, eventList);
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()
@@ -385,40 +381,10 @@ public class MaterialsTab extends JMainTabSecondary {
 		}
 	}
 
-	private class MaterialsFilterControl extends ExportFilterControl<Material> {
+	private class MaterialsFilterControl implements SimpleFilterControl<Material> {
 
 		@Override
-		protected Object getColumnValue(final Material item, final String column) {
-			try {
-				return MaterialExtendedTableFormat.valueOf(column).getColumnValue(item);
-			} catch (IllegalArgumentException exception) {
-
-			}
-			return tableFormat.getColumnValue(item, column);
-		}
-
-		@Override
-		protected EnumTableColumn<Material> valueOf(final String column) {
-			try {
-				return MaterialExtendedTableFormat.valueOf(column);
-			} catch (IllegalArgumentException exception) {
-
-			}
-			return tableFormat.valueOf(column);
-		}
-
-		@Override
-		protected List<EnumTableColumn<Material>> getColumns() {
-			return new ArrayList<>(tableFormat.getOrderColumns());
-		}
-
-		@Override
-		protected List<EnumTableColumn<Material>> getShownColumns() {
-			return new ArrayList<>(tableFormat.getShownColumns());
-		}
-
-		@Override
-		protected void saveSettings(final String msg) {
+		public void saveSettings(final String msg) {
 			program.saveSettings("Materials Table " + msg); //Save Material Export Setttings (Filters not used)
 		}
 	}

@@ -60,7 +60,6 @@ import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuData.AssetMenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
-import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
@@ -338,31 +337,12 @@ public class AssetsTab extends JMainTabPrimary implements TagUpdate {
 		public AssetFilterControl(EventList<MyAsset> exportEventList) {
 			super(program.getMainWindow().getFrame(), 
 					NAME,
+					tableFormat,
 					eventList,
 					exportEventList,
 					filterList,
 					Settings.get().getTableFilters(NAME)
 					);
-		}
-
-		@Override
-		protected Object getColumnValue(final MyAsset item, final String column) {
-			return tableFormat.getColumnValue(item, column);
-		}
-
-		@Override
-		protected EnumTableColumn<MyAsset> valueOf(final String column) {
-			return tableFormat.valueOf(column);
-		}
-
-		@Override
-		protected List<EnumTableColumn<MyAsset>> getColumns() {
-			return new ArrayList<>(tableFormat.getOrderColumns());
-		}
-
-		@Override
-		protected List<EnumTableColumn<MyAsset>> getShownColumns() {
-			return new ArrayList<>(tableFormat.getShownColumns());
 		}
 
 		@Override
@@ -373,7 +353,7 @@ public class AssetsTab extends JMainTabPrimary implements TagUpdate {
 		}
 
 		@Override
-		protected void saveSettings(final String msg) {
+		public void saveSettings(final String msg) {
 			program.saveSettings("Assets Table: " + msg); //Save Asset Filters and Export Setttings
 		}
 	}

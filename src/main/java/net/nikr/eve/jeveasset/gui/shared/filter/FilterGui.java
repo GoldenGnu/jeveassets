@@ -72,6 +72,7 @@ class FilterGui<E> {
 	private final JFrame jFrame;
 
 	private final FilterControl<E> filterControl;
+	private final SimpleTableFormat<E> tableFormat;
 
 	private final List<FilterPanel<E>> filterPanels = new ArrayList<>();
 	private final FilterSave filterSave;
@@ -82,11 +83,12 @@ class FilterGui<E> {
 
 	private final ListenerClass settingsUpdateListener = new ListenerClass();
 
-	protected FilterGui(final JFrame jFrame, final FilterControl<E> filterControl) {
+	protected FilterGui(final JFrame jFrame, final FilterControl<E> filterControl, SimpleTableFormat<E> tableFormat) {
 		this.jFrame = jFrame;
 		this.filterControl = filterControl;
+		this.tableFormat = tableFormat;
 
-		exportDialog = new ExportDialog<>(jFrame, filterControl.getName(), filterControl, filterControl, Collections.singletonList(filterControl.getExportEventList()), filterControl.getColumns());
+		exportDialog = new ExportDialog<>(jFrame, filterControl.getName(), filterControl, filterControl, tableFormat, filterControl.getExportEventList());
 
 		jPanel = new JPanel();
 
@@ -337,7 +339,7 @@ class FilterGui<E> {
 
 	protected void clone(final FilterPanel<E> filterPanel) {
 		int index = filterPanels.indexOf(filterPanel);
-		FilterPanel<E> clone = new FilterPanel<>(this, filterControl);
+		FilterPanel<E> clone = new FilterPanel<>(this, filterControl, tableFormat);
 		clone.setFilter(filterPanel.getFilter());
 		filterPanels.add(index, clone);
 		if (!multiUpdate) {
@@ -353,7 +355,7 @@ class FilterGui<E> {
 	}
 
 	private void add() {
-		add(new FilterPanel<>(this, filterControl));
+		add(new FilterPanel<>(this, filterControl, tableFormat));
 	}
 
 	private void add(final FilterPanel<E> filterPanel) {
@@ -417,7 +419,7 @@ class FilterGui<E> {
 		multiUpdate = true;
 		clearEmpty(); //Remove single empty filter...
 		for (Filter filter : filters) {
-			FilterPanel<E> filterPanel = new FilterPanel<>(this, filterControl);
+			FilterPanel<E> filterPanel = new FilterPanel<>(this, filterControl, tableFormat);
 			filterPanel.setFilter(filter);
 			add(filterPanel);
 		}

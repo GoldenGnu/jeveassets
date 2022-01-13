@@ -135,7 +135,7 @@ public class FilterMatcherTest extends TestUtil {
 
 	private static final String NULL = null;
 
-	private final TestFilterControl filterControl = new TestFilterControl();
+	private final TestTableFormat filterControl = new TestTableFormat();
 	private final Item item = new Item();
 
 	@Test
@@ -262,19 +262,19 @@ public class FilterMatcherTest extends TestUtil {
 		this.dateColumn = dateColumn;
 		this.percentColumn = percentColumn;
 		FilterMatcher<Item> filterMatcher;
-		filterMatcher = new FilterMatcher<>(filterControl, 1, Filter.LogicType.AND, enumColumn, compare, text, true);
+		filterMatcher = new FilterMatcher<>(filterControl, null, 1, Filter.LogicType.AND, enumColumn, compare, text, true);
 		assertEquals("Matcher: value:" + text + " [" + compare + "]" + enumColumn.getColumnValue(item) + "(" + enumColumn.name() +  ")", expected, filterMatcher.matches(item));
-		filterMatcher = new FilterMatcher<>(filterControl, new Filter(1, Filter.LogicType.AND, enumColumn, compare, text, true));
+		filterMatcher = new FilterMatcher<>(filterControl, null, new Filter(1, Filter.LogicType.AND, enumColumn, compare, text, true));
 		assertEquals("Filter: " + enumColumn.name() + "  value:" + text, expected, filterMatcher.matches(item));
 	}
 
 	private void matches(final Object expected, String text1, String text2, String text3, String text4, String text5) {
 		List<FilterMatcher<Item>> filterMatchers = new ArrayList<>();
-		filterMatchers.add(new FilterMatcher<>(filterControl, 1, Filter.LogicType.OR, TestEnum.TEXT, CompareType.EQUALS, text1, true));
-		filterMatchers.add(new FilterMatcher<>(filterControl, 1, Filter.LogicType.OR, TestEnum.TEXT, CompareType.EQUALS, text2, true));
-		filterMatchers.add(new FilterMatcher<>(filterControl, 2, Filter.LogicType.OR, TestEnum.TEXT, CompareType.EQUALS, text3, true));
-		filterMatchers.add(new FilterMatcher<>(filterControl, 2, Filter.LogicType.OR, TestEnum.TEXT, CompareType.EQUALS, text4, true));
-		filterMatchers.add(new FilterMatcher<>(filterControl, 0, Filter.LogicType.AND, TestEnum.TEXT, CompareType.EQUALS, text5, true));
+		filterMatchers.add(new FilterMatcher<>(filterControl, null, 1, Filter.LogicType.OR, TestEnum.TEXT, CompareType.EQUALS, text1, true));
+		filterMatchers.add(new FilterMatcher<>(filterControl, null, 1, Filter.LogicType.OR, TestEnum.TEXT, CompareType.EQUALS, text2, true));
+		filterMatchers.add(new FilterMatcher<>(filterControl, null, 2, Filter.LogicType.OR, TestEnum.TEXT, CompareType.EQUALS, text3, true));
+		filterMatchers.add(new FilterMatcher<>(filterControl, null, 2, Filter.LogicType.OR, TestEnum.TEXT, CompareType.EQUALS, text4, true));
+		filterMatchers.add(new FilterMatcher<>(filterControl, null, 0, Filter.LogicType.AND, TestEnum.TEXT, CompareType.EQUALS, text5, true));
 		FilterLogicalMatcher<Item> logicalMatcher = new FilterLogicalMatcher<>(filterMatchers);
 		assertEquals("(" + text1 + " OR " + text2 +") AND (" + text3 + " OR " + text4 + ") AND " + text5 + " --> Matching: " + TEXT, expected, logicalMatcher.matches(item));
 	}
@@ -840,15 +840,15 @@ public class FilterMatcherTest extends TestUtil {
 
 	public static class Item { }
 
-	public class TestFilterControl extends FilterControl<Item> {
+	public class TestTableFormat implements SimpleTableFormat<Item> {
 
 		@Override
-		protected EnumTableColumn<Item> valueOf(final String column) {
+		public EnumTableColumn<Item> valueOf(final String column) {
 			return TestEnum.valueOf(column);
 		}
 
 		@Override
-		protected Object getColumnValue(final Item item, final String columnString) {
+		public Object getColumnValue(final Item item, final String columnString) {
 			EnumTableColumn<?> column = valueOf(columnString);
 			if (column instanceof TestEnum) {
 				TestEnum format = (TestEnum) column;
@@ -896,18 +896,13 @@ public class FilterMatcherTest extends TestUtil {
 		}
 
 		@Override
-		protected List<EnumTableColumn<Item>> getColumns() {
+		public List<EnumTableColumn<Item>> getFilterableColumns() {
 			return new ArrayList<>(Arrays.asList(TestEnum.values()));
 		}
 
 		@Override
-		protected List<EnumTableColumn<Item>> getShownColumns() {
+		public List<EnumTableColumn<Item>> getShownColumns() {
 			return null; //Only used by the GUI
-		}
-
-		@Override
-		protected void saveSettings(final String msg) {
-			//Only used by the GUI
 		}
 	}
 }

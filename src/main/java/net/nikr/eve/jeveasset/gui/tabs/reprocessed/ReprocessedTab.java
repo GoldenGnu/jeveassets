@@ -59,7 +59,6 @@ import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuColumns;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
-import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
@@ -129,7 +128,7 @@ public class ReprocessedTab extends JMainTabSecondary {
 		jToolBarRight.addButton(jExpand);
 
 		//Table Format
-		tableFormat = new EnumTableFormatAdaptor<>(ReprocessedTableFormat.class);
+		tableFormat = new EnumTableFormatAdaptor<>(ReprocessedTableFormat.class, Arrays.asList(ReprocessedExtendedTableFormat.values()));
 		//Backend
 		eventList = EventListManager.create();
 		//Sorting (per column)
@@ -367,43 +366,12 @@ public class ReprocessedTab extends JMainTabSecondary {
 		public ReprocessedFilterControl(EventList<ReprocessedInterface> exportEventList) {
 			super(program.getMainWindow().getFrame(),
 					NAME,
+					tableFormat,
 					eventList,
 					exportEventList,
 					filterList,
 					Settings.get().getTableFilters(NAME)
 					);
-		}
-
-		@Override
-		protected Object getColumnValue(final ReprocessedInterface reprocessed, final String column) {
-			try {
-				return ReprocessedExtendedTableFormat.valueOf(column).getColumnValue(reprocessed);
-			} catch (IllegalArgumentException exception) {
-
-			}
-			return tableFormat.getColumnValue(reprocessed, column);
-		}
-
-		@Override
-		protected EnumTableColumn<ReprocessedInterface> valueOf(final String column) {
-			try {
-				return ReprocessedExtendedTableFormat.valueOf(column);
-			} catch (IllegalArgumentException exception) {
-
-			}
-			return tableFormat.valueOf(column);
-		}
-
-		@Override
-		protected List<EnumTableColumn<ReprocessedInterface>> getColumns() {
-			ArrayList<EnumTableColumn<ReprocessedInterface>> columns = new ArrayList<>(tableFormat.getShownColumns());
-			columns.addAll(Arrays.asList(ReprocessedExtendedTableFormat.values()));
-			return columns;
-		}
-
-		@Override
-		protected List<EnumTableColumn<ReprocessedInterface>> getShownColumns() {
-			return new ArrayList<>(tableFormat.getShownColumns());
 		}
 
 		@Override
@@ -417,7 +385,7 @@ public class ReprocessedTab extends JMainTabSecondary {
 		}
 
 		@Override
-		protected void saveSettings(final String msg) {
+		public void saveSettings(final String msg) {
 			program.saveSettings("Reprocessed Table: " + msg); //Save Reprocessed Filters and Export Setttings
 		}
 	}

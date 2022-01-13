@@ -61,12 +61,11 @@ import net.nikr.eve.jeveasset.gui.shared.components.JMainTabSecondary;
 import net.nikr.eve.jeveasset.gui.shared.components.JTextDialog;
 import net.nikr.eve.jeveasset.gui.shared.components.ListComboBoxModel;
 import net.nikr.eve.jeveasset.gui.shared.filter.ExportDialog;
-import net.nikr.eve.jeveasset.gui.shared.filter.ExportFilterControl;
+import net.nikr.eve.jeveasset.gui.shared.filter.SimpleFilterControl;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuColumns;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
-import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
@@ -193,7 +192,7 @@ public class LoadoutsTab extends JMainTabSecondary {
 		jToolBarRight.addButton(jExpand);
 
 		//Table Format
-		tableFormat = new EnumTableFormatAdaptor<>(LoadoutTableFormat.class);
+		tableFormat = new EnumTableFormatAdaptor<>(LoadoutTableFormat.class, Arrays.asList(LoadoutExtendedTableFormat.values()));
 		//Backend
 		eventList = EventListManager.create();
 		//Filter
@@ -220,12 +219,7 @@ public class LoadoutsTab extends JMainTabSecondary {
 		//Menu
 		installTableTool(new LoadoutTableMenu(), tableFormat, tableModel, jTable, eventList, Loadout.class);
 
-		List<EnumTableColumn<Loadout>> enumColumns = new ArrayList<>();
-		enumColumns.addAll(Arrays.asList(LoadoutExtendedTableFormat.values()));
-		enumColumns.addAll(Arrays.asList(LoadoutTableFormat.values()));
-		List<EventList<Loadout>> eventLists = new ArrayList<>();
-		eventLists.add(filterList);
-		exportDialog = new ExportDialog<>(program.getMainWindow().getFrame(), NAME, null, new LoadoutsFilterControl(), eventLists, enumColumns);
+		exportDialog = new ExportDialog<>(program.getMainWindow().getFrame(), NAME, null, new LoadoutsFilterControl(), tableFormat, filterList);
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.LEADING)
@@ -620,39 +614,10 @@ public class LoadoutsTab extends JMainTabSecondary {
 		}
 	}
 
-	private class LoadoutsFilterControl extends ExportFilterControl<Loadout> {
-		@Override
-		protected Object getColumnValue(Loadout item, String column) {
-			try {
-				return LoadoutExtendedTableFormat.valueOf(column).getColumnValue(item);
-			} catch (IllegalArgumentException exception) {
-
-			}
-			return tableFormat.getColumnValue(item, column);
-		}
+	private class LoadoutsFilterControl implements SimpleFilterControl<Loadout> {
 
 		@Override
-		protected EnumTableColumn<Loadout> valueOf(final String column) {
-			try {
-				return LoadoutExtendedTableFormat.valueOf(column);
-			} catch (IllegalArgumentException exception) {
-
-			}
-			return tableFormat.valueOf(column);
-		}
-
-		@Override
-		protected List<EnumTableColumn<Loadout>> getColumns() {
-			return new ArrayList<>(tableFormat.getOrderColumns());
-		}
-
-		@Override
-		protected List<EnumTableColumn<Loadout>> getShownColumns() {
-			return new ArrayList<>(tableFormat.getShownColumns());
-		}
-
-		@Override
-		protected void saveSettings(final String msg) {
+		public void saveSettings(final String msg) {
 			program.saveSettings("Ship Loudouts Table: " + msg); //Save Ship Loudout Export Setttings (Filters not used)
 		}
 	}
