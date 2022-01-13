@@ -133,7 +133,7 @@ public class FileUtil extends FileUtilSimple {
 	}
 
 	public static void autoImportFileUtil() {
-		if (Program.PROGRAM_DEV_BUILD && !Settings.isTestMode()) { //Need import
+		if (Program.isDevBuild() && !Settings.isTestMode()) { //Need import
 			Program.setPortable(false);
 			Path settingsFrom = Paths.get(getPathSettings());
 			Path trackerFrom = Paths.get(getPathTrackerData());

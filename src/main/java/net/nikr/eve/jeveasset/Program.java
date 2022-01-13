@@ -124,7 +124,7 @@ public class Program implements ActionListener {
 	public static final String PROGRAM_VERSION = "8.0.0 DEV BUILD 1";
 	public static final String PROGRAM_NAME = "jEveAssets";
 	public static final String PROGRAM_HOMEPAGE = "https://eve.nikr.net/jeveasset";
-	public static final boolean PROGRAM_DEV_BUILD = false;
+	private static final boolean PROGRAM_DEV_BUILD = false;
 
 	private static boolean debug = false;
 	private static boolean forceUpdate = false;
@@ -185,7 +185,7 @@ public class Program implements ActionListener {
 			LOG.debug("Force Update: {} Force No Update: {}", forceUpdate, forceNoUpdate);
 			DetectEdtViolationRepaintManager.install();
 		}
-		if (PROGRAM_DEV_BUILD) {
+		if (isDevBuild()) {
 			portable = true;
 		}
 
@@ -205,7 +205,7 @@ public class Program implements ActionListener {
 
 		updater = new Updater();
 		localData = updater.getLocalData();
-		if (!PROGRAM_DEV_BUILD) {
+		if (!isDevBuild()) {
 			update();
 		}
 
@@ -241,9 +241,6 @@ public class Program implements ActionListener {
 		industryJobsTab = new IndustryJobsTab(this);
 		LOG.info("Loading: Industry Slot Tab");
 		industrySlotsTab = new IndustrySlotsTab(this);
-		LOG.info("Loading: Industry Plot Tab");
-		//FIXME - - > IndustryPlotTab - remove or ?
-		//industryPlotTab = new IndustryPlotTab(this);
 		SplashUpdater.setProgress(56);
 		LOG.info("Loading: Market Orders Tab");
 		marketOrdersTab = new MarketOrdersTab(this);
@@ -310,7 +307,8 @@ public class Program implements ActionListener {
 		LOG.info("GUI loaded");
 	//Updating data...
 		LOG.info("Updating data...");
-		updateEventLists(); //Update price
+		updateEventLists();
+	//OSXAdapter
 		macOsxCode();
 	//Open Tools
 		for (String title : Settings.get().getShowTools()) {
@@ -331,7 +329,7 @@ public class Program implements ActionListener {
 			LOG.info("Show Debug Warning");
 			JOptionPane.showMessageDialog(mainWindow.getFrame(), "WARNING: Debug is enabled", "Debug", JOptionPane.WARNING_MESSAGE);
 		}
-		if (PROGRAM_DEV_BUILD) {
+		if (isDevBuild()) {
 			JOptionPane.showMessageDialog(mainWindow.getFrame(), "WARNING: This is a dev build\r\n\r\nNotes:\r\n- Always run portable\r\n- Settings and profiles are cloned\r\n- Does not check for updates\r\n- Expect bugs!", "DEV BUILD", JOptionPane.WARNING_MESSAGE);
 		}
 		if (Settings.get().isSettingsLoadError()) {
@@ -911,6 +909,10 @@ public class Program implements ActionListener {
 				trackerTab.updateData();
 			}
 		});
+	}
+
+	public static boolean isDevBuild() {
+		return PROGRAM_DEV_BUILD;
 	}
 
 	public static boolean isDebug() {
