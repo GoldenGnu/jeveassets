@@ -24,8 +24,6 @@ package net.nikr.eve.jeveasset.gui.shared.table;
 import ca.odell.glazedlists.gui.AdvancedTableFormat;
 import ca.odell.glazedlists.gui.WritableTableFormat;
 import com.udojava.evalex.Expression;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -34,15 +32,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.swing.ButtonGroup;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JRadioButtonMenuItem;
-import javax.swing.table.AbstractTableModel;
-import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.settings.Settings;
-import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.menu.JFormulaDialog;
 import net.nikr.eve.jeveasset.gui.shared.menu.JFormulaDialog.Formula;
 import net.nikr.eve.jeveasset.gui.shared.table.ColumnManager.IndexColumn;
@@ -101,10 +90,6 @@ public class EnumTableFormatAdaptor<T extends Enum<T> & EnumTableColumn<Q>, Q> i
 	private List<EnumTableColumn<Q>> orderColumns;
 	private List<EnumTableColumn<Q>> tempColumns = new ArrayList<>();
 	private final ColumnComparator columnComparator;
-
-	private EditColumnsDialog<T, Q> editColumns;
-	private ViewSave viewSave;
-	private ViewManager viewManager;
 	private ResizeMode resizeMode;
 
 	public EnumTableFormatAdaptor(final Class<T> enumClass) {
@@ -279,138 +264,6 @@ public class EnumTableFormatAdaptor<T extends Enum<T> & EnumTableColumn<Q>, Q> i
 		}
 		shownColumns.add(column);
 		updateColumns();
-	}
-
-	public JMenu getMenu(final Program program, final AbstractTableModel tableModel, final JAutoColumnTable jTable, final String name) {
-		return getMenu(program, tableModel, jTable, name, true);
-	}
-
-	public JMenu getMenu(final Program program, final AbstractTableModel tableModel, final JAutoColumnTable jTable, final String name, final boolean editable) {
-		JMenu jMenu;
-		JMenuItem jMenuItem;
-		jMenu = new JMenu(GuiShared.get().tableSettings());
-		jMenu.setIcon(Images.TABLE_COLUMN_SHOW.getIcon());
-
-		if (editable) {
-			if (editColumns == null) { //Create dialog (only once)
-				editColumns = new EditColumnsDialog<>(program, this);
-			}
-			if (viewSave == null) { //Create dialog (only once)
-				viewSave = new ViewSave(program);
-			}
-			if (viewManager == null) { //Create dialog (only once)
-				viewManager = new ViewManager(program, this, tableModel, jTable);
-			}
-			jMenuItem = new JMenuItem(GuiShared.get().tableColumns(), Images.DIALOG_SETTINGS.getIcon());
-			jMenuItem.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(final ActionEvent e) {
-					editColumns.setVisible(true);
-					tableModel.fireTableStructureChanged();
-					jTable.autoResizeColumns();
-				}
-			});
-			jMenu.add(jMenuItem);
-
-			jMenu.addSeparator();
-
-			jMenuItem = new JMenuItem(GuiShared.get().saveView(), Images.FILTER_SAVE.getIcon());
-			jMenuItem.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(final ActionEvent e) {
-					//Get views...
-					Map<String, View> views = Settings.get().getTableViews(name);
-					viewSave.updateData(new ArrayList<>(views.values())); //Update views
-					View view = viewSave.show();
-					if (view != null ) { //Validate
-						view.setColumns(getColumns()); //Set data
-						if (views.containsValue(view)) { //Ovwewrite?
-							int value = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), GuiShared.get().overwrite(), GuiShared.get().saveView(), JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
-							if (value != JOptionPane.OK_OPTION) {
-								return;
-							}
-						}
-						Settings.lock("View (New)"); //Lock for View (New)
-						views.remove(view.getName()); //Remove old
-						views.put(view.getName(), view); //Add new
-						Settings.unlock("View (New)"); //Unlock for View (New)
-						program.saveSettings("View (New)"); //Save View (New)
-					}
-				}
-			});
-			jMenu.add(jMenuItem);
-
-			JMenu jLoad = new JMenu(GuiShared.get().loadView());
-			jLoad.setIcon(Images.FILTER_LOAD.getIcon());
-			jMenu.add(jLoad);
-
-			JMenuItem jManage = new JMenuItem(GuiShared.get().editViews(), Images.DIALOG_SETTINGS.getIcon());
-			jManage.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(final ActionEvent e) {
-					Map<String, View> views = Settings.get().getTableViews(name);
-					viewManager.updateData(views);
-					viewManager.setVisible(true);
-				}
-			});
-
-			if (!Settings.get().getTableViews(name).isEmpty()) {
-				jLoad.setEnabled(true);
-
-				jLoad.add(jManage);
-
-				jLoad.addSeparator();
-
-				for (final View view : Settings.get().getTableViews(name).values()) {
-					jMenuItem = new JMenuItem(view.getName(), Images.FILTER_LOAD.getIcon());
-					jMenuItem.addActionListener(new ActionListener() {
-						@Override
-						public void actionPerformed(final ActionEvent e) {
-							viewManager.loadView(view);
-						}
-					});
-					jLoad.add(jMenuItem);
-				}
-			} else {
-				jLoad.setEnabled(false);
-			}
-
-			jMenu.addSeparator();
-		}
-
-		jMenuItem = new JMenuItem(GuiShared.get().tableColumnsReset(), Images.TABLE_COLUMN_SHOW.getIcon());
-		jMenuItem.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(final ActionEvent e) {
-				reset();
-				tableModel.fireTableStructureChanged();
-				jTable.autoResizeColumns();
-				program.saveSettings("Columns (Reset)"); //Save Resize Mode
-			}
-		});
-		jMenu.add(jMenuItem);
-
-		jMenu.addSeparator();
-
-		ButtonGroup buttonGroup = new ButtonGroup();
-		JRadioButtonMenuItem jRadioButton;
-		for (final ResizeMode mode : ResizeMode.values()) {
-			jRadioButton = new JRadioButtonMenuItem(mode.toString(), Images.TABLE_COLUMN_RESIZE.getIcon());
-			jRadioButton.setSelected(resizeMode == mode);
-				jRadioButton.addActionListener(new ActionListener() {
-					@Override
-					public void actionPerformed(final ActionEvent e) {
-						setResizeMode(mode);
-						jTable.saveColumnsWidth();
-						jTable.autoResizeColumns();
-						program.updateTableMenu();
-						program.saveSettings("Resize Mode"); //Save Resize Mode
-					}
-				});
-			buttonGroup.add(jRadioButton);
-			jMenu.add(jRadioButton);
-		}
-		return jMenu;
 	}
 
 	public void addListener(ColumnValueChangeListener listener) {
