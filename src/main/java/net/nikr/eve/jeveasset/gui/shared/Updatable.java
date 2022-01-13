@@ -75,6 +75,9 @@ public class Updatable {
 			if (owner.isBookmarks() && isUpdatable(owner.getBookmarksNextUpdate())){
 				return true;
 			}
+			if (owner.isSkills() && isUpdatable(owner.getSkillsNextUpdate())){
+				return true;
+			}
 		}
 		return false;
 	}
