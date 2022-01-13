@@ -141,19 +141,22 @@ public class ExportDialog<E> extends JDialogCentered {
 
 	private final JCustomFileChooser jFileChooser;
 
-	private final List<EventList<E>> eventLists;
-	private final Map<String, EnumTableColumn<E>> columns = new HashMap<>();
-	private final List<EnumTableColumn<E>> columnIndex = new ArrayList<>();
-	private final FilterControl<E> filterControl;
-	private final ExportFilterControl<E> exportFilterControl;
 	private final String toolName;
+	private final ColumnCache<E> columnCache;
+	private final SimpleFilterControl<E> filterControl;
+	private final SimpleTableFormat<E> tableFormat;
+	private final EventList<E> eventList;
 
-	public ExportDialog(final JFrame jFrame, final String toolName, final FilterControl<E> filterControl, ExportFilterControl<E> exportFilterControl, final List<EventList<E>> eventLists, final List<EnumTableColumn<E>> enumColumns) {
+	private final Map<String, EnumTableColumn<E>> columns = new HashMap<>();
+	private final List<EnumTableColumn<E>> columnIndex = new ArrayList<>();	
+
+	public ExportDialog(final JFrame jFrame, final String toolName, ColumnCache<E> columnCache, final SimpleFilterControl<E> filterControl, SimpleTableFormat<E> tableFormat, final EventList<E> eventList) {
 		super(null, DialoguesExport.get().export(), jFrame, Images.DIALOG_CSV_EXPORT.getImage());
 		this.toolName = toolName;
+		this.columnCache = columnCache;
 		this.filterControl = filterControl;
-		this.exportFilterControl = exportFilterControl;
-		this.eventLists = eventLists;
+		this.tableFormat = tableFormat;
+		this.eventList = eventList;
 
 		ListenerClass listener = new ListenerClass();
 		layout.setAutoCreateContainerGaps(false);
@@ -326,6 +329,7 @@ public class ExportDialog<E> extends JDialogCentered {
 		jViewSelect.setActionCommand(ExportAction.VIEW_CHANGED.name());
 		jViewSelect.addActionListener(listener);
 
+		final List<EnumTableColumn<E>> enumColumns = tableFormat.getFilterableColumns();
 		columnIndex.addAll(enumColumns);
 		for (EnumTableColumn<E> column : enumColumns) {
 			columns.put(column.name(), column);
@@ -437,7 +441,7 @@ public class ExportDialog<E> extends JDialogCentered {
 	}
 
 	private void updateColumns() {
-		final List<EnumTableColumn<E>> enumColumns = exportFilterControl.getColumns();
+		final List<EnumTableColumn<E>> enumColumns = tableFormat.getFilterableColumns();
 		columns.clear();
 		columnIndex.clear();
 		columnIndex.addAll(enumColumns);
@@ -523,20 +527,50 @@ public class ExportDialog<E> extends JDialogCentered {
 		Settings.get().getExportSettings(toolName).setHtmlStyled(jHtmlStyle.isSelected());
 		Settings.get().getExportSettings(toolName).setHtmlIGB(jHtmlIGB.isSelected());
 		Settings.get().getExportSettings(toolName).setHtmlRepeatHeader(jHtmlHeaderRepeat.getValue());
-		//Shared
+		//Format
+		ExportFormat exportFormat = ExportFormat.CSV;
+		if (jCsv.isSelected()) {
+			exportFormat = ExportFormat.CSV;
+		} else if (jHtml.isSelected()) {
+			exportFormat = ExportFormat.HTML;
+		} else if (jSql.isSelected()) {
+			exportFormat = ExportFormat.SQL;
+		}
+		Settings.get().getExportSettings(toolName).setExportFormat(exportFormat);
+		//Filter
+		FilterSelection filterSelection = FilterSelection.NONE;
+		if (jNoFilter.isSelected()) {
+			filterSelection = FilterSelection.NONE;
+		} else if (jCurrentFilter.isSelected()) {
+			filterSelection = FilterSelection.CURRENT;
+		} else if (jSavedFilter.isSelected()) {
+			filterSelection = FilterSelection.SAVED;
+		}
+		Settings.get().getExportSettings(toolName).setFilterSelection(filterSelection);
+		//View
+		ColumnSelection columnSelection = ColumnSelection.SHOWN;
+		if (jViewCurrent.isSelected()) {
+			columnSelection = ColumnSelection.SHOWN;
+		} else if (jViewSaved.isSelected()) {
+			columnSelection = ColumnSelection.SAVED;
+		} else if (jViewSelect.isSelected()) {
+			columnSelection = ColumnSelection.SELECTED;
+		}
+		Settings.get().getExportSettings(toolName).setColumnSelection(columnSelection);
+		//Columns
 		if (jColumnSelection.getSelectedIndices().length == columns.size()) { //All is selected - nothing worth saving...
 			Settings.get().getExportSettings(toolName).putTableExportColumns(null);
 		} else {
 			Settings.get().getExportSettings(toolName).putTableExportColumns(getExportColumns());
 		}
-		//Make sure there is a selected item and that it is not the filler text for empty list.
+		//Filter Name (Make sure there is a selected item and that it is not the filler text for empty list)
 		if (jFilters.getSelectedItem() != null
 				&& !DialoguesExport.get().noSavedFilter().equals(jFilters.getSelectedItem())) {
 			Settings.get().getExportSettings(toolName).setFilterName((String) jFilters.getSelectedItem());
 		} else  {
 			Settings.get().getExportSettings(toolName).setFilterName(null);
 		}
-		//Make sure there is a selected item and that is is not filler text for empty list.
+		//View Name (Make sure there is a selected item and that is is not filler text for empty list)
 		if (jViews.getSelectedItem() != null
 				&& !DialoguesExport.get().viewNoSaved().equals(jViews.getSelectedItem())) {
 			Settings.get().getExportSettings(toolName).setViewName((String) jViews.getSelectedItem());
@@ -544,7 +578,7 @@ public class ExportDialog<E> extends JDialogCentered {
 			Settings.get().getExportSettings(toolName).setViewName(null);
 		}
 		Settings.unlock("Export Settings (Save)"); //Unlock for Export Settings (Save)
-		exportFilterControl.saveSettings("Export Settings (Save)");
+		filterControl.saveSettings("Export Settings (Save)");
 	}
 
 	private void loadSettings() {
@@ -573,7 +607,7 @@ public class ExportDialog<E> extends JDialogCentered {
 			List<Integer> selections = new ArrayList<>();
 			for (String column : list) {
 				try {
-					EnumTableColumn<E> enumColumn = exportFilterControl.valueOf(column);
+					EnumTableColumn<E> enumColumn = tableFormat.valueOf(column);
 					if (enumColumn != null) {
 						int index = columnIndex.indexOf(enumColumn);
 						selections.add(index);
@@ -590,7 +624,7 @@ public class ExportDialog<E> extends JDialogCentered {
 		}
 
 		String filterName = Settings.get().getExportSettings(toolName).getFilterName();
-		List<String> filterNames = new ArrayList<>(exportFilterControl.getAllFilters().keySet());
+		List<String> filterNames = new ArrayList<>(filterControl.getAllFilters().keySet());
 		if (!filterNames.isEmpty()) {
 			Collections.sort(filterNames, new CaseInsensitiveComparator());
 			jFilters.setModel(new ListComboBoxModel<>(filterNames));
@@ -664,7 +698,7 @@ public class ExportDialog<E> extends JDialogCentered {
 		if (filterSelection == FilterSelection.NONE) {
 			jNoFilter.setSelected(true);
 			jFilters.setEnabled(false);
-		} else if (filterSelection == FilterSelection.CURRENT && !exportFilterControl.getCurrentFilters().isEmpty()) {
+		} else if (filterSelection == FilterSelection.CURRENT && !filterControl.getCurrentFilters().isEmpty()) {
 			jCurrentFilter.setSelected(true);
 			jFilters.setEnabled(false);
 		} else if (filterSelection == FilterSelection.SAVED && hasItem(jFilters, filterName)) {
@@ -679,14 +713,14 @@ public class ExportDialog<E> extends JDialogCentered {
 		}
 
 		//Filters current
-		if (exportFilterControl.getCurrentFilters().isEmpty()) {
+		if (filterControl.getCurrentFilters().isEmpty()) {
 			jCurrentFilter.setEnabled(false);
 		} else {
 			jCurrentFilter.setEnabled(true);
 		}
 
 		//Filters saved
-		if (exportFilterControl.getAllFilters().isEmpty()) {
+		if (filterControl.getAllFilters().isEmpty()) {
 			jSavedFilter.setEnabled(false);
 			jFilters.getModel().setSelectedItem(DialoguesExport.get().noSavedFilter());
 		} else {
@@ -760,7 +794,7 @@ public class ExportDialog<E> extends JDialogCentered {
 		List<EnumTableColumn<E>> header = new ArrayList<>();
 		if (jViewCurrent.isSelected()) {
 			//Use the tool current shown columns + order
-			header = exportFilterControl.getShownColumns();
+			header = tableFormat.getShownColumns();
 		} else if (jViewSaved.isSelected()) {
 			String viewKey = (String) jViews.getSelectedItem();
 			View view = Settings.get().getTableViews(toolName).get(viewKey);
@@ -798,46 +832,40 @@ public class ExportDialog<E> extends JDialogCentered {
 		}
 	//Filters
 		if (jNoFilter.isSelected()) {
-			for (EventList<E> eventList : eventLists) {
-				try {
-					eventList.getReadWriteLock().readLock().lock();
-					items.addAll(eventList);
-				} finally {
-					eventList.getReadWriteLock().readLock().unlock();
-				}
+			try {
+				eventList.getReadWriteLock().readLock().lock();
+				items.addAll(eventList);
+			} finally {
+				eventList.getReadWriteLock().readLock().unlock();
 			}
 		} else if (jCurrentFilter.isSelected()) {
-			List<Filter> filter = exportFilterControl.getCurrentFilters();
-			for (EventList<E> eventList : eventLists) {
-				try {
-					eventList.getReadWriteLock().readLock().lock();
-					FilterList<E> filterList = new FilterList<>(eventList, new FilterLogicalMatcher<>(filterControl, filter));
-					if (!filterList.isEmpty() && filterList.get(0) instanceof TreeAsset) {
-						FilterList<E> treeFilterList = new FilterList<>(eventList, new TreeMatcher<>(filterList));
-						items.addAll(treeFilterList);
-					} else {
-						items.addAll(filterList);
-					}
-				} finally {
-					eventList.getReadWriteLock().readLock().unlock();
+			List<Filter> filter = filterControl.getCurrentFilters();
+			try {
+				eventList.getReadWriteLock().readLock().lock();
+				FilterList<E> filterList = new FilterList<>(eventList, new FilterLogicalMatcher<>(tableFormat, columnCache, filter));
+				if (!filterList.isEmpty() && filterList.get(0) instanceof TreeAsset) {
+					FilterList<E> treeFilterList = new FilterList<>(eventList, new TreeMatcher<>(filterList));
+					items.addAll(treeFilterList);
+				} else {
+					items.addAll(filterList);
 				}
+			} finally {
+				eventList.getReadWriteLock().readLock().unlock();
 			}
 		} else if (jSavedFilter.isSelected()) {
 			String filterName = (String) jFilters.getSelectedItem();
-			List<Filter> filter = exportFilterControl.getAllFilters().get(filterName);
-			for (EventList<E> eventList : eventLists) {
-				try {
-					eventList.getReadWriteLock().readLock().lock();
-					FilterList<E> filterList = new FilterList<>(eventList, new FilterLogicalMatcher<>(filterControl, filter));
-					if (!filterList.isEmpty() && filterList.get(0) instanceof TreeAsset) {
-						FilterList<E> treeFilterList = new FilterList<>(eventList, new TreeMatcher<>(filterList));
-						items.addAll(treeFilterList);
-					} else {
-						items.addAll(filterList);
-					}
-				} finally {
-					eventList.getReadWriteLock().readLock().unlock();
+			List<Filter> filter = filterControl.getAllFilters().get(filterName);
+			try {
+				eventList.getReadWriteLock().readLock().lock();
+				FilterList<E> filterList = new FilterList<>(eventList, new FilterLogicalMatcher<>(tableFormat, columnCache, filter));
+				if (!filterList.isEmpty() && filterList.get(0) instanceof TreeAsset) {
+					FilterList<E> treeFilterList = new FilterList<>(eventList, new TreeMatcher<>(filterList));
+					items.addAll(treeFilterList);
+				} else {
+					items.addAll(filterList);
 				}
+			} finally {
+				eventList.getReadWriteLock().readLock().unlock();
 			}
 		}
 	//Save settings
@@ -857,7 +885,7 @@ public class ExportDialog<E> extends JDialogCentered {
 			for (E e : items) {
 				Map<String, String> row = new HashMap<>();
 				for (EnumTableColumn<E> column : header) {
-					row.put(column.name(), format(exportFilterControl.getColumnValue(e, column.name()), Settings.get().getExportSettings(toolName).getCsvDecimalSeparator(), false));
+					row.put(column.name(), format(tableFormat.getColumnValue(e, column.name()), Settings.get().getExportSettings(toolName).getCsvDecimalSeparator(), false));
 				}
 				rows.add(row);
 			}
@@ -874,7 +902,7 @@ public class ExportDialog<E> extends JDialogCentered {
 			for (E e : items) {
 				Map<EnumTableColumn<?>, String> row = new HashMap<>();
 				for (EnumTableColumn<E> column : header) {
-					row.put(column, format(exportFilterControl.getColumnValue(e, column.name()), Settings.get().getExportSettings(toolName).getCsvDecimalSeparator(), Settings.get().getExportSettings(toolName).isHtmlStyled()));
+					row.put(column, format(tableFormat.getColumnValue(e, column.name()), Settings.get().getExportSettings(toolName).getCsvDecimalSeparator(), Settings.get().getExportSettings(toolName).isHtmlStyled()));
 				}
 				rows.add(row);
 			}
@@ -893,7 +921,7 @@ public class ExportDialog<E> extends JDialogCentered {
 			for (E e : items) {
 				Map<EnumTableColumn<?>, Object> row = new HashMap<>();
 				for (EnumTableColumn<E> column : header) {
-					row.put(column, exportFilterControl.getColumnValue(e, column.name()));
+					row.put(column, tableFormat.getColumnValue(e, column.name()));
 				}
 				rows.add(row);
 			}
@@ -914,7 +942,6 @@ public class ExportDialog<E> extends JDialogCentered {
 					DialoguesExport.get().export(),
 					JOptionPane.PLAIN_MESSAGE);
 		}
-
 		setVisible(false);
 	}
 
@@ -1073,6 +1100,6 @@ public class ExportDialog<E> extends JDialogCentered {
 			}
 			return eventList.contains(item);
 		}
-		
+
 	}
 }

@@ -18,28 +18,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  */
-
 package net.nikr.eve.jeveasset.gui.shared.filter;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 
 
-public abstract class ExportFilterControl<E> {
-
-	protected abstract EnumTableColumn<E> valueOf(String column) throws IllegalArgumentException;
-	protected abstract Object getColumnValue(E item, String column);
-	protected abstract List<EnumTableColumn<E>> getColumns();
-	protected abstract List<EnumTableColumn<E>> getShownColumns();
-	protected abstract void saveSettings(final String msg);
-
-	public Map<String, List<Filter>> getAllFilters() {
-		return new HashMap<>();
-	}
-	public List<Filter> getCurrentFilters() {
-		return new ArrayList<>();
-	}
+public interface SimpleTableFormat<E> {
+	public Object getColumnValue(E item, String column);
+	public List<EnumTableColumn<E>> getFilterableColumns();
+	public List<EnumTableColumn<E>> getShownColumns();
+	public EnumTableColumn<E> valueOf(String column) throws IllegalArgumentException;
 }

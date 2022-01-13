@@ -34,7 +34,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.List;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -52,7 +51,6 @@ import net.nikr.eve.jeveasset.gui.shared.menu.JMenuColumns;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuUI.ContractMenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
-import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.JSeparatorTable;
@@ -101,7 +99,7 @@ public class ContractsTab extends JMainTabPrimary {
 		jToolBarRight.addButton(jExpand);
 
 		//Table Format
-		tableFormat = new EnumTableFormatAdaptor<>(ContractsTableFormat.class);
+		tableFormat = new EnumTableFormatAdaptor<>(ContractsTableFormat.class, Arrays.asList(ContractsExtendedTableFormat.values()));
 		//Backend
 		eventList = program.getProfileData().getContractItemEventList();
 		//Sorting (per column)
@@ -231,43 +229,12 @@ public class ContractsTab extends JMainTabPrimary {
 		public ContractsFilterControl(EventList<MyContractItem> exportEventList) {
 			super(program.getMainWindow().getFrame(),
 					NAME,
+					tableFormat,
 					eventList,
 					exportEventList,
 					filterList,
 					Settings.get().getTableFilters(NAME)
 					);
-		}
-
-		@Override
-		protected Object getColumnValue(MyContractItem contract, String column) {
-			try {
-				return ContractsExtendedTableFormat.valueOf(column).getColumnValue(contract);
-			} catch (IllegalArgumentException exception) {
-
-			}
-			return tableFormat.getColumnValue(contract, column);
-		}
-
-		@Override
-		protected EnumTableColumn<MyContractItem> valueOf(String column) {
-			try {
-				return ContractsExtendedTableFormat.valueOf(column);
-			} catch (IllegalArgumentException exception) {
-
-			}
-			return tableFormat.valueOf(column);
-		}
-
-		@Override
-		protected List<EnumTableColumn<MyContractItem>> getColumns() {
-			ArrayList<EnumTableColumn<MyContractItem>> columns = new ArrayList<>(tableFormat.getOrderColumns());
-			columns.addAll(Arrays.asList(ContractsExtendedTableFormat.values()));
-			return columns;
-		}
-
-		@Override
-		protected List<EnumTableColumn<MyContractItem>> getShownColumns() {
-			return new ArrayList<>(tableFormat.getShownColumns());
 		}
 
 		@Override
@@ -281,7 +248,7 @@ public class ContractsTab extends JMainTabPrimary {
 		}
 
 		@Override
-		protected void saveSettings(final String msg) {
+		public void saveSettings(final String msg) {
 			program.saveSettings("Contracts Table: " + msg); //Save Contract Filters and Export Setttings
 		}
 	}

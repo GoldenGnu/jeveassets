@@ -33,7 +33,6 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.List;
 import java.util.Map;
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -49,7 +48,6 @@ import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuColumns;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
-import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
@@ -235,6 +233,7 @@ public class ValueTableTab extends JMainTabSecondary {
 		public ValueFilterControl(EventList<Value> exportEventList) {
 			super(program.getMainWindow().getFrame(),
 					NAME,
+					tableFormat,
 					eventList,
 					exportEventList,
 					filterList,
@@ -243,27 +242,7 @@ public class ValueTableTab extends JMainTabSecondary {
 		}
 
 		@Override
-		protected Object getColumnValue(final Value value, final String column) {
-			return tableFormat.getColumnValue(value, column);
-		}
-
-		@Override
-		protected EnumTableColumn<Value> valueOf(final String column) {
-			return tableFormat.valueOf(column);
-		}
-
-		@Override
-		protected List<EnumTableColumn<Value>> getColumns() {
-			return new ArrayList<>(tableFormat.getOrderColumns());
-		}
-
-		@Override
-		protected List<EnumTableColumn<Value>> getShownColumns() {
-			return new ArrayList<>(tableFormat.getShownColumns());
-		}
-
-		@Override
-		protected void saveSettings(final String msg) {
+		public void saveSettings(final String msg) {
 			program.saveSettings("ISK Talbe: " + msg); //Save ISK Filters and Export Setttings
 		}
 	}
