@@ -161,7 +161,7 @@ public class StatusPanel extends JGroupLayoutPanel {
 	}
 
 	private boolean canUpdate() {
-		return (program.checkProgramUpdate() || program.checkDataUpdate()) && !Program.PROGRAM_DEV_BUILD;
+		return (program.checkProgramUpdate() || program.checkDataUpdate()) && !Program.isDevBuild();
 	}
 
 	private void doLayout() {
