@@ -52,7 +52,7 @@ public class ViewManager extends JManageDialog {
 	}
 
 	public final void update() {
-		update(new ArrayList<String>(views.keySet()));
+		update(new ArrayList<>(views.keySet()));
 		program.updateTableMenu();
 	}
 
@@ -63,7 +63,7 @@ public class ViewManager extends JManageDialog {
 		setVisible(false);
 	}
 
-	protected void loadView(View view) {
+	public void loadView(View view) {
 		tableFormat.setColumns(view.getColumns());
 		tableModel.fireTableStructureChanged();
 		jTable.autoResizeColumns();
