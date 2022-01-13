@@ -51,7 +51,7 @@ import net.nikr.eve.jeveasset.gui.tabs.loadout.Loadout;
 import net.nikr.eve.jeveasset.gui.tabs.loadout.LoadoutExtendedTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.loadout.LoadoutTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.materials.Material;
-import net.nikr.eve.jeveasset.gui.tabs.materials.MaterialExtenedTableFormat;
+import net.nikr.eve.jeveasset.gui.tabs.materials.MaterialExtendedTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.materials.MaterialTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.orders.MarketTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.overview.Overview;
@@ -184,7 +184,7 @@ public class TableFormatTest extends TestUtil {
 			for (MaterialTableFormat tableFormat : MaterialTableFormat.values()) {
 				test(tableFormat, tableFormat.getType(), tableFormat.getColumnValue(material));
 			}
-			for (MaterialExtenedTableFormat tableFormat : MaterialExtenedTableFormat.values()) {
+			for (MaterialExtendedTableFormat tableFormat : MaterialExtendedTableFormat.values()) {
 				test(tableFormat, tableFormat.getType(), tableFormat.getColumnValue(material));
 			}
 			Value value = new Value(STRING_VALUE, DATE_VALUE);
