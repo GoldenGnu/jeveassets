@@ -896,7 +896,7 @@ public class FilterMatcherTest extends TestUtil {
 		}
 
 		@Override
-		public List<EnumTableColumn<Item>> getFilterableColumns() {
+		public List<EnumTableColumn<Item>> getAllColumns() {
 			return new ArrayList<>(Arrays.asList(TestEnum.values()));
 		}
 
