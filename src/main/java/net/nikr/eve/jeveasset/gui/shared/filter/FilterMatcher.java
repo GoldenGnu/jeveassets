@@ -158,7 +158,7 @@ public class FilterMatcher<E> implements Matcher<E> {
 
 	public static <E> String buildItemCache(SimpleTableFormat<E> filterControl, E e) {
 		StringBuilder builder = new StringBuilder();
-		for (EnumTableColumn<E> testColumn : filterControl.getFilterableColumns()) {
+		for (EnumTableColumn<E> testColumn : filterControl.getAllColumns()) {
 			Object columnValue = filterControl.getColumnValue(e, testColumn.name());
 			if (columnValue != null) {
 				builder.append("\n");

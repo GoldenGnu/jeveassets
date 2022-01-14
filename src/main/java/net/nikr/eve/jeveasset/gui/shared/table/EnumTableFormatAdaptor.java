@@ -87,11 +87,11 @@ public class EnumTableFormatAdaptor<T extends Enum<T> & EnumTableColumn<Q>, Q> i
 
 	private final Class<T> enumClass;
 	private final Map<String, EnumTableColumn<Q>> extendedTableFormats = new HashMap<>();
-	private List<EnumTableColumn<Q>> shownColumns;
-	private Map<String, EnumTableColumn<Q>> orderColumnsName;
-	private List<EnumTableColumn<Q>> allColumns;
-	private List<EnumTableColumn<Q>> orderColumns;
-	private List<EnumTableColumn<Q>> tempColumns = new ArrayList<>();
+	private final List<EnumTableColumn<Q>> shownColumns = new ArrayList<>();
+	private final Map<String, EnumTableColumn<Q>> orderColumnsName = new HashMap<>();
+	private final List<EnumTableColumn<Q>> allColumns = new ArrayList<>();
+	private final List<EnumTableColumn<Q>> orderColumns =  new ArrayList<>();
+	private final List<EnumTableColumn<Q>> tempColumns = new ArrayList<>();
 	private final ColumnComparator columnComparator;
 	private ResizeMode resizeMode;
 
@@ -104,7 +104,7 @@ public class EnumTableFormatAdaptor<T extends Enum<T> & EnumTableColumn<Q>, Q> i
 		for (EnumTableColumn<Q> column : enumTableColumns) {
 			extendedTableFormats.put(column.name(), column);
 		}
-		allColumns = new ArrayList<>(Arrays.asList(enumClass.getEnumConstants()));
+		allColumns.addAll(Arrays.asList(enumClass.getEnumConstants()));
 		allColumns.addAll(extendedTableFormats.values());
 		columnComparator = new ColumnComparator();
 		resizeMode = ResizeMode.TEXT;
@@ -116,15 +116,16 @@ public class EnumTableFormatAdaptor<T extends Enum<T> & EnumTableColumn<Q>, Q> i
 	}
 
 	private void reset() {
-		shownColumns = new ArrayList<>();
-		orderColumnsName = new HashMap<>();
+		shownColumns.clear();
+		orderColumnsName.clear();
+		orderColumns.clear();
 		for (T t : enumClass.getEnumConstants()) {
 			if (t.isShowDefault()) {
 				shownColumns.add(t);
 			}
 			orderColumnsName.put(t.name(), t);
 		}
-		orderColumns = new ArrayList<>(Arrays.asList(enumClass.getEnumConstants()));
+		orderColumns.addAll(Arrays.asList(enumClass.getEnumConstants()));
 		addTempColumns();
 	}
 
@@ -170,13 +171,9 @@ public class EnumTableFormatAdaptor<T extends Enum<T> & EnumTableColumn<Q>, Q> i
 		return shownColumns;
 	}
 
-	public List<EnumTableColumn<Q>> getOrderColumns() {
-		return orderColumns;
-	}
-
 	@Override
-	public List<EnumTableColumn<Q>> getFilterableColumns() {
-		return orderColumns;
+	public List<EnumTableColumn<Q>> getAllColumns() {
+		return allColumns;
 	}
 
 	public ResizeMode getResizeMode() {
@@ -194,9 +191,9 @@ public class EnumTableFormatAdaptor<T extends Enum<T> & EnumTableColumn<Q>, Q> i
 		if (columns == null) {
 			return;
 		}
-		orderColumns = new ArrayList<>();
-		shownColumns = new ArrayList<>();
-		orderColumnsName = new HashMap<>();
+		orderColumns.clear();
+		shownColumns.clear();
+		orderColumnsName.clear();
 		List<T> originalColumns = new ArrayList<>(Arrays.asList(enumClass.getEnumConstants()));
 		for (SimpleColumn column : columns) {
 			try {
