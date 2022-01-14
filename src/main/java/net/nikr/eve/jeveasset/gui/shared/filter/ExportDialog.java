@@ -329,7 +329,7 @@ public class ExportDialog<E> extends JDialogCentered {
 		jViewSelect.setActionCommand(ExportAction.VIEW_CHANGED.name());
 		jViewSelect.addActionListener(listener);
 
-		final List<EnumTableColumn<E>> enumColumns = tableFormat.getFilterableColumns();
+		final List<EnumTableColumn<E>> enumColumns = tableFormat.getAllColumns();
 		columnIndex.addAll(enumColumns);
 		for (EnumTableColumn<E> column : enumColumns) {
 			columns.put(column.name(), column);
@@ -441,7 +441,7 @@ public class ExportDialog<E> extends JDialogCentered {
 	}
 
 	private void updateColumns() {
-		final List<EnumTableColumn<E>> enumColumns = tableFormat.getFilterableColumns();
+		final List<EnumTableColumn<E>> enumColumns = tableFormat.getAllColumns();
 		columns.clear();
 		columnIndex.clear();
 		columnIndex.addAll(enumColumns);

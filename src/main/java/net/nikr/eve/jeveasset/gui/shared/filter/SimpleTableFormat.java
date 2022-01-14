@@ -26,7 +26,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 
 public interface SimpleTableFormat<E> {
 	public Object getColumnValue(E item, String column);
-	public List<EnumTableColumn<E>> getFilterableColumns();
+	public List<EnumTableColumn<E>> getAllColumns();
 	public List<EnumTableColumn<E>> getShownColumns();
 	public EnumTableColumn<E> valueOf(String column) throws IllegalArgumentException;
 }

@@ -134,17 +134,17 @@ class FilterPanel<E> implements Comparable<FilterPanel<E>> {
 
 		allColumns = new ArrayList<>();
 		allColumns.add(new AllColumn<>());
-		allColumns.addAll(tableFormat.getFilterableColumns());
+		allColumns.addAll(tableFormat.getAllColumns());
 
 		numericColumns = new ArrayList<>();
-		for (EnumTableColumn<E> object : tableFormat.getFilterableColumns()) {
+		for (EnumTableColumn<E> object : tableFormat.getAllColumns()) {
 			if (filterControl.isNumeric(object)) {
 				numericColumns.add(object);
 			}
 		}
 
 		dateColumns = new ArrayList<>();
-		for (EnumTableColumn<E> object : tableFormat.getFilterableColumns()) {
+		for (EnumTableColumn<E> object : tableFormat.getAllColumns()) {
 			if (filterControl.isDate(object)) {
 				dateColumns.add(object);
 			}
@@ -288,16 +288,16 @@ class FilterPanel<E> implements Comparable<FilterPanel<E>> {
 		EnumTableColumn<E> selectedItem = jColumn.getItemAt(jColumn.getSelectedIndex());
 		allColumns.clear();
 		allColumns.add(new AllColumn<>());
-		allColumns.addAll(tableFormat.getFilterableColumns());
+		allColumns.addAll(tableFormat.getAllColumns());
 		numericColumns.clear();
-		for (EnumTableColumn<E> object : tableFormat.getFilterableColumns()) {
+		for (EnumTableColumn<E> object : tableFormat.getAllColumns()) {
 			if (filterControl.isNumeric(object)) {
 				numericColumns.add(object);
 			}
 		}
 
 		dateColumns.clear();
-		for (EnumTableColumn<E> object : tableFormat.getFilterableColumns()) {
+		for (EnumTableColumn<E> object : tableFormat.getAllColumns()) {
 			if (filterControl.isDate(object)) {
 				dateColumns.add(object);
 			}
@@ -501,7 +501,7 @@ class FilterPanel<E> implements Comparable<FilterPanel<E>> {
 		} else if (isDateCompare()) {
 			compareColumns = new ArrayList<>(dateColumns);
 		} else {
-			compareColumns = new ArrayList<>(tableFormat.getFilterableColumns());
+			compareColumns = new ArrayList<>(tableFormat.getAllColumns());
 		}
 		jCompareColumn.setModel(new ListComboBoxModel<>(compareColumns));
 		for (Object column : compareColumns) {
