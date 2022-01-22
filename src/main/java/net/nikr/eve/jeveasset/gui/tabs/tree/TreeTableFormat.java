@@ -66,7 +66,7 @@ public enum TreeTableFormat implements EnumTableColumn<TreeAsset> {
 		}
 		@Override
 		public Object getColumnValue(final TreeAsset from) {
-			return from.getCustomName();
+			return from.getItemName();
 		}
 		@Override
 		public boolean isShowDefault() {
