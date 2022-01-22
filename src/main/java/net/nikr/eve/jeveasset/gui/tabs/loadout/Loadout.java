@@ -40,67 +40,62 @@ import net.nikr.eve.jeveasset.i18n.TabsLoadout;
 public class Loadout implements Comparable<Loadout>, LocationType, ItemType, PriceType, CopySeparator, OwnersType {
 
 	public enum FlagType {
-		TOTAL_VALUE("Total Value", 1) {
+		TOTAL_VALUE("Total Value") {
 			@Override String i18n() {
 				return TabsLoadout.get().flagTotalValue();
 			}
 		},
-		HIGH_SLOT("HiSlot", 2) {
+		HIGH_SLOT("HiSlot") {
 			@Override String i18n() {
 				return TabsLoadout.get().flagHighSlot();
 			}
 		},
-		MEDIUM_SLOT("MedSlot", 3) {
+		MEDIUM_SLOT("MedSlot") {
 			@Override String i18n() {
 				return TabsLoadout.get().flagMediumSlot();
 			}
 		},
-		LOW_SLOT("LoSlot", 4) {
+		LOW_SLOT("LoSlot") {
 			@Override String i18n() {
 				return TabsLoadout.get().flagLowSlot();
 			}
 		},
-		RIG_SLOTS("RigSlot", 5) {
+		RIG_SLOTS("RigSlot") {
 			@Override String i18n() {
 				return TabsLoadout.get().flagRigSlot();
 			}
 		},
-		SUB_SYSTEMS("SubSystem", 6) {
+		SUB_SYSTEMS("SubSystem") {
 			@Override String i18n() {
 				return TabsLoadout.get().flagSubSystem();
 			}
 		},
-		DRONE_BAY("DroneBay", 7) {
+		DRONE_BAY("DroneBay") {
 			@Override String i18n() {
 				return TabsLoadout.get().flagDroneBay();
 			}
 		},
-		CARGO("Cargo", 8) {
+		CARGO("Cargo") {
 			@Override String i18n() {
 				return TabsLoadout.get().flagCargo();
 			}
 		},
-		OTHER("", 9) {
+		OTHER("") {
 			@Override String i18n() {
 				return TabsLoadout.get().flagOther();
 			}
 		};
 
 		private final String flag;
-		private final int order;
-		private FlagType(final String flag, final int order) {
+
+		private FlagType(String flag) {
 			this.flag = flag;
-			this.order = order;
 		}
 
 		abstract String i18n();
 
 		public String getFlag() {
 			return flag;
-		}
-
-		public int getOrder() {
-			return order;
 		}
 
 		@Override
@@ -225,11 +220,11 @@ public class Loadout implements Comparable<Loadout>, LocationType, ItemType, Pri
 	}
 
 	public String getSeparator() {
-		return String.valueOf(flag.getOrder());
+		return String.valueOf(flag.ordinal());
 	}
 
 	protected String getCompare() {
-		return key + flag.getOrder() + convertName(name);
+		return key + flag.ordinal() + convertName(name);
 	}
 
 	@Override
