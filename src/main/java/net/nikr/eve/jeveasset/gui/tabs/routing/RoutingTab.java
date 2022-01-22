@@ -838,14 +838,14 @@ public class RoutingTab extends JMainTabSecondary {
 		List<MyAsset> assets;
 		SourceItem source = (SourceItem) jSource.getSelectedItem();
 		if (source.getName().equals(General.get().all())) { //ALL
-			assets = new ArrayList<>(program.getAssetList());
+			assets = new ArrayList<>(program.getAssetsList());
 		} else if (source.getName().equals(TabsRouting.get().filteredAssets())) { //FILTERS
 			assets = program.getAssetsTab().getFilteredAssets();
 		} else { //OVERVIEW GROUP
 			assets = new ArrayList<>();
 			OverviewGroup group = Settings.get().getOverviewGroups().get(source.getName());
 			for (OverviewLocation location : group.getLocations()) {
-				for (MyAsset asset : program.getAssetList()) {
+				for (MyAsset asset : program.getAssetsList()) {
 					if ((location.getName().equals(asset.getLocation().getLocation()))
 						|| (location.getType() == LocationType.TYPE_SYSTEM && location.getName().equals(asset.getLocation().getSystem()))
 						|| (location.getType() == LocationType.TYPE_CONSTELLATION && location.getName().equals(asset.getLocation().getConstellation()))

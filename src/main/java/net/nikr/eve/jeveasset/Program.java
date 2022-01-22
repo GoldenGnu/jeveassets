@@ -829,7 +829,7 @@ public class Program implements ActionListener {
 		return profileData;
 	}
 
-	public List<MyAsset> getAssetList() {
+	public List<MyAsset> getAssetsList() {
 		return profileData.getAssetsList();
 	}
 
