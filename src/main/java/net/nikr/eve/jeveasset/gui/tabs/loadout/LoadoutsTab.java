@@ -336,7 +336,7 @@ public class LoadoutsTab extends JMainTabSecondary {
 		if (!fitName.isEmpty()) {
 			String selectedShip = (String) jShips.getSelectedItem();
 			MyAsset exportAsset = null;
-			for (MyAsset asset : program.getAssetList()) {
+			for (MyAsset asset : program.getAssetsList()) {
 					String key = asset.getName() + " #" + asset.getItemID();
 					if (selectedShip.equals(key)) {
 						exportAsset = asset;
@@ -362,7 +362,7 @@ public class LoadoutsTab extends JMainTabSecondary {
 	private void exportEFT() {
 		String selectedShip = (String) jShips.getSelectedItem();
 		MyAsset exportAsset = null;
-		for (MyAsset asset : program.getAssetList()) {
+		for (MyAsset asset : program.getAssetsList()) {
 				String key = asset.getName() + " #" + asset.getItemID();
 				if (selectedShip.equals(key)) {
 					exportAsset = asset;
@@ -474,7 +474,7 @@ public class LoadoutsTab extends JMainTabSecondary {
 
 	private void updateTable() {
 		List<Loadout> ship = new ArrayList<>();
-		for (MyAsset asset : program.getAssetList()) {
+		for (MyAsset asset : program.getAssetsList()) {
 			String key = asset.getName() + " #" + asset.getItemID();
 			if (!asset.getItem().isShip() || !asset.isSingleton()) {
 				continue;
@@ -553,7 +553,7 @@ public class LoadoutsTab extends JMainTabSecondary {
 			if (LoadoutsAction.OWNERS.name().equals(e.getActionCommand())) {
 				String owner = (String) jOwners.getSelectedItem();
 				List<String> charShips = new ArrayList<>();
-				for (MyAsset asset : program.getAssetList()) {
+				for (MyAsset asset : program.getAssetsList()) {
 					String key = asset.getName() + " #" + asset.getItemID();
 					if (!asset.getItem().isShip() || !asset.isSingleton()) {
 						continue;
@@ -597,7 +597,7 @@ public class LoadoutsTab extends JMainTabSecondary {
 			} else if (LoadoutsAction.EXPORT_EVE_ALL.name().equals(e.getActionCommand())) {
 				String filename = browse();
 				List<MyAsset> ships = new ArrayList<>();
-				for (MyAsset asset : program.getAssetList()) {
+				for (MyAsset asset : program.getAssetsList()) {
 					if (!asset.getItem().isShip() || !asset.isSingleton() || asset.getAssets().isEmpty()) {
 						continue;
 					}
