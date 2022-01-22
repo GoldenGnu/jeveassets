@@ -71,7 +71,7 @@ public class MyAsset extends RawAsset implements Comparable<MyAsset>, InfoItem, 
 	private boolean bpc;
 //Dynamic values
 	private String name;
-	private String customName = null;
+	private String itemName = null;
 	private String container = "";
 	private PriceData priceData;
 	private UserItem<Integer, Double> userPrice;
@@ -95,7 +95,7 @@ public class MyAsset extends RawAsset implements Comparable<MyAsset>, InfoItem, 
 				asset.owner,
 				asset.parents);
 		this.name = asset.name;
-		this.customName = asset.customName;
+		this.itemName = asset.itemName;
 		this.container = asset.container;
 		this.priceData = asset.priceData;
 		this.userPrice = asset.userPrice;
@@ -143,7 +143,7 @@ public class MyAsset extends RawAsset implements Comparable<MyAsset>, InfoItem, 
 		this.volume = ApiIdConverter.getVolume(item, !rawAsset.isSingleton());
 		this.typeName = item.getTypeName();
 		this.name = item.getTypeName();
-		this.customName = null;
+		this.itemName = null;
 		this.owners = Collections.singleton(owner.getOwnerID());
 		this.generated = getFlag().equals(General.get().marketOrderSellFlag()) //market sell orders
 						|| getFlag().equals(General.get().marketOrderBuyFlag()) //market buy orders
@@ -386,8 +386,8 @@ public class MyAsset extends RawAsset implements Comparable<MyAsset>, InfoItem, 
 		return typeName;
 	}
 
-	public String getCustomName() {
-		return customName;
+	public String getItemName() {
+		return itemName;
 	}
 
 	public UserItem<Integer, Double> getUserPrice() {
@@ -504,13 +504,13 @@ public class MyAsset extends RawAsset implements Comparable<MyAsset>, InfoItem, 
 		this.eveNameSet = customItem == null && eveName != null;
 		if (customItem != null) {
 			name = customItem.getValue();
-			customName = customItem.getValue();
+			itemName = customItem.getValue();
 		} else if (eveName != null) {
 			name = eveName + " (" + typeName + ")";
-			customName = eveName;
+			itemName = eveName;
 		} else {
 			name = typeName;
-			customName = null;
+			itemName = null;
 		}
 	}
 
