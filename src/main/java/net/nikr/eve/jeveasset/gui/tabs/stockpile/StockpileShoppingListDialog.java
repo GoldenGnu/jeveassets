@@ -256,7 +256,7 @@ class StockpileShoppingListDialog extends JDialogCentered {
 	//All items
 		Map<TypeIdentifier, List<StockItem>> items = new HashMap<>();
 		//Assets
-		for (MyAsset asset : program.getAssetList()) {
+		for (MyAsset asset : program.getAssetsList()) {
 			if (asset.isGenerated()) { //Skip generated assets
 				continue;
 			}

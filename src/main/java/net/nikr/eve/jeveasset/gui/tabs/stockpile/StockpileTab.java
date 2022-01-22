@@ -651,7 +651,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		}
 		//Inventory AKA Assets
 		if (stockpile.isAssets()) {
-			for (MyAsset asset : program.getAssetList()) {
+			for (MyAsset asset : program.getAssetsList()) {
 				if (asset.isGenerated()) { //Skip generated assets
 					continue;
 				}

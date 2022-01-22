@@ -582,7 +582,7 @@ public class Program implements ActionListener {
 			List<MyContract> oldContracts = new ArrayList<>(getContractList()); //Copy
 			List<MyIndustryJob> oldIndustryJobs = new ArrayList<>(getIndustryJobsList()); //Copy
 			List<MyMarketOrder> oldMarketOrders = new ArrayList<>(getMarketOrdersList()); //Copy
-			List<MyAsset> oldAsset = new ArrayList<>(getAssetList()); //Copy
+			List<MyAsset> oldAsset = new ArrayList<>(getAssetsList()); //Copy
 			profileData.updateEventLists();
 			if (start != null) {
 				LogManager.createLog(oldContracts, oldIndustryJobs, oldMarketOrders, oldAsset, start, profileData);
@@ -848,7 +848,7 @@ public class Program implements ActionListener {
 		return profileData;
 	}
 
-	public List<MyAsset> getAssetList() {
+	public List<MyAsset> getAssetsList() {
 		return profileData.getAssetsList();
 	}
 

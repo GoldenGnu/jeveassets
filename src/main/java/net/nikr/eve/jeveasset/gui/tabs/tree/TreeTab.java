@@ -305,7 +305,7 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate {
 		Map<String, TreeAsset> categoryCache = new HashMap<>();
 		Map<String, TreeAsset> locationCache = new HashMap<>();
 		MyLocation emptyLocation = new MyLocation(0, "", 0, "", 0, "", 0, "", "");
-		for (MyAsset asset : program.getAssetList()) {
+		for (MyAsset asset : program.getAssetsList()) {
 		//LOCATION
 			List<TreeAsset> locationTree = new ArrayList<>();
 			MyLocation location = asset.getLocation();

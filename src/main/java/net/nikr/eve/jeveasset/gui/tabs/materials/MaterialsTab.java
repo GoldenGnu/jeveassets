@@ -243,7 +243,7 @@ public class MaterialsTab extends JMainTabSecondary {
 		Map<String, Material> total = new HashMap<>();
 		//Summary Total All
 		Material summaryTotalAllMaterial = new Material(MaterialType.SUMMARY_ALL, null, TabsMaterials.get().summary(), TabsMaterials.get().grandTotal(), General.get().all());
-		for (MyAsset asset : program.getAssetList()) {
+		for (MyAsset asset : program.getAssetsList()) {
 			//Skip none-material + none Pi Material (if not enabled)
 			if (!asset.getItem().getCategory().equals(Item.CATEGORY_MATERIAL) && (!asset.getItem().isPiMaterial() || !jPiMaterial.isSelected())) {
 				continue;
