@@ -34,7 +34,6 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -64,6 +63,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.JSeparatorTable;
 import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
+import net.nikr.eve.jeveasset.gui.shared.table.TableFormatFactory;
 import net.nikr.eve.jeveasset.gui.tabs.reprocessed.ReprocessedSeparatorTableCell.ReprocessedCellAction;
 import net.nikr.eve.jeveasset.i18n.TabsReprocessed;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
@@ -128,7 +128,7 @@ public class ReprocessedTab extends JMainTabSecondary {
 		jToolBarRight.addButton(jExpand);
 
 		//Table Format
-		tableFormat = new EnumTableFormatAdaptor<>(ReprocessedTableFormat.class, Arrays.asList(ReprocessedExtendedTableFormat.values()));
+		tableFormat = TableFormatFactory.reprocessedTableFormat();
 		//Backend
 		eventList = EventListManager.create();
 		//Sorting (per column)

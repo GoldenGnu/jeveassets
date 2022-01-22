@@ -52,6 +52,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
+import net.nikr.eve.jeveasset.gui.shared.table.TableFormatFactory;
 import net.nikr.eve.jeveasset.i18n.TabsLog;
 
 
@@ -83,7 +84,7 @@ public class LogTab extends JMainTabSecondary {
 		ListenerClass listener = new ListenerClass();
 
 		//Table Format
-		tableFormat = new EnumTableFormatAdaptor<>(LogTableFormat.class);
+		tableFormat = TableFormatFactory.logTableFormat();
 		//Backend
 		eventList = EventListManager.create();
 		//Sorting (per column)

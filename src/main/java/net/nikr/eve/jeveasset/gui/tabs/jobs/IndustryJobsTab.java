@@ -60,6 +60,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
+import net.nikr.eve.jeveasset.gui.shared.table.TableFormatFactory;
 import net.nikr.eve.jeveasset.i18n.TabsJobs;
 
 
@@ -85,7 +86,7 @@ public class IndustryJobsTab extends JMainTabPrimary {
 
 		ListenerClass listener = new ListenerClass();
 		//Table Format
-		tableFormat = new EnumTableFormatAdaptor<>(IndustryJobTableFormat.class);
+		tableFormat = TableFormatFactory.industryJobTableFormat();
 		//Backend
 		eventList = program.getProfileData().getIndustryJobsEventList();
 		//Sorting (per column)

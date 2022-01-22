@@ -101,6 +101,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
+import net.nikr.eve.jeveasset.gui.shared.table.TableFormatFactory;
 import net.nikr.eve.jeveasset.gui.tabs.orders.OutbidProcesser.OutbidProcesserInput;
 import net.nikr.eve.jeveasset.gui.tabs.orders.OutbidProcesser.OutbidProcesserOutput;
 import net.nikr.eve.jeveasset.i18n.DialoguesUpdate;
@@ -227,7 +228,7 @@ public class MarketOrdersTab extends JMainTabPrimary {
 		jToolBar.addButton(jAutoUpdate);
 
 		//Table Format
-		tableFormat = new EnumTableFormatAdaptor<>(MarketTableFormat.class);
+		tableFormat = TableFormatFactory.marketTableFormat();
 		//Backend
 		eventList = program.getProfileData().getMarketOrdersEventList();
 		//Sorting (per column)

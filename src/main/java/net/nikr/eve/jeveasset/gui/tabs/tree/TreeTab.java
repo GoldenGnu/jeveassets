@@ -85,6 +85,7 @@ import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
+import net.nikr.eve.jeveasset.gui.shared.table.TableFormatFactory;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.HierarchyColumn;
 import net.nikr.eve.jeveasset.gui.tabs.tree.TreeAsset.TreeType;
 import net.nikr.eve.jeveasset.gui.tabs.tree.TreeTab.AssetTreeExpansionModel.ExpandedState;
@@ -195,7 +196,7 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate {
 		this.addStatusbarLabel(jValue);
 
 		//Table Format
-		tableFormat = new EnumTableFormatAdaptor<>(TreeTableFormat.class);
+		tableFormat = TableFormatFactory.treeTableFormat();
 		//Backend
 		eventList = EventListManager.create();
 		exportEventList = EventListManager.create();
