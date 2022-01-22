@@ -72,6 +72,7 @@ import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
+import net.nikr.eve.jeveasset.gui.shared.table.TableFormatFactory;
 import net.nikr.eve.jeveasset.gui.tabs.assets.AssetsTab;
 import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
@@ -214,7 +215,7 @@ public class OverviewTab extends JMainTabSecondary {
 		updateFilters();
 
 		//Table Format
-		tableFormat = new EnumTableFormatAdaptor<>(OverviewTableFormat.class);
+		tableFormat = TableFormatFactory.overviewTableFormat();
 		//Backend
 		eventList = EventListManager.create();
 		//Sorting (per column)

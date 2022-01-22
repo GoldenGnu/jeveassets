@@ -49,6 +49,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
+import net.nikr.eve.jeveasset.gui.shared.table.TableFormatFactory;
 import net.nikr.eve.jeveasset.i18n.TabsJournal;
 
 
@@ -71,7 +72,7 @@ public class JournalTab extends JMainTabPrimary {
 		super(program, NAME, TabsJournal.get().title(), Images.TOOL_JOURNAL.getIcon(), true);
 
 		//Table Format
-		tableFormat = new EnumTableFormatAdaptor<>(JournalTableFormat.class);
+		tableFormat = TableFormatFactory.journalTableFormat();
 		//Backend
 		eventList = program.getProfileData().getJournalEventList();
 		//Sorting (per column)

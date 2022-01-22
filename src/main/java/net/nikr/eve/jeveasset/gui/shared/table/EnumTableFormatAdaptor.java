@@ -95,11 +95,11 @@ public class EnumTableFormatAdaptor<T extends Enum<T> & EnumTableColumn<Q>, Q> i
 	private final ColumnComparator columnComparator;
 	private ResizeMode resizeMode;
 
-	public EnumTableFormatAdaptor(final Class<T> enumClass) {
+	protected EnumTableFormatAdaptor(final Class<T> enumClass) {
 		this(enumClass, new ArrayList<>());
 	}
 
-	public EnumTableFormatAdaptor(final Class<T> enumClass, final List<EnumTableColumn<Q>> enumTableColumns) {
+	protected EnumTableFormatAdaptor(final Class<T> enumClass, final List<EnumTableColumn<Q>> enumTableColumns) {
 		this.enumClass = enumClass;
 		for (EnumTableColumn<Q> column : enumTableColumns) {
 			extendedTableFormats.put(column.name(), column);

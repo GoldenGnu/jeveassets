@@ -47,10 +47,10 @@ import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
-import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
+import net.nikr.eve.jeveasset.gui.shared.table.TableFormatFactory;
 import net.nikr.eve.jeveasset.i18n.TabsTracker;
 
 
@@ -82,8 +82,7 @@ public class TrackerSkillPointsFilterDialog extends JDialogCentered {
 			}
 		});
 
-		EnumTableFormatAdaptor<TrackerSkillPointsFilterTableFormat, TrackerSkillPointFilter> tableFormat = new EnumTableFormatAdaptor<>(TrackerSkillPointsFilterTableFormat.class);
-		tableModel = EventModels.createTableModel(eventList, tableFormat);
+		tableModel = EventModels.createTableModel(eventList, TableFormatFactory.trackerSkillPointsFilterTableFormat());
 		jTable = new JAutoColumnTable(program, tableModel);
 		jTable.getTableHeader().setReorderingAllowed(false);
 

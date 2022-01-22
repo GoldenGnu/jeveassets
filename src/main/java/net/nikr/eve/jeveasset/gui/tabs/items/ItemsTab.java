@@ -48,6 +48,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
+import net.nikr.eve.jeveasset.gui.shared.table.TableFormatFactory;
 import net.nikr.eve.jeveasset.i18n.TabsItems;
 
 
@@ -69,7 +70,7 @@ public class ItemsTab extends JMainTabPrimary {
 		super(program, NAME, TabsItems.get().items(), Images.TOOL_ITEMS.getIcon(), true);
 
 		//Table Format
-		tableFormat = new EnumTableFormatAdaptor<>(ItemTableFormat.class);
+		tableFormat = TableFormatFactory.itemTableFormat();
 		//Backend
 		eventList = EventListManager.create();
 		//Sorting (per column)
