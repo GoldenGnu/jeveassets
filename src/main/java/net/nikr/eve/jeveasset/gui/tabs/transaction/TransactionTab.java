@@ -63,6 +63,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
+import net.nikr.eve.jeveasset.gui.shared.table.TableFormatFactory;
 import net.nikr.eve.jeveasset.i18n.TabsTransaction;
 
 public class TransactionTab extends JMainTabPrimary {
@@ -109,7 +110,7 @@ public class TransactionTab extends JMainTabPrimary {
 		jToolBar.addButton(jClearNew);
 		
 		//Table Format
-		tableFormat = new EnumTableFormatAdaptor<>(TransactionTableFormat.class);
+		tableFormat = TableFormatFactory.transactionTableFormat();
 		//Backend
 		eventList = program.getProfileData().getTransactionsEventList();
 		//Sorting (per column)

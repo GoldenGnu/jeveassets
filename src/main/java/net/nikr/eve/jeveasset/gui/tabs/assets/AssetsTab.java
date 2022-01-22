@@ -63,6 +63,7 @@ import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
+import net.nikr.eve.jeveasset.gui.shared.table.TableFormatFactory;
 import net.nikr.eve.jeveasset.i18n.TabsAssets;
 
 
@@ -120,7 +121,7 @@ public class AssetsTab extends JMainTabPrimary implements TagUpdate {
 		jToolBar.addButton(jReprocessColors);
 
 		//Table Format
-		tableFormat = new EnumTableFormatAdaptor<>(AssetTableFormat.class);
+		tableFormat = TableFormatFactory.assetTableFormat();
 		//Backend
 		eventList = program.getProfileData().getAssetsEventList();
 		//Sorting (per column)

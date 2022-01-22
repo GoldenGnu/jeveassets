@@ -53,6 +53,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
+import net.nikr.eve.jeveasset.gui.shared.table.TableFormatFactory;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerSkillPointFilter;
 import net.nikr.eve.jeveasset.i18n.TabsValues;
 
@@ -88,7 +89,7 @@ public class ValueTableTab extends JMainTabSecondary {
 		jToolBar.addButton(jSkillPointsFilters);
 
 		//Table Format
-		tableFormat = new EnumTableFormatAdaptor<>(ValueTableFormat.class);
+		tableFormat = TableFormatFactory.valueTableFormat();
 		//Backend
 		eventList = EventListManager.create();
 		//Sorting (per column)

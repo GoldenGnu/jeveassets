@@ -54,6 +54,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
+import net.nikr.eve.jeveasset.gui.shared.table.TableFormatFactory;
 import net.nikr.eve.jeveasset.i18n.TabsIndustrySlots;
 
 
@@ -75,7 +76,7 @@ public class IndustrySlotsTab extends JMainTabSecondary {
 	public IndustrySlotsTab(final Program program) {
 		super(program, NAME, TabsIndustrySlots.get().title(), Images.TOOL_INDUSTRY_SLOTS.getIcon(), true);
 		//Table Format
-		tableFormat = new EnumTableFormatAdaptor<>(IndustrySlotTableFormat.class);
+		tableFormat = TableFormatFactory.industrySlotTableFormat();
 		//Backend
 		eventList = EventListManager.create();
 		//Sorting (per column)

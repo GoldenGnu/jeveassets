@@ -31,7 +31,6 @@ import ca.odell.glazedlists.swing.TableComparatorChooser;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import javax.swing.GroupLayout;
@@ -55,6 +54,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.JSeparatorTable;
 import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
+import net.nikr.eve.jeveasset.gui.shared.table.TableFormatFactory;
 import net.nikr.eve.jeveasset.i18n.TabsContracts;
 
 
@@ -99,7 +99,7 @@ public class ContractsTab extends JMainTabPrimary {
 		jToolBarRight.addButton(jExpand);
 
 		//Table Format
-		tableFormat = new EnumTableFormatAdaptor<>(ContractsTableFormat.class, Arrays.asList(ContractsExtendedTableFormat.values()));
+		tableFormat = TableFormatFactory.contractsTableFormat();
 		//Backend
 		eventList = program.getProfileData().getContractItemEventList();
 		//Sorting (per column)
