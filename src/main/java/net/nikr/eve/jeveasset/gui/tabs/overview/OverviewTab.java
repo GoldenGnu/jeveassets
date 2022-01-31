@@ -32,9 +32,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import javax.swing.ButtonGroup;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
@@ -47,9 +45,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JToggleButton;
 import javax.swing.SwingConstants;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.api.my.MyAsset;
-import net.nikr.eve.jeveasset.data.sde.Item;
-import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.types.LocationType;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
@@ -74,10 +69,8 @@ import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.TableFormatFactory;
 import net.nikr.eve.jeveasset.gui.tabs.assets.AssetsTab;
-import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 import net.nikr.eve.jeveasset.i18n.TabsOverview;
-import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 
 
 public class OverviewTab extends JMainTabSecondary {
@@ -122,7 +115,7 @@ public class OverviewTab extends JMainTabSecondary {
 	private final DefaultEventSelectionModel<Overview> selectionModel;
 
 	//Data
-	private int rowCount;
+	private final OverviewData overviewData;
 
 	//Dialog
 	ExportDialog<Overview> exportDialog;
@@ -131,6 +124,8 @@ public class OverviewTab extends JMainTabSecondary {
 
 	public OverviewTab(final Program program) {
 		super(program, NAME, TabsOverview.get().overview(), Images.TOOL_OVERVIEW.getIcon(), true);
+
+		overviewData = new OverviewData(program);
 
 		JFixedToolBar jToolBarLeft = new JFixedToolBar();
 
@@ -370,109 +365,6 @@ public class OverviewTab extends JMainTabSecondary {
 		return View.STATIONS;
 	}
 
-	private List<Overview> getList(final List<MyAsset> input, final String owner, final View view) {
-		List<Overview> locations = new ArrayList<>();
-		Map<String, Overview> locationsMap = new HashMap<>();
-		List<String> groupedLocations = new ArrayList<>();
-		rowCount = 0;
-		if (view == View.GROUPS) { //Add all groups
-			for (Map.Entry<String, OverviewGroup> entry : Settings.get().getOverviewGroups().entrySet()) {
-				OverviewGroup overviewGroup = entry.getValue();
-				if (!locationsMap.containsKey(overviewGroup.getName())) { //Create new overview
-					Overview overview = new Overview(overviewGroup.getName(), MyLocation.create(0), 0, 0, 0, 0);
-					locationsMap.put(overviewGroup.getName(), overview);
-					locations.add(overview);
-				}
-			}
-		} else { //Add all grouped locations
-			for (Map.Entry<String, OverviewGroup> entry : Settings.get().getOverviewGroups().entrySet()) {
-				OverviewGroup overviewGroup = entry.getValue();
-				for (OverviewLocation overviewLocation : overviewGroup.getLocations()) {
-					if (!groupedLocations.contains(overviewLocation.getName())) {
-						groupedLocations.add(overviewLocation.getName());
-					}
-				}
-			}
-		}
-		final boolean all = owner.equals(General.get().all());
-		for (MyAsset asset : input) {
-			if (asset.getItem().isContainer() && Settings.get().isIgnoreSecureContainers()) {
-				continue;
-			}
-			if (asset.getItem().getGroup().equals(Item.GROUP_STATION_SERVICES)) {
-				continue;
-			}
-			//Filters
-			if (!owner.equals(asset.getOwnerName()) && !all) {
-				continue;
-			}
-
-			rowCount++;
-
-			double reprocessedValue = asset.getValueReprocessed();
-			double value = asset.getValue();
-			long count = asset.getCount();
-			double volume = asset.getVolumeTotal();
-			if (view != View.GROUPS) { //Locations
-				String locationName = "";
-				MyLocation location = asset.getLocation();
-				if (view == View.STATIONS && location.isPlanet()) {
-					continue;
-				}
-				if (view == View.PLANETS && !location.isPlanet()) {
-					continue;
-				}
-				if (!location.isEmpty()) { //Always use the default location for empty locations
-					if (view == View.REGIONS) {
-						locationName = asset.getLocation().getRegion();
-						location = ApiIdConverter.getLocation(asset.getLocation().getRegionID());
-					} else if (view == View.CONSTELLATIONS) {
-						locationName = asset.getLocation().getConstellation();
-						location = ApiIdConverter.getLocation(asset.getLocation().getConstellationID());
-					} else if (view == View.SYSTEMS) {
-						locationName = asset.getLocation().getSystem();
-						location = ApiIdConverter.getLocation(asset.getLocation().getSystemID());
-					} else if (view == View.PLANETS) {
-						locationName = asset.getLocation().getLocation();
-						location = ApiIdConverter.getLocation(asset.getLocation().getLocationID());
-					} else if (view == View.STATIONS) {
-						locationName = asset.getLocation().getLocation();
-						location = ApiIdConverter.getLocation(asset.getLocation().getLocationID());
-					}
-				} else {
-					locationName = location.getLocation();
-				}
-				if (locationsMap.containsKey(locationName)) { //Update existing overview
-					Overview overview = locationsMap.get(locationName);
-					overview.addCount(count);
-					overview.addValue(value);
-					overview.addVolume(volume);
-					overview.addReprocessedValue(reprocessedValue);
-				} else { //Create new overview
-					Overview overview = new Overview(locationName, location, reprocessedValue, volume, count, value);
-					locationsMap.put(locationName, overview);
-					locations.add(overview);
-				}
-			} else { //Groups
-				for (Map.Entry<String, OverviewGroup> entry : Settings.get().getOverviewGroups().entrySet()) {
-					OverviewGroup overviewGroup = entry.getValue();
-					for (OverviewLocation overviewLocation : overviewGroup.getLocations()) {
-						if (overviewLocation.equalsLocation(asset)) { //Update existing overview (group)
-							Overview overview = locationsMap.get(overviewGroup.getName());
-							overview.addCount(count);
-							overview.addValue(value);
-							overview.addVolume(volume);
-							overview.addReprocessedValue(reprocessedValue);
-							break; //Only add once....
-						}
-					}
-				}
-			}
-		}
-		jTable.setGroupedLocations(groupedLocations);
-		return locations;
-	}
-
 	public final void updateFilters() {
 		JMenuItem jMenuItem;
 
@@ -508,58 +400,59 @@ public class OverviewTab extends JMainTabSecondary {
 		updateTableInner();
 	}
 
+	public static void updateShownColumns(EnumTableFormatAdaptor<OverviewTableFormat, Overview> tableFormat, View view) {
+		switch (view) {
+			case STATIONS:
+				tableFormat.showColumn(OverviewTableFormat.SYSTEM);
+				tableFormat.showColumn(OverviewTableFormat.CONSTELLATION);
+				tableFormat.showColumn(OverviewTableFormat.REGION);
+				tableFormat.showColumn(OverviewTableFormat.SECURITY);
+				break;
+			case PLANETS:
+				tableFormat.showColumn(OverviewTableFormat.SYSTEM);
+				tableFormat.showColumn(OverviewTableFormat.CONSTELLATION);
+				tableFormat.showColumn(OverviewTableFormat.REGION);
+				tableFormat.showColumn(OverviewTableFormat.SECURITY);
+				break;
+			case SYSTEMS:
+				tableFormat.hideColumn(OverviewTableFormat.SYSTEM);
+				tableFormat.showColumn(OverviewTableFormat.CONSTELLATION);
+				tableFormat.showColumn(OverviewTableFormat.REGION);
+				tableFormat.showColumn(OverviewTableFormat.SECURITY);
+				break;
+			case CONSTELLATIONS:
+				tableFormat.hideColumn(OverviewTableFormat.SYSTEM);
+				tableFormat.hideColumn(OverviewTableFormat.CONSTELLATION);
+				tableFormat.showColumn(OverviewTableFormat.REGION);
+				tableFormat.hideColumn(OverviewTableFormat.SECURITY);
+				break;
+			case REGIONS:
+				tableFormat.hideColumn(OverviewTableFormat.SYSTEM);
+				tableFormat.hideColumn(OverviewTableFormat.REGION);
+				tableFormat.hideColumn(OverviewTableFormat.CONSTELLATION);
+				tableFormat.hideColumn(OverviewTableFormat.SECURITY);
+				break;
+			case GROUPS:
+				tableFormat.hideColumn(OverviewTableFormat.SYSTEM);
+				tableFormat.hideColumn(OverviewTableFormat.CONSTELLATION);
+				tableFormat.hideColumn(OverviewTableFormat.REGION);
+				tableFormat.hideColumn(OverviewTableFormat.SECURITY);
+				break;
+		}
+	}
+
 	private void updateTableInner() {
 		beforeUpdateData();
 		String owner = (String) jOwner.getSelectedItem();
 		View view = getSelectedView();
-		if (view == View.REGIONS) {
-			tableFormat.hideColumn(OverviewTableFormat.SYSTEM);
-			tableFormat.hideColumn(OverviewTableFormat.REGION);
-			tableFormat.hideColumn(OverviewTableFormat.CONSTELLATION);
-			tableFormat.hideColumn(OverviewTableFormat.SECURITY);
-			tableModel.fireTableStructureChanged();
-		} else if (view == View.CONSTELLATIONS) {
-			tableFormat.hideColumn(OverviewTableFormat.SYSTEM);
-			tableFormat.hideColumn(OverviewTableFormat.CONSTELLATION);
-			tableFormat.showColumn(OverviewTableFormat.REGION);
-			tableFormat.hideColumn(OverviewTableFormat.SECURITY);
-			tableModel.fireTableStructureChanged();
-		} else if (view == View.SYSTEMS) {
-			tableFormat.hideColumn(OverviewTableFormat.SYSTEM);
-			tableFormat.showColumn(OverviewTableFormat.CONSTELLATION);
-			tableFormat.showColumn(OverviewTableFormat.REGION);
-			tableFormat.showColumn(OverviewTableFormat.SECURITY);
-			tableModel.fireTableStructureChanged();
-		} else if (view == View.PLANETS) {
-			tableFormat.showColumn(OverviewTableFormat.SYSTEM);
-			tableFormat.showColumn(OverviewTableFormat.CONSTELLATION);
-			tableFormat.showColumn(OverviewTableFormat.REGION);
-			tableFormat.showColumn(OverviewTableFormat.SECURITY);
-			tableModel.fireTableStructureChanged();
-		} else if (view == View.STATIONS) {
-			tableFormat.showColumn(OverviewTableFormat.SYSTEM);
-			tableFormat.showColumn(OverviewTableFormat.CONSTELLATION);
-			tableFormat.showColumn(OverviewTableFormat.REGION);
-			tableFormat.showColumn(OverviewTableFormat.SECURITY);
-			tableModel.fireTableStructureChanged();
-		} else if (view == View.GROUPS) {
-			tableFormat.hideColumn(OverviewTableFormat.SYSTEM);
-			tableFormat.hideColumn(OverviewTableFormat.CONSTELLATION);
-			tableFormat.hideColumn(OverviewTableFormat.REGION);
-			tableFormat.hideColumn(OverviewTableFormat.SECURITY);
-			tableModel.fireTableStructureChanged();
-		}
-		try {
-			eventList.getReadWriteLock().writeLock().lock();
-			eventList.clear();
-			eventList.addAll(getList(program.getAssetsTab().getFilteredAssets(), owner, view));
-		} finally {
-			eventList.getReadWriteLock().writeLock().unlock();
-		}
+		updateShownColumns(tableFormat, view);
+		tableModel.fireTableStructureChanged();
+		overviewData.updateData(eventList, program.getAssetsTab().getFilteredAssets(), owner, view);
+		jTable.setGroupedLocations(overviewData.getGroupedLocations());
 		updateStatusbar();
 		program.overviewGroupsChanged();
 
-		jShowing.setText(TabsOverview.get().filterShowing(rowCount, EventListManager.size(program.getProfileData().getAssetsEventList()), program.getAssetsTab().getCurrentFilterName()));
+		jShowing.setText(TabsOverview.get().filterShowing(overviewData.getRowCount(), EventListManager.size(program.getProfileData().getAssetsEventList()), program.getAssetsTab().getCurrentFilterName()));
 		afterUpdateData();
 	}
 

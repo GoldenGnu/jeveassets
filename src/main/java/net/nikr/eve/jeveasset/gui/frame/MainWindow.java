@@ -29,6 +29,7 @@ import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.plaf.basic.BasicButtonUI;
+import net.nikr.eve.jeveasset.CliOptions;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
@@ -112,7 +113,7 @@ public class MainWindow {
 		jFrame.setTitle(GuiFrame.get().windowTitle(
 						Program.PROGRAM_NAME,
 						Program.PROGRAM_VERSION,
-						Program.isPortable() ? 1 : 0,
+						CliOptions.get().isPortable() ? 1 : 0,
 						program.getProfileManager().getProfiles().size(),
 						program.getProfileManager().getActiveProfile().getName()
 						));

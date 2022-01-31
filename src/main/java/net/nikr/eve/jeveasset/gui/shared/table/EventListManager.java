@@ -24,8 +24,9 @@ import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.DebugList;
 import ca.odell.glazedlists.EventList;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
-import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.CliOptions;
 
 
 public class EventListManager {
@@ -33,13 +34,23 @@ public class EventListManager {
 	private EventListManager() { }
 
 	public static <E> EventList<E> create() {
-		if (Program.isDebug()) {
+		if (CliOptions.get().isDebug()) {
 			DebugList<E> debugList = new DebugList<>();
 			debugList.setLockCheckingEnabled(true);
 			return debugList;
 		} else {
 			return new BasicEventList<>();
 		}
+	}
+	public static <E> EventList<E> create(Collection<E> data) {
+		EventList<E> eventList = create();
+		try {
+			eventList.getReadWriteLock().writeLock().lock();
+			eventList.addAll(data);
+		} finally {
+			eventList.getReadWriteLock().writeLock().unlock();
+		}
+		return eventList;
 	}
 	public static <E> List<E> safeList(EventList<E> eventList) {
 		try {

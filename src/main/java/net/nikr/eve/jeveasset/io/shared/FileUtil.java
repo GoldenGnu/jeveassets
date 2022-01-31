@@ -30,6 +30,7 @@ import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+import net.nikr.eve.jeveasset.CliOptions;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import org.slf4j.Logger;
@@ -62,6 +63,7 @@ public class FileUtil extends FileUtilSimple {
 	private static final String PATH_DATA_VERSION = "data" + File.separator + "data.dat";
 	private static final String PATH_PACKAGE_MANAGER = "packagemanager.properties";
 	private static final String PATH_MEMORY = "jmemory.jar";
+	private static final String PATH_EXPORT = "exports";
 
 	public static boolean onMac() {
 		return System.getProperty("os.name").toLowerCase().startsWith("mac os x");
@@ -133,7 +135,7 @@ public class FileUtil extends FileUtilSimple {
 
 	public static void autoImportFileUtil() {
 		if (Program.isDevBuild() && !Settings.isTestMode()) { //Need import
-			Program.setPortable(false);
+			CliOptions.get().setPortable(false);
 			Path settingsFrom = Paths.get(getPathSettings());
 			Path trackerFrom = Paths.get(getPathTrackerData());
 			Path assetAddedFrom = Paths.get(getPathAssetAdded());
@@ -143,7 +145,7 @@ public class FileUtil extends FileUtilSimple {
 			Path profilesFrom = Paths.get(getPathProfilesDirectory());
 			Path contractPricesFrom = Paths.get(getPathContractPrices());
 			Path itemsUpdatesFrom = Paths.get(getPathItemsUpdates());
-			Program.setPortable(true);
+			CliOptions.get().setPortable(true);
 			Path settingsTo = Paths.get(getPathSettings());
 			Path trackerTo = Paths.get(getPathTrackerData());
 			Path assetAddedTo = Paths.get(getPathAssetAdded());
@@ -256,32 +258,36 @@ public class FileUtil extends FileUtilSimple {
 		}
 	}
 
+	public static String getPathExports() {
+		return getLocalFile(PATH_EXPORT, !CliOptions.get().isPortable());
+	}
+
 	public static String getPathSettings() {
-		return getLocalFile(PATH_SETTINGS, !Program.isPortable());
+		return getLocalFile(PATH_SETTINGS, !CliOptions.get().isPortable());
 	}
 
 	public static String getPathTrackerData() {
-		return getLocalFile(PATH_TRACKER_DATA, !Program.isPortable());
+		return getLocalFile(PATH_TRACKER_DATA, !CliOptions.get().isPortable());
 	}
 
 	public static String getPathContractPrices() {
-		return getLocalFile(PATH_CONTRACT_PRICES, !Program.isPortable());
+		return getLocalFile(PATH_CONTRACT_PRICES, !CliOptions.get().isPortable());
 	}
 
 	public static String getPathAssetAdded() {
-		return getLocalFile(PATH_ASSET_ADDED, !Program.isPortable());
+		return getLocalFile(PATH_ASSET_ADDED, !CliOptions.get().isPortable());
 	}
 
 	public static String getPathAssetAddedDatabase() {
-		return getLocalFile(PATH_ASSET_ADDED_DATABASE, !Program.isPortable());
+		return getLocalFile(PATH_ASSET_ADDED_DATABASE, !CliOptions.get().isPortable());
 	}
 
 	public static String getPathConquerableStations() {
-		return getLocalFile(PATH_CONQUERABLE_STATIONS, !Program.isPortable());
+		return getLocalFile(PATH_CONQUERABLE_STATIONS, !CliOptions.get().isPortable());
 	}
 
 	public static String getPathCitadel() {
-		return getLocalFile(PATH_CITADEL, !Program.isPortable());
+		return getLocalFile(PATH_CITADEL, !CliOptions.get().isPortable());
 	}
 
 	public static String getPathJumps() {
@@ -293,15 +299,15 @@ public class FileUtil extends FileUtilSimple {
 	}
 
 	public static String getPathPriceData() {
-		return getLocalFile(PATH_PRICE_DATA, !Program.isPortable());
+		return getLocalFile(PATH_PRICE_DATA, !CliOptions.get().isPortable());
 	}
 
 	public static String getPathAssetsOld() {
-		return getLocalFile(PATH_ASSETS, !Program.isPortable());
+		return getLocalFile(PATH_ASSETS, !CliOptions.get().isPortable());
 	}
 
 	public static String getPathProfilesDirectory() {
-		return getLocalFile(PATH_PROFILES, !Program.isPortable());
+		return getLocalFile(PATH_PROFILES, !CliOptions.get().isPortable());
 	}
 
 	public static String getPathStaticDataDirectory() {
@@ -309,7 +315,7 @@ public class FileUtil extends FileUtilSimple {
 	}
 
 	public static String getPathDataDirectory() {
-		return getLocalFile(PATH_DATA, !Program.isPortable());
+		return getLocalFile(PATH_DATA, !CliOptions.get().isPortable());
 	}
 
 	public static String getPathItems() {
@@ -317,7 +323,7 @@ public class FileUtil extends FileUtilSimple {
 	}
 	
 	public static String getPathItemsUpdates() {
-		return getLocalFile(PATH_ITEMS_UPDATES, !Program.isPortable());
+		return getLocalFile(PATH_ITEMS_UPDATES, !CliOptions.get().isPortable());
 	}
 
 	public static String getPathLocations() {
