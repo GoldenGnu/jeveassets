@@ -47,8 +47,6 @@ import javax.swing.JMenu;
 import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.sde.Item;
-import net.nikr.eve.jeveasset.data.sde.ReprocessedMaterial;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.types.LocationType;
 import net.nikr.eve.jeveasset.gui.images.Images;
@@ -66,7 +64,6 @@ import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
 import net.nikr.eve.jeveasset.gui.shared.table.TableFormatFactory;
 import net.nikr.eve.jeveasset.gui.tabs.reprocessed.ReprocessedSeparatorTableCell.ReprocessedCellAction;
 import net.nikr.eve.jeveasset.i18n.TabsReprocessed;
-import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 
 
 public class ReprocessedTab extends JMainTabSecondary {
@@ -94,11 +91,14 @@ public class ReprocessedTab extends JMainTabSecondary {
 
 	//Data
 	private final Set<Integer> typeIDs = new HashSet<>();
+	private final ReprocessedData reprocessedData;
 
 	public static final String NAME = "reprocessed"; //Not to be changed!
 
 	public ReprocessedTab(final Program program) {
 		super(program, NAME, TabsReprocessed.get().title(), Images.TOOL_REPROCESSED.getIcon(), true);
+
+		reprocessedData = new ReprocessedData(program);
 
 		JFixedToolBar jToolBarLeft = new JFixedToolBar();
 
@@ -192,57 +192,10 @@ public class ReprocessedTab extends JMainTabSecondary {
 
 	@Override
 	public void updateData() {
-		List<ReprocessedInterface> list = new ArrayList<>();
-		List<ReprocessedGrandItem> uniqueList = new ArrayList<>();
-		ReprocessedGrandTotal grandTotal = new ReprocessedGrandTotal();
-		for (Integer typeID : typeIDs) {
-			Item item = ApiIdConverter.getItem(typeID);
-			if (!item.isEmpty()) {
-				if (item.getReprocessedMaterial().isEmpty()) {
-					continue; //Ignore types without materials
-				}
-				double sellPrice = ApiIdConverter.getPriceSimple(typeID, false);
-				ReprocessedTotal total = new ReprocessedTotal(item, sellPrice);
-				list.add(total);
-				for (ReprocessedMaterial material : item.getReprocessedMaterial()) {
-					Item materialItem = ApiIdConverter.getItem(material.getTypeID());
-					if (!materialItem.isEmpty()) {
-						double price = ApiIdConverter.getPriceSimple(materialItem.getTypeID(), false);
-						int quantitySkill = Settings.get().getReprocessSettings().getLeft(material.getQuantity(), item.isOre());
-						ReprocessedItem reprocessedItem = new ReprocessedItem(total, materialItem, material, quantitySkill, price);
-						list.add(reprocessedItem);
-						//Total
-						total.add(reprocessedItem);
-						//Grand Total
-						grandTotal.add(reprocessedItem);
-						//Grand Item
-						ReprocessedGrandItem grandItem = new ReprocessedGrandItem(reprocessedItem, materialItem, grandTotal);
-						int index = uniqueList.indexOf(grandItem);
-						if (index >= 0) {
-							grandItem = uniqueList.get(index);
-						} else {
-							uniqueList.add(grandItem);
-						}
-						grandItem.add(reprocessedItem);
-					}
-				}
-				grandTotal.add(total);
-			}
-		}
-		if (typeIDs.size() > 1) {
-			list.add(grandTotal);
-			list.addAll(uniqueList);
-		}
 		//Save separator expanded/collapsed state
 		jTable.saveExpandedState();
-		//Update list
-		try {
-			eventList.getReadWriteLock().writeLock().lock();
-			eventList.clear();
-			eventList.addAll(list);
-		} finally {
-			eventList.getReadWriteLock().writeLock().unlock();
-		}
+		//Update Data
+		reprocessedData.updateData(eventList, typeIDs);
 		//Restore separator expanded/collapsed state
 		jTable.loadExpandedState();
 	}

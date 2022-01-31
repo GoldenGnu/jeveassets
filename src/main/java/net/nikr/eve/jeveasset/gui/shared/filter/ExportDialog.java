@@ -22,24 +22,15 @@
 package net.nikr.eve.jeveasset.gui.shared.filter;
 
 import ca.odell.glazedlists.EventList;
-import ca.odell.glazedlists.FilterList;
-import ca.odell.glazedlists.matchers.Matcher;
 import java.awt.CardLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
 import javax.swing.AbstractListModel;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
@@ -66,29 +57,17 @@ import net.nikr.eve.jeveasset.data.settings.ExportSettings.FieldDelimiter;
 import net.nikr.eve.jeveasset.data.settings.ExportSettings.FilterSelection;
 import net.nikr.eve.jeveasset.data.settings.ExportSettings.LineDelimiter;
 import net.nikr.eve.jeveasset.data.settings.Settings;
-import net.nikr.eve.jeveasset.data.settings.tag.Tags;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
 import net.nikr.eve.jeveasset.gui.shared.DocumentFactory;
-import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.components.JCustomFileChooser;
 import net.nikr.eve.jeveasset.gui.shared.components.JDefaultField;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
 import net.nikr.eve.jeveasset.gui.shared.components.JMultiSelectionList;
 import net.nikr.eve.jeveasset.gui.shared.components.ListComboBoxModel;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
-import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.SimpleColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.View;
-import net.nikr.eve.jeveasset.gui.shared.table.containers.HierarchyColumn;
-import net.nikr.eve.jeveasset.gui.tabs.tree.TreeAsset;
-import net.nikr.eve.jeveasset.gui.tabs.tree.TreeTab;
-import net.nikr.eve.jeveasset.gui.tabs.tree.TreeTab.AssetTreeComparator;
 import net.nikr.eve.jeveasset.i18n.DialoguesExport;
-import net.nikr.eve.jeveasset.io.local.CsvWriter;
-import net.nikr.eve.jeveasset.io.local.HtmlWriter;
-import net.nikr.eve.jeveasset.io.local.SqlWriter;
-import org.supercsv.prefs.CsvPreference;
-
 
 public class ExportDialog<E> extends JDialogCentered {
 
@@ -135,9 +114,6 @@ public class ExportDialog<E> extends JDialogCentered {
 	private final JCheckBox jExtendedInserts;
 
 	private final JButton jOK;
-
-	private static final DecimalFormat HTML_EN_NUMBER_FORMAT  = new DecimalFormat("#,##0.####", new DecimalFormatSymbols(new Locale("en")));
-	private static final DecimalFormat HTML_EU_NUMBER_FORMAT  = new DecimalFormat("#,##0.####", new DecimalFormatSymbols(new Locale("da")));
 
 	private final JCustomFileChooser jFileChooser;
 
@@ -489,29 +465,6 @@ public class ExportDialog<E> extends JDialogCentered {
 		}
 	}
 
-	private String format(final Object object, final DecimalSeparator decimalSeparator, final boolean html) {
-		if (object == null) {
-			return "";
-		} else if (object instanceof HierarchyColumn) {
-			HierarchyColumn column = (HierarchyColumn) object;
-			return column.getExport();
-		} else if (object instanceof Number) {
-			Number number = (Number) object;
-			if (decimalSeparator == DecimalSeparator.DOT) {
-				return HTML_EN_NUMBER_FORMAT.format(number);
-			} else {
-				return HTML_EU_NUMBER_FORMAT.format(number);
-			}
-		} else if (object instanceof Tags && html) {
-			Tags tags = (Tags) object;
-			return tags.getHtml();
-		} else if (object instanceof Date) {
-			return Formater.columnDate(object);
-		} else {
-			return object.toString();
-		}
-	}
-
 	private void saveSettings() {
 		Settings.lock("Export Settings (Save)"); //Lock for Export Settings (Save)
 		//CSV
@@ -788,31 +741,6 @@ public class ExportDialog<E> extends JDialogCentered {
 
 	@Override
 	protected void save() {
-		List<E> items = new ArrayList<>();
-
-	//Columns + Header
-		List<EnumTableColumn<E>> header = new ArrayList<>();
-		if (jViewCurrent.isSelected()) {
-			//Use the tool current shown columns + order
-			header = tableFormat.getShownColumns();
-		} else if (jViewSaved.isSelected()) {
-			String viewKey = (String) jViews.getSelectedItem();
-			View view = Settings.get().getTableViews(toolName).get(viewKey);
-			for (SimpleColumn simpleColumn : view.getColumns()) {
-				if (simpleColumn.isShown()) {
-					EnumTableColumn<E> column = columns.get(simpleColumn.getEnumName());
-					header.add(column);
-				}
-			}
-		} else {
-			//Use custom columns
-			header.addAll(jColumnSelection.getSelectedValuesList());
-		}
-	//Bad selection
-		if (header.isEmpty()) {
-			JOptionPane.showMessageDialog(getDialog(), DialoguesExport.get().selectOne(), DialoguesExport.get().export(), JOptionPane.PLAIN_MESSAGE);
-			return;
-		}
 	//Bad options
 		if (jCsv.isSelected() && Settings.get().getExportSettings(toolName).getCsvDecimalSeparator() == DecimalSeparator.COMMA && Settings.get().getExportSettings(toolName).getCsvFieldDelimiter() == FieldDelimiter.COMMA) {
 			int nReturn = JOptionPane.showConfirmDialog(
@@ -830,112 +758,10 @@ public class ExportDialog<E> extends JDialogCentered {
 		if (!ok) {
 			return;
 		}
-	//Filters
-		if (jNoFilter.isSelected()) {
-			try {
-				eventList.getReadWriteLock().readLock().lock();
-				items.addAll(eventList);
-			} finally {
-				eventList.getReadWriteLock().readLock().unlock();
-			}
-		} else if (jCurrentFilter.isSelected()) {
-			List<Filter> filter = filterControl.getCurrentFilters();
-			try {
-				eventList.getReadWriteLock().readLock().lock();
-				FilterList<E> filterList = new FilterList<>(eventList, new FilterLogicalMatcher<>(tableFormat, columnCache, filter));
-				if (!filterList.isEmpty() && filterList.get(0) instanceof TreeAsset) {
-					FilterList<E> treeFilterList = new FilterList<>(eventList, new TreeMatcher<>(filterList));
-					items.addAll(treeFilterList);
-				} else {
-					items.addAll(filterList);
-				}
-			} finally {
-				eventList.getReadWriteLock().readLock().unlock();
-			}
-		} else if (jSavedFilter.isSelected()) {
-			String filterName = (String) jFilters.getSelectedItem();
-			List<Filter> filter = filterControl.getAllFilters().get(filterName);
-			try {
-				eventList.getReadWriteLock().readLock().lock();
-				FilterList<E> filterList = new FilterList<>(eventList, new FilterLogicalMatcher<>(tableFormat, columnCache, filter));
-				if (!filterList.isEmpty() && filterList.get(0) instanceof TreeAsset) {
-					FilterList<E> treeFilterList = new FilterList<>(eventList, new TreeMatcher<>(filterList));
-					items.addAll(treeFilterList);
-				} else {
-					items.addAll(filterList);
-				}
-			} finally {
-				eventList.getReadWriteLock().readLock().unlock();
-			}
-		}
 	//Save settings
 		saveSettings();
 	//Save file
-		boolean saved;
-		if (jCsv.isSelected()) {
-	//CSV
-			//Create data
-			List<String> headerStrings = new ArrayList<>(header.size());
-			List<String> headerKeys = new ArrayList<>(header.size());
-			for (EnumTableColumn<E> column : header) {
-				headerStrings.add(column.getColumnName());
-				headerKeys.add(column.name());
-			}
-			List<Map<String, String>> rows = new ArrayList<>();
-			for (E e : items) {
-				Map<String, String> row = new HashMap<>();
-				for (EnumTableColumn<E> column : header) {
-					row.put(column.name(), format(tableFormat.getColumnValue(e, column.name()), Settings.get().getExportSettings(toolName).getCsvDecimalSeparator(), false));
-				}
-				rows.add(row);
-			}
-			//Save data
-			saved = CsvWriter.save(Settings.get().getExportSettings(toolName).getFilename(),
-					rows,
-					headerStrings.toArray(new String[headerStrings.size()]),
-					headerKeys.toArray(new String[headerKeys.size()]),
-					new CsvPreference.Builder('\"', Settings.get().getExportSettings(toolName).getCsvFieldDelimiter().getValue(), Settings.get().getExportSettings(toolName).getCsvLineDelimiter().getValue()).build());
-		} else if (jHtml.isSelected()) {
-	//HTML
-			//Create data
-			List<Map<EnumTableColumn<?>, String>> rows = new ArrayList<>();
-			for (E e : items) {
-				Map<EnumTableColumn<?>, String> row = new HashMap<>();
-				for (EnumTableColumn<E> column : header) {
-					row.put(column, format(tableFormat.getColumnValue(e, column.name()), Settings.get().getExportSettings(toolName).getCsvDecimalSeparator(), Settings.get().getExportSettings(toolName).isHtmlStyled()));
-				}
-				rows.add(row);
-			}
-			//Save data
-			saved = HtmlWriter.save(Settings.get().getExportSettings(toolName).getFilename(),
-					rows,
-					new ArrayList<>(header),
-					jHtmlIGB.isSelected() ? new ArrayList<>(items) : null,
-					Settings.get().getExportSettings(toolName).isHtmlStyled(),
-					Settings.get().getExportSettings(toolName).getHtmlRepeatHeader(),
-					toolName.equals(TreeTab.NAME));
-		} else if (jSql.isSelected()) {
-	//SQL
-			//Create data
-			List<Map<EnumTableColumn<?>, Object>> rows = new ArrayList<>();
-			for (E e : items) {
-				Map<EnumTableColumn<?>, Object> row = new HashMap<>();
-				for (EnumTableColumn<E> column : header) {
-					row.put(column, tableFormat.getColumnValue(e, column.name()));
-				}
-				rows.add(row);
-			}
-			//Save data
-			saved = SqlWriter.save(Settings.get().getExportSettings(toolName).getFilename(),
-					rows,
-					new ArrayList<>(header),
-					Settings.get().getExportSettings(toolName).getSqlTableName(),
-					Settings.get().getExportSettings(toolName).isSqlDropTable(),
-					Settings.get().getExportSettings(toolName).isSqlCreateTable(),
-					Settings.get().getExportSettings(toolName).isSqlExtendedInserts());
-		} else {
-			saved = false;
-		}
+		boolean saved = ExportTableData.exportAutoFill(eventList, columnCache, tableFormat, toolName, Settings.get().getExportSettings(toolName));
 		if (!saved) {
 			JOptionPane.showMessageDialog(getDialog(),
 					DialoguesExport.get().failedToSave(),
@@ -1062,44 +888,5 @@ public class ExportDialog<E> extends JDialogCentered {
 					.addGroup(verticalGroup)
 				);
 		}
-	}
-
-	private class TreeMatcher<E> implements Matcher<E> {
-
-		private final EventList<E> eventList;
-		private final Set<TreeAsset> parentTree = new HashSet<>();
-
-		public TreeMatcher(EventList<E> eventList) {
-			this.eventList = eventList;
-			Set<TreeAsset> items = new TreeSet<>(new AssetTreeComparator());
-			for (E e : eventList) {
-				if (e instanceof TreeAsset) {
-					TreeAsset tree = (TreeAsset) e;
-					items.add(tree);
-					parentTree.addAll(tree.getTree());
-				}
-			}
-			for (TreeAsset treeAsset : parentTree) {
-				treeAsset.resetValues();
-				if (treeAsset.isItem()) {
-					items.add(treeAsset);
-				}
-			}
-			for (TreeAsset treeAsset : items) {
-				treeAsset.updateParents();
-			}
-		}
-
-		@Override
-		public boolean matches(E item) { //XXX - Expensive
-			if (item instanceof TreeAsset) {
-				TreeAsset treeAsset = (TreeAsset) item;
-				if (treeAsset.isParent()) {
-					return parentTree.contains(treeAsset);
-				}
-			}
-			return eventList.contains(item);
-		}
-
 	}
 }

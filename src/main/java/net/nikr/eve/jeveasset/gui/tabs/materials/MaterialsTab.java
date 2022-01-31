@@ -18,7 +18,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  */
-
 package net.nikr.eve.jeveasset.gui.tabs.materials;
 
 import ca.odell.glazedlists.EventList;
@@ -31,10 +30,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -43,8 +38,6 @@ import javax.swing.JComponent;
 import javax.swing.JMenu;
 import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.api.my.MyAsset;
-import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.settings.types.LocationType;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JFixedToolBar;
@@ -62,8 +55,6 @@ import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.JSeparatorTable;
 import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
 import net.nikr.eve.jeveasset.gui.shared.table.TableFormatFactory;
-import net.nikr.eve.jeveasset.gui.tabs.materials.Material.MaterialType;
-import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 import net.nikr.eve.jeveasset.i18n.TabsMaterials;
 
@@ -94,15 +85,18 @@ public class MaterialsTab extends JMainTabSecondary {
 	private final EnumTableFormatAdaptor<MaterialTableFormat, Material> tableFormat;
 
 	//Dialog
-	ExportDialog<Material> exportDialog;
+	private final ExportDialog<Material> exportDialog;
+
+	//Data
+	private final MaterialsData materialsData;
 
 	public static final String NAME = "materials"; //Not to be changed!
 
 	public MaterialsTab(final Program program) {
 		super(program, NAME, TabsMaterials.get().materials(), Images.TOOL_MATERIALS.getIcon(), true);
-		//Category: Asteroid
-		//Category: Material
 
+		materialsData = new MaterialsData(program);
+		
 		ListenerClass listener = new ListenerClass();
 		
 		JFixedToolBar jToolBarLeft = new JFixedToolBar();
@@ -235,97 +229,14 @@ public class MaterialsTab extends JMainTabSecondary {
 	private void updateTable() {
 		beforeUpdateData();
 		String owner = (String) jOwners.getSelectedItem();
-		List<Material> materials = new ArrayList<>();
-		Map<String, Material> uniqueMaterials = new HashMap<>();
-		Map<String, Material> totalMaterials = new HashMap<>();
-		Map<String, Material> totalAllMaterials = new HashMap<>();
-		Map<String, Material> summary = new HashMap<>();
-		Map<String, Material> total = new HashMap<>();
-		//Summary Total All
-		Material summaryTotalAllMaterial = new Material(MaterialType.SUMMARY_ALL, null, TabsMaterials.get().summary(), TabsMaterials.get().grandTotal(), General.get().all());
-		for (MyAsset asset : program.getAssetsList()) {
-			//Skip none-material + none Pi Material (if not enabled)
-			if (!asset.getItem().getCategory().equals(Item.CATEGORY_MATERIAL) && (!asset.getItem().isPiMaterial() || !jPiMaterial.isSelected())) {
-				continue;
-			}
-			//Skip not selected owners
-			if (!owner.equals(asset.getOwnerName()) && !owner.equals(General.get().all())) {
-				continue;
-			}
-
-			//Locations
-			Material material = uniqueMaterials.get(asset.getLocation().getLocation() + asset.getName());
-			if (material == null) { //New
-				material = new Material(MaterialType.LOCATIONS, asset, asset.getLocation().getLocation(), asset.getItem().getGroup(), asset.getName());
-				uniqueMaterials.put(asset.getLocation().getLocation() + asset.getName(), material);
-				materials.add(material);
-			}
-
-			//Locations Total
-			Material totalMaterial =  totalMaterials.get(asset.getLocation().getLocation() + asset.getItem().getGroup());
-			if (totalMaterial == null) { //New
-				totalMaterial = new Material(MaterialType.LOCATIONS_TOTAL, asset, asset.getLocation().getLocation(), TabsMaterials.get().total(), asset.getItem().getGroup());
-				totalMaterials.put(asset.getLocation().getLocation() + asset.getItem().getGroup(), totalMaterial);
-				materials.add(totalMaterial);
-			}
-
-			//Locations Total All
-			Material totalAllMaterial = totalAllMaterials.get(asset.getLocation().getLocation());
-			if (totalAllMaterial == null) { //New
-				totalAllMaterial = new Material(MaterialType.LOCATIONS_ALL, asset, asset.getLocation().getLocation(), TabsMaterials.get().total(), General.get().all());
-				totalAllMaterials.put(asset.getLocation().getLocation(), totalAllMaterial);
-				materials.add(totalAllMaterial);
-			}
-
-			//Summary
-			Material summaryMaterial = summary.get(asset.getName());
-			if (summaryMaterial == null) { //New
-				summaryMaterial = new Material(MaterialType.SUMMARY, asset, TabsMaterials.get().summary(), asset.getItem().getGroup(),  asset.getName());
-				summary.put(asset.getName(), summaryMaterial);
-				materials.add(summaryMaterial);
-			}
-
-			//Summary Total
-			Material summaryTotalMaterial =  total.get(asset.getItem().getGroup());
-			if (summaryTotalMaterial == null) { //New
-				summaryTotalMaterial = new Material(MaterialType.SUMMARY_TOTAL, null, TabsMaterials.get().summary(), TabsMaterials.get().grandTotal(), asset.getItem().getGroup());
-				total.put(asset.getItem().getGroup(), summaryTotalMaterial);
-				materials.add(summaryTotalMaterial);
-			}
-
-			//Update values
-			material.updateValue(asset.getCount(), asset.getDynamicPrice());
-			totalMaterial.updateValue(asset.getCount(), asset.getDynamicPrice());
-			totalAllMaterial.updateValue(asset.getCount(), asset.getDynamicPrice());
-			summaryMaterial.updateValue(asset.getCount(), asset.getDynamicPrice());
-			summaryTotalMaterial.updateValue(asset.getCount(), asset.getDynamicPrice());
-			summaryTotalAllMaterial.updateValue(asset.getCount(), asset.getDynamicPrice());
-		}
-		if (!materials.isEmpty()) {
-			materials.add(summaryTotalAllMaterial);
-		}
-		Collections.sort(materials);
-		String location = "";
-		for (Material material : materials) {
-			if (!location.equals(material.getHeader())) {
-				material.first();
-				location = material.getHeader();
-			}
-		}
+		boolean piMaterials = jPiMaterial.isSelected();
 		//Save separator expanded/collapsed state
 		jTable.saveExpandedState();
-		//Update list
-		try {
-			eventList.getReadWriteLock().writeLock().lock();
-			eventList.clear();
-			eventList.addAll(materials);
-		} finally {
-			eventList.getReadWriteLock().writeLock().unlock();
-		}
+		//Update Data
+		boolean isEmpty = materialsData.updateData(eventList, owner, piMaterials);
 		//Restore separator expanded/collapsed state
 		jTable.loadExpandedState();
-
-		if (!materials.isEmpty()) {
+		if (!isEmpty) {
 			jExport.setEnabled(true);
 			jExpand.setEnabled(true);
 			jCollapse.setEnabled(true);

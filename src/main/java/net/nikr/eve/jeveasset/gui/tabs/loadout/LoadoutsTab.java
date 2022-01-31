@@ -48,7 +48,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.my.MyAsset;
-import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.settings.types.LocationType;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
@@ -71,7 +70,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.JSeparatorTable;
 import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
 import net.nikr.eve.jeveasset.gui.shared.table.TableFormatFactory;
-import net.nikr.eve.jeveasset.gui.tabs.loadout.Loadout.FlagType;
+import net.nikr.eve.jeveasset.gui.tabs.loadout.Loadout.LoadoutMatcher;
 import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 import net.nikr.eve.jeveasset.i18n.TabsLoadout;
@@ -116,12 +115,16 @@ public class LoadoutsTab extends JMainTabSecondary {
 	private final EnumTableFormatAdaptor<LoadoutTableFormat, Loadout> tableFormat;
 
 	//Dialog
-	ExportDialog<Loadout> exportDialog;
+	private final ExportDialog<Loadout> exportDialog;
+
+	private final LoadoutData loadoutData;
 
 	public static final String NAME = "loadouts"; //Not to be changed!
 
 	public LoadoutsTab(final Program program) {
 		super(program, NAME, TabsLoadout.get().ship(), Images.TOOL_SHIP_LOADOUTS.getIcon(), true);
+
+		loadoutData = new LoadoutData(program);
 
 		loadoutsExportDialog = new LoadoutsExportDialog(program, this);
 
@@ -473,51 +476,10 @@ public class LoadoutsTab extends JMainTabSecondary {
 	}
 
 	private void updateTable() {
-		List<Loadout> ship = new ArrayList<>();
-		for (MyAsset asset : program.getAssetsList()) {
-			String key = asset.getName() + " #" + asset.getItemID();
-			if (!asset.getItem().isShip() || !asset.isSingleton()) {
-				continue;
-			}
-			Loadout moduleShip = new Loadout(asset.getItem(), asset.getLocation(), asset.getOwner(), TabsLoadout.get().totalShip(), key, TabsLoadout.get().flagTotalValue(), null, asset.getDynamicPrice(), 1, true);
-			Loadout moduleModules = new Loadout(new Item(0), asset.getLocation(), asset.getOwner(), TabsLoadout.get().totalModules(), key, TabsLoadout.get().flagTotalValue(), null, 0, 0, false);
-			Loadout moduleTotal = new Loadout(new Item(0), asset.getLocation(), asset.getOwner(), TabsLoadout.get().totalAll(), key, TabsLoadout.get().flagTotalValue(), null, asset.getDynamicPrice(), 1, false);
-			ship.add(moduleShip);
-			ship.add(moduleModules);
-			ship.add(moduleTotal);
-			Map<Integer, Loadout> modules = new HashMap<>();
-			for (MyAsset assetModule : asset.getAssets()) {
-				Loadout module = modules.get(assetModule.getTypeID());
-				if (module == null //New
-						|| assetModule.getFlag().contains(FlagType.HIGH_SLOT.getFlag())
-						|| assetModule.getFlag().contains(FlagType.MEDIUM_SLOT.getFlag())
-						|| assetModule.getFlag().contains(FlagType.LOW_SLOT.getFlag())
-						|| assetModule.getFlag().contains(FlagType.RIG_SLOTS.getFlag())
-						|| assetModule.getFlag().contains(FlagType.SUB_SYSTEMS.getFlag())
-						) {
-					module = new Loadout(assetModule.getItem(), assetModule.getLocation(), assetModule.getOwner(), assetModule.getName(), key, assetModule.getFlag(), assetModule.getDynamicPrice(), (assetModule.getDynamicPrice() * assetModule.getCount()), assetModule.getCount(), false);
-					modules.put(assetModule.getTypeID(), module);
-					ship.add(module);
-				} else { //Add count
-					module.addCount(assetModule.getCount());
-					module.addValue(assetModule.getDynamicPrice() * assetModule.getCount());
-				}
-				moduleModules.addValue(assetModule.getDynamicPrice() * assetModule.getCount());
-				moduleModules.addCount(assetModule.getCount());
-				moduleTotal.addValue(assetModule.getDynamicPrice() * assetModule.getCount());
-				moduleTotal.addCount(assetModule.getCount());
-			}
-		}
 		//Save separator expanded/collapsed state
 		jTable.saveExpandedState();
-		//Update list
-		try {
-			eventList.getReadWriteLock().writeLock().lock();
-			eventList.clear();
-			eventList.addAll(ship);
-		} finally {
-			eventList.getReadWriteLock().writeLock().unlock();
-		}
+		//Update Data
+		loadoutData.updateData(eventList);
 		//Restore separator expanded/collapsed state
 		jTable.loadExpandedState();
 	}
@@ -535,7 +497,7 @@ public class LoadoutsTab extends JMainTabSecondary {
 
 		@Override
 		public JMenu getColumnMenu() {
-			return new JMenuColumns<>(program, tableFormat, tableModel, jTable, NAME);
+			return new JMenuColumns<>(program, tableFormat, tableModel, jTable, NAME, false);
 		}
 
 		@Override
@@ -587,7 +549,7 @@ public class LoadoutsTab extends JMainTabSecondary {
 				}
 			} else if (LoadoutsAction.FILTER.name().equals(e.getActionCommand())) {
 				String selectedShip = (String) jShips.getSelectedItem();
-				filterList.setMatcher(new Loadout.LoadoutMatcher(selectedShip));
+				filterList.setMatcher(new LoadoutMatcher(selectedShip));
 			} else if (LoadoutsAction.COLLAPSE.name().equals(e.getActionCommand())) {
 				jTable.expandSeparators(false);
 			} else if (LoadoutsAction.EXPAND.name().equals(e.getActionCommand())) {

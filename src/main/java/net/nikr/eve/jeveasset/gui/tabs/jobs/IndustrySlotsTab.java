@@ -31,16 +31,10 @@ import ca.odell.glazedlists.swing.TableComparatorChooser;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map;
 import javax.swing.JComponent;
 import javax.swing.JMenu;
 import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
-import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
-import net.nikr.eve.jeveasset.data.profile.ProfileData;
-import net.nikr.eve.jeveasset.data.profile.ProfileManager;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.types.LocationType;
 import net.nikr.eve.jeveasset.gui.images.Images;
@@ -73,8 +67,11 @@ public class IndustrySlotsTab extends JMainTabSecondary {
 
 	public static final String NAME = "industryslots"; //Not to be changed!
 
+	private final IndustrySlotsData industrySlotsData;
+
 	public IndustrySlotsTab(final Program program) {
 		super(program, NAME, TabsIndustrySlots.get().title(), Images.TOOL_INDUSTRY_SLOTS.getIcon(), true);
+		industrySlotsData = new IndustrySlotsData(program);
 		//Table Format
 		tableFormat = TableFormatFactory.industrySlotTableFormat();
 		//Backend
@@ -126,42 +123,10 @@ public class IndustrySlotsTab extends JMainTabSecondary {
 		);
 	}
 
-	public static Collection<IndustrySlot> createData(ProfileManager profileManager, ProfileData profileData) {
-		Map<Long, IndustrySlot> industrySlots = new HashMap<>();
-		IndustrySlot total = new IndustrySlot(TabsIndustrySlots.get().grandTotal());
-		for (OwnerType ownerType : profileManager.getOwnerTypes()) {
-			if (ownerType.isCorporation()) {
-				continue;
-			}
-			IndustrySlot old = industrySlots.put(ownerType.getOwnerID(), new IndustrySlot(ownerType));
-			if (old == null) {
-				total.count(ownerType);
-			}
-		}
-		for (MyIndustryJob industryJob : profileData.getIndustryJobsList()) {
-			IndustrySlot industrySlot = industrySlots.get(industryJob.getInstallerID());
-			if (industrySlot == null) {
-				industrySlot = industrySlots.get(industryJob.getOwnerID());
-			}
-			if (industrySlot == null) {
-				continue;
-			}
-			industrySlot.count(industryJob);
-			total.count(industryJob);
-		}
-		industrySlots.put(0L, total);
-		return industrySlots.values();
-	}
-
 	@Override
 	public void updateData() {
-		try {
-			eventList.getReadWriteLock().writeLock().lock();
-			eventList.clear();
-			eventList.addAll(createData(program.getProfileManager(), program.getProfileData()));
-		} finally {
-			eventList.getReadWriteLock().writeLock().unlock();
-		}
+		//Update Data
+		industrySlotsData.updateData(eventList);
 	}
 
 	@Override

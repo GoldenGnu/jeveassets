@@ -137,6 +137,7 @@ public class LibraryManager {
 			files.add("kotlin-stdlib-jdk8-1.4.10.jar");
 			files.add("kotlin-stdlib-common-1.4.0.jar");
 			files.add("EvalEx-2.5.jar");
+			files.add("picocli-4.6.2.jar");
 		}
 		return files;
 	}

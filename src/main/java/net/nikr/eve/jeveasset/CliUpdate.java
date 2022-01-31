@@ -28,8 +28,6 @@ import java.util.List;
 import net.nikr.eve.jeveasset.data.profile.Profile;
 import net.nikr.eve.jeveasset.data.profile.ProfileData;
 import net.nikr.eve.jeveasset.data.profile.ProfileManager;
-import net.nikr.eve.jeveasset.data.sde.StaticData;
-import net.nikr.eve.jeveasset.data.settings.AddedData;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.TrackerData;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateDialog.PriceDataTask;
@@ -45,18 +43,11 @@ import net.nikr.eve.jeveasset.io.local.ProfileWriter;
 import net.nikr.eve.jeveasset.io.online.PriceDataGetter;
 
 
-public class BackgroundUpdate {
+public class CliUpdate {
 
 	void update() {
-		SplashUpdater.setText("Loading DATA");
-		StaticData.load();
-		Settings.load();
-		TrackerData.load();
-		AddedData.load();
-
 		PriceDataGetter priceDataGetter = new PriceDataGetter();
 		priceDataGetter.load();
-		//boolean updatePrices = priceDataGetter.getNextUpdate() == null || Settings.get().isUpdatable(priceDataGetter.getNextUpdate()); //force first update
 
 		ProfileManager profileManager = new ProfileManager();
 		profileManager.searchProfile();
@@ -94,7 +85,6 @@ public class BackgroundUpdate {
 			count++;
 			SplashUpdater.setProgress( (int)(count * 100.0 / profileManager.getProfiles().size()));
 		}
-		System.exit(0);
 	}
 	
 }

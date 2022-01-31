@@ -27,6 +27,7 @@ import java.util.concurrent.ExecutionException;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import net.nikr.eve.jeveasset.CliOptions;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.i18n.GuiFrame;
@@ -319,7 +320,7 @@ public class MainMenu extends JMenuBar {
 		menu.add(menuItem);
 
 //DEBUG
-		if (Program.isDebug()) {
+		if (CliOptions.get().isDebug()) {
 			menu = new JMenu("Debug");
 			//FIXME - - > Remove for production
 			//this.add(menu);
