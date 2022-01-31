@@ -22,6 +22,7 @@
 package net.nikr.eve.jeveasset.gui.shared;
 
 import java.util.Date;
+import net.nikr.eve.jeveasset.CliOptions;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.accounts.ApiType;
 import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
@@ -90,7 +91,7 @@ public class Updatable {
 		return nextUpdate != null &&
 				((now.after(nextUpdate)
 				|| now.equals(nextUpdate)
-				|| Program.isForceUpdate())
-				&& !Program.isForceNoUpdate());
+				|| CliOptions.get().isForceUpdate())
+				&& !CliOptions.get().isForceNoUpdate());
 	}
 }

@@ -166,7 +166,7 @@ public class SplashUpdater {
 	}
 
 	private static void showSplashWindow() {
-		if (showSplashWindow && !splashWindow.isVisible()) {
+		if (showSplashWindow && splashWindow != null && !splashWindow.isVisible()) {
 			splashWindow.setVisible(true);
 			splashWindow.toFront();
 		}
@@ -174,7 +174,7 @@ public class SplashUpdater {
 
 	private static void paintSplashWindow(boolean sub) {
 		synchronized (PAINT_LOCK) {
-			if (splashWindow.isVisible()) {
+			if (splashWindow != null && splashWindow.isVisible()) {
 				if (lastPaint != null) {
 					delta = delta + (System.currentTimeMillis() - lastPaint);
 				}
@@ -224,7 +224,7 @@ public class SplashUpdater {
 
 	private static void paint(final Graphics2D g) throws IllegalStateException {
 		//Clear Screen
-		if (Program.isDebug()) {
+		if (CliOptions.get().isDebug()) {
 			g.setColor(Color.DARK_GRAY);
 			g.drawString("DEBUG", 344, 232);
 			g.setColor(Color.WHITE);

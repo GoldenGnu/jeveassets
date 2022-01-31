@@ -144,7 +144,7 @@ public class TableFormatTest extends TestUtil {
 				test(tableFormat, tableFormat.getType(), tableFormat.getColumnValue(item));
 			}
 			//Loadout
-			Loadout loadout = new Loadout(item, location, owner, STRING_VALUE, STRING_VALUE, STRING_VALUE, DOUBLE_VALUE, DOUBLE_VALUE, LONG_VALUE, BOOLEAN_VALUE);
+			Loadout loadout = new Loadout(item, location, owner, STRING_VALUE, asset, STRING_VALUE, DOUBLE_VALUE, DOUBLE_VALUE, LONG_VALUE, BOOLEAN_VALUE);
 			for (LoadoutTableFormat tableFormat : LoadoutTableFormat.values()) {
 				test(tableFormat, tableFormat.getType(), tableFormat.getColumnValue(loadout));
 			}

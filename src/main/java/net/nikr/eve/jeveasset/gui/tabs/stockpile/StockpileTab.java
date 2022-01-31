@@ -57,15 +57,8 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
-import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
-import net.nikr.eve.jeveasset.data.api.my.MyAsset;
-import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
-import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
-import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
-import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
+import net.nikr.eve.jeveasset.data.profile.ProfileManager;
 import net.nikr.eve.jeveasset.data.sde.Item;
-import net.nikr.eve.jeveasset.data.sde.ItemFlag;
-import net.nikr.eve.jeveasset.data.sde.StaticData;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.tag.TagUpdate;
 import net.nikr.eve.jeveasset.data.settings.types.LocationType;
@@ -96,7 +89,6 @@ import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.JSeparatorTable;
 import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
 import net.nikr.eve.jeveasset.gui.shared.table.TableFormatFactory;
-import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileTotal;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.SubpileItem;
@@ -152,17 +144,14 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 	private final StockpileFilterControl filterControl;
 
 	//Data
-	private Map<Long, String> ownersName;
-	private final Map<Integer, Set<MyContractItem>> contractItems = new HashMap<>();
-	private final Map<Integer, Set<MyAsset>> assets = new HashMap<>();
-	private final Map<Integer, Set<MyMarketOrder>> marketOrders = new HashMap<>();
-	private final Map<Integer, Set<MyIndustryJob>> industryJobs = new HashMap<>();
-	private final Map<Integer, Set<MyTransaction>> transactions = new HashMap<>();
+	private final StockpileData stockpileData;
 
 	public static final String NAME = "stockpile"; //Not to be changed!
 
 	public StockpileTab(final Program program) {
 		super(program, NAME, TabsStockpile.get().stockpile(), Images.TOOL_STOCKPILE.getIcon(), true);
+
+		stockpileData = new StockpileData(program);
 
 		final ListenerClass listener = new ListenerClass();
 
@@ -370,39 +359,31 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 
 	@Override
 	public void updateData() {
-		//Items
-		List<StockpileItem> stockpileItems = new ArrayList<>();
-
-		updateOwners();
-
-		contractItems.clear();
-		assets.clear();
-		marketOrders.clear();
-		industryJobs.clear();
-		transactions.clear();
-
-		for (Stockpile stockpile : getShownStockpiles()) {
-			stockpile.updateDynamicValues();
-			stockpileItems.addAll(stockpile.getItems());
-			updateStockpile(stockpile);
-		}
-
 		//Save separator expanded/collapsed state
 		jTable.saveExpandedState();
-		//Update list
-		try {
-			eventList.getReadWriteLock().writeLock().lock();
-			eventList.clear();
-			eventList.addAll(stockpileItems);
-		} finally {
-			eventList.getReadWriteLock().writeLock().unlock();
-		}
+		//Update Data
+		stockpileData.updateData(eventList);
 		//Restore separator expanded/collapsed state
 		jTable.loadExpandedState();
+	}
 
-		for (Stockpile stockpile : Settings.get().getStockpiles()) {
-			updateSubpile(stockpile);
-		}
+	private void updateOwners() {
+		//Update Owners
+		stockpileData.updateOwners();
+	}
+
+	private void updateSubpile(Stockpile stockpile) {
+		//Save separator expanded/collapsed state
+		jTable.saveExpandedState();
+		//Update Data
+		stockpileData.updateSubpile(eventList, stockpile);
+		//Restore separator expanded/collapsed state
+		jTable.loadExpandedState();
+	}
+
+	private void updateStockpile(Stockpile stockpile) {
+		//Update Data
+		stockpileData.updateStockpile(stockpile);
 	}
 
 	@Override
@@ -602,272 +583,6 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		afterUpdateData();
 	}
 
-	private void updateStockpile(Stockpile stockpile) {
-		//Update owner name
-		Set<String> owners = new HashSet<>();
-		for (StockpileFilter filter : stockpile.getFilters()) {
-			for (Long ownerID : filter.getOwnerIDs()) {
-				String owner = ownersName.get(ownerID);
-				if (owner != null) {
-					owners.add(owner);
-				}
-			}
-		}
-		stockpile.setOwnerName(new ArrayList<>(owners));
-		//Update Item flag name
-		Set<ItemFlag> flags = new HashSet<>();
-		for (StockpileFilter filter : stockpile.getFilters()) {
-			for (Integer flagID : filter.getFlagIDs()) {
-				ItemFlag flag = StaticData.get().getItemFlags().get(flagID);
-				if (flag != null) {
-					flags.add(flag);
-				}
-			}
-		}
-	//Create lookup set of TypeIDs
-		Set<Integer> typeIDs = new HashSet<>();
-		for (StockpileItem item : stockpile.getItems()) {
-			typeIDs.add(item.getItemTypeID());
-		}
-		addTypeIDs(typeIDs, stockpile);
-	//Create lookup maps of Items
-		//ContractItems
-		if (stockpile.isContracts()) {
-			for (MyContractItem contractItem : program.getContractItemList()) {
-				if (contractItem.getContract().isIgnoreContract()) {
-					continue;
-				}
-				int typeID = contractItem.isBPC() ? -contractItem.getTypeID() : contractItem.getTypeID(); //BPC has negative value
-				if (!typeIDs.contains(typeID)) {
-					continue; //Ignore wrong typeID
-				}
-				Set<MyContractItem> items = contractItems.get(typeID);
-				if (items == null) {
-					items = new HashSet<>();
-					contractItems.put(typeID, items);
-				}
-				items.add(contractItem);
-			}
-		}
-		//Inventory AKA Assets
-		if (stockpile.isAssets()) {
-			for (MyAsset asset : program.getAssetsList()) {
-				if (asset.isGenerated()) { //Skip generated assets
-					continue;
-				}
-				int typeID = asset.isBPC() ? -asset.getTypeID() : asset.getTypeID(); //BPC has negative value
-				if (!typeIDs.contains(typeID)) {
-					continue; //Ignore wrong typeID
-				}
-				Set<MyAsset> items = assets.get(typeID);
-				if (items == null) {
-					items = new HashSet<>();
-					assets.put(typeID, items);
-				}
-				items.add(asset);
-			}
-		}
-		//Market Orders
-		if (stockpile.isBuyOrders() || stockpile.isSellOrders()) {
-			for (MyMarketOrder marketOrder : program.getMarketOrdersList()) {
-				int typeID = marketOrder.getItem().getTypeID();
-				if (!typeIDs.contains(typeID)) {
-					continue; //Ignore wrong typeID
-				}
-				Set<MyMarketOrder> items = marketOrders.get(typeID);
-				if (items == null) {
-					items = new HashSet<>();
-					marketOrders.put(typeID, items);
-				}
-				items.add(marketOrder);
-			}
-		}
-		//Industry Job
-		if (stockpile.isJobs()) {
-			for (MyIndustryJob industryJob : program.getIndustryJobsList()) {
-				Integer productTypeID = industryJob.getProductTypeID();
-				if (productTypeID  != null && typeIDs.contains(productTypeID)) {
-					Set<MyIndustryJob> items = industryJobs.get(productTypeID);
-					if (items == null) {
-						items = new HashSet<>();
-						industryJobs.put(productTypeID, items);
-					}
-					items.add(industryJob);
-				}
-				int blueprintTypeID = -industryJob.getBlueprintTypeID(); //Negative - match blueprints copies
-				if (typeIDs.contains(blueprintTypeID)) {
-					Set<MyIndustryJob> items = industryJobs.get(blueprintTypeID);
-					if (items == null) {
-						items = new HashSet<>();
-						industryJobs.put(blueprintTypeID, items);
-					}
-					items.add(industryJob);
-				}
-			}
-		}
-		//Transactions
-		if (stockpile.isTransactions()) {
-			for (MyTransaction transaction : program.getTransactionsList()) {
-				int typeID = transaction.getItem().getTypeID();
-				if (!typeIDs.contains(typeID)) {
-					continue; //Ignore wrong typeID
-				}
-				Set<MyTransaction> items = transactions.get(typeID);
-				if (items == null) {
-					items = new HashSet<>();
-					transactions.put(typeID, items);
-				}
-				items.add(transaction);
-			}
-		}
-		stockpile.setFlagName(flags);
-		stockpile.reset();
-		if (!stockpile.isEmpty()) {
-			for (StockpileItem item : stockpile.getItems()) {
-				if (item instanceof Stockpile.StockpileTotal) {
-					continue;
-				}
-				updateItem(item, stockpile);
-			}
-		}
-		stockpile.updateTotal();
-		stockpile.updateTags();
-	}
-
-	private void addTypeIDs(Set<Integer> typeIDs, Stockpile stockpile) {
-		for (StockpileItem item : stockpile.getItems()) {
-			typeIDs.add(item.getItemTypeID());
-		}
-		for (Stockpile subpile : stockpile.getSubpiles().keySet()) {
-			addTypeIDs(typeIDs, subpile);
-		}
-	}
-
-	private void updateItem(StockpileItem item, Stockpile stockpile) {
-		final int TYPE_ID = item.getItemTypeID();
-		double price = ApiIdConverter.getPrice(TYPE_ID, item.isBPC(), item);
-		float volume = ApiIdConverter.getVolume(item.getItem(), true);
-		Double transactionAveragePrice = program.getProfileData().getTransactionAveragePrice(TYPE_ID);
-		item.updateValues(price, volume, transactionAveragePrice);
-		//ContractItems
-		if (stockpile.isContracts()) {
-			Set<MyContractItem> items = contractItems.get(TYPE_ID);
-			if (items != null) {
-				for (MyContractItem contractItem : items) {
-					item.updateContract(contractItem);
-				}
-			}
-		}
-		//Inventory AKA Assets
-		if (stockpile.isAssets()) {
-			Set<MyAsset> items = assets.get(TYPE_ID);
-			if (items != null) {
-				for (MyAsset asset : items) {
-					item.updateAsset(asset);
-				}
-			}
-		}
-		//Market Orders
-		if (stockpile.isBuyOrders() || stockpile.isSellOrders()) {
-			Set<MyMarketOrder> items = marketOrders.get(TYPE_ID);
-			if (items != null) {
-				for (MyMarketOrder marketOrder : items) {
-					item.updateMarketOrder(marketOrder);
-				}
-			}
-		}
-		//Industry Job
-		if (stockpile.isJobs()) {
-			Set<MyIndustryJob> items = industryJobs.get(TYPE_ID);
-			if (items != null) {
-				for (MyIndustryJob industryJob : items) {
-					item.updateIndustryJob(industryJob);
-				}
-			}
-		}
-		//Transactions
-		if (stockpile.isTransactions()) {
-			Set<MyTransaction> items = transactions.get(TYPE_ID);
-			if (items != null) {
-				for (MyTransaction transaction : items) {
-					item.updateTransaction(transaction);
-				}
-			}
-		}
-	}
-
-	private void updateSubpile(Stockpile parent) {
-		Map<Integer, StockpileItem> parentItems = new HashMap<>();
-		for (StockpileItem item : parent.getItems()) {
-			parentItems.put(item.getItemTypeID(), item);
-		}
-		//Save old items (for them to be removed)
-		List<SubpileItem> subpileItems = new ArrayList<>(parent.getSubpileItems());
-		//Clear old items
-		parent.getSubpileItems().clear();
-		for (SubpileItem subpileItem : subpileItems) {
-			subpileItem.clearItemLinks();
-		}
-		//Update subs
-		for (Stockpile stockpile : parent.getSubpileLinks()) {
-			updateSubpile(stockpile);
-		}
-		//Add new items
-		updateSubpile(parent, parent, parentItems, null, 0, "");
-		//Update items
-		for (SubpileItem subpileItem : parent.getSubpileItems()) {
-			updateItem(subpileItem, subpileItem.getStockpile());
-		}
-		parent.updateTotal();
-		//Lock Table
-		beforeUpdateData();
-		//Update list
-		try {
-			eventList.getReadWriteLock().writeLock().lock();
-			eventList.removeAll(subpileItems);
-			if (program.getProfileManager().getActiveProfile().getStockpileIDs().contains(parent.getId())) {
-				eventList.addAll(parent.getSubpileItems());
-			}
-		} finally {
-			eventList.getReadWriteLock().writeLock().unlock();
-		}
-		//Unlcok Table
-		afterUpdateData();
-	}
-
-	private void updateSubpile(Stockpile topStockpile, Stockpile parentStockpile, Map<Integer, StockpileItem> topItems, SubpileStock parentStock, int parentLevel, String parentPath) {
-		for (Map.Entry<Stockpile, Double> entry : parentStockpile.getSubpiles().entrySet()) {
-			//For each subpile (stockpile)
-			Stockpile currentStockpile = entry.getKey();
-			Double value = entry.getValue();
-			String path = parentPath + currentStockpile.getName() + "\r\n";
-			int level = parentLevel + 1;
-			SubpileStock subpileStock = new SubpileStock(topStockpile, currentStockpile, parentStockpile, parentStock, value, parentLevel, path);
-			topStockpile.getSubpileItems().add(subpileStock);
-			for (StockpileItem stockpileItem : currentStockpile.getItems()) {
-				//For each StockpileItem
-				if (stockpileItem.getTypeID() != 0) {
-					StockpileItem parentItem = topItems.get(stockpileItem.getItemTypeID());
-					SubpileItem subpileItem = new SubpileItem(topStockpile, stockpileItem, subpileStock, parentLevel, path);
-					int linkIndex = topStockpile.getSubpileItems().indexOf(subpileItem);
-					if (parentItem != null) { //Add link (Advanced: Item + Link)
-						subpileItem.addItemLink(parentItem, null); //Add link
-					}
-					if (linkIndex >= 0) { //Update item (Advanced: Link + Link = MultiLink)
-						SubpileItem linkItem = topStockpile.getSubpileItems().get(linkIndex);
-						linkItem.addItemLink(stockpileItem, subpileStock);
-						if (level >= linkItem.getLevel()) {
-							linkItem.setPath(path);
-							linkItem.setLevel(level);
-						}
-					} else { //Add new item (Simple)
-						topStockpile.getSubpileItems().add(subpileItem);
-					}
-				}
-			}
-			updateSubpile(topStockpile, currentStockpile, topItems, subpileStock, level, path);
-		}
-	}
 	private void importText(StockpileImport stockpileImport) {
 		//Get string from clipboard
 		String text = jTextDialog.importText("", stockpileImport.getExample());
@@ -1019,9 +734,13 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 	}
 
 	public static List<Stockpile> getShownStockpiles(Program program) {
+		return getShownStockpiles(program.getProfileManager());
+	}
+
+	public static List<Stockpile> getShownStockpiles(ProfileManager profileManager) {
 		List<Stockpile> shown = new ArrayList<>();
 		for (Stockpile stockpile : Settings.get().getStockpiles()) {
-			if (!program.getProfileManager().getActiveProfile().getStockpileIDs().contains(stockpile.getId())) {
+			if (!profileManager.getActiveProfile().getStockpileIDs().contains(stockpile.getId())) {
 				continue;
 			}
 			shown.add(stockpile);
@@ -1054,14 +773,6 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 				jTextDialog.exportText(json);
 				jTextDialog.setLineWrap(false);
 			}
-		}
-	}
-
-	private void updateOwners() {
-		//Owners Look-Up
-		ownersName = new HashMap<>();
-		for (OwnerType owner : program.getOwnerTypes()) {
-			ownersName.put(owner.getOwnerID(), owner.getOwnerName());
 		}
 	}
 

@@ -67,6 +67,7 @@ public final class Formater {
 	private static final DateFormatThreadSafe TODAYS_DATE = new DateFormatThreadSafe("yyyyMMdd");
 	private static final DateFormatThreadSafe TIME_ONLY = new DateFormatThreadSafe("HH:mm z");
 	private static final DateFormatThreadSafe WEEKDAY_AND_TIME = new DateFormatThreadSafe("EEEEE HH:mm");
+	private static final DateFormatThreadSafe FILETIME = new DateFormatThreadSafe("yyyy-MM-dd--HH-mm", TimeZone.getDefault());
 	private static final DateFormatThreadSafe SIMPLE_DATE = new DateFormatThreadSafe("yyyyMMddHHmm");
 	private static final DateFormatThreadSafe DATE_ONLY = new DateFormatThreadSafe("yyyy-MM-dd");
 
@@ -157,6 +158,10 @@ public final class Formater {
 
 	public static String columnDate(final Object date) {
 		return COLUMN_DATETIME_FORMAT.format(date);
+	}
+	
+	public static String fileDate(final Object date) {
+		return FILETIME.format(date);
 	}
 
 	public static Date columnStringToDate(final String date) {
@@ -373,12 +378,13 @@ public final class Formater {
 
 		private final String format;
 		private final boolean lenient;
+		private final TimeZone timeZone;
 
 		private final ThreadLocal<DateFormat> df = new ThreadLocal<DateFormat>() {
 			@Override
 			protected DateFormat initialValue() {
 				SimpleDateFormat value = new SimpleDateFormat(format, new Locale("en"));
-				value.setTimeZone(TIME_ZONE);
+				value.setTimeZone(timeZone);
 				value.setLenient(lenient);
 				return value;
 			}
@@ -389,8 +395,17 @@ public final class Formater {
 		}
 
 		public DateFormatThreadSafe(String format, boolean lenient) {
+			this(format, lenient, TIME_ZONE);
+		}
+
+		public DateFormatThreadSafe(String format, TimeZone timeZone) {
+			this(format, false, timeZone);
+		}
+
+		public DateFormatThreadSafe(String format, boolean lenient, TimeZone timeZone) {
 			this.format = format;
 			this.lenient = lenient;
+			this.timeZone = timeZone;
 		}
 
 		public Date parse(String dateString) throws ParseException {

@@ -57,6 +57,16 @@ public enum LoadoutExtendedTableFormat implements EnumTableColumn<Loadout> {
 		public Object getColumnValue(final Loadout from) {
 			return from.getOwnerName();
 		}
+	},
+	SHIP(String.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsLoadout.get().columnShip();
+		}
+		@Override
+		public Object getColumnValue(final Loadout from) {
+			return from.getKey();
+		}
 	};
 
 	private final Class<?> type;
