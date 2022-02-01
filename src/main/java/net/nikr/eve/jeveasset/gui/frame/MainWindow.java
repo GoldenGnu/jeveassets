@@ -61,6 +61,7 @@ public class MainWindow {
 	//Data
 	private final Program program;
 	private final List<JMainTab> tabs = new ArrayList<>();
+	private final List<JMainTab> closed = new ArrayList<>();
 
 	public MainWindow(final Program program) {
 		this.program = program;
@@ -86,6 +87,16 @@ public class MainWindow {
 		jLockWindow = new JLockWindow(jFrame);
 
 		JPanel jPanel = new JPanel();
+		jPanel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_T, InputEvent.CTRL_DOWN_MASK + InputEvent.SHIFT_DOWN_MASK), "reOpenTab");
+		jPanel.getActionMap().put("reOpenTab", new AbstractAction() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (closed.isEmpty()) {
+					return;
+				}
+				addTab(closed.get(closed.size() - 1), true);
+			}
+		});
 		GroupLayout layout = new GroupLayout(jPanel);
 		jPanel.setLayout(layout);
 		layout.setAutoCreateGaps(false);
@@ -160,6 +171,7 @@ public class MainWindow {
 				jMainTab.updateCache();
 			}
 			tabs.add(jMainTab);
+			closed.remove(jMainTab);
 			jTabbedPane.addTab(jMainTab.getTitle(), jMainTab.getIcon(), jMainTab.getPanel());
 			jTabbedPane.setTabComponentAt(jTabbedPane.getTabCount() - 1, new TabCloseButton(jMainTab));
 			if (Settings.get().isSaveToolsOnExit() && !Settings.get().getShowTools().contains(jMainTab.getTitle())) {
@@ -186,6 +198,7 @@ public class MainWindow {
 		int index = tabs.indexOf(jMainTab);
 		jTabbedPane.removeTabAt(index);
 		tabs.remove(index);
+		closed.add(jMainTab);
 		jMainTab.clearData();
 		if (Settings.get().isSaveToolsOnExit()) {
 			boolean removed = Settings.get().getShowTools().remove(jMainTab.getTitle());
