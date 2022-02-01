@@ -34,6 +34,8 @@ import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.TextManager;
+import net.nikr.eve.jeveasset.gui.shared.components.JDragTabbedPane;
+import net.nikr.eve.jeveasset.gui.shared.components.JDragTabbedPane.TabMoveListener;
 import net.nikr.eve.jeveasset.gui.shared.components.JLockWindow;
 import net.nikr.eve.jeveasset.gui.shared.components.JLockWindow.LockWorkerAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
@@ -50,7 +52,7 @@ public class MainWindow {
 	//GUI
 	private final MainMenu mainMenu;
 	private final JFrame jFrame;
-	private final JTabbedPane jTabbedPane;
+	private final JDragTabbedPane jTabbedPane;
 	private final StatusPanel statusPanel;
 	private final JLockWindow jLockWindow;
 
@@ -93,8 +95,25 @@ public class MainWindow {
 		mainMenu = new MainMenu(program);
 		jFrame.setJMenuBar(mainMenu);
 
-		jTabbedPane = new JTabbedPane();
+		jTabbedPane = new JDragTabbedPane();
 		jTabbedPane.addChangeListener(listener);
+		jTabbedPane.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mousePressed(final MouseEvent e) {
+				if (e.getButton() == MouseEvent.BUTTON2) {
+					int index = jTabbedPane.indexAtLocation(e.getX(), e.getY());
+					if (index < 0) {
+						return;
+					}
+					JMainTab jMainTab = tabs.get(index);
+					if (jMainTab.isCloseable()) {
+						removeTab(jMainTab);
+					}
+				}
+			}
+		});
+		jTabbedPane.addTabMoveListeners(listener);
+		jTabbedPane.addDragLock(0);
 
 		statusPanel = new StatusPanel(program);
 		layout.setHorizontalGroup(
@@ -251,7 +270,7 @@ public class MainWindow {
 		return ((jFrame.getExtendedState() & JFrame.MAXIMIZED_BOTH) == JFrame.MAXIMIZED_BOTH);
 	}
 
-	private class ListenerClass implements WindowListener, ChangeListener, ComponentListener, ActionListener {
+	private class ListenerClass implements WindowListener, ChangeListener, ComponentListener, ActionListener, TabMoveListener {
 		private short move = 0;
 		private short resize = 0;
 
@@ -321,6 +340,18 @@ public class MainWindow {
 				program.saveSettings("Window Moved");
 			}
 		}
+
+		@Override
+		public void tabMoved(int from, int to) {
+			LOG.info("Moving tab: " + tabs.get(from).getTitle() + " from: " + from + " to: " + to);
+			JMainTab jMainTab = tabs.remove(from);
+			tabs.add(to, jMainTab);
+			if (Settings.get().isSaveToolsOnExit()) {
+				Settings.get().getShowTools().remove(jMainTab.getTitle());
+				Settings.get().getShowTools().add(to, jMainTab.getTitle());
+				program.saveSettings("Moved Tool");
+			}
+		}
 	}
 
 	private class TabCloseButton extends JPanel {
@@ -331,16 +362,6 @@ public class MainWindow {
 			JLabel jTitle = new JLabel(jMainTab.getTitle(), jMainTab.getIcon(), SwingConstants.LEFT);
 			add(jTitle);
 			if (jMainTab.isCloseable()) {
-				this.addMouseListener(new MouseAdapter() {
-					@Override
-					public void mousePressed(final MouseEvent e) {
-						if (e.getButton() == MouseEvent.BUTTON2) {
-							removeTab(jMainTab);
-						} else if (e.getButton() == MouseEvent.BUTTON1) {
-							jTabbedPane.setSelectedComponent(jMainTab.getPanel());
-						}
-					}
-				});
 				JButton jClose = new JButton();
 				jClose.setToolTipText(GuiFrame.get().close());
 				jClose.setIcon(Images.TAB_CLOSE.getIcon());
