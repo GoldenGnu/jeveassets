@@ -975,6 +975,14 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 						addStockpile(cloneStockpile);
 					}
 				}
+			} else if (StockpileCellAction.HIDE_STOCKPILE.name().equals(e.getActionCommand())) { //Hide stockpile
+				Stockpile stockpile = getSelectedStockpile();
+				if (stockpile == null) {
+					return;
+				}
+				program.getProfileManager().getActiveProfile().getStockpileIDs().remove(stockpile.getId());
+				program.saveProfile();
+				removeItems(stockpile.getItems());
 			} else if (StockpileCellAction.DELETE_STOCKPILE.name().equals(e.getActionCommand())) { //Delete stockpile
 				Stockpile stockpile = getSelectedStockpile();
 				if (stockpile != null) {
