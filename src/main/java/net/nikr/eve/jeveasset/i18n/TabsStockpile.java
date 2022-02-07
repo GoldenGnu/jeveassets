@@ -82,6 +82,7 @@ public abstract class TabsStockpile extends Bundle {
 	public abstract String exportStockpilesText();
 	public abstract String flag();
 	public abstract String getShoppingList();
+	public abstract String hideStockpile();
 	public abstract String importButton();
 	public abstract String importEft();
 	public abstract String importEftHelp();
