@@ -47,17 +47,16 @@ import java.util.Set;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import javax.swing.BorderFactory;
-import javax.swing.ButtonGroup;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JEditorPane;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
@@ -128,9 +127,7 @@ public class AccountImportDialog extends JDialogCentered {
 
 	private JDropDownButton jScopes;
 	private JTextField jAuthCode;
-	private JRadioButtonMenuItem jCorporation;
-	private JRadioButtonMenuItem jCharacter;
-	private JDropDownButton jType;
+	private JComboBox<String> jType;
 	private JButton jBrowse;
 	private JTextArea jExport;
 	private JButton jExportClipboard;
@@ -258,17 +255,14 @@ public class AccountImportDialog extends JDialogCentered {
 		if (editEsiOwner != null) { //Edit ESI
 			jType.setVisible(false);
 			if (editEsiOwner.isCorporation()) {
-				jCharacter.setSelected(false);
-				jCorporation.setSelected(true);
+				jType.setSelectedIndex(1);
 			} else {
-				jCorporation.setSelected(false);
-				jCharacter.setSelected(true);
+				jType.setSelectedIndex(0);
 			}
 		} else { //Add
 			jImport.setText("");
 			jType.setVisible(true);
-			jCorporation.setSelected(false);
-			jCharacter.setSelected(true);
+			jType.setSelectedIndex(0);
 		}
 		updateTab();
 		super.setVisible(true);
@@ -414,19 +408,15 @@ public class AccountImportDialog extends JDialogCentered {
 	private void updateScopes() {
 		scopesMap.clear();
 		jScopes.removeAll();
-		if (jCharacter.isSelected()) {
-			jType.setText(DialoguesAccount.get().character());
-		} else {
-			jType.setText(DialoguesAccount.get().corporation());
-		}
 		for (EsiScopes scope : EsiScopes.values()) {
 			if (scope.isPublicScope()) {
 				continue;
 			}
-			if (jCharacter.isSelected() && !scope.isCharacterScope()) {
+			
+			if (jType.getSelectedIndex() == 0 && !scope.isCharacterScope()) {
 				continue;
 			}
-			if (jCorporation.isSelected() && !scope.isCorporationScope()) {
+			if (jType.getSelectedIndex() == 1 && !scope.isCorporationScope()) {
 				continue;
 			}
 			JCheckBoxMenuItem jCheckBoxMenuItem = new JCheckBoxMenuItem(scope.toString());
@@ -684,32 +674,14 @@ public class AccountImportDialog extends JDialogCentered {
 				}
 			});
 
-			jType = new JDropDownButton(JDropDownButton.LEFT, JDropDownButton.TOP);
-			jType.setText(DialoguesAccount.get().character());
-
-			jCorporation = new JRadioButtonMenuItem(DialoguesAccount.get().corporation());
-			jCorporation.setSelected(false);
-			jCorporation.addActionListener(new ActionListener() {
+			String[] types = {DialoguesAccount.get().character(), DialoguesAccount.get().corporation()};
+			jType = new JComboBox<>(types);
+			jType.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					updateScopes();
 				}
 			});
-			jType.add(jCorporation);
-
-			jCharacter = new JRadioButtonMenuItem(DialoguesAccount.get().character());
-			jCharacter.setSelected(true);
-			jCharacter.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					updateScopes();
-				}
-			});
-			jType.add(jCharacter);
-
-			ButtonGroup buttonGroup = new ButtonGroup();
-			buttonGroup.add(jCorporation);
-			buttonGroup.add(jCharacter);
 
 			jScopes = new JDropDownButton(DialoguesAccount.get().scopes(), Images.MISC_ESI.getIcon(), JDropDownButton.LEFT, JDropDownButton.TOP);
 
