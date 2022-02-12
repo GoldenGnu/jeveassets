@@ -1195,9 +1195,10 @@
 			<version>1.6.4</version>
 		</dependency>
 		<dependency>
+			<!-- https://github.com/uklimaschewski/EvalEx/releases -->
 			<groupId>com.udojava</groupId>
 			<artifactId>EvalEx</artifactId>
-			<version>2.5</version>
+			<version>2.7</version>
 		</dependency>
 	</dependencies>
 
