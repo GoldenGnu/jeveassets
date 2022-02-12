@@ -50,6 +50,7 @@ import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
 import javax.swing.JEditorPane;
@@ -128,6 +129,7 @@ public class AccountImportDialog extends JDialogCentered {
 
 	private JDropDownButton jScopes;
 	private JTextField jAuthCode;
+	private JCheckBox jWorkaround;
 	private JRadioButtonMenuItem jCorporation;
 	private JRadioButtonMenuItem jCharacter;
 	private JDropDownButton jType;
@@ -292,6 +294,7 @@ public class AccountImportDialog extends JDialogCentered {
 			this.getDialog().setTitle(DialoguesAccount.get().dialogueNameAccountImport());
 		}
 		jPrevious.setEnabled(false);
+		jWorkaround.setSelected(false);
 		jAuthCode.setEnabled(false);
 		jAuthCode.setText("");
 		jNext.setEnabled(false);
@@ -668,7 +671,7 @@ public class AccountImportDialog extends JDialogCentered {
 							scopes.add(entry.getKey().getScope());
 						}
 					}
-					if (esiAuth.isServerStarted()) { //Localhost
+					if (esiAuth.isServerStarted() && !jWorkaround.isSelected()) { //Localhost
 						boolean ok = esiAuth.openWebpage(EsiCallbackURL.LOCALHOST, scopes, getDialog());
 						if (ok) { //Wait for response
 							currentCard = AccountImportCard.VALIDATE;
@@ -713,6 +716,15 @@ public class AccountImportDialog extends JDialogCentered {
 
 			jScopes = new JDropDownButton(DialoguesAccount.get().scopes(), Images.MISC_ESI.getIcon(), JDropDownButton.LEFT, JDropDownButton.TOP);
 
+			JLabel jWorkaroundLabel = new JLabel(DialoguesAccount.get().workaroundLabel());
+			jWorkaround = new JCheckBox(DialoguesAccount.get().workaroundCheckbox());
+			jWorkaround.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					jAuthCode.setEnabled(jWorkaround.isSelected());
+				}
+			});
+
 			JLabel jAuthCodeLabel = new JLabel(DialoguesAccount.get().authCode());
 			jAuthCode = new JTextField();
 
@@ -735,6 +747,7 @@ public class AccountImportDialog extends JDialogCentered {
 						.addGroup(cardLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
 							.addComponent(jAuthLabel)
 							.addComponent(jAuthCodeLabel)
+							.addComponent(jWorkaroundLabel)
 						)
 						.addGroup(cardLayout.createParallelGroup()
 							.addGroup(cardLayout.createSequentialGroup()
@@ -742,6 +755,7 @@ public class AccountImportDialog extends JDialogCentered {
 								.addComponent(jScopes, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
 								.addComponent(jBrowse, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
 							)
+							.addComponent(jWorkaround)
 							.addComponent(jAuthCode, 150, 150, Integer.MAX_VALUE)
 						)
 					)
@@ -755,6 +769,10 @@ public class AccountImportDialog extends JDialogCentered {
 					.addComponent(jType, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jScopes, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jBrowse, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+				)
+				.addGroup(cardLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+					.addComponent(jWorkaroundLabel)
+					.addComponent(jWorkaround)
 				)
 				.addGroup(cardLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
 					.addComponent(jAuthCodeLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
