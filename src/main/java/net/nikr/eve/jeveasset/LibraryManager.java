@@ -96,17 +96,17 @@ public class LibraryManager {
 			files.add("jaxen-1.2.0.jar");
 			files.add("javax.activation-api-1.2.0.jar");
 			files.add("guava-r09.jar");
-			files.add("LGoodDatePicker-11.1.0.jar");
-			files.add("jfreechart-1.5.0.jar");
+			files.add("LGoodDatePicker-11.2.1.jar");
+			files.add("jfreechart-1.5.3.jar");
 			files.add("osxadapter-1.1.0.jar");
 			files.add("pricing-2.1.2.jar");
 			files.add("routing-2.0.0.jar");
-			files.add("slf4j-api-1.7.30.jar");
-			files.add("log4j-over-slf4j-1.7.30.jar");
-			files.add("jcl-over-slf4j-1.7.30.jar");
-			files.add("jul-to-slf4j-1.7.30.jar");
-			files.add("logback-core-1.2.3.jar");
-			files.add("logback-classic-1.2.3.jar");
+			files.add("slf4j-api-1.7.36.jar");
+			files.add("log4j-over-slf4j-1.7.36.jar");
+			files.add("jcl-over-slf4j-1.7.36.jar");
+			files.add("jul-to-slf4j-1.7.36.jar");
+			files.add("logback-core-1.2.10.jar");
+			files.add("logback-classic-1.2.10.jar");
 			files.add("super-csv-2.4.0.jar");
 			files.add("translations-3.1.1.jar");
 			files.add("swagger-annotations-1.6.2.jar");
@@ -115,7 +115,7 @@ public class LibraryManager {
 			files.add("eve-esi-4.6.1.jar");
 			files.add("hamcrest-core-1.3.jar");
 			files.add("jaxb-api-2.3.1.jar");
-			files.add("sqlite-jdbc-3.32.3.2.jar");
+			files.add("sqlite-jdbc-3.36.0.3.jar");
 			files.add("okhttp-4.9.1.jar");
 			files.add("gson-fire-1.8.5.jar");
 			files.add("gson-2.8.6.jar");
@@ -136,7 +136,7 @@ public class LibraryManager {
 			files.add("kotlin-stdlib-1.4.10.jar");
 			files.add("kotlin-stdlib-jdk8-1.4.10.jar");
 			files.add("kotlin-stdlib-common-1.4.0.jar");
-			files.add("EvalEx-2.5.jar");
+			files.add("EvalEx-2.7.jar");
 			files.add("picocli-4.6.2.jar");
 		}
 		return files;
