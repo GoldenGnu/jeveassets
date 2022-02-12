@@ -72,6 +72,8 @@ public abstract class DialoguesAccount extends Bundle {
 	public abstract String scopes();
 	public abstract String corporation();
 	public abstract String character();
+	public abstract String workaroundLabel();
+	public abstract String workaroundCheckbox();
 	public abstract String scopeAssets();
 	public abstract String scopeWallet();
 	public abstract String scopeBlueprints();
