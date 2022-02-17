@@ -27,6 +27,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import net.nikr.eve.jeveasset.CliExport.ExportTool;
 import net.nikr.eve.jeveasset.data.settings.ExportSettings;
 import net.nikr.eve.jeveasset.data.settings.ExportSettings.DecimalSeparator;
@@ -39,10 +41,13 @@ import picocli.CommandLine;
 import picocli.CommandLine.ArgGroup;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
+import picocli.CommandLine.PicocliException;
 
 
 @Command(sortOptions = false)
 public class CliOptions {
+
+	private static final Logger LOG = Logger.getLogger(CliOptions.class.getName());
 
 	public static final String ASSETS = "assets";
 	public static final String CONTRACTS = "contracts";
@@ -85,7 +90,12 @@ public class CliOptions {
 
 	public static CommandLine set(final String[] args) {
 		CommandLine cmd = new CommandLine(CLI_OPTIONS);
-		cmd.parseArgs(args);
+		try {
+			cmd.parseArgs(args);
+		} catch (PicocliException ex) {
+			LOG.log(Level.SEVERE, ex.getMessage(), ex);
+			System.exit(-1);
+		}
 		if (CLI_OPTIONS.help) {
 			cmd.setUsageHelpWidth(110);
 			cmd.setUsageHelpAutoWidth(true);
@@ -112,7 +122,7 @@ public class CliOptions {
 	UpdateOptions updateOptions;
 
 	static class UpdateOptions {
-		@Option(names =  { "-u", "-update"}, required = true, description = "Update Data%nUpdate everything (all profiles, all accounts, everything with the cache expired) with a simple GUI and exit" + END_GROUP)
+		@Option(names =  { "-u", "-update", "-backgroundupdate"}, required = true, description = "Update Data%nUpdate everything (all profiles, all accounts, everything with the cache expired) with a simple GUI and exit" + END_GROUP)
 		boolean update;
 	}
 
