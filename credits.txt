@@ -25,6 +25,7 @@ Developers:
 One-time Contributors:
   Madetara (Ray Kavier)
   Kaylee Syntax
+  Inoruuk
 
 Retired Developers:
   Flaming Candle
