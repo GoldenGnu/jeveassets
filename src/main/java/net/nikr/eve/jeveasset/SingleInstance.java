@@ -23,6 +23,7 @@
 
 package net.nikr.eve.jeveasset;
 
+import java.awt.GraphicsEnvironment;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -55,9 +56,16 @@ public class SingleInstance {
 	private void test() {
 		if (!msgShown && findExisting()) {
 			msgShown = true;
+			if(GraphicsEnvironment.isHeadless()) {
+				LOG.error("jEveAssets is already running");
+				LOG.error("jEveAssets do not support running more than one instance");
+				LOG.error("To avoid losing or corrupting data jEveAssets will now exit");
+				LOG.error("Goodbye...");
+				System.exit(-1);
+			}
 			int value = JOptionPane.showConfirmDialog(Main.getTop(), General.get().singleInstanceMsg(), General.get().singleInstanceTitle(), JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
 			if (value != JOptionPane.YES_OPTION) {
-				System.exit(0);
+				System.exit(-1);
 			}
 		}
 	}
