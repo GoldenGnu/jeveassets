@@ -184,7 +184,7 @@ public class ReprocessedTab extends JMainTabSecondary {
 		//Add item dialog
 		ArrayList<Item> reprocessableItems = new ArrayList<>();
 		for(Item item : StaticData.get().getItems().values()) {
-			if(!(item.getReprocessedMaterial().isEmpty())) {
+			if(!item.getReprocessedMaterial().isEmpty()) {
 				reprocessableItems.add(item);
 			}
 		}
