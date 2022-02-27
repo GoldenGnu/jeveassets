@@ -296,7 +296,6 @@ public class StockpileItemDialog extends JDialogCentered {
 		jItems.setVisible(true);
 		jItems.setSelectedIndex(0);
 		jCountMinimum.setText("");
-		jItems.setEnabled(true);
 	}
 
 	private void show() {
@@ -412,6 +411,10 @@ public class StockpileItemDialog extends JDialogCentered {
 		updating = true;
 		boolean valid = true;
 		boolean colorIsSet = false;
+		Object object = jItems.getSelectedItem();
+		if (object == null || !(object instanceof Item)) {
+			valid = false; //No item selected
+		}
 		if (itemExist()) { //Editing existing item
 			colorIsSet = true;
 			ColorSettings.config(jCountMinimum, ColorEntry.GLOBAL_ENTRY_WARNING);
