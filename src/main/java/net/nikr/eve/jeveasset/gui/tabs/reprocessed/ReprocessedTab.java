@@ -182,9 +182,8 @@ public class ReprocessedTab extends JMainTabSecondary {
 		installTableTool(new ReprocessedTableMenu(), tableFormat, tableModel, jTable, filterControl, ReprocessedInterface.class);
 
 		//Add item dialog
-		Collection<Item> allItems = StaticData.get().getItems().values();
 		ArrayList<Item> reprocessableItems = new ArrayList<>();
-		for(Item item : allItems) {
+		for(Item item : StaticData.get().getItems().values()) {
 			if(!(item.getReprocessedMaterial().isEmpty())) {
 				reprocessableItems.add(item);
 			}
