@@ -36,6 +36,7 @@ public abstract class TabsReprocessed extends Bundle {
 	}
 
 	public abstract String add();
+	public abstract String addItem();
 	public abstract String batch();
 	public abstract String removeAll();
 	public abstract String collapse();
@@ -57,6 +58,7 @@ public abstract class TabsReprocessed extends Bundle {
 	public abstract String price();
 	public abstract String remove();
 	public abstract String set();
+	public abstract String selectItem();
 	public abstract String title();
 	public abstract String total();
 	public abstract String value();
