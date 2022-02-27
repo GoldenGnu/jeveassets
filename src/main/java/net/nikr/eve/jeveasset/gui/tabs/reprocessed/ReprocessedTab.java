@@ -47,6 +47,8 @@ import javax.swing.JMenu;
 import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.data.sde.Item;
+import net.nikr.eve.jeveasset.data.sde.StaticData;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.types.LocationType;
 import net.nikr.eve.jeveasset.gui.images.Images;
@@ -71,11 +73,15 @@ public class ReprocessedTab extends JMainTabSecondary {
 	private enum ReprocessedAction {
 		COLLAPSE,
 		EXPAND,
-		CLEAR
+		CLEAR,
+		ADD_ITEM
 	}
 
 	//GUI
 	private final JSeparatorTable jTable;
+
+	//Dialogs
+	private final JReprocessedAddItemDialog jAddItemDialog;
 
 	//Table
 	private final ReprocessedFilterControl filterControl;
@@ -101,6 +107,11 @@ public class ReprocessedTab extends JMainTabSecondary {
 		reprocessedData = new ReprocessedData(program);
 
 		JFixedToolBar jToolBarLeft = new JFixedToolBar();
+
+		JButton jAddItem = new JButton(TabsReprocessed.get().addItem(), Images.EDIT_ADD.getIcon());
+		jAddItem.setActionCommand(ReprocessedAction.ADD_ITEM.name());
+		jAddItem.addActionListener(listener);
+		jToolBarLeft.addButton(jAddItem);
 
 		JButton jClear = new JButton(TabsReprocessed.get().removeAll(), Images.EDIT_DELETE.getIcon());
 		jClear.setActionCommand(ReprocessedAction.CLEAR.name());
@@ -168,6 +179,16 @@ public class ReprocessedTab extends JMainTabSecondary {
 		filterControl = new ReprocessedFilterControl(sortedListTotal);
 		//Menu
 		installTableTool(new ReprocessedTableMenu(), tableFormat, tableModel, jTable, filterControl, ReprocessedInterface.class);
+
+		//Add item dialog
+		ArrayList<Item> reprocessableItems = new ArrayList<>();
+		for(Item item : StaticData.get().getItems().values()) {
+			if(!item.getReprocessedMaterial().isEmpty()) {
+				reprocessableItems.add(item);
+			}
+		}
+		jAddItemDialog = new JReprocessedAddItemDialog(program);
+		jAddItemDialog.updateData(reprocessableItems);
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
@@ -276,6 +297,13 @@ public class ReprocessedTab extends JMainTabSecondary {
 					ReprocessedInterface item = (ReprocessedInterface) separator.first();
 					ReprocessedTotal total = item.getTotal();
 					typeIDs.remove(total.getItem().getTypeID());
+					updateData();
+				}
+			}
+			if (ReprocessedAction.ADD_ITEM.name().equals(e.getActionCommand())) {
+				Item selectedItem = jAddItemDialog.show();
+				if(selectedItem != null) {
+					typeIDs.add(selectedItem.getTypeID());
 					updateData();
 				}
 			}
