@@ -200,8 +200,6 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner> {
 			} else {
 				throw ex;
 			}
-		} finally {
-			
 		}
 	}
 
