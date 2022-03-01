@@ -55,11 +55,13 @@ import org.slf4j.LoggerFactory;
 public class EsiPublicMarketOrdersGetter extends AbstractEsiGetter {
 
 	private static final Logger LOG = LoggerFactory.getLogger(EsiPublicMarketOrdersGetter.class);
+	private static final Long OFFSET = 1000L * 10L; // 10 seconds
 
 	private final UpdateTask updateTask;
 	private final OutbidProcesserInput input;
 	private final OutbidProcesserOutput output;
-	private boolean firstNextUpdate = true;
+	private boolean publicMarketOrders = false;
+	private Date nextUpdate = null;
 	private Date lastUpdate;
 	
 	public EsiPublicMarketOrdersGetter(UpdateTask updateTask, OutbidProcesserInput input, OutbidProcesserOutput output) {
@@ -73,6 +75,7 @@ public class EsiPublicMarketOrdersGetter extends AbstractEsiGetter {
 	protected void update() throws ApiException {
 		AtomicInteger count = new AtomicInteger(0);
 		//Update public market orders
+		publicMarketOrders = true;
 		List<MarketOrdersResponse> responses = updatePagedList(input.getRegionIDs(), new PagedListHandler<Integer, MarketOrdersResponse>() {
 			@Override
 			protected List<MarketOrdersResponse> get(Integer k) throws ApiException {
@@ -95,6 +98,7 @@ public class EsiPublicMarketOrdersGetter extends AbstractEsiGetter {
 				}
 			}
 		});
+		publicMarketOrders = false;
 		Map<Integer, Set<RawPublicMarketOrder>> orders = EsiConverter.toPublicMarketOrders(responses);
 		for (MarketOrdersResponse ordersResponse : responses) {
 			//Find leaking market structures
@@ -168,10 +172,11 @@ public class EsiPublicMarketOrdersGetter extends AbstractEsiGetter {
 
 	@Override
 	protected void setNextUpdate(Date date) {
-		if (firstNextUpdate) {
-			firstNextUpdate = false;
+		if (publicMarketOrders && (nextUpdate == null || nextUpdate.before(date))) {
+			nextUpdate = date;
+			Date fixedDate = new Date(date.getTime() + OFFSET);
 			Settings.lock("Public Orders (next update)");
-			Settings.get().setPublicMarketOrdersNextUpdate(date);
+			Settings.get().setPublicMarketOrdersNextUpdate(fixedDate);
 			Settings.unlock("Public Orders (next update)");
 		}
 	}
