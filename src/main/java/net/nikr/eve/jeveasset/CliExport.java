@@ -230,10 +230,28 @@ public class CliExport {
 					LOG.error(tool.getName() + " export failed");
 					fails--;
 				} else {
-					LOG.error(tool.getName() + " exported");
+					LOG.info(tool.getName() + " data exported");
 				}
 			}
-			
+		}
+		StringBuilder builder = new StringBuilder();
+		builder.append("Data exported");
+		if (fails == 0) {
+			builder.append(" successfully");
+		} else {
+			builder.append("with ");
+			builder.append(fails);
+			builder.append(" error");
+			if (fails > 1) {
+				builder.append("s");
+			}
+		}
+		builder.append(" to ");
+		builder.append(CliOptions.get().getOutputDirectory());
+		if (fails == 0) {
+			LOG.info(builder.toString());
+		} else {
+			LOG.warn(builder.toString());
 		}
 		return fails;
 	}
