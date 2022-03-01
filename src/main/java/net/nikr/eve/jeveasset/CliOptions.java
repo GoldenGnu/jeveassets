@@ -504,6 +504,14 @@ public class CliOptions {
 		return exportOptions.filters.loadoutsIDs;
 	}
 
+	public File getOutputDirectory() {
+		//Output
+		if (exportOptions.output == null) {
+			exportOptions.output = new File(FileUtil.getPathExports());
+		}
+		return exportOptions.output;
+	}
+
 	public boolean isPortable() {
 		return portable;
 	}
