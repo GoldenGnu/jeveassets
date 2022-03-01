@@ -44,7 +44,12 @@ import picocli.CommandLine.Option;
 import picocli.CommandLine.PicocliException;
 
 
-@Command(sortOptions = false)
+@Command(sortOptions = false,
+		synopsisHeading = "",
+		customSynopsis = "Usage: java [-Djava.awt.headless=true] -jar jeveassets.jar [-h] [-v] [-p] [-z] [-u] [-e [OPTIONS]]",
+		description="%n  -Djava.awt.headless=true   Run without a GUI%n"
+				+ "                             Java parameter (must be specified before -jar)"
+		)
 public class CliOptions {
 
 	private static final Logger LOG = Logger.getLogger(CliOptions.class.getName());
@@ -109,20 +114,22 @@ public class CliOptions {
 		return cmd;
 	}
 
-	@Option(names = {"-h", "-help", "/?"}, usageHelp = true, description = "display this help message")
+	@Option(names = {"-h", "-help", "/?"}, usageHelp = true, description = "Display this help message")
 	boolean help;
-	@Option(names = {"-v", "-version"}, versionHelp = true, description = "print version information and exit")
+	@Option(names = {"-v", "-version"}, versionHelp = true, description = "Display version information")
 	boolean version;
-	@Option(names = "-portable", description = "Run jEveAssets portable%nSaving everything in the jEveAssets program directory ")
+	@Option(names = {"-p", "-portable"}, description = "Run jEveAssets portable%nSave all data in the jEveAssets program directory ")
 	boolean portable;
-	@Option(names = "-lazysave", description = "Only save to disk on update and exit%nNote: This may cause you to lose data if jEveAssets exit unexpectedly")
+	@Option(names = {"-z", "-lazysave"}, description = "Only save to disk on update and exit%n"
+			+ "    Warning:%n"
+			+ "    This may cause you to lose data if jEveAssets exit unexpectedly" + END_GROUP)
 	boolean lazySave;
 
 	@ArgGroup(exclusive = false, heading = "Update Options:%n")
 	UpdateOptions updateOptions;
 
 	static class UpdateOptions {
-		@Option(names =  { "-u", "-update", "-backgroundupdate"}, required = true, description = "Update Data%nUpdate everything (all profiles, all accounts, everything with the cache expired) with a simple GUI and exit" + END_GROUP)
+		@Option(names =  { "-u", "-update"}, required = true, description = "Update Data%nUpdate all profiles and accounts%nAll data with cache expired will be updated" + END_GROUP)
 		boolean update;
 	}
 
@@ -244,9 +251,9 @@ public class CliOptions {
 		boolean overviewRegions;
 		@Option(names = {"-vg", "-"+OVERVIEW+"-groups"}, description = TOOLS_BEFORE+"Overview Groups"+TOOLS_AFTER)
 		boolean overviewGroups;
-		@Option(names = {"-rn",REPROCESSED_NAMES}, arity = "1..", paramLabel = "typeNames", description = TOOLS_BEFORE+"Reprocessed"+TOOLS_AFTER)
+		@Option(names = {"-rn",REPROCESSED_NAMES}, arity = "1..", split = ",", paramLabel = "typeName", description = TOOLS_BEFORE+"Reprocessed"+TOOLS_AFTER+" for typeName(s)")
 		Set<String> reprocessedNames;
-		@Option(names = {"-ri",REPROCESSED_IDS}, arity = "1..", paramLabel = "typeIDs", description = TOOLS_BEFORE+"Reprocessed"+TOOLS_AFTER
+		@Option(names = {"-ri",REPROCESSED_IDS}, arity = "1..", split = ",", paramLabel = "typeID", description = TOOLS_BEFORE+"Reprocessed"+TOOLS_AFTER+" for typeID(s)"
 				+ END_GROUP + END_GROUP + "%nFilters Help:%nOmit the parameter value to use the current filter%nOmit the parameter to use no filter")
 		Set<Integer> reprocessedIDs;
 	}
@@ -266,9 +273,9 @@ public class CliOptions {
 		String itemsFilter;
 		@Option(names =  "-"+JOURNAL+FILTER_CMD, fallbackValue = "", arity = "0..1", paramLabel = FILTER_LABEL, description = FILTER_BEFORE+"Journal"+FILTER_AFTER)
 		String journalFilter;
-		@Option(names =  "-"+LOADOUTS+"-names", arity = "1..", paramLabel = "typeNames|itemsNames", description = FILTER_BEFORE+"Ship Fittings"+FILTER_AFTER)
+		@Option(names =  "-"+LOADOUTS+"-names", arity = "1..", split = ",", paramLabel = "typeName|itemName", description = "Export Ship Fittings matching ships typeName or itemName")
 		Set<String> loadoutsNames;
-		@Option(names =  "-"+LOADOUTS+"-ids", arity = "1..", paramLabel = "typeNames", description = FILTER_BEFORE+"Ship Fittings"+FILTER_AFTER)
+		@Option(names =  "-"+LOADOUTS+"-ids", arity = "1..", split = ",", paramLabel = "typeID", description = "Export Ship Fittings matching ships typeID")
 		Set<Integer> loadoutsIDs;
 		@Option(names =  "-"+MATERIALS+"-owner", fallbackValue = "", arity = "0..1", paramLabel = "owner", description = "Materials owner name")
 		String materialsOwner;
@@ -328,7 +335,7 @@ public class CliOptions {
 	DevOptions devOptions;
 
 	static class DevOptions {
-		@Option(names =  { "-debug" }, description = "Dev Command: Enable debug logging and other debug stuff")
+		@Option(names =  { "-debug" }, description = "Dev Command: Enable debug logging and other debug shenanigans")
 		boolean debug;
 		@Option(names =  { "-noupdate" }, description = "Dev Command: Disable all updates")
 		boolean forceNoUpdate;
@@ -419,12 +426,8 @@ public class CliOptions {
 	}
 
 	private void set(ExportSettings exportSettings, ExportTool exportTool, ExportFormat exportFormat, String filterName, String viewName) {
-		//Output
-		if (exportOptions.output == null) {
-			exportOptions.output = new File(FileUtil.getPathExports());
-		}
 		StringBuilder builder = new StringBuilder();
-		builder.append(exportOptions.output.getAbsolutePath());
+		builder.append(getOutputDirectory());
 		builder.append(File.separator);
 		if (!exportOptions.noDate) {
 			builder.append(Formater.fileDate(new Date()));
