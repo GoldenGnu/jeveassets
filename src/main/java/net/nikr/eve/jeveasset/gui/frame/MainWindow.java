@@ -88,6 +88,7 @@ public class MainWindow {
 
 		JPanel jPanel = new JPanel();
 		jPanel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_T, InputEvent.CTRL_DOWN_MASK + InputEvent.SHIFT_DOWN_MASK), "reOpenTab");
+		jPanel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_T, InputEvent.META_DOWN_MASK + InputEvent.SHIFT_DOWN_MASK), "reOpenTab");
 		jPanel.getActionMap().put("reOpenTab", new AbstractAction() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
