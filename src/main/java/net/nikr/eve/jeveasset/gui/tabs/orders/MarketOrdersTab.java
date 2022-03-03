@@ -50,9 +50,7 @@ import java.nio.file.WatchService;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import javax.swing.GroupLayout;
 import javax.swing.Icon;
@@ -88,9 +86,6 @@ import net.nikr.eve.jeveasset.gui.shared.MarketDetailsColumn.MarketDetailsAction
 import net.nikr.eve.jeveasset.gui.shared.Updatable;
 import net.nikr.eve.jeveasset.gui.shared.components.JFixedToolBar;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTabPrimary;
-import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
-import net.nikr.eve.jeveasset.gui.shared.filter.Filter.CompareType;
-import net.nikr.eve.jeveasset.gui.shared.filter.Filter.LogicType;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuColumns;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
@@ -265,17 +260,7 @@ public class MarketOrdersTab extends JMainTabPrimary {
 		//Scroll Panels
 		JScrollPane jTableScroll = new JScrollPane(jTable);
 		//Table Filter
-		Map<String, List<Filter>> defaultFilters = new HashMap<>();
-		List<Filter> filter;
-		filter = new ArrayList<>();
-		filter.add(new Filter(LogicType.AND, MarketTableFormat.ORDER_TYPE, CompareType.EQUALS, TabsOrders.get().buy()));
-		filter.add(new Filter(LogicType.AND, MarketTableFormat.STATUS, CompareType.EQUALS, TabsOrders.get().statusActive()));
-		defaultFilters.put(TabsOrders.get().activeBuyOrders(), filter);
-		filter = new ArrayList<>();
-		filter.add(new Filter(LogicType.AND, MarketTableFormat.ORDER_TYPE, CompareType.EQUALS, TabsOrders.get().sell()));
-		filter.add(new Filter(LogicType.AND, MarketTableFormat.STATUS, CompareType.EQUALS, TabsOrders.get().statusActive()));
-		defaultFilters.put(TabsOrders.get().activeSellOrders(), filter);
-		filterControl = new MarketOrdersFilterControl(sortedList, defaultFilters);
+		filterControl = new MarketOrdersFilterControl(sortedList);
 		//Menu
 		installTableTool(new OrdersTableMenu(), tableFormat, tableModel, jTable, filterControl, MyMarketOrder.class);
 
@@ -701,15 +686,13 @@ public class MarketOrdersTab extends JMainTabPrimary {
 
 	private class MarketOrdersFilterControl extends FilterControl<MyMarketOrder> {
 
-		public MarketOrdersFilterControl(EventList<MyMarketOrder> exportEventList, Map<String, List<Filter>> defaultFilters) {
+		public MarketOrdersFilterControl(EventList<MyMarketOrder> exportEventList) {
 			super(program.getMainWindow().getFrame(),
 					NAME,
 					tableFormat,
 					eventList,
 					exportEventList,
-					filterList,
-					Settings.get().getTableFilters(NAME),
-					defaultFilters
+					filterList
 					);
 		}
 

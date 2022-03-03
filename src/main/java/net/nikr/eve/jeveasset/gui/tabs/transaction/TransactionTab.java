@@ -34,9 +34,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -52,8 +50,6 @@ import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.components.JFixedToolBar;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTabPrimary;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
-import net.nikr.eve.jeveasset.gui.shared.filter.Filter.CompareType;
-import net.nikr.eve.jeveasset.gui.shared.filter.Filter.LogicType;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuColumns;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
@@ -139,15 +135,7 @@ public class TransactionTab extends JMainTabPrimary {
 		//Scroll Panels
 		JScrollPane jTableScroll = new JScrollPane(jTable);
 		//Table Filter
-		Map<String, List<Filter>> defaultFilters = new HashMap<>();
-		List<Filter> filter;
-		filter = new ArrayList<>();
-		filter.add(new Filter(LogicType.AND, TransactionTableFormat.TYPE, CompareType.EQUALS, TabsTransaction.get().buy()));
-		defaultFilters.put(TabsTransaction.get().buy(), filter);
-		filter = new ArrayList<>();
-		filter.add(new Filter(LogicType.AND, TransactionTableFormat.TYPE, CompareType.EQUALS, TabsTransaction.get().sell()));
-		defaultFilters.put(TabsTransaction.get().sell(), filter);
-		filterControl = new TransactionsFilterControl(sortedList, defaultFilters);
+		filterControl = new TransactionsFilterControl(sortedList);
 		//Menu
 		installTableTool(new TransactionTableMenu(), tableFormat, tableModel, jTable, filterControl, MyTransaction.class);
 
@@ -323,15 +311,13 @@ public class TransactionTab extends JMainTabPrimary {
 
 	private class TransactionsFilterControl extends FilterControl<MyTransaction> {
 
-		public TransactionsFilterControl(EventList<MyTransaction> exportEventList, Map<String, List<Filter>> defaultFilters) {
+		public TransactionsFilterControl(EventList<MyTransaction> exportEventList) {
 			super(program.getMainWindow().getFrame(),
 					NAME,
 					tableFormat,
 					eventList,
 					exportEventList,
-					filterList,
-					Settings.get().getTableFilters(NAME),
-					defaultFilters
+					filterList
 					);
 		}
 

@@ -219,8 +219,7 @@ public class ValueTableTab extends JMainTabSecondary {
 					tableFormat,
 					eventList,
 					exportEventList,
-					filterList,
-					Settings.get().getTableFilters(NAME)
+					filterList
 					);
 		}
 

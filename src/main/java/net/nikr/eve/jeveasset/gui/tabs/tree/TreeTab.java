@@ -645,8 +645,7 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate {
 					tableFormat,
 					eventList,
 					exportEventList,
-					filterList,
-					Settings.get().getTableFilters(NAME)
+					filterList
 					);
 		}
 

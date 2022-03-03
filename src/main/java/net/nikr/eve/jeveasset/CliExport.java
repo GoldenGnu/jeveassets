@@ -327,7 +327,7 @@ public class CliExport {
 	}
 
 	private <T extends Enum<T> & EnumTableColumn<Q>, Q> boolean export(EventList<Q> data, final SimpleTableFormat<Q> tableFormat, String toolName, ExportSettings exportSettings) {
-		return ExportTableData.exportNoCache(data, tableFormat, toolName, exportSettings);
+		return ExportTableData.exportAutoNoCache(data, tableFormat, toolName, exportSettings);
 	}
 
 	private static class LoadoutMatcher implements Matcher<Loadout> {

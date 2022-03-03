@@ -341,8 +341,7 @@ public class AssetsTab extends JMainTabPrimary implements TagUpdate {
 					tableFormat,
 					eventList,
 					exportEventList,
-					filterList,
-					Settings.get().getTableFilters(NAME)
+					filterList
 					);
 		}
 
