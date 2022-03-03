@@ -42,7 +42,6 @@ import net.nikr.eve.jeveasset.gui.shared.table.View;
 import net.nikr.eve.jeveasset.gui.shared.table.ViewManager;
 import net.nikr.eve.jeveasset.gui.shared.table.ViewSave;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
-import static net.nikr.eve.jeveasset.io.esi.EsiContractItemsGetter.reset;
 
 
 public class JMenuColumns<T extends Enum<T> & EnumTableColumn<Q>, Q> extends JMenu {
@@ -151,7 +150,7 @@ public class JMenuColumns<T extends Enum<T> & EnumTableColumn<Q>, Q> extends JMe
 		jMenuItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				reset();
+				tableFormatAdaptor.reset();
 				tableModel.fireTableStructureChanged();
 				jTable.autoResizeColumns();
 				program.saveSettings("Columns (Reset)"); //Save Resize Mode
