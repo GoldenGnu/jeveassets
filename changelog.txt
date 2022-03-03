@@ -16,6 +16,36 @@
                   #### #  # #  # #  # #### #### #### #### ####
 
 ________________________________________________________________________________
+_7.1.0__________________________________________________________________________
+
+New Features:
+-Added CLI for exporting table data (Issue #270)
+-Tool tabs can now be rearranged by dragging the tabs (issue #298)
+-Tool tabs can now be reopen with [ctrl|command] + [shift] + t (issue #298)
+-Make a Add button in the Reprocessed tool (Issue #297 - contributed by Inoruuk)
+-Added Output Name column to the industry jobs tool (Issue #294)
+-Hide stockpile from stockpile menu (Issue #300)
+
+Changed:
+-Change character/corporation selection in the AccountImportDialog to a ComboBox
+-Allow manually enabling the eve.nikr.net account import workaround
+
+Code:
+-Updated slf4j library to 1.7.36
+-Updated logback library to 1.2.10
+-Updated jfreechart library to 1.5.3
+-Updated LGoodDatePicker library to 11.2.1
+-Updated sqlite-jdbc library to 3.36.0.3
+-Updated EvalEx library to 2.7
+
+Bug Fixes:
+-Updatable didn't check for skill updates
+-ItemsWriter saved base price as double, ItemsReader expected long
+-Made SingleInstance handle headless mode
+-Possible fix for ClassCastException in StockpileItemDialog (BugId: 995)
+-Possible fix for publicMarketOrders cache time being incorrect
+
+________________________________________________________________________________
 _7.0.0__________________________________________________________________________
 
 New Features:
