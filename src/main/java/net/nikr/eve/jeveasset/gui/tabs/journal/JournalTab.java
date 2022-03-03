@@ -196,8 +196,7 @@ public class JournalTab extends JMainTabPrimary {
 					tableFormat,
 					eventList,
 					exportEventList,
-					filterList,
-					Settings.get().getTableFilters(NAME)
+					filterList
 					);
 		}
 

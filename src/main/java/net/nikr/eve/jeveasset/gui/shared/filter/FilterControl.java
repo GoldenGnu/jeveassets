@@ -37,6 +37,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JTable;
+import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.SettingsUpdateListener;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.AllColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
@@ -49,7 +50,7 @@ public abstract class FilterControl<E> implements ColumnCache<E>, SimpleFilterCo
 	private final SimpleTableFormat<E> tableFormat;
 	private final EventList<E> eventList;
 	private final EventList<E> exportEventList;
-	private final List<SettingsUpdateListener> settingsUpdateListenerList;
+	private final List<SettingsUpdateListener> settingsUpdateListenerList = new ArrayList<>();
 	private final FilterList<E> filterList;
 	private final Map<String, List<Filter>> filters;
 	private final Map<String, List<Filter>> defaultFilters;
@@ -62,7 +63,6 @@ public abstract class FilterControl<E> implements ColumnCache<E>, SimpleFilterCo
 		tableFormat = null;
 		eventList = null;
 		exportEventList = null;
-		settingsUpdateListenerList = null;
 		filterList = null;
 		filters = null;
 		defaultFilters = null;
@@ -70,19 +70,14 @@ public abstract class FilterControl<E> implements ColumnCache<E>, SimpleFilterCo
 		cache = new HashMap<>();
 	}
 
-	protected FilterControl(final JFrame jFrame, final String toolName, SimpleTableFormat<E> tableFormat, final EventList<E> eventList, final EventList<E> exportEventList, final FilterList<E> filterList, final Map<String, List<Filter>> filters) {
-		this(jFrame, toolName, tableFormat, eventList, exportEventList, filterList, filters, new HashMap<String, List<Filter>>());
-	}
-	protected FilterControl(final JFrame jFrame, final String toolName, SimpleTableFormat<E> tableFormat, final EventList<E> eventList, final EventList<E> exportEventList, final FilterList<E> filterList, final Map<String, List<Filter>> filters, final Map<String, List<Filter>> defaultFilters) {
-		this(jFrame, toolName, tableFormat, eventList, exportEventList, filterList, filters, defaultFilters, new ArrayList<SettingsUpdateListener>());
-	}
-	protected FilterControl(final JFrame jFrame, final String toolName, SimpleTableFormat<E> tableFormat, final EventList<E> eventList, final EventList<E> exportEventList, final FilterList<E> filterList, final Map<String, List<Filter>> filters, final Map<String, List<Filter>> defaultFilters, final List<SettingsUpdateListener> settingsUpdateListenerList) {
+	protected FilterControl(final JFrame jFrame, final String toolName, SimpleTableFormat<E> tableFormat, final EventList<E> eventList, final EventList<E> exportEventList, final FilterList<E> filterList) {
 		this.toolName = toolName;
 		this.tableFormat = tableFormat;
 		this.eventList = eventList;
 		this.exportEventList = exportEventList;
 		this.filterList = filterList;
-		this.settingsUpdateListenerList = settingsUpdateListenerList;
+		this.filters = Settings.get().getTableFilters(toolName);
+		this.defaultFilters = Settings.get().getDefaultTableFilters(toolName);
 		eventList.addListEventListener(new ListEventListener<E>() {
 			@Override @SuppressWarnings("deprecation")
 			public void listChanged(ListEvent<E> listChanges) {
@@ -107,8 +102,6 @@ public abstract class FilterControl<E> implements ColumnCache<E>, SimpleFilterCo
 				}
 			}
 		});
-		this.filters = filters;
-		this.defaultFilters = defaultFilters;
 		ListenerClass listener = new ListenerClass();
 		filterList.addListEventListener(listener);
 		gui = new FilterGui<>(jFrame, this, tableFormat);
