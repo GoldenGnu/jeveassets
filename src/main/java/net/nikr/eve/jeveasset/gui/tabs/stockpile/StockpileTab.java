@@ -1080,8 +1080,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 					tableFormat,
 					eventList,
 					exportEventList,
-					filterList,
-					Settings.get().getTableFilters(NAME)
+					filterList
 					);
 		}
 

@@ -32,25 +32,17 @@ import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import ca.odell.glazedlists.swing.TableComparatorChooser;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
-import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob.IndustryJobState;
-import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.types.LocationType;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTabPrimary;
-import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
-import net.nikr.eve.jeveasset.gui.shared.filter.Filter.CompareType;
-import net.nikr.eve.jeveasset.gui.shared.filter.Filter.LogicType;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuColumns;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
@@ -116,15 +108,7 @@ public class IndustryJobsTab extends JMainTabPrimary {
 		//Scroll
 		JScrollPane jTableScroll = new JScrollPane(jTable);
 		//Table Filter
-		Map<String, List<Filter>> defaultFilters = new HashMap<>();
-		List<Filter> filter;
-		filter = new ArrayList<>();
-		filter.add(new Filter(LogicType.AND, IndustryJobTableFormat.STATE, CompareType.EQUALS_NOT, IndustryJobState.STATE_DELIVERED.toString()));
-		defaultFilters.put(TabsJobs.get().active(), filter);
-		filter = new ArrayList<>();
-		filter.add(new Filter(LogicType.AND, IndustryJobTableFormat.STATE, CompareType.EQUALS, IndustryJobState.STATE_DELIVERED.toString()));
-		defaultFilters.put(TabsJobs.get().completed(), filter);
-		filterControl = new IndustryJobsFilterControl(sortedList, defaultFilters);
+		filterControl = new IndustryJobsFilterControl(sortedList);
 		//Menu
 		installTableTool(new JobsTableMenu(), tableFormat, tableModel, jTable, filterControl, MyIndustryJob.class);
 
@@ -230,15 +214,13 @@ public class IndustryJobsTab extends JMainTabPrimary {
 
 	public class IndustryJobsFilterControl extends FilterControl<MyIndustryJob> {
 
-		public IndustryJobsFilterControl(EventList<MyIndustryJob> exportEventList, Map<String, List<Filter>> defaultFilters) {
+		public IndustryJobsFilterControl(EventList<MyIndustryJob> exportEventList) {
 			super(program.getMainWindow().getFrame(),
 					NAME,
 					tableFormat,
 					eventList,
 					exportEventList,
-					filterList,
-					Settings.get().getTableFilters(NAME),
-					defaultFilters
+					filterList
 					);
 		}
 

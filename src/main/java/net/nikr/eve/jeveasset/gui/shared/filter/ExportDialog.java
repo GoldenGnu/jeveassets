@@ -761,7 +761,7 @@ public class ExportDialog<E> extends JDialogCentered {
 	//Save settings
 		saveSettings();
 	//Save file
-		boolean saved = ExportTableData.exportAutoFill(eventList, columnCache, tableFormat, toolName, Settings.get().getExportSettings(toolName));
+		boolean saved = ExportTableData.exportAuto(eventList, columnCache, tableFormat, toolName, Settings.get().getExportSettings(toolName));
 		if (!saved) {
 			JOptionPane.showMessageDialog(getDialog(),
 					DialoguesExport.get().failedToSave(),
