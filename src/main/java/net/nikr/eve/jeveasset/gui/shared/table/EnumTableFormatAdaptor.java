@@ -115,7 +115,7 @@ public class EnumTableFormatAdaptor<T extends Enum<T> & EnumTableColumn<Q>, Q> i
 		return enumClass.getEnumConstants();
 	}
 
-	private void reset() {
+	public void reset() {
 		shownColumns.clear();
 		orderColumnsName.clear();
 		orderColumns.clear();
