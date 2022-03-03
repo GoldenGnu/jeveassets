@@ -34,7 +34,6 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -49,24 +48,24 @@ import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.sde.Item;
-import net.nikr.eve.jeveasset.data.sde.ReprocessedMaterial;
+import net.nikr.eve.jeveasset.data.sde.StaticData;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.types.LocationType;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JFixedToolBar;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTabSecondary;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
+import net.nikr.eve.jeveasset.gui.shared.menu.JMenuColumns;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
-import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.JSeparatorTable;
 import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
+import net.nikr.eve.jeveasset.gui.shared.table.TableFormatFactory;
 import net.nikr.eve.jeveasset.gui.tabs.reprocessed.ReprocessedSeparatorTableCell.ReprocessedCellAction;
 import net.nikr.eve.jeveasset.i18n.TabsReprocessed;
-import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 
 
 public class ReprocessedTab extends JMainTabSecondary {
@@ -74,11 +73,15 @@ public class ReprocessedTab extends JMainTabSecondary {
 	private enum ReprocessedAction {
 		COLLAPSE,
 		EXPAND,
-		CLEAR
+		CLEAR,
+		ADD_ITEM
 	}
 
 	//GUI
 	private final JSeparatorTable jTable;
+
+	//Dialogs
+	private final JReprocessedAddItemDialog jAddItemDialog;
 
 	//Table
 	private final ReprocessedFilterControl filterControl;
@@ -94,13 +97,21 @@ public class ReprocessedTab extends JMainTabSecondary {
 
 	//Data
 	private final Set<Integer> typeIDs = new HashSet<>();
+	private final ReprocessedData reprocessedData;
 
 	public static final String NAME = "reprocessed"; //Not to be changed!
 
 	public ReprocessedTab(final Program program) {
 		super(program, NAME, TabsReprocessed.get().title(), Images.TOOL_REPROCESSED.getIcon(), true);
 
+		reprocessedData = new ReprocessedData(program);
+
 		JFixedToolBar jToolBarLeft = new JFixedToolBar();
+
+		JButton jAddItem = new JButton(TabsReprocessed.get().addItem(), Images.EDIT_ADD.getIcon());
+		jAddItem.setActionCommand(ReprocessedAction.ADD_ITEM.name());
+		jAddItem.addActionListener(listener);
+		jToolBarLeft.addButton(jAddItem);
 
 		JButton jClear = new JButton(TabsReprocessed.get().removeAll(), Images.EDIT_DELETE.getIcon());
 		jClear.setActionCommand(ReprocessedAction.CLEAR.name());
@@ -128,7 +139,7 @@ public class ReprocessedTab extends JMainTabSecondary {
 		jToolBarRight.addButton(jExpand);
 
 		//Table Format
-		tableFormat = new EnumTableFormatAdaptor<>(ReprocessedTableFormat.class);
+		tableFormat = TableFormatFactory.reprocessedTableFormat();
 		//Backend
 		eventList = EventListManager.create();
 		//Sorting (per column)
@@ -169,6 +180,16 @@ public class ReprocessedTab extends JMainTabSecondary {
 		//Menu
 		installTableTool(new ReprocessedTableMenu(), tableFormat, tableModel, jTable, filterControl, ReprocessedInterface.class);
 
+		//Add item dialog
+		ArrayList<Item> reprocessableItems = new ArrayList<>();
+		for(Item item : StaticData.get().getItems().values()) {
+			if(!item.getReprocessedMaterial().isEmpty()) {
+				reprocessableItems.add(item);
+			}
+		}
+		jAddItemDialog = new JReprocessedAddItemDialog(program);
+		jAddItemDialog.updateData(reprocessableItems);
+
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
 				.addComponent(filterControl.getPanel())
@@ -192,57 +213,10 @@ public class ReprocessedTab extends JMainTabSecondary {
 
 	@Override
 	public void updateData() {
-		List<ReprocessedInterface> list = new ArrayList<>();
-		List<ReprocessedGrandItem> uniqueList = new ArrayList<>();
-		ReprocessedGrandTotal grandTotal = new ReprocessedGrandTotal();
-		for (Integer typeID : typeIDs) {
-			Item item = ApiIdConverter.getItem(typeID);
-			if (!item.isEmpty()) {
-				if (item.getReprocessedMaterial().isEmpty()) {
-					continue; //Ignore types without materials
-				}
-				double sellPrice = ApiIdConverter.getPriceSimple(typeID, false);
-				ReprocessedTotal total = new ReprocessedTotal(item, sellPrice);
-				list.add(total);
-				for (ReprocessedMaterial material : item.getReprocessedMaterial()) {
-					Item materialItem = ApiIdConverter.getItem(material.getTypeID());
-					if (!materialItem.isEmpty()) {
-						double price = ApiIdConverter.getPriceSimple(materialItem.getTypeID(), false);
-						int quantitySkill = Settings.get().getReprocessSettings().getLeft(material.getQuantity(), item.isOre());
-						ReprocessedItem reprocessedItem = new ReprocessedItem(total, materialItem, material, quantitySkill, price);
-						list.add(reprocessedItem);
-						//Total
-						total.add(reprocessedItem);
-						//Grand Total
-						grandTotal.add(reprocessedItem);
-						//Grand Item
-						ReprocessedGrandItem grandItem = new ReprocessedGrandItem(reprocessedItem, materialItem, grandTotal);
-						int index = uniqueList.indexOf(grandItem);
-						if (index >= 0) {
-							grandItem = uniqueList.get(index);
-						} else {
-							uniqueList.add(grandItem);
-						}
-						grandItem.add(reprocessedItem);
-					}
-				}
-				grandTotal.add(total);
-			}
-		}
-		if (typeIDs.size() > 1) {
-			list.add(grandTotal);
-			list.addAll(uniqueList);
-		}
 		//Save separator expanded/collapsed state
 		jTable.saveExpandedState();
-		//Update list
-		try {
-			eventList.getReadWriteLock().writeLock().lock();
-			eventList.clear();
-			eventList.addAll(list);
-		} finally {
-			eventList.getReadWriteLock().writeLock().unlock();
-		}
+		//Update Data
+		reprocessedData.updateData(eventList, typeIDs);
 		//Restore separator expanded/collapsed state
 		jTable.loadExpandedState();
 	}
@@ -292,7 +266,7 @@ public class ReprocessedTab extends JMainTabSecondary {
 
 		@Override
 		public JMenu getColumnMenu() {
-			return tableFormat.getMenu(program, tableModel, jTable, NAME);
+			return new JMenuColumns<>(program, tableFormat, tableModel, jTable, NAME);
 		}
 
 		@Override
@@ -323,6 +297,13 @@ public class ReprocessedTab extends JMainTabSecondary {
 					ReprocessedInterface item = (ReprocessedInterface) separator.first();
 					ReprocessedTotal total = item.getTotal();
 					typeIDs.remove(total.getItem().getTypeID());
+					updateData();
+				}
+			}
+			if (ReprocessedAction.ADD_ITEM.name().equals(e.getActionCommand())) {
+				Item selectedItem = jAddItemDialog.show();
+				if(selectedItem != null) {
+					typeIDs.add(selectedItem.getTypeID());
 					updateData();
 				}
 			}
@@ -366,43 +347,12 @@ public class ReprocessedTab extends JMainTabSecondary {
 		public ReprocessedFilterControl(EventList<ReprocessedInterface> exportEventList) {
 			super(program.getMainWindow().getFrame(),
 					NAME,
+					tableFormat,
 					eventList,
 					exportEventList,
 					filterList,
 					Settings.get().getTableFilters(NAME)
 					);
-		}
-
-		@Override
-		protected Object getColumnValue(final ReprocessedInterface reprocessed, final String column) {
-			try {
-				return ReprocessedExtendedTableFormat.valueOf(column).getColumnValue(reprocessed);
-			} catch (IllegalArgumentException exception) {
-
-			}
-			return tableFormat.getColumnValue(reprocessed, column);
-		}
-
-		@Override
-		protected EnumTableColumn<ReprocessedInterface> valueOf(final String column) {
-			try {
-				return ReprocessedExtendedTableFormat.valueOf(column);
-			} catch (IllegalArgumentException exception) {
-
-			}
-			return tableFormat.valueOf(column);
-		}
-
-		@Override
-		protected List<EnumTableColumn<ReprocessedInterface>> getColumns() {
-			ArrayList<EnumTableColumn<ReprocessedInterface>> columns = new ArrayList<>(tableFormat.getShownColumns());
-			columns.addAll(Arrays.asList(ReprocessedExtendedTableFormat.values()));
-			return columns;
-		}
-
-		@Override
-		protected List<EnumTableColumn<ReprocessedInterface>> getShownColumns() {
-			return new ArrayList<>(tableFormat.getShownColumns());
 		}
 
 		@Override
@@ -416,7 +366,7 @@ public class ReprocessedTab extends JMainTabSecondary {
 		}
 
 		@Override
-		protected void saveSettings(final String msg) {
+		public void saveSettings(final String msg) {
 			program.saveSettings("Reprocessed Table: " + msg); //Save Reprocessed Filters and Export Setttings
 		}
 	}

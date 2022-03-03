@@ -26,7 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
-import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.CliOptions;
 import net.nikr.eve.jeveasset.gui.tabs.values.Value;
 import net.nikr.eve.jeveasset.io.local.TrackerDataReader;
 import net.nikr.eve.jeveasset.io.local.TrackerDataWriter;
@@ -97,7 +97,7 @@ public class TrackerData {
 	}
 
 	public static Map<String, List<Value>> get() {
-		if (Program.isDebug() && LOCK.getReadHoldCount() == 0 && LOCK.getWriteHoldCount() == 0) {
+		if (CliOptions.get().isDebug() && LOCK.getReadHoldCount() == 0 && LOCK.getWriteHoldCount() == 0) {
 			throw new RuntimeException("Tracker Data not read locked");
 		}
 		return TRACKER_DATA;

@@ -52,10 +52,10 @@ import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
 import net.nikr.eve.jeveasset.gui.shared.components.JDropDownButton;
 import net.nikr.eve.jeveasset.gui.shared.components.JLockWindow;
 import net.nikr.eve.jeveasset.gui.shared.components.JLockWindow.LockWorkerAdaptor;
-import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.JSeparatorTable;
+import net.nikr.eve.jeveasset.gui.shared.table.TableFormatFactory;
 import net.nikr.eve.jeveasset.i18n.DialoguesAccount;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 
@@ -110,8 +110,7 @@ public class AccountManagerDialog extends JDialogCentered {
 		separatorList = new SeparatorList<>(eventList, new SeparatorListComparator(), 1, 3);
 		eventList.getReadWriteLock().readLock().unlock();
 
-		EnumTableFormatAdaptor<AccountTableFormat, OwnerType> tableFormat = new EnumTableFormatAdaptor<>(AccountTableFormat.class);
-		tableModel = EventModels.createTableModel(separatorList, tableFormat);
+		tableModel = EventModels.createTableModel(separatorList, TableFormatFactory.accountTableFormat());
 		jTable = new JAccountTable(program, tableModel, separatorList);
 		jTable.getTableHeader().setReorderingAllowed(false);
 		jTable.setSeparatorRenderer(new AccountSeparatorTableCell(this, listener, jTable, separatorList));

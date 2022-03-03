@@ -52,14 +52,15 @@ import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.CompareType;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.LogicType;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
+import net.nikr.eve.jeveasset.gui.shared.menu.JMenuColumns;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
-import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
+import net.nikr.eve.jeveasset.gui.shared.table.TableFormatFactory;
 import net.nikr.eve.jeveasset.i18n.TabsJobs;
 
 
@@ -85,7 +86,7 @@ public class IndustryJobsTab extends JMainTabPrimary {
 
 		ListenerClass listener = new ListenerClass();
 		//Table Format
-		tableFormat = new EnumTableFormatAdaptor<>(IndustryJobTableFormat.class);
+		tableFormat = TableFormatFactory.industryJobTableFormat();
 		//Backend
 		eventList = program.getProfileData().getIndustryJobsEventList();
 		//Sorting (per column)
@@ -181,7 +182,7 @@ public class IndustryJobsTab extends JMainTabPrimary {
 
 		@Override
 		public JMenu getColumnMenu() {
-			return tableFormat.getMenu(program, tableModel, jTable, NAME);
+			return new JMenuColumns<>(program, tableFormat, tableModel, jTable, NAME);
 		}
 
 		@Override
@@ -232,6 +233,7 @@ public class IndustryJobsTab extends JMainTabPrimary {
 		public IndustryJobsFilterControl(EventList<MyIndustryJob> exportEventList, Map<String, List<Filter>> defaultFilters) {
 			super(program.getMainWindow().getFrame(),
 					NAME,
+					tableFormat,
 					eventList,
 					exportEventList,
 					filterList,
@@ -241,27 +243,7 @@ public class IndustryJobsTab extends JMainTabPrimary {
 		}
 
 		@Override
-		protected Object getColumnValue(final MyIndustryJob item, final String column) {
-			return tableFormat.getColumnValue(item, column);
-		}
-
-		@Override
-		protected EnumTableColumn<MyIndustryJob> valueOf(final String column) {
-			return tableFormat.valueOf(column);
-		}
-
-		@Override
-		protected List<EnumTableColumn<MyIndustryJob>> getColumns() {
-			return new ArrayList<>(tableFormat.getOrderColumns());
-		}
-
-		@Override
-		protected List<EnumTableColumn<MyIndustryJob>> getShownColumns() {
-			return new ArrayList<>(tableFormat.getShownColumns());
-		}
-
-		@Override
-		protected void saveSettings(final String msg) {
+		public void saveSettings(final String msg) {
 			program.saveSettings("Industry Jobs Table: " + msg); //Save Industry Job Filters and Export Setttings
 		}
 	}

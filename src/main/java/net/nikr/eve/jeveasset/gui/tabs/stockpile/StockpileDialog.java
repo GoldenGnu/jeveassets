@@ -497,7 +497,7 @@ public class StockpileDialog extends JDialogCentered {
 		//Containers & MyLocations Loop
 		Set<String> containerSet = new HashSet<>();
 		myLocations.clear();
-		for (MyAsset asset : program.getAssetList()) {
+		for (MyAsset asset : program.getAssetsList()) {
 			if (!asset.getContainer().isEmpty()) {
 				containerSet.add(asset.getContainer());
 			}

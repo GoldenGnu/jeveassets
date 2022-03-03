@@ -228,7 +228,7 @@ public abstract class FakeProgram extends Program {
 	}
 
 	@Override
-	public List<MyAsset> getAssetList() {
+	public List<MyAsset> getAssetsList() {
 		throw new UnsupportedOperationException("Not implemented");
 	}
 

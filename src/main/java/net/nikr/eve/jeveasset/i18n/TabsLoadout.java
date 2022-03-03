@@ -41,6 +41,7 @@ public abstract class TabsLoadout extends Bundle {
 	public abstract String columnOwner();
 	public abstract String columnSlot();
 	public abstract String columnValue();
+	public abstract String columnShip();
 	public abstract String description();
 	public abstract String empty();
 	public abstract String expand();

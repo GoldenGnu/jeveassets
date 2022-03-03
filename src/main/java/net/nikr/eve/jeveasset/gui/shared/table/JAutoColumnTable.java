@@ -443,7 +443,7 @@ public class JAutoColumnTable extends JTable {
 		return maxWidth; //Return width
 	}
 
-	protected void saveColumnsWidth() {
+	public void saveColumnsWidth() {
 		EnumTableFormatAdaptor<?, ?> tableFormat = getEnumTableFormatAdaptor();
 		if (!loadingWidth && tableFormat != null && tableFormat.getResizeMode() == ResizeMode.NONE) {
 			List<SimpleColumn> columns = tableFormat.getColumns();

@@ -61,9 +61,9 @@ import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.JSimpleColorPicker;
 import net.nikr.eve.jeveasset.gui.shared.components.JDropDownButton;
 import net.nikr.eve.jeveasset.gui.shared.components.JFixedToolBar;
-import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
+import net.nikr.eve.jeveasset.gui.shared.table.TableFormatFactory;
 import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 
 
@@ -73,7 +73,6 @@ public class ColorSettingsPanel extends JSettingsPanel {
 	//Table
 	private final JColorTable jTable;
 	private final DefaultEventTableModel<ColorRow> tableModel;
-	private final EnumTableFormatAdaptor<ColorsTableFormat, ColorRow> tableFormat;
 	private final EventList<ColorRow> eventList;
 	private final DefaultEventSelectionModel<ColorRow> selectionModel;
 	private ColorThemeTypes colorThemeTypes;
@@ -88,8 +87,6 @@ public class ColorSettingsPanel extends JSettingsPanel {
 		
 		JSimpleColorPicker jSimpleColorPicker = new JSimpleColorPicker(settingsDialog.getDialog());
 
-		//Table Format
-		tableFormat = new EnumTableFormatAdaptor<>(ColorsTableFormat.class);
 		//Backend
 		eventList = EventListManager.create();
 
@@ -104,7 +101,7 @@ public class ColorSettingsPanel extends JSettingsPanel {
 		SeparatorList<ColorRow> separatorList = new SeparatorList<>(filterList, new ColorRowSeparatorComparator(), 1, Integer.MAX_VALUE);
 		
 		//Table Model
-		tableModel = EventModels.createTableModel(separatorList, tableFormat);
+		tableModel = EventModels.createTableModel(separatorList, TableFormatFactory.colorsTableFormat());
 		//Table
 		jTable = new JColorTable(program, tableModel, separatorList);
 		jTable.setSeparatorRenderer(new ColorSeparatorTableCell(jTable, separatorList));

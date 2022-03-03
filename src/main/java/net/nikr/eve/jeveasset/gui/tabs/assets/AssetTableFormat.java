@@ -67,7 +67,7 @@ public enum AssetTableFormat implements EnumTableColumn<MyAsset> {
 		}
 		@Override
 		public Object getColumnValue(final MyAsset from) {
-			return from.getCustomName();
+			return from.getItemName();
 		}
 		@Override
 		public boolean isShowDefault() {

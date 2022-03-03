@@ -33,8 +33,6 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JMenu;
@@ -46,14 +44,15 @@ import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JFixedToolBar;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTabSecondary;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
+import net.nikr.eve.jeveasset.gui.shared.menu.JMenuColumns;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
-import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
+import net.nikr.eve.jeveasset.gui.shared.table.TableFormatFactory;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerSkillPointFilter;
 import net.nikr.eve.jeveasset.i18n.TabsValues;
 
@@ -74,8 +73,12 @@ public class ValueTableTab extends JMainTabSecondary {
 
 	public static final String NAME = "value"; //Not to be changed!
 
+	private final IskData iskData;
+	
 	public ValueTableTab(final Program program) {
 		super(program, NAME, TabsValues.get().title(), Images.TOOL_VALUE_TABLE.getIcon(), true);
+
+		iskData = new IskData(program);
 
 		JFixedToolBar jToolBar = new JFixedToolBar();
 
@@ -89,7 +92,7 @@ public class ValueTableTab extends JMainTabSecondary {
 		jToolBar.addButton(jSkillPointsFilters);
 
 		//Table Format
-		tableFormat = new EnumTableFormatAdaptor<>(ValueTableFormat.class);
+		tableFormat = TableFormatFactory.valueTableFormat();
 		//Backend
 		eventList = EventListManager.create();
 		//Sorting (per column)
@@ -155,29 +158,8 @@ public class ValueTableTab extends JMainTabSecondary {
 		} else {
 			jSkillPointsFilters.setIcon(Images.EDIT_EDIT_WHITE.getIcon());
 		}
-		Map<String, Value> values = DataSetCreator.createDataSet(program.getProfileData(), Settings.getNow());
-		Value total = values.get(TabsValues.get().grandTotal());
-		total.setSkillPoints(0);
-		for (Value value : values.values()) {
-			TrackerSkillPointFilter skillPointFilter = Settings.get().getTrackerSettings().getSkillPointFilters().get(value.getName());
-			if (skillPointFilter != null) {
-				if (skillPointFilter.isEnabled()) {
-					value.setSkillPointsMinimum(skillPointFilter.getMinimum());
-					total.addSkillPointValue(value.getSkillPoints(), skillPointFilter.getMinimum());
-				} else {
-					value.setSkillPoints(0);
-				}
-			} else {
-				total.addSkillPointValue(value.getSkillPoints(), 0);
-			}
-		}
-		try {
-			eventList.getReadWriteLock().writeLock().lock();
-			eventList.clear();
-			eventList.addAll(values.values());
-		} finally {
-			eventList.getReadWriteLock().writeLock().unlock();
-		}
+		//Update Data
+		iskData.updateData(eventList);
 	}
 
 	@Override
@@ -219,7 +201,7 @@ public class ValueTableTab extends JMainTabSecondary {
 
 		@Override
 		public JMenu getColumnMenu() {
-			return tableFormat.getMenu(program, tableModel, jTable, NAME);
+			return new JMenuColumns<>(program, tableFormat, tableModel, jTable, NAME);
 		}
 
 		@Override
@@ -234,6 +216,7 @@ public class ValueTableTab extends JMainTabSecondary {
 		public ValueFilterControl(EventList<Value> exportEventList) {
 			super(program.getMainWindow().getFrame(),
 					NAME,
+					tableFormat,
 					eventList,
 					exportEventList,
 					filterList,
@@ -242,27 +225,7 @@ public class ValueTableTab extends JMainTabSecondary {
 		}
 
 		@Override
-		protected Object getColumnValue(final Value value, final String column) {
-			return tableFormat.getColumnValue(value, column);
-		}
-
-		@Override
-		protected EnumTableColumn<Value> valueOf(final String column) {
-			return tableFormat.valueOf(column);
-		}
-
-		@Override
-		protected List<EnumTableColumn<Value>> getColumns() {
-			return new ArrayList<>(tableFormat.getOrderColumns());
-		}
-
-		@Override
-		protected List<EnumTableColumn<Value>> getShownColumns() {
-			return new ArrayList<>(tableFormat.getShownColumns());
-		}
-
-		@Override
-		protected void saveSettings(final String msg) {
+		public void saveSettings(final String msg) {
 			program.saveSettings("ISK Talbe: " + msg); //Save ISK Filters and Export Setttings
 		}
 	}

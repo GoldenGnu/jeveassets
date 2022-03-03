@@ -43,9 +43,10 @@ import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.NumberValue;
 
 
-public abstract class FilterControl<E> extends ExportFilterControl<E> {
+public abstract class FilterControl<E> implements ColumnCache<E>, SimpleFilterControl<E> {
 
-	private final String name;
+	private final String toolName;
+	private final SimpleTableFormat<E> tableFormat;
 	private final EventList<E> eventList;
 	private final EventList<E> exportEventList;
 	private final List<SettingsUpdateListener> settingsUpdateListenerList;
@@ -57,7 +58,8 @@ public abstract class FilterControl<E> extends ExportFilterControl<E> {
 
 	/** Do not use this constructor - it's here only for test purposes. */
 	protected FilterControl() {
-		name = null;
+		toolName = null;
+		tableFormat = null;
 		eventList = null;
 		exportEventList = null;
 		settingsUpdateListenerList = null;
@@ -68,15 +70,15 @@ public abstract class FilterControl<E> extends ExportFilterControl<E> {
 		cache = new HashMap<>();
 	}
 
-	protected FilterControl(final JFrame jFrame, final String name, final EventList<E> eventList, final EventList<E> exportEventList, final FilterList<E> filterList, final Map<String, List<Filter>> filters) {
-		this(jFrame, name, eventList, exportEventList, filterList, filters, new HashMap<String, List<Filter>>());
+	protected FilterControl(final JFrame jFrame, final String toolName, SimpleTableFormat<E> tableFormat, final EventList<E> eventList, final EventList<E> exportEventList, final FilterList<E> filterList, final Map<String, List<Filter>> filters) {
+		this(jFrame, toolName, tableFormat, eventList, exportEventList, filterList, filters, new HashMap<String, List<Filter>>());
 	}
-	protected FilterControl(final JFrame jFrame, final String name, final EventList<E> eventList, final EventList<E> exportEventList, final FilterList<E> filterList, final Map<String, List<Filter>> filters, final Map<String, List<Filter>> defaultFilters) {
-		this(jFrame, name, eventList, exportEventList, filterList, filters, defaultFilters, new ArrayList<SettingsUpdateListener>());
+	protected FilterControl(final JFrame jFrame, final String toolName, SimpleTableFormat<E> tableFormat, final EventList<E> eventList, final EventList<E> exportEventList, final FilterList<E> filterList, final Map<String, List<Filter>> filters, final Map<String, List<Filter>> defaultFilters) {
+		this(jFrame, toolName, tableFormat, eventList, exportEventList, filterList, filters, defaultFilters, new ArrayList<SettingsUpdateListener>());
 	}
-	protected FilterControl(final JFrame jFrame, final String name, final EventList<E> eventList, final EventList<E> exportEventList, final FilterList<E> filterList, final Map<String, List<Filter>> filters, final Map<String, List<Filter>> defaultFilters, final List<SettingsUpdateListener> settingsUpdateListenerList) {
-
-		this.name = name;
+	protected FilterControl(final JFrame jFrame, final String toolName, SimpleTableFormat<E> tableFormat, final EventList<E> eventList, final EventList<E> exportEventList, final FilterList<E> filterList, final Map<String, List<Filter>> filters, final Map<String, List<Filter>> defaultFilters, final List<SettingsUpdateListener> settingsUpdateListenerList) {
+		this.toolName = toolName;
+		this.tableFormat = tableFormat;
 		this.eventList = eventList;
 		this.exportEventList = exportEventList;
 		this.filterList = filterList;
@@ -109,7 +111,7 @@ public abstract class FilterControl<E> extends ExportFilterControl<E> {
 		this.defaultFilters = defaultFilters;
 		ListenerClass listener = new ListenerClass();
 		filterList.addListEventListener(listener);
-		gui = new FilterGui<>(jFrame, this);
+		gui = new FilterGui<>(jFrame, this, tableFormat);
 		cache = new HashMap<>();
 	}
 
@@ -125,11 +127,13 @@ public abstract class FilterControl<E> extends ExportFilterControl<E> {
 		gui.refilter();
 	}
 
-	Map<E, String> getCache() {
+	@Override
+	public Map<E, String> getCache() {
 		return cache;
 	}
 
-	void addCache(E e, String haystack) {
+	@Override
+	public void addCache(E e, String haystack) {
 		cache.put(e, haystack);
 	}
 
@@ -147,7 +151,7 @@ public abstract class FilterControl<E> extends ExportFilterControl<E> {
 			return;
 		}
 		for (E e : update) {
-			cache.put(e, FilterMatcher.buildItemCache(this, e)); //Update outdated cache
+			cache.put(e, FilterMatcher.buildItemCache(tableFormat, e)); //Update outdated cache
 		}
 	}
 
@@ -156,7 +160,7 @@ public abstract class FilterControl<E> extends ExportFilterControl<E> {
 		try {
 			getEventList().getReadWriteLock().readLock().lock();
 			for (E e : getEventList()) {
-				String s = FilterMatcher.buildItemCache(this, e);
+				String s = FilterMatcher.buildItemCache(tableFormat, e);
 				cache.put(e, s);
 			}
 		} finally {
@@ -224,17 +228,17 @@ public abstract class FilterControl<E> extends ExportFilterControl<E> {
 				&& items.size() == 1 //Single element
 				&& !(items.get(0) instanceof SeparatorList.Separator) //Not Separator
 				&& columnIndex >= 0 //Shown column
-				&& columnIndex < getShownColumns().size()) { //Shown column
-			column = getShownColumns().get(columnIndex);
+				&& columnIndex < tableFormat.getShownColumns().size()) { //Shown column
+			column = tableFormat.getShownColumns().get(columnIndex);
 			isNumeric = isNumeric(column);
 			isDate = isDate(column);
-			text = FilterMatcher.format(getColumnValue(items.get(0), column.name()), false);
+			text = FilterMatcher.format(tableFormat.getColumnValue(items.get(0), column.name()), false);
 		}
 		return new FilterMenu<>(gui, column, text, isNumeric, isDate);
 	}
 
 	String getName() {
-		return name;
+		return toolName;
 	}
 
 	public EventList<E> getEventList() {

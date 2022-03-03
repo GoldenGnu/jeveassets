@@ -117,16 +117,10 @@ public class Program implements ActionListener {
 		TIMER
 	}
 	//Major.Minor.Bugfix [Release Candidate n] [BETA n] [DEV BUILD #n];
-	public static final String PROGRAM_VERSION = "7.0.1 DEV BUILD 1";
+	public static final String PROGRAM_VERSION = "7.1.0";
 	public static final String PROGRAM_NAME = "jEveAssets";
 	public static final String PROGRAM_HOMEPAGE = "https://eve.nikr.net/jeveasset";
-	public static final boolean PROGRAM_DEV_BUILD = false;
-
-	private static boolean debug = false;
-	private static boolean forceUpdate = false;
-	private static boolean forceNoUpdate = false;
-	private static boolean portable = false;
-	private static boolean lazySave = false;
+	private static final boolean PROGRAM_DEV_BUILD = false;
 
 	//Height
 	private static int height = 22; //Defaults to 22
@@ -176,39 +170,28 @@ public class Program implements ActionListener {
 	private final String localData;
 
 	public Program() {
-		if (debug) {
-			LOG.debug("Force Update: {} Force No Update: {}", forceUpdate, forceNoUpdate);
+		if (CliOptions.get().isDebug()) {
+			LOG.debug("Force Update: {} Force No Update: {}", CliOptions.get().isForceUpdate(), CliOptions.get().isForceNoUpdate());
 			DetectEdtViolationRepaintManager.install();
 		}
-		if (PROGRAM_DEV_BUILD) {
-			portable = true;
-		}
-
-	//Data
-		SplashUpdater.setText("Loading DATA");
-		LOG.info("DATA Loading...");
-		FileUtil.autoImportFileUtil();
-		StaticData.load();
-		Settings.load();
-		TrackerData.load();
-		AddedData.load();
-		ContractPriceManager.load();
-
+	//Load Static Data, Settings, Tracker Data, Added Data, Contract Prices
+		init();
+	//Look and feel
 		initLookAndFeel(Settings.get().getColorSettings().getLookAndFeelClass());
-
 		calcButtonsHeight(); //Must be done after setting the LAF
-
+	//Check for data/program updates
 		updater = new Updater();
 		localData = updater.getLocalData();
-		if (!PROGRAM_DEV_BUILD) {
+		if (!isDevBuild()) {
 			update();
 		}
-
+	//Load profile data
 		profileManager = new ProfileManager();
 		profileManager.searchProfile();
 		profileManager.loadActiveProfile();
 		profileData = new ProfileData(profileManager);
 		//Can not update profile data now - list needs to be empty doing creation...
+	//Load price data
 		priceDataGetter = new PriceDataGetter();
 		priceDataGetter.load();
 	//Timer
@@ -236,9 +219,6 @@ public class Program implements ActionListener {
 		industryJobsTab = new IndustryJobsTab(this);
 		LOG.info("Loading: Industry Slot Tab");
 		industrySlotsTab = new IndustrySlotsTab(this);
-		LOG.info("Loading: Industry Plot Tab");
-		//FIXME - - > IndustryPlotTab - remove or ?
-		//industryPlotTab = new IndustryPlotTab(this);
 		SplashUpdater.setProgress(56);
 		LOG.info("Loading: Market Orders Tab");
 		marketOrdersTab = new MarketOrdersTab(this);
@@ -302,7 +282,8 @@ public class Program implements ActionListener {
 		LOG.info("GUI loaded");
 	//Updating data...
 		LOG.info("Updating data...");
-		updateEventLists(); //Update price
+		updateEventLists();
+	//OSXAdapter
 		macOsxCode();
 	//Open Tools
 		for (String title : Settings.get().getShowTools()) {
@@ -319,11 +300,11 @@ public class Program implements ActionListener {
 		//Start timer
 		timerTicked();
 		LOG.info("Startup Done");
-		if (debug) {
+		if (CliOptions.get().isDebug()) {
 			LOG.info("Show Debug Warning");
 			JOptionPane.showMessageDialog(mainWindow.getFrame(), "WARNING: Debug is enabled", "Debug", JOptionPane.WARNING_MESSAGE);
 		}
-		if (PROGRAM_DEV_BUILD) {
+		if (isDevBuild()) {
 			JOptionPane.showMessageDialog(mainWindow.getFrame(), "WARNING: This is a dev build\r\n\r\nNotes:\r\n- Always run portable\r\n- Settings and profiles are cloned\r\n- Does not check for updates\r\n- Expect bugs!", "DEV BUILD", JOptionPane.WARNING_MESSAGE);
 		}
 		if (Settings.get().isSettingsLoadError()) {
@@ -334,6 +315,24 @@ public class Program implements ActionListener {
 			LOG.info("Show Account Manager");
 			accountManagerDialog.setVisible(true);
 		}
+	}
+
+	/**
+	 * Load: Static Data, Settings, Tracker Data, Added Data, Contract Prices.
+	 * PROGRAM_DEV_BUILD == true > run portable
+	 */
+	public static void init() {
+		if (isDevBuild()) {
+			CliOptions.get().setPortable(true);
+		}
+		SplashUpdater.setText("Loading DATA");
+		LOG.info("DATA Loading...");
+		FileUtil.autoImportFileUtil();
+		StaticData.load();
+		Settings.load();
+		TrackerData.load();
+		AddedData.load();
+		ContractPriceManager.load();
 	}
 
 	/**
@@ -657,7 +656,7 @@ public class Program implements ActionListener {
 	 * @param msg Who is saving what?
 	 */
 	public void saveSettings(final String msg) {
-		if (!lazySave && !Settings.ignoreSave()) {
+		if (!CliOptions.get().isLazySave() && !Settings.ignoreSave()) {
 			Settings.saveStart();
 			Thread thread = new SaveSettings(msg, this);
 			thread.start();
@@ -676,7 +675,7 @@ public class Program implements ActionListener {
 	}
 
 	public void saveSettingsAndProfile() {
-		if (lazySave) {
+		if (CliOptions.get().isLazySave()) {
 			doSaveSettings("API Update");
 		} else {
 			saveSettings("API Update");
@@ -710,7 +709,7 @@ public class Program implements ActionListener {
 	 * Used by macOsxCode() - should not be renamed
 	 */
 	public void saveExit() {
-		if (lazySave) {
+		if (CliOptions.get().isLazySave()) {
 			doSaveSettings("Exit");
 		} else {
 			LOG.info("Waiting for save queue to finish...");
@@ -831,7 +830,7 @@ public class Program implements ActionListener {
 		return profileData;
 	}
 
-	public List<MyAsset> getAssetList() {
+	public List<MyAsset> getAssetsList() {
 		return profileData.getAssetsList();
 	}
 
@@ -894,40 +893,8 @@ public class Program implements ActionListener {
 		});
 	}
 
-	public static boolean isDebug() {
-		return debug;
-	}
-
-	public static void setDebug(final boolean debug) {
-		Program.debug = debug;
-	}
-
-	public static boolean isForceNoUpdate() {
-		return forceNoUpdate;
-	}
-
-	public static void setForceNoUpdate(final boolean forceNoUpdate) {
-		Program.forceNoUpdate = forceNoUpdate;
-	}
-
-	public static boolean isForceUpdate() {
-		return forceUpdate;
-	}
-
-	public static void setForceUpdate(final boolean forceUpdate) {
-		Program.forceUpdate = forceUpdate;
-	}
-
-	public static void setPortable(final boolean portable) {
-		Program.portable = portable;
-	}
-
-	public static void setLazySave(final boolean lazySave) {
-		Program.lazySave = lazySave;
-	}
-
-	public static boolean isPortable() {
-		return portable;
+	public static boolean isDevBuild() {
+		return PROGRAM_DEV_BUILD;
 	}
 
 	public void updateStructures(Set<MyLocation> locations) {

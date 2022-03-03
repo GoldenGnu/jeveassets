@@ -20,7 +20,9 @@
  */
 package net.nikr.eve.jeveasset;
 
+import java.awt.Component;
 import java.awt.Desktop;
+import java.awt.GraphicsEnvironment;
 import java.awt.IllegalComponentStateException;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -83,7 +85,7 @@ public class NikrUncaughtExceptionHandler implements Thread.UncaughtExceptionHan
 				error = false;
 				return;
 			} else if (causes.contains(UnsupportedClassVersionError.class)) { //Old Java
-				JOptionPane.showMessageDialog(Main.getTop(),
+				showMessageDialog(Main.getTop(),
 						"Please update Java to the latest version.\r\n"
 						+ "The minimum supported version is " + JAVA + "\r\n"
 						+ "\r\n"
@@ -92,7 +94,7 @@ public class NikrUncaughtExceptionHandler implements Thread.UncaughtExceptionHan
 						+ "\r\n"
 						, Program.PROGRAM_NAME + " - Critical Error", JOptionPane.ERROR_MESSAGE);
 			} else if (causes.contains(OutOfMemoryError.class)) { //Out of memory
-				int value = JOptionPane.showConfirmDialog(Main.getTop(),
+				int value = showConfirmDialog(Main.getTop(),
 						"Java has run out of memory. jEveAssets will now close\r\n"
 						+ "Do you want to browse to the wiki article explaining how to fix this?\r\n"
 						+ "\r\n"
@@ -109,27 +111,14 @@ public class NikrUncaughtExceptionHandler implements Thread.UncaughtExceptionHan
 					Updater updater = new Updater();
 					updater.fixMissingClasses();
 				} catch (Throwable ex) { //Better safe than sorry...
-					JOptionPane.showMessageDialog(Main.getTop(),
+					showMessageDialog(Main.getTop(),
 							"Please, re-download jEveAssets and leave the unzipped directory intact\r\n"
 							+ "Press OK to close jEveAssets"
 							, Program.PROGRAM_NAME + " - Critical Error", JOptionPane.ERROR_MESSAGE);
 				}
-			} else if (causes.contains(UnsatisfiedLinkError.class) && t.getMessage().contains("splashscreen")) { //Headless Java
-				System.err.println("ERROR: Your version of java does not support a GUI");
-				System.err.println("       Please, install in non-headless version of " + JAVA + " (or later) to run jEveAssets");
-				System.out.println("ERROR: Your version of java does not support a GUI");
-				System.out.println("       Please, install in non-headless version of " + JAVA + " (or later) to run jEveAssets");
-				try {
-					JOptionPane.showMessageDialog(Main.getTop(), "Your version of java does not support a GUI\r\n"
-							+ "Please, install in non-headless version of " + JAVA + " (or later) to run jEveAssets",
-							Program.PROGRAM_NAME + " - Critical Error",
-							JOptionPane.ERROR_MESSAGE);
-				} catch (Throwable ex) {
-					//We tried our best, nothing more to do now...
-				}
 			} else { //Bug
 				if (isJavaBug(t)) { //Java Bug
-					JOptionPane.showMessageDialog(Main.getTop(),
+					showMessageDialog(Main.getTop(),
 						"You have encountered a bug that is most likely a java bug.\r\n"
 						+ "Updating to the latest version of java may fix this problem.\r\n"
 						+ "It's still very helpful to send the the bug report.\r\n"
@@ -139,7 +128,7 @@ public class NikrUncaughtExceptionHandler implements Thread.UncaughtExceptionHan
 						+ "\r\n"
 						, Program.PROGRAM_NAME + " - Critical Error", JOptionPane.ERROR_MESSAGE);
 				}
-				int value = JOptionPane.showConfirmDialog(Main.getTop(),
+				int value = showConfirmDialog(Main.getTop(),
 						"Send bug report?\r\n"
 						+ "\r\n"
 						+ "Data send and saved:\r\n"
@@ -153,11 +142,27 @@ public class NikrUncaughtExceptionHandler implements Thread.UncaughtExceptionHan
 						, Program.PROGRAM_NAME + " - Critical Error", JOptionPane.OK_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE);
 				if (value == JOptionPane.OK_OPTION) {
 					String result = send(t);
-					JOptionPane.showMessageDialog(Main.getTop(), result, "Bug Report", JOptionPane.PLAIN_MESSAGE);
+					showMessageDialog(Main.getTop(), result, "Bug Report", JOptionPane.PLAIN_MESSAGE);
 				}
 			}
 			System.exit(-1);
 		}
+	}
+
+	private void showMessageDialog(Component parentComponent,
+        Object message, String title, int messageType) {
+		if (GraphicsEnvironment.isHeadless()) {
+			return;
+		}
+		JOptionPane.showMessageDialog(parentComponent, message, title, messageType);
+	}
+
+	public static int showConfirmDialog(Component parentComponent,
+        Object message, String title, int optionType, int messageType) {
+		if (GraphicsEnvironment.isHeadless()) {
+			return JOptionPane.CANCEL_OPTION;
+		}
+		return JOptionPane.showConfirmDialog(parentComponent, message, title, optionType, messageType);
 	}
 
 	private static boolean isJavaBug(Throwable t) {

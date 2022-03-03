@@ -30,7 +30,6 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JMenu;
@@ -43,13 +42,14 @@ import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JFixedToolBar;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTabPrimary;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
+import net.nikr.eve.jeveasset.gui.shared.menu.JMenuColumns;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
-import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
+import net.nikr.eve.jeveasset.gui.shared.table.TableFormatFactory;
 import net.nikr.eve.jeveasset.i18n.TabsJournal;
 
 
@@ -72,7 +72,7 @@ public class JournalTab extends JMainTabPrimary {
 		super(program, NAME, TabsJournal.get().title(), Images.TOOL_JOURNAL.getIcon(), true);
 
 		//Table Format
-		tableFormat = new EnumTableFormatAdaptor<>(JournalTableFormat.class);
+		tableFormat = TableFormatFactory.journalTableFormat();
 		//Backend
 		eventList = program.getProfileData().getJournalEventList();
 		//Sorting (per column)
@@ -170,7 +170,7 @@ public class JournalTab extends JMainTabPrimary {
 
 		@Override
 		public JMenu getColumnMenu() {
-			return tableFormat.getMenu(program, tableModel, jTable, NAME);
+			return new JMenuColumns<>(program, tableFormat, tableModel, jTable, NAME);
 		}
 
 		@Override
@@ -193,6 +193,7 @@ public class JournalTab extends JMainTabPrimary {
 		public JournalFilterControl(SortedList<MyJournal> exportEventList) {
 			super(program.getMainWindow().getFrame(),
 					NAME,
+					tableFormat,
 					eventList,
 					exportEventList,
 					filterList,
@@ -201,27 +202,7 @@ public class JournalTab extends JMainTabPrimary {
 		}
 
 		@Override
-		protected Object getColumnValue(final MyJournal journal, final String column) {
-			return tableFormat.getColumnValue(journal, column);
-		}
-
-		@Override
-		protected EnumTableColumn<MyJournal> valueOf(final String column) {
-			return tableFormat.valueOf(column);
-		}
-
-		@Override
-		protected List<EnumTableColumn<MyJournal>> getColumns() {
-			return new ArrayList<>(tableFormat.getOrderColumns());
-		}
-
-		@Override
-		protected List<EnumTableColumn<MyJournal>> getShownColumns() {
-			return new ArrayList<>(tableFormat.getShownColumns());
-		}
-
-		@Override
-		protected void saveSettings(final String msg) {
+		public void saveSettings(final String msg) {
 			program.saveSettings("Journal Table: " + msg); //Save Journal Filters and Export Setttings
 		}
 	}

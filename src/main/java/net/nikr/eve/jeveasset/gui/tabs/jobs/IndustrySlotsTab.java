@@ -31,28 +31,24 @@ import ca.odell.glazedlists.swing.TableComparatorChooser;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import javax.swing.JComponent;
 import javax.swing.JMenu;
 import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
-import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.types.LocationType;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTabSecondary;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
+import net.nikr.eve.jeveasset.gui.shared.menu.JMenuColumns;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
-import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
+import net.nikr.eve.jeveasset.gui.shared.table.TableFormatFactory;
 import net.nikr.eve.jeveasset.i18n.TabsIndustrySlots;
 
 
@@ -71,10 +67,13 @@ public class IndustrySlotsTab extends JMainTabSecondary {
 
 	public static final String NAME = "industryslots"; //Not to be changed!
 
+	private final IndustrySlotsData industrySlotsData;
+
 	public IndustrySlotsTab(final Program program) {
 		super(program, NAME, TabsIndustrySlots.get().title(), Images.TOOL_INDUSTRY_SLOTS.getIcon(), true);
+		industrySlotsData = new IndustrySlotsData(program);
 		//Table Format
-		tableFormat = new EnumTableFormatAdaptor<>(IndustrySlotTableFormat.class);
+		tableFormat = TableFormatFactory.industrySlotTableFormat();
 		//Backend
 		eventList = EventListManager.create();
 		//Sorting (per column)
@@ -126,36 +125,8 @@ public class IndustrySlotsTab extends JMainTabSecondary {
 
 	@Override
 	public void updateData() {
-		Map<Long, IndustrySlot> industrySlots = new HashMap<>();
-		IndustrySlot total = new IndustrySlot(TabsIndustrySlots.get().grandTotal());
-		for (OwnerType ownerType : program.getOwnerTypes()) {
-			if (ownerType.isCorporation()) {
-				continue;
-			}
-			IndustrySlot old = industrySlots.put(ownerType.getOwnerID(), new IndustrySlot(ownerType));
-			if (old == null) {
-				total.count(ownerType);
-			}
-		}
-		for (MyIndustryJob industryJob : program.getIndustryJobsList()) {
-			IndustrySlot industrySlot = industrySlots.get(industryJob.getInstallerID());
-			if (industrySlot == null) {
-				industrySlot = industrySlots.get(industryJob.getOwnerID());
-			}
-			if (industrySlot == null) {
-				continue;
-			}
-			industrySlot.count(industryJob);
-			total.count(industryJob);
-		}
-		industrySlots.put(0L, total);
-		try {
-			eventList.getReadWriteLock().writeLock().lock();
-			eventList.clear();
-			eventList.addAll(industrySlots.values());
-		} finally {
-			eventList.getReadWriteLock().writeLock().unlock();
-		}
+		//Update Data
+		industrySlotsData.updateData(eventList);
 	}
 
 	@Override
@@ -201,7 +172,7 @@ public class IndustrySlotsTab extends JMainTabSecondary {
 
 		@Override
 		public JMenu getColumnMenu() {
-			return tableFormat.getMenu(program, tableModel, jTable, NAME);
+			return new JMenuColumns<>(program, tableFormat, tableModel, jTable, NAME);
 		}
 
 		@Override
@@ -216,6 +187,7 @@ public class IndustrySlotsTab extends JMainTabSecondary {
 		public IndustrySlotFilterControl(EventList<IndustrySlot> exportEventList) {
 			super(program.getMainWindow().getFrame(),
 					NAME,
+					tableFormat,
 					eventList,
 					exportEventList,
 					filterList,
@@ -224,27 +196,7 @@ public class IndustrySlotsTab extends JMainTabSecondary {
 		}
 
 		@Override
-		protected Object getColumnValue(final IndustrySlot value, final String column) {
-			return tableFormat.getColumnValue(value, column);
-		}
-
-		@Override
-		protected EnumTableColumn<IndustrySlot> valueOf(final String column) {
-			return tableFormat.valueOf(column);
-		}
-
-		@Override
-		protected List<EnumTableColumn<IndustrySlot>> getColumns() {
-			return new ArrayList<>(tableFormat.getOrderColumns());
-		}
-
-		@Override
-		protected List<EnumTableColumn<IndustrySlot>> getShownColumns() {
-			return new ArrayList<>(tableFormat.getShownColumns());
-		}
-
-		@Override
-		protected void saveSettings(final String msg) {
+		public void saveSettings(final String msg) {
 			program.saveSettings("ISK Talbe: " + msg); //Save ISK Filters and Export Setttings
 		}
 	}

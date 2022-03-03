@@ -40,18 +40,13 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
-import java.util.TreeSet;
 import javax.swing.ButtonGroup;
 import javax.swing.GroupLayout;
-import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -65,9 +60,6 @@ import javax.swing.UIManager;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.api.my.MyAsset;
-import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob.IndustryActivity;
-import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.tag.TagUpdate;
 import net.nikr.eve.jeveasset.data.settings.types.LocationType;
@@ -77,27 +69,25 @@ import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.components.JFixedToolBar;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTabSecondary;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
+import net.nikr.eve.jeveasset.gui.shared.menu.JMenuColumns;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuData.AssetMenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
-import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
+import net.nikr.eve.jeveasset.gui.shared.table.TableFormatFactory;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.HierarchyColumn;
-import net.nikr.eve.jeveasset.gui.tabs.tree.TreeAsset.TreeType;
 import net.nikr.eve.jeveasset.gui.tabs.tree.TreeTab.AssetTreeExpansionModel.ExpandedState;
-import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.i18n.TabsAssets;
 import net.nikr.eve.jeveasset.i18n.TabsTree;
-import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 
 
 public class TreeTab extends JMainTabSecondary implements TagUpdate {
 
 	private enum TreeAction {
-		UPDATE,
+		TYPE,
 		COLLAPSE,
 		EXPAND,
 		REPROCESS_COLORS
@@ -127,16 +117,16 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate {
 	private final EnumTableFormatAdaptor<TreeTableFormat, TreeAsset> tableFormat;
 	private final DefaultEventSelectionModel<TreeAsset> selectionModel;
 	private final AssetTreeExpansionModel expansionModel;
-	private final Set<TreeAsset> locationsExport = new TreeSet<>(new AssetTreeComparator());
-	private final Set<TreeAsset> locations = new TreeSet<>(new AssetTreeComparator());
-	private final Set<TreeAsset> categoriesExport = new TreeSet<>(new AssetTreeComparator());
-	private final Set<TreeAsset> categories = new TreeSet<>(new AssetTreeComparator());
 
 	public static final String NAME = "treeassets"; //Not to be changed!
 
-	//FIXME - - - - > Sorted export not tested/working
+	private final TreeData treeData;
+
 	public TreeTab(final Program program) {
 		super(program, NAME, TabsTree.get().title(), Images.TOOL_TREE.getIcon(), true);
+
+		treeData = new TreeData(program);
+
 		layout.setAutoCreateGaps(true);
 
 		ListenerClass listener = new ListenerClass();
@@ -146,13 +136,13 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate {
 		ButtonGroup buttonGroup = new ButtonGroup();
 
 		jCategories = new JToggleButton(TabsTree.get().categories(), Images.LOC_GROUPS.getIcon());
-		jCategories.setActionCommand(TreeAction.UPDATE.name());
+		jCategories.setActionCommand(TreeAction.TYPE.name());
 		jCategories.addActionListener(listener);
 		buttonGroup.add(jCategories);
 		jToolBarLeft.addButton(jCategories);
 
 		JToggleButton jLocation = new JToggleButton(TabsTree.get().locations(), Images.LOC_LOCATIONS.getIcon());
-		jLocation.setActionCommand(TreeAction.UPDATE.name());
+		jLocation.setActionCommand(TreeAction.TYPE.name());
 		jLocation.addActionListener(listener);
 		jLocation.setSelected(true);
 		buttonGroup.add(jLocation);
@@ -195,7 +185,7 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate {
 		this.addStatusbarLabel(jValue);
 
 		//Table Format
-		tableFormat = new EnumTableFormatAdaptor<>(TreeTableFormat.class);
+		tableFormat = TableFormatFactory.treeTableFormat();
 		//Backend
 		eventList = EventListManager.create();
 		exportEventList = EventListManager.create();
@@ -277,162 +267,9 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate {
 
 	@Override
 	public void updateData() {
-		locations.clear();
-		categories.clear();
-		locationsExport.clear();
-		categoriesExport.clear();
-		Map<Flag, Set<String>> flags = new HashMap<>();
-		Flag shipHangar = new Flag("Ship Hangar", Images.LOC_HANGAR_SHIPS.getIcon());
-		flags.put(new Flag("Asset Safety", Images.LOC_SAFTY.getIcon()), Collections.singleton("AssetSafety")); //FlagID 36 (Asset Safety)
-		flags.put(new Flag("Item Hangar", Images.LOC_HANGAR_ITEMS.getIcon()), Collections.singleton("Hangar")); //FlagID 4
-		Set<String> deliveries = new HashSet<>();
-		deliveries.add("Deliveries"); //FlagID 173
-		deliveries.add("CorpMarket"); //FlagID 62 (Corporation Deliveries)
-		flags.put(new Flag("Deliveries", Images.LOC_DELIVERIES.getIcon()), deliveries);
-		Set<String> industryJobs = new HashSet<>();
-		industryJobs.add(General.get().industryJobFlag());
-		industryJobs.add(IndustryActivity.ACTIVITY_MANUFACTURING.toString()); //industry job manufacturing
-		industryJobs.add(IndustryActivity.ACTIVITY_REACTIONS.toString()); //industry job reactions
-		flags.put(new Flag(General.get().industryJobFlag(), Images.LOC_INDUSTRY.getIcon()), industryJobs);
-		Set<String> contracts = new HashSet<>();
-		contracts.add(General.get().contractExcluded());
-		contracts.add(General.get().contractIncluded());
-		flags.put(new Flag("Contracts", Images.LOC_CONTRACTS.getIcon()), contracts);
-		Set<String> marketOrders = new HashSet<>();
-		marketOrders.add(General.get().marketOrderBuyFlag());
-		marketOrders.add(General.get().marketOrderSellFlag());
-		flags.put(new Flag("Market Orders", Images.LOC_MARKET.getIcon()), marketOrders);
-		Map<String, TreeAsset> categoryCache = new HashMap<>();
-		Map<String, TreeAsset> locationCache = new HashMap<>();
-		MyLocation emptyLocation = new MyLocation(0, "", 0, "", 0, "", 0, "", "");
-		for (MyAsset asset : program.getAssetList()) {
-		//LOCATION
-			List<TreeAsset> locationTree = new ArrayList<>();
-			MyLocation location = asset.getLocation();
-
-			//Region
-			String regionKey = location.getRegion();
-			TreeAsset regionAsset = locationCache.get(location.getRegion());
-			if (regionAsset == null) {
-				regionAsset = new TreeAsset(ApiIdConverter.getLocation(location.getRegionID()), location.getRegion(), regionKey, Images.LOC_REGION.getIcon(), locationTree);
-				locationCache.put(regionKey, regionAsset);
-				locationsExport.add(regionAsset);
-			}
-			locationTree.add(regionAsset);
-
-			//System
-			String systemKey = location.getRegion() + location.getSystem();
-			TreeAsset systemAsset = locationCache.get(systemKey);
-			if (systemAsset == null) {
-				systemAsset = new TreeAsset(ApiIdConverter.getLocation(location.getSystemID()), location.getSystem(), systemKey, Images.LOC_SYSTEM.getIcon(), locationTree);
-				locationCache.put(systemKey, systemAsset);
-				locationsExport.add(systemAsset);
-			}
-			locationTree.add(systemAsset);
-
-			String fullLocation = location.getRegion()+location.getSystem();
-			//Station
-			if (location.isStation() || location.isPlanet()) { //Station or Planet
-				String stationKey = location.getRegion() + location.getSystem() + location.getLocation();
-				TreeAsset stationAsset = locationCache.get(stationKey);
-				if (stationAsset == null) {
-					if (asset.getLocation().isPlanet()) {
-						stationAsset = new TreeAsset(asset.getLocation(), location.getLocation(), stationKey, Images.LOC_PLANET.getIcon(), locationTree);
-					} else {
-						stationAsset = new TreeAsset(asset.getLocation(), location.getLocation(), stationKey, Images.LOC_STATION.getIcon(), locationTree);
-					}
-					locationCache.put(stationKey, stationAsset);
-					locationsExport.add(stationAsset);
-				}
-				locationTree.add(stationAsset);
-				fullLocation = location.getRegion()+location.getSystem()+location.getLocation();
-			}
-
-			//Add parent item(s)
-			String parentKey = fullLocation;
-			List<MyAsset> list = new ArrayList<>(asset.getParents()); //Copy
-			if (asset.getAssets().isEmpty()) {
-				list.add(asset);
-			}
-			if (!list.isEmpty()) {
-				for (MyAsset parentAsset : list) {
-					//Office
-					MyAsset parent = parentAsset.getParent();
-					if (parent != null && parent.getTypeID() == 27) { //Office divisions
-						String cacheKey = parentAsset.getFlagName() + " #" + parent.getItemID();
-						TreeAsset divisionAsset = locationCache.get(cacheKey);
-						if (divisionAsset == null) {						
-							divisionAsset = new TreeAsset(location, parentAsset.getFlagName(), parentKey + cacheKey, Images.LOC_DIVISION.getIcon(), locationTree);
-							locationCache.put(cacheKey, divisionAsset);
-							locationsExport.add(divisionAsset);
-						}
-						parentKey = parentKey + cacheKey;
-						locationTree.add(divisionAsset);
-					}
-					//Flags
-					if (parent == null) {
-						for (Map.Entry<Flag, Set<String>> entry: flags.entrySet()) {
-							if (entry.getValue().contains(parentAsset.getFlag())) {
-								final Flag flag;
-								if (entry.getKey().getName().equals("Item Hangar") && parentAsset.getItem().isShip()) {
-									flag = shipHangar;
-								} else {
-									flag = entry.getKey();
-								}
-								String cacheKey = flag.getName() + "#" + parentAsset.getLocationID();
-								TreeAsset hangarAsset = locationCache.get(cacheKey);
-								if (hangarAsset == null) {						
-									hangarAsset = new TreeAsset(location, flag.getName(), parentKey + cacheKey, flag.getIcon(), locationTree);
-									locationCache.put(cacheKey, hangarAsset);
-									locationsExport.add(hangarAsset);
-								}
-								parentKey = parentKey + cacheKey;
-								locationTree.add(hangarAsset);
-							}
-						}
-					}
-					//Item
-					String cacheKey = parentAsset.getName() + " #" + parentAsset.getItemID();
-					TreeAsset parentTreeAsset = locationCache.get(cacheKey);
-					if (parentTreeAsset == null) {						
-						parentTreeAsset = new TreeAsset(parentAsset, TreeType.LOCATION, locationTree, parentKey, !parentAsset.getAssets().isEmpty());
-						locationCache.put(cacheKey, parentTreeAsset);
-						locations.add(parentTreeAsset);
-						locationsExport.add(parentTreeAsset);
-					}
-					parentKey = parentKey + parentAsset.getName() + " #" + parentAsset.getItemID();
-					locationTree.add(parentTreeAsset);
-				}
-			}
-			
-		//CATEGORY
-			List<TreeAsset> categoryTree = new ArrayList<>();
-
-			//Category
-			String categoryKey = asset.getItem().getCategory();
-			TreeAsset categoryAsset = categoryCache.get(categoryKey);
-			if (categoryAsset == null) {
-				categoryAsset = new TreeAsset(emptyLocation, asset.getItem().getCategory(), categoryKey, null, categoryTree, 1);
-				categoryCache.put(categoryKey, categoryAsset);
-			}
-			categoryTree.add(categoryAsset);
-			categoriesExport.add(categoryAsset);
-
-			//Group
-			String groupKey = categoryKey + asset.getItem().getGroup();
-			TreeAsset groupAsset = categoryCache.get(groupKey);
-			if (groupAsset == null) {
-				groupAsset = new TreeAsset(emptyLocation, asset.getItem().getGroup(), groupKey, null, categoryTree, 1);
-				categoryCache.put(groupKey, groupAsset);
-			}
-			categoryTree.add(groupAsset);
-			categoriesExport.add(groupAsset);
-
-			//Item
-			TreeAsset category = new TreeAsset(asset, TreeType.CATEGORY, categoryTree, groupKey, false);
-			categories.add(category);
-			categoriesExport.add(category);
-		}
+		//Update Data
+		treeData.updateData();
+		//Update GUI
 		updateTableFull();
 	}
 
@@ -485,11 +322,11 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate {
 		final Set<TreeAsset> treeAssets;
 		final Set<TreeAsset> treeAssetsExport;
 		if (jCategories.isSelected()) {
-			treeAssets = categories;
-			treeAssetsExport = categoriesExport;
+			treeAssets = treeData.getCategories();
+			treeAssetsExport = treeData.getCategoriesExport();
 		} else {
-			treeAssets = locations;
-			treeAssetsExport = locationsExport;
+			treeAssets = treeData.getLocations();
+			treeAssetsExport = treeData.getLocationsExport();
 		}
 		//Update Jumps
 		eventList.getReadWriteLock().writeLock().lock();
@@ -517,11 +354,11 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate {
 	private void updateTotals() {
 		//Reset
 		if (jCategories.isSelected()) {
-			for (TreeAsset treeAsset : categoriesExport) {
+			for (TreeAsset treeAsset : treeData.getCategoriesExport()) {
 				treeAsset.resetValues();
 			}
 		} else {
-			for (TreeAsset treeAsset : locationsExport) {
+			for (TreeAsset treeAsset : treeData.getLocationsExport()) {
 				treeAsset.resetValues();
 			}
 		}
@@ -581,7 +418,7 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate {
 
 		@Override
 		public JMenu getColumnMenu() {
-			return tableFormat.getMenu(program, tableModel, jTable, NAME);
+			return new JMenuColumns<>(program, tableFormat, tableModel, jTable, NAME);
 		}
 
 		@Override
@@ -598,7 +435,7 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate {
 		
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			if (TreeAction.UPDATE.name().equals(e.getActionCommand())) {
+			if (TreeAction.TYPE.name().equals(e.getActionCommand())) {
 				expansionModel.setState(ExpandedState.LOAD);
 				updateTableFull();
 			} else if (TreeAction.COLLAPSE.name().equals(e.getActionCommand())) {
@@ -669,54 +506,6 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate {
 					}
 				}
 			});
-		}
-	}
-
-	private static class Flag implements Comparable<Flag> {
-		private final String name;
-		private final Icon icon;
-
-		public Flag(String name, Icon icon) {
-			this.name = name;
-			this.icon = icon;
-		}
-
-		public String getName() {
-			return name;
-		}
-
-		public Icon getIcon() {
-			return icon;
-		}
-
-		@Override
-		public int hashCode() {
-			int hash = 3;
-			hash = 61 * hash + Objects.hashCode(this.name);
-			return hash;
-		}
-
-		@Override
-		public boolean equals(Object obj) {
-			if (this == obj) {
-				return true;
-			}
-			if (obj == null) {
-				return false;
-			}
-			if (getClass() != obj.getClass()) {
-				return false;
-			}
-			final Flag other = (Flag) obj;
-			if (!Objects.equals(this.name, other.name)) {
-				return false;
-			}
-			return true;
-		}
-
-		@Override
-		public int compareTo(Flag o) {
-			return this.name.compareTo(o.name);
 		}
 	}
 
@@ -853,31 +642,12 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate {
 		public TreeFilterControl() {
 			super(program.getMainWindow().getFrame(),
 					NAME,
+					tableFormat,
 					eventList,
 					exportEventList,
 					filterList,
 					Settings.get().getTableFilters(NAME)
 					);
-		}
-
-		@Override
-		protected Object getColumnValue(final TreeAsset item, final String column) {
-			return tableFormat.getColumnValue(item, column);
-		}
-
-		@Override
-		protected EnumTableColumn<TreeAsset> valueOf(final String column) {
-			return tableFormat.valueOf(column);
-		}
-
-		@Override
-		protected List<EnumTableColumn<TreeAsset>> getColumns() {
-			return new ArrayList<>(tableFormat.getOrderColumns());
-		}
-
-		@Override
-		protected List<EnumTableColumn<TreeAsset>> getShownColumns() {
-			return new ArrayList<>(tableFormat.getShownColumns());
 		}
 
 		@Override
@@ -900,7 +670,7 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate {
 		}
 
 		@Override
-		protected void saveSettings(final String msg) {
+		public void saveSettings(final String msg) {
 			program.saveSettings("Tree Talbe: " + msg); //Save Tree Filters and Export Setttings
 		}
 	}

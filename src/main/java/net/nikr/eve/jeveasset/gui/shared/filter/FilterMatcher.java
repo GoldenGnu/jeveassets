@@ -44,7 +44,8 @@ public class FilterMatcher<E> implements Matcher<E> {
 	private static final NumberFormat PERCENT_FORMAT = NumberFormat.getPercentInstance(LOCALE);
 	private static final Calendar CALENDAR = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
 
-	private final FilterControl<E> filterControl;
+	private final SimpleTableFormat<E> tableFormat;
+	private final ColumnCache<E> columnCache;
 	private final int group;
 	private final boolean and;
 	private final EnumTableColumn<?> enumColumn;
@@ -53,12 +54,13 @@ public class FilterMatcher<E> implements Matcher<E> {
 	private final Pattern pattern;
 	private final boolean empty;
 
-	FilterMatcher(final FilterControl<E> filterControl, final Filter filter) {
-		this(filterControl, filter.getGroup(), filter.getLogic(), filter.getColumn(), filter.getCompareType(), filter.getText(), filter.isEnabled());
+	FilterMatcher(final SimpleTableFormat<E> filterControl, ColumnCache<E> columnCache, final Filter filter) {
+		this(filterControl, columnCache, filter.getGroup(), filter.getLogic(), filter.getColumn(), filter.getCompareType(), filter.getText(), filter.isEnabled());
 	}
 
-	FilterMatcher(final FilterControl<E> filterControl, int group, final LogicType logic, final EnumTableColumn<?> enumColumn, final CompareType compare, final String text, final boolean enabled) {
-		this.filterControl = filterControl;
+	FilterMatcher(final SimpleTableFormat<E> tableFormat, ColumnCache<E> columnCache, int group, final LogicType logic, final EnumTableColumn<?> enumColumn, final CompareType compare, final String text, final boolean enabled) {
+		this.tableFormat = tableFormat;
+		this.columnCache = columnCache;
 		this.group = group;
 		this.enumColumn = enumColumn;
 		this.compare = compare;
@@ -99,7 +101,7 @@ public class FilterMatcher<E> implements Matcher<E> {
 		if (enumColumn instanceof Filter.AllColumn) {
 			return matchesAll(item);
 		}
-		Object column = filterControl.getColumnValue(item, enumColumn.name());
+		Object column = tableFormat.getColumnValue(item, enumColumn.name());
 		if (column == null) {
 			return false;
 		}
@@ -129,21 +131,21 @@ public class FilterMatcher<E> implements Matcher<E> {
 			case AFTER:
 				return after(column, text);
 			case GREATER_THAN_COLUMN:
-				return great(column, filterControl.getColumnValue(item, text));
+				return great(column, tableFormat.getColumnValue(item, text));
 			case LESS_THAN_COLUMN:
-				return less(column, filterControl.getColumnValue(item, text));
+				return less(column, tableFormat.getColumnValue(item, text));
 			case EQUALS_COLUMN:
-				return equals(column, format(filterControl.getColumnValue(item, text), false));
+				return equals(column, format(tableFormat.getColumnValue(item, text), false));
 			case EQUALS_NOT_COLUMN:
-				return !equals(column, format(filterControl.getColumnValue(item, text), false));
+				return !equals(column, format(tableFormat.getColumnValue(item, text), false));
 			case CONTAINS_COLUMN:
-				return contains(column, format(filterControl.getColumnValue(item, text), false));
+				return contains(column, format(tableFormat.getColumnValue(item, text), false));
 			case CONTAINS_NOT_COLUMN:
-				return !contains(column, format(filterControl.getColumnValue(item, text), false));
+				return !contains(column, format(tableFormat.getColumnValue(item, text), false));
 			case BEFORE_COLUMN:
-				return before(column, filterControl.getColumnValue(item, text));
+				return before(column, tableFormat.getColumnValue(item, text));
 			case AFTER_COLUMN:
-				return after(column, filterControl.getColumnValue(item, text));
+				return after(column, tableFormat.getColumnValue(item, text));
 			case LAST_DAYS:
 				return lastDays(column, text);
 			case LAST_HOURS:
@@ -154,9 +156,9 @@ public class FilterMatcher<E> implements Matcher<E> {
 		}
 	}
 
-	public static <E> String buildItemCache(FilterControl<E> filterControl, E e) {
+	public static <E> String buildItemCache(SimpleTableFormat<E> filterControl, E e) {
 		StringBuilder builder = new StringBuilder();
-		for (EnumTableColumn<E> testColumn : filterControl.getColumns()) {
+		for (EnumTableColumn<E> testColumn : filterControl.getAllColumns()) {
 			Object columnValue = filterControl.getColumnValue(e, testColumn.name());
 			if (columnValue != null) {
 				builder.append("\n");
@@ -168,10 +170,15 @@ public class FilterMatcher<E> implements Matcher<E> {
 	}
 
 	private boolean matchesAll(final E item) {
-		String haystack = filterControl.getCache().get(item);
-		if (haystack == null) { //Will be build on update if any filter is set
-			haystack = buildItemCache(filterControl, item);
-			filterControl.addCache(item, haystack);
+		String haystack;
+		if (columnCache != null) {
+			haystack = columnCache.getCache().get(item);
+			if (haystack == null) { //Will be build on update if any filter is set
+				haystack = buildItemCache(tableFormat, item);
+				columnCache.addCache(item, haystack);
+			}
+		} else {
+			haystack = buildItemCache(tableFormat, item);
 		}
 		if (compare == null || text == null) {
 			return true;

@@ -31,7 +31,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -49,7 +48,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.my.MyAsset;
-import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.settings.types.LocationType;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
@@ -61,17 +59,18 @@ import net.nikr.eve.jeveasset.gui.shared.components.JMainTabSecondary;
 import net.nikr.eve.jeveasset.gui.shared.components.JTextDialog;
 import net.nikr.eve.jeveasset.gui.shared.components.ListComboBoxModel;
 import net.nikr.eve.jeveasset.gui.shared.filter.ExportDialog;
-import net.nikr.eve.jeveasset.gui.shared.filter.ExportFilterControl;
+import net.nikr.eve.jeveasset.gui.shared.filter.SimpleFilterControl;
+import net.nikr.eve.jeveasset.gui.shared.menu.JMenuColumns;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
-import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.JSeparatorTable;
 import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
-import net.nikr.eve.jeveasset.gui.tabs.loadout.Loadout.FlagType;
+import net.nikr.eve.jeveasset.gui.shared.table.TableFormatFactory;
+import net.nikr.eve.jeveasset.gui.tabs.loadout.Loadout.LoadoutMatcher;
 import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 import net.nikr.eve.jeveasset.i18n.TabsLoadout;
@@ -116,12 +115,16 @@ public class LoadoutsTab extends JMainTabSecondary {
 	private final EnumTableFormatAdaptor<LoadoutTableFormat, Loadout> tableFormat;
 
 	//Dialog
-	ExportDialog<Loadout> exportDialog;
+	private final ExportDialog<Loadout> exportDialog;
+
+	private final LoadoutData loadoutData;
 
 	public static final String NAME = "loadouts"; //Not to be changed!
 
 	public LoadoutsTab(final Program program) {
 		super(program, NAME, TabsLoadout.get().ship(), Images.TOOL_SHIP_LOADOUTS.getIcon(), true);
+
+		loadoutData = new LoadoutData(program);
 
 		loadoutsExportDialog = new LoadoutsExportDialog(program, this);
 
@@ -192,7 +195,7 @@ public class LoadoutsTab extends JMainTabSecondary {
 		jToolBarRight.addButton(jExpand);
 
 		//Table Format
-		tableFormat = new EnumTableFormatAdaptor<>(LoadoutTableFormat.class);
+		tableFormat = TableFormatFactory.loadoutTableFormat();
 		//Backend
 		eventList = EventListManager.create();
 		//Filter
@@ -219,12 +222,7 @@ public class LoadoutsTab extends JMainTabSecondary {
 		//Menu
 		installTableTool(new LoadoutTableMenu(), tableFormat, tableModel, jTable, eventList, Loadout.class);
 
-		List<EnumTableColumn<Loadout>> enumColumns = new ArrayList<>();
-		enumColumns.addAll(Arrays.asList(LoadoutExtendedTableFormat.values()));
-		enumColumns.addAll(Arrays.asList(LoadoutTableFormat.values()));
-		List<EventList<Loadout>> eventLists = new ArrayList<>();
-		eventLists.add(filterList);
-		exportDialog = new ExportDialog<>(program.getMainWindow().getFrame(), NAME, null, new LoadoutsFilterControl(), eventLists, enumColumns);
+		exportDialog = new ExportDialog<>(program.getMainWindow().getFrame(), NAME, null, new LoadoutsFilterControl(), tableFormat, filterList);
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.LEADING)
@@ -341,7 +339,7 @@ public class LoadoutsTab extends JMainTabSecondary {
 		if (!fitName.isEmpty()) {
 			String selectedShip = (String) jShips.getSelectedItem();
 			MyAsset exportAsset = null;
-			for (MyAsset asset : program.getAssetList()) {
+			for (MyAsset asset : program.getAssetsList()) {
 					String key = asset.getName() + " #" + asset.getItemID();
 					if (selectedShip.equals(key)) {
 						exportAsset = asset;
@@ -367,7 +365,7 @@ public class LoadoutsTab extends JMainTabSecondary {
 	private void exportEFT() {
 		String selectedShip = (String) jShips.getSelectedItem();
 		MyAsset exportAsset = null;
-		for (MyAsset asset : program.getAssetList()) {
+		for (MyAsset asset : program.getAssetsList()) {
 				String key = asset.getName() + " #" + asset.getItemID();
 				if (selectedShip.equals(key)) {
 					exportAsset = asset;
@@ -478,51 +476,10 @@ public class LoadoutsTab extends JMainTabSecondary {
 	}
 
 	private void updateTable() {
-		List<Loadout> ship = new ArrayList<>();
-		for (MyAsset asset : program.getAssetList()) {
-			String key = asset.getName() + " #" + asset.getItemID();
-			if (!asset.getItem().isShip() || !asset.isSingleton()) {
-				continue;
-			}
-			Loadout moduleShip = new Loadout(asset.getItem(), asset.getLocation(), asset.getOwner(), TabsLoadout.get().totalShip(), key, TabsLoadout.get().flagTotalValue(), null, asset.getDynamicPrice(), 1, true);
-			Loadout moduleModules = new Loadout(new Item(0), asset.getLocation(), asset.getOwner(), TabsLoadout.get().totalModules(), key, TabsLoadout.get().flagTotalValue(), null, 0, 0, false);
-			Loadout moduleTotal = new Loadout(new Item(0), asset.getLocation(), asset.getOwner(), TabsLoadout.get().totalAll(), key, TabsLoadout.get().flagTotalValue(), null, asset.getDynamicPrice(), 1, false);
-			ship.add(moduleShip);
-			ship.add(moduleModules);
-			ship.add(moduleTotal);
-			Map<Integer, Loadout> modules = new HashMap<>();
-			for (MyAsset assetModule : asset.getAssets()) {
-				Loadout module = modules.get(assetModule.getTypeID());
-				if (module == null //New
-						|| assetModule.getFlag().contains(FlagType.HIGH_SLOT.getFlag())
-						|| assetModule.getFlag().contains(FlagType.MEDIUM_SLOT.getFlag())
-						|| assetModule.getFlag().contains(FlagType.LOW_SLOT.getFlag())
-						|| assetModule.getFlag().contains(FlagType.RIG_SLOTS.getFlag())
-						|| assetModule.getFlag().contains(FlagType.SUB_SYSTEMS.getFlag())
-						) {
-					module = new Loadout(assetModule.getItem(), assetModule.getLocation(), assetModule.getOwner(), assetModule.getName(), key, assetModule.getFlag(), assetModule.getDynamicPrice(), (assetModule.getDynamicPrice() * assetModule.getCount()), assetModule.getCount(), false);
-					modules.put(assetModule.getTypeID(), module);
-					ship.add(module);
-				} else { //Add count
-					module.addCount(assetModule.getCount());
-					module.addValue(assetModule.getDynamicPrice() * assetModule.getCount());
-				}
-				moduleModules.addValue(assetModule.getDynamicPrice() * assetModule.getCount());
-				moduleModules.addCount(assetModule.getCount());
-				moduleTotal.addValue(assetModule.getDynamicPrice() * assetModule.getCount());
-				moduleTotal.addCount(assetModule.getCount());
-			}
-		}
 		//Save separator expanded/collapsed state
 		jTable.saveExpandedState();
-		//Update list
-		try {
-			eventList.getReadWriteLock().writeLock().lock();
-			eventList.clear();
-			eventList.addAll(ship);
-		} finally {
-			eventList.getReadWriteLock().writeLock().unlock();
-		}
+		//Update Data
+		loadoutData.updateData(eventList);
 		//Restore separator expanded/collapsed state
 		jTable.loadExpandedState();
 	}
@@ -540,7 +497,7 @@ public class LoadoutsTab extends JMainTabSecondary {
 
 		@Override
 		public JMenu getColumnMenu() {
-			return tableFormat.getMenu(program, tableModel, jTable, NAME);
+			return new JMenuColumns<>(program, tableFormat, tableModel, jTable, NAME, false);
 		}
 
 		@Override
@@ -558,7 +515,7 @@ public class LoadoutsTab extends JMainTabSecondary {
 			if (LoadoutsAction.OWNERS.name().equals(e.getActionCommand())) {
 				String owner = (String) jOwners.getSelectedItem();
 				List<String> charShips = new ArrayList<>();
-				for (MyAsset asset : program.getAssetList()) {
+				for (MyAsset asset : program.getAssetsList()) {
 					String key = asset.getName() + " #" + asset.getItemID();
 					if (!asset.getItem().isShip() || !asset.isSingleton()) {
 						continue;
@@ -592,7 +549,7 @@ public class LoadoutsTab extends JMainTabSecondary {
 				}
 			} else if (LoadoutsAction.FILTER.name().equals(e.getActionCommand())) {
 				String selectedShip = (String) jShips.getSelectedItem();
-				filterList.setMatcher(new Loadout.LoadoutMatcher(selectedShip));
+				filterList.setMatcher(new LoadoutMatcher(selectedShip));
 			} else if (LoadoutsAction.COLLAPSE.name().equals(e.getActionCommand())) {
 				jTable.expandSeparators(false);
 			} else if (LoadoutsAction.EXPAND.name().equals(e.getActionCommand())) {
@@ -602,7 +559,7 @@ public class LoadoutsTab extends JMainTabSecondary {
 			} else if (LoadoutsAction.EXPORT_EVE_ALL.name().equals(e.getActionCommand())) {
 				String filename = browse();
 				List<MyAsset> ships = new ArrayList<>();
-				for (MyAsset asset : program.getAssetList()) {
+				for (MyAsset asset : program.getAssetsList()) {
 					if (!asset.getItem().isShip() || !asset.isSingleton() || asset.getAssets().isEmpty()) {
 						continue;
 					}
@@ -619,39 +576,10 @@ public class LoadoutsTab extends JMainTabSecondary {
 		}
 	}
 
-	private class LoadoutsFilterControl extends ExportFilterControl<Loadout> {
-		@Override
-		protected Object getColumnValue(Loadout item, String column) {
-			try {
-				return LoadoutExtendedTableFormat.valueOf(column).getColumnValue(item);
-			} catch (IllegalArgumentException exception) {
-
-			}
-			return tableFormat.getColumnValue(item, column);
-		}
+	private class LoadoutsFilterControl implements SimpleFilterControl<Loadout> {
 
 		@Override
-		protected EnumTableColumn<Loadout> valueOf(final String column) {
-			try {
-				return LoadoutExtendedTableFormat.valueOf(column);
-			} catch (IllegalArgumentException exception) {
-
-			}
-			return tableFormat.valueOf(column);
-		}
-
-		@Override
-		protected List<EnumTableColumn<Loadout>> getColumns() {
-			return new ArrayList<>(tableFormat.getOrderColumns());
-		}
-
-		@Override
-		protected List<EnumTableColumn<Loadout>> getShownColumns() {
-			return new ArrayList<>(tableFormat.getShownColumns());
-		}
-
-		@Override
-		protected void saveSettings(final String msg) {
+		public void saveSettings(final String msg) {
 			program.saveSettings("Ship Loudouts Table: " + msg); //Save Ship Loudout Export Setttings (Filters not used)
 		}
 	}

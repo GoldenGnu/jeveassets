@@ -33,63 +33,12 @@ import org.slf4j.bridge.SLF4JBridgeHandler;
 public final class Main {
 
 	private static JDialog top;
-	private static boolean debug = false;
-	private static boolean portable = false;
-	private static boolean forceNoUpdate = false;
-	private static boolean forceUpdate = false;
-	private static boolean lazySave = false;
-	private static boolean jmemory = false;
-
 	private static Logger log;
-
-	private Main() {
-		init();
-		//Lets go!
-		Program program = new Program();
-	}
-
-	private static void init() {
-		//Validate directory
-		LibraryManager.checkLibraries();
-		//install the uncaught exception handlers
-		NikrUncaughtExceptionHandler.install();
-		//Splash screen
-		if (!GraphicsEnvironment.isHeadless()) {
-			SplashUpdater splashUpdater = new SplashUpdater();
-			splashUpdater.start();
-		}
-		//Print program data
-		if (jmemory) {
-			log.info("jmemory ok");
-		}
-		log.info("Starting " + Program.PROGRAM_NAME + " " + Program.PROGRAM_VERSION);
-		log.log(Level.INFO, "OS: {0} {1}", new Object[]{System.getProperty("os.name"), System.getProperty("os.version")});
-		log.log(Level.INFO, "Java: {0} {1}", new Object[]{System.getProperty("java.vendor"), System.getProperty("java.version")});
-		if (Updater.isPackageManager()) {
-			log.log(Level.INFO, "Package Manager Mode: Enabled");
-			log.log(Level.INFO, "Package Maintainers: {0}", Updater.getPackageMaintainers());
-		}
-		// variables to the main program and settings.
-		Program.setDebug(debug);
-		Program.setPortable(portable);
-		Program.setForceNoUpdate(forceNoUpdate && debug);
-		Program.setForceUpdate(forceUpdate && debug);
-		Program.setLazySave(lazySave);
-		//Ensure only one instance is running...
-		SingleInstance instance = new SingleInstance();
-		if (instance.isSingleInstance()) {
-			FileLock.unlockAll();
-		}
-	}
-
-	public static boolean isJmemory() {
-		return jmemory;
-	}
 
 	public static JDialog getTop() {
 		if (top == null) {
 			top = new JDialog();
-			top.setAlwaysOnTop(true);    
+			top.setAlwaysOnTop(true);
 		}
 		return top;
 	}
@@ -100,28 +49,14 @@ public final class Main {
 	 * @param args the command line arguments
 	 */
 	public static void main(final String[] args) {
-		boolean backgroundUpdate = false;
+		boolean portable = false;
+		boolean debug = false;
 		for (String arg : args) {
 			if (arg.toLowerCase().equals("-debug")) {
 				debug = true;
 			}
 			if (arg.toLowerCase().equals("-portable")) {
 				portable = true;
-			}
-			if (arg.toLowerCase().equals("-noupdate")) {
-				forceNoUpdate = true;
-			}
-			if (arg.toLowerCase().equals("-update")) {
-				forceUpdate = true;
-			}
-			if (arg.toLowerCase().equals("-lazysave")) {
-				lazySave = true;
-			}
-			if (arg.toLowerCase().equals("-jmemory")) {
-				jmemory = true;
-			}
-			if (arg.toLowerCase().equals("-backgroundupdate")) {
-				backgroundUpdate =  true;
 			}
 		}
 		//Force UTF-8 File system
@@ -182,16 +117,65 @@ public final class Main {
 		System.setProperty("jdk.http.auth.proxying.disabledSchemes", "");
 		//XXX - Workaround: javax.net.ssl.SSLHandshakeException: Received fatal alert: handshake_failure
 		System.setProperty("https.protocols", "SSLv3,TLSv1,TLSv1.1,TLSv1.2");
-
-		if (backgroundUpdate) {
-			init();
-			BackgroundUpdate update = new BackgroundUpdate();
+		//Validate directory
+		LibraryManager.checkLibraries();
+		//install the uncaught exception handlers
+		NikrUncaughtExceptionHandler.install();		
+		//Splash screen
+		if (!GraphicsEnvironment.isHeadless()) {
+			SplashUpdater splashUpdater = new SplashUpdater();
+			splashUpdater.start();
+		}
+		//Arguments
+		CliOptions.set(args);
+		//Print program data
+		if (CliOptions.get().isJmemory()) {
+			log.info("jmemory ok");
+		}
+		log.info("Starting " + Program.PROGRAM_NAME + " " + Program.PROGRAM_VERSION);
+		log.log(Level.INFO, "OS: {0} {1}", new Object[]{System.getProperty("os.name"), System.getProperty("os.version")});
+		log.log(Level.INFO, "Java: {0} {1}", new Object[]{System.getProperty("java.vendor"), System.getProperty("java.version")});
+		if (Updater.isPackageManager()) {
+			log.log(Level.INFO, "Package Manager Mode: Enabled");
+			log.log(Level.INFO, "Package Maintainers: {0}", Updater.getPackageMaintainers());
+		}
+		//Ensure only one instance is running...
+		SingleInstance instance = new SingleInstance();
+		if (instance.isSingleInstance()) {
+			FileLock.unlockAll();
+		}
+		//Command line interface
+		if (CliOptions.get().isCLI()) {
+			Program.init();
+		}
+		int exitCode = 0;
+		//Update
+		if (CliOptions.get().isUpdate()) {
+			CliUpdate update = new CliUpdate();
 			update.update();
-		} else {
+		}
+		//Export
+		if (CliOptions.get().isExport()) {
+			CliExport cliExport = new CliExport();
+			exitCode = cliExport.export();
+		}
+		if (CliOptions.get().isCLI()) {
+			System.exit(exitCode);
+		} else { //GUI
+			if(GraphicsEnvironment.isHeadless()) {
+				System.err.println("ERROR: Java is running in headless mode");
+				System.err.println("       jEveAssets can not display a GUI in headless mode");
+				System.err.println("       use -help to see CLI options available in headless mode");
+				System.out.println("ERROR: Java is running in headless mode");
+				System.out.println("       jEveAssets can not display a GUI in headless mode");
+				System.out.println("       use -help to see CLI options available in headless mode");
+				System.exit(-1);
+			}
 			javax.swing.SwingUtilities.invokeLater(new Runnable() {
 				@Override
 				public void run() {
-					Main main = new Main();
+					//Lets go!
+					Program program = new Program();
 				}
 			});
 		}

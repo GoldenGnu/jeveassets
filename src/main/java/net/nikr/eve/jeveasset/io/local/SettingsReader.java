@@ -1841,17 +1841,17 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			}
 			//CSV
 			exportSettings.setCsvDecimalSeparator(decimal);
-			exportSettings.setFieldDelimiter(field);
-			exportSettings.setLineDelimiter(line);
+			exportSettings.setCsvFieldDelimiter(field);
+			exportSettings.setCsvLineDelimiter(line);
 			//SQL
 			if (createTable != null) {
-				exportSettings.setCreateTable(createTable);
+				exportSettings.setSqlCreateTable(createTable);
 			}
 			if (dropTable != null) {
-				exportSettings.setDropTable(dropTable);
+				exportSettings.setSqlDropTable(dropTable);
 			}
 			if (extendedInserts != null) {
-				exportSettings.setExtendedInserts(extendedInserts);
+				exportSettings.setSqlExtendedInserts(extendedInserts);
 			}
 			//HTML
 			if (htmlStyled != null) {
@@ -1865,7 +1865,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			}
 			//Lists
 			if (tableNames.containsKey(toolName)) {
-				exportSettings.setTableName(tableNames.get(toolName));
+				exportSettings.setSqlTableName(tableNames.get(toolName));
 			}
 			if (fileNames.containsKey(toolName)) {
 				exportSettings.setFilename(fileNames.get(toolName));
@@ -1959,26 +1959,26 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			exportSetting.setCsvDecimalSeparator(decimal);
 
 			FieldDelimiter field = FieldDelimiter.valueOf(getString(csvElement, "field"));
-			exportSetting.setFieldDelimiter(field);
+			exportSetting.setCsvFieldDelimiter(field);
 
 			LineDelimiter line = LineDelimiter.valueOf(getString(csvElement, "line"));
-			exportSetting.setLineDelimiter(line);
+			exportSetting.setCsvLineDelimiter(line);
 		}
 
 		//SQL
 		Element sqlElement = getNodeOptional(exportNode, "sql");
 		if (sqlElement != null) {
 			String tableName = getString(sqlElement, "tablename");
-			exportSetting.setTableName(tableName);
+			exportSetting.setSqlTableName(tableName);
 
 			boolean createTable = getBoolean(sqlElement, "createtable");
-			exportSetting.setCreateTable(createTable);
+			exportSetting.setSqlCreateTable(createTable);
 
 			boolean dropTable = getBoolean(sqlElement, "droptable");
-			exportSetting.setDropTable(dropTable);
+			exportSetting.setSqlDropTable(dropTable);
 
 			boolean extendedInserts = getBoolean(sqlElement, "extendedinserts");
-			exportSetting.setExtendedInserts(extendedInserts);
+			exportSetting.setSqlExtendedInserts(extendedInserts);
 		}
 
 		//html

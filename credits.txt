@@ -25,6 +25,7 @@ Developers:
 One-time Contributors:
   Madetara (Ray Kavier)
   Kaylee Syntax
+  Inoruuk
 
 Retired Developers:
   Flaming Candle
@@ -53,7 +54,7 @@ Link:
   http://wiki.heavyduck.com/EveAssetManager
 
 License:
-  GNU Lesser General Public License (http://www.gnu.org/copyleft/lesser.html)
+  GNU Lesser General Public License (http://www.gnu.org/licenses/lgpl.html)
 
 ________________________________________________________________________________
 _EVE-ONLINE_____________________________________________________________________
@@ -66,7 +67,7 @@ Link:
   API: https://esi.evetech.net/ui
 
 Toolkit License:
-  Â©CCP hf. All rights reserved. Used with permission.
+  ©CCP hf. All rights reserved. Used with permission.
 
 ________________________________________________________________________________
 _FUZZWORK_______________________________________________________________________
@@ -93,22 +94,6 @@ Link:
   https://app.swaggerhub.com/apis/rihanshazih/contracts-appraisal
 
 ________________________________________________________________________________
-_STOP.HAMMERTI.ME.UK____________________________________________________________
-
-jEveAssets use stop.hammerti.me.uk API to get structure names and locations
-
-Link:
-  https://stop.hammerti.me.uk/api
-
-________________________________________________________________________________
-_ZKILLBOARD_STRUCTURE_API_______________________________________________________
-
-jEveAssets use zKillboard API to get structure names and locations
-
-Link:
-  https://zkillboard.com/api/structures.json
-
-________________________________________________________________________________
 _SILK_ICONS_____________________________________________________________________
 
 jEveAssets use Silk Icons from famfamfam.com
@@ -132,7 +117,7 @@ Link:
   http://publicobject.com/glazedlists
 
 License:
-  GNU Lesser General Public License (http://www.gnu.org/copyleft/lesser.html)
+  GNU Lesser General Public License (http://www.gnu.org/licenses/lgpl.html)
   Mozilla Public License (http://www.mozilla.org/MPL/MPL-1.1.html)
 
 ________________________________________________________________________________
@@ -232,7 +217,7 @@ Link:
   https://logback.qos.ch
 
 License:
-  LGPL 2.1 (https://www.gnu.org/licenses/old-licenses/lgpl-2.1.html)
+  GNU Lesser General Public License (http://www.gnu.org/licenses/lgpl.html)
 
 ________________________________________________________________________________
 _SQLITE_________________________________________________________________________
@@ -243,7 +228,7 @@ Link:
   https://github.com/xerial/sqlite-jdbc
 
 License:
-  Apache License 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
+  Apache License (http://www.apache.org/licenses/LICENSE-2.0)
 
 ________________________________________________________________________________
 _JUNIT__________________________________________________________________________
@@ -254,7 +239,7 @@ Link:
   http://junit.org
 
 License:
-  Common Public License V1.0 (http://junit.sourceforge.net/cpl-v10.html)
+  Eclipse Public License (https://junit.org/junit4/license.html)
 
 ________________________________________________________________________________
 _LGOODDATEPICKER________________________________________________________________
@@ -265,7 +250,7 @@ Link:
   https://github.com/LGoodDatePicker/LGoodDatePicker
 
 License:
-  The MIT License (https://opensource.org/licenses/MIT)
+  MIT License (http://en.wikipedia.org/wiki/MIT_License)
 
 ________________________________________________________________________________
 _JFREECHART_____________________________________________________________________
@@ -276,7 +261,7 @@ Link:
   http://www.jfree.org/jfreechart
 
 License:
-  GNU Lesser General Public Licence (http://www.gnu.org/licenses/lgpl.html)
+  GNU Lesser General Public License (http://www.gnu.org/licenses/lgpl.html)
 
 ________________________________________________________________________________
 _FLATLAF _______________________________________________________________________
@@ -298,7 +283,18 @@ Link:
   https://github.com/uklimaschewski/EvalEx
 
 License:
-  https://raw.githubusercontent.com/uklimaschewski/EvalEx/master/LICENSE
+  MIT License (http://en.wikipedia.org/wiki/MIT_License)
+
+________________________________________________________________________________
+_PICOCLI________________________________________________________________________
+
+jEveAssets use Picocli for the CLI
+
+Link:
+  https://picocli.info
+
+License:
+  Apache License (http://www.apache.org/licenses/LICENSE-2.0)
 
 ________________________________________________________________________________
 _COPYRIGHT______________________________________________________________________
