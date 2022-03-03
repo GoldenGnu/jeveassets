@@ -21,7 +21,7 @@ _7.1.0__________________________________________________________________________
 New Features:
 -Added CLI for exporting table data (Issue #270)
 -Tool tabs can now be rearranged by dragging the tabs (issue #298)
--Tool tabs can now be reopen with [ctrl|command] + [shit] + t (issue #298)
+-Tool tabs can now be reopen with [ctrl|command] + [shift] + t (issue #298)
 -Make a Add button in the Reprocessed tool (Issue #297 - contributed by Inoruuk)
 -Added Output Name column to the industry jobs tool (Issue #294)
 -Hide stockpile from stockpile menu (Issue #300)
