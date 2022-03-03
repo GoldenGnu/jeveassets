@@ -206,9 +206,9 @@ public class TableFormatTest extends TestUtil {
 	private void test(EnumTableColumn<?> enumColumn, Class<?> expecteds, Object object) {
 		assertNotNull(enumColumn.getClass().getSuperclass().getSimpleName() + "->" + enumColumn.name() + " was null", object);
 		Class<?> actual = object.getClass();
-		if (((actual.isAssignableFrom(Double.class) || actual.isAssignableFrom(Float.class)) && (expecteds.isAssignableFrom(Double.class) | expecteds.isAssignableFrom(Float.class)))) {
+		if ((actual.isAssignableFrom(Double.class) || actual.isAssignableFrom(Float.class)) && (expecteds.isAssignableFrom(Double.class) || expecteds.isAssignableFrom(Float.class))) {
 			//No problem
-		} else if (((actual.isAssignableFrom(Long.class) || actual.isAssignableFrom(Integer.class)) && (expecteds.isAssignableFrom(Long.class) | expecteds.isAssignableFrom(Integer.class)))) {
+		} else if ((actual.isAssignableFrom(Long.class) || actual.isAssignableFrom(Integer.class)) && (expecteds.isAssignableFrom(Long.class) || expecteds.isAssignableFrom(Integer.class))) {
 			//No problem
 		} else if (Number.class.isAssignableFrom(actual)) {
 			fail("Unsupported number type used");
