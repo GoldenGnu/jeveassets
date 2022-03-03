@@ -673,4 +673,9 @@ public abstract class FakeSettings extends Settings {
 	public boolean isContractHistory() {
 		throw new UnsupportedOperationException("not implemented");
 	}
+
+	@Override
+	public Map<String, List<Filter>> getDefaultTableFilters(String key) {
+		throw new UnsupportedOperationException("not implemented");
+	}
 }

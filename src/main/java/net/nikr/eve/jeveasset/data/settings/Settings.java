@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import net.nikr.eve.jeveasset.SplashUpdater;
+import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder.MarketOrderRange;
 import net.nikr.eve.jeveasset.data.settings.ContractPriceManager.ContractPriceSettings;
 import net.nikr.eve.jeveasset.data.settings.tag.Tag;
@@ -45,10 +46,19 @@ import net.nikr.eve.jeveasset.gui.shared.menu.JMenuJumps.Jump;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.ResizeMode;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.SimpleColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.View;
+import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJobTableFormat;
+import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJobsTab;
+import net.nikr.eve.jeveasset.gui.tabs.orders.MarketOrdersTab;
+import net.nikr.eve.jeveasset.gui.tabs.orders.MarketTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.orders.Outbid;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewGroup;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
+import net.nikr.eve.jeveasset.gui.tabs.transaction.TransactionTab;
+import net.nikr.eve.jeveasset.gui.tabs.transaction.TransactionTableFormat;
 import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
+import net.nikr.eve.jeveasset.i18n.TabsJobs;
+import net.nikr.eve.jeveasset.i18n.TabsOrders;
+import net.nikr.eve.jeveasset.i18n.TabsTransaction;
 import net.nikr.eve.jeveasset.io.local.SettingsReader;
 import net.nikr.eve.jeveasset.io.local.SettingsWriter;
 import net.nikr.eve.jeveasset.io.shared.FileUtil;
@@ -213,6 +223,7 @@ public class Settings {
 	//									 JAutoColumnTable.ListenerClass.mouseReleased() - Moved
 	//									 ViewManager.loadView() - Load View
 	//Lock OK
+	private final Map<String, Map<String, List<Filter>>> defaultTableFilters = new HashMap<>();
 	private final Map<String, List<Filter>> currentTableFilters = new HashMap<>();
 	private final Map<String, Boolean> currentTableFiltersShown = new HashMap<>();
 	private final Map<String, List<SimpleColumn>> tableColumns = new HashMap<>();
@@ -266,6 +277,37 @@ public class Settings {
 		flags.put(SettingFlag.FLAG_SAVE_TOOLS_ON_EXIT, false);
 		flags.put(SettingFlag.FLAG_SAVE_CONTRACT_HISTORY, true);
 		cacheFlags();
+		//Default Filters
+		List<Filter> filter;
+		//Market Orders: Default Filters
+		Map<String, List<Filter>> marketOrdersDefaultFilters = new HashMap<>();
+		filter = new ArrayList<>();
+		filter.add(new Filter(Filter.LogicType.AND, MarketTableFormat.ORDER_TYPE, Filter.CompareType.EQUALS, TabsOrders.get().buy()));
+		filter.add(new Filter(Filter.LogicType.AND, MarketTableFormat.STATUS, Filter.CompareType.EQUALS, TabsOrders.get().statusActive()));
+		marketOrdersDefaultFilters.put(TabsOrders.get().activeBuyOrders(), filter);
+		filter = new ArrayList<>();
+		filter.add(new Filter(Filter.LogicType.AND, MarketTableFormat.ORDER_TYPE, Filter.CompareType.EQUALS, TabsOrders.get().sell()));
+		filter.add(new Filter(Filter.LogicType.AND, MarketTableFormat.STATUS, Filter.CompareType.EQUALS, TabsOrders.get().statusActive()));
+		marketOrdersDefaultFilters.put(TabsOrders.get().activeSellOrders(), filter);
+		defaultTableFilters.put(MarketOrdersTab.NAME, marketOrdersDefaultFilters);
+		//Transactions: Default Filters
+		Map<String, List<Filter>> transactionsDefaultFilters = new HashMap<>();
+		filter = new ArrayList<>();
+		filter.add(new Filter(Filter.LogicType.AND, TransactionTableFormat.TYPE, Filter.CompareType.EQUALS, TabsTransaction.get().buy()));
+		transactionsDefaultFilters.put(TabsTransaction.get().buy(), filter);
+		filter = new ArrayList<>();
+		filter.add(new Filter(Filter.LogicType.AND, TransactionTableFormat.TYPE, Filter.CompareType.EQUALS, TabsTransaction.get().sell()));
+		transactionsDefaultFilters.put(TabsTransaction.get().sell(), filter);
+		defaultTableFilters.put(TransactionTab.NAME, transactionsDefaultFilters);
+		//Industry Jobs: Default Filters
+		Map<String, List<Filter>> industryJobsTabDefaultFilters = new HashMap<>();
+		filter = new ArrayList<>();
+		filter.add(new Filter(Filter.LogicType.AND, IndustryJobTableFormat.STATE, Filter.CompareType.EQUALS_NOT, MyIndustryJob.IndustryJobState.STATE_DELIVERED.toString()));
+		industryJobsTabDefaultFilters.put(TabsJobs.get().active(), filter);
+		filter = new ArrayList<>();
+		filter.add(new Filter(Filter.LogicType.AND, IndustryJobTableFormat.STATE, Filter.CompareType.EQUALS, MyIndustryJob.IndustryJobState.STATE_DELIVERED.toString()));
+		industryJobsTabDefaultFilters.put(TabsJobs.get().completed(), filter);
+		defaultTableFilters.put(IndustryJobsTab.NAME, transactionsDefaultFilters);
 	}
 
 	public static Settings get() {
@@ -468,6 +510,13 @@ public class Settings {
 			tableFilters.put(key, new HashMap<>());
 		}
 		return tableFilters.get(key);
+	}
+
+	public Map<String, List<Filter>> getDefaultTableFilters(final String key) {
+		if (!defaultTableFilters.containsKey(key)) {
+			defaultTableFilters.put(key, new HashMap<>());
+		}
+		return defaultTableFilters.get(key);
 	}
 
 	/***

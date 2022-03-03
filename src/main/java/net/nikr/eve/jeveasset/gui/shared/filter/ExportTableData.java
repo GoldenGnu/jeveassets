@@ -61,7 +61,7 @@ public class ExportTableData {
 	private static final DecimalFormat HTML_EU_NUMBER_FORMAT  = new DecimalFormat("#,##0.####", new DecimalFormatSymbols(new Locale("da")));
 
 	/**
-	 * No Column Cache
+	 * Get Filters and Views from Settings (No Column Cache).
 	 * @param <Q>
 	 * @param eventList
 	 * @param tableFormat
@@ -69,12 +69,12 @@ public class ExportTableData {
 	 * @param exportSettings
 	 * @return 
 	 */
-	public static <Q> boolean exportNoCache(EventList<Q> eventList, final SimpleTableFormat<Q> tableFormat, String toolName, ExportSettings exportSettings) {
-		return exportAutoFill(eventList, null, tableFormat, toolName, exportSettings);
+	public static <Q> boolean exportAutoNoCache(EventList<Q> eventList, final SimpleTableFormat<Q> tableFormat, String toolName, ExportSettings exportSettings) {
+		return exportAuto(eventList, null, tableFormat, toolName, exportSettings);
 	}
 
 	/**
-	 * Get Filters and Views from Settings
+	 * Get Filters and Views from Settings (With Column Cache)
 	 * @param <Q>
 	 * @param eventList
 	 * @param columnCache
@@ -83,8 +83,8 @@ public class ExportTableData {
 	 * @param exportSettings
 	 * @return 
 	 */
-	public static <Q> boolean exportAutoFill(EventList<Q> eventList, ColumnCache<Q> columnCache, final SimpleTableFormat<Q> tableFormat, String toolName, ExportSettings exportSettings) {
-		return export(eventList, columnCache, tableFormat, toolName, Settings.get().getTableViews(toolName), Settings.get().getTableFilters(toolName), Settings.get().getCurrentTableFilters(toolName), exportSettings);
+	public static <Q> boolean exportAuto(EventList<Q> eventList, ColumnCache<Q> columnCache, final SimpleTableFormat<Q> tableFormat, String toolName, ExportSettings exportSettings) {
+		return export(eventList, columnCache, tableFormat, toolName, Settings.get().getTableViews(toolName), Settings.get().getTableFilters(toolName), Settings.get().getDefaultTableFilters(toolName), Settings.get().getCurrentTableFilters(toolName), exportSettings);
 	}
 	/**
 	 * No Filters and Views from Settings
@@ -97,7 +97,7 @@ public class ExportTableData {
 	 * @return 
 	 */
 	public static <Q> boolean exportEmpty(EventList<Q> eventList, ColumnCache<Q> columnCache, final SimpleTableFormat<Q> tableFormat, String toolName, ExportSettings exportSettings) {
-		return export(eventList, columnCache, tableFormat, toolName, new HashMap<>(), new HashMap<>(), new ArrayList<>(), exportSettings);
+		return export(eventList, columnCache, tableFormat, toolName, new HashMap<>(), new HashMap<>(), new HashMap<>(), new ArrayList<>(), exportSettings);
 	}
 
 	/**
@@ -113,7 +113,7 @@ public class ExportTableData {
 	 * @param exportSettings
 	 * @return 
 	 */
-	public static <Q> boolean export(EventList<Q> eventList, ColumnCache<Q> columnCache, final SimpleTableFormat<Q> tableFormat, String toolName, Map<String, View> views,  Map<String, List<Filter>> filters, List<Filter> currentFilters, ExportSettings exportSettings) {
+	private static <Q> boolean export(EventList<Q> eventList, ColumnCache<Q> columnCache, final SimpleTableFormat<Q> tableFormat, String toolName, Map<String, View> views,  Map<String, List<Filter>> filters, Map<String, List<Filter>> defaultFilters, List<Filter> currentFilters, ExportSettings exportSettings) {
 		//Filter
 		String filterName = exportSettings.getFilterName();
 		List<Filter> filter;
@@ -124,8 +124,11 @@ public class ExportTableData {
 		} else {
 			filter = filters.get(filterName);
 			if (filter == null) {
-				LOG.error(toolName + ": No such filter (" + filterName + " )");
-				return false;
+				filter = defaultFilters.get(filterName);
+				if (filter == null) {
+					LOG.error(toolName + ": No such filter (" + filterName + " )");
+					return false;
+				}
 			}
 		}
 		//Columns + Header
