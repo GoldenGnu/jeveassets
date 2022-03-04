@@ -36,6 +36,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import net.nikr.eve.jeveasset.data.settings.ExportSettings;
+import net.nikr.eve.jeveasset.data.settings.ExportSettings.DecimalSeparator;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.tag.Tags;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
@@ -43,6 +44,8 @@ import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.View;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.HierarchyColumn;
+import net.nikr.eve.jeveasset.gui.shared.table.containers.NumberValue;
+import net.nikr.eve.jeveasset.gui.shared.table.containers.Percent;
 import net.nikr.eve.jeveasset.gui.tabs.tree.TreeAsset;
 import net.nikr.eve.jeveasset.gui.tabs.tree.TreeTab;
 import net.nikr.eve.jeveasset.io.local.CsvWriter;
@@ -57,8 +60,12 @@ public class ExportTableData {
 
 	private static final Logger LOG = LoggerFactory.getLogger(ExportTableData.class);
 
-	private static final DecimalFormat HTML_EN_NUMBER_FORMAT  = new DecimalFormat("#,##0.####", new DecimalFormatSymbols(new Locale("en")));
-	private static final DecimalFormat HTML_EU_NUMBER_FORMAT  = new DecimalFormat("#,##0.####", new DecimalFormatSymbols(new Locale("da")));
+	private static final DecimalFormat INTEGER_DOT_FORMAT  = new DecimalFormat("###0", new DecimalFormatSymbols(new Locale("en")));
+	private static final DecimalFormat INTEGER_COMMA_FORMAT  = new DecimalFormat("###0", new DecimalFormatSymbols(new Locale("da")));
+	private static final DecimalFormat DECIMAL_HTML_DOT_FORMAT  = new DecimalFormat("#,##0.00##", new DecimalFormatSymbols(new Locale("en")));
+	private static final DecimalFormat DECIMAL_HTML_COMMA_FORMAT  = new DecimalFormat("#,##0.00##", new DecimalFormatSymbols(new Locale("da")));
+	private static final DecimalFormat DECIMAL_CSV_DOT_FORMAT  = new DecimalFormat("###0.00##", new DecimalFormatSymbols(new Locale("en")));
+	private static final DecimalFormat DECIMAL_CSV_COMMA_FORMAT  = new DecimalFormat("###0.00##", new DecimalFormatSymbols(new Locale("da")));
 
 	/**
 	 * Get Filters and Views from Settings (No Column Cache).
@@ -207,7 +214,7 @@ public class ExportTableData {
 			for (Q e : items) {
 				Map<EnumTableColumn<?>, String> row = new HashMap<>();
 				for (EnumTableColumn<Q> column : header) {
-					row.put(column, format(tableFormat.getColumnValue(e, column.name()), exportSettings.getCsvDecimalSeparator(), exportSettings.isHtmlStyled()));
+					row.put(column, format(tableFormat.getColumnValue(e, column.name()), exportSettings.getCsvDecimalSeparator(), true));
 				}
 				rows.add(row);
 			}
@@ -282,18 +289,40 @@ public class ExportTableData {
 
 	}
 
-	private static String format(final Object object, final ExportSettings.DecimalSeparator decimalSeparator, final boolean html) {
+	private static String format(Object object, final DecimalSeparator decimalSeparator, final boolean html) {
+		if (object != null && object instanceof NumberValue && !(object instanceof Percent)) { //Unpack NumberValue
+			object = ((NumberValue)object).getNumber();
+		}
 		if (object == null) {
 			return "";
 		} else if (object instanceof HierarchyColumn) {
 			HierarchyColumn column = (HierarchyColumn) object;
 			return column.getExport();
+		} else if (object instanceof Percent) {
+			Percent percent = (Percent) object;
+			return percent.toString();
 		} else if (object instanceof Number) {
 			Number number = (Number) object;
-			if (decimalSeparator == ExportSettings.DecimalSeparator.DOT) {
-				return HTML_EN_NUMBER_FORMAT.format(number);
+			if (object instanceof Integer || object instanceof Long) {
+				if (decimalSeparator == DecimalSeparator.DOT) {
+					return INTEGER_DOT_FORMAT.format(number);
+				} else {
+					return INTEGER_COMMA_FORMAT.format(number);
+				}
 			} else {
-				return HTML_EU_NUMBER_FORMAT.format(number);
+				if (html) {
+					if (decimalSeparator == DecimalSeparator.DOT) {
+						return DECIMAL_HTML_DOT_FORMAT.format(number);
+					} else {
+						return DECIMAL_HTML_COMMA_FORMAT.format(number);
+					}
+				} else {
+					if (decimalSeparator == DecimalSeparator.DOT) {
+						return DECIMAL_CSV_DOT_FORMAT.format(number);
+					} else {
+						return DECIMAL_CSV_COMMA_FORMAT.format(number);
+					}
+				}
 			}
 		} else if (object instanceof Tags && html) {
 			Tags tags = (Tags) object;
