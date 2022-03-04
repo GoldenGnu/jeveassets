@@ -769,9 +769,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 			setAttributeOptional(exportNode, "filtername", exportSetting.getValue().getFilterName());
 			node.appendChild(exportNode);
 
-			if (exportSetting.getValue().getTableExportColumns() != null &&
-					!exportSetting.getValue().getTableExportColumns().isEmpty()) {
-
+			if (!exportSetting.getValue().getTableExportColumns().isEmpty()) {
 				Element tableNode = xmldoc.createElementNS(null, "table");
 				for (String column : exportSetting.getValue().getTableExportColumns()) {
 					Element columnNode = xmldoc.createElementNS(null, "column");

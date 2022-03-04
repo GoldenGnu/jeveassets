@@ -31,9 +31,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.nikr.eve.jeveasset.CliExport.ExportTool;
 import net.nikr.eve.jeveasset.data.settings.ExportSettings;
+import net.nikr.eve.jeveasset.data.settings.ExportSettings.ColumnSelection;
 import net.nikr.eve.jeveasset.data.settings.ExportSettings.DecimalSeparator;
 import net.nikr.eve.jeveasset.data.settings.ExportSettings.ExportFormat;
 import net.nikr.eve.jeveasset.data.settings.ExportSettings.FieldDelimiter;
+import net.nikr.eve.jeveasset.data.settings.ExportSettings.FilterSelection;
 import net.nikr.eve.jeveasset.data.settings.ExportSettings.LineDelimiter;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.io.shared.FileUtil;
@@ -139,6 +141,8 @@ public class CliOptions {
 	//-u -e -html -csv -sql
 	//-u -e -html -csv -sql -nodate
 	//-u -e -html -csv -sql -nodate -assets-filter "Propulsion Modules" -reprocessed-ids 12066 -reprocessed-names "100MN Afterburner II"
+	//-e -a -html -nodate -assets-filter "Propulsion Modules" -assets-view "Simple"
+	//-e -a -html -nodate -assets-filter -assets-view
 	public static class ExportOptions {
 		@Option(names =  { "-e", "-export"}, required = true, description = "Export Data%n")
 		boolean export;
@@ -440,9 +444,28 @@ public class CliOptions {
 		//Format
 		exportSettings.setExportFormat(exportFormat);
 		//Filter
-		exportSettings.setFilterName(filterName);
+		if (filterName == null) {
+			exportSettings.setFilterName("");
+			exportSettings.setFilterSelection(FilterSelection.NONE);
+		} else if (filterName.isEmpty()) {
+			exportSettings.setFilterName("");
+			exportSettings.setFilterSelection(FilterSelection.CURRENT);
+		} else {
+			exportSettings.setFilterName(filterName);
+			exportSettings.setFilterSelection(FilterSelection.SAVED);
+		}
 		//View
-		exportSettings.setViewName(viewName);
+		if (viewName == null) { //All columns
+			exportSettings.setColumnSelection(ColumnSelection.SELECTED);
+			exportSettings.putTableExportColumns(null); //null = all
+			exportSettings.setViewName(null);
+		} else if (viewName.isEmpty()) { //Current shown columns in order
+			exportSettings.setColumnSelection(ColumnSelection.SHOWN);
+			exportSettings.setViewName(null);
+		} else { //Saved View
+			exportSettings.setColumnSelection(ColumnSelection.SAVED);
+			exportSettings.setViewName(viewName);
+		}
 		//Add
 		List<ExportSettings> list = settings.get(exportTool);
 		if (list == null) {
