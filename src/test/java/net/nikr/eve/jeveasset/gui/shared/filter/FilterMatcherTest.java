@@ -904,5 +904,8 @@ public class FilterMatcherTest extends TestUtil {
 		public List<EnumTableColumn<Item>> getShownColumns() {
 			return null; //Only used by the GUI
 		}
+
+		@Override
+		public void addColumn(EnumTableColumn<Item> column) { }
 	}
 }

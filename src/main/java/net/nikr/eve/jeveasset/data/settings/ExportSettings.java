@@ -176,6 +176,10 @@ public class ExportSettings {
 	private String filterName;
 	private String viewName;
 
+	//CLI
+	private boolean formulas;
+	private boolean jumps;
+
 	//CSV
 	private FieldDelimiter csvFieldDelimiter;
 	private LineDelimiter csvLineDelimiter;
@@ -200,6 +204,8 @@ public class ExportSettings {
 		columnSelection = ColumnSelection.SHOWN;
 		filterName = "";
 		viewName = "";
+		formulas = false;
+		jumps = false;
 
 		csvFieldDelimiter = FieldDelimiter.COMMA;
 		csvLineDelimiter = LineDelimiter.DOS;
@@ -347,6 +353,22 @@ public class ExportSettings {
 		this.viewName = viewName;
 	}
 
+	public boolean isFormulas() {
+		return formulas;
+	}
+
+	public void setFormulas(boolean formulas) {
+		this.formulas = formulas;
+	}
+
+	public boolean isJumps() {
+		return jumps;
+	}
+
+	public void setJumps(boolean jumps) {
+		this.jumps = jumps;
+	}
+
 	public String getFilename() {
 		if(this.fileName != null && !this.fileName.isEmpty()) {
 			return this.fileName;
@@ -371,6 +393,7 @@ public class ExportSettings {
 	public List<String> getTableExportColumns() {
 		return tableExportColumns;
 	}
+
 	public void putTableExportColumns(final List<String> selectedColumns) {
 			tableExportColumns.clear();
 			if (selectedColumns != null) {
