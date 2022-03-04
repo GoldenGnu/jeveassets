@@ -54,7 +54,6 @@ import net.nikr.eve.jeveasset.data.settings.ExportSettings;
 import net.nikr.eve.jeveasset.data.settings.ExportSettings.ColumnSelection;
 import net.nikr.eve.jeveasset.data.settings.ExportSettings.DecimalSeparator;
 import net.nikr.eve.jeveasset.data.settings.ExportSettings.ExportFormat;
-import net.nikr.eve.jeveasset.data.settings.ExportSettings.FieldDelimiter;
 import net.nikr.eve.jeveasset.data.settings.ExportSettings.FilterSelection;
 import net.nikr.eve.jeveasset.data.settings.ExportSettings.LineDelimiter;
 import net.nikr.eve.jeveasset.data.settings.Settings;
@@ -101,7 +100,6 @@ public class ExportDialog<E> extends JDialogCentered {
 	private final CardLayout cardLayout;
 	private final JPanel jOptionPanel;
 	//CSV
-	private final JComboBox<FieldDelimiter> jFieldDelimiter;
 	private final JComboBox<LineDelimiter> jLineDelimiter;
 	private final JComboBox<DecimalSeparator> jDecimalSeparator;
 	//Html
@@ -183,21 +181,10 @@ public class ExportDialog<E> extends JDialogCentered {
 		JOptionPanel jCsvPanel = new JOptionPanel();
 		jOptionPanel.add(jCsvPanel, ExportFormat.CSV.name());
 
-		JLabel jFieldDelimiterLabel = new JLabel(DialoguesExport.get().fieldTerminated());
-		jFieldDelimiter = new JComboBox<>(FieldDelimiter.values());
-		jCsvPanel.add(jFieldDelimiterLabel);
-		jCsvPanel.add(jFieldDelimiter);
-
 		JLabel jLineDelimiterLabel = new JLabel(DialoguesExport.get().linesTerminated());
 		jLineDelimiter = new JComboBox<>(LineDelimiter.values());
 		jCsvPanel.add(jLineDelimiterLabel);
 		jCsvPanel.add(jLineDelimiter);
-
-		//FIXME - - > ExportDialog: DecimalSeparator also used by HTML export...
-		JLabel jDecimalSeparatorLabel = new JLabel(DialoguesExport.get().decimalSeparator());
-		jDecimalSeparator = new JComboBox<>(DecimalSeparator.values());
-		jCsvPanel.add(jDecimalSeparatorLabel);
-		jCsvPanel.add(jDecimalSeparator);
 	//Sql
 		JOptionPanel jSqlPanel = new JOptionPanel();
 		jOptionPanel.add(jSqlPanel, ExportFormat.SQL.name());
@@ -235,7 +222,25 @@ public class ExportDialog<E> extends JDialogCentered {
 		jHtmlHeaderRepeat.setPaintLabels(true);
 		jHtmlPanel.add(jHtmlHeaderRepeatLabel);
 		jHtmlPanel.add(jHtmlHeaderRepeat);
+	//Decimal
+		JPanel jDecimalPanel = new JPanel();
+		jDecimalPanel.setBorder(BorderFactory.createTitledBorder(DialoguesExport.get().decimalSeparator()));
+		GroupLayout decimalLayout = new GroupLayout(jDecimalPanel);
+		jDecimalPanel.setLayout(decimalLayout);
+		decimalLayout.setAutoCreateGaps(true);
+		decimalLayout.setAutoCreateContainerGaps(true);
 
+		jDecimalSeparator = new JComboBox<>(DecimalSeparator.values());
+		jDecimalPanel.add(jDecimalSeparator);
+
+		decimalLayout.setHorizontalGroup(
+			decimalLayout.createParallelGroup()
+					.addComponent(jDecimalSeparator)
+		);
+		decimalLayout.setVerticalGroup(
+			decimalLayout.createSequentialGroup()
+					.addComponent(jDecimalSeparator, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+		);
 	//Filters
 		JPanel jFilterPanel = new JPanel();
 		jFilterPanel.setBorder(BorderFactory.createTitledBorder(DialoguesExport.get().filters()));
@@ -381,6 +386,7 @@ public class ExportDialog<E> extends JDialogCentered {
 						//Format
 						.addComponent(jFormatPanel, 250, 250, 250)
 						.addComponent(jOptionPanel, 250, 250, 250)
+						.addComponent(jDecimalPanel, 250, 250, 250)
 						.addComponent(jFilterPanel, 250, 250, 250)
 					)
 					.addGap(10)
@@ -403,6 +409,7 @@ public class ExportDialog<E> extends JDialogCentered {
 					.addGroup(layout.createSequentialGroup()
 						.addComponent(jFormatPanel)
 						.addComponent(jOptionPanel)
+						.addComponent(jDecimalPanel)
 						.addComponent(jFilterPanel)
 					)
 					.addComponent(jColumnPanel)
@@ -468,10 +475,10 @@ public class ExportDialog<E> extends JDialogCentered {
 
 	private void saveSettings() {
 		Settings.lock("Export Settings (Save)"); //Lock for Export Settings (Save)
+		//Decimal
+		Settings.get().getExportSettings(toolName).setDecimalSeparator((DecimalSeparator) jDecimalSeparator.getSelectedItem());
 		//CSV
-		Settings.get().getExportSettings(toolName).setCsvFieldDelimiter((FieldDelimiter) jFieldDelimiter.getSelectedItem());
 		Settings.get().getExportSettings(toolName).setCsvLineDelimiter((LineDelimiter) jLineDelimiter.getSelectedItem());
-		Settings.get().getExportSettings(toolName).setCsvDecimalSeparator((DecimalSeparator) jDecimalSeparator.getSelectedItem());
 		//SQL
 		Settings.get().getExportSettings(toolName).setSqlTableName(jTableName.getText());
 		Settings.get().getExportSettings(toolName).setSqlDropTable(jDropTable.isSelected());
@@ -536,10 +543,10 @@ public class ExportDialog<E> extends JDialogCentered {
 	}
 
 	private void loadSettings() {
+		//Decimal
+		jDecimalSeparator.setSelectedItem(Settings.get().getExportSettings(toolName).getDecimalSeparator());
 		//CSV
-		jFieldDelimiter.setSelectedItem(Settings.get().getExportSettings(toolName).getCsvFieldDelimiter());
 		jLineDelimiter.setSelectedItem(Settings.get().getExportSettings(toolName).getCsvLineDelimiter());
-		jDecimalSeparator.setSelectedItem(Settings.get().getExportSettings(toolName).getCsvDecimalSeparator());
 		//SQL
 		jTableName.setText(Settings.get().getExportSettings(toolName).getSqlTableName());
 		jDropTable.setSelected(Settings.get().getExportSettings(toolName).isSqlDropTable());
@@ -727,16 +734,9 @@ public class ExportDialog<E> extends JDialogCentered {
 	@Override
 	protected void save() {
 	//Bad options
-		if (jCsv.isSelected() && Settings.get().getExportSettings(toolName).getCsvDecimalSeparator() == DecimalSeparator.COMMA && Settings.get().getExportSettings(toolName).getCsvFieldDelimiter() == FieldDelimiter.COMMA) {
-			int nReturn = JOptionPane.showConfirmDialog(
-					getDialog(),
-					DialoguesExport.get().confirmStupidDecision(),
-					DialoguesExport.get().export(),
-					JOptionPane.YES_NO_OPTION,
-					JOptionPane.PLAIN_MESSAGE);
-			if (nReturn == JOptionPane.NO_OPTION) {
-				return;
-			}
+		if (jColumnSelection.isEnabled() && jColumnSelection.getSelectedIndices().length == 0) {
+			JOptionPane.showMessageDialog(getDialog(), DialoguesExport.get().noColumnsSelected(), DialoguesExport.get().export(), JOptionPane.PLAIN_MESSAGE);
+			return;
 		}
 	//Save location
 		boolean ok = browse();
