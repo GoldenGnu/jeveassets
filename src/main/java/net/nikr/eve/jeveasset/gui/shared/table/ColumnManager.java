@@ -41,7 +41,6 @@ import javax.swing.event.TableColumnModelEvent;
 import javax.swing.event.TableColumnModelListener;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
-import net.nikr.eve.jeveasset.data.sde.RouteFinder;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.types.LocationType;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
@@ -358,7 +357,7 @@ public class ColumnManager<T extends Enum<T> & EnumTableColumn<Q>, Q> {
 			if (systemID <= 0) {
 				continue;
 			}
-			jump.getJumps().put(locationType, RouteFinder.get().distanceBetween(jump.getSystemID(), systemID));
+			jump.addJump(locationType);
 		}
 	}
 
@@ -373,7 +372,7 @@ public class ColumnManager<T extends Enum<T> & EnumTableColumn<Q>, Q> {
 				continue;
 			}
 			for (Jump jump : Settings.get().getTableJumps(toolName)) {
-				jump.getJumps().put(locationType, RouteFinder.get().distanceBetween(jump.getSystemID(), systemID));
+				jump.addJump(locationType);
 			}
 		}
 	}
@@ -524,7 +523,7 @@ public class ColumnManager<T extends Enum<T> & EnumTableColumn<Q>, Q> {
 
 		@Override
 		public Object getColumnValue(Q from) {
-			return jump.getJumps().get(from);
+			return jump.getJumps(from);
 		}
 
 		@Override

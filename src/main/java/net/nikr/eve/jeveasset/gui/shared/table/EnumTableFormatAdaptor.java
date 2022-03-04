@@ -115,7 +115,7 @@ public class EnumTableFormatAdaptor<T extends Enum<T> & EnumTableColumn<Q>, Q> i
 		return enumClass.getEnumConstants();
 	}
 
-	public void reset() {
+	public final void reset() {
 		shownColumns.clear();
 		orderColumnsName.clear();
 		orderColumns.clear();
@@ -135,6 +135,11 @@ public class EnumTableFormatAdaptor<T extends Enum<T> & EnumTableColumn<Q>, Q> i
 		}
 	}
 
+	/**
+	 * Used to add special columns (Ex: FormulaColumn and JumpColumn)
+	 * @param column 
+	 */
+	@Override
 	public void addColumn(EnumTableColumn<Q> column) {
 		addColumn(column, true);
 	}
@@ -149,9 +154,11 @@ public class EnumTableFormatAdaptor<T extends Enum<T> & EnumTableColumn<Q>, Q> i
 			shownColumns.add(column);
 			if (index != null && index >= 0 && index < orderColumns.size()) {
 				orderColumns.add(index, column);
+				allColumns.add(index, column);
 				updateColumns();
 			} else {
 				orderColumns.add(column);
+				allColumns.add(column);
 			}
 			if (temp) {
 				tempColumns.add(column);
@@ -159,11 +166,16 @@ public class EnumTableFormatAdaptor<T extends Enum<T> & EnumTableColumn<Q>, Q> i
 		}
 	}
 
+	/**
+	 * Used to remove special columns (Ex: FormulaColumn and JumpColumn)
+	 * @param column 
+	 */
 	public void removeColumn(EnumTableColumn<Q> column) {
 		orderColumnsName.remove(column.name());
 		shownColumns.remove(column);
 		orderColumns.remove(column);
 		tempColumns.remove(column);
+		allColumns.remove(column);
 	}
 
 	@Override

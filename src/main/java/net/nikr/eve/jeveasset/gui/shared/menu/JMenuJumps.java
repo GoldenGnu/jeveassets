@@ -29,7 +29,9 @@ import java.util.Set;
 import javax.swing.JMenuItem;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
+import net.nikr.eve.jeveasset.data.sde.RouteFinder;
 import net.nikr.eve.jeveasset.data.sde.StaticData;
+import net.nikr.eve.jeveasset.data.settings.types.LocationType;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuJumps.Jump;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.JAutoMenu;
@@ -151,8 +153,29 @@ public class JMenuJumps<T extends Enum<T> & EnumTableColumn<Q>, Q> extends JAuto
 			return from.getSystemID();
 		}
 
-		public Map<Object, Integer> getJumps() {
-			return jumps;
+		public Integer addJump(LocationType locationType) {
+			MyLocation location = locationType.getLocation();
+			if (location == null) {
+				return null;
+			}
+			long systemID = location.getSystemID();
+			if (systemID <= 0) {
+				return null;
+			}
+			Integer distanceBetween = RouteFinder.get().distanceBetween(getSystemID(), systemID);
+			jumps.put(locationType, distanceBetween);
+			return distanceBetween;
+		}
+
+		public Integer getJumps(Object object) {
+			Integer count = jumps.get(object);
+			if (count != null) {
+				return count;
+			} if (object instanceof LocationType) {
+				return addJump((LocationType) object);
+			} else {
+				return null;
+			}
 		}
 
 		public Integer getIndex() {

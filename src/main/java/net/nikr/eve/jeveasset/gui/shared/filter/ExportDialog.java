@@ -50,6 +50,7 @@ import javax.swing.JSeparator;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.data.settings.ExportSettings;
 import net.nikr.eve.jeveasset.data.settings.ExportSettings.ColumnSelection;
 import net.nikr.eve.jeveasset.data.settings.ExportSettings.DecimalSeparator;
 import net.nikr.eve.jeveasset.data.settings.ExportSettings.ExportFormat;
@@ -604,26 +605,10 @@ public class ExportDialog<E> extends JDialogCentered {
 
 	private void resetSettings() {
 		Settings.lock("Export Settings (Reset)"); //Lock for Export Settings (Reset)
-		//CSV
-		Settings.get().getExportSettings(toolName).setCsvFieldDelimiter(FieldDelimiter.COMMA);
-		Settings.get().getExportSettings(toolName).setCsvLineDelimiter(LineDelimiter.DOS);
-		Settings.get().getExportSettings(toolName).setCsvDecimalSeparator(DecimalSeparator.DOT);
-		//SQL
-		Settings.get().getExportSettings(toolName).setSqlTableName("");
-		Settings.get().getExportSettings(toolName).setSqlDropTable(true);
-		Settings.get().getExportSettings(toolName).setSqlCreateTable(true);
-		Settings.get().getExportSettings(toolName).setSqlExtendedInserts(true);
-		//HTML
-		Settings.get().getExportSettings(toolName).setHtmlStyled(true);
-		Settings.get().getExportSettings(toolName).setHtmlRepeatHeader(0);
-		//Shared
-		Settings.get().getExportSettings(toolName).setFilename(Settings.get().getExportSettings(toolName).getDefaultFilename());
-		Settings.get().getExportSettings(toolName).putTableExportColumns(null); //null = all
-		Settings.get().getExportSettings(toolName).setExportFormat(ExportFormat.CSV);
-		Settings.get().getExportSettings(toolName).setColumnSelection(ColumnSelection.SHOWN);
-		Settings.get().getExportSettings(toolName).setFilterSelection(FilterSelection.NONE);
-		Settings.get().getExportSettings(toolName).setViewName(null);
-		Settings.get().getExportSettings(toolName).setFilterName(null);
+		ExportSettings oldSettings = Settings.get().getExportSettings(toolName);
+		ExportSettings newSettings = new ExportSettings(toolName);
+		newSettings.putTableExportColumns(oldSettings.getTableExportColumns());
+		Settings.get().getExportSettings().put(toolName, newSettings);
 		Settings.unlock("Export Settings (Reset)"); //Unlock for Export Settings (Reset)
 		loadSettings();
 	}
