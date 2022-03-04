@@ -41,7 +41,6 @@ public abstract class DialoguesExport extends Bundle {
 	public abstract String cancel();
 	public abstract String columns();
 	public abstract String comma();
-	public abstract String confirmStupidDecision();
 	public abstract String createTable();
 	public abstract String csv();
 	public abstract String currentFilter();
@@ -52,7 +51,6 @@ public abstract class DialoguesExport extends Bundle {
 	public abstract String export();
 	public abstract String extendedInserts();
 	public abstract String failedToSave();
-	public abstract String fieldTerminated();
 	public abstract String filters();
 	public abstract String format();
 	public abstract String html();
@@ -60,9 +58,10 @@ public abstract class DialoguesExport extends Bundle {
 	public abstract String htmlIGB();
 	public abstract String htmlStyled();
 	public abstract String lineEndingsMac();
-	public abstract String lineEndingsWindows();
 	public abstract String lineEndingsUnix();
+	public abstract String lineEndingsWindows();
 	public abstract String linesTerminated();
+	public abstract String noColumnsSelected();
 	public abstract String noFilter();
 	public abstract String noSavedFilter();
 	public abstract String ok();
@@ -72,8 +71,8 @@ public abstract class DialoguesExport extends Bundle {
 	public abstract String sql();
 	public abstract String tableName();
 	public abstract String viewCurrent();
+	public abstract String viewNoSaved();
 	public abstract String viewSaved();
 	public abstract String viewSelect();
 	public abstract String viewSelectAll();
-	public abstract String viewNoSaved();
 }

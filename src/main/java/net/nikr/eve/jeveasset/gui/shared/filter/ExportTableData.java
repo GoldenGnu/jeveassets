@@ -266,7 +266,7 @@ public class ExportTableData {
 			for (Q e : items) {
 				Map<String, String> row = new HashMap<>();
 				for (EnumTableColumn<Q> column : header) {
-					row.put(column.name(), format(tableFormat.getColumnValue(e, column.name()), exportSettings.getCsvDecimalSeparator(), false));
+					row.put(column.name(), format(tableFormat.getColumnValue(e, column.name()), exportSettings.getDecimalSeparator(), false));
 				}
 				rows.add(row);
 			}
@@ -283,7 +283,7 @@ public class ExportTableData {
 			for (Q e : items) {
 				Map<EnumTableColumn<?>, String> row = new HashMap<>();
 				for (EnumTableColumn<Q> column : header) {
-					row.put(column, format(tableFormat.getColumnValue(e, column.name()), exportSettings.getCsvDecimalSeparator(), true));
+					row.put(column, format(tableFormat.getColumnValue(e, column.name()), exportSettings.getDecimalSeparator(), true));
 				}
 				rows.add(row);
 			}

@@ -34,7 +34,6 @@ import net.nikr.eve.jeveasset.data.settings.ExportSettings;
 import net.nikr.eve.jeveasset.data.settings.ExportSettings.ColumnSelection;
 import net.nikr.eve.jeveasset.data.settings.ExportSettings.DecimalSeparator;
 import net.nikr.eve.jeveasset.data.settings.ExportSettings.ExportFormat;
-import net.nikr.eve.jeveasset.data.settings.ExportSettings.FieldDelimiter;
 import net.nikr.eve.jeveasset.data.settings.ExportSettings.FilterSelection;
 import net.nikr.eve.jeveasset.data.settings.ExportSettings.LineDelimiter;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
@@ -400,8 +399,7 @@ public class CliOptions {
 			if (exportOptionsFormat.csv != null && exportOptionsFormat.csv.csv) {
 				ExportSettings exportSettings = new ExportSettings(exportTool.getToolName());
 				if (exportOptionsFormat.csv.comma) {
-					exportSettings.setCsvDecimalSeparator(DecimalSeparator.COMMA);
-					exportSettings.setCsvFieldDelimiter(FieldDelimiter.SEMICOLON);
+					exportSettings.setDecimalSeparator(DecimalSeparator.COMMA);
 				}
 				if (exportOptionsFormat.csv.line != null) {
 					if (exportOptionsFormat.csv.line.unix) {
