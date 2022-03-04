@@ -64,16 +64,16 @@ public class ExportSettings {
 				return DialoguesExport.get().lineEndingsWindows();
 			}
 		},
-		MAC("\r") {
-			@Override
-			String getI18N() {
-				return DialoguesExport.get().lineEndingsMac();
-			}
-		},
 		UNIX("\n") {
 			@Override
 			String getI18N() {
 				return DialoguesExport.get().lineEndingsUnix();
+			}
+		},
+		MAC("\r") {
+			@Override
+			String getI18N() {
+				return DialoguesExport.get().lineEndingsMac();
 			}
 		};
 		private final String string;
@@ -91,22 +91,34 @@ public class ExportSettings {
 	}
 
 	public enum DecimalSeparator {
-		DOT() {
+		DOT(FieldDelimiter.COMMA) {
 			@Override
 			String getI18N() {
 				return DialoguesExport.get().dot();
 			}
 		},
-		COMMA() {
+		COMMA(FieldDelimiter.SEMICOLON) {
 			@Override
 			String getI18N() {
 				return DialoguesExport.get().comma();
 			}
 		};
+
+		private final FieldDelimiter fieldDelimiter;
+
+		private DecimalSeparator(FieldDelimiter fieldDelimiter) {
+			this.fieldDelimiter = fieldDelimiter;
+		}
+
 		@Override
 		public String toString() {
 			return getI18N();
 		}
+
+		public FieldDelimiter getFieldDelimiter() {
+			return fieldDelimiter;
+		}
+
 		abstract String getI18N();
 	}
 
@@ -175,15 +187,14 @@ public class ExportSettings {
 	private ColumnSelection columnSelection;
 	private String filterName;
 	private String viewName;
+	private DecimalSeparator decimalSeparator;
 
 	//CLI
 	private boolean formulas;
 	private boolean jumps;
 
 	//CSV
-	private FieldDelimiter csvFieldDelimiter;
 	private LineDelimiter csvLineDelimiter;
-	private DecimalSeparator csvDecimalSeparator;
 
 	//SQL
 	private boolean sqlCreateTable; 
@@ -204,12 +215,12 @@ public class ExportSettings {
 		columnSelection = ColumnSelection.SHOWN;
 		filterName = "";
 		viewName = "";
+		decimalSeparator = DecimalSeparator.DOT; //CSV & HTML
+
 		formulas = false;
 		jumps = false;
 
-		csvFieldDelimiter = FieldDelimiter.COMMA;
 		csvLineDelimiter = LineDelimiter.DOS;
-		csvDecimalSeparator = DecimalSeparator.DOT;
 
 		sqlCreateTable = true;
 		sqlDropTable = true;
@@ -225,20 +236,16 @@ public class ExportSettings {
 		return exportFormat == ExportFormat.CSV;
 	}
 
-	public DecimalSeparator getCsvDecimalSeparator() {
-		return csvDecimalSeparator;
+	public DecimalSeparator getDecimalSeparator() {
+		return decimalSeparator;
 	}
 
-	public void setCsvDecimalSeparator(final DecimalSeparator csvDecimalSeparator) {
-		this.csvDecimalSeparator = csvDecimalSeparator;
+	public void setDecimalSeparator(final DecimalSeparator decimalSeparator) {
+		this.decimalSeparator = decimalSeparator;
 	}
 
 	public FieldDelimiter getCsvFieldDelimiter() {
-		return csvFieldDelimiter;
-	}
-
-	public void setCsvFieldDelimiter(final FieldDelimiter csvFieldDelimiter) {
-		this.csvFieldDelimiter = csvFieldDelimiter;
+		return decimalSeparator.getFieldDelimiter();
 	}
 
 	public LineDelimiter getCsvLineDelimiter() {
