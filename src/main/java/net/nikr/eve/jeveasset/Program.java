@@ -120,7 +120,7 @@ public class Program implements ActionListener {
 	public static final String PROGRAM_VERSION = "7.1.1 DEV BUILD 1";
 	public static final String PROGRAM_NAME = "jEveAssets";
 	public static final String PROGRAM_HOMEPAGE = "https://eve.nikr.net/jeveasset";
-	private static final boolean PROGRAM_DEV_BUILD = true;
+	private static final boolean PROGRAM_DEV_BUILD = false;
 
 	//Height
 	private static int height = 22; //Defaults to 22
