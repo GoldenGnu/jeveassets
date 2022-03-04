@@ -48,7 +48,6 @@ import net.nikr.eve.jeveasset.data.settings.ExportSettings;
 import net.nikr.eve.jeveasset.data.settings.ExportSettings.ColumnSelection;
 import net.nikr.eve.jeveasset.data.settings.ExportSettings.DecimalSeparator;
 import net.nikr.eve.jeveasset.data.settings.ExportSettings.ExportFormat;
-import net.nikr.eve.jeveasset.data.settings.ExportSettings.FieldDelimiter;
 import net.nikr.eve.jeveasset.data.settings.ExportSettings.FilterSelection;
 import net.nikr.eve.jeveasset.data.settings.ExportSettings.LineDelimiter;
 import net.nikr.eve.jeveasset.data.settings.MarketOrdersSettings;
@@ -1765,7 +1764,6 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 
 		//CSV
 		DecimalSeparator decimal = DecimalSeparator.valueOf(getString(element, "decimal"));
-		FieldDelimiter field = FieldDelimiter.valueOf(getString(element, "field"));
 		LineDelimiter line = LineDelimiter.valueOf(getString(element, "line"));
 
 		//SQL
@@ -1840,8 +1838,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 				exportSettings.setExportFormat(exportFormat);
 			}
 			//CSV
-			exportSettings.setCsvDecimalSeparator(decimal);
-			exportSettings.setCsvFieldDelimiter(field);
+			exportSettings.setDecimalSeparator(decimal);
 			exportSettings.setCsvLineDelimiter(line);
 			//SQL
 			if (createTable != null) {
@@ -1956,10 +1953,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		Element csvElement = getNodeOptional(exportNode, "csv");
 		if (csvElement != null) {
 			DecimalSeparator decimal = DecimalSeparator.valueOf(getString(csvElement, "decimal"));
-			exportSetting.setCsvDecimalSeparator(decimal);
-
-			FieldDelimiter field = FieldDelimiter.valueOf(getString(csvElement, "field"));
-			exportSetting.setCsvFieldDelimiter(field);
+			exportSetting.setDecimalSeparator(decimal);
 
 			LineDelimiter line = LineDelimiter.valueOf(getString(csvElement, "line"));
 			exportSetting.setCsvLineDelimiter(line);

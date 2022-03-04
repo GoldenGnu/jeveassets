@@ -781,8 +781,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 
 			//CSV
 			Element csvNode = xmldoc.createElementNS(null, "csv");
-			setAttribute(csvNode, "decimal", exportSetting.getValue().getCsvDecimalSeparator());
-			setAttribute(csvNode, "field", exportSetting.getValue().getCsvFieldDelimiter());
+			setAttribute(csvNode, "decimal", exportSetting.getValue().getDecimalSeparator());
 			setAttribute(csvNode, "line", exportSetting.getValue().getCsvLineDelimiter());
 			exportNode.appendChild(csvNode);
 
