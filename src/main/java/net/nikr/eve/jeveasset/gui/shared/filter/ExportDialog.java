@@ -512,7 +512,7 @@ public class ExportDialog<E> extends JDialogCentered {
 		Settings.get().getExportSettings(toolName).setColumnSelection(columnSelection);
 		//Columns
 		if (jColumnSelection.getSelectedIndices().length == columns.size()) { //All is selected - nothing worth saving...
-			Settings.get().getExportSettings(toolName).putTableExportColumns(null);
+			Settings.get().getExportSettings(toolName).putTableExportColumns(null); //null = all
 		} else {
 			Settings.get().getExportSettings(toolName).putTableExportColumns(getExportColumns());
 		}
@@ -553,12 +553,12 @@ public class ExportDialog<E> extends JDialogCentered {
 		jFileChooser.setExtension(exportFormat.getExtension());
 		//Columns (Shared)
 		jColumnSelection.clearSelection();
-		List<String> list = Settings.get().getExportSettings(toolName).getTableExportColumns();
-		if (list == null) {
-			jColumnSelection.clearSelection();
+		List<String> selectedColumns = Settings.get().getExportSettings(toolName).getTableExportColumns();
+		if (selectedColumns.isEmpty()) {
+			jColumnSelection.selectAll();
 		} else {
 			List<Integer> selections = new ArrayList<>();
-			for (String column : list) {
+			for (String column : selectedColumns) {
 				try {
 					EnumTableColumn<E> enumColumn = tableFormat.valueOf(column);
 					if (enumColumn != null) {
@@ -618,7 +618,7 @@ public class ExportDialog<E> extends JDialogCentered {
 		Settings.get().getExportSettings(toolName).setHtmlRepeatHeader(0);
 		//Shared
 		Settings.get().getExportSettings(toolName).setFilename(Settings.get().getExportSettings(toolName).getDefaultFilename());
-		Settings.get().getExportSettings(toolName).putTableExportColumns(null);
+		Settings.get().getExportSettings(toolName).putTableExportColumns(null); //null = all
 		Settings.get().getExportSettings(toolName).setExportFormat(ExportFormat.CSV);
 		Settings.get().getExportSettings(toolName).setColumnSelection(ColumnSelection.SHOWN);
 		Settings.get().getExportSettings(toolName).setFilterSelection(FilterSelection.NONE);
