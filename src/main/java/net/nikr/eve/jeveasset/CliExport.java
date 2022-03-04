@@ -323,7 +323,7 @@ public class CliExport {
 		//Overview
 		EnumTableFormatAdaptor<OverviewTableFormat, Overview> tableFormat = TableFormatFactory.overviewTableFormat();
 		OverviewTab.updateShownColumns(tableFormat, view);
-		return ExportTableData.exportEmpty(new OverviewData(profileManager, profileData).getData(filterList, owner, view), null, tableFormat, toolName, exportSettings);
+		return ExportTableData.exportEmpty(new OverviewData(profileManager, profileData).getData(filterList, owner, view), tableFormat, toolName, exportSettings);
 	}
 
 	private <T extends Enum<T> & EnumTableColumn<Q>, Q> boolean export(EventList<Q> data, final SimpleTableFormat<Q> tableFormat, String toolName, ExportSettings exportSettings) {

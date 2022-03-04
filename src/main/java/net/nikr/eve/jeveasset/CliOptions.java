@@ -148,6 +148,10 @@ public class CliOptions {
 		boolean export;
 		@Option(names =  { "-f", "-output" }, paramLabel = "directory", description = "Output directory")
 		File output;
+		@Option(names =  "-noformula", description = "Do not include formula columns")
+		boolean noFormulas;
+		@Option(names =  "-nojumps", description = "Do not include jump columns")
+		boolean noJumps;
 		@Option(names = "-nodate", description = "Do not include date and time in the filenames" 
 				+ END_GROUP + "%nFormat Help:%nYou can select as many formats as you want")
 		boolean noDate;
@@ -454,7 +458,11 @@ public class CliOptions {
 			exportSettings.setFilterName(filterName);
 			exportSettings.setFilterSelection(FilterSelection.SAVED);
 		}
-		//View
+		//Formula Columns
+		exportSettings.setFormulas(!exportOptions.noFormulas);
+		//Jump Columns
+		exportSettings.setJumps(!exportOptions.noJumps);
+		//Columns
 		if (viewName == null) { //All columns
 			exportSettings.setColumnSelection(ColumnSelection.SELECTED);
 			exportSettings.putTableExportColumns(null); //null = all
