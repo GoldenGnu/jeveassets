@@ -29,4 +29,5 @@ public interface SimpleTableFormat<E> {
 	public List<EnumTableColumn<E>> getAllColumns();
 	public List<EnumTableColumn<E>> getShownColumns();
 	public EnumTableColumn<E> valueOf(String column) throws IllegalArgumentException;
+	public void addColumn(EnumTableColumn<E> column);
 }

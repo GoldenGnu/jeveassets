@@ -40,6 +40,10 @@ import net.nikr.eve.jeveasset.data.settings.ExportSettings.DecimalSeparator;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.tag.Tags;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
+import net.nikr.eve.jeveasset.gui.shared.menu.JFormulaDialog.Formula;
+import net.nikr.eve.jeveasset.gui.shared.menu.JMenuJumps.Jump;
+import net.nikr.eve.jeveasset.gui.shared.table.ColumnManager.FormulaColumn;
+import net.nikr.eve.jeveasset.gui.shared.table.ColumnManager.JumpColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.SimpleColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.View;
@@ -97,14 +101,13 @@ public class ExportTableData {
 	 * No Filters and Views from Settings
 	 * @param <Q>
 	 * @param eventList
-	 * @param columnCache
 	 * @param tableFormat
 	 * @param toolName
 	 * @param exportSettings
 	 * @return 
 	 */
-	public static <Q> boolean exportEmpty(EventList<Q> eventList, ColumnCache<Q> columnCache, final SimpleTableFormat<Q> tableFormat, String toolName, ExportSettings exportSettings) {
-		return export(eventList, columnCache, tableFormat, toolName, new HashMap<>(), new HashMap<>(), new HashMap<>(), new ArrayList<>(), exportSettings);
+	public static <Q> boolean exportEmpty(EventList<Q> eventList, final SimpleTableFormat<Q> tableFormat, String toolName, ExportSettings exportSettings) {
+		return export(eventList, null, tableFormat, toolName, new HashMap<>(), new HashMap<>(), new HashMap<>(), new ArrayList<>(), exportSettings);
 	}
 
 	/**
@@ -211,6 +214,22 @@ public class ExportTableData {
 		if (header.isEmpty()) {
 			LOG.error(toolName + " -> No columns selected for ColumnSelection: " + exportSettings.getColumnSelection());
 			return false;
+		}
+		//Formula
+		for (Formula formula : Settings.get().getTableFormulas(toolName)) {
+			FormulaColumn<Q> formulaColumn = new FormulaColumn<>(formula);
+			tableFormat.addColumn(formulaColumn); //Add the column for filters
+			if (exportSettings.isFormulas()) {
+				header.add(formulaColumn); //Export
+			}
+		}
+		//Jump
+		for (Jump jump : Settings.get().getTableJumps(toolName)) {
+			JumpColumn<Q> jumpColumn = new JumpColumn<>(jump);
+			tableFormat.addColumn(jumpColumn); //Add the column for filters
+			if (exportSettings.isJumps()) {
+				header.add(jumpColumn); //Export
+			}
 		}
 		//Apply Filters
 		List<Q> items = new ArrayList<>();
