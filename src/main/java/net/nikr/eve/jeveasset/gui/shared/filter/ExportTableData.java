@@ -41,7 +41,7 @@ import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.tag.Tags;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
-import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
+import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.SimpleColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.View;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.HierarchyColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.NumberValue;
@@ -122,45 +122,95 @@ public class ExportTableData {
 	 */
 	private static <Q> boolean export(EventList<Q> eventList, ColumnCache<Q> columnCache, final SimpleTableFormat<Q> tableFormat, String toolName, Map<String, View> views,  Map<String, List<Filter>> filters, Map<String, List<Filter>> defaultFilters, List<Filter> currentFilters, ExportSettings exportSettings) {
 		//Filter
-		String filterName = exportSettings.getFilterName();
-		List<Filter> filter;
-		if (filterName == null) {
-			filter = new ArrayList<>();
-		} else if (filterName.isEmpty()) {
-			filter = currentFilters;
-		} else {
-			filter = filters.get(filterName);
-			if (filter == null) {
-				filter = defaultFilters.get(filterName);
-				if (filter == null) {
-					LOG.error(toolName + ": No such filter (" + filterName + " )");
+		final List<Filter> filter;
+		switch (exportSettings.getFilterSelection()) {
+			case NONE:
+				filter = new ArrayList<>();
+				break;
+			case CURRENT:
+				filter = currentFilters;
+				break;
+			case SAVED:
+				String filterName = exportSettings.getFilterName();
+				if (filterName == null) {
+					LOG.error(toolName + " -> Filter name is null");
 					return false;
 				}
-			}
+				List<Filter> f = filters.get(filterName);
+				if (f != null) {
+					filter = f;
+				} else {
+					filter = defaultFilters.get(filterName);
+					if (filter == null) {
+						LOG.error(toolName + " -> No such filter: " + filterName);
+						return false;
+					}
+				}
+				break;
+			default:
+				LOG.error(toolName + " -> Unknown FilterSelection: " + exportSettings.getFilterSelection());
+				return false;
 		}
 		//Columns + Header
-		String viewName = exportSettings.getViewName();
-		List<EnumTableColumn<Q>> header = new ArrayList<>();
-		if (viewName == null) { //All columns
-			header = tableFormat.getAllColumns();
-		} else if (viewName.isEmpty()) { //Current shown columns in order
-			header = tableFormat.getShownColumns();
-		} else { //Saved View
-			View view = views.get(viewName);
-			if (view == null) {
-				LOG.error(toolName + ": No such view (" + viewName + " )");
-				return false;
-			}
-			Map<String, EnumTableColumn<Q>> columns = new HashMap<>();
-			for (EnumTableColumn<Q> column : tableFormat.getAllColumns()) {
-				columns.put(column.name(), column);
-			}
-			for (EnumTableFormatAdaptor.SimpleColumn simpleColumn : view.getColumns()) {
-				if (simpleColumn.isShown()) {
-					EnumTableColumn<Q> column = columns.get(simpleColumn.getEnumName());
-					header.add(column);
+		Map<String, EnumTableColumn<Q>> columns = new HashMap<>(); //Column lookup
+		for (EnumTableColumn<Q> column : tableFormat.getAllColumns()) {
+			columns.put(column.name(), column);
+		}
+		final List<EnumTableColumn<Q>> header;
+		switch (exportSettings.getColumnSelection()) {
+			case SELECTED: //Selected/All columns
+				List<String> selectedColumns = exportSettings.getTableExportColumns();
+				if (!selectedColumns.isEmpty()) { //Selected columns
+					header = new ArrayList<>();
+					for (String selectedColumn : selectedColumns) {
+						EnumTableColumn<Q> column = columns.get(selectedColumn);
+						if (column != null) {
+							header.add(column);
+						}
+					}
+				} else { //All columns
+					header = tableFormat.getAllColumns();
 				}
-			}
+				break;
+			case SHOWN: //Current shown columns in order
+				header = new ArrayList<>();
+				for (SimpleColumn simpleColumn : Settings.get().getTableColumns().get(toolName)) {
+					if (simpleColumn.isShown()) {
+						EnumTableColumn<Q> column = columns.get(simpleColumn.getEnumName());
+						if (column != null) {
+							header.add(column);
+						}
+					}
+				}
+				break;
+			case SAVED: //Saved View
+				String viewName = exportSettings.getViewName();
+				if (viewName == null) {
+					LOG.error(toolName + " -> View name is null");
+					return false;
+				}
+				View view = views.get(viewName);
+				if (view == null) {
+					LOG.error(toolName + " -> No such view: " + viewName);
+					return false;
+				}
+				header = new ArrayList<>();
+				for (SimpleColumn simpleColumn : view.getColumns()) {
+					if (simpleColumn.isShown()) {
+						EnumTableColumn<Q> column = columns.get(simpleColumn.getEnumName());
+						if (column != null) {
+							header.add(column);
+						}
+					}
+				}
+				break;
+			default:
+				LOG.error(toolName + " -> Unknown ColumnSelection: " + exportSettings.getColumnSelection());
+				return false;
+		}
+		if (header.isEmpty()) {
+			LOG.error(toolName + " -> No columns selected for ColumnSelection: " + exportSettings.getColumnSelection());
+			return false;
 		}
 		//Apply Filters
 		List<Q> items = new ArrayList<>();

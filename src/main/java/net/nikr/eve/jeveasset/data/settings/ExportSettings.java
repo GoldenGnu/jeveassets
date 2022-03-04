@@ -371,10 +371,10 @@ public class ExportSettings {
 	public List<String> getTableExportColumns() {
 		return tableExportColumns;
 	}
-	public void putTableExportColumns(final List<String> list) {
+	public void putTableExportColumns(final List<String> selectedColumns) {
 			tableExportColumns.clear();
-			if (list != null) {
-				tableExportColumns.addAll(list);
+			if (selectedColumns != null) {
+				tableExportColumns.addAll(selectedColumns);
 			}
 	}
 
