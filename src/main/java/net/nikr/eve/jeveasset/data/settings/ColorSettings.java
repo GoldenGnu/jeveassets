@@ -20,7 +20,6 @@
  */
 package net.nikr.eve.jeveasset.data.settings;
 
-import com.privatejgoodies.common.base.Objects;
 import java.awt.Color;
 import java.awt.Component;
 import java.util.ArrayList;
@@ -28,6 +27,7 @@ import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.JTextField;
