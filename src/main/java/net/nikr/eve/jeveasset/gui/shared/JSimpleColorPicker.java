@@ -20,7 +20,6 @@
  */
 package net.nikr.eve.jeveasset.gui.shared;
 
-import com.google.common.base.Objects;
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Component;
@@ -40,6 +39,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
 import javax.swing.Icon;
@@ -254,7 +254,7 @@ public class JSimpleColorPicker {
 		for (ColorIcon icon : icons) {
 			icon.setSelect(input);
 		}
-		jDefault.setEnabled(!Objects.equal(input, defaultColor));
+		jDefault.setEnabled(!Objects.equals(input, defaultColor));
 		jDefault.setBorder(getBorder(jDefault));
 		jNone.setEnabled(input != null && nullable);
 		jNone.setBorder(getBorder(jNone));
