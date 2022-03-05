@@ -16,6 +16,18 @@
                   #### #  # #  # #  # #### #### #### #### ####
 
 ________________________________________________________________________________
+_7.1.1__________________________________________________________________________
+
+Bug Fixes:
+-Unable to export default filters
+-Can not reset columns
+-Fixed number formatting for CSV and HTML export
+-Exporting from the GUI did not use the filter and column options
+-Fixed export and filtering for formula and jump columns 
+-Added option to exclude formula and jump columns from the CLI
+-Force valid separator/column options when exporting from the GUI
+
+________________________________________________________________________________
 _7.1.0__________________________________________________________________________
 
 New Features:
