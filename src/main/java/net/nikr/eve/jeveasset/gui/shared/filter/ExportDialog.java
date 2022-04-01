@@ -190,7 +190,7 @@ public class ExportDialog<E> extends JDialogCentered {
 		jOptionPanel.add(jSqlPanel, ExportFormat.SQL.name());
 
 		JLabel jTableNameLabel = new JLabel(DialoguesExport.get().tableName());
-		jTableName = new JDefaultField(Program.PROGRAM_NAME.toLowerCase() + "_" + toolName.toLowerCase());
+		jTableName = new JDefaultField(ExportSettings.getDefaultTableName(toolName));
 		jTableName.setDocument(DocumentFactory.getWordPlainDocument());
 		jSqlPanel.add(jTableNameLabel);
 		jSqlPanel.add(jTableName);
