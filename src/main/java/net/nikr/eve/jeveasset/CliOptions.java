@@ -36,6 +36,7 @@ import net.nikr.eve.jeveasset.data.settings.ExportSettings.DecimalSeparator;
 import net.nikr.eve.jeveasset.data.settings.ExportSettings.ExportFormat;
 import net.nikr.eve.jeveasset.data.settings.ExportSettings.FilterSelection;
 import net.nikr.eve.jeveasset.data.settings.ExportSettings.LineDelimiter;
+import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.io.shared.FileUtil;
 import picocli.CommandLine;
@@ -424,6 +425,7 @@ public class CliOptions {
 				exportSettings.setSqlDropTable(exportOptionsFormat.sql.dropTable);
 				exportSettings.setSqlCreateTable(exportOptionsFormat.sql.createTable);
 				exportSettings.setSqlExtendedInserts(exportOptionsFormat.sql.extendedInserts);
+				exportSettings.setSqlTableName(Settings.get().getExportSettings(exportTool.getToolName()).getSqlTableName());
 				set(exportSettings, exportTool, ExportFormat.SQL, filterName, viewName);
 			}
 		} else { //Default CSV
