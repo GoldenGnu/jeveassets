@@ -148,13 +148,13 @@ public class CliOptions {
 		boolean export;
 		@Option(names =  { "-f", "-output" }, paramLabel = "directory", description = "Output directory")
 		File output;
+		@Option(names = "-nodate", description = "Do not include date and time in the filenames")
+		boolean noDate;
 		@Option(names =  "-noformula", description = "Do not include formula columns")
 		boolean noFormulas;
-		@Option(names =  "-nojumps", description = "Do not include jump columns")
-		boolean noJumps;
-		@Option(names = "-nodate", description = "Do not include date and time in the filenames" 
+		@Option(names =  "-nojumps", description = "Do not include jump columns"
 				+ END_GROUP + "%nFormat Help:%nYou can select as many formats as you want")
-		boolean noDate;
+		boolean noJumps;
 		@ArgGroup(exclusive = false)
 		ExportOptionsFormat exportOptionsFormat;
 		@ArgGroup(exclusive = false)
