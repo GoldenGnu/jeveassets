@@ -24,6 +24,7 @@ package net.nikr.eve.jeveasset.data.settings;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.i18n.DialoguesExport;
 import net.nikr.eve.jeveasset.io.shared.FileUtil;
 
@@ -285,6 +286,9 @@ public class ExportSettings {
 	}
 
 	public String getSqlTableName() {
+		if (sqlTableName.isEmpty()) { //Ensure never empty
+			return getDefaultTableName(toolName);
+		}
 		return sqlTableName;
 	}
 
@@ -414,5 +418,9 @@ public class ExportSettings {
 
 	public String getDefaultFilename() {
 		return PATH + this.toolName + "_export." + exportFormat.getExtension();
+	}
+
+	public static String getDefaultTableName(String toolName) {
+		return Program.PROGRAM_NAME.toLowerCase() + "_" + toolName.toLowerCase();
 	}
 }
