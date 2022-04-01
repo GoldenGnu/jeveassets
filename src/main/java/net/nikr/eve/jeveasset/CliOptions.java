@@ -209,12 +209,12 @@ public class CliOptions {
 		@Option(names = "-sql", required = true, description = "Export to SQL")
 		boolean sql;
 		@Option(names = "-droptable", description = "    Drop Table (if exist)")
-		boolean dropTable = true;
+		boolean dropTable;
 		@Option(names = "-createtable", description = "    Create Table (if not exist)")
-		boolean createTable = true;
+		boolean createTable;
 		@Option(names = "-extended", description = "    Extended Inserts"
 				+ END_GROUP +"%nTools Help:%nOmit all the tool parameters to export all tools")
-		boolean extendedInserts = true;
+		boolean extendedInserts;
 	}
 
 	static class ExportOptionsTools {
