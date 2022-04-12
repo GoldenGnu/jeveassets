@@ -39,10 +39,13 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.EnumMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
@@ -112,12 +115,13 @@ public class AccountImportDialog extends JDialogCentered {
 	private final AccountManagerDialog apiManager;
 
 	private enum Result {
-		FAIL_EXIST, //OK
 		FAIL_API_FAIL,
 		FAIL_INVALID,
-		FAIL_NOT_ENOUGH_PRIVILEGES, //OK
+		FAIL_NOT_ENOUGH_PRIVILEGES,
 		FAIL_WRONG_ENTRY,
 		FAIL_CANCEL,
+		OK_EXIST, //OK
+		OK_EXIST_LIMITED_ACCESS, //OK
 		OK_LIMITED_ACCESS, //OK
 		OK_ACCOUNT_VALID //OK
 	}
@@ -368,11 +372,18 @@ public class AccountImportDialog extends JDialogCentered {
 
 	private void done() {
 		if (apiType == ApiType.ESI && share != Share.EXPORT) {
-			if (editEsiOwner != null) { //Edit
-				program.getProfileManager().getEsiOwners().remove(editEsiOwner);
+			List<EsiOwner> existingEsiOwners = getExistingEsiOwners();
+			if (!existingEsiOwners.isEmpty()) { //Update
+				for (EsiOwner owner : existingEsiOwners) {
+					owner.updateAuth(esiOwner);
+				}
+			} else {
+				if (editEsiOwner != null) { //Add & Edit
+					program.getProfileManager().getEsiOwners().remove(editEsiOwner);
+				}
+				program.getProfileManager().getEsiOwners().add(esiOwner);
 			}
 			apiManager.forceUpdate();
-			program.getProfileManager().getEsiOwners().add(esiOwner);
 			apiManager.updateTable();
 		}
 		this.setVisible(false);
@@ -443,6 +454,16 @@ public class AccountImportDialog extends JDialogCentered {
 		}
 	}
 
+	private List<EsiOwner> getExistingEsiOwners() {
+		List<EsiOwner> esiOwners = new ArrayList<>();
+		for (EsiOwner owner : program.getProfileManager().getEsiOwners()) {
+			if (Objects.equals(owner.getOwnerID(), esiOwner.getOwnerID())) {
+				esiOwners.add(owner);
+			}
+		}
+		return esiOwners;
+	}
+
 	private class ListenerClass implements ActionListener, PropertyChangeListener,
 											WindowFocusListener {
 
@@ -477,7 +498,11 @@ public class AccountImportDialog extends JDialogCentered {
 						}
 						break;
 					case SHARE_EXPORT:
-						currentCard = AccountImportCard.DONE;
+						if (donePanel.jResult.getText().isEmpty()) {
+							currentCard = AccountImportCard.ADD_ESI;
+						} else {
+							currentCard = AccountImportCard.DONE;
+						}
 						break;
 					case EXIT: //Previous: Exit
 						currentCard = AccountImportCard.EXIT;
@@ -583,12 +608,6 @@ public class AccountImportDialog extends JDialogCentered {
 				if (addTask.done) {
 					addTask.done = false;
 					switch (addTask.result) {
-						case FAIL_EXIST:
-							currentCard = AccountImportCard.DONE;
-							jNext.setEnabled(false);
-							donePanel.setResult(DialoguesAccount.get().failExist());
-							donePanel.setText(DialoguesAccount.get().failExistText());
-							break;
 						case FAIL_API_FAIL:
 							currentCard = AccountImportCard.DONE;
 							jNext.setEnabled(false);
@@ -620,17 +639,39 @@ public class AccountImportDialog extends JDialogCentered {
 									break;
 							}
 							break;
+						case OK_EXIST:
+							currentCard = AccountImportCard.DONE;
+							jNext.setEnabled(true);
+							donePanel.setResult(DialoguesAccount.get().okUpdate());
+							donePanel.setText(DialoguesAccount.get().okUpdateText());
+							break;
+						case OK_EXIST_LIMITED_ACCESS:
+							currentCard = AccountImportCard.DONE;
+							jNext.setEnabled(true);
+							donePanel.setResult(DialoguesAccount.get().okUpdate());
+							donePanel.setText(DialoguesAccount.get().okUpdateLimitedText());
+							break;
 						case OK_LIMITED_ACCESS:
 							currentCard = AccountImportCard.DONE;
 							jNext.setEnabled(true);
 							donePanel.setResult(DialoguesAccount.get().okLimited());
-							donePanel.setText(DialoguesAccount.get().okLimitedText());
+							if (share == Share.EXPORT) {
+								donePanel.setText(DialoguesAccount.get().okLimitedExportText());
+							} else {
+								donePanel.setText(DialoguesAccount.get().okLimitedText());
+							}
 							break;
 						case OK_ACCOUNT_VALID:
-							currentCard = AccountImportCard.DONE;
 							jNext.setEnabled(true);
-							donePanel.setResult(DialoguesAccount.get().okValid());
-							donePanel.setText(DialoguesAccount.get().okValidText());
+							if (share == Share.EXPORT) {
+								currentCard = AccountImportCard.SHARE_EXPORT;
+								donePanel.setResult("");
+								donePanel.setText("");
+							} else {
+								currentCard = AccountImportCard.DONE;
+								donePanel.setResult(DialoguesAccount.get().okValid());
+								donePanel.setText(DialoguesAccount.get().okValidText());
+							}
 							break;
 					}
 					updateTab();
@@ -977,7 +1018,15 @@ public class AccountImportDialog extends JDialogCentered {
 
 		@Override
 		public boolean exist() {
-			return false; //Each ESI account are unique
+			if (editEsiOwner != null) {
+				return false;
+			}
+			for (EsiOwner owner : program.getProfileManager().getEsiOwners()) {
+				if (Objects.equals(owner.getOwnerID(), esiOwner.getOwnerID())) {
+					return true;
+				}
+			}
+			return false;
 		}
 
 		@Override
@@ -998,7 +1047,18 @@ public class AccountImportDialog extends JDialogCentered {
 
 		@Override
 		public boolean exist() {
-			return false; //Each ESI account are unique
+			if (editEsiOwner != null) {
+				return false;
+			}
+			if (share == Share.EXPORT) {
+				return false;
+			}
+			for (EsiOwner owner : program.getProfileManager().getEsiOwners()) {
+				if (Objects.equals(owner.getOwnerID(), esiOwner.getOwnerID())) {
+					return true;
+				}
+			}
+			return false;
 		}
 
 		@Override
@@ -1041,10 +1101,6 @@ public class AccountImportDialog extends JDialogCentered {
 		@Override
 		public final Void doInBackground() {
 			setProgress(0);
-			if (exist()) { //account already exist
-				result = Result.FAIL_EXIST;
-				return null;
-			}
 			load();
 			if (getAccountAdder().hasError() || getAccountAdder().isPrivilegesInvalid()) { //Failed to add new account
 				String s = getAccountAdder().getError();
@@ -1059,9 +1115,15 @@ public class AccountImportDialog extends JDialogCentered {
 					result = Result.FAIL_API_FAIL;
 				}
 			} else { //Successfully added new account
-				if (getAccountAdder().isPrivilegesLimited()) {
+				if (exist()) { //account already exist
+					if (getAccountAdder().isPrivilegesLimited()) {
+						result = Result.OK_EXIST_LIMITED_ACCESS; //limited privileges
+					} else {
+						result = Result.OK_EXIST;
+					}
+				} else if (getAccountAdder().isPrivilegesLimited()) { //limited privileges
 					result = Result.OK_LIMITED_ACCESS;
-				} else {
+				} else { //All okay
 					result = Result.OK_ACCOUNT_VALID;
 				}
 			}
