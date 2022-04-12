@@ -347,6 +347,12 @@ public class EsiOwner extends AbstractOwner implements OwnerType {
 		return EsiScopes.CORPORATION_ROLES.isInScope(scopes);
 	}
 
+	public final void updateAuth(EsiOwner esiOwner) {
+		OAuth oAuth = esiOwner.getOAuth();
+		setAuth(esiOwner.getCallbackURL(), oAuth.getRefreshToken(), oAuth.getAccessToken());
+		setInvalid(false);
+	}
+
 	public synchronized final void setAuth(EsiCallbackURL callbackURL, String refreshToken, String accessToken) {
 		if (callbackURL != null) {
 			this.callbackURL = callbackURL;

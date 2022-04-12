@@ -48,15 +48,17 @@ public abstract class DialoguesAccount extends Bundle {
 
 	public abstract String failApiError();
 	public abstract String failApiErrorText(String s);
-	public abstract String failExist();
-	public abstract String failExistText();
 	public abstract String failNotEnoughPrivileges();
 	public abstract String failNotEnoughPrivilegesText();
 	public abstract String failNotValid();
 	public abstract String failNotValidText();
 	public abstract String failWrongEntry();
 	public abstract String failWrongEntryText();
+	public abstract String okUpdate();
+	public abstract String okUpdateLimitedText();
+	public abstract String okUpdateText();
 	public abstract String okLimited();
+	public abstract String okLimitedExportText();
 	public abstract String okLimitedText();
 	public abstract String okValid();
 	public abstract String okValidText();
@@ -66,7 +68,6 @@ public abstract class DialoguesAccount extends Bundle {
 	public abstract String authorize();
 	public abstract String accessKey();
 	public abstract String credential();
-	public abstract String eveKitHelpText();
 	public abstract String esiHelpText();
 	public abstract String validatingMessage();
 	public abstract String scopes();
@@ -101,9 +102,7 @@ public abstract class DialoguesAccount extends Bundle {
 	public abstract String accountMigrated();
 	public abstract String accountCanMigrate();
 	public abstract String add();
-	public abstract String evekitDescription();
 	public abstract String esiDescription();
-	public abstract String evekit();
 	public abstract String esi();
 	public abstract String collapse();
 	public abstract String expand();
