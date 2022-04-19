@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import javax.swing.BorderFactory;
+import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JTextField;
 import javax.swing.UIManager;
@@ -258,6 +259,14 @@ public class ColorSettings {
 				//Restore original border (if saved)
 				jTextField.setBorder(borderWrap.getBorder());
 			}
+		}
+	}
+
+	public static void configReset(JButton jButton) {
+		jButton.setBackground(Colors.BUTTON_BACKGROUND.getColor());
+		jButton.setForeground(Colors.BUTTON_FOREGROUND.getColor());
+		if ("Nimbus".equalsIgnoreCase(UIManager.getLookAndFeel().getID())) {
+			jButton.setOpaque(false);
 		}
 	}
 

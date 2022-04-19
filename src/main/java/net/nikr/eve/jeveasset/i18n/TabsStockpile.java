@@ -112,6 +112,7 @@ public abstract class TabsStockpile extends Bundle {
 	public abstract String include();
 	public abstract String includeContainer();
 	public abstract String includeCount(int i);
+	public abstract String includeHelp();
 	public abstract String includeAssets();
 	public abstract String includeAssetsTip();
 	public abstract String includeBuyOrders();
