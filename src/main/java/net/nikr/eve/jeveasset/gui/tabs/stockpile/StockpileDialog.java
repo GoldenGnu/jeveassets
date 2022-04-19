@@ -1134,8 +1134,8 @@ public class StockpileDialog extends JDialogCentered {
 			jInclude.add(jSoldContracts, true);
 
 		//INCLIDE LABELS
-			jErrorLabel = new JLabel();
-			jErrorLabel.setEnabled(false);
+			jErrorLabel = new JLabel(TabsStockpile.get().includeHelp());
+			jErrorLabel.setIcon(Images.UPDATE_DONE_ERROR.getIcon());
 			jAssetsLabel = new JLabel();
 			jAssetsLabel.setDisabledIcon(Images.INCLUDE_ASSETS.getIcon());
 			jAssetsLabel.setEnabled(false);
@@ -1497,8 +1497,12 @@ public class StockpileDialog extends JDialogCentered {
 					) {
 				ok = false;
 				jInclude.setIcon(Images.UPDATE_DONE_ERROR.getIcon());
+				ColorSettings.config(jInclude, ColorEntry.GLOBAL_ENTRY_INVALID);
+				jErrorLabel.setVisible(true);
 			} else {
 				jInclude.setIcon(Images.LOC_INCLUDE.getIcon());
+				ColorSettings.configReset(jInclude);
+				jErrorLabel.setVisible(false);
 			}
 
 			jAssetsLabel.setVisible(jAssets.isSelected());
@@ -1536,11 +1540,6 @@ public class StockpileDialog extends JDialogCentered {
 			}
 			jContractsLabel.setText(TabsStockpile.get().includeCount(contracts));
 			jContractsLabel.setVisible(contracts > 0);
-
-			jErrorLabel.setVisible(!jAssets.isSelected()
-					&& !jJobs.isSelected()
-					&& orders == 0
-					&& contracts == 0);
 
 			jMatch.setIcon(jMatchExclude.isSelected() ? Images.EDIT_DELETE_WHITE.getIcon() : Images.EDIT_ADD_WHITE.getIcon());
 			jAssets.setIcon(jAssets.isSelected() ? Images.INCLUDE_ASSETS_SELECTED.getIcon() : Images.INCLUDE_ASSETS.getIcon());
