@@ -28,7 +28,8 @@ import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.TestUtil;
 import net.nikr.eve.jeveasset.data.api.accounts.EveApiAccount;
 import net.nikr.eve.jeveasset.data.api.accounts.EveApiOwner;
-import net.nikr.eve.jeveasset.data.profile.ProfileManager;
+import net.nikr.eve.jeveasset.data.profile.Profile;
+import net.nikr.eve.jeveasset.data.profile.Profile.DefaultProfile;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import org.junit.AfterClass;
@@ -72,17 +73,17 @@ public class ProfileTest extends TestUtil {
 	}
 
 	private void test(String name, boolean supportContracts, boolean supportTransactions, boolean supportJournal) throws URISyntaxException {
-		ProfileManager profileManager = new ProfileManager();
+		Profile profile = new DefaultProfile();
 		String filename = getFilename(name);
-		boolean load = ProfileReader.load(profileManager, filename);
+		boolean load = ProfileReader.load(profile, filename);
 		assertEquals(name+" fail to load", load, true);
-		assertEquals(name+" had no accounts", profileManager.getAccounts().isEmpty(), false);
+		assertEquals(name+" had no accounts", profile.getAccounts().isEmpty(), false);
 		boolean marketOrders = false;
 		//boolean industryJobs = false;
 		boolean contracts = false;
 		boolean transactions = false;
 		boolean journal = false;
-		for (EveApiAccount account : profileManager.getAccounts()) {
+		for (EveApiAccount account : profile.getAccounts()) {
 			if (!account.getName().equals("") && !account.getName().equals("-1")) {
 				fail(name+" Name is not safe expected:<[]> but was:<[" + account.getName() + "]>");
 			}
@@ -153,12 +154,12 @@ public class ProfileTest extends TestUtil {
 
 	@Test
 	public void failTest() throws URISyntaxException {
-		ProfileManager profileManager = new ProfileManager();
+		Profile profile = new DefaultProfile();
 		String filename = getFilename("data-fail");
-		boolean load = ProfileReader.load(profileManager, filename);
+		boolean load = ProfileReader.load(profile, filename);
 		assertThat(load, is(false));
-		assertThat(profileManager.getEsiOwners().isEmpty(), is(true));
-		assertThat(profileManager.getEveKitOwners().isEmpty(), is(true));
-		assertThat(profileManager.getAccounts().isEmpty(), is(true));
+		assertThat(profile.getEsiOwners().isEmpty(), is(true));
+		assertThat(profile.getEveKitOwners().isEmpty(), is(true));
+		assertThat(profile.getAccounts().isEmpty(), is(true));
 	}
 }

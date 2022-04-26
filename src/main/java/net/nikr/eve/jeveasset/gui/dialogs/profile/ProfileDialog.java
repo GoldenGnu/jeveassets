@@ -157,9 +157,7 @@ public class ProfileDialog extends JDialogCentered {
 				profileLoop.setActiveProfile(false);
 			}
 			//Clear accounts
-			program.getProfileManager().getAccounts().clear();
-			program.getProfileManager().getEveKitOwners().clear();
-			program.getProfileManager().getEsiOwners().clear();
+			program.getProfileManager().clear();
 			//Clear data
 			program.updateEventLists();
 			//Set active profile

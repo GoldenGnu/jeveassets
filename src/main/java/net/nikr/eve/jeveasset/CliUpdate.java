@@ -57,8 +57,8 @@ public class CliUpdate {
 		int count = 0;
 		Date date = Settings.getNow();
 		for (Profile profile : profileManager.getProfiles()) {
-			profileManager.clear();
-			ProfileReader.load(profileManager, profile.getFilename());
+			profileManager.setActiveProfile(profile);
+			ProfileReader.load(profile);
 			ProfileData profileData = new ProfileData(profileManager);
 			profileData.updateEventLists();
 			List<UpdateTask> updateTasks = new ArrayList<>();
@@ -76,12 +76,20 @@ public class CliUpdate {
 				});
 				updateTask.update();
 			}
+			//Update tracker locations
 			AssetValue.updateData();
+			//Update eventlists
 			profileData.updateEventLists();
+			//Create value tracker point
 			DataSetCreator.createTrackerDataPoint(profileData, date);
 			TrackerData.save("Added", true);
-			ProfileWriter.save(profileManager, profile.getFilename());
+			//Save settings
 			Settings.saveSettings();
+			//Save profile
+			ProfileWriter.save(profile);
+			//Clean up
+			profile.clear();
+			//Progress
 			count++;
 			SplashUpdater.setProgress( (int)(count * 100.0 / profileManager.getProfiles().size()));
 		}

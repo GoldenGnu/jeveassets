@@ -29,6 +29,7 @@ import net.nikr.eve.jeveasset.SplashUpdater;
 import net.nikr.eve.jeveasset.data.api.accounts.EveKitOwner;
 import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
+import net.nikr.eve.jeveasset.data.profile.Profile.DefaultProfile;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 import net.nikr.eve.jeveasset.io.local.ProfileReader;
 import net.nikr.eve.jeveasset.io.local.ProfileWriter;
@@ -41,15 +42,12 @@ public class ProfileManager {
 
 	private static final Logger LOG = LoggerFactory.getLogger(ProfileManager.class);
 
-	private final List<EveApiAccount> accounts = new ArrayList<EveApiAccount>();
-	private final List<EveKitOwner> eveKitOwners = new ArrayList<EveKitOwner>();
-	private final List<EsiOwner> esiOwners = new ArrayList<EsiOwner>();
 	private boolean profileLoadError = false;
 	private Profile activeProfile;
-	private List<Profile> profiles = new ArrayList<Profile>();
+	private List<Profile> profiles = new ArrayList<>();
 
 	public ProfileManager() {
-		activeProfile = new Profile("Default", true, true);
+		activeProfile = new DefaultProfile();
 		profiles.add(activeProfile);
 	}
 
@@ -78,15 +76,11 @@ public class ProfileManager {
 	}
 
 	public void saveProfile() {
-		ProfileWriter.save(this, activeProfile.getFilename());
-	}
-
-	public List<EveApiAccount> getAccounts() {
-		return accounts;
+		ProfileWriter.save(activeProfile);
 	}
 
 	public List<OwnerType> getOwnerTypes() {
-		List<OwnerType> owners = new ArrayList<OwnerType>();
+		List<OwnerType> owners = new ArrayList<>();
 		for (EveApiAccount account : getAccounts()) {
 			owners.addAll(account.getOwners());
 		}
@@ -96,32 +90,32 @@ public class ProfileManager {
 	}
 
 	public List<EveKitOwner> getEveKitOwners() {
-		return eveKitOwners;
+		return activeProfile.getEveKitOwners();
+	}
+	
+	public List<EsiOwner> getEsiOwners() {
+		return activeProfile.getEsiOwners();
 	}
 
-	public List<EsiOwner> getEsiOwners() {
-		return esiOwners;
+	public List<EveApiAccount> getAccounts() {
+		return activeProfile.getAccounts();
+	}
+
+	public void clear() {
+		activeProfile.clear();
 	}
 
 	public void loadActiveProfile() {
 	//Load Profile
 		LOG.info("Loading profile: {}", activeProfile.getName());
-		clear();
-		profileLoadError = !ProfileReader.load(this, activeProfile.getFilename()); //Assets (Must be loaded before the price data)
+		clear(); //Clear active profile before loading
+		profileLoadError = !ProfileReader.load(activeProfile); //Assets (Must be loaded before the price data)
 		SplashUpdater.setProgress(40);
-	//Price data (update as needed)
-		SplashUpdater.setProgress(45);
 	}
 
 	public void showProfileLoadErrorWarning(Component parentComponent) {
 		if (profileLoadError) {
 			JOptionPane.showMessageDialog(parentComponent, GuiShared.get().errorLoadingProfileMsg(), GuiShared.get().errorLoadingProfileTitle(), JOptionPane.ERROR_MESSAGE);
 		}
-	}
-
-	public void clear() {
-		accounts.clear();
-		eveKitOwners.clear();
-		esiOwners.clear();
 	}
 }
