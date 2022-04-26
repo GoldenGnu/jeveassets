@@ -23,8 +23,13 @@ package net.nikr.eve.jeveasset.data.profile;
 
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
+import net.nikr.eve.jeveasset.data.api.accounts.EveApiAccount;
+import net.nikr.eve.jeveasset.data.api.accounts.EveKitOwner;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
 import net.nikr.eve.jeveasset.io.shared.FileUtil;
 import org.slf4j.Logger;
@@ -39,6 +44,13 @@ public class Profile implements Comparable<Profile> {
 	private boolean defaultProfile;
 	private boolean activeProfile;
 	private Set<Long> stockpileIDs = null;
+	private final List<EveApiAccount> accounts = new ArrayList<>();
+	private final List<EveKitOwner> eveKitOwners = new ArrayList<>();
+	private final List<EsiOwner> esiOwners = new ArrayList<>();
+
+	private Profile() {
+		this("Default", true, true);
+	}
 
 	public Profile(final String name, final boolean defaultProfile, final boolean activeProfile) {
 		this.name = name;
@@ -65,6 +77,24 @@ public class Profile implements Comparable<Profile> {
 
 	public void setStockpileIDs(Set<Long> stockpileIDs) {
 		this.stockpileIDs = stockpileIDs;
+	}
+
+	public List<EveApiAccount> getAccounts() {
+		return accounts;
+	}
+
+	public List<EveKitOwner> getEveKitOwners() {
+		return eveKitOwners;
+	}
+
+	public List<EsiOwner> getEsiOwners() {
+		return esiOwners;
+	}
+
+	public void clear() {
+		accounts.clear();
+		eveKitOwners.clear();
+		esiOwners.clear();
 	}
 
 	private void createList() {
@@ -181,5 +211,12 @@ public class Profile implements Comparable<Profile> {
 	@Override
 	public int compareTo(final Profile o) {
 		return this.getName().compareToIgnoreCase(o.getName());
+	}
+
+	public static class DefaultProfile extends Profile {
+
+		public DefaultProfile() {
+			super();
+		}
 	}
 }

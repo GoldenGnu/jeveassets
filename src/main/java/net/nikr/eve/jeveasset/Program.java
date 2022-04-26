@@ -194,6 +194,7 @@ public class Program implements ActionListener {
 	//Load price data
 		priceDataGetter = new PriceDataGetter();
 		priceDataGetter.load();
+		SplashUpdater.setProgress(45);
 	//Timer
 		timer = new Timer(15000, this); //Once a minute
 		timer.setActionCommand(ProgramAction.TIMER.name());
