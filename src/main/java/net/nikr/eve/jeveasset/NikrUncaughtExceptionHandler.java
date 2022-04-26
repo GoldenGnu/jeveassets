@@ -101,7 +101,7 @@ public class NikrUncaughtExceptionHandler implements Thread.UncaughtExceptionHan
 						, Program.PROGRAM_NAME + " - Critical Error", JOptionPane.OK_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE);
 				if (value == JOptionPane.OK_OPTION) {
 					try {
-						Desktop.getDesktop().browse(new URI("https://jeveassets.nikr.net/jmemory"));
+						Desktop.getDesktop().browse(new URI("https://wiki.jeveassets.org/jmemory"));
 					} catch (Throwable ex) {
 						//We tried our best, nothing more to do now...
 					}
