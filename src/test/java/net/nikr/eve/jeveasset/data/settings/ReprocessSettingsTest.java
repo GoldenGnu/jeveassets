@@ -38,20 +38,27 @@ public class ReprocessSettingsTest extends TestUtil {
 	public void testSomeMethod() {
 		ReprocessSettings reprocessSettings;
 		//Level 4 Material Skill At 50% Facilities
-		reprocessSettings = new ReprocessSettings(50, 5, 5, 4);
+		reprocessSettings = new ReprocessSettings(50, 5, 5, 4, 0);
 		assertEquals(68.31, reprocessSettings.getPercent(true), 0);
 		//Level 4 Material Skill 52% Reprocessing Array
-		reprocessSettings = new ReprocessSettings(52, 5, 5, 4);
+		reprocessSettings = new ReprocessSettings(52, 5, 5, 4, 0);
 		assertEquals(71.0424, reprocessSettings.getPercent(true), 0);
 		//Max Skill At 50% Facilities
-		reprocessSettings = new ReprocessSettings(50, 5, 5, 5);
+		reprocessSettings = new ReprocessSettings(50, 5, 5, 5, 0);
 		assertEquals(69.575, reprocessSettings.getPercent(true), 0);
 		//Max Skill At 52% Reprocessing Array
-		reprocessSettings = new ReprocessSettings(52, 5, 5, 5);
+		reprocessSettings = new ReprocessSettings(52, 5, 5, 5, 0);
 		assertEquals(72.358, reprocessSettings.getPercent(true), 0);
 
+		//Min Reproceesing
+		reprocessSettings = new ReprocessSettings(100, 5, 5, 5, 0);
+		assertEquals(50, reprocessSettings.getPercent(false), 0);
+		//Max Reproceesing
+		reprocessSettings = new ReprocessSettings(0, 0, 0, 0, 5);
+		assertEquals(55, reprocessSettings.getPercent(false), 0.0001);
+
 		//Level 4 Material Skill At 50% Facilities
-		reprocessSettings = new ReprocessSettings(50, 0, 0, 0);
+		reprocessSettings = new ReprocessSettings(50, 0, 0, 0, 0);
 		Item item = StaticData.get().getItems().get(238);
 		for (ReprocessedMaterial reprocessedMaterial : item.getReprocessedMaterial()) {
 			if (reprocessedMaterial.getTypeID() == 34) { //Tritanium

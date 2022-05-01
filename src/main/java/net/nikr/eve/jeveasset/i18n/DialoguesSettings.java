@@ -164,7 +164,8 @@ public abstract class DialoguesSettings extends Bundle {
 	public abstract String percentSymbol();
 	public abstract String reprocessingLevel();
 	public abstract String reprocessingEfficiencyLevel();
-	public abstract String scrapMetalProcessingLevel();
+	public abstract String oreProcessingLevel();
+	public abstract String scrapmetalProcessingLevel();
 	public abstract String zero();
 	public abstract String one();
 	public abstract String two();
