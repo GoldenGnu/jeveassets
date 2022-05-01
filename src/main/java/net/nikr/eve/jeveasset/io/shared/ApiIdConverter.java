@@ -163,8 +163,8 @@ public final class ApiIdConverter {
 		}
 	}
 
-	private static double getPriceReprocessed(final Integer typeID, final boolean isBlueprintCopy) {
-		return getPriceType(typeID, isBlueprintCopy, null, true);
+	private static double getPriceReprocessed(final Integer typeID) {
+		return getPriceType(typeID, false, null, true);
 	}
 
 	private static double getPriceType(final Integer typeID, final boolean isBlueprintCopy, ContractPriceItem contractPriceItem, boolean reprocessed) {
@@ -221,7 +221,7 @@ public final class ApiIdConverter {
 		for (ReprocessedMaterial material : item.getReprocessedMaterial()) {
 			//Calculate reprocessed price
 			portionSize = material.getPortionSize();
-			double price = ApiIdConverter.getPriceReprocessed(material.getTypeID(), false);
+			double price = ApiIdConverter.getPriceReprocessed(material.getTypeID());
 			priceReprocessed = priceReprocessed + (price * Settings.get().getReprocessSettings().getLeft(material.getQuantity(), item.isOre()));
 		}
 		if (priceReprocessed > 0 && portionSize > 0) {
