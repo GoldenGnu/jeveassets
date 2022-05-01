@@ -671,7 +671,8 @@ public class SettingsWriter extends AbstractXmlWriter {
 		xmldoc.getDocumentElement().appendChild(parentNode);
 		setAttribute(parentNode, "refining", reprocessSettings.getReprocessingLevel());
 		setAttribute(parentNode, "efficiency", reprocessSettings.getReprocessingEfficiencyLevel());
-		setAttribute(parentNode, "processing", reprocessSettings.getScrapmetalProcessingLevel());
+		setAttribute(parentNode, "ore", reprocessSettings.getOreProcessingLevel());
+		setAttribute(parentNode, "scrapmetal", reprocessSettings.getScrapmetalProcessingLevel());
 		setAttribute(parentNode, "station", reprocessSettings.getStation());
 	}
 

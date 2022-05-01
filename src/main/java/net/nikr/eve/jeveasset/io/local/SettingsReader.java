@@ -1125,10 +1125,26 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 
 	private void parseReprocessing(final Element windowElement, final Settings settings) throws XmlException {
 		int reprocessing = getInt(windowElement, "refining");
-		int reprocessingEfficiency = getInt(windowElement, "efficiency");
-		int scrapmetalProcessing = getInt(windowElement, "processing");
+		int efficiency = getInt(windowElement, "efficiency");
+		Integer processing = getIntOptional(windowElement, "processing");
+		Integer ore = getIntOptional(windowElement, "ore");
+		Integer scrapmetal = getIntOptional(windowElement, "scrapmetal");
+		if (scrapmetal == null) {
+			if (processing != null) {
+				scrapmetal = processing;
+			} else {
+				scrapmetal = 0;
+			}
+		}
+		if (ore == null) {
+			if (processing != null) {
+				ore = processing;
+			} else {
+				ore = 0;
+			}
+		}
 		int station = getInt(windowElement, "station");
-		settings.setReprocessSettings(new ReprocessSettings(station, reprocessing, reprocessingEfficiency, scrapmetalProcessing));
+		settings.setReprocessSettings(new ReprocessSettings(station, reprocessing, efficiency, ore, scrapmetal));
 	}
 
 	private void parseWindow(final Element windowElement, final Settings settings) throws XmlException {
