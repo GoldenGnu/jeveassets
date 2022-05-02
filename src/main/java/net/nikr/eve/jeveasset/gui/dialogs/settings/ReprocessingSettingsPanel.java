@@ -23,6 +23,8 @@ package net.nikr.eve.jeveasset.gui.dialogs.settings;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import javax.swing.*;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.settings.ReprocessSettings;
@@ -60,9 +62,11 @@ public class ReprocessingSettingsPanel extends JSettingsPanel {
 		JLabel jStationLabel = new JLabel(DialoguesSettings.get().stationEquipment());
 		jStation50 = new JRadioButton(DialoguesSettings.get().fiftyPercent());
 		jStation50.addActionListener(listener);
-		jStationOther = new JRadioButton(DialoguesSettings.get().customPercent());
+		jStationOther = new JRadioButton();
 		jStationOther.addActionListener(listener);
 		jStation = new JIntegerField(DocumentFactory.ValueFlag.POSITIVE_AND_ZERO);
+		jStation.addMouseListener(listener);
+		jStation.setColumns(7);
 		JLabel jStationPercentLabel = new JLabel(DialoguesSettings.get().percentSymbol());
 
 		ButtonGroup jStationButtonGroup = new ButtonGroup();
@@ -168,11 +172,12 @@ public class ReprocessingSettingsPanel extends JSettingsPanel {
 						.addComponent(jOreLabel)
 						.addComponent(jScrapmetalLabel)
 					)
+					.addGap(5)
 					.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
 						.addGroup(layout.createSequentialGroup()
 							.addComponent(jStation50)
 							.addComponent(jStationOther)
-							.addComponent(jStation)
+							.addComponent(jStation, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
 							.addComponent(jStationPercentLabel)
 						)
 						.addGroup(layout.createSequentialGroup()
@@ -343,18 +348,30 @@ public class ReprocessingSettingsPanel extends JSettingsPanel {
 	private void validateStation() {
 		if (jStation50.isSelected()) {
 			jStation.setText("50");
-			jStation.setEditable(false);
+			jStation.setEnabled(false);
 		}
 		if (jStationOther.isSelected()) {
-			jStation.setEditable(true);
+			jStation.setEnabled(true);
 		}
 	}
 
-	private class ListenerClass implements ActionListener {
+	private class ListenerClass extends MouseAdapter implements ActionListener {
 		@Override
 		public void actionPerformed(final ActionEvent e) {
 			validateSkills();
 			validateStation();
+			if (e.getSource().equals(jStationOther)) {
+				jStation.requestFocusInWindow();
+				jStation.selectAll();
+			}
+		}
+
+		@Override
+		public void mouseClicked(MouseEvent e) {
+			jStationOther.setSelected(true);
+			jStation.setEnabled(true);
+			jStation.requestFocusInWindow();
+			jStation.selectAll();
 		}
 	}
 }

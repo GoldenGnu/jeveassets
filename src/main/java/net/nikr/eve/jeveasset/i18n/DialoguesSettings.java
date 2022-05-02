@@ -160,7 +160,6 @@ public abstract class DialoguesSettings extends Bundle {
 	public abstract String reprocessingWarning();
 	public abstract String stationEquipment();
 	public abstract String fiftyPercent();
-	public abstract String customPercent();
 	public abstract String percentSymbol();
 	public abstract String reprocessingLevel();
 	public abstract String reprocessingEfficiencyLevel();
