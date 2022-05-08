@@ -94,12 +94,14 @@ import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileTotal;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.SubpileItem;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.SubpileStock;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileSeparatorTableCell.StockpileCellAction;
+import net.nikr.eve.jeveasset.i18n.GuiShared;
 import net.nikr.eve.jeveasset.i18n.TabsStockpile;
 import net.nikr.eve.jeveasset.io.local.SettingsReader;
 import net.nikr.eve.jeveasset.io.local.SettingsWriter;
 import net.nikr.eve.jeveasset.io.local.StockpileDataReader;
 import net.nikr.eve.jeveasset.io.local.StockpileDataWriter;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
+import net.nikr.eve.jeveasset.io.shared.DesktopUtil.HelpLink;
 
 
 public class StockpileTab extends JMainTabSecondary implements TagUpdate {
@@ -321,6 +323,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		filterControl = new StockpileFilterControl(sortedListTotal);
 		filterControl.addExportOption(jExportXml);
 		filterControl.addExportOption(jExportText);
+		filterControl.setManualLink(new HelpLink("https://wiki.jeveassets.org/manual/stockpile", GuiShared.get().helpStockpile()), getIcon());
 		//Menu
 		installTableTool(new StockpileTableMenu(), tableFormat, tableModel, jTable, filterControl, StockpileItem.class);
 

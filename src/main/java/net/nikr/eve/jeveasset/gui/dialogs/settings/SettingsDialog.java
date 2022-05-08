@@ -50,12 +50,15 @@ import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
 import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
+import net.nikr.eve.jeveasset.i18n.GuiShared;
+import net.nikr.eve.jeveasset.io.shared.DesktopUtil;
+import net.nikr.eve.jeveasset.io.shared.DesktopUtil.HelpLink;
 
 
 public class SettingsDialog extends JDialogCentered {
 
 	private enum SettingsDialogAction {
-		OK, CANCEL, APPLY
+		OK, CANCEL, APPLY, HELP
 	}
 
 	private final JTree jTree;
@@ -144,6 +147,10 @@ public class SettingsDialog extends JDialogCentered {
 
 		JSeparator jSeparator = new JSeparator();
 
+		JButton jHelp = new JButton(Images.MISC_HELP.getIcon());
+		jHelp.setActionCommand(SettingsDialogAction.HELP.name());
+		jHelp.addActionListener(listener);
+
 		jOK = new JButton(DialoguesSettings.get().ok());
 		jOK.setActionCommand(SettingsDialogAction.OK.name());
 		jOK.addActionListener(listener);
@@ -164,6 +171,8 @@ public class SettingsDialog extends JDialogCentered {
 				)
 				.addComponent(jSeparator)
 				.addGroup(layout.createSequentialGroup()
+					.addComponent(jHelp, 30, 30, 30)
+					.addGap(0, 0, Integer.MAX_VALUE)
 					.addComponent(jOK, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
 					.addComponent(jCancel, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
 					.addComponent(jApply, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
@@ -177,6 +186,7 @@ public class SettingsDialog extends JDialogCentered {
 				)
 				.addComponent(jSeparator, 5, 5, 5)
 				.addGroup(layout.createParallelGroup()
+					.addComponent(jHelp, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jOK, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jCancel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jApply, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
@@ -310,12 +320,12 @@ public class SettingsDialog extends JDialogCentered {
 		public void actionPerformed(final ActionEvent e) {
 			if (SettingsDialogAction.OK.name().equals(e.getActionCommand())) {
 				save(true);
-			}
-			if (SettingsDialogAction.CANCEL.name().equals(e.getActionCommand())) {
+			} else if (SettingsDialogAction.CANCEL.name().equals(e.getActionCommand())) {
 				setVisible(false);
-			}
-			if (SettingsDialogAction.APPLY.name().equals(e.getActionCommand())) {
+			} else if (SettingsDialogAction.APPLY.name().equals(e.getActionCommand())) {
 				save(false);
+			} else if (SettingsDialogAction.HELP.name().equals(e.getActionCommand())) {
+				DesktopUtil.browse(new HelpLink("https://wiki.jeveassets.org/manual/options", GuiShared.get().helpSettings()), getDialog());
 			}
 		}
 
