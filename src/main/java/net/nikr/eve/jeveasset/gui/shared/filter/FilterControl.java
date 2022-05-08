@@ -32,6 +32,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.swing.Icon;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
@@ -42,6 +43,7 @@ import net.nikr.eve.jeveasset.data.settings.SettingsUpdateListener;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.AllColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.NumberValue;
+import net.nikr.eve.jeveasset.io.shared.DesktopUtil.HelpLink;
 
 
 public abstract class FilterControl<E> implements ColumnCache<E>, SimpleFilterControl<E> {
@@ -208,6 +210,10 @@ public abstract class FilterControl<E> implements ColumnCache<E>, SimpleFilterCo
 
 	public void addExportOption(final JMenuItem jMenuItem) {
 		gui.addExportOption(jMenuItem);
+	}
+
+	public void setManualLink(final HelpLink helpLink, Icon icon) {
+		gui.setManualLink(helpLink, icon);
 	}
 
 	public JMenu getMenu(final JTable jTable, final List<E> items) {
