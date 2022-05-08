@@ -79,6 +79,22 @@ public final class DesktopUtil {
 
 	
 	/**
+	 * Open link to jEveAssets manual 
+	 * @param helpLink
+	 * @param window 
+	 */
+	public static void browse(HelpLink helpLink, final Window window) {
+		if (helpLink == null) {
+			return;
+		}
+		int returnValue = JOptionPane.showConfirmDialog(window, GuiShared.get().helpOpenManual(helpLink.getTitle()), GuiShared.get().helpOpenManualTitle(), JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+		if (returnValue != JOptionPane.OK_OPTION) {
+			return;
+		}
+		browse(helpLink.getLink(), window);
+	}
+
+	/**
 	 * Open a single link
 	 * @param url 
 	 * @param program 
@@ -210,6 +226,24 @@ public final class DesktopUtil {
 					browse(hle.getURL().toString(), window);
 				}
 			}
+		}
+	}
+
+	public static class HelpLink {
+		private final String link;
+		private final String title;
+
+		public HelpLink(String link, String title) {
+			this.link = link;
+			this.title = title;
+		}
+
+		public String getLink() {
+			return link;
+		}
+
+		public String getTitle() {
+			return title;
 		}
 	}
 }

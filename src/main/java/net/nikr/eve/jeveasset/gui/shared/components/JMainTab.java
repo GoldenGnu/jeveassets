@@ -209,7 +209,7 @@ public abstract class JMainTab {
 	public abstract void clearData();
 	public abstract Collection<LocationType> getLocations();
 
-	public Icon getIcon() {
+	public final Icon getIcon() {
 		return icon;
 	}
 
