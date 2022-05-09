@@ -20,7 +20,6 @@
  */
 package net.nikr.eve.jeveasset.data.settings;
 
-import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -39,35 +38,6 @@ import org.slf4j.LoggerFactory;
 public class AddedData {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AddedData.class);
-
-	private static enum TempDirs {
-		DEFAULT(System.getProperty("java.io.tmpdir")), //Default
-		USER_HOME(System.getProperty("user.home")), //User Home Directory
-		USER_DIR(System.getProperty("user.dir")), //jEveAssets Working Directory
-		DATA_DIR(FileUtil.getPathDataDirectory()), //jEveAssets Data Directory
-		PROGRAM_DIR(FileUtil.getLocalFile("", false)), //jEveAssets Program Directory
-		;
-
-		private final String dir;
-		private final File file;
-
-		private TempDirs(String dir) {
-			this.dir = dir;
-			this.file = new File(dir);
-		}
-
-		public boolean isValid() {
-			return file.exists() && file.isDirectory() && file.canRead() && file.canWrite() && file.canExecute();
-		}
-
-		public String getDir() {
-			return dir;
-		}
-
-		public void setTmpDir() {
-			System.setProperty("java.io.tmpdir", dir);
-		}
-	}
 
 	private static enum DataSettings {
 		ASSETS("assetadded"){
@@ -126,7 +96,7 @@ public class AddedData {
 	}
 
 	public static void load() {
-		fixTempDir();
+		TempDirs.fixTempDir();
 		for (DataSettings dataSettings : DataSettings.values()) {
 			dataSettings.getInstance().init();
 		}
@@ -138,16 +108,6 @@ public class AddedData {
 		}
 		if (!tableExist()) { //New database: Empty
 			createTable();
-		}
-	}
-
-	private static void fixTempDir() {
-		for (TempDirs tempDirs : TempDirs.values()) {
-			if (tempDirs.isValid()) {
-				tempDirs.setTmpDir();
-				LOG.info("Using " + tempDirs.name() + " for java.io.tmpdir (" + tempDirs.getDir() + ")");
-				break;
-			}
 		}
 	}
 
