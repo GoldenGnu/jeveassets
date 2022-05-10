@@ -146,7 +146,7 @@ public abstract class JManageDialog extends JDialogCentered {
 	}
 
 	private String getSelectedString() {
-		int selectedIndex =  jList.getSelectedIndex();
+		int selectedIndex = jList.getSelectedIndex();
 		if (selectedIndex != -1) {
 			return listModel.get(jList.getSelectedIndex());
 		} else {

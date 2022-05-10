@@ -291,7 +291,7 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 		//Price Reprocessed Type (can be a String)
 		object = jPriceReprocessedType.getSelectedItem();
 		PriceMode priceReprocessedType;
-		if (object  instanceof PriceMode) {
+		if (object instanceof PriceMode) {
 			priceReprocessedType = (PriceMode) object;
 		} else {
 			priceReprocessedType = Settings.get().getPriceDataSettings().getPriceReprocessedType();

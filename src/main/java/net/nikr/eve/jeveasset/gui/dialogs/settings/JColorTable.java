@@ -217,12 +217,12 @@ public class JColorTable extends JSeparatorTable {
 					* On TableHeader UI update:
 					* Create decoupled DefaultTableCellHeaderRenderer to replace the now defunct wrapped renderer
 					*/
-				   IconTableCellRenderer.this.tableCellRenderer = new JTableHeader() {
-					   @Override
-					   public TableCellRenderer createDefaultRenderer() {
-						   return super.createDefaultRenderer();
-					   }
-				   }.createDefaultRenderer();
+					IconTableCellRenderer.this.tableCellRenderer = new JTableHeader() {
+						@Override
+						public TableCellRenderer createDefaultRenderer() {
+							return super.createDefaultRenderer();
+						}
+					}.createDefaultRenderer();
 				}
 			});
 		}

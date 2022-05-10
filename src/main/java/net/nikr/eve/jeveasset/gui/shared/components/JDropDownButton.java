@@ -146,7 +146,7 @@ public class JDropDownButton extends JButton {
 		return popupHorizontalAlignment;
 	}
 
-	public void setPopupHorizontalAlignment(final int popupHorizontalAlignment)  {
+	public void setPopupHorizontalAlignment(final int popupHorizontalAlignment) {
 		if (popupHorizontalAlignment != LEFT && popupHorizontalAlignment != RIGHT && popupHorizontalAlignment != CENTER) {
 			throw new IllegalArgumentException("Must be SwingConstants.RIGHT, SwingConstants.LEFT, or SwingConstants.CENTER");
 		}
@@ -276,7 +276,7 @@ public class JDropDownButton extends JButton {
 
 		@Override
 		public void keyPressed(final KeyEvent e) {
-			if (e.getKeyCode()  == KeyEvent.VK_SPACE || e.getKeyCode() == KeyEvent.VK_ENTER) {
+			if (e.getKeyCode() == KeyEvent.VK_SPACE || e.getKeyCode() == KeyEvent.VK_ENTER) {
 				showPopupMenuKey = true;
 			}
 		}

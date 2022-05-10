@@ -188,7 +188,7 @@ public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarket
 
 	@Override
 	public int compareTo(final MyMarketOrder o) {
-		return  Long.compare(o.getOrderID(), this.getOrderID());
+		return Long.compare(o.getOrderID(), this.getOrderID());
 	}
 
 	public Date getExpires() {

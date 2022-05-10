@@ -58,7 +58,7 @@ public class ContractPriceReader extends AbstractBackup {
 		try {
 			lock(filename);
 			fileReader = new FileReader(file);
-			ContractPriceData contractPriceData =  gson.fromJson(fileReader, ContractPriceData.class);
+			ContractPriceData contractPriceData = gson.fromJson(fileReader, ContractPriceData.class);
 			LOG.info("Contract prices loaded");
 			if (contractPriceData != null) {
 				return contractPriceData;

@@ -229,7 +229,7 @@ public class MenuScroller {
 	private void refreshMenu() {
 		if (menuItems != null && menuItems.length > 0) {
 			int maxScroll = menuItems.length - (topFixedCount + bottomFixedCount + 2);
-			if (scrollCount ==  maxScroll) { //Show All
+			if (scrollCount == maxScroll) { //Show All
 				menu.setPreferredSize(null);
 				return;
 			}
@@ -275,7 +275,7 @@ public class MenuScroller {
 			}
 			Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 			int height = screenSize.height;
-			int maxScroll = (height / maxHeight) - (topFixedCount + bottomFixedCount + 1);  // 2 just takes the menu up a bit from the bottom which looks nicer
+			int maxScroll = (height / maxHeight) - (topFixedCount + bottomFixedCount + 1); // 2 just takes the menu up a bit from the bottom which looks nicer
 			scrollCount = Math.min(maxScroll, menuItems.length - (topFixedCount + bottomFixedCount + 2));
 		}
 	}

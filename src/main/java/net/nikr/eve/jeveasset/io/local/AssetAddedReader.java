@@ -75,7 +75,7 @@ public class AssetAddedReader extends AbstractBackup {
 				LOG.error(ex.getMessage(), ex);
 			}
 		} finally {
-			if (fileReader != null)  {
+			if (fileReader != null) {
 				try {
 					fileReader.close();
 				} catch (IOException ex) {

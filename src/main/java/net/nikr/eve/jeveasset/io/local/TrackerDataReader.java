@@ -70,7 +70,7 @@ public class TrackerDataReader extends AbstractBackup {
 		try {
 			lock(filename);
 			fileReader = new FileReader(file);
-			Map<String, List<Value>> trackerData =  gson.fromJson(fileReader, new TypeToken<HashMap<String, ArrayList<Value>>>() {}.getType());
+			Map<String, List<Value>> trackerData = gson.fromJson(fileReader, new TypeToken<HashMap<String, ArrayList<Value>>>() {}.getType());
 			LOG.info("Tracker data loaded");
 			return trackerData;
 		} catch (IOException | JsonParseException ex) {

@@ -119,7 +119,7 @@ import uk.me.candle.eve.routing.cancel.CancelService;
  */
 public class RoutingTab extends JMainTabSecondary {
 
-	private static final  Logger LOG = LoggerFactory.getLogger(RoutingTab.class);
+	private static final Logger LOG = LoggerFactory.getLogger(RoutingTab.class);
 
 	private enum RoutingAction {
 		ADD,
@@ -611,7 +611,7 @@ public class RoutingTab extends JMainTabSecondary {
 		jFullResult.setEditable(false);
 		jFullResult.setFont(jPanel.getFont());
 
-		ResultToolbar jInfoToolBar  = new ResultToolbar();
+		ResultToolbar jInfoToolBar = new ResultToolbar();
 		resultToolbars.add(jInfoToolBar);
 
 		jInfo = new JTextArea();
@@ -1544,7 +1544,7 @@ public class RoutingTab extends JMainTabSecondary {
 				jFileChooser.setSelectedFile(null);
 				jFileChooser.setCurrentDirectory(null);
 				int returnValue = jFileChooser.showOpenDialog(program.getMainWindow().getFrame());
-				if (returnValue != JCustomFileChooser.APPROVE_OPTION)  {
+				if (returnValue != JCustomFileChooser.APPROVE_OPTION) {
 					return;
 				}
 				File file = jFileChooser.getSelectedFile();
@@ -1593,7 +1593,7 @@ public class RoutingTab extends JMainTabSecondary {
 				jFileChooser.setSelectedFile(null);
 				jFileChooser.setCurrentDirectory(null);
 				int returnValue = jFileChooser.showSaveDialog(program.getMainWindow().getFrame());
-				if (returnValue != JCustomFileChooser.APPROVE_OPTION)  {
+				if (returnValue != JCustomFileChooser.APPROVE_OPTION) {
 					return;
 				}
 				File file = jFileChooser.getSelectedFile();

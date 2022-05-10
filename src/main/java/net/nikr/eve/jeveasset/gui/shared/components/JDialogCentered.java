@@ -174,7 +174,7 @@ public abstract class JDialogCentered {
 		}
 
 		@Override
-		public void windowClosed(final WindowEvent e)  { }
+		public void windowClosed(final WindowEvent e) { }
 
 		@Override
 		public void windowIconified(final WindowEvent e) { }

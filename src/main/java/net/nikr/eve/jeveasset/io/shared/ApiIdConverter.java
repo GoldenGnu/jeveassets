@@ -129,7 +129,7 @@ public final class ApiIdConverter {
 			case 5: division = "5th Division"; break;
 			case 6: division = "6th Division"; break;
 			case 7: division = "7th Division"; break;
-			default: division = "Division " + 1;  break;
+			default: division = "Division " + 1; break;
 		}
 		String divisionName = null;
 		if (ownerType != null) {

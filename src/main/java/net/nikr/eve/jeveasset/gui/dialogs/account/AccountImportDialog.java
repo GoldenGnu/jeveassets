@@ -539,7 +539,7 @@ public class AccountImportDialog extends JDialogCentered {
 				CopyHandler.toClipboard(jExport.getText());
 			} else if (AccountImportAction.SHARE_TO_FILE.name().equals(e.getActionCommand())) {
 				File file = jFileChooser.getSelectedFile();
-				if (file != null)  {
+				if (file != null) {
 					jFileChooser.setSelectedFile(new File(""));
 					jFileChooser.setCurrentDirectory(file.getParentFile());
 				}
@@ -569,7 +569,7 @@ public class AccountImportDialog extends JDialogCentered {
 				}
 			} else if (AccountImportAction.SHARE_FROM_FILE.name().equals(e.getActionCommand())) {
 				File file = jFileChooser.getSelectedFile();
-				if (file != null)  {
+				if (file != null) {
 					jFileChooser.setSelectedFile(new File(""));
 					jFileChooser.setCurrentDirectory(file.getParentFile());
 				}
@@ -586,7 +586,7 @@ public class AccountImportDialog extends JDialogCentered {
 						}
 						jImport.setText(builder.toString());
 					} catch (IOException ex) {
-						JOptionPane.showMessageDialog(getDialog(), GuiShared.get().textLoadFailMsg(),  GuiShared.get().textLoadFailTitle(), JOptionPane.WARNING_MESSAGE);
+						JOptionPane.showMessageDialog(getDialog(), GuiShared.get().textLoadFailMsg(), GuiShared.get().textLoadFailTitle(), JOptionPane.WARNING_MESSAGE);
 					} finally {
 						try {
 							if (reader != null) {

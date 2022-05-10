@@ -191,7 +191,7 @@ public class StockpileData extends TableData {
 		if (stockpile.isJobs()) {
 			for (MyIndustryJob industryJob : profileData.getIndustryJobsList()) {
 				Integer productTypeID = industryJob.getProductTypeID();
-				if (productTypeID  != null && typeIDs.contains(productTypeID)) {
+				if (productTypeID != null && typeIDs.contains(productTypeID)) {
 					Set<MyIndustryJob> items = industryJobs.get(productTypeID);
 					if (items == null) {
 						items = new HashSet<>();

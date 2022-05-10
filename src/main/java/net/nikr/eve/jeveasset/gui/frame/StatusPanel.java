@@ -98,7 +98,7 @@ public class StatusPanel extends JGroupLayoutPanel {
 		jApiUpdate = createIcon(Images.DIALOG_UPDATE.getIcon(), GuiFrame.get().updatable());
 		programStatus.add(jApiUpdate);
 
-		jEveTime = createLabel(GuiFrame.get().eve(),  Images.MISC_EVE.getIcon());
+		jEveTime = createLabel(GuiFrame.get().eve(), Images.MISC_EVE.getIcon());
 		programStatus.add(jEveTime);
 
 		eveTimer = new Timer(1000, listener);

@@ -270,11 +270,11 @@ public class JFormulaDialog<T extends Enum<T> & EnumTableColumn<Q>, Q> extends J
 	}
 
 	public static String getHardName(EnumTableColumn<?> t) {
-		return  t.name().replace("_", "");
+		return t.name().replace("_", "");
 	}
 
 	private static String getSoftName(EnumTableColumn<?> t) {
-		return  "[" + t.getColumnName() + "]";
+		return "[" + t.getColumnName() + "]";
 	}
 
 	private String toColumnName(String text) {

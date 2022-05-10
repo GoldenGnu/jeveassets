@@ -411,7 +411,7 @@ public class JMenuInfo {
 			}
 			createMenuItem(values, jPopupMenu, totalValue, NumberFormat.ISK, GuiShared.get().selectionValue(), GuiShared.get().selectionShortValue(), Images.TOOL_VALUES.getIcon());
 			createMenuItem(values, jPopupMenu, averageValue, NumberFormat.ISK, GuiShared.get().selectionAverage(), GuiShared.get().selectionShortAverage(), Images.ASSETS_AVERAGE.getIcon());
-			createMenuItem(values, jPopupMenu, totalCount, NumberFormat.ISK, GuiShared.get().selectionCount(),  GuiShared.get().selectionShortCount(), Images.EDIT_ADD.getIcon());
+			createMenuItem(values, jPopupMenu, totalCount, NumberFormat.ISK, GuiShared.get().selectionCount(), GuiShared.get().selectionShortCount(), Images.EDIT_ADD.getIcon());
 		}
 	}
 

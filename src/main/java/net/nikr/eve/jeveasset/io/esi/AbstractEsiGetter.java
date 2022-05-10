@@ -195,7 +195,7 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner> {
 				} catch (InterruptedException ex1) {
 					//No problem
 				}
-				logInfo(updater.getStatus(), "Retrying "  + retries + " of " + updater.getMaxRetries() + ":");
+				logInfo(updater.getStatus(), "Retrying " + retries + " of " + updater.getMaxRetries() + ":");
 				return updateApi(updater, retries);
 			} else {
 				throw ex;
@@ -246,7 +246,7 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner> {
 				}
 				//Reset
 				AbstractEsiGetter.errorReset = new Date(); //New timeframe
-				AbstractEsiGetter.errorLimit = null;  //No errors in this timeframe (yet)
+				AbstractEsiGetter.errorLimit = null; //No errors in this timeframe (yet)
 			} catch (InterruptedException ex) {
 				//No problem
 			}

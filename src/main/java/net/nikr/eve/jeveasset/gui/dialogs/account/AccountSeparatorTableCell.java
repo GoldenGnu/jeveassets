@@ -1,6 +1,6 @@
-/* Glazed Lists													(c) 2003-2006 */
-/* http://publicobject.com/glazedlists/						 publicobject.com,*/
-/*													   O'Dell Engineering Ltd.*/
+/* Glazed Lists                                                 (c) 2003-2006 */
+/* http://publicobject.com/glazedlists/                      publicobject.com,*/
+/*                                                     O'Dell Engineering Ltd.*/
 
 package net.nikr.eve.jeveasset.gui.dialogs.account;
 

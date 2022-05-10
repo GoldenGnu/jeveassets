@@ -67,7 +67,7 @@ public class JTextDialog extends JDialogCentered {
 	private String returnValue = null;
 
 	public JTextDialog(Window window) {
-		super(null, "",  window, null);
+		super(null, "", window, null);
 
 		jFileChooser = JCustomFileChooser.createFileChooser(window, "txt");
 		jFileChooser.setMultiSelectionEnabled(false);
@@ -246,7 +246,7 @@ public class JTextDialog extends JDialogCentered {
 				}
 				jText.setText(builder.toString());
 			} catch (IOException e) {
-				JOptionPane.showMessageDialog(getDialog(), GuiShared.get().textLoadFailMsg(),  GuiShared.get().textLoadFailTitle(), JOptionPane.WARNING_MESSAGE);
+				JOptionPane.showMessageDialog(getDialog(), GuiShared.get().textLoadFailMsg(), GuiShared.get().textLoadFailTitle(), JOptionPane.WARNING_MESSAGE);
 			} finally {
 				try {
 					if (reader != null) {
