@@ -68,7 +68,7 @@ public class EsiStructuresGetter extends AbstractEsiGetter {
 		if (locations != null) { //Locations
 			EsiStructuresGetter.createIDsFromLocations(locations);
 			total = IDS.size() * esiOwners.size();
-		} else if (ownerTypes != null) { 
+		} else if (ownerTypes != null) {
 			EsiStructuresGetter.createIDsFromOwners(ownerTypes, tracker);
 			total = IDS.size() * esiOwners.size();
 		} else {

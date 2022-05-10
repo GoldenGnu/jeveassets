@@ -669,7 +669,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 				//Save Result
 				save = true;
 				Settings.lock("Stockpile (Import new)");
-				addStockpile(program, stockpile); //Add 
+				addStockpile(program, stockpile); //Add
 				Settings.unlock("Stockpile (Import new)");
 				//Update UI
 				addStockpile(stockpile);
@@ -831,7 +831,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 					if (item.isEditable()) {
 						edit.add(item);
 					}
-				} 
+				}
 			}
 			jComponent.add(new JStockpileItemMenu(program, edit, delete, items));
 			MenuManager.addSeparator(jComponent);

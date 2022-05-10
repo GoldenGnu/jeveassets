@@ -60,7 +60,7 @@ public final class Main {
 			}
 		}
 		//Force UTF-8 File system
-		System.setProperty("sun.jnu.encoding", "UTF-8"); 
+		System.setProperty("sun.jnu.encoding", "UTF-8");
 		System.setProperty("file.encoding", "UTF-8");
 
 		// the tests for null indicate that the property is not set

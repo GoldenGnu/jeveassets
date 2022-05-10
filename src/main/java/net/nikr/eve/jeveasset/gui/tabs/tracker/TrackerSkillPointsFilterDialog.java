@@ -56,7 +56,7 @@ import net.nikr.eve.jeveasset.i18n.TabsTracker;
 
 public class TrackerSkillPointsFilterDialog extends JDialogCentered {
 
-	private final JCheckBox jAll; 
+	private final JCheckBox jAll;
 	private final JAutoColumnTable jTable;
 	private final EventList<TrackerSkillPointFilter> eventList;
 	private final DefaultEventTableModel<TrackerSkillPointFilter> tableModel;

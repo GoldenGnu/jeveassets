@@ -40,7 +40,7 @@ public class ImportIskPerHour extends StockpileImport{
 	public String getHelp() {
 		return TabsStockpile.get().importIskPerHourHelp();
 	}
- 
+
 	@Override
 	public String getExample() {
 		return "Supported formats:\n"

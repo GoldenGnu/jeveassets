@@ -68,13 +68,13 @@ public class Citadel {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param locationID
 	 * @param location
 	 * @param systemID
 	 * @param userLocation
 	 * @param citadel
-	 * @param source 
+	 * @param source
 	 */
 	public Citadel(long locationID, String location, long systemID, boolean userLocation, boolean citadel, CitadelSource source) {
 		this.locationID = locationID;

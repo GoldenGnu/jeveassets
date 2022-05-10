@@ -1099,7 +1099,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 					+ jobsCountNow
 					+ buyTransactionsCountNow
 					+ sellTransactionsCountNow
-					+ buyingContractsCountNow 
+					+ buyingContractsCountNow
 					+ boughtContractsCountNow
 					+ sellingContractsCountNow
 					+ soldContractsCountNow
@@ -1452,7 +1452,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 					+ jobsCountNow
 					+ buyTransactionsCountNow
 					+ sellTransactionsCountNow
-					+ buyingContractsCountNow 
+					+ buyingContractsCountNow
 					+ boughtContractsCountNow
 					+ sellingContractsCountNow
 					+ soldContractsCountNow

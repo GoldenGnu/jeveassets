@@ -572,7 +572,7 @@ public class LoadoutsTab extends JMainTabSecondary {
 				exportEFT();
 			} else if (LoadoutsAction.EXPORT.name().equals(e.getActionCommand())) {
 				exportDialog.setVisible(true);
-			} 
+			}
 		}
 	}
 

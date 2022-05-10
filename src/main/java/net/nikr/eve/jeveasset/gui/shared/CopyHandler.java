@@ -51,7 +51,7 @@ public class CopyHandler {
 
 	/**
 	 * Install default copy format
-	 * @param jTable 
+	 * @param jTable
 	 */
 	public static void installCopyFormatter(JTable jTable) {
 		ListenerClass listenerClass = new ListenerClass(jTable);

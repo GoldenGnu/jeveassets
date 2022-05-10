@@ -1091,14 +1091,14 @@ public class StockpileDialog extends JDialogCentered {
 			jSellingOrders.addActionListener(listener);
 			jInclude.add(jSellingOrders, true);
 
-			jBoughtTransactions = new JCheckBoxMenuItem(TabsStockpile.get().includeBuyTransactions()); 
+			jBoughtTransactions = new JCheckBoxMenuItem(TabsStockpile.get().includeBuyTransactions());
 			jBoughtTransactions.setToolTipText(TabsStockpile.get().includeBuyTransactionsTip());
 			jBoughtTransactions.setHorizontalAlignment(JButton.LEFT);
 			jBoughtTransactions.setActionCommand(StockpileDialogAction.VALIDATE.name());
 			jBoughtTransactions.addActionListener(listener);
 			jInclude.add(jBoughtTransactions, true);
 
-			jSoldTransactions = new JCheckBoxMenuItem(TabsStockpile.get().includeSellTransactions()); 
+			jSoldTransactions = new JCheckBoxMenuItem(TabsStockpile.get().includeSellTransactions());
 			jSoldTransactions.setToolTipText(TabsStockpile.get().includeSellTransactionsTip());
 			jSoldTransactions.setHorizontalAlignment(JButton.LEFT);
 			jSoldTransactions.setActionCommand(StockpileDialogAction.VALIDATE.name());
@@ -1246,7 +1246,7 @@ public class StockpileDialog extends JDialogCentered {
 						.addComponent(jContractsLabel)
 					)
 			);
-											 
+
 			groupLayout.setVerticalGroup(
 				groupLayout.createSequentialGroup()
 					.addComponent(jToolBar, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
@@ -1484,7 +1484,7 @@ public class StockpileDialog extends JDialogCentered {
 			if (singletonPanel != null) {
 				singletonPanel.warning(false);
 			}
-			if (!jAssets.isSelected() 
+			if (!jAssets.isSelected()
 					&& !jJobs.isSelected()
 					&& !jBuyingOrders.isSelected()
 					&& !jSellingOrders.isSelected()

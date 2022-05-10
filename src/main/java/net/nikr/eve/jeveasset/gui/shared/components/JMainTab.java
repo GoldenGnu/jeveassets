@@ -246,7 +246,7 @@ public abstract class JMainTab {
 	 * 2. Restore table selection after update
 	 * 3. Restore expanded state for JSeparatorTable after update
 	 * 4. Lock/unlock table doing update
-	 * 
+	 *
 	 * @param jTable
 	 */
 	protected final void installTable(final JAutoColumnTable jTable) {

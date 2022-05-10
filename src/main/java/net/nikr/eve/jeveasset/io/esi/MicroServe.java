@@ -156,7 +156,7 @@ public class MicroServe implements AuthCodeListener {
 				//html
 				if (listener.isListening()) {
 					if (found) {
-						write(out, "Authentication Successful", 
+						write(out, "Authentication Successful",
 								"		Return to jEveAssets to complete the import.<br />\n"
 								+ "		<br />\n"
 								+ "		<i>This browser window can now be closed.</i>\n"

@@ -198,7 +198,7 @@ public class ExportSettings {
 	private LineDelimiter csvLineDelimiter;
 
 	//SQL
-	private boolean sqlCreateTable; 
+	private boolean sqlCreateTable;
 	private boolean sqlDropTable;
 	private boolean sqlExtendedInserts;
 	private String sqlTableName;

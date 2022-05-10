@@ -209,7 +209,7 @@ public class DataSetCreator {
 					if (assetsUpdated(marketOrder.getCreatedOrIssued(), marketOrder.getOwner())) {
 						//To avoid duplicating the value:
 						//Only add sell orders value that was created before the last asset update
-						final double price; 
+						final double price;
 						if (useAssetPriceForSellOrders) {
 							price = marketOrder.getDynamicPrice();
 						} else {

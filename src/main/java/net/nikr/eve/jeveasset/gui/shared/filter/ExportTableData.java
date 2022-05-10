@@ -78,7 +78,7 @@ public class ExportTableData {
 	 * @param tableFormat
 	 * @param toolName
 	 * @param exportSettings
-	 * @return 
+	 * @return
 	 */
 	public static <Q> boolean exportAutoNoCache(EventList<Q> eventList, final SimpleTableFormat<Q> tableFormat, String toolName, ExportSettings exportSettings) {
 		return exportAuto(eventList, null, tableFormat, toolName, exportSettings);
@@ -92,7 +92,7 @@ public class ExportTableData {
 	 * @param tableFormat
 	 * @param toolName
 	 * @param exportSettings
-	 * @return 
+	 * @return
 	 */
 	public static <Q> boolean exportAuto(EventList<Q> eventList, ColumnCache<Q> columnCache, final SimpleTableFormat<Q> tableFormat, String toolName, ExportSettings exportSettings) {
 		return export(eventList, columnCache, tableFormat, toolName, Settings.get().getTableViews(toolName), Settings.get().getTableFilters(toolName), Settings.get().getDefaultTableFilters(toolName), Settings.get().getCurrentTableFilters(toolName), exportSettings);
@@ -104,14 +104,14 @@ public class ExportTableData {
 	 * @param tableFormat
 	 * @param toolName
 	 * @param exportSettings
-	 * @return 
+	 * @return
 	 */
 	public static <Q> boolean exportEmpty(EventList<Q> eventList, final SimpleTableFormat<Q> tableFormat, String toolName, ExportSettings exportSettings) {
 		return export(eventList, null, tableFormat, toolName, new HashMap<>(), new HashMap<>(), new HashMap<>(), new ArrayList<>(), exportSettings);
 	}
 
 	/**
-	 * 
+	 *
 	 * @param <Q>
 	 * @param eventList
 	 * @param columnCache
@@ -121,7 +121,7 @@ public class ExportTableData {
 	 * @param filters
 	 * @param currentFilters
 	 * @param exportSettings
-	 * @return 
+	 * @return
 	 */
 	private static <Q> boolean export(EventList<Q> eventList, ColumnCache<Q> columnCache, final SimpleTableFormat<Q> tableFormat, String toolName, Map<String, View> views, Map<String, List<Filter>> filters, Map<String, List<Filter>> defaultFilters, List<Filter> currentFilters, ExportSettings exportSettings) {
 		//Filter

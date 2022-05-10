@@ -1,6 +1,6 @@
 /*
  * Copyright 2009-2022 Contributors (see credits.txt)
- * 
+ *
  * Original code from: http://ganeshtiwaridotcomdotnp.blogspot.dk/2012/01/java-single-instance-of-application.html
  *
  * This file is part of jEveAssets.
