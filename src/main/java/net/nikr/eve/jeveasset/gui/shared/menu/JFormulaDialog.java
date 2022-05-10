@@ -441,7 +441,7 @@ public class JFormulaDialog<T extends Enum<T> & EnumTableColumn<Q>, Q> extends J
 		public void setIndex(Integer index) {
 			this.index = index;
 		}
-	
+
 		@Override
 		public int hashCode() {
 			int hash = 7;

@@ -347,12 +347,11 @@ public class Updater {
 				return null;
 			}
 		}
-		
+
 		protected String get(Reader reader) throws IOException {
 			StringBuilder builder = new StringBuilder();
 			try {
 				BufferedReader in = new BufferedReader(reader);
-				
 				String str;
 				while ((str = in.readLine()) != null) {
 					builder.append(str);
@@ -368,6 +367,6 @@ public class Updater {
 				}
 			}
 		}
-		
 	}
+
 }

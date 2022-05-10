@@ -503,7 +503,7 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 		JMenu jKhonSpace = new JMenu(GuiShared.get().lazyBlacksmith());
 		jKhonSpace.setIcon(Images.LINK_KHON_SPACE.getIcon());
 		jIndustry.add(jKhonSpace);
-		
+
 		jLazyBlacksmithInvention = new JMenuItem(GuiShared.get().lazyBlacksmithInvention());
 		jLazyBlacksmithInvention.setIcon(Images.MISC_INVENTION.getIcon());
 		jLazyBlacksmithInvention.setActionCommand(MenuLookupAction.LAZY_BLACKSMITH_INVENTION.name());

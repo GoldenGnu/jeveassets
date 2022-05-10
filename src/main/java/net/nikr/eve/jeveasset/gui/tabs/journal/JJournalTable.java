@@ -60,5 +60,5 @@ public class JJournalTable extends JAutoColumnTable {
 		}
 		return component;
 	}
-	
+
 }

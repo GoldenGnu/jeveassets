@@ -57,7 +57,6 @@ public class JDateChooser extends DatePicker {
 						jTextField.setBackground(Colors.COMPONENT_TRANSPARENT.getColor());
 					}
 				});
-				
 			}
 		});
 	}

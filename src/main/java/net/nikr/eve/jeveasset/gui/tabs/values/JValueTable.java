@@ -82,5 +82,5 @@ public class JValueTable extends JAutoColumnTable {
 		}
 		return component;
 	}
-	
+
 }

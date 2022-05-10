@@ -91,7 +91,7 @@ public class MarketLogReader {
 			LOG.error("Failed to read: " + filename, ex);
 			return null;
 		}
-		
+
 		List<MarketLog> marketLogs = parse(logFile);
 		if (marketLogs == null || marketLogs.isEmpty()) {
 			LOG.warn("Failed to read: " + filename);

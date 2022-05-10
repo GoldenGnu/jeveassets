@@ -213,5 +213,5 @@ public class JOverviewMenu extends JMenu {
 			program.getOverviewTab().updateTable();
 		}
 	}
-	
+
 }

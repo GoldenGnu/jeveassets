@@ -426,7 +426,6 @@ public class AccountImportDialog extends JDialogCentered {
 			if (scope.isPublicScope()) {
 				continue;
 			}
-			
 			if (jType.getSelectedIndex() == 0 && !scope.isCharacterScope()) {
 				continue;
 			}
@@ -525,7 +524,7 @@ public class AccountImportDialog extends JDialogCentered {
 							currentCard = AccountImportCard.SHARE_EXPORT;
 						} else {
 							currentCard = AccountImportCard.EXIT;
-						}						
+						}
 						break;
 					case SHARE_EXPORT:
 						currentCard = AccountImportCard.EXIT;
@@ -930,7 +929,6 @@ public class AccountImportDialog extends JDialogCentered {
 					)
 			);
 		}
-		
 	}
 
 	private class ExportPanel extends JCardPanel {
@@ -981,7 +979,6 @@ public class AccountImportDialog extends JDialogCentered {
 					)
 			);
 		}
-		
 	}
 
 	private abstract class JCardPanel extends JPanel {

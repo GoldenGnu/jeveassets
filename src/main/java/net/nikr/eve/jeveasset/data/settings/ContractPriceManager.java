@@ -59,7 +59,7 @@ public class ContractPriceManager {
 		}
 		return priceGetter;
 	}
-	
+
 	private ContractPriceManager() {
 		contractPriceData = ContractPriceReader.load();
 	}

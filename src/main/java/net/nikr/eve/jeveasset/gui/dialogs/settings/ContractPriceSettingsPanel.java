@@ -48,8 +48,8 @@ public class ContractPriceSettingsPanel extends JSettingsPanel {
 	private final JCheckBox jFeedback;
 	private final JComboBox<ContractPriceMode> jMode;
 	private final JMultiSelectionList<ContractPriceSecurity> jSecurity;
-	
-	
+
+
 	public ContractPriceSettingsPanel(Program program, SettingsDialog optionsDialog) {
 		super(program, optionsDialog, DialoguesSettings.get().contractPrices(), Images.MISC_CONTRACTS_APPRAISAL.getIcon());
 
@@ -100,7 +100,6 @@ public class ContractPriceSettingsPanel extends JSettingsPanel {
 				.addComponent(jFeedback, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				.addComponent(jWarning)
 		);
-		
 	}
 
 	@Override
@@ -143,5 +142,5 @@ public class ContractPriceSettingsPanel extends JSettingsPanel {
 			jSecurity.addSelection(contractPriceSecurity.ordinal(), true);
 		}
 	}
-	
+
 }

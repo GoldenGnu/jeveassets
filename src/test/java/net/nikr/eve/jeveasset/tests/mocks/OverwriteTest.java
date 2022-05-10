@@ -40,7 +40,7 @@ public class OverwriteTest {
 			}
 		}
 	}
-	
+
 	@Test
 	public void testOverwrite() {
 		test(FakeProgram.class);

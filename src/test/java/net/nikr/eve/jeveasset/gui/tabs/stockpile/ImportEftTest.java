@@ -237,5 +237,5 @@ Warden II x5
 		assertEquals(data.size(), importEft.importText(text).size());
 		return data;
 	}
-	
+
 }

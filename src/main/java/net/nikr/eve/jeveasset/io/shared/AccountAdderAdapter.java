@@ -52,5 +52,5 @@ public class AccountAdderAdapter implements AccountAdder {
 	public boolean isInvalid() {
 		return false;
 	}
-	
+
 }

@@ -489,7 +489,6 @@ public class SettingsWriter extends AbstractXmlWriter {
 					viewNode.appendChild(viewColumnNode);
 				}
 			}
-			
 		}
 	}
 

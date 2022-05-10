@@ -35,7 +35,7 @@ public class EsiSkillGetter extends AbstractEsiGetter {
 	public EsiSkillGetter(UpdateTask updateTask, EsiOwner owner) {
 		super(updateTask, owner, false, owner.getSkillsNextUpdate(), TaskType.SKILLS);
 	}
-	
+
 	@Override
 	protected void update() throws ApiException {
 		if (owner.isCorporation()) {

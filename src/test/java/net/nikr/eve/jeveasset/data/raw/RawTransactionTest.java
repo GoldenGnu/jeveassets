@@ -34,5 +34,5 @@ public class RawTransactionTest extends TestUtil {
 		RawUtil.compare(RawTransaction.class, CharacterWalletTransactionsResponse.class);
 		RawUtil.compare(RawTransaction.class, CorporationWalletTransactionsResponse.class);
 	}
-	
+
 }

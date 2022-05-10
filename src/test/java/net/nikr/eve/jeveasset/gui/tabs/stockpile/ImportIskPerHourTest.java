@@ -461,5 +461,5 @@ public class ImportIskPerHourTest extends TestUtil {
 		Map<String, Double> data = test(ssvFormat, 11, false);
 		assertEquals(1520, data.get("Drone Transceiver"), 0.1);
 	}
-	
+
 }

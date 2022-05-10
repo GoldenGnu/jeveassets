@@ -331,7 +331,7 @@ public class FileUtil extends FileUtilSimple {
 	public static String getPathItems() {
 		return getLocalFile(PATH_ITEMS, false);
 	}
-	
+
 	public static String getPathItemsUpdates() {
 		return getLocalFile(PATH_ITEMS_UPDATES, !CliOptions.get().isPortable());
 	}

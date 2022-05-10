@@ -85,9 +85,9 @@ public class JMenuJumps<T extends Enum<T> & EnumTableColumn<Q>, Q> extends JAuto
 		add(jAddOther);
 
 		add(jClear);
-		
+
 		Set<Jump> locations = columnManager.getJumps();
-		
+
 		jClear.setEnabled(!locations.isEmpty());
 
 		if (!locations.isEmpty()) {

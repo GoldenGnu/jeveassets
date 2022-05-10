@@ -52,7 +52,7 @@ public class JImportDialog extends JDialogCentered {
 		SKIP,
 		SKIP_ALL,
 	}
-	
+
 	private final JRadioButton jRename;
 	private final JRadioButton jMerge;
 	private final JRadioButton jOverwrite;
@@ -69,7 +69,7 @@ public class JImportDialog extends JDialogCentered {
 	private final ImportOptions importOptions;
 
 	private ImportReturn importReturn;
-	
+
 	public JImportDialog(Program program, ImportOptions importOptions) {
 		super(program, GuiShared.get().importOptions());
 		this.importOptions = importOptions;
@@ -180,7 +180,7 @@ public class JImportDialog extends JDialogCentered {
 		setVisible(true);
 		return importReturn;
 	}
-	
+
 	@Override
 	protected JComponent getDefaultFocus() {
 		return jOK;
@@ -237,6 +237,6 @@ public class JImportDialog extends JDialogCentered {
 		public String getTextOverwriteHelp();
 		public String getTextSkipHelp();
 		public String getTextAll(int count);
-		
 	}
+
 }

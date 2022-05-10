@@ -76,7 +76,7 @@ public class JSelectionDialog<T> extends JDialogCentered {
 				)
 		);
 	}
-	
+
 	public T show(String title, Collection<T> data) {
 		if (data.size() == 1) {
 			return data.iterator().next();
@@ -86,9 +86,7 @@ public class JSelectionDialog<T> extends JDialogCentered {
 		jLocations.setModel(new ListComboBoxModel<>(data));
 		setVisible(true);
 		return selected;
-		
 	}
-	
 
 	@Override
 	protected JComponent getDefaultFocus() {
@@ -120,5 +118,5 @@ public class JSelectionDialog<T> extends JDialogCentered {
 			}
 		}
 	}
-	
+
 }

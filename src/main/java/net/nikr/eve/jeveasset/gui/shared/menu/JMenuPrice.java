@@ -76,7 +76,6 @@ public class JMenuPrice<T> extends JAutoMenu<T> {
 		add(jReset);
 	}
 
-	
 	@Override
 	public void updateMenuData() {
 		jEdit.setEnabled(!menuData.getPrices().isEmpty());

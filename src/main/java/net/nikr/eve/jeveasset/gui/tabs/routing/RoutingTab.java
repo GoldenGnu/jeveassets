@@ -385,7 +385,7 @@ public class RoutingTab extends JMainTabSecondary {
 								.addComponent(jAlgorithmInfo)
 							)
 							.addComponent(jSource)
-						)	
+						)
 					)
 					.addComponent(jAvailableScroll, 300, 300, Short.MAX_VALUE)
 					.addGroup(routingLayout.createSequentialGroup()
@@ -510,7 +510,7 @@ public class RoutingTab extends JMainTabSecondary {
 		jAvoidSave.setActionCommand(RoutingAction.AVOID_SAVE.name());
 		jAvoidSave.addActionListener(listener);
 		jToolBar.addButton(jAvoidSave);
-	
+
 		jAvoidLoad = new JDropDownButton(TabsRouting.get().avoidLoad(), Images.FILTER_LOAD.getIcon());
 		jToolBar.addButton(jAvoidLoad);
 
@@ -556,7 +556,7 @@ public class RoutingTab extends JMainTabSecondary {
 			securityLayout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
 				.addComponent(jSecurityIcon, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				.addComponent(jSecurityMinimum, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-				.addComponent(jSecuritySeparatorLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())	
+				.addComponent(jSecuritySeparatorLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				.addComponent(jSecurityMaximum, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 		);
 		filterLayout.setHorizontalGroup(
@@ -687,11 +687,10 @@ public class RoutingTab extends JMainTabSecondary {
 			layout.createSequentialGroup()
 				.addComponent(jSystemTabs, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
 				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
-					.addComponent(jProgress, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())	
+					.addComponent(jProgress, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jCalculate, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				)
 				.addComponent(jResultTabs)
-				
 		);
 		buildGraph(true); //Build default Graph (0.0/All sec - no avoids)
 		jSystemDialog.updateData(filteredGraph.getNodes()); //Will be replaced by valid systems by processRouteInner()
@@ -1469,7 +1468,6 @@ public class RoutingTab extends JMainTabSecondary {
 				Settings.unlock("Routing (Security)");
 				program.saveSettings("Routing (Security)");
 				updateFilterLabels();
-				
 			} else if (RoutingAction.ADD_STATION.name().equals(e.getActionCommand())) {
 				MyLocation station = jStationDialog.show();
 				addLocation(station);
@@ -1568,7 +1566,7 @@ public class RoutingTab extends JMainTabSecondary {
 						added.add(routeName);
 					}
 				}
-				
+
 				int count = existing.size();
 				ImportReturn importReturn = null;
 				jImportDialog.resetToDefault();
@@ -1661,7 +1659,7 @@ public class RoutingTab extends JMainTabSecondary {
 
 			jToolBar.setFloatable(false);
 			jToolBar.setRollover(true);
-			
+
 			jName = new JLabel();
 			plain = jName.getFont();
 			italic = new Font(plain.getName(), Font.ITALIC, plain.getSize());
@@ -1837,13 +1835,13 @@ public class RoutingTab extends JMainTabSecondary {
 
 		public void resetCancelService() {
 			contained.resetCancelService();
-		}	
+		}
 
 		@Override
 		public String toString() {
 			return getName();
 		}
-		
+
 		public static List<RoutingAlgorithmContainer> getRegisteredList() {
 			List<RoutingAlgorithmContainer> list = new ArrayList<>();
 			list.add(new RoutingAlgorithmContainer(new BruteForce<>()));

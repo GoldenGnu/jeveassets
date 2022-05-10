@@ -57,7 +57,7 @@ public class CopyHandler {
 		ListenerClass listenerClass = new ListenerClass(jTable);
 		//jTable.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("ctrl C"), "copy");
 		jTable.getActionMap().put("copy", listenerClass);
-		jTable.getActionMap().put("cut", listenerClass);	
+		jTable.getActionMap().put("cut", listenerClass);
 	}
 
 	public static void toClipboard(final String text) {

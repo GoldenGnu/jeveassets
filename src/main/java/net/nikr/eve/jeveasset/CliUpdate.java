@@ -94,5 +94,5 @@ public class CliUpdate {
 			SplashUpdater.setProgress( (int)(count * 100.0 / profileManager.getProfiles().size()));
 		}
 	}
-	
+
 }

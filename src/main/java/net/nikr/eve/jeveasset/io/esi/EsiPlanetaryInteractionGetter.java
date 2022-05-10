@@ -104,5 +104,5 @@ public class EsiPlanetaryInteractionGetter extends AbstractEsiGetter {
 	protected RolesEnum[] getRequiredRoles() {
 		return null;
 	}
-	
+
 }

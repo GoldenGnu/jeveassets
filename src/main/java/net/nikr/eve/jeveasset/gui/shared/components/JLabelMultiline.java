@@ -30,7 +30,7 @@ public class JLabelMultiline extends JTextArea {
 	public JLabelMultiline(String text) {
 		this(text, text.trim().split("\r\n|\r|\n").length);
 	}
-	
+
 	public JLabelMultiline(String text, int rows) {
 		super(text);
 		//Init
@@ -45,4 +45,5 @@ public class JLabelMultiline extends JTextArea {
 		setBorder(null);
 		setRows(rows);
 	}
+
 }

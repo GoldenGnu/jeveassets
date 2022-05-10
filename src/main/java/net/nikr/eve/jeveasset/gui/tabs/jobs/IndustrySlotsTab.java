@@ -213,5 +213,5 @@ public class IndustrySlotsTab extends JMainTabSecondary {
 			}
 		}
 	}
-	
+
 }

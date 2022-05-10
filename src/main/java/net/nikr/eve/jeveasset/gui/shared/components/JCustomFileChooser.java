@@ -71,7 +71,6 @@ public final class JCustomFileChooser extends JFileChooser {
 		} else {
 			super.setSelectedFile(file);
 		}
-		
 	}
 
 	public final void setExtension(final String extension) {
@@ -119,7 +118,6 @@ public final class JCustomFileChooser extends JFileChooser {
 				}
 				builder.append(extension.toUpperCase());
 				this.extensions.add(extension.toLowerCase());
-				
 			}
 			description = GuiShared.get().files(builder.toString());
 		}

@@ -123,7 +123,7 @@ public class ExportDialog<E> extends JDialogCentered {
 	private final EventList<E> eventList;
 
 	private final Map<String, EnumTableColumn<E>> columns = new HashMap<>();
-	private final List<EnumTableColumn<E>> columnIndex = new ArrayList<>();	
+	private final List<EnumTableColumn<E>> columnIndex = new ArrayList<>();
 
 	public ExportDialog(final JFrame jFrame, final String toolName, ColumnCache<E> columnCache, final SimpleFilterControl<E> filterControl, SimpleTableFormat<E> tableFormat, final EventList<E> eventList) {
 		super(null, DialoguesExport.get().export(), jFrame, Images.DIALOG_CSV_EXPORT.getImage());
@@ -349,7 +349,6 @@ public class ExportDialog<E> extends JDialogCentered {
 								.addComponent(jViews, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
 								.addComponent(jViewSelectAll, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
 								.addComponent(jColumnSelectionPanel, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
-								
 							)
 						)
 					)
@@ -575,7 +574,7 @@ public class ExportDialog<E> extends JDialogCentered {
 					}
 				} catch (IllegalArgumentException ex) {
 					//ignore missing columns...
-				}	
+				}
 			}
 			int[] indices = new int[selections.size()];
 			for (int i = 0; i < selections.size(); i++) {

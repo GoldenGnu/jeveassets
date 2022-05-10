@@ -72,12 +72,12 @@ public class PriceDataGetterOnlineTest extends TestUtil {
 	public static void setUpClass() {
 		setLoggingLevel(Level.ERROR);
 	}
-	
+
 	@AfterClass
 	public static void tearDownClass() {
 		setLoggingLevel(Level.INFO);
 	}
-	
+
 	@Before
 	public void setUp() {
 		Set<Integer> ids = new HashSet<>();
@@ -94,7 +94,7 @@ public class PriceDataGetterOnlineTest extends TestUtil {
 			typeIDs.addAll(ids);
 		}
 	}
-	
+
 	@After
 	public void tearDown() {
 		typeIDs.clear();
@@ -168,7 +168,7 @@ public class PriceDataGetterOnlineTest extends TestUtil {
 			this.locationType = locationType;
 			this.locations = locations;
 		}
-	
+
 		@Override
 		public long getPriceCacheTimer() {
 			return 60*60*1000l; // 1 hour

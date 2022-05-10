@@ -144,7 +144,7 @@ public class TreeData extends TableData {
 					if (parent != null && parent.getTypeID() == 27) { //Office divisions
 						String cacheKey = parentAsset.getFlagName() + " #" + parent.getItemID();
 						TreeAsset divisionAsset = locationCache.get(cacheKey);
-						if (divisionAsset == null) {						
+						if (divisionAsset == null) {
 							divisionAsset = new TreeAsset(location, parentAsset.getFlagName(), parentKey + cacheKey, Images.LOC_DIVISION.getIcon(), locationTree);
 							locationCache.put(cacheKey, divisionAsset);
 							locationsExport.add(divisionAsset);
@@ -164,7 +164,7 @@ public class TreeData extends TableData {
 								}
 								String cacheKey = flag.getName() + "#" + parentAsset.getLocationID();
 								TreeAsset hangarAsset = locationCache.get(cacheKey);
-								if (hangarAsset == null) {						
+								if (hangarAsset == null) {
 									hangarAsset = new TreeAsset(location, flag.getName(), parentKey + cacheKey, flag.getIcon(), locationTree);
 									locationCache.put(cacheKey, hangarAsset);
 									locationsExport.add(hangarAsset);
@@ -177,7 +177,7 @@ public class TreeData extends TableData {
 					//Item
 					String cacheKey = parentAsset.getName() + " #" + parentAsset.getItemID();
 					TreeAsset parentTreeAsset = locationCache.get(cacheKey);
-					if (parentTreeAsset == null) {						
+					if (parentTreeAsset == null) {
 						parentTreeAsset = new TreeAsset(parentAsset, TreeAsset.TreeType.LOCATION, locationTree, parentKey, !parentAsset.getAssets().isEmpty());
 						locationCache.put(cacheKey, parentTreeAsset);
 						locations.add(parentTreeAsset);
@@ -187,7 +187,7 @@ public class TreeData extends TableData {
 					locationTree.add(parentTreeAsset);
 				}
 			}
-			
+
 		//CATEGORY
 			List<TreeAsset> categoryTree = new ArrayList<>();
 

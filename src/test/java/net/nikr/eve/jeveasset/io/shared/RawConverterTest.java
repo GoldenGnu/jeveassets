@@ -536,7 +536,7 @@ public class RawConverterTest extends TestUtil {
 			assertEquals(value.name(), RawConverter.toMarketOrderRange(value).name());
 		}
 	}
-	
+
 	@Test
 	public void testToMarketOrderState_3args() {
 		//Enum
@@ -675,7 +675,6 @@ public class RawConverterTest extends TestUtil {
 		assertEquals(RawConverter.toLong((String)null), null);
 	}
 
-	
 	@Test
 	public void testToInteger_Number() {
 		assertEquals((int) RawConverter.toInteger(1L), 1);

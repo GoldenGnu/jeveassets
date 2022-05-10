@@ -27,7 +27,7 @@ import static org.junit.Assert.*;
 
 
 public class ImportShoppingListTest extends TestUtil {
-	
+
 	private final ImportShoppingList importShoppingList = new ImportShoppingList();
 
 	@Test
@@ -81,5 +81,5 @@ Estimated market value: 225.404.694,17 isk
 		assertEquals(data.size(), importShoppingList.importText(text).size());
 		return data;
 	}
-	
+
 }

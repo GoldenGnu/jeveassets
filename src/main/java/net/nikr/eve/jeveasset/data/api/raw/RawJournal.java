@@ -174,7 +174,6 @@ public class RawJournal {
 		tax = journal.getTax();
 		taxReceiverId = journal.getTaxReceiverId();
 		this.accountKey = accountKey;
-		
 	}
 
 	public Double getAmount() {

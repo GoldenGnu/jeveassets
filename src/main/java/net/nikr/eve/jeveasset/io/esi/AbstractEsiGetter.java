@@ -398,7 +398,6 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner> {
 		@Override
 		public ApiResponse<V> update() throws ApiException {
 			return handler.get(k);
-			
 		}
 
 		public Map<K, V> go() throws ApiException {
@@ -647,6 +646,6 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner> {
 	}
 
 	private static class InvalidAuthException extends RuntimeException {
-		
+
 	}
 }

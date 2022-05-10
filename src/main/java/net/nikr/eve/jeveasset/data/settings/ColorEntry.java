@@ -142,7 +142,7 @@ public enum ColorEntry {
 		FILTERS(DataColors.get().groupFilters()),
 		REPROCESSED(DataColors.get().groupReprocessed()),
 		STOCKPILE(DataColors.get().groupStockpile());
-	
+
 		private final String name;
 		private ColorEntryGroup(String name) {
 			this.name = name;

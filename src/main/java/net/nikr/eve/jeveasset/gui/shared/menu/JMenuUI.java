@@ -65,7 +65,7 @@ public class JMenuUI <T> extends MenuManager.JAutoMenu<T> {
 		AUTOPILOT,
 		OPEN_WINDOW,
 	}
-	
+
 	private final JMenu jWaypoints;
 	private final JMenuItem jSystem;
 	private final JMenuItem jStation;
@@ -115,7 +115,7 @@ public class JMenuUI <T> extends MenuManager.JAutoMenu<T> {
 		jContracts.addActionListener(listener);
 		add(jContracts);
 	}
-	
+
 	@Override
 	public void updateMenuData() {
 		jWaypoints.setEnabled(menuData.getSystemLocations().size() == 1 || menuData.getAutopilotStationLocations().size() == 1 || menuData.getContracts().size() == 1);
@@ -419,6 +419,6 @@ public class JMenuUI <T> extends MenuManager.JAutoMenu<T> {
 				}
 			});
 		}
-		
 	}
+
 }

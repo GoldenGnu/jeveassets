@@ -35,13 +35,12 @@ import org.slf4j.LoggerFactory;
 
 
 public class TrackerData {
-	
+
 	private static final Logger LOG = LoggerFactory.getLogger(TrackerData.class);
 	private static final Map<String, List<Value>> TRACKER_DATA = new HashMap<String, List<Value>>(); //ownerID :: long
 	private static final ReentrantReadWriteLock LOCK = new ReentrantReadWriteLock();
 	private static final Object SAVE_QUEUE_SYNC = new Object();
 	private static Integer SAVE_QUEUE = 0;
-	
 
 	public static void readLock() {
 		LOCK.readLock().lock();

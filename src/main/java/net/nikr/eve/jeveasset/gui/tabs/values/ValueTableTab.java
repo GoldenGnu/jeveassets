@@ -74,7 +74,7 @@ public class ValueTableTab extends JMainTabSecondary {
 	public static final String NAME = "value"; //Not to be changed!
 
 	private final IskData iskData;
-	
+
 	public ValueTableTab(final Program program) {
 		super(program, NAME, TabsValues.get().title(), Images.TOOL_VALUE_TABLE.getIcon(), true);
 
@@ -243,5 +243,5 @@ public class ValueTableTab extends JMainTabSecondary {
 			}
 		}
 	}
-	
+
 }

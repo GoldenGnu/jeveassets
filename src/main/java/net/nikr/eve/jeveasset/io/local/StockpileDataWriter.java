@@ -146,7 +146,6 @@ public class StockpileDataWriter extends AbstractBackup {
 
 			return stockpileObject;
 		}
-		
-		
 	}
+
 }

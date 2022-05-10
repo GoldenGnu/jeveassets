@@ -37,7 +37,7 @@ public class JMenuCopyPlus<T> extends JAutoMenu<T> {
 	private final DecimalFormat number = new DecimalFormat("0");
 	private final JTextDialog jTextDialog;
 	private final JMenuItem jEveMultiBuy;
-	
+
 
 	public JMenuCopyPlus(Program program) {
 		super(GuiShared.get().copyPlus(), program);

@@ -350,7 +350,6 @@ public class DataConverterTest extends TestUtil {
 				MyMarketOrder myMarketOrder = DataConverter.toMyMarketOrder(rawMarketOrder, esiOwner);
 				myMarketOrder.setOrderID(i);
 				esiOwner.getMarketOrders().add(myMarketOrder);
-				
 			}
 			List<RawMarketOrder> rawMarketOrders = new ArrayList<>();
 			for (long i = 11; i <= 20; i++) {

@@ -402,7 +402,7 @@ public class TreeAsset extends MyAsset {
 		Number count = (Number) objCount;
 		for (TreeTableFormat column : TreeTableFormat.values()) {
 			if (!Percent.class.isAssignableFrom(column.getType())
-				&& !Runs.class.isAssignableFrom(column.getType())	
+				&& !Runs.class.isAssignableFrom(column.getType())
 				&& !Number.class.isAssignableFrom(column.getType())
 				) {
 				continue;

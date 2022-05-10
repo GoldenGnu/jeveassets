@@ -81,5 +81,5 @@ public class IndustrySlotsData extends TableData {
 			eventList.getReadWriteLock().writeLock().unlock();
 		}
 	}
-	
+
 }

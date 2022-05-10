@@ -56,7 +56,7 @@ public class TrackerFilterDialog extends JDialogCentered {
 	private final DefaultTreeModel treeModel;
 
 	private boolean save = false;
-	
+
 	public TrackerFilterDialog(Program program) {
 		super(program, TabsTracker.get().filterTitle(), Images.TOOL_TRACKER.getImage());
 
@@ -92,7 +92,6 @@ public class TrackerFilterDialog extends JDialogCentered {
 				setVisible(false);
 			}
 		});
-		
 
 		JScrollPane jTreeScroll = new JScrollPane(jTree);
 		jTreeScroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);

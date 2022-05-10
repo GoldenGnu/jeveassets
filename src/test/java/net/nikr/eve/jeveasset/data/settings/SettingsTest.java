@@ -35,7 +35,6 @@ public class SettingsTest extends TestUtil {
 		for (SettingFlag flag : SettingFlag.values()) {
 			assertThat(flag.name() + " have no default value", settings.getFlags().get(flag), notNullValue());
 		}
-		
 	}
-	
+
 }

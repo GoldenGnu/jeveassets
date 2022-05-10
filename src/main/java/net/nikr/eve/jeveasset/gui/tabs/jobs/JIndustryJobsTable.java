@@ -74,5 +74,5 @@ public class JIndustryJobsTable extends JAutoColumnTable {
 		}
 		return component;
 	}
-	
+
 }

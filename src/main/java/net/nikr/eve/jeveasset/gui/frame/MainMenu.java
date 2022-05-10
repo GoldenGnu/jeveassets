@@ -286,7 +286,7 @@ public class MainMenu extends JMenuBar {
 		menuItem.setIcon(Images.MISC_DEBUG.getIcon());
 		menuItem.setActionCommand(MainMenuAction.SEND_BUG_REPORT.name());
 		menuItem.addActionListener(program);
-		
+
 		menu.add(menuItem);
 
 		menu.addSeparator();
@@ -381,6 +381,6 @@ public class MainMenu extends JMenuBar {
 			jStructureMenu.setIcon(Images.DIALOG_UPDATE_DISABLED.getIcon());
 			jStructureMenu.setToolTipText(GuiFrame.get().not());
 		}
-		
 	}
+
 }

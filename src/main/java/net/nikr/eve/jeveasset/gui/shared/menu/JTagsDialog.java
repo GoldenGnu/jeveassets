@@ -205,9 +205,7 @@ public class JTagsDialog extends JDialogCentered {
 		}
 
 		@Override
-		public void focusLost(FocusEvent e) {
-			
-		}
+		public void focusLost(FocusEvent e) { }
 
 		@Override
 		public void caretUpdate(CaretEvent e) {
@@ -293,7 +291,7 @@ public class JTagsDialog extends JDialogCentered {
 	}
 
 	private static class ColorFilter extends RGBImageFilter {
-	
+
 		private final int foreground;
 		private final int white;
 
@@ -301,7 +299,7 @@ public class JTagsDialog extends JDialogCentered {
 			this.foreground = foreground.getRGB();
 			white = Color.WHITE.getRGB();
 		}
-		
+
 		@Override
 		public int filterRGB(int x, int y, int rgb) {
 			if ((rgb | 0xFFFFFF00) == white) {
@@ -310,7 +308,7 @@ public class JTagsDialog extends JDialogCentered {
 				return rgb;
 			}
 		}
-		
+
 	}
 
 	private static class ColorPicker {
@@ -322,7 +320,7 @@ public class JTagsDialog extends JDialogCentered {
 			this.jButton = jButton;
 
 			jWindow = new JWindow(owner);
-			
+
 			JPanel jPanel = new JPanel();
 
 			jPanel.setBorder(new JPopupMenu().getBorder());
@@ -391,6 +389,6 @@ public class JTagsDialog extends JDialogCentered {
 		public void hide() {
 			jWindow.setVisible(false);
 		}
-		
 	}
+
 }

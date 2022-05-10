@@ -880,7 +880,7 @@ public class UpdateDialog extends JDialogCentered {
 			ThreadWoker.start(this, updates);
 		}
 	}
-	
+
 	public static class Step4Task extends UpdateTask {
 
 		private final List<Runnable> updates = new ArrayList<>();

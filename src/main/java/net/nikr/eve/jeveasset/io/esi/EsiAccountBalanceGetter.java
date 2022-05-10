@@ -36,7 +36,7 @@ public class EsiAccountBalanceGetter extends AbstractEsiGetter {
 	public EsiAccountBalanceGetter(UpdateTask updateTask, EsiOwner owner) {
 		super(updateTask, owner, false, owner.getBalanceNextUpdate(), TaskType.ACCOUNT_BALANCE);
 	}
-	
+
 	@Override
 	protected void update() throws ApiException {
 		if (owner.isCorporation()) {

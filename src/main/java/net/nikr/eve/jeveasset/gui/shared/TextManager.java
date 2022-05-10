@@ -54,7 +54,7 @@ public final class TextManager {
 	private final JMenuItem jPaste;
 	private final JMenuItem jUndo;
 	private final JMenuItem jRedo;
-	
+
 	public static void installAll(final Container container) {
 		for (Component component : container.getComponents()) {
 			if (component instanceof Container) {

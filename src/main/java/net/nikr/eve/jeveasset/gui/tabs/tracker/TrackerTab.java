@@ -521,7 +521,7 @@ public class TrackerTab extends JMainTabSecondary {
 		} else {
 			plot = new XYPlot(dataset, domainAxis, rangeLogarithmicAxis, render);
 		}
-		
+
 		plot.setBackgroundPaint(Colors.TEXTFIELD_BACKGROUND.getColor());
 		plot.setRangeGridlinePaint(Color.LIGHT_GRAY);
 		plot.setDomainGridlinePaint(Color.LIGHT_GRAY);
@@ -608,7 +608,7 @@ public class TrackerTab extends JMainTabSecondary {
 							.addComponent(jToLabel, labelWidth, labelWidth, labelWidth)
 						)
 						.addGap(gapWidth)
-						.addGroup(layout.createParallelGroup()	
+						.addGroup(layout.createParallelGroup()
 							.addComponent(jFrom, dateWidth, dateWidth, dateWidth)
 							.addComponent(jTo, dateWidth, dateWidth, dateWidth)
 						)
@@ -867,7 +867,7 @@ public class TrackerTab extends JMainTabSecondary {
 		assetNodes.put(knownLocationsNode.getNodeId(), knownLocationsNode);
 		CheckBoxNode unknownLocationsNode = new CheckBoxNode(assetNode, TabsTracker.get().unknownLocations(), TabsTracker.get().unknownLocations(), false);
 		assetNodes.put(unknownLocationsNode.getNodeId(), unknownLocationsNode);
-		
+
 		Map<String, CheckBoxNode> nodeCache = new HashMap<>();
 		for (AssetValue assetValue : assetsIDs) {
 			String location = assetValue.getLocation();
@@ -1400,7 +1400,7 @@ public class TrackerTab extends JMainTabSecondary {
 	private class MyRender extends XYLineAndShapeRenderer {
 
 		private final Map<Integer, Integer> renders = new HashMap<>();
-		
+
 		public MyRender() {
 			super(true, true);
 		}
@@ -1647,7 +1647,7 @@ public class TrackerTab extends JMainTabSecondary {
 				if (values.isEmpty()) {
 					return;
 				}
-				
+
 				int retrunValue = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), TabsTracker.get().deleteSelected(), TabsTracker.get().delete(), JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
 				if (retrunValue == JOptionPane.OK_OPTION) {
 					for (Map.Entry<String, Value> entry : values.entrySet()) {
@@ -1714,7 +1714,6 @@ public class TrackerTab extends JMainTabSecondary {
 		}
 
 		boolean mouseClicked = false;
-		
 
 		@Override
 		public void chartMouseClicked(final ChartMouseEvent cme) {
@@ -1764,7 +1763,7 @@ public class TrackerTab extends JMainTabSecondary {
 							@Override
 							public void popupMenuCanceled(PopupMenuEvent e) { }
 						});
-						jPopupMenu.show((Component)cme.getTrigger().getSource(), x, y);					
+						jPopupMenu.show((Component)cme.getTrigger().getSource(), x, y);
 					}
 				});
 			}
@@ -1782,9 +1781,7 @@ public class TrackerTab extends JMainTabSecondary {
 		}
 
 		@Override
-		public void popupMenuCanceled(PopupMenuEvent e) {
-			
-		}
+		public void popupMenuCanceled(PopupMenuEvent e) { }
 
 		@Override
 		public void valueChanged(ListSelectionEvent e) {

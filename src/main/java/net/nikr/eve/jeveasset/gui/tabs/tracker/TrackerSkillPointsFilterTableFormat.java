@@ -122,5 +122,5 @@ public enum TrackerSkillPointsFilterTableFormat implements EnumTableColumn<Track
 	public String toString() {
 		return getColumnName();
 	}
-	
+
 }
