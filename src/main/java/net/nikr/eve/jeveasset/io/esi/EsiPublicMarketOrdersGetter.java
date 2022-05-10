@@ -143,7 +143,7 @@ public class EsiPublicMarketOrdersGetter extends AbstractEsiGetter {
 			});
 			for (MarketStructuresResponse response : structuresResponses) {
 				RawPublicMarketOrder marketOrder = new RawPublicMarketOrder(response, getSystemID(input, response.getLocationId()));
-				Set<RawPublicMarketOrder> set =  orders.get(marketOrder.getTypeId());
+				Set<RawPublicMarketOrder> set = orders.get(marketOrder.getTypeId());
 				if (set == null) {
 					set = new HashSet<>();
 					orders.put(marketOrder.getTypeId(), set);

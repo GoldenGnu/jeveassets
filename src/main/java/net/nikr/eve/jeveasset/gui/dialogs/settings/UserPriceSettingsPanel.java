@@ -63,7 +63,7 @@ public class UserPriceSettingsPanel extends JUserListPanel<Integer, Double> {
 	protected Double valueOf(final String value) {
 		try {
 			return Double.valueOf(value);
-		}  catch (NumberFormatException ex) {
+		} catch (NumberFormatException ex) {
 			return null;
 		}
 	}
@@ -75,7 +75,7 @@ public class UserPriceSettingsPanel extends JUserListPanel<Integer, Double> {
 
 	public static class UserPrice extends UserItem<Integer, Double> {
 
-		private DecimalFormat simpleFormat  = new DecimalFormat("0.##", new DecimalFormatSymbols(Locale.ENGLISH));
+		private DecimalFormat simpleFormat = new DecimalFormat("0.##", new DecimalFormatSymbols(Locale.ENGLISH));
 
 		public UserPrice(final UserItem<Integer, Double> userItem) {
 			super(userItem);

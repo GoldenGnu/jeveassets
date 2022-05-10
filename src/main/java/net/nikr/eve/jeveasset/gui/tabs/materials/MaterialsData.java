@@ -85,7 +85,7 @@ public class MaterialsData extends TableData {
 			}
 
 			//Locations Total
-			Material totalMaterial =  totalMaterials.get(asset.getLocation().getLocation() + asset.getItem().getGroup());
+			Material totalMaterial = totalMaterials.get(asset.getLocation().getLocation() + asset.getItem().getGroup());
 			if (totalMaterial == null) { //New
 				totalMaterial = new Material(Material.MaterialType.LOCATIONS_TOTAL, asset, asset.getLocation().getLocation(), TabsMaterials.get().total(), asset.getItem().getGroup());
 				totalMaterials.put(asset.getLocation().getLocation() + asset.getItem().getGroup(), totalMaterial);
@@ -103,13 +103,13 @@ public class MaterialsData extends TableData {
 			//Summary
 			Material summaryMaterial = summary.get(asset.getName());
 			if (summaryMaterial == null) { //New
-				summaryMaterial = new Material(Material.MaterialType.SUMMARY, asset, TabsMaterials.get().summary(), asset.getItem().getGroup(),  asset.getName());
+				summaryMaterial = new Material(Material.MaterialType.SUMMARY, asset, TabsMaterials.get().summary(), asset.getItem().getGroup(), asset.getName());
 				summary.put(asset.getName(), summaryMaterial);
 				materials.add(summaryMaterial);
 			}
 
 			//Summary Total
-			Material summaryTotalMaterial =  total.get(asset.getItem().getGroup());
+			Material summaryTotalMaterial = total.get(asset.getItem().getGroup());
 			if (summaryTotalMaterial == null) { //New
 				summaryTotalMaterial = new Material(Material.MaterialType.SUMMARY_TOTAL, null, TabsMaterials.get().summary(), TabsMaterials.get().grandTotal(), asset.getItem().getGroup());
 				total.put(asset.getItem().getGroup(), summaryTotalMaterial);

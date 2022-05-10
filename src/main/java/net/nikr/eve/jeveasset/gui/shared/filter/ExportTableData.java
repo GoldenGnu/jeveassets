@@ -64,12 +64,12 @@ public class ExportTableData {
 
 	private static final Logger LOG = LoggerFactory.getLogger(ExportTableData.class);
 
-	private static final DecimalFormat INTEGER_DOT_FORMAT  = new DecimalFormat("###0", new DecimalFormatSymbols(new Locale("en")));
-	private static final DecimalFormat INTEGER_COMMA_FORMAT  = new DecimalFormat("###0", new DecimalFormatSymbols(new Locale("da")));
-	private static final DecimalFormat DECIMAL_HTML_DOT_FORMAT  = new DecimalFormat("#,##0.00##", new DecimalFormatSymbols(new Locale("en")));
-	private static final DecimalFormat DECIMAL_HTML_COMMA_FORMAT  = new DecimalFormat("#,##0.00##", new DecimalFormatSymbols(new Locale("da")));
-	private static final DecimalFormat DECIMAL_CSV_DOT_FORMAT  = new DecimalFormat("###0.00##", new DecimalFormatSymbols(new Locale("en")));
-	private static final DecimalFormat DECIMAL_CSV_COMMA_FORMAT  = new DecimalFormat("###0.00##", new DecimalFormatSymbols(new Locale("da")));
+	private static final DecimalFormat INTEGER_DOT_FORMAT = new DecimalFormat("###0", new DecimalFormatSymbols(new Locale("en")));
+	private static final DecimalFormat INTEGER_COMMA_FORMAT = new DecimalFormat("###0", new DecimalFormatSymbols(new Locale("da")));
+	private static final DecimalFormat DECIMAL_HTML_DOT_FORMAT = new DecimalFormat("#,##0.00##", new DecimalFormatSymbols(new Locale("en")));
+	private static final DecimalFormat DECIMAL_HTML_COMMA_FORMAT = new DecimalFormat("#,##0.00##", new DecimalFormatSymbols(new Locale("da")));
+	private static final DecimalFormat DECIMAL_CSV_DOT_FORMAT = new DecimalFormat("###0.00##", new DecimalFormatSymbols(new Locale("en")));
+	private static final DecimalFormat DECIMAL_CSV_COMMA_FORMAT = new DecimalFormat("###0.00##", new DecimalFormatSymbols(new Locale("da")));
 
 	/**
 	 * Get Filters and Views from Settings (No Column Cache).
@@ -123,7 +123,7 @@ public class ExportTableData {
 	 * @param exportSettings
 	 * @return 
 	 */
-	private static <Q> boolean export(EventList<Q> eventList, ColumnCache<Q> columnCache, final SimpleTableFormat<Q> tableFormat, String toolName, Map<String, View> views,  Map<String, List<Filter>> filters, Map<String, List<Filter>> defaultFilters, List<Filter> currentFilters, ExportSettings exportSettings) {
+	private static <Q> boolean export(EventList<Q> eventList, ColumnCache<Q> columnCache, final SimpleTableFormat<Q> tableFormat, String toolName, Map<String, View> views, Map<String, List<Filter>> filters, Map<String, List<Filter>> defaultFilters, List<Filter> currentFilters, ExportSettings exportSettings) {
 		//Filter
 		final List<Filter> filter;
 		switch (exportSettings.getFilterSelection()) {

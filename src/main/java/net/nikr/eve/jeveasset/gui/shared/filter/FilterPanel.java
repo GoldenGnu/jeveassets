@@ -200,7 +200,7 @@ class FilterPanel<E> implements Comparable<FilterPanel<E>> {
 
 		JComboBox<String> jComboBox = new JComboBox<>();
 		FontMetrics fontMetrics = jComboBox.getFontMetrics(jComboBox.getFont());
-		EnumTableColumn<E>  longestColumn = null;
+		EnumTableColumn<E> longestColumn = null;
 		for (EnumTableColumn<E> column : allColumns) {
 			if (longestColumn == null || fontMetrics.stringWidth(longestColumn.getColumnName()) < fontMetrics.stringWidth(column.getColumnName())) {
 				longestColumn = column;
@@ -414,7 +414,7 @@ class FilterPanel<E> implements Comparable<FilterPanel<E>> {
 	private String getDataString() {
 		LocalDate date = jDate.getDate();
 		Instant instant = date.atStartOfDay().atZone(ZoneId.of("GMT")).toInstant(); //End of day - GMT
-		return  Formater.columnDate(Date.from(instant));
+		return Formater.columnDate(Date.from(instant));
 	}
 
 	private void refilter() {
@@ -556,7 +556,7 @@ class FilterPanel<E> implements Comparable<FilterPanel<E>> {
 		Border border = jGroup.getBorder();
 		JFormattedTextField jTextField = ((JSpinner.DefaultEditor) jGroup.getEditor()).getTextField();
 		if ("Nimbus".equals(UIManager.getLookAndFeel().getName())) {
-			if (color == Color.GRAY)  {
+			if (color == Color.GRAY) {
 				jTextField.setUI(null);
 				jTextField.updateUI();
 			} else {
@@ -570,7 +570,7 @@ class FilterPanel<E> implements Comparable<FilterPanel<E>> {
 			});
 			}
 		} else {
-			if (color == Color.GRAY)  {
+			if (color == Color.GRAY) {
 				jTextField.setOpaque(false);
 			} else {
 				jTextField.setBackground(color);
@@ -578,7 +578,7 @@ class FilterPanel<E> implements Comparable<FilterPanel<E>> {
 			}
 			if (border instanceof CompoundBorder) {
 				CompoundBorder compoundBorder = (CompoundBorder) border;
-				if (color == Color.GRAY)  {
+				if (color == Color.GRAY) {
 					jGroup.setBorder(BorderFactory.createCompoundBorder(compoundBorder.getOutsideBorder(), BorderFactory.createLineBorder(jGroup.getBackground(), 2)));
 				} else {
 					jGroup.setBorder(BorderFactory.createCompoundBorder(compoundBorder.getOutsideBorder(), BorderFactory.createLineBorder(color, 2)));

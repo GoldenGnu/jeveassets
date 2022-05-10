@@ -314,7 +314,7 @@ public abstract class AbstractGetter<O extends OwnerType> implements Runnable {
 		synchronized(owner) {
 			assets = new ArrayList<>(owner.getAssets());
 		}
-		addItemIDs(itemMap,  assets);
+		addItemIDs(itemMap, assets);
 		return itemMap;
 	}
 

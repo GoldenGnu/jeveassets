@@ -110,17 +110,17 @@ public class EsiItemsGetter extends AbstractEsiGetter {
 		final String techLevel;
 		if (metaGroupID != null) {
 			switch (metaGroupID) {
-				case 1:  techLevel = "Tech I"; break;
-				case 2:  techLevel = "Tech II"; break;
-				case 3:  techLevel = "Storyline"; break;
-				case 4:  techLevel = "Faction"; break;
-				case 5:  techLevel = "Officer"; break;
-				case 6:  techLevel = "Deadspace"; break;
+				case 1: techLevel = "Tech I"; break;
+				case 2: techLevel = "Tech II"; break;
+				case 3: techLevel = "Storyline"; break;
+				case 4: techLevel = "Faction"; break;
+				case 5: techLevel = "Officer"; break;
+				case 6: techLevel = "Deadspace"; break;
 				/*
 				//No longer in use
-				case 7:  tech = "Frigates"; break;
-				case 8:  tech = "Elite Frigates"; break;
-				case 9:  tech = "Commander Frigates"; break;
+				case 7: tech = "Frigates"; break;
+				case 8: tech = "Elite Frigates"; break;
+				case 9: tech = "Commander Frigates"; break;
 				case 10: tech = "Destroyer"; break;
 				case 11: tech = "Cruiser"; break;
 				case 12: tech = "Elite Cruiser"; break;

@@ -1471,7 +1471,7 @@ public class TrackerTab extends JMainTabSecondary {
 		if (date == null) {
 			return null;
 		}
-		Instant instant = date.atStartOfDay().atZone(ZoneId.of("GMT")).toInstant();  //Start of day - GMT
+		Instant instant = date.atStartOfDay().atZone(ZoneId.of("GMT")).toInstant(); //Start of day - GMT
 		return Date.from(instant);
 	}
 
@@ -1859,7 +1859,7 @@ public class TrackerTab extends JMainTabSecondary {
 						String filename = zipEntry.getName();
 						if (filename.equals("settings.xml") || filename.equals("tracker.json")) {
 							unzippedFile = new File(FileUtil.getPathDataDirectory() + File.separator + "temp_" + filename);
-							if (unzippedFile.toPath().normalize().startsWith(FileUtil.getPathDataDirectory() + File.separator)) {  //Make sure path is correct
+							if (unzippedFile.toPath().normalize().startsWith(FileUtil.getPathDataDirectory() + File.separator)) { //Make sure path is correct
 								FileOutputStream fos = new FileOutputStream(unzippedFile);
 								byte[] buffer = new byte[1024];
 								int len;

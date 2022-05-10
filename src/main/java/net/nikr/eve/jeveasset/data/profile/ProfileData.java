@@ -1179,7 +1179,7 @@ public class ProfileData {
 			}
 			//Handle Asset Structures
 			if (asset.getItem().getCategory().equals(Item.CATEGORY_STRUCTURE)) {
-				for (MyAsset childAsset:  asset.getAssets()) {
+				for (MyAsset childAsset: asset.getAssets()) {
 					updateStructureAssets(childAsset, asset);
 				}
 			}

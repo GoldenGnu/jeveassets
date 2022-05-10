@@ -871,7 +871,7 @@ public class MarketOrdersTab extends JMainTabPrimary {
 						LOG.info("Saving Profile");
 						program.saveProfile();
 					}
-					LOG.info("Marketlog update thread done in "  + Formater.milliseconds(System.currentTimeMillis() - start) + " for " + file.getName());
+					LOG.info("Marketlog update thread done in " + Formater.milliseconds(System.currentTimeMillis() - start) + " for " + file.getName());
 				}
 			}, file.getName());
 			thread.start();
@@ -901,7 +901,7 @@ public class MarketOrdersTab extends JMainTabPrimary {
 								}
 							} else {
 								//Outbid and lowest sell price
-								if (outbid.getPrice() < marketOrder.getPrice() &&  (marketOrderCopy == null || marketOrder.getPrice() < marketOrderCopy.getPrice())) {
+								if (outbid.getPrice() < marketOrder.getPrice() && (marketOrderCopy == null || marketOrder.getPrice() < marketOrderCopy.getPrice())) {
 									marketOrderCopy = marketOrder;
 								}
 							}

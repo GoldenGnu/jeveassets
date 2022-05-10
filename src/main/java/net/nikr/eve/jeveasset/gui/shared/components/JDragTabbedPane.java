@@ -427,7 +427,7 @@ public class JDragTabbedPane extends JTabbedPane {
 	private Rectangle getTabAreaBounds() {
 		Rectangle tabbedRect = getBounds();
 		//pointed out by daryl. NullPointerException: i.e. addTab("Tab",null)
-		//Rectangle compRect   = getSelectedComponent().getBounds();
+		//Rectangle compRect = getSelectedComponent().getBounds();
 		Component comp = getSelectedComponent();
 		int idx = 0;
 		while (comp == null && idx < getTabCount()) {

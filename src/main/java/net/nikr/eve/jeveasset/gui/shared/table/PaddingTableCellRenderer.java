@@ -91,7 +91,7 @@ public final class PaddingTableCellRenderer implements TableCellRenderer {
 
 	@Override
 	public Component getTableCellRendererComponent(final JTable table, final Object value, final boolean isSelected, final boolean hasFocus, final int row, final int column) {
-		JComponent jComponent  = (JComponent) renderer.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+		JComponent jComponent = (JComponent) renderer.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 		BorderState state = BorderState.getState(isSelected, hasFocus);
 		Border compoundBorder = borders.get(state);
 		if (compoundBorder == null) {

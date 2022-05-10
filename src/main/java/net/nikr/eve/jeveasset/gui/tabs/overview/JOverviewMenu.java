@@ -55,7 +55,7 @@ public class JOverviewMenu extends JMenu {
 
 		ListenerClass listener = new ListenerClass();
 
-		JMenuItem  jMenuItem;
+		JMenuItem jMenuItem;
 		JCheckBoxMenuItem jCheckBoxMenuItem;
 
 		//Station, System, Region views

@@ -37,7 +37,7 @@ public class JFixedToolBar extends JToolBar {
 	private Integer height = null;
 	private final Orientation orientation;
 	
-	public static enum Orientation  {
+	public static enum Orientation {
 		HORIZONTAL,
 		VERTICAL
 	}
@@ -113,7 +113,7 @@ public class JFixedToolBar extends JToolBar {
 			return super.getPreferredSize();
 		} else {
 			if (height == null) {
-				height =  getInsets().top + getInsets().bottom + Program.getButtonsHeight();
+				height = getInsets().top + getInsets().bottom + Program.getButtonsHeight();
 			}
 			Dimension preferredSize = super.getPreferredSize();
 			return new Dimension(preferredSize.width, height);

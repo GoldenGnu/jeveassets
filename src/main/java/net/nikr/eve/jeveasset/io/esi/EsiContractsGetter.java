@@ -35,7 +35,7 @@ public class EsiContractsGetter extends AbstractEsiGetter {
 	private final boolean saveHistory;
 
 	public EsiContractsGetter(UpdateTask updateTask, EsiOwner owner, boolean saveHistory) {
-		super(updateTask, owner, false,  owner.getContractsNextUpdate(), TaskType.CONTRACTS);
+		super(updateTask, owner, false, owner.getContractsNextUpdate(), TaskType.CONTRACTS);
 		this.saveHistory = saveHistory;
 	}
 

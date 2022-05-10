@@ -341,7 +341,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 		}
 	}
 
-	private void writeTrackerSettings(final Document xmldoc,  Settings settings) {
+	private void writeTrackerSettings(final Document xmldoc, Settings settings) {
 		Element trackerSettingsNode = xmldoc.createElementNS(null, "trackersettings");
 		xmldoc.getDocumentElement().appendChild(trackerSettingsNode);
 		setAttribute(trackerSettingsNode, "allprofiles", settings.getTrackerSettings().isAllProfiles());

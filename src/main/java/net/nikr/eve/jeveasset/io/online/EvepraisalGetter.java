@@ -43,7 +43,7 @@ public class EvepraisalGetter {
 	private static final Logger LOG = LoggerFactory.getLogger(EvepraisalGetter.class);
 
 	public static String post(Map<Item, Long> itemCounts) {
-		DecimalFormat number  = new DecimalFormat("0");
+		DecimalFormat number = new DecimalFormat("0");
 		StringBuilder builder = new StringBuilder();
 		for (Map.Entry<Item, Long> entry : itemCounts.entrySet()) {
 			builder.append(entry.getKey().getTypeName());

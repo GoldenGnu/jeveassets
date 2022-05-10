@@ -32,7 +32,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 import net.nikr.eve.jeveasset.i18n.TabsValues;
 
 
-public class JValueTable  extends JAutoColumnTable {
+public class JValueTable extends JAutoColumnTable {
 
 	private final DefaultEventTableModel<Value> tableModel;
 

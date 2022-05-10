@@ -75,7 +75,7 @@ class StockpileShoppingListDialog extends JDialogCentered {
 		FORMAT_CHANGED
 	}
 
-	private final DecimalFormat number  = new DecimalFormat("0");
+	private final DecimalFormat number = new DecimalFormat("0");
 
 	private final JTextArea jText;
 	private final JButton jClose;
@@ -94,7 +94,7 @@ class StockpileShoppingListDialog extends JDialogCentered {
 	private boolean updating = false;
 
 	StockpileShoppingListDialog(final Program program) {
-		super(program,  TabsStockpile.get().shoppingList(), Images.TOOL_STOCKPILE.getImage());
+		super(program, TabsStockpile.get().shoppingList(), Images.TOOL_STOCKPILE.getImage());
 
 		this.getDialog().setResizable(true);
 		
@@ -243,7 +243,7 @@ class StockpileShoppingListDialog extends JDialogCentered {
 				}
 				TypeIdentifier typeID = new TypeIdentifier(stockpileItem);
 				if (!typeID.isEmpty()) { //Ignore Total
-					List<StockClaim> claimList  = claims.get(typeID);
+					List<StockClaim> claimList = claims.get(typeID);
 					if (claimList == null) {
 						claimList = new ArrayList<>();
 						claims.put(typeID, claimList);
@@ -602,7 +602,7 @@ class StockpileShoppingListDialog extends JDialogCentered {
 		public int compareTo(StockClaim o) {
 			if (this.getNeed() > o.getNeed()) {
 				return 1;
-			} else if  (this.getNeed() < o.getNeed()){
+			} else if (this.getNeed() < o.getNeed()){
 				return -1;
 			} else {
 				return 0;
@@ -696,7 +696,7 @@ class StockpileShoppingListDialog extends JDialogCentered {
 		}
 	}
 
-	private static class TypeIdentifier  {
+	private static class TypeIdentifier {
 		private final int typeID;
 		private final boolean runs;
 

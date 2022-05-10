@@ -904,14 +904,14 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 		NodeList skillsNodes = element.getElementsByTagName("skills");
 		for (int a = 0; a < skillsNodes.getLength(); a++) {
 			Element currentSkillsNode = (Element) skillsNodes.item(a);
-			Integer unallocatedSkillPoints =  getIntOptional(currentSkillsNode, "unallocated");
-			Long totalSkillPoints =  getLongOptional(currentSkillsNode, "total");
+			Integer unallocatedSkillPoints = getIntOptional(currentSkillsNode, "unallocated");
+			Long totalSkillPoints = getLongOptional(currentSkillsNode, "total");
 			List<RawSkill> skills = new ArrayList<>();
 			NodeList skillNodes = currentSkillsNode.getElementsByTagName("skill");
 			for (int b = 0; b < skillNodes.getLength(); b++) {
 				Element currentNode = (Element) skillNodes.item(b);
 				
-				int typeID =  getInt(currentNode, "id");
+				int typeID = getInt(currentNode, "id");
 				long skillpoints = getLong(currentNode, "sp");
 				int activeSkillLevel = getInt(currentNode, "active");
 				int trainedSkillLevel = getInt(currentNode, "trained");

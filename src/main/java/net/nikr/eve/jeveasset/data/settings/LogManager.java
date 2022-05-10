@@ -53,7 +53,7 @@ import net.nikr.eve.jeveasset.io.local.LogsWriter;
 
 
 public class LogManager {
-	private static List<AssetLogSource> logs =  null;
+	private static List<AssetLogSource> logs = null;
 	private static LogData logData = null;
 
 	private LogManager() { }
@@ -151,8 +151,8 @@ public class LogManager {
 			AssetLog from = oldAssetsMap.get(itemID);
 			AssetLog to = newAssetsMap.get(itemID);
 			boolean owner = !Objects.equal(from.getOwnerID(), to.getOwnerID()) ; //New Owner
-			boolean location = !Objects.equal(from.getLocationID(), to.getLocationID());  //New Location
-			boolean flag =  !Objects.equal(from.getFlagID(), to.getFlagID()); //New Flag
+			boolean location = !Objects.equal(from.getLocationID(), to.getLocationID()); //New Location
+			boolean flag = !Objects.equal(from.getFlagID(), to.getFlagID()); //New Flag
 			boolean container = !Objects.equal(from.getParentIDs(), to.getParentIDs()); //New Container
 			if (location || flag || container || owner) { //Moved same itemID
 				putSet(addedSources, from.getTypeID(), new LogSource(LogSourceType.MOVED_FROM, from.getNeed(), from));

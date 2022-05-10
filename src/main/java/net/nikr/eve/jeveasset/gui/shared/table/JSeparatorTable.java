@@ -467,7 +467,7 @@ class SpanTableUI extends BasicTableUI {
 					aColumn = cm.getColumn(column);
 					cellRect = table.getCellRect(row, column, false);
 					if (aColumn != draggedColumn) {
-					   paintCell(g, cellRect, row, column);
+						paintCell(g, cellRect, row, column);
 					}
 				}
 			}

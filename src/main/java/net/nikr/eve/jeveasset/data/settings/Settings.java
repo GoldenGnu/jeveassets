@@ -211,8 +211,8 @@ public class Settings {
 	private final MarketOrdersSettings marketOrdersSettings = new MarketOrdersSettings();
 	//Cache
 	private Boolean filterOnEnter = null; //Filter tools
-	private Boolean highlightSelectedRows = null;  //Assets
-	private Boolean reprocessColors = null;  //Assets
+	private Boolean highlightSelectedRows = null; //Assets
+	private Boolean reprocessColors = null; //Assets
 	private Boolean stockpileHalfColors = null; //Stockpile
 //Table settings
 	//Filters					Saved by ExportFilterControl.saveSettings()

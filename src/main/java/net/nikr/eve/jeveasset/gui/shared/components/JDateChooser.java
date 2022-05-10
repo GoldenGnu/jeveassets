@@ -68,7 +68,7 @@ public class JDateChooser extends DatePicker {
 	}
 
 	@Override
-	public final  JButton getComponentToggleCalendarButton() {
+	public final JButton getComponentToggleCalendarButton() {
 		return super.getComponentToggleCalendarButton();
 	}
 

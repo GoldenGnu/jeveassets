@@ -89,16 +89,16 @@ public class JTextAreaPlaceholder extends JTextArea {
 		updatePlaceholderFont();
 
 		addFocusListener(new FocusListener() {
-            @Override
-            public void focusLost(FocusEvent e) {
-                updateShown();
-            }
-            
-            @Override
-            public void focusGained(FocusEvent e) {
-                updateShown();
-            }
-        });
+			@Override
+			public void focusLost(FocusEvent e) {
+				updateShown();
+			}
+
+			@Override
+			public void focusGained(FocusEvent e) {
+				updateShown();
+			}
+		});
 		getDocument().addDocumentListener(new DocumentListener() {
 			@Override
 			public void insertUpdate(DocumentEvent e) {
@@ -192,7 +192,7 @@ public class JTextAreaPlaceholder extends JTextArea {
 		Insets insets = getInsets();
 		getMock().setBorder(BorderFactory.createEmptyBorder(insets.top, insets.left, insets.bottom, insets.right));
 		revalidate();
-        repaint();
+		repaint();
 	}
 
 	private void updateShown() {
@@ -202,7 +202,7 @@ public class JTextAreaPlaceholder extends JTextArea {
 		paintPlaceholder = paint;
 		if (repaint) {
 			revalidate();
-            repaint();
+			repaint();
 		}
 	}
 
@@ -212,7 +212,7 @@ public class JTextAreaPlaceholder extends JTextArea {
 		getMock().setSize(size);
 		if (repaint) {
 			revalidate();
-            repaint();
+			repaint();
 		}
 	}
 
@@ -224,7 +224,7 @@ public class JTextAreaPlaceholder extends JTextArea {
 	public void setPlaceholderForeground(Color fg) {
 		getMock().setForeground(fg);
 		revalidate();
-        repaint();
+		repaint();
 	}
 
 	public boolean isPlaceholderItalic() {
@@ -248,7 +248,7 @@ public class JTextAreaPlaceholder extends JTextArea {
 			getMock().setFont(placeholderFont);
 		}
 		revalidate();
-        repaint();
+		repaint();
 		
 	}
 

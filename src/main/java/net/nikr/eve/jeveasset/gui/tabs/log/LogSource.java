@@ -198,7 +198,7 @@ public class LogSource extends AssetLogData {
 			long t2 = target - o2.getNeed();
 			if (t1 < t2) {
 				return 1;
-			} else if  (t1 > t2){
+			} else if (t1 > t2){
 				return -1;
 			} else {
 				return 0;

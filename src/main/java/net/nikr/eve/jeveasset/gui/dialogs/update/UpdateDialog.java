@@ -448,7 +448,7 @@ public class UpdateDialog extends JDialogCentered {
 		Date blueprintsFirst = null;
 		Date bookmarksFirst = null;
 		Date skillsFirst = null;
-		Date containerLogsFirst  = null;
+		Date containerLogsFirst = null;
 		Date accountBalanceFirst = null;
 
 		Date industryJobsLast = null;
@@ -460,7 +460,7 @@ public class UpdateDialog extends JDialogCentered {
 		Date blueprintsLast = null;
 		Date bookmarksLast = null;
 		Date skillsLast = null;
-		Date containerLogsLast  = null;
+		Date containerLogsLast = null;
 		Date accountBalanceLast = null;
 
 		Date priceData = program.getPriceDataGetter().getNextUpdate();
@@ -713,7 +713,7 @@ public class UpdateDialog extends JDialogCentered {
 				if (jContracts.isSelected()) {
 					updateTasks.add(new Step4Task(program.getProfileManager(), jContracts.isSelected()));
 				}
-				if (jContractPricesAll.isSelected() || jContractPricesNew.isSelected())  {
+				if (jContractPricesAll.isSelected() || jContractPricesNew.isSelected()) {
 					updateTasks.add(new ContractPricesTask(program.getProfileData(), jContractPricesAll.isSelected()));
 				}
 				if (jPriceDataAll.isSelected() || jPriceDataNew.isSelected()) {

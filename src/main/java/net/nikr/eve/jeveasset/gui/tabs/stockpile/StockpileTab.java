@@ -644,7 +644,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		if (importText == null) {
 			return; //Cancel
 		}
-		List<Stockpile> stockpiles  = StockpileDataReader.load(importText);
+		List<Stockpile> stockpiles = StockpileDataReader.load(importText);
 		if (stockpiles != null) {
 			importStockpiles(stockpiles);
 		} else {
@@ -1126,13 +1126,13 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 				if ((o1 instanceof SubpileItem) && (o2 instanceof SubpileItem)) {
 					SubpileItem item1 = (SubpileItem) o1;
 					SubpileItem item2 = (SubpileItem) o2;
-					return item1.getOrder().compareTo(item2.getOrder());  //Equal (both SubpileItem)
+					return item1.getOrder().compareTo(item2.getOrder()); //Equal (both SubpileItem)
 				} else if (o1 instanceof SubpileItem) {
 					return -1; //Before
 				} else if (o2 instanceof SubpileItem) {
-					return 1;  //After
+					return 1; //After
 				} else {
-					return 0;  //Equal (not SubpileItem)
+					return 0; //Equal (not SubpileItem)
 				}
 			}
 		}
@@ -1141,13 +1141,13 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 			@Override
 			public int compare(final StockpileItem o1, final StockpileItem o2) {
 				if ((o1 instanceof StockpileTotal) && (o2 instanceof StockpileTotal)) {
-					return 0;  //Equal (both StockpileTotal)
+					return 0; //Equal (both StockpileTotal)
 				} else if (o1 instanceof StockpileTotal) {
-					return 1;  //After
+					return 1; //After
 				} else if (o2 instanceof StockpileTotal) {
 					return -1; //Before
 				} else {
-					return 0;  //Equal (not StockpileTotal)
+					return 0; //Equal (not StockpileTotal)
 				}
 			}
 		}

@@ -82,8 +82,8 @@ public class MenuManager<T extends Enum<T> & EnumTableColumn<Q>, Q> {
 	private boolean stockpile = false;
 	private boolean tagsSupported = false;
 
-	private final Map<MenuEnum, AutoMenu<Q>> mainMenu =  new EnumMap<>(MenuEnum.class);
-	private final Map<MenuEnum, AutoMenu<Q>> tablePopupMenu =  new EnumMap<>(MenuEnum.class);
+	private final Map<MenuEnum, AutoMenu<Q>> mainMenu = new EnumMap<>(MenuEnum.class);
+	private final Map<MenuEnum, AutoMenu<Q>> tablePopupMenu = new EnumMap<>(MenuEnum.class);
 	
 	private final TableMenu<Q> tableMenu;
 	private final JTable jTable;
@@ -94,7 +94,7 @@ public class MenuManager<T extends Enum<T> & EnumTableColumn<Q>, Q> {
 	public static <T extends Enum<T> & EnumTableColumn<Q>, Q> void install(final Program program, final TableMenu<Q> tableMenu, JTable jTable, final ColumnManager<T, Q> columnManager, final Class<Q> clazz) {
 		MenuManager<T, Q> menuManager = new MenuManager<>(program, tableMenu, jTable, columnManager, clazz);
 		MenuManager<?, ?> put = MANAGERS.put(clazz, menuManager);
-		if (put != null)  {
+		if (put != null) {
 			throw new RuntimeException("Duplicated MenuManager Class");
 		}
 	}
@@ -154,7 +154,7 @@ public class MenuManager<T extends Enum<T> & EnumTableColumn<Q>, Q> {
 		priceSupported = PriceType.class.isAssignableFrom(clazz) || Item.class.isAssignableFrom(clazz);
 		createCashe(program, mainMenu, columnManager);
 		createCashe(program, tablePopupMenu, columnManager);
-		ListenerClass listener  = new ListenerClass();
+		ListenerClass listener = new ListenerClass();
 		jTable.addMouseListener(listener);
 		jTable.getTableHeader().addMouseListener(listener);
 		jTable.getSelectionModel().addListSelectionListener(listener);

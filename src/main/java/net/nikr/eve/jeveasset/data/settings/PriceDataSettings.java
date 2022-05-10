@@ -313,7 +313,7 @@ public class PriceDataSettings {
 		locationID = getDefaultLocationID();
 		priceSource = getDefaultPriceSource();
 		priceType = PriceMode.getDefaultPriceType();
-		priceReprocessedType =  PriceMode.getDefaultPriceType();
+		priceReprocessedType = PriceMode.getDefaultPriceType();
 	}
 
 	public PriceDataSettings(final LocationType locationType, final Long locationID, final PriceSource priceSource, final PriceMode priceType, final PriceMode priceReprocessedType) {

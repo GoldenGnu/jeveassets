@@ -27,7 +27,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.i18n.TabsReprocessed;
 
 
-public enum ReprocessedTableFormat  implements EnumTableColumn<ReprocessedInterface> {
+public enum ReprocessedTableFormat implements EnumTableColumn<ReprocessedInterface> {
 	NAME(String.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {

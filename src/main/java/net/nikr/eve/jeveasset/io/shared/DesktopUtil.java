@@ -107,7 +107,7 @@ public final class DesktopUtil {
 	 * Open a single link
 	 * @param url
 	 * @param window 
-	 * @return  
+	 * @return
 	 */
 	public static boolean browse(final String url, final Window window) {
 		if (url == null) {

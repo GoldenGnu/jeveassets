@@ -25,9 +25,9 @@ package net.nikr.eve.jeveasset.data.settings;
  */
 public interface SettingsUpdateListener {
 
-    /**
-     * Primary method called on settings update
-     */
-    void settingChanged();
+	/**
+	 * Primary method called on settings update
+	 */
+	void settingChanged();
 
 }

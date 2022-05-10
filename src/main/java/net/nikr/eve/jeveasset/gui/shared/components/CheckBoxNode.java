@@ -76,7 +76,7 @@ public class CheckBoxNode implements Comparable<CheckBoxNode>{
 			shownChildren();
 			return true;
 		}
-		if (matchesChildren(text)) {  //Matches Child (include self and parent)
+		if (matchesChildren(text)) { //Matches Child (include self and parent)
 			shownParents();
 			updateShown(true);
 			return true;
@@ -102,7 +102,7 @@ public class CheckBoxNode implements Comparable<CheckBoxNode>{
 			return false;
 		}
 		selected = newValue;
-		if (isParent()) {  //If have children -> Update Tree
+		if (isParent()) { //If have children -> Update Tree
 			update = selectionToChildren(newValue) || update;
 		}
 		if (selected != newValue) {
