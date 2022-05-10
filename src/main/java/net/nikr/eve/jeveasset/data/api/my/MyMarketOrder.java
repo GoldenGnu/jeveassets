@@ -237,7 +237,7 @@ public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarket
 
 	@Override
 	public int getMaterialEfficiency() {
-		return 0; //Zero - Can not sell researched blueprints 
+		return 0; //Zero - Can not sell researched blueprints
 	}
 
 	@Override

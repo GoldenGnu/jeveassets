@@ -387,7 +387,7 @@ public class StockpileItemDialog extends JDialogCentered {
 		if (existing == null) {
 			return null;
 		}
-		boolean materials = jBlueprintType.isEnabled() && 
+		boolean materials = jBlueprintType.isEnabled() &&
 				(jBlueprintType.getItemAt(jBlueprintType.getSelectedIndex()) == BlueprintAddType.MANUFACTURING_MATERIALS
 				|| jBlueprintType.getItemAt(jBlueprintType.getSelectedIndex()) == BlueprintAddType.REACTION_MATERIALS);
 		if (materials) { //Never exists
@@ -527,7 +527,7 @@ public class StockpileItemDialog extends JDialogCentered {
 		} else if (itemExist()) { //UPDATING (Adding an existing item)
 			stockpileItem = getExistingItem();
 			stockpileItem.update(getStockpileItem());
-		} else { //ADD 
+		} else { //ADD
 			stockpileItems = getStockpileItems();
 			if (stockpileItems != null) {
 				for (StockpileItem item : stockpileItems) {

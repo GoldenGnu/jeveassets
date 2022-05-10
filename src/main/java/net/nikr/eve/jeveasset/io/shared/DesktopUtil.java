@@ -79,9 +79,9 @@ public final class DesktopUtil {
 
 	
 	/**
-	 * Open link to jEveAssets manual 
+	 * Open link to jEveAssets manual
 	 * @param helpLink
-	 * @param window 
+	 * @param window
 	 */
 	public static void browse(HelpLink helpLink, final Window window) {
 		if (helpLink == null) {
@@ -96,8 +96,8 @@ public final class DesktopUtil {
 
 	/**
 	 * Open a single link
-	 * @param url 
-	 * @param program 
+	 * @param url
+	 * @param program
 	 */
 	public static void browse(final String url, Program program) {
 		browse(url, getWindow(program));
@@ -106,7 +106,7 @@ public final class DesktopUtil {
 	/**
 	 * Open a single link
 	 * @param url
-	 * @param window 
+	 * @param window
 	 * @return
 	 */
 	public static boolean browse(final String url, final Window window) {
@@ -136,8 +136,8 @@ public final class DesktopUtil {
 
 	/**
 	 * Open multiple links
-	 * @param urls 
-	 * @param program 
+	 * @param urls
+	 * @param program
 	 */
 	public static void browse(final Set<String> urls, Program program) {
 		browse(urls, getWindow(program));
@@ -146,7 +146,7 @@ public final class DesktopUtil {
 	/**
 	 * Open multiple links
 	 * @param urls
-	 * @param window 
+	 * @param window
 	 */
 	private static void browse(final Set<String> urls, Window window) {
 		if (urls == null || urls.isEmpty()) {

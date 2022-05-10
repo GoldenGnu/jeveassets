@@ -33,7 +33,7 @@ import net.nikr.eve.jeveasset.i18n.TabsReprocessed;
 public class JReprocessedAddItemDialog extends JAutoCompleteDialog<Item> {
 
 	public JReprocessedAddItemDialog(final Program program) {
-		super(program, TabsReprocessed.get().addItem(), Images.TOOL_REPROCESSED.getImage(), 
+		super(program, TabsReprocessed.get().addItem(), Images.TOOL_REPROCESSED.getImage(),
 				TabsReprocessed.get().selectItem(), false, true);
 	}
 

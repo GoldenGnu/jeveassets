@@ -136,7 +136,7 @@ public class EsiItemsGetter extends AbstractEsiGetter {
 				default: techLevel = "Tech I"; break;
 			}
 		} else {
-			techLevel = "Tech 1"; 
+			techLevel = "Tech 1";
 		}
 		boolean marketGroup;
 		if (marketGroupResponse != null) {

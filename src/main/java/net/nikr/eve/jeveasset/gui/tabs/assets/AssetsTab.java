@@ -336,7 +336,7 @@ public class AssetsTab extends JMainTabPrimary implements TagUpdate {
 	private class AssetFilterControl extends FilterControl<MyAsset> {
 
 		public AssetFilterControl(EventList<MyAsset> exportEventList) {
-			super(program.getMainWindow().getFrame(), 
+			super(program.getMainWindow().getFrame(),
 					NAME,
 					tableFormat,
 					eventList,

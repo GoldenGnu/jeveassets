@@ -150,7 +150,7 @@ public class FilterMatcherTest extends TestUtil {
 
 	/**
 	 * Speed test
-	 * @param args 
+	 * @param args
 	 */
 	public static void main(final String[] args) {
 		Images.preload();

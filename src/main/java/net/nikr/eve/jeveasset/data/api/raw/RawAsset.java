@@ -242,7 +242,7 @@ public class RawAsset {
 	}
 
 	/**
-	 * ESI Planetary Interaction Facility 
+	 * ESI Planetary Interaction Facility
 	 *
 	 * @param planet
 	 * @param pin

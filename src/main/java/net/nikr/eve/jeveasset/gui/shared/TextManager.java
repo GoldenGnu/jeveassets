@@ -126,7 +126,7 @@ public final class TextManager {
 		jUndo = new JMenuItem(undoManager.getUndoAction());
 		jUndo.setIcon(Images.EDIT_UNDO.getIcon());
 
-		jRedo = new JMenuItem(undoManager.getRedoAction()); 
+		jRedo = new JMenuItem(undoManager.getRedoAction());
 		jRedo.setIcon(Images.EDIT_REDO.getIcon());
 	}
 

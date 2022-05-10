@@ -108,7 +108,7 @@ public class EsiShipGetter extends AbstractEsiGetter {
 	/**
 	 * Set locationID for asset and children.
 	 * @param asset
-	 * @param locationID 
+	 * @param locationID
 	 */
 	private void setLocationID(MyAsset asset, long locationID) {
 		asset.setLocationID(locationID);

@@ -1108,7 +1108,7 @@ public class AccountImportDialog extends JDialogCentered {
 					result = Result.FAIL_INVALID;
 				} else if (getAccountAdder().isPrivilegesInvalid()) { // Not enough privileges
 					result = Result.FAIL_NOT_ENOUGH_PRIVILEGES;
-				} else if (getAccountAdder().isWrongEntry()) { // Editing account to a different character/corporation 
+				} else if (getAccountAdder().isWrongEntry()) { // Editing account to a different character/corporation
 					result = Result.FAIL_WRONG_ENTRY;
 				} else { //String error
 					error = s;

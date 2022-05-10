@@ -1498,7 +1498,7 @@ public class TrackerTab extends JMainTabSecondary {
 		}
 	}
 
-	private class ListenerClass implements 
+	private class ListenerClass implements
 			ActionListener, PopupMenuListener,
 			ChartMouseListener, ListSelectionListener, DateChangeListener {
 

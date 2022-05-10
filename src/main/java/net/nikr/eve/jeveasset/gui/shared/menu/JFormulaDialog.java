@@ -304,7 +304,7 @@ public class JFormulaDialog<T extends Enum<T> & EnumTableColumn<Q>, Q> extends J
 	}
 
 	public static String replaceAll(EnumTableColumn<?> enumColumn, String text) {
-		return text.replaceAll("\\b" + getHardName(enumColumn) + "\\b", getSoftName(enumColumn).replace("$", "\\$")); //$ is reserved for 
+		return text.replaceAll("\\b" + getHardName(enumColumn) + "\\b", getSoftName(enumColumn).replace("$", "\\$")); //$ is reserved for
 	}
 
 	private Expression getExpression() {

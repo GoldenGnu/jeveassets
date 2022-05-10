@@ -183,7 +183,7 @@ public class UserLocationSettingsPanel extends JSettingsPanel {
 			return null;
 		}
 		//Create data for the system dialog
-		List<MyLocation> locations = new ArrayList<>(); 
+		List<MyLocation> locations = new ArrayList<>();
 		for (MyLocation system : StaticData.get().getLocations()) {
 			if (system.isSystem()) {
 				locations.add(system);

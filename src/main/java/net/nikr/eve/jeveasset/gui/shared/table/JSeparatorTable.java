@@ -276,14 +276,14 @@ public class JSeparatorTable extends JAutoColumnTable {
 
 	/**
 	 * Get the renderer for separator rows.
-	 * @return 
+	 * @return
 	 */
 	public TableCellRenderer getSeparatorRenderer() { return separatorRenderer; }
 	public void setSeparatorRenderer(final TableCellRenderer separatorRenderer) { this.separatorRenderer = separatorRenderer; }
 
 	/**
 	 * Get the editor for separator rows.
-	 * @return 
+	 * @return
 	 */
 	public TableCellEditor getSeparatorEditor() { return separatorEditor; }
 	public void setSeparatorEditor(final TableCellEditor separatorEditor) { this.separatorEditor = separatorEditor; }

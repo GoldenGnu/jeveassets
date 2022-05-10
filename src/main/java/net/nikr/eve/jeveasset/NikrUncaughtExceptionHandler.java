@@ -106,7 +106,7 @@ public class NikrUncaughtExceptionHandler implements Thread.UncaughtExceptionHan
 						//We tried our best, nothing more to do now...
 					}
 				}
-			} else if (causes.contains(NoClassDefFoundError.class) || causes.contains(ClassNotFoundException.class)) { //Corrupted class files 
+			} else if (causes.contains(NoClassDefFoundError.class) || causes.contains(ClassNotFoundException.class)) { //Corrupted class files
 				try {
 					Updater updater = new Updater();
 					updater.fixMissingClasses();

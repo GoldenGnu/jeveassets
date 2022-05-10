@@ -137,7 +137,7 @@ public class EnumTableFormatAdaptor<T extends Enum<T> & EnumTableColumn<Q>, Q> i
 
 	/**
 	 * Used to add special columns (Ex: FormulaColumn and JumpColumn)
-	 * @param column 
+	 * @param column
 	 */
 	@Override
 	public void addColumn(EnumTableColumn<Q> column) {
@@ -168,7 +168,7 @@ public class EnumTableFormatAdaptor<T extends Enum<T> & EnumTableColumn<Q>, Q> i
 
 	/**
 	 * Used to remove special columns (Ex: FormulaColumn and JumpColumn)
-	 * @param column 
+	 * @param column
 	 */
 	public void removeColumn(EnumTableColumn<Q> column) {
 		orderColumnsName.remove(column.name());

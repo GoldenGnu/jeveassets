@@ -39,7 +39,7 @@ public final class PaddingTableCellRenderer implements TableCellRenderer {
 		SELECTED_AND_NOT_FOCUSED(true, false),
 		NOT_SELECTED_AND_FOCUSED(false, true),
 		NOT_SELECTED_AND_NOT_FOCUSED(false, false);
- 
+
 		private final boolean selected;
 		private final boolean focused;
 

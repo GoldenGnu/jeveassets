@@ -129,7 +129,7 @@ public class Item implements Comparable<Item>, ItemType {
 	}
 
 	public boolean isContainer() {
-		return group.equals(GROUP_AUDIT_LOG_SECURE_CONTAINER) 
+		return group.equals(GROUP_AUDIT_LOG_SECURE_CONTAINER)
 					|| group.equals(GROUP_FREIGHT_CONTAINER)
 					|| group.equals(GROUP_CARGO_CONTAINER)
 					|| group.equals(GROUP_SECURE_CARGO_CONTAINER);
