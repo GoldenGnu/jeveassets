@@ -28,7 +28,7 @@ import org.junit.Test;
 
 
 public class AssetsGetterTest extends TestUtil {
-	
+
 	@Test
 	public void testFlatListExclusions() {
 		assertEquals(StaticData.get().getItemFlags().get(7).getFlagName(), "Skill");
@@ -36,4 +36,5 @@ public class AssetsGetterTest extends TestUtil {
 		assertEquals(StaticData.get().getItemFlags().get(61).getFlagName(), "Skill In Training");
 		assertEquals(StaticData.get().getItemFlags().get(88).getFlagName(), "Booster");
 	}
+
 }

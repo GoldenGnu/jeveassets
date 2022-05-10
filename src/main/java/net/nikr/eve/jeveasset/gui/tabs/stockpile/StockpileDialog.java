@@ -885,7 +885,7 @@ public class StockpileDialog extends JDialogCentered {
 		private final List<FilterPanel> flagPanels = new ArrayList<>();
 		private final List<FilterPanel> containerPanels = new ArrayList<>();
 		private FilterPanel singletonPanel = null;
-		
+
 		private final JPanel jPanel;
 		private final JPanel jFilters;
 		private final ListenerClass listener = new ListenerClass();
@@ -925,7 +925,7 @@ public class StockpileDialog extends JDialogCentered {
 		private final JRadioButtonMenuItem jConstellation;
 		private final JRadioButtonMenuItem jRegion;
 		private final JRadioButtonMenuItem jUniverse;
-		
+
 		private LocationType locationType;
 
 		public LocationPanel(StockpileFilter stockpileFilter) {
@@ -1270,7 +1270,7 @@ public class StockpileDialog extends JDialogCentered {
 		private void doLayout() {
 			autoValidate();
 			jFilters.removeAll();
-			
+
 			GroupLayout layout = new GroupLayout(jFilters);
 			jFilters.setLayout(layout);
 			layout.setAutoCreateGaps(true);

@@ -56,7 +56,7 @@ public class WindowSettingsPanel extends JSettingsPanel {
 
 	public WindowSettingsPanel(final Program program, final SettingsDialog optionsDialog) {
 		super(program, optionsDialog, DialoguesSettings.get().windowWindow(), Images.SETTINGS_WINDOW.getIcon());
-	
+
 		ListenerClass listener = new ListenerClass();
 
 		jAutoSave = new JRadioButton(DialoguesSettings.get().windowSaveOnExit());
@@ -104,7 +104,6 @@ public class WindowSettingsPanel extends JSettingsPanel {
 					.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
 						.addComponent(jWidth)
 						.addComponent(jX)
-						
 					)
 					.addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
 						.addComponent(jHeightLabel)

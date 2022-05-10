@@ -142,7 +142,7 @@ public class JSimpleColorPicker {
 		blindColors.add(Colors.DARK_GRAY);
 		blindColors.add(Colors.COLORBLIND_FOREGROUND_GREEN);
 		blindColors.add(Colors.COLORBLIND_FOREGROUND_RED);
-		blindColors.add(Colors.COLORBLIND_ORANGE);	
+		blindColors.add(Colors.COLORBLIND_ORANGE);
 		blindColors.add(Colors.COLORBLIND_YELLOW);
 		blindColors.add(Colors.COLORBLIND_GREEN);
 		blindColors.add(Colors.COLORBLIND_BLUE);
@@ -160,7 +160,7 @@ public class JSimpleColorPicker {
 		darkColors.add(Colors.DARK_FOREGROUND_GREEN);
 		darkColors.add(Colors.DARK_FOREGROUND_RED);
 		darkColors.add(Colors.DARK_RED);
-		darkColors.add(Colors.DARK_ORANGE);	
+		darkColors.add(Colors.DARK_ORANGE);
 		darkColors.add(Colors.DARK_YELLOW);
 		darkColors.add(Colors.DARK_GREEN);
 		darkColors.add(Colors.DARK_BLUE);
@@ -183,7 +183,6 @@ public class JSimpleColorPicker {
 					cancel();
 				} else {
 					save(color);
-					
 				}
 			}
 		});
@@ -320,7 +319,6 @@ public class JSimpleColorPicker {
 							BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Colors.TABLE_SELECTION_BACKGROUND.getColor(), 1),
 							BorderFactory.createEmptyBorder(1, 1, 1, 1))));
 					}
-					
 				}
 
 				@Override
@@ -432,7 +430,6 @@ public class JSimpleColorPicker {
 					g2d.drawImage(Images.SETTINGS_COLOR_CHECK_BLACK.getImage(), x + (getIconWidth()-16)/2, y + (getIconWidth()-16)/2, null);
 				} else {
 					g2d.drawImage(Images.SETTINGS_COLOR_CHECK_WHITE.getImage(), x + (getIconWidth()-16)/2, y + (getIconWidth()-16)/2, null);
-					
 				}
 			}
 		}

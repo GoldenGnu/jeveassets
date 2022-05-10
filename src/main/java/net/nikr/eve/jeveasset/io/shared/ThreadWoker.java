@@ -92,7 +92,7 @@ public class ThreadWoker {
 	public static <K> List<Future<K>> startReturn(UpdateTask updateTask, Collection<? extends Callable<K>> updaters) throws InterruptedException {
 		return startReturn(updateTask, updaters, false);
 	}
-	
+
 	public static <K> List<Future<K>> startReturn(UpdateTask updateTask, Collection<? extends Callable<K>> updaters, boolean updateProgress) throws InterruptedException {
 		return startReturn(updateTask, updaters, updateProgress, 0, 100);
 	}
@@ -130,7 +130,7 @@ public class ThreadWoker {
 	}
 
 	public static class TaskCancelledException extends RuntimeException {
-		
+
 	}
 
 	private static <E extends Exception> void throwExecutionException(ExecutionException ex) throws E {

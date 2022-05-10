@@ -92,5 +92,5 @@ public class IndustrySlotTable extends JAutoColumnTable {
 		}
 		return component;
 	}
-	
+
 }

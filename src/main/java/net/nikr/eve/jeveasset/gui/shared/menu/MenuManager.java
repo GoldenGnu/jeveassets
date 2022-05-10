@@ -84,7 +84,7 @@ public class MenuManager<T extends Enum<T> & EnumTableColumn<Q>, Q> {
 
 	private final Map<MenuEnum, AutoMenu<Q>> mainMenu = new EnumMap<>(MenuEnum.class);
 	private final Map<MenuEnum, AutoMenu<Q>> tablePopupMenu = new EnumMap<>(MenuEnum.class);
-	
+
 	private final TableMenu<Q> tableMenu;
 	private final JTable jTable;
 	private final Program program;
@@ -219,7 +219,6 @@ public class MenuManager<T extends Enum<T> & EnumTableColumn<Q>, Q> {
 		menus.put(MenuEnum.FORMULA, new JMenuFormula<>(program, columnManager));
 	//SUM
 		menus.put(MenuEnum.SUM, new JMenuSum<>(program, jTable));
-	
 	}
 
 	private void createMenu(JPopupMenu jPopupMenu) {
@@ -488,7 +487,7 @@ public class MenuManager<T extends Enum<T> & EnumTableColumn<Q>, Q> {
 
 		@Override
 		public void mouseExited(final MouseEvent e) { }
-	
+
 		@Override
 		public void valueChanged(final ListSelectionEvent e) {
 			if (!e.getValueIsAdjusting()) {
@@ -559,7 +558,7 @@ public class MenuManager<T extends Enum<T> & EnumTableColumn<Q>, Q> {
 			this.menuData = menuData;
 			updateMenuData();
 		}
-	
+
 		@Override
 		public abstract JComponent getComponent();
 

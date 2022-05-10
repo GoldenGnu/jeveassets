@@ -80,7 +80,7 @@ public class ItemsTab extends JMainTabPrimary {
 		eventList.getReadWriteLock().readLock().lock();
 		filterList = new FilterList<>(sortedList);
 		eventList.getReadWriteLock().readLock().unlock();
-		
+
 		//Table Model
 		tableModel = EventModels.createTableModel(filterList, tableFormat);
 		//Table

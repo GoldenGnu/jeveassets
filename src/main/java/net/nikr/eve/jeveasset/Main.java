@@ -120,7 +120,7 @@ public final class Main {
 		//Validate directory
 		LibraryManager.checkLibraries();
 		//install the uncaught exception handlers
-		NikrUncaughtExceptionHandler.install();		
+		NikrUncaughtExceptionHandler.install();
 		//Splash screen
 		if (!GraphicsEnvironment.isHeadless()) {
 			SplashUpdater splashUpdater = new SplashUpdater();

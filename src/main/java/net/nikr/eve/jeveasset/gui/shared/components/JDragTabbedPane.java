@@ -89,7 +89,7 @@ public class JDragTabbedPane extends JTabbedPane {
 
 	public void removeDragLock(Integer index) {
 		locked.remove(index);
-	}	
+	}
 
 	private void clickArrowButton(String actionKey) {
 		ActionMap map = getActionMap();

@@ -115,7 +115,7 @@ public class LogTab extends JMainTabSecondary {
 		selectionModel = EventModels.createSelectionModel(separatorList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
-		
+
 		//Listeners
 		installTable(jTable);
 		//Scroll
@@ -234,5 +234,5 @@ public class LogTab extends JMainTabSecondary {
 			program.saveSettings("Log Table: " + msg); //Save Asset Filters and Export Setttings
 		}
 	}
-	
+
 }

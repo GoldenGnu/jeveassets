@@ -38,7 +38,7 @@ import net.nikr.eve.jeveasset.i18n.TabsMaterials;
 
 
 public class MaterialsData extends TableData {
-	
+
 	public MaterialsData(Program program) {
 		super(program);
 	}

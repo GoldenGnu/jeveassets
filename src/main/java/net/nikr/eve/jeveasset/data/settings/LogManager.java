@@ -110,7 +110,6 @@ public class LogManager {
 			}
 			newAssetsMap.put(asset.getItemID(), new AssetLog(asset, end));
 		}
-		
 		for (MyContract contract : oldContracts) {
 			oldContractMap.put(contract.getContractID(), contract);
 		}
@@ -478,9 +477,9 @@ public class LogManager {
 				long id = contractItem.getRecordID();
 				putSet(sources, typeID, new LogSource(sourceType, quantity, typeID, date, ownerID, locationID, logType, id));
 			}
-			
 		}
 	}
+
 	private static void addedContractsCancelled(Map<Integer, Set<LogSource>> sources, Date date, List<MyContractItem> newContractItems, Map<Integer, MyContract> oldContracts) {
 		for (MyContractItem newContractItem : newContractItems) {
 			MyContract oldContract = oldContracts.get(newContractItem.getContract().getContractID());

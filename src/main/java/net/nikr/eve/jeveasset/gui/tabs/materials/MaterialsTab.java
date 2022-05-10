@@ -96,9 +96,9 @@ public class MaterialsTab extends JMainTabSecondary {
 		super(program, NAME, TabsMaterials.get().materials(), Images.TOOL_MATERIALS.getIcon(), true);
 
 		materialsData = new MaterialsData(program);
-		
+
 		ListenerClass listener = new ListenerClass();
-		
+
 		JFixedToolBar jToolBarLeft = new JFixedToolBar();
 
 		jOwners = new JComboBox<>();

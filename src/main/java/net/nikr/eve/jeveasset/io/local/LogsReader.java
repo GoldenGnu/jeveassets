@@ -50,7 +50,7 @@ public class LogsReader extends AbstractXmlReader<Boolean> {
 		LogsReader reader = new LogsReader(logData);
 		return reader.read("Logs", FileUtil.getPathLogs(), XmlType.DYNAMIC_BACKUP);
 	}
-	
+
 	@Override
 	protected Boolean parse(Element element) throws XmlException {
 		if (!element.getNodeName().equals("logs")) {
@@ -170,5 +170,5 @@ public class LogsReader extends AbstractXmlReader<Boolean> {
 	protected Boolean doNotExistValue() {
 		return true;
 	}
-	
+
 }

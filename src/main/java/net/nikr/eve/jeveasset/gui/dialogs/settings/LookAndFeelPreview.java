@@ -97,9 +97,7 @@ public class LookAndFeelPreview {
 		public void mouseReleased(MouseEvent e) {}
 
 		@Override
-		public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
-			
-		}
+		public void popupMenuWillBecomeVisible(PopupMenuEvent e) { }
 
 		@Override
 		public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
@@ -158,7 +156,7 @@ public class LookAndFeelPreview {
 		private void hide() {
 			previewWindowMock.setVisible(false);
 		}
-		
+
 	}
 
 	public static BufferedImage createImage(Component comp) {
@@ -240,13 +238,11 @@ public class LookAndFeelPreview {
 					outerLayout.createSequentialGroup()
 						.addComponent(jInner)
 						.addGap(0, 0, Integer.MAX_VALUE)
-						
 			);
 			outerLayout.setVerticalGroup(
 					outerLayout.createSequentialGroup()
 						.addComponent(jInner)
 						.addGap(0, 0, Integer.MAX_VALUE)
-							
 			);
 		}
 
@@ -264,7 +260,7 @@ public class LookAndFeelPreview {
 
 		private static final int OFFSET = 5;
 		private static final int BORDER = 2;
-		
+
 		private BufferedImage bufferedImage;
 		private JComponent jComponent;
 		private Point point;

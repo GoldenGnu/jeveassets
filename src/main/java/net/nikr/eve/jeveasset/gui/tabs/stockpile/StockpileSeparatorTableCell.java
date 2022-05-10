@@ -85,7 +85,7 @@ public class StockpileSeparatorTableCell extends SeparatorTableCell<StockpileIte
 		jMultiplier.setBackground(Colors.COMPONENT_TRANSPARENT.getColor());
 		jMultiplier.setBorder(null);
 		jMultiplier.setAutoSelectAll(true);
-		
+
 		jMultiplierLabel = new JLabel(TabsStockpile.get().multiplierSign());
 
 		jGroup = new JLabel();

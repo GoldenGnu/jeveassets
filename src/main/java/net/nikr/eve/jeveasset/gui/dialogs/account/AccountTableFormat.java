@@ -311,5 +311,5 @@ public enum AccountTableFormat implements EnumTableColumn<OwnerType> {
 	public String toString() {
 		return getColumnName();
 	}
-	
+
 }

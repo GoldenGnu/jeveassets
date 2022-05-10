@@ -148,7 +148,6 @@ public class EsiItemsGetter extends AbstractEsiGetter {
 		int productTypeID = 0; //Product
 		int productQuantity = 1; //Product Quantity
 		item = new Item(typeID, name, group, category, price, volume, packagedVolume, capacity, metaLevel, techLevel, marketGroup, portion, productTypeID, productQuantity, ESI_ITEM_VERSION);
-		
 	}
 
 	private float getNotNull(Float f) {
@@ -178,5 +177,5 @@ public class EsiItemsGetter extends AbstractEsiGetter {
 	protected RolesEnum[] getRequiredRoles() {
 		return null;
 	}
-	
+
 }

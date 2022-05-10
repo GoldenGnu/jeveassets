@@ -137,8 +137,7 @@ public class TrackerAssetFilterDialog extends JDialogCentered {
 				filter();
 			}
 		});
-		
-		
+
 		jNewSelected = new JCheckBox(TabsTracker.get().newSelected());
 		jNewSelected.setSelected(Settings.get().getTrackerSettings().isSelectNew());
 
@@ -333,7 +332,7 @@ public class TrackerAssetFilterDialog extends JDialogCentered {
 	private static class CheckBoxNodeFormat implements TreeList.Format<CheckBoxNode> {
 
 		private final CheckBoxNodeComparator comparator = new CheckBoxNodeComparator();
-		
+
 		@Override
 		public void getPath(List<CheckBoxNode> path, CheckBoxNode element) {
 			addParents(path, element);
@@ -366,7 +365,6 @@ public class TrackerAssetFilterDialog extends JDialogCentered {
 			}
 		}
 	}
-	
 
 	private static class CheckBoxNodeMatcher implements Matcher<CheckBoxNode> {
 

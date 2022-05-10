@@ -115,13 +115,13 @@ public class JStockpileItemMenu extends JMenu {
 		jMenu = new JMenu(TabsStockpile.get().blueprints());
 		jMenu.setIcon(Images.MISC_BLUEPRINT.getIcon());
 		this.add(jMenu);
-		
+
 		jMenuItem = new JStockpileMenuItem(TabsStockpile.get().original(), Images.MISC_BPO.getIcon(), items);
 		jMenuItem.setActionCommand(StockpileItemMenuAction.ORIGINAL.name());
 		jMenuItem.addActionListener(listener);
 		jMenuItem.setEnabled(blueprint);
 		jMenu.add(jMenuItem);
-		
+
 		jMenuItem = new JStockpileMenuItem(TabsStockpile.get().copy(), Images.MISC_BPC.getIcon(), items);
 		jMenuItem.setActionCommand(StockpileItemMenuAction.COPY.name());
 		jMenuItem.addActionListener(listener);

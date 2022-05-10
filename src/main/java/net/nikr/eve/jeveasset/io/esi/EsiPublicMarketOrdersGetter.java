@@ -63,7 +63,7 @@ public class EsiPublicMarketOrdersGetter extends AbstractEsiGetter {
 	private boolean publicMarketOrders = false;
 	private Date nextUpdate = null;
 	private Date lastUpdate;
-	
+
 	public EsiPublicMarketOrdersGetter(UpdateTask updateTask, OutbidProcesserInput input, OutbidProcesserOutput output) {
 		super(updateTask, null, false, Settings.get().getPublicMarketOrdersNextUpdate(), TaskType.PUBLIC_MARKET_ORDERS);
 		this.updateTask = updateTask;

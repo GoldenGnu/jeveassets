@@ -97,7 +97,7 @@ public class MicroServe implements AuthCodeListener {
 			this.serverSocket = serverSocket;
 			this.listener = listener;
 		}
-		
+
 		@Override
 		public void run() {
 			while (true) {
@@ -110,7 +110,7 @@ public class MicroServe implements AuthCodeListener {
 				}
 			}
 		}
-		
+
 	}
 
 	private static class ConnectionResponse extends Thread {

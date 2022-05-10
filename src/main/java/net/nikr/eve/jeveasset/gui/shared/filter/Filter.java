@@ -33,7 +33,7 @@ public class Filter {
 	public static class AllColumn<T> implements EnumTableColumn<T> {
 
 		public static final AllColumn<Object> ALL = new AllColumn<Object>();
-		
+
 		@Override
 		public Class<?> getType() {
 			return Object.class;

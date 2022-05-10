@@ -25,7 +25,7 @@ import net.nikr.eve.jeveasset.i18n.DialoguesAccount;
 import net.troja.eve.esi.auth.SsoScopes;
 
 public enum EsiScopes {
-	
+
 	CHARACTER_ASSETS(SsoScopes.ESI_ASSETS_READ_ASSETS_V1, DialoguesAccount.get().scopeAssets(), ScopeType.CHARACTER),
 	CHARACTER_WALLET(SsoScopes.ESI_WALLET_READ_CHARACTER_WALLET_V1, DialoguesAccount.get().scopeWallet(), ScopeType.CHARACTER),
 	CHARACTER_INDUSTRY_JOBS(SsoScopes.ESI_INDUSTRY_READ_CHARACTER_JOBS_V1, DialoguesAccount.get().scopeIndustryJobs(), ScopeType.CHARACTER),

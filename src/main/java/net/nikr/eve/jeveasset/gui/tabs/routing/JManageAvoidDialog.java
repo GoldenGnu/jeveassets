@@ -91,5 +91,5 @@ public class JManageAvoidDialog extends JManageDialog {
 	@Override protected String textNoName() { return GuiShared.get().noFilterName(); }
 	@Override protected String textMerge() { return GuiShared.get().mergeFilters(); }
 	@Override protected String textRename() { return GuiShared.get().renameFilter(); }
-	
+
 }

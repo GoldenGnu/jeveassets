@@ -27,7 +27,7 @@ import java.net.URL;
 public class FileUtilSimple {
 
 	private static final String PATH_JAR = "jeveassets.jar";
-	
+
 	public static String getPathRunJar() {
 		return getLocalFile(PATH_JAR);
 	}

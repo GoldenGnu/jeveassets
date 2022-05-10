@@ -40,5 +40,5 @@ public class ReprocessedSeparatorComparator implements Comparator<ReprocessedInt
 			return a.compareToIgnoreCase(b); //Not grand total: compare name
 		}
 	}
-	
+
 }

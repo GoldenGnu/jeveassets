@@ -140,7 +140,7 @@ public class ShowToolSettingsPanel extends JSettingsPanel {
 		}
 
 		jToolsLabel = new JLabel(DialoguesSettings.get().toolsOrderHelp());
-		
+
 		jTools = new JList<>(model);
 		jTools.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		jTools.setTransferHandler(new ListItemTransferHandler());
@@ -174,7 +174,7 @@ public class ShowToolSettingsPanel extends JSettingsPanel {
 		List<String> oldList = new ArrayList<>(Settings.get().getShowTools()); //Copy
 		boolean update = Settings.get().isSaveToolsOnExit() != jSave.isSelected();
 		Settings.get().setSaveToolsOnExit(jSave.isSelected()); //must be before: program.getMainWindow().saveShown() (or it won't save)
-		
+
 		if (jSave.isSelected()) {
 			Settings.get().getShowTools().clear();
 			for (JMainTab tab : program.getMainWindow().getTabs()) {
@@ -209,7 +209,6 @@ public class ShowToolSettingsPanel extends JSettingsPanel {
 					}
 				}
 			}
-			
 		}
 		setEnabled(!Settings.get().isSaveToolsOnExit());
 	}

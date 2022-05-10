@@ -245,7 +245,7 @@ public abstract class GuiShared extends Bundle {
 	public abstract String renameView();
 	public abstract String saveView();
 	public abstract String saveViewMsg();
-	
+
 	//Update
 	public abstract String beta();
 	public abstract String devBuild();
@@ -259,7 +259,7 @@ public abstract class GuiShared extends Bundle {
 	public abstract String protableMsg(int i);
 	public abstract String releaseCandidate();
 	public abstract String stable();
-	
+
 	//Filters
 	public abstract String saveFilter();
 	public abstract String enterFilterName();
@@ -318,7 +318,7 @@ public abstract class GuiShared extends Bundle {
 	public abstract String popupMenuAddField();
 	public abstract String export();
 	public abstract String exportTableData();
-	
+
 	//Text Dialog
 	public abstract String textLoadFailMsg();
 	public abstract String textLoadFailTitle();

@@ -54,5 +54,5 @@ public abstract class General extends Bundle {
 	public abstract String emptyLocation(String locationID);
 	public abstract String bookmarkLocation(String system, String label, String locationID);
 	public abstract String assetSafety();
-	
+
 }

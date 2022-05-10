@@ -127,7 +127,7 @@ public class ExportSettings {
 		CSV("csv"),
 		SQL("sql"),
 		HTML("html");
-		
+
 		private final String extension;
 
 		private ExportFormat(String extension) {

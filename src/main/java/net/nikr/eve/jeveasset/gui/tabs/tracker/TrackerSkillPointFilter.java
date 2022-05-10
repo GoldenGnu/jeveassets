@@ -24,7 +24,7 @@ import java.util.Objects;
 
 
 public class TrackerSkillPointFilter implements Comparable<TrackerSkillPointFilter> {
-	
+
 	private final String name;
 	private boolean enabled;
 	private long minimum;

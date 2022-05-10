@@ -70,7 +70,7 @@ public class DataSetCreatorTest extends TestUtil {
 	private static final long ISSUER_CORPORATION_ID = 2;
 	private static final long ACCEPTOR_ID = 3;
 	private static final long ACCEPTOR_CORPORATION_ID = 4;
-	
+
 	private final Date now = new Date();
 	private final Date before = getBefore();
 	private final Date after = getAfter();
@@ -250,7 +250,7 @@ public class DataSetCreatorTest extends TestUtil {
 		contract.setIssuerID((int) ISSUER_ID);
 		contract.setIssuerCorporationID((int) ISSUER_CORPORATION_ID);
 		contract.setAcceptorID((int) ACCEPTOR_ID);
-		
+
 		contract.setAssigneeID(0);
 		MyContract myContract = new MyContract(contract);
 		myContract.setIssuer(issuer.getOwnerName());

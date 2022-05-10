@@ -220,7 +220,7 @@ public class RawConverter {
 			try {
 				return RawContract.ContractAvailability.valueOf(valueEnum);
 			} catch (IllegalArgumentException ex) {
-				
+
 			}
 			switch (valueEnum.toLowerCase()) {
 				case "private":
@@ -237,7 +237,6 @@ public class RawConverter {
 			}
 		}
 		return null;
-		
 	}
 
 	public static RawContract.ContractAvailability toContractAvailability(CharacterContractsResponse.AvailabilityEnum value) {
@@ -264,7 +263,7 @@ public class RawConverter {
 			try {
 				return RawContract.ContractStatus.valueOf(valueEnum);
 			} catch (IllegalArgumentException ex) {
-				
+
 			}
 			switch (valueEnum.toUpperCase()) {
 				case "COMPLETED":
@@ -311,7 +310,7 @@ public class RawConverter {
 			try {
 				return RawContract.ContractType.valueOf(valueEnum);
 			} catch (IllegalArgumentException ex) {
-				
+
 			}
 			switch (valueEnum.toLowerCase()) {
 				case "item_exchange":
@@ -362,7 +361,7 @@ public class RawConverter {
 			try {
 				return RawIndustryJob.IndustryJobStatus.valueOf(valueEnum);
 			} catch (IllegalArgumentException ex) {
-				
+
 			}
 		}
 		if (valueString != null) {
@@ -556,7 +555,7 @@ public class RawConverter {
 			try {
 				return RawMarketOrder.MarketOrderRange.valueOf(valueEnum);
 			} catch (IllegalArgumentException ex) {
-				
+
 			}
 		}
 		if (valueString != null) {
@@ -639,7 +638,7 @@ public class RawConverter {
 			try {
 				return RawMarketOrder.MarketOrderState.valueOf(valueEnum);
 			} catch (IllegalArgumentException ex) {
-				
+
 			}
 		}
 		if (valueString != null) {

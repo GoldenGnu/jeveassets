@@ -96,6 +96,6 @@ public class LibTest extends TestUtil {
 		for (File file : files) {
 			assertFalse("File still exist (after purge): " + file.getName(), file.exists());
 		}
-		
 	}
+
 }

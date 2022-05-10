@@ -41,5 +41,5 @@ public class LocationFlagTest extends TestUtil {
 				CorporationAssetsResponse.LocationFlagEnum.values(),
 				CorporationContainersLogsResponse.LocationFlagEnum.values());
 	}
-	
+
 }

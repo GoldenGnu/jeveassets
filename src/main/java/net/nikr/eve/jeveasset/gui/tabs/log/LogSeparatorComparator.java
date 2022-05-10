@@ -29,5 +29,5 @@ public class LogSeparatorComparator implements Comparator<AssetLogSource> {
 	public int compare(AssetLogSource o1, AssetLogSource o2) {
 		return o1.getParent().compareTo(o2.getParent());
 	}
-	
+
 }

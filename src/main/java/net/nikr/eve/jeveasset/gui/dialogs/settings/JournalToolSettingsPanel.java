@@ -52,7 +52,7 @@ public class JournalToolSettingsPanel extends JSettingsPanel {
 				.addComponent(jSaveHistoryWarning, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
 		);
 	}
-		
+
 	@Override
 	public boolean save() {
 		Settings.get().setJournalHistory(jSaveHistory.isSelected());
@@ -63,5 +63,5 @@ public class JournalToolSettingsPanel extends JSettingsPanel {
 	public void load() {
 		jSaveHistory.setSelected(Settings.get().isJournalHistory());
 	}
-	
+
 }

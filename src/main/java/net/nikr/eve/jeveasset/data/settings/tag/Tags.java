@@ -157,7 +157,6 @@ public class Tags extends TreeSet<Tag> implements Comparable<Tags>{
 			builder.append(tag.getName());
 			builder.append(" ");
 			builder.append("</span>");
-			
 		}
 		html = builder.toString();
 	}

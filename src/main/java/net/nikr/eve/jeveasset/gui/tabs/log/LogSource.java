@@ -204,9 +204,8 @@ public class LogSource extends AssetLogData {
 				return 0;
 			}
 		}
-		
+
 	}
-	
 
 	private static class Match implements Comparable<Match> {
 		private final int percent;
@@ -249,5 +248,5 @@ public class LogSource extends AssetLogData {
 			return true;
 		}
 	}
-	
+
 }

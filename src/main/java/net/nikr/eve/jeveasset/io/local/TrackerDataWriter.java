@@ -130,7 +130,6 @@ public class TrackerDataWriter extends AbstractBackup {
 			}
 			return valueObject;
 		}
-		
-		
 	}
+
 }

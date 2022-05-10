@@ -346,7 +346,7 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 			validate(ex.getResponseHeaders());
 		}
 	}
-	
+
 	@Test
 	public void esiIndustryJobsGetterCharacter() {
 		try {
@@ -696,7 +696,6 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 		} catch (ApiException ex) {
 			validate(ex.getResponseHeaders());
 		}
-		
 	}
 
 	@Test

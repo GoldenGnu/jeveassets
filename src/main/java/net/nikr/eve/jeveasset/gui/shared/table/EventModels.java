@@ -80,7 +80,6 @@ public class EventModels {
 			super.fireTableStructureChanged();
 		}
 
-		
 	}
 
 	public static class StringFilterator implements TextFilterator<String> {

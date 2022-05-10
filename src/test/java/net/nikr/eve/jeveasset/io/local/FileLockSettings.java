@@ -35,7 +35,7 @@ public class FileLockSettings extends Settings implements SettingsFactory {
 	private static final String XML = ".xml";
 	private static final String BAC = ".bac";
 	private static final String ERROR = ".error1";
-	
+
 
 	public FileLockSettings() {
 		super();
@@ -57,7 +57,7 @@ public class FileLockSettings extends Settings implements SettingsFactory {
 	public static String getPathSettingsVersionBackup() {
 		return getVersionBackup(getPath(SETTINGS+XML));
 	}
-	
+
 	public static String getPathSettingsStatic() {
 		return getPath(SETTINGS+XML);
 	}
@@ -101,6 +101,5 @@ public class FileLockSettings extends Settings implements SettingsFactory {
 			return null;
 		}
 	}
-	
-	
+
 }

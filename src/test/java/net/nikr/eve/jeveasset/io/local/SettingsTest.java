@@ -847,6 +847,6 @@ public class SettingsTest extends TestUtil {
 		public Settings create() {
 			return new BackwardCompatibilitySettings();
 		}
-		
 	}
+
 }

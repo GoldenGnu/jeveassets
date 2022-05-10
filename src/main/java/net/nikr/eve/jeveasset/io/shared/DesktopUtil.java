@@ -77,7 +77,6 @@ public final class DesktopUtil {
 		JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), "Could not open " + file.getName(), "Open File", JOptionPane.PLAIN_MESSAGE);
 	}
 
-	
 	/**
 	 * Open link to jEveAssets manual
 	 * @param helpLink
@@ -130,7 +129,6 @@ public final class DesktopUtil {
 			} else {
 				return false;
 			}
-			
 		}
 	}
 

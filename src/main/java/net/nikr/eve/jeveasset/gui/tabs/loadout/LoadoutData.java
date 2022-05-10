@@ -95,5 +95,5 @@ public class LoadoutData extends TableData {
 			eventList.getReadWriteLock().writeLock().unlock();
 		}
 	}
-	
+
 }

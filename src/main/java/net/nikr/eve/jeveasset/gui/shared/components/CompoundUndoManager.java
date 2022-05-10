@@ -95,7 +95,7 @@ public class CompoundUndoManager extends UndoManager
 				}
 			}
 		});
-		
+
 		component.getDocument().addUndoableEditListener(this);
 
 		//component.setBorder(BorderFactory.createLineBorder(Color.GREEN, 1));

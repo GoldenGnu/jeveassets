@@ -160,14 +160,14 @@ public interface ConverterTestOptions {
 	public ContextType getJournalContextTypeRaw();
 
 	public CharacterWalletJournalResponse.ContextIdTypeEnum getJournalContextTypeEsiCharacter();
-	
+
 	public CorporationWalletJournalResponse.ContextIdTypeEnum getJournalContextTypeEsiCorporation();
 
 	//JournalRefType
 	public RawJournalRefType getJournalRefTypeRaw();
 
 	public CharacterWalletJournalResponse.RefTypeEnum getJournalRefTypeEsiCharacter();
-	
+
 	public CorporationWalletJournalResponse.RefTypeEnum getJournalRefTypeEsiCorporation();
 
 	//MarketOrderRange

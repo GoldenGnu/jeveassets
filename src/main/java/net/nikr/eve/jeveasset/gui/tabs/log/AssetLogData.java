@@ -33,7 +33,7 @@ public class AssetLogData {
 	public static enum LogType {
 		ASSET, MARKET_ORDER, CONTRACT, INDUSTRY_JOB, TRANSACTION
 	}
-	
+
 	private final int typeID;
 	private final Date date;
 	private final long ownerID;

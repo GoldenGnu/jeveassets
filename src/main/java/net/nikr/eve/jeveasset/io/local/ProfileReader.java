@@ -168,7 +168,7 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 					try {
 						roles.add(RolesEnum.valueOf(role));
 					} catch (IllegalArgumentException ex) {
-						
+
 					}
 				}
 			}
@@ -910,12 +910,12 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 			NodeList skillNodes = currentSkillsNode.getElementsByTagName("skill");
 			for (int b = 0; b < skillNodes.getLength(); b++) {
 				Element currentNode = (Element) skillNodes.item(b);
-				
+
 				int typeID = getInt(currentNode, "id");
 				long skillpoints = getLong(currentNode, "sp");
 				int activeSkillLevel = getInt(currentNode, "active");
 				int trainedSkillLevel = getInt(currentNode, "trained");
-				
+
 				RawSkill skill = RawSkill.create();
 				skill.setTypeID(typeID);
 				skill.setSkillpoints(skillpoints);

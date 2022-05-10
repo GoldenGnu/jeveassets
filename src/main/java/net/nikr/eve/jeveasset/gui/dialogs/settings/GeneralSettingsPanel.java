@@ -40,7 +40,7 @@ import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 
 
 public class GeneralSettingsPanel extends JSettingsPanel {
-	
+
 	private final JCheckBox jEnterFilters;
 	private final JCheckBox jHighlightSelectedRow;
 	private final JCheckBox jFocusEveOnline;

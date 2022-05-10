@@ -27,7 +27,7 @@ import net.nikr.eve.jeveasset.i18n.DataColors;
 public class ColorThemeStrong extends ColorTheme {
 
 	protected ColorThemeStrong() {}
-	
+
 	@Override
 	public String getName() {
 		return DataColors.get().colorThemeStrong();

@@ -305,7 +305,6 @@ public class ColumnManager<T extends Enum<T> & EnumTableColumn<Q>, Q> {
 		}
 		//Add
 		for (Jump add : jumps) {
-			
 			add(add);
 		}
 		//Update GUI

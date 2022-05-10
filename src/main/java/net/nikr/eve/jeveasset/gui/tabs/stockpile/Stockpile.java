@@ -892,7 +892,6 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 								count = count + contractItem.getQuantity();
 							}
 							found = true;
-							
 						} else if (filter.isBoughtContracts()) { //Bought
 							if ((isIssuer && contractItem.getContract().isIssuerAfterAssets())
 									|| isAcceptor && contractItem.getContract().isAcceptorAfterAssets()) {
@@ -992,7 +991,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 			}
 			return false; //No match
 		}
-	
+
 		private boolean matchLocation(final StockpileFilter filter, final Collection<MyLocation> locations) {
 			MyLocation stockpileLocation = filter.getLocation();
 			for (MyLocation location : locations) {
@@ -1796,11 +1795,10 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 				} else {
 					countMinimum = + countMinimum + item.getStockpileItem().getCountMinimum();
 				}
-				
 			}
 			return countMinimum;
 		}
-	
+
 		@Override
 		public long getCountMinimumMultiplied() {
 			return (long) Math.ceil(getStockpile().getMultiplier() * getCountMinimum());

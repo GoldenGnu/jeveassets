@@ -105,5 +105,5 @@ public class JRouteManageDialog extends JManageDialog {
 	@Override protected String textNoName() { return GuiShared.get().noFilterName(); }
 	@Override protected String textMerge() { return ""; } //Not supported
 	@Override protected String textRename() { return TabsRouting.get().routeRenameTitle(); }
-	
+
 }

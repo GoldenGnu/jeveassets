@@ -62,5 +62,5 @@ public abstract class TabsReprocessed extends Bundle {
 	public abstract String title();
 	public abstract String total();
 	public abstract String value();
-	
+
 }

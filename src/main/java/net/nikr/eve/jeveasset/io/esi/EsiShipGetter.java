@@ -135,5 +135,5 @@ public class EsiShipGetter extends AbstractEsiGetter {
 	protected RolesEnum[] getRequiredRoles() {
 		return null;
 	}
-	
+
 }

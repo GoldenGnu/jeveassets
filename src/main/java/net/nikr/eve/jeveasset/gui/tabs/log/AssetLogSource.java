@@ -36,7 +36,7 @@ public class AssetLogSource extends AssetLogData implements Comparable<AssetLogS
 	public AssetLog getParent() {
 		return parent;
 	}
-	
+
 	public LogSourceType getSourceType() {
 		return sourceType;
 	}

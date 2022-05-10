@@ -810,9 +810,6 @@ public class ProfileData {
 					}
 				}
 			}
-			if (found.isEmpty()) {
-				
-			}
 		} finally {
 			eventList.getReadWriteLock().readLock().unlock();
 		}

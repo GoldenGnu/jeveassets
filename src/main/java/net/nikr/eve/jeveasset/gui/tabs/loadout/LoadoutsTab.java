@@ -165,7 +165,7 @@ public class LoadoutsTab extends JMainTabSecondary {
 		JMenu jMenu = new JMenu(TabsLoadout.get().exportEveXml());
 		jMenu.setIcon(Images.MISC_EVE.getIcon());
 		jExport.add(jMenu);
-		
+
 		JMenuItem jExportEveXml = new JMenuItem(TabsLoadout.get().exportEveXmlSelected());
 		jExportEveXml.setActionCommand(LoadoutsAction.EXPORT_EVE_SELECTED.name());
 		jExportEveXml.addActionListener(listener);
@@ -431,7 +431,6 @@ public class LoadoutsTab extends JMainTabSecondary {
 		writeCount(builder, cargo);
 
 		jEftDialog.exportText(builder.toString());
-		
 	}
 
 	private void writeModuls(StringBuilder builder, Map<Integer, String> modules) {

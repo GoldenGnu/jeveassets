@@ -62,7 +62,7 @@ public abstract class DialoguesSettings extends Bundle {
 	public abstract String saveTools();
 	public abstract String selectTools();
 	public abstract String toolsOrderHelp();
-	
+
 	// used in AssetsToolSettingsPanel
 	public abstract String assets();
 	public abstract String includeSellContracts();
