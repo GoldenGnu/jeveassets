@@ -560,7 +560,7 @@ class FilterPanel<E> implements Comparable<FilterPanel<E>> {
 				jTextField.setUI(null);
 				jTextField.updateUI();
 			} else {
-				jTextField.setUI(new SynthFormattedTextFieldUI(){
+				jTextField.setUI(new SynthFormattedTextFieldUI() {
 				@Override
 				protected void paint(javax.swing.plaf.synth.SynthContext context, java.awt.Graphics g) {
 					g.setColor(color);

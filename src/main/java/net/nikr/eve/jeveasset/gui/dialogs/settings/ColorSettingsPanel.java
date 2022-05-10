@@ -222,7 +222,7 @@ public class ColorSettingsPanel extends JSettingsPanel {
 		}
 		//Installed LookAndFeels
 		for (LookAndFeelInfo laf : UIManager.getInstalledLookAndFeels()) {
-			if (laf.getClassName().equals(UIManager.getSystemLookAndFeelClassName())){
+			if (laf.getClassName().equals(UIManager.getSystemLookAndFeelClassName())) {
 				continue; //Skip system LaF
 			}
 			JLookAndFeelMenuItem jMenuItem = new JLookAndFeelMenuItem(laf, jLookAndFeel, settingsDialog);

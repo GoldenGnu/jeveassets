@@ -146,7 +146,7 @@ public class ReprocessedSeparatorTableCell extends SeparatorTableCell<Reprocesse
 		//Color
 		if (material.getTotal().isSell()) {
 			ColorSettings.config(jColor, ColorEntry.REPROCESSED_SELL);
-		} else if (material.getTotal().isReprocess()){
+		} else if (material.getTotal().isReprocess()) {
 			ColorSettings.config(jColor, ColorEntry.REPROCESSED_REPROCESS);
 		} else {
 			ColorSettings.config(jColor, ColorEntry.REPROCESSED_EQUAL);

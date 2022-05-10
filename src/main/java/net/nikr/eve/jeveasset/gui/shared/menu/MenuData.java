@@ -197,7 +197,7 @@ public class MenuData<T> {
 			if (location == null) {
 				continue;
 			}
-			if ((location.isEmpty() && location.getLocationID() != 0) || location.isUserLocation()){ //Empty with locationID or user
+			if ((location.isEmpty() && location.getLocationID() != 0) || location.isUserLocation()) { //Empty with locationID or user
 				editableCitadelLocations.add(location);
 			}
 			if (location.isUserLocation()) { //User

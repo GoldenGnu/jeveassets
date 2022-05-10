@@ -61,7 +61,7 @@ public class ColorSettings {
 		private PredefinedLookAndFeel(String name, String className, boolean selected) {
 			if (name == null) {
 				for (LookAndFeelInfo laf : UIManager.getInstalledLookAndFeels()) {
-					if (laf.getClassName().equals(UIManager.getSystemLookAndFeelClassName())){
+					if (laf.getClassName().equals(UIManager.getSystemLookAndFeelClassName())) {
 						name = DialoguesSettings.get().lookAndFeelDefaultName(laf.getName());
 						break;
 					}

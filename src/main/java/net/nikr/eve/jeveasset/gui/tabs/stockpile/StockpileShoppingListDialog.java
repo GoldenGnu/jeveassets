@@ -479,7 +479,7 @@ class StockpileShoppingListDialog extends JDialogCentered {
 		StockItem stockItem = null;
 		for (StockClaim stockMinimum : minimumList) {
 			Long count = stockMinimum.matches(object);
-			if (count != null && count != 0){ //if match (have claim)
+			if (count != null && count != 0) { //if match (have claim)
 				if (stockItem == null) { //if item not added already - add to items list
 					stockItem = new StockItem();
 					itemList.add(stockItem);
@@ -602,7 +602,7 @@ class StockpileShoppingListDialog extends JDialogCentered {
 		public int compareTo(StockClaim o) {
 			if (this.getNeed() > o.getNeed()) {
 				return 1;
-			} else if (this.getNeed() < o.getNeed()){
+			} else if (this.getNeed() < o.getNeed()) {
 				return -1;
 			} else {
 				return 0;
