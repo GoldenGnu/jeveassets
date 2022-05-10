@@ -212,7 +212,7 @@ public class MyLocation implements Comparable<MyLocation> {
 	/**
 	 * Return true if this location is a Station
 	 * Will return false if this location is a Planet, System, Constellation, Region or Unknown/Empty locations
-	 * @return 
+	 * @return
 	 */
 	public final boolean isStation() {
 		return getStationID() != 0 && getSystemID() != 0 && !isConstellation() && getRegionID() != 0 && (locationID < 40000000 || locationID > 50000000);
@@ -221,7 +221,7 @@ public class MyLocation implements Comparable<MyLocation> {
 	/**
 	 * Return true if this location is a Planet
 	 * Will return false if this location is a Station, System, Constellation, Region or Unknown/Empty locations
-	 * @return 
+	 * @return
 	 */
 	public final boolean isPlanet() {
 		return getStationID() != 0 && getSystemID() != 0 && !isConstellation() && getRegionID() != 0 && locationID >= 40000000 && locationID <= 50000000;
@@ -230,7 +230,7 @@ public class MyLocation implements Comparable<MyLocation> {
 	/**
 	 * Return true if this location is a System
 	 * Will return false if this location is a Station, Planet, Constellation, Region or Unknown/Empty locations
-	 * @return 
+	 * @return
 	 */
 	public final boolean isSystem() {
 		return getStationID() == 0 && getSystemID() != 0 && !isConstellation() && getRegionID() != 0;
@@ -238,7 +238,7 @@ public class MyLocation implements Comparable<MyLocation> {
 	/**
 	 * Return true if this location is a Constellation
 	 * Will return false if this location is a Station, Planet, System, Region or Unknown/Empty locations
-	 * @return 
+	 * @return
 	 */
 	public final boolean isConstellation() {
 		return getStationID() == 0 && getSystemID() == 0 && getConstellationID() != 0 && getRegionID() != 0;
@@ -246,7 +246,7 @@ public class MyLocation implements Comparable<MyLocation> {
 	/**
 	 * Return true if this location is a Region
 	 * Will return false if this location is a Station, Planet, System, Constellation or Unknown/Empty locations
-	 * @return 
+	 * @return
 	 */
 	public final boolean isRegion() {
 		return getStationID() == 0 && getSystemID() == 0 && !isConstellation() && getRegionID() != 0;

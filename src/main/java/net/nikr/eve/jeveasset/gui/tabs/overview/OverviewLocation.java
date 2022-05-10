@@ -70,7 +70,7 @@ public class OverviewLocation {
 	}
 
 	public boolean equalsLocation(final MyAsset asset) {
-		return (name.equals(asset.getLocation().getLocation()) 
+		return (name.equals(asset.getLocation().getLocation())
 				|| name.equals(asset.getLocation().getSystem())
 				|| name.equals(asset.getLocation().getConstellation())
 				|| name.equals(asset.getLocation().getRegion()));

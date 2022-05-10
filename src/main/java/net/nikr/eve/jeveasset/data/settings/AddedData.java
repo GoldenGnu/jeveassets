@@ -116,7 +116,7 @@ public class AddedData {
 	 * @param data current data
 	 * @param id unique id
 	 * @param added
-	 * @return 
+	 * @return
 	 */
 	public Date getAdd(Map<Long, Date> data, Long id, Date added) {
 		Date date = data.get(id);
@@ -136,7 +136,7 @@ public class AddedData {
 	 * @param data current data
 	 * @param id unique id
 	 * @param added
-	 * @return 
+	 * @return
 	 */
 	public Date getPut(Map<Long, Date> data, Long id, Date added) {
 		Date date = data.get(id);

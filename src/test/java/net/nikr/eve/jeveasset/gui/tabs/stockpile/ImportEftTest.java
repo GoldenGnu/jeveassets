@@ -214,7 +214,7 @@ Warden II x5
 			"Tracking Speed Script x1\n" +
 			"Heavy Armor Maintenance Bot I x1\n" +
 			"Medium Shield Maintenance Bot II x1\n" +
-			"Exotic Dancers, Male x5, Nanite Repair Paste\r\n" + 
+			"Exotic Dancers, Male x5, Nanite Repair Paste\r\n" +
 			"Exotic Dancers, Male, Navy Cap Booster 200";
 		Map<String, Double> data = test(text, 49);
 		assertEquals(6, data.get("Exotic Dancers, Male"), 0.1);

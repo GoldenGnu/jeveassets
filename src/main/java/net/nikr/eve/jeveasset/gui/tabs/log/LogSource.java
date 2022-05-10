@@ -41,7 +41,7 @@ public class LogSource extends AssetLogData {
 	/**
 	 * Load
 	 * @param data
-	 * @param sourceType 
+	 * @param sourceType
 	 */
 	public LogSource(AssetLogData data, LogSourceType sourceType) {
 		super(data, data.getCount());

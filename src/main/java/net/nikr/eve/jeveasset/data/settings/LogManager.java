@@ -250,7 +250,7 @@ public class LogManager {
 		for (List<AssetLog> list : claims.values()) {
 			for (AssetLog claim : list) {
 				if (claim.getSources().isEmpty() || claim.getNeed() > 0) {
-					if (loot && (claim.getItem().getCategory().equals("Drone") 
+					if (loot && (claim.getItem().getCategory().equals("Drone")
 							|| claim.getItem().getCategory().equals("Commodity")
 							|| claim.getItem().getCategory().equals("Module")
 							|| claim.getItem().getCategory().equals("Charge"))) {
@@ -382,7 +382,7 @@ public class LogManager {
 			Date date;
 			if (contractItem.isIncluded()) { //Item being sold by the issuer (Removed on creating contract)
 				date = contractItem.getContract().getDateIssued();
-			} else { //Item being sold by the acceptor (Removed on completing contract) 
+			} else { //Item being sold by the acceptor (Removed on completing contract)
 				date = contractItem.getContract().getDateCompleted();
 			}
 			int typeID = contractItem.getTypeID();
@@ -490,7 +490,7 @@ public class LogManager {
 			if (oldContract.getStatus().equals(newContractItem.getContract().getStatus())) {
 				continue;
 			}
-			if (newContractItem.getContract().getStatus() != RawContract.ContractStatus.CANCELLED 
+			if (newContractItem.getContract().getStatus() != RawContract.ContractStatus.CANCELLED
 					&& newContractItem.getContract().getStatus() != RawContract.ContractStatus.DELETED
 					&& newContractItem.getContract().getStatus() != RawContract.ContractStatus.REVERSED) {
 				continue;

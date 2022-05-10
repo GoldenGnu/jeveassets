@@ -145,7 +145,7 @@ public class PriceDataGetterOnlineTest extends TestUtil {
 			}
 		}
 
-		System.out.println("    " + process.size() + " of " + typeIDs.size() + " done - " + empty.size() + " empty - " + failed.size() + " failed - completed in: " + Formater.milliseconds(end - start)); 
+		System.out.println("    " + process.size() + " of " + typeIDs.size() + " done - " + empty.size() + " empty - " + failed.size() + " failed - completed in: " + Formater.milliseconds(end - start));
 		assertTrue(failed.isEmpty());
 		assertTrue(process.size() >= typeIDs.size());
 	}

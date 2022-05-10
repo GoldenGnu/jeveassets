@@ -106,8 +106,8 @@ public class RawContainerLog {
 
 	/**
 	 * Raw
-	 * 
-	 * @param response 
+	 *
+	 * @param response
 	 */
 	public RawContainerLog(RawContainerLog response) {
 		loggedAt = response.loggedAt;
@@ -129,8 +129,8 @@ public class RawContainerLog {
 
 	/**
 	 * ESI
-	 * 
-	 * @param response 
+	 *
+	 * @param response
 	 */
 	public RawContainerLog(CorporationContainersLogsResponse response) {
 		loggedAt = RawConverter.toDate(response.getLoggedAt());

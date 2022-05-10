@@ -257,7 +257,7 @@ public final class ApiIdConverter {
 			return new Item(0);
 		}
 		Item item = StaticData.get().getItems().get(typeID);
-		if (item == null || 
+		if (item == null ||
 				(item.getVersion() != null && !item.getVersion().equals(EsiItemsGetter.ESI_ITEM_VERSION))) { //New ESI item version
 			if (item != null && item.getVersion().startsWith(EsiItemsGetter.ESI_ITEM_EMPTY)) {
 				String lastUpdated = item.getVersion().replace(EsiItemsGetter.ESI_ITEM_EMPTY, "");

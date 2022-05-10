@@ -604,7 +604,7 @@ public class ProfileData {
 				double tax = 0;
 				if (transaction.getTax() != null) {
 					tax = transaction.getTax() / transaction.getItemCount();
-				} 
+				}
 				setLastTransaction(transaction, transaction.getTypeID(), transaction.isBuy(), transaction.getPrice(), tax);
 			}
 			//Date added
@@ -847,7 +847,7 @@ public class ProfileData {
 			eventList.getReadWriteLock().readLock().lock();
 			for (MyIndustryJob industryJob : eventList) {
 				Integer productTypeID = industryJob.getProductTypeID();
-				if (typeIDs.contains(getTypeID(industryJob.isBPC(), industryJob.getItem().getTypeID())) 
+				if (typeIDs.contains(getTypeID(industryJob.isBPC(), industryJob.getItem().getTypeID()))
 						|| (productTypeID != null && typeIDs.contains(getTypeID(industryJob.isCopying(), productTypeID)))) {
 					found.add(industryJob); //Save for update
 					updatePrice(industryJob); //Update data
@@ -1133,12 +1133,12 @@ public class ProfileData {
 		if (buy) { //Buy
 			marketPriceData = transactionSellPriceData.get(typeID);
 		} else { //Sell
-			marketPriceData = transactionBuyPriceData.get(typeID); 
+			marketPriceData = transactionBuyPriceData.get(typeID);
 		}
 		if (marketPriceData != null) {
 			double transactionPrice;
 			switch (Settings.get().getTransactionProfitPrice()) {
-				case AVERAGE: 
+				case AVERAGE:
 					transactionPrice = marketPriceData.getAverage();
 					break;
 				case LASTEST:

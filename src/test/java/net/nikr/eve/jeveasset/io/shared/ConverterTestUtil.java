@@ -781,11 +781,11 @@ public class ConverterTestUtil {
 					|| methodId.equals("CharacterWalletJournalResponse->getExtraInfo")
 					|| methodId.equals("CorporationWalletJournalResponse->getExtraInfo")
 					//escrow is not optional in RawMarketOrder
-					|| methodId.equals("CharacterOrdersHistoryResponse->getEscrow") 
+					|| methodId.equals("CharacterOrdersHistoryResponse->getEscrow")
 					|| methodId.equals("CorporationOrdersHistoryResponse->getEscrow")
 					|| methodId.equals("CharacterOrdersResponse->getEscrow")
 					|| methodId.equals("CorporationOrdersResponse->getEscrow")
-					// issuedBy workaround for optional in CorporationOrdersHistoryResponse 
+					// issuedBy workaround for optional in CorporationOrdersHistoryResponse
 					|| methodId.equals("CorporationOrdersHistoryResponse->getIssuedBy")
 					//isBuyOrder is not optional in RawMarketOrder
 					|| methodId.equals("CharacterOrdersHistoryResponse->getIsBuyOrder")
@@ -796,8 +796,8 @@ public class ConverterTestUtil {
 					|| methodId.equals("CharacterOrdersHistoryResponse->getMinVolume")
 					|| methodId.equals("CorporationOrdersHistoryResponse->getMinVolume")
 					|| methodId.equals("CharacterOrdersResponse->getMinVolume")
-					|| methodId.equals("CorporationOrdersResponse->getMinVolume") 
-					) { 
+					|| methodId.equals("CorporationOrdersResponse->getMinVolume")
+					) {
 				continue;
 			}
 			if (methodName.startsWith("get") && methodName.endsWith("String") ) {

@@ -248,7 +248,7 @@ public class PriceDataSettings {
 				if (priceMode == PriceMode.PRICE_BUY_MIN) {
 					priceData.setBuyMin(price);
 				}
-			} 
+			}
 		}
 
 		private static double getDefaultPrice(final PriceData priceData, final PriceMode priceMode) {
@@ -272,7 +272,7 @@ public class PriceDataSettings {
 					if (priceData.getSellMin() > 0 && priceData.getBuyMax() > 0) { //Working as intended
 						return (priceData.getSellMin() + priceData.getBuyMax()) / 2;
 					} else if (priceData.getBuyMax() > 0) { //Using BuyMax (fallback)
-						return priceData.getBuyMax(); 
+						return priceData.getBuyMax();
 					} else { //Using SellMin (fallback)
 						return priceData.getSellMin(); //SellMin or Zero
 					}

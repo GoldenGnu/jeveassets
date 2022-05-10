@@ -40,7 +40,7 @@ public class AssetLog extends AssetLogData implements Comparable<AssetLog> {
 	/**
 	 * Load
 	 * @param data
-	 * @param itemID 
+	 * @param itemID
 	 */
 	public AssetLog(AssetLogData data, long itemID) {
 		super(data, data.getCount());
@@ -52,7 +52,7 @@ public class AssetLog extends AssetLogData implements Comparable<AssetLog> {
 	 * Removed
 	 * @param assetLog
 	 * @param date
-	 * @param count 
+	 * @param count
 	 */
 	public AssetLog(AssetLog assetLog, Date date, long count) {
 		super(assetLog, date, count);
@@ -63,7 +63,7 @@ public class AssetLog extends AssetLogData implements Comparable<AssetLog> {
 	/**
 	 * New
 	 * @param asset
-	 * @param date 
+	 * @param date
 	 */
 	public AssetLog(MyAsset asset, Date date) {
 		super(asset, date);
@@ -75,7 +75,7 @@ public class AssetLog extends AssetLogData implements Comparable<AssetLog> {
 	 * Log
 	 * @param containerLog
 	 * @param count
-	 * @param date 
+	 * @param date
 	 */
 	public AssetLog(MyContainerLog containerLog, long count, Date date) {
 		super(containerLog, count);

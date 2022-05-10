@@ -47,11 +47,11 @@ public class FileLockSettings extends Settings implements SettingsFactory {
 	}
 
 	public String getPathSettings() {
-		return getPath(SETTINGS+XML); 
+		return getPath(SETTINGS+XML);
 	}
 
 	public static String getPathSettingsBackup() {
-		return getPath(SETTINGS+BAC); 
+		return getPath(SETTINGS+BAC);
 	}
 
 	public static String getPathSettingsVersionBackup() {
@@ -59,19 +59,19 @@ public class FileLockSettings extends Settings implements SettingsFactory {
 	}
 	
 	public static String getPathSettingsStatic() {
-		return getPath(SETTINGS+XML); 
+		return getPath(SETTINGS+XML);
 	}
 
 	public static String getPathSettingsError() {
-		return getPath(SETTINGS+ERROR); 
+		return getPath(SETTINGS+ERROR);
 	}
 
 	public static String getPathProfile() {
-		return getPath(PROFILE+XML); 
+		return getPath(PROFILE+XML);
 	}
 
 	public static String getPathProfileBackup() {
-		return getPath(PROFILE+BAC); 
+		return getPath(PROFILE+BAC);
 	}
 
 	public static String getPathProfileVerionsBackup() {
@@ -79,11 +79,11 @@ public class FileLockSettings extends Settings implements SettingsFactory {
 	}
 
 	public static String getPathProfileError() {
-		return getPath(PROFILE+ERROR); 
+		return getPath(PROFILE+ERROR);
 	}
 
 	public static String getPathTimeout() {
-		return getPath(TIMEOUT); 
+		return getPath(TIMEOUT);
 	}
 
 	private static String getVersionBackup(String filename) {

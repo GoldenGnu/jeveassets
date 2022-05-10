@@ -224,7 +224,7 @@ public class MenuData<T> {
 				//Jumps
 				MyLocation system = ApiIdConverter.getLocation(location.getSystemID());
 				if (!system.isEmpty()) {
-					systemLocations.add(system); //Jumps + Autopilot + zKillboard System 
+					systemLocations.add(system); //Jumps + Autopilot + zKillboard System
 				}
 			}
 			//Constellation

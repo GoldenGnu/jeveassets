@@ -171,13 +171,13 @@ public class PriceDataGetter implements PricingListener {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param task UpdateTask to update progress on
 	 * @param updateAll true to update all prices. false to only update new/missing prices
 	 * @param pricingOptions Options used doing update
 	 * @param typeIDs TypeIDs to get price data for
 	 * @param priceSource Price data source to update from (only used in log)
-	 * @return 
+	 * @return
 	 */
 	protected Map<Integer, PriceData> processUpdate(final UpdateTask task, final boolean updateAll, final PricingOptions pricingOptions, final Set<Integer> typeIDs, final PriceSource priceSource) {
 		this.updateTask = task;

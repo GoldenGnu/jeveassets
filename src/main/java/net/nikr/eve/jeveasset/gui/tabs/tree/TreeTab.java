@@ -597,7 +597,7 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate {
 
 					//Use sorted comparator
 					Comparator<? super TreeAsset> comparator = sortedList.getComparator();
-					if (comparator != null) { 
+					if (comparator != null) {
 						int result = comparator.compare(o1, o2);
 						if (result != 0) { //Not equal
 							return result;

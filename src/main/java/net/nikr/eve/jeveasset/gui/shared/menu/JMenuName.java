@@ -95,7 +95,7 @@ public class JMenuName<T> extends JAutoMenu<T> {
 		itemNames = new ArrayList<>();
 		containerNames = new ArrayList<>();
 		for (MyAsset asset : menuData.getAssets()) {
-			if (asset.getOwner() == null) { 
+			if (asset.getOwner() == null) {
 				continue; //Ignore TreeAsset for Location/Group/Category
 			}
 			itemNames.add(new UserName(asset));

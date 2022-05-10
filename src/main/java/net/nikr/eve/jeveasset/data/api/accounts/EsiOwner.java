@@ -177,7 +177,7 @@ public class EsiOwner extends AbstractOwner implements OwnerType {
 
 	private boolean isWallet() {
 		if (isCorporation()) {
-			return EsiScopes.CORPORATION_WALLET.isInScope(scopes) 
+			return EsiScopes.CORPORATION_WALLET.isInScope(scopes)
 					&& (roles.contains(RolesEnum.JUNIOR_ACCOUNTANT)
 					|| roles.contains(RolesEnum.ACCOUNTANT)
 					|| roles.contains(RolesEnum.DIRECTOR));
@@ -221,7 +221,7 @@ public class EsiOwner extends AbstractOwner implements OwnerType {
 	@Override
 	public boolean isIndustryJobs() {
 		if (isCorporation()) {
-			return EsiScopes.CORPORATION_INDUSTRY_JOBS.isInScope(scopes) 
+			return EsiScopes.CORPORATION_INDUSTRY_JOBS.isInScope(scopes)
 					&& (roles.contains(RolesEnum.FACTORY_MANAGER)
 					|| roles.contains(RolesEnum.DIRECTOR));
 		} else {

@@ -100,7 +100,7 @@ public class MarketLogReader {
 		Integer typeID = marketLogs.get(0).getTypeID();
 		if (typeID == null) {
 			LOG.warn("Failed to read: " + filename);
-			return null; 
+			return null;
 		}
 		Set<RawPublicMarketOrder> marketOrders = new HashSet<>();
 		for (MarketLog marketLog : marketLogs) {
