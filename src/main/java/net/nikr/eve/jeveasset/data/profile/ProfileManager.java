@@ -92,7 +92,7 @@ public class ProfileManager {
 	public List<EveKitOwner> getEveKitOwners() {
 		return activeProfile.getEveKitOwners();
 	}
-	
+
 	public List<EsiOwner> getEsiOwners() {
 		return activeProfile.getEsiOwners();
 	}

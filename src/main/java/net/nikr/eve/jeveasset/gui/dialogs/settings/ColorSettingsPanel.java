@@ -84,7 +84,7 @@ public class ColorSettingsPanel extends JSettingsPanel {
 
 	public ColorSettingsPanel(final Program program, final SettingsDialog settingsDialog) {
 		super(program, settingsDialog, DialoguesSettings.get().colors(), Images.SETTINGS_COLORS.getIcon());
-		
+
 		JSimpleColorPicker jSimpleColorPicker = new JSimpleColorPicker(settingsDialog.getDialog());
 
 		//Backend
@@ -99,7 +99,7 @@ public class ColorSettingsPanel extends JSettingsPanel {
 
 		//Separator
 		SeparatorList<ColorRow> separatorList = new SeparatorList<>(filterList, new ColorRowSeparatorComparator(), 1, Integer.MAX_VALUE);
-		
+
 		//Table Model
 		tableModel = EventModels.createTableModel(separatorList, TableFormatFactory.colorsTableFormat());
 		//Table
@@ -133,15 +133,15 @@ public class ColorSettingsPanel extends JSettingsPanel {
 				}
 				int row = jTable.rowAtPoint(e.getPoint());
 				int column = jTable.columnAtPoint(e.getPoint());
-				
+
 				Object object = tableModel.getElementAt(row);
 				if (!(object instanceof ColorRow)) {
 					return; //Ignore Separator
 				}
 				ColorRow colorRow = (ColorRow) object;
-				
+
 				String columnName = (String) jTable.getTableHeader().getColumnModel().getColumn(column).getHeaderValue();
-				
+
 				Rectangle cellRect = jTable.getCellRect(row, column, false);
 				Point table = jTable.getLocationOnScreen();
 				Point point = new Point(table.x + cellRect.x + cellRect.width, table.y + cellRect.y + cellRect.height);

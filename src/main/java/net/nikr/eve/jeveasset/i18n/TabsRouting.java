@@ -113,11 +113,5 @@ public abstract class TabsRouting extends Bundle {
 	public abstract String startSystem();
 	public abstract String total(Object arg0, Object arg1);
 	public abstract String unchecked();
-	
-	
-	
-	
-	
-	
-	
+
 }

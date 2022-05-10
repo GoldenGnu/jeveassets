@@ -70,7 +70,7 @@ public class AssetValue implements Comparable<AssetValue> {
 			return add;
 		}
 	}
-	
+
 	private AssetValue(String id) {
 		String[] ids = id.split(" > ");
 		if (ids.length == 2) {

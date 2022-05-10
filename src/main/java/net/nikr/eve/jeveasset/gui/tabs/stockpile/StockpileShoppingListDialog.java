@@ -97,7 +97,7 @@ class StockpileShoppingListDialog extends JDialogCentered {
 		super(program, TabsStockpile.get().shoppingList(), Images.TOOL_STOCKPILE.getImage());
 
 		this.getDialog().setResizable(true);
-		
+
 		ListenerClass listener = new ListenerClass();
 
 		JButton jCopyToClipboard = new JButton(TabsStockpile.get().clipboardStockpile(), Images.EDIT_COPY.getIcon());
@@ -559,7 +559,6 @@ class StockpileShoppingListDialog extends JDialogCentered {
 			this.stockpileItem = stockpileItem;
 			this.totalNeed = (long)(stockpileItem.getCountMinimumMultiplied() * percent / 100.0);
 			this.countMinimum = this.totalNeed;
-			
 		}
 
 		public double getPercentFull() {

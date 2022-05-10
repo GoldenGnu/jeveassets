@@ -26,7 +26,7 @@ import org.junit.Test;
 
 
 public class EsiScopesTest extends TestUtil {
-	
+
 	public EsiScopesTest() {
 	}
 
@@ -45,5 +45,5 @@ public class EsiScopesTest extends TestUtil {
 			assertTrue(scope.getScope() + " not included", s.contains(scope.getScope()));
 		}
 	}
-	
+
 }

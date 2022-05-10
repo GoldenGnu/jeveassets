@@ -266,7 +266,7 @@ public class StatusPanel extends JGroupLayoutPanel {
 			jProgress.setPreferredSize(size);
 			jProgress.setMaximumSize(size);
 			jProgress.setVisible(false);
-			
+
 			jProgress.setStringPainted(true);
 			if (progressShow.isAuto()) {
 				jProgress.setString(text);

@@ -75,7 +75,7 @@ public abstract class JAutoCompleteDialog<T> extends JDialogCentered {
 		eventList.getReadWriteLock().readLock().lock();
 		SortedList<T> sortedList = new SortedList<>(eventList, getComparator());
 		eventList.getReadWriteLock().readLock().unlock();
-		
+
 		autoComplete = AutoCompleteSupport.install(jItems, EventModels.createSwingThreadProxyList(sortedList), getFilterator());
 		if (!strict) {
 			autoComplete.setFilterMode(TextMatcherEditor.CONTAINS);

@@ -128,5 +128,4 @@ public class ViewManager extends JManageDialog {
 	@Override protected String textMerge() { return ""; }
 	@Override protected String textRename() { return GuiShared.get().renameView(); }
 
-	
 }

@@ -75,7 +75,7 @@ public class PriceDataGetter implements PricingListener {
 	private Set<Integer> zero;
 	private Set<Integer> queue;
 	private final Map<Integer, PriceData> priceDataList = Collections.synchronizedMap(new HashMap<>());
-	
+
 	private long nextUpdate = 0;
 
 	public void load() {
@@ -367,7 +367,7 @@ public class PriceDataGetter implements PricingListener {
 			failed.add(typeID);
 		}
 		long nextUpdateTemp = pricing.getNextUpdateTime(typeID);
-		
+
 		if (nextUpdateTemp >= 0 && nextUpdateTemp > getNextUpdateTime()) {
 			setUpdateNext(nextUpdateTemp);
 		}

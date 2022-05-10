@@ -370,6 +370,6 @@ public abstract class UpdateTask extends SwingWorker<Void, Void> {
 		public int getIconHeight() {
 			return 16;
 		}
-		
 	}
+
 }

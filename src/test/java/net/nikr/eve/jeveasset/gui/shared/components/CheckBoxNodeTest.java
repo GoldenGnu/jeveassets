@@ -42,7 +42,6 @@ public class CheckBoxNodeTest {
 	private CheckBoxNode c2;
 	private CheckBoxNode c3;
 	private final List<CheckBoxNode> all = new ArrayList<>();
-	
 
 	@Test
 	public void testSetSelected() {
@@ -262,8 +261,7 @@ public class CheckBoxNodeTest {
 	private void matchTrue(CheckBoxNode node) {
 		node.matches(node.getNodeName());
 	}
-	
-	
+
 	private void makeNodes(boolean selected) {
 		root = new CheckBoxNode(null, "root", "root", selected);
 		a = new CheckBoxNode(root, "aa", "aa", selected);
@@ -292,7 +290,6 @@ public class CheckBoxNodeTest {
 		all.add(c1);
 		all.add(c2);
 		all.add(c3);
-		
 
 		assertThat(root.isSelected(), equalTo(selected));
 		assertThat(root.isShown(), equalTo(true));

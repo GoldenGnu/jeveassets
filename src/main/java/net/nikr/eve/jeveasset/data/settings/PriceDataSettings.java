@@ -31,7 +31,7 @@ import uk.me.candle.eve.pricing.options.PricingType;
 
 
 public class PriceDataSettings {
-	
+
 	public enum PriceSource {
 		EVEMARKETER(PricingFetch.EVEMARKETER, true, true, false, LocationType.REGION, 10000002L, Images.LINK_EVEMARKETER.getIcon()) {
 			@Override public PriceMode[] getPriceTypes() {

@@ -64,5 +64,5 @@ public class ViewSave extends JAutoCompleteDialog<View> {
 			baseList.add(element.getName());
 		}
 	}
-	
+
 }

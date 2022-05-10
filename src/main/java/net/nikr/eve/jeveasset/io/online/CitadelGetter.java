@@ -79,7 +79,7 @@ public class CitadelGetter {
 	private void loadXml() {
 		citadelSettings = CitadelReader.load();
 	}
-	
+
 	protected static interface Setter<T> {
 		public void setETag(CitadelSettings citadelSettings, String eTag);
 		public void setData(CitadelSettings citadelSettings, Map<Long, T> results);

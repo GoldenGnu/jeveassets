@@ -43,8 +43,6 @@ public class EsiBookmarksGetter extends AbstractEsiGetter {
 		super(updateTask, esiOwner, false, esiOwner.getBookmarksNextUpdate(), TaskType.BOOKMARKS);
 	}
 
-	
-
 	@Override
 	protected void update() throws ApiException {
 		if (owner.isCorporation()) {
@@ -53,7 +51,6 @@ public class EsiBookmarksGetter extends AbstractEsiGetter {
 				public ApiResponse<List<CorporationBookmarksResponse>> get(Integer page) throws ApiException {
 					return getBookmarksApiAuth().getCorporationsCorporationIdBookmarksWithHttpInfo((int) owner.getOwnerID(), DATASOURCE, null, page, null);
 				}
-				
 			});
 			List<Citadel> citadels = new ArrayList<>();
 			for (CorporationBookmarksResponse bookmark : bookmarks) {

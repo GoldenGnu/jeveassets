@@ -143,7 +143,7 @@ public class AboutDialog extends JDialogCentered {
 				+ "&nbsp;<a href=\"https://github.com/uklimaschewski/EvalEx\">EvalEx</a> (formula columns)<br>"
 				+ "&nbsp;<a href=\"https://picocli.info\">Picocli</a> (CLI)<br>"
 				);
-		
+
 		JScrollPane jInfoScroll = new JScrollPane(jInfo, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
 		jClose = new JButton(DialoguesAbout.get().close());

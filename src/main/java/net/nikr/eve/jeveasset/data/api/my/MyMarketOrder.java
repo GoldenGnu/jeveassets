@@ -426,7 +426,6 @@ public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarket
 		} else {
 			return outbid.getPrice() - getPrice();
 		}
-		
 	}
 
 	public void setOutbid(Outbid outbid) {

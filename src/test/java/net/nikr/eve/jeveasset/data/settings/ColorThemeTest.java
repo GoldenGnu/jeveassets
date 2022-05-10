@@ -50,7 +50,6 @@ public class ColorThemeTest extends TestUtil {
 
 	private void test(ColorTheme colorTheme) {
 		assertTrue(colorTheme.isValid());
-		
 	}
-	
+
 }

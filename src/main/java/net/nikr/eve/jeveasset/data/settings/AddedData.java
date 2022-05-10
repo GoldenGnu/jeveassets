@@ -69,7 +69,7 @@ public class AddedData {
 
 		public void load() { }
 	}
-	
+
 	private static final String CONNECTION_URL = "jdbc:sqlite:" + FileUtil.getPathAssetAddedDatabase();
 	private Map<Long, Date> insert = null;
 	private Map<Long, Date> update = null;

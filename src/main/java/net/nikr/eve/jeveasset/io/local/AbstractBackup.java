@@ -41,7 +41,7 @@ public abstract class AbstractBackup extends AttributeGetters {
 				|| getNewFile(filename).exists() //.new
 				|| getBackupFile(filename).exists(); //.bac
 	}
-	
+
 	protected boolean restoreBackupFile(final String filename) {
 		File targetFile = new File(filename);
 		renameFile(targetFile, getCorruptFile(filename)); //Backup corrupted file
@@ -58,7 +58,7 @@ public abstract class AbstractBackup extends AttributeGetters {
 		File targetFile = new File(filename);
 		renameFile(targetFile, getCorruptFile(filename)); //Backup corrupted file
 	}
-	
+
 	protected void backupFile(final String filename) {
 		File targetFile = new File(filename);
 		//target to bac (new is safe)
@@ -74,7 +74,7 @@ public abstract class AbstractBackup extends AttributeGetters {
 	private File getProgramBackup(final String filename) {
 		return new File(filename.substring(0, filename.lastIndexOf(".")) + "_" + Program.PROGRAM_VERSION.replace(" ", "_") + "_backup.zip");
 	}
-	
+
 	protected void backup(final String filename) {
 		File backupFile = getProgramBackup(filename);
 		if (!backupFile.exists()) {

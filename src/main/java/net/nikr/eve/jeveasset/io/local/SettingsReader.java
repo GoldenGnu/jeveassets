@@ -851,7 +851,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			if (haveAttribute(stockpileNode, "multiplier")) {
 				multiplier = getDouble(stockpileNode, "multiplier");
 			}
-		
+
 			Stockpile stockpile = new Stockpile(name, stockpileID, filters, multiplier);
 			stockpiles.add(stockpile);
 			subpileMap.put(stockpile, subpileNames);
@@ -1271,7 +1271,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		if (!priceSource.isValid(locationType, locationID)) {
 			locationType = priceSource.getDefaultLocationType();
 			locationID = priceSource.getDefaultLocationID();
-		}	
+		}
 		settings.setPriceDataSettings(new PriceDataSettings(locationType, locationID, priceSource, priceType, priceReprocessedType));
 	}
 

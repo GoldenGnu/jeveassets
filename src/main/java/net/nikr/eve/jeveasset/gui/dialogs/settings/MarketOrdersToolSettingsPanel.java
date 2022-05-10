@@ -114,7 +114,7 @@ public class MarketOrdersToolSettingsPanel extends JSettingsPanel {
 				)
 		);
 	}
-		
+
 	@Override
 	public boolean save() {
 		int oldExpireWarnDays = Settings.get().getMarketOrdersSettings().getExpireWarnDays();

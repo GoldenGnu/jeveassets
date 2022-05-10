@@ -38,5 +38,5 @@ public class RawPublicMarketOrderTest extends TestUtil {
 				MarketOrdersResponse.RangeEnum.values(),
 				MarketStructuresResponse.RangeEnum.values());
 	}
-	
+
 }

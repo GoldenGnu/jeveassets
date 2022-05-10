@@ -92,7 +92,6 @@ public class CliOptions {
 
 	public static CliOptions get() {
 		return CLI_OPTIONS;
-		
 	}
 
 	public static CommandLine set(final String[] args) {
@@ -304,7 +303,7 @@ public class CliOptions {
 				+ END_GROUP + END_GROUP + "%nViews Help:%nOmit the parameter value to use the current columns%nOmit the parameter to include all columns")
 		String treeFilterLocation;
 	}
-	
+
 	static class ExportOptionsView {
 		@Option(names = "-"+ASSETS+VIEW_CMD, fallbackValue = "", arity = "0..1", paramLabel = VIEW_LABEL, description = VIEW_BEFORE+"Assets"+VIEW_AFTER)
 		String assetsView;

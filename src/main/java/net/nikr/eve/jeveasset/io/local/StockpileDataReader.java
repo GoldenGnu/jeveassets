@@ -112,7 +112,7 @@ public class StockpileDataReader extends AbstractBackup {
 					singleton = filterObject.get("s").getAsBoolean();
 				}
 				long locationID = filterObject.get("id").getAsLong();
-				
+
 				//Containers
 				List<StockpileContainer> containers = new ArrayList<>();
 				JsonElement containersElement = filterObject.get("c");

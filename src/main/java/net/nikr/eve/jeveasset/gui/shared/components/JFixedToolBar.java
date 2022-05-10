@@ -36,12 +36,12 @@ public class JFixedToolBar extends JToolBar {
 
 	private Integer height = null;
 	private final Orientation orientation;
-	
+
 	public static enum Orientation {
 		HORIZONTAL,
 		VERTICAL
 	}
-	
+
 	public JFixedToolBar() {
 		this(Orientation.HORIZONTAL);
 	}

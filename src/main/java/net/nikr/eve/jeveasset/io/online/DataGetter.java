@@ -51,7 +51,7 @@ public class DataGetter {
 			MessageDigest md = MessageDigest.getInstance("MD5");
 			URL url = new URL(link);
 			URLConnection con = url.openConnection();
-			
+
 			byte[] buffer = new byte[4096];
 			input = new DigestInputStream(con.getInputStream(), md);
 			output = new FileOutputStream(out);

@@ -102,7 +102,7 @@ public final class ApiIdConverter {
 			case 62: return "Corporation Deliveries";
 			case 63: return itemFlag.getFlagName();
 			case 64: return itemFlag.getFlagName();
-			
+
 			case 115: return getDivisionName(ownerType, 1);
 			case 116: return getDivisionName(ownerType, 2);
 			case 117: return getDivisionName(ownerType, 3);

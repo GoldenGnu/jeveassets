@@ -90,8 +90,6 @@ public class Material implements Comparable<Material>, LocationType, ItemType, P
 				this.item = new Item(0);
 				this.price = null;
 			}
-
-			
 			//Has location
 			if (type == MaterialType.LOCATIONS || type == MaterialType.LOCATIONS_TOTAL || type == MaterialType.LOCATIONS_ALL) {
 				location = asset.getLocation();

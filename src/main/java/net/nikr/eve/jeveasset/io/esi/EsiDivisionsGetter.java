@@ -35,7 +35,7 @@ public class EsiDivisionsGetter extends AbstractEsiGetter {
 	public EsiDivisionsGetter(UpdateTask updateTask, EsiOwner owner) {
 		super(updateTask, owner, false, owner.getAssetNextUpdate(), TaskType.DIVISIONS);
 	}
-	
+
 	@Override
 	protected void update() throws ApiException {
 		if (!owner.isCorporation()) {

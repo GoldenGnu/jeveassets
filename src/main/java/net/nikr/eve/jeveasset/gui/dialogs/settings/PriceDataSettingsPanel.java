@@ -74,7 +74,7 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 
 	private final EventList<MyLocation> stationsEventList = EventListManager.create();
 	private final List<MyLocation> stations = new ArrayList<>();
-	
+
 	private final AutoCompleteSupport<MyLocation> regionsAutoComplete;
 	private final AutoCompleteSupport<MyLocation> systemsAutoComplete;
 	private final AutoCompleteSupport<MyLocation> stationsAutoComplete;

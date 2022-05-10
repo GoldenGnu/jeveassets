@@ -80,7 +80,6 @@ public class JMenuRouting<T> extends MenuManager.JAutoMenu<T> {
 				} else {
 					locations = menuData.getAutopilotStationLocations();
 				}
-				
 				program.getMainWindow().addTab(program.getRoutingTab());
 				for (MyLocation location : locations) {
 					program.getRoutingTab().addLocation(location);
@@ -103,5 +102,5 @@ public class JMenuRouting<T> extends MenuManager.JAutoMenu<T> {
 			}
 		}
 	}
-	
+
 }

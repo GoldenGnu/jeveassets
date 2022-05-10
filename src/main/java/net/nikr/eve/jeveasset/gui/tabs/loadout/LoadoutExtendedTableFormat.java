@@ -99,5 +99,5 @@ public enum LoadoutExtendedTableFormat implements EnumTableColumn<Loadout> {
 	public String toString() {
 		return getColumnName();
 	}
-	
+
 }

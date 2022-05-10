@@ -281,7 +281,7 @@ public class ColorSettings {
 	public static void configCell(Component component, Color foreground, Color background, boolean selected) {
 		configCell(component, foreground, background, selected, false);
 	}
-	
+
 	public static void configCell(Component component, Color foreground, Color background, boolean selected, boolean darker) {
 		if (selected) {
 			if (darker) {
@@ -324,7 +324,6 @@ public class ColorSettings {
 		private final Color defaultForeground;
 		private Color background;
 		private Color foreground;
-		
 
 		public ColorRow(ColorEntry colorEntry, Color defaultBackground, Color defaultForeground, Color background, Color foreground) {
 			this.colorEntry = colorEntry;

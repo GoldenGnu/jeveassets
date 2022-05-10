@@ -195,7 +195,7 @@ public class TrackerSkillPointsFilterDialog extends JDialogCentered {
 	protected JButton getDefaultButton() {
 		return jOK;
 	}
-	
+
 	@Override
 	protected void windowShown() { }
 
@@ -268,5 +268,4 @@ public class TrackerSkillPointsFilterDialog extends JDialogCentered {
 		}
 	}
 
-	
 }

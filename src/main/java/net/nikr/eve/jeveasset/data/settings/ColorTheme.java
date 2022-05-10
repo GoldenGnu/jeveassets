@@ -53,7 +53,7 @@ public abstract class ColorTheme {
 			return colorTheme.getName();
 		}
 	}
-	
+
 	private Map<ColorEntry, ColorThemeEntry> colors = null;
 
 	protected ColorTheme() { }
@@ -195,7 +195,6 @@ public abstract class ColorTheme {
 			} else {
 				return null;
 			}
-			
 		}
 
 		@Override

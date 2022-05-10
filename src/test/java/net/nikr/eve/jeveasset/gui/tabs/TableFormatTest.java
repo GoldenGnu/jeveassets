@@ -88,7 +88,7 @@ public class TableFormatTest extends TestUtil {
 	private static final Float FLOAT_VALUE = 5.1f;
 	private static final Double DOUBLE_VALUE = 5.1;
 	private static final Date DATE_VALUE = new Date();
-	
+
 	@Test
 	public void testTableFormatClass() {
 		boolean setValues = true;

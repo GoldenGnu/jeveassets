@@ -46,12 +46,11 @@ public class RawMarketOrder {
 		REGION("region", TabsOrders.get().rangeRegion()),
 		SOLARSYSTEM("solarsystem", TabsOrders.get().rangeSolarSystem()),
 		STATION("station", TabsOrders.get().rangeStation());
-		
 
 		private static final MarketOrderRange[] SORTED = {
 			REGION, SOLARSYSTEM, STATION, _1, _2, _3, _4, _5, _10, _20, _30, _40
 		};
-		
+
 		private final String value;
 		private final String text;
 
@@ -242,7 +241,7 @@ public class RawMarketOrder {
 		volumeTotal = marketOrder.getVolumeTotal();
 		changes.add(new Change(this));
 	}
-	
+
 	/**
 	 * ESI Corporation History
 	 *

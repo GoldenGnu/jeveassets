@@ -249,7 +249,7 @@ public class ReprocessedTab extends JMainTabSecondary {
 		if (program.getMainWindow().isOpen(this)) {
 			updateData(); //Also update data when already open
 		}
-		program.getMainWindow().addTab(this);	
+		program.getMainWindow().addTab(this);
 	}
 
 	private class ReprocessedTableMenu implements TableMenu<ReprocessedInterface> {

@@ -369,7 +369,7 @@ public class Program implements ActionListener {
 		//lookAndFeel = "com.formdev.flatlaf.FlatDarkLaf"; //Flat Dark
 		//lookAndFeel = "com.formdev.flatlaf.FlatIntelliJLaf"; //Flat IntelliJ
 		//lookAndFeel = "com.formdev.flatlaf.FlatDarculaLaf"; //Flat Darcula
-		
+
 		try {
 			UIManager.setLookAndFeel(lookAndFeel);
 		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
@@ -625,7 +625,6 @@ public class Program implements ActionListener {
 				}
 			}
 		});
-		
 		ensureEDT(new Runnable() {
 			@Override
 			public void run() {

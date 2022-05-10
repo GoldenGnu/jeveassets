@@ -128,7 +128,7 @@ public class TagsSettingsPanel extends JSettingsPanel {
 	@Override
 	public void load() {
 		tasks.clear();
-		
+
 		Set<Tag> allTags = new TreeSet<Tag>(GlazedLists.comparableComparator());
 		allTags.addAll(Settings.get().getTags().values());
 
@@ -140,7 +140,6 @@ public class TagsSettingsPanel extends JSettingsPanel {
 		listModel.clear();
 		for (Tag tag : allTags) {
 			listModel.addElement(tag);
-			
 		}
 
 		jEdit.setEnabled(false);
@@ -314,5 +313,5 @@ public class TagsSettingsPanel extends JSettingsPanel {
 			return jLabel;
 		}
 	}
-	
+
 }

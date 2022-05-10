@@ -122,9 +122,7 @@ public class JTextAreaPlaceholder extends JTextArea {
 			}
 
 			@Override
-			public void componentMoved(ComponentEvent e) {
-				
-			}
+			public void componentMoved(ComponentEvent e) { }
 
 			@Override
 			public void componentShown(ComponentEvent e) {
@@ -132,9 +130,7 @@ public class JTextAreaPlaceholder extends JTextArea {
 			}
 
 			@Override
-			public void componentHidden(ComponentEvent e) {
-				
-			}
+			public void componentHidden(ComponentEvent e) { }
 		});
 	}
 
@@ -249,7 +245,6 @@ public class JTextAreaPlaceholder extends JTextArea {
 		}
 		revalidate();
 		repaint();
-		
 	}
 
 	@Override

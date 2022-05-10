@@ -105,6 +105,6 @@ public class JMenuLookupOnlineTest extends TestUtil {
 				}
 			}
 		}
-		
 	}
+
 }

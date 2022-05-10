@@ -46,7 +46,7 @@ public class RawAccountBalance {
 		this.balance = balance.balance;
 		this.accountKey = balance.accountKey;
 	}
-	
+
 	/**
 	 * ESI Character
 	 *

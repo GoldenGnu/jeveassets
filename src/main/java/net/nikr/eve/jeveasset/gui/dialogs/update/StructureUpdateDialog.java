@@ -68,7 +68,7 @@ public class StructureUpdateDialog extends JDialogCentered {
 
 	private final List<EsiOwner> owners = new ArrayList<>();;
 	private Set<MyLocation> locations;
-	
+
 	public StructureUpdateDialog(Program program) {
 		super(program, DialoguesStructure.get().title(), Images.DIALOG_UPDATE.getImage());
 
@@ -202,10 +202,8 @@ public class StructureUpdateDialog extends JDialogCentered {
 					.addComponent(jCancel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				)
 		);
-		
-		
 	}
-	
+
 	@Override
 	protected JComponent getDefaultFocus() {
 		return jOk;
