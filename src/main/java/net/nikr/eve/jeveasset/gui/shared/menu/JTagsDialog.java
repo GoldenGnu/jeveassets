@@ -133,11 +133,11 @@ public class JTagsDialog extends JDialogCentered {
 		);
 	}
 
-	public Tag show(Tag editTag){
+	public Tag show(Tag editTag) {
 		return show(editTag, new HashSet<>(Settings.get().getTags().keySet()));
 	}
 
-	public Tag show(Tag editTag, Set<String> unique){
+	public Tag show(Tag editTag, Set<String> unique) {
 		getDialog().setTitle(GuiShared.get().tagsEditTitle());
 		this.editTag = editTag;
 		this.unique = unique;

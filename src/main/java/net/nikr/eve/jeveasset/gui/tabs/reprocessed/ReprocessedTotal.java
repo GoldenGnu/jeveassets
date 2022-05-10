@@ -45,7 +45,7 @@ public class ReprocessedTotal implements ReprocessedInterface {
 		this.sellPrice = sellPrice;
 	}
 
-	public void add(final ReprocessedItem item){
+	public void add(final ReprocessedItem item) {
 		portionSize = item.getPortionSize();
 		quantityMax = quantityMax + item.getQuantityMax();
 		quantitySkill = quantitySkill + item.getQuantitySkill();

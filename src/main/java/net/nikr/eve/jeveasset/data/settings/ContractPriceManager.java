@@ -109,9 +109,9 @@ public class ContractPriceManager {
 		Double price = Settings.get().getContractPriceSettings().getContractPriceMode().getPrice(prices);
 		if (price == null) {
 			return 0;
-		} else if (perUnit){
+		} else if (perUnit) {
 			return price;
-		} else if (contractPriceItem.getRuns() > 0){
+		} else if (contractPriceItem.getRuns() > 0) {
 			return price * contractPriceItem.getRuns();
 		} else {
 			return price;

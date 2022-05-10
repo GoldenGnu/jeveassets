@@ -588,7 +588,7 @@ public class UpdateDialog extends JDialogCentered {
 	private String getFormatedDuration(Date date) {
 		if (date == null) { //less than 1 second
 			return DialoguesUpdate.get().noAccounts();
-		} else if (Updatable.isUpdatable(date)){
+		} else if (Updatable.isUpdatable(date)) {
 			return DialoguesUpdate.get().now();
 		} else {
 			long time = date.getTime() - Settings.getNow().getTime();

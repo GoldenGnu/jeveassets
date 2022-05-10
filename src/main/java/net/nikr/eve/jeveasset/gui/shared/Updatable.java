@@ -49,37 +49,37 @@ public class Updatable {
 			if (!owner.isShowOwner() || owner.isInvalid() || owner.isExpired() || owner.getAccountAPI() == ApiType.EVE_ONLINE || owner.getAccountAPI() == ApiType.EVEKIT) {
 				continue;
 			}
-			if (owner.isAssetList() && isUpdatable(owner.getAssetNextUpdate())){
+			if (owner.isAssetList() && isUpdatable(owner.getAssetNextUpdate())) {
 				return true;
 			}
-			if (owner.isAccountBalance() && isUpdatable(owner.getBalanceNextUpdate())){
+			if (owner.isAccountBalance() && isUpdatable(owner.getBalanceNextUpdate())) {
 				return true;
 			}
-			if (owner.isIndustryJobs() && isUpdatable(owner.getIndustryJobsNextUpdate())){
+			if (owner.isIndustryJobs() && isUpdatable(owner.getIndustryJobsNextUpdate())) {
 				return true;
 			}
-			if (owner.isMarketOrders() && isUpdatable(owner.getMarketOrdersNextUpdate())){
+			if (owner.isMarketOrders() && isUpdatable(owner.getMarketOrdersNextUpdate())) {
 				return true;
 			}
-			if (owner.isJournal() && isUpdatable(owner.getJournalNextUpdate())){
+			if (owner.isJournal() && isUpdatable(owner.getJournalNextUpdate())) {
 				return true;
 			}
-			if (owner.isTransactions() && isUpdatable(owner.getTransactionsNextUpdate())){
+			if (owner.isTransactions() && isUpdatable(owner.getTransactionsNextUpdate())) {
 				return true;
 			}
-			if (owner.isContracts() && isUpdatable(owner.getContractsNextUpdate())){
+			if (owner.isContracts() && isUpdatable(owner.getContractsNextUpdate())) {
 				return true;
 			}
-			if (owner.isBlueprints() && isUpdatable(owner.getBlueprintsNextUpdate())){
+			if (owner.isBlueprints() && isUpdatable(owner.getBlueprintsNextUpdate())) {
 				return true;
 			}
-			if (owner.isBookmarks() && isUpdatable(owner.getBookmarksNextUpdate())){
+			if (owner.isBookmarks() && isUpdatable(owner.getBookmarksNextUpdate())) {
 				return true;
 			}
-			if (owner.isContainerLogs() && isUpdatable(owner.getContainerLogsNextUpdate())){
+			if (owner.isContainerLogs() && isUpdatable(owner.getContainerLogsNextUpdate())) {
 				return true;
 			}
-			if (owner.isSkills() && isUpdatable(owner.getSkillsNextUpdate())){
+			if (owner.isSkills() && isUpdatable(owner.getSkillsNextUpdate())) {
 				return true;
 			}
 		}

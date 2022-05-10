@@ -85,7 +85,7 @@ public class DataGetter {
 				}
 			}
 		}
-		if (tries < 10){ //Retry 10 times
+		if (tries < 10) { //Retry 10 times
 			out.delete();
 			tries++;
 			return get(link, out, checksum, tries);

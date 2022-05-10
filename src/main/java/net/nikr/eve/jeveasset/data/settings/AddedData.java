@@ -40,7 +40,7 @@ public class AddedData {
 	private static final Logger LOG = LoggerFactory.getLogger(AddedData.class);
 
 	private static enum DataSettings {
-		ASSETS("assetadded"){
+		ASSETS("assetadded") {
 			@Override
 			public void load() {
 				AssetAddedReader.load();

@@ -1855,7 +1855,7 @@ public class TrackerTab extends JMainTabSecondary {
 				try {
 					zis = new ZipInputStream(new FileInputStream(file));
 					ZipEntry zipEntry = zis.getNextEntry();
-					while(zipEntry != null){
+					while(zipEntry != null) {
 						String filename = zipEntry.getName();
 						if (filename.equals("settings.xml") || filename.equals("tracker.json")) {
 							unzippedFile = new File(FileUtil.getPathDataDirectory() + File.separator + "temp_" + filename);

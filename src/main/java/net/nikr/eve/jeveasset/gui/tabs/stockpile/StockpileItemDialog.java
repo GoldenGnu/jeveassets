@@ -272,7 +272,7 @@ public class StockpileItemDialog extends JDialogCentered {
 		show();
 		if (stockpileItems != null) {
 			return stockpileItems;
-		} else if (stockpileItem != null){
+		} else if (stockpileItem != null) {
 			return Collections.singletonList(stockpileItem);
 		} else {
 			return null;
@@ -464,10 +464,10 @@ public class StockpileItemDialog extends JDialogCentered {
 			} else if (!item.getReactionMaterials().isEmpty()) {
 				jBlueprintType.setModel(new DefaultComboBoxModel<>(BlueprintAddType.ADD_FORMULA));
 				jBlueprintType.setEnabled(true);
-			} else if (item.isBlueprint()){
+			} else if (item.isBlueprint()) {
 				jBlueprintType.setModel(new DefaultComboBoxModel<>(BlueprintAddType.EDIT_BLUEPRINT));
 				jBlueprintType.setEnabled(true);
-			} else if (item.isFormula()){
+			} else if (item.isFormula()) {
 				jBlueprintType.setModel(new DefaultComboBoxModel<>(BlueprintAddType.EDIT_FORMULA));
 				jBlueprintType.setEnabled(true);
 			} else {

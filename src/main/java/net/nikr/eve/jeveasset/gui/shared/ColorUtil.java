@@ -42,7 +42,7 @@ public class ColorUtil {
 
 		if (factor > 1) {
 			factor = 1;
-		} else if (factor < 0){
+		} else if (factor < 0) {
 			factor = 0;
 		}
 		/* From 2D group:
