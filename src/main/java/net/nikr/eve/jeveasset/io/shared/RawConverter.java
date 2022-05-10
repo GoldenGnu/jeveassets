@@ -145,7 +145,7 @@ public class RawConverter {
 			return RawConverter.toLong(shipLocation.getStationId());
 		} else if (shipLocation.getStructureId() != null) {
 			return shipLocation.getStructureId();
-		} else if (shipLocation.getSolarSystemId() != null){
+		} else if (shipLocation.getSolarSystemId() != null) {
 			return RawConverter.toLong(shipLocation.getSolarSystemId());
 		} else {
 			return 0; //Fallback
@@ -463,7 +463,7 @@ public class RawConverter {
 		}
 	}
 
-	public static RawJournal.ContextType toJournalContextType(String valueEnum, String valueString){
+	public static RawJournal.ContextType toJournalContextType(String valueEnum, String valueString) {
 		if (valueEnum != null) {
 			try {
 				return RawJournal.ContextType.valueOf(valueEnum);

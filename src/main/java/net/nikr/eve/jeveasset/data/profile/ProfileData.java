@@ -1003,7 +1003,7 @@ public class ProfileData {
 					}
 					list.add(transaction);
 				}
-				if (transaction.getDate().before(maxAge) && Settings.get().getMaximumPurchaseAge() != 0){
+				if (transaction.getDate().before(maxAge) && Settings.get().getMaximumPurchaseAge() != 0) {
 					continue; //Date out of range and not unlimited
 				}
 				if (transaction.isSell()) { //Sell

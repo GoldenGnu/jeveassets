@@ -49,7 +49,7 @@ public class JReprocessedAddItemDialog extends JAutoCompleteDialog<Item> {
 
 	@Override
 	protected Item getValue(Object object) {
-		if(object instanceof Item){
+		if(object instanceof Item) {
 			return (Item)object;
 		}
 		return null;

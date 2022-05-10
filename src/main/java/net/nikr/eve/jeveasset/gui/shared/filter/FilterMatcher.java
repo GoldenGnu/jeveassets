@@ -70,7 +70,7 @@ public class FilterMatcher<E> implements Matcher<E> {
 		} else {
 			try {
 				compiled = Pattern.compile(format(text), Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
-			} catch (PatternSyntaxException ex){
+			} catch (PatternSyntaxException ex) {
 				compiled = Pattern.compile("", Pattern.CASE_INSENSITIVE);
 			}
 			this.pattern = compiled;

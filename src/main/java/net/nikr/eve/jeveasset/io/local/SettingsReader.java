@@ -568,15 +568,15 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 				double sellorders = getDouble(dataNode, "sellorders");
 				double balanceTotal = getDouble(dataNode, "walletbalance");
 				double manufacturing = 0.0;
-				if (haveAttribute(dataNode, "manufacturing")){
+				if (haveAttribute(dataNode, "manufacturing")) {
 					manufacturing = getDouble(dataNode, "manufacturing");
 				}
 				double contractCollateral = 0.0;
-				if (haveAttribute(dataNode, "contractcollateral")){
+				if (haveAttribute(dataNode, "contractcollateral")) {
 					contractCollateral = getDouble(dataNode, "contractcollateral");
 				}
 				double contractValue = 0.0;
-				if (haveAttribute(dataNode, "contractvalue")){
+				if (haveAttribute(dataNode, "contractvalue")) {
 					contractValue = getDouble(dataNode, "contractvalue");
 				}
 				//Add data
@@ -848,7 +848,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			}
 		//MULTIPLIER
 			double multiplier = 1;
-			if (haveAttribute(stockpileNode, "multiplier")){
+			if (haveAttribute(stockpileNode, "multiplier")) {
 				multiplier = getDouble(stockpileNode, "multiplier");
 			}
 		

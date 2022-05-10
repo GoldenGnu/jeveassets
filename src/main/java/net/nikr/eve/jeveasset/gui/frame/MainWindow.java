@@ -186,7 +186,7 @@ public class MainWindow {
 		}
 	}
 
-	public boolean isOpen(final JMainTab jMainTab){
+	public boolean isOpen(final JMainTab jMainTab) {
 		return tabs.contains(jMainTab);
 	}
 

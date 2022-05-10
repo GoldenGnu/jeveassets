@@ -153,7 +153,7 @@ public class JMenuTags<T> extends JAutoMenu<T> {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			Object object = e.getSource();
-			if (object instanceof JTagCheckMenuItem){
+			if (object instanceof JTagCheckMenuItem) {
 				JTagCheckMenuItem jCheckBoxMenuItem = (JTagCheckMenuItem) object;
 				Tag tag = jCheckBoxMenuItem.getTag();
 				if (!jCheckBoxMenuItem.isSelected()) { //State change before this is called

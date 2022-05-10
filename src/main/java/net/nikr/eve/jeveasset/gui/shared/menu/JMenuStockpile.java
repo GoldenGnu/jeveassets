@@ -141,7 +141,7 @@ public class JMenuStockpile<T> extends JAutoMenu<T> {
 								Item materialItem = ApiIdConverter.getItem(material.getTypeID());
 								items.add(new StockpileItem(stockpile, materialItem, material.getTypeID(), material.getQuantity(), false));
 							}
-						} else if (formulaSelect != null && formulaSelect.equals(TabsStockpile.get().materialsReaction())){
+						} else if (formulaSelect != null && formulaSelect.equals(TabsStockpile.get().materialsReaction())) {
 							for (IndustryMaterial material : item.getItem().getReactionMaterials()) {
 								Item materialItem = ApiIdConverter.getItem(material.getTypeID());
 								items.add(new StockpileItem(stockpile, materialItem, material.getTypeID(), material.getQuantity(), false));
