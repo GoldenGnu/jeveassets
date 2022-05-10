@@ -203,13 +203,13 @@ public class IndustrySlotsTab extends JMainTabSecondary {
 		@Override
 		public int compare(final IndustrySlot o1, final IndustrySlot o2) {
 			if (o1.isGrandTotal() && o2.isGrandTotal()) {
-				return 0;  //Equal (both StockpileTotal)
+				return 0; //Equal (both StockpileTotal)
 			} else if (o1.isGrandTotal()) {
-				return 1;  //After
+				return 1; //After
 			} else if (o2.isGrandTotal()) {
 				return -1; //Before
 			} else {
-				return 0;  //Equal (not StockpileTotal)
+				return 0; //Equal (not StockpileTotal)
 			}
 		}
 	}

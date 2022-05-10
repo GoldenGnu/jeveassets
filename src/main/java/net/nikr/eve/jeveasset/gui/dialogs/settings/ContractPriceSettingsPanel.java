@@ -51,7 +51,7 @@ public class ContractPriceSettingsPanel extends JSettingsPanel {
 	
 	
 	public ContractPriceSettingsPanel(Program program, SettingsDialog optionsDialog) {
-		super(program, optionsDialog,  DialoguesSettings.get().contractPrices(), Images.MISC_CONTRACTS_APPRAISAL.getIcon());
+		super(program, optionsDialog, DialoguesSettings.get().contractPrices(), Images.MISC_CONTRACTS_APPRAISAL.getIcon());
 
 		jIncludePrivate = new JCheckBox(DialoguesSettings.get().includePrivate());
 		jDefaultBPC = new JCheckBox(DialoguesSettings.get().defaultBPC());

@@ -116,7 +116,7 @@ public class OutbidProcesser {
 						if (ordersResponse.getPrice() > price || (ordersResponse.getPrice() == price && ordersResponse.getIssued().before(issued))) {
 							outbid.addCount(ordersResponse.getVolumeRemain());
 						}
-					} else { //Sell  (outbid is lower)
+					} else { //Sell (outbid is lower)
 						outbid.setPrice(Math.min(outbid.getPrice(), ordersResponse.getPrice()));
 						if (ordersResponse.getPrice() < price || (ordersResponse.getPrice() == price && ordersResponse.getIssued().before(issued))) {
 							outbid.addCount(ordersResponse.getVolumeRemain());

@@ -127,7 +127,7 @@ public class FileUtil extends FileUtilSimple {
 		}
 		String filename = file.getName();
 		int i = filename.lastIndexOf('.');
-		if (i > 0 &&  i < filename.length() - 1) {
+		if (i > 0 && i < filename.length() - 1) {
 			extension = filename.substring(i + 1).toLowerCase();
 		}
 		return extension;

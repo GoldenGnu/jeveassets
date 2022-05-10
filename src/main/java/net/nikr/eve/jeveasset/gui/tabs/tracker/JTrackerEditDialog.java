@@ -92,7 +92,7 @@ public class JTrackerEditDialog extends JDialogCentered {
 
 		ListenerClass listener = new ListenerClass();
 
-		jSelectionDialog = new  JSelectionDialog<>(program);
+		jSelectionDialog = new JSelectionDialog<>(program);
 
 		JLabel jDateLabel = new JLabel(TabsTracker.get().date());
 		jDate = new JTextField();
@@ -372,7 +372,7 @@ public class JTrackerEditDialog extends JDialogCentered {
 		}
 	}
 
-	private Double getValue(Double balance)  {
+	private Double getValue(Double balance) {
 		String balanceReturn = JOptionInput.showInputDialog(getDialog(), TabsTracker.get().enterNewValue(), format(balance));
 		if (balanceReturn == null) {
 			return null; //Cancel

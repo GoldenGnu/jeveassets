@@ -200,7 +200,7 @@ public class ColumnManager<T extends Enum<T> & EnumTableColumn<Q>, Q> {
 		return toColumn;
 	}
 
-	private JumpColumn<Q>  add(Jump add) {
+	private JumpColumn<Q> add(Jump add) {
 		JumpColumn<Q> toColumn = get(add);
 		tableFormat.addColumn(toColumn);
 		jumpColumns.put(add, toColumn);

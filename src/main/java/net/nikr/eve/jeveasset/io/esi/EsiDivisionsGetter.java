@@ -56,7 +56,7 @@ public class EsiDivisionsGetter extends AbstractEsiGetter {
 		if (owner.isCorporation()) {
 			return owner.isDivisions();
 		} else {
-			return true;  //Overwrite the default, so, we don't get errors
+			return true; //Overwrite the default, so, we don't get errors
 		}
 	}
 

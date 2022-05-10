@@ -103,7 +103,7 @@ public class TrackerDataWriter extends AbstractBackup {
 			valueObject.addProperty("contractvalue", value.getContractValue());
 			valueObject.addProperty("skillpoints", value.getSkillPoints());
 			if (!value.getBalanceFilter().isEmpty()) {
-				JsonArray  balanceObject = new JsonArray();
+				JsonArray balanceObject = new JsonArray();
 				valueObject.add("balance", balanceObject);
 				for (Map.Entry<String, Double> entry : value.getBalanceFilter().entrySet()) {
 					JsonObject itemObject = new JsonObject();
@@ -113,7 +113,7 @@ public class TrackerDataWriter extends AbstractBackup {
 				}
 			}
 			if (!value.getAssetsFilter().isEmpty()) {
-				JsonArray  assetObject = new JsonArray();
+				JsonArray assetObject = new JsonArray();
 				valueObject.add("asset", assetObject);
 				for (Map.Entry<AssetValue, Double> entry : value.getAssetsFilter().entrySet()) {
 					JsonObject itemObject = new JsonObject();

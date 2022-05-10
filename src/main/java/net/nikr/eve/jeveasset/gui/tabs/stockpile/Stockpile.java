@@ -712,13 +712,13 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 				@Override
 				public int compare(StockpileFilter o1, StockpileFilter o2) {
 					if (o1.isExclude() && o2.isExclude()) {
-						return 0;  //Equals
+						return 0; //Equals
 					} else if (o1.isExclude()) {
 						return -1; //First
 					} else if (o2.isExclude()) {
-						return 1;  //Last
+						return 1; //Last
 					} else {
-						return 0;  //Equals
+						return 0; //Equals
 					}
 				}
 			});
@@ -797,7 +797,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 								count = count + ((long)industryJob.getRuns() * (long)industryJob.getLicensedRuns());
 							}
 						}
-					} else if (industryJob.isManufacturing()  //Manufacturing
+					} else if (industryJob.isManufacturing() //Manufacturing
 							&& (industryJob.getStatus() == RawIndustryJob.IndustryJobStatus.ACTIVE //Inprogress AKA not delivered (1 = Active, 2 = Paused (Facility Offline), 3 = Ready)
 								|| industryJob.getStatus() == RawIndustryJob.IndustryJobStatus.PAUSED
 								|| industryJob.getStatus() == RawIndustryJob.IndustryJobStatus.READY
@@ -951,7 +951,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 				if (container.contains(stockpileContainer.getCompare())) { //Match
 					return true;
 				}
-				if (stockpileContainer.isIncludeContainer() &&  includeContainer.contains(stockpileContainer.getCompare())) {
+				if (stockpileContainer.isIncludeContainer() && includeContainer.contains(stockpileContainer.getCompare())) {
 					return true;
 				}
 			}

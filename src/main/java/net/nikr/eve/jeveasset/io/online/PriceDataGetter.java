@@ -182,7 +182,7 @@ public class PriceDataGetter implements PricingListener {
 	protected Map<Integer, PriceData> processUpdate(final UpdateTask task, final boolean updateAll, final PricingOptions pricingOptions, final Set<Integer> typeIDs, final PriceSource priceSource) {
 		this.updateTask = task;
 		this.update = updateAll;
-		this.typeIDs =  Collections.synchronizedSet(new HashSet<>(typeIDs));
+		this.typeIDs = Collections.synchronizedSet(new HashSet<>(typeIDs));
 		this.failed = Collections.synchronizedSet(new HashSet<>());
 		this.zero = Collections.synchronizedSet(new HashSet<>());
 		this.okay = Collections.synchronizedSet(new HashSet<>());

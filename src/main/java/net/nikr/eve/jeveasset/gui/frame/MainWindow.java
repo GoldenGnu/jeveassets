@@ -73,7 +73,7 @@ public class MainWindow {
 		//Frame
 		jFrame = new JFrame();
 		updateTitle();
-		setSizeAndLocation(Settings.get().getWindowSize(),  Settings.get().getWindowLocation(), Settings.get().isWindowMaximized());
+		setSizeAndLocation(Settings.get().getWindowSize(), Settings.get().getWindowLocation(), Settings.get().isWindowMaximized());
 		jFrame.setAlwaysOnTop(Settings.get().isWindowAlwaysOnTop());
 		List<Image> icons = new ArrayList<>();
 		icons.add(Images.TOOL_ASSETS.getImage());

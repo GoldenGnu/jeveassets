@@ -325,7 +325,7 @@ public class LoadoutsTab extends JMainTabSecondary {
 			jXmlFileChooser.setCurrentDirectory(new File(FileUtil.getUserDirectory()));
 		}
 		int bFound = jXmlFileChooser.showSaveDialog(program.getMainWindow().getFrame());
-		if (bFound  == JFileChooser.APPROVE_OPTION) {
+		if (bFound == JFileChooser.APPROVE_OPTION) {
 			File file = jXmlFileChooser.getSelectedFile();
 			return file.getAbsolutePath();
 		} else {

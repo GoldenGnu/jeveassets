@@ -336,12 +336,12 @@ public class TreeAsset extends MyAsset {
 	}
 
 	private void add(TreeTableFormat column, Percent percent, Number count) {
-		Average average  = calcAverages.get(column);
+		Average average = calcAverages.get(column);
 		if (average == null) {
 			average = new Average();
 			calcAverages.put(column, average);
 		}
-		Total total  = calcTotals.get(column);
+		Total total = calcTotals.get(column);
 		if (total == null) {
 			total = new Total();
 			calcTotals.put(column, total);
@@ -352,12 +352,12 @@ public class TreeAsset extends MyAsset {
 	}
 
 	private void add(TreeTableFormat column, Runs runs, Number count) {
-		Average average  = calcAverages.get(column);
+		Average average = calcAverages.get(column);
 		if (average == null) {
 			average = new Average();
 			calcAverages.put(column, average);
 		}
-		Total total  = calcTotals.get(column);
+		Total total = calcTotals.get(column);
 		if (total == null) {
 			total = new Total();
 			calcTotals.put(column, total);
@@ -368,12 +368,12 @@ public class TreeAsset extends MyAsset {
 	}
 
 	private void add(TreeTableFormat column, Number value, Number count) {
-		Average average  = calcAverages.get(column);
+		Average average = calcAverages.get(column);
 		if (average == null) {
 			average = new Average();
 			calcAverages.put(column, average);
 		}
-		Total total  = calcTotals.get(column);
+		Total total = calcTotals.get(column);
 		if (total == null) {
 			total = new Total();
 			calcTotals.put(column, total);

@@ -695,7 +695,7 @@ public class Program implements ActionListener {
 	 */
 	public void exit() {
 		if (getStatusPanel().updateInProgress() > 0) {
-			int value = JOptionPane.showConfirmDialog(getMainWindow().getFrame(),  GuiFrame.get().exitMsg(getStatusPanel().updateInProgress()), GuiFrame.get().exitTitle(getStatusPanel().updateInProgress()), JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+			int value = JOptionPane.showConfirmDialog(getMainWindow().getFrame(), GuiFrame.get().exitMsg(getStatusPanel().updateInProgress()), GuiFrame.get().exitTitle(getStatusPanel().updateInProgress()), JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
 			if (value != JOptionPane.OK_OPTION) {
 				return;
 			}

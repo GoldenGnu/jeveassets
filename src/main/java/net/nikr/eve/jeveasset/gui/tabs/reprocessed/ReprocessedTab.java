@@ -329,13 +329,13 @@ public class ReprocessedTab extends JMainTabSecondary {
 			@Override
 			public int compare(final ReprocessedInterface o1, final ReprocessedInterface o2) {
 				if (o1.isTotal() && o2.isTotal()) {
-					return 0;  //Equal (both StockpileTotal)
+					return 0; //Equal (both StockpileTotal)
 				} else if (o1.isTotal()) {
-					return 1;  //After
+					return 1; //After
 				} else if (o2.isTotal()) {
 					return -1; //Before
 				} else {
-					return 0;  //Equal (not StockpileTotal)
+					return 0; //Equal (not StockpileTotal)
 				}
 			}
 		}

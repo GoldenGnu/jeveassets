@@ -315,13 +315,13 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		}
 
 		//Show Tools
-		Element showToolsElement =  getNodeOptional(element, "showtools");
+		Element showToolsElement = getNodeOptional(element, "showtools");
 		if (showToolsElement != null) {
 			parseShowToolsNodes(showToolsElement, settings);
 		}
 
 		//Outbid
-		Element marketOrderOutbidElement =  getNodeOptional(element, "marketorderoutbid");
+		Element marketOrderOutbidElement = getNodeOptional(element, "marketorderoutbid");
 		if (marketOrderOutbidElement != null) {
 			parseMarketOrderOutbidNodes(marketOrderOutbidElement, settings);
 		}
@@ -1169,7 +1169,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		Proxy.Type type;
 		try {
 			type = Proxy.Type.valueOf(getString(proxyElement, "type"));
-		} catch (IllegalArgumentException  ex) {
+		} catch (IllegalArgumentException ex) {
 			type = null;
 		}
 		String address = getString(proxyElement, "address");
@@ -1702,7 +1702,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 				CompareType compare = convertMode(getString(rowNode, "mode"));
 				String text;
 				if (haveAttribute(rowNode, "columnmatch")) {
-					text =  convertColumn(getString(rowNode, "columnmatch")).name();
+					text = convertColumn(getString(rowNode, "columnmatch")).name();
 				} else {
 					text = getString(rowNode, "text");
 				}

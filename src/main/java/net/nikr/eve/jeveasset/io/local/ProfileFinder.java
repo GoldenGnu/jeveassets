@@ -60,7 +60,7 @@ public final class ProfileFinder {
 					defaultProfileFound = true;
 					profiles.add(0, profile);
 					profileManager.setActiveProfile(profile);
-				}  else if (profile.isDefaultProfile() && defaultProfileFound) {
+				} else if (profile.isDefaultProfile() && defaultProfileFound) {
 					LOG.warn("Default profile found (again): {}", formatName(name));
 					profile.setDefaultProfile(false);
 					profile.setActiveProfile(false);

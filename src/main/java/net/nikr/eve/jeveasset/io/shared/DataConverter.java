@@ -184,7 +184,7 @@ public abstract class DataConverter {
 				|| rawAsset.getItemFlag().getFlagID() == 61 //Skill In Training
 				|| rawAsset.getItemFlag().getFlagID() == 88 //Booster
 				|| rawAsset.getItemFlag().getFlagID() == 89 //Implant
-				|| rawAsset.getLocationID() == owner.getOwnerID();  //Other stuff
+				|| rawAsset.getLocationID() == owner.getOwnerID(); //Other stuff
 	}
 
 	public static Map<MyContract, List<MyContractItem>> convertRawContracts(List<RawContract> rawContracts, OwnerType owner, boolean saveHistory) {

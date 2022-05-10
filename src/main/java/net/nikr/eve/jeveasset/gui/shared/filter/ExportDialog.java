@@ -464,7 +464,7 @@ public class ExportDialog<E> extends JDialogCentered {
 			jFileChooser.setSelectedFile(new File(Settings.get().getExportSettings(toolName).getDefaultFilename()));
 		}
 		int bFound = jFileChooser.showDialog(getDialog(), DialoguesExport.get().ok());
-		if (bFound  == JFileChooser.APPROVE_OPTION) {
+		if (bFound == JFileChooser.APPROVE_OPTION) {
 			file = jFileChooser.getSelectedFile();
 			Settings.get().getExportSettings(toolName).setFilename(file.getAbsolutePath());
 			return true;
@@ -528,14 +528,14 @@ public class ExportDialog<E> extends JDialogCentered {
 		if (jFilters.getSelectedItem() != null
 				&& !DialoguesExport.get().noSavedFilter().equals(jFilters.getSelectedItem())) {
 			Settings.get().getExportSettings(toolName).setFilterName((String) jFilters.getSelectedItem());
-		} else  {
+		} else {
 			Settings.get().getExportSettings(toolName).setFilterName(null);
 		}
 		//View Name (Make sure there is a selected item and that is is not filler text for empty list)
 		if (jViews.getSelectedItem() != null
 				&& !DialoguesExport.get().viewNoSaved().equals(jViews.getSelectedItem())) {
 			Settings.get().getExportSettings(toolName).setViewName((String) jViews.getSelectedItem());
-		} else  {
+		} else {
 			Settings.get().getExportSettings(toolName).setViewName(null);
 		}
 		Settings.unlock("Export Settings (Save)"); //Unlock for Export Settings (Save)

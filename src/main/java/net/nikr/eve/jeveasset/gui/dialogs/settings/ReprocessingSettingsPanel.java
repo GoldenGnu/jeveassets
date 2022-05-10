@@ -80,7 +80,7 @@ public class ReprocessingSettingsPanel extends JSettingsPanel {
 		JLabel j4 = new JLabel(DialoguesSettings.get().four());
 		JLabel j5 = new JLabel(DialoguesSettings.get().five());
 
-		JLabel jReprocessingLabel=  new JLabel(DialoguesSettings.get().reprocessingLevel());
+		JLabel jReprocessingLabel= new JLabel(DialoguesSettings.get().reprocessingLevel());
 		jReprocessing = new JRadioButton[6];
 		jReprocessing[LEVEL0] = new JRadioButton();
 		jReprocessing[LEVEL0].addActionListener(listener);

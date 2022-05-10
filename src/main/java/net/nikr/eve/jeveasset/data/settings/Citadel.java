@@ -100,7 +100,7 @@ public class Citadel {
 		MyLocation system = StaticData.get().getLocation(systemID);
 		if (!isEmpty() && system != null) { //Location is valid -> return locations
 			if (userLocation) {
-				myLocation =  MyLocation.create(locationID, system.getSystem() + " - " + location, systemID, system.getSystem(), system.getConstellationID(), system.getConstellation(), system.getRegionID(), system.getRegion(), system.getSecurity(), citadel, userLocation);
+				myLocation = MyLocation.create(locationID, system.getSystem() + " - " + location, systemID, system.getSystem(), system.getConstellationID(), system.getConstellation(), system.getRegionID(), system.getRegion(), system.getSecurity(), citadel, userLocation);
 			} else {
 				myLocation = MyLocation.create(locationID, location, systemID, system.getSystem(), system.getConstellationID(), system.getConstellation(), system.getRegionID(), system.getRegion(), system.getSecurity(), citadel, userLocation);
 			}

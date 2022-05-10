@@ -150,7 +150,7 @@ public class NikrUncaughtExceptionHandler implements Thread.UncaughtExceptionHan
 	}
 
 	private void showMessageDialog(Component parentComponent,
-        Object message, String title, int messageType) {
+		Object message, String title, int messageType) {
 		if (GraphicsEnvironment.isHeadless()) {
 			return;
 		}
@@ -158,7 +158,7 @@ public class NikrUncaughtExceptionHandler implements Thread.UncaughtExceptionHan
 	}
 
 	public static int showConfirmDialog(Component parentComponent,
-        Object message, String title, int optionType, int messageType) {
+		Object message, String title, int optionType, int messageType) {
 		if (GraphicsEnvironment.isHeadless()) {
 			return JOptionPane.CANCEL_OPTION;
 		}

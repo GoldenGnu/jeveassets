@@ -252,7 +252,7 @@ public abstract class JMainTab {
 	protected final void installTable(final JAutoColumnTable jTable) {
 		//Table Selection
 		ListSelectionModel selectionModel = jTable.getSelectionModel();
-		if (selectionModel instanceof  DefaultEventSelectionModel) {
+		if (selectionModel instanceof DefaultEventSelectionModel) {
 			this.eventSelectionModel = (DefaultEventSelectionModel<?>) selectionModel;
 		}
 		TableModel tableModel = jTable.getModel();
@@ -266,7 +266,7 @@ public abstract class JMainTab {
 		//Load Settings
 		if (eventTableModel != null && toolName != null) {
 			TableFormat<?> tableFormat = eventTableModel.getTableFormat();
-			if (tableFormat instanceof  EnumTableFormatAdaptor) {
+			if (tableFormat instanceof EnumTableFormatAdaptor) {
 				EnumTableFormatAdaptor<?, ?> formatAdaptor = (EnumTableFormatAdaptor<?, ?>) tableFormat;
 				formatAdaptor.setColumns(Settings.get().getTableColumns().get(toolName));
 				formatAdaptor.setResizeMode(Settings.get().getTableResize().get(toolName));

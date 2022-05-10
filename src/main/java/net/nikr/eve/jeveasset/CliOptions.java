@@ -131,7 +131,7 @@ public class CliOptions {
 	UpdateOptions updateOptions;
 
 	static class UpdateOptions {
-		@Option(names =  { "-u", "-update"}, required = true, description = "Update Data%nUpdate all profiles and accounts%nAll data with cache expired will be updated" + END_GROUP)
+		@Option(names = { "-u", "-update"}, required = true, description = "Update Data%nUpdate all profiles and accounts%nAll data with cache expired will be updated" + END_GROUP)
 		boolean update;
 	}
 
@@ -144,15 +144,15 @@ public class CliOptions {
 	//-e -a -html -nodate -assets-filter "Propulsion Modules" -assets-view "Simple"
 	//-e -a -html -nodate -assets-filter -assets-view
 	public static class ExportOptions {
-		@Option(names =  { "-e", "-export"}, required = true, description = "Export Data%n")
+		@Option(names = { "-e", "-export"}, required = true, description = "Export Data%n")
 		boolean export;
-		@Option(names =  { "-f", "-output" }, paramLabel = "directory", description = "Output directory")
+		@Option(names = { "-f", "-output" }, paramLabel = "directory", description = "Output directory")
 		File output;
 		@Option(names = "-nodate", description = "Do not include date and time in the filenames")
 		boolean noDate;
-		@Option(names =  "-noformula", description = "Do not include formula columns")
+		@Option(names = "-noformula", description = "Do not include formula columns")
 		boolean noFormulas;
-		@Option(names =  "-nojumps", description = "Do not include jump columns"
+		@Option(names = "-nojumps", description = "Do not include jump columns"
 				+ END_GROUP + "%nFormat Help:%nYou can select as many formats as you want")
 		boolean noJumps;
 		@ArgGroup(exclusive = false)
@@ -219,41 +219,41 @@ public class CliOptions {
 	}
 
 	static class ExportOptionsTools {
-		@Option(names =  {"-a" ,"-"+ASSETS}, description = TOOLS_BEFORE+"Assets"+TOOLS_AFTER)
+		@Option(names = {"-a" ,"-"+ASSETS}, description = TOOLS_BEFORE+"Assets"+TOOLS_AFTER)
 		boolean assets;
-		@Option(names =  {"-c" ,"-"+CONTRACTS}, description = TOOLS_BEFORE+"Contracts"+TOOLS_AFTER)
+		@Option(names = {"-c" ,"-"+CONTRACTS}, description = TOOLS_BEFORE+"Contracts"+TOOLS_AFTER)
 		boolean contracts;
-		@Option(names =  {"-i" ,"-"+INDUSTRY_JOBS}, description = TOOLS_BEFORE+"Industry Jobs"+TOOLS_AFTER)
+		@Option(names = {"-i" ,"-"+INDUSTRY_JOBS}, description = TOOLS_BEFORE+"Industry Jobs"+TOOLS_AFTER)
 		boolean industryJobs;
-		@Option(names =  {"-n" ,"-"+INDUSTRY_SLOTS}, description = TOOLS_BEFORE+"Industry Slots"+TOOLS_AFTER)
+		@Option(names = {"-n" ,"-"+INDUSTRY_SLOTS}, description = TOOLS_BEFORE+"Industry Slots"+TOOLS_AFTER)
 		boolean industrySlots;
-		@Option(names =  {"-k" ,"-"+ISK}, description = TOOLS_BEFORE+"Isk"+TOOLS_AFTER)
+		@Option(names = {"-k" ,"-"+ISK}, description = TOOLS_BEFORE+"Isk"+TOOLS_AFTER)
 		boolean isk;
-		@Option(names =  {"-x" ,"-"+ITEMS}, description = TOOLS_BEFORE+"Items"+TOOLS_AFTER)
+		@Option(names = {"-x" ,"-"+ITEMS}, description = TOOLS_BEFORE+"Items"+TOOLS_AFTER)
 		boolean items;
-		@Option(names =  {"-j" ,"-"+JOURNAL}, description = TOOLS_BEFORE+"Journal"+TOOLS_AFTER)
+		@Option(names = {"-j" ,"-"+JOURNAL}, description = TOOLS_BEFORE+"Journal"+TOOLS_AFTER)
 		boolean journal;
-		@Option(names =  {"-y" ,"-"+LOADOUTS}, description = TOOLS_BEFORE+"Ship Fittings"+TOOLS_AFTER)
+		@Option(names = {"-y" ,"-"+LOADOUTS}, description = TOOLS_BEFORE+"Ship Fittings"+TOOLS_AFTER)
 		boolean loadouts;
-		@Option(names =  {"-m" ,"-"+MATERIALS}, description = TOOLS_BEFORE+"Materials"+TOOLS_AFTER)
+		@Option(names = {"-m" ,"-"+MATERIALS}, description = TOOLS_BEFORE+"Materials"+TOOLS_AFTER)
 		boolean materials;
-		@Option(names =  {"-o" ,"-"+MARKET_ORDERS}, description = TOOLS_BEFORE+"Market Orders"+TOOLS_AFTER)
+		@Option(names = {"-o" ,"-"+MARKET_ORDERS}, description = TOOLS_BEFORE+"Market Orders"+TOOLS_AFTER)
 		boolean marketOrders;
-		@Option(names =  {"-s" ,"-"+STOCKPILE}, description = TOOLS_BEFORE+"Stockpile"+TOOLS_AFTER)
+		@Option(names = {"-s" ,"-"+STOCKPILE}, description = TOOLS_BEFORE+"Stockpile"+TOOLS_AFTER)
 		boolean stockpile;
-		@Option(names =  {"-t" ,"-"+TRANSACTIONS}, description = TOOLS_BEFORE+"Transaction"+TOOLS_AFTER)
+		@Option(names = {"-t" ,"-"+TRANSACTIONS}, description = TOOLS_BEFORE+"Transaction"+TOOLS_AFTER)
 		boolean transaction;
-		@Option(names =  {"-g" ,"-"+TREE_CATEGORY}, description = TOOLS_BEFORE+"Tree Category"+TOOLS_AFTER)
+		@Option(names = {"-g" ,"-"+TREE_CATEGORY}, description = TOOLS_BEFORE+"Tree Category"+TOOLS_AFTER)
 		boolean treeCategory;
-		@Option(names =  {"-l" ,"-"+TREE_LOCATION}, description = TOOLS_BEFORE+"Tree Location"+TOOLS_AFTER)
+		@Option(names = {"-l" ,"-"+TREE_LOCATION}, description = TOOLS_BEFORE+"Tree Location"+TOOLS_AFTER)
 		boolean treeLocation;
-		@Option(names =  {"-vs", "-"+OVERVIEW+"-stations"}, description = TOOLS_BEFORE+"Overview Stations"+TOOLS_AFTER)
+		@Option(names = {"-vs", "-"+OVERVIEW+"-stations"}, description = TOOLS_BEFORE+"Overview Stations"+TOOLS_AFTER)
 		boolean overviewStations;
-		@Option(names =  {"-vp", "-"+OVERVIEW+"-planets"}, description = TOOLS_BEFORE+"Overview Planets"+TOOLS_AFTER)
+		@Option(names = {"-vp", "-"+OVERVIEW+"-planets"}, description = TOOLS_BEFORE+"Overview Planets"+TOOLS_AFTER)
 		boolean overviewPlanets;
-		@Option(names =  {"-vy", "-"+OVERVIEW+"-systems"}, description = TOOLS_BEFORE+"Overview Systems"+TOOLS_AFTER)
+		@Option(names = {"-vy", "-"+OVERVIEW+"-systems"}, description = TOOLS_BEFORE+"Overview Systems"+TOOLS_AFTER)
 		boolean overviewSystems;
-		@Option(names =  {"-vc", "-"+OVERVIEW+"-constellations"}, description = TOOLS_BEFORE+"Overview Constellations"+TOOLS_AFTER)
+		@Option(names = {"-vc", "-"+OVERVIEW+"-constellations"}, description = TOOLS_BEFORE+"Overview Constellations"+TOOLS_AFTER)
 		boolean overviewConstellations;
 		@Option(names = {"-vr", "-"+OVERVIEW+"-regions"}, description = TOOLS_BEFORE+"Overview Regions"+TOOLS_AFTER)
 		boolean overviewRegions;
@@ -267,74 +267,74 @@ public class CliOptions {
 	}
 
 	static class ExportOptionsFilters {
-		@Option(names =  "-"+ASSETS+FILTER_CMD, fallbackValue = "", arity = "0..1", paramLabel = FILTER_LABEL, description = FILTER_BEFORE+"Assets"+FILTER_AFTER)
+		@Option(names = "-"+ASSETS+FILTER_CMD, fallbackValue = "", arity = "0..1", paramLabel = FILTER_LABEL, description = FILTER_BEFORE+"Assets"+FILTER_AFTER)
 		String assetsFilter;
-		@Option(names =  "-"+CONTRACTS+FILTER_CMD, fallbackValue = "", arity = "0..1", paramLabel = FILTER_LABEL, description = FILTER_BEFORE+"Contracts"+FILTER_AFTER)
+		@Option(names = "-"+CONTRACTS+FILTER_CMD, fallbackValue = "", arity = "0..1", paramLabel = FILTER_LABEL, description = FILTER_BEFORE+"Contracts"+FILTER_AFTER)
 		String contractsFilter;
-		@Option(names =  "-"+INDUSTRY_JOBS+FILTER_CMD, fallbackValue = "", arity = "0..1", paramLabel = FILTER_LABEL, description = FILTER_BEFORE+"Industry Jobs"+FILTER_AFTER)
+		@Option(names = "-"+INDUSTRY_JOBS+FILTER_CMD, fallbackValue = "", arity = "0..1", paramLabel = FILTER_LABEL, description = FILTER_BEFORE+"Industry Jobs"+FILTER_AFTER)
 		String industryJobsFilter;
-		@Option(names =  "-"+INDUSTRY_SLOTS+FILTER_CMD, fallbackValue = "", arity = "0..1", paramLabel = FILTER_LABEL, description = FILTER_BEFORE+"Industry Slots"+FILTER_AFTER)
+		@Option(names = "-"+INDUSTRY_SLOTS+FILTER_CMD, fallbackValue = "", arity = "0..1", paramLabel = FILTER_LABEL, description = FILTER_BEFORE+"Industry Slots"+FILTER_AFTER)
 		String industrySlotsFilter;
-		@Option(names =  "-"+ISK+FILTER_CMD, fallbackValue = "", arity = "0..1", paramLabel = FILTER_LABEL, description = FILTER_BEFORE+"Isk"+FILTER_AFTER)
+		@Option(names = "-"+ISK+FILTER_CMD, fallbackValue = "", arity = "0..1", paramLabel = FILTER_LABEL, description = FILTER_BEFORE+"Isk"+FILTER_AFTER)
 		String iskFilter;
-		@Option(names =  "-"+ITEMS+FILTER_CMD, fallbackValue = "", arity = "0..1", paramLabel = FILTER_LABEL, description = FILTER_BEFORE+"Items"+FILTER_AFTER)
+		@Option(names = "-"+ITEMS+FILTER_CMD, fallbackValue = "", arity = "0..1", paramLabel = FILTER_LABEL, description = FILTER_BEFORE+"Items"+FILTER_AFTER)
 		String itemsFilter;
-		@Option(names =  "-"+JOURNAL+FILTER_CMD, fallbackValue = "", arity = "0..1", paramLabel = FILTER_LABEL, description = FILTER_BEFORE+"Journal"+FILTER_AFTER)
+		@Option(names = "-"+JOURNAL+FILTER_CMD, fallbackValue = "", arity = "0..1", paramLabel = FILTER_LABEL, description = FILTER_BEFORE+"Journal"+FILTER_AFTER)
 		String journalFilter;
-		@Option(names =  "-"+LOADOUTS+"-names", arity = "1..", split = ",", paramLabel = "typeName|itemName", description = "Export Ship Fittings matching ships typeName or itemName")
+		@Option(names = "-"+LOADOUTS+"-names", arity = "1..", split = ",", paramLabel = "typeName|itemName", description = "Export Ship Fittings matching ships typeName or itemName")
 		Set<String> loadoutsNames;
-		@Option(names =  "-"+LOADOUTS+"-ids", arity = "1..", split = ",", paramLabel = "typeID", description = "Export Ship Fittings matching ships typeID")
+		@Option(names = "-"+LOADOUTS+"-ids", arity = "1..", split = ",", paramLabel = "typeID", description = "Export Ship Fittings matching ships typeID")
 		Set<Integer> loadoutsIDs;
-		@Option(names =  "-"+MATERIALS+"-owner", fallbackValue = "", arity = "0..1", paramLabel = "owner", description = "Materials owner name")
+		@Option(names = "-"+MATERIALS+"-owner", fallbackValue = "", arity = "0..1", paramLabel = "owner", description = "Materials owner name")
 		String materialsOwner;
-		@Option(names =  "-"+MATERIALS+"-pi", fallbackValue = "", description = "Materials include PI")
+		@Option(names = "-"+MATERIALS+"-pi", fallbackValue = "", description = "Materials include PI")
 		boolean materialsPI;
-		@Option(names =  "-"+MARKET_ORDERS+FILTER_CMD, fallbackValue = "", arity = "0..1", paramLabel = FILTER_LABEL, description = FILTER_BEFORE+"Market Orders"+FILTER_AFTER)
+		@Option(names = "-"+MARKET_ORDERS+FILTER_CMD, fallbackValue = "", arity = "0..1", paramLabel = FILTER_LABEL, description = FILTER_BEFORE+"Market Orders"+FILTER_AFTER)
 		String marketOrdersFilter;
 		//Reprocesseddoes not support filters
-		@Option(names =  "-"+OVERVIEW+FILTER_CMD, fallbackValue = "", arity = "0..1", paramLabel = FILTER_LABEL, description = FILTER_BEFORE+"Asset filter to use with Overview")
+		@Option(names = "-"+OVERVIEW+FILTER_CMD, fallbackValue = "", arity = "0..1", paramLabel = FILTER_LABEL, description = FILTER_BEFORE+"Asset filter to use with Overview")
 		String overviewFilter;
-		@Option(names =  "-"+STOCKPILE+FILTER_CMD, fallbackValue = "", arity = "0..1", paramLabel = FILTER_LABEL, description = FILTER_BEFORE+"Stockpile"+FILTER_AFTER)
+		@Option(names = "-"+STOCKPILE+FILTER_CMD, fallbackValue = "", arity = "0..1", paramLabel = FILTER_LABEL, description = FILTER_BEFORE+"Stockpile"+FILTER_AFTER)
 		String stockpileFilter;
-		@Option(names =  "-"+TRANSACTIONS+FILTER_CMD, fallbackValue = "", arity = "0..1", paramLabel = FILTER_LABEL, description = FILTER_BEFORE+"Transaction"+FILTER_AFTER)
+		@Option(names = "-"+TRANSACTIONS+FILTER_CMD, fallbackValue = "", arity = "0..1", paramLabel = FILTER_LABEL, description = FILTER_BEFORE+"Transaction"+FILTER_AFTER)
 		String transactionFilter;
-		@Option(names =  "-"+TREE_CATEGORY+FILTER_CMD, fallbackValue = "", arity = "0..1", paramLabel = FILTER_LABEL, description = FILTER_BEFORE+"Tree Category"+FILTER_AFTER)
+		@Option(names = "-"+TREE_CATEGORY+FILTER_CMD, fallbackValue = "", arity = "0..1", paramLabel = FILTER_LABEL, description = FILTER_BEFORE+"Tree Category"+FILTER_AFTER)
 		String treeFilterCategory;
-		@Option(names =  "-"+TREE_LOCATION+FILTER_CMD, fallbackValue = "", arity = "0..1", paramLabel = FILTER_LABEL, description = FILTER_BEFORE+"Tree Location"+FILTER_AFTER
+		@Option(names = "-"+TREE_LOCATION+FILTER_CMD, fallbackValue = "", arity = "0..1", paramLabel = FILTER_LABEL, description = FILTER_BEFORE+"Tree Location"+FILTER_AFTER
 				+ END_GROUP + END_GROUP + "%nViews Help:%nOmit the parameter value to use the current columns%nOmit the parameter to include all columns")
 		String treeFilterLocation;
 	}
 	
 	static class ExportOptionsView {
-		@Option(names =  "-"+ASSETS+VIEW_CMD, fallbackValue = "", arity = "0..1", paramLabel = VIEW_LABEL, description = VIEW_BEFORE+"Assets"+VIEW_AFTER)
+		@Option(names = "-"+ASSETS+VIEW_CMD, fallbackValue = "", arity = "0..1", paramLabel = VIEW_LABEL, description = VIEW_BEFORE+"Assets"+VIEW_AFTER)
 		String assetsView;
-		@Option(names =  "-"+CONTRACTS+VIEW_CMD, fallbackValue = "", arity = "0..1", paramLabel = VIEW_LABEL, description = VIEW_BEFORE+"Contracts"+VIEW_AFTER)
+		@Option(names = "-"+CONTRACTS+VIEW_CMD, fallbackValue = "", arity = "0..1", paramLabel = VIEW_LABEL, description = VIEW_BEFORE+"Contracts"+VIEW_AFTER)
 		String contractsView;
-		@Option(names =  "-"+INDUSTRY_JOBS+VIEW_CMD, fallbackValue = "", arity = "0..1", paramLabel = VIEW_LABEL, description = VIEW_BEFORE+"Industry Jobs"+VIEW_AFTER)
+		@Option(names = "-"+INDUSTRY_JOBS+VIEW_CMD, fallbackValue = "", arity = "0..1", paramLabel = VIEW_LABEL, description = VIEW_BEFORE+"Industry Jobs"+VIEW_AFTER)
 		String industryJobsView;
-		@Option(names =  "-"+INDUSTRY_SLOTS+VIEW_CMD, fallbackValue = "", arity = "0..1", paramLabel = VIEW_LABEL, description = VIEW_BEFORE+"Industry Slots"+VIEW_AFTER)
+		@Option(names = "-"+INDUSTRY_SLOTS+VIEW_CMD, fallbackValue = "", arity = "0..1", paramLabel = VIEW_LABEL, description = VIEW_BEFORE+"Industry Slots"+VIEW_AFTER)
 		String industrySlotsView;
-		@Option(names =  "-"+ISK+VIEW_CMD, fallbackValue = "", arity = "0..1", paramLabel = VIEW_LABEL, description = VIEW_BEFORE+"Isk"+VIEW_AFTER)
+		@Option(names = "-"+ISK+VIEW_CMD, fallbackValue = "", arity = "0..1", paramLabel = VIEW_LABEL, description = VIEW_BEFORE+"Isk"+VIEW_AFTER)
 		String iskView;
-		@Option(names =  "-"+ITEMS+VIEW_CMD, fallbackValue = "", arity = "0..1", paramLabel = VIEW_LABEL, description = VIEW_BEFORE+"Items"+VIEW_AFTER)
+		@Option(names = "-"+ITEMS+VIEW_CMD, fallbackValue = "", arity = "0..1", paramLabel = VIEW_LABEL, description = VIEW_BEFORE+"Items"+VIEW_AFTER)
 		String itemsView;
-		@Option(names =  "-"+JOURNAL+VIEW_CMD, fallbackValue = "", arity = "0..1", paramLabel = VIEW_LABEL, description = VIEW_BEFORE+"Journal"+VIEW_AFTER)
+		@Option(names = "-"+JOURNAL+VIEW_CMD, fallbackValue = "", arity = "0..1", paramLabel = VIEW_LABEL, description = VIEW_BEFORE+"Journal"+VIEW_AFTER)
 		String journalView;
 		//Loadouts does not support views
-		@Option(names =  "-"+MATERIALS+VIEW_CMD, fallbackValue = "", arity = "0..1", paramLabel = VIEW_LABEL, description = VIEW_BEFORE+"Materials"+VIEW_AFTER)
+		@Option(names = "-"+MATERIALS+VIEW_CMD, fallbackValue = "", arity = "0..1", paramLabel = VIEW_LABEL, description = VIEW_BEFORE+"Materials"+VIEW_AFTER)
 		String materialsView;
-		@Option(names =  "-"+MARKET_ORDERS+VIEW_CMD, fallbackValue = "", arity = "0..1", paramLabel = VIEW_LABEL, description = VIEW_BEFORE+"Market Orders"+VIEW_AFTER)
+		@Option(names = "-"+MARKET_ORDERS+VIEW_CMD, fallbackValue = "", arity = "0..1", paramLabel = VIEW_LABEL, description = VIEW_BEFORE+"Market Orders"+VIEW_AFTER)
 		String marketOrdersView;
-		@Option(names =  "-"+REPROCESSED+VIEW_CMD, fallbackValue = "", arity = "0..1", paramLabel = VIEW_LABEL, description = VIEW_BEFORE+"Reprocessed"+VIEW_AFTER)
+		@Option(names = "-"+REPROCESSED+VIEW_CMD, fallbackValue = "", arity = "0..1", paramLabel = VIEW_LABEL, description = VIEW_BEFORE+"Reprocessed"+VIEW_AFTER)
 		String reprocessedView;
 		//Overview does not support views
-		@Option(names =  "-"+STOCKPILE+VIEW_CMD, fallbackValue = "", arity = "0..1", paramLabel = VIEW_LABEL, description = VIEW_BEFORE+"Stockpile"+VIEW_AFTER)
+		@Option(names = "-"+STOCKPILE+VIEW_CMD, fallbackValue = "", arity = "0..1", paramLabel = VIEW_LABEL, description = VIEW_BEFORE+"Stockpile"+VIEW_AFTER)
 		String stockpileView;
-		@Option(names =  "-"+TRANSACTIONS+VIEW_CMD, fallbackValue = "", arity = "0..1", paramLabel = VIEW_LABEL, description = VIEW_BEFORE+"Transaction"+VIEW_AFTER)
+		@Option(names = "-"+TRANSACTIONS+VIEW_CMD, fallbackValue = "", arity = "0..1", paramLabel = VIEW_LABEL, description = VIEW_BEFORE+"Transaction"+VIEW_AFTER)
 		String transactionView;
-		@Option(names =  "-"+TREE_CATEGORY+VIEW_CMD, fallbackValue = "", arity = "0..1", paramLabel = VIEW_LABEL, description = VIEW_BEFORE+"Tree Category"+VIEW_AFTER)
+		@Option(names = "-"+TREE_CATEGORY+VIEW_CMD, fallbackValue = "", arity = "0..1", paramLabel = VIEW_LABEL, description = VIEW_BEFORE+"Tree Category"+VIEW_AFTER)
 		String treeViewCategory;
-		@Option(names =  "-"+TREE_LOCATION+VIEW_CMD, fallbackValue = "", arity = "0..1", paramLabel = VIEW_LABEL, description = VIEW_BEFORE+"Tree Location"+VIEW_AFTER
+		@Option(names = "-"+TREE_LOCATION+VIEW_CMD, fallbackValue = "", arity = "0..1", paramLabel = VIEW_LABEL, description = VIEW_BEFORE+"Tree Location"+VIEW_AFTER
 				+ END_GROUP + END_GROUP)
 		String treeViewLocation;
 	}
@@ -343,17 +343,17 @@ public class CliOptions {
 	DevOptions devOptions;
 
 	static class DevOptions {
-		@Option(names =  { "-debug" }, description = "Dev Command: Enable debug logging and other debug shenanigans")
+		@Option(names = { "-debug" }, description = "Dev Command: Enable debug logging and other debug shenanigans")
 		boolean debug;
-		@Option(names =  { "-noupdate" }, description = "Dev Command: Disable all updates")
+		@Option(names = { "-noupdate" }, description = "Dev Command: Disable all updates")
 		boolean forceNoUpdate;
-		@Option(names =  { "-forceupdate" }, description = "Dev Command: Ignore update times%n"
+		@Option(names = { "-forceupdate" }, description = "Dev Command: Ignore update times%n"
 				+ "    Warning:%n"
 				+ "    Using -forceupdate may get you banned from ESI%n"
 				+ "    It does not give you access to any new data%n"
 				+ "    You will just get a cached result and a lot of bad karma… ")
 		boolean forceUpdate;
-		@Option(names =  { "-jmemory" }, description = "Dev Command: Notify jEveAssets It's being run with jmemory.jar")
+		@Option(names = { "-jmemory" }, description = "Dev Command: Notify jEveAssets It's being run with jmemory.jar")
 		boolean jMemory;
 	}
 

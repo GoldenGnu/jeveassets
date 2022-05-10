@@ -86,7 +86,7 @@ public class ImportEft extends StockpileImport {
 			return null; //Malformed
 		}
 		String ship = first[0].replace("[", "").replace("]", "").trim();
-		String  name = first[1].replace("[", "").replace("]", "").trim();
+		String name = first[1].replace("[", "").replace("]", "").trim();
 		modules.add(0, ship);
 		setName(name);
 		Map<String, Item> typeNames = new HashMap<>();
