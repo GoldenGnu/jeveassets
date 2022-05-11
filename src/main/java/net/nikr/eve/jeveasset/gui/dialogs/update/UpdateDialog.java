@@ -25,7 +25,9 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.swing.ButtonGroup;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
@@ -682,17 +684,17 @@ public class UpdateDialog extends JDialogCentered {
 				}
 				final Date start = lastUpdate;
 				List<UpdateTask> updateTasks = new ArrayList<>();
-				if (jMarketOrders.isSelected()
-						|| jJournal.isSelected()
-						|| jTransactions.isSelected()
-						|| jIndustryJobs.isSelected()
+				if (jAssets.isSelected()
 						|| jAccountBalance.isSelected()
-						|| jContracts.isSelected()
-						|| jAssets.isSelected()
 						|| jBlueprints.isSelected()
 						|| jBookmarks.isSelected()
-						|| jSkills.isSelected()
 						|| jContainerLogs.isSelected()
+						|| jContracts.isSelected()
+						|| jIndustryJobs.isSelected()
+						|| jJournal.isSelected()
+						|| jMarketOrders.isSelected()
+						|| jTransactions.isSelected()
+						|| jSkills.isSelected()
 						) {
 					updateTasks.add(new Step1Task(program.getProfileManager()));
 					updateTasks.add(new Step2Task(program.getProfileManager(),
@@ -711,9 +713,9 @@ public class UpdateDialog extends JDialogCentered {
 							jAssets.isSelected()));
 				}
 				if (jContracts.isSelected()) {
-					updateTasks.add(new Step4Task(program.getProfileManager(), jContracts.isSelected()));
+					updateTasks.add(new Step4Task(program.getProfileManager()));
 				}
-				if (jContractPricesAll.isSelected() || jContractPricesNew.isSelected()) {
+				if (jContractPricesAll.isSelected() || jContractPricesNew.isSelected())  {
 					updateTasks.add(new ContractPricesTask(program.getProfileData(), jContractPricesAll.isSelected()));
 				}
 				if (jPriceDataAll.isSelected() || jPriceDataNew.isSelected()) {
@@ -777,16 +779,11 @@ public class UpdateDialog extends JDialogCentered {
 
 	public static class Step1Task extends UpdateTask {
 
-		private final List<Runnable> updates = new ArrayList<>();
 		private final ProfileManager profileManager;
 
 		public Step1Task(final ProfileManager profileManager) {
 			super(DialoguesUpdate.get().step1());
 			this.profileManager = profileManager;
-			//Esi
-			for (EsiOwner esiOwner : profileManager.getEsiOwners()) {
-				updates.add(new EsiOwnerGetter(this, esiOwner));
-			}
 		}
 
 		@Override
@@ -810,140 +807,158 @@ public class UpdateDialog extends JDialogCentered {
 					addError("Migrated EveKit accounts can safely be deleted", "Delete EveApi accounts in the account manager:\r\nOptions > Accounts... > Edit");
 				}
 			}
+			//Esi
+			List<Runnable> updates = new ArrayList<>();
+			for (EsiOwner esiOwner : profileManager.getEsiOwners()) {
+				updates.add(new EsiOwnerGetter(this, esiOwner));
+			}
 			ThreadWoker.start(this, updates);
 		}
 	}
 
 	public static class Step2Task extends UpdateTask {
 
-		private final List<Runnable> updates = new ArrayList<>();
+		private final ProfileManager profileManager;
+		private final boolean assets;
+		private final boolean accountBalance;
+		private final boolean blueprints;
+		private final boolean bookmarks;
+		private final boolean containerLogs;
+		private final boolean contracts;
+		private final boolean industryJobs;
+		private final boolean journal;
+		private final boolean marketOrders;
+		private final boolean transactions;
+		private final boolean skills;
 
-		public Step2Task(final ProfileManager profileManager, final boolean assets, final boolean balance, final boolean blueprints, final boolean bookmarks, final boolean container, final boolean contracts, final boolean industry, final boolean journal, final boolean orders, final boolean transactions, final boolean skills) {
+		public Step2Task(final ProfileManager profileManager,
+								final boolean assets,
+								final boolean accountBalance,
+								final boolean blueprints,
+								final boolean bookmarks,
+								final boolean containerLogs,
+								final boolean contracts,
+								final boolean industryJobs,
+								final boolean journal,
+								final boolean marketOrders,
+								final boolean transactions,
+								final boolean skills) {
 			super(DialoguesUpdate.get().step2());
-			if (balance) {
-				//Esi
-				for (EsiOwner esiOwner : profileManager.getEsiOwners()) {
-					updates.add(new EsiAccountBalanceGetter(this, esiOwner));
-				}
-			}
-			if (assets) {
-				//Esi
-				for (EsiOwner esiOwner : profileManager.getEsiOwners()) {
-					updates.add(new EsiAssetsGetter(this, esiOwner));
-					if (esiOwner.isCorporation()) {
-						updates.add(new EsiDivisionsGetter(this, esiOwner));
-					}
-				}
-			}
-			if (industry) {
-				//Esi
-				for (EsiOwner esiOwner : profileManager.getEsiOwners()) {
-					updates.add(new EsiIndustryJobsGetter(this, esiOwner));
-				}
-			}
-			if (orders) {
-				//Esi
-				for (EsiOwner esiOwner : profileManager.getEsiOwners()) {
-					updates.add(new EsiMarketOrdersGetter(this, esiOwner, Settings.get().isMarketOrderHistory()));
-				}
-			}
-			if (journal) {
-				//Esi
-				for (EsiOwner esiOwner : profileManager.getEsiOwners()) {
-					updates.add(new EsiJournalGetter(this, esiOwner, Settings.get().isJournalHistory()));
-				}
-			}
-			if (transactions) {
-				//Esi
-				for (EsiOwner esiOwner : profileManager.getEsiOwners()) {
-					updates.add(new EsiTransactionsGetter(this, esiOwner, Settings.get().isTransactionHistory()));
-				}
-			}
-			if (contracts) {
-				//Esi
-				for (EsiOwner esiOwner : profileManager.getEsiOwners()) {
-					updates.add(new EsiContractsGetter(this, esiOwner, Settings.get().isContractHistory()));
-				}
-			}
-			if (blueprints) {
-				//Esi
-				for (EsiOwner esiOwner : profileManager.getEsiOwners()) {
-					updates.add(new EsiBlueprintsGetter(this, esiOwner));
-				}
-			}
-			if (container) {
-				//Esi
-				for (EsiOwner esiOwner : profileManager.getEsiOwners()) {
-					updates.add(new EsiContainerLogsGetter(this, esiOwner));
-				}
-			}
-			if (bookmarks) {
-				//Esi
-				for (EsiOwner esiOwner : profileManager.getEsiOwners()) {
-					updates.add(new EsiBookmarksGetter(this, esiOwner));
-				}
-			}
-			if (skills) {
-				//Esi
-				for (EsiOwner esiOwner : profileManager.getEsiOwners()) {
-					updates.add(new EsiSkillGetter(this, esiOwner));
-				}
-			}
+			this.profileManager = profileManager;
+			this.assets = assets;
+			this.accountBalance = accountBalance;
+			this.blueprints = blueprints;
+			this.bookmarks = bookmarks;
+			this.containerLogs = containerLogs;
+			this.contracts = contracts;
+			this.industryJobs = industryJobs;
+			this.journal = journal;
+			this.marketOrders = marketOrders;
+			this.transactions = transactions;
+			this.skills = skills;
 		}
 
 		@Override
 		public void update() {
 			setIcon(null);
+			//Esi
+			List<Runnable> updates = new ArrayList<>();
+			for (EsiOwner esiOwner : profileManager.getEsiOwners()) {
+				if (accountBalance) {
+					updates.add(new EsiAccountBalanceGetter(this, esiOwner));
+				}
+				if (assets) {
+					updates.add(new EsiAssetsGetter(this, esiOwner));
+					if (esiOwner.isCorporation()) {
+						updates.add(new EsiDivisionsGetter(this, esiOwner));
+					}
+				}
+				if (industryJobs) {
+					updates.add(new EsiIndustryJobsGetter(this, esiOwner));
+				}
+				if (marketOrders) {
+					updates.add(new EsiMarketOrdersGetter(this, esiOwner, Settings.get().isMarketOrderHistory()));
+				}
+				if (journal) {
+					updates.add(new EsiJournalGetter(this, esiOwner, Settings.get().isJournalHistory()));
+				}
+				if (transactions) {
+					updates.add(new EsiTransactionsGetter(this, esiOwner, Settings.get().isTransactionHistory()));
+				}
+				if (containerLogs) {
+					updates.add(new EsiContainerLogsGetter(this, esiOwner));
+				}
+				if (contracts) {
+					updates.add(new EsiContractsGetter(this, esiOwner, Settings.get().isContractHistory()));
+				}
+				if (blueprints) {
+					updates.add(new EsiBlueprintsGetter(this, esiOwner));
+				}
+				if (bookmarks) {
+					updates.add(new EsiBookmarksGetter(this, esiOwner));
+				}
+				if (skills) {
+					updates.add(new EsiSkillGetter(this, esiOwner));
+				}
+			}
 			ThreadWoker.start(this, updates);
 		}
 	}
 
 	public static class Step3Task extends UpdateTask {
 
-		private final List<Runnable> updates = new ArrayList<>();
+		private final ProfileManager profileManager;
+		private final boolean assets;
+		private final Map<EsiOwner, Date> assetNextUpdate = new HashMap<>();
 
 		public Step3Task(final ProfileManager profileManager, final boolean assets) {
 			super(DialoguesUpdate.get().step3());
+			this.profileManager = profileManager;
+			this.assets = assets;
+			for (EsiOwner esiOwner : profileManager.getEsiOwners()) {
+				assetNextUpdate.put(esiOwner, esiOwner.getAssetNextUpdate());
+			}
+		}
+
+		@Override
+		public void update() {
+			setIcon(null);
+			List<Runnable> updates = new ArrayList<>();
 			//Locations
 			if (assets) {
 				//Esi
 				for (EsiOwner esiOwner : profileManager.getEsiOwners()) {
 					updates.add(new EsiLocationsGetter(this, esiOwner));
-					updates.add(new EsiShipGetter(this, esiOwner));
-					updates.add(new EsiPlanetaryInteractionGetter(this, esiOwner));
+					updates.add(new EsiShipGetter(this, esiOwner, assetNextUpdate.getOrDefault(esiOwner, Settings.getNow())));
+					updates.add(new EsiPlanetaryInteractionGetter(this, esiOwner, assetNextUpdate.getOrDefault(esiOwner, Settings.getNow())));
 				}
 			}
 			updates.add(new EsiFactionWarfareGetter(this));
 			//char/corp/alliance IDs to names (ESI)
 			updates.add(new EsiNameGetter(this, profileManager.getOwnerTypes()));
-		}
-
-		@Override
-		public void update() {
-			setIcon(null);
 			ThreadWoker.start(this, updates);
 		}
 	}
-
+	
 	public static class Step4Task extends UpdateTask {
 
-		private final List<Runnable> updates = new ArrayList<>();
+		private final ProfileManager profileManager;
 
-		public Step4Task(final ProfileManager profileManager, final boolean contracts) {
+		public Step4Task(final ProfileManager profileManager) {
 			super(DialoguesUpdate.get().step4());
-			//Contract Items
-			if (contracts) {
-				//Esi
-				EsiContractItemsGetter.reset();
-				for (EsiOwner esiOwner : profileManager.getEsiOwners()) {
-					updates.add(new EsiContractItemsGetter(this, esiOwner, profileManager.getEsiOwners()));
-				}
-			}
+			this.profileManager = profileManager;
 		}
 
 		@Override
 		public void update() {
 			setIcon(null);
+			//Contract Items
+			//Esi
+			List<Runnable> updates = new ArrayList<>();
+			EsiContractItemsGetter.reset();
+			for (EsiOwner esiOwner : profileManager.getEsiOwners()) {
+				updates.add(new EsiContractItemsGetter(this, esiOwner, profileManager.getEsiOwners()));
+			}
 			ThreadWoker.start(this, updates, false);
 		}
 	}
