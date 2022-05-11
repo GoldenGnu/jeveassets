@@ -37,8 +37,8 @@ import net.troja.eve.esi.model.CharacterShipResponse;
 
 public class EsiShipGetter extends AbstractEsiGetter {
 
-	public EsiShipGetter(UpdateTask updateTask, EsiOwner owner) {
-		super(updateTask, owner, false, owner.getAssetNextUpdate(), TaskType.SHIP);
+	public EsiShipGetter(UpdateTask updateTask, EsiOwner owner, Date assetNextUpdate) {
+		super(updateTask, owner, false, assetNextUpdate, TaskType.SHIP);
 	}
 
 	@Override

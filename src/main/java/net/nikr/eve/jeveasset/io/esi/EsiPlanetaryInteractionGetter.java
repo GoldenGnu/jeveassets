@@ -40,8 +40,8 @@ import net.troja.eve.esi.model.PlanetResponse;
 
 public class EsiPlanetaryInteractionGetter extends AbstractEsiGetter {
 
-	public EsiPlanetaryInteractionGetter(UpdateTask updateTask, EsiOwner esiOwner) {
-		super(updateTask, esiOwner, false, esiOwner.getAssetNextUpdate(), TaskType.PLANETARY_INTERACTION);
+	public EsiPlanetaryInteractionGetter(UpdateTask updateTask, EsiOwner esiOwner, Date assetNextUpdate) {
+		super(updateTask, esiOwner, false, assetNextUpdate, TaskType.PLANETARY_INTERACTION);
 	}
 
 	@Override
