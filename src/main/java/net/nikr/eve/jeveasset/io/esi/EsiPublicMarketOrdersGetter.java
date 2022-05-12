@@ -131,13 +131,13 @@ public class EsiPublicMarketOrdersGetter extends AbstractEsiGetter {
 						});
 					} catch (ApiException ex) {
 						if (ex.getCode() == 403 && ex.getResponseBody().toLowerCase().contains("market access denied")) {
-							System.out.println(ex.getResponseBody() + "|" + ex.getMessage());
+							LOG.warn(ex.getMessage() + ":\n" + ex.getResponseBody());
 							return null;
 						} else {
 							throw ex;
 						}
 					} finally {
-						setProgressAll(input.getStructureIDs().size(), count.incrementAndGet(), 40, 80);
+						setProgressAll(input.getStructureIDs().size(), count.incrementAndGet(), 40, 90);
 					}
 				}
 			});
@@ -161,6 +161,7 @@ public class EsiPublicMarketOrdersGetter extends AbstractEsiGetter {
 			Settings.get().setPublicMarketOrdersLastUpdate(lastUpdate);
 			Settings.unlock("Public Orders (last update)");
 		}
+		setProgressAll(100, 100, 90, 100);
 	}
 
 	private void setProgressAll(final float progressEnd, final float progressNow, final int minimum, final int maximum) {
