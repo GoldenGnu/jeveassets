@@ -74,6 +74,7 @@ import net.nikr.eve.jeveasset.data.settings.ColorSettings;
 import net.nikr.eve.jeveasset.data.settings.Colors;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.types.LocationType;
+import net.nikr.eve.jeveasset.gui.dialogs.update.StructureUpdateDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.update.TaskDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
@@ -139,9 +140,10 @@ public class MarketOrdersTab extends JMainTabPrimary {
 	private final MarketOrdersErrorDialog jMarketOrdersErrorDialog;
 	private final Timer timer;
 	private final FileListener fileListener;
-	private java.util.Timer updateTimer;
 	private static Date lastLogUpdate = null;
 	private static String clipboardData = null;
+	private java.util.Timer updateTimer;
+	private boolean showUnknownLocationsWarning = true;
 
 	//Table
 	private final MarketOrdersFilterControl filterControl;
@@ -506,6 +508,29 @@ public class MarketOrdersTab extends JMainTabPrimary {
 		jUpdate.setText(TabsOrders.get().updateOutbidUpdating());
 		jUpdate.setEnabled(false);
 		OutbidProcesserInput input = new OutbidProcesserInput(program.getProfileData(), Settings.get().getOutbidOrderRange());
+		if (input.hasUnknownLocations() && showUnknownLocationsWarning) {
+			showUnknownLocationsWarning = false; //Only shown once per run
+			if (StructureUpdateDialog.structuresUpdatable(program)) { //Strctures updatable
+				//Ask to update structures
+				int returnValue = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), TabsOrders.get().unknownLocationsMsg(), TabsOrders.get().unknownLocationsTitle(), JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+				if (returnValue == JOptionPane.OK_OPTION) { //Do update structures
+					//Show structures update dialog
+					program.showUpdateStructuresDialog();
+					//Wait for structures update to be completed
+					while (program.getStatusPanel().updateing(StatusPanel.UpdateType.STRUCTURE)) {
+						try {
+							Thread.sleep(500);
+						} catch (InterruptedException ex) {
+							break; //Better safe than sorry...
+						}
+					}
+					//Continue with the outbid update
+				}
+			} else { //Strctures not updatable
+				//Show help text about how to update later
+				JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsOrders.get().unknownLocationsMsgLater(), TabsOrders.get().unknownLocationsTitle(), JOptionPane.PLAIN_MESSAGE);
+			}
+		}
 		if (input.getRegionIDs().isEmpty()) {
 			LOG.info("no active orders found");
 			if (jAutoUpdate.isSelected()) {
