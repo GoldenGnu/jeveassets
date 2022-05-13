@@ -496,6 +496,14 @@ public class Program implements ActionListener {
 		return updater.checkDataUpdate(localData);
 	}
 
+	public final void showUpdateStructuresDialog() {
+		if (getStatusPanel().updateing(UpdateType.STRUCTURE)) {
+			JOptionPane.showMessageDialog(getMainWindow().getFrame(), GuiFrame.get().updatingInProgressMsg(), GuiFrame.get().updatingInProgressTitle(), JOptionPane.PLAIN_MESSAGE);
+		} else {
+			updateStructures(null);
+		}
+	}
+
 	public final void updateMarketOrdersWithProgress(OutbidProcesserOutput output) {
 		JLockWindow jLockWindow = new JLockWindow(getMainWindow().getFrame());
 		jLockWindow.show(GuiShared.get().updating(), new LockWorkerAdaptor() {
@@ -1016,11 +1024,7 @@ public class Program implements ActionListener {
 		} else if (MainMenuAction.UPDATE.name().equals(e.getActionCommand())) { //Update
 			updateDialog.setVisible(true);
 		} else if (MainMenuAction.UPDATE_STRUCTURE.name().equals(e.getActionCommand())) {
-			if (getStatusPanel().updateing(UpdateType.STRUCTURE)) {
-				JOptionPane.showMessageDialog(getMainWindow().getFrame(), GuiFrame.get().updatingInProgressMsg(), GuiFrame.get().updatingInProgressTitle(), JOptionPane.PLAIN_MESSAGE);
-			} else {
-				updateStructures(null);
-			}
+			showUpdateStructuresDialog();
 		} else if (MainMenuAction.ABOUT.name().equals(e.getActionCommand())) { //Others
 			showAbout();
 		} else if (MainMenuAction.SEND_BUG_REPORT.name().equals(e.getActionCommand())) {
