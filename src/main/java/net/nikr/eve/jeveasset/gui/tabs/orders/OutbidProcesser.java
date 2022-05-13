@@ -224,8 +224,9 @@ public class OutbidProcesser {
 		private final MarketOrderRange sellOrderRange;
 		private UniverseApi structuresApi = null;
 		private MarketApi marketApi = null;
+		private boolean unknownLocations = false;
 
-		public OutbidProcesserInput(ProfileData profileData, MarketOrderRange sellOrderRange) {
+		public OutbidProcesserInput(ProfileData profileData, MarketOrderRange sellOrderRange) {	
 			this.sellOrderRange = sellOrderRange;
 			for (OwnerType ownerType : profileData.getOwners().values()) { //Copy = thread safe
 				synchronized (ownerType) {
@@ -244,7 +245,8 @@ public class OutbidProcesser {
 							set.add(marketOrder);
 							//RegionIDs
 							MyLocation location = marketOrder.getLocation();
-							if (location == null) {
+							if (location == null || location.isEmpty()) { //Unknown Location
+								unknownLocations = true;
 								continue;
 							}
 							Integer regionID = RawConverter.toInteger(location.getRegionID());
@@ -266,6 +268,10 @@ public class OutbidProcesser {
 					}
 				}
 			}
+		}
+
+		public boolean hasUnknownLocations() {
+			return unknownLocations;
 		}
 
 		public void addOrders(Map<Integer, Set<RawPublicMarketOrder>> orders, Date date) {
