@@ -228,32 +228,36 @@ public class CliExport {
 				}
 				if (!ok) {
 					LOG.error(tool.getName() + " export failed");
-					fails--;
+					fails++;
 				} else {
 					LOG.info(tool.getName() + " data exported");
 				}
 			}
 		}
 		StringBuilder builder = new StringBuilder();
-		builder.append("Data exported");
-		if (fails == 0) {
-			builder.append(" successfully");
+		if (CliOptions.get().getExportSettings().size() == fails) {
+			builder.append("Failed to export data");
 		} else {
-			builder.append("with ");
-			builder.append(fails);
-			builder.append(" error");
-			if (fails > 1) {
-				builder.append("s");
+			builder.append("Data exported");
+			if (fails == 0) {
+				builder.append(" successfully");
+			} else {
+				builder.append(" with ");
+				builder.append(fails);
+				builder.append(" error");
+				if (fails > 1) {
+					builder.append("s");
+				}
 			}
+			builder.append(" to ");
+			builder.append(CliOptions.get().getOutputDirectory());
 		}
-		builder.append(" to ");
-		builder.append(CliOptions.get().getOutputDirectory());
 		if (fails == 0) {
 			LOG.info(builder.toString());
 		} else {
 			LOG.warn(builder.toString());
 		}
-		return fails;
+		return -fails; //Return negative exit code
 	}
 
 	private boolean exportLoadout(ProfileManager profileManager, ProfileData profileData, ExportSettings exportSettings, String toolName) {
