@@ -307,7 +307,7 @@ public class Settings {
 		filter = new ArrayList<>();
 		filter.add(new Filter(Filter.LogicType.AND, IndustryJobTableFormat.STATE, Filter.CompareType.EQUALS, MyIndustryJob.IndustryJobState.STATE_DELIVERED.toString()));
 		industryJobsTabDefaultFilters.put(TabsJobs.get().completed(), filter);
-		defaultTableFilters.put(IndustryJobsTab.NAME, transactionsDefaultFilters);
+		defaultTableFilters.put(IndustryJobsTab.NAME, industryJobsTabDefaultFilters);
 	}
 
 	public static Settings get() {
