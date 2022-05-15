@@ -254,30 +254,31 @@ class FilterGui<E> {
 	}
 
 	protected String getCurrentFilterName() {
-		String filterName = GuiShared.get().filterUntitled();
+		if (isEmpty()) {
+			return GuiShared.get().filterEmpty();
+		}
 		List<Filter> filters = getFilters();
-		if (filters.isEmpty()) {
-			filterName = GuiShared.get().filterEmpty();
-		} else {
-			if (filterControl.getAllFilters().containsValue(filters)) {
-				for (Map.Entry<String, List<Filter>> entry : filterControl.getAllFilters().entrySet()) {
-					if (entry.getValue().equals(filters)) {
-						filterName = entry.getKey();
-						break;
-					}
+		if (filterControl.getAllFilters().containsValue(filters)) {
+			for (Map.Entry<String, List<Filter>> entry : filterControl.getAllFilters().entrySet()) {
+				if (entry.getValue().equals(filters)) {
+					return entry.getKey();
 				}
 			}
 		}
-		return filterName;
+		return GuiShared.get().filterUntitled();
 	}
 
 	protected List<Filter> getFilters() {
 		List<Filter> filters = new ArrayList<>();
 		for (FilterPanel<E> filterPanel : filterPanels) {
-			Filter filter = filterPanel.getFilter();
-			filters.add(filter);
+			filters.add(filterPanel.getFilter());
 		}
 		return filters;
+	}
+
+	private boolean isEmpty() {
+		//One filter that is empty. Otherwise not empty
+		return filterPanels.size() == 1 && filterPanels.get(0).getFilter().isEmpty();
 	}
 
 	private List<FilterMatcher<E>> getMatchers() {
@@ -413,7 +414,7 @@ class FilterGui<E> {
 	}
 
 	private void clearEmpty() {
-		if (filterPanels.size() == 1 && filterPanels.get(0).getFilter().isEmpty()) {
+		if (isEmpty()) {
 			remove(filterPanels.get(0));
 		}
 	}
@@ -553,6 +554,7 @@ class FilterGui<E> {
 		public void actionPerformed(final ActionEvent e) {
 			if (FilterGuiAction.ADD.name().equals(e.getActionCommand())) {
 				add();
+				updateShowing();
 				fireSettingsUpdate();
 			} else if (FilterGuiAction.CLEAR.name().equals(e.getActionCommand())) {
 				clear();
@@ -563,14 +565,13 @@ class FilterGui<E> {
 				Settings.get().getCurrentTableFiltersShown().put(filterControl.getName(), isFilterShown());
 				fireSettingsUpdate();
 			} else if (FilterGuiAction.SAVE.name().equals(e.getActionCommand())) {
-				List<Filter> filters = getFilters();
-				if (filters.isEmpty()) {
+				if (isEmpty()) {
 					JOptionPane.showMessageDialog(jFrame, GuiShared.get().nothingToSave(), GuiShared.get().saveFilter(), JOptionPane.PLAIN_MESSAGE);
 				} else {
 					String name = filterSave.show(new ArrayList<>(filterControl.getFilters().keySet()), new ArrayList<>(filterControl.getDefaultFilters().keySet()));
 					if (name != null && !name.isEmpty()) {
 						Settings.lock("Filter (New)"); //Lock for Filter (New)
-						filterControl.getFilters().put(name, filters);
+						filterControl.getFilters().put(name, getFilters());
 						Settings.unlock("Filter (New)"); //Unlock for Filter (New)
 						saveSettings("Filter (New)"); //Save Filter (New)
 						updateFilters();
@@ -587,4 +588,5 @@ class FilterGui<E> {
 			}
 		}
 	}
+
 }
