@@ -226,7 +226,7 @@ public class OutbidProcesser {
 		private MarketApi marketApi = null;
 		private boolean unknownLocations = false;
 
-		public OutbidProcesserInput(ProfileData profileData, MarketOrderRange sellOrderRange) {	
+		public OutbidProcesserInput(ProfileData profileData, MarketOrderRange sellOrderRange) {
 			this.sellOrderRange = sellOrderRange;
 			for (OwnerType ownerType : profileData.getOwners().values()) { //Copy = thread safe
 				synchronized (ownerType) {
