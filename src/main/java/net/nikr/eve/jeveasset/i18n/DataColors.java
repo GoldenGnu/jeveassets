@@ -62,6 +62,15 @@ public abstract class DataColors extends Bundle {
 	public abstract String marketOrdersNew();
 	public abstract String industryJobsDelivered();
 	public abstract String industryJobsDone();
+	public abstract String industryJobsManufacturing();
+	public abstract String industryJobsResearchingTechnology();
+	public abstract String industryJobsResearchingTimeProductivity();
+	public abstract String industryJobsResearchingMeterialProductivity();
+	public abstract String industryJobsCopying();
+	public abstract String industryJobsDuplicating();
+	public abstract String industryJobsReverseEngineering();
+	public abstract String industryJobsReverseInvention();
+	public abstract String industryJobsReactions();
 	public abstract String industrySlotsFree();
 	public abstract String industrySlotsDone();
 	public abstract String industrySlotsFull();
