@@ -228,16 +228,13 @@ public class AssetsTab extends JMainTabPrimary implements TagUpdate {
 	}
 
 	public boolean isFiltersEmpty() {
-		return getFilters().isEmpty();
+		return filterControl.isFiltersEmpty();
 	}
 	public void addFilter(final Filter filter) {
 		filterControl.addFilter(filter);
 	}
 	public void addFilters(final List<Filter> filters) {
 		filterControl.addFilters(filters);
-	}
-	private List<Filter> getFilters() {
-		return filterControl.getCurrentFilters();
 	}
 	public void clearFilters() {
 		filterControl.clearCurrentFilters();

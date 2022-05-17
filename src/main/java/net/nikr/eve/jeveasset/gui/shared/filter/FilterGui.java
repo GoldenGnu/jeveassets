@@ -213,7 +213,7 @@ class FilterGui<E> {
 	}
 
 	protected String getCurrentFilterName() {
-		if (isEmpty()) {
+		if (isFiltersEmpty()) {
 			return GuiShared.get().filterEmpty();
 		}
 		List<Filter> filters = getFilters();
@@ -235,7 +235,7 @@ class FilterGui<E> {
 		return filters;
 	}
 
-	private boolean isEmpty() {
+	protected boolean isFiltersEmpty() {
 		//One filter that is empty. Otherwise not empty
 		return filterPanels.size() == 1 && filterPanels.get(0).getFilter().isEmpty();
 	}
@@ -373,7 +373,7 @@ class FilterGui<E> {
 	}
 
 	private void clearEmpty() {
-		if (isEmpty()) {
+		if (isFiltersEmpty()) {
 			remove(filterPanels.get(0));
 		}
 	}
@@ -524,7 +524,7 @@ class FilterGui<E> {
 				Settings.get().getCurrentTableFiltersShown().put(filterControl.getName(), isFilterShown());
 				fireSettingsUpdate();
 			} else if (FilterGuiAction.SAVE.name().equals(e.getActionCommand())) {
-				if (isEmpty()) {
+				if (isFiltersEmpty()) {
 					JOptionPane.showMessageDialog(jFrame, GuiShared.get().nothingToSave(), GuiShared.get().saveFilter(), JOptionPane.PLAIN_MESSAGE);
 				} else {
 					String name = filterSave.show(new ArrayList<>(filterControl.getFilters().keySet()), new ArrayList<>(filterControl.getDefaultFilters().keySet()));
