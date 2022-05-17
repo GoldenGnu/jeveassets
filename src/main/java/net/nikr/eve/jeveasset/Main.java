@@ -152,7 +152,7 @@ public final class Main {
 		//Update
 		if (CliOptions.get().isUpdate()) {
 			CliUpdate update = new CliUpdate();
-			update.update();
+			exitCode = update.update();
 		}
 		//Export
 		if (CliOptions.get().isExport()) {
