@@ -165,6 +165,10 @@ public abstract class UpdateTask extends SwingWorker<Void, Void> {
 		warning = true;
 	}
 
+	public boolean hasError() {
+		return error;
+	}
+
 	public boolean hasLog() {
 		return !log.isEmpty();
 	}
