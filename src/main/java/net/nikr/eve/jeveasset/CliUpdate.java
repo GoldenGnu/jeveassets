@@ -41,11 +41,15 @@ import net.nikr.eve.jeveasset.gui.tabs.values.DataSetCreator;
 import net.nikr.eve.jeveasset.io.local.ProfileReader;
 import net.nikr.eve.jeveasset.io.local.ProfileWriter;
 import net.nikr.eve.jeveasset.io.online.PriceDataGetter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class CliUpdate {
 
-	void update() {
+	private static final Logger LOG = LoggerFactory.getLogger(CliUpdate.class);
+
+	int update() {
 		PriceDataGetter priceDataGetter = new PriceDataGetter();
 		priceDataGetter.load();
 
@@ -56,9 +60,12 @@ public class CliUpdate {
 		SplashUpdater.setProgress(0);
 		int count = 0;
 		Date date = Settings.getNow();
+		boolean ok = true;
 		for (Profile profile : profileManager.getProfiles()) {
 			profileManager.setActiveProfile(profile);
-			ProfileReader.load(profile);
+			if (!ProfileReader.load(profile)) {
+				continue; //Error loading profile
+			}
 			ProfileData profileData = new ProfileData(profileManager);
 			profileData.updateEventLists();
 			List<UpdateTask> updateTasks = new ArrayList<>();
@@ -74,7 +81,11 @@ public class CliUpdate {
 						SplashUpdater.setSubProgress(updateTask.getProgress());
 					}
 				});
+				SplashUpdater.setSubProgress(0);
 				updateTask.update();
+				if (updateTask.hasError()) {
+					ok = false;
+				}
 			}
 			//Update tracker locations
 			AssetValue.updateData();
@@ -92,6 +103,13 @@ public class CliUpdate {
 			//Progress
 			count++;
 			SplashUpdater.setProgress( (int)(count * 100.0 / profileManager.getProfiles().size()));
+		}
+		if (ok) {
+			LOG.info("Data updated successfully");
+			return 0;
+		} else {
+			LOG.info("Data updated with errors");
+			return -1; //on error
 		}
 	}
 
