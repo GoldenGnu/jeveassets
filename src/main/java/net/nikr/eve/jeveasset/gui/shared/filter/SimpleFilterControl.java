@@ -21,7 +21,6 @@
 
 package net.nikr.eve.jeveasset.gui.shared.filter;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,7 +33,8 @@ public interface SimpleFilterControl<E> {
 	public default Map<String, List<Filter>> getAllFilters() {
 		return new HashMap<>();
 	}
-	public default List<Filter> getCurrentFilters() {
-		return new ArrayList<>();
+
+	public default boolean isFiltersEmpty() {
+		return true;
 	}
 }

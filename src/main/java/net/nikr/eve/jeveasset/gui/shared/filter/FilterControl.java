@@ -183,9 +183,13 @@ public abstract class FilterControl<E> implements ColumnCache<E>, SimpleFilterCo
 		}
 	}
 
-	@Override
 	public List<Filter> getCurrentFilters() {
 		return gui.getFilters();
+	}
+
+	@Override
+	public boolean isFiltersEmpty() {
+		return gui.isFiltersEmpty();
 	}
 
 	public void clearCurrentFilters() {
