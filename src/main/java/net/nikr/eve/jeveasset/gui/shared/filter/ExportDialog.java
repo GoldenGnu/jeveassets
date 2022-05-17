@@ -642,14 +642,14 @@ public class ExportDialog<E> extends JDialogCentered {
 		if (filterSelection == FilterSelection.NONE) {
 			jNoFilter.setSelected(true);
 			jFilters.setEnabled(false);
-		} else if (filterSelection == FilterSelection.CURRENT && !filterControl.getCurrentFilters().isEmpty()) {
+		} else if (filterSelection == FilterSelection.CURRENT && !filterControl.isFiltersEmpty()) {
 			jCurrentFilter.setSelected(true);
 			jFilters.setEnabled(false);
 		} else if (filterSelection == FilterSelection.SAVED && hasItem(jFilters, filterName)) {
 			jSavedFilter.setSelected(true);
 			jFilters.setEnabled(true);
 		} else {
-			//If we got here then the view selection didn't match the data and we had to default, so reset the value
+			//If we got here then the filter selection didn't match the data and we had to default, so reset the value
 			//in the settings.
 			jNoFilter.setSelected(true);
 			jFilters.setEnabled(false);
@@ -657,7 +657,7 @@ public class ExportDialog<E> extends JDialogCentered {
 		}
 
 		//Filters current
-		if (filterControl.getCurrentFilters().isEmpty()) {
+		if (filterControl.isFiltersEmpty()) {
 			jCurrentFilter.setEnabled(false);
 		} else {
 			jCurrentFilter.setEnabled(true);
