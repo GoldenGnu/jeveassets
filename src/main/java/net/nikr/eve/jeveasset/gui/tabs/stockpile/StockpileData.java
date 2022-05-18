@@ -328,7 +328,7 @@ public class StockpileData extends TableData {
 		try {
 			eventList.getReadWriteLock().writeLock().lock();
 			eventList.removeAll(subpileItems);
-			if (profileManager.getActiveProfile().getStockpileIDs().contains(parent.getId())) {
+			if (profileManager.getStockpileIDs().isShown(parent.getId())) {
 				eventList.addAll(parent.getSubpileItems());
 			}
 		} finally {
