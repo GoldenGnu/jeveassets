@@ -31,8 +31,6 @@ import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.data.profile.Profile.DefaultProfile;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
-import net.nikr.eve.jeveasset.io.local.ProfileReader;
-import net.nikr.eve.jeveasset.io.local.ProfileWriter;
 import net.nikr.eve.jeveasset.io.local.ProfileFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,6 +61,15 @@ public class ProfileManager {
 		return profiles;
 	}
 
+	public boolean containsProfileName(String name) {
+		for (Profile profile : profiles) {
+			if (profile.getName().equalsIgnoreCase(name)) { //Profile names are case insensitive
+				return true;
+			}
+		}
+		return false;
+	}
+
 	public void setProfiles(final List<Profile> profiles) {
 		this.profiles = profiles;
 	}
@@ -71,12 +78,16 @@ public class ProfileManager {
 		this.activeProfile = activeProfile;
 	}
 
+	public StockpileIDs getStockpileIDs() {
+		return activeProfile.getStockpileIDs();
+	}
+
 	public Profile getActiveProfile() {
 		return activeProfile;
 	}
 
 	public void saveProfile() {
-		ProfileWriter.save(activeProfile);
+		activeProfile.save();
 	}
 
 	public List<OwnerType> getOwnerTypes() {
@@ -108,8 +119,7 @@ public class ProfileManager {
 	public void loadActiveProfile() {
 	//Load Profile
 		LOG.info("Loading profile: {}", activeProfile.getName());
-		clear(); //Clear active profile before loading
-		profileLoadError = !ProfileReader.load(activeProfile); //Assets (Must be loaded before the price data)
+		profileLoadError = !activeProfile.load();
 		SplashUpdater.setProgress(40);
 	}
 

@@ -73,7 +73,6 @@ public final class ProfileWriter extends AbstractXmlWriter {
 			LOG.error("Profile not saved " + ex.getMessage(), ex);
 			return false;
 		}
-		writeStockpiles(xmldoc, profile);
 		writeAccounts(xmldoc, profile.getAccounts());
 		writeEveKitOwners(xmldoc, profile.getEveKitOwners());
 		writeEsiOwners(xmldoc, profile.getEsiOwners());
@@ -85,16 +84,6 @@ public final class ProfileWriter extends AbstractXmlWriter {
 		}
 		LOG.info("Profile saved");
 		return true;
-	}
-
-	private void writeStockpiles(final Document xmldoc, final Profile profile) {
-		Element parentNode = xmldoc.createElement("stockpiles");
-		xmldoc.getDocumentElement().appendChild(parentNode);
-		for (Long id : profile.getStockpileIDs()) {
-			Element node = xmldoc.createElement("stockpile");
-			setAttribute(node, "id", id);
-			parentNode.appendChild(node);
-		}
 	}
 
 	private void writeEsiOwners(final Document xmldoc, final List<EsiOwner> esiOwners) {

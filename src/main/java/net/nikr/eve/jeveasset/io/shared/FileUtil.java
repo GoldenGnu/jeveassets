@@ -42,6 +42,7 @@ public class FileUtil extends FileUtilSimple {
 
 	private static final String PATH_ASSET_ADDED = "data" + File.separator + "added.json";
 	private static final String PATH_ASSET_ADDED_DATABASE = "data" + File.separator + "addedsql.db";
+	private static final String PATH_STOCKPILE_IDS_DATABASE = "data" + File.separator + "stockpileids.db";
 	private static final String PATH_TRACKER_DATA = "data" + File.separator + "tracker.json";
 	private static final String PATH_CONTRACT_PRICES = "data" + File.separator + "contract_prices.json";
 	private static final String PATH_SETTINGS = "data" + File.separator + "settings.xml";
@@ -141,6 +142,7 @@ public class FileUtil extends FileUtilSimple {
 			Path trackerFrom = Paths.get(getPathTrackerData());
 			Path assetAddedFrom = Paths.get(getPathAssetAdded());
 			Path assetAddedDatabaseFrom = Paths.get(getPathAssetAddedDatabase());
+			Path stockpileIDsDatabaseFrom = Paths.get(getPathStockpileIDsDatabase());
 			Path citadelFrom = Paths.get(getPathCitadel());
 			Path priceFrom = Paths.get(getPathPriceData());
 			Path profilesFrom = Paths.get(getPathProfilesDirectory());
@@ -151,6 +153,7 @@ public class FileUtil extends FileUtilSimple {
 			Path trackerTo = Paths.get(getPathTrackerData());
 			Path assetAddedTo = Paths.get(getPathAssetAdded());
 			Path assetAddedDatabaseTo = Paths.get(getPathAssetAddedDatabase());
+			Path stockpileIDsDatabaseTo = Paths.get(getPathStockpileIDsDatabase());
 			Path citadelTo = Paths.get(getPathCitadel());
 			Path priceTo = Paths.get(getPathPriceData());
 			Path profilesTo = Paths.get(getPathProfilesDirectory());
@@ -187,6 +190,15 @@ public class FileUtil extends FileUtilSimple {
 				LOG.info("Importing asset added");
 				try {
 					Files.copy(assetAddedDatabaseFrom, assetAddedDatabaseTo);
+					LOG.info("	OK");
+				} catch (IOException ex) {
+					LOG.info("	FAILED");
+				}
+			}
+			if (Files.exists(stockpileIDsDatabaseFrom) && !Files.exists(stockpileIDsDatabaseTo)) {
+				LOG.info("Importing stockpile IDs");
+				try {
+					Files.copy(stockpileIDsDatabaseFrom, stockpileIDsDatabaseTo);
 					LOG.info("	OK");
 				} catch (IOException ex) {
 					LOG.info("	FAILED");
@@ -281,6 +293,10 @@ public class FileUtil extends FileUtilSimple {
 
 	public static String getPathAssetAddedDatabase() {
 		return getLocalFile(PATH_ASSET_ADDED_DATABASE, !CliOptions.get().isPortable());
+	}
+
+	public static String getPathStockpileIDsDatabase() {
+		return getLocalFile(PATH_STOCKPILE_IDS_DATABASE, !CliOptions.get().isPortable());
 	}
 
 	public static String getPathConquerableStations() {
