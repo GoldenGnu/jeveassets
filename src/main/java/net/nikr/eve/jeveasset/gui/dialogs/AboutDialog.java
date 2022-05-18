@@ -74,7 +74,7 @@ public class AboutDialog extends JDialogCentered {
 		}
 
 		JEditorPane jInfo = createEditorPane(
-				  "<b>Version</b><br>"
+				"<b>Version</b><br>"
 				+ "&nbsp;" + Program.PROGRAM_VERSION + "<br>"
 				+ "<br>"
 				+ "<b>Data</b><br>"
