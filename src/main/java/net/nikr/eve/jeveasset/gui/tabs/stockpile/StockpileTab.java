@@ -743,7 +743,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 	public static List<Stockpile> getShownStockpiles(ProfileManager profileManager) {
 		List<Stockpile> shown = new ArrayList<>();
 		for (Stockpile stockpile : Settings.get().getStockpiles()) {
-			if (!profileManager.getActiveProfile().getStockpileIDs().contains(stockpile.getId())) {
+			if (profileManager.getStockpileIDs().isHidden(stockpile.getId())) {
 				continue;
 			}
 			shown.add(stockpile);
@@ -753,8 +753,6 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 
 	public static void addStockpile(Program program, Stockpile stockpile) {
 		Settings.get().getStockpiles().add(stockpile);
-		program.getProfileManager().getActiveProfile().getStockpileIDs().add(stockpile.getId());
-		program.saveProfile();
 	}
 
 	private void exportXml() {
@@ -887,31 +885,37 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 				}
 			} else if (StockpileAction.SHOW_HIDE.name().equals(e.getActionCommand())) { //Shopping list multi
 				List<Stockpile> selected = new ArrayList<>();
+				Set<Long> all = new HashSet<>();
 				for (Stockpile stockpile : Settings.get().getStockpiles()) {
-					if (program.getProfileManager().getActiveProfile().getStockpileIDs().contains(stockpile.getId())) {
+					all.add(stockpile.getId());
+					if (program.getProfileManager().getStockpileIDs().isShown(stockpile.getId())) {
 						selected.add(stockpile);
 					}
 				}
-				program.getProfileManager().getActiveProfile().getStockpileIDs();
 				List<Stockpile> stockpiles = stockpileSelectionDialog.show(Settings.get().getStockpiles(), selected, true);
 				if (stockpiles == null) {
 					return; //Cancel
 				}
-				Set<Long> stockpileIDs = new HashSet<>();
+				Set<Long> hidden = new HashSet<>(all);
 				for (Stockpile stockpile : stockpiles) {
-					stockpileIDs.add(stockpile.getId());
+					hidden.remove(stockpile.getId());
 				}
-				Set<Long> oldValue = program.getProfileManager().getActiveProfile().getStockpileIDs();
-				if (!oldValue.equals(stockpileIDs)) {
-					program.getProfileManager().getActiveProfile().setStockpileIDs(stockpileIDs);
-					program.saveProfile();
+				Set<Long> oldData = program.getProfileManager().getStockpileIDs().getHidden();
+				if (!oldData.equals(hidden)) {
+					//Hide
+					Set<Long> hide = new HashSet<>(hidden); //To be hidden
+					hide.removeAll(oldData); //Remove already hidden
+					//Show
+					Set<Long> show = new HashSet<>(oldData); //Currently hidden
+					show.removeAll(hidden); //Remove still hidden
+					//Update data (must be done after making the removed and added lists)
+					program.getProfileManager().getStockpileIDs().setHidden(hidden);
+					//Update GUI
 					for (Stockpile stockpile : Settings.get().getStockpiles()) {
 						long stockpileID = stockpile.getId();
-						boolean inOld = oldValue.contains(stockpileID);
-						boolean inNew = stockpileIDs.contains(stockpileID);
-						if (inOld && !inNew) { //Hidden
+						if (hide.contains(stockpileID)) { //Hidden
 							removeItems(stockpile.getItems());
-						} else if (!inOld && inNew) { //Shown
+						} else if (show.contains(stockpileID)) { //Shown
 							addStockpile(stockpile);
 						} //Else: Not changed
 					}
@@ -983,8 +987,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 				if (stockpile == null) {
 					return;
 				}
-				program.getProfileManager().getActiveProfile().getStockpileIDs().remove(stockpile.getId());
-				program.saveProfile();
+				program.getProfileManager().getStockpileIDs().hide(stockpile.getId());
 				removeItems(stockpile.getItems());
 			} else if (StockpileCellAction.DELETE_STOCKPILE.name().equals(e.getActionCommand())) { //Delete stockpile
 				Stockpile stockpile = getSelectedStockpile();

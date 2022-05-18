@@ -144,7 +144,7 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 			Long id = getLong(currentNode, "id");
 			stockpileIDs.add(id);
 		}
-		profile.setStockpileIDs(stockpileIDs);
+		profile.getStockpileIDs().setShown(stockpileIDs);
 	}
 
 	private void parseEsiOwners(final Element element, final List<EsiOwner> esiOwners) throws XmlException {

@@ -38,8 +38,6 @@ import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateDialog.Step4Task;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.gui.tabs.values.AssetValue;
 import net.nikr.eve.jeveasset.gui.tabs.values.DataSetCreator;
-import net.nikr.eve.jeveasset.io.local.ProfileReader;
-import net.nikr.eve.jeveasset.io.local.ProfileWriter;
 import net.nikr.eve.jeveasset.io.online.PriceDataGetter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,7 +61,10 @@ public class CliUpdate {
 		boolean ok = true;
 		for (Profile profile : profileManager.getProfiles()) {
 			profileManager.setActiveProfile(profile);
-			if (!ProfileReader.load(profile)) {
+			if (!profile.load()) {
+				LOG.warn("Failed to load profile");
+				count++;
+				SplashUpdater.setProgress( (int)(count * 100.0 / profileManager.getProfiles().size()));
 				continue; //Error loading profile
 			}
 			ProfileData profileData = new ProfileData(profileManager);
@@ -97,7 +98,7 @@ public class CliUpdate {
 			//Save settings
 			Settings.saveSettings();
 			//Save profile
-			ProfileWriter.save(profile);
+			profile.save();
 			//Clean up
 			profile.clear();
 			//Progress
