@@ -80,7 +80,7 @@ public class JIndustryJobsTable extends JAutoColumnTable {
 				case ACTIVITY_COPYING:
 					entry = ColorEntry.INDUSTRY_JOBS_ACTIVITY_COPYING;
 					break;
-				case ACTIVITY_DUPLICATING:	
+				case ACTIVITY_DUPLICATING:
 					entry = ColorEntry.INDUSTRY_JOBS_ACTIVITY_DUPLICATING;
 					break;
 				case ACTIVITY_REVERSE_ENGINEERING:
