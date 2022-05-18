@@ -677,7 +677,7 @@ public class UpdateDialog extends JDialogCentered {
 				if (jContracts.isSelected()) {
 					updateTasks.add(new Step4Task(program.getProfileManager()));
 				}
-				if (jContractPricesAll.isSelected() || jContractPricesNew.isSelected())  {
+				if (jContractPricesAll.isSelected() || jContractPricesNew.isSelected()) {
 					updateTasks.add(new ContractPricesTask(program.getProfileData(), jContractPricesAll.isSelected()));
 				}
 				if (jPriceDataAll.isSelected() || jPriceDataNew.isSelected()) {
