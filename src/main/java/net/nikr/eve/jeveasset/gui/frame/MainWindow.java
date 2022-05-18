@@ -204,7 +204,7 @@ public class MainWindow {
 		if (Settings.get().isSaveToolsOnExit()) {
 			boolean removed = Settings.get().getShowTools().remove(jMainTab.getTitle());
 			if (removed) {
-				program.saveSettings("Hidding Tool");
+				program.saveSettings("Hiding Tool");
 			}
 		}
 	}
