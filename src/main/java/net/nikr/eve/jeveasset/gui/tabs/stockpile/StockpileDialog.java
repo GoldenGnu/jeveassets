@@ -58,7 +58,6 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
-import javax.swing.SwingConstants;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 import javax.swing.event.DocumentEvent;
@@ -726,7 +725,7 @@ public class StockpileDialog extends JDialogCentered {
 						.addComponent(jWarning)
 						.addComponent(jContainer, 0, 0, FIELD_WIDTH)
 						.addComponent(jIncludeContainer)
-						.addComponent(jRemove, 30, 30, 30)
+						.addComponent(jRemove, Program.getIconButtonsWidth(), Program.getIconButtonsWidth(), Program.getIconButtonsWidth())
 				);
 				groupLayout.setVerticalGroup(
 					groupLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
@@ -748,7 +747,7 @@ public class StockpileDialog extends JDialogCentered {
 						.addComponent(jType)
 						.addComponent(jWarning)
 						.addComponent(jSingleton, 0, 0, FIELD_WIDTH)
-						.addComponent(jRemove, 30, 30, 30)
+						.addComponent(jRemove, Program.getIconButtonsWidth(), Program.getIconButtonsWidth(), Program.getIconButtonsWidth())
 				);
 				groupLayout.setVerticalGroup(
 					groupLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
@@ -770,7 +769,7 @@ public class StockpileDialog extends JDialogCentered {
 						.addComponent(jType)
 						.addComponent(jWarning)
 						.addComponent(jFlag, 0, 0, FIELD_WIDTH)
-						.addComponent(jRemove, 30, 30, 30)
+						.addComponent(jRemove, Program.getIconButtonsWidth(), Program.getIconButtonsWidth(), Program.getIconButtonsWidth())
 				);
 				groupLayout.setVerticalGroup(
 					groupLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
@@ -793,7 +792,7 @@ public class StockpileDialog extends JDialogCentered {
 						.addComponent(jType)
 						.addComponent(jWarning)
 						.addComponent(jOwner, 0, 0, FIELD_WIDTH)
-						.addComponent(jRemove, 30, 30, 30)
+						.addComponent(jRemove, Program.getIconButtonsWidth(), Program.getIconButtonsWidth(), Program.getIconButtonsWidth())
 				);
 				groupLayout.setVerticalGroup(
 					groupLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
@@ -1019,7 +1018,7 @@ public class StockpileDialog extends JDialogCentered {
 
 		//MATCH
 			jMatch = new JDropDownButton(Images.EDIT_ADD_WHITE.getIcon());
-			jToolBar.addButton(jMatch, 1, SwingConstants.CENTER);
+			jToolBar.addButtonIcon(jMatch);
 
 			JRadioButtonMenuItem jMatchInclude = new JRadioButtonMenuItem(TabsStockpile.get().matchInclude(), Images.EDIT_ADD_WHITE.getIcon());
 			jMatchInclude.setHorizontalAlignment(JButton.LEFT);
@@ -1235,7 +1234,7 @@ public class StockpileDialog extends JDialogCentered {
 						.addComponent(jLocationType)
 						.addComponent(jLocationWarning)
 						.addComponent(jLocation, 0, 0, FIELD_WIDTH)
-						.addComponent(jOptions, 30, 30, 30)
+						.addComponent(jOptions, Program.getIconButtonsWidth(), Program.getIconButtonsWidth(), Program.getIconButtonsWidth())
 					)
 					.addComponent(jFilters)
 					.addGroup(groupLayout.createSequentialGroup()

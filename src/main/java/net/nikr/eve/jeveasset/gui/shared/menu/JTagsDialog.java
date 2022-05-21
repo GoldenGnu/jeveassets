@@ -112,7 +112,7 @@ public class JTagsDialog extends JDialogCentered {
 				.addComponent(jLabel, 250, 250, Integer.MAX_VALUE)
 				.addGroup(layout.createSequentialGroup()
 					.addComponent(jTextField, 200, 200, 200)
-					.addComponent(jColor, 30, 30, 30)
+					.addComponent(jColor, Program.getIconButtonsWidth(), Program.getIconButtonsWidth(), Program.getIconButtonsWidth())
 				)
 				.addGroup(layout.createSequentialGroup()
 					.addComponent(jOK, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())

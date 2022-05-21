@@ -457,7 +457,7 @@ public class TrackerTab extends JMainTabSecondary {
 		JLabel jFilter = new JLabel(TabsTracker.get().helpNewData());
 		jFilter.setIcon(new ShapeIcon(FILTER_AND_DEFAULT));
 
-		JDropDownButton jSettings = new JDropDownButton(Images.DIALOG_SETTINGS.getIcon());
+		JDropDownButton jSettings = new JDropDownButton(Images.DIALOG_SETTINGS.getIcon(), JDropDownButton.RIGHT);
 
 		jImportFile = new JMenuItem(TabsTracker.get().importFile(), Images.EDIT_IMPORT.getIcon());
 		jImportFile.setSelected(true);
@@ -595,7 +595,7 @@ public class TrackerTab extends JMainTabSecondary {
 						.addGap(20)
 						.addComponent(jFilter)
 						.addGap(20, 20, Integer.MAX_VALUE)
-						.addComponent(jSettings)
+						.addComponent(jSettings, Program.getIconButtonsWidth(), Program.getIconButtonsWidth(), Program.getIconButtonsWidth())
 						.addGap(6)
 					)
 					.addComponent(jChartPanel)
