@@ -60,6 +60,7 @@ import net.nikr.eve.jeveasset.data.profile.ProfileManager;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.sde.StaticData;
 import net.nikr.eve.jeveasset.data.settings.AddedData;
+import net.nikr.eve.jeveasset.data.settings.ContractPriceManager;
 import net.nikr.eve.jeveasset.data.settings.LogManager;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.TrackerData;
@@ -80,16 +81,19 @@ import net.nikr.eve.jeveasset.gui.frame.StatusPanel.UpdateType;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Updatable;
 import net.nikr.eve.jeveasset.gui.shared.components.JLockWindow;
+import net.nikr.eve.jeveasset.gui.shared.components.JLockWindow.LockWorkerAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
 import net.nikr.eve.jeveasset.gui.tabs.assets.AssetsTab;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractsTab;
 import net.nikr.eve.jeveasset.gui.tabs.items.ItemsTab;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJobsTab;
+import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustrySlotsTab;
 import net.nikr.eve.jeveasset.gui.tabs.journal.JournalTab;
 import net.nikr.eve.jeveasset.gui.tabs.loadout.LoadoutsTab;
 import net.nikr.eve.jeveasset.gui.tabs.log.LogTab;
 import net.nikr.eve.jeveasset.gui.tabs.materials.MaterialsTab;
 import net.nikr.eve.jeveasset.gui.tabs.orders.MarketOrdersTab;
+import net.nikr.eve.jeveasset.gui.tabs.orders.OutbidProcesser.OutbidProcesserOutput;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewTab;
 import net.nikr.eve.jeveasset.gui.tabs.reprocessed.ReprocessedTab;
 import net.nikr.eve.jeveasset.gui.tabs.routing.RoutingTab;
@@ -102,10 +106,6 @@ import net.nikr.eve.jeveasset.gui.tabs.values.ValueRetroTab;
 import net.nikr.eve.jeveasset.gui.tabs.values.ValueTableTab;
 import net.nikr.eve.jeveasset.i18n.GuiFrame;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
-import net.nikr.eve.jeveasset.data.settings.ContractPriceManager;
-import net.nikr.eve.jeveasset.gui.shared.components.JLockWindow.LockWorkerAdaptor;
-import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustrySlotsTab;
-import net.nikr.eve.jeveasset.gui.tabs.orders.OutbidProcesser.OutbidProcesserOutput;
 import net.nikr.eve.jeveasset.io.online.PriceDataGetter;
 import net.nikr.eve.jeveasset.io.online.Updater;
 import net.nikr.eve.jeveasset.io.shared.DesktopUtil;
@@ -175,8 +175,8 @@ public class Program implements ActionListener {
 	private final String localData;
 
 	public Program() {
-		if (CliOptions.get().isDebug()) {
-			LOG.debug("Force Update: {} Force No Update: {}", CliOptions.get().isForceUpdate(), CliOptions.get().isForceNoUpdate());
+		if (CliOptions.get().isDebug() || CliOptions.get().isEDTdebug()) {
+			LOG.info("ForceUpdate: {} NoUpdate: {} Debug: {} EDTDebug: {}", CliOptions.get().isForceUpdate(), CliOptions.get().isForceNoUpdate(), CliOptions.get().isDebug(), CliOptions.get().isEDTdebug());
 			DetectEdtViolationRepaintManager.install();
 		}
 	//Load Static Data, Settings, Tracker Data, Added Data, Contract Prices
