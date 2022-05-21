@@ -381,12 +381,12 @@ public class CliOptions {
 			if (tools == null || tools.materials) createExportSettings(ExportTool.MATERIALS, filters.materialsOwner, views.materialsView);
 			if (tools == null || tools.marketOrders) createExportSettings(ExportTool.MARKET_ORDERS, filters.marketOrdersFilter, views.marketOrdersView);
 			if (tools != null && (tools.reprocessedIDs != null || tools.reprocessedNames != null)) createExportSettings(ExportTool.REPROCESSED, null, views.reprocessedView);
-			if (tools == null || tools.overviewStations) createExportSettings(ExportTool.OVERVIEW_STATIONS, filters.overviewFilter, "");
-			if (tools == null || tools.overviewPlanets) createExportSettings(ExportTool.OVERVIEW_PLANETS, filters.overviewFilter, "");
-			if (tools == null || tools.overviewSystems) createExportSettings(ExportTool.OVERVIEW_SYSTEMS, filters.overviewFilter, "");
-			if (tools == null || tools.overviewConstellations) createExportSettings(ExportTool.OVERVIEW_CONSTELLATIONS, filters.overviewFilter, "");
-			if (tools == null || tools.overviewRegions) createExportSettings(ExportTool.OVERVIEW_REGIONS, filters.overviewFilter, "");
-			if (tools == null || tools.overviewGroups) createExportSettings(ExportTool.OVERVIEW_GROUPS, filters.overviewFilter, "");
+			if (tools == null || tools.overviewStations) createExportSettings(ExportTool.OVERVIEW_STATIONS, filters.overviewFilter, null);
+			if (tools == null || tools.overviewPlanets) createExportSettings(ExportTool.OVERVIEW_PLANETS, filters.overviewFilter, null);
+			if (tools == null || tools.overviewSystems) createExportSettings(ExportTool.OVERVIEW_SYSTEMS, filters.overviewFilter, null);
+			if (tools == null || tools.overviewConstellations) createExportSettings(ExportTool.OVERVIEW_CONSTELLATIONS, filters.overviewFilter, null);
+			if (tools == null || tools.overviewRegions) createExportSettings(ExportTool.OVERVIEW_REGIONS, filters.overviewFilter, null);
+			if (tools == null || tools.overviewGroups) createExportSettings(ExportTool.OVERVIEW_GROUPS, filters.overviewFilter, null);
 			if (tools == null || tools.stockpile) createExportSettings(ExportTool.STOCKPILE, filters.stockpileFilter, views.stockpileView);
 			if (tools == null || tools.transaction) createExportSettings(ExportTool.TRANSACTIONS, filters.transactionFilter, views.transactionView);
 			if (tools == null || tools.treeLocation) createExportSettings(ExportTool.TREE_LOCATION, filters.treeFilterLocation, views.treeViewLocation);
