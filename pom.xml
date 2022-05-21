@@ -635,7 +635,7 @@
 			</properties>
 		</profile>
 		<profile>
-			<id>RUN-no-arguments_Profiling</id>
+			<id>RUN-no-args-profiling</id>
 			<properties>
 				<edt.debug></edt.debug>
 			</properties>
@@ -655,17 +655,23 @@
 			</properties>
 		</profile>
 		<profile>
-			<id>RUN-update</id>
+			<id>RUNCLI-update</id>
 			<properties>
 				<arg1>-update</arg1>
 				<arg2>-portable</arg2>
 			</properties>
 		</profile>
 		<profile>
-			<id>RUN-export</id>
+			<id>RUNCLI-export</id>
 			<properties>
 				<arg1>-export</arg1>
 				<arg2>-portable</arg2>
+			</properties>
+		</profile>
+		<profile>
+			<id>RUNCLI-help</id>
+			<properties>
+				<arg1>-help</arg1>
 			</properties>
 		</profile>
 		<!-- TESTS -->
