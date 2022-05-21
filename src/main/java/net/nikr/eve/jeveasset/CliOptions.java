@@ -343,11 +343,13 @@ public class CliOptions {
 	DevOptions devOptions;
 
 	static class DevOptions {
-		@Option(names =  { "-debug" }, description = "Dev Command: Enable debug logging and other debug shenanigans")
+		@Option(names = { "-debug" }, description = "Dev Command: Enable debug logging and other debug shenanigans")
 		boolean debug;
-		@Option(names =  { "-noupdate" }, description = "Dev Command: Disable all updates")
+		@Option(names = { "-edtdebug" }, description = "Dev Command: Detect painting outside EDT")
+		boolean edtdebug;
+		@Option(names = { "-noupdate" }, description = "Dev Command: Disable all updates")
 		boolean forceNoUpdate;
-		@Option(names =  { "-forceupdate" }, description = "Dev Command: Ignore update times%n"
+		@Option(names = { "-forceupdate" }, description = "Dev Command: Ignore update times%n"
 				+ "    Warning:%n"
 				+ "    Using -forceupdate may get you banned from ESI%n"
 				+ "    It does not give you access to any new data%n"
@@ -559,6 +561,13 @@ public class CliOptions {
 			return false;
 		}
 		return devOptions.debug;
+	}
+
+	public boolean isEDTdebug() {
+		if (devOptions == null) {
+			return false;
+		}
+		return devOptions.edtdebug;
 	}
 
 	public boolean isForceNoUpdate() {
