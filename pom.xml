@@ -59,7 +59,7 @@
 					<finalName>jeveassets</finalName>
 					<archive>
 						<manifest>
-							<mainClass>net.nikr.eve.jeveasset.Main</mainClass>
+							<mainClass>${main.class}</mainClass>
 							<packageName>net.nikr.eve.jeveasset</packageName>
 							<addClasspath>true</addClasspath>
 							<classpathPrefix>lib</classpathPrefix>
@@ -318,7 +318,7 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>exec-maven-plugin</artifactId>
-				<version>1.4.0</version>
+				<version>3.0.0</version>
 				<executions>
 					<execution>
 						<goals>
@@ -329,10 +329,12 @@
 				<configuration>
 					<executable>java</executable>
 					<arguments>
-						<argument>-jar</argument>
-						<argument>target/jeveassets.jar</argument>
+						<argument>-classpath</argument>
+						<classpath />
+						<mainClass>${main.class}</mainClass>
 						<argument>${arg1}</argument>
 						<argument>${arg2}</argument>
+						<argument>${edt.debug}</argument>
 					</arguments>
 				</configuration>
 			</plugin>
@@ -610,6 +612,63 @@
 				<tests.to.skip>NOTHING</tests.to.skip>
 			</properties>
 		</profile>
+		<!-- RUN -->
+		<profile>
+			<id>RUN-portable</id>
+			<properties>
+				<arg1>-portable</arg1>
+			</properties>
+		</profile>
+		<profile>
+			<id>RUN-debug</id>
+			<properties>
+				<arg1>-debug</arg1>
+			</properties>
+		</profile>
+		<profile>
+			<id>RUN-edtdebug</id>
+		</profile>
+		<profile>
+			<id>RUN-lazysave</id>
+			<properties>
+				<arg1>-lazysave</arg1>
+			</properties>
+		</profile>
+		<profile>
+			<id>RUN-no-arguments_Profiling</id>
+			<properties>
+				<edt.debug></edt.debug>
+			</properties>
+		</profile>
+		<profile>
+			<id>RUN-forceupdate</id>
+			<properties>
+				<arg1>-debug</arg1>
+				<arg2>-forceupdate</arg2>
+			</properties>
+		</profile>
+		<profile>
+			<id>RUN-noupdate</id>
+			<properties>
+				<arg1>-debug</arg1>
+				<arg2>-noupdate</arg2>
+			</properties>
+		</profile>
+		<profile>
+			<id>RUN-update</id>
+			<properties>
+				<arg1>-update</arg1>
+				<arg2>-portable</arg2>
+			</properties>
+		</profile>
+		<profile>
+			<id>RUN-export</id>
+			<properties>
+				<arg1>-export</arg1>
+				<arg2>-portable</arg2>
+			</properties>
+		</profile>
+		<!-- TESTS -->
 		<profile>
 			<id>skip-online-tests</id>
 			<activation>
@@ -634,39 +693,43 @@
 				<tests.to.skip>**/*PriceDataGetterOnlineTest.java</tests.to.skip>
 			</properties>
 		</profile>
+		<!-- JDK support -->
 		<profile>
-			<id>portable</id>
+			<id>jdk11</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+				<jdk>11</jdk>
+			</activation>
 			<properties>
-				<arg1>-portable</arg1>
+				<project.build.sourceVersion>11</project.build.sourceVersion>
 			</properties>
 		</profile>
 		<profile>
-			<id>debug</id>
+			<id>jdk17</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+				<jdk>17</jdk>
+			</activation>
 			<properties>
-				<arg1>-debug</arg1>
+				<project.build.sourceVersion>17</project.build.sourceVersion>
 			</properties>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.izpack</groupId>
+						<artifactId>izpack-maven-plugin</artifactId>
+						<version>5.0.3</version>
+						<executions>
+							<execution>
+								<id>izpack</id>
+								<phase>none</phase>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
 		</profile>
-		<profile>
-			<id>update</id>
-			<properties>
-				<arg1>-debug</arg1>
-				<arg2>-update</arg2>
-			</properties>
-		</profile>
-		<profile>
-			<id>noupdate</id>
-			<properties>
-				<arg1>-debug</arg1>
-				<arg2>-noupdate</arg2>
-			</properties>
-		</profile>
-		<profile>
-			<id>backgroundupdate</id>
-			<properties>
-				<arg1>-backgroundupdate</arg1>
-				<arg2>-portable</arg2>
-			</properties>
-		</profile>
+		<!-- jPackager -->
 		<profile>
 			<id>jpackager-windows</id>
 			<activation>
@@ -998,41 +1061,6 @@
 				</plugins>
 			</build>
 		</profile>
-		<profile>
-			<id>jdk11</id>
-			<activation>
-				<activeByDefault>false</activeByDefault>
-				<jdk>11</jdk>
-			</activation>
-			<properties>
-				<project.build.sourceVersion>11</project.build.sourceVersion>
-			</properties>
-		</profile>
-		<profile>
-			<id>jdk17</id>
-			<activation>
-				<activeByDefault>false</activeByDefault>
-				<jdk>17</jdk>
-			</activation>
-			<properties>
-				<project.build.sourceVersion>17</project.build.sourceVersion>
-			</properties>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.codehaus.izpack</groupId>
-						<artifactId>izpack-maven-plugin</artifactId>
-						<version>5.0.3</version>
-						<executions>
-							<execution>
-								<id>izpack</id>
-								<phase>none</phase>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
 	</profiles>
 
 	<repositories>
@@ -1210,8 +1238,11 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.build.sourceVersion>1.8</project.build.sourceVersion>
 		<targetJdk>1.8</targetJdk>
-		<arg1>-empty</arg1>
-		<arg2>-empty</arg2>
+		<main.class>net.nikr.eve.jeveasset.Main</main.class>
+		<arg1></arg1>
+		<arg2></arg2>
+		<!-- always do EDT debug when doing devlopment! -->
+		<edt.debug>-edtdebug</edt.debug>
 		<!-- Live deploy location -->
 		<!--
 		<upload.program.file>eve.nikr.net/jeveassets/update/program</upload.program.file>
