@@ -27,6 +27,7 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
+import javax.swing.JLabel;
 import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
 import net.nikr.eve.jeveasset.Program;
@@ -71,12 +72,26 @@ public class JFixedToolBar extends JToolBar {
 		addSpace(10);
 	}
 
-	public void addButton(final AbstractButton jButton) {
-		addButton(jButton, 100);
+	public void addLabelIcon(final JLabel jButton) {
+		Dimension dimension = new Dimension(Program.getIconButtonsWidth(), Program.getButtonsHeight());
+		jButton.setPreferredSize(dimension);
+		jButton.setMaximumSize(dimension);
+
+		jButton.setHorizontalAlignment(SwingConstants.CENTER);
+		super.add(jButton);
 	}
 
-	public void addButton(final AbstractButton jButton, final int width) {
-		addButton(jButton, width, SwingConstants.LEFT);
+	public void addButtonIcon(final AbstractButton jButton) {
+		Dimension dimension = new Dimension(Program.getIconButtonsWidth(), Program.getButtonsHeight());
+		jButton.setPreferredSize(dimension);
+		jButton.setMaximumSize(dimension);
+
+		jButton.setHorizontalAlignment(SwingConstants.CENTER);
+		super.add(jButton);
+	}
+
+	public void addButton(final AbstractButton jButton) {
+		addButton(jButton, 100, SwingConstants.LEFT);
 	}
 
 	public void addButton(final AbstractButton jButton, final int width, final int alignment) {
@@ -100,11 +115,12 @@ public class JFixedToolBar extends JToolBar {
 		Dimension dimension;
 		if (preferredWidth > width) {
 			dimension = new Dimension(preferredWidth, height);
+			jComponent.setPreferredSize(dimension);
+			jComponent.setMaximumSize(dimension);
 		} else {
 			dimension = new Dimension(width, height);
+			jComponent.setMaximumSize(dimension);
 		}
-		jComponent.setPreferredSize(dimension);
-		jComponent.setMaximumSize(dimension);
 	}
 
 	@Override

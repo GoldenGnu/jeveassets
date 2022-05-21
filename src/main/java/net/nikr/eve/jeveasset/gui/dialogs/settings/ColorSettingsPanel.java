@@ -272,7 +272,7 @@ public class ColorSettingsPanel extends JSettingsPanel {
 				jFilter.setText("");
 			}
 		});
-		jToolBarBottom.addButton(jClear, 0);
+		jToolBarBottom.add(jClear);
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.TRAILING)

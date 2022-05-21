@@ -254,7 +254,7 @@ class FilterPanel<E> implements Comparable<FilterPanel<E>> {
 
 		layout.setHorizontalGroup(
 			layout.createSequentialGroup()
-				.addComponent(jEnabled, 30, 30, 30)
+				.addComponent(jEnabled, Program.getIconButtonsWidth(), Program.getIconButtonsWidth(), Program.getIconButtonsWidth())
 				.addGap(0)
 				.addComponent(jLogic, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
 				.addComponent(jGroup, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
@@ -264,8 +264,8 @@ class FilterPanel<E> implements Comparable<FilterPanel<E>> {
 				.addComponent(jCompareColumn, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
 				.addComponent(jDate, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
 				.addComponent(jSpacing, 0, 0, Integer.MAX_VALUE)
-				.addComponent(jClone, 30, 30, 30)
-				.addComponent(jRemove, 30, 30, 30)
+				.addComponent(jClone, Program.getIconButtonsWidth(), Program.getIconButtonsWidth(), Program.getIconButtonsWidth())
+				.addComponent(jRemove, Program.getIconButtonsWidth(), Program.getIconButtonsWidth(), Program.getIconButtonsWidth())
 		);
 		layout.setVerticalGroup(
 			layout.createParallelGroup()

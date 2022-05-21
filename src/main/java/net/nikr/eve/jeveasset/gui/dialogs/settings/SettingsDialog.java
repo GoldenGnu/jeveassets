@@ -171,7 +171,7 @@ public class SettingsDialog extends JDialogCentered {
 				)
 				.addComponent(jSeparator)
 				.addGroup(layout.createSequentialGroup()
-					.addComponent(jHelp, 30, 30, 30)
+					.addComponent(jHelp, Program.getIconButtonsWidth(), Program.getIconButtonsWidth(), Program.getIconButtonsWidth())
 					.addGap(0, 0, Integer.MAX_VALUE)
 					.addComponent(jOK, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
 					.addComponent(jCancel, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())

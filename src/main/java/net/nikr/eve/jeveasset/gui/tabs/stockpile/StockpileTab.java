@@ -333,7 +333,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 				.addGroup(layout.createSequentialGroup()
 					.addComponent(jToolBarLeft, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
 					.addGap(0)
-					.addComponent(jToolBarRight)
+					.addComponent(jToolBarRight, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
 				)
 				.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
 		);
