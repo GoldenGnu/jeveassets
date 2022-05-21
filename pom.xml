@@ -275,19 +275,19 @@
 						<goals>
 							<goal>exec</goal>
 						</goals>
+						<configuration>
+							<executable>java</executable>
+							<arguments>
+								<argument>-classpath</argument>
+								<classpath />
+								<mainClass>${main.class}</mainClass>
+								<argument>${arg1}</argument>
+								<argument>${arg2}</argument>
+								<argument>${edt.debug}</argument>
+							</arguments>
+						</configuration>
 					</execution>
 				</executions>
-				<configuration>
-					<executable>java</executable>
-					<arguments>
-						<argument>-classpath</argument>
-						<classpath />
-						<mainClass>${main.class}</mainClass>
-						<argument>${arg1}</argument>
-						<argument>${arg2}</argument>
-						<argument>${edt.debug}</argument>
-					</arguments>
-				</configuration>
 			</plugin>
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
