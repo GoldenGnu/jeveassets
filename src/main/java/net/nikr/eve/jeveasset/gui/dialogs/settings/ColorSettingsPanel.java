@@ -37,8 +37,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -53,9 +51,9 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.settings.ColorTheme.ColorThemeTypes;
 import net.nikr.eve.jeveasset.data.settings.ColorSettings.ColorRow;
 import net.nikr.eve.jeveasset.data.settings.ColorSettings.PredefinedLookAndFeel;
+import net.nikr.eve.jeveasset.data.settings.ColorTheme.ColorThemeTypes;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.JSimpleColorPicker;
@@ -84,7 +82,7 @@ public class ColorSettingsPanel extends JSettingsPanel {
 
 	public ColorSettingsPanel(final Program program, final SettingsDialog settingsDialog) {
 		super(program, settingsDialog, DialoguesSettings.get().colors(), Images.SETTINGS_COLORS.getIcon());
-		
+
 		JSimpleColorPicker jSimpleColorPicker = new JSimpleColorPicker(settingsDialog.getDialog());
 
 		//Backend
@@ -99,7 +97,7 @@ public class ColorSettingsPanel extends JSettingsPanel {
 
 		//Separator
 		SeparatorList<ColorRow> separatorList = new SeparatorList<>(filterList, new ColorRowSeparatorComparator(), 1, Integer.MAX_VALUE);
-		
+
 		//Table Model
 		tableModel = EventModels.createTableModel(separatorList, TableFormatFactory.colorsTableFormat());
 		//Table
@@ -133,15 +131,15 @@ public class ColorSettingsPanel extends JSettingsPanel {
 				}
 				int row = jTable.rowAtPoint(e.getPoint());
 				int column = jTable.columnAtPoint(e.getPoint());
-				
+
 				Object object = tableModel.getElementAt(row);
 				if (!(object instanceof ColorRow)) {
 					return; //Ignore Separator
 				}
 				ColorRow colorRow = (ColorRow) object;
-				
+
 				String columnName = (String) jTable.getTableHeader().getColumnModel().getColumn(column).getHeaderValue();
-				
+
 				Rectangle cellRect = jTable.getCellRect(row, column, false);
 				Point table = jTable.getLocationOnScreen();
 				Point point = new Point(table.x + cellRect.x + cellRect.width, table.y + cellRect.y + cellRect.height);
@@ -222,7 +220,7 @@ public class ColorSettingsPanel extends JSettingsPanel {
 		}
 		//Installed LookAndFeels
 		for (LookAndFeelInfo laf : UIManager.getInstalledLookAndFeels()) {
-			if (laf.getClassName().equals(UIManager.getSystemLookAndFeelClassName())){
+			if (laf.getClassName().equals(UIManager.getSystemLookAndFeelClassName())) {
 				continue; //Skip system LaF
 			}
 			JLookAndFeelMenuItem jMenuItem = new JLookAndFeelMenuItem(laf, jLookAndFeel, settingsDialog);
@@ -230,19 +228,6 @@ public class ColorSettingsPanel extends JSettingsPanel {
 			lafButtonGroup.add(jMenuItem);
 			jLafMenuItems.add(jMenuItem);
 		}
-
-		//Ensure layout is correct
-		settingsDialog.getDialog().addWindowListener(new WindowAdapter() {
-			@Override
-			public void windowOpened(WindowEvent e) {
-				SwingUtilities.invokeLater(new Runnable() {
-					@Override
-					public void run() {
-						settingsDialog.getDialog().pack();
-					}
-				});
-			}
-		});
 
 		JDropDownButton jTheme = new JDropDownButton(DialoguesSettings.get().theme(), Images.FILTER_LOAD.getIcon());
 		jToolBarTop.addButton(jTheme);

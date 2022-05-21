@@ -293,6 +293,7 @@ public class SettingsDialog extends JDialogCentered {
 	@Override
 	public void setVisible(final boolean b) {
 		if (b) {
+			getDialog().pack(); //XXX - Workaround for LookAndFeelPreview being temperamental and resizing the dialog when generating the LAF previews
 			for (Map.Entry<String, JSettingsPanel> entry : settingsPanels.entrySet()) {
 				entry.getValue().load();
 			}
