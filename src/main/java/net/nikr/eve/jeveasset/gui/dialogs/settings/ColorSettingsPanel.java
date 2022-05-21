@@ -37,8 +37,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -53,9 +51,9 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.settings.ColorTheme.ColorThemeTypes;
 import net.nikr.eve.jeveasset.data.settings.ColorSettings.ColorRow;
 import net.nikr.eve.jeveasset.data.settings.ColorSettings.PredefinedLookAndFeel;
+import net.nikr.eve.jeveasset.data.settings.ColorTheme.ColorThemeTypes;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.JSimpleColorPicker;
@@ -230,19 +228,6 @@ public class ColorSettingsPanel extends JSettingsPanel {
 			lafButtonGroup.add(jMenuItem);
 			jLafMenuItems.add(jMenuItem);
 		}
-
-		//Ensure layout is correct
-		settingsDialog.getDialog().addWindowListener(new WindowAdapter() {
-			@Override
-			public void windowOpened(WindowEvent e) {
-				SwingUtilities.invokeLater(new Runnable() {
-					@Override
-					public void run() {
-						settingsDialog.getDialog().pack();
-					}
-				});
-			}
-		});
 
 		JDropDownButton jTheme = new JDropDownButton(DialoguesSettings.get().theme(), Images.FILTER_LOAD.getIcon());
 		jToolBarTop.addButton(jTheme);

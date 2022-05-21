@@ -61,7 +61,7 @@ public class LookAndFeelPreview {
 	private LookAndFeelPreview() { }
 
 	private static class LookAndFeelPreviewListener implements PopupMenuListener, MouseListener, WindowListener {
-		private static final PreviewMock previewWindowMock = new PreviewMock();
+		private static PreviewMock previewWindowMock;
 		private final String lookAndFeelClass;
 		private final JComponent jComponent;
 		private final SettingsDialog settingsDialog;
@@ -74,7 +74,10 @@ public class LookAndFeelPreview {
 			jComponent.addMouseListener(this);
 			jDropDownButton.getPopupMenu().addPopupMenuListener(this);
 			settingsDialog.getDialog().addWindowListener(this);
-			settingsDialog.getDialog().setGlassPane(previewWindowMock);
+			if (previewWindowMock == null) {
+				previewWindowMock = new PreviewMock();
+				settingsDialog.getDialog().setGlassPane(previewWindowMock);
+			}
 		}
 
 		@Override
@@ -122,7 +125,6 @@ public class LookAndFeelPreview {
 					bufferedImage = createImage(previewComponent.getInner());
 					settingsDialog.removeCard(previewComponent.getOuter());
 					UIManager.setLookAndFeel(currentLAF);
-					SwingUtilities.updateComponentTreeUI(previewWindowMock);
 					SwingUtilities.updateComponentTreeUI(previewComponent.getOuter());
 				} catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
 					LOG.error(ex.getMessage(), ex);
@@ -170,6 +172,8 @@ public class LookAndFeelPreview {
 
 	private static class PreviewComponent {
 
+		private static final int WIDTH = 100;
+		private static final int SIZE = (WIDTH * 2) + 30;
 		private final JPanel jInner;
 		private final JPanel jOuter;
 
@@ -202,14 +206,14 @@ public class LookAndFeelPreview {
 			innerLayout.setHorizontalGroup(
 					innerLayout.createSequentialGroup()
 						.addGroup(innerLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-							.addComponent(jTextField, 120, 120, 120)
-							.addComponent(jLabel, 120, 120, 120)
-							.addComponent(jCheckBox, 120, 120, 120)
+							.addComponent(jTextField, WIDTH, WIDTH, WIDTH)
+							.addComponent(jLabel, WIDTH, WIDTH, WIDTH)
+							.addComponent(jCheckBox, WIDTH, WIDTH, WIDTH)
 						)
 						.addGroup(innerLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-							.addComponent(jComboBox, 120, 120, 120)
-							.addComponent(jButton, 120, 120, 120)
-							.addComponent(jRadioButton, 120, 120, 120)
+							.addComponent(jComboBox, WIDTH, WIDTH, WIDTH)
+							.addComponent(jButton, WIDTH, WIDTH, WIDTH)
+							.addComponent(jRadioButton, WIDTH, WIDTH, WIDTH)
 						)
 			);
 			innerLayout.setVerticalGroup(
@@ -236,8 +240,7 @@ public class LookAndFeelPreview {
 
 			outerLayout.setHorizontalGroup(
 					outerLayout.createSequentialGroup()
-						.addComponent(jInner)
-						.addGap(0, 0, Integer.MAX_VALUE)
+						.addComponent(jInner, SIZE, SIZE, SIZE)
 			);
 			outerLayout.setVerticalGroup(
 					outerLayout.createSequentialGroup()
@@ -258,7 +261,7 @@ public class LookAndFeelPreview {
 
 	private static class PreviewMock extends JComponent {
 
-		private static final int OFFSET = 5;
+		private static final int OFFSET = 2;
 		private static final int BORDER = 2;
 
 		private BufferedImage bufferedImage;
