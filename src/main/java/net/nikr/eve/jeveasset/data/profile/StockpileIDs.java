@@ -109,11 +109,6 @@ public class StockpileIDs {
 
 		hidden.clear();
 		hidden.addAll(data);
-		System.out.println("---");
-		System.out.println("hide: " + hide.size());
-		System.out.println("show: " + show.size());
-		System.out.println("hidden: " + hidden.size());
-
 	}
 
 	public void setShown(Set<Long> data) {
