@@ -456,6 +456,10 @@ public class Program implements ActionListener {
 		return 90;
 	}
 
+	public static int getIconButtonsWidth() {
+		return 30;
+	}
+
 	public void addMainTab(final String toolName, final JMainTab jMainTab) {
 		JMainTab old = jMainTabs.put(toolName, jMainTab);
 		if (old != null) {

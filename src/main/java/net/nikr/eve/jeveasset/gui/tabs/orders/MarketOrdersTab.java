@@ -187,7 +187,7 @@ public class MarketOrdersTab extends JMainTabPrimary {
 		JLabel jOrderRangeNextLabel = new JLabel(Images.MISC_HELP.getIcon());
 		jOrderRangeNextLabel.setToolTipText(TabsOrders.get().sellOrderRangeToolTip());
 		InstantToolTip.install(jOrderRangeNextLabel);
-		jToolBar.add(jOrderRangeNextLabel);
+		jToolBar.addLabelIcon(jOrderRangeNextLabel);
 
 		jToolBar.addSpace(7);
 
@@ -203,7 +203,7 @@ public class MarketOrdersTab extends JMainTabPrimary {
 		JLabel jOrderTypeLabelLabel = new JLabel(Images.MISC_HELP.getIcon());
 		jOrderTypeLabelLabel.setToolTipText(TabsOrders.get().marketLogTypeToolTip());
 		InstantToolTip.install(jOrderTypeLabelLabel);
-		jToolBar.add(jOrderTypeLabelLabel);
+		jToolBar.addLabelIcon(jOrderTypeLabelLabel);
 
 		jToolBar.addSpace(7);
 

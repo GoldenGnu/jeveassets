@@ -39,7 +39,6 @@ import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.SwingConstants;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.SettingsUpdateListener;
 import net.nikr.eve.jeveasset.gui.images.Images;
@@ -165,7 +164,7 @@ class FilterGui<E> {
 		jShowFilters.setActionCommand(FilterGuiAction.SHOW_FILTERS.name());
 		jShowFilters.addActionListener(listener);
 		jShowFilters.setSelected(true);
-		jToolBarLeft.addButton(jShowFilters, 30, SwingConstants.CENTER);
+		jToolBarLeft.add(jShowFilters);
 
 		jToolBarRight = new JFixedToolBar();
 
@@ -179,7 +178,7 @@ class FilterGui<E> {
 
 		jHelp = new JDropDownButton(Images.MISC_HELP.getIcon());
 		jHelp.setVisible(false);
-		jToolBarRight.addButton(jHelp, 0);
+		jToolBarRight.addButtonIcon(jHelp);
 
 		JMenuItem jFilterHelpMenuItem = new JMenuItem(GuiShared.get().helpFilter(), Images.MISC_HELP.getIcon());
 		jFilterHelpMenuItem.setActionCommand(FilterGuiAction.MANUAL_FILTER.name());
@@ -194,7 +193,7 @@ class FilterGui<E> {
 		jFilterHelp = new JButton(Images.MISC_HELP.getIcon());
 		jFilterHelp.setActionCommand(FilterGuiAction.MANUAL_FILTER.name());
 		jFilterHelp.addActionListener(listener);
-		jToolBarRight.addButton(jFilterHelp, 0);
+		jToolBarRight.addButtonIcon(jFilterHelp);
 
 		updateFilters();
 		add();
