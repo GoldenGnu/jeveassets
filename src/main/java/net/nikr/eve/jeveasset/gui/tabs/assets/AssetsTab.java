@@ -213,8 +213,14 @@ public class AssetsTab extends JMainTabPrimary implements TagUpdate {
 		} finally {
 			eventList.getReadWriteLock().readLock().unlock();
 		}
-		jClearNew.setEnabled(newFound);
 		filterControl.createCache();
+		final boolean found = newFound;
+		Program.ensureEDT(new Runnable() {
+			@Override
+			public void run() {
+				jClearNew.setEnabled(found);
+			}
+		});
 	}
 
 	@Override
