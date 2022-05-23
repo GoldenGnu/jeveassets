@@ -62,7 +62,6 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
-import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -958,25 +957,35 @@ public class RoutingTab extends JMainTabSecondary {
 			}
 			//Warning for 2 or less systems
 			if (getWaypointsSize() <= 2) {
-				JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsRouting.get().noSystems(), TabsRouting.get().noSystemsTitle(), JOptionPane.INFORMATION_MESSAGE);
+				Program.ensureEDT(new Runnable() {
+					@Override
+					public void run() {
+						JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsRouting.get().noSystems(), TabsRouting.get().noSystemsTitle(), JOptionPane.INFORMATION_MESSAGE);
+					}
+				});
 				return;
 			}
-			//Clear previous results
 			routeResult = null;
-			jResult.setText(TabsRouting.get().emptyResult());
-			jResult.setCaretPosition(0);
-			jResult.setEnabled(false);
-			jFullResult.setText(TabsRouting.get().emptyResult());
-			jFullResult.setCaretPosition(0);
-			jFullResult.setEnabled(false);
-			jResult.setCaretPosition(0);
-			jInfo.setText(TabsRouting.get().emptyResult());
-			jInfo.setCaretPosition(0);
-			jInfo.setEnabled(false);
-			for (ResultToolbar resultToolbar : resultToolbars) {
-				resultToolbar.setEnabledResult(false);
-				resultToolbar.update();
-			}
+			//Clear previous results
+			Program.ensureEDT(new Runnable() {
+				@Override
+				public void run() {
+					jResult.setText(TabsRouting.get().emptyResult());
+					jResult.setCaretPosition(0);
+					jResult.setEnabled(false);
+					jFullResult.setText(TabsRouting.get().emptyResult());
+					jFullResult.setCaretPosition(0);
+					jFullResult.setEnabled(false);
+					jResult.setCaretPosition(0);
+					jInfo.setText(TabsRouting.get().emptyResult());
+					jInfo.setCaretPosition(0);
+					jInfo.setEnabled(false);
+					for (ResultToolbar resultToolbar : resultToolbars) {
+						resultToolbar.setEnabledResult(false);
+						resultToolbar.update();
+					}
+				}
+			});
 			//Update all SolarSystem with the latest from the new Graph
 			//This is needed to get the proper Edge(s) parsed to the routing Algorithm
 			Map<Long, List<SolarSystem>> stationsMap = new HashMap<>();
@@ -1018,7 +1027,12 @@ public class RoutingTab extends JMainTabSecondary {
 				algorithm.resetCancelService();
 				return;
 			} else { //Completed!
-				jProgress.setValue(jProgress.getMaximum());
+				Program.ensureEDT(new Runnable() {
+					@Override
+					public void run() {
+						jProgress.setValue(jProgress.getMaximum());
+					}
+				});
 			}
 			SolarSystem last = null;
 			List<List<SolarSystem>> route = new ArrayList<>();
@@ -1033,10 +1047,15 @@ public class RoutingTab extends JMainTabSecondary {
 			}
 			setRouteResult(new RouteResult(route, stationsMap, inputWaypoints.size(), algorithm.getName(), algorithm.getLastTimeTaken(), algorithm.getLastDistance(), getAvoidString(), getSecurityString()));
 		} catch (DisconnectedGraphException dce) {
-			JOptionPane.showMessageDialog(program.getMainWindow().getFrame()
-							, dce.getMessage()
-							, TabsRouting.get().error()
-							, JOptionPane.ERROR_MESSAGE);
+			Program.ensureEDT(new Runnable() {
+				@Override
+				public void run() {
+					JOptionPane.showMessageDialog(program.getMainWindow().getFrame(),
+							 dce.getMessage(),
+							 TabsRouting.get().error(),
+							 JOptionPane.ERROR_MESSAGE);
+				}
+			});
 		}
 	}
 
@@ -1097,7 +1116,7 @@ public class RoutingTab extends JMainTabSecondary {
 			}
 		}
 		//Set results
-		SwingUtilities.invokeLater(new Runnable() {
+		Program.ensureEDT(new Runnable() {
 			@Override
 			public void run() {
 				jResult.setText(routeString.toString());
