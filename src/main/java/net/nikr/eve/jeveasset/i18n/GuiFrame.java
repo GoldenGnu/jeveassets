@@ -55,9 +55,8 @@ public abstract class GuiFrame extends Bundle {
 	public abstract String industrySlots();
 	public abstract String journal();
 	public abstract String license();
-	public abstract String linkFaq();
-	public abstract String linkForum();
-	public abstract String linkGitHub();
+	public abstract String linkFeedbackAndHelp();
+	public abstract String linkWiki();
 	public abstract String market();
 	public abstract String materials();
 	public abstract String misc();
@@ -72,7 +71,6 @@ public abstract class GuiFrame extends Bundle {
 	public abstract String readme();
 	public abstract String reprocessed();
 	public abstract String routing();
-	public abstract String sendBugReport();
 	public abstract String ship();
 	public abstract String stockpile();
 	public abstract String table();

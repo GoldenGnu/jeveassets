@@ -1010,8 +1010,10 @@ public class Program implements ActionListener {
 			showUpdateStructuresDialog(true);
 		} else if (MainMenuAction.ABOUT.name().equals(e.getActionCommand())) { //Others
 			showAbout();
-		} else if (MainMenuAction.SEND_BUG_REPORT.name().equals(e.getActionCommand())) {
-			DesktopUtil.browse("https://github.com/GoldenGnu/jeveassets/issues/new", this);
+		} else if (MainMenuAction.LINK_WIKI.name().equals(e.getActionCommand())) {
+			DesktopUtil.browse("https://wiki.jeveassets.org", this); //Links
+		} else if (MainMenuAction.LINK_FEEDBACK_AND_HELP.name().equals(e.getActionCommand())) {
+			DesktopUtil.browse("https://wiki.jeveassets.org/faq#feedback_and_help", this);
 		} else if (MainMenuAction.README.name().equals(e.getActionCommand())) { //External Files
 			DesktopUtil.open(FileUtil.getPathReadme(), this);
 		} else if (MainMenuAction.LICENSE.name().equals(e.getActionCommand())) {
@@ -1020,12 +1022,6 @@ public class Program implements ActionListener {
 			DesktopUtil.open(FileUtil.getPathCredits(), this);
 		} else if (MainMenuAction.CHANGELOG.name().equals(e.getActionCommand())) {
 			DesktopUtil.open(FileUtil.getPathChangeLog(), this);
-		} else if (MainMenuAction.LINK_GITHUB.name().equals(e.getActionCommand())) { //Links
-			DesktopUtil.browse("https://github.com/GoldenGnu/jeveassets/issues/new", this);
-		} else if (MainMenuAction.LINK_FAQ.name().equals(e.getActionCommand())) {
-			DesktopUtil.browse("https://wiki.jeveassets.org/faq", this);
-		} else if (MainMenuAction.LINK_FORUM.name().equals(e.getActionCommand())) {
-			DesktopUtil.browse("https://forums.eveonline.com/t/13255/", this);
 		} else if (MainMenuAction.EXIT_PROGRAM.name().equals(e.getActionCommand())) { //Exit
 			exit();
 		} else if (ProgramAction.TIMER.name().equals(e.getActionCommand())) { //Ticker
