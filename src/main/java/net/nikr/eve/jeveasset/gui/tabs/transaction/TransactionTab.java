@@ -212,8 +212,14 @@ public class TransactionTab extends JMainTabPrimary {
 		} finally {
 			eventList.getReadWriteLock().readLock().unlock();
 		}
-		jClearNew.setEnabled(newFound);
 		filterControl.createCache();
+		final boolean found = newFound;
+		Program.ensureEDT(new Runnable() {
+			@Override
+			public void run() {
+				jClearNew.setEnabled(found);
+			}
+		});
 	}
 
 	@Override
