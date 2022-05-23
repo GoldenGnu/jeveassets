@@ -369,7 +369,12 @@ public class MarketOrdersTab extends JMainTabPrimary {
 			updateTimer.schedule(new java.util.TimerTask() {
 				@Override
 				public void run() {
-					updateESI();
+					Program.ensureEDT(new Runnable() {
+						@Override
+						public void run() {
+							updateESI();
+						}
+					});
 					updateTimer = null;
 				}
 			}, delay);
@@ -521,16 +526,7 @@ public class MarketOrdersTab extends JMainTabPrimary {
 				int returnValue = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), TabsOrders.get().unknownLocationsMsg(), TabsOrders.get().unknownLocationsTitle(), JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
 				if (returnValue == JOptionPane.OK_OPTION) { //Do update structures
 					//Show structures update dialog
-					program.showUpdateStructuresDialog();
-					//Wait for structures update to be completed
-					while (program.getStatusPanel().updateing(StatusPanel.UpdateType.STRUCTURE)) {
-						try {
-							Thread.sleep(500);
-						} catch (InterruptedException ex) {
-							break; //Better safe than sorry...
-						}
-					}
-					//Continue with the outbid update
+					program.showUpdateStructuresDialog(false);
 				}
 			} else { //Strctures not updatable
 				//Show help text about how to update later

@@ -268,7 +268,7 @@ public abstract class FakeProgram extends Program {
 	}
 
 	@Override
-	public void updateStructures(Set<MyLocation> locations) {
+	public void updateStructures(Set<MyLocation> locations, boolean minimizable) {
 		throw new UnsupportedOperationException("Not implemented");
 	}
 
