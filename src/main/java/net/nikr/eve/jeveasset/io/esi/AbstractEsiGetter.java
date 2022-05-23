@@ -51,8 +51,8 @@ import net.troja.eve.esi.api.IndustryApi;
 import net.troja.eve.esi.api.LocationApi;
 import net.troja.eve.esi.api.MarketApi;
 import net.troja.eve.esi.api.PlanetaryInteractionApi;
-import net.troja.eve.esi.api.SovereigntyApi;
 import net.troja.eve.esi.api.SkillsApi;
+import net.troja.eve.esi.api.SovereigntyApi;
 import net.troja.eve.esi.api.UniverseApi;
 import net.troja.eve.esi.api.UserInterfaceApi;
 import net.troja.eve.esi.api.WalletApi;
@@ -148,7 +148,7 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner> {
 		try {
 			update();
 		} catch (ApiException ex) {
-			addError(ex.getCode(), "Error Code: " + ex.getCode() + "\r\n" + ex.getResponseBody(), ex);
+			addError("Error Code: " + ex.getCode() + "\r\n" + ex.getResponseBody(), "Error Code: " + ex.getCode() + "\r\n" + ex.getResponseBody(), ex);
 		} catch (TaskCancelledException ex) {
 			logInfo(null, "Cancelled");
 		} catch (InvalidAuthException ex) {
