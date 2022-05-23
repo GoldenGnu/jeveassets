@@ -55,12 +55,13 @@ import org.slf4j.LoggerFactory;
 public class EsiPublicMarketOrdersGetter extends AbstractEsiGetter {
 
 	private static final Logger LOG = LoggerFactory.getLogger(EsiPublicMarketOrdersGetter.class);
-	private static final Long OFFSET = 1000L * 10L; // 10 seconds
+	private static final Long OFFSET = 1000L * 3L; // 3 seconds
 
 	private final UpdateTask updateTask;
 	private final OutbidProcesserInput input;
 	private final OutbidProcesserOutput output;
 	private boolean publicMarketOrders = false;
+	private boolean modified = false;
 	private Date nextUpdate = null;
 	private Date lastUpdate;
 
@@ -84,10 +85,13 @@ public class EsiPublicMarketOrdersGetter extends AbstractEsiGetter {
 						@Override
 						public ApiResponse<List<MarketOrdersResponse>> get(Integer page) throws ApiException {
 							ApiResponse<List<MarketOrdersResponse>> response = getMarketApiOpen().getMarketsRegionIdOrdersWithHttpInfo("all", k, DATASOURCE, null, page, null);
-							if (lastUpdate == null) {
-								String header = getHeader(response.getHeaders(), "last-modified");
-								if (header != null) {
-									lastUpdate = Formater.parseExpireDate(header);
+							String header = getHeader(response.getHeaders(), "last-modified");
+							if (header != null) {
+								Date date = Formater.parseExpireDate(header);
+								if (lastUpdate == null) {
+									lastUpdate = date;
+								} else if (!modified && !lastUpdate.equals(date)){
+									modified = true;
 								}
 							}
 							return response;
@@ -98,6 +102,9 @@ public class EsiPublicMarketOrdersGetter extends AbstractEsiGetter {
 				}
 			}
 		});
+		if (modified) {
+			addError("last-modified changed while updating", "Cache expired while updating");
+		}
 		publicMarketOrders = false;
 		Map<Integer, Set<RawPublicMarketOrder>> orders = EsiConverter.toPublicMarketOrders(responses);
 		for (MarketOrdersResponse ordersResponse : responses) {
