@@ -602,7 +602,6 @@ class FilterPanel<E> implements Comparable<FilterPanel<E>> {
 	}
 
 	private void groupChanged() {
-		System.out.println("groupChanged");
 		refilter();
 		if (!loading) {
 			if (gui.fade(FilterPanel.this)) {
@@ -641,7 +640,6 @@ class FilterPanel<E> implements Comparable<FilterPanel<E>> {
 		@Override
 		public void keyPressed(final KeyEvent e) {
 			if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-				System.out.println("keyPressed");
 				refilter();
 			}
 		}
@@ -675,7 +673,6 @@ class FilterPanel<E> implements Comparable<FilterPanel<E>> {
 
 		@Override
 		public void dateChanged(DateChangeEvent e) {
-			System.out.println("dateChanged");
 			refilter();
 		}
 
