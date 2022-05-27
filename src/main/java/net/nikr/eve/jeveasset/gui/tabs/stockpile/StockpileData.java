@@ -140,93 +140,84 @@ public class StockpileData extends TableData {
 		}
 		addTypeIDs(typeIDs, stockpile);
 	//Create lookup maps of Items
-		//ContractItems
-		if (stockpile.isContracts()) {
-			for (MyContractItem contractItem : profileData.getContractItemList()) {
-				if (contractItem.getContract().isIgnoreContract()) {
-					continue;
-				}
-				int typeID = contractItem.isBPC() ? -contractItem.getTypeID() : contractItem.getTypeID(); //BPC has negative value
-				if (!typeIDs.contains(typeID)) {
-					continue; //Ignore wrong typeID
-				}
-				Set<MyContractItem> items = contractItems.get(typeID);
-				if (items == null) {
-					items = new HashSet<>();
-					contractItems.put(typeID, items);
-				}
-				items.add(contractItem);
-			}
-		}
-		//Inventory AKA Assets
-		if (stockpile.isAssets()) {
-			for (MyAsset asset : profileData.getAssetsList()) {
-				if (asset.isGenerated()) { //Skip generated assets
-					continue;
-				}
-				int typeID = asset.isBPC() ? -asset.getTypeID() : asset.getTypeID(); //BPC has negative value
-				if (!typeIDs.contains(typeID)) {
-					continue; //Ignore wrong typeID
-				}
-				Set<MyAsset> items = assets.get(typeID);
-				if (items == null) {
-					items = new HashSet<>();
-					assets.put(typeID, items);
-				}
-				items.add(asset);
-			}
-		}
-		//Market Orders
-		if (stockpile.isBuyOrders() || stockpile.isSellOrders()) {
-			for (MyMarketOrder marketOrder : profileData.getMarketOrdersList()) {
-				int typeID = marketOrder.getItem().getTypeID();
-				if (!typeIDs.contains(typeID)) {
-					continue; //Ignore wrong typeID
-				}
-				Set<MyMarketOrder> items = marketOrders.get(typeID);
-				if (items == null) {
-					items = new HashSet<>();
-					marketOrders.put(typeID, items);
-				}
-				items.add(marketOrder);
-			}
-		}
-		//Industry Job
-		if (stockpile.isJobs()) {
-			for (MyIndustryJob industryJob : profileData.getIndustryJobsList()) {
-				Integer productTypeID = industryJob.getProductTypeID();
-				if (productTypeID != null && typeIDs.contains(productTypeID)) {
-					Set<MyIndustryJob> items = industryJobs.get(productTypeID);
-					if (items == null) {
-						items = new HashSet<>();
-						industryJobs.put(productTypeID, items);
+		if (!typeIDs.isEmpty()) {
+			//Contract Items
+			if (stockpile.isContracts()) {
+				for (MyContractItem contractItem : profileData.getContractItemList()) {
+					if (contractItem.getContract().isIgnoreContract()) {
+						continue;
 					}
-					items.add(industryJob);
-				}
-				int blueprintTypeID = -industryJob.getBlueprintTypeID(); //Negative - match blueprints copies
-				if (typeIDs.contains(blueprintTypeID)) {
-					Set<MyIndustryJob> items = industryJobs.get(blueprintTypeID);
-					if (items == null) {
-						items = new HashSet<>();
-						industryJobs.put(blueprintTypeID, items);
+					Integer typeID = contractItem.getTypeID();
+					//Ignore null and wrong typeID
+					if (typeID == null || !typeIDs.contains(typeID)) {
+						continue;
 					}
-					items.add(industryJob);
+					//BPC has negative value
+					if (contractItem.isBPC()) {
+						typeID = -typeID;
+					}
+					//Add Contract Item
+					add(contractItems, typeID, contractItem);
 				}
 			}
-		}
-		//Transactions
-		if (stockpile.isTransactions()) {
-			for (MyTransaction transaction : profileData.getTransactionsList()) {
-				int typeID = transaction.getItem().getTypeID();
-				if (!typeIDs.contains(typeID)) {
-					continue; //Ignore wrong typeID
+			//Assets
+			if (stockpile.isAssets()) {
+				for (MyAsset asset : profileData.getAssetsList()) {
+					if (asset.isGenerated()) { //Skip generated assets
+						continue;
+					}
+					Integer typeID = asset.getTypeID();
+					//Ignore null and wrong typeID
+					if (typeID == null || !typeIDs.contains(typeID)) {
+						continue;
+					}
+					//BPC has negative value
+					if (asset.isBPC()) {
+						typeID = -typeID;
+					}
+					//Add Asset
+					add(assets, typeID, asset);
 				}
-				Set<MyTransaction> items = transactions.get(typeID);
-				if (items == null) {
-					items = new HashSet<>();
-					transactions.put(typeID, items);
+			}
+			//Market Orders
+			if (stockpile.isBuyOrders() || stockpile.isSellOrders()) {
+				for (MyMarketOrder marketOrder : profileData.getMarketOrdersList()) {
+					Integer typeID = marketOrder.getTypeID();
+					//Ignore null and wrong typeID
+					if (typeID == null || !typeIDs.contains(typeID)) {
+						continue;
+					}
+					//Add Market Order
+					add(marketOrders, typeID, marketOrder);
 				}
-				items.add(transaction);
+			}
+			//Industry Jobs
+			if (stockpile.isJobs()) {
+				for (MyIndustryJob industryJob : profileData.getIndustryJobsList()) {
+					//Manufacturing
+					Integer productTypeID = industryJob.getProductTypeID();
+					if (productTypeID != null && typeIDs.contains(productTypeID)) {
+						add(industryJobs, productTypeID, industryJob);
+					}
+					//Copying
+					Integer blueprintTypeID = industryJob.getBlueprintTypeID();
+					if (blueprintTypeID != null && typeIDs.contains(blueprintTypeID)) {
+						blueprintTypeID = -blueprintTypeID; //Negative - match blueprints copies
+						add(industryJobs, blueprintTypeID, industryJob);
+					}
+				}
+			}
+			//Transactions
+			if (stockpile.isTransactions()) {
+				for (MyTransaction transaction : profileData.getTransactionsList()) {
+					Integer typeID = transaction.getTypeID();
+					//Ignore null and wrong typeID
+					if (typeID == null || !typeIDs.contains(typeID)) {
+						continue;
+					}
+					//Add Transaction
+					add(transactions, typeID, transaction);
+				}
 			}
 		}
 		stockpile.setFlagName(flags);
@@ -241,6 +232,18 @@ public class StockpileData extends TableData {
 		}
 		stockpile.updateTotal();
 		stockpile.updateTags();
+	}
+
+	private <T> void add(Map<Integer, Set<T>> map, Integer typeID, T t) {
+		if (typeID == null) {
+			return; //Ignore null (should never happen: better safe than sorry)
+		}
+		Set<T> items = map.get(typeID);
+		if (items == null) {
+			items = new HashSet<>();
+			map.put(typeID, items);
+		}
+		items.add(t);
 	}
 
 	private void addTypeIDs(Set<Integer> typeIDs, Stockpile stockpile) {
@@ -258,7 +261,7 @@ public class StockpileData extends TableData {
 		float volume = ApiIdConverter.getVolume(item.getItem(), true);
 		Double transactionAveragePrice = profileData.getTransactionAveragePrice(TYPE_ID);
 		item.updateValues(price, volume, transactionAveragePrice);
-		//ContractItems
+		//Contract Items
 		if (stockpile.isContracts()) {
 			Set<MyContractItem> items = contractItems.get(TYPE_ID);
 			if (items != null) {
@@ -267,7 +270,7 @@ public class StockpileData extends TableData {
 				}
 			}
 		}
-		//Inventory AKA Assets
+		//Assets
 		if (stockpile.isAssets()) {
 			Set<MyAsset> items = assets.get(TYPE_ID);
 			if (items != null) {
