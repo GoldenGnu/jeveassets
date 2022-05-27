@@ -84,22 +84,21 @@ public class StockpileData extends TableData {
 		industryJobs.clear();
 		transactions.clear();
 
+		//Update Stockpiles (StockpileItem)
 		for (Stockpile stockpile : StockpileTab.getShownStockpiles(profileManager)) {
 			stockpile.updateDynamicValues();
 			stockpileItems.addAll(stockpile.getItems());
 			updateStockpile(stockpile);
 		}
-		//Update list
+		//Update Subpiles (SubpileItem)
+		stockpileItems.addAll(getUpdatedSubpiles());
+		//Update EventList (GUI)
 		try {
 			eventList.getReadWriteLock().writeLock().lock();
 			eventList.clear();
 			eventList.addAll(stockpileItems);
 		} finally {
 			eventList.getReadWriteLock().writeLock().unlock();
-		}
-
-		for (Stockpile stockpile : Settings.get().getStockpiles()) {
-			updateSubpile(eventList, stockpile);
 		}
 	}
 
@@ -308,7 +307,50 @@ public class StockpileData extends TableData {
 		}
 	}
 
+	/**
+	 * Update Subpiles for all stockpiles and return a list of the updated Subpiles.
+	 * This method does not change the EventList
+	 * @return
+	 */
+	private List<StockpileItem> getUpdatedSubpiles() {
+		List<StockpileItem> added = new ArrayList<>();
+		for (Stockpile stockpile : Settings.get().getStockpiles()) {
+			updateSubpile(added, null, stockpile);
+		}
+		return added;
+	}
+
+	/**
+	 * Update Subpiles for a single stockpile.
+	 * This method will update the EventList (remove old, add new)
+	 * This method is very ineffective when updating multiple Stockpiles:
+	 * Use getUpdatedSubpiles() to update all
+	 * And updateSubpile(,,) for anything > 1
+	 * @param eventList
+	 * @param parent
+	 */
 	public void updateSubpile(EventList<StockpileItem> eventList, Stockpile parent) {
+		List<StockpileItem> updated = new ArrayList<>();
+		List<StockpileItem> removed = new ArrayList<>();
+		updateSubpile(updated, removed, parent);
+		//Update list
+		try {
+			eventList.getReadWriteLock().writeLock().lock();
+			eventList.removeAll(removed);
+			eventList.addAll(updated);
+		} finally {
+			eventList.getReadWriteLock().writeLock().unlock();
+		}
+	}
+
+	/**
+	 * Internal: Don't use this.
+	 * Update subpiles for a single stockpile. Does not modify the EventList.
+	 * @param updated Updated SubpileItem's
+	 * @param removed Removed SubpileItem's
+	 * @param parent
+	 */
+	private void updateSubpile(List<StockpileItem> updated, List<StockpileItem> removed, Stockpile parent) {
 		Map<Integer, StockpileItem> parentItems = new HashMap<>();
 		for (StockpileItem item : parent.getItems()) {
 			parentItems.put(item.getItemTypeID(), item);
@@ -322,7 +364,7 @@ public class StockpileData extends TableData {
 		}
 		//Update subs
 		for (Stockpile stockpile : parent.getSubpileLinks()) {
-			updateSubpile(eventList, stockpile);
+			updateSubpile(updated, removed, stockpile);
 		}
 		//Add new items
 		updateSubpile(parent, parent, parentItems, null, 0, "");
@@ -331,18 +373,27 @@ public class StockpileData extends TableData {
 			updateItem(subpileItem, subpileItem.getStockpile());
 		}
 		parent.updateTotal();
-		//Update list
-		try {
-			eventList.getReadWriteLock().writeLock().lock();
-			eventList.removeAll(subpileItems);
-			if (profileManager.getStockpileIDs().isShown(parent.getId())) {
-				eventList.addAll(parent.getSubpileItems());
-			}
-		} finally {
-			eventList.getReadWriteLock().writeLock().unlock();
+		//Update lists
+		if (removed != null) {
+			removed.addAll(subpileItems);
+		}
+		updated.removeAll(subpileItems);
+		if (profileManager.getStockpileIDs().isShown(parent.getId())) {
+			updated.addAll(parent.getSubpileItems());
 		}
 	}
 
+	/**
+	 * Internal: Don't use this.
+	 * Do all the subpile calculations
+	 * (this where the magic happens, 100% certified unreadable code! As required for all critical parts of this software)
+	 * @param topStockpile
+	 * @param parentStockpile
+	 * @param topItems
+	 * @param parentStock
+	 * @param parentLevel
+	 * @param parentPath
+	 */
 	private void updateSubpile(Stockpile topStockpile, Stockpile parentStockpile, Map<Integer, StockpileItem> topItems, SubpileStock parentStock, int parentLevel, String parentPath) {
 		for (Map.Entry<Stockpile, Double> entry : parentStockpile.getSubpiles().entrySet()) {
 			//For each subpile (stockpile)
