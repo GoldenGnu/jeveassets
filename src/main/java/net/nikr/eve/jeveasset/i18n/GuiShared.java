@@ -70,6 +70,7 @@ public abstract class GuiShared extends Bundle {
 	public abstract String eveMarketer();
 	public abstract String eveOnline();
 	public abstract String eveRef();
+	public abstract String eveTycoon();
 	public abstract String evepraisal();
 	public abstract String foreground();
 	public abstract String formulaColumns();
