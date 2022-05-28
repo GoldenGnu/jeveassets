@@ -56,7 +56,6 @@ import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder.Change;
 import net.nikr.eve.jeveasset.data.api.raw.RawSkill;
 import net.nikr.eve.jeveasset.data.api.raw.RawTransaction;
 import net.nikr.eve.jeveasset.data.profile.Profile;
-import net.nikr.eve.jeveasset.data.profile.ProfileManager;
 import net.nikr.eve.jeveasset.data.sde.ItemFlag;
 import net.nikr.eve.jeveasset.data.sde.StaticData;
 import net.nikr.eve.jeveasset.io.esi.EsiCallbackURL;
@@ -64,8 +63,6 @@ import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import net.nikr.eve.jeveasset.io.shared.DataConverter;
 import net.nikr.eve.jeveasset.io.shared.RawConverter;
 import net.troja.eve.esi.model.CharacterRolesResponse.RolesEnum;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -73,27 +70,29 @@ import org.w3c.dom.NodeList;
 
 public final class ProfileReader extends AbstractXmlReader<Boolean> {
 
-	private static final Logger LOG = LoggerFactory.getLogger(ProfileReader.class);
+	private final Profile profile;
 
-	private final ProfileManager profileManager;
+	public static boolean load(final Profile profile) {
+		return load(profile, profile.getFilename());
+	}
 
-	public static boolean load(ProfileManager profileManager, final String filename) {
-		ProfileReader reader = new ProfileReader(profileManager);
+	public static boolean load(final Profile profile, final String filename) {
+		ProfileReader reader = new ProfileReader(profile);
 		Boolean ok = reader.read(filename, filename, XmlType.DYNAMIC_BACKUP);
 		if (!ok) {
-			profileManager.clear();
+			profile.clear();
 		}
 		return ok;
 	}
 
-	public ProfileReader(final ProfileManager profileManager) {
-		this.profileManager = profileManager;
+	public ProfileReader(final Profile profile) {
+		this.profile = profile;
 	}
 
 	@Override
 	protected Boolean parse(Element element) throws XmlException {
-		profileManager.clear(); //Clear before load (may happen more than once)
-		parseProfile(element, profileManager);
+		profile.clear(); //Clear before load (may happen more than once)
+		parseProfile(element, profile);
 		return true;
 	}
 
@@ -107,7 +106,7 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 		return true;
 	}
 
-	private void parseProfile(final Element element, ProfileManager profileManager) throws XmlException {
+	private void parseProfile(final Element element, Profile profile) throws XmlException {
 		if (!element.getNodeName().equals("assets")) {
 			throw new XmlException("Wrong root element name.");
 		}
@@ -115,25 +114,25 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 		NodeList stockpilesNodes = element.getElementsByTagName("stockpiles");
 		if (stockpilesNodes.getLength() == 1) {
 			Element stockpilesElement = (Element) stockpilesNodes.item(0);
-			parseStockpiles(stockpilesElement, profileManager.getActiveProfile());
+			parseStockpiles(stockpilesElement, profile);
 		}
 		//Eve XML Api
 		NodeList accountNodes = element.getElementsByTagName("accounts");
 		if (accountNodes.getLength() == 1) {
 			Element accountsElement = (Element) accountNodes.item(0);
-			parseAccounts(accountsElement, profileManager.getAccounts());
+			parseAccounts(accountsElement, profile.getAccounts());
 		}
 		//EveKit
 		NodeList eveKitOwnersNodes = element.getElementsByTagName("evekitowners");
 		if (eveKitOwnersNodes.getLength() == 1) {
 			Element eveKitOwnersElement = (Element) eveKitOwnersNodes.item(0);
-			parseEveKitOwners(eveKitOwnersElement, profileManager.getEveKitOwners());
+			parseEveKitOwners(eveKitOwnersElement, profile.getEveKitOwners());
 		}
 		//Esi
 		NodeList esiOwnersNodes = element.getElementsByTagName("esiowners");
 		if (esiOwnersNodes.getLength() == 1) {
 			Element esiElement = (Element) esiOwnersNodes.item(0);
-			parseEsiOwners(esiElement, profileManager.getEsiOwners());
+			parseEsiOwners(esiElement, profile.getEsiOwners());
 		}
 	}
 
@@ -145,7 +144,7 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 			Long id = getLong(currentNode, "id");
 			stockpileIDs.add(id);
 		}
-		profile.setStockpileIDs(stockpileIDs);
+		profile.getStockpileIDs().setShown(stockpileIDs);
 	}
 
 	private void parseEsiOwners(final Element element, final List<EsiOwner> esiOwners) throws XmlException {
@@ -169,7 +168,7 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 					try {
 						roles.add(RolesEnum.valueOf(role));
 					} catch (IllegalArgumentException ex) {
-						
+
 					}
 				}
 			}
@@ -360,7 +359,7 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 
 	private void parseContracts(final Element element, final OwnerType owner) throws XmlException {
 		NodeList contractsNodes = element.getElementsByTagName("contracts");
-		Map<MyContract, List<MyContractItem>> contracts = new HashMap<MyContract, List<MyContractItem>>();
+		Map<MyContract, List<MyContractItem>> contracts = new HashMap<>();
 		for (int a = 0; a < contractsNodes.getLength(); a++) {
 			Element contractsNode = (Element) contractsNodes.item(a);
 			NodeList contractNodes = contractsNode.getElementsByTagName("contract");
@@ -369,7 +368,7 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 				RawContract rawContract = parseContract(contractNode);
 				MyContract contract = DataConverter.toMyContract(rawContract);
 				NodeList itemNodes = contractNode.getElementsByTagName("contractitem");
-				List<MyContractItem> contractItems = new ArrayList<MyContractItem>();
+				List<MyContractItem> contractItems = new ArrayList<>();
 				for (int c = 0; c < itemNodes.getLength(); c++) {
 					Element currentNode = (Element) itemNodes.item(c);
 					RawContractItem rawContractItem = parseContractItem(currentNode);
@@ -459,7 +458,7 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 	}
 
 	private void parseBalances(final Element element, final OwnerType owner) throws XmlException {
-		List<MyAccountBalance> accountBalances = new ArrayList<MyAccountBalance>();
+		List<MyAccountBalance> accountBalances = new ArrayList<>();
 		NodeList balancesNodes = element.getElementsByTagName("balances");
 		for (int a = 0; a < balancesNodes.getLength(); a++) {
 			Element currentBalancesNode = (Element) balancesNodes.item(a);
@@ -485,7 +484,7 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 
 	private void parseMarketOrders(final Element element, final OwnerType owner) throws XmlException {
 		NodeList marketOrdersNodes = element.getElementsByTagName("markerorders");
-		Set<MyMarketOrder> marketOrders = new HashSet<MyMarketOrder>();
+		Set<MyMarketOrder> marketOrders = new HashSet<>();
 		for (int a = 0; a < marketOrdersNodes.getLength(); a++) {
 			Element currentMarketOrdersNode = (Element) marketOrdersNodes.item(a);
 			NodeList marketOrderNodes = currentMarketOrdersNode.getElementsByTagName("markerorder");
@@ -571,7 +570,7 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 
 	private void parseJournals(final Element element, final OwnerType owner) throws XmlException {
 		NodeList journalsNodes = element.getElementsByTagName("journals");
-		Set<MyJournal> journals = new HashSet<MyJournal>();
+		Set<MyJournal> journals = new HashSet<>();
 		for (int a = 0; a < journalsNodes.getLength(); a++) {
 			Element currentAalletJournalsNode = (Element) journalsNodes.item(a);
 			NodeList journalNodes = currentAalletJournalsNode.getElementsByTagName("journal");
@@ -640,7 +639,7 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 
 	private void parseTransactions(final Element element, final OwnerType owner) throws XmlException {
 		NodeList transactionsNodes = element.getElementsByTagName("wallettransactions");
-		Set<MyTransaction> transactions = new HashSet<MyTransaction>();
+		Set<MyTransaction> transactions = new HashSet<>();
 		for (int a = 0; a < transactionsNodes.getLength(); a++) {
 			Element currentTransactionsNode = (Element) transactionsNodes.item(a);
 			NodeList transactionNodes = currentTransactionsNode.getElementsByTagName("wallettransaction");
@@ -695,7 +694,7 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 
 	private void parseIndustryJobs(final Element element, final OwnerType owner) throws XmlException {
 		NodeList industryJobsNodes = element.getElementsByTagName("industryjobs");
-		List<MyIndustryJob> industryJobs = new ArrayList<MyIndustryJob>();
+		List<MyIndustryJob> industryJobs = new ArrayList<>();
 		for (int a = 0; a < industryJobsNodes.getLength(); a++) {
 			Element currentIndustryJobsNode = (Element) industryJobsNodes.item(a);
 			NodeList industryJobNodes = currentIndustryJobsNode.getElementsByTagName("industryjob");
@@ -770,7 +769,7 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 			Node currentNode = assetsNodes.item(i);
 			if (currentNode.getNodeName().equals("asset")) {
 				RawAsset rawAsset = parseAsset(currentNode, parentAsset);
-				List<MyAsset> parents = new ArrayList<MyAsset>();
+				List<MyAsset> parents = new ArrayList<>();
 				if (parentAsset != null) { //Child
 					parents.addAll(parentAsset.getParents());
 					parents.add(parentAsset);
@@ -903,18 +902,18 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 		NodeList skillsNodes = element.getElementsByTagName("skills");
 		for (int a = 0; a < skillsNodes.getLength(); a++) {
 			Element currentSkillsNode = (Element) skillsNodes.item(a);
-			Integer unallocatedSkillPoints =  getIntOptional(currentSkillsNode, "unallocated");
-			Long totalSkillPoints =  getLongOptional(currentSkillsNode, "total");
+			Integer unallocatedSkillPoints = getIntOptional(currentSkillsNode, "unallocated");
+			Long totalSkillPoints = getLongOptional(currentSkillsNode, "total");
 			List<RawSkill> skills = new ArrayList<>();
 			NodeList skillNodes = currentSkillsNode.getElementsByTagName("skill");
 			for (int b = 0; b < skillNodes.getLength(); b++) {
 				Element currentNode = (Element) skillNodes.item(b);
-				
-				int typeID =  getInt(currentNode, "id");
+
+				int typeID = getInt(currentNode, "id");
 				long skillpoints = getLong(currentNode, "sp");
 				int activeSkillLevel = getInt(currentNode, "active");
 				int trainedSkillLevel = getInt(currentNode, "trained");
-				
+
 				RawSkill skill = RawSkill.create();
 				skill.setTypeID(typeID);
 				skill.setSkillpoints(skillpoints);

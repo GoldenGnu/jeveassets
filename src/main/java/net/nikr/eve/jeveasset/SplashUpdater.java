@@ -150,7 +150,7 @@ public class SplashUpdater {
 			if (number > progress) {
 				progress = number;
 				update(false);
-			}	
+			}
 		}
 	}
 

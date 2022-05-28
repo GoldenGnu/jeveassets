@@ -200,7 +200,7 @@ class FilterPanel<E> implements Comparable<FilterPanel<E>> {
 
 		JComboBox<String> jComboBox = new JComboBox<>();
 		FontMetrics fontMetrics = jComboBox.getFontMetrics(jComboBox.getFont());
-		EnumTableColumn<E>  longestColumn = null;
+		EnumTableColumn<E> longestColumn = null;
 		for (EnumTableColumn<E> column : allColumns) {
 			if (longestColumn == null || fontMetrics.stringWidth(longestColumn.getColumnName()) < fontMetrics.stringWidth(column.getColumnName())) {
 				longestColumn = column;
@@ -254,7 +254,7 @@ class FilterPanel<E> implements Comparable<FilterPanel<E>> {
 
 		layout.setHorizontalGroup(
 			layout.createSequentialGroup()
-				.addComponent(jEnabled, 30, 30, 30)
+				.addComponent(jEnabled, Program.getIconButtonsWidth(), Program.getIconButtonsWidth(), Program.getIconButtonsWidth())
 				.addGap(0)
 				.addComponent(jLogic, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
 				.addComponent(jGroup, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
@@ -264,8 +264,8 @@ class FilterPanel<E> implements Comparable<FilterPanel<E>> {
 				.addComponent(jCompareColumn, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
 				.addComponent(jDate, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
 				.addComponent(jSpacing, 0, 0, Integer.MAX_VALUE)
-				.addComponent(jClone, 30, 30, 30)
-				.addComponent(jRemove, 30, 30, 30)
+				.addComponent(jClone, Program.getIconButtonsWidth(), Program.getIconButtonsWidth(), Program.getIconButtonsWidth())
+				.addComponent(jRemove, Program.getIconButtonsWidth(), Program.getIconButtonsWidth(), Program.getIconButtonsWidth())
 		);
 		layout.setVerticalGroup(
 			layout.createParallelGroup()
@@ -414,7 +414,7 @@ class FilterPanel<E> implements Comparable<FilterPanel<E>> {
 	private String getDataString() {
 		LocalDate date = jDate.getDate();
 		Instant instant = date.atStartOfDay().atZone(ZoneId.of("GMT")).toInstant(); //End of day - GMT
-		return  Formater.columnDate(Date.from(instant));
+		return Formater.columnDate(Date.from(instant));
 	}
 
 	private void refilter() {
@@ -556,11 +556,11 @@ class FilterPanel<E> implements Comparable<FilterPanel<E>> {
 		Border border = jGroup.getBorder();
 		JFormattedTextField jTextField = ((JSpinner.DefaultEditor) jGroup.getEditor()).getTextField();
 		if ("Nimbus".equals(UIManager.getLookAndFeel().getName())) {
-			if (color == Color.GRAY)  {
+			if (color == Color.GRAY) {
 				jTextField.setUI(null);
 				jTextField.updateUI();
 			} else {
-				jTextField.setUI(new SynthFormattedTextFieldUI(){
+				jTextField.setUI(new SynthFormattedTextFieldUI() {
 				@Override
 				protected void paint(javax.swing.plaf.synth.SynthContext context, java.awt.Graphics g) {
 					g.setColor(color);
@@ -570,7 +570,7 @@ class FilterPanel<E> implements Comparable<FilterPanel<E>> {
 			});
 			}
 		} else {
-			if (color == Color.GRAY)  {
+			if (color == Color.GRAY) {
 				jTextField.setOpaque(false);
 			} else {
 				jTextField.setBackground(color);
@@ -578,7 +578,7 @@ class FilterPanel<E> implements Comparable<FilterPanel<E>> {
 			}
 			if (border instanceof CompoundBorder) {
 				CompoundBorder compoundBorder = (CompoundBorder) border;
-				if (color == Color.GRAY)  {
+				if (color == Color.GRAY) {
 					jGroup.setBorder(BorderFactory.createCompoundBorder(compoundBorder.getOutsideBorder(), BorderFactory.createLineBorder(jGroup.getBackground(), 2)));
 				} else {
 					jGroup.setBorder(BorderFactory.createCompoundBorder(compoundBorder.getOutsideBorder(), BorderFactory.createLineBorder(color, 2)));
@@ -602,7 +602,6 @@ class FilterPanel<E> implements Comparable<FilterPanel<E>> {
 	}
 
 	private void groupChanged() {
-		System.out.println("groupChanged");
 		refilter();
 		if (!loading) {
 			if (gui.fade(FilterPanel.this)) {
@@ -641,7 +640,6 @@ class FilterPanel<E> implements Comparable<FilterPanel<E>> {
 		@Override
 		public void keyPressed(final KeyEvent e) {
 			if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-				System.out.println("keyPressed");
 				refilter();
 			}
 		}
@@ -675,7 +673,6 @@ class FilterPanel<E> implements Comparable<FilterPanel<E>> {
 
 		@Override
 		public void dateChanged(DateChangeEvent e) {
-			System.out.println("dateChanged");
 			refilter();
 		}
 

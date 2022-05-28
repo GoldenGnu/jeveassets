@@ -209,7 +209,7 @@ public abstract class JMainTab {
 	public abstract void clearData();
 	public abstract Collection<LocationType> getLocations();
 
-	public Icon getIcon() {
+	public final Icon getIcon() {
 		return icon;
 	}
 
@@ -246,13 +246,13 @@ public abstract class JMainTab {
 	 * 2. Restore table selection after update
 	 * 3. Restore expanded state for JSeparatorTable after update
 	 * 4. Lock/unlock table doing update
-	 * 
+	 *
 	 * @param jTable
 	 */
 	protected final void installTable(final JAutoColumnTable jTable) {
 		//Table Selection
 		ListSelectionModel selectionModel = jTable.getSelectionModel();
-		if (selectionModel instanceof  DefaultEventSelectionModel) {
+		if (selectionModel instanceof DefaultEventSelectionModel) {
 			this.eventSelectionModel = (DefaultEventSelectionModel<?>) selectionModel;
 		}
 		TableModel tableModel = jTable.getModel();
@@ -266,7 +266,7 @@ public abstract class JMainTab {
 		//Load Settings
 		if (eventTableModel != null && toolName != null) {
 			TableFormat<?> tableFormat = eventTableModel.getTableFormat();
-			if (tableFormat instanceof  EnumTableFormatAdaptor) {
+			if (tableFormat instanceof EnumTableFormatAdaptor) {
 				EnumTableFormatAdaptor<?, ?> formatAdaptor = (EnumTableFormatAdaptor<?, ?>) tableFormat;
 				formatAdaptor.setColumns(Settings.get().getTableColumns().get(toolName));
 				formatAdaptor.setResizeMode(Settings.get().getTableResize().get(toolName));

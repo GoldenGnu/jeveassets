@@ -91,7 +91,7 @@ public class MarketLogReader {
 			LOG.error("Failed to read: " + filename, ex);
 			return null;
 		}
-		
+
 		List<MarketLog> marketLogs = parse(logFile);
 		if (marketLogs == null || marketLogs.isEmpty()) {
 			LOG.warn("Failed to read: " + filename);
@@ -100,7 +100,7 @@ public class MarketLogReader {
 		Integer typeID = marketLogs.get(0).getTypeID();
 		if (typeID == null) {
 			LOG.warn("Failed to read: " + filename);
-			return null; 
+			return null;
 		}
 		Set<RawPublicMarketOrder> marketOrders = new HashSet<>();
 		for (MarketLog marketLog : marketLogs) {

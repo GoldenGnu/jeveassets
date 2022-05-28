@@ -130,7 +130,7 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate {
 		layout.setAutoCreateGaps(true);
 
 		ListenerClass listener = new ListenerClass();
-		
+
 		JFixedToolBar jToolBarLeft = new JFixedToolBar();
 
 		ButtonGroup buttonGroup = new ButtonGroup();
@@ -432,7 +432,7 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate {
 
 	private class ListenerClass implements ActionListener, MouseListener {
 		private final int WIDTH = UIManager.getIcon("Tree.expandedIcon").getIconWidth();
-		
+
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			if (TreeAction.TYPE.name().equals(e.getActionCommand())) {
@@ -597,7 +597,7 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate {
 
 					//Use sorted comparator
 					Comparator<? super TreeAsset> comparator = sortedList.getComparator();
-					if (comparator != null) { 
+					if (comparator != null) {
 						int result = comparator.compare(o1, o2);
 						if (result != 0) { //Not equal
 							return result;
@@ -709,7 +709,6 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate {
 			return jPanel;
 		}
 
-		
 	}
 
 	public static class AssetTreeTableCellRenderer extends TreeTableCellRenderer {

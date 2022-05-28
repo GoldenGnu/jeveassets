@@ -43,22 +43,22 @@ public final class Formater {
 	public static final String COLUMN_DATETIME = "yyyy-MM-dd HH:mm";
 	public static final String COLUMN_DATE = "yyyy-MM-dd";
 
-	private static final DecimalFormat ISK_FORMAT  = new DecimalFormat("#,##0.00 isk");
-	private static final DecimalFormat ITEM_FORMAT  = new DecimalFormat("#,##0 item");
-	private static final DecimalFormat ITEMS_FORMAT  = new DecimalFormat("#,##0 items");
-	private static final DecimalFormat PERCENT_FORMAT  = new DecimalFormat("##0%");
-	private static final DecimalFormat TIMES_FORMAT  = new DecimalFormat("##0x");
-	private static final DecimalFormat INTEGER_FORMAT  = new DecimalFormat("0");
-	private static final DecimalFormat DECIMAL_FORMAT  = new DecimalFormat("#,##0.00");
-	private static final DecimalFormat FLOAT_FORMAT  = new DecimalFormat("#,##0.####");
-	private static final DecimalFormat COMPARE_FORMAT  = new DecimalFormat("0.####", new DecimalFormatSymbols(FilterMatcher.LOCALE));
-	private static final DecimalFormat SECURITY_FORMAT  = new DecimalFormat("0.0", new DecimalFormatSymbols(Locale.ENGLISH));
-	private static final DecimalFormat COPY_FORMAT  = new DecimalFormat("0.##", new DecimalFormatSymbols(Locale.ENGLISH));
-	public static final DecimalFormat LONG_FORMAT  = new DecimalFormat("#,##0");
-	public static final NumberFormat MILLIONS_FORMAT  = new FixedFormat(1000000.0, "M");
-	public static final NumberFormat BILLIONS_FORMAT  = new FixedFormat(1000000000.0, "B");
-	public static final NumberFormat TRILLIONS_FORMAT  = new FixedFormat(1000000000000.0, "T");
-	public static final NumberFormat AUTO_FORMAT  = new AutoFormat();
+	private static final DecimalFormat ISK_FORMAT = new DecimalFormat("#,##0.00 isk");
+	private static final DecimalFormat ITEM_FORMAT = new DecimalFormat("#,##0 item");
+	private static final DecimalFormat ITEMS_FORMAT = new DecimalFormat("#,##0 items");
+	private static final DecimalFormat PERCENT_FORMAT = new DecimalFormat("##0%");
+	private static final DecimalFormat TIMES_FORMAT = new DecimalFormat("##0x");
+	private static final DecimalFormat INTEGER_FORMAT = new DecimalFormat("0");
+	private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("#,##0.00");
+	private static final DecimalFormat FLOAT_FORMAT = new DecimalFormat("#,##0.####");
+	private static final DecimalFormat COMPARE_FORMAT = new DecimalFormat("0.####", new DecimalFormatSymbols(FilterMatcher.LOCALE));
+	private static final DecimalFormat SECURITY_FORMAT = new DecimalFormat("0.0", new DecimalFormatSymbols(Locale.ENGLISH));
+	private static final DecimalFormat COPY_FORMAT = new DecimalFormat("0.##", new DecimalFormatSymbols(Locale.ENGLISH));
+	public static final DecimalFormat LONG_FORMAT = new DecimalFormat("#,##0");
+	public static final NumberFormat MILLIONS_FORMAT = new FixedFormat(1000000.0, "M");
+	public static final NumberFormat BILLIONS_FORMAT = new FixedFormat(1000000000.0, "B");
+	public static final NumberFormat TRILLIONS_FORMAT = new FixedFormat(1000000000000.0, "T");
+	public static final NumberFormat AUTO_FORMAT = new AutoFormat();
 
 	private static final DateFormatThreadSafe EXPIRE_DATE1 = new DateFormatThreadSafe("EEE, dd MMM yyyy kk:mm:ss zzz"); //Tue, 04 Oct 2016 18:21:28 GMT
 	private static final DateFormatThreadSafe EXPIRE_DATE2 = new DateFormatThreadSafe("dd MMM yyyy kk:mm:ss zzz");
@@ -77,7 +77,7 @@ public final class Formater {
 		try {
 			return EXPIRE_DATE1.parse(date);
 		} catch (ParseException ex) {
-			
+
 		}
 		try {
 			return EXPIRE_DATE2.parse(date);
@@ -159,7 +159,7 @@ public final class Formater {
 	public static String columnDate(final Object date) {
 		return COLUMN_DATETIME_FORMAT.format(date);
 	}
-	
+
 	public static String fileDate(final Object date) {
 		return FILETIME.format(date);
 	}
@@ -168,12 +168,12 @@ public final class Formater {
 		try {
 			return COLUMN_DATETIME_FORMAT.parse(date);
 		} catch (ParseException ex) {
-			
+
 		}
 		try {
 			return COLUMN_DATE_FORMAT.parse(date);
 		} catch (ParseException ex) {
-			
+
 		}
 		return null;
 	}

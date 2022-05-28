@@ -53,7 +53,6 @@ public class EsiBlueprintsGetter extends AbstractEsiGetter {
 				public ApiResponse<List<CharacterBlueprintsResponse>> get(Integer page) throws ApiException {
 					return getCharacterApiAuth().getCharactersCharacterIdBlueprintsWithHttpInfo((int) owner.getOwnerID(), DATASOURCE, null, page, null);
 				}
-				
 			});
 			owner.setBlueprints(EsiConverter.toBlueprints(responses));
 		}

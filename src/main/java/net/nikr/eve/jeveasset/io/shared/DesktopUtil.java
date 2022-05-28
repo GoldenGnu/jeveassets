@@ -77,11 +77,26 @@ public final class DesktopUtil {
 		JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), "Could not open " + file.getName(), "Open File", JOptionPane.PLAIN_MESSAGE);
 	}
 
-	
+	/**
+	 * Open link to jEveAssets manual
+	 * @param helpLink
+	 * @param window
+	 */
+	public static void browse(HelpLink helpLink, final Window window) {
+		if (helpLink == null) {
+			return;
+		}
+		int returnValue = JOptionPane.showConfirmDialog(window, GuiShared.get().helpOpenManual(helpLink.getTitle()), GuiShared.get().helpOpenManualTitle(), JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+		if (returnValue != JOptionPane.OK_OPTION) {
+			return;
+		}
+		browse(helpLink.getLink(), window);
+	}
+
 	/**
 	 * Open a single link
-	 * @param url 
-	 * @param program 
+	 * @param url
+	 * @param program
 	 */
 	public static void browse(final String url, Program program) {
 		browse(url, getWindow(program));
@@ -90,8 +105,8 @@ public final class DesktopUtil {
 	/**
 	 * Open a single link
 	 * @param url
-	 * @param window 
-	 * @return  
+	 * @param window
+	 * @return
 	 */
 	public static boolean browse(final String url, final Window window) {
 		if (url == null) {
@@ -114,14 +129,13 @@ public final class DesktopUtil {
 			} else {
 				return false;
 			}
-			
 		}
 	}
 
 	/**
 	 * Open multiple links
-	 * @param urls 
-	 * @param program 
+	 * @param urls
+	 * @param program
 	 */
 	public static void browse(final Set<String> urls, Program program) {
 		browse(urls, getWindow(program));
@@ -130,7 +144,7 @@ public final class DesktopUtil {
 	/**
 	 * Open multiple links
 	 * @param urls
-	 * @param window 
+	 * @param window
 	 */
 	private static void browse(final Set<String> urls, Window window) {
 		if (urls == null || urls.isEmpty()) {
@@ -210,6 +224,24 @@ public final class DesktopUtil {
 					browse(hle.getURL().toString(), window);
 				}
 			}
+		}
+	}
+
+	public static class HelpLink {
+		private final String link;
+		private final String title;
+
+		public HelpLink(String link, String title) {
+			this.link = link;
+			this.title = title;
+		}
+
+		public String getLink() {
+			return link;
+		}
+
+		public String getTitle() {
+			return title;
 		}
 	}
 }

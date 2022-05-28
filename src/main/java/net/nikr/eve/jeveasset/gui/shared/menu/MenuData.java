@@ -197,7 +197,7 @@ public class MenuData<T> {
 			if (location == null) {
 				continue;
 			}
-			if ((location.isEmpty() && location.getLocationID() != 0) || location.isUserLocation()){ //Empty with locationID or user
+			if ((location.isEmpty() && location.getLocationID() != 0) || location.isUserLocation()) { //Empty with locationID or user
 				editableCitadelLocations.add(location);
 			}
 			if (location.isUserLocation()) { //User
@@ -219,16 +219,16 @@ public class MenuData<T> {
 				planetNames.add(location.getLocation()); //Dotlan + Assets Planet
 			}
 			//System
-			if (location.isStation()  || location.isPlanet() || location.isSystem()) { //Station, Planet, or System
+			if (location.isStation() || location.isPlanet() || location.isSystem()) { //Station, Planet, or System
 				systemNames.add(location.getSystem()); //Dotlan + Assets System
 				//Jumps
 				MyLocation system = ApiIdConverter.getLocation(location.getSystemID());
 				if (!system.isEmpty()) {
-					systemLocations.add(system); //Jumps + Autopilot + zKillboard System 
+					systemLocations.add(system); //Jumps + Autopilot + zKillboard System
 				}
 			}
 			//Constellation
-			if (location.isStation()  || location.isPlanet() || location.isSystem() || location.isConstellation()) {  //Station, Planet, System or Constellation
+			if (location.isStation() || location.isPlanet() || location.isSystem() || location.isConstellation()) { //Station, Planet, System or Constellation
 				constellationNames.add(location.getConstellation()); //Assets Constellation
 				MyLocation constellation = ApiIdConverter.getLocation(location.getConstellationID());
 				if (!constellation.isEmpty()) {
@@ -236,7 +236,7 @@ public class MenuData<T> {
 				}
 			}
 			//Region
-			if (location.isStation()  || location.isPlanet() || location.isSystem() || location.isConstellation() || location.isRegion()) {  //Station, Planet, System, Constellation or Region
+			if (location.isStation() || location.isPlanet() || location.isSystem() || location.isConstellation() || location.isRegion()) { //Station, Planet, System, Constellation or Region
 				regionNames.add(location.getRegion()); //Dotlan + Assets Region
 				MyLocation region = ApiIdConverter.getLocation(location.getRegionID());
 				if (!region.isEmpty()) {

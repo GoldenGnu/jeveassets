@@ -21,11 +21,14 @@
 
 package net.nikr.eve.jeveasset.data.profile;
 
-import net.nikr.eve.jeveasset.data.settings.Settings;
 import java.io.File;
-import java.util.HashSet;
-import java.util.Set;
-import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
+import java.util.ArrayList;
+import java.util.List;
+import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
+import net.nikr.eve.jeveasset.data.api.accounts.EveApiAccount;
+import net.nikr.eve.jeveasset.data.api.accounts.EveKitOwner;
+import net.nikr.eve.jeveasset.io.local.ProfileReader;
+import net.nikr.eve.jeveasset.io.local.ProfileWriter;
 import net.nikr.eve.jeveasset.io.shared.FileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,12 +41,30 @@ public class Profile implements Comparable<Profile> {
 	private String name;
 	private boolean defaultProfile;
 	private boolean activeProfile;
-	private Set<Long> stockpileIDs = null;
+	private final StockpileIDs stockpileIDs;
+	private final List<EveApiAccount> accounts = new ArrayList<>();
+	private final List<EveKitOwner> eveKitOwners = new ArrayList<>();
+	private final List<EsiOwner> esiOwners = new ArrayList<>();
+
+	private Profile() {
+		this("Default", true, true);
+	}
 
 	public Profile(final String name, final boolean defaultProfile, final boolean activeProfile) {
 		this.name = name;
 		this.defaultProfile = defaultProfile;
 		this.activeProfile = activeProfile;
+		this.stockpileIDs = new StockpileIDs(name);
+	}
+
+	public boolean load() {
+		clear(); //Clear the profile before loading
+		stockpileIDs.load(); //Load stockpileIDs
+		return ProfileReader.load(this); //Assets (Must be loaded before the price data)
+	}
+
+	public void save() {
+		ProfileWriter.save(this);
 	}
 
 	public boolean isDefaultProfile() {
@@ -58,22 +79,26 @@ public class Profile implements Comparable<Profile> {
 		this.activeProfile = activeProfile;
 	}
 
-	public Set<Long> getStockpileIDs() {
-		createList();
+	public StockpileIDs getStockpileIDs() {
 		return stockpileIDs;
 	}
 
-	public void setStockpileIDs(Set<Long> stockpileIDs) {
-		this.stockpileIDs = stockpileIDs;
+	public List<EveApiAccount> getAccounts() {
+		return accounts;
 	}
 
-	private void createList() {
-		if (stockpileIDs == null) {
-			stockpileIDs = new HashSet<>();
-			for (Stockpile stockpile : Settings.get().getStockpiles()) {
-				stockpileIDs.add(stockpile.getId());
-			}
-		}
+	public List<EveKitOwner> getEveKitOwners() {
+		return eveKitOwners;
+	}
+
+	public List<EsiOwner> getEsiOwners() {
+		return esiOwners;
+	}
+
+	public void clear() {
+		accounts.clear();
+		eveKitOwners.clear();
+		esiOwners.clear();
 	}
 
 	public String getBackupFilename() {
@@ -136,6 +161,13 @@ public class Profile implements Comparable<Profile> {
 		if (!backFrom.equals(backTo)) {
 			backFrom.renameTo(backTo);
 		}
+		stockpileIDs.renameTable(name);
+	}
+
+	public void delete() {
+		getFile().delete();
+		getBackupFile().delete();
+		stockpileIDs.removeTable();
 	}
 
 	@Override
@@ -181,5 +213,12 @@ public class Profile implements Comparable<Profile> {
 	@Override
 	public int compareTo(final Profile o) {
 		return this.getName().compareToIgnoreCase(o.getName());
+	}
+
+	public static class DefaultProfile extends Profile {
+
+		public DefaultProfile() {
+			super();
+		}
 	}
 }

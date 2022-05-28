@@ -58,7 +58,6 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
-import javax.swing.SwingConstants;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 import javax.swing.event.DocumentEvent;
@@ -714,7 +713,7 @@ public class StockpileDialog extends JDialogCentered {
 				jContainer = new JComboBox<>();
 				jIncludeContainer = new JCheckBox(TabsStockpile.get().includeContainer());
 				TextManager.installTextComponent((JTextComponent) jContainer.getEditor().getEditorComponent());
-				AutoCompleteSupport<String> containerAutoComplete =  AutoCompleteSupport.install(jContainer, EventModels.createSwingThreadProxyList(containerEventList), new StringFilterator());
+				AutoCompleteSupport<String> containerAutoComplete = AutoCompleteSupport.install(jContainer, EventModels.createSwingThreadProxyList(containerEventList), new StringFilterator());
 				containerAutoComplete.setFilterMode(TextMatcherEditor.CONTAINS);
 				((JTextComponent) jContainer.getEditor().getEditorComponent()).getDocument().addDocumentListener(listener);
 				jContainer.setActionCommand(StockpileDialogAction.VALIDATE.name());
@@ -726,7 +725,7 @@ public class StockpileDialog extends JDialogCentered {
 						.addComponent(jWarning)
 						.addComponent(jContainer, 0, 0, FIELD_WIDTH)
 						.addComponent(jIncludeContainer)
-						.addComponent(jRemove, 30, 30, 30)
+						.addComponent(jRemove, Program.getIconButtonsWidth(), Program.getIconButtonsWidth(), Program.getIconButtonsWidth())
 				);
 				groupLayout.setVerticalGroup(
 					groupLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
@@ -748,7 +747,7 @@ public class StockpileDialog extends JDialogCentered {
 						.addComponent(jType)
 						.addComponent(jWarning)
 						.addComponent(jSingleton, 0, 0, FIELD_WIDTH)
-						.addComponent(jRemove, 30, 30, 30)
+						.addComponent(jRemove, Program.getIconButtonsWidth(), Program.getIconButtonsWidth(), Program.getIconButtonsWidth())
 				);
 				groupLayout.setVerticalGroup(
 					groupLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
@@ -770,7 +769,7 @@ public class StockpileDialog extends JDialogCentered {
 						.addComponent(jType)
 						.addComponent(jWarning)
 						.addComponent(jFlag, 0, 0, FIELD_WIDTH)
-						.addComponent(jRemove, 30, 30, 30)
+						.addComponent(jRemove, Program.getIconButtonsWidth(), Program.getIconButtonsWidth(), Program.getIconButtonsWidth())
 				);
 				groupLayout.setVerticalGroup(
 					groupLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
@@ -793,7 +792,7 @@ public class StockpileDialog extends JDialogCentered {
 						.addComponent(jType)
 						.addComponent(jWarning)
 						.addComponent(jOwner, 0, 0, FIELD_WIDTH)
-						.addComponent(jRemove, 30, 30, 30)
+						.addComponent(jRemove, Program.getIconButtonsWidth(), Program.getIconButtonsWidth(), Program.getIconButtonsWidth())
 				);
 				groupLayout.setVerticalGroup(
 					groupLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
@@ -885,7 +884,7 @@ public class StockpileDialog extends JDialogCentered {
 		private final List<FilterPanel> flagPanels = new ArrayList<>();
 		private final List<FilterPanel> containerPanels = new ArrayList<>();
 		private FilterPanel singletonPanel = null;
-		
+
 		private final JPanel jPanel;
 		private final JPanel jFilters;
 		private final ListenerClass listener = new ListenerClass();
@@ -925,7 +924,7 @@ public class StockpileDialog extends JDialogCentered {
 		private final JRadioButtonMenuItem jConstellation;
 		private final JRadioButtonMenuItem jRegion;
 		private final JRadioButtonMenuItem jUniverse;
-		
+
 		private LocationType locationType;
 
 		public LocationPanel(StockpileFilter stockpileFilter) {
@@ -1019,7 +1018,7 @@ public class StockpileDialog extends JDialogCentered {
 
 		//MATCH
 			jMatch = new JDropDownButton(Images.EDIT_ADD_WHITE.getIcon());
-			jToolBar.addButton(jMatch, 1, SwingConstants.CENTER);
+			jToolBar.addButtonIcon(jMatch);
 
 			JRadioButtonMenuItem jMatchInclude = new JRadioButtonMenuItem(TabsStockpile.get().matchInclude(), Images.EDIT_ADD_WHITE.getIcon());
 			jMatchInclude.setHorizontalAlignment(JButton.LEFT);
@@ -1091,14 +1090,14 @@ public class StockpileDialog extends JDialogCentered {
 			jSellingOrders.addActionListener(listener);
 			jInclude.add(jSellingOrders, true);
 
-			jBoughtTransactions = new JCheckBoxMenuItem(TabsStockpile.get().includeBuyTransactions()); 
+			jBoughtTransactions = new JCheckBoxMenuItem(TabsStockpile.get().includeBuyTransactions());
 			jBoughtTransactions.setToolTipText(TabsStockpile.get().includeBuyTransactionsTip());
 			jBoughtTransactions.setHorizontalAlignment(JButton.LEFT);
 			jBoughtTransactions.setActionCommand(StockpileDialogAction.VALIDATE.name());
 			jBoughtTransactions.addActionListener(listener);
 			jInclude.add(jBoughtTransactions, true);
 
-			jSoldTransactions = new JCheckBoxMenuItem(TabsStockpile.get().includeSellTransactions()); 
+			jSoldTransactions = new JCheckBoxMenuItem(TabsStockpile.get().includeSellTransactions());
 			jSoldTransactions.setToolTipText(TabsStockpile.get().includeSellTransactionsTip());
 			jSoldTransactions.setHorizontalAlignment(JButton.LEFT);
 			jSoldTransactions.setActionCommand(StockpileDialogAction.VALIDATE.name());
@@ -1134,8 +1133,8 @@ public class StockpileDialog extends JDialogCentered {
 			jInclude.add(jSoldContracts, true);
 
 		//INCLIDE LABELS
-			jErrorLabel = new JLabel();
-			jErrorLabel.setEnabled(false);
+			jErrorLabel = new JLabel(TabsStockpile.get().includeHelp());
+			jErrorLabel.setIcon(Images.UPDATE_DONE_ERROR.getIcon());
 			jAssetsLabel = new JLabel();
 			jAssetsLabel.setDisabledIcon(Images.INCLUDE_ASSETS.getIcon());
 			jAssetsLabel.setEnabled(false);
@@ -1235,7 +1234,7 @@ public class StockpileDialog extends JDialogCentered {
 						.addComponent(jLocationType)
 						.addComponent(jLocationWarning)
 						.addComponent(jLocation, 0, 0, FIELD_WIDTH)
-						.addComponent(jOptions, 30, 30, 30)
+						.addComponent(jOptions, Program.getIconButtonsWidth(), Program.getIconButtonsWidth(), Program.getIconButtonsWidth())
 					)
 					.addComponent(jFilters)
 					.addGroup(groupLayout.createSequentialGroup()
@@ -1246,7 +1245,7 @@ public class StockpileDialog extends JDialogCentered {
 						.addComponent(jContractsLabel)
 					)
 			);
-											 
+
 			groupLayout.setVerticalGroup(
 				groupLayout.createSequentialGroup()
 					.addComponent(jToolBar, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
@@ -1270,7 +1269,7 @@ public class StockpileDialog extends JDialogCentered {
 		private void doLayout() {
 			autoValidate();
 			jFilters.removeAll();
-			
+
 			GroupLayout layout = new GroupLayout(jFilters);
 			jFilters.setLayout(layout);
 			layout.setAutoCreateGaps(true);
@@ -1484,7 +1483,7 @@ public class StockpileDialog extends JDialogCentered {
 			if (singletonPanel != null) {
 				singletonPanel.warning(false);
 			}
-			if (!jAssets.isSelected() 
+			if (!jAssets.isSelected()
 					&& !jJobs.isSelected()
 					&& !jBuyingOrders.isSelected()
 					&& !jSellingOrders.isSelected()
@@ -1497,8 +1496,12 @@ public class StockpileDialog extends JDialogCentered {
 					) {
 				ok = false;
 				jInclude.setIcon(Images.UPDATE_DONE_ERROR.getIcon());
+				ColorSettings.config(jInclude, ColorEntry.GLOBAL_ENTRY_INVALID);
+				jErrorLabel.setVisible(true);
 			} else {
 				jInclude.setIcon(Images.LOC_INCLUDE.getIcon());
+				ColorSettings.configReset(jInclude);
+				jErrorLabel.setVisible(false);
 			}
 
 			jAssetsLabel.setVisible(jAssets.isSelected());
@@ -1536,11 +1539,6 @@ public class StockpileDialog extends JDialogCentered {
 			}
 			jContractsLabel.setText(TabsStockpile.get().includeCount(contracts));
 			jContractsLabel.setVisible(contracts > 0);
-
-			jErrorLabel.setVisible(!jAssets.isSelected()
-					&& !jJobs.isSelected()
-					&& orders == 0
-					&& contracts == 0);
 
 			jMatch.setIcon(jMatchExclude.isSelected() ? Images.EDIT_DELETE_WHITE.getIcon() : Images.EDIT_ADD_WHITE.getIcon());
 			jAssets.setIcon(jAssets.isSelected() ? Images.INCLUDE_ASSETS_SELECTED.getIcon() : Images.INCLUDE_ASSETS.getIcon());

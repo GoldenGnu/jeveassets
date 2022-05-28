@@ -162,7 +162,7 @@ public final class EveFittingWriter extends AbstractXmlWriter {
 				if (moduleCount.containsKey(subModule.getName())) {
 					long count = moduleCount.get(subModule.getName());
 					moduleCount.remove(subModule.getName());
-					count = count +  subModule.getCount();
+					count = count + subModule.getCount();
 					moduleCount.put(subModule.getName(), count);
 				} else {
 					moduleCount.put(subModule.getName(), subModule.getCount());
@@ -184,7 +184,7 @@ public final class EveFittingWriter extends AbstractXmlWriter {
 				if (moduleCount.containsKey(subModule.getName())) {
 					long count = moduleCount.get(subModule.getName());
 					moduleCount.remove(subModule.getName());
-					count = count +  subModule.getCount();
+					count = count + subModule.getCount();
 					moduleCount.put(subModule.getName(), count);
 				} else {
 					moduleCount.put(subModule.getName(), subModule.getCount());

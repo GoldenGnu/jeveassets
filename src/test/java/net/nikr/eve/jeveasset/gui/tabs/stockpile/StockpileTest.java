@@ -38,7 +38,7 @@ public class StockpileTest extends TestUtil {
 
 	@Test
 	public void testSomeMethod() {
-		StockpileFilter filter = new StockpileFilter(MyLocation.create(0), 
+		StockpileFilter filter = new StockpileFilter(MyLocation.create(0),
 				Collections.singletonList(0),
 				Collections.singletonList(new StockpileContainer("Container", false)),
 				Collections.singletonList(0L),

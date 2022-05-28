@@ -315,13 +315,13 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		}
 
 		//Show Tools
-		Element showToolsElement =  getNodeOptional(element, "showtools");
+		Element showToolsElement = getNodeOptional(element, "showtools");
 		if (showToolsElement != null) {
 			parseShowToolsNodes(showToolsElement, settings);
 		}
 
 		//Outbid
-		Element marketOrderOutbidElement =  getNodeOptional(element, "marketorderoutbid");
+		Element marketOrderOutbidElement = getNodeOptional(element, "marketorderoutbid");
 		if (marketOrderOutbidElement != null) {
 			parseMarketOrderOutbidNodes(marketOrderOutbidElement, settings);
 		}
@@ -568,15 +568,15 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 				double sellorders = getDouble(dataNode, "sellorders");
 				double balanceTotal = getDouble(dataNode, "walletbalance");
 				double manufacturing = 0.0;
-				if (haveAttribute(dataNode, "manufacturing")){
+				if (haveAttribute(dataNode, "manufacturing")) {
 					manufacturing = getDouble(dataNode, "manufacturing");
 				}
 				double contractCollateral = 0.0;
-				if (haveAttribute(dataNode, "contractcollateral")){
+				if (haveAttribute(dataNode, "contractcollateral")) {
 					contractCollateral = getDouble(dataNode, "contractcollateral");
 				}
 				double contractValue = 0.0;
-				if (haveAttribute(dataNode, "contractvalue")){
+				if (haveAttribute(dataNode, "contractvalue")) {
 					contractValue = getDouble(dataNode, "contractvalue");
 				}
 				//Add data
@@ -848,10 +848,10 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			}
 		//MULTIPLIER
 			double multiplier = 1;
-			if (haveAttribute(stockpileNode, "multiplier")){
+			if (haveAttribute(stockpileNode, "multiplier")) {
 				multiplier = getDouble(stockpileNode, "multiplier");
 			}
-		
+
 			Stockpile stockpile = new Stockpile(name, stockpileID, filters, multiplier);
 			stockpiles.add(stockpile);
 			subpileMap.put(stockpile, subpileNames);
@@ -1125,10 +1125,26 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 
 	private void parseReprocessing(final Element windowElement, final Settings settings) throws XmlException {
 		int reprocessing = getInt(windowElement, "refining");
-		int reprocessingEfficiency = getInt(windowElement, "efficiency");
-		int scrapmetalProcessing = getInt(windowElement, "processing");
+		int efficiency = getInt(windowElement, "efficiency");
+		Integer processing = getIntOptional(windowElement, "processing");
+		Integer ore = getIntOptional(windowElement, "ore");
+		Integer scrapmetal = getIntOptional(windowElement, "scrapmetal");
+		if (scrapmetal == null) {
+			if (processing != null) {
+				scrapmetal = processing;
+			} else {
+				scrapmetal = 0;
+			}
+		}
+		if (ore == null) {
+			if (processing != null) {
+				ore = processing;
+			} else {
+				ore = 0;
+			}
+		}
 		int station = getInt(windowElement, "station");
-		settings.setReprocessSettings(new ReprocessSettings(station, reprocessing, reprocessingEfficiency, scrapmetalProcessing));
+		settings.setReprocessSettings(new ReprocessSettings(station, reprocessing, efficiency, ore, scrapmetal));
 	}
 
 	private void parseWindow(final Element windowElement, final Settings settings) throws XmlException {
@@ -1153,7 +1169,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		Proxy.Type type;
 		try {
 			type = Proxy.Type.valueOf(getString(proxyElement, "type"));
-		} catch (IllegalArgumentException  ex) {
+		} catch (IllegalArgumentException ex) {
 			type = null;
 		}
 		String address = getString(proxyElement, "address");
@@ -1255,7 +1271,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		if (!priceSource.isValid(locationType, locationID)) {
 			locationType = priceSource.getDefaultLocationType();
 			locationID = priceSource.getDefaultLocationID();
-		}	
+		}
 		settings.setPriceDataSettings(new PriceDataSettings(locationType, locationID, priceSource, priceType, priceReprocessedType));
 	}
 
@@ -1686,7 +1702,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 				CompareType compare = convertMode(getString(rowNode, "mode"));
 				String text;
 				if (haveAttribute(rowNode, "columnmatch")) {
-					text =  convertColumn(getString(rowNode, "columnmatch")).name();
+					text = convertColumn(getString(rowNode, "columnmatch")).name();
 				} else {
 					text = getString(rowNode, "text");
 				}

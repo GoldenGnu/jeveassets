@@ -60,7 +60,7 @@ public final class Main {
 			}
 		}
 		//Force UTF-8 File system
-		System.setProperty("sun.jnu.encoding", "UTF-8"); 
+		System.setProperty("sun.jnu.encoding", "UTF-8");
 		System.setProperty("file.encoding", "UTF-8");
 
 		// the tests for null indicate that the property is not set
@@ -120,7 +120,7 @@ public final class Main {
 		//Validate directory
 		LibraryManager.checkLibraries();
 		//install the uncaught exception handlers
-		NikrUncaughtExceptionHandler.install();		
+		NikrUncaughtExceptionHandler.install();
 		//Splash screen
 		if (!GraphicsEnvironment.isHeadless()) {
 			SplashUpdater splashUpdater = new SplashUpdater();

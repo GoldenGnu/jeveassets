@@ -102,7 +102,7 @@ public final class ApiIdConverter {
 			case 62: return "Corporation Deliveries";
 			case 63: return itemFlag.getFlagName();
 			case 64: return itemFlag.getFlagName();
-			
+
 			case 115: return getDivisionName(ownerType, 1);
 			case 116: return getDivisionName(ownerType, 2);
 			case 117: return getDivisionName(ownerType, 3);
@@ -129,7 +129,7 @@ public final class ApiIdConverter {
 			case 5: division = "5th Division"; break;
 			case 6: division = "6th Division"; break;
 			case 7: division = "7th Division"; break;
-			default: division = "Division " + 1;  break;
+			default: division = "Division " + 1; break;
 		}
 		String divisionName = null;
 		if (ownerType != null) {
@@ -163,8 +163,8 @@ public final class ApiIdConverter {
 		}
 	}
 
-	private static double getPriceReprocessed(final Integer typeID, final boolean isBlueprintCopy) {
-		return getPriceType(typeID, isBlueprintCopy, null, true);
+	private static double getPriceReprocessed(final Integer typeID) {
+		return getPriceType(typeID, false, null, true);
 	}
 
 	private static double getPriceType(final Integer typeID, final boolean isBlueprintCopy, ContractPriceItem contractPriceItem, boolean reprocessed) {
@@ -221,7 +221,7 @@ public final class ApiIdConverter {
 		for (ReprocessedMaterial material : item.getReprocessedMaterial()) {
 			//Calculate reprocessed price
 			portionSize = material.getPortionSize();
-			double price = ApiIdConverter.getPriceReprocessed(material.getTypeID(), false);
+			double price = ApiIdConverter.getPriceReprocessed(material.getTypeID());
 			priceReprocessed = priceReprocessed + (price * Settings.get().getReprocessSettings().getLeft(material.getQuantity(), item.isOre()));
 		}
 		if (priceReprocessed > 0 && portionSize > 0) {
@@ -257,7 +257,7 @@ public final class ApiIdConverter {
 			return new Item(0);
 		}
 		Item item = StaticData.get().getItems().get(typeID);
-		if (item == null || 
+		if (item == null ||
 				(item.getVersion() != null && !item.getVersion().equals(EsiItemsGetter.ESI_ITEM_VERSION))) { //New ESI item version
 			if (item != null && item.getVersion().startsWith(EsiItemsGetter.ESI_ITEM_EMPTY)) {
 				String lastUpdated = item.getVersion().replace(EsiItemsGetter.ESI_ITEM_EMPTY, "");

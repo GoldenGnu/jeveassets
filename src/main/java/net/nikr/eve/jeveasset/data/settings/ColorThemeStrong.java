@@ -27,7 +27,7 @@ import net.nikr.eve.jeveasset.i18n.DataColors;
 public class ColorThemeStrong extends ColorTheme {
 
 	protected ColorThemeStrong() {}
-	
+
 	@Override
 	public String getName() {
 		return DataColors.get().colorThemeStrong();
@@ -67,6 +67,15 @@ public class ColorThemeStrong extends ColorTheme {
 		colors.put(ColorEntry.MARKET_ORDERS_NEW, new ColorThemeEntry(Colors.STRONG_GREEN));
 		colors.put(ColorEntry.INDUSTRY_JOBS_DELIVERED, new ColorThemeEntry(Colors.STRONG_YELLOW));
 		colors.put(ColorEntry.INDUSTRY_JOBS_DONE, new ColorThemeEntry(Colors.STRONG_GREEN));
+		colors.put(ColorEntry.INDUSTRY_JOBS_ACTIVITY_MANUFACTURING, new ColorThemeEntry(Colors.STRONG_ORANGE));
+		colors.put(ColorEntry.INDUSTRY_JOBS_ACTIVITY_RESEARCHING_TECHNOLOGY, new ColorThemeEntry(Colors.STRONG_BLUE));
+		colors.put(ColorEntry.INDUSTRY_JOBS_ACTIVITY_RESEARCHING_METERIAL_PRODUCTIVITY, new ColorThemeEntry(Colors.STRONG_BLUE));
+		colors.put(ColorEntry.INDUSTRY_JOBS_ACTIVITY_RESEARCHING_TIME_PRODUCTIVITY, new ColorThemeEntry(Colors.STRONG_BLUE));
+		colors.put(ColorEntry.INDUSTRY_JOBS_ACTIVITY_COPYING, new ColorThemeEntry(Colors.STRONG_BLUE));
+		colors.put(ColorEntry.INDUSTRY_JOBS_ACTIVITY_DUPLICATING, new ColorThemeEntry(Colors.STRONG_BLUE));
+		colors.put(ColorEntry.INDUSTRY_JOBS_ACTIVITY_REVERSE_ENGINEERING, new ColorThemeEntry(Colors.STRONG_BLUE));
+		colors.put(ColorEntry.INDUSTRY_JOBS_ACTIVITY_REVERSE_INVENTION, new ColorThemeEntry(Colors.STRONG_BLUE));
+		colors.put(ColorEntry.INDUSTRY_JOBS_ACTIVITY_REACTIONS, new ColorThemeEntry(Colors.STRONG_GREEN));
 		colors.put(ColorEntry.INDUSTRY_SLOTS_FREE, new ColorThemeEntry(Colors.STRONG_GREEN));
 		colors.put(ColorEntry.INDUSTRY_SLOTS_DONE, new ColorThemeEntry(Colors.STRONG_YELLOW));
 		colors.put(ColorEntry.INDUSTRY_SLOTS_FULL, new ColorThemeEntry(Colors.STRONG_RED));

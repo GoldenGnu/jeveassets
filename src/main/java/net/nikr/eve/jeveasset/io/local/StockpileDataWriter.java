@@ -86,7 +86,7 @@ public class StockpileDataWriter extends AbstractBackup {
 			stockpileObject.addProperty("m", stockpile.getMultiplier());
 
 			//Filters
-			JsonArray  filtersObject = new JsonArray();
+			JsonArray filtersObject = new JsonArray();
 			stockpileObject.add("sf", filtersObject);
 			for (StockpileFilter stockpileFilter : stockpile.getFilters()) {
 				JsonObject filterObject = new JsonObject();
@@ -106,7 +106,7 @@ public class StockpileDataWriter extends AbstractBackup {
 				filterObject.addProperty("id", stockpileFilter.getLocation().getLocationID());
 
 				//Containers
-				JsonArray  containers = new JsonArray();
+				JsonArray containers = new JsonArray();
 				filterObject.add("c", containers);
 				for (StockpileContainer stockpileContainer : stockpileFilter.getContainers()) {
 					JsonObject container = new JsonObject();
@@ -146,7 +146,6 @@ public class StockpileDataWriter extends AbstractBackup {
 
 			return stockpileObject;
 		}
-		
-		
 	}
+
 }

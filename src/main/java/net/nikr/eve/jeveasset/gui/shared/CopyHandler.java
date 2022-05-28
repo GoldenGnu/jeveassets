@@ -51,13 +51,13 @@ public class CopyHandler {
 
 	/**
 	 * Install default copy format
-	 * @param jTable 
+	 * @param jTable
 	 */
 	public static void installCopyFormatter(JTable jTable) {
 		ListenerClass listenerClass = new ListenerClass(jTable);
 		//jTable.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("ctrl C"), "copy");
 		jTable.getActionMap().put("copy", listenerClass);
-		jTable.getActionMap().put("cut", listenerClass);	
+		jTable.getActionMap().put("cut", listenerClass);
 	}
 
 	public static void toClipboard(final String text) {

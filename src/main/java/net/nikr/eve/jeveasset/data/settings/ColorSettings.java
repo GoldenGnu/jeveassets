@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import javax.swing.BorderFactory;
+import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JTextField;
 import javax.swing.UIManager;
@@ -60,7 +61,7 @@ public class ColorSettings {
 		private PredefinedLookAndFeel(String name, String className, boolean selected) {
 			if (name == null) {
 				for (LookAndFeelInfo laf : UIManager.getInstalledLookAndFeels()) {
-					if (laf.getClassName().equals(UIManager.getSystemLookAndFeelClassName())){
+					if (laf.getClassName().equals(UIManager.getSystemLookAndFeelClassName())) {
 						name = DialoguesSettings.get().lookAndFeelDefaultName(laf.getName());
 						break;
 					}
@@ -261,6 +262,14 @@ public class ColorSettings {
 		}
 	}
 
+	public static void configReset(JButton jButton) {
+		jButton.setBackground(Colors.BUTTON_BACKGROUND.getColor());
+		jButton.setForeground(Colors.BUTTON_FOREGROUND.getColor());
+		if ("Nimbus".equalsIgnoreCase(UIManager.getLookAndFeel().getID())) {
+			jButton.setOpaque(false);
+		}
+	}
+
 	public static void configCell(Component component, ColorEntry colorEntry, boolean selected) {
 		configCell(component, foreground(colorEntry), background(colorEntry), selected, false);
 	}
@@ -272,7 +281,7 @@ public class ColorSettings {
 	public static void configCell(Component component, Color foreground, Color background, boolean selected) {
 		configCell(component, foreground, background, selected, false);
 	}
-	
+
 	public static void configCell(Component component, Color foreground, Color background, boolean selected, boolean darker) {
 		if (selected) {
 			if (darker) {
@@ -315,7 +324,6 @@ public class ColorSettings {
 		private final Color defaultForeground;
 		private Color background;
 		private Color foreground;
-		
 
 		public ColorRow(ColorEntry colorEntry, Color defaultBackground, Color defaultForeground, Color background, Color foreground) {
 			this.colorEntry = colorEntry;

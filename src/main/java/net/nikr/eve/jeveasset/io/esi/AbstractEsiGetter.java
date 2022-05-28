@@ -195,7 +195,7 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner> {
 				} catch (InterruptedException ex1) {
 					//No problem
 				}
-				logInfo(updater.getStatus(), "Retrying "  + retries + " of " + updater.getMaxRetries() + ":");
+				logInfo(updater.getStatus(), "Retrying " + retries + " of " + updater.getMaxRetries() + ":");
 				return updateApi(updater, retries);
 			} else {
 				throw ex;
@@ -246,7 +246,7 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner> {
 				}
 				//Reset
 				AbstractEsiGetter.errorReset = new Date(); //New timeframe
-				AbstractEsiGetter.errorLimit = null;  //No errors in this timeframe (yet)
+				AbstractEsiGetter.errorLimit = null; //No errors in this timeframe (yet)
 			} catch (InterruptedException ex) {
 				//No problem
 			}
@@ -254,39 +254,39 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner> {
 			LOG.warn("Error limit: " + errorLimit);
 		}
 	}
- 
+
 	public MarketApi getMarketApiAuth() {
 		return owner.getMarketApiAuth();
  	}
- 
+
 	public IndustryApi getIndustryApiAuth() {
 		return owner.getIndustryApiAuth();
  	}
- 
+
 	protected CharacterApi getCharacterApiAuth() {
 		return owner.getCharacterApiAuth();
  	}
- 
+
 	protected AssetsApi getAssetsApiAuth() {
 		return owner.getAssetsApiAuth();
  	}
- 
+
 	protected WalletApi getWalletApiAuth() {
 		return owner.getWalletApiAuth();
  	}
- 
+
 	protected UniverseApi getUniverseApiAuth() {
 		return owner.getUniverseApiAuth();
  	}
- 
+
 	public ContractsApi getContractsApiAuth() {
 		return owner.getContractsApiAuth();
  	}
- 
+
 	public CorporationApi getCorporationApiAuth() {
 		return owner.getCorporationApiAuth();
  	}
- 
+
 	public LocationApi getLocationApiAuth() {
 		return owner.getLocationApiAuth();
  	}
@@ -302,11 +302,11 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner> {
 	public SkillsApi getSkillsApiAuth() {
 		return owner.getSkillsApi();
  	}
- 
+
 	public UniverseApi getUniverseApiOpen() {
 		return UNIVERSE_API;
  	}
- 
+
 	public CharacterApi getCharacterApiOpen() {
 		return CHARACTER_API;
  	}
@@ -314,7 +314,7 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner> {
 	public CorporationApi getCorporationApiOpen() {
 		return CORPORATION_API;
 	}
- 
+
 	public SovereigntyApi getSovereigntyApiOpen() {
 		return SOVEREIGNTY_API;
  	}
@@ -398,7 +398,6 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner> {
 		@Override
 		public ApiResponse<V> update() throws ApiException {
 			return handler.get(k);
-			
 		}
 
 		public Map<K, V> go() throws ApiException {
@@ -647,6 +646,6 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner> {
 	}
 
 	private static class InvalidAuthException extends RuntimeException {
-		
+
 	}
 }

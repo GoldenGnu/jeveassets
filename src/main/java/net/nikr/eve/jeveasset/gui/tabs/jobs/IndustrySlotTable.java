@@ -30,7 +30,7 @@ import net.nikr.eve.jeveasset.data.settings.ColorSettings;
 import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 
 
-public class IndustrySlotTable  extends JAutoColumnTable {
+public class IndustrySlotTable extends JAutoColumnTable {
 
 	private final DefaultEventTableModel<IndustrySlot> tableModel;
 
@@ -92,5 +92,5 @@ public class IndustrySlotTable  extends JAutoColumnTable {
 		}
 		return component;
 	}
-	
+
 }

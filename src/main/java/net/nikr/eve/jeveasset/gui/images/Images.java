@@ -100,6 +100,7 @@ public enum Images {
 	LINK_DOTLAN_EVEMAPS ("link_dotlan_evemaps.png"),
 	LINK_LOOKUP ("link_lookup.png"),
 	LINK_CHRUKER ("link_chruker.png"),
+	LINK_EVE_TYCOON ("link_eve_tycoon.png"),
 	LINK_FUZZWORK ("link_fuzzwork.png"),
 	LINK_ZKILLBOARD ("link_zkillboard.png"),
 	LINK_ADAM4EVE ("link_adam4eve.png"),
@@ -224,7 +225,7 @@ public enum Images {
 	UPDATE_DONE_ERROR ("update_done_error.png");
 
 	private static final Logger LOG = LoggerFactory.getLogger(Images.class);
-	private final String filename;   // in kilograms
+	private final String filename;
 	private BufferedImage image = null;
 	private Icon icon;
 

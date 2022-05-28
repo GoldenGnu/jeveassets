@@ -42,7 +42,6 @@ import net.nikr.eve.jeveasset.data.api.raw.RawBlueprint;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder.Change;
 import net.nikr.eve.jeveasset.data.api.raw.RawSkill;
 import net.nikr.eve.jeveasset.data.profile.Profile;
-import net.nikr.eve.jeveasset.data.profile.ProfileManager;
 import net.nikr.eve.jeveasset.io.shared.RawConverter;
 import net.troja.eve.esi.model.CharacterRolesResponse.RolesEnum;
 import org.slf4j.Logger;
@@ -57,12 +56,16 @@ public final class ProfileWriter extends AbstractXmlWriter {
 
 	private ProfileWriter() { }
 
-	public static boolean save(final ProfileManager profileManager, final String filename) {
-		ProfileWriter writer = new ProfileWriter();
-		return writer.write(profileManager, filename);
+	public static boolean save(final Profile profile) {
+		return save(profile, profile.getFilename());
 	}
 
-	private boolean write(final ProfileManager profileManager, final String filename) {
+	public static boolean save(final Profile profile, final String filename) {
+		ProfileWriter writer = new ProfileWriter();
+		return writer.write(profile, filename);
+	}
+
+	private boolean write(final Profile profile, final String filename) {
 		Document xmldoc;
 		try {
 			xmldoc = getXmlDocument("assets");
@@ -70,10 +73,9 @@ public final class ProfileWriter extends AbstractXmlWriter {
 			LOG.error("Profile not saved " + ex.getMessage(), ex);
 			return false;
 		}
-		writeStockpiles(xmldoc, profileManager.getActiveProfile());
-		writeAccounts(xmldoc, profileManager.getAccounts());
-		writeEveKitOwners(xmldoc, profileManager.getEveKitOwners());
-		writeEsiOwners(xmldoc, profileManager.getEsiOwners());
+		writeAccounts(xmldoc, profile.getAccounts());
+		writeEveKitOwners(xmldoc, profile.getEveKitOwners());
+		writeEsiOwners(xmldoc, profile.getEsiOwners());
 		try {
 			writeXmlFile(xmldoc, filename, true);
 		} catch (XmlException ex) {
@@ -82,16 +84,6 @@ public final class ProfileWriter extends AbstractXmlWriter {
 		}
 		LOG.info("Profile saved");
 		return true;
-	}
-
-	private void writeStockpiles(final Document xmldoc, final Profile profile) {
-		Element parentNode = xmldoc.createElement("stockpiles");
-		xmldoc.getDocumentElement().appendChild(parentNode);
-		for (Long id : profile.getStockpileIDs()) {
-			Element node = xmldoc.createElement("stockpile");
-			setAttribute(node, "id", id);
-			parentNode.appendChild(node);
-		}
 	}
 
 	private void writeEsiOwners(final Document xmldoc, final List<EsiOwner> esiOwners) {

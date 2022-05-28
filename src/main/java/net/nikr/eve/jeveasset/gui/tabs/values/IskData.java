@@ -73,5 +73,5 @@ public class IskData extends TableData {
 			eventList.getReadWriteLock().writeLock().unlock();
 		}
 	}
-	
+
 }

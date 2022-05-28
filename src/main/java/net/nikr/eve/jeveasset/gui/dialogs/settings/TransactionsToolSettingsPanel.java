@@ -52,7 +52,7 @@ public class TransactionsToolSettingsPanel extends JSettingsPanel {
 				.addComponent(jSaveHistoryWarning, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
 		);
 	}
-		
+
 	@Override
 	public boolean save() {
 		Settings.get().setTransactionHistory(jSaveHistory.isSelected());
@@ -63,5 +63,5 @@ public class TransactionsToolSettingsPanel extends JSettingsPanel {
 	public void load() {
 		jSaveHistory.setSelected(Settings.get().isTransactionHistory());
 	}
-	
+
 }

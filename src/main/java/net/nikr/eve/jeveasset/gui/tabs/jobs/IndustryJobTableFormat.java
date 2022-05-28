@@ -217,11 +217,11 @@ public enum IndustryJobTableFormat implements EnumTableColumn<MyIndustryJob> {
 	COST(Double.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
-		    return TabsJobs.get().columnCost();
+			return TabsJobs.get().columnCost();
 		}
 		@Override
 		public Object getColumnValue(final MyIndustryJob from) {
-		    return from.getCost();
+			return from.getCost();
 		}
 	};
 

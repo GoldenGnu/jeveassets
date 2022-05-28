@@ -25,6 +25,8 @@ import java.io.File;
 import java.io.FileFilter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 import net.nikr.eve.jeveasset.data.profile.Profile;
 import net.nikr.eve.jeveasset.data.profile.ProfileManager;
 import net.nikr.eve.jeveasset.io.shared.FileUtil;
@@ -52,21 +54,28 @@ public final class ProfileFinder {
 		File[] files = profilesDirectory.listFiles(fileFilter);
 		if (files != null) {
 			boolean defaultProfileFound = false;
+			Set<String> unique = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
 			for (File file : files) {
 				String name = file.getName();
-				Profile profile = new Profile(formatName(name), defaultProfile(name), activeProfile(name));
+				String profileName = formatName(name);
+				if (unique.contains(profileName)) {
+					LOG.warn("Ignoring duplicated profile name: {} ({})", profileName, name);
+					continue; //ignore duplicates
+				}
+				unique.add(profileName);
+				Profile profile = new Profile(profileName, defaultProfile(name), activeProfile(name));
 				if (profile.isDefaultProfile() && !defaultProfileFound) {
-					LOG.info("Default profile found: {}", formatName(name));
+					LOG.info("Default profile found: {} ({})", profileName, name);
 					defaultProfileFound = true;
 					profiles.add(0, profile);
 					profileManager.setActiveProfile(profile);
-				}  else if (profile.isDefaultProfile() && defaultProfileFound) {
-					LOG.warn("Default profile found (again): {}", formatName(name));
+				} else if (profile.isDefaultProfile() && defaultProfileFound) {
+					LOG.warn("Default profile found (again): {} ({})", profileName, name);
 					profile.setDefaultProfile(false);
 					profile.setActiveProfile(false);
 					profiles.add(profile);
 				} else {
-					LOG.info("Profile found: {}", formatName(name));
+					LOG.info("Profile found: {} ({})", profileName, name);
 					profiles.add(profile);
 				}
 			}

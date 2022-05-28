@@ -75,7 +75,7 @@ public class PriceDataGetter implements PricingListener {
 	private Set<Integer> zero;
 	private Set<Integer> queue;
 	private final Map<Integer, PriceData> priceDataList = Collections.synchronizedMap(new HashMap<>());
-	
+
 	private long nextUpdate = 0;
 
 	public void load() {
@@ -171,18 +171,18 @@ public class PriceDataGetter implements PricingListener {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param task UpdateTask to update progress on
 	 * @param updateAll true to update all prices. false to only update new/missing prices
 	 * @param pricingOptions Options used doing update
 	 * @param typeIDs TypeIDs to get price data for
 	 * @param priceSource Price data source to update from (only used in log)
-	 * @return 
+	 * @return
 	 */
 	protected Map<Integer, PriceData> processUpdate(final UpdateTask task, final boolean updateAll, final PricingOptions pricingOptions, final Set<Integer> typeIDs, final PriceSource priceSource) {
 		this.updateTask = task;
 		this.update = updateAll;
-		this.typeIDs =  Collections.synchronizedSet(new HashSet<>(typeIDs));
+		this.typeIDs = Collections.synchronizedSet(new HashSet<>(typeIDs));
 		this.failed = Collections.synchronizedSet(new HashSet<>());
 		this.zero = Collections.synchronizedSet(new HashSet<>());
 		this.okay = Collections.synchronizedSet(new HashSet<>());
@@ -367,7 +367,7 @@ public class PriceDataGetter implements PricingListener {
 			failed.add(typeID);
 		}
 		long nextUpdateTemp = pricing.getNextUpdateTime(typeID);
-		
+
 		if (nextUpdateTemp >= 0 && nextUpdateTemp > getNextUpdateTime()) {
 			setUpdateNext(nextUpdateTemp);
 		}

@@ -54,7 +54,7 @@ public final class TextManager {
 	private final JMenuItem jPaste;
 	private final JMenuItem jUndo;
 	private final JMenuItem jRedo;
-	
+
 	public static void installAll(final Container container) {
 		for (Component component : container.getComponents()) {
 			if (component instanceof Container) {
@@ -126,7 +126,7 @@ public final class TextManager {
 		jUndo = new JMenuItem(undoManager.getUndoAction());
 		jUndo.setIcon(Images.EDIT_UNDO.getIcon());
 
-		jRedo = new JMenuItem(undoManager.getRedoAction()); 
+		jRedo = new JMenuItem(undoManager.getRedoAction());
 		jRedo.setIcon(Images.EDIT_REDO.getIcon());
 	}
 

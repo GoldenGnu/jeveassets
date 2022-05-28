@@ -272,7 +272,7 @@ public class StockpileItemDialog extends JDialogCentered {
 		show();
 		if (stockpileItems != null) {
 			return stockpileItems;
-		} else if (stockpileItem != null){
+		} else if (stockpileItem != null) {
 			return Collections.singletonList(stockpileItem);
 		} else {
 			return null;
@@ -387,7 +387,7 @@ public class StockpileItemDialog extends JDialogCentered {
 		if (existing == null) {
 			return null;
 		}
-		boolean materials = jBlueprintType.isEnabled() && 
+		boolean materials = jBlueprintType.isEnabled() &&
 				(jBlueprintType.getItemAt(jBlueprintType.getSelectedIndex()) == BlueprintAddType.MANUFACTURING_MATERIALS
 				|| jBlueprintType.getItemAt(jBlueprintType.getSelectedIndex()) == BlueprintAddType.REACTION_MATERIALS);
 		if (materials) { //Never exists
@@ -464,10 +464,10 @@ public class StockpileItemDialog extends JDialogCentered {
 			} else if (!item.getReactionMaterials().isEmpty()) {
 				jBlueprintType.setModel(new DefaultComboBoxModel<>(BlueprintAddType.ADD_FORMULA));
 				jBlueprintType.setEnabled(true);
-			} else if (item.isBlueprint()){
+			} else if (item.isBlueprint()) {
 				jBlueprintType.setModel(new DefaultComboBoxModel<>(BlueprintAddType.EDIT_BLUEPRINT));
 				jBlueprintType.setEnabled(true);
-			} else if (item.isFormula()){
+			} else if (item.isFormula()) {
 				jBlueprintType.setModel(new DefaultComboBoxModel<>(BlueprintAddType.EDIT_FORMULA));
 				jBlueprintType.setEnabled(true);
 			} else {
@@ -527,7 +527,7 @@ public class StockpileItemDialog extends JDialogCentered {
 		} else if (itemExist()) { //UPDATING (Adding an existing item)
 			stockpileItem = getExistingItem();
 			stockpileItem.update(getStockpileItem());
-		} else { //ADD 
+		} else { //ADD
 			stockpileItems = getStockpileItems();
 			if (stockpileItems != null) {
 				for (StockpileItem item : stockpileItems) {

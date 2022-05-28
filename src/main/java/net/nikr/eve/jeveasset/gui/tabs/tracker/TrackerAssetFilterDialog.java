@@ -137,8 +137,7 @@ public class TrackerAssetFilterDialog extends JDialogCentered {
 				filter();
 			}
 		});
-		
-		
+
 		jNewSelected = new JCheckBox(TabsTracker.get().newSelected());
 		jNewSelected.setSelected(Settings.get().getTrackerSettings().isSelectNew());
 
@@ -223,7 +222,7 @@ public class TrackerAssetFilterDialog extends JDialogCentered {
 		Map<String, CheckBoxNode> cloneList = cloneList(nodes);
 
 		//Set data
-		try { 
+		try {
 			eventList.getReadWriteLock().writeLock().lock();
 			eventList.clear();
 			eventList.addAll(cloneList.values());
@@ -251,7 +250,7 @@ public class TrackerAssetFilterDialog extends JDialogCentered {
 	private void filter() {
 		if (jFilter.getText().isEmpty()) {
 			filterList.setMatcher(null);
-			try { 
+			try {
 				eventList.getReadWriteLock().readLock().lock();
 				for (CheckBoxNode node : eventList) {
 					node.show();
@@ -260,7 +259,7 @@ public class TrackerAssetFilterDialog extends JDialogCentered {
 				eventList.getReadWriteLock().readLock().unlock();
 			}
 		} else {
-			try { 
+			try {
 				eventList.getReadWriteLock().readLock().lock();
 				for (CheckBoxNode node : eventList) {
 					node.hide();
@@ -333,7 +332,7 @@ public class TrackerAssetFilterDialog extends JDialogCentered {
 	private static class CheckBoxNodeFormat implements TreeList.Format<CheckBoxNode> {
 
 		private final CheckBoxNodeComparator comparator = new CheckBoxNodeComparator();
-		
+
 		@Override
 		public void getPath(List<CheckBoxNode> path, CheckBoxNode element) {
 			addParents(path, element);
@@ -366,7 +365,6 @@ public class TrackerAssetFilterDialog extends JDialogCentered {
 			}
 		}
 	}
-	
 
 	private static class CheckBoxNodeMatcher implements Matcher<CheckBoxNode> {
 

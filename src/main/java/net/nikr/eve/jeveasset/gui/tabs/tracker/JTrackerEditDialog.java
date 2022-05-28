@@ -92,7 +92,7 @@ public class JTrackerEditDialog extends JDialogCentered {
 
 		ListenerClass listener = new ListenerClass();
 
-		jSelectionDialog = new  JSelectionDialog<>(program);
+		jSelectionDialog = new JSelectionDialog<>(program);
 
 		JLabel jDateLabel = new JLabel(TabsTracker.get().date());
 		jDate = new JTextField();
@@ -160,7 +160,7 @@ public class JTrackerEditDialog extends JDialogCentered {
 		JButton jCancel = new JButton(TabsTracker.get().cancel());
 		jCancel.setActionCommand(TrackerEditAction.CANCEL.name());
 		jCancel.addActionListener(listener);
-		
+
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.CENTER)
 				.addGroup(layout.createSequentialGroup()
@@ -286,7 +286,7 @@ public class JTrackerEditDialog extends JDialogCentered {
 	private String format(double d) {
 		return Formater.longFormat(d);
 	}
-	
+
 	private String format(Date d) {
 		return Formater.columnDate(d);
 	}
@@ -295,7 +295,6 @@ public class JTrackerEditDialog extends JDialogCentered {
 		return Formater.longParse(s);
 	}
 
-	
 	@Override
 	protected JComponent getDefaultFocus() {
 		return jWalletBalance;
@@ -307,9 +306,7 @@ public class JTrackerEditDialog extends JDialogCentered {
 	}
 
 	@Override
-	protected void windowShown() {
-		
-	}
+	protected void windowShown() { }
 
 	@Override
 	protected void save() {
@@ -372,7 +369,7 @@ public class JTrackerEditDialog extends JDialogCentered {
 		}
 	}
 
-	private Double getValue(Double balance)  {
+	private Double getValue(Double balance) {
 		String balanceReturn = JOptionInput.showInputDialog(getDialog(), TabsTracker.get().enterNewValue(), format(balance));
 		if (balanceReturn == null) {
 			return null; //Cancel
@@ -386,7 +383,7 @@ public class JTrackerEditDialog extends JDialogCentered {
 	}
 
 	private class ListenerClass implements ActionListener, FocusListener {
-		
+
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			if (TrackerEditAction.OK.name().equals(e.getActionCommand())) {
@@ -430,7 +427,6 @@ public class JTrackerEditDialog extends JDialogCentered {
 						}
 						jWalletBalance.setText(format(total));
 					}
-					
 				}
 			} else if (TrackerEditAction.EDIT_ASSETS.name().equals(e.getActionCommand())) {
 				//Create values for selection dialog
@@ -481,7 +477,7 @@ public class JTrackerEditDialog extends JDialogCentered {
 					asset = getValue(asset); //Get new value
 					if (asset != null) { //Update number
 						assetUpdates.add(new FilterUpdate(assetValue.getID(), asset)); //Add update to queue (will only be executed if this dialog closed by pressing OK)
-						
+
 						//Update displayed total - only a GUI thing, the textfield is never used when getAssetsFilter is not empty
 						Map<String, Double> map = new HashMap<>();
 						for (Map.Entry<AssetValue, Double> entry : value.getAssetsFilter().entrySet()) {
@@ -496,9 +492,8 @@ public class JTrackerEditDialog extends JDialogCentered {
 						}
 						jAssets.setText(format(total));
 					}
-					
 				}
-			}	
+			}
 		}
 
 		@Override

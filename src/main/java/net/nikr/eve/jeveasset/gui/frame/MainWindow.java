@@ -73,7 +73,7 @@ public class MainWindow {
 		//Frame
 		jFrame = new JFrame();
 		updateTitle();
-		setSizeAndLocation(Settings.get().getWindowSize(),  Settings.get().getWindowLocation(), Settings.get().isWindowMaximized());
+		setSizeAndLocation(Settings.get().getWindowSize(), Settings.get().getWindowLocation(), Settings.get().isWindowMaximized());
 		jFrame.setAlwaysOnTop(Settings.get().isWindowAlwaysOnTop());
 		List<Image> icons = new ArrayList<>();
 		icons.add(Images.TOOL_ASSETS.getImage());
@@ -186,7 +186,7 @@ public class MainWindow {
 		}
 	}
 
-	public boolean isOpen(final JMainTab jMainTab){
+	public boolean isOpen(final JMainTab jMainTab) {
 		return tabs.contains(jMainTab);
 	}
 
@@ -204,7 +204,7 @@ public class MainWindow {
 		if (Settings.get().isSaveToolsOnExit()) {
 			boolean removed = Settings.get().getShowTools().remove(jMainTab.getTitle());
 			if (removed) {
-				program.saveSettings("Hidding Tool");
+				program.saveSettings("Hiding Tool");
 			}
 		}
 	}

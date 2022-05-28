@@ -63,12 +63,12 @@ public class EsiStructuresGetter extends AbstractEsiGetter {
 		this.tracker = tracker;
 	}
 
-	public static String estimate(List<EsiOwner> esiOwners,  List<OwnerType> ownerTypes, Set<MyLocation> locations, boolean tracker) {
+	public static String estimate(List<EsiOwner> esiOwners, List<OwnerType> ownerTypes, Set<MyLocation> locations, boolean tracker) {
 		int total = 0;
 		if (locations != null) { //Locations
 			EsiStructuresGetter.createIDsFromLocations(locations);
 			total = IDS.size() * esiOwners.size();
-		} else if (ownerTypes != null) { 
+		} else if (ownerTypes != null) {
 			EsiStructuresGetter.createIDsFromOwners(ownerTypes, tracker);
 			total = IDS.size() * esiOwners.size();
 		} else {

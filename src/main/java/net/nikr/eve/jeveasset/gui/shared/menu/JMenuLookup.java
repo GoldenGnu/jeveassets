@@ -61,6 +61,7 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 		LAZY_BLACKSMITH_MANUFACTURING,
 		EVE_COOKBOOK,
 		FUZZWORK_MARKET,
+		EVE_TYCOON,
 		EVEMAPS_DOTLAN_STATION,
 		EVEMAPS_DOTLAN_PLANET,
 		EVEMAPS_DOTLAN_SYSTEM,
@@ -206,6 +207,16 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 				return urls;
 			}
 		},
+		EVE_TYCOON() {
+			@Override
+			public Set<String> getLinks(MenuData<?> menuData) {
+				Set<String> urls = new HashSet<>();
+				for (int marketTypeID : menuData.getMarketTypeIDs()) {
+					urls.add("https://evemarketer.com/types/" + marketTypeID);
+				}
+				return urls;
+			}
+		},
 	//Info
 		GAMES_CHRUKER() {
 			@Override
@@ -329,6 +340,7 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 	private final JMenu jMarket;
 	private final JMenuItem jEveMarketer;
 	private final JMenuItem jFuzzworkMarket;
+	private final JMenuItem jEveTycoon;
 	private final JMenuItem jEvepraisal;
 	private final JMenuItem jEveHub;
 	private final JMenu jItemDatabase;
@@ -438,6 +450,12 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 		jFuzzworkMarket.addActionListener(listener);
 		jMarket.add(jFuzzworkMarket);
 
+		jEveTycoon = new JMenuItem(GuiShared.get().eveTycoon());
+		jEveTycoon.setIcon(Images.LINK_EVE_TYCOON.getIcon());
+		jEveTycoon.setActionCommand(MenuLookupAction.EVE_TYCOON.name());
+		jEveTycoon.addActionListener(listener);
+		jMarket.add(jEveTycoon);
+
 		jEvepraisal = new JMenuItem(GuiShared.get().evepraisal());
 		jEvepraisal.setIcon(Images.LINK_EVEPRAISAL.getIcon());
 		jEvepraisal.setActionCommand(MenuLookupAction.EVEPRAISAL.name());
@@ -503,7 +521,7 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 		JMenu jKhonSpace = new JMenu(GuiShared.get().lazyBlacksmith());
 		jKhonSpace.setIcon(Images.LINK_KHON_SPACE.getIcon());
 		jIndustry.add(jKhonSpace);
-		
+
 		jLazyBlacksmithInvention = new JMenuItem(GuiShared.get().lazyBlacksmithInvention());
 		jLazyBlacksmithInvention.setIcon(Images.MISC_INVENTION.getIcon());
 		jLazyBlacksmithInvention.setActionCommand(MenuLookupAction.LAZY_BLACKSMITH_INVENTION.name());
@@ -543,9 +561,9 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 		jzKillboardRegion.setEnabled(!menuData.getRegionLocations().isEmpty());
 	//Market
 		jMarket.setEnabled(!menuData.getMarketTypeIDs().isEmpty());
-		//jEveMarketdata.setEnabled(!menuData.getMarketTypeIDs().isEmpty());
 		jEveMarketer.setEnabled(!menuData.getMarketTypeIDs().isEmpty());
 		jFuzzworkMarket.setEnabled(!menuData.getMarketTypeIDs().isEmpty());
+		jEveTycoon.setEnabled(!menuData.getMarketTypeIDs().isEmpty());
 		jAdam4eve.setEnabled(!menuData.getMarketTypeIDs().isEmpty());
 		jEveHub.setEnabled(!menuData.getMarketTypeIDs().isEmpty());
 	//Info
@@ -680,6 +698,8 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 				DesktopUtil.browse(LookupLinks.EVEPRAISAL.getLinks(menuData), program);
 			} else if (MenuLookupAction.FUZZWORK_MARKET.name().equals(e.getActionCommand())) {
 				DesktopUtil.browse(LookupLinks.FUZZWORK_MARKET.getLinks(menuData), program);
+			} else if (MenuLookupAction.EVE_TYCOON.name().equals(e.getActionCommand())) {
+				DesktopUtil.browse(LookupLinks.EVE_TYCOON.getLinks(menuData), program);
 		//Info
 			} else if (MenuLookupAction.GAMES_CHRUKER.name().equals(e.getActionCommand())) {
 				DesktopUtil.browse(LookupLinks.GAMES_CHRUKER.getLinks(menuData), program);

@@ -49,7 +49,7 @@ import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 
 
 public class StockpileToolSettingsPanel extends JSettingsPanel {
-	
+
 	private final JCheckBox jSwitchTab;
 	private final JRadioButton jTwoGroups;
 	private final JRadioButton jThreeGroups;
@@ -58,7 +58,7 @@ public class StockpileToolSettingsPanel extends JSettingsPanel {
 	private final JLabel jGroup1Label;
 	private final JLabel jGroup2Label;
 	private final JLabel jGroup3Label;
-	
+
 	public StockpileToolSettingsPanel(final Program program, final SettingsDialog settingsDialog) {
 		super(program, settingsDialog, DialoguesSettings.get().stockpile(), Images.TOOL_STOCKPILE.getIcon());
 

@@ -24,7 +24,7 @@ import java.util.Locale;
 import uk.me.candle.translations.Bundle;
 
 
-public abstract class TabsJournal  extends Bundle {
+public abstract class TabsJournal extends Bundle {
 
 	public static TabsJournal get() {
 		return BundleServiceFactory.getBundleService().get(TabsJournal.class);

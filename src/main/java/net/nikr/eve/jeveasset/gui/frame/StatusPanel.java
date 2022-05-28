@@ -98,7 +98,7 @@ public class StatusPanel extends JGroupLayoutPanel {
 		jApiUpdate = createIcon(Images.DIALOG_UPDATE.getIcon(), GuiFrame.get().updatable());
 		programStatus.add(jApiUpdate);
 
-		jEveTime = createLabel(GuiFrame.get().eve(),  Images.MISC_EVE.getIcon());
+		jEveTime = createLabel(GuiFrame.get().eve(), Images.MISC_EVE.getIcon());
 		programStatus.add(jEveTime);
 
 		eveTimer = new Timer(1000, listener);
@@ -266,7 +266,7 @@ public class StatusPanel extends JGroupLayoutPanel {
 			jProgress.setPreferredSize(size);
 			jProgress.setMaximumSize(size);
 			jProgress.setVisible(false);
-			
+
 			jProgress.setStringPainted(true);
 			if (progressShow.isAuto()) {
 				jProgress.setString(text);

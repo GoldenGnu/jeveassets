@@ -341,7 +341,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 		}
 	}
 
-	private void writeTrackerSettings(final Document xmldoc,  Settings settings) {
+	private void writeTrackerSettings(final Document xmldoc, Settings settings) {
 		Element trackerSettingsNode = xmldoc.createElementNS(null, "trackersettings");
 		xmldoc.getDocumentElement().appendChild(trackerSettingsNode);
 		setAttribute(trackerSettingsNode, "allprofiles", settings.getTrackerSettings().isAllProfiles());
@@ -489,7 +489,6 @@ public class SettingsWriter extends AbstractXmlWriter {
 					viewNode.appendChild(viewColumnNode);
 				}
 			}
-			
 		}
 	}
 
@@ -671,7 +670,8 @@ public class SettingsWriter extends AbstractXmlWriter {
 		xmldoc.getDocumentElement().appendChild(parentNode);
 		setAttribute(parentNode, "refining", reprocessSettings.getReprocessingLevel());
 		setAttribute(parentNode, "efficiency", reprocessSettings.getReprocessingEfficiencyLevel());
-		setAttribute(parentNode, "processing", reprocessSettings.getScrapmetalProcessingLevel());
+		setAttribute(parentNode, "ore", reprocessSettings.getOreProcessingLevel());
+		setAttribute(parentNode, "scrapmetal", reprocessSettings.getScrapmetalProcessingLevel());
 		setAttribute(parentNode, "station", reprocessSettings.getStation());
 	}
 

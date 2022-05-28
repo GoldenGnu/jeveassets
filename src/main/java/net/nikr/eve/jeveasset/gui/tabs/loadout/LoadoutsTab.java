@@ -165,7 +165,7 @@ public class LoadoutsTab extends JMainTabSecondary {
 		JMenu jMenu = new JMenu(TabsLoadout.get().exportEveXml());
 		jMenu.setIcon(Images.MISC_EVE.getIcon());
 		jExport.add(jMenu);
-		
+
 		JMenuItem jExportEveXml = new JMenuItem(TabsLoadout.get().exportEveXmlSelected());
 		jExportEveXml.setActionCommand(LoadoutsAction.EXPORT_EVE_SELECTED.name());
 		jExportEveXml.addActionListener(listener);
@@ -325,7 +325,7 @@ public class LoadoutsTab extends JMainTabSecondary {
 			jXmlFileChooser.setCurrentDirectory(new File(FileUtil.getUserDirectory()));
 		}
 		int bFound = jXmlFileChooser.showSaveDialog(program.getMainWindow().getFrame());
-		if (bFound  == JFileChooser.APPROVE_OPTION) {
+		if (bFound == JFileChooser.APPROVE_OPTION) {
 			File file = jXmlFileChooser.getSelectedFile();
 			return file.getAbsolutePath();
 		} else {
@@ -431,7 +431,6 @@ public class LoadoutsTab extends JMainTabSecondary {
 		writeCount(builder, cargo);
 
 		jEftDialog.exportText(builder.toString());
-		
 	}
 
 	private void writeModuls(StringBuilder builder, Map<Integer, String> modules) {
@@ -572,7 +571,7 @@ public class LoadoutsTab extends JMainTabSecondary {
 				exportEFT();
 			} else if (LoadoutsAction.EXPORT.name().equals(e.getActionCommand())) {
 				exportDialog.setVisible(true);
-			} 
+			}
 		}
 	}
 

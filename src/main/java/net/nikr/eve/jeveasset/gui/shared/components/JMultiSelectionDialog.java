@@ -151,7 +151,7 @@ public class JMultiSelectionDialog<T> extends JDialogCentered {
 				jList.addSelectionInterval(index, index);
 			}
 		}
-		jAll.setSelected(jList.getSelectedIndices().length  == list.size());
+		jAll.setSelected(jList.getSelectedIndices().length == list.size());
 		this.data = null;
 		this.setVisible(true);
 		return this.data;
@@ -186,7 +186,7 @@ public class JMultiSelectionDialog<T> extends JDialogCentered {
 					jList.clearSelection();
 				}
 			} else if (MultiSelectionActions.SUBSET.name().equals(e.getActionCommand())) {
-				if (jSubset.isSelected() && list2 != null)  {
+				if (jSubset.isSelected() && list2 != null) {
 					List<T> selected = jList.getSelectedValuesList();
 					jList.clearSelection();
 					jList.setModel(new DataListModel<>(list2));

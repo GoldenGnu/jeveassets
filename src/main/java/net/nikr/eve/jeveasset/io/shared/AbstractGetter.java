@@ -126,7 +126,7 @@ public abstract class AbstractGetter<O extends OwnerType> implements Runnable {
 	/**
 	 * NOT THREAD SAFE!
 	 * use setNextUpdateSafe(Date date)
-	 * @param date 
+	 * @param date
 	 */
 	protected abstract void setNextUpdate(Date date);
 	protected abstract boolean haveAccess();
@@ -146,14 +146,14 @@ public abstract class AbstractGetter<O extends OwnerType> implements Runnable {
 		//Silently ignore disabled owners
 		if (disabled) {
 			logInfo(null, "Owner disabled");
-			return false; 
+			return false;
 		}
 		//Check API cache time
 		if (wait) {
 			addWarning("NOT ALLOWED YET", "Update skipped: Waiting for cache to expire.\r\n(Updatable again after cache expires)");
 			return false;
 		}
-		//Check if the owner have accesss to the endpoint 
+		//Check if the owner have accesss to the endpoint
 		if (owner != null && !haveAccess()) {
 			//Silent
 			return false;
@@ -313,7 +313,7 @@ public abstract class AbstractGetter<O extends OwnerType> implements Runnable {
 		synchronized(owner) {
 			assets = new ArrayList<>(owner.getAssets());
 		}
-		addItemIDs(itemMap,  assets);
+		addItemIDs(itemMap, assets);
 		return itemMap;
 	}
 

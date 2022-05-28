@@ -112,7 +112,7 @@ public class JTagsDialog extends JDialogCentered {
 				.addComponent(jLabel, 250, 250, Integer.MAX_VALUE)
 				.addGroup(layout.createSequentialGroup()
 					.addComponent(jTextField, 200, 200, 200)
-					.addComponent(jColor, 30, 30, 30)
+					.addComponent(jColor, Program.getIconButtonsWidth(), Program.getIconButtonsWidth(), Program.getIconButtonsWidth())
 				)
 				.addGroup(layout.createSequentialGroup()
 					.addComponent(jOK, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
@@ -133,11 +133,11 @@ public class JTagsDialog extends JDialogCentered {
 		);
 	}
 
-	public Tag show(Tag editTag){
+	public Tag show(Tag editTag) {
 		return show(editTag, new HashSet<>(Settings.get().getTags().keySet()));
 	}
 
-	public Tag show(Tag editTag, Set<String> unique){
+	public Tag show(Tag editTag, Set<String> unique) {
 		getDialog().setTitle(GuiShared.get().tagsEditTitle());
 		this.editTag = editTag;
 		this.unique = unique;
@@ -205,9 +205,7 @@ public class JTagsDialog extends JDialogCentered {
 		}
 
 		@Override
-		public void focusLost(FocusEvent e) {
-			
-		}
+		public void focusLost(FocusEvent e) { }
 
 		@Override
 		public void caretUpdate(CaretEvent e) {
@@ -293,7 +291,7 @@ public class JTagsDialog extends JDialogCentered {
 	}
 
 	private static class ColorFilter extends RGBImageFilter {
-	
+
 		private final int foreground;
 		private final int white;
 
@@ -301,7 +299,7 @@ public class JTagsDialog extends JDialogCentered {
 			this.foreground = foreground.getRGB();
 			white = Color.WHITE.getRGB();
 		}
-		
+
 		@Override
 		public int filterRGB(int x, int y, int rgb) {
 			if ((rgb | 0xFFFFFF00) == white) {
@@ -310,7 +308,7 @@ public class JTagsDialog extends JDialogCentered {
 				return rgb;
 			}
 		}
-		
+
 	}
 
 	private static class ColorPicker {
@@ -322,7 +320,7 @@ public class JTagsDialog extends JDialogCentered {
 			this.jButton = jButton;
 
 			jWindow = new JWindow(owner);
-			
+
 			JPanel jPanel = new JPanel();
 
 			jPanel.setBorder(new JPopupMenu().getBorder());
@@ -391,6 +389,6 @@ public class JTagsDialog extends JDialogCentered {
 		public void hide() {
 			jWindow.setVisible(false);
 		}
-		
 	}
+
 }

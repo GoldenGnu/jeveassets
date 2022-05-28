@@ -276,14 +276,14 @@ public class JSeparatorTable extends JAutoColumnTable {
 
 	/**
 	 * Get the renderer for separator rows.
-	 * @return 
+	 * @return
 	 */
 	public TableCellRenderer getSeparatorRenderer() { return separatorRenderer; }
 	public void setSeparatorRenderer(final TableCellRenderer separatorRenderer) { this.separatorRenderer = separatorRenderer; }
 
 	/**
 	 * Get the editor for separator rows.
-	 * @return 
+	 * @return
 	 */
 	public TableCellEditor getSeparatorEditor() { return separatorEditor; }
 	public void setSeparatorEditor(final TableCellEditor separatorEditor) { this.separatorEditor = separatorEditor; }
@@ -467,7 +467,7 @@ class SpanTableUI extends BasicTableUI {
 					aColumn = cm.getColumn(column);
 					cellRect = table.getCellRect(row, column, false);
 					if (aColumn != draggedColumn) {
-					   paintCell(g, cellRect, row, column);
+						paintCell(g, cellRect, row, column);
 					}
 				}
 			}

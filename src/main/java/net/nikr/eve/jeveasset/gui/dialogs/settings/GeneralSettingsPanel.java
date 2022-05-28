@@ -40,7 +40,7 @@ import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 
 
 public class GeneralSettingsPanel extends JSettingsPanel {
-	
+
 	private final JCheckBox jEnterFilters;
 	private final JCheckBox jHighlightSelectedRow;
 	private final JCheckBox jFocusEveOnline;
@@ -51,7 +51,7 @@ public class GeneralSettingsPanel extends JSettingsPanel {
 
 
 	public GeneralSettingsPanel(final Program program, final SettingsDialog optionsDialog) {
-		super(program, optionsDialog, DialoguesSettings.get().general(),  Images.DIALOG_SETTINGS.getIcon());
+		super(program, optionsDialog, DialoguesSettings.get().general(), Images.DIALOG_SETTINGS.getIcon());
 
 		jEnterFilters = new JCheckBox(DialoguesSettings.get().enterFilter());
 

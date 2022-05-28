@@ -127,7 +127,7 @@ public class ExportSettings {
 		CSV("csv"),
 		SQL("sql"),
 		HTML("html");
-		
+
 		private final String extension;
 
 		private ExportFormat(String extension) {
@@ -198,7 +198,7 @@ public class ExportSettings {
 	private LineDelimiter csvLineDelimiter;
 
 	//SQL
-	private boolean sqlCreateTable; 
+	private boolean sqlCreateTable;
 	private boolean sqlDropTable;
 	private boolean sqlExtendedInserts;
 	private String sqlTableName;

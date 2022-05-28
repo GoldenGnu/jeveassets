@@ -62,7 +62,7 @@ public abstract class DialoguesSettings extends Bundle {
 	public abstract String saveTools();
 	public abstract String selectTools();
 	public abstract String toolsOrderHelp();
-	
+
 	// used in AssetsToolSettingsPanel
 	public abstract String assets();
 	public abstract String includeSellContracts();
@@ -160,11 +160,11 @@ public abstract class DialoguesSettings extends Bundle {
 	public abstract String reprocessingWarning();
 	public abstract String stationEquipment();
 	public abstract String fiftyPercent();
-	public abstract String customPercent();
 	public abstract String percentSymbol();
 	public abstract String reprocessingLevel();
 	public abstract String reprocessingEfficiencyLevel();
-	public abstract String scrapMetalProcessingLevel();
+	public abstract String oreProcessingLevel();
+	public abstract String scrapmetalProcessingLevel();
 	public abstract String zero();
 	public abstract String one();
 	public abstract String two();
@@ -201,7 +201,7 @@ public abstract class DialoguesSettings extends Bundle {
 	public abstract String pricePrice();
 	public abstract String priceInstructions();
 
-	// used  in UserLocationSettingsPanel
+	// used in UserLocationSettingsPanel
 	public abstract String locationsInstructions();
 
 	// used in WindowSettingsPanel

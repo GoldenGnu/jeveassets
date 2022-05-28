@@ -43,7 +43,6 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.JToggleButton;
-import javax.swing.SwingConstants;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.types.LocationType;
@@ -139,37 +138,37 @@ public class OverviewTab extends JMainTabSecondary {
 		jStations.setToolTipText(TabsOverview.get().stations());
 		jStations.setActionCommand(OverviewAction.UPDATE_LIST.name());
 		jStations.addActionListener(listener);
-		jToolBarLeft.addButton(jStations, 1, SwingConstants.CENTER);
+		jToolBarLeft.addButtonIcon(jStations);
 
 		jPlanets = new JToggleButton(Images.LOC_PLANET.getIcon());
 		jPlanets.setToolTipText(TabsOverview.get().planets());
 		jPlanets.setActionCommand(OverviewAction.UPDATE_LIST.name());
 		jPlanets.addActionListener(listener);
-		jToolBarLeft.addButton(jPlanets, 1, SwingConstants.CENTER);
+		jToolBarLeft.addButtonIcon(jPlanets);
 
 		jSystems = new JToggleButton(Images.LOC_SYSTEM.getIcon());
 		jSystems.setToolTipText(TabsOverview.get().systems());
 		jSystems.setActionCommand(OverviewAction.UPDATE_LIST.name());
 		jSystems.addActionListener(listener);
-		jToolBarLeft.addButton(jSystems, 1, SwingConstants.CENTER);
+		jToolBarLeft.addButtonIcon(jSystems);
 
 		jConstellations = new JToggleButton(Images.LOC_CONSTELLATION.getIcon());
 		jConstellations.setToolTipText(TabsOverview.get().constellations());
 		jConstellations.setActionCommand(OverviewAction.UPDATE_LIST.name());
 		jConstellations.addActionListener(listener);
-		jToolBarLeft.addButton(jConstellations, 1, SwingConstants.CENTER);
+		jToolBarLeft.addButtonIcon(jConstellations);
 
 		jRegions = new JToggleButton(Images.LOC_REGION.getIcon());
 		jRegions.setToolTipText(TabsOverview.get().regions());
 		jRegions.setActionCommand(OverviewAction.UPDATE_LIST.name());
 		jRegions.addActionListener(listener);
-		jToolBarLeft.addButton(jRegions, 1, SwingConstants.CENTER);
+		jToolBarLeft.addButtonIcon(jRegions);
 
 		jGroups = new JToggleButton(Images.LOC_GROUPS.getIcon());
 		jGroups.setToolTipText(TabsOverview.get().groups());
 		jGroups.setActionCommand(OverviewAction.UPDATE_LIST.name());
 		jGroups.addActionListener(listener);
-		jToolBarLeft.addButton(jGroups, 1, SwingConstants.CENTER);
+		jToolBarLeft.addButtonIcon(jGroups);
 
 		ButtonGroup group = new ButtonGroup();
 		group.add(jStations);

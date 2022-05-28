@@ -63,7 +63,7 @@ public class OutbidProcesser {
 		OutbidProcesser processer = new OutbidProcesser(input, output);
 		processer.process();
 	}
-	
+
 	private void process() {
 		//Process order updates
 		for (RawPublicMarketOrder ordersResponse : input.getMarketOrders()) {
@@ -116,12 +116,12 @@ public class OutbidProcesser {
 						if (ordersResponse.getPrice() > price || (ordersResponse.getPrice() == price && ordersResponse.getIssued().before(issued))) {
 							outbid.addCount(ordersResponse.getVolumeRemain());
 						}
-					} else { //Sell  (outbid is lower)
+					} else { //Sell (outbid is lower)
 						outbid.setPrice(Math.min(outbid.getPrice(), ordersResponse.getPrice()));
 						if (ordersResponse.getPrice() < price || (ordersResponse.getPrice() == price && ordersResponse.getIssued().before(issued))) {
 							outbid.addCount(ordersResponse.getVolumeRemain());
 						} else if (ordersResponse.getPrice() == price) {
-							
+							//TODO matching price, compare date?
 						}
 					}
 
@@ -215,7 +215,7 @@ public class OutbidProcesser {
 	public static class OutbidProcesserInput {
 
 		private static final Map<Integer, DatedMarketOrders> MARKET_ORDERS = Collections.synchronizedMap(new HashMap<>());
-		
+
 		private final Map<Long, Long> locationToSystem = new HashMap<>();
 		private final Map<Long, Citadel> citadels = new HashMap<>();
 		private final Map<Integer, Set<MyMarketOrder>> typeIDs = new HashMap<>();
@@ -224,8 +224,9 @@ public class OutbidProcesser {
 		private final MarketOrderRange sellOrderRange;
 		private UniverseApi structuresApi = null;
 		private MarketApi marketApi = null;
+		private boolean unknownLocations = false;
 
-		public OutbidProcesserInput(ProfileData profileData, MarketOrderRange sellOrderRange) {	
+		public OutbidProcesserInput(ProfileData profileData, MarketOrderRange sellOrderRange) {
 			this.sellOrderRange = sellOrderRange;
 			for (OwnerType ownerType : profileData.getOwners().values()) { //Copy = thread safe
 				synchronized (ownerType) {
@@ -244,7 +245,8 @@ public class OutbidProcesser {
 							set.add(marketOrder);
 							//RegionIDs
 							MyLocation location = marketOrder.getLocation();
-							if (location == null) {
+							if (location == null || location.isEmpty()) { //Unknown Location
+								unknownLocations = true;
 								continue;
 							}
 							Integer regionID = RawConverter.toInteger(location.getRegionID());
@@ -266,6 +268,10 @@ public class OutbidProcesser {
 					}
 				}
 			}
+		}
+
+		public boolean hasUnknownLocations() {
+			return unknownLocations;
 		}
 
 		public void addOrders(Map<Integer, Set<RawPublicMarketOrder>> orders, Date date) {

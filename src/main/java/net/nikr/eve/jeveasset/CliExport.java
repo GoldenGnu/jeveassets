@@ -348,7 +348,7 @@ public class CliExport {
 				this.loadoutsIDs = new HashSet<>();
 			}
 		}
-		
+
 		@Override
 		public boolean matches(Loadout item) {
 			if (loadoutsNames.contains(item.getShipItemName())) {
@@ -360,6 +360,6 @@ public class CliExport {
 			}
 			return false;
 		}
-		
 	}
+
 }

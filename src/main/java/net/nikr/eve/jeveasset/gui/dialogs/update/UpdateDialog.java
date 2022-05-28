@@ -567,7 +567,7 @@ public class UpdateDialog extends JDialogCentered {
 	private String getFormatedDuration(Date date) {
 		if (date == null) { //less than 1 second
 			return DialoguesUpdate.get().noAccounts();
-		} else if (Updatable.isUpdatable(date)){
+		} else if (Updatable.isUpdatable(date)) {
 			return DialoguesUpdate.get().now();
 		} else {
 			long time = date.getTime() - Settings.getNow().getTime();
@@ -677,7 +677,7 @@ public class UpdateDialog extends JDialogCentered {
 				if (jContracts.isSelected()) {
 					updateTasks.add(new Step4Task(program.getProfileManager()));
 				}
-				if (jContractPricesAll.isSelected() || jContractPricesNew.isSelected())  {
+				if (jContractPricesAll.isSelected() || jContractPricesNew.isSelected()) {
 					updateTasks.add(new ContractPricesTask(program.getProfileData(), jContractPricesAll.isSelected()));
 				}
 				if (jPriceDataAll.isSelected() || jPriceDataNew.isSelected()) {
@@ -895,7 +895,7 @@ public class UpdateDialog extends JDialogCentered {
 			ThreadWoker.start(this, updates);
 		}
 	}
-	
+
 	public static class Step4Task extends UpdateTask {
 
 		private final ProfileManager profileManager;

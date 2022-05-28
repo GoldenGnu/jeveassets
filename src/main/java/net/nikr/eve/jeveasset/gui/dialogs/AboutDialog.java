@@ -74,7 +74,7 @@ public class AboutDialog extends JDialogCentered {
 		}
 
 		JEditorPane jInfo = createEditorPane(
-				  "<b>Version</b><br>"
+				"<b>Version</b><br>"
 				+ "&nbsp;" + Program.PROGRAM_VERSION + "<br>"
 				+ "<br>"
 				+ "<b>Data</b><br>"
@@ -93,12 +93,7 @@ public class AboutDialog extends JDialogCentered {
 				+ "&nbsp;Niklas Kyster Rasmussen (Golden Gnu)<br>"
 				+ "&nbsp;Dultas<br>"
 				+ "<br>"
-				+ "<b>One-time Contributors</b><br>"
-				+ "&nbsp;Madetara (Ray Kavier)<br>"
-				+ "&nbsp;Kaylee Syntax<br>"
-				+ "&nbsp;Inoruuk<br>"
-				+ "<br>"
-				+ "<b>Retired Developers</b><br>"
+				+ "<b>Contributors</b><br>"
 				+ "&nbsp;Flaming Candle<br>"
 				+ "&nbsp;Jochen Bedersdorfer<br>"
 				+ "&nbsp;TryfanMan<br>"
@@ -106,6 +101,10 @@ public class AboutDialog extends JDialogCentered {
 				+ "&nbsp;Ima Sohmbadi<br>"
 				+ "&nbsp;Saulvin<br>"
 				+ "&nbsp;AnrDaemon<br>"
+				+ "&nbsp;Madetara (Ray Kavier)<br>"
+				+ "&nbsp;Kaylee Syntax<br>"
+				+ "&nbsp;Inoruuk<br>"
+				+ "&nbsp;Burberius<br>"
 				+ "<br>"
 				+ "<b>Retired Testers</b><br>"
 				+ "&nbsp;Varo Jan<br>"
@@ -143,7 +142,7 @@ public class AboutDialog extends JDialogCentered {
 				+ "&nbsp;<a href=\"https://github.com/uklimaschewski/EvalEx\">EvalEx</a> (formula columns)<br>"
 				+ "&nbsp;<a href=\"https://picocli.info\">Picocli</a> (CLI)<br>"
 				);
-		
+
 		JScrollPane jInfoScroll = new JScrollPane(jInfo, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
 		jClose = new JButton(DialoguesAbout.get().close());

@@ -67,14 +67,14 @@ public class JTextDialog extends JDialogCentered {
 	private String returnValue = null;
 
 	public JTextDialog(Window window) {
-		super(null, "",  window, null);
+		super(null, "", window, null);
 
 		jFileChooser = JCustomFileChooser.createFileChooser(window, "txt");
 		jFileChooser.setMultiSelectionEnabled(false);
 		jFileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 
 		ListenerClass listener = new ListenerClass();
-		
+
 		jToClipboard = new JButton(GuiShared.get().textToClipboard(), Images.EDIT_COPY.getIcon());
 		jToClipboard.setActionCommand(TextDialogAction.TO_CLIPBOARD.name());
 		jToClipboard.addActionListener(listener);
@@ -98,7 +98,7 @@ public class JTextDialog extends JDialogCentered {
 		jCancel = new JButton(GuiShared.get().cancel());
 		jCancel.setActionCommand(TextDialogAction.CANCEL.name());
 		jCancel.addActionListener(listener);
-		
+
 		jText = new JTextAreaPlaceholder();
 		jText.setTabSize(4);
 		jText.setLineWrap(true);
@@ -138,9 +138,8 @@ public class JTextDialog extends JDialogCentered {
 					.addComponent(jCancel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				)
 		);
-		
 	}
-	
+
 	@Override
 	protected JComponent getDefaultFocus() {
 		return jText;
@@ -152,14 +151,10 @@ public class JTextDialog extends JDialogCentered {
 	}
 
 	@Override
-	protected void windowShown() {
-		
-	}
+	protected void windowShown() { }
 
 	@Override
-	protected void save() {
-		
-	}
+	protected void save() { }
 
 	public void setLineWrap(boolean wrap) {
 		jText.setLineWrap(wrap);
@@ -229,7 +224,6 @@ public class JTextDialog extends JDialogCentered {
 				}
 			}
 		}
-		
 	}
 
 	private void fromFile() {
@@ -246,7 +240,7 @@ public class JTextDialog extends JDialogCentered {
 				}
 				jText.setText(builder.toString());
 			} catch (IOException e) {
-				JOptionPane.showMessageDialog(getDialog(), GuiShared.get().textLoadFailMsg(),  GuiShared.get().textLoadFailTitle(), JOptionPane.WARNING_MESSAGE);
+				JOptionPane.showMessageDialog(getDialog(), GuiShared.get().textLoadFailMsg(), GuiShared.get().textLoadFailTitle(), JOptionPane.WARNING_MESSAGE);
 			} finally {
 				try {
 					if (reader != null) {

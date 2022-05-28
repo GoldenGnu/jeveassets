@@ -74,6 +74,7 @@ import net.nikr.eve.jeveasset.data.settings.ColorSettings;
 import net.nikr.eve.jeveasset.data.settings.Colors;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.types.LocationType;
+import net.nikr.eve.jeveasset.gui.dialogs.update.StructureUpdateDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.update.TaskDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
@@ -139,9 +140,10 @@ public class MarketOrdersTab extends JMainTabPrimary {
 	private final MarketOrdersErrorDialog jMarketOrdersErrorDialog;
 	private final Timer timer;
 	private final FileListener fileListener;
-	private java.util.Timer updateTimer;
 	private static Date lastLogUpdate = null;
 	private static String clipboardData = null;
+	private java.util.Timer updateTimer;
+	private boolean showUnknownLocationsWarning = true;
 
 	//Table
 	private final MarketOrdersFilterControl filterControl;
@@ -185,7 +187,7 @@ public class MarketOrdersTab extends JMainTabPrimary {
 		JLabel jOrderRangeNextLabel = new JLabel(Images.MISC_HELP.getIcon());
 		jOrderRangeNextLabel.setToolTipText(TabsOrders.get().sellOrderRangeToolTip());
 		InstantToolTip.install(jOrderRangeNextLabel);
-		jToolBar.add(jOrderRangeNextLabel);
+		jToolBar.addLabelIcon(jOrderRangeNextLabel);
 
 		jToolBar.addSpace(7);
 
@@ -201,7 +203,7 @@ public class MarketOrdersTab extends JMainTabPrimary {
 		JLabel jOrderTypeLabelLabel = new JLabel(Images.MISC_HELP.getIcon());
 		jOrderTypeLabelLabel.setToolTipText(TabsOrders.get().marketLogTypeToolTip());
 		InstantToolTip.install(jOrderTypeLabelLabel);
-		jToolBar.add(jOrderTypeLabelLabel);
+		jToolBar.addLabelIcon(jOrderTypeLabelLabel);
 
 		jToolBar.addSpace(7);
 
@@ -367,7 +369,12 @@ public class MarketOrdersTab extends JMainTabPrimary {
 			updateTimer.schedule(new java.util.TimerTask() {
 				@Override
 				public void run() {
-					updateESI();
+					Program.ensureEDT(new Runnable() {
+						@Override
+						public void run() {
+							updateESI();
+						}
+					});
 					updateTimer = null;
 				}
 			}, delay);
@@ -512,6 +519,20 @@ public class MarketOrdersTab extends JMainTabPrimary {
 		jUpdate.setText(TabsOrders.get().updateOutbidUpdating());
 		jUpdate.setEnabled(false);
 		OutbidProcesserInput input = new OutbidProcesserInput(program.getProfileData(), Settings.get().getOutbidOrderRange());
+		if (input.hasUnknownLocations() && showUnknownLocationsWarning) {
+			showUnknownLocationsWarning = false; //Only shown once per run
+			if (StructureUpdateDialog.structuresUpdatable(program)) { //Strctures updatable
+				//Ask to update structures
+				int returnValue = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), TabsOrders.get().unknownLocationsMsg(), TabsOrders.get().unknownLocationsTitle(), JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+				if (returnValue == JOptionPane.OK_OPTION) { //Do update structures
+					//Show structures update dialog
+					program.showUpdateStructuresDialog(false);
+				}
+			} else { //Strctures not updatable
+				//Show help text about how to update later
+				JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsOrders.get().unknownLocationsMsgLater(), TabsOrders.get().unknownLocationsTitle(), JOptionPane.PLAIN_MESSAGE);
+			}
+		}
 		if (input.getRegionIDs().isEmpty()) {
 			LOG.info("no active orders found");
 			if (jAutoUpdate.isSelected()) {
@@ -877,7 +898,7 @@ public class MarketOrdersTab extends JMainTabPrimary {
 						LOG.info("Saving Profile");
 						program.saveProfile();
 					}
-					LOG.info("Marketlog update thread done in "  + Formater.milliseconds(System.currentTimeMillis() - start) + " for " + file.getName());
+					LOG.info("Marketlog update thread done in " + Formater.milliseconds(System.currentTimeMillis() - start) + " for " + file.getName());
 				}
 			}, file.getName());
 			thread.start();
@@ -907,7 +928,7 @@ public class MarketOrdersTab extends JMainTabPrimary {
 								}
 							} else {
 								//Outbid and lowest sell price
-								if (outbid.getPrice() < marketOrder.getPrice() &&  (marketOrderCopy == null || marketOrder.getPrice() < marketOrderCopy.getPrice())) {
+								if (outbid.getPrice() < marketOrder.getPrice() && (marketOrderCopy == null || marketOrder.getPrice() < marketOrderCopy.getPrice())) {
 									marketOrderCopy = marketOrder;
 								}
 							}

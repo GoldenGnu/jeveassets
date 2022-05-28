@@ -123,7 +123,7 @@ public class ExportDialog<E> extends JDialogCentered {
 	private final EventList<E> eventList;
 
 	private final Map<String, EnumTableColumn<E>> columns = new HashMap<>();
-	private final List<EnumTableColumn<E>> columnIndex = new ArrayList<>();	
+	private final List<EnumTableColumn<E>> columnIndex = new ArrayList<>();
 
 	public ExportDialog(final JFrame jFrame, final String toolName, ColumnCache<E> columnCache, final SimpleFilterControl<E> filterControl, SimpleTableFormat<E> tableFormat, final EventList<E> eventList) {
 		super(null, DialoguesExport.get().export(), jFrame, Images.DIALOG_CSV_EXPORT.getImage());
@@ -349,7 +349,6 @@ public class ExportDialog<E> extends JDialogCentered {
 								.addComponent(jViews, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
 								.addComponent(jViewSelectAll, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
 								.addComponent(jColumnSelectionPanel, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
-								
 							)
 						)
 					)
@@ -464,7 +463,7 @@ public class ExportDialog<E> extends JDialogCentered {
 			jFileChooser.setSelectedFile(new File(Settings.get().getExportSettings(toolName).getDefaultFilename()));
 		}
 		int bFound = jFileChooser.showDialog(getDialog(), DialoguesExport.get().ok());
-		if (bFound  == JFileChooser.APPROVE_OPTION) {
+		if (bFound == JFileChooser.APPROVE_OPTION) {
 			file = jFileChooser.getSelectedFile();
 			Settings.get().getExportSettings(toolName).setFilename(file.getAbsolutePath());
 			return true;
@@ -528,14 +527,14 @@ public class ExportDialog<E> extends JDialogCentered {
 		if (jFilters.getSelectedItem() != null
 				&& !DialoguesExport.get().noSavedFilter().equals(jFilters.getSelectedItem())) {
 			Settings.get().getExportSettings(toolName).setFilterName((String) jFilters.getSelectedItem());
-		} else  {
+		} else {
 			Settings.get().getExportSettings(toolName).setFilterName(null);
 		}
 		//View Name (Make sure there is a selected item and that is is not filler text for empty list)
 		if (jViews.getSelectedItem() != null
 				&& !DialoguesExport.get().viewNoSaved().equals(jViews.getSelectedItem())) {
 			Settings.get().getExportSettings(toolName).setViewName((String) jViews.getSelectedItem());
-		} else  {
+		} else {
 			Settings.get().getExportSettings(toolName).setViewName(null);
 		}
 		Settings.unlock("Export Settings (Save)"); //Unlock for Export Settings (Save)
@@ -575,7 +574,7 @@ public class ExportDialog<E> extends JDialogCentered {
 					}
 				} catch (IllegalArgumentException ex) {
 					//ignore missing columns...
-				}	
+				}
 			}
 			int[] indices = new int[selections.size()];
 			for (int i = 0; i < selections.size(); i++) {

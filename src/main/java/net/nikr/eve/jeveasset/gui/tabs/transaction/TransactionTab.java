@@ -104,7 +104,7 @@ public class TransactionTab extends JMainTabPrimary {
 			}
 		});
 		jToolBar.addButton(jClearNew);
-		
+
 		//Table Format
 		tableFormat = TableFormatFactory.transactionTableFormat();
 		//Backend

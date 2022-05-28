@@ -110,17 +110,17 @@ public class EsiItemsGetter extends AbstractEsiGetter {
 		final String techLevel;
 		if (metaGroupID != null) {
 			switch (metaGroupID) {
-				case 1:  techLevel = "Tech I"; break;
-				case 2:  techLevel = "Tech II"; break;
-				case 3:  techLevel = "Storyline"; break;
-				case 4:  techLevel = "Faction"; break;
-				case 5:  techLevel = "Officer"; break;
-				case 6:  techLevel = "Deadspace"; break;
+				case 1: techLevel = "Tech I"; break;
+				case 2: techLevel = "Tech II"; break;
+				case 3: techLevel = "Storyline"; break;
+				case 4: techLevel = "Faction"; break;
+				case 5: techLevel = "Officer"; break;
+				case 6: techLevel = "Deadspace"; break;
 				/*
 				//No longer in use
-				case 7:  tech = "Frigates"; break;
-				case 8:  tech = "Elite Frigates"; break;
-				case 9:  tech = "Commander Frigates"; break;
+				case 7: tech = "Frigates"; break;
+				case 8: tech = "Elite Frigates"; break;
+				case 9: tech = "Commander Frigates"; break;
 				case 10: tech = "Destroyer"; break;
 				case 11: tech = "Cruiser"; break;
 				case 12: tech = "Elite Cruiser"; break;
@@ -136,7 +136,7 @@ public class EsiItemsGetter extends AbstractEsiGetter {
 				default: techLevel = "Tech I"; break;
 			}
 		} else {
-			techLevel = "Tech 1"; 
+			techLevel = "Tech 1";
 		}
 		boolean marketGroup;
 		if (marketGroupResponse != null) {
@@ -148,7 +148,6 @@ public class EsiItemsGetter extends AbstractEsiGetter {
 		int productTypeID = 0; //Product
 		int productQuantity = 1; //Product Quantity
 		item = new Item(typeID, name, group, category, price, volume, packagedVolume, capacity, metaLevel, techLevel, marketGroup, portion, productTypeID, productQuantity, ESI_ITEM_VERSION);
-		
 	}
 
 	private float getNotNull(Float f) {
@@ -178,5 +177,5 @@ public class EsiItemsGetter extends AbstractEsiGetter {
 	protected RolesEnum[] getRequiredRoles() {
 		return null;
 	}
-	
+
 }

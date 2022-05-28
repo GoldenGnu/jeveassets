@@ -55,7 +55,11 @@ public class JDropDownButton extends JButton {
 	}
 
 	public JDropDownButton(final Icon icon) {
-		this("", icon, LEFT, BOTTOM);
+		this(GuiShared.get().emptyString(), icon, LEFT, BOTTOM);
+	}
+
+	public JDropDownButton(final Icon icon, final int popupHorizontalAlignment) {
+		this(GuiShared.get().emptyString(), icon, popupHorizontalAlignment, BOTTOM);
 	}
 
 	public JDropDownButton(final String text) {
@@ -69,6 +73,7 @@ public class JDropDownButton extends JButton {
 	public JDropDownButton(final int popupHorizontalAlignment) {
 		this(GuiShared.get().emptyString(), null, popupHorizontalAlignment, BOTTOM);
 	}
+
 	public JDropDownButton(final int popupHorizontalAlignment, final int popupVerticalAlignment) {
 		this(GuiShared.get().emptyString(), null, popupHorizontalAlignment, popupVerticalAlignment);
 	}
@@ -76,6 +81,7 @@ public class JDropDownButton extends JButton {
 	public JDropDownButton(final String text, final int popupHorizontalAlignment) {
 		this(text, null, popupHorizontalAlignment, BOTTOM);
 	}
+
 	public JDropDownButton(final String text, final int popupHorizontalAlignment, final int popupVerticalAlignment) {
 		this(text, null, popupHorizontalAlignment, popupVerticalAlignment);
 	}
@@ -146,7 +152,7 @@ public class JDropDownButton extends JButton {
 		return popupHorizontalAlignment;
 	}
 
-	public void setPopupHorizontalAlignment(final int popupHorizontalAlignment)  {
+	public void setPopupHorizontalAlignment(final int popupHorizontalAlignment) {
 		if (popupHorizontalAlignment != LEFT && popupHorizontalAlignment != RIGHT && popupHorizontalAlignment != CENTER) {
 			throw new IllegalArgumentException("Must be SwingConstants.RIGHT, SwingConstants.LEFT, or SwingConstants.CENTER");
 		}
@@ -276,7 +282,7 @@ public class JDropDownButton extends JButton {
 
 		@Override
 		public void keyPressed(final KeyEvent e) {
-			if (e.getKeyCode()  == KeyEvent.VK_SPACE || e.getKeyCode() == KeyEvent.VK_ENTER) {
+			if (e.getKeyCode() == KeyEvent.VK_SPACE || e.getKeyCode() == KeyEvent.VK_ENTER) {
 				showPopupMenuKey = true;
 			}
 		}

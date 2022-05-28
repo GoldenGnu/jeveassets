@@ -270,11 +270,11 @@ public class JFormulaDialog<T extends Enum<T> & EnumTableColumn<Q>, Q> extends J
 	}
 
 	public static String getHardName(EnumTableColumn<?> t) {
-		return  t.name().replace("_", "");
+		return t.name().replace("_", "");
 	}
 
 	private static String getSoftName(EnumTableColumn<?> t) {
-		return  "[" + t.getColumnName() + "]";
+		return "[" + t.getColumnName() + "]";
 	}
 
 	private String toColumnName(String text) {
@@ -304,7 +304,7 @@ public class JFormulaDialog<T extends Enum<T> & EnumTableColumn<Q>, Q> extends J
 	}
 
 	public static String replaceAll(EnumTableColumn<?> enumColumn, String text) {
-		return text.replaceAll("\\b" + getHardName(enumColumn) + "\\b", getSoftName(enumColumn).replace("$", "\\$")); //$ is reserved for 
+		return text.replaceAll("\\b" + getHardName(enumColumn) + "\\b", getSoftName(enumColumn).replace("$", "\\$")); //$ is reserved for
 	}
 
 	private Expression getExpression() {
@@ -441,7 +441,7 @@ public class JFormulaDialog<T extends Enum<T> & EnumTableColumn<Q>, Q> extends J
 		public void setIndex(Integer index) {
 			this.index = index;
 		}
-	
+
 		@Override
 		public int hashCode() {
 			int hash = 7;

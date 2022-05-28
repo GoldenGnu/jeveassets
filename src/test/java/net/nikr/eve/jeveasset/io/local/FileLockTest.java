@@ -30,7 +30,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import net.nikr.eve.jeveasset.TestUtil;
-import net.nikr.eve.jeveasset.data.profile.ProfileManager;
+import net.nikr.eve.jeveasset.data.profile.Profile;
+import net.nikr.eve.jeveasset.data.profile.Profile.DefaultProfile;
 import net.nikr.eve.jeveasset.io.shared.FileUtil;
 import org.junit.AfterClass;
 import static org.junit.Assert.assertFalse;
@@ -118,18 +119,18 @@ public class FileLockTest extends TestUtil {
 	@Test
 	public void restoreBackupProfileTest() throws IOException {
 		File file = new File (FileLockSettings.getPathProfile());
-		ProfileManager profileManager = new ProfileManager();
+		Profile profile = new DefaultProfile();
 		boolean saved;
-		saved = ProfileWriter.save(profileManager, FileLockSettings.getPathProfile());
+		saved = ProfileWriter.save(profile, FileLockSettings.getPathProfile());
 		assertTrue("LockTest: Backup - Save profile failed (1 of 2)", saved);
-		saved = ProfileWriter.save(profileManager, FileLockSettings.getPathProfile());
+		saved = ProfileWriter.save(profile, FileLockSettings.getPathProfile());
 		assertTrue("LockTest: Backup - Save profile failed (2 of 2)", saved);
 		boolean deleted = file.delete();
 		assertTrue("LockTest: Backup - Delete profile failed", deleted);
 		boolean created = file.createNewFile();
 		assertTrue("LockTest: Backup - Create profile failed", created);
 		System.out.println("\"Premature end of file\": Is an expected error:");
-		boolean loaded = ProfileReader.load(profileManager, FileLockSettings.getPathProfile());
+		boolean loaded = ProfileReader.load(profile, FileLockSettings.getPathProfile());
 		assertTrue("LockTest: Backup - Load profile failed", loaded);
 	}
 
@@ -267,7 +268,7 @@ public class FileLockTest extends TestUtil {
 
 		@Override
 		public void run() {
-			ok = ProfileReader.load(new ProfileManager(), FileLockSettings.getPathProfile());
+			ok = ProfileReader.load(new DefaultProfile(), FileLockSettings.getPathProfile());
 		}
 
 		@Override
@@ -281,7 +282,7 @@ public class FileLockTest extends TestUtil {
 
 		@Override
 		public void run() {
-			ok = ProfileWriter.save(new ProfileManager(), FileLockSettings.getPathProfile());
+			ok = ProfileWriter.save(new DefaultProfile(), FileLockSettings.getPathProfile());
 		}
 
 		@Override
@@ -293,7 +294,7 @@ public class FileLockTest extends TestUtil {
 	@Test
 	public void profileLockTest() throws InterruptedException {
 		//Setup
-		boolean ok = ProfileWriter.save(new ProfileManager(), FileLockSettings.getPathProfile());
+		boolean ok = ProfileWriter.save(new DefaultProfile(), FileLockSettings.getPathProfile());
 		assertTrue("LockTest: Setup failed", ok);
 		//Chaos! :D
 		List<TestThread> threads = new ArrayList<>();

@@ -33,7 +33,7 @@ public class Filter {
 	public static class AllColumn<T> implements EnumTableColumn<T> {
 
 		public static final AllColumn<Object> ALL = new AllColumn<Object>();
-		
+
 		@Override
 		public Class<?> getType() {
 			return Object.class;
@@ -304,7 +304,7 @@ public class Filter {
 	 * @param logic
 	 * @param column
 	 * @param compare
-	 * @param text 
+	 * @param text
 	 */
 	public Filter(final LogicType logic, final EnumTableColumn<?> column, final CompareType compare, final String text) {
 		this(1, logic, column, compare, text, true);

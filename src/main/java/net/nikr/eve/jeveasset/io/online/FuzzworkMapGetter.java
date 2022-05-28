@@ -36,7 +36,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-public class FuzzworkMapGetter { 
+public class FuzzworkMapGetter {
 
 	private static final Logger LOG = LoggerFactory.getLogger(FuzzworkMapGetter.class);
 
@@ -122,7 +122,7 @@ public class FuzzworkMapGetter {
 		public double distance;
 	}
 
-	public static class Planet { 
+	public static class Planet {
 		public Integer itemid;
 		public String itemname;
 		public Integer solarsystemid;

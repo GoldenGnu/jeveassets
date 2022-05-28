@@ -26,7 +26,7 @@ import java.awt.Color;
 public class ColorUtil {
 
 	private ColorUtil() { }
-	
+
 	public static double luminance(Color color) {
 		return (0.299 * color.getRed() + 0.587 * color.getGreen() + 0.114 * color.getBlue()) / 255;
 	}
@@ -42,7 +42,7 @@ public class ColorUtil {
 
 		if (factor > 1) {
 			factor = 1;
-		} else if (factor < 0){
+		} else if (factor < 0) {
 			factor = 0;
 		}
 		/* From 2D group:

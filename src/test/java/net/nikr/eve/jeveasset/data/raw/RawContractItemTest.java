@@ -34,5 +34,5 @@ public class RawContractItemTest extends TestUtil {
 		RawUtil.compare(RawContractItem.class, CharacterContractsItemsResponse.class);
 		RawUtil.compare(RawContractItem.class, CorporationContractsItemsResponse.class);
 	}
-	
+
 }

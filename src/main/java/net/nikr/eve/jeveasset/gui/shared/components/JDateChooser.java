@@ -51,13 +51,12 @@ public class JDateChooser extends DatePicker {
 		addDateChangeListener(new DateChangeListener() {
 			@Override
 			public void dateChanged(DateChangeEvent event) {
-				SwingUtilities.invokeLater(new Runnable(){
+				SwingUtilities.invokeLater(new Runnable() {
 					@Override
 					public void run() {
 						jTextField.setBackground(Colors.COMPONENT_TRANSPARENT.getColor());
 					}
 				});
-				
 			}
 		});
 	}
@@ -68,7 +67,7 @@ public class JDateChooser extends DatePicker {
 	}
 
 	@Override
-	public final  JButton getComponentToggleCalendarButton() {
+	public final JButton getComponentToggleCalendarButton() {
 		return super.getComponentToggleCalendarButton();
 	}
 

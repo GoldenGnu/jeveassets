@@ -27,7 +27,7 @@ import static org.junit.Assert.*;
 
 
 public class ImportEveMultibuyTest extends TestUtil {
-	
+
 	private final ImportEveMultibuy importEveMultibuy = new ImportEveMultibuy();
 
 	@Test

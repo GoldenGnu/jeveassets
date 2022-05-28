@@ -55,10 +55,8 @@ public class MainMenu extends JMenuBar {
 		CREDITS,
 		README,
 		CHANGELOG,
-		SEND_BUG_REPORT,
-		LINK_FORUM,
-		LINK_GITHUB,
-		LINK_FAQ,
+		LINK_FEEDBACK_AND_HELP,
+		LINK_WIKI,
 		ROUTING,
 		STOCKPILE,
 		UPDATE,
@@ -264,49 +262,40 @@ public class MainMenu extends JMenuBar {
 		menu = new JMenu(GuiFrame.get().help());
 		this.add(menu);
 
-		menuItem = new JMenuItem(GuiFrame.get().linkFaq());
+		menuItem = new JMenuItem(GuiFrame.get().linkWiki());
+		menuItem.setIcon(Images.TOOL_ASSETS.getIcon());
+		menuItem.setActionCommand(MainMenuAction.LINK_WIKI.name());
+		menuItem.addActionListener(program);
+		menu.add(menuItem);
+
+		menuItem = new JMenuItem(GuiFrame.get().linkFeedbackAndHelp());
 		menuItem.setIcon(Images.MISC_HELP.getIcon());
-		menuItem.setActionCommand(MainMenuAction.LINK_FAQ.name());
+		menuItem.setActionCommand(MainMenuAction.LINK_FEEDBACK_AND_HELP.name());
 		menuItem.addActionListener(program);
-		menu.add(menuItem);
-
-		menuItem = new JMenuItem(GuiFrame.get().linkForum());
-		menuItem.setIcon(Images.MISC_EVE.getIcon());
-		menuItem.setActionCommand(MainMenuAction.LINK_FORUM.name());
-		menuItem.addActionListener(program);
-		menu.add(menuItem);
-
-		menuItem = new JMenuItem(GuiFrame.get().linkGitHub());
-		menuItem.setIcon(Images.JOBS_INVENTION_SUCCESS.getIcon());
-		menuItem.setActionCommand(MainMenuAction.LINK_GITHUB.name());
-		menuItem.addActionListener(program);
-		menu.add(menuItem);
-
-		menuItem = new JMenuItem(GuiFrame.get().sendBugReport());
-		menuItem.setIcon(Images.MISC_DEBUG.getIcon());
-		menuItem.setActionCommand(MainMenuAction.SEND_BUG_REPORT.name());
-		menuItem.addActionListener(program);
-		
 		menu.add(menuItem);
 
 		menu.addSeparator();
 
 		menuItem = new JMenuItem(GuiFrame.get().readme());
+		menuItem.setIcon(Images.STOCKPILE_SHOPPING_LIST.getIcon());
 		menuItem.setActionCommand(MainMenuAction.README.name());
 		menuItem.addActionListener(program);
 		menu.add(menuItem);
 
 		menuItem = new JMenuItem(GuiFrame.get().credits());
+		menuItem.setIcon(Images.STOCKPILE_SHOPPING_LIST.getIcon());
 		menuItem.setActionCommand(MainMenuAction.CREDITS.name());
 		menuItem.addActionListener(program);
 		menu.add(menuItem);
 
 		menuItem = new JMenuItem(GuiFrame.get().license());
+		menuItem.setIcon(Images.STOCKPILE_SHOPPING_LIST.getIcon());
 		menuItem.setActionCommand(MainMenuAction.LICENSE.name());
 		menuItem.addActionListener(program);
 		menu.add(menuItem);
 
 		menuItem = new JMenuItem(GuiFrame.get().change());
+		menuItem.setIcon(Images.STOCKPILE_SHOPPING_LIST.getIcon());
 		menuItem.setActionCommand(MainMenuAction.CHANGELOG.name());
 		menuItem.addActionListener(program);
 		menu.add(menuItem);
@@ -381,6 +370,6 @@ public class MainMenu extends JMenuBar {
 			jStructureMenu.setIcon(Images.DIALOG_UPDATE_DISABLED.getIcon());
 			jStructureMenu.setToolTipText(GuiFrame.get().not());
 		}
-		
 	}
+
 }

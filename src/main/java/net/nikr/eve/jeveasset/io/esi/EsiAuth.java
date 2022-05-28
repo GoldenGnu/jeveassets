@@ -39,7 +39,7 @@ public class EsiAuth {
 	private OAuth oAuth;
 	private final MicroServe microServe;
 	private EsiCallbackURL callbackURL;
-	
+
 	public EsiAuth() {
 		microServe = new MicroServe();
 		microServe.startServer();

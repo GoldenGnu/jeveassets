@@ -39,21 +39,21 @@ public class JMenuFormula<T extends Enum<T> & EnumTableColumn<Q>, Q> extends JAu
 	private enum MenuFormulaAction {
 		ADD
 	}
-	
+
 	private final JMenuItem jAdd;
 	private final JFormulaDialog<T, Q> jFormulaDialog;
 	private final ColumnManager<T, Q> columnManager;
-	
+
 
 	public JMenuFormula(Program program, ColumnManager<T, Q> columnManager) {
 		super(GuiShared.get().formulaMenu(), program);
 
 		this.columnManager = columnManager;
-		
+
 		setIcon(Images.MISC_FORMULA.getIcon());
 
 		jFormulaDialog = new JFormulaDialog<>(program, columnManager);
-		
+
 		ListenerClass listener = new ListenerClass();
 
 		jAdd = new JMenuItem(GuiShared.get().add());
@@ -78,7 +78,7 @@ public class JMenuFormula<T extends Enum<T> & EnumTableColumn<Q>, Q> extends JAu
 			JMenuItem menuItem;
 			JMenu jMenu = new JMenu(formula.getColumnName());
 			add(jMenu);
-			
+
 			menuItem = new JMenuItem(GuiShared.get().delete(), Images.EDIT_DELETE.getIcon());
 			menuItem.addActionListener(new ActionListener() {
 				@Override
@@ -101,7 +101,7 @@ public class JMenuFormula<T extends Enum<T> & EnumTableColumn<Q>, Q> extends JAu
 				}
 			});
 			jMenu.add(menuItem);
-		}		
+		}
 	}
 
 	private class ListenerClass implements ActionListener {
@@ -114,6 +114,7 @@ public class JMenuFormula<T extends Enum<T> & EnumTableColumn<Q>, Q> extends JAu
 				}
 				columnManager.addColumn(formula);
 			}
-		}	
+		}
 	}
+
 }

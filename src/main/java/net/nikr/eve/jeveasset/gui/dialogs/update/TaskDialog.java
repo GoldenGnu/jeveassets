@@ -150,7 +150,7 @@ public class TaskDialog {
 		}
 
 		jIcon = new JLabel(new UpdateTask.EmptyIcon());
-		
+
 		jProgressBar = new JProgressBar(0, 100);
 		jTotalProgressBar = new JProgressBar(0, 100);
 		jTotalProgressBar.setIndeterminate(true);

@@ -188,7 +188,7 @@ public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarket
 
 	@Override
 	public int compareTo(final MyMarketOrder o) {
-		return  Long.compare(o.getOrderID(), this.getOrderID());
+		return Long.compare(o.getOrderID(), this.getOrderID());
 	}
 
 	public Date getExpires() {
@@ -237,7 +237,7 @@ public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarket
 
 	@Override
 	public int getMaterialEfficiency() {
-		return 0; //Zero - Can not sell researched blueprints 
+		return 0; //Zero - Can not sell researched blueprints
 	}
 
 	@Override
@@ -426,7 +426,6 @@ public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarket
 		} else {
 			return outbid.getPrice() - getPrice();
 		}
-		
 	}
 
 	public void setOutbid(Outbid outbid) {

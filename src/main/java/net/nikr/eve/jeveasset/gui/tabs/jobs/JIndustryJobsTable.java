@@ -62,6 +62,42 @@ public class JIndustryJobsTable extends JAutoColumnTable {
 			ColorSettings.configCell(component, ColorEntry.INDUSTRY_JOBS_DONE, isSelected);
 			return component;
 		}
+		if (columnName.equals(IndustryJobTableFormat.ACTIVITY.getColumnName())) {
+			ColorEntry entry = null;
+			switch (industryJob.getActivity()) {
+				case ACTIVITY_MANUFACTURING:
+					entry = ColorEntry.INDUSTRY_JOBS_ACTIVITY_MANUFACTURING;
+					break;
+				case ACTIVITY_RESEARCHING_TECHNOLOGY:
+					entry = ColorEntry.INDUSTRY_JOBS_ACTIVITY_RESEARCHING_TECHNOLOGY;
+					break;
+				case ACTIVITY_RESEARCHING_METERIAL_PRODUCTIVITY:
+					entry = ColorEntry.INDUSTRY_JOBS_ACTIVITY_RESEARCHING_METERIAL_PRODUCTIVITY;
+					break;
+				case ACTIVITY_RESEARCHING_TIME_PRODUCTIVITY:
+					entry = ColorEntry.INDUSTRY_JOBS_ACTIVITY_RESEARCHING_TIME_PRODUCTIVITY;
+					break;
+				case ACTIVITY_COPYING:
+					entry = ColorEntry.INDUSTRY_JOBS_ACTIVITY_COPYING;
+					break;
+				case ACTIVITY_DUPLICATING:
+					entry = ColorEntry.INDUSTRY_JOBS_ACTIVITY_DUPLICATING;
+					break;
+				case ACTIVITY_REVERSE_ENGINEERING:
+					entry = ColorEntry.INDUSTRY_JOBS_ACTIVITY_REVERSE_ENGINEERING;
+					break;
+				case ACTIVITY_REVERSE_INVENTION:
+					entry = ColorEntry.INDUSTRY_JOBS_ACTIVITY_REVERSE_INVENTION;
+					break;
+				case ACTIVITY_REACTIONS:
+					entry = ColorEntry.INDUSTRY_JOBS_ACTIVITY_REACTIONS;
+					break;
+			}
+			if (entry != null) {
+				ColorSettings.configCell(component, entry, isSelected);
+				return component;
+			}
+		}
 		//Delivered
 		if (industryJob.getState() == MyIndustryJob.IndustryJobState.STATE_DELIVERED && columnName.equals(IndustryJobTableFormat.END_DATE.getColumnName())) {
 			ColorSettings.configCell(component, ColorEntry.INDUSTRY_JOBS_DELIVERED, isSelected);
@@ -74,5 +110,5 @@ public class JIndustryJobsTable extends JAutoColumnTable {
 		}
 		return component;
 	}
-	
+
 }

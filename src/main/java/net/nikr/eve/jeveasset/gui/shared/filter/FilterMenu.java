@@ -90,7 +90,7 @@ class FilterMenu<E> extends JMenu {
 		}
 	}
 
-	public String daysBetween(){
+	public String daysBetween() {
 		Date date = Formater.columnStringToDate(text);
 		// reset hour, minutes, seconds and millis
 		Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
@@ -104,7 +104,7 @@ class FilterMenu<E> extends JMenu {
 		return String.valueOf(days);
 	}
 
-	public String hoursBetween(){
+	public String hoursBetween() {
 		Date date = Formater.columnStringToDate(text);
 		int hours = (int)((new Date().getTime() - date.getTime()) / (1000 * 60 * 60)) + 1;
 		return String.valueOf(hours);

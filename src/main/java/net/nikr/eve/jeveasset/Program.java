@@ -117,7 +117,7 @@ public class Program implements ActionListener {
 		TIMER
 	}
 	//Major.Minor.Bugfix [Release Candidate n] [BETA n] [DEV BUILD #n];
-	public static final String PROGRAM_VERSION = "7.1.2 DEV BUILD 1";
+	public static final String PROGRAM_VERSION = "7.2.0";
 	public static final String PROGRAM_NAME = "jEveAssets";
 	public static final String PROGRAM_HOMEPAGE = "https://eve.nikr.net/jeveasset";
 	private static final boolean PROGRAM_DEV_BUILD = false;
@@ -194,6 +194,7 @@ public class Program implements ActionListener {
 	//Load price data
 		priceDataGetter = new PriceDataGetter();
 		priceDataGetter.load();
+		SplashUpdater.setProgress(45);
 	//Timer
 		timer = new Timer(15000, this); //Once a minute
 		timer.setActionCommand(ProgramAction.TIMER.name());
@@ -368,7 +369,7 @@ public class Program implements ActionListener {
 		//lookAndFeel = "com.formdev.flatlaf.FlatDarkLaf"; //Flat Dark
 		//lookAndFeel = "com.formdev.flatlaf.FlatIntelliJLaf"; //Flat IntelliJ
 		//lookAndFeel = "com.formdev.flatlaf.FlatDarculaLaf"; //Flat Darcula
-		
+
 		try {
 			UIManager.setLookAndFeel(lookAndFeel);
 		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
@@ -455,6 +456,10 @@ public class Program implements ActionListener {
 		return 90;
 	}
 
+	public static int getIconButtonsWidth() {
+		return 30;
+	}
+
 	public void addMainTab(final String toolName, final JMainTab jMainTab) {
 		JMainTab old = jMainTabs.put(toolName, jMainTab);
 		if (old != null) {
@@ -485,6 +490,14 @@ public class Program implements ActionListener {
 
 	public boolean checkDataUpdate() {
 		return updater.checkDataUpdate(localData);
+	}
+
+	public final void showUpdateStructuresDialog(boolean minimizable) {
+		if (getStatusPanel().updateing(UpdateType.STRUCTURE)) {
+			JOptionPane.showMessageDialog(getMainWindow().getFrame(), GuiFrame.get().updatingInProgressMsg(), GuiFrame.get().updatingInProgressTitle(), JOptionPane.PLAIN_MESSAGE);
+		} else {
+			updateStructures(null, minimizable);
+		}
 	}
 
 	public final void updateMarketOrdersWithProgress(OutbidProcesserOutput output) {
@@ -624,7 +637,6 @@ public class Program implements ActionListener {
 				}
 			}
 		});
-		
 		ensureEDT(new Runnable() {
 			@Override
 			public void run() {
@@ -694,7 +706,7 @@ public class Program implements ActionListener {
 	 */
 	public void exit() {
 		if (getStatusPanel().updateInProgress() > 0) {
-			int value = JOptionPane.showConfirmDialog(getMainWindow().getFrame(),  GuiFrame.get().exitMsg(getStatusPanel().updateInProgress()), GuiFrame.get().exitTitle(getStatusPanel().updateInProgress()), JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+			int value = JOptionPane.showConfirmDialog(getMainWindow().getFrame(), GuiFrame.get().exitMsg(getStatusPanel().updateInProgress()), GuiFrame.get().exitTitle(getStatusPanel().updateInProgress()), JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
 			if (value != JOptionPane.OK_OPTION) {
 				return;
 			}
@@ -897,8 +909,8 @@ public class Program implements ActionListener {
 		return PROGRAM_DEV_BUILD;
 	}
 
-	public void updateStructures(Set<MyLocation> locations) {
-		structureUpdateDialog.show(locations);
+	public void updateStructures(Set<MyLocation> locations,boolean minimizable) {
+		structureUpdateDialog.show(locations, minimizable);
 	}
 
 	/**
@@ -995,15 +1007,13 @@ public class Program implements ActionListener {
 		} else if (MainMenuAction.UPDATE.name().equals(e.getActionCommand())) { //Update
 			updateDialog.setVisible(true);
 		} else if (MainMenuAction.UPDATE_STRUCTURE.name().equals(e.getActionCommand())) {
-			if (getStatusPanel().updateing(UpdateType.STRUCTURE)) {
-				JOptionPane.showMessageDialog(getMainWindow().getFrame(), GuiFrame.get().updatingInProgressMsg(), GuiFrame.get().updatingInProgressTitle(), JOptionPane.PLAIN_MESSAGE);
-			} else {
-				updateStructures(null);
-			}
+			showUpdateStructuresDialog(true);
 		} else if (MainMenuAction.ABOUT.name().equals(e.getActionCommand())) { //Others
 			showAbout();
-		} else if (MainMenuAction.SEND_BUG_REPORT.name().equals(e.getActionCommand())) {
-			DesktopUtil.browse("https://github.com/GoldenGnu/jeveassets/issues/new", this);
+		} else if (MainMenuAction.LINK_WIKI.name().equals(e.getActionCommand())) {
+			DesktopUtil.browse("https://wiki.jeveassets.org", this); //Links
+		} else if (MainMenuAction.LINK_FEEDBACK_AND_HELP.name().equals(e.getActionCommand())) {
+			DesktopUtil.browse("https://wiki.jeveassets.org/faq#feedback_and_help", this);
 		} else if (MainMenuAction.README.name().equals(e.getActionCommand())) { //External Files
 			DesktopUtil.open(FileUtil.getPathReadme(), this);
 		} else if (MainMenuAction.LICENSE.name().equals(e.getActionCommand())) {
@@ -1012,12 +1022,6 @@ public class Program implements ActionListener {
 			DesktopUtil.open(FileUtil.getPathCredits(), this);
 		} else if (MainMenuAction.CHANGELOG.name().equals(e.getActionCommand())) {
 			DesktopUtil.open(FileUtil.getPathChangeLog(), this);
-		} else if (MainMenuAction.LINK_GITHUB.name().equals(e.getActionCommand())) { //Links
-			DesktopUtil.browse("https://github.com/GoldenGnu/jeveassets/issues/new", this);
-		} else if (MainMenuAction.LINK_FAQ.name().equals(e.getActionCommand())) {
-			DesktopUtil.browse("https://wiki.jeveassets.org/faq", this);
-		} else if (MainMenuAction.LINK_FORUM.name().equals(e.getActionCommand())) {
-			DesktopUtil.browse("https://forums.eveonline.com/t/13255/", this);
 		} else if (MainMenuAction.EXIT_PROGRAM.name().equals(e.getActionCommand())) { //Exit
 			exit();
 		} else if (ProgramAction.TIMER.name().equals(e.getActionCommand())) { //Ticker

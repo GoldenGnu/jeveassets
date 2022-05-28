@@ -70,7 +70,7 @@ public class FilterMatcher<E> implements Matcher<E> {
 		} else {
 			try {
 				compiled = Pattern.compile(format(text), Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
-			} catch (PatternSyntaxException ex){
+			} catch (PatternSyntaxException ex) {
 				compiled = Pattern.compile("", Pattern.CASE_INSENSITIVE);
 			}
 			this.pattern = compiled;
@@ -326,7 +326,7 @@ public class FilterMatcher<E> implements Matcher<E> {
 			CALENDAR.set(Calendar.MINUTE, 0);
 			CALENDAR.set(Calendar.SECOND, 0);
 			CALENDAR.set(Calendar.MILLISECOND, 0);
-			CALENDAR.add(Calendar.DAY_OF_MONTH, -days.intValue());  
+			CALENDAR.add(Calendar.DAY_OF_MONTH, -days.intValue());
 			return date.after(CALENDAR.getTime());
 		}
 		return false;
@@ -337,7 +337,7 @@ public class FilterMatcher<E> implements Matcher<E> {
 		Number hours = createNumber(object2);
 		if (date != null && hours != null) {
 			CALENDAR.setTime(new Date());
-			CALENDAR.add(Calendar.HOUR_OF_DAY, -hours.intValue());  
+			CALENDAR.add(Calendar.HOUR_OF_DAY, -hours.intValue());
 			return date.after(CALENDAR.getTime());
 		}
 		return false;

@@ -141,7 +141,6 @@ public class JRouteEditDialog extends JDialogCentered {
 						.addComponent(jOK, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 						.addComponent(jCancel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					)
-					
 			);
 	}
 
@@ -172,7 +171,6 @@ public class JRouteEditDialog extends JDialogCentered {
 							, JOptionPane.ERROR_MESSAGE);
 			return false;
 		}
-		
 	}
 
 	private void calculateInfo(int jumps) {
@@ -257,7 +255,6 @@ public class JRouteEditDialog extends JDialogCentered {
 			returnResult = null;
 		}
 		setVisible(false);
-		
 	}
 
 	private static class Route implements Serializable {

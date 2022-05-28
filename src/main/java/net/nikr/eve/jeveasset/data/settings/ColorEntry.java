@@ -50,8 +50,17 @@ public enum ColorEntry {
 	MARKET_ORDERS_NEAR_EXPIRED(ColorEntryGroup.MARKET_ORDERS, DataColors.get().marketOrdersNearExpired()),
 	MARKET_ORDERS_NEAR_FILLED(ColorEntryGroup.MARKET_ORDERS, DataColors.get().marketOrdersNearFilled()),
 	MARKET_ORDERS_NEW(ColorEntryGroup.MARKET_ORDERS, DataColors.get().marketOrdersNew()),
-	INDUSTRY_JOBS_DELIVERED(ColorEntryGroup.INDUSTRY_SLOTS, DataColors.get().industryJobsDelivered()),
-	INDUSTRY_JOBS_DONE(ColorEntryGroup.INDUSTRY_SLOTS, DataColors.get().industryJobsDone()),
+	INDUSTRY_JOBS_DELIVERED(ColorEntryGroup.INDUSTRY_JOBS, DataColors.get().industryJobsDelivered()),
+	INDUSTRY_JOBS_DONE(ColorEntryGroup.INDUSTRY_JOBS, DataColors.get().industryJobsDone()),
+	INDUSTRY_JOBS_ACTIVITY_MANUFACTURING(ColorEntryGroup.INDUSTRY_JOBS, DataColors.get().industryJobsManufacturing()),
+	INDUSTRY_JOBS_ACTIVITY_RESEARCHING_TECHNOLOGY(ColorEntryGroup.INDUSTRY_JOBS, DataColors.get().industryJobsResearchingTechnology()),
+	INDUSTRY_JOBS_ACTIVITY_RESEARCHING_TIME_PRODUCTIVITY(ColorEntryGroup.INDUSTRY_JOBS, DataColors.get().industryJobsResearchingTimeProductivity()),
+	INDUSTRY_JOBS_ACTIVITY_RESEARCHING_METERIAL_PRODUCTIVITY(ColorEntryGroup.INDUSTRY_JOBS, DataColors.get().industryJobsResearchingMeterialProductivity()),
+	INDUSTRY_JOBS_ACTIVITY_COPYING(ColorEntryGroup.INDUSTRY_JOBS, DataColors.get().industryJobsCopying()),
+	INDUSTRY_JOBS_ACTIVITY_DUPLICATING(ColorEntryGroup.INDUSTRY_JOBS, DataColors.get().industryJobsDuplicating()),
+	INDUSTRY_JOBS_ACTIVITY_REVERSE_ENGINEERING(ColorEntryGroup.INDUSTRY_JOBS, DataColors.get().industryJobsReverseEngineering()),
+	INDUSTRY_JOBS_ACTIVITY_REVERSE_INVENTION(ColorEntryGroup.INDUSTRY_JOBS, DataColors.get().industryJobsReverseInvention()),
+	INDUSTRY_JOBS_ACTIVITY_REACTIONS(ColorEntryGroup.INDUSTRY_JOBS, DataColors.get().industryJobsReactions()),
 	INDUSTRY_SLOTS_FREE(ColorEntryGroup.INDUSTRY_SLOTS, DataColors.get().industrySlotsFree()),
 	INDUSTRY_SLOTS_DONE(ColorEntryGroup.INDUSTRY_SLOTS, DataColors.get().industrySlotsDone()),
 	INDUSTRY_SLOTS_FULL(ColorEntryGroup.INDUSTRY_SLOTS, DataColors.get().industrySlotsFull()),
@@ -142,7 +151,7 @@ public enum ColorEntry {
 		FILTERS(DataColors.get().groupFilters()),
 		REPROCESSED(DataColors.get().groupReprocessed()),
 		STOCKPILE(DataColors.get().groupStockpile());
-	
+
 		private final String name;
 		private ColorEntryGroup(String name) {
 			this.name = name;

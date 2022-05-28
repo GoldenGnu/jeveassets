@@ -145,7 +145,7 @@ public class EsiNameGetter extends AbstractEsiGetter {
 		//Next Update
 		Date nextUpdate = Settings.get().getOwnersNextUpdate().get(number.longValue());
 		if (nextUpdate != null && !Updatable.isUpdatable(nextUpdate)) {
-			return; 
+			return;
 		}
 		int l = number.intValue();
 		if (l >= 100) {

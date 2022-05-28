@@ -62,7 +62,7 @@ public class StockpileDataReader extends AbstractBackup {
 			BufferedReader reader = new BufferedReader(new InputStreamReader(new InflaterInputStream(inputStream)));
 			StringBuilder sb = new StringBuilder();
 			String str;
-			while((str = reader.readLine())!= null){
+			while((str = reader.readLine())!= null) {
 				sb.append(str);
 				sb.append("\n");
 			}
@@ -112,7 +112,7 @@ public class StockpileDataReader extends AbstractBackup {
 					singleton = filterObject.get("s").getAsBoolean();
 				}
 				long locationID = filterObject.get("id").getAsLong();
-				
+
 				//Containers
 				List<StockpileContainer> containers = new ArrayList<>();
 				JsonElement containersElement = filterObject.get("c");

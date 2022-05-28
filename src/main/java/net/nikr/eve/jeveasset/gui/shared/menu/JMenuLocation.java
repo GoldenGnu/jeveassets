@@ -133,7 +133,7 @@ public class JMenuLocation<T> extends MenuManager.JAutoMenu<T> {
 					program.updateLocations(Collections.singleton(renameLocation.getLocationID()));
 				}
 			} else if (MenuLocationAction.UPDATE.name().equals(e.getActionCommand())) {
-				program.updateStructures(menuData.getEditableCitadelLocations());
+				program.updateStructures(menuData.getEditableCitadelLocations(), true);
 			}
 		}
 	}

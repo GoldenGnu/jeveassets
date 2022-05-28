@@ -97,7 +97,7 @@ public class MicroServe implements AuthCodeListener {
 			this.serverSocket = serverSocket;
 			this.listener = listener;
 		}
-		
+
 		@Override
 		public void run() {
 			while (true) {
@@ -110,7 +110,7 @@ public class MicroServe implements AuthCodeListener {
 				}
 			}
 		}
-		
+
 	}
 
 	private static class ConnectionResponse extends Thread {
@@ -156,7 +156,7 @@ public class MicroServe implements AuthCodeListener {
 				//html
 				if (listener.isListening()) {
 					if (found) {
-						write(out, "Authentication Successful", 
+						write(out, "Authentication Successful",
 								"		Return to jEveAssets to complete the import.<br />\n"
 								+ "		<br />\n"
 								+ "		<i>This browser window can now be closed.</i>\n"

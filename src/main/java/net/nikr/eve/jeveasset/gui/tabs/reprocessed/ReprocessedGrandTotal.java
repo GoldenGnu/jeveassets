@@ -82,5 +82,4 @@ public class ReprocessedGrandTotal extends ReprocessedTotal {
 		return !sell && reprocess;
 	}
 
-	
 }

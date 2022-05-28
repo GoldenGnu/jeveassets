@@ -62,7 +62,6 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
-import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -119,7 +118,7 @@ import uk.me.candle.eve.routing.cancel.CancelService;
  */
 public class RoutingTab extends JMainTabSecondary {
 
-	private static final  Logger LOG = LoggerFactory.getLogger(RoutingTab.class);
+	private static final Logger LOG = LoggerFactory.getLogger(RoutingTab.class);
 
 	private enum RoutingAction {
 		ADD,
@@ -381,11 +380,11 @@ public class RoutingTab extends JMainTabSecondary {
 						.addGroup(routingLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
 							.addGroup(routingLayout.createSequentialGroup()
 								.addComponent(jAlgorithm)
-								.addGap(10)
-								.addComponent(jAlgorithmInfo)
+								.addGap(5)
+								.addComponent(jAlgorithmInfo, Program.getIconButtonsWidth(), Program.getIconButtonsWidth(), Program.getIconButtonsWidth())
 							)
 							.addComponent(jSource)
-						)	
+						)
 					)
 					.addComponent(jAvailableScroll, 300, 300, Short.MAX_VALUE)
 					.addGroup(routingLayout.createSequentialGroup()
@@ -510,7 +509,7 @@ public class RoutingTab extends JMainTabSecondary {
 		jAvoidSave.setActionCommand(RoutingAction.AVOID_SAVE.name());
 		jAvoidSave.addActionListener(listener);
 		jToolBar.addButton(jAvoidSave);
-	
+
 		jAvoidLoad = new JDropDownButton(TabsRouting.get().avoidLoad(), Images.FILTER_LOAD.getIcon());
 		jToolBar.addButton(jAvoidLoad);
 
@@ -556,7 +555,7 @@ public class RoutingTab extends JMainTabSecondary {
 			securityLayout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
 				.addComponent(jSecurityIcon, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				.addComponent(jSecurityMinimum, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-				.addComponent(jSecuritySeparatorLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())	
+				.addComponent(jSecuritySeparatorLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				.addComponent(jSecurityMaximum, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 		);
 		filterLayout.setHorizontalGroup(
@@ -611,7 +610,7 @@ public class RoutingTab extends JMainTabSecondary {
 		jFullResult.setEditable(false);
 		jFullResult.setFont(jPanel.getFont());
 
-		ResultToolbar jInfoToolBar  = new ResultToolbar();
+		ResultToolbar jInfoToolBar = new ResultToolbar();
 		resultToolbars.add(jInfoToolBar);
 
 		jInfo = new JTextArea();
@@ -687,11 +686,10 @@ public class RoutingTab extends JMainTabSecondary {
 			layout.createSequentialGroup()
 				.addComponent(jSystemTabs, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
 				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
-					.addComponent(jProgress, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())	
+					.addComponent(jProgress, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jCalculate, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				)
 				.addComponent(jResultTabs)
-				
 		);
 		buildGraph(true); //Build default Graph (0.0/All sec - no avoids)
 		jSystemDialog.updateData(filteredGraph.getNodes()); //Will be replaced by valid systems by processRouteInner()
@@ -959,25 +957,35 @@ public class RoutingTab extends JMainTabSecondary {
 			}
 			//Warning for 2 or less systems
 			if (getWaypointsSize() <= 2) {
-				JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsRouting.get().noSystems(), TabsRouting.get().noSystemsTitle(), JOptionPane.INFORMATION_MESSAGE);
+				Program.ensureEDT(new Runnable() {
+					@Override
+					public void run() {
+						JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsRouting.get().noSystems(), TabsRouting.get().noSystemsTitle(), JOptionPane.INFORMATION_MESSAGE);
+					}
+				});
 				return;
 			}
-			//Clear previous results
 			routeResult = null;
-			jResult.setText(TabsRouting.get().emptyResult());
-			jResult.setCaretPosition(0);
-			jResult.setEnabled(false);
-			jFullResult.setText(TabsRouting.get().emptyResult());
-			jFullResult.setCaretPosition(0);
-			jFullResult.setEnabled(false);
-			jResult.setCaretPosition(0);
-			jInfo.setText(TabsRouting.get().emptyResult());
-			jInfo.setCaretPosition(0);
-			jInfo.setEnabled(false);
-			for (ResultToolbar resultToolbar : resultToolbars) {
-				resultToolbar.setEnabledResult(false);
-				resultToolbar.update();
-			}
+			//Clear previous results
+			Program.ensureEDT(new Runnable() {
+				@Override
+				public void run() {
+					jResult.setText(TabsRouting.get().emptyResult());
+					jResult.setCaretPosition(0);
+					jResult.setEnabled(false);
+					jFullResult.setText(TabsRouting.get().emptyResult());
+					jFullResult.setCaretPosition(0);
+					jFullResult.setEnabled(false);
+					jResult.setCaretPosition(0);
+					jInfo.setText(TabsRouting.get().emptyResult());
+					jInfo.setCaretPosition(0);
+					jInfo.setEnabled(false);
+					for (ResultToolbar resultToolbar : resultToolbars) {
+						resultToolbar.setEnabledResult(false);
+						resultToolbar.update();
+					}
+				}
+			});
 			//Update all SolarSystem with the latest from the new Graph
 			//This is needed to get the proper Edge(s) parsed to the routing Algorithm
 			Map<Long, List<SolarSystem>> stationsMap = new HashMap<>();
@@ -1019,7 +1027,12 @@ public class RoutingTab extends JMainTabSecondary {
 				algorithm.resetCancelService();
 				return;
 			} else { //Completed!
-				jProgress.setValue(jProgress.getMaximum());
+				Program.ensureEDT(new Runnable() {
+					@Override
+					public void run() {
+						jProgress.setValue(jProgress.getMaximum());
+					}
+				});
 			}
 			SolarSystem last = null;
 			List<List<SolarSystem>> route = new ArrayList<>();
@@ -1034,10 +1047,15 @@ public class RoutingTab extends JMainTabSecondary {
 			}
 			setRouteResult(new RouteResult(route, stationsMap, inputWaypoints.size(), algorithm.getName(), algorithm.getLastTimeTaken(), algorithm.getLastDistance(), getAvoidString(), getSecurityString()));
 		} catch (DisconnectedGraphException dce) {
-			JOptionPane.showMessageDialog(program.getMainWindow().getFrame()
-							, dce.getMessage()
-							, TabsRouting.get().error()
-							, JOptionPane.ERROR_MESSAGE);
+			Program.ensureEDT(new Runnable() {
+				@Override
+				public void run() {
+					JOptionPane.showMessageDialog(program.getMainWindow().getFrame(),
+							 dce.getMessage(),
+							 TabsRouting.get().error(),
+							 JOptionPane.ERROR_MESSAGE);
+				}
+			});
 		}
 	}
 
@@ -1098,7 +1116,7 @@ public class RoutingTab extends JMainTabSecondary {
 			}
 		}
 		//Set results
-		SwingUtilities.invokeLater(new Runnable() {
+		Program.ensureEDT(new Runnable() {
 			@Override
 			public void run() {
 				jResult.setText(routeString.toString());
@@ -1469,7 +1487,6 @@ public class RoutingTab extends JMainTabSecondary {
 				Settings.unlock("Routing (Security)");
 				program.saveSettings("Routing (Security)");
 				updateFilterLabels();
-				
 			} else if (RoutingAction.ADD_STATION.name().equals(e.getActionCommand())) {
 				MyLocation station = jStationDialog.show();
 				addLocation(station);
@@ -1544,7 +1561,7 @@ public class RoutingTab extends JMainTabSecondary {
 				jFileChooser.setSelectedFile(null);
 				jFileChooser.setCurrentDirectory(null);
 				int returnValue = jFileChooser.showOpenDialog(program.getMainWindow().getFrame());
-				if (returnValue != JCustomFileChooser.APPROVE_OPTION)  {
+				if (returnValue != JCustomFileChooser.APPROVE_OPTION) {
 					return;
 				}
 				File file = jFileChooser.getSelectedFile();
@@ -1568,7 +1585,7 @@ public class RoutingTab extends JMainTabSecondary {
 						added.add(routeName);
 					}
 				}
-				
+
 				int count = existing.size();
 				ImportReturn importReturn = null;
 				jImportDialog.resetToDefault();
@@ -1593,7 +1610,7 @@ public class RoutingTab extends JMainTabSecondary {
 				jFileChooser.setSelectedFile(null);
 				jFileChooser.setCurrentDirectory(null);
 				int returnValue = jFileChooser.showSaveDialog(program.getMainWindow().getFrame());
-				if (returnValue != JCustomFileChooser.APPROVE_OPTION)  {
+				if (returnValue != JCustomFileChooser.APPROVE_OPTION) {
 					return;
 				}
 				File file = jFileChooser.getSelectedFile();
@@ -1661,7 +1678,7 @@ public class RoutingTab extends JMainTabSecondary {
 
 			jToolBar.setFloatable(false);
 			jToolBar.setRollover(true);
-			
+
 			jName = new JLabel();
 			plain = jName.getFont();
 			italic = new Font(plain.getName(), Font.ITALIC, plain.getSize());
@@ -1837,13 +1854,13 @@ public class RoutingTab extends JMainTabSecondary {
 
 		public void resetCancelService() {
 			contained.resetCancelService();
-		}	
+		}
 
 		@Override
 		public String toString() {
 			return getName();
 		}
-		
+
 		public static List<RoutingAlgorithmContainer> getRegisteredList() {
 			List<RoutingAlgorithmContainer> list = new ArrayList<>();
 			list.add(new RoutingAlgorithmContainer(new BruteForce<>()));

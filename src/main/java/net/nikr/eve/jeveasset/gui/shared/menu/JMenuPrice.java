@@ -76,7 +76,6 @@ public class JMenuPrice<T> extends JAutoMenu<T> {
 		add(jReset);
 	}
 
-	
 	@Override
 	public void updateMenuData() {
 		jEdit.setEnabled(!menuData.getPrices().isEmpty());
@@ -128,7 +127,7 @@ public class JMenuPrice<T> extends JAutoMenu<T> {
 								, JOptionPane.OK_CANCEL_OPTION);
 						Settings.get().getContractPriceSettings().setFeedback(value == JOptionPane.OK_OPTION);
 						program.saveSettings("Contract Price (Send Feedback)");
-					} 
+					}
 					if (!Settings.get().getContractPriceSettings().isFeedback()) {
 						return;
 					}

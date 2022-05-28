@@ -31,7 +31,7 @@ import uk.me.candle.eve.pricing.options.PricingType;
 
 
 public class PriceDataSettings {
-	
+
 	public enum PriceSource {
 		EVEMARKETER(PricingFetch.EVEMARKETER, true, true, false, LocationType.REGION, 10000002L, Images.LINK_EVEMARKETER.getIcon()) {
 			@Override public PriceMode[] getPriceTypes() {
@@ -248,7 +248,7 @@ public class PriceDataSettings {
 				if (priceMode == PriceMode.PRICE_BUY_MIN) {
 					priceData.setBuyMin(price);
 				}
-			} 
+			}
 		}
 
 		private static double getDefaultPrice(final PriceData priceData, final PriceMode priceMode) {
@@ -272,7 +272,7 @@ public class PriceDataSettings {
 					if (priceData.getSellMin() > 0 && priceData.getBuyMax() > 0) { //Working as intended
 						return (priceData.getSellMin() + priceData.getBuyMax()) / 2;
 					} else if (priceData.getBuyMax() > 0) { //Using BuyMax (fallback)
-						return priceData.getBuyMax(); 
+						return priceData.getBuyMax();
 					} else { //Using SellMin (fallback)
 						return priceData.getSellMin(); //SellMin or Zero
 					}
@@ -313,7 +313,7 @@ public class PriceDataSettings {
 		locationID = getDefaultLocationID();
 		priceSource = getDefaultPriceSource();
 		priceType = PriceMode.getDefaultPriceType();
-		priceReprocessedType =  PriceMode.getDefaultPriceType();
+		priceReprocessedType = PriceMode.getDefaultPriceType();
 	}
 
 	public PriceDataSettings(final LocationType locationType, final Long locationID, final PriceSource priceSource, final PriceMode priceType, final PriceMode priceReprocessedType) {

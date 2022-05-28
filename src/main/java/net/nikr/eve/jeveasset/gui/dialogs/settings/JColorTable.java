@@ -66,7 +66,7 @@ public class JColorTable extends JSeparatorTable {
 
 	public JColorTable(final Program program, final DefaultEventTableModel<ColorRow> tableModel, SeparatorList<?> separatorList) {
 		super(program, tableModel, separatorList);
-		
+
 		this.tableModel = tableModel;
 		this.getTableHeader().setDefaultRenderer(new IconTableCellRenderer(this));
 
@@ -130,7 +130,6 @@ public class JColorTable extends JSeparatorTable {
 	public void startEditCell(int editRow, int editColumn) {
 		this.editRow = editRow;
 		this.editColumn = editColumn;
-		
 	}
 
 	public void stopEditCell() {
@@ -141,7 +140,6 @@ public class JColorTable extends JSeparatorTable {
 		editRow = -1;
 		editColumn = -1;
 	}
-	
 
 	@Override
 	public Component prepareRenderer(final TableCellRenderer renderer, final int row, final int column) {
@@ -153,7 +151,7 @@ public class JColorTable extends JSeparatorTable {
 		}
 		ColorRow colorRow = (ColorRow) object;
 		String columnName = (String) this.getTableHeader().getColumnModel().getColumn(column).getHeaderValue();
-		
+
 		boolean mouseCell = row == mouseRow && column == mouseColumn;
 		boolean editCell = row == editRow && column == editColumn;
 		if (columnName.equals(ColorsTableFormat.BACKGROUND.getColumnName())) {
@@ -217,12 +215,12 @@ public class JColorTable extends JSeparatorTable {
 					* On TableHeader UI update:
 					* Create decoupled DefaultTableCellHeaderRenderer to replace the now defunct wrapped renderer
 					*/
-				   IconTableCellRenderer.this.tableCellRenderer = new JTableHeader() {
-					   @Override
-					   public TableCellRenderer createDefaultRenderer() {
-						   return super.createDefaultRenderer();
-					   }
-				   }.createDefaultRenderer();
+					IconTableCellRenderer.this.tableCellRenderer = new JTableHeader() {
+						@Override
+						public TableCellRenderer createDefaultRenderer() {
+							return super.createDefaultRenderer();
+						}
+					}.createDefaultRenderer();
 				}
 			});
 		}
@@ -264,7 +262,7 @@ public class JColorTable extends JSeparatorTable {
 	private class MyComboBox {
 
 		private final static double FACTOR = 0.9;
-		
+
 		private final JPanel jPanel;
 		private final JNullableLabel jDefault;
 		private final JLabel jPickerIcon;
@@ -334,10 +332,7 @@ public class JColorTable extends JSeparatorTable {
 					jDefault.setIcon(Images.SETTINGS_COLOR_CHECK_WHITE_ALPHA.getIcon());
 				}
 			}
-			
 		}
-
-		
 	}
 
 	private static class JNullableLabel extends JLabel {

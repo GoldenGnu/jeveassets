@@ -103,7 +103,7 @@ public abstract class JManageDialog extends JDialogCentered {
 		jImport.addActionListener(listener);
 		jImport.setVisible(supportExport);
 		jImport.setHorizontalAlignment(SwingConstants.LEFT);
-		
+
 		//Done
 		jClose = new JButton(GuiShared.get().managerClose());
 		jClose.setActionCommand(ManageDialogAction.DONE.name());
@@ -146,7 +146,7 @@ public abstract class JManageDialog extends JDialogCentered {
 	}
 
 	private String getSelectedString() {
-		int selectedIndex =  jList.getSelectedIndex();
+		int selectedIndex = jList.getSelectedIndex();
 		if (selectedIndex != -1) {
 			return listModel.get(jList.getSelectedIndex());
 		} else {
@@ -207,7 +207,6 @@ public abstract class JManageDialog extends JDialogCentered {
 	protected abstract String textNoName();
 	protected abstract String textMerge();
 	protected abstract String textRename();
-	
 
 	private void delete() {
 		List<String> list = new ArrayList<String>();
@@ -357,5 +356,5 @@ public abstract class JManageDialog extends JDialogCentered {
 			}
 		}
 	}
-	
+
 }

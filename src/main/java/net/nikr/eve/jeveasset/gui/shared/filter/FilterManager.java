@@ -176,7 +176,7 @@ public class FilterManager<E> extends JManageDialog {
 		List<String> groups = new ArrayList<>();
 		for (String line : importText.split("[\r\n]+")) {
 			groups.clear(); //Clear old data
-			
+
 			//For each [*]
 			Pattern pattern = Pattern.compile("\\[([^\\]]|\\]\\])*\\]"); //	\[([^\]]|\]\])*\]	A([^B]|BB)*B
 			Matcher m = pattern.matcher(line);
@@ -298,8 +298,6 @@ public class FilterManager<E> extends JManageDialog {
 					Filter filter = new Filter(group, logic, column, compare, text, enabled);
 					filterList.add(filter);
 				}
-				
-				
 			}
 			//Ignore everything that does not match the syntax
 		}
@@ -395,10 +393,6 @@ public class FilterManager<E> extends JManageDialog {
 	@Override protected String textNoName() { return GuiShared.get().noFilterName(); }
 	@Override protected String textMerge() { return GuiShared.get().mergeFilters(); }
 	@Override protected String textRename() { return GuiShared.get().renameFilter(); }
-
-	
-	
-
 
 	public final void updateFilters() {
 		update(new ArrayList<>(filters.keySet()));

@@ -69,5 +69,5 @@ public class JTransactionTable extends JAutoColumnTable {
 		}
 		return component;
 	}
-	
+
 }

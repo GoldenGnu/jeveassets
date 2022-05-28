@@ -54,7 +54,7 @@ import net.nikr.eve.jeveasset.gui.shared.filter.SimpleTableFormat;
  */
 public class EnumTableFormatAdaptor<T extends Enum<T> & EnumTableColumn<Q>, Q> implements AdvancedTableFormat<Q>, WritableTableFormat<Q>, SimpleTableFormat<Q> {
 
-	private static final  Logger LOG = LoggerFactory.getLogger(EnumTableFormatAdaptor.class);
+	private static final Logger LOG = LoggerFactory.getLogger(EnumTableFormatAdaptor.class);
 
 	public static enum ResizeMode {
 		TEXT {
@@ -90,7 +90,7 @@ public class EnumTableFormatAdaptor<T extends Enum<T> & EnumTableColumn<Q>, Q> i
 	private final List<EnumTableColumn<Q>> shownColumns = new ArrayList<>();
 	private final Map<String, EnumTableColumn<Q>> orderColumnsName = new HashMap<>();
 	private final List<EnumTableColumn<Q>> allColumns = new ArrayList<>();
-	private final List<EnumTableColumn<Q>> orderColumns =  new ArrayList<>();
+	private final List<EnumTableColumn<Q>> orderColumns = new ArrayList<>();
 	private final List<EnumTableColumn<Q>> tempColumns = new ArrayList<>();
 	private final ColumnComparator columnComparator;
 	private ResizeMode resizeMode;
@@ -137,7 +137,7 @@ public class EnumTableFormatAdaptor<T extends Enum<T> & EnumTableColumn<Q>, Q> i
 
 	/**
 	 * Used to add special columns (Ex: FormulaColumn and JumpColumn)
-	 * @param column 
+	 * @param column
 	 */
 	@Override
 	public void addColumn(EnumTableColumn<Q> column) {
@@ -168,7 +168,7 @@ public class EnumTableFormatAdaptor<T extends Enum<T> & EnumTableColumn<Q>, Q> i
 
 	/**
 	 * Used to remove special columns (Ex: FormulaColumn and JumpColumn)
-	 * @param column 
+	 * @param column
 	 */
 	public void removeColumn(EnumTableColumn<Q> column) {
 		orderColumnsName.remove(column.name());
@@ -268,7 +268,7 @@ public class EnumTableFormatAdaptor<T extends Enum<T> & EnumTableColumn<Q>, Q> i
 		}
 		orderColumns.add(toIndex, fromColumn);
 		//Update IndexColumn
-		for (int i = 0; i < orderColumns.size(); i++)  {
+		for (int i = 0; i < orderColumns.size(); i++) {
 			EnumTableColumn<Q> column = orderColumns.get(i);
 			if (column instanceof IndexColumn) {
 				((IndexColumn)column).setIndex(i);

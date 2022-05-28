@@ -156,7 +156,7 @@ public class ContractPriceGetter extends AbstractGetter<EsiOwner> {
 				} else {
 					retry++;
 					if (retry < RETRIES) {
-						LOG.warn("Retrying " + contractPriceType.getTypeID() + ": " + retry + " of " +  RETRIES);
+						LOG.warn("Retrying " + contractPriceType.getTypeID() + ": " + retry + " of " + RETRIES);
 						return update();
 					} else {
 						LOG.error("Failed to get " + contractPriceType.getTypeID() + ": " + ex.getCode() + " " + ex.getResponseBody(), ex);

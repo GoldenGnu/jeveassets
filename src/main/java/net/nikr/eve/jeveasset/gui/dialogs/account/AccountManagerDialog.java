@@ -129,7 +129,7 @@ public class AccountManagerDialog extends JDialogCentered {
 		jAdd.addActionListener(listener);
 
 		JDropDownButton jShare = new JDropDownButton(DialoguesAccount.get().share());
-		
+
 		JMenuItem jExport = new JMenuItem(DialoguesAccount.get().shareExport(), Images.MISC_ESI.getIcon());
 		jExport.setActionCommand(AccountManagerAction.SHARE_EXPORT.name());
 		jExport.addActionListener(listener);
@@ -323,8 +323,8 @@ public class AccountManagerDialog extends JDialogCentered {
 		} else {
 			save();
 		}
-		
 	}
+
 	private class ListenerClass implements ActionListener {
 		@Override
 		public void actionPerformed(final ActionEvent e) {
@@ -349,7 +349,7 @@ public class AccountManagerDialog extends JDialogCentered {
 					if (object instanceof EsiOwner) {
 						EsiOwner esiOwner = (EsiOwner) object;
 						accountImportDialog.editEsi(esiOwner);
-					}		
+					}
 				}
 			} else if (AccountCellAction.DELETE.name().equals(e.getActionCommand())) {
 				int index = jTable.getSelectedRow();

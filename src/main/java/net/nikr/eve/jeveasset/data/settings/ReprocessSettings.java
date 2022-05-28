@@ -26,17 +26,19 @@ public class ReprocessSettings {
 	private final int station;
 	private final int reprocessingLevel;
 	private final int reprocessingEfficiencyLevel;
+	private final int oreProcessingLevel;
 	private final int scrapmetalProcessingLevel;
 
 	//Defaults
 	public ReprocessSettings() {
-		this(50, 0, 0, 0);
+		this(50, 0, 0, 0, 0);
 	}
 
-	public ReprocessSettings(final int station, final int reprocessingLevel, final int reprocessingEfficiencyLevel, final int scrapmetalProcessing) {
+	public ReprocessSettings(final int station, final int reprocessingLevel, final int reprocessingEfficiencyLevel, int oreProcessingLevel, final int scrapmetalProcessing) {
 		this.station = station;
 		this.reprocessingLevel = reprocessingLevel;
 		this.reprocessingEfficiencyLevel = reprocessingEfficiencyLevel;
+		this.oreProcessingLevel = oreProcessingLevel;
 		this.scrapmetalProcessingLevel = scrapmetalProcessing;
 	}
 
@@ -46,6 +48,10 @@ public class ReprocessSettings {
 
 	public int getReprocessingLevel() {
 		return reprocessingLevel;
+	}
+
+	public int getOreProcessingLevel() {
+		return oreProcessingLevel;
 	}
 
 	public int getScrapmetalProcessingLevel() {
@@ -66,10 +72,10 @@ public class ReprocessSettings {
 			percent = (((double) station / 100.0)
 			* (1.0 + ((double) reprocessingLevel * 0.03))
 			* (1.0 + ((double) reprocessingEfficiencyLevel * 0.02))
-			* (1.0 + ((double) scrapmetalProcessingLevel * 0.02))
+			* (1.0 + ((double) oreProcessingLevel * 0.02))
 			) * 100.0;
 		} else {
-			percent = (((double) station / 100.0)
+			percent = (0.5 //Station is always 50% for scrap metal
 			* (1.0 + ((double) scrapmetalProcessingLevel * 0.02))
 			) * 100.0;
 		}

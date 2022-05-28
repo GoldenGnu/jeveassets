@@ -44,7 +44,6 @@ public class MarketOrdersErrorDialog extends JDialogCentered {
 	public MarketOrdersErrorDialog(Program program) {
 		super(program, TabsOrders.get().logTitle(), Images.UPDATE_DONE_ERROR.getImage());
 
-		
 		document = new DefaultStyledDocument();
 		JTextPane jText = new JTextPane(document);
 		jText.setEditable(false);
@@ -107,5 +106,5 @@ public class MarketOrdersErrorDialog extends JDialogCentered {
 
 	@Override
 	protected void save() {}
-	
+
 }

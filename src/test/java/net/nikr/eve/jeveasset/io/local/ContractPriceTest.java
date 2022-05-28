@@ -49,7 +49,7 @@ public class ContractPriceTest extends TestUtil{
 	private static final Integer TE = 8;
 	private static final Date DATE = new Date(System.currentTimeMillis() + (1L * 60L * 60L * 1000L));
 
-			
+
 	@Test
 	public void testReadWrite() {
 		ContractPriceItem contractPriceType = new ContractPriceItem(TYPE_ID, BPC, BPO, ME, TE, 100);
@@ -81,5 +81,5 @@ public class ContractPriceTest extends TestUtil{
 		File file = new File(FILENAME);
 		assertThat(file.delete(), equalTo(true));
 	}
-	
+
 }

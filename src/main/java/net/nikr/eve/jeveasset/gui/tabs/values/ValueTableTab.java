@@ -74,7 +74,7 @@ public class ValueTableTab extends JMainTabSecondary {
 	public static final String NAME = "value"; //Not to be changed!
 
 	private final IskData iskData;
-	
+
 	public ValueTableTab(final Program program) {
 		super(program, NAME, TabsValues.get().title(), Images.TOOL_VALUE_TABLE.getIcon(), true);
 
@@ -233,15 +233,15 @@ public class ValueTableTab extends JMainTabSecondary {
 		@Override
 		public int compare(final Value o1, final Value o2) {
 			if (o1.isGrandTotal() && o2.isGrandTotal()) {
-				return 0;  //Equal (both StockpileTotal)
+				return 0; //Equal (both StockpileTotal)
 			} else if (o1.isGrandTotal()) {
-				return 1;  //After
+				return 1; //After
 			} else if (o2.isGrandTotal()) {
 				return -1; //Before
 			} else {
-				return 0;  //Equal (not StockpileTotal)
+				return 0; //Equal (not StockpileTotal)
 			}
 		}
 	}
-	
+
 }

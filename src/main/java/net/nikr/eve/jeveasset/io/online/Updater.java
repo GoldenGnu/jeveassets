@@ -95,14 +95,14 @@ public class Updater {
 
 	public void fixData() {
 		if (isPackageManager()) {
-			JOptionPane.showMessageDialog(Main.getTop(), 
+			JOptionPane.showMessageDialog(Main.getTop(),
 				"One of the data files in the data folder is corrupted or missing\r\n"
 				+ "jEveAssets will not work without it\r\n"
 				+ "Please use your package manager to correct the problem\r\n"
 				, Program.PROGRAM_NAME + " - Critical Error", JOptionPane.ERROR_MESSAGE);
 			System.exit(-1);
 		}
-		int value = JOptionPane.showConfirmDialog(Main.getTop(), 
+		int value = JOptionPane.showConfirmDialog(Main.getTop(),
 				"One of the data files in the data folder is corrupted or missing\r\n"
 				+ "jEveAssets will not work without it\r\n"
 				+ "Download the latest version with auto update?\r\n"
@@ -134,14 +134,14 @@ public class Updater {
 
 	public void fixLibs() {
 		if (isPackageManager()) {
-			JOptionPane.showMessageDialog(Main.getTop(), 
+			JOptionPane.showMessageDialog(Main.getTop(),
 				"One of the libraies in the lib folder is corrupted or missing\r\n"
 				+ "jEveAssets will not work without it\r\n"
 				+ "Please use your package manager to correct the problem\r\n"
 				, Program.PROGRAM_NAME + " - Critical Error", JOptionPane.ERROR_MESSAGE);
 			System.exit(-1);
 		}
-		int value = JOptionPane.showConfirmDialog(Main.getTop(), 
+		int value = JOptionPane.showConfirmDialog(Main.getTop(),
 				"One of the libraies in the lib folder is corrupted or missing\r\n"
 				+ "jEveAssets will not work without it\r\n"
 				+ "Download the latest version with auto update?\r\n"
@@ -173,13 +173,13 @@ public class Updater {
 
 	public void fixMissingClasses() {
 		if (isPackageManager()) {
-			JOptionPane.showMessageDialog(Main.getTop(), 
+			JOptionPane.showMessageDialog(Main.getTop(),
 				"jEveAssets have been corrupted\r\n"
 				+ "Please use your package manager to correct the problem\r\n"
 				, Program.PROGRAM_NAME + " - Critical Error", JOptionPane.ERROR_MESSAGE);
 			System.exit(-1);
 		}
-		int value = JOptionPane.showConfirmDialog(Main.getTop(), 
+		int value = JOptionPane.showConfirmDialog(Main.getTop(),
 				"jEveAssets have been corrupted\r\n"
 				+ "You may be able to use auto update to fix the problem\r\n"
 				+ "Download the latest version with auto update?\r\n"
@@ -216,7 +216,7 @@ public class Updater {
 		LOG.log(Level.INFO, "{0} Online: {1} Local: {2}", new Object[]{title.toUpperCase(), online, local});
 		if (online != null && !online.equals(local)) {
 			if (isPackageManager()) {
-				JOptionPane.showMessageDialog(Main.getTop(), 
+				JOptionPane.showMessageDialog(Main.getTop(),
 					title + " update available\r\n"
 					+ "\r\n"
 					+ "Your version: " + local + "\r\n"
@@ -229,7 +229,7 @@ public class Updater {
 					JOptionPane.PLAIN_MESSAGE);
 				return;
 			}
-			int value = JOptionPane.showConfirmDialog(Main.getTop(), 
+			int value = JOptionPane.showConfirmDialog(Main.getTop(),
 					title + " update available\r\n"
 					+ "\r\n"
 					+ "Your version: " + local + "\r\n"
@@ -349,12 +349,12 @@ public class Updater {
 				return null;
 			}
 		}
-		
+
 		protected String get(Reader reader) {
 			StringBuilder builder = new StringBuilder();
 			try {
 				BufferedReader in = new BufferedReader(reader);
-				
+
 				String str;
 				while ((str = in.readLine()) != null) {
 					builder.append(str);
@@ -374,6 +374,6 @@ public class Updater {
 				}
 			}
 		}
-		
 	}
+
 }

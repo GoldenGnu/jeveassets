@@ -70,6 +70,7 @@ public abstract class GuiShared extends Bundle {
 	public abstract String eveMarketer();
 	public abstract String eveOnline();
 	public abstract String eveRef();
+	public abstract String eveTycoon();
 	public abstract String evepraisal();
 	public abstract String foreground();
 	public abstract String formulaColumns();
@@ -82,6 +83,11 @@ public abstract class GuiShared extends Bundle {
 	public abstract String fuzzworkBlueprints();
 	public abstract String fuzzworkItems();
 	public abstract String fuzzworkMarket();
+	public abstract String helpFilter();
+	public abstract String helpSettings();
+	public abstract String helpStockpile();
+	public abstract String helpOpenManual(String title);
+	public abstract String helpOpenManualTitle();
 	public abstract String importOptions();
 	public abstract String importOptionsMerge();
 	public abstract String importOptionsOverwrite();
@@ -240,7 +246,7 @@ public abstract class GuiShared extends Bundle {
 	public abstract String renameView();
 	public abstract String saveView();
 	public abstract String saveViewMsg();
-	
+
 	//Update
 	public abstract String beta();
 	public abstract String devBuild();
@@ -254,7 +260,7 @@ public abstract class GuiShared extends Bundle {
 	public abstract String protableMsg(int i);
 	public abstract String releaseCandidate();
 	public abstract String stable();
-	
+
 	//Filters
 	public abstract String saveFilter();
 	public abstract String enterFilterName();
@@ -313,7 +319,7 @@ public abstract class GuiShared extends Bundle {
 	public abstract String popupMenuAddField();
 	public abstract String export();
 	public abstract String exportTableData();
-	
+
 	//Text Dialog
 	public abstract String textLoadFailMsg();
 	public abstract String textLoadFailTitle();

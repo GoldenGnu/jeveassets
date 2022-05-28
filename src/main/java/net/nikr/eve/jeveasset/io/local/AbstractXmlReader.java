@@ -114,5 +114,4 @@ public abstract class AbstractXmlReader<T> extends AbstractBackup {
 		}
 	}
 
-	
 }

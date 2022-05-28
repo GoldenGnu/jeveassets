@@ -64,12 +64,12 @@ public class ExportTableData {
 
 	private static final Logger LOG = LoggerFactory.getLogger(ExportTableData.class);
 
-	private static final DecimalFormat INTEGER_DOT_FORMAT  = new DecimalFormat("###0", new DecimalFormatSymbols(new Locale("en")));
-	private static final DecimalFormat INTEGER_COMMA_FORMAT  = new DecimalFormat("###0", new DecimalFormatSymbols(new Locale("da")));
-	private static final DecimalFormat DECIMAL_HTML_DOT_FORMAT  = new DecimalFormat("#,##0.00##", new DecimalFormatSymbols(new Locale("en")));
-	private static final DecimalFormat DECIMAL_HTML_COMMA_FORMAT  = new DecimalFormat("#,##0.00##", new DecimalFormatSymbols(new Locale("da")));
-	private static final DecimalFormat DECIMAL_CSV_DOT_FORMAT  = new DecimalFormat("###0.00##", new DecimalFormatSymbols(new Locale("en")));
-	private static final DecimalFormat DECIMAL_CSV_COMMA_FORMAT  = new DecimalFormat("###0.00##", new DecimalFormatSymbols(new Locale("da")));
+	private static final DecimalFormat INTEGER_DOT_FORMAT = new DecimalFormat("###0", new DecimalFormatSymbols(new Locale("en")));
+	private static final DecimalFormat INTEGER_COMMA_FORMAT = new DecimalFormat("###0", new DecimalFormatSymbols(new Locale("da")));
+	private static final DecimalFormat DECIMAL_HTML_DOT_FORMAT = new DecimalFormat("#,##0.00##", new DecimalFormatSymbols(new Locale("en")));
+	private static final DecimalFormat DECIMAL_HTML_COMMA_FORMAT = new DecimalFormat("#,##0.00##", new DecimalFormatSymbols(new Locale("da")));
+	private static final DecimalFormat DECIMAL_CSV_DOT_FORMAT = new DecimalFormat("###0.00##", new DecimalFormatSymbols(new Locale("en")));
+	private static final DecimalFormat DECIMAL_CSV_COMMA_FORMAT = new DecimalFormat("###0.00##", new DecimalFormatSymbols(new Locale("da")));
 
 	/**
 	 * Get Filters and Views from Settings (No Column Cache).
@@ -78,7 +78,7 @@ public class ExportTableData {
 	 * @param tableFormat
 	 * @param toolName
 	 * @param exportSettings
-	 * @return 
+	 * @return
 	 */
 	public static <Q> boolean exportAutoNoCache(EventList<Q> eventList, final SimpleTableFormat<Q> tableFormat, String toolName, ExportSettings exportSettings) {
 		return exportAuto(eventList, null, tableFormat, toolName, exportSettings);
@@ -92,7 +92,7 @@ public class ExportTableData {
 	 * @param tableFormat
 	 * @param toolName
 	 * @param exportSettings
-	 * @return 
+	 * @return
 	 */
 	public static <Q> boolean exportAuto(EventList<Q> eventList, ColumnCache<Q> columnCache, final SimpleTableFormat<Q> tableFormat, String toolName, ExportSettings exportSettings) {
 		return export(eventList, columnCache, tableFormat, toolName, Settings.get().getTableViews(toolName), Settings.get().getTableFilters(toolName), Settings.get().getDefaultTableFilters(toolName), Settings.get().getCurrentTableFilters(toolName), exportSettings);
@@ -104,14 +104,14 @@ public class ExportTableData {
 	 * @param tableFormat
 	 * @param toolName
 	 * @param exportSettings
-	 * @return 
+	 * @return
 	 */
 	public static <Q> boolean exportEmpty(EventList<Q> eventList, final SimpleTableFormat<Q> tableFormat, String toolName, ExportSettings exportSettings) {
 		return export(eventList, null, tableFormat, toolName, new HashMap<>(), new HashMap<>(), new HashMap<>(), new ArrayList<>(), exportSettings);
 	}
 
 	/**
-	 * 
+	 *
 	 * @param <Q>
 	 * @param eventList
 	 * @param columnCache
@@ -121,9 +121,9 @@ public class ExportTableData {
 	 * @param filters
 	 * @param currentFilters
 	 * @param exportSettings
-	 * @return 
+	 * @return
 	 */
-	private static <Q> boolean export(EventList<Q> eventList, ColumnCache<Q> columnCache, final SimpleTableFormat<Q> tableFormat, String toolName, Map<String, View> views,  Map<String, List<Filter>> filters, Map<String, List<Filter>> defaultFilters, List<Filter> currentFilters, ExportSettings exportSettings) {
+	private static <Q> boolean export(EventList<Q> eventList, ColumnCache<Q> columnCache, final SimpleTableFormat<Q> tableFormat, String toolName, Map<String, View> views, Map<String, List<Filter>> filters, Map<String, List<Filter>> defaultFilters, List<Filter> currentFilters, ExportSettings exportSettings) {
 		//Filter
 		final List<Filter> filter;
 		switch (exportSettings.getFilterSelection()) {

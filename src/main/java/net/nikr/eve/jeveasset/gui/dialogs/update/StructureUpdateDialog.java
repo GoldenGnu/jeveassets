@@ -68,7 +68,8 @@ public class StructureUpdateDialog extends JDialogCentered {
 
 	private final List<EsiOwner> owners = new ArrayList<>();;
 	private Set<MyLocation> locations;
-	
+	private boolean minimizable;
+
 	public StructureUpdateDialog(Program program) {
 		super(program, DialoguesStructure.get().title(), Images.DIALOG_UPDATE.getImage());
 
@@ -202,10 +203,8 @@ public class StructureUpdateDialog extends JDialogCentered {
 					.addComponent(jCancel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				)
 		);
-		
-		
 	}
-	
+
 	@Override
 	protected JComponent getDefaultFocus() {
 		return jOk;
@@ -235,7 +234,13 @@ public class StructureUpdateDialog extends JDialogCentered {
 			ownerTypes = null;
 		}
 		setVisible(false);
-		TaskDialog taskDialog = new TaskDialog(program, new StructureUpdateTask(esiOwners, ownerTypes, locations, jTrackerLocations.isSelected()), esiOwners.size() > 1, false, false, UpdateType.STRUCTURE, new TaskDialog.TasksCompleted() {
+		TaskDialog taskDialog = new TaskDialog(program,
+				new StructureUpdateTask(esiOwners, ownerTypes, locations, jTrackerLocations.isSelected()),
+				esiOwners.size() > 1,
+				false,
+				false,
+				minimizable ? UpdateType.STRUCTURE : null,
+				new TaskDialog.TasksCompleted() {
 			@Override
 			public void tasksCompleted(TaskDialog taskDialog) {
 				//Update tracker locations
@@ -246,8 +251,9 @@ public class StructureUpdateDialog extends JDialogCentered {
 		});
 	}
 
-	public void show(Set<MyLocation> locations) {
+	public void show(Set<MyLocation> locations, boolean minimizable) {
 		this.locations = locations;
+		this.minimizable = minimizable;
 		setVisible(true);
 	}
 

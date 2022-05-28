@@ -81,7 +81,7 @@ public abstract class DataConverter {
 	public static List<MyAsset> assetContracts(final Collection<MyContractItem> contractItems, final Map<Long, OwnerType> owners, boolean includeSellContracts, boolean includeBuyContracts) {
 		List<MyAsset> list = new ArrayList<>();
 		//Only includes issuer buying and selling items
-		//TODO Could add issuer bought/sold and acceptor bought/sold items to the assets list 
+		//TODO Could add issuer bought/sold and acceptor bought/sold items to the assets list
 		for (MyContractItem contractItem : contractItems) {
 			OwnerType issuer = owners.get(contractItem.getContract().getIssuerID());
 			/*
@@ -184,7 +184,7 @@ public abstract class DataConverter {
 				|| rawAsset.getItemFlag().getFlagID() == 61 //Skill In Training
 				|| rawAsset.getItemFlag().getFlagID() == 88 //Booster
 				|| rawAsset.getItemFlag().getFlagID() == 89 //Implant
-				|| rawAsset.getLocationID() == owner.getOwnerID();  //Other stuff
+				|| rawAsset.getLocationID() == owner.getOwnerID(); //Other stuff
 	}
 
 	public static Map<MyContract, List<MyContractItem>> convertRawContracts(List<RawContract> rawContracts, OwnerType owner, boolean saveHistory) {
@@ -203,7 +203,7 @@ public abstract class DataConverter {
 				}
 			}
 			contracts.remove(myContract); //Remove old value (if present)
-			contracts.put(myContract, contractItems); 
+			contracts.put(myContract, contractItems);
 		}
 		return contracts;
 	}

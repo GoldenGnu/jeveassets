@@ -457,7 +457,7 @@ public class TrackerTab extends JMainTabSecondary {
 		JLabel jFilter = new JLabel(TabsTracker.get().helpNewData());
 		jFilter.setIcon(new ShapeIcon(FILTER_AND_DEFAULT));
 
-		JDropDownButton jSettings = new JDropDownButton(Images.DIALOG_SETTINGS.getIcon());
+		JDropDownButton jSettings = new JDropDownButton(Images.DIALOG_SETTINGS.getIcon(), JDropDownButton.RIGHT);
 
 		jImportFile = new JMenuItem(TabsTracker.get().importFile(), Images.EDIT_IMPORT.getIcon());
 		jImportFile.setSelected(true);
@@ -521,7 +521,7 @@ public class TrackerTab extends JMainTabSecondary {
 		} else {
 			plot = new XYPlot(dataset, domainAxis, rangeLogarithmicAxis, render);
 		}
-		
+
 		plot.setBackgroundPaint(Colors.TEXTFIELD_BACKGROUND.getColor());
 		plot.setRangeGridlinePaint(Color.LIGHT_GRAY);
 		plot.setDomainGridlinePaint(Color.LIGHT_GRAY);
@@ -595,7 +595,7 @@ public class TrackerTab extends JMainTabSecondary {
 						.addGap(20)
 						.addComponent(jFilter)
 						.addGap(20, 20, Integer.MAX_VALUE)
-						.addComponent(jSettings)
+						.addComponent(jSettings, Program.getIconButtonsWidth(), Program.getIconButtonsWidth(), Program.getIconButtonsWidth())
 						.addGap(6)
 					)
 					.addComponent(jChartPanel)
@@ -608,7 +608,7 @@ public class TrackerTab extends JMainTabSecondary {
 							.addComponent(jToLabel, labelWidth, labelWidth, labelWidth)
 						)
 						.addGap(gapWidth)
-						.addGroup(layout.createParallelGroup()	
+						.addGroup(layout.createParallelGroup()
 							.addComponent(jFrom, dateWidth, dateWidth, dateWidth)
 							.addComponent(jTo, dateWidth, dateWidth, dateWidth)
 						)
@@ -867,7 +867,7 @@ public class TrackerTab extends JMainTabSecondary {
 		assetNodes.put(knownLocationsNode.getNodeId(), knownLocationsNode);
 		CheckBoxNode unknownLocationsNode = new CheckBoxNode(assetNode, TabsTracker.get().unknownLocations(), TabsTracker.get().unknownLocations(), false);
 		assetNodes.put(unknownLocationsNode.getNodeId(), unknownLocationsNode);
-		
+
 		Map<String, CheckBoxNode> nodeCache = new HashMap<>();
 		for (AssetValue assetValue : assetsIDs) {
 			String location = assetValue.getLocation();
@@ -1400,7 +1400,7 @@ public class TrackerTab extends JMainTabSecondary {
 	private class MyRender extends XYLineAndShapeRenderer {
 
 		private final Map<Integer, Integer> renders = new HashMap<>();
-		
+
 		public MyRender() {
 			super(true, true);
 		}
@@ -1471,7 +1471,7 @@ public class TrackerTab extends JMainTabSecondary {
 		if (date == null) {
 			return null;
 		}
-		Instant instant = date.atStartOfDay().atZone(ZoneId.of("GMT")).toInstant();  //Start of day - GMT
+		Instant instant = date.atStartOfDay().atZone(ZoneId.of("GMT")).toInstant(); //Start of day - GMT
 		return Date.from(instant);
 	}
 
@@ -1498,7 +1498,7 @@ public class TrackerTab extends JMainTabSecondary {
 		}
 	}
 
-	private class ListenerClass implements 
+	private class ListenerClass implements
 			ActionListener, PopupMenuListener,
 			ChartMouseListener, ListSelectionListener, DateChangeListener {
 
@@ -1647,7 +1647,7 @@ public class TrackerTab extends JMainTabSecondary {
 				if (values.isEmpty()) {
 					return;
 				}
-				
+
 				int retrunValue = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), TabsTracker.get().deleteSelected(), TabsTracker.get().delete(), JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
 				if (retrunValue == JOptionPane.OK_OPTION) {
 					for (Map.Entry<String, Value> entry : values.entrySet()) {
@@ -1714,7 +1714,6 @@ public class TrackerTab extends JMainTabSecondary {
 		}
 
 		boolean mouseClicked = false;
-		
 
 		@Override
 		public void chartMouseClicked(final ChartMouseEvent cme) {
@@ -1764,7 +1763,7 @@ public class TrackerTab extends JMainTabSecondary {
 							@Override
 							public void popupMenuCanceled(PopupMenuEvent e) { }
 						});
-						jPopupMenu.show((Component)cme.getTrigger().getSource(), x, y);					
+						jPopupMenu.show((Component)cme.getTrigger().getSource(), x, y);
 					}
 				});
 			}
@@ -1782,9 +1781,7 @@ public class TrackerTab extends JMainTabSecondary {
 		}
 
 		@Override
-		public void popupMenuCanceled(PopupMenuEvent e) {
-			
-		}
+		public void popupMenuCanceled(PopupMenuEvent e) { }
 
 		@Override
 		public void valueChanged(ListSelectionEvent e) {
@@ -1855,11 +1852,11 @@ public class TrackerTab extends JMainTabSecondary {
 				try {
 					zis = new ZipInputStream(new FileInputStream(file));
 					ZipEntry zipEntry = zis.getNextEntry();
-					while(zipEntry != null){
+					while(zipEntry != null) {
 						String filename = zipEntry.getName();
 						if (filename.equals("settings.xml") || filename.equals("tracker.json")) {
 							unzippedFile = new File(FileUtil.getPathDataDirectory() + File.separator + "temp_" + filename);
-							if (unzippedFile.toPath().normalize().startsWith(FileUtil.getPathDataDirectory() + File.separator)) {  //Make sure path is correct
+							if (unzippedFile.toPath().normalize().startsWith(FileUtil.getPathDataDirectory() + File.separator)) { //Make sure path is correct
 								FileOutputStream fos = new FileOutputStream(unzippedFile);
 								byte[] buffer = new byte[1024];
 								int len;

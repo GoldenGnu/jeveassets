@@ -106,7 +106,7 @@ public class NikrUncaughtExceptionHandler implements Thread.UncaughtExceptionHan
 						//We tried our best, nothing more to do now...
 					}
 				}
-			} else if (causes.contains(NoClassDefFoundError.class) || causes.contains(ClassNotFoundException.class)) { //Corrupted class files 
+			} else if (causes.contains(NoClassDefFoundError.class) || causes.contains(ClassNotFoundException.class)) { //Corrupted class files
 				try {
 					Updater updater = new Updater();
 					updater.fixMissingClasses();
@@ -150,7 +150,7 @@ public class NikrUncaughtExceptionHandler implements Thread.UncaughtExceptionHan
 	}
 
 	private void showMessageDialog(Component parentComponent,
-        Object message, String title, int messageType) {
+		Object message, String title, int messageType) {
 		if (GraphicsEnvironment.isHeadless()) {
 			return;
 		}
@@ -158,7 +158,7 @@ public class NikrUncaughtExceptionHandler implements Thread.UncaughtExceptionHan
 	}
 
 	public static int showConfirmDialog(Component parentComponent,
-        Object message, String title, int optionType, int messageType) {
+		Object message, String title, int optionType, int messageType) {
 		if (GraphicsEnvironment.isHeadless()) {
 			return JOptionPane.CANCEL_OPTION;
 		}

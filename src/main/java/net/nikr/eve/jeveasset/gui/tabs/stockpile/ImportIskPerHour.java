@@ -40,14 +40,14 @@ public class ImportIskPerHour extends StockpileImport{
 	public String getHelp() {
 		return TabsStockpile.get().importIskPerHourHelp();
 	}
- 
+
 	@Override
 	public String getExample() {
 		return "Supported formats:\n"
 				+ "\n"
 				//Default
 				+ "<item name><me> - <number>\n"
-				+  "10000MN Afterburner I (ME: 0, NumBPs: 1) - 1\n"
+				+ "10000MN Afterburner I (ME: 0, NumBPs: 1) - 1\n"
 				+ "\n"
 				//EveList
 				+ "<item name><space><number>\n"
