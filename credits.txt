@@ -22,12 +22,7 @@ Developers:
   Niklas Kyster Rasmussen (Golden Gnu)
   Dultas
 
-One-time Contributors:
-  Madetara (Ray Kavier)
-  Kaylee Syntax
-  Inoruuk
-
-Retired Developers:
+Contributors:
   Flaming Candle
   Jochen Bedersdorfer
   TryfanMan
@@ -35,6 +30,10 @@ Retired Developers:
   Ima Sohmbadi
   Saulvin
   AnrDaemon
+  Madetara (Ray Kavier)
+  Kaylee Syntax
+  Inoruuk
+  Burberius
 
 Retired Testers:
   Varo Jan
