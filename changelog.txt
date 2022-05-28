@@ -16,6 +16,48 @@
                   #### #  # #  # #  # #### #### #### #### ####
 
 ________________________________________________________________________________
+_7.2.0__________________________________________________________________________
+
+New Features:
+-Added configurable colors to the industry jobs activity column
+-Adding account automatically update existing account authorization (Issue #306)
+-Separated ore and scrapmetal reprocessing calculations/settings (Issue #312)
+-Added buttons to open the online manual (Stockpile/Table Filters/Settings)
+-Added Eve Tycoon to the lookup menu
+
+Bug Fixes:
+-CLI -droptable -createtable -extended are always true (Issue #310)
+-CLI tableName is always a empty string, DROP TABLE IF EXISTS `` (Issue #310)
+-If sqlTableName is set in the GUI, It's not used for CLI export (Issue #310)
+-Fixed issues with CLI updates for multiple profiles
+-Fixed delay between starting update and the update window showing (Issue #319)
+-Fixed public market orders update progress finishing at 80% progress
+-Fixed Industry Jobs having the wrong default filters (was Transactions filters)
+-Fixed CLI export logging
+-Fixed the current filter never being displayed as empty 
+-Overview export using current view (should use all)
+-Fixed an old bug where Settings dialog would resize after being shown 
+-Fixed painting outside the EDT in JMainTab/MarketOrdersTab/RoutingTab
+
+Changed:
+-Improved the reprocessing settings GUI
+-Slightly better CLI help message
+-The Stockpile dialog now better convey that selecting an include is required
+-Show warning before updating outbid data with orders in unknown locations
+-Made most toolbars more compressible and normalized icon buttons width 
+-Changed help menu to point to the wiki and wiki's feedback and help
+
+Code:
+-Optimized stockpile New/Clone/Delete/Import/Hide/Show
+-Optimized subpile updates in the stockpile tool
+-Upgraded maven plugins to make it work with Java 17 (contributed by Burberius)
+-Updated all the wiki links to the new site: https://wiki.jeveassets.org
+-Refactored ProfileManager/Profile/ProfileWriter/ProfileReader to be more OOP
+-Added test to ensure dev build is always off (false)
+-Ensure profile names are never duplicated
+-Better error logging for ESI errors
+
+________________________________________________________________________________
 _7.1.1__________________________________________________________________________
 
 Bug Fixes:
