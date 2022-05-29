@@ -146,14 +146,10 @@ public class StockpileData extends TableData {
 					if (contractItem.getContract().isIgnoreContract()) {
 						continue;
 					}
-					Integer typeID = contractItem.getTypeID();
+					Integer typeID = get(contractItem.getTypeID(), contractItem.isBPC());
 					//Ignore null and wrong typeID
-					if (typeID == null || !typeIDs.contains(typeID)) {
+					if (ignore(typeIDs, typeID)) {
 						continue;
-					}
-					//BPC has negative value
-					if (contractItem.isBPC()) {
-						typeID = -typeID;
 					}
 					//Add Contract Item
 					add(contractItems, typeID, contractItem);
@@ -165,14 +161,10 @@ public class StockpileData extends TableData {
 					if (asset.isGenerated()) { //Skip generated assets
 						continue;
 					}
-					Integer typeID = asset.getTypeID();
+					Integer typeID = get(asset.getTypeID(), asset.isBPC());
 					//Ignore null and wrong typeID
-					if (typeID == null || !typeIDs.contains(typeID)) {
+					if (ignore(typeIDs, typeID)) {
 						continue;
-					}
-					//BPC has negative value
-					if (asset.isBPC()) {
-						typeID = -typeID;
 					}
 					//Add Asset
 					add(assets, typeID, asset);
@@ -183,7 +175,7 @@ public class StockpileData extends TableData {
 				for (MyMarketOrder marketOrder : profileData.getMarketOrdersList()) {
 					Integer typeID = marketOrder.getTypeID();
 					//Ignore null and wrong typeID
-					if (typeID == null || !typeIDs.contains(typeID)) {
+					if (ignore(typeIDs, typeID)) {
 						continue;
 					}
 					//Add Market Order
@@ -195,13 +187,12 @@ public class StockpileData extends TableData {
 				for (MyIndustryJob industryJob : profileData.getIndustryJobsList()) {
 					//Manufacturing
 					Integer productTypeID = industryJob.getProductTypeID();
-					if (productTypeID != null && typeIDs.contains(productTypeID)) {
+					if (!ignore(typeIDs, productTypeID)) { //Ignore null and wrong typeID
 						add(industryJobs, productTypeID, industryJob);
 					}
 					//Copying
-					Integer blueprintTypeID = industryJob.getBlueprintTypeID();
-					if (blueprintTypeID != null && typeIDs.contains(blueprintTypeID)) {
-						blueprintTypeID = -blueprintTypeID; //Negative - match blueprints copies
+					Integer blueprintTypeID = get(industryJob.getBlueprintTypeID(), true);  //Negative - match blueprints copies
+					if (!ignore(typeIDs, blueprintTypeID)) { //Ignore null and wrong typeID
 						add(industryJobs, blueprintTypeID, industryJob);
 					}
 				}
@@ -231,6 +222,28 @@ public class StockpileData extends TableData {
 		}
 		stockpile.updateTotal();
 		stockpile.updateTags();
+	}
+
+	private Integer get(Integer typeID, boolean bpc) {
+		//Ignore null
+		if (typeID == null) {
+			return null;
+		}
+		//BPC has negative value
+		if (bpc) {
+			typeID = -typeID;
+		}
+		//Return fixed TypeID
+		return typeID;
+	}
+
+	private boolean ignore(Set<Integer> typeIDs, Integer typeID) {
+		//Ignore null
+		if (typeID == null) {
+			return true;
+		}
+		//Ignore wrong typeID
+		return !typeIDs.contains(typeID);
 	}
 
 	private <T> void add(Map<Integer, Set<T>> map, Integer typeID, T t) {
