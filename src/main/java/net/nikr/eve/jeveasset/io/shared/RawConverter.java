@@ -846,6 +846,9 @@ public class RawConverter {
 		SUBSYSTEMBAY("SubSystemBay", 177),
 		FRIGATEESCAPEBAY("FrigateEscapeBay", 179),
 		QUANTUMCOREROOM("StructureDeedBay", 180), //QuantumCoreRoom
+		STRUCTUREDEEDBAY("StructureDeedBay", 180), //QuantumCoreRoom
+		SPECIALIZEDICEHOLD("SpecializedIceHold", 181),
+		SPECIALIZEDASTEROIDHOLD("SpecializedAsteroidHold", 182),
 		;
 
 		private final String value;

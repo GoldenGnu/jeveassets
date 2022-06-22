@@ -761,7 +761,7 @@
 		<dependency>
 			<groupId>net.troja.eve</groupId>
 			<artifactId>eve-esi</artifactId>
-			<version>4.6.1</version>
+			<version>4.7.0</version>
 		</dependency>
 		<dependency>
 			<groupId>net.nikr.eve</groupId>
@@ -801,7 +801,7 @@
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.13.1</version>
+			<version>4.13.2</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -839,13 +839,13 @@
 			<!-- http://logback.qos.ch/news.html -->
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
-			<version>1.2.10</version>
+			<version>1.2.11</version>
 		</dependency>
 		 <dependency>
 			 <!-- use logback for logging -->
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-core</artifactId>
-			<version>1.2.10</version>
+			<version>1.2.11</version>
 		</dependency>
 		<dependency>
 			<!-- https://github.com/jfree/jfreechart/releases -->
