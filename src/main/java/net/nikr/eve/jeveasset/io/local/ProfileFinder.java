@@ -58,6 +58,10 @@ public final class ProfileFinder {
 			for (File file : files) {
 				String name = file.getName();
 				String profileName = formatName(name);
+				if (!profileName.matches("[\\w\\s]+")) {
+					LOG.warn("Ignoring invalid profile name: {} ({})", profileName, name);
+					continue; //Ignore invalid names
+				}
 				if (unique.contains(profileName)) {
 					LOG.warn("Ignoring duplicated profile name: {} ({})", profileName, name);
 					continue; //ignore duplicates
