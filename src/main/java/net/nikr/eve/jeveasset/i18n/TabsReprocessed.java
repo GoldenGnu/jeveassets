@@ -35,7 +35,6 @@ public abstract class TabsReprocessed extends Bundle {
 		super(locale);
 	}
 
-	public abstract String add();
 	public abstract String addItem();
 	public abstract String batch();
 	public abstract String removeAll();
@@ -57,7 +56,6 @@ public abstract class TabsReprocessed extends Bundle {
 	public abstract String info();
 	public abstract String price();
 	public abstract String remove();
-	public abstract String set();
 	public abstract String selectItem();
 	public abstract String title();
 	public abstract String total();
