@@ -133,6 +133,8 @@ public abstract class GuiShared extends Bundle {
 	public abstract String paste();
 	public abstract String planet();
 	public abstract String region();
+	public abstract String reprocessed();
+	public abstract String routing();
 	public abstract String selectionAverage();
 	public abstract String selectionCount();
 	public abstract String selectionInventionSuccess();
@@ -182,6 +184,7 @@ public abstract class GuiShared extends Bundle {
 	public abstract String selectionShortTax();
 	public abstract String selectionShortValue();
 	public abstract String selectionShortVolume();
+	public abstract String set();
 	public abstract String station();
 	public abstract String stockpile();
 	public abstract String system();

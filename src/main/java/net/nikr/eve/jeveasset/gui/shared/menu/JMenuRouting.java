@@ -42,7 +42,7 @@ public class JMenuRouting<T> extends MenuManager.JAutoMenu<T> {
 	private final JMenuItem jStation;
 
 	public JMenuRouting(Program program) {
-		super("Routing", program);
+		super(GuiShared.get().routing(), program);
 		this.setIcon(Images.TOOL_ROUTING.getIcon());
 
 		ListenerClass listener = new ListenerClass();
