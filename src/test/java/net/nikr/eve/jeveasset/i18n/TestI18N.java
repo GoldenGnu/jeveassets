@@ -166,7 +166,7 @@ public class TestI18N extends TestUtil {
 
 	@Test public void testTabsReprocessedBundle_en() throws Exception {
 		TabsReprocessed g = BundleServiceFactory.getBundleService().get(TabsReprocessed.class);
-		assertNotNull(g.add());
+		assertNotNull(g.addItem());
 	}
 
 	@Test public void testTabsRoutingBundle_en() throws Exception {
