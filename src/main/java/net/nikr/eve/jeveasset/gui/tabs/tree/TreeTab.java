@@ -670,7 +670,7 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate {
 
 		@Override
 		public void saveSettings(final String msg) {
-			program.saveSettings("Tree Talbe: " + msg); //Save Tree Filters and Export Setttings
+			program.saveSettings("Tree Table: " + msg); //Save Tree Filters and Export Setttings
 		}
 	}
 
