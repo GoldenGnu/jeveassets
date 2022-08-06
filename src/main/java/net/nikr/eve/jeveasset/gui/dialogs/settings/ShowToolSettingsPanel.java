@@ -170,11 +170,8 @@ public class ShowToolSettingsPanel extends JSettingsPanel {
 	}
 
 	@Override
-	public boolean save() {
-		List<String> oldList = new ArrayList<>(Settings.get().getShowTools()); //Copy
-		boolean update = Settings.get().isSaveToolsOnExit() != jSave.isSelected();
+	public UpdateType save() {
 		Settings.get().setSaveToolsOnExit(jSave.isSelected()); //must be before: program.getMainWindow().saveShown() (or it won't save)
-
 		if (jSave.isSelected()) {
 			Settings.get().getShowTools().clear();
 			for (JMainTab tab : program.getMainWindow().getTabs()) {
@@ -183,11 +180,10 @@ public class ShowToolSettingsPanel extends JSettingsPanel {
 		} else {
 			Settings.get().getShowTools().clear();
 			for (int i = 0; i < model.size(); i++) {
-				Tool tool = model.get(i);
-				Settings.get().getShowTools().add(tool.getTitle());
+				Settings.get().getShowTools().add(model.get(i).getTitle());
 			}
 		}
-		return !oldList.equals(Settings.get().getShowTools()) || update;
+		return UpdateType.NONE;
 	}
 
 	@Override

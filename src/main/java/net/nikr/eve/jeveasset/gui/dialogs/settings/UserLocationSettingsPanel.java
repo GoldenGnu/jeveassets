@@ -103,10 +103,10 @@ public class UserLocationSettingsPanel extends JSettingsPanel {
 	}
 
 	@Override
-	public boolean save() {
+	public UpdateType save() {
 		CitadelGetter.remove(delete);
 		CitadelGetter.set(edit);
-		return !delete.isEmpty() || !edit.isEmpty();
+		return delete.isEmpty() && edit.isEmpty() ? UpdateType.NONE : UpdateType.FULL_UPDATE;
 	}
 
 	@Override

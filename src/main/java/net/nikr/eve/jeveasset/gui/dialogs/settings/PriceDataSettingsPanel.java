@@ -256,7 +256,7 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 	}
 
 	@Override
-	public boolean save() {
+	public UpdateType save() {
 		Object object;
 		Long locationID;
 		LocationType locationType = null;
@@ -304,7 +304,7 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 		boolean blueprintsTech2 = jBlueprintsTech2.isSelected();
 
 		//Eval if table need to be updated
-		boolean updateTable = !priceType.equals(Settings.get().getPriceDataSettings().getPriceType())
+		boolean update = !priceType.equals(Settings.get().getPriceDataSettings().getPriceType())
 								|| !priceReprocessedType.equals(Settings.get().getPriceDataSettings().getPriceReprocessedType())
 								|| blueprintsTech1 != Settings.get().isBlueprintBasePriceTech1()
 								|| blueprintsTech2 != Settings.get().isBlueprintBasePriceTech2();
@@ -315,7 +315,7 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 		Settings.get().setBlueprintBasePriceTech2(blueprintsTech2);
 
 		//Update table if needed
-		return updateTable;
+		return update ? UpdateType.FULL_UPDATE : UpdateType.NONE;
 	}
 
 	@Override

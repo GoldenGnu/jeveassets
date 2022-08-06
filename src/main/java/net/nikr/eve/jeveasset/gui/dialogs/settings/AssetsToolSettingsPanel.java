@@ -65,7 +65,7 @@ public class AssetsToolSettingsPanel extends JSettingsPanel {
 	}
 
 	@Override
-	public boolean save() {
+	public UpdateType save() {
 		boolean update = jSellOrders.isSelected() != Settings.get().isIncludeSellOrders()
 						|| jBuyOrders.isSelected() != Settings.get().isIncludeBuyOrders()
 						|| jSellContracts.isSelected() != Settings.get().isIncludeSellContracts()
@@ -77,7 +77,7 @@ public class AssetsToolSettingsPanel extends JSettingsPanel {
 		Settings.get().setIncludeSellContracts(jSellContracts.isSelected());
 		Settings.get().setIncludeBuyContracts(jBuyContracts.isSelected());
 		Settings.get().setIncludeManufacturing(jManufacturing.isSelected());
-		return update;
+		return update ? UpdateType.FULL_UPDATE : UpdateType.NONE;
 	}
 
 	@Override

@@ -189,7 +189,7 @@ public class WindowSettingsPanel extends JSettingsPanel {
 	}
 
 	@Override
-	public boolean save() {
+	public UpdateType save() {
 		if (jAutoSave.isSelected()) {
 			Settings.get().setWindowAutoSave(true);
 		} else {
@@ -219,7 +219,7 @@ public class WindowSettingsPanel extends JSettingsPanel {
 		boolean alwaysOnTop = jAlwaysOnTop.isSelected();
 		Settings.get().setWindowAlwaysOnTop(alwaysOnTop);
 		program.getMainWindow().getFrame().setAlwaysOnTop(alwaysOnTop);
-		return false;
+		return UpdateType.NONE;
 	}
 
 	@Override

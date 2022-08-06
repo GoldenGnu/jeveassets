@@ -46,7 +46,7 @@ public class UserPriceSettingsPanel extends JUserListPanel<Integer, Double> {
 
 	@Override
 	protected void updateEventList(List<Integer> keys) {
-		program.updatePrices(new HashSet<Integer>(keys));
+		program.updatePrices(new HashSet<>(keys));
 	}
 
 	@Override
@@ -75,7 +75,7 @@ public class UserPriceSettingsPanel extends JUserListPanel<Integer, Double> {
 
 	public static class UserPrice extends UserItem<Integer, Double> {
 
-		private DecimalFormat simpleFormat = new DecimalFormat("0.##", new DecimalFormatSymbols(Locale.ENGLISH));
+		private final DecimalFormat simpleFormat = new DecimalFormat("0.##", new DecimalFormatSymbols(Locale.ENGLISH));
 
 		public UserPrice(final UserItem<Integer, Double> userItem) {
 			super(userItem);
