@@ -54,9 +54,9 @@ public class JournalToolSettingsPanel extends JSettingsPanel {
 	}
 
 	@Override
-	public boolean save() {
+	public UpdateType save() {
 		Settings.get().setJournalHistory(jSaveHistory.isSelected());
-		return false;
+		return UpdateType.NONE;
 	}
 
 	@Override

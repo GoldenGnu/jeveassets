@@ -31,6 +31,16 @@ import net.nikr.eve.jeveasset.Program;
 
 public abstract class JSettingsPanel {
 
+	public static enum UpdateType {
+		NONE,
+		FULL_UPDATE,
+		UPDATE_OVERVIEW,
+		UPDATE_TAGS,
+		FULL_REPAINT,
+		REPAINT_MARKET_ORDERS_TABLE,
+		REPAINT_STOCKPILE_TABLE,
+	}
+
 	protected Program program;
 	protected String title;
 	protected JPanel jPanel;
@@ -53,7 +63,7 @@ public abstract class JSettingsPanel {
 		layout.setAutoCreateContainerGaps(true);
 	}
 
-	public abstract boolean save();
+	public abstract UpdateType save();
 	public abstract void load();
 
 	public JPanel getPanel() {

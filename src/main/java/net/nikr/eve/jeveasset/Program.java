@@ -651,6 +651,17 @@ public class Program implements ActionListener {
 		});
 	}
 
+	public void repaintTables() {
+		for (JMainTab jMainTab : mainWindow.getTabs()) {
+			ensureEDT(new Runnable() {
+				@Override
+				public void run() {
+					jMainTab.repaintTable();
+				}
+			});
+		}
+	}
+
 	public static void ensureEDT(Runnable runnable) {
 		if (SwingUtilities.isEventDispatchThread()) {
 			runnable.run();
@@ -808,6 +819,10 @@ public class Program implements ActionListener {
 
 	public TransactionTab getTransactionsTab() {
 		return transactionsTab;
+	}
+
+	public MarketOrdersTab getMarketOrdersTab() {
+		return marketOrdersTab;
 	}
 
 	public StatusPanel getStatusPanel() {
