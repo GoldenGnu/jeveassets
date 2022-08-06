@@ -22,6 +22,7 @@
 package net.nikr.eve.jeveasset.gui.tabs.overview;
 
 import ca.odell.glazedlists.EventList;
+import ca.odell.glazedlists.FilterList;
 import ca.odell.glazedlists.ListSelection;
 import ca.odell.glazedlists.SortedList;
 import ca.odell.glazedlists.swing.DefaultEventSelectionModel;
@@ -35,7 +36,6 @@ import java.util.Collections;
 import java.util.List;
 import javax.swing.ButtonGroup;
 import javax.swing.GroupLayout;
-import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -54,9 +54,8 @@ import net.nikr.eve.jeveasset.gui.shared.components.JDropDownButton;
 import net.nikr.eve.jeveasset.gui.shared.components.JFixedToolBar;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTabSecondary;
 import net.nikr.eve.jeveasset.gui.shared.components.ListComboBoxModel;
-import net.nikr.eve.jeveasset.gui.shared.filter.ExportDialog;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
-import net.nikr.eve.jeveasset.gui.shared.filter.SimpleFilterControl;
+import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuColumns;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo.InfoItem;
@@ -68,7 +67,6 @@ import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.TableFormatFactory;
 import net.nikr.eve.jeveasset.gui.tabs.assets.AssetsTab;
-import net.nikr.eve.jeveasset.i18n.GuiShared;
 import net.nikr.eve.jeveasset.i18n.TabsOverview;
 
 
@@ -76,8 +74,7 @@ public class OverviewTab extends JMainTabSecondary {
 
 	public static enum OverviewAction {
 		UPDATE_LIST,
-		LOAD_FILTER,
-		EXPORT
+		LOAD_FILTER
 	}
 
 	public static enum View {
@@ -108,16 +105,14 @@ public class OverviewTab extends JMainTabSecondary {
 
 	//Table
 	private final EventList<Overview> eventList;
+	private final FilterList<Overview> filterList;
 	private final DefaultEventTableModel<Overview> tableModel;
 	private final EnumTableFormatAdaptor<OverviewTableFormat, Overview> tableFormat;
-	private final SortedList<Overview> sortedList;
+	private final OverviewTabFilterControl filterControl;
 	private final DefaultEventSelectionModel<Overview> selectionModel;
 
 	//Data
 	private final OverviewData overviewData;
-
-	//Dialog
-	ExportDialog<Overview> exportDialog;
 
 	public static final String NAME = "overview"; //Not to be changed!
 
@@ -194,11 +189,6 @@ public class OverviewTab extends JMainTabSecondary {
 		jOwner.addActionListener(listener);
 		jToolBarLeft.addComboBox(jOwner, 150);
 
-		JButton jExport = new JButton(GuiShared.get().export(), Images.DIALOG_CSV_EXPORT.getIcon());
-		jExport.setActionCommand(OverviewAction.EXPORT.name());
-		jExport.addActionListener(listener);
-		jToolBarLeft.addButton(jExport);
-
 		JFixedToolBar jToolBarRight = new JFixedToolBar();
 
 		jToolBarRight.addSpace(10);
@@ -214,26 +204,30 @@ public class OverviewTab extends JMainTabSecondary {
 		eventList = EventListManager.create();
 		//Sorting (per column)
 		eventList.getReadWriteLock().readLock().lock();
-		sortedList = new SortedList<>(eventList);
+		SortedList<Overview> sortedList = new SortedList<>(eventList);
+		eventList.getReadWriteLock().readLock().unlock();
+		//Filter
+		eventList.getReadWriteLock().readLock().lock();
+		filterList = new FilterList<>(sortedList);
 		eventList.getReadWriteLock().readLock().unlock();
 		//Table Model
-		tableModel = EventModels.createTableModel(sortedList, tableFormat);
+		tableModel = EventModels.createTableModel(filterList, tableFormat);
 		//Table
 		jTable = new JOverviewTable(program, tableModel);
 		//Sorting
 		TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
 		//Selection Model
-		selectionModel = EventModels.createSelectionModel(sortedList);
+		selectionModel = EventModels.createSelectionModel(filterList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
 		//Listeners
 		installTable(jTable);
 		//Scroll
 		JScrollPane jTableScroll = new JScrollPane(jTable);
+		//Table Filter
+		filterControl = new OverviewTabFilterControl(sortedList);
 		//Menu
-		installTableTool(new OverviewTableMenu(), tableFormat, tableModel, jTable, eventList, Overview.class);
-
-		exportDialog = new ExportDialog<>(program.getMainWindow().getFrame(), NAME, null, new OverviewFilterControl(), tableFormat, sortedList);
+		installTableTool(new OverviewTableMenu(), tableFormat, tableModel, jTable, filterControl, Overview.class);
 
 		jVolume = StatusPanel.createLabel(TabsOverview.get().totalVolume(), Images.ASSETS_VOLUME.getIcon());
 		this.addStatusbarLabel(jVolume);
@@ -252,6 +246,7 @@ public class OverviewTab extends JMainTabSecondary {
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()
+				.addComponent(filterControl.getPanel())
 				.addGroup(layout.createSequentialGroup()
 					.addComponent(jToolBarLeft, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
 					.addGap(0)
@@ -261,6 +256,7 @@ public class OverviewTab extends JMainTabSecondary {
 		);
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
+				.addComponent(filterControl.getPanel())
 				.addGroup(layout.createParallelGroup()
 					.addComponent(jToolBarLeft, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
 					.addComponent(jToolBarRight, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
@@ -375,16 +371,16 @@ public class OverviewTab extends JMainTabSecondary {
 		jMenuItem.addActionListener(listener);
 		jLoadFilter.add(jMenuItem);
 
-		List<String> filters = new ArrayList<>(Settings.get().getTableFilters(AssetsTab.NAME).keySet());
-		Collections.sort(filters, new CaseInsensitiveComparator());
+		List<String> filterNames = new ArrayList<>(Settings.get().getTableFilters(AssetsTab.NAME).keySet());
+		Collections.sort(filterNames, new CaseInsensitiveComparator());
 
-		if (!filters.isEmpty()) {
+		if (!filterNames.isEmpty()) {
 			jLoadFilter.addSeparator();
 		}
 
-		for (String filter : filters) {
-			List<Filter> filterList = Settings.get().getTableFilters(AssetsTab.NAME).get(filter);
-			jMenuItem = new FilterMenuItem(filter, filterList);
+		for (String filterName : filterNames) {
+			List<Filter> filters = Settings.get().getTableFilters(AssetsTab.NAME).get(filterName);
+			jMenuItem = new FilterMenuItem(filterName, filters);
 			jMenuItem.setActionCommand(OverviewAction.LOAD_FILTER.name());
 			jMenuItem.addActionListener(listener);
 			jLoadFilter.add(jMenuItem);
@@ -503,7 +499,7 @@ public class OverviewTab extends JMainTabSecondary {
 
 		@Override
 		public JMenu getFilterMenu() {
-			return null;
+			return filterControl.getMenu(jTable, selectionModel.getSelected());
 		}
 
 		@Override
@@ -538,8 +534,6 @@ public class OverviewTab extends JMainTabSecondary {
 						program.getAssetsTab().addFilters(menuItem.getFilters());
 					}
 				}
-			} else if (OverviewAction.EXPORT.name().equals(e.getActionCommand())) {
-				exportDialog.setVisible(true);
 			}
 		}
 	}
@@ -558,11 +552,21 @@ public class OverviewTab extends JMainTabSecondary {
 		}
 	}
 
-	private class OverviewFilterControl implements SimpleFilterControl<Overview> {
+	public class OverviewTabFilterControl extends FilterControl<Overview> {
+
+		public OverviewTabFilterControl(EventList<Overview> exportEventList) {
+			super(program.getMainWindow().getFrame(),
+					NAME,
+					tableFormat,
+					eventList,
+					exportEventList,
+					filterList
+					);
+		}
 
 		@Override
 		public void saveSettings(final String msg) {
-			program.saveSettings("Overview Table: " + msg); //Save Overview Export Setttings (Filters not used)
+			program.saveSettings("Overview Table: " + msg); //Save Overview Filters and Export Setttings
 		}
 	}
 }

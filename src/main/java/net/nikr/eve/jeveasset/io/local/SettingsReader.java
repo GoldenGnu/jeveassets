@@ -102,6 +102,8 @@ import net.nikr.eve.jeveasset.gui.tabs.orders.MarketTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.orders.Outbid;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewGroup;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewLocation;
+import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewTab;
+import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.routing.SolarSystem;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter;
@@ -1631,6 +1633,14 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		try {
 			if (toolName.equals(ItemsTab.NAME)) {
 				return ItemTableFormat.valueOf(column);
+			}
+		} catch (IllegalArgumentException exception) {
+
+		}
+		//Overview
+		try {
+			if (toolName.equals(OverviewTab.NAME)) {
+				return OverviewTableFormat.valueOf(column);
 			}
 		} catch (IllegalArgumentException exception) {
 
