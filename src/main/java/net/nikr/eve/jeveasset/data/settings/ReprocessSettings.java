@@ -86,7 +86,10 @@ public class ReprocessSettings {
 	}
 
 	@Override
-	public boolean equals(final Object obj) {
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
 		if (obj == null) {
 			return false;
 		}
@@ -103,19 +106,23 @@ public class ReprocessSettings {
 		if (this.reprocessingEfficiencyLevel != other.reprocessingEfficiencyLevel) {
 			return false;
 		}
+		if (this.oreProcessingLevel != other.oreProcessingLevel) {
+			return false;
+		}
 		if (this.scrapmetalProcessingLevel != other.scrapmetalProcessingLevel) {
 			return false;
 		}
 		return true;
 	}
 
-	@Override
+		@Override
 	public int hashCode() {
 		int hash = 7;
-		hash = 83 * hash + this.station;
-		hash = 83 * hash + this.reprocessingLevel;
-		hash = 83 * hash + this.reprocessingEfficiencyLevel;
-		hash = 83 * hash + this.scrapmetalProcessingLevel;
+		hash = 29 * hash + this.station;
+		hash = 29 * hash + this.reprocessingLevel;
+		hash = 29 * hash + this.reprocessingEfficiencyLevel;
+		hash = 29 * hash + this.oreProcessingLevel;
+		hash = 29 * hash + this.scrapmetalProcessingLevel;
 		return hash;
 	}
 }

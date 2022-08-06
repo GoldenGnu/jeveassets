@@ -155,7 +155,7 @@ public class GeneralSettingsPanel extends JSettingsPanel {
 	}
 
 	@Override
-	public boolean save() {
+	public UpdateType save() {
 		int maximumPurchaseAge;
 		try {
 			maximumPurchaseAge = Integer.valueOf(jMaxOrderAge.getText());
@@ -170,11 +170,10 @@ public class GeneralSettingsPanel extends JSettingsPanel {
 			transactionProfitMargin = 0;
 		}
 		DecimalSeparator copyDecimalSeparator = jDecimalSeparator.getItemAt(jDecimalSeparator.getSelectedIndex());
-		boolean update = jHighlightSelectedRow.isSelected() != Settings.get().isHighlightSelectedRows()
-						|| maximumPurchaseAge != Settings.get().getMaximumPurchaseAge()
+		boolean update = maximumPurchaseAge != Settings.get().getMaximumPurchaseAge()
 						|| transactionProfitPrice != Settings.get().getTransactionProfitPrice()
-						|| copyDecimalSeparator != 	Settings.get().getCopySettings().getCopyDecimalSeparator()
-						;
+						|| transactionProfitMargin != Settings.get().getTransactionProfitMargin();
+		boolean repaint = jHighlightSelectedRow.isSelected() != Settings.get().isHighlightSelectedRows();
 		Settings.get().setFilterOnEnter(jEnterFilters.isSelected());
 		Settings.get().setHighlightSelectedRows(jHighlightSelectedRow.isSelected());
 		Settings.get().setFocusEveOnlineOnEsiUiCalls(jFocusEveOnline.isSelected());
@@ -182,7 +181,13 @@ public class GeneralSettingsPanel extends JSettingsPanel {
 		Settings.get().setTransactionProfitPrice(transactionProfitPrice);
 		Settings.get().setTransactionProfitMargin(transactionProfitMargin);
 		Settings.get().getCopySettings().setCopyDecimalSeparator(copyDecimalSeparator);
-		return update;
+		if (update) {
+			return UpdateType.FULL_UPDATE;
+		} else if (repaint) {
+			return UpdateType.FULL_REPAINT;
+		} else {
+			return UpdateType.NONE;
+		}
 	}
 
 	@Override

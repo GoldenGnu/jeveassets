@@ -63,8 +63,8 @@ public class TagsSettingsPanel extends JSettingsPanel {
 	private final JTagsDialog jTagsDialog;
 
 	//Date
-	private final List<TagTask> tasks = new ArrayList<TagTask>();
-	private final Set<String> currentTags = new HashSet<String>();
+	private final List<TagTask> tasks = new ArrayList<>();
+	private final Set<String> currentTags = new HashSet<>();
 
 	public TagsSettingsPanel(Program program, SettingsDialog settingsDialog) {
 		super(program, settingsDialog, GuiShared.get().tags(), Images.TAG_GRAY.getIcon());
@@ -73,9 +73,9 @@ public class TagsSettingsPanel extends JSettingsPanel {
 
 		jTagsDialog = new JTagsDialog(program);
 
-		listModel = new DefaultListModel<Tag>();
+		listModel = new DefaultListModel<>();
 
-		jTags = new JList<Tag>(listModel);
+		jTags = new JList<>(listModel);
 		jTags.setCellRenderer(new TagListCellRenderer(jTags.getCellRenderer()));
 		jTags.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		jTags.addListSelectionListener(listener);
@@ -115,21 +115,18 @@ public class TagsSettingsPanel extends JSettingsPanel {
 	}
 
 	@Override
-	public boolean save() {
+	public UpdateType save() {
 		for (TagTask task : tasks) {
 			task.runTask();
 		}
-		if (!tasks.isEmpty()) {
-			program.updateTags();
-		}
-		return false;
+		return tasks.isEmpty() ? UpdateType.NONE : UpdateType.UPDATE_TAGS;
 	}
 
 	@Override
 	public void load() {
 		tasks.clear();
 
-		Set<Tag> allTags = new TreeSet<Tag>(GlazedLists.comparableComparator());
+		Set<Tag> allTags = new TreeSet<>(GlazedLists.comparableComparator());
 		allTags.addAll(Settings.get().getTags().values());
 
 		currentTags.clear();

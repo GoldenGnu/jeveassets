@@ -54,9 +54,9 @@ public class TransactionsToolSettingsPanel extends JSettingsPanel {
 	}
 
 	@Override
-	public boolean save() {
+	public UpdateType save() {
 		Settings.get().setTransactionHistory(jSaveHistory.isSelected());
-		return false;
+		return UpdateType.NONE;
 	}
 
 	@Override

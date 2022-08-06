@@ -124,6 +124,12 @@ public abstract class JMainTab {
 		}
 	}
 
+	public void repaintTable() {
+		if (jTable != null) {
+			jTable.repaint();
+		}
+	}
+
 	public final void saveSettings() {
 		//Save Settings
 		if (eventTableModel != null && jTable != null && toolName != null) {

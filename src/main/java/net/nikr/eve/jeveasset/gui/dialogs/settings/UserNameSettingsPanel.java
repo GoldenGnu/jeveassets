@@ -43,7 +43,7 @@ public class UserNameSettingsPanel extends JUserListPanel<Long, String> {
 
 	@Override
 	protected void updateEventList(List<Long> keys) {
-		program.updateNames(new HashSet<Long>(keys));
+		program.updateNames(new HashSet<>(keys));
 	}
 
 	@Override

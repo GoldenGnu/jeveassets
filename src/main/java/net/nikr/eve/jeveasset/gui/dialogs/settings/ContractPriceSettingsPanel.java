@@ -103,31 +103,26 @@ public class ContractPriceSettingsPanel extends JSettingsPanel {
 	}
 
 	@Override
-	public boolean save() {
-		final ContractPriceSettings old = Settings.get().getContractPriceSettings();
-		Object object = jMode.getSelectedItem();
+	public UpdateType save() {
+		final ContractPriceSettings contractPriceSettings = Settings.get().getContractPriceSettings();
+		ContractPriceMode mode = jMode.getItemAt(jMode.getSelectedIndex());
 		boolean includePrivate = jIncludePrivate.isSelected();
 		boolean defaultBPC = jDefaultBPC.isSelected();
 		boolean feedback = jFeedback.isSelected();
-		boolean updated = false;
-		if (old.getContractPriceMode() != object) {
-			updated = true;
-		}
+
+		boolean update = contractPriceSettings.getContractPriceMode() != mode
+						|| contractPriceSettings.isDefaultBPC() != defaultBPC;
+
 		List<ContractPriceSecurity> contractPriceSecurity = jSecurity.getSelectedValuesList();
-		if (old.isDefaultBPC() != defaultBPC) {
-			updated = true;
-		}
-		if (object instanceof ContractPriceMode) {
-			old.setContractPriceMode((ContractPriceMode) object);
-		}
-		old.setContractPriceSecurity(new HashSet<>(contractPriceSecurity));
-		old.setIncludePrivate(includePrivate);
-		old.setDefaultBPC(defaultBPC);
-		old.setFeedback(feedback);
+		contractPriceSettings.setContractPriceMode(mode);
+		contractPriceSettings.setContractPriceSecurity(new HashSet<>(contractPriceSecurity));
+		contractPriceSettings.setIncludePrivate(includePrivate);
+		contractPriceSettings.setDefaultBPC(defaultBPC);
+		contractPriceSettings.setFeedback(feedback);
 		if (contractPriceSecurity.isEmpty()) {
 			jSecurity.setSelectedIndex(ContractPriceSecurity.HIGH_SEC.ordinal());
 		}
-		return updated;
+		return update ? UpdateType.FULL_UPDATE : UpdateType.NONE;
 	}
 
 	@Override

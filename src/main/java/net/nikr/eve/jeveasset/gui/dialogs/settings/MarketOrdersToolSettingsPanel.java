@@ -26,12 +26,12 @@ import javax.swing.GroupLayout;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.MarketOrdersSettings;
+import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
+import net.nikr.eve.jeveasset.gui.shared.DocumentFactory.ValueFlag;
 import net.nikr.eve.jeveasset.gui.shared.components.JIntegerField;
 import net.nikr.eve.jeveasset.gui.shared.components.JLabelMultiline;
-import net.nikr.eve.jeveasset.gui.shared.DocumentFactory.ValueFlag;
 import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 
 
@@ -116,12 +116,7 @@ public class MarketOrdersToolSettingsPanel extends JSettingsPanel {
 	}
 
 	@Override
-	public boolean save() {
-		int oldExpireWarnDays = Settings.get().getMarketOrdersSettings().getExpireWarnDays();
-		int oldRemainingWarnPercent = Settings.get().getMarketOrdersSettings().getRemainingWarnPercent();
-
-		boolean marketOrderHistory = jSaveHistory.isSelected();
-
+	public UpdateType save() {
 		int expireWarnDays;
 		try {
 			expireWarnDays = Integer.parseInt(jExpireWarnDays.getText());
@@ -136,12 +131,14 @@ public class MarketOrdersToolSettingsPanel extends JSettingsPanel {
 			remainingWarnPercent = 0;
 		}
 
-		Settings.get().setMarketOrderHistory(marketOrderHistory);
+		boolean repaint = Settings.get().getMarketOrdersSettings().getExpireWarnDays() != expireWarnDays
+					|| Settings.get().getMarketOrdersSettings().getRemainingWarnPercent() != remainingWarnPercent;
+
+		Settings.get().setMarketOrderHistory(jSaveHistory.isSelected());
 		Settings.get().getMarketOrdersSettings().setExpireWarnDays(expireWarnDays);
 		Settings.get().getMarketOrdersSettings().setRemainingWarnPercent(remainingWarnPercent);
 
-		//This may get awkward with more checks
-		return (oldExpireWarnDays != expireWarnDays) || (oldRemainingWarnPercent != remainingWarnPercent);
+		return repaint ? UpdateType.REPAINT_MARKET_ORDERS_TABLE : UpdateType.NONE;
 	}
 
 	@Override

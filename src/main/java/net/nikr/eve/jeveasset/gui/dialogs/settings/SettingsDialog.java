@@ -26,7 +26,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import javax.swing.GroupLayout;
 import javax.swing.Icon;
 import javax.swing.JButton;
@@ -47,6 +49,7 @@ import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.settings.Settings;
+import net.nikr.eve.jeveasset.gui.dialogs.settings.JSettingsPanel.UpdateType;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
 import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
@@ -273,22 +276,37 @@ public class SettingsDialog extends JDialogCentered {
 	}
 
 	private void save(boolean hideWindow) {
-		boolean update = false;
+		Set<UpdateType> updates = new HashSet<>();
 		Settings.lock("Settings Dialog"); //Lock for Settings Dialog
 		for (Map.Entry<String, JSettingsPanel> entry : settingsPanels.entrySet()) {
-			if (entry.getValue().save()) {
-				update = true;
-			}
+			updates.add(entry.getValue().save());
 		}
 		Settings.unlock("Settings Dialog"); //Unlock for Settings Dialog
 		if (hideWindow) {
 			setVisible(false);
 		}
-		if (update) { //Update
+		if (updates.contains(UpdateType.FULL_UPDATE)) {
 			if (hideWindow) {
 				program.updateEventListsWithProgress();
 			} else {
 				program.updateEventListsWithProgress(getDialog());
+			}
+		} else {
+			if (updates.contains(UpdateType.FULL_REPAINT)) {
+				program.repaintTables();
+			} else {
+				if (updates.contains(UpdateType.REPAINT_MARKET_ORDERS_TABLE)) {
+					program.getMarketOrdersTab().repaintTable();
+				}
+				if (updates.contains(UpdateType.REPAINT_STOCKPILE_TABLE)) {
+					program.getStockpileTab().repaintTable();
+				}
+			}
+			if (updates.contains(UpdateType.UPDATE_OVERVIEW)) {
+				program.getOverviewTab().updateData();
+			}
+			if (updates.contains(UpdateType.UPDATE_TAGS)) {
+				program.updateTags();
 			}
 		}
 		program.saveSettings("Settings Dialog"); //Save Settings Dialog
@@ -364,7 +382,7 @@ public class SettingsDialog extends JDialogCentered {
 		}
 
 		@Override
-		public boolean save() { return false; }
+		public UpdateType save() { return UpdateType.NONE; }
 
 		@Override
 		public void load() { }

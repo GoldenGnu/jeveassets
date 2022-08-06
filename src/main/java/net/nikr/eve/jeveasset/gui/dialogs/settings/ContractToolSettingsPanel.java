@@ -54,9 +54,9 @@ public class ContractToolSettingsPanel extends JSettingsPanel {
 	}
 
 	@Override
-	public boolean save() {
+	public UpdateType save() {
 		Settings.get().setContractHistory(jSaveHistory.isSelected());
-		return false;
+		return UpdateType.NONE;
 	}
 
 	@Override

@@ -48,10 +48,10 @@ public class OverviewToolSettingsPanel extends JSettingsPanel {
 	}
 
 	@Override
-	public boolean save() {
+	public UpdateType save() {
 		boolean update = jIgnoreContainers.isSelected() != Settings.get().isIgnoreSecureContainers();
 		Settings.get().setIgnoreSecureContainers(jIgnoreContainers.isSelected());
-		return update;
+		return update ? UpdateType.UPDATE_OVERVIEW : UpdateType.NONE;
 	}
 
 	@Override

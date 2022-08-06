@@ -55,7 +55,7 @@ public abstract class JUserListPanel<K, V extends Comparable<V>> extends JSettin
 
 		ListenerClass listener = new ListenerClass();
 
-		jItems = new JComboBox<UserItem<K, V>>();
+		jItems = new JComboBox<>();
 
 		jEdit = new JButton(DialoguesSettings.get().editItem());
 		jEdit.setActionCommand(UserListAction.EDIT.name());
@@ -154,7 +154,7 @@ public abstract class JUserListPanel<K, V extends Comparable<V>> extends JSettin
 		}
 		V v = valueOf(value);
 		if (v != null) { //Update value
-			List<K> containedKeys = new ArrayList<K>();
+			List<K> containedKeys = new ArrayList<>();
 			for (UserItem<K, V> userItem : userItems) {
 				UserItem<K, V> userItemExisting = items.get(userItem.getKey());
 				if (userItemExisting == null) { //Add new
@@ -169,9 +169,9 @@ public abstract class JUserListPanel<K, V extends Comparable<V>> extends JSettin
 			updateGUI();
 			if (save) { //Save (if not in setttings dialog)
 				Settings.lock("Custom Price/Name (Edit)"); //Lock for Custom Price/Name (Edit)
-				boolean update = save();
+				UpdateType updateType = save();
 				Settings.unlock("Custom Price/Name (Edit)"); //Unlock for Custom Price/Name (Edit)
-				if (update) {
+				if (updateType == UpdateType.FULL_UPDATE) {
 					//FIXME - - - > Price/Name: Update Price/Name (no need to update all date - just need to update the data in tags column)
 					updateEventList(containedKeys);
 				}
@@ -198,7 +198,7 @@ public abstract class JUserListPanel<K, V extends Comparable<V>> extends JSettin
 		}
 		int count = 0;
 		String name = ""; //Never used
-		List<K> containedKeys = new ArrayList<K>();
+		List<K> containedKeys = new ArrayList<>();
 		for (UserItem<K, V> userItem : userItems) {
 			if (items.containsKey(userItem.getKey())) {
 				count++;
@@ -218,9 +218,9 @@ public abstract class JUserListPanel<K, V extends Comparable<V>> extends JSettin
 			updateGUI();
 			if (save) { //Save (if not in setttings dialog)
 				Settings.lock("Custom Price/Name (Delete)"); //Lock for Custom Price/Name (Delete)
-				boolean update = save();
+				UpdateType updateType = save();
 				Settings.unlock("Custom Price/Name (Delete)"); //Unlock for Custom Price/Name (Delete)
-				if (update) {
+				if (updateType == UpdateType.FULL_UPDATE) {
 					updateEventList(containedKeys);
 				}
 				program.saveSettings("Custom Price/Name (Delete)"); //Save Custom Price/Name (Delete)
@@ -231,18 +231,18 @@ public abstract class JUserListPanel<K, V extends Comparable<V>> extends JSettin
 	private void updateGUI() {
 		if (items.isEmpty()) {
 			setEnabledAll(false);
-			jItems.setModel(new ListComboBoxModel<UserItem<K, V>>());
+			jItems.setModel(new ListComboBoxModel<>());
 			jItems.getModel().setSelectedItem(DialoguesSettings.get().itemEmpty());
-			listItems = new ArrayList<UserItem<K, V>>(); //Clear list
+			listItems = new ArrayList<>(); //Clear list
 		} else {
 			setEnabledAll(true);
-			listItems = new ArrayList<UserItem<K, V>>(new TreeSet<UserItem<K, V>>(items.values()));
-			jItems.setModel(new ListComboBoxModel<UserItem<K, V>>(listItems));
+			listItems = new ArrayList<>(new TreeSet<>(items.values()));
+			jItems.setModel(new ListComboBoxModel<>(listItems));
 		}
 	}
 
 	@Override
-	public boolean save() {
+	public UpdateType save() {
 		boolean update = !getItems().equals(items);
 		//Update Settings
 		setItems(items);
@@ -255,12 +255,12 @@ public abstract class JUserListPanel<K, V extends Comparable<V>> extends JSettin
 			jItems.setSelectedIndex(selected);
 		}
 		//Update table if needed
-		return update;
+		return update ? UpdateType.FULL_UPDATE : UpdateType.NONE;
 	}
 
 	@Override
 	public void load() {
-		items = new HashMap<K, UserItem<K, V>>();
+		items = new HashMap<>();
 		for (Entry<K, UserItem<K, V>> entry : getItems().entrySet()) {
 			UserItem<K, V> userItem = newUserItem(entry.getValue());
 			items.put(entry.getKey(), userItem);
