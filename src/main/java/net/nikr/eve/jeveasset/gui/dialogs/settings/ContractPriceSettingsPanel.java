@@ -133,14 +133,13 @@ public class ContractPriceSettingsPanel extends JSettingsPanel {
 	@Override
 	public void load() {
 		final ContractPriceSettings contractPriceSettings = Settings.get().getContractPriceSettings();
-		jMode.setSelectedItem(contractPriceSettings.getContractPriceMode());
-		jIncludePrivate.setSelected(contractPriceSettings.isIncludePrivate());
-		jDefaultBPC.setSelected(contractPriceSettings.isDefaultBPC());
-		jFeedback.setSelected(contractPriceSettings.isFeedback());
 		jSecurity.clearSelection();
 		for (ContractPriceSecurity contractPriceSecurity : contractPriceSettings.getContractPriceSecurity()) {
 			jSecurity.addSelection(contractPriceSecurity.ordinal(), true);
 		}
+		jMode.setSelectedItem(contractPriceSettings.getContractPriceMode());
+		jIncludePrivate.setSelected(contractPriceSettings.isIncludePrivate());
+		jDefaultBPC.setSelected(contractPriceSettings.isDefaultBPC());
+		jFeedback.setSelected(contractPriceSettings.isFeedback());
 	}
-
 }
