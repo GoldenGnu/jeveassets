@@ -23,6 +23,7 @@ package net.nikr.eve.jeveasset.gui.frame;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.util.concurrent.ExecutionException;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -81,6 +82,7 @@ public class MainMenu extends JMenuBar {
 
 //FILE
 		menu = new JMenu(GuiFrame.get().file());
+		menu.setMnemonic(KeyEvent.VK_F);
 		this.add(menu);
 
 		menuItem = new JMenuItem(GuiFrame.get().exit());
@@ -91,6 +93,7 @@ public class MainMenu extends JMenuBar {
 
 //TOOLS
 		menu = new JMenu(GuiFrame.get().tools());
+		menu.setMnemonic(KeyEvent.VK_T);
 		this.add(menu);
 
 		submenu = new JMenu(GuiFrame.get().netWorth());
@@ -213,6 +216,7 @@ public class MainMenu extends JMenuBar {
 
 //UPDATE
 		menu = new JMenu(GuiFrame.get().update());
+		menu.setMnemonic(KeyEvent.VK_U);
 		this.add(menu);
 
 		jUpdateMenu = new JMenuItem(GuiFrame.get().update1());
@@ -231,10 +235,12 @@ public class MainMenu extends JMenuBar {
 
 //TABLE
 		jTableMenu = new JMenu(GuiFrame.get().table());
+		jTableMenu.setMnemonic(KeyEvent.VK_A);
 		this.add(jTableMenu);
 
 //OPTIONS
 		menu = new JMenu(GuiFrame.get().options());
+		menu.setMnemonic(KeyEvent.VK_O);
 		this.add(menu);
 
 		menuItem = new JMenuItem(GuiFrame.get().accounts());
@@ -260,6 +266,7 @@ public class MainMenu extends JMenuBar {
 
 //HELP
 		menu = new JMenu(GuiFrame.get().help());
+		menu.setMnemonic(KeyEvent.VK_H);
 		this.add(menu);
 
 		menuItem = new JMenuItem(GuiFrame.get().linkWiki());
