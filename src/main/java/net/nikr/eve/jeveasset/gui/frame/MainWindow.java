@@ -49,6 +49,8 @@ public class MainWindow {
 
 	private static final Logger LOG = LoggerFactory.getLogger(MainWindow.class);
 
+	private static final String RE_OPEN_TAB = "reOpenTab";
+
 	//GUI
 	private final MainMenu mainMenu;
 	private final JFrame jFrame;
@@ -87,9 +89,13 @@ public class MainWindow {
 		jLockWindow = new JLockWindow(jFrame);
 
 		JPanel jPanel = new JPanel();
-		jPanel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_T, InputEvent.CTRL_DOWN_MASK + InputEvent.SHIFT_DOWN_MASK), "reOpenTab");
-		jPanel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_T, InputEvent.META_DOWN_MASK + InputEvent.SHIFT_DOWN_MASK), "reOpenTab");
-		jPanel.getActionMap().put("reOpenTab", new AbstractAction() {
+	//Global key shortcuts
+	//Re-open closed tab
+		//Windows/Linux
+		jPanel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_T, InputEvent.CTRL_DOWN_MASK + InputEvent.SHIFT_DOWN_MASK), RE_OPEN_TAB);
+		//Mac OSX
+		jPanel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_T, InputEvent.META_DOWN_MASK + InputEvent.SHIFT_DOWN_MASK), RE_OPEN_TAB);
+		jPanel.getActionMap().put(RE_OPEN_TAB, new AbstractAction() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (closed.isEmpty()) {
