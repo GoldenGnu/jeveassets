@@ -140,6 +140,7 @@ public abstract class TabsStockpile extends Bundle {
 	public abstract String itemsRequired();
 	public abstract String itemsShoppingList();
 	public abstract String location();
+	public abstract String marketDetailsOwnerToolTip();
 	public abstract String matchExclude();
 	public abstract String matchInclude();
 	public abstract String materialsManufacturing();

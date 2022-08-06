@@ -44,8 +44,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
@@ -65,6 +67,7 @@ import net.nikr.eve.jeveasset.data.settings.types.LocationType;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
+import net.nikr.eve.jeveasset.gui.shared.InstantToolTip;
 import net.nikr.eve.jeveasset.gui.shared.MarketDetailsColumn;
 import net.nikr.eve.jeveasset.gui.shared.MarketDetailsColumn.MarketDetailsActionListener;
 import net.nikr.eve.jeveasset.gui.shared.components.JCustomFileChooser;
@@ -122,13 +125,14 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		EXPAND
 	}
 
-	private final JSeparatorTable jTable;
+	//StatusBar
 	private final JLabel jVolumeNow;
 	private final JLabel jVolumeNeeded;
 	private final JLabel jValueNow;
 	private final JLabel jValueNeeded;
-	private final JCustomFileChooser jFileChooser;
 
+	//Dialogs
+	private final JCustomFileChooser jFileChooser;
 	private final StockpileDialog stockpileDialog;
 	private final StockpileItemDialog stockpileItemDialog;
 	private final StockpileShoppingListDialog stockpileShoppingListDialog;
@@ -137,6 +141,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 	private final JTextDialog jTextDialog;
 
 	//Table
+	private final JSeparatorTable jTable;
 	private final EnumTableFormatAdaptor<StockpileTableFormat, StockpileItem> tableFormat;
 	private final DefaultEventTableModel<StockpileItem> tableModel;
 	private final EventList<StockpileItem> eventList;
@@ -144,6 +149,10 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 	private final SeparatorList<StockpileItem> separatorList;
 	private final DefaultEventSelectionModel<StockpileItem> selectionModel;
 	private final StockpileFilterControl filterControl;
+
+	//Toolbar
+	private final JComboBox<EsiOwner> jOwners;
+	private final DefaultComboBoxModel<EsiOwner> ownerModel;
 
 	//Data
 	private final StockpileData stockpileData;
@@ -260,6 +269,21 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		jExportText.setActionCommand(StockpileAction.EXPORT_TEXT.name());
 		jExportText.addActionListener(listener);
 
+		jToolBarLeft.addSeparator();
+
+		ownerModel = new DefaultComboBoxModel<>();
+		jOwners = new JComboBox<>(ownerModel);
+		jToolBarLeft.add(jOwners, 150);
+
+		jToolBarLeft.addSpace(1);
+
+		JLabel jOwnerLabel = new JLabel(Images.MISC_HELP.getIcon());
+		jOwnerLabel.setToolTipText(TabsStockpile.get().marketDetailsOwnerToolTip());
+		InstantToolTip.install(jOwnerLabel);
+		jToolBarLeft.addLabelIcon(jOwnerLabel);
+
+		jToolBarLeft.addSeparator();
+
 		JFixedToolBar jToolBarRight = new JFixedToolBar();
 
 		JButton jCollapse = new JButton(TabsStockpile.get().collapse(), Images.MISC_COLLAPSED.getIcon());
@@ -311,7 +335,10 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		MarketDetailsColumn.install(eventList, new MarketDetailsActionListener<StockpileItem>() {
 			@Override
 			public void openMarketDetails(StockpileItem stockpileItem) {
-				EsiOwner esiOwner = JMenuUI.selectOwner(program, JMenuUI.EsiOwnerRequirement.OPEN_WINDOW);
+				if (!jOwners.isEnabled()) {
+					return;
+				}
+				EsiOwner esiOwner = jOwners.getItemAt(jOwners.getSelectedIndex());
 				JMenuUI.openMarketDetails(program, esiOwner, stockpileItem.getTypeID(), false);
 			}
 		});
@@ -368,6 +395,14 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		stockpileData.updateData(eventList);
 		//Restore separator expanded/collapsed state
 		jTable.loadExpandedState();
+		//Update owner combobox
+		ownerModel.removeAllElements();
+		for (EsiOwner owner : program.getProfileManager().getEsiOwners()) {
+			if (owner.isOpenWindows()) {
+				ownerModel.addElement(owner);
+			}
+		}
+		jOwners.setEnabled(ownerModel.getSize() > 0);
 	}
 
 	private void updateOwners() {
