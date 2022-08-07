@@ -20,65 +20,77 @@
  */
 package net.nikr.eve.jeveasset.data.settings;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import javax.swing.Icon;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.i18n.DataModelPriceDataSettings;
 import uk.me.candle.eve.pricing.options.LocationType;
+import uk.me.candle.eve.pricing.options.PriceType;
 import uk.me.candle.eve.pricing.options.PricingFetch;
-import uk.me.candle.eve.pricing.options.PricingNumber;
-import uk.me.candle.eve.pricing.options.PricingType;
 
 
 public class PriceDataSettings {
 
 	public enum PriceSource {
-		EVEMARKETER(PricingFetch.EVEMARKETER, true, true, false, LocationType.REGION, 10000002L, Images.LINK_EVEMARKETER.getIcon()) {
-			@Override public PriceMode[] getPriceTypes() {
-				return PriceMode.values();
-			}
+		EVEMARKETER(PricingFetch.EVEMARKETER, LocationType.REGION, 10000002L, Images.LINK_EVEMARKETER.getIcon()) {
 			@Override String getI18N() {
 				return DataModelPriceDataSettings.get().sourceEvemarketer();
 			}
 		},
-		FUZZWORK(PricingFetch.FUZZWORK, true, false, true, LocationType.REGION, 10000002L, Images.LINK_FUZZWORK.getIcon()) {
-			@Override public PriceMode[] getPriceTypes() {
-				return PriceMode.values();
-			}
+		FUZZWORK(PricingFetch.FUZZWORK, LocationType.REGION, 10000002L, Images.LINK_FUZZWORK.getIcon()) {
 			@Override String getI18N() {
 				return DataModelPriceDataSettings.get().sourceFuzzwork();
 			}
 		},
+		/*
+		EVE_TYCOON(PricingFetch.EVE_TYCOON, LocationType.REGION, 10000002L, Images.LINK_EVE_TYCOON.getIcon()) {
+			@Override String getI18N() {
+				return DataModelPriceDataSettings.get().sourceEveTycoon();
+			}
+		},
+		*/
+		JANICE(PricingFetch.JANICE, LocationType.STATION, 1L, Images.LINK_JANICE.getIcon()) {
+			@Override String getI18N() {
+				return DataModelPriceDataSettings.get().sourceJanice();
+			}
+		},
 		;
 		private final PricingFetch pricingFetch;
-		private final boolean supportsRegion;
-		private final boolean supportsSystem;
-		private final boolean supportsStation;
 		private final LocationType defaultLocationType;
 		private final Long defaultLocationID;
 		private final Icon icon;
 
 		private PriceSource(final PricingFetch pricingFetch,
-				final boolean supportsRegion,
-				final boolean supportsSystem,
-				final boolean supportsStation,
 				final LocationType defaultLocationType,
 				final Long defaultLocationID,
 				final Icon icon) {
 			this.pricingFetch = pricingFetch;
-			this.supportsRegion = supportsRegion;
-			this.supportsSystem = supportsSystem;
-			this.supportsStation = supportsStation;
 			this.defaultLocationType = defaultLocationType;
 			this.defaultLocationID = defaultLocationID;
 			this.icon = icon;
 		}
 
-		public abstract PriceMode[] getPriceTypes();
 		abstract String getI18N();
 		@Override
 		public String toString() {
 			return getI18N();
+		}
+
+		public List<PriceMode> getSupportedPriceModes() {
+			List<PriceMode> priceModes = new ArrayList<>();
+			for (PriceMode priceMode : PriceMode.values()) {
+				if (pricingFetch.getSupportedPricingTypes().contains(priceMode.getPricingType())) {
+					priceModes.add(priceMode);
+				} else if (priceMode == PriceMode.PRICE_MIDPOINT
+						&& pricingFetch.getSupportedPricingTypes().contains(PriceType.SELL_LOW)
+						&& pricingFetch.getSupportedPricingTypes().contains(PriceType.BUY_HIGH)
+						) {
+					priceModes.add(priceMode);
+				}
+			}
+			return priceModes;
 		}
 
 		public LocationType getDefaultLocationType() {
@@ -93,16 +105,16 @@ public class PriceDataSettings {
 			return pricingFetch;
 		}
 
-		public boolean supportsRegion() {
-			return supportsRegion;
+		public boolean supportRegions() {
+			return pricingFetch.getSupportedLocationTypes().contains(LocationType.REGION);
 		}
 
-		public boolean supportsStation() {
-			return supportsStation;
+		public boolean supportStations() {
+			return pricingFetch.getSupportedLocationTypes().contains(LocationType.STATION);
 		}
 
-		public boolean supportsSystem() {
-			return supportsSystem;
+		public boolean supportSystems() {
+			return pricingFetch.getSupportedLocationTypes().contains(LocationType.SYSTEM);
 		}
 
 		public Icon getIcon() {
@@ -113,11 +125,11 @@ public class PriceDataSettings {
 			if (null != locationType && locationID != null) {
 				switch (locationType) {
 					case REGION:
-						return supportsRegion();
+						return supportRegions();
 					case SYSTEM:
-						return supportsSystem();
+						return supportSystems();
 					case STATION:
-						return supportsStation();
+						return supportStations();
 				}
 			}
 			return false; //Should never happen
@@ -125,67 +137,67 @@ public class PriceDataSettings {
 	}
 
 	public enum PriceMode {
-		PRICE_SELL_MAX(PricingType.HIGH, PricingNumber.SELL) {
+		PRICE_SELL_MAX(PriceType.SELL_HIGH) {
 			@Override
 			String getI18N() {
 				return DataModelPriceDataSettings.get().priceSellMax();
 			}
 		},
-		PRICE_SELL_AVG(PricingType.MEAN, PricingNumber.SELL) {
+		PRICE_SELL_AVG(PriceType.SELL_MEAN) {
 			@Override
 			String getI18N() {
 				return DataModelPriceDataSettings.get().priceSellAvg();
 			}
 		},
-		PRICE_SELL_MEDIAN(PricingType.MEDIAN, PricingNumber.SELL) {
+		PRICE_SELL_MEDIAN(PriceType.SELL_MEDIAN) {
 			@Override
 			String getI18N() {
 				return DataModelPriceDataSettings.get().priceSellMedian();
 			}
 		},
-		PRICE_SELL_PERCENTILE(PricingType.PERCENTILE, PricingNumber.SELL) {
+		PRICE_SELL_PERCENTILE(PriceType.SELL_PERCENTILE) {
 			@Override
 			String getI18N() {
 				return DataModelPriceDataSettings.get().priceSellPercentile();
 			}
 		},
-		PRICE_SELL_MIN(PricingType.LOW, PricingNumber.SELL) {
+		PRICE_SELL_MIN(PriceType.SELL_LOW) {
 			@Override
 			String getI18N() {
 				return DataModelPriceDataSettings.get().priceSellMin();
 			}
 		},
-		PRICE_MIDPOINT(null, null) {
+		PRICE_MIDPOINT(null) {
 			@Override
 			String getI18N() {
 				return DataModelPriceDataSettings.get().priceMidpoint();
 			}
 		},
-		PRICE_BUY_MAX(PricingType.HIGH, PricingNumber.BUY) {
+		PRICE_BUY_MAX(PriceType.BUY_HIGH) {
 			@Override
 			String getI18N() {
 				return DataModelPriceDataSettings.get().priceBuyMax();
 			}
 		},
-		PRICE_BUY_PERCENTILE(PricingType.PERCENTILE, PricingNumber.BUY) {
+		PRICE_BUY_PERCENTILE(PriceType.BUY_PERCENTILE) {
 			@Override
 			String getI18N() {
 				return DataModelPriceDataSettings.get().priceBuyPercentile();
 			}
 		},
-		PRICE_BUY_AVG(PricingType.MEAN, PricingNumber.BUY) {
+		PRICE_BUY_AVG(PriceType.BUY_MEAN) {
 			@Override
 			String getI18N() {
 				return DataModelPriceDataSettings.get().priceBuyAvg();
 			}
 		},
-		PRICE_BUY_MEDIAN(PricingType.MEDIAN, PricingNumber.BUY) {
+		PRICE_BUY_MEDIAN(PriceType.BUY_MEDIAN) {
 			@Override
 			String getI18N() {
 				return DataModelPriceDataSettings.get().priceBuyMedian();
 			}
 		},
-		PRICE_BUY_MIN(PricingType.LOW, PricingNumber.BUY) {
+		PRICE_BUY_MIN(PriceType.BUY_LOW) {
 			@Override
 			String getI18N() {
 				return DataModelPriceDataSettings.get().priceBuyMin();
@@ -197,20 +209,14 @@ public class PriceDataSettings {
 			return getI18N();
 		}
 
-		PricingType pricingType;
-		PricingNumber pricingNumber;
+		PriceType priceType;
 
-		private PriceMode(PricingType pricingType, PricingNumber pricingNumber) {
-			this.pricingType = pricingType;
-			this.pricingNumber = pricingNumber;
+		private PriceMode(PriceType priceType) {
+			this.priceType = priceType;
 		}
 
-		public PricingType getPricingType() {
-			return pricingType;
-		}
-
-		public PricingNumber getPricingNumber() {
-			return pricingNumber;
+		public PriceType getPricingType() {
+			return priceType;
 		}
 
 		public static void setDefaultPrice(final PriceData priceData, final PriceMode priceMode, final double price) {
@@ -307,6 +313,7 @@ public class PriceDataSettings {
 	private final PriceSource priceSource;
 	private PriceMode priceType;
 	private PriceMode priceReprocessedType;
+	private String janiceKey;
 
 	public PriceDataSettings() {
 		locationType = LocationType.REGION;
@@ -316,7 +323,7 @@ public class PriceDataSettings {
 		priceReprocessedType = PriceMode.getDefaultPriceType();
 	}
 
-	public PriceDataSettings(final LocationType locationType, final Long locationID, final PriceSource priceSource, final PriceMode priceType, final PriceMode priceReprocessedType) {
+	public PriceDataSettings(final LocationType locationType, final Long locationID, final PriceSource priceSource, final PriceMode priceType, final PriceMode priceReprocessedType, final String janiceKey) {
 		if (locationType != null && locationID != null) {
 			this.locationType = locationType;
 			this.locationID = locationID;
@@ -327,6 +334,11 @@ public class PriceDataSettings {
 		this.priceSource = priceSource;
 		this.priceType = priceType;
 		this.priceReprocessedType = priceReprocessedType;
+		if (janiceKey == null) { //empty string instead of null
+			this.janiceKey = "";
+		} else {
+			this.janiceKey = janiceKey;
+		}
 	}
 
 	public PriceSource getSource() {
@@ -371,6 +383,10 @@ public class PriceDataSettings {
 
 	public PriceMode getPriceReprocessedType() {
 		return priceReprocessedType;
+	}
+
+	public String getJaniceKey() {
+		return janiceKey;
 	}
 
 	@Override

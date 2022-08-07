@@ -32,7 +32,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import net.nikr.eve.jeveasset.SplashUpdater;
@@ -44,6 +43,7 @@ import net.nikr.eve.jeveasset.data.settings.PriceDataSettings.PriceMode;
 import net.nikr.eve.jeveasset.data.settings.PriceDataSettings.PriceSource;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
+import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import net.nikr.eve.jeveasset.io.shared.FileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,16 +51,17 @@ import uk.me.candle.eve.pricing.Pricing;
 import uk.me.candle.eve.pricing.PricingFactory;
 import uk.me.candle.eve.pricing.PricingListener;
 import uk.me.candle.eve.pricing.options.LocationType;
+import uk.me.candle.eve.pricing.options.PriceLocation;
+import uk.me.candle.eve.pricing.options.PriceType;
 import uk.me.candle.eve.pricing.options.PricingFetch;
-import uk.me.candle.eve.pricing.options.PricingNumber;
 import uk.me.candle.eve.pricing.options.PricingOptions;
-import uk.me.candle.eve.pricing.options.PricingType;
 
 
 public class PriceDataGetter implements PricingListener {
 
 	private static final Logger LOG = LoggerFactory.getLogger(PriceDataGetter.class);
 
+	private static final String JANICE = "";
 	private static final long PRICE_CACHE_TIMER = 1 * 60 * 60 * 1000L; // 1 hour (hours*min*sec*ms)
 	private static final int ATTEMPT_COUNT = 2;
 	private static final int ZERO_PRICES_WARNING_LIMIT = 10;
@@ -110,7 +111,7 @@ public class PriceDataGetter implements PricingListener {
 	 * @return available price data
 	 */
 	private Map<Integer, PriceData> processLoad() {
-		Pricing pricing = PricingFactory.getPricing(new DefaultPricingOptions());
+		Pricing pricing = PricingFactory.getPricing(PricingFetch.FUZZWORK, new DefaultPricingOptions());
 		LOG.info("Price data loading");
 		for (Item item : StaticData.get().getItems().values()) { //For each typeID
 			if (!item.isMarketGroup()) {
@@ -124,12 +125,11 @@ public class PriceDataGetter implements PricingListener {
 			}
 			boolean ok = false;
 			for (PriceMode priceMode : PriceMode.values()) { //For each PriceMode (all combinations of PricingNumber & PricingType)
-				PricingType pricingType = priceMode.getPricingType();
-				PricingNumber pricingNumber = priceMode.getPricingNumber();
-				if (pricingNumber == null || pricingType == null) {
+				PriceType priceType = priceMode.getPricingType();
+				if (priceType == null) {
 					continue; //Ignore calculated prices - f.ex. PriceMode.PRICE_MIDPOINT
 				}
-				Double price = pricing.getPriceCache(typeID, pricingType, pricingNumber);
+				Double price = pricing.getPriceCache(typeID, priceType);
 				if (price != null) {
 					ok = true; //Something is set
 					PriceMode.setDefaultPrice(priceData, priceMode, price);
@@ -188,13 +188,22 @@ public class PriceDataGetter implements PricingListener {
 		this.okay = Collections.synchronizedSet(new HashSet<>());
 		this.queue = Collections.synchronizedSet(new HashSet<>(typeIDs));
 
+		if (priceSource == PriceSource.JANICE) {
+			String janiceKey = Settings.get().getPriceDataSettings().getJaniceKey();
+			if (!janiceKey.isEmpty()) {
+				pricingOptions.addHeader("X-ApiKey", janiceKey);
+			} else if (!JANICE.isEmpty()) {
+				pricingOptions.addHeader("X-ApiKey", JANICE);
+			}
+		}
+
 		if (updateAll) {
 			LOG.info("Price data update all (" + priceSource + "):");
 		} else {
 			LOG.info("Price data update new (" + priceSource + "):");
 		}
 
-		Pricing pricing = PricingFactory.getPricing(pricingOptions);
+		Pricing pricing = PricingFactory.getPricing(priceSource.getPricingFetch(), pricingOptions);
 
 		pricing.addPricingListener(this);
 
@@ -342,12 +351,11 @@ public class PriceDataGetter implements PricingListener {
 		boolean ok = false;
 		boolean isZero = true;
 		for (PriceMode priceMode : PriceMode.values()) {
-			PricingType pricingType = priceMode.getPricingType();
-			PricingNumber pricingNumber = priceMode.getPricingNumber();
-			if (pricingNumber == null || pricingType == null) {
+			PriceType priceType = priceMode.getPricingType();
+			if (priceType == null) {
 				continue; //Ignore calculated prices - f.ex. PriceMode.PRICE_MIDPOINT
 			}
-			Double price = pricing.getPrice(typeID, pricingType, pricingNumber);
+			Double price = pricing.getPrice(typeID, priceType);
 			if (price != null) {
 				ok = true; //Something is set
 				PriceMode.setDefaultPrice(priceData, priceMode, price);
@@ -387,28 +395,13 @@ public class PriceDataGetter implements PricingListener {
 		}
 
 		@Override
-		public PricingFetch getPricingFetchImplementation() {
-			return Settings.get().getPriceDataSettings().getSource().getPricingFetch();
-		}
-
-		@Override
 		public LocationType getLocationType() {
 			return Settings.get().getPriceDataSettings().getLocationType();
 		}
 
 		@Override
-		public List<Long> getLocations() {
-			return Collections.singletonList(Settings.get().getPriceDataSettings().getLocationID());
-		}
-
-		@Override
-		public PricingType getPricingType() {
-			return PricingType.LOW;
-		}
-
-		@Override
-		public PricingNumber getPricingNumber() {
-			return PricingNumber.SELL;
+		public PriceLocation getLocation() {
+			return ApiIdConverter.getLocation(Settings.get().getPriceDataSettings().getLocationID());
 		}
 
 		@Override
@@ -448,6 +441,11 @@ public class PriceDataGetter implements PricingListener {
 		@Override
 		public int getTimeout() {
 			return 20000;
+		}
+
+		@Override
+		public String getUserAgent() {
+			return System.getProperty("http.agent");
 		}
 	}
 }

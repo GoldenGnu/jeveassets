@@ -27,9 +27,10 @@ import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.Security;
 import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
+import uk.me.candle.eve.pricing.options.NamedPriceLocation;
 
 
-public class MyLocation implements Comparable<MyLocation> {
+public class MyLocation implements Comparable<MyLocation>, NamedPriceLocation {
 
 	private final static Map<Long, MyLocation> CACHE = new HashMap<>();
 
@@ -161,10 +162,12 @@ public class MyLocation implements Comparable<MyLocation> {
 		this.userLocation = newLocation.userLocation;
 	}
 
+	@Override
 	public String getLocation() {
 		return location;
 	}
 
+	@Override
 	public long getLocationID() {
 		return locationID;
 	}
@@ -197,6 +200,7 @@ public class MyLocation implements Comparable<MyLocation> {
 		return region;
 	}
 
+	@Override
 	public long getRegionID() {
 		return regionID;
 	}
