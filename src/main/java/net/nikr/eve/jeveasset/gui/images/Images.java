@@ -101,6 +101,8 @@ public enum Images {
 	LINK_LOOKUP ("link_lookup.png"),
 	LINK_CHRUKER ("link_chruker.png"),
 	LINK_EVE_TYCOON ("link_eve_tycoon.png"),
+	LINK_JANICE ("link_janice.png"),
+	LINK_JANICE_32 ("link_janice_32.png"),
 	LINK_FUZZWORK ("link_fuzzwork.png"),
 	LINK_ZKILLBOARD ("link_zkillboard.png"),
 	LINK_ADAM4EVE ("link_adam4eve.png"),

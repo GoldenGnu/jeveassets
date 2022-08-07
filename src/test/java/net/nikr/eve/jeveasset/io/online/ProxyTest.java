@@ -24,9 +24,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Proxy;
-import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import net.nikr.eve.jeveasset.TestUtil;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
@@ -36,14 +34,13 @@ import net.nikr.eve.jeveasset.data.settings.PriceDataSettings.PriceSource;
 import net.nikr.eve.jeveasset.data.settings.ProxyData;
 import net.nikr.eve.jeveasset.io.esi.EsiCallbackURL;
 import net.nikr.eve.jeveasset.io.esi.EsiOwnerGetter;
+import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import uk.me.candle.eve.pricing.options.LocationType;
-import uk.me.candle.eve.pricing.options.PricingFetch;
-import uk.me.candle.eve.pricing.options.PricingNumber;
+import uk.me.candle.eve.pricing.options.PriceLocation;
 import uk.me.candle.eve.pricing.options.PricingOptions;
-import uk.me.candle.eve.pricing.options.PricingType;
 
 public class ProxyTest extends TestUtil {
 
@@ -112,7 +109,6 @@ public class ProxyTest extends TestUtil {
 
 		protected void update() {
 			super.processUpdate(null, true, new TestPricingOptions(), TYPE_IDS, PriceSource.EVEMARKETER);
-			//super.processUpdate(null, true, new TestPricingOptions(), TYPE_IDS, PriceSource.EVE_CENTRAL);
 		}
 
 	}
@@ -125,29 +121,13 @@ public class ProxyTest extends TestUtil {
 		}
 
 		@Override
-		public PricingFetch getPricingFetchImplementation() {
-			return PriceSource.EVEMARKETER.getPricingFetch();
-			//return PriceSource.EVE_CENTRAL.getPricingFetch();
-		}
-
-		@Override
-		public List<Long> getLocations() {
-			return Collections.singletonList(10000002L);
+		public PriceLocation getLocation() {
+			return ApiIdConverter.getLocation(10000002L);
 		}
 
 		@Override
 		public LocationType getLocationType() {
 			return LocationType.REGION;
-		}
-
-		@Override
-		public PricingType getPricingType() {
-			return PricingType.PERCENTILE;
-		}
-
-		@Override
-		public PricingNumber getPricingNumber() {
-			return PricingNumber.BUY;
 		}
 
 		@Override
@@ -183,6 +163,11 @@ public class ProxyTest extends TestUtil {
 		@Override
 		public int getTimeout() {
 			return 20000;
+		}
+
+		@Override
+		public String getUserAgent() {
+			return System.getProperty("http.agent");
 		}
 	}
 }

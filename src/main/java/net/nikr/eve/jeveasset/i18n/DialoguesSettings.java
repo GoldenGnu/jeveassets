@@ -145,6 +145,9 @@ public abstract class DialoguesSettings extends Bundle {
 	public abstract String priceTech1();
 	public abstract String priceTech2();
 	public abstract String source();
+	public abstract String janiceApiKey();
+	public abstract String janiceApiKeyMsg();
+	public abstract String janiceApiKeyTitle();
 
 	// used in ProxySettingsPanel
 	public abstract String proxy();
