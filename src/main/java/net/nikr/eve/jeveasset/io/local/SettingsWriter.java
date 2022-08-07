@@ -706,6 +706,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 		setAttribute(parentNode, "pricesource", priceDataSettings.getSource());
 		setAttribute(parentNode, "locationid", priceDataSettings.getLocationID());
 		setAttribute(parentNode, "type", priceDataSettings.getLocationType());
+		setAttributeOptional(parentNode, "janicekey", priceDataSettings.getJaniceKey());
 		xmldoc.getDocumentElement().appendChild(parentNode);
 	}
 

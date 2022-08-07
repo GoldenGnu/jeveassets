@@ -1269,12 +1269,13 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 				//In case a price source is removed: Use the default
 			}
 		}
+		String janiceKey = getStringOptional(element, "janicekey");
 		//Validate
 		if (!priceSource.isValid(locationType, locationID)) {
 			locationType = priceSource.getDefaultLocationType();
 			locationID = priceSource.getDefaultLocationID();
 		}
-		settings.setPriceDataSettings(new PriceDataSettings(locationType, locationID, priceSource, priceType, priceReprocessedType));
+		settings.setPriceDataSettings(new PriceDataSettings(locationType, locationID, priceSource, priceType, priceReprocessedType, janiceKey));
 	}
 
 	private void parseContractPriceSettings(final Element element, final Settings settings) throws XmlException {
