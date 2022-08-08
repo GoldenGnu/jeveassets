@@ -60,6 +60,7 @@ import net.nikr.eve.jeveasset.data.sde.StaticData;
 import net.nikr.eve.jeveasset.data.settings.AddedData;
 import net.nikr.eve.jeveasset.data.settings.ContractPriceManager;
 import net.nikr.eve.jeveasset.data.settings.Settings;
+import net.nikr.eve.jeveasset.data.settings.TempDirs;
 import net.nikr.eve.jeveasset.data.settings.TrackerData;
 import net.nikr.eve.jeveasset.data.settings.tag.TagUpdate;
 import net.nikr.eve.jeveasset.gui.dialogs.AboutDialog;
@@ -329,6 +330,7 @@ public class Program implements ActionListener {
 		SplashUpdater.setText("Loading DATA");
 		LOG.info("DATA Loading...");
 		FileUtil.autoImportFileUtil();
+		TempDirs.fixTempDir();
 		StaticData.load();
 		Settings.load();
 		TrackerData.load();

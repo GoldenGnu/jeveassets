@@ -31,7 +31,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import net.nikr.eve.jeveasset.data.settings.Settings;
-import net.nikr.eve.jeveasset.data.settings.TempDirs;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
 import net.nikr.eve.jeveasset.io.shared.FileUtil;
 import org.slf4j.Logger;
@@ -70,7 +69,6 @@ public class StockpileIDs {
 	}
 
 	public void load() {
-		TempDirs.fixTempDir();
 		hidden.clear(); //Clear befor loading
 		if (!tableExist()) { //New database: Empty
 			newDatabase = true;
