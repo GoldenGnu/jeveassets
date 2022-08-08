@@ -96,7 +96,6 @@ public class AddedData {
 	}
 
 	public static void load() {
-		TempDirs.fixTempDir();
 		for (DataSettings dataSettings : DataSettings.values()) {
 			dataSettings.getInstance().init();
 		}
