@@ -26,6 +26,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import javax.swing.DefaultListModel;
@@ -110,8 +111,8 @@ public abstract class JManageDialog extends JDialogCentered {
 		jClose.addActionListener(listener);
 
 		//List
-		listModel = new DefaultListModel<String>();
-		jList = new JList<String>(listModel);
+		listModel = new DefaultListModel<>();
+		jList = new JList<>(listModel);
 		jList.addMouseListener(listener);
 		jList.addListSelectionListener(listener);
 		JScrollPane jScrollPanel = new JScrollPane(jList);
@@ -158,6 +159,10 @@ public abstract class JManageDialog extends JDialogCentered {
 		jDelete.setEnabled(b);
 		jLoad.setEnabled(b);
 		jRename.setEnabled(b);
+	}
+
+	protected final void update(Collection<String> list) {
+		update(new ArrayList<>(list));
 	}
 
 	protected final void update(List<String> list) {
@@ -209,7 +214,7 @@ public abstract class JManageDialog extends JDialogCentered {
 	protected abstract String textRename();
 
 	private void delete() {
-		List<String> list = new ArrayList<String>();
+		List<String> list = new ArrayList<>();
 		for (int index : jList.getSelectedIndices()) {
 			String filterName = listModel.get(index);
 			list.add(filterName);
@@ -228,7 +233,7 @@ public abstract class JManageDialog extends JDialogCentered {
 	}
 
 	private void export() {
-		List<String> list = new ArrayList<String>();
+		List<String> list = new ArrayList<>();
 		for (int index : jList.getSelectedIndices()) {
 			String filterName = listModel.get(index);
 			list.add(filterName);
@@ -249,7 +254,7 @@ public abstract class JManageDialog extends JDialogCentered {
 		if (name == null) {
 			return;
 		}
-		List<String> list = new ArrayList<String>();
+		List<String> list = new ArrayList<>();
 		for (int index : jList.getSelectedIndices()) {
 			String filterName = listModel.get(index);
 			list.add(filterName);

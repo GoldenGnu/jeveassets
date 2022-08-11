@@ -20,7 +20,6 @@
  */
 package net.nikr.eve.jeveasset.gui.tabs.routing;
 
-import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JOptionPane;
 import net.nikr.eve.jeveasset.Program;
@@ -41,7 +40,7 @@ public class JRouteManageDialog extends JManageDialog {
 	}
 
 	public void updateData() {
-		update(new ArrayList<String>(Settings.get().getRoutingSettings().getRoutes().keySet()));
+		update(Settings.get().getRoutingSettings().getRoutes().keySet());
 	}
 
 	@Override

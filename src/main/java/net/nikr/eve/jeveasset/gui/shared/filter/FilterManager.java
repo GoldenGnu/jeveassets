@@ -395,7 +395,7 @@ public class FilterManager<E> extends JManageDialog {
 	@Override protected String textRename() { return GuiShared.get().renameFilter(); }
 
 	public final void updateFilters() {
-		update(new ArrayList<>(filters.keySet()));
+		update(filters.keySet());
 		gui.updateFilters();
 	}
 
