@@ -100,6 +100,8 @@ public abstract class TabsRouting extends Bundle {
 	public abstract String resultUntitled();
 	public abstract String routeDeleteMsg(int size);
 	public abstract String routeDeleteTitle();
+	public abstract String routeNoName();
+	public abstract String routeOverwrite();
 	public abstract String routeRenameTitle();
 	public abstract String routeSaveTitle();
 	public abstract String routeSaveMsg();

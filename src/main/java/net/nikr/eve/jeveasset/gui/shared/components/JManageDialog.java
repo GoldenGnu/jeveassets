@@ -181,6 +181,16 @@ public abstract class JManageDialog extends JDialogCentered {
 		}
 	}
 
+	protected boolean validateName(final String name, final String oldName, final String title) {
+		if (listModel.contains(name) && (oldName.isEmpty() || !oldName.equals(name))) {
+			int nReturn = JOptionPane.showConfirmDialog(this.getDialog(), GuiShared.get().overwrite(), textOverwrite(), JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE);
+			if (nReturn == JOptionPane.NO_OPTION) { //Overwrite cancelled
+				return false;
+			}
+		}
+		return true;
+	}
+
 	@Override
 	protected JComponent getDefaultFocus() {
 		return jList;
@@ -205,13 +215,13 @@ public abstract class JManageDialog extends JDialogCentered {
 	protected abstract void delete(final List<String> list);
 	protected abstract void export(final List<String> list);
 	protected abstract void importData();
-	protected abstract boolean validateName(final String name, final String oldName, final String title);
 	protected abstract String textDeleteMultipleMsg(int size);
 	protected abstract String textDelete();
 	protected abstract String textEnterName();
 	protected abstract String textNoName();
 	protected abstract String textMerge();
 	protected abstract String textRename();
+	protected abstract String textOverwrite();
 
 	private void delete() {
 		List<String> list = new ArrayList<>();

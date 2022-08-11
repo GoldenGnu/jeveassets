@@ -373,18 +373,12 @@ public class FilterManager<E> extends JManageDialog {
 	@Override
 	protected boolean validateName(final String name, final String oldName, final String title) {
 		for (String filter : defaultFilters.keySet()) {
-			if (filter.toLowerCase().equals(name.toLowerCase())) {
+			if (filter.equalsIgnoreCase(name)) {
 				JOptionPane.showMessageDialog(this.getDialog(), GuiShared.get().overwriteDefaultFilter(), title, JOptionPane.PLAIN_MESSAGE);
 				return false;
 			}
 		}
-		if (filters.containsKey(name) && (oldName.isEmpty() || !oldName.equals(name))) {
-			int nReturn = JOptionPane.showConfirmDialog(this.getDialog(), GuiShared.get().overwrite(), GuiShared.get().overwriteFilter(), JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE);
-			if (nReturn == JOptionPane.NO_OPTION) { //Overwrite cancelled
-				return false;
-			}
-		}
-		return true;
+		return super.validateName(name, oldName, title);
 	}
 
 	@Override protected String textDeleteMultipleMsg(int size) { return GuiShared.get().deleteFilters(size); }
@@ -393,6 +387,7 @@ public class FilterManager<E> extends JManageDialog {
 	@Override protected String textNoName() { return GuiShared.get().noFilterName(); }
 	@Override protected String textMerge() { return GuiShared.get().mergeFilters(); }
 	@Override protected String textRename() { return GuiShared.get().renameFilter(); }
+	@Override protected String textOverwrite() { return GuiShared.get().overwriteFilter(); }
 
 	public final void updateFilters() {
 		update(filters.keySet());
