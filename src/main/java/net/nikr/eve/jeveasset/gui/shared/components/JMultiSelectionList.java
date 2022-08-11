@@ -51,7 +51,9 @@ public class JMultiSelectionList<T> extends JList<T> {
 
 	public JMultiSelectionList(final ListModel<T> model) {
 		super(model);
-		selectedList = new ArrayList<Integer>();
+		model.addListDataListener(listener);
+
+		selectedList = new ArrayList<>();
 
 		this.addMouseListener(listener);
 		this.addKeyListener(listener);
@@ -254,7 +256,7 @@ public class JMultiSelectionList<T> extends JList<T> {
 	}
 	//Private Methods
 	private void updateList(final int index, final int fix) {
-		List<Integer> fixedIndices = new ArrayList<Integer>(selectedList.size());
+		List<Integer> fixedIndices = new ArrayList<>(selectedList.size());
 		for (int i = 0; i < selectedList.size(); i++) {
 			int item = selectedList.get(i);
 			if (item >= index) {

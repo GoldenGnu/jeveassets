@@ -62,6 +62,7 @@ import net.nikr.eve.jeveasset.data.sde.StaticData;
 import net.nikr.eve.jeveasset.data.settings.AddedData;
 import net.nikr.eve.jeveasset.data.settings.ContractPriceManager;
 import net.nikr.eve.jeveasset.data.settings.LogManager;
+import net.nikr.eve.jeveasset.data.settings.PriceHistoryDatabase;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.TempDirs;
 import net.nikr.eve.jeveasset.data.settings.TrackerData;
@@ -96,6 +97,7 @@ import net.nikr.eve.jeveasset.gui.tabs.materials.MaterialsTab;
 import net.nikr.eve.jeveasset.gui.tabs.orders.MarketOrdersTab;
 import net.nikr.eve.jeveasset.gui.tabs.orders.OutbidProcesser.OutbidProcesserOutput;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewTab;
+import net.nikr.eve.jeveasset.gui.tabs.prices.PriceHistoryTab;
 import net.nikr.eve.jeveasset.gui.tabs.reprocessed.ReprocessedTab;
 import net.nikr.eve.jeveasset.gui.tabs.routing.RoutingTab;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileTab;
@@ -143,6 +145,7 @@ public class Program implements ActionListener {
 	//Tabs
 	private ValueRetroTab valueRetroTab;
 	private ValueTableTab valueTableTab;
+	private PriceHistoryTab priceHistoryTab;
 	private MaterialsTab materialsTab;
 	private LoadoutsTab loadoutsTab;
 	private RoutingTab routingTab;
@@ -244,7 +247,10 @@ public class Program implements ActionListener {
 		SplashUpdater.setProgress(66);
 		LOG.info("Loading: Values Tab");
 		valueRetroTab = new ValueRetroTab(this);
+		LOG.info("Loading: Isk Tab");
 		valueTableTab = new ValueTableTab(this);
+		LOG.info("Loading: Price History Tab");
+		priceHistoryTab = new PriceHistoryTab(this);
 		SplashUpdater.setProgress(68);
 		LOG.info("Loading: Routing Tab");
 		routingTab = new RoutingTab(this);
@@ -343,6 +349,7 @@ public class Program implements ActionListener {
 		Settings.load();
 		TrackerData.load();
 		AddedData.load();
+		PriceHistoryDatabase.load();
 		ContractPriceManager.load();
 	}
 
@@ -842,6 +849,10 @@ public class Program implements ActionListener {
 		return transactionsTab;
 	}
 
+	public PriceHistoryTab getPriceHistoryTab() {
+		return priceHistoryTab;
+	}
+
 	public MarketOrdersTab getMarketOrdersTab() {
 		return marketOrdersTab;
 	}
@@ -1003,6 +1014,8 @@ public class Program implements ActionListener {
 			mainWindow.addTab(valueRetroTab);
 		} else if (MainMenuAction.VALUE_TABLE.name().equals(e.getActionCommand())) {
 			mainWindow.addTab(valueTableTab);
+		} else if (MainMenuAction.PRICE_HISTORY.name().equals(e.getActionCommand())) {
+			mainWindow.addTab(priceHistoryTab);
 		} else if (MainMenuAction.MATERIALS.name().equals(e.getActionCommand())) {
 			mainWindow.addTab(materialsTab);
 		} else if (MainMenuAction.LOADOUTS.name().equals(e.getActionCommand())) {

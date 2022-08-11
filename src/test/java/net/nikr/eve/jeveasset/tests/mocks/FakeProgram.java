@@ -49,6 +49,7 @@ import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustrySlotsTab;
 import net.nikr.eve.jeveasset.gui.tabs.loadout.LoadoutsTab;
 import net.nikr.eve.jeveasset.gui.tabs.orders.MarketOrdersTab;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewTab;
+import net.nikr.eve.jeveasset.gui.tabs.prices.PriceHistoryTab;
 import net.nikr.eve.jeveasset.gui.tabs.reprocessed.ReprocessedTab;
 import net.nikr.eve.jeveasset.gui.tabs.routing.RoutingTab;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileTab;
@@ -320,6 +321,11 @@ public abstract class FakeProgram extends Program {
 
 	@Override
 	public void repaintTables() {
+		throw new UnsupportedOperationException("Not implemented");
+	}
+
+	@Override
+	public PriceHistoryTab getPriceHistoryTab() {
 		throw new UnsupportedOperationException("Not implemented");
 	}
 }

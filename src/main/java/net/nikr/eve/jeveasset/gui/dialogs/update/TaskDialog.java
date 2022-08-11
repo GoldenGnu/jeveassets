@@ -118,6 +118,9 @@ public class TaskDialog {
 			progress = program.getStatusPanel().addProgress(updateType, new StatusPanel.ProgressControl() {
 				@Override
 				public void show() {
+					if (auto) {
+						return; //Ignore on auto
+					}
 					progress.setVisible(false);
 					SwingUtilities.invokeLater(new Runnable() {
 						@Override

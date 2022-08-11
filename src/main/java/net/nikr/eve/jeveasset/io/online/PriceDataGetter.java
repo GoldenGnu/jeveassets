@@ -41,6 +41,7 @@ import net.nikr.eve.jeveasset.data.sde.StaticData;
 import net.nikr.eve.jeveasset.data.settings.PriceData;
 import net.nikr.eve.jeveasset.data.settings.PriceDataSettings.PriceMode;
 import net.nikr.eve.jeveasset.data.settings.PriceDataSettings.PriceSource;
+import net.nikr.eve.jeveasset.data.settings.PriceHistoryDatabase;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
@@ -75,6 +76,7 @@ public class PriceDataGetter implements PricingListener {
 	private Set<Integer> okay;
 	private Set<Integer> zero;
 	private Set<Integer> queue;
+	private final Map<Integer, PriceData> updatedList = Collections.synchronizedMap(new HashMap<>());
 	private final Map<Integer, PriceData> priceDataList = Collections.synchronizedMap(new HashMap<>());
 
 	private long nextUpdate = 0;
@@ -187,6 +189,7 @@ public class PriceDataGetter implements PricingListener {
 		this.zero = Collections.synchronizedSet(new HashSet<>());
 		this.okay = Collections.synchronizedSet(new HashSet<>());
 		this.queue = Collections.synchronizedSet(new HashSet<>(typeIDs));
+		this.updatedList.clear();
 
 		if (priceSource == PriceSource.JANICE) {
 			String janiceKey = Settings.get().getPriceDataSettings().getJaniceKey();
@@ -288,6 +291,7 @@ public class PriceDataGetter implements PricingListener {
 				Map<Integer, PriceData> hashMap = new HashMap<>();
 				priceDataList.keySet().removeAll(failed); //Remove failed
 				hashMap.putAll(priceDataList);
+				PriceHistoryDatabase.setPriceData(updatedList);
 				return hashMap;
 			} finally {
 				clear(pricing);
@@ -368,6 +372,7 @@ public class PriceDataGetter implements PricingListener {
 			if (isZero) {
 				zero.add(typeID);
 			}
+			updatedList.put(typeID, priceData);
 			okay.add(typeID);
 			failed.remove(typeID);
 			queue.remove(typeID); //Load price...

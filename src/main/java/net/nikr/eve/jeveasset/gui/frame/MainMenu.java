@@ -41,6 +41,7 @@ public class MainMenu extends JMenuBar {
 	public enum MainMenuAction {
 		VALUES,
 		VALUE_TABLE,
+		PRICE_HISTORY,
 		LOADOUTS,
 		MARKET_ORDERS,
 		TRANSACTION,
@@ -116,6 +117,12 @@ public class MainMenu extends JMenuBar {
 		menuItem = new JMenuItem(GuiFrame.get().valueTable());
 		menuItem.setIcon(Images.TOOL_VALUE_TABLE.getIcon());
 		menuItem.setActionCommand(MainMenuAction.VALUE_TABLE.name());
+		menuItem.addActionListener(program);
+		submenu.add(menuItem);
+
+		menuItem = new JMenuItem(GuiFrame.get().priceHistory());
+		menuItem.setIcon(Images.TOOL_PRICE_HISTORY.getIcon());
+		menuItem.setActionCommand(MainMenuAction.PRICE_HISTORY.name());
 		menuItem.addActionListener(program);
 		submenu.add(menuItem);
 
