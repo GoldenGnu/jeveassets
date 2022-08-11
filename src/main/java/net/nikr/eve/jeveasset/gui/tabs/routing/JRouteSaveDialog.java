@@ -20,6 +20,7 @@
  */
 package net.nikr.eve.jeveasset.gui.tabs.routing;
 
+import ca.odell.glazedlists.GlazedLists;
 import ca.odell.glazedlists.TextFilterator;
 import java.util.Comparator;
 import net.nikr.eve.jeveasset.Program;
@@ -32,17 +33,12 @@ import net.nikr.eve.jeveasset.i18n.TabsRouting;
 public class JRouteSaveDialog extends JAutoCompleteDialog<String> {
 
 	public JRouteSaveDialog(Program program) {
-		super(program, TabsRouting.get().routeSaveTitle(), Images.TOOL_ROUTING.getImage(), TabsRouting.get().routeSaveMsg(), false, false);
+		super(program, TabsRouting.get().routeSaveTitle(), Images.TOOL_ROUTING.getImage(), TabsRouting.get().routeSaveMsg(), false);
 	}
 
 	@Override
 	protected Comparator<String> getComparator() {
-		return new Comparator<String>() {
-			@Override
-			public int compare(String o1, String o2) {
-				return o1.compareTo(o2);
-			}
-		};
+		return GlazedLists.comparableComparator();
 	}
 
 	@Override
@@ -57,6 +53,11 @@ public class JRouteSaveDialog extends JAutoCompleteDialog<String> {
 		} else {
 			return null;
 		}
+	}
+
+	@Override
+	protected boolean isEmpty(String t) {
+		return t.isEmpty();
 	}
 
 }
