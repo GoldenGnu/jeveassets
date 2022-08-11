@@ -20,31 +20,31 @@
  */
 package net.nikr.eve.jeveasset.gui.tabs.reprocessed;
 
+import ca.odell.glazedlists.GlazedLists;
 import ca.odell.glazedlists.TextFilterator;
 import java.util.Comparator;
-import java.util.List;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JAutoCompleteDialog;
+import net.nikr.eve.jeveasset.gui.shared.table.EventModels.ItemFilterator;
 import net.nikr.eve.jeveasset.i18n.TabsReprocessed;
 
 
 public class JReprocessedAddItemDialog extends JAutoCompleteDialog<Item> {
 
 	public JReprocessedAddItemDialog(final Program program) {
-		super(program, TabsReprocessed.get().addItem(), Images.TOOL_REPROCESSED.getImage(),
-				TabsReprocessed.get().selectItem(), false, true);
+		super(program, TabsReprocessed.get().addItem(), Images.TOOL_REPROCESSED.getImage(), TabsReprocessed.get().selectItem(), true);
 	}
 
 	@Override
 	protected Comparator<Item> getComparator() {
-		return new ItemComparator();
+		return GlazedLists.comparableComparator();
 	}
 
 	@Override
 	protected TextFilterator<Item> getFilterator() {
-		return new Filterator();
+		return new ItemFilterator();
 	}
 
 	@Override
@@ -55,17 +55,9 @@ public class JReprocessedAddItemDialog extends JAutoCompleteDialog<Item> {
 		return null;
 	}
 
-	private static class Filterator implements TextFilterator<Item> {
-		@Override
-		public void getFilterStrings(List<String> baseList, Item element) {
-			baseList.add(element.getTypeName());
-		}
+	@Override
+	protected boolean isEmpty(Item t) {
+		return false;
 	}
 
-	private static class ItemComparator implements Comparator<Item> {
-		@Override
-		public int compare(Item o1, Item o2) {
-			return o1.compareTo(o2);
-		}
-	}
 }

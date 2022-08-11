@@ -27,7 +27,6 @@ import java.util.Map;
 import javax.swing.ButtonGroup;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.table.AbstractTableModel;
 import net.nikr.eve.jeveasset.Program;
@@ -90,14 +89,8 @@ public class JMenuColumns<T extends Enum<T> & EnumTableColumn<Q>, Q> extends JMe
 					Map<String, View> views = Settings.get().getTableViews(name);
 					viewSave.updateData(new ArrayList<>(views.values())); //Update views
 					View view = viewSave.show();
-					if (view != null ) { //Validate
+					if (view != null) { //Validate
 						view.setColumns(tableFormatAdaptor.getColumns()); //Set data
-						if (views.containsValue(view)) { //Ovwewrite?
-							int value = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), GuiShared.get().overwrite(), GuiShared.get().saveView(), JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
-							if (value != JOptionPane.OK_OPTION) {
-								return;
-							}
-						}
 						Settings.lock("View (New)"); //Lock for View (New)
 						views.remove(view.getName()); //Remove old
 						views.put(view.getName(), view); //Add new

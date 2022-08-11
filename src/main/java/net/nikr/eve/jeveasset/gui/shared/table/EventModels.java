@@ -28,6 +28,8 @@ import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import ca.odell.glazedlists.swing.GlazedListsSwing;
 import java.util.List;
 import javax.swing.JTable;
+import net.nikr.eve.jeveasset.data.sde.Item;
+import net.nikr.eve.jeveasset.data.sde.MyLocation;
 
 
 public class EventModels {
@@ -36,12 +38,12 @@ public class EventModels {
 	public static <E> DefaultEventTableModel<E> createTableModel(EventList<E> source, TableFormat<E> tableFormat) {
 		// XXX - Workaround for java bug: https://bugs.openjdk.java.net/browse/JDK-8068824
 		//return new DefaultEventTableModel<E>(createSwingThreadProxyList(source), tableFormat);
-		return new FixedEventTableModel<E>(createSwingThreadProxyList(source), tableFormat);
+		return new FixedEventTableModel<>(createSwingThreadProxyList(source), tableFormat);
 	}
 
 	//EventModels.createSelectionModel
 	public static <E> DefaultEventSelectionModel<E> createSelectionModel(EventList<E> source) {
-		return new DefaultEventSelectionModel<E>(createSwingThreadProxyList(source));
+		return new DefaultEventSelectionModel<>(createSwingThreadProxyList(source));
 	}
 
 	public static <E> EventList<E> createSwingThreadProxyList(EventList<E> source) {
@@ -88,6 +90,20 @@ public class EventModels {
 			if (element.length() > 0) {
 				baseList.add(element);
 			}
+		}
+	}
+
+	public static class LocationFilterator implements TextFilterator<MyLocation> {
+		@Override
+		public void getFilterStrings(final List<String> baseList, final MyLocation element) {
+			baseList.add(element.getLocation());
+		}
+	}
+
+	public static class ItemFilterator implements TextFilterator<Item> {
+		@Override
+		public void getFilterStrings(List<String> baseList, Item element) {
+			baseList.add(element.getTypeName());
 		}
 	}
 }

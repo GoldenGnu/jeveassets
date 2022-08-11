@@ -55,15 +55,13 @@ public abstract class JAutoCompleteDialog<T> extends JDialogCentered {
 	private final JButton jOK;
 
 	private final boolean strict;
-	private final boolean allowOverwrite;
 
 	private T value;
 
-	public JAutoCompleteDialog(Program program, String title, Image image, String msg, boolean strict, boolean allowOverwrite) {
+	public JAutoCompleteDialog(Program program, String title, Image image, String msg, boolean strict) {
 		super(program, title, image);
 
 		this.strict = strict;
-		this.allowOverwrite = allowOverwrite;
 
 		ListenerClass listener = new ListenerClass();
 
@@ -115,6 +113,7 @@ public abstract class JAutoCompleteDialog<T> extends JDialogCentered {
 	protected abstract Comparator<T> getComparator();
 	protected abstract TextFilterator<T> getFilterator();
 	protected abstract T getValue(Object object);
+	protected abstract boolean isEmpty(T t);
 
 	public final void updateData(Collection<T> list) {
 		boolean same = false;
@@ -156,11 +155,15 @@ public abstract class JAutoCompleteDialog<T> extends JDialogCentered {
 	}
 
 	protected boolean valied(T value) {
-		if (allowOverwrite) {
+		if (value == null || isEmpty(value)) {
+			JOptionPane.showMessageDialog(getDialog(), GuiShared.get().invalidMsg(), GuiShared.get().invalidTitle(), JOptionPane.PLAIN_MESSAGE);
+			return false;
+		}
+		if (strict) {
 			return true;
 		} else {
 			if (EventListManager.contains(eventList, value)) {
-				int nReturn = JOptionPane.showConfirmDialog(getDialog(), GuiShared.get().overwrite(), GuiShared.get().overwriteView(), JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE);
+				int nReturn = JOptionPane.showConfirmDialog(getDialog(), GuiShared.get().overwrite(), GuiShared.get().overwriteTitle(), JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE);
 				if (nReturn == JOptionPane.NO_OPTION) { //Overwrite cancelled
 					return false;
 				}

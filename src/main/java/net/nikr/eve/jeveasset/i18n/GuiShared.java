@@ -94,6 +94,8 @@ public abstract class GuiShared extends Bundle {
 	public abstract String importOptionsRename();
 	public abstract String importOptionsSkip();
 	public abstract String industry();
+	public abstract String invalidMsg();
+	public abstract String invalidTitle();
 	public abstract String item();
 	public abstract String itemDatabase();
 	public abstract String itemDelete();
@@ -129,6 +131,7 @@ public abstract class GuiShared extends Bundle {
 	public abstract String openLinks(int size);
 	public abstract String openLinksTitle();
 	public abstract String overwrite();
+	public abstract String overwriteTitle();
 	public abstract String overwriteFile();
 	public abstract String paste();
 	public abstract String planet();

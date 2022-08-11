@@ -34,7 +34,7 @@ import net.nikr.eve.jeveasset.i18n.GuiShared;
 public class ViewSave extends JAutoCompleteDialog<View> {
 
 	public ViewSave(Program program) {
-		super(program, GuiShared.get().saveView(), Images.FILTER_SAVE.getImage(), GuiShared.get().saveViewMsg(), false, false);
+		super(program, GuiShared.get().saveView(), Images.FILTER_SAVE.getImage(), GuiShared.get().saveViewMsg(), false);
 	}
 
 	@Override
@@ -56,6 +56,11 @@ public class ViewSave extends JAutoCompleteDialog<View> {
 		} else {
 			return null;
 		}
+	}
+
+	@Override
+	protected boolean isEmpty(View t) {
+		return t.getName().isEmpty();
 	}
 
 	private static class Filterator implements TextFilterator<View> {
