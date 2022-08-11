@@ -21,7 +21,6 @@
 
 package net.nikr.eve.jeveasset.gui.shared.table;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import javax.swing.JOptionPane;
@@ -52,7 +51,7 @@ public class ViewManager extends JManageDialog {
 	}
 
 	public final void update() {
-		update(new ArrayList<>(views.keySet()));
+		update(views.keySet());
 		program.updateTableMenu();
 	}
 
