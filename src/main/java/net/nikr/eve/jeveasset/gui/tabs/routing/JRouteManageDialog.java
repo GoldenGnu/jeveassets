@@ -21,12 +21,10 @@
 package net.nikr.eve.jeveasset.gui.tabs.routing;
 
 import java.util.List;
-import javax.swing.JOptionPane;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.settings.RouteResult;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.shared.components.JManageDialog;
-import net.nikr.eve.jeveasset.i18n.GuiShared;
 import net.nikr.eve.jeveasset.i18n.TabsRouting;
 
 
@@ -87,22 +85,12 @@ public class JRouteManageDialog extends JManageDialog {
 		//Not supported
 	}
 
-	@Override
-	protected boolean validateName(String name, String oldName, String title) {
-		if ( Settings.get().getRoutingSettings().getRoutes().containsKey(name) && (oldName.isEmpty() || !oldName.equals(name))) {
-			int nReturn = JOptionPane.showConfirmDialog(this.getDialog(), GuiShared.get().overwrite(), GuiShared.get().overwriteView(), JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE);
-			if (nReturn == JOptionPane.NO_OPTION) { //Overwrite cancelled
-				return false;
-			}
-		}
-		return true;
-	}
-
 	@Override protected String textDeleteMultipleMsg(int size) { return TabsRouting.get().routeDeleteMsg(size); }
 	@Override protected String textDelete() { return TabsRouting.get().routeDeleteTitle(); }
 	@Override protected String textEnterName() { return TabsRouting.get().routeSaveMsg(); }
-	@Override protected String textNoName() { return GuiShared.get().noFilterName(); }
+	@Override protected String textNoName() { return TabsRouting.get().routeNoName(); }
 	@Override protected String textMerge() { return ""; } //Not supported
 	@Override protected String textRename() { return TabsRouting.get().routeRenameTitle(); }
+	@Override protected String textOverwrite() { return TabsRouting.get().routeOverwrite(); }
 
 }
