@@ -34,7 +34,7 @@ import net.nikr.eve.jeveasset.i18n.TabsRouting;
 public class JSaveAvoidDialog extends JAutoCompleteDialog<String> {
 
 	public JSaveAvoidDialog(Program program) {
-		super(program, TabsRouting.get().saveFilterTitle(), Images.TOOL_ROUTING.getImage(), TabsRouting.get().saveFilterMsg(), false, false);
+		super(program, TabsRouting.get().saveFilterTitle(), Images.TOOL_ROUTING.getImage(), TabsRouting.get().saveFilterMsg(), false);
 	}
 
 	@Override
@@ -51,4 +51,10 @@ public class JSaveAvoidDialog extends JAutoCompleteDialog<String> {
 	protected String getValue(Object object) {
 		return String.valueOf(object);
 	}
+
+	@Override
+	protected boolean isEmpty(String t) {
+		return t.isEmpty();
+	}
+
 }

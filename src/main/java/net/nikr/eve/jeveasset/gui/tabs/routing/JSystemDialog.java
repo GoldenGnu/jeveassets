@@ -33,7 +33,17 @@ import net.nikr.eve.jeveasset.i18n.TabsRouting;
 public class JSystemDialog extends JAutoCompleteDialog<SolarSystem> {
 
 	public JSystemDialog(Program program) {
-		super(program, TabsRouting.get().addSystemTitle(), Images.TOOL_ROUTING.getImage(), TabsRouting.get().addSystemSelect(), true, true);
+		super(program, TabsRouting.get().addSystemTitle(), Images.TOOL_ROUTING.getImage(), TabsRouting.get().addSystemSelect(), true);
+	}
+
+	@Override
+	protected Comparator<SolarSystem> getComparator() {
+		return new SystemComparator();
+	}
+
+	@Override
+	protected TextFilterator<SolarSystem> getFilterator() {
+		return new Filterator();
 	}
 
 	@Override
@@ -46,13 +56,8 @@ public class JSystemDialog extends JAutoCompleteDialog<SolarSystem> {
 	}
 
 	@Override
-	protected Comparator<SolarSystem> getComparator() {
-		return new SystemComparator();
-	}
-
-	@Override
-	protected TextFilterator<SolarSystem> getFilterator() {
-		return new Filterator();
+	protected boolean isEmpty(SolarSystem t) {
+		return false;
 	}
 
 	private static class Filterator implements TextFilterator<SolarSystem> {

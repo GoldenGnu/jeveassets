@@ -21,20 +21,31 @@
 
 package net.nikr.eve.jeveasset.gui.shared.menu;
 
+import ca.odell.glazedlists.GlazedLists;
 import ca.odell.glazedlists.TextFilterator;
 import java.util.Comparator;
-import java.util.List;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JAutoCompleteDialog;
+import net.nikr.eve.jeveasset.gui.shared.table.EventModels.LocationFilterator;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 
 public class JSystemDialog extends JAutoCompleteDialog<MyLocation> {
 
 	public JSystemDialog(final Program program) {
-		super(program, GuiShared.get().locationRename(), Images.LOC_LOCATIONS.getImage(), GuiShared.get().locationSystem(), true, true);
+		super(program, GuiShared.get().locationRename(), Images.LOC_LOCATIONS.getImage(), GuiShared.get().locationSystem(), true);
+	}
+
+	@Override
+	protected Comparator<MyLocation> getComparator() {
+		return GlazedLists.comparableComparator();
+	}
+
+	@Override
+	protected TextFilterator<MyLocation> getFilterator() {
+		return new LocationFilterator();
 	}
 
 	@Override
@@ -47,26 +58,8 @@ public class JSystemDialog extends JAutoCompleteDialog<MyLocation> {
 	}
 
 	@Override
-	protected Comparator<MyLocation> getComparator() {
-		return new SystemComparator();
+	protected boolean isEmpty(MyLocation t) {
+		return false;
 	}
 
-	@Override
-	protected TextFilterator<MyLocation> getFilterator() {
-		return new Filterator();
-	}
-
-	private static class Filterator implements TextFilterator<MyLocation> {
-		@Override
-		public void getFilterStrings(final List<String> baseList, final MyLocation element) {
-			baseList.add(element.getLocation());
-		}
-	}
-
-	private static class SystemComparator implements Comparator<MyLocation> {
-		@Override
-		public int compare(MyLocation o1, MyLocation o2) {
-			return o1.compareTo(o2);
-		}
-	}
 }
