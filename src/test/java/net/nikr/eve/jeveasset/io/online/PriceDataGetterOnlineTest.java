@@ -38,6 +38,7 @@ import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.StaticData;
 import net.nikr.eve.jeveasset.data.settings.PriceData;
 import net.nikr.eve.jeveasset.data.settings.PriceDataSettings.PriceSource;
+import net.nikr.eve.jeveasset.data.settings.PriceHistoryDatabase;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import org.junit.After;
@@ -70,6 +71,7 @@ public class PriceDataGetterOnlineTest extends TestUtil {
 	public static void setUpClass() {
 		setLoggingLevel(Level.ERROR);
 		JANICE_KEY = System.getenv().get(JANICE_API_KEY);
+		PriceHistoryDatabase.load();
 	}
 
 	@AfterClass

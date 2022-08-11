@@ -31,6 +31,7 @@ import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 import net.nikr.eve.jeveasset.SplashUpdater;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
@@ -166,6 +167,8 @@ public class Settings {
 	private final Map<String, ExportSettings> exportSettings = new HashMap<>();
 //Tracker						Saved by TaskDialog.update() (on API update)
 	private final TrackerSettings trackerSettings = new TrackerSettings();
+//Price History
+	private final Map<String, Set<Integer>> priceHistorySets = new HashMap<>();
 //Runtime flags					Is not saved to file
 	private boolean settingsLoadError = false;
 //Settings Dialog:				Saved by SettingsDialog.save()
@@ -390,6 +393,10 @@ public class Settings {
 
 	public TrackerSettings getTrackerSettings() {
 		return trackerSettings;
+	}
+
+	public Map<String, Set<Integer>> getPriceHistorySets() {
+		return priceHistorySets;
 	}
 
 	public PriceDataSettings getPriceDataSettings() {
