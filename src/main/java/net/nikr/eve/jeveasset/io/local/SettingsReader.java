@@ -298,6 +298,12 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			throw new XmlException("Wrong root element name.");
 		}
 
+		//Price History
+		Element priceHistoryElement = getNodeOptional(element, "pricehistory");
+		if (priceHistoryElement != null) {
+			parsePriceHistorySettings(priceHistoryElement, settings);
+		}
+
 		//Faction Warfare System Owners
 		Element factionWarfareSystemOwnersElement = getNodeOptional(element, "factionwarfaresystemowners");
 		if (factionWarfareSystemOwnersElement != null) {
@@ -893,6 +899,17 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		subpileMap.clear();
 		stockpileMap.clear();
 		Collections.sort(stockpiles);
+	}
+
+	private void parsePriceHistorySettings(Element priceHistoryElement, Settings settings) throws XmlException {
+		NodeList priceListNodes = priceHistoryElement.getElementsByTagName("set");
+		for (int a = 0; a < priceListNodes.getLength(); a++) {
+			Element priceListNode = (Element) priceListNodes.item(a);
+			String name = getString(priceListNode, "name");
+			Set<Integer> typeIDs = new HashSet<>();
+			addIntToList(priceListNode, "ids", typeIDs);
+			settings.getPriceHistorySets().put(name, typeIDs);
+		}
 	}
 
 	private void parseFactionWarfareSystemOwners(Element factionWarfareSystemOwnersElement, Settings settings) throws XmlException {

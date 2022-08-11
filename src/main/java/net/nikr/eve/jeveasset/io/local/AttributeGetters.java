@@ -25,6 +25,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import net.nikr.eve.jeveasset.data.settings.Settings;
@@ -80,6 +81,20 @@ public class AttributeGetters {
 			return null;
 		} else {
 			return stringToList(nodeValue);
+		}
+	}
+
+	protected void addIntToList(final Node node, final String attributeName, final Collection<Integer> addTo) throws XmlException {
+		String nodeValue = getNodeValueOptional(node, attributeName);
+		if (nodeValue == null) {
+			return;
+		}
+		for (String s : nodeValue.split(",")) {
+			try {
+				addTo.add(Integer.valueOf(s));
+			} catch (NumberFormatException ex) {
+				//Ignore...
+			}
 		}
 	}
 

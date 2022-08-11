@@ -124,6 +124,8 @@ public class SettingsDialog extends JDialogCentered {
 
 		add(toolNode, new TrackerToolSettingsPanel(program, this));
 
+		add(toolNode, new PriceHistoryToolSettingsPanel(program, this));
+
 		DefaultMutableTreeNode valuesNode = addGroup(DialoguesSettings.get().values(), Images.EDIT_RENAME.getIcon());
 		userPriceSettingsPanel = new UserPriceSettingsPanel(program, this);
 		add(valuesNode, userPriceSettingsPanel);

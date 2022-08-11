@@ -178,6 +178,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 		writeShowTool(xmldoc, settings.getShowTools(), settings.isSaveToolsOnExit());
 		writeColorSettings(xmldoc, settings.getColorSettings());
 		writeFactionWarfareSystemOwners(xmldoc, settings);
+		writePriceHistorySettings(xmldoc, settings);
 		try {
 			writeXmlFile(xmldoc, filename, true);
 		} catch (XmlException ex) {
@@ -186,6 +187,17 @@ public class SettingsWriter extends AbstractXmlWriter {
 		}
 		LOG.info("Settings saved");
 		return true;
+	}
+
+	private void writePriceHistorySettings(Document xmldoc, Settings settings) {
+		Element priceHistoryNode = xmldoc.createElementNS(null, "pricehistory");
+		xmldoc.getDocumentElement().appendChild(priceHistoryNode);
+		for (Map.Entry<String, Set<Integer>> entry : settings.getPriceHistorySets().entrySet()) {
+			Element setNode = xmldoc.createElementNS(null, "set");
+			setAttribute(setNode, "name", entry.getKey());
+			setAttributeOptional(setNode, "ids", entry.getValue());
+			priceHistoryNode.appendChild(setNode);
+		}
 	}
 
 	private void writeFactionWarfareSystemOwners(Document xmldoc, Settings settings) {

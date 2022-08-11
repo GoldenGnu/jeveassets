@@ -123,6 +123,7 @@
 									<fileset dir="data" includes="*.dat"/>
 									<fileset dir="data" includes="*.json"/>
 									<fileset dir="data" includes="*.zip"/>
+									<fileset dir="data" includes="*.db"/>
 								</copy>
 								<copy todir="${project.build.directory}">
 									<fileset dir="" includes="*.txt"/>

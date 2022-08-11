@@ -105,6 +105,7 @@ public enum Images {
 	LINK_JANICE_32 ("link_janice_32.png"),
 	LINK_FUZZWORK ("link_fuzzwork.png"),
 	LINK_ZKILLBOARD ("link_zkillboard.png"),
+	LINK_ZKILLBOARD_32 ("link_zkillboard_32.png"),
 	LINK_ADAM4EVE ("link_adam4eve.png"),
 	LINK_EVEHUB ("link_evehub.png"),
 	LINK_KHON_SPACE ("link_khon_space.png"),
@@ -218,6 +219,7 @@ public enum Images {
 	TOOL_TRANSACTION ("tool_transaction.png"),
 	TOOL_JOURNAL ("tool_journal.png"),
 	TOOL_TREE ("tool_tree.png"),
+	TOOL_PRICE_HISTORY ("tool_price_history.png"),
 
 	UPDATE_NOT_STARTED ("update_not_started.png"),
 	UPDATE_WORKING ("update_working.png"),

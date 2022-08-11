@@ -257,7 +257,7 @@ public class PriceDataSettings {
 			}
 		}
 
-		private static double getDefaultPrice(final PriceData priceData, final PriceMode priceMode) {
+		public static double getDefaultPrice(final PriceData priceData, final PriceMode priceMode) {
 			if (priceData != null) {
 				if (priceMode == PriceMode.PRICE_SELL_MAX) {
 					return priceData.getSellMax();

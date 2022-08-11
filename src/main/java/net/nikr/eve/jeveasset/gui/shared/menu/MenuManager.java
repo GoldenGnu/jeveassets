@@ -66,6 +66,7 @@ public class MenuManager<T extends Enum<T> & EnumTableColumn<Q>, Q> {
 		PRICE,
 		NAME,
 		REPROCESSED,
+		PRICE_HISTORY,
 		JUMPS,
 		ROUTING,
 		COPY_PLUS,
@@ -239,6 +240,10 @@ public class MenuManager<T extends Enum<T> & EnumTableColumn<Q>, Q> {
 		if (itemSupported) {
 			menus.put(MenuEnum.REPROCESSED, new JMenuReprocessed<>(program));
 		}
+	//PRICE HISTORY
+		if (itemSupported) {
+			menus.put(MenuEnum.PRICE_HISTORY, new JMenuPriceHistory<>(program));
+		}
 	//JUMPS
 		if (jumpsSupported) {
 			menus.put(MenuEnum.JUMPS, new JMenuJumps<>(program, columnManager));
@@ -357,6 +362,12 @@ public class MenuManager<T extends Enum<T> & EnumTableColumn<Q>, Q> {
 		AutoMenu<Q> jReprocessed = menus.get(MenuEnum.REPROCESSED);
 		if (jReprocessed != null) {
 			jComponent.add(jReprocessed.getComponent());
+			notEmpty = true;
+		}
+	//PRICE HISTORY
+		AutoMenu<Q> jPriceHistory = menus.get(MenuEnum.PRICE_HISTORY);
+		if (jPriceHistory != null) {
+			jComponent.add(jPriceHistory.getComponent());
 			notEmpty = true;
 		}
 	//JUMPS

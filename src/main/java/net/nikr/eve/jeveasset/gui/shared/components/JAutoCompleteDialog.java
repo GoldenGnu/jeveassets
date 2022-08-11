@@ -65,7 +65,12 @@ public abstract class JAutoCompleteDialog<T> extends JDialogCentered {
 
 		ListenerClass listener = new ListenerClass();
 
-		JLabel jText = new JLabel(msg);
+		JLabel jText = new JLabel();
+		if (msg != null) {
+			jText.setText(msg);
+		} else {
+			jText.setVisible(false);
+		}
 
 		jItems = new JComboBox<>();
 		eventList = EventListManager.create();

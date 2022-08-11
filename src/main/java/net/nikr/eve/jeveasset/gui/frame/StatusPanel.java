@@ -44,6 +44,7 @@ import net.nikr.eve.jeveasset.gui.shared.components.JFixedToolBar;
 import net.nikr.eve.jeveasset.gui.shared.components.JGroupLayoutPanel;
 import net.nikr.eve.jeveasset.i18n.DialoguesStructure;
 import net.nikr.eve.jeveasset.i18n.GuiFrame;
+import net.nikr.eve.jeveasset.i18n.TabPriceHistory;
 import net.nikr.eve.jeveasset.i18n.TabsOrders;
 
 
@@ -257,6 +258,9 @@ public class StatusPanel extends JGroupLayoutPanel {
 				case PUBLIC_MARKET_ORDERS:
 					text = TabsOrders.get().updateTitle();
 					break;
+				case PRICE_HISTORY:
+					text = TabPriceHistory.get().updateTitle();
+					break;
 				default:
 					text = "";
 			}
@@ -360,6 +364,6 @@ public class StatusPanel extends JGroupLayoutPanel {
 	}
 
 	public static enum UpdateType {
-		STRUCTURE, PUBLIC_MARKET_ORDERS
+		STRUCTURE, PUBLIC_MARKET_ORDERS, PRICE_HISTORY
 	}
 }
