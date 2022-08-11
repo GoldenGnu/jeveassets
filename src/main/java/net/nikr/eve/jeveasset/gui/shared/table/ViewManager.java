@@ -23,7 +23,6 @@ package net.nikr.eve.jeveasset.gui.shared.table;
 
 import java.util.List;
 import java.util.Map;
-import javax.swing.JOptionPane;
 import javax.swing.table.AbstractTableModel;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.settings.Settings;
@@ -36,7 +35,7 @@ public class ViewManager extends JManageDialog {
 	private final EnumTableFormatAdaptor<?, ?> tableFormat;
 	private final AbstractTableModel tableModel;
 	private final JAutoColumnTable jTable;
-	private Map<String ,View> views;
+	private Map<String, View> views;
 
 	public ViewManager(Program program, EnumTableFormatAdaptor<?, ?> tableFormat, AbstractTableModel tableModel, JAutoColumnTable jTable) {
 		super(program, program.getMainWindow().getFrame(), GuiShared.get().manageViews(), false, false);
@@ -109,22 +108,12 @@ public class ViewManager extends JManageDialog {
 		//Import is not supported
 	}
 
-	@Override
-	protected boolean validateName(String name, String oldName, String title) {
-		if (views.containsKey(name) && (oldName.isEmpty() || !oldName.equals(name))) {
-			int nReturn = JOptionPane.showConfirmDialog(this.getDialog(), GuiShared.get().overwrite(), GuiShared.get().overwriteView(), JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE);
-			if (nReturn == JOptionPane.NO_OPTION) { //Overwrite cancelled
-				return false;
-			}
-		}
-		return true;
-	}
-
 	@Override protected String textDeleteMultipleMsg(int size) { return GuiShared.get().deleteViews(size); }
 	@Override protected String textDelete() { return GuiShared.get().deleteView(); }
 	@Override protected String textEnterName() { return GuiShared.get().enterViewName(); }
 	@Override protected String textNoName() { return GuiShared.get().noViewName(); }
 	@Override protected String textMerge() { return ""; }
 	@Override protected String textRename() { return GuiShared.get().renameView(); }
+	@Override protected String textOverwrite() { return GuiShared.get().overwriteView(); }
 
 }

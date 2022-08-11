@@ -21,7 +21,6 @@
 package net.nikr.eve.jeveasset.gui.tabs.routing;
 
 import java.util.List;
-import javax.swing.JOptionPane;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.shared.components.JManageDialog;
@@ -73,22 +72,12 @@ public class JManageAvoidDialog extends JManageDialog {
 		//Import is not supported
 	}
 
-	@Override
-	protected boolean validateName(String name, String oldName, String title) {
-		if (Settings.get().getRoutingSettings().getPresets().containsKey(name) && (oldName.isEmpty() || !oldName.equals(name))) {
-			int nReturn = JOptionPane.showConfirmDialog(this.getDialog(), GuiShared.get().overwrite(), GuiShared.get().overwriteView(), JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE);
-			if (nReturn == JOptionPane.NO_OPTION) { //Overwrite cancelled
-				return false;
-			}
-		}
-		return true;
-	}
-
 	@Override protected String textDeleteMultipleMsg(int size) { return GuiShared.get().deleteFilters(size); }
 	@Override protected String textDelete() { return GuiShared.get().deleteFilter(); }
 	@Override protected String textEnterName() { return GuiShared.get().enterFilterName(); }
 	@Override protected String textNoName() { return GuiShared.get().noFilterName(); }
 	@Override protected String textMerge() { return GuiShared.get().mergeFilters(); }
 	@Override protected String textRename() { return GuiShared.get().renameFilter(); }
+	@Override protected String textOverwrite() { return GuiShared.get().overwriteFilter(); }
 
 }
