@@ -55,6 +55,7 @@ public abstract class TabPriceHistory extends Bundle {
 	public abstract String remove();
 	public abstract String rename();
 	public abstract String save();
+	public abstract String saveTitle();
 	public abstract String scaleLinear();
 	public abstract String scaleLogarithmic();
 	public abstract String sourcejEveAssets();
