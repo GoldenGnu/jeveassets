@@ -160,7 +160,7 @@ public class PriceHistoryTab extends JMainTabSecondary {
 	private final Shape LEGEND = RECTANGLE;
 	private final Shape ITEM_SHAPE = new Ellipse2D.Float(-3.0f, -3.0f, 6.0f, 6.0f);
 	private final Stroke LEGEND_OUTLINE = new BasicStroke(1);
-	private final int PANEL_WIDTH_MINIMUM = 225;
+	private final int PANEL_WIDTH_MINIMUM = 215;
 	public final int MAXIMUM_SHOWN = 50;
 	private final XYLineAndShapeRenderer renderer;
 
@@ -274,7 +274,7 @@ public class PriceHistoryTab extends JMainTabSecondary {
 		};
 		jAddItemDialog.updateData(StaticData.get().getItems().values());
 
-		jSaveItemsDialog = new JAutoCompleteDialog<String>(program, TabPriceHistory.get().addTitle(), Images.TOOL_PRICE_HISTORY.getImage(), null, false) {
+		jSaveItemsDialog = new JAutoCompleteDialog<String>(program, TabPriceHistory.get().saveTitle(), Images.TOOL_PRICE_HISTORY.getImage(), null, false) {
 			@Override
 			protected Comparator<String> getComparator() {
 				return GlazedLists.comparableComparator();
@@ -906,7 +906,7 @@ public class PriceHistoryTab extends JMainTabSecondary {
 			} else if (PriceHistoryAction.REMOVE_ITEMS.name().equals(e.getActionCommand())) {
 				removeItems(jItems.getSelectedValuesList());
 			} else if (PriceHistoryAction.SAVE.name().equals(e.getActionCommand())) {
-				jSaveItemsDialog.updateData(new ArrayList<>());
+				jSaveItemsDialog.updateData(Settings.get().getPriceHistorySets().keySet());
 				String name = jSaveItemsDialog.show();
 				if (name == null) {
 					return;
