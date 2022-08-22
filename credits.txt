@@ -34,6 +34,7 @@ Contributors:
   Kaylee Syntax
   Inoruuk
   Burberius
+  Lazaren
 
 Retired Testers:
   Varo Jan
