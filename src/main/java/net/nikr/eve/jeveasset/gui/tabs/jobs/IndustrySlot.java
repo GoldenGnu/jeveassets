@@ -61,6 +61,18 @@ public class IndustrySlot implements Comparable<IndustrySlot>, LocationType {
 		this.empty = false;
 	}
 
+	public final void count(IndustrySlot industrySlot) {
+		manufacturingActive += industrySlot.manufacturingActive;
+		reactionsActive += industrySlot.reactionsActive;
+		researchActive += industrySlot.researchActive;
+		manufacturingDone += industrySlot.manufacturingDone;
+		reactionsDone += industrySlot.reactionsDone;
+		researchDone += industrySlot.researchDone;
+		manufacturingMax += industrySlot.manufacturingMax;
+		reactionsMax += industrySlot.reactionsMax;
+		researchMax += industrySlot.researchMax;
+	}
+
 	public final void count(MyIndustryJob industryJob) {
 		if (industryJob.isDelivered()) {
 			return; //Doesn't count as active

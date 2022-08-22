@@ -25,6 +25,8 @@ import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.FilterList;
 import ca.odell.glazedlists.ListSelection;
 import ca.odell.glazedlists.SortedList;
+import ca.odell.glazedlists.event.ListEvent;
+import ca.odell.glazedlists.event.ListEventListener;
 import ca.odell.glazedlists.swing.DefaultEventSelectionModel;
 import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import ca.odell.glazedlists.swing.TableComparatorChooser;
@@ -32,10 +34,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import javax.swing.JComponent;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.settings.types.LocationType;
+import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTabSecondary;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
@@ -55,6 +59,9 @@ public class IndustrySlotsTab extends JMainTabSecondary {
 
 	//GUI
 	private final JAutoColumnTable jTable;
+	private final JLabel jManufacturing;
+	private final JLabel jReactions;
+	private final JLabel jResearch;
 
 	//Table
 	private final IndustrySlotFilterControl filterControl;
@@ -70,6 +77,9 @@ public class IndustrySlotsTab extends JMainTabSecondary {
 
 	public IndustrySlotsTab(final Program program) {
 		super(program, NAME, TabsIndustrySlots.get().title(), Images.TOOL_INDUSTRY_SLOTS.getIcon(), true);
+
+		ListenerClass listener = new ListenerClass();
+
 		industrySlotsData = new IndustrySlotsData(program);
 		//Table Format
 		tableFormat = TableFormatFactory.industrySlotTableFormat();
@@ -87,6 +97,7 @@ public class IndustrySlotsTab extends JMainTabSecondary {
 		eventList.getReadWriteLock().readLock().lock();
 		filterList = new FilterList<>(totalSortedList);
 		eventList.getReadWriteLock().readLock().unlock();
+		filterList.addListEventListener(listener);
 		//Table Model
 		tableModel = EventModels.createTableModel(filterList, tableFormat);
 		//Table
@@ -109,6 +120,15 @@ public class IndustrySlotsTab extends JMainTabSecondary {
 		filterControl = new IndustrySlotFilterControl(totalSortedList);
 		//Menu
 		installTableTool(new IndustrySlotTableMenu(), tableFormat, tableModel, jTable, filterControl, IndustrySlot.class);
+
+		jManufacturing = StatusPanel.createLabel(TabsIndustrySlots.get().manufacturing(), Images.MISC_MANUFACTURING.getIcon());
+		this.addStatusbarLabel(jManufacturing);
+
+		jReactions = StatusPanel.createLabel(TabsIndustrySlots.get().reactions(), Images.MISC_REACTION.getIcon());
+		this.addStatusbarLabel(jReactions);
+
+		jResearch = StatusPanel.createLabel(TabsIndustrySlots.get().research(), Images.MISC_INVENTION.getIcon());
+		this.addStatusbarLabel(jResearch);
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()
@@ -179,6 +199,39 @@ public class IndustrySlotsTab extends JMainTabSecondary {
 
 		@Override
 		public void addToolMenu(JComponent jComponent) { }
+	}
+
+	private class ListenerClass implements ListEventListener<IndustrySlot> {
+		@Override
+		public void listChanged(final ListEvent<IndustrySlot> listChanges) {
+			IndustrySlot total = new IndustrySlot("");
+			try {
+				filterList.getReadWriteLock().readLock().lock();
+				for (IndustrySlot industrySlot : filterList) {
+					if (industrySlot.isGrandTotal()) {
+						continue;
+					}
+					total.count(industrySlot);
+				}
+			} finally {
+				filterList.getReadWriteLock().readLock().unlock();
+			}
+			jManufacturing.setText(TabsIndustrySlots.get().tooltip(
+					total.getManufacturingDone(),
+					total.getManufacturingFree(),
+					total.getManufacturingActive(),
+					total.getManufacturingMax()));
+			jReactions.setText(TabsIndustrySlots.get().tooltip(
+					total.getReactionsDone(),
+					total.getReactionsFree(),
+					total.getReactionsActive(),
+					total.getReactionsMax()));
+			jResearch.setText(TabsIndustrySlots.get().tooltip(
+					total.getResearchDone(),
+					total.getResearchFree(),
+					total.getResearchActive(),
+					total.getResearchMax()));
+		}
 	}
 
 	private class IndustrySlotFilterControl extends FilterControl<IndustrySlot> {

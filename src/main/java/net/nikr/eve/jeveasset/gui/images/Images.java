@@ -173,6 +173,7 @@ public enum Images {
 	MISC_CONTRACTS_APPRAISAL ("misc_contracts_appraisal.png"),
 	MISC_SUM ("misc_sum.png"),
 	MISC_FORMULA ("misc_formula.png"),
+	MISC_REACTION ("misc_reaction.png"),
 
 	SETTINGS_TOOLS ("settings_tools.png"),
 	SETTINGS_PRICE_DATA ("settings_price_data.png"),
