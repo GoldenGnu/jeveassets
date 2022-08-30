@@ -30,8 +30,13 @@ public class LongInt implements NumberValue, Comparable<LongInt> {
 	private final String formatted;
 
 	public LongInt(final Long number) {
-		this.number = number;
-		this.formatted = Formater.integerFormat(number);
+		if (number == null) {
+			this.number = 0L;
+			this.formatted = "";
+		} else {
+			this.number = number;
+			this.formatted = Formater.integerFormat(number);
+		}
 	}
 
 	@Override
