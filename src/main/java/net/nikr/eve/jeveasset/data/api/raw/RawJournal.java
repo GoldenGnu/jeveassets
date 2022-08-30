@@ -272,6 +272,14 @@ public class RawJournal {
 		return contextIdTypeEnum;
 	}
 
+	public String getContextTypeName() {
+		if (contextIdTypeEnum == null) {
+			return "";
+		} else {
+			return contextIdTypeEnum.toString();
+		}
+	}
+
 	public void setContextType(ContextType contextType) {
 		this.contextIdTypeEnum = contextType;
 	}
