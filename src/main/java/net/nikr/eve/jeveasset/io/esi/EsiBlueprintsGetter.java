@@ -56,6 +56,9 @@ public class EsiBlueprintsGetter extends AbstractEsiGetter {
 			});
 			owner.setBlueprints(EsiConverter.toBlueprints(responses));
 		}
+		if (owner.getBlueprints().size() == 25000) {
+			addWarning("BLUEPRINT MAX ITEMS", "25000 blueprints updated\r\nESI is limited to 25K blueprints per char/corp\r\nSome blueprints may not have ME/TE/Runs");
+		}
 	}
 
 	@Override
