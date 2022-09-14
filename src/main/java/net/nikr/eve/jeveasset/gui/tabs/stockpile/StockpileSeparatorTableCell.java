@@ -44,16 +44,18 @@ public class StockpileSeparatorTableCell extends SeparatorTableCell<StockpileIte
 	}
 
 	private final JLabel jStartSpace;
-	private final JLabel jGroup;
 	private final JLabel jColor;
 	private final JLabel jColorDisabled;
 	private final JDropDownButton jStockpile;
+	private final JDoubleField jMultiplier;
+	private final JLabel jMultiplierLabel;
+	private final JLabel jName;
+	private final JLabel jAvailableLabel;
+	private final JLabel jAvailable;
 	private final JLabel jOwnerLabel;
 	private final JLabel jOwner;
 	private final JLabel jLocation;
 	private final JLabel jLocationLabel;
-	private final JLabel jMultiplierLabel;
-	private final JDoubleField jMultiplier;
 	private final Program program;
 
 	private Component focusOwner;
@@ -88,26 +90,19 @@ public class StockpileSeparatorTableCell extends SeparatorTableCell<StockpileIte
 
 		jMultiplierLabel = new JLabel(TabsStockpile.get().multiplierSign());
 
-		jGroup = new JLabel();
-		jGroup.setBorder(null);
-		jGroup.setOpaque(false);
-		jGroup.setFont(new Font(jGroup.getFont().getName(), Font.BOLD, jGroup.getFont().getSize() + 1));
+		jName = createLabel("");
+
+		//Available
+		jAvailableLabel = createLabel(TabsStockpile.get().stockpileAvailable());
+		jAvailable = createLabel();
 
 		//Owner
-		jOwnerLabel = new JLabel(TabsStockpile.get().stockpileOwner());
-		jOwnerLabel.setVerticalAlignment(SwingConstants.BOTTOM);
-		jOwnerLabel.setFont(new Font(jOwnerLabel.getFont().getName(), Font.BOLD, jOwnerLabel.getFont().getSize()));
-
-		jOwner = new JLabel();
-		jOwner.setVerticalAlignment(SwingConstants.BOTTOM);
+		jOwnerLabel = createLabel(TabsStockpile.get().stockpileOwner());
+		jOwner = createLabel();
 
 		//Location
-		jLocationLabel = new JLabel(TabsStockpile.get().stockpileLocation());
-		jLocationLabel.setVerticalAlignment(SwingConstants.BOTTOM);
-		jLocationLabel.setFont(new Font(jLocationLabel.getFont().getName(), Font.BOLD, jLocationLabel.getFont().getSize()));
-
-		jLocation = new JLabel();
-		jLocation.setVerticalAlignment(SwingConstants.BOTTOM);
+		jLocationLabel = createLabel(TabsStockpile.get().stockpileLocation());
+		jLocation = createLabel();
 
 		//Stockpile Edit/Add/etc.
 		jStockpile = new JDropDownButton(TabsStockpile.get().stockpile());
@@ -169,7 +164,11 @@ public class StockpileSeparatorTableCell extends SeparatorTableCell<StockpileIte
 					.addComponent(jMultiplier, 50, 50, 50)
 					.addComponent(jMultiplierLabel)
 					.addGap(10)
-					.addComponent(jGroup, 150, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+					.addComponent(jName, 150, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+					.addGap(10)
+					.addComponent(jAvailableLabel)
+					.addGap(5)
+					.addComponent(jAvailable, 30, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
 					.addGap(10)
 					.addComponent(jOwnerLabel)
 					.addGap(5)
@@ -194,36 +193,55 @@ public class StockpileSeparatorTableCell extends SeparatorTableCell<StockpileIte
 					.addComponent(jStockpile, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jMultiplier, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jMultiplierLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					.addComponent(jGroup, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jName, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addGroup(layout.createSequentialGroup()
 						.addGap(4)
 						.addGroup(layout.createParallelGroup()
-							.addComponent(jLocationLabel)
-							.addComponent(jLocation)
+							.addComponent(jAvailableLabel)
+							.addComponent(jAvailable)
 							.addComponent(jOwnerLabel)
 							.addComponent(jOwner)
+							.addComponent(jLocationLabel)
+							.addComponent(jLocation)
 						)
 					)
 				)
 				.addGap(2)
 		);
 	}
+	private JLabel createLabel() {
+		return createLabel(null);
+	}
+
+	private JLabel createLabel(String text) {
+		JLabel jLabel = new JLabel();
+		jLabel.setBorder(null);
+		jLabel.setOpaque(false);
+		//jLabel.setVerticalAlignment(SwingConstants.BOTTOM);
+		if (text != null) {
+			jLabel.setText(text);
+			jLabel.setFont(new Font(jLabel.getFont().getName(), Font.BOLD, jLabel.getFont().getSize() + 1));
+		}
+		return jLabel;
+	}
 
 	private void setEnabled(final boolean enabled) {
 		if (!enabled) { //Save focus owner
 			focusOwner = program.getMainWindow().getFrame().getFocusOwner();
 		}
-		jGroup.setEnabled(enabled);
+		jExpand.setEnabled(enabled);
 		jColor.setVisible(enabled);
 		jColorDisabled.setVisible(!enabled);
 		jStockpile.setEnabled(enabled);
-		jOwnerLabel.setEnabled(enabled);
-		jMultiplierLabel.setEnabled(enabled);
 		jMultiplier.setEnabled(enabled);
+		jMultiplierLabel.setEnabled(enabled);
+		jName.setEnabled(enabled);
+		jAvailableLabel.setEnabled(enabled);
+		jAvailable.setEnabled(enabled);
+		jOwnerLabel.setEnabled(enabled);
 		jOwner.setEnabled(enabled);
 		jLocation.setEnabled(enabled);
 		jLocationLabel.setEnabled(enabled);
-		jExpand.setEnabled(enabled);
 		if (enabled && focusOwner != null) { //Load focus owner
 			focusOwner.requestFocusInWindow();
 		}
@@ -235,7 +253,7 @@ public class StockpileSeparatorTableCell extends SeparatorTableCell<StockpileIte
 		if (stockpileItem == null) { // handle 'late' rendering calls after this separator is invalid
 			return;
 		}
-		jGroup.setText(stockpileItem.getStockpile().getName());
+		//Color
 		if (Settings.get().isStockpileHalfColors()) {
 			if (stockpileItem.getStockpile().getPercentFull() >= (Settings.get().getStockpileColorGroup3() / 100.0) ) {
 				ColorSettings.config(jColor, ColorEntry.STOCKPILE_ICON_OVER_THRESHOLD);
@@ -251,15 +269,19 @@ public class StockpileSeparatorTableCell extends SeparatorTableCell<StockpileIte
 				ColorSettings.config(jColor, ColorEntry.STOCKPILE_ICON_BELOW_THRESHOLD);
 			}
 		}
-		String location = stockpileItem.getStockpile().getLocationName();
-		jLocation.setText(location);
-		jLocation.setToolTipText(location);
-		jLocationLabel.setToolTipText(location);
+		//Multiplier
+		jMultiplier.setText(Formater.compareFormat(stockpileItem.getStockpile().getMultiplier()));
+		//Name
+		jName.setText(stockpileItem.getStockpile().getName());
+		//Available
+		String available = Formater.doubleFormat(stockpileItem.getStockpile().getPercentFull());
+		jAvailable.setText(available);
+		//Owner
 		String owner = stockpileItem.getStockpile().getOwnerName();
 		jOwner.setText(owner);
-		jOwner.setToolTipText(owner);
-		jOwnerLabel.setToolTipText(owner);
-		jMultiplier.setText(Formater.compareFormat(stockpileItem.getStockpile().getMultiplier()));
+		//Location
+		String location = stockpileItem.getStockpile().getLocationName();
+		jLocation.setText(location);
 	}
 
 	protected JViewport getParentViewport() {
