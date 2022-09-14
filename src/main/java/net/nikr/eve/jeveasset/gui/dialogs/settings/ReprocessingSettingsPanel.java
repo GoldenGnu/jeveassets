@@ -31,7 +31,7 @@ import net.nikr.eve.jeveasset.data.settings.ReprocessSettings;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.DocumentFactory;
-import net.nikr.eve.jeveasset.gui.shared.components.JIntegerField;
+import net.nikr.eve.jeveasset.gui.shared.components.JDoubleField;
 import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 
 
@@ -64,7 +64,7 @@ public class ReprocessingSettingsPanel extends JSettingsPanel {
 		jStation50.addActionListener(listener);
 		jStationOther = new JRadioButton();
 		jStationOther.addActionListener(listener);
-		jStation = new JIntegerField(DocumentFactory.ValueFlag.POSITIVE_AND_ZERO);
+		jStation = new JDoubleField(DocumentFactory.ValueFlag.POSITIVE_AND_ZERO);
 		jStation.addMouseListener(listener);
 		jStation.setColumns(7);
 		JLabel jStationPercentLabel = new JLabel(DialoguesSettings.get().percentSymbol());
@@ -291,7 +291,7 @@ public class ReprocessingSettingsPanel extends JSettingsPanel {
 
 	@Override
 	public boolean save() {
-		ReprocessSettings reprocessSettings = new ReprocessSettings(Integer.parseInt(jStation.getText()), getSelected(jReprocessing), getSelected(jReprocessingEfficiency), getSelected(jOreProcessing), getSelected(jScrapmetalProcessing));
+		ReprocessSettings reprocessSettings = new ReprocessSettings(Double.parseDouble(jStation.getText()), getSelected(jReprocessing), getSelected(jReprocessingEfficiency), getSelected(jOreProcessing), getSelected(jScrapmetalProcessing));
 		boolean update = !Settings.get().getReprocessSettings().equals(reprocessSettings);
 		Settings.get().setReprocessSettings(reprocessSettings);
 		//Update table if needed

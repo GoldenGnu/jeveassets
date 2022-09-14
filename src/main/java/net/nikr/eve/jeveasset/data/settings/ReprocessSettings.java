@@ -23,7 +23,7 @@ package net.nikr.eve.jeveasset.data.settings;
 
 public class ReprocessSettings {
 
-	private final int station;
+	private final double station;
 	private final int reprocessingLevel;
 	private final int reprocessingEfficiencyLevel;
 	private final int oreProcessingLevel;
@@ -34,7 +34,7 @@ public class ReprocessSettings {
 		this(50, 0, 0, 0, 0);
 	}
 
-	public ReprocessSettings(final int station, final int reprocessingLevel, final int reprocessingEfficiencyLevel, int oreProcessingLevel, final int scrapmetalProcessing) {
+	public ReprocessSettings(final double station, final int reprocessingLevel, final int reprocessingEfficiencyLevel, int oreProcessingLevel, final int scrapmetalProcessing) {
 		this.station = station;
 		this.reprocessingLevel = reprocessingLevel;
 		this.reprocessingEfficiencyLevel = reprocessingEfficiencyLevel;
@@ -58,7 +58,7 @@ public class ReprocessSettings {
 		return scrapmetalProcessingLevel;
 	}
 
-	public int getStation() {
+	public double getStation() {
 		return station;
 	}
 
@@ -69,7 +69,7 @@ public class ReprocessSettings {
 	protected double getPercent(final boolean ore) {
 		double percent;
 		if (ore) {
-			percent = (((double) station / 100.0)
+			percent = ((station / 100.0)
 			* (1.0 + ((double) reprocessingLevel * 0.03))
 			* (1.0 + ((double) reprocessingEfficiencyLevel * 0.02))
 			* (1.0 + ((double) oreProcessingLevel * 0.02))
@@ -86,7 +86,10 @@ public class ReprocessSettings {
 	}
 
 	@Override
-	public boolean equals(final Object obj) {
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
 		if (obj == null) {
 			return false;
 		}
@@ -94,13 +97,16 @@ public class ReprocessSettings {
 			return false;
 		}
 		final ReprocessSettings other = (ReprocessSettings) obj;
-		if (this.station != other.station) {
+		if (Double.doubleToLongBits(this.station) != Double.doubleToLongBits(other.station)) {
 			return false;
 		}
 		if (this.reprocessingLevel != other.reprocessingLevel) {
 			return false;
 		}
 		if (this.reprocessingEfficiencyLevel != other.reprocessingEfficiencyLevel) {
+			return false;
+		}
+		if (this.oreProcessingLevel != other.oreProcessingLevel) {
 			return false;
 		}
 		if (this.scrapmetalProcessingLevel != other.scrapmetalProcessingLevel) {
@@ -111,11 +117,12 @@ public class ReprocessSettings {
 
 	@Override
 	public int hashCode() {
-		int hash = 7;
-		hash = 83 * hash + this.station;
-		hash = 83 * hash + this.reprocessingLevel;
-		hash = 83 * hash + this.reprocessingEfficiencyLevel;
-		hash = 83 * hash + this.scrapmetalProcessingLevel;
+		int hash = 5;
+		hash = 61 * hash + (int) (Double.doubleToLongBits(this.station) ^ (Double.doubleToLongBits(this.station) >>> 32));
+		hash = 61 * hash + this.reprocessingLevel;
+		hash = 61 * hash + this.reprocessingEfficiencyLevel;
+		hash = 61 * hash + this.oreProcessingLevel;
+		hash = 61 * hash + this.scrapmetalProcessingLevel;
 		return hash;
 	}
 }

@@ -1143,7 +1143,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 				ore = 0;
 			}
 		}
-		int station = getInt(windowElement, "station");
+		double station = getDouble(windowElement, "station");
 		settings.setReprocessSettings(new ReprocessSettings(station, reprocessing, efficiency, ore, scrapmetal));
 	}
 
