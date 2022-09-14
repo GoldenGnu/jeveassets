@@ -179,6 +179,7 @@ public abstract class TabsStockpile extends Bundle {
 	public abstract String source();
 	public abstract String station();
 	public abstract String stockpile();
+	public abstract String stockpileAvailable();
 	public abstract String stockpileLocation();
 	public abstract String stockpileOwner();
 	public abstract String stockpilePercent();
