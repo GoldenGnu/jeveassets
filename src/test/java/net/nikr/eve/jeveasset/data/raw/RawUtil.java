@@ -33,6 +33,7 @@ import java.util.Map;
 import java.util.Set;
 import net.nikr.eve.jeveasset.data.api.raw.RawAsset;
 import net.nikr.eve.jeveasset.data.api.raw.RawBlueprint;
+import net.nikr.eve.jeveasset.data.api.raw.RawContractItem;
 import net.nikr.eve.jeveasset.data.api.raw.RawIndustryJob;
 import net.nikr.eve.jeveasset.data.api.raw.RawJournal;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder;
@@ -76,6 +77,27 @@ public class RawUtil {
 				continue;
 			}
 			if (value.getName().equals("isBlueprintCopy") && raw.equals(RawAsset.class)) { //Converted to quantity
+				continue;
+			}
+			if (value.getName().equals("itemId") && raw.equals(RawContractItem.class)) { //Only in public endpoint
+				continue;
+			}
+			if (value.getName().equals("runs") && raw.equals(RawContractItem.class)) { //Only in public endpoint
+				continue;
+			}
+			if (value.getName().equals("materialEfficiency") && raw.equals(RawContractItem.class)) { //Only in public endpoint
+				continue;
+			}
+			if (value.getName().equals("timeEfficiency") && raw.equals(RawContractItem.class)) { //Only in public endpoint
+				continue;
+			}
+			if (value.getName().equals("isBlueprintCopy") && raw.equals(RawContractItem.class)) { //Only in public endpoint
+				continue;
+			}
+			if (value.getName().equals("isSingleton") && raw.equals(RawContractItem.class)) { //Only in corp/char endpoints (not working, though)
+				continue;
+			}
+			if (value.getName().equals("rawQuantity") && raw.equals(RawContractItem.class)) { //Only in corp/char endpoints (not working, though)
 				continue;
 			}
 			if (value.getName().equals("accountKey") && (raw.equals(RawTransaction.class) || raw.equals(RawJournal.class))) {
@@ -156,6 +178,27 @@ public class RawUtil {
 				continue;
 			}
 			if (value.getName().equals("isBlueprintCopy") && raw.equals(RawAsset.class)) { //Converted to quantity
+				continue;
+			}
+			if (value.getName().equals("itemId") && raw.equals(RawContractItem.class)) { //Only in public endpoint
+				continue;
+			}
+			if (value.getName().equals("runs") && raw.equals(RawContractItem.class)) { //Only in public endpoint
+				continue;
+			}
+			if (value.getName().equals("materialEfficiency") && raw.equals(RawContractItem.class)) { //Only in public endpoint
+				continue;
+			}
+			if (value.getName().equals("timeEfficiency") && raw.equals(RawContractItem.class)) { //Only in public endpoint
+				continue;
+			}
+			if (value.getName().equals("isBlueprintCopy") && raw.equals(RawContractItem.class)) { //Only in public endpoint
+				continue;
+			}
+			if (value.getName().equals("isSingleton") && raw.equals(RawContractItem.class)) { //Only in corp/char endpoints (not working, though)
+				continue;
+			}
+			if (value.getName().equals("rawQuantity") && raw.equals(RawContractItem.class)) { //Only in corp/char endpoints (not working, though)
 				continue;
 			}
 			if (value.getName().equals("accountKey") && (raw.equals(RawTransaction.class) || raw.equals(RawJournal.class))) {

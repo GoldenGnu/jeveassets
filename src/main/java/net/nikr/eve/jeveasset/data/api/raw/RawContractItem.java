@@ -20,8 +20,11 @@
  */
 package net.nikr.eve.jeveasset.data.api.raw;
 
+import net.nikr.eve.jeveasset.data.api.my.MyBlueprint;
+import net.nikr.eve.jeveasset.io.shared.RawConverter;
 import net.troja.eve.esi.model.CharacterContractsItemsResponse;
 import net.troja.eve.esi.model.CorporationContractsItemsResponse;
+import net.troja.eve.esi.model.PublicContractsItemsResponse;
 
 public class RawContractItem {
 
@@ -31,12 +34,15 @@ public class RawContractItem {
 	private Integer rawQuantity = null;
 	private Long recordId = null;
 	private Integer typeId = null;
+	private Long itemId = null;
+	private Integer runs = null;
+	private Integer materialEfficiency = null;
+	private Integer timeEfficiency = null;
 
 	/**
 	 * New
 	 */
-	private RawContractItem() {
-	}
+	private RawContractItem() { }
 
 	public static RawContractItem create() {
 		return new RawContractItem();
@@ -54,6 +60,10 @@ public class RawContractItem {
 		rawQuantity = contractItem.rawQuantity;
 		recordId = contractItem.recordId;
 		typeId = contractItem.typeId;
+		itemId = contractItem.itemId;
+		runs = contractItem.runs;
+		materialEfficiency = contractItem.materialEfficiency;
+		timeEfficiency = contractItem.timeEfficiency;
 	}
 
 	/**
@@ -82,6 +92,36 @@ public class RawContractItem {
 		rawQuantity = contractItem.getRawQuantity();
 		recordId = contractItem.getRecordId();
 		typeId = contractItem.getTypeId();
+	}
+
+	/**
+	 * ESI Public
+	 *
+	 * @param contractItem
+	 */
+	public RawContractItem(PublicContractsItemsResponse contractItem) {
+		isIncluded = contractItem.getIsIncluded();
+		isSingleton = false;
+		quantity = contractItem.getQuantity();
+		if (RawConverter.toBoolean(contractItem.getIsBlueprintCopy())) {
+			rawQuantity = -2;
+		} else {
+			rawQuantity = contractItem.getQuantity();
+		}
+		recordId = contractItem.getRecordId();
+		typeId = contractItem.getTypeId();
+		itemId = contractItem.getItemId();
+		runs = contractItem.getRuns();
+		materialEfficiency = contractItem.getMaterialEfficiency();
+		timeEfficiency = contractItem.getTimeEfficiency();
+	}
+
+	public MyBlueprint getBlueprint() {
+		if (runs != null || materialEfficiency != null || timeEfficiency != null) {
+			return new MyBlueprint(this);
+		} else {
+			return null;
+		}
 	}
 
 	public Boolean isIncluded() {
@@ -130,5 +170,37 @@ public class RawContractItem {
 
 	public final void setTypeID(Integer typeId) {
 		this.typeId = typeId;
+	}
+
+	public Long getItemID() {
+		return itemId;
+	}
+
+	public void setItemID(Long itemId) {
+		this.itemId = itemId;
+	}
+
+	public Integer getLicensedRuns() {
+		return runs;
+	}
+
+	public void setLicensedRuns(Integer runs) {
+		this.runs = runs;
+	}
+
+	public Integer getME() {
+		return materialEfficiency;
+	}
+
+	public void setME(Integer materialEfficiency) {
+		this.materialEfficiency = materialEfficiency;
+	}
+
+	public Integer getTE() {
+		return timeEfficiency;
+	}
+
+	public void setTE(Integer timeEfficiency) {
+		this.timeEfficiency = timeEfficiency;
 	}
 }

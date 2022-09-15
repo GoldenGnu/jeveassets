@@ -38,7 +38,7 @@ public class MyContract extends RawContract implements LocationsType, OwnersType
 	private String assignee = "";
 	private String issuerCorp = "";
 	private String issuer = "";
-	private final Set<Long> owners = new HashSet<Long>();
+	private final Set<Long> owners = new HashSet<>();
 
 	private boolean issuerAfterAssets = false;
 	private boolean acceptorAfterAssets = false;
@@ -165,6 +165,10 @@ public class MyContract extends RawContract implements LocationsType, OwnersType
 
 	public boolean isCourierContract() {
 		return getType() == ContractType.COURIER;
+	}
+
+	public boolean isPublic() {
+		return getAvailability() == ContractAvailability.PUBLIC;
 	}
 
 	public boolean isItemContract() {
