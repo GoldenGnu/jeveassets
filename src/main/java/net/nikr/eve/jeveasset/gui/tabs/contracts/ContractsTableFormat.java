@@ -145,6 +145,16 @@ public enum ContractsTableFormat implements EnumTableColumn<MyContractItem> {
 			return from.getTE();
 		}
 	},
+	MARKET_PRICE(Double.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsContracts.get().columnMarketPrice();
+		}
+		@Override
+		public Object getColumnValue(final MyContractItem from) {
+			return from.getDynamicPrice();
+		}
+	},
 	PRICE(Double.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
