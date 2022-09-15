@@ -33,7 +33,6 @@ import net.nikr.eve.jeveasset.data.api.my.MyContract;
 import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
-import net.nikr.eve.jeveasset.data.api.raw.RawContract.ContractStatus;
 import net.nikr.eve.jeveasset.data.profile.ProfileData;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.TrackerData;
@@ -242,7 +241,7 @@ public class DataSetCreator {
 					//OR
 					//Done & Assets not updated = Add Collateral
 					//If assets is updated, so are all the values
-					if (assetsUpdated(contract.getDateIssued(), issuer) && (contract.getStatus() == ContractStatus.IN_PROGRESS || contract.getStatus() == ContractStatus.OUTSTANDING)) {
+					if (assetsUpdated(contract.getDateIssued(), issuer) && (contract.isInProgress() || contract.isOpen())) {
 						addContractCollateral(contract, values, total, date, issuer.getOwnerName()); //OK
 					} else if (assetsNotUpdated(contract.getDateCompleted(), issuer)) {
 						addContractCollateral(contract, values, total, date, issuer.getOwnerName()); //NOT TESTED
@@ -252,21 +251,21 @@ public class DataSetCreator {
 				if (acceptor != null) {
 					//Not Done & Balance Updated = Add Collateral
 					//If ballance is not updated, there is nothing to counter...
-					if (balanceUpdated(contract.getDateIssued(), acceptor) && contract.getStatus() == ContractStatus.IN_PROGRESS) {
+					if (balanceUpdated(contract.getDateIssued(), acceptor) && contract.isInProgress()) {
 						addContractCollateral(contract, values, total, date, acceptor.getOwnerName()); //OK
 					}
 				}
 			}
 			//Contract Isk
 			if (issuer != null) { //Issuer
-				if (contract.getStatus() == ContractStatus.OUTSTANDING) { //Not Completed
+				if (contract.isOpen()) { //Not Completed
 					//Not Done & Balance Updated = Add Reward (We still own the isk, until the contract is completed)
 					//If ballance is not updated, there is nothing to counter...
 					if (balanceUpdated(contract.getDateIssued(), issuer)) {
 						//Buying: +Reward
 						addContractValue(values, total, date, issuer.getOwnerName(), contract.getReward()); //OK
 					} // else: Selling: we do not own the price isk, until the contract is completed
-				} else if (contract.getDateCompleted() != null) { //Completed
+				} else if (contract.isCompletedSuccesful()) { //Completed
 					//Done & Ballance not updated yet = Add Price + Remove Reward (Contract completed, update with the current values)
 					//If ballance is updated, so are all the values
 					if (balanceNotUpdated(contract.getDateCompleted(), issuer)) { //NOT TESTED
@@ -277,7 +276,7 @@ public class DataSetCreator {
 					}
 				}
 			}
-			if (acceptor != null && contract.getDateCompleted() != null) { //Completed
+			if (acceptor != null && contract.isCompletedSuccesful()) { //Completed
 				//Done & Ballance not updated yet = Remove Price & Add Reward (Contract completed, update with the current values)
 				//If ballance is updated, so are all the values
 				if (balanceNotUpdated(contract.getDateCompleted(), acceptor)) { //NOT TESTED
@@ -309,7 +308,7 @@ public class DataSetCreator {
 			OwnerType acceptor = owners.get(contract.getAcceptorID());
 			//Issuer
 			if (issuer != null) {
-				if (contract.getStatus() == ContractStatus.OUTSTANDING) { //Not Completed
+				if (contract.isOpen()) { //Not Completed
 					if (contractItem.isIncluded()) { //Item are being sold
 						//Not Done & Assets Updated = Add Item Value (We still own the item, until the contract is completed)
 						//If Assets is not updated, nothing to counter
@@ -318,7 +317,7 @@ public class DataSetCreator {
 							addContractValue(values, total, date, issuer.getOwnerName(), contractItem.getDynamicPrice() * contractItem.getQuantity());
 						}
 					} // else: Item is being bought - nothing have changed until the contract is done
-				} else if (contract.getDateCompleted() != null) { //Completed
+				} else if (contract.isCompletedSuccesful()) { //Completed
 					//Done & Assets not updated yet = Add Bought Item & Remove Sold Item (Contract completed, update with the current values)
 					//If Assets is updated, so are all the values
 					if (assetsNotUpdated(contract.getDateCompleted(), issuer)) {
@@ -332,7 +331,7 @@ public class DataSetCreator {
 					}
 				}
 			}
-			if (acceptor != null && contract.getDateCompleted() != null) { //Completed
+			if (acceptor != null && contract.isCompletedSuccesful()) { //Completed
 				//Done & Assets not updated yet = Add Bought Item & Remove Sold Item (Contract completed, update with the current values)
 				//If Assets is updated, so are all the values
 				if (assetsNotUpdated(contract.getDateCompleted(), acceptor)) {

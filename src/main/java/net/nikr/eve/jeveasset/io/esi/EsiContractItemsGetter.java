@@ -31,12 +31,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.data.api.my.MyContract;
 import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
-import net.nikr.eve.jeveasset.data.api.raw.RawContract.ContractStatus;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
-import static net.nikr.eve.jeveasset.io.esi.AbstractEsiGetter.DATASOURCE;
-import static net.nikr.eve.jeveasset.io.esi.AbstractEsiGetter.DEFAULT_RETRIES;
-import static net.nikr.eve.jeveasset.io.esi.AbstractEsiGetter.getContractsApiOpen;
 import net.troja.eve.esi.ApiException;
 import net.troja.eve.esi.ApiResponse;
 import net.troja.eve.esi.model.CharacterContractsItemsResponse;
@@ -149,12 +145,12 @@ public class EsiContractItemsGetter extends AbstractEsiGetter {
 					if (entry.getValue() != null && !entry.getValue().isEmpty()) {
 						continue; //Ignore contracts that have been already updated
 					}
-					if (esiOwner.isCorporation() && contract.getStatus() == ContractStatus.DELETED) {
+					if (esiOwner.isCorporation() && contract.isDeleted()) {
 						continue; //Ignore deleted corporation contracts
 					}
 					uniqueContacts.add(contract);
 					//Open public contracts
-					if (contract.isPublic() && contract.getStatus() == ContractStatus.OUTSTANDING) {
+					if (contract.isPublic() && contract.isOpen()) {
 						publicContracts.get(esiOwner.getOwnerID()).add(contract);
 						SIZE.getAndIncrement();
 					}

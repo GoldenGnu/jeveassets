@@ -115,7 +115,7 @@ public class MyContract extends RawContract implements LocationsType, OwnersType
 	}
 
 	public void setIssuerAfterAssets(Date date) {
-		if (date != null && getDateCompleted() != null) {
+		if (date != null && isCompletedSuccesful()) {
 			this.issuerAfterAssets = getDateCompleted().after(date);
 		} else {
 			this.issuerAfterAssets = false;
@@ -127,7 +127,7 @@ public class MyContract extends RawContract implements LocationsType, OwnersType
 	}
 
 	public void setAcceptorAfterAssets(Date date) {
-		if (date != null && getDateCompleted() != null) {
+		if (date != null && isCompletedSuccesful()) {
 			this.acceptorAfterAssets = getDateCompleted().after(date);
 		} else {
 			this.acceptorAfterAssets = false;
@@ -136,7 +136,7 @@ public class MyContract extends RawContract implements LocationsType, OwnersType
 
 	@Override
 	public Set<MyLocation> getLocations() {
-		Set<MyLocation> locations = new HashSet<MyLocation>();
+		Set<MyLocation> locations = new HashSet<>();
 		if (startLocation != null) {
 			locations.add(startLocation);
 		}
@@ -177,6 +177,22 @@ public class MyContract extends RawContract implements LocationsType, OwnersType
 
 	public boolean isIgnoreContract() {
 		return getType() != ContractType.AUCTION && getType() != ContractType.ITEM_EXCHANGE;
+	}
+
+	public boolean isOpen() {
+		return getStatus() == ContractStatus.OUTSTANDING;
+	}
+
+	public boolean isInProgress() {
+		return getStatus() == ContractStatus.IN_PROGRESS;
+	}
+
+	public boolean isDeleted() {
+		return getStatus() == ContractStatus.DELETED;
+	}
+
+	public boolean isCompletedSuccesful() {
+		return getDateCompleted() != null;
 	}
 
 	public String getStatusFormated() {
