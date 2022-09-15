@@ -226,6 +226,7 @@ public enum Images {
 	UPDATE_WORKING ("update_working.png"),
 	UPDATE_CANCELLED ("update_cancelled.png"),
 	UPDATE_DONE_OK ("update_done_ok.png"),
+	UPDATE_DONE_INFO ("update_done_info.png"),
 	UPDATE_DONE_SOME ("update_done_some.png"),
 	UPDATE_DONE_ERROR ("update_done_error.png");
 
