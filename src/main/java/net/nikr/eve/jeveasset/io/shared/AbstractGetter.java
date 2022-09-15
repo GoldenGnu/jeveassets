@@ -151,7 +151,7 @@ public abstract class AbstractGetter<O extends OwnerType> implements Runnable {
 		}
 		//Check API cache time
 		if (wait) {
-			addWarning("NOT ALLOWED YET", "Update skipped: Waiting for cache to expire.\r\n(Updatable again after cache expires)");
+			addInfo("NOT ALLOWED YET", "Update skipped: Waiting for cache to expire.\r\n(Updatable again after cache expires)");
 			return false;
 		}
 		//Check if the owner have accesss to the endpoint
@@ -214,9 +214,20 @@ public abstract class AbstractGetter<O extends OwnerType> implements Runnable {
 	}
 
 	protected final void addWarning(Object logMsg, Object taskMsg, Throwable ex) {
-		logError(logMsg, taskMsg, ex);
+		logWarn(logMsg, taskMsg, ex);
 		if (updateTask != null && taskMsg != null) {
 			updateTask.addWarning(buildLogID(), taskMsg.toString());
+		}
+	}
+
+	protected final void addInfo(String logMsg, String taskMsg) {
+		addInfo(logMsg, taskMsg, null);
+	}
+
+	protected final void addInfo(Object logMsg, Object taskMsg, Throwable ex) {
+		logInfo(logMsg, taskMsg, ex);
+		if (updateTask != null && taskMsg != null) {
+			updateTask.addInfo(buildLogID(), taskMsg.toString());
 		}
 	}
 
@@ -252,8 +263,29 @@ public abstract class AbstractGetter<O extends OwnerType> implements Runnable {
 	}
 
 	protected final void logWarn(Object logMsg, Object taskMsg) {
+		logWarn(logMsg, taskMsg, null);
+	}
+
+	protected final void logWarn(Object logMsg, Object taskMsg, Throwable ex) {
 		String e = getLog(logMsg, taskMsg, null);
-		LOG.warn(e);
+		if (ex != null) {
+			LOG.warn(e, ex);
+		} else {
+			LOG.warn(e);
+		}
+	}
+
+	protected final void logInfo(Object logMsg, Object taskMsg) {
+		logInfo(logMsg, taskMsg, null);
+	}
+
+	protected final void logInfo(Object logMsg, Object taskMsg, Throwable ex) {
+		String e = getLog(logMsg, taskMsg, null);
+		if (ex != null) {
+			LOG.info(e, ex);
+		} else {
+			LOG.info(e);
+		}
 	}
 
 	protected final String getLog(Object logMsg, Object taskMsg, Throwable ex) {
