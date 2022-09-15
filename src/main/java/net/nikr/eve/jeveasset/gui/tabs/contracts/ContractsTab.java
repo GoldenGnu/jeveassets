@@ -25,6 +25,8 @@ import ca.odell.glazedlists.FilterList;
 import ca.odell.glazedlists.ListSelection;
 import ca.odell.glazedlists.SeparatorList;
 import ca.odell.glazedlists.SortedList;
+import ca.odell.glazedlists.event.ListEvent;
+import ca.odell.glazedlists.event.ListEventListener;
 import ca.odell.glazedlists.swing.DefaultEventSelectionModel;
 import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import ca.odell.glazedlists.swing.TableComparatorChooser;
@@ -33,15 +35,21 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Set;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.data.api.my.MyContract;
 import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
 import net.nikr.eve.jeveasset.data.settings.types.LocationType;
+import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.images.Images;
+import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.components.JFixedToolBar;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTabPrimary;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
@@ -65,6 +73,11 @@ public class ContractsTab extends JMainTabPrimary {
 
 	//GUI
 	private final JSeparatorTable jTable;
+	private final JLabel jSellingPrice;
+	private final JLabel jSellingAssets;
+	private final JLabel jBuying;
+	private final JLabel jSold;
+	private final JLabel jBought;
 
 	//Table
 	private final EventList<MyContractItem> eventList;
@@ -75,13 +88,12 @@ public class ContractsTab extends JMainTabPrimary {
 	private final EnumTableFormatAdaptor<ContractsTableFormat, MyContractItem> tableFormat;
 	private final ContractsFilterControl filterControl;
 
-	//Listener
-	private final ListenerClass listener = new ListenerClass();
-
 	public static final String NAME = "contracts"; //Not to be changed!
 
 	public ContractsTab(Program program) {
 		super(program, NAME, TabsContracts.get().title(), Images.TOOL_CONTRACTS.getIcon(), true);
+
+		ListenerClass listener = new ListenerClass();
 
 		JFixedToolBar jToolBarLeft = new JFixedToolBar();
 
@@ -115,6 +127,8 @@ public class ContractsTab extends JMainTabPrimary {
 		eventList.getReadWriteLock().readLock().lock();
 		filterList = new FilterList<>(sortedListSeparator);
 		eventList.getReadWriteLock().readLock().unlock();
+		//Statusbar updater
+		filterList.addListEventListener(listener);
 		//Separator
 		separatorList = new SeparatorList<>(filterList, new SeparatorComparator(), 1, Integer.MAX_VALUE);
 		//Table Model
@@ -139,6 +153,21 @@ public class ContractsTab extends JMainTabPrimary {
 		filterControl = new ContractsFilterControl(sortedListSeparator);
 		//Menu
 		installTableTool(new ContractsTableMenu(), tableFormat, tableModel, jTable, filterControl, MyContractItem.class);
+
+		jSellingPrice = StatusPanel.createLabel(TabsContracts.get().sellingPrice(), Images.ORDERS_SELL.getIcon());
+		addStatusbarLabel(jSellingPrice);
+
+		jSellingAssets = StatusPanel.createLabel(TabsContracts.get().sellingAssets(), Images.TOOL_VALUES.getIcon());
+		addStatusbarLabel(jSellingAssets);
+
+		jBuying = StatusPanel.createLabel(TabsContracts.get().buying(), Images.ORDERS_BUY.getIcon());
+		addStatusbarLabel(jBuying);
+
+		jSold = StatusPanel.createLabel(TabsContracts.get().sold(), Images.ORDERS_SOLD.getIcon());
+		addStatusbarLabel(jSold);
+
+		jBought = StatusPanel.createLabel(TabsContracts.get().bought(), Images.ORDERS_BOUGHT.getIcon());
+		addStatusbarLabel(jBought);
 
 		layout.setHorizontalGroup(
 				layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
@@ -200,7 +229,7 @@ public class ContractsTab extends JMainTabPrimary {
 		public void addToolMenu(JComponent jComponent) { }
 	}
 
-	private class ListenerClass implements ActionListener {
+	private class ListenerClass implements ActionListener, ListEventListener<MyContractItem> {
 
 		@Override
 		public void actionPerformed(final ActionEvent e) {
@@ -210,6 +239,61 @@ public class ContractsTab extends JMainTabPrimary {
 			if (ContractsAction.EXPAND.name().equals(e.getActionCommand())) {
 				jTable.expandSeparators(true);
 			}
+		}
+
+		@Override
+		public void listChanged(final ListEvent<MyContractItem> listChanges) {
+			double sellingPrice = 0;
+			double sellingAssets = 0;
+			double buying = 0;
+			double sold = 0;
+			double bought = 0;
+			try {
+				filterList.getReadWriteLock().readLock().lock();
+				Set<MyContract> contracts = new HashSet<>();
+				for (MyContractItem contractItem : filterList) {
+					contracts.add(contractItem.getContract());
+					MyContract contract = contractItem.getContract();
+					if (contract.isIgnoreContract()) {
+						continue;
+					}
+					boolean isIssuer = contract.isForCorp() ? program.getOwners().keySet().contains(contract.getIssuerCorpID()) : program.getOwners().keySet().contains(contract.getIssuerID());
+					if (isIssuer && //Issuer
+							contract.isOpen() //Not completed
+							&& contractItem.isIncluded()) { //Selling
+						sellingAssets = sellingAssets + contractItem.getDynamicPrice() * contractItem.getQuantity();
+					}
+				}
+				for (MyContract contract : contracts) {
+					if (contract.isIgnoreContract()) {
+						continue;
+					}
+					boolean isIssuer = contract.isForCorp() ? program.getOwners().keySet().contains(contract.getIssuerCorpID()) : program.getOwners().keySet().contains(contract.getIssuerID());
+					boolean isAcceptor = contract.getAcceptorID() > 0 && program.getOwners().keySet().contains(contract.getAcceptorID());
+					if (isIssuer //Issuer
+							&& contract.isOpen() //Not completed
+							) { //Selling/Buying
+						sellingPrice = sellingPrice + contract.getPrice(); //Positive
+						buying = buying - contract.getReward(); //Negative
+					} else if (contract.isCompletedSuccessful()) { //Completed
+						if (isIssuer) { //Sold/Bought
+							sold = sold + contract.getPrice(); //Positive
+							bought = bought - contract.getReward(); //Negative
+						}
+						if (isAcceptor) { //Reverse of the above
+							sold = sold + contract.getReward(); //Positive
+							bought = bought - contract.getPrice(); //Negative
+						}
+					}
+				}
+			} finally {
+				filterList.getReadWriteLock().readLock().unlock();
+			}
+			jSellingPrice.setText(Formater.iskFormat(sellingPrice));
+			jSellingAssets.setText(Formater.iskFormat(sellingAssets));
+			jSold.setText(Formater.iskFormat(sold));
+			jBuying.setText(Formater.iskFormat(buying));
+			jBought.setText(Formater.iskFormat(bought));
 		}
 	}
 

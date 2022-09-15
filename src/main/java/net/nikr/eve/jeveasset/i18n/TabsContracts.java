@@ -36,6 +36,8 @@ public abstract class TabsContracts extends Bundle {
 	}
 
 	public abstract String auction();
+	public abstract String bought();
+	public abstract String buying();
 	public abstract String collapse();
 	public abstract String columnAccepted();
 	public abstract String columnAcceptor();
@@ -83,6 +85,9 @@ public abstract class TabsContracts extends Bundle {
 	public abstract String notAccepted();
 	public abstract String packaged();
 	public abstract String publicContract();
+	public abstract String sellingPrice();
+	public abstract String sellingAssets();
+	public abstract String sold();
 	public abstract String statusCancelled();
 	public abstract String statusCompleted();
 	public abstract String statusCompletedByContractor();
