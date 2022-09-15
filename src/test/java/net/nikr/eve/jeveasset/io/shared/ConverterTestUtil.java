@@ -43,6 +43,7 @@ import net.nikr.eve.jeveasset.data.api.accounts.EveKitOwner;
 import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
 import net.nikr.eve.jeveasset.data.api.my.MyAccountBalance;
 import net.nikr.eve.jeveasset.data.api.my.MyAsset;
+import net.nikr.eve.jeveasset.data.api.my.MyBlueprint;
 import net.nikr.eve.jeveasset.data.api.my.MyContainerLog;
 import net.nikr.eve.jeveasset.data.api.my.MyContract;
 import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
@@ -509,6 +510,13 @@ public class ConverterTestUtil {
 				myContract.setAvailability(options.getContractAvailabilityRaw());
 			}
 		}
+		if (object instanceof MyContractItem) {
+			MyContractItem myContractItem = (MyContractItem) object;
+			myContractItem.setItemID(options.getLong());
+			myContractItem.setLicensedRuns(options.getInteger());
+			myContractItem.setME(options.getInteger());
+			myContractItem.setTE(options.getInteger());
+		}
 		if (object instanceof MyMarketOrder) {
 			MyMarketOrder marketOrder = (MyMarketOrder) object;
 			marketOrder.setWalletDivision(options.getInteger());
@@ -748,6 +756,8 @@ public class ConverterTestUtil {
 			return options.getMyShip();
 		} else if (type.equals(JButton.class)) {
 			return options.getButton();
+		} else if (type.equals(MyBlueprint.class)) {
+			return options.getMyBlueprint();
 		} else {
 			fail("No test value for: " + type.getSimpleName());
 			return null;

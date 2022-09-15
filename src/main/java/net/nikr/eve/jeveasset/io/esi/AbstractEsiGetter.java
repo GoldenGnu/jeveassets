@@ -73,6 +73,7 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner> {
 	private static final CharacterApi CHARACTER_API = new CharacterApi(PUBLIC_CLIENT);
 	private static final CorporationApi CORPORATION_API = new CorporationApi(PUBLIC_CLIENT);
 	private static final SovereigntyApi SOVEREIGNTY_API = new SovereigntyApi(PUBLIC_CLIENT);
+	private static final ContractsApi CONTRACTS_API = new ContractsApi(PUBLIC_CLIENT);
 	private static final MarketApi MARKET_API = new MarketApi(PUBLIC_CLIENT);
 	private static final FactionWarfareApi FACTION_WARFARE_API = new FactionWarfareApi(PUBLIC_CLIENT);
 	public static final UserInterfaceApi USER_INTERFACE_API = new UserInterfaceApi(PUBLIC_CLIENT);
@@ -327,6 +328,10 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner> {
 		return FACTION_WARFARE_API;
 	}
 
+	public static ContractsApi getContractsApiOpen() {
+		return CONTRACTS_API;
+	}
+
 	protected final <K, V> Map<K, V> updateListSlow(Collection<K> list, boolean trackProgress, int maxRetries, ListHandlerSlow<K, V> handler) throws ApiException {
 		Map<K, V> values = new HashMap<>();
 		int count = 1;
@@ -458,6 +463,42 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner> {
 
 	protected abstract class PagedListHandler<K, V> {
 		protected abstract List<V> get(K k) throws ApiException;
+	}
+
+	protected final <K, V> Map<K, List<V>> updatePagedMap(Collection<K> list, PagedListHandler<K, V> handler) throws ApiException {
+		List<Callable<Map<K, List<V>>>> updaters = new ArrayList<>();
+		for (K k : list) {
+			updaters.add(new Callable<Map<K, List<V>>>() {
+				@Override
+				public Map<K, List<V>> call() throws Exception {
+					List<V> v = handler.get(k);
+					if (v != null) {
+						Map<K, List<V>> map = new HashMap<>();
+						map.put(k, v);
+						return map;
+					} else {
+						return null;
+					}
+				}
+			}
+			);
+		}
+		LOG.info("Starting " + updaters.size() + " list threads");
+		Map<K, List<V>> values = new HashMap<>();
+		try {
+			List<Future<Map<K, List<V>>>> futures = startSubThreads(updaters);
+			for (Future<Map<K, List<V>>> future : futures) {
+				Map<K, List<V>> returnValue = future.get();
+				if (returnValue != null) {
+					values.putAll(returnValue);
+				}
+			}
+		} catch (InterruptedException ex) {
+			throw new RuntimeException(ex);
+		} catch (ExecutionException ex) {
+			ThreadWoker.throwExecutionException(ApiException.class, ex);
+		}
+		return values;
 	}
 
 	protected final <K> List<K> updateIDs(Set<Long> existing, int maxRetries, IDsHandler<K> handler) throws ApiException {

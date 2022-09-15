@@ -30,6 +30,7 @@ import java.util.Set;
 import javax.swing.JButton;
 import net.nikr.eve.jeveasset.data.api.accounts.EveApiAccount;
 import net.nikr.eve.jeveasset.data.api.accounts.EveApiAccount.KeyType;
+import net.nikr.eve.jeveasset.data.api.my.MyBlueprint;
 import net.nikr.eve.jeveasset.data.api.my.MyShip;
 import net.nikr.eve.jeveasset.data.api.raw.RawBlueprint;
 import net.nikr.eve.jeveasset.data.api.raw.RawContainerLog;
@@ -109,6 +110,8 @@ public class ConverterTestOptionsGetter {
 		private static final UserPrice[] USER_ITEM = {new UserPrice(DOUBLE[0], INTEGER[0], STRING[0])};
 		private static final MyShip MY_SHIP = new MyShip(LONG[0], INTEGER[0], 60003466L);
 		private static final JButton BUTTON = new JButton();
+		private static final MyBlueprint BLUEPRINT = new MyBlueprint(INTEGER[0], INTEGER[0], INTEGER[0]);
+				
 		//LocationType
 		private static final CharacterAssetsResponse.LocationTypeEnum[] ESI_LOCATION_TYPE_CHARACTER = CharacterAssetsResponse.LocationTypeEnum.values();
 		private static final CorporationAssetsResponse.LocationTypeEnum[] ESI_LOCATION_TYPE_CORPORATION = CorporationAssetsResponse.LocationTypeEnum.values();
@@ -451,6 +454,11 @@ public class ConverterTestOptionsGetter {
 		@Override
 		public JButton getButton() {
 			return BUTTON;
+		}
+
+		@Override
+		public MyBlueprint getMyBlueprint() {
+			return BLUEPRINT;
 		}
 
 		@Override

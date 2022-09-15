@@ -79,6 +79,7 @@ import net.troja.eve.esi.model.CorporationWalletsResponse;
 import net.troja.eve.esi.model.MarketOrdersResponse;
 import net.troja.eve.esi.model.PlanetContent;
 import net.troja.eve.esi.model.PlanetPin;
+import net.troja.eve.esi.model.PublicContractsItemsResponse;
 import net.troja.eve.esi.model.Skill;
 
 
@@ -206,6 +207,14 @@ public class EsiConverter extends DataConverter {
 	public static Map<MyContract, List<MyContractItem>> toContractItemsCorporation(MyContract contract, List<CorporationContractsItemsResponse> responses, OwnerType owner) {
 		List<RawContractItem> rawContractItems = new ArrayList<>();
 		for (CorporationContractsItemsResponse response : responses) {
+			rawContractItems.add(new RawContractItem(response));
+		}
+		return convertRawContractItems(contract, rawContractItems, owner);
+	}
+
+	public static Map<MyContract, List<MyContractItem>> toContractItemsPublic(MyContract contract, List<PublicContractsItemsResponse> responses, OwnerType owner) {
+		List<RawContractItem> rawContractItems = new ArrayList<>();
+		for (PublicContractsItemsResponse response : responses) {
 			rawContractItems.add(new RawContractItem(response));
 		}
 		return convertRawContractItems(contract, rawContractItems, owner);

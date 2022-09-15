@@ -27,6 +27,7 @@ import java.util.Date;
 import javax.swing.JButton;
 import net.nikr.eve.jeveasset.data.api.accounts.EveApiAccount;
 import net.nikr.eve.jeveasset.data.api.accounts.EveApiAccount.KeyType;
+import net.nikr.eve.jeveasset.data.api.my.MyBlueprint;
 import net.nikr.eve.jeveasset.data.api.my.MyShip;
 import net.nikr.eve.jeveasset.data.api.raw.RawBlueprint;
 import net.nikr.eve.jeveasset.data.api.raw.RawContainerLog;
@@ -85,6 +86,8 @@ public interface ConverterTestOptions {
 	public MyShip getMyShip();
 
 	public JButton getButton();
+
+	public MyBlueprint getMyBlueprint();
 
 	public MarketPriceData getMarketPriceData();
 

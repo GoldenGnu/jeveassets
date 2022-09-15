@@ -24,7 +24,6 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
-import net.nikr.eve.jeveasset.data.api.raw.RawBlueprint;
 import net.nikr.eve.jeveasset.data.api.raw.RawIndustryJob;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
@@ -205,7 +204,7 @@ public class MyIndustryJob extends RawIndustryJob implements Comparable<MyIndust
 	private double contractPrice;
 	private double outputValue;
 	private String installer = "";
-	private RawBlueprint blueprint;
+	private MyBlueprint blueprint;
 	private MyLocation location;
 
 	public MyIndustryJob(final RawIndustryJob rawIndustryJob, final Item item, final Item output, final OwnerType owner) {
@@ -311,7 +310,7 @@ public class MyIndustryJob extends RawIndustryJob implements Comparable<MyIndust
 		return 0;
 	}
 
-	public void setBlueprint(RawBlueprint blueprint) {
+	public void setBlueprint(MyBlueprint blueprint) {
 		this.blueprint = blueprint;
 	}
 

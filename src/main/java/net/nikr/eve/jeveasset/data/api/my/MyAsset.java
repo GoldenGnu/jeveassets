@@ -30,7 +30,6 @@ import java.util.Set;
 import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob.IndustryActivity;
 import net.nikr.eve.jeveasset.data.api.raw.RawAsset;
-import net.nikr.eve.jeveasset.data.api.raw.RawBlueprint;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.settings.MarketPriceData;
@@ -82,7 +81,7 @@ public class MyAsset extends RawAsset implements Comparable<MyAsset>, InfoItem, 
 	private double price;
 	private double contractPrice;
 	private Tags tags;
-	private RawBlueprint blueprint;
+	private MyBlueprint blueprint;
 	private MyLocation location;
 	//Dynamic values cache
 	private boolean userNameSet = false;
@@ -486,7 +485,7 @@ public class MyAsset extends RawAsset implements Comparable<MyAsset>, InfoItem, 
 		this.added = added;
 	}
 
-	public void setBlueprint(RawBlueprint blueprint) {
+	public void setBlueprint(MyBlueprint blueprint) {
 		this.blueprint = blueprint;
 		updateBlueprint();
 	}
