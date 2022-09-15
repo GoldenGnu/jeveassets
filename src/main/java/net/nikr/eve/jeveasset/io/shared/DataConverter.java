@@ -41,7 +41,6 @@ import net.nikr.eve.jeveasset.data.api.raw.RawAccountBalance;
 import net.nikr.eve.jeveasset.data.api.raw.RawAsset;
 import net.nikr.eve.jeveasset.data.api.raw.RawContainerLog;
 import net.nikr.eve.jeveasset.data.api.raw.RawContract;
-import net.nikr.eve.jeveasset.data.api.raw.RawContract.ContractStatus;
 import net.nikr.eve.jeveasset.data.api.raw.RawContractItem;
 import net.nikr.eve.jeveasset.data.api.raw.RawIndustryJob;
 import net.nikr.eve.jeveasset.data.api.raw.RawJournal;
@@ -93,17 +92,11 @@ public abstract class DataConverter {
 				issuer = owners.get(contractItem.getContract().getIssuerID());
 			}
 			 */
-			if ( //Not completed
-					(contractItem.getContract().getStatus() == ContractStatus.IN_PROGRESS
-					|| contractItem.getContract().getStatus() == ContractStatus.OUTSTANDING)
-					//Owned
-					&& issuer != null
-					//Not courier
-					&& contractItem.getContract().isItemContract()
-					//Sell
-					&& ((contractItem.isIncluded() && includeSellContracts)
-					//Buy
-					|| (!contractItem.isIncluded() && includeBuyContracts))) {
+			if (contractItem.getContract().isOpen() //Not completed
+					&& issuer != null //Owned
+					&& contractItem.getContract().isItemContract() //Not courier
+					&& ((contractItem.isIncluded() && includeSellContracts) //Sell
+					|| (!contractItem.isIncluded() && includeBuyContracts))) { //Buy
 				MyAsset asset = new MyAsset(contractItem, issuer);
 				list.add(asset);
 			}

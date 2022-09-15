@@ -489,8 +489,8 @@ public class LogManager {
 			if (oldContract.getStatus().equals(newContractItem.getContract().getStatus())) {
 				continue;
 			}
-			if (newContractItem.getContract().getStatus() != RawContract.ContractStatus.CANCELLED
-					&& newContractItem.getContract().getStatus() != RawContract.ContractStatus.DELETED
+			if (newContractItem.getContract().isDeleted()
+					&& newContractItem.getContract().getStatus() != RawContract.ContractStatus.CANCELLED
 					&& newContractItem.getContract().getStatus() != RawContract.ContractStatus.REVERSED) {
 				continue;
 			}

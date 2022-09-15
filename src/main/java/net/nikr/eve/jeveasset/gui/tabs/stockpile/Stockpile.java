@@ -38,7 +38,6 @@ import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
-import net.nikr.eve.jeveasset.data.api.raw.RawContract.ContractStatus;
 import net.nikr.eve.jeveasset.data.api.raw.RawIndustryJob;
 import net.nikr.eve.jeveasset.data.profile.ProfileData;
 import net.nikr.eve.jeveasset.data.sde.Item;
@@ -864,14 +863,14 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 					boolean isAcceptor = contractItem.getContract().getAcceptorID() > 0 && matchOwner(filter, contractItem.getContract().getAcceptorID());
 					//Sell: Issuer Included or Acceptor Excluded
 					if ((isIssuer && contractItem.isIncluded()) || (isAcceptor && !contractItem.isIncluded())) {
-						if (contractItem.getContract().getStatus() == ContractStatus.OUTSTANDING && filter.isSellingContracts()) {
+						if (contractItem.getContract().isOpen() && filter.isSellingContracts()) {
 							if (add) { //Selling
 								sellingContractsCountNow = sellingContractsCountNow + contractItem.getQuantity();
 							} else {
 								count = count + contractItem.getQuantity();
 							}
 							found = true;
-						} else if (filter.isSoldContracts()) { //Sold
+						} else if (contractItem.getContract().isCompletedSuccesful() && filter.isSoldContracts()) { //Sold
 							if ((isIssuer && contractItem.getContract().isIssuerAfterAssets())
 									|| isAcceptor && contractItem.getContract().isAcceptorAfterAssets()) {
 								if (add) {
@@ -885,14 +884,14 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 					}
 					//Buy: Issuer Excluded or Acceptor Included
 					if ((isIssuer && !contractItem.isIncluded()) || (isAcceptor && contractItem.isIncluded())) {
-						if (contractItem.getContract().getStatus() == ContractStatus.OUTSTANDING && filter.isBuyingContracts()) {
+						if (contractItem.getContract().isOpen() && filter.isBuyingContracts()) {
 							if (add) { //Buying
 								buyingContractsCountNow = buyingContractsCountNow + contractItem.getQuantity();
 							} else {
 								count = count + contractItem.getQuantity();
 							}
 							found = true;
-						} else if (filter.isBoughtContracts()) { //Bought
+						} else if (contractItem.getContract().isCompletedSuccesful() && filter.isBoughtContracts()) { //Bought
 							if ((isIssuer && contractItem.getContract().isIssuerAfterAssets())
 									|| isAcceptor && contractItem.getContract().isAcceptorAfterAssets()) {
 								if (add) {
