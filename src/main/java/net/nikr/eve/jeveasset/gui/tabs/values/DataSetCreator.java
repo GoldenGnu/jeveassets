@@ -107,7 +107,7 @@ public class DataSetCreator {
 	}
 
 	private Map<String, Value> createDataSetInner(ProfileData profileData, Date date) {
-		Map<String, Value> values = new HashMap<String, Value>();
+		Map<String, Value> values = new HashMap<>();
 		Value total = new Value(TabsValues.get().grandTotal(), date);
 		values.put(total.getName(), total);
 		//Asset
@@ -297,9 +297,9 @@ public class DataSetCreator {
 			if (contract.isIgnoreContract()) {
 				continue; //Ignore courier contracts
 			}
-			if (contractItem.getItem() != null && contractItem.getItem().isBlueprint()) {
+			if (contractItem.getItem() != null && contractItem.getItem().isBlueprint() && contractItem.getBlueprint() == null) {
 				continue; //Ignore blueprints value - as we do not know if it's a BPO or BPC. Feels like assuming BPC (zero value) is the better option
-			}
+			} //Else: Not a blueprint or we have data from the public contract items endpoints, so we do know if it's a BPC or PBO :)
 			OwnerType issuer;
 			if (contract.isForCorp()) {
 				issuer = owners.get(contract.getIssuerCorpID());
