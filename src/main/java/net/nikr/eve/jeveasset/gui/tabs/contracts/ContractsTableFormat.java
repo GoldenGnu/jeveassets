@@ -26,6 +26,8 @@ import java.util.Comparator;
 import java.util.Date;
 import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
+import net.nikr.eve.jeveasset.gui.shared.table.containers.LongInt;
+import net.nikr.eve.jeveasset.gui.shared.table.containers.Runs;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.YesNo;
 import net.nikr.eve.jeveasset.i18n.TabsContracts;
 
@@ -99,6 +101,48 @@ public enum ContractsTableFormat implements EnumTableColumn<MyContractItem> {
 		@Override
 		public Object getColumnValue(final MyContractItem from) {
 			return from.getContract().getVolume();
+		}
+	},
+	Runs(Runs.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsContracts.get().columnRuns();
+		}
+		@Override
+		public String getColumnToolTip() {
+			return TabsContracts.get().columnRunsToolTip();
+		}
+		@Override
+		public Object getColumnValue(final MyContractItem from) {
+			return new Runs(from.getRuns());
+		}
+	},
+	ME(Integer.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsContracts.get().columnMaterialEfficiency();
+		}
+		@Override
+		public String getColumnToolTip() {
+			return TabsContracts.get().columnMaterialEfficiencyToolTip();
+		}
+		@Override
+		public Object getColumnValue(final MyContractItem from) {
+			return from.getME();
+		}
+	},
+	TE(Integer.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsContracts.get().columnTimeEfficiency();
+		}
+		@Override
+		public String getColumnToolTip() {
+			return TabsContracts.get().columnTimeEfficiencyToolTip();
+		}
+		@Override
+		public Object getColumnValue(final MyContractItem from) {
+			return from.getTE();
 		}
 	},
 	PRICE(Double.class, GlazedLists.comparableComparator()) {
@@ -259,6 +303,36 @@ public enum ContractsTableFormat implements EnumTableColumn<MyContractItem> {
 		@Override
 		public Object getColumnValue(final MyContractItem from) {
 			return from.getContract().getDateCompleted();
+		}
+	},
+	CONTRACT_ID(Integer.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsContracts.get().columnContractID();
+		}
+		@Override
+		public Object getColumnValue(final MyContractItem from) {
+			return from.getContract().getContractID();
+		}
+	},
+	RECORD_ID(LongInt.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsContracts.get().columnRecordID();
+		}
+		@Override
+		public Object getColumnValue(final MyContractItem from) {
+			return new LongInt(from.getRecordID());
+		}
+	},
+	ITEM_ID(LongInt.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsContracts.get().columnItemID();
+		}
+		@Override
+		public Object getColumnValue(final MyContractItem from) {
+			return new LongInt(from.getItemID());
 		}
 	};
 

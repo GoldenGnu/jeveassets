@@ -34,16 +34,21 @@ import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
 import net.nikr.eve.jeveasset.data.api.raw.RawContract.ContractStatus;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
+import static net.nikr.eve.jeveasset.io.esi.AbstractEsiGetter.DATASOURCE;
+import static net.nikr.eve.jeveasset.io.esi.AbstractEsiGetter.DEFAULT_RETRIES;
+import static net.nikr.eve.jeveasset.io.esi.AbstractEsiGetter.getContractsApiOpen;
 import net.troja.eve.esi.ApiException;
 import net.troja.eve.esi.ApiResponse;
 import net.troja.eve.esi.model.CharacterContractsItemsResponse;
 import net.troja.eve.esi.model.CharacterRolesResponse.RolesEnum;
 import net.troja.eve.esi.model.CorporationContractsItemsResponse;
+import net.troja.eve.esi.model.PublicContractsItemsResponse;
 
 public class EsiContractItemsGetter extends AbstractEsiGetter {
 
 	private final List<EsiOwner> owners;
 	private static Map<Long, List<MyContract>> contracts;
+	private static Map<Long, List<MyContract>> publicContracts;
 	private final static AtomicInteger SIZE = new AtomicInteger(0);
 	private final static AtomicInteger PROGRESS = new AtomicInteger(0);
 	private final static int BATCH_SIZE = 20;
@@ -103,11 +108,30 @@ public class EsiContractItemsGetter extends AbstractEsiGetter {
 				owner.setContracts(EsiConverter.toContractItems(entry.getKey(), entry.getValue(), owner));
 			}
 		}
+		//Public contracts (Have blueprint info Runs/Me/Te)
+		Map<MyContract, List<PublicContractsItemsResponse>> responses = updatePagedMap(publicContracts.get(owner.getOwnerID()), new PagedListHandler<MyContract, PublicContractsItemsResponse>() {
+			@Override
+			protected List<PublicContractsItemsResponse> get(MyContract contract) throws ApiException {
+				return updatePages(DEFAULT_RETRIES, new EsiPagesHandler<PublicContractsItemsResponse>() {
+					@Override
+					public ApiResponse<List<PublicContractsItemsResponse>> get(Integer page) throws ApiException {
+						ApiResponse<List<PublicContractsItemsResponse>> response = getContractsApiOpen().getContractsPublicItemsContractIdWithHttpInfo(contract.getContractID(), DATASOURCE, null, page);
+						PROGRESS.getAndAdd(1);
+						setProgress(SIZE.get(), PROGRESS.get(), 0, 100);
+						return response;
+					}
+				});
+			}
+		});
+		for (Map.Entry<MyContract, List<PublicContractsItemsResponse>> entry : responses.entrySet()) {
+			owner.setContracts(EsiConverter.toContractItemsPublic(entry.getKey(), entry.getValue(), owner));
+		}
 	}
 
 	private static synchronized void createContracts(List<EsiOwner> owners) {
 		if (contracts == null) {
 			contracts = new HashMap<>();
+			publicContracts = new HashMap<>();
 			Set<MyContract> uniqueContacts = new HashSet<>();
 			Map<Long, EsiOwner> uniqueOwners = new HashMap<>();
 			for (EsiOwner esiOwner : owners) {
@@ -116,6 +140,7 @@ public class EsiContractItemsGetter extends AbstractEsiGetter {
 				}
 				uniqueOwners.put(esiOwner.getOwnerID(), esiOwner);
 				contracts.put(esiOwner.getOwnerID(), new ArrayList<>());
+				publicContracts.put(esiOwner.getOwnerID(), new ArrayList<>());
 				for (Map.Entry<MyContract, List<MyContractItem>> entry : esiOwner.getContracts().entrySet()) {
 					MyContract contract = entry.getKey();
 					if (contract.isIgnoreContract()) {
@@ -128,6 +153,11 @@ public class EsiContractItemsGetter extends AbstractEsiGetter {
 						continue; //Ignore deleted corporation contracts
 					}
 					uniqueContacts.add(contract);
+					//Open public contracts
+					if (contract.isPublic() && contract.getStatus() == ContractStatus.OUTSTANDING) {
+						publicContracts.get(esiOwner.getOwnerID()).add(contract);
+						SIZE.getAndIncrement();
+					}
 				}
 			}
 			for (MyContract contract : uniqueContacts) {

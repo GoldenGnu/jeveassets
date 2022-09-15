@@ -447,12 +447,20 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 		boolean singleton = getBoolean(element, "singleton");
 		int typeID = getInt(element, "typeid");
 		Integer rawQuantity = getIntOptional(element, "rawquantity");
+		Long itemID = getLongOptional(element, "itemid");
+		Integer runs = getIntOptional(element, "runs");
+		Integer materialEfficiency = getIntOptional(element, "me");
+		Integer timeEfficiency = getIntOptional(element, "te");
 		contractItem.setIncluded(included);
 		contractItem.setQuantity(quantity);
 		contractItem.setRecordID(recordID);
 		contractItem.setSingleton(singleton);
 		contractItem.setTypeID(typeID);
 		contractItem.setRawQuantity(rawQuantity);
+		contractItem.setItemID(itemID);
+		contractItem.setLicensedRuns(runs);
+		contractItem.setME(materialEfficiency);
+		contractItem.setTE(timeEfficiency);
 
 		return contractItem;
 	}
