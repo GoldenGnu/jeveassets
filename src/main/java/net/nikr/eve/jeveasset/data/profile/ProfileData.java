@@ -194,15 +194,19 @@ public class ProfileData {
 	}
 
 	public List<String> getOwnerNames(boolean all) {
-		List<String> sortedOwners = new ArrayList<>(ownerNames);
-		if (all) {
-			sortedOwners.add(0, General.get().all());
+		synchronized (ownerNames) { //synchronized as ownerNames are modified by updateEventLists
+			List<String> sortedOwners = new ArrayList<>(ownerNames);
+			if (all) {
+				sortedOwners.add(0, General.get().all());
+			}
+			return sortedOwners;
 		}
-		return sortedOwners;
 	}
 
-	public synchronized Map<Long, OwnerType> getOwners() { //synchronized as owners are modified by updateEventLists
-		return new HashMap<>(owners);
+	public Map<Long, OwnerType> getOwners() {
+		synchronized (owners) { //synchronized as owners are modified by updateEventLists
+			return new HashMap<>(owners);
+		}
 	}
 
 	private Set<Integer> createPriceTypeIDs() {
@@ -327,15 +331,17 @@ public class ProfileData {
 		}
 	}
 
-	public synchronized void updateMarketOrders(OutbidProcesserOutput output) { //synchronized as owners are modified by updateEventLists
+	public void updateMarketOrders(OutbidProcesserOutput output) {
 		Date addedDate = new Date();
 		Map<Long, Date> marketOrdersAdded = AddedData.getMarketOrders().getAll();
-		for (OwnerType ownerType : owners.values()) {
-			for (MyMarketOrder order : ownerType.getMarketOrders()) { // getMarketOrders() is thread safe
-				order.setOutbid(output.getOutbids().get(order.getOrderID()));
-				boolean updated = order.addChanges(output.getUpdates().get(order.getOrderID()));
-				if (updated) { //If Market Order have been updated
-					order.setChanged(AddedData.getMarketOrders().getPut(marketOrdersAdded, order.getOrderID(), addedDate));
+		synchronized (owners) { //synchronized as owners are modified by updateEventLists
+			for (OwnerType ownerType : owners.values()) {
+				for (MyMarketOrder order : ownerType.getMarketOrders()) { // getMarketOrders() is thread safe
+					order.setOutbid(output.getOutbids().get(order.getOrderID()));
+					boolean updated = order.addChanges(output.getUpdates().get(order.getOrderID()));
+					if (updated) { //If Market Order have been updated
+						order.setChanged(AddedData.getMarketOrders().getPut(marketOrdersAdded, order.getOrderID(), addedDate));
+					}
 				}
 			}
 		}
@@ -680,6 +686,17 @@ public class ProfileData {
 			updatePrice(editablePriceType);
 		}
 
+		//Owners - Before EventList update - in case owners are referanced in any ListEventListeners
+		synchronized (ownerNames) { //synchronized as ownerNames are modified (here) by updateEventLists
+			ownerNames.clear();
+			ownerNames.addAll(uniqueOwnerNames);
+		}
+		Collections.sort(ownerNames, new CaseInsensitiveComparator());
+		synchronized (owners) { //synchronized as owners are modified (here) by updateEventLists
+			owners.clear();
+			owners.putAll(uniqueOwners);
+		}
+		//Update Lists
 		assetsList.clear();
 		assetsList.addAll(assets);
 		marketOrdersList.clear();
@@ -698,6 +715,7 @@ public class ProfileData {
 		accountBalanceList.addAll(accountBalance);
 		skillPointsTotal.clear();
 		skillPointsTotal.putAll(skillPointsTotalCache);
+		//Update EventLists
 		Program.ensureEDT(new Runnable() {
 			@Override
 			public void run() {
@@ -794,12 +812,6 @@ public class ProfileData {
 				}
 			}
 		});
-		//Sort Owners
-		ownerNames.clear();
-		ownerNames.addAll(uniqueOwnerNames);
-		Collections.sort(ownerNames, new CaseInsensitiveComparator());
-		owners.clear();
-		owners.putAll(uniqueOwners);
 	}
 
 	public void updateNames(EventList<MyAsset> eventList, Set<Long> itemIDs) {

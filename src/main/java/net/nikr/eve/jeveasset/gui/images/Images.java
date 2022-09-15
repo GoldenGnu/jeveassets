@@ -38,7 +38,9 @@ public enum Images {
 	JOBS_INVENTION_SUCCESS ("jobs_invention_success.png"),
 
 	ORDERS_SELL ("orders_sell.png"),
+	ORDERS_SOLD ("orders_sold.png"),
 	ORDERS_BUY ("orders_buy.png"),
+	ORDERS_BOUGHT ("orders_bought.png"),
 	ORDERS_ESCROW ("orders_escrow.png"),
 	ORDERS_TO_COVER ("orders_to_cover.png"),
 
