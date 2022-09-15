@@ -870,7 +870,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 								count = count + contractItem.getQuantity();
 							}
 							found = true;
-						} else if (contractItem.getContract().isCompletedSuccesful() && filter.isSoldContracts()) { //Sold
+						} else if (contractItem.getContract().isCompletedSuccessful() && filter.isSoldContracts()) { //Sold
 							if ((isIssuer && contractItem.getContract().isIssuerAfterAssets())
 									|| isAcceptor && contractItem.getContract().isAcceptorAfterAssets()) {
 								if (add) {
@@ -891,7 +891,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 								count = count + contractItem.getQuantity();
 							}
 							found = true;
-						} else if (contractItem.getContract().isCompletedSuccesful() && filter.isBoughtContracts()) { //Bought
+						} else if (contractItem.getContract().isCompletedSuccessful() && filter.isBoughtContracts()) { //Bought
 							if ((isIssuer && contractItem.getContract().isIssuerAfterAssets())
 									|| isAcceptor && contractItem.getContract().isAcceptorAfterAssets()) {
 								if (add) {
