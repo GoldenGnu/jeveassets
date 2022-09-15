@@ -265,7 +265,7 @@ public class DataSetCreator {
 						//Buying: +Reward
 						addContractValue(values, total, date, issuer.getOwnerName(), contract.getReward()); //OK
 					} // else: Selling: we do not own the price isk, until the contract is completed
-				} else if (contract.isCompletedSuccesful()) { //Completed
+				} else if (contract.isCompletedSuccessful()) { //Completed
 					//Done & Ballance not updated yet = Add Price + Remove Reward (Contract completed, update with the current values)
 					//If ballance is updated, so are all the values
 					if (balanceNotUpdated(contract.getDateCompleted(), issuer)) { //NOT TESTED
@@ -276,7 +276,7 @@ public class DataSetCreator {
 					}
 				}
 			}
-			if (acceptor != null && contract.isCompletedSuccesful()) { //Completed
+			if (acceptor != null && contract.isCompletedSuccessful()) { //Completed
 				//Done & Ballance not updated yet = Remove Price & Add Reward (Contract completed, update with the current values)
 				//If ballance is updated, so are all the values
 				if (balanceNotUpdated(contract.getDateCompleted(), acceptor)) { //NOT TESTED
@@ -317,7 +317,7 @@ public class DataSetCreator {
 							addContractValue(values, total, date, issuer.getOwnerName(), contractItem.getDynamicPrice() * contractItem.getQuantity());
 						}
 					} // else: Item is being bought - nothing have changed until the contract is done
-				} else if (contract.isCompletedSuccesful()) { //Completed
+				} else if (contract.isCompletedSuccessful()) { //Completed
 					//Done & Assets not updated yet = Add Bought Item & Remove Sold Item (Contract completed, update with the current values)
 					//If Assets is updated, so are all the values
 					if (assetsNotUpdated(contract.getDateCompleted(), issuer)) {
@@ -331,7 +331,7 @@ public class DataSetCreator {
 					}
 				}
 			}
-			if (acceptor != null && contract.isCompletedSuccesful()) { //Completed
+			if (acceptor != null && contract.isCompletedSuccessful()) { //Completed
 				//Done & Assets not updated yet = Add Bought Item & Remove Sold Item (Contract completed, update with the current values)
 				//If Assets is updated, so are all the values
 				if (assetsNotUpdated(contract.getDateCompleted(), acceptor)) {

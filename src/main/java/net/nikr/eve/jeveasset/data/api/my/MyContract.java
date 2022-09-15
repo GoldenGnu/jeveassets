@@ -115,7 +115,7 @@ public class MyContract extends RawContract implements LocationsType, OwnersType
 	}
 
 	public void setIssuerAfterAssets(Date date) {
-		if (date != null && isCompletedSuccesful()) {
+		if (date != null && isCompletedSuccessful()) {
 			this.issuerAfterAssets = getDateCompleted().after(date);
 		} else {
 			this.issuerAfterAssets = false;
@@ -127,7 +127,7 @@ public class MyContract extends RawContract implements LocationsType, OwnersType
 	}
 
 	public void setAcceptorAfterAssets(Date date) {
-		if (date != null && isCompletedSuccesful()) {
+		if (date != null && isCompletedSuccessful()) {
 			this.acceptorAfterAssets = getDateCompleted().after(date);
 		} else {
 			this.acceptorAfterAssets = false;
@@ -191,7 +191,7 @@ public class MyContract extends RawContract implements LocationsType, OwnersType
 		return getStatus() == ContractStatus.DELETED;
 	}
 
-	public boolean isCompletedSuccesful() {
+	public boolean isCompletedSuccessful() {
 		return getDateCompleted() != null;
 	}
 
