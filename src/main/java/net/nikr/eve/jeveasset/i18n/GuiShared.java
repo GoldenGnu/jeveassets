@@ -140,6 +140,16 @@ public abstract class GuiShared extends Bundle {
 	public abstract String reprocessed();
 	public abstract String routing();
 	public abstract String selectionAverage();
+	public abstract String selectionContractsBought();
+	public abstract String selectionContractsBoughtToolTip();
+	public abstract String selectionContractsBuying();
+	public abstract String selectionContractsBuyingToolTip();
+	public abstract String selectionContractsSellingAssets();
+	public abstract String selectionContractsSellingAssetsToolTip();
+	public abstract String selectionContractsSellingPrice();
+	public abstract String selectionContractsSellingPriceToolTip();
+	public abstract String selectionContractsSold();
+	public abstract String selectionContractsSoldToolTip();
 	public abstract String selectionCount();
 	public abstract String selectionInventionSuccess();
 	public abstract String selectionManufactureJobsValue();
