@@ -40,7 +40,10 @@ import javax.swing.JPopupMenu;
 import javax.swing.SwingConstants;
 import javax.swing.Timer;
 import javax.swing.border.Border;
+import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.my.MyAsset;
+import net.nikr.eve.jeveasset.data.api.my.MyContract;
+import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
@@ -111,6 +114,72 @@ public class JMenuInfo {
 			createMenuItem(values, jPopupMenu, averageValue, NumberFormat.ISK, GuiShared.get().selectionAverage(), GuiShared.get().selectionShortAverage(), Images.ASSETS_AVERAGE.getIcon());
 			createMenuItem(values, jPopupMenu, totalVolume, NumberFormat.DOUBLE, GuiShared.get().selectionVolume(), GuiShared.get().selectionShortVolume(), Images.ASSETS_VOLUME.getIcon());
 			createMenuItem(values, jPopupMenu, totalCount, NumberFormat.ITEMS, GuiShared.get().selectionCount(), GuiShared.get().selectionShortCount(), Images.EDIT_ADD.getIcon());
+		}
+	}
+
+	public static void contracts(final Program program, final JComponent jComponent, final List<MyContractItem> list) {
+		if (jComponent instanceof JPopupMenu) {
+			JPopupMenu jPopupMenu = (JPopupMenu) jComponent;
+
+			List<MenuItemValue> values = createDefault(jPopupMenu);
+
+			double sellingPrice = 0;
+			double sellingAssets = 0;
+			double buying = 0;
+			double sold = 0;
+			double bought = 0;
+			Set<MyContract> contracts = new HashSet<>();
+			for (Object object : list) {
+				if (object instanceof SeparatorList.Separator) {
+					continue;
+				}
+				if (object == null) {
+					continue;
+				}
+				MyContractItem contractItem = (MyContractItem) object;
+				contracts.add(contractItem.getContract());
+				MyContract contract = contractItem.getContract();
+				if (contract.isIgnoreContract()) {
+					continue;
+				}
+				boolean isIssuer = contract.isForCorp() ? program.getOwners().keySet().contains(contract.getIssuerCorpID()) : program.getOwners().keySet().contains(contract.getIssuerID());
+				if (isIssuer && //Issuer
+						contract.isOpen() //Not completed
+						&& contractItem.isIncluded()) { //Selling
+					sellingAssets = sellingAssets + contractItem.getDynamicPrice() * contractItem.getQuantity();
+				}
+			}
+			for (MyContract contract : contracts) {
+				if (contract.isIgnoreContract()) {
+					continue;
+				}
+				boolean isIssuer = contract.isForCorp() ? program.getOwners().keySet().contains(contract.getIssuerCorpID()) : program.getOwners().keySet().contains(contract.getIssuerID());
+				boolean isAcceptor = contract.getAcceptorID() > 0 && program.getOwners().keySet().contains(contract.getAcceptorID());
+				if (isIssuer //Issuer
+						&& contract.isOpen() //Not completed
+						) { //Selling/Buying
+					sellingPrice = sellingPrice + contract.getPrice(); //Positive
+					buying = buying - contract.getReward(); //Negative
+				} else if (contract.isCompletedSuccessful()) { //Completed
+					if (isIssuer) { //Sold/Bought
+						sold = sold + contract.getPrice(); //Positive
+						bought = bought - contract.getReward(); //Negative
+					}
+					if (isAcceptor) { //Reverse of the above
+						sold = sold + contract.getReward(); //Positive
+						bought = bought - contract.getPrice(); //Negative
+					}
+				}
+			}
+			List<MenuItemValue> sell = createMenuItemGroup(jPopupMenu, GuiShared.get().selectionTitleSell(), Images.ORDERS_SELL.getIcon());
+			createMenuItem(sell, jPopupMenu, sellingPrice, NumberFormat.ISK, GuiShared.get().selectionContractsSellingPriceToolTip(), GuiShared.get().selectionContractsSellingPrice(), Images.ORDERS_SELL.getIcon());
+			createMenuItem(sell, jPopupMenu, sellingAssets, NumberFormat.ISK, GuiShared.get().selectionContractsSellingAssetsToolTip(), GuiShared.get().selectionContractsSellingAssets(), Images.TOOL_VALUES.getIcon());
+			createMenuItem(sell, jPopupMenu, sold, NumberFormat.ISK, GuiShared.get().selectionContractsSoldToolTip(), GuiShared.get().selectionContractsSold(), Images.ORDERS_SOLD.getIcon());
+			values.addAll(sell);
+			List<MenuItemValue> buy = createMenuItemGroup(jPopupMenu, GuiShared.get().selectionTitleBuy(), Images.ORDERS_BUY.getIcon());
+			createMenuItem(buy, jPopupMenu, buying, NumberFormat.ISK, GuiShared.get().selectionContractsBuyingToolTip(), GuiShared.get().selectionContractsBuying(), Images.ORDERS_BUY.getIcon());
+			createMenuItem(buy, jPopupMenu, bought, NumberFormat.ISK, GuiShared.get().selectionContractsBoughtToolTip(), GuiShared.get().selectionContractsBought(), Images.ORDERS_BOUGHT.getIcon());
+			values.addAll(buy);
 		}
 	}
 
