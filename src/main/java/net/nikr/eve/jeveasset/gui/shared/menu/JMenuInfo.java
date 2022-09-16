@@ -51,6 +51,7 @@ import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.CopyHandler;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo.InfoItem;
+import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustrySlot;
 import net.nikr.eve.jeveasset.gui.tabs.loadout.Loadout;
 import net.nikr.eve.jeveasset.gui.tabs.materials.Material;
 import net.nikr.eve.jeveasset.gui.tabs.materials.Material.MaterialType;
@@ -273,6 +274,43 @@ public class JMenuInfo {
 			createMenuItem(buy, jPopupMenu, buyTotal, NumberFormat.ISK, GuiShared.get().selectionTransactionsBuyTotal(), GuiShared.get().selectionShortValue(), Images.TOOL_VALUES.getIcon());
 			createMenuItem(buy, jPopupMenu, buyAvg, NumberFormat.ISK, GuiShared.get().selectionTransactionsBuyAvg(), GuiShared.get().selectionShortAverage(), Images.ASSETS_AVERAGE.getIcon());
 			values.addAll(buy);
+		}
+	}
+
+	public static void industrySlots(final JComponent jComponent, final List<IndustrySlot> list) {
+		if (jComponent instanceof JPopupMenu) {
+			JPopupMenu jPopupMenu = (JPopupMenu) jComponent;
+
+			List<MenuItemValue> values = createDefault(jPopupMenu);
+
+			IndustrySlot total = new IndustrySlot("");
+			for (IndustrySlot industrySlot : list) {
+				if (industrySlot.isGrandTotal()) {
+					continue;
+				}
+				total.count(industrySlot);
+			}
+
+			List<MenuItemValue> manufacturing = createMenuItemGroup(jPopupMenu, GuiShared.get().selectionSlotsManufacturing(), Images.MISC_MANUFACTURING.getIcon());
+			createMenuItem(manufacturing, jPopupMenu, total.getManufacturingDone(), NumberFormat.LONG, GuiShared.get().selectionSlotsManufacturingDoneToolTip(), GuiShared.get().selectionSlotsManufacturingDone(), Images.EDIT_SET.getIcon());
+			createMenuItem(manufacturing, jPopupMenu, total.getManufacturingFree(), NumberFormat.LONG, GuiShared.get().selectionSlotsManufacturingFreeToolTip(), GuiShared.get().selectionSlotsManufacturingFree(), Images.EDIT_ADD.getIcon());
+			createMenuItem(manufacturing, jPopupMenu, total.getManufacturingActive(), NumberFormat.LONG, GuiShared.get().selectionSlotsManufacturingActiveToolTip(), GuiShared.get().selectionSlotsManufacturingActive(), Images.UPDATE_WORKING.getIcon());
+			createMenuItem(manufacturing, jPopupMenu, total.getManufacturingMax(), NumberFormat.LONG, GuiShared.get().selectionSlotsManufacturingMaxToolTip(), GuiShared.get().selectionSlotsManufacturingMax(), Images.UPDATE_DONE_OK.getIcon());
+			values.addAll(manufacturing);
+
+			List<MenuItemValue> research = createMenuItemGroup(jPopupMenu, GuiShared.get().selectionSlotsResearch(), Images.MISC_INVENTION.getIcon());
+			createMenuItem(research, jPopupMenu, total.getResearchDone(), NumberFormat.LONG, GuiShared.get().selectionSlotsResearchDoneToolTip(), GuiShared.get().selectionSlotsResearchDone(), Images.EDIT_SET.getIcon());
+			createMenuItem(research, jPopupMenu, total.getResearchFree(), NumberFormat.LONG, GuiShared.get().selectionSlotsResearchFreeToolTip(), GuiShared.get().selectionSlotsResearchFree(), Images.EDIT_ADD.getIcon());
+			createMenuItem(research, jPopupMenu, total.getResearchActive(), NumberFormat.LONG, GuiShared.get().selectionSlotsResearchActiveToolTip(), GuiShared.get().selectionSlotsResearchActive(), Images.UPDATE_WORKING.getIcon());
+			createMenuItem(research, jPopupMenu, total.getResearchMax(), NumberFormat.LONG, GuiShared.get().selectionSlotsResearchMaxToolTip(), GuiShared.get().selectionSlotsResearchMax(), Images.UPDATE_DONE_OK.getIcon());
+			values.addAll(research);
+
+			List<MenuItemValue> reactions = createMenuItemGroup(jPopupMenu, GuiShared.get().selectionSlotsReactions(), Images.MISC_REACTION.getIcon());
+			createMenuItem(reactions, jPopupMenu, total.getReactionsDone(), NumberFormat.LONG, GuiShared.get().selectionSlotsReactionsDoneToolTip(), GuiShared.get().selectionSlotsReactionsDone(), Images.EDIT_SET.getIcon());
+			createMenuItem(reactions, jPopupMenu, total.getReactionsFree(), NumberFormat.LONG, GuiShared.get().selectionSlotsReactionsFreeToolTip(), GuiShared.get().selectionSlotsReactionsFree(), Images.EDIT_ADD.getIcon());
+			createMenuItem(reactions, jPopupMenu, total.getReactionsActive(), NumberFormat.LONG, GuiShared.get().selectionSlotsReactionsActiveToolTip(), GuiShared.get().selectionSlotsReactionsActive(), Images.UPDATE_WORKING.getIcon());
+			createMenuItem(reactions, jPopupMenu, total.getReactionsMax(), NumberFormat.LONG, GuiShared.get().selectionSlotsReactionsMaxToolTip(), GuiShared.get().selectionSlotsReactionsMax(), Images.UPDATE_DONE_OK.getIcon());
+			values.addAll(reactions);
 		}
 	}
 
