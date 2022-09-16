@@ -41,9 +41,11 @@ import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.settings.types.LocationType;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.images.Images;
+import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTabSecondary;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuColumns;
+import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
@@ -60,8 +62,20 @@ public class IndustrySlotsTab extends JMainTabSecondary {
 	//GUI
 	private final JAutoColumnTable jTable;
 	private final JLabel jManufacturing;
-	private final JLabel jReactions;
+	private final JLabel jManufacturingDone;
+	private final JLabel jManufacturingFree;
+	private final JLabel jManufacturingActive;
+	private final JLabel jManufacturingMax;
 	private final JLabel jResearch;
+	private final JLabel jResearchDone;
+	private final JLabel jResearchFree;
+	private final JLabel jResearchActive;
+	private final JLabel jResearchMax;
+	private final JLabel jReactions;
+	private final JLabel jReactionsDone;
+	private final JLabel jReactionsFree;
+	private final JLabel jReactionsActive;
+	private final JLabel jReactionsMax;
 
 	//Table
 	private final IndustrySlotFilterControl filterControl;
@@ -123,12 +137,36 @@ public class IndustrySlotsTab extends JMainTabSecondary {
 
 		jManufacturing = StatusPanel.createLabel(TabsIndustrySlots.get().manufacturing(), Images.MISC_MANUFACTURING.getIcon());
 		this.addStatusbarLabel(jManufacturing);
-
-		jReactions = StatusPanel.createLabel(TabsIndustrySlots.get().reactions(), Images.MISC_REACTION.getIcon());
-		this.addStatusbarLabel(jReactions);
+		jManufacturingDone = StatusPanel.createLabel(TabsIndustrySlots.get().columnManufacturingDone(), Images.EDIT_SET.getIcon());
+		this.addStatusbarLabel(jManufacturingDone);
+		jManufacturingFree = StatusPanel.createLabel(TabsIndustrySlots.get().columnManufacturingFree(), Images.EDIT_ADD.getIcon());
+		this.addStatusbarLabel(jManufacturingFree);
+		jManufacturingActive = StatusPanel.createLabel(TabsIndustrySlots.get().columnManufacturingActive(), Images.UPDATE_WORKING.getIcon());
+		this.addStatusbarLabel(jManufacturingActive);
+		jManufacturingMax = StatusPanel.createLabel(TabsIndustrySlots.get().columnManufacturingDone(), Images.UPDATE_DONE_OK.getIcon());
+		this.addStatusbarLabel(jManufacturingMax);
 
 		jResearch = StatusPanel.createLabel(TabsIndustrySlots.get().research(), Images.MISC_INVENTION.getIcon());
 		this.addStatusbarLabel(jResearch);
+		jResearchDone = StatusPanel.createLabel(TabsIndustrySlots.get().columnResearchDone(), Images.EDIT_SET.getIcon());
+		this.addStatusbarLabel(jResearchDone);
+		jResearchFree = StatusPanel.createLabel(TabsIndustrySlots.get().columnResearchFree(), Images.EDIT_ADD.getIcon());
+		this.addStatusbarLabel(jResearchFree);
+		jResearchActive = StatusPanel.createLabel(TabsIndustrySlots.get().columnResearchActive(), Images.UPDATE_WORKING.getIcon());
+		this.addStatusbarLabel(jResearchActive);
+		jResearchMax = StatusPanel.createLabel(TabsIndustrySlots.get().columnResearchMax(), Images.UPDATE_DONE_OK.getIcon());
+		this.addStatusbarLabel(jResearchMax);
+
+		jReactions = StatusPanel.createLabel(TabsIndustrySlots.get().reactions(), Images.MISC_REACTION.getIcon());
+		this.addStatusbarLabel(jReactions);
+		jReactionsDone = StatusPanel.createLabel(TabsIndustrySlots.get().columnReactionsDone(), Images.EDIT_SET.getIcon());
+		this.addStatusbarLabel(jReactionsDone);
+		jReactionsFree = StatusPanel.createLabel(TabsIndustrySlots.get().columnReactionsFree(), Images.EDIT_ADD.getIcon());
+		this.addStatusbarLabel(jReactionsFree);
+		jReactionsActive = StatusPanel.createLabel(TabsIndustrySlots.get().columnReactionsActive(), Images.UPDATE_WORKING.getIcon());
+		this.addStatusbarLabel(jReactionsActive);
+		jReactionsMax = StatusPanel.createLabel(TabsIndustrySlots.get().columnReactionsMax(), Images.UPDATE_DONE_OK.getIcon());
+		this.addStatusbarLabel(jReactionsMax);
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()
@@ -195,7 +233,9 @@ public class IndustrySlotsTab extends JMainTabSecondary {
 		}
 
 		@Override
-		public void addInfoMenu(JComponent jComponent) { }
+		public void addInfoMenu(JComponent jComponent) {
+			JMenuInfo.industrySlots(jComponent, selectionModel.getSelected());
+		}
 
 		@Override
 		public void addToolMenu(JComponent jComponent) { }
@@ -216,21 +256,18 @@ public class IndustrySlotsTab extends JMainTabSecondary {
 			} finally {
 				filterList.getReadWriteLock().readLock().unlock();
 			}
-			jManufacturing.setText(TabsIndustrySlots.get().tooltip(
-					total.getManufacturingDone(),
-					total.getManufacturingFree(),
-					total.getManufacturingActive(),
-					total.getManufacturingMax()));
-			jReactions.setText(TabsIndustrySlots.get().tooltip(
-					total.getReactionsDone(),
-					total.getReactionsFree(),
-					total.getReactionsActive(),
-					total.getReactionsMax()));
-			jResearch.setText(TabsIndustrySlots.get().tooltip(
-					total.getResearchDone(),
-					total.getResearchFree(),
-					total.getResearchActive(),
-					total.getResearchMax()));
+			jManufacturingDone.setText(Formater.longFormat(total.getManufacturingDone()));
+			jManufacturingFree.setText(Formater.longFormat(total.getManufacturingFree()));
+			jManufacturingActive.setText(Formater.longFormat(total.getManufacturingActive()));
+			jManufacturingMax.setText(Formater.longFormat(total.getManufacturingMax()));
+			jReactionsDone.setText(Formater.longFormat(total.getReactionsDone()));
+			jReactionsFree.setText(Formater.longFormat(total.getReactionsFree()));
+			jReactionsActive.setText(Formater.longFormat(total.getReactionsActive()));
+			jReactionsMax.setText(Formater.longFormat(total.getReactionsMax()));
+			jResearchDone.setText(Formater.longFormat(total.getResearchDone()));
+			jResearchFree.setText(Formater.longFormat(total.getResearchFree()));
+			jResearchActive.setText(Formater.longFormat(total.getResearchActive()));
+			jResearchMax.setText(Formater.longFormat(total.getResearchMax()));
 		}
 	}
 
