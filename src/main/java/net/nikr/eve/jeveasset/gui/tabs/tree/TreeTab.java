@@ -64,13 +64,14 @@ import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.tag.TagUpdate;
 import net.nikr.eve.jeveasset.data.settings.types.LocationType;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
+import net.nikr.eve.jeveasset.gui.frame.StatusPanel.JStatusLabel;
 import net.nikr.eve.jeveasset.gui.images.Images;
-import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.components.JFixedToolBar;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTabSecondary;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuColumns;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
+import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo.AutoNumberFormat;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuData.AssetMenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
@@ -97,11 +98,11 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate {
 
 	//GUI
 	private final JTreeTable jTable;
-	private final JLabel jValue;
-	private final JLabel jReprocessed;
-	private final JLabel jCount;
-	private final JLabel jAverage;
-	private final JLabel jVolume;
+	private final JStatusLabel jValue;
+	private final JStatusLabel jReprocessed;
+	private final JStatusLabel jCount;
+	private final JStatusLabel jAverage;
+	private final JStatusLabel jVolume;
 	private final JToggleButton jCategories;
 	private final JToggleButton jReprocessColors;
 
@@ -169,19 +170,19 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate {
 		jExpand.addActionListener(listener);
 		jToolBarRight.addButton(jExpand);
 
-		jVolume = StatusPanel.createLabel(TabsAssets.get().totalVolume(), Images.ASSETS_VOLUME.getIcon());
+		jVolume = StatusPanel.createLabel(TabsAssets.get().totalVolume(), Images.ASSETS_VOLUME.getIcon(), AutoNumberFormat.DOUBLE);
 		this.addStatusbarLabel(jVolume);
 
-		jCount = StatusPanel.createLabel(TabsAssets.get().totalCount(), Images.EDIT_ADD.getIcon()); //Add
+		jCount = StatusPanel.createLabel(TabsAssets.get().totalCount(), Images.EDIT_ADD.getIcon(), AutoNumberFormat.ITEMS);
 		this.addStatusbarLabel(jCount);
 
-		jAverage = StatusPanel.createLabel(TabsAssets.get().average(), Images.ASSETS_AVERAGE.getIcon());
+		jAverage = StatusPanel.createLabel(TabsAssets.get().average(), Images.ASSETS_AVERAGE.getIcon(), AutoNumberFormat.ISK);
 		this.addStatusbarLabel(jAverage);
 
-		jReprocessed = StatusPanel.createLabel(TabsAssets.get().totalReprocessed(), Images.SETTINGS_REPROCESSING.getIcon());
+		jReprocessed = StatusPanel.createLabel(TabsAssets.get().totalReprocessed(), Images.SETTINGS_REPROCESSING.getIcon(), AutoNumberFormat.ISK);
 		this.addStatusbarLabel(jReprocessed);
 
-		jValue = StatusPanel.createLabel(TabsAssets.get().totalValue(), Images.TOOL_VALUES.getIcon());
+		jValue = StatusPanel.createLabel(TabsAssets.get().totalValue(), Images.TOOL_VALUES.getIcon(), AutoNumberFormat.ISK);
 		this.addStatusbarLabel(jValue);
 
 		//Table Format
@@ -398,11 +399,11 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate {
 		if (totalCount > 0 && totalValue > 0) {
 			averageValue = totalValue / totalCount;
 		}
-		jVolume.setText(Formater.doubleFormat(totalVolume));
-		jCount.setText(Formater.itemsFormat(totalCount));
-		jAverage.setText(Formater.iskFormat(averageValue));
-		jReprocessed.setText(Formater.iskFormat(totalReprocessed));
-		jValue.setText(Formater.iskFormat(totalValue));
+		jVolume.setNumber(totalVolume);
+		jCount.setNumber(totalCount);
+		jAverage.setNumber(averageValue);
+		jReprocessed.setNumber(totalReprocessed);
+		jValue.setNumber(totalValue);
 	}
 
 	private class TreeTableMenu implements TableMenu<TreeAsset> {

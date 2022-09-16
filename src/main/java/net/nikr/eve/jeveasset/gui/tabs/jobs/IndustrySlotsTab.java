@@ -40,12 +40,13 @@ import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.settings.types.LocationType;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
+import net.nikr.eve.jeveasset.gui.frame.StatusPanel.JStatusLabel;
 import net.nikr.eve.jeveasset.gui.images.Images;
-import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTabSecondary;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuColumns;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
+import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo.AutoNumberFormat;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
@@ -62,20 +63,20 @@ public class IndustrySlotsTab extends JMainTabSecondary {
 	//GUI
 	private final JAutoColumnTable jTable;
 	private final JLabel jManufacturing;
-	private final JLabel jManufacturingDone;
-	private final JLabel jManufacturingFree;
-	private final JLabel jManufacturingActive;
-	private final JLabel jManufacturingMax;
+	private final JStatusLabel jManufacturingDone;
+	private final JStatusLabel jManufacturingFree;
+	private final JStatusLabel jManufacturingActive;
+	private final JStatusLabel jManufacturingMax;
 	private final JLabel jResearch;
-	private final JLabel jResearchDone;
-	private final JLabel jResearchFree;
-	private final JLabel jResearchActive;
-	private final JLabel jResearchMax;
+	private final JStatusLabel jResearchDone;
+	private final JStatusLabel jResearchFree;
+	private final JStatusLabel jResearchActive;
+	private final JStatusLabel jResearchMax;
 	private final JLabel jReactions;
-	private final JLabel jReactionsDone;
-	private final JLabel jReactionsFree;
-	private final JLabel jReactionsActive;
-	private final JLabel jReactionsMax;
+	private final JStatusLabel jReactionsDone;
+	private final JStatusLabel jReactionsFree;
+	private final JStatusLabel jReactionsActive;
+	private final JStatusLabel jReactionsMax;
 
 	//Table
 	private final IndustrySlotFilterControl filterControl;
@@ -135,37 +136,37 @@ public class IndustrySlotsTab extends JMainTabSecondary {
 		//Menu
 		installTableTool(new IndustrySlotTableMenu(), tableFormat, tableModel, jTable, filterControl, IndustrySlot.class);
 
-		jManufacturing = StatusPanel.createLabel(TabsIndustrySlots.get().manufacturing(), Images.MISC_MANUFACTURING.getIcon());
+		jManufacturing = StatusPanel.createIcon(Images.MISC_MANUFACTURING.getIcon(), TabsIndustrySlots.get().manufacturing());
 		this.addStatusbarLabel(jManufacturing);
-		jManufacturingDone = StatusPanel.createLabel(TabsIndustrySlots.get().columnManufacturingDone(), Images.EDIT_SET.getIcon());
+		jManufacturingDone = StatusPanel.createLabel(TabsIndustrySlots.get().columnManufacturingDone(), Images.EDIT_SET.getIcon(), AutoNumberFormat.LONG);
 		this.addStatusbarLabel(jManufacturingDone);
-		jManufacturingFree = StatusPanel.createLabel(TabsIndustrySlots.get().columnManufacturingFree(), Images.EDIT_ADD.getIcon());
+		jManufacturingFree = StatusPanel.createLabel(TabsIndustrySlots.get().columnManufacturingFree(), Images.EDIT_ADD.getIcon(), AutoNumberFormat.LONG);
 		this.addStatusbarLabel(jManufacturingFree);
-		jManufacturingActive = StatusPanel.createLabel(TabsIndustrySlots.get().columnManufacturingActive(), Images.UPDATE_WORKING.getIcon());
+		jManufacturingActive = StatusPanel.createLabel(TabsIndustrySlots.get().columnManufacturingActive(), Images.UPDATE_WORKING.getIcon(), AutoNumberFormat.LONG);
 		this.addStatusbarLabel(jManufacturingActive);
-		jManufacturingMax = StatusPanel.createLabel(TabsIndustrySlots.get().columnManufacturingDone(), Images.UPDATE_DONE_OK.getIcon());
+		jManufacturingMax = StatusPanel.createLabel(TabsIndustrySlots.get().columnManufacturingDone(), Images.UPDATE_DONE_OK.getIcon(), AutoNumberFormat.LONG);
 		this.addStatusbarLabel(jManufacturingMax);
 
-		jResearch = StatusPanel.createLabel(TabsIndustrySlots.get().research(), Images.MISC_INVENTION.getIcon());
+		jResearch = StatusPanel.createIcon(Images.MISC_INVENTION.getIcon(), TabsIndustrySlots.get().research());
 		this.addStatusbarLabel(jResearch);
-		jResearchDone = StatusPanel.createLabel(TabsIndustrySlots.get().columnResearchDone(), Images.EDIT_SET.getIcon());
+		jResearchDone = StatusPanel.createLabel(TabsIndustrySlots.get().columnResearchDone(), Images.EDIT_SET.getIcon(), AutoNumberFormat.LONG);
 		this.addStatusbarLabel(jResearchDone);
-		jResearchFree = StatusPanel.createLabel(TabsIndustrySlots.get().columnResearchFree(), Images.EDIT_ADD.getIcon());
+		jResearchFree = StatusPanel.createLabel(TabsIndustrySlots.get().columnResearchFree(), Images.EDIT_ADD.getIcon(), AutoNumberFormat.LONG);
 		this.addStatusbarLabel(jResearchFree);
-		jResearchActive = StatusPanel.createLabel(TabsIndustrySlots.get().columnResearchActive(), Images.UPDATE_WORKING.getIcon());
+		jResearchActive = StatusPanel.createLabel(TabsIndustrySlots.get().columnResearchActive(), Images.UPDATE_WORKING.getIcon(), AutoNumberFormat.LONG);
 		this.addStatusbarLabel(jResearchActive);
-		jResearchMax = StatusPanel.createLabel(TabsIndustrySlots.get().columnResearchMax(), Images.UPDATE_DONE_OK.getIcon());
+		jResearchMax = StatusPanel.createLabel(TabsIndustrySlots.get().columnResearchMax(), Images.UPDATE_DONE_OK.getIcon(), AutoNumberFormat.LONG);
 		this.addStatusbarLabel(jResearchMax);
 
-		jReactions = StatusPanel.createLabel(TabsIndustrySlots.get().reactions(), Images.MISC_REACTION.getIcon());
+		jReactions = StatusPanel.createIcon(Images.MISC_REACTION.getIcon(), TabsIndustrySlots.get().reactions());
 		this.addStatusbarLabel(jReactions);
-		jReactionsDone = StatusPanel.createLabel(TabsIndustrySlots.get().columnReactionsDone(), Images.EDIT_SET.getIcon());
+		jReactionsDone = StatusPanel.createLabel(TabsIndustrySlots.get().columnReactionsDone(), Images.EDIT_SET.getIcon(), AutoNumberFormat.LONG);
 		this.addStatusbarLabel(jReactionsDone);
-		jReactionsFree = StatusPanel.createLabel(TabsIndustrySlots.get().columnReactionsFree(), Images.EDIT_ADD.getIcon());
+		jReactionsFree = StatusPanel.createLabel(TabsIndustrySlots.get().columnReactionsFree(), Images.EDIT_ADD.getIcon(), AutoNumberFormat.LONG);
 		this.addStatusbarLabel(jReactionsFree);
-		jReactionsActive = StatusPanel.createLabel(TabsIndustrySlots.get().columnReactionsActive(), Images.UPDATE_WORKING.getIcon());
+		jReactionsActive = StatusPanel.createLabel(TabsIndustrySlots.get().columnReactionsActive(), Images.UPDATE_WORKING.getIcon(), AutoNumberFormat.LONG);
 		this.addStatusbarLabel(jReactionsActive);
-		jReactionsMax = StatusPanel.createLabel(TabsIndustrySlots.get().columnReactionsMax(), Images.UPDATE_DONE_OK.getIcon());
+		jReactionsMax = StatusPanel.createLabel(TabsIndustrySlots.get().columnReactionsMax(), Images.UPDATE_DONE_OK.getIcon(), AutoNumberFormat.LONG);
 		this.addStatusbarLabel(jReactionsMax);
 
 		layout.setHorizontalGroup(
@@ -256,18 +257,18 @@ public class IndustrySlotsTab extends JMainTabSecondary {
 			} finally {
 				filterList.getReadWriteLock().readLock().unlock();
 			}
-			jManufacturingDone.setText(Formater.longFormat(total.getManufacturingDone()));
-			jManufacturingFree.setText(Formater.longFormat(total.getManufacturingFree()));
-			jManufacturingActive.setText(Formater.longFormat(total.getManufacturingActive()));
-			jManufacturingMax.setText(Formater.longFormat(total.getManufacturingMax()));
-			jReactionsDone.setText(Formater.longFormat(total.getReactionsDone()));
-			jReactionsFree.setText(Formater.longFormat(total.getReactionsFree()));
-			jReactionsActive.setText(Formater.longFormat(total.getReactionsActive()));
-			jReactionsMax.setText(Formater.longFormat(total.getReactionsMax()));
-			jResearchDone.setText(Formater.longFormat(total.getResearchDone()));
-			jResearchFree.setText(Formater.longFormat(total.getResearchFree()));
-			jResearchActive.setText(Formater.longFormat(total.getResearchActive()));
-			jResearchMax.setText(Formater.longFormat(total.getResearchMax()));
+			jManufacturingDone.setNumber(total.getManufacturingDone());
+			jManufacturingFree.setNumber(total.getManufacturingFree());
+			jManufacturingActive.setNumber(total.getManufacturingActive());
+			jManufacturingMax.setNumber(total.getManufacturingMax());
+			jReactionsDone.setNumber(total.getReactionsDone());
+			jReactionsFree.setNumber(total.getReactionsFree());
+			jReactionsActive.setNumber(total.getReactionsActive());
+			jReactionsMax.setNumber(total.getReactionsMax());
+			jResearchDone.setNumber(total.getResearchDone());
+			jResearchFree.setNumber(total.getResearchFree());
+			jResearchActive.setNumber(total.getResearchActive());
+			jResearchMax.setNumber(total.getResearchMax());
 		}
 	}
 

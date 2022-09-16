@@ -27,6 +27,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JTable;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.gui.images.Images;
+import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo.AutoNumberFormat;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.JAutoMenuComponent;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.NumberValue;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
@@ -73,11 +74,11 @@ public class JMenuSum<T> extends JAutoMenuComponent<T> {
 	private void show(BigDecimal bigDecimal) {
 		if (bigDecimal.compareTo(BigDecimal.ZERO) != 0) {
 			double doubleValue = bigDecimal.doubleValue();
-			JMenuInfo.NumberFormat format;
+			AutoNumberFormat format;
 			if (doubleValue % 1 == 0) {
-				format = JMenuInfo.NumberFormat.LONG;
+				format = AutoNumberFormat.LONG;
 			} else {
-				format = JMenuInfo.NumberFormat.DOUBLE;
+				format = AutoNumberFormat.DOUBLE;
 			}
 			jMenuItem = JMenuInfo.createMenuItem(null, null, bigDecimal.doubleValue(), format, null, null, Images.MISC_SUM.getIcon());
 		} else {
