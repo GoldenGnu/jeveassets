@@ -47,9 +47,9 @@ import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.types.LocationType;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
+import net.nikr.eve.jeveasset.gui.frame.StatusPanel.JStatusLabel;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
-import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.components.JDropDownButton;
 import net.nikr.eve.jeveasset.gui.shared.components.JFixedToolBar;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTabSecondary;
@@ -59,6 +59,7 @@ import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuColumns;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo.InfoItem;
+import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo.AutoNumberFormat;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
@@ -95,11 +96,11 @@ public class OverviewTab extends JMainTabSecondary {
 	private final JToggleButton jGroups;
 	private final JDropDownButton jLoadFilter;
 	private final JComboBox<String> jOwner;
-	private final JLabel jValue;
-	private final JLabel jReprocessed;
-	private final JLabel jCount;
-	private final JLabel jAverage;
-	private final JLabel jVolume;
+	private final JStatusLabel jValue;
+	private final JStatusLabel jReprocessed;
+	private final JStatusLabel jCount;
+	private final JStatusLabel jAverage;
+	private final JStatusLabel jVolume;
 	private final JLabel jShowing;
 	private final ListenerClass listener = new ListenerClass();
 
@@ -229,19 +230,19 @@ public class OverviewTab extends JMainTabSecondary {
 		//Menu
 		installTableTool(new OverviewTableMenu(), tableFormat, tableModel, jTable, filterControl, Overview.class);
 
-		jVolume = StatusPanel.createLabel(TabsOverview.get().totalVolume(), Images.ASSETS_VOLUME.getIcon());
+		jVolume = StatusPanel.createLabel(TabsOverview.get().totalVolume(), Images.ASSETS_VOLUME.getIcon(), AutoNumberFormat.DOUBLE);
 		this.addStatusbarLabel(jVolume);
 
-		jCount = StatusPanel.createLabel(TabsOverview.get().totalCount(), Images.EDIT_ADD.getIcon()); //Add
+		jCount = StatusPanel.createLabel(TabsOverview.get().totalCount(), Images.EDIT_ADD.getIcon(), AutoNumberFormat.ITEMS);
 		this.addStatusbarLabel(jCount);
 
-		jAverage = StatusPanel.createLabel(TabsOverview.get().average(), Images.ASSETS_AVERAGE.getIcon());
+		jAverage = StatusPanel.createLabel(TabsOverview.get().average(), Images.ASSETS_AVERAGE.getIcon(), AutoNumberFormat.ISK);
 		this.addStatusbarLabel(jAverage);
 
-		jReprocessed = StatusPanel.createLabel(TabsOverview.get().totalReprocessed(), Images.SETTINGS_REPROCESSING.getIcon());
+		jReprocessed = StatusPanel.createLabel(TabsOverview.get().totalReprocessed(), Images.SETTINGS_REPROCESSING.getIcon(), AutoNumberFormat.ISK);
 		this.addStatusbarLabel(jReprocessed);
 
-		jValue = StatusPanel.createLabel(TabsOverview.get().totalValue(), Images.TOOL_VALUES.getIcon());
+		jValue = StatusPanel.createLabel(TabsOverview.get().totalValue(), Images.TOOL_VALUES.getIcon(), AutoNumberFormat.ISK);
 		this.addStatusbarLabel(jValue);
 
 		layout.setHorizontalGroup(
@@ -331,11 +332,11 @@ public class OverviewTab extends JMainTabSecondary {
 		if (totalCount > 0 && totalValue > 0) {
 			averageValue = totalValue / totalCount;
 		}
-		jVolume.setText(Formater.doubleFormat(totalVolume));
-		jCount.setText(Formater.itemsFormat(totalCount));
-		jAverage.setText(Formater.iskFormat(averageValue));
-		jReprocessed.setText(Formater.iskFormat(totalReprocessed));
-		jValue.setText(Formater.iskFormat(totalValue));
+		jVolume.setNumber(totalVolume);
+		jCount.setNumber(totalCount);
+		jAverage.setNumber(averageValue);
+		jReprocessed.setNumber(totalReprocessed);
+		jValue.setNumber(totalValue);
 	}
 
 	protected View getSelectedView() {

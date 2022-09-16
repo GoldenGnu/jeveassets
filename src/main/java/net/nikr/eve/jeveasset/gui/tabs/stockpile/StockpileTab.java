@@ -65,8 +65,8 @@ import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.tag.TagUpdate;
 import net.nikr.eve.jeveasset.data.settings.types.LocationType;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
+import net.nikr.eve.jeveasset.gui.frame.StatusPanel.JStatusLabel;
 import net.nikr.eve.jeveasset.gui.images.Images;
-import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.InstantToolTip;
 import net.nikr.eve.jeveasset.gui.shared.MarketDetailsColumn;
 import net.nikr.eve.jeveasset.gui.shared.MarketDetailsColumn.MarketDetailsActionListener;
@@ -81,6 +81,7 @@ import net.nikr.eve.jeveasset.gui.shared.components.JTextDialog;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuColumns;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
+import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo.AutoNumberFormat;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuUI;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager;
@@ -126,10 +127,10 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 	}
 
 	//StatusBar
-	private final JLabel jVolumeNow;
-	private final JLabel jVolumeNeeded;
-	private final JLabel jValueNow;
-	private final JLabel jValueNeeded;
+	private final JStatusLabel jVolumeNow;
+	private final JStatusLabel jVolumeNeeded;
+	private final JStatusLabel jValueNow;
+	private final JStatusLabel jValueNeeded;
 
 	//Dialogs
 	private final JCustomFileChooser jFileChooser;
@@ -374,16 +375,16 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 				.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
 		);
 
-		jVolumeNow = StatusPanel.createLabel(TabsStockpile.get().shownVolumeNow(), Images.ASSETS_VOLUME.getIcon());
+		jVolumeNow = StatusPanel.createLabel(TabsStockpile.get().shownVolumeNow(), Images.ASSETS_VOLUME.getIcon(), AutoNumberFormat.DOUBLE);
 		this.addStatusbarLabel(jVolumeNow);
 
-		jValueNow = StatusPanel.createLabel(TabsStockpile.get().shownValueNow(), Images.TOOL_VALUES.getIcon());
+		jValueNow = StatusPanel.createLabel(TabsStockpile.get().shownValueNow(), Images.TOOL_VALUES.getIcon(), AutoNumberFormat.ISK);
 		this.addStatusbarLabel(jValueNow);
 
-		jVolumeNeeded = StatusPanel.createLabel(TabsStockpile.get().shownVolumeNeeded(), Images.ASSETS_VOLUME.getIcon());
+		jVolumeNeeded = StatusPanel.createLabel(TabsStockpile.get().shownVolumeNeeded(), Images.ASSETS_VOLUME.getIcon(), AutoNumberFormat.DOUBLE);
 		this.addStatusbarLabel(jVolumeNeeded);
 
-		jValueNeeded = StatusPanel.createLabel(TabsStockpile.get().shownValueNeeded(), Images.TOOL_VALUES.getIcon());
+		jValueNeeded = StatusPanel.createLabel(TabsStockpile.get().shownValueNeeded(), Images.TOOL_VALUES.getIcon(), AutoNumberFormat.ISK);
 		this.addStatusbarLabel(jValueNeeded);
 	}
 
@@ -900,10 +901,10 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 				}
 			}
 
-			jVolumeNow.setText(TabsStockpile.get().now() + Formater.doubleFormat(volumnNow));
-			jValueNow.setText(TabsStockpile.get().now() + Formater.iskFormat(valueNow));
-			jVolumeNeeded.setText(TabsStockpile.get().needed() + Formater.doubleFormat(volumnNeeded));
-			jValueNeeded.setText(TabsStockpile.get().needed() + Formater.iskFormat(valueNeeded));
+			jVolumeNow.setNumber(TabsStockpile.get().now(), volumnNow);
+			jValueNow.setNumber(TabsStockpile.get().now(), valueNow);
+			jVolumeNeeded.setNumber(TabsStockpile.get().needed(), volumnNeeded);
+			jValueNeeded.setNumber(TabsStockpile.get().needed(), valueNeeded);
 		}
 
 		@Override

@@ -40,7 +40,6 @@ import java.util.Set;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
@@ -48,13 +47,14 @@ import net.nikr.eve.jeveasset.data.api.my.MyContract;
 import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
 import net.nikr.eve.jeveasset.data.settings.types.LocationType;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
+import net.nikr.eve.jeveasset.gui.frame.StatusPanel.JStatusLabel;
 import net.nikr.eve.jeveasset.gui.images.Images;
-import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.components.JFixedToolBar;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTabPrimary;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuColumns;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
+import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo.AutoNumberFormat;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuUI.ContractMenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
@@ -74,11 +74,11 @@ public class ContractsTab extends JMainTabPrimary {
 
 	//GUI
 	private final JSeparatorTable jTable;
-	private final JLabel jSellingPrice;
-	private final JLabel jSellingAssets;
-	private final JLabel jBuying;
-	private final JLabel jSold;
-	private final JLabel jBought;
+	private final JStatusLabel jSellingPrice;
+	private final JStatusLabel jSellingAssets;
+	private final JStatusLabel jBuying;
+	private final JStatusLabel jSold;
+	private final JStatusLabel jBought;
 
 	//Table
 	private final EventList<MyContractItem> eventList;
@@ -155,19 +155,19 @@ public class ContractsTab extends JMainTabPrimary {
 		//Menu
 		installTableTool(new ContractsTableMenu(), tableFormat, tableModel, jTable, filterControl, MyContractItem.class);
 
-		jSellingPrice = StatusPanel.createLabel(TabsContracts.get().sellingPrice(), Images.ORDERS_SELL.getIcon());
+		jSellingPrice = StatusPanel.createLabel(TabsContracts.get().sellingPrice(), Images.ORDERS_SELL.getIcon(), AutoNumberFormat.ISK);
 		addStatusbarLabel(jSellingPrice);
 
-		jSellingAssets = StatusPanel.createLabel(TabsContracts.get().sellingAssets(), Images.TOOL_VALUES.getIcon());
+		jSellingAssets = StatusPanel.createLabel(TabsContracts.get().sellingAssets(), Images.TOOL_VALUES.getIcon(), AutoNumberFormat.ISK);
 		addStatusbarLabel(jSellingAssets);
 
-		jBuying = StatusPanel.createLabel(TabsContracts.get().buying(), Images.ORDERS_BUY.getIcon());
+		jBuying = StatusPanel.createLabel(TabsContracts.get().buying(), Images.ORDERS_BUY.getIcon(), AutoNumberFormat.ISK);
 		addStatusbarLabel(jBuying);
 
-		jSold = StatusPanel.createLabel(TabsContracts.get().sold(), Images.ORDERS_SOLD.getIcon());
+		jSold = StatusPanel.createLabel(TabsContracts.get().sold(), Images.ORDERS_SOLD.getIcon(), AutoNumberFormat.ISK);
 		addStatusbarLabel(jSold);
 
-		jBought = StatusPanel.createLabel(TabsContracts.get().bought(), Images.ORDERS_BOUGHT.getIcon());
+		jBought = StatusPanel.createLabel(TabsContracts.get().bought(), Images.ORDERS_BOUGHT.getIcon(), AutoNumberFormat.ISK);
 		addStatusbarLabel(jBought);
 
 		layout.setHorizontalGroup(
@@ -292,11 +292,11 @@ public class ContractsTab extends JMainTabPrimary {
 			} finally {
 				filterList.getReadWriteLock().readLock().unlock();
 			}
-			jSellingPrice.setText(Formater.iskFormat(sellingPrice));
-			jSellingAssets.setText(Formater.iskFormat(sellingAssets));
-			jSold.setText(Formater.iskFormat(sold));
-			jBuying.setText(Formater.iskFormat(buying));
-			jBought.setText(Formater.iskFormat(bought));
+			jSellingPrice.setNumber(sellingPrice);
+			jSellingAssets.setNumber(sellingAssets);
+			jSold.setNumber(sold);
+			jBuying.setNumber(buying);
+			jBought.setNumber(bought);
 		}
 	}
 
