@@ -176,11 +176,21 @@ public class MainMenu extends JMenuBar {
 		menuItem.addActionListener(program);
 		submenu.add(menuItem);
 
+		submenu.addSeparator();
+
 		menuItem = new JMenuItem(GuiFrame.get().market());
 		menuItem.setIcon(Images.TOOL_MARKET_ORDERS.getIcon());
 		menuItem.setActionCommand(MainMenuAction.MARKET_ORDERS.name());
 		menuItem.addActionListener(program);
 		submenu.add(menuItem);
+
+		menuItem = new JMenuItem(GuiFrame.get().contracts());
+		menuItem.setIcon(Images.TOOL_CONTRACTS.getIcon());
+		menuItem.setActionCommand(MainMenuAction.CONTRACTS.name());
+		menuItem.addActionListener(program);
+		submenu.add(menuItem);
+
+		submenu.addSeparator();
 
 		menuItem = new JMenuItem(GuiFrame.get().industry());
 		menuItem.setIcon(Images.TOOL_INDUSTRY_JOBS.getIcon());
@@ -191,12 +201,6 @@ public class MainMenu extends JMenuBar {
 		menuItem = new JMenuItem(GuiFrame.get().industrySlots());
 		menuItem.setIcon(Images.TOOL_INDUSTRY_SLOTS.getIcon());
 		menuItem.setActionCommand(MainMenuAction.INDUSTRY_SLOT.name());
-		menuItem.addActionListener(program);
-		submenu.add(menuItem);
-
-		menuItem = new JMenuItem(GuiFrame.get().contracts());
-		menuItem.setIcon(Images.TOOL_CONTRACTS.getIcon());
-		menuItem.setActionCommand(MainMenuAction.CONTRACTS.name());
 		menuItem.addActionListener(program);
 		submenu.add(menuItem);
 
