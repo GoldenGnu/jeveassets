@@ -78,6 +78,7 @@ import net.nikr.eve.jeveasset.gui.dialogs.update.StructureUpdateDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.update.TaskDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
+import net.nikr.eve.jeveasset.gui.frame.StatusPanel.JStatusLabel;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.CopyHandler;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
@@ -90,6 +91,7 @@ import net.nikr.eve.jeveasset.gui.shared.components.JMainTabPrimary;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuColumns;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
+import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo.AutoNumberFormat;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuUI;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
@@ -123,21 +125,21 @@ public class MarketOrdersTab extends JMainTabPrimary {
 	private static final int SIGNIFICANT_FIGURES = 4;
 
 	private final JAutoColumnTable jTable;
-	private final JLabel jSellOrdersTotal;
-	private final JLabel jBuyOrdersTotal;
-	private final JLabel jEscrowTotal;
-	private final JLabel jToCoverTotal;
 	private final JButton jUpdate;
 	private final JButton jErrors;
 	private final JCheckBox jAutoUpdate;
-	private final JLabel jSellOrderRangeLast;
-	private final JLabel jLastEsiUpdate;
-	private final JLabel jLastLogUpdate;
-	private final JLabel jClipboard;
 	private final JButton jClearNew;
 	private final JComboBox<MarketOrderRange> jOrderRangeNext;
 	private final JComboBox<String> jOrderType;
 	private final MarketOrdersErrorDialog jMarketOrdersErrorDialog;
+	private final JStatusLabel jSellOrdersTotal;
+	private final JStatusLabel jBuyOrdersTotal;
+	private final JStatusLabel jEscrowTotal;
+	private final JStatusLabel jToCoverTotal;
+	private final JStatusLabel jSellOrderRangeLast;
+	private final JStatusLabel jLastEsiUpdate;
+	private final JStatusLabel jLastLogUpdate;
+	private final JStatusLabel jClipboard;
 	private final Timer timer;
 	private final FileListener fileListener;
 	private static Date lastLogUpdate = null;
@@ -266,30 +268,30 @@ public class MarketOrdersTab extends JMainTabPrimary {
 		//Menu
 		installTableTool(new OrdersTableMenu(), tableFormat, tableModel, jTable, filterControl, MyMarketOrder.class);
 
-		jSellOrdersTotal = StatusPanel.createLabel(TabsOrders.get().totalSellOrders(), Images.ORDERS_SELL.getIcon());
+		jSellOrdersTotal = StatusPanel.createLabel(TabsOrders.get().totalSellOrders(), Images.ORDERS_SELL.getIcon(), AutoNumberFormat.ISK);
 		this.addStatusbarLabel(jSellOrdersTotal);
 
-		jBuyOrdersTotal = StatusPanel.createLabel(TabsOrders.get().totalBuyOrders(), Images.ORDERS_BUY.getIcon());
+		jBuyOrdersTotal = StatusPanel.createLabel(TabsOrders.get().totalBuyOrders(), Images.ORDERS_BUY.getIcon(), AutoNumberFormat.ISK);
 		this.addStatusbarLabel(jBuyOrdersTotal);
 
-		jEscrowTotal = StatusPanel.createLabel(TabsOrders.get().totalEscrow(), Images.ORDERS_ESCROW.getIcon());
+		jEscrowTotal = StatusPanel.createLabel(TabsOrders.get().totalEscrow(), Images.ORDERS_ESCROW.getIcon(), AutoNumberFormat.ISK);
 		this.addStatusbarLabel(jEscrowTotal);
 
-		jToCoverTotal = StatusPanel.createLabel(TabsOrders.get().totalToCover(), Images.ORDERS_TO_COVER.getIcon());
+		jToCoverTotal = StatusPanel.createLabel(TabsOrders.get().totalToCover(), Images.ORDERS_TO_COVER.getIcon(), AutoNumberFormat.ISK);
 		this.addStatusbarLabel(jToCoverTotal);
 
-		jSellOrderRangeLast = StatusPanel.createLabel(TabsOrders.get().sellOrderRangeLastToolTip(), Images.ORDERS_SELL.getIcon());
+		jSellOrderRangeLast = StatusPanel.createLabel(TabsOrders.get().sellOrderRangeLastToolTip(), Images.ORDERS_SELL.getIcon(), null);
 		this.addStatusbarLabel(jSellOrderRangeLast);
 		jSellOrderRangeLast.setText(TabsOrders.get().sellOrderRangeSelcted(Settings.get().getOutbidOrderRange().toString()));
 
-		jClipboard = StatusPanel.createLabel(TabsOrders.get().lastClipboardToolTip(), Images.EDIT_COPY.getIcon());
+		jClipboard = StatusPanel.createLabel(TabsOrders.get().lastClipboardToolTip(), Images.EDIT_COPY.getIcon(), null);
 		this.addStatusbarLabel(jClipboard);
 		setClipboardData(TabsOrders.get().none());
 
-		jLastLogUpdate = StatusPanel.createLabel(TabsOrders.get().lastLogUpdateToolTip(), null);
+		jLastLogUpdate = StatusPanel.createLabel(TabsOrders.get().lastLogUpdateToolTip(), null, null);
 		this.addStatusbarLabel(jLastLogUpdate);
 
-		jLastEsiUpdate = StatusPanel.createLabel(TabsOrders.get().lastEsiUpdateToolTip(), null);
+		jLastEsiUpdate = StatusPanel.createLabel(TabsOrders.get().lastEsiUpdateToolTip(), null, null);
 		this.addStatusbarLabel(jLastEsiUpdate);
 
 		updateDates();
@@ -679,10 +681,10 @@ public class MarketOrdersTab extends JMainTabPrimary {
 			} finally {
 				filterList.getReadWriteLock().readLock().unlock();
 			}
-			jSellOrdersTotal.setText(Formater.iskFormat(sellOrdersTotal));
-			jBuyOrdersTotal.setText(Formater.iskFormat(buyOrdersTotal));
-			jToCoverTotal.setText(Formater.iskFormat(toCoverTotal));
-			jEscrowTotal.setText(Formater.iskFormat(escrowTotal));
+			jSellOrdersTotal.setNumber(sellOrdersTotal);
+			jBuyOrdersTotal.setNumber(buyOrdersTotal);
+			jToCoverTotal.setNumber(toCoverTotal);
+			jEscrowTotal.setNumber(escrowTotal);
 		}
 
 		@Override

@@ -39,11 +39,15 @@ import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.ColorUtil;
+import net.nikr.eve.jeveasset.gui.shared.CopyHandler;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.components.JFixedToolBar;
 import net.nikr.eve.jeveasset.gui.shared.components.JGroupLayoutPanel;
+import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
+import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo.AutoNumberFormat;
 import net.nikr.eve.jeveasset.i18n.DialoguesStructure;
 import net.nikr.eve.jeveasset.i18n.GuiFrame;
+import net.nikr.eve.jeveasset.i18n.GuiShared;
 import net.nikr.eve.jeveasset.i18n.TabPriceHistory;
 import net.nikr.eve.jeveasset.i18n.TabsOrders;
 
@@ -99,7 +103,7 @@ public class StatusPanel extends JGroupLayoutPanel {
 		jApiUpdate = createIcon(Images.DIALOG_UPDATE.getIcon(), GuiFrame.get().updatable());
 		programStatus.add(jApiUpdate);
 
-		jEveTime = createLabel(GuiFrame.get().eve(), Images.MISC_EVE.getIcon());
+		jEveTime = createLabel(GuiFrame.get().eve(), Images.MISC_EVE.getIcon(), null);
 		programStatus.add(jEveTime);
 
 		eveTimer = new Timer(1000, listener);
@@ -181,11 +185,19 @@ public class StatusPanel extends JGroupLayoutPanel {
 		}
 		for (JLabel jLabel : programStatus) {
 			jToolBar.add(jLabel);
-			addSpace(10);
+			if (jLabel instanceof JStatusLabel) {
+				addSpace(6);
+			} else {
+				addSpace(8);
+			}
 		}
 		for (JLabel jLabel : program.getMainWindow().getSelectedTab().getStatusbarLabels()) {
 			jToolBar.add(jLabel);
-			addSpace(10);
+			if (jLabel instanceof JStatusLabel) {
+				addSpace(6);
+			} else {
+				addSpace(8);
+			}
 		}
 		addSpace(10);
 		this.getPanel().updateUI();
@@ -205,25 +217,15 @@ public class StatusPanel extends JGroupLayoutPanel {
 	public static JLabel createIcon(final Icon icon, final String toolTip) {
 		JLabel jLabel = new JLabel();
 		jLabel.setIcon(icon);
-		jLabel.setMinimumSize(new Dimension(25, 25));
-		jLabel.setPreferredSize(new Dimension(25, 25));
-		jLabel.setMaximumSize(new Dimension(25, 25));
 		jLabel.setHorizontalAlignment(JLabel.CENTER);
 		jLabel.setToolTipText(toolTip);
 		return jLabel;
 	}
-	public static JLabel createLabel(final String toolTip, final Icon icon) {
-		JLabel jLabel = new JLabel();
-		jLabel.setIcon(icon);
-		if (ColorUtil.isBrightColor(jLabel.getBackground())) { //Light background color
-			jLabel.setForeground(jLabel.getBackground().darker().darker().darker());
-		} else { //Dark background color
-			jLabel.setForeground(jLabel.getBackground().brighter().brighter());
-		}
-		jLabel.setToolTipText(toolTip);
-		jLabel.setHorizontalAlignment(JLabel.LEFT);
-		return jLabel;
+
+	public static JStatusLabel createLabel(final String toolTip, final Icon icon, final AutoNumberFormat format) {
+		return new JStatusLabel(toolTip, icon, format);
 	}
+
 	private void addSpace(final int width) {
 		JLabel jSpace = new JLabel();
 		jSpace.setMinimumSize(new Dimension(width, 25));
@@ -353,6 +355,86 @@ public class StatusPanel extends JGroupLayoutPanel {
 				return false;
 			}
 			return true;
+		}
+	}
+
+	public static class JStatusLabel extends JLabel {
+
+		private final AutoNumberFormat format;
+		private String text = null;
+		private Number number = null;
+
+		public JStatusLabel(final String toolTip, final Icon icon, AutoNumberFormat format) {
+			this.format = format;
+			init(toolTip, icon);
+		}
+
+		private void init(final String toolTip, final Icon icon) {
+			setIcon(icon);
+			if (ColorUtil.isBrightColor(getBackground())) { //Light background color
+				setForeground(getBackground().darker().darker().darker());
+			} else { //Dark background color
+				setForeground(getBackground().brighter().brighter());
+			}
+			setIconTextGap(3);
+			setToolTipText(toolTip);
+			setHorizontalAlignment(JLabel.LEFT);
+
+			addMouseListener(new MouseAdapter() {
+				@Override
+				public void mousePressed(MouseEvent e) {
+					if (e.getButton() == MouseEvent.BUTTON1) {
+						if (number != null) {
+							CopyHandler.toClipboard(Formater.copyFormat(number));
+						} else {
+							CopyHandler.toClipboard(text);
+						}
+						JStatusLabel.super.setText(GuiShared.get().selectionCopiedToClipboard());
+						setIcon(Images.EDIT_COPY.getIcon());
+						final Timer timer = new Timer(JMenuInfo.COPY_DELAY, null);
+						timer.addActionListener(new ActionListener() {
+							@Override
+							public void actionPerformed(ActionEvent e) {
+								updateText();
+								setIcon(icon);
+								timer.stop();
+							}
+						});
+						timer.start();
+					}
+				}
+			});
+		}
+
+		@Override
+		public void setText(String text) {
+			this.text = text;
+			this.number = null;
+			updateText();
+		}
+
+		public void setNumber(Number number) {
+			this.text = null;
+			this.number = number;
+			updateText();
+		}
+
+		public void setNumber(String text, double number) {
+			this.text = text;
+			this.number = number;
+			updateText();
+		}
+
+		public void updateText() {
+			if (text != null && number != null && format != null) {
+				super.setText(text + JMenuInfo.format(number, format));
+			} else if (text != null) {
+				super.setText(text);
+			} else if (number != null && format != null) {
+				super.setText(JMenuInfo.format(number, format));
+			} else {
+				super.setText("");
+			}
 		}
 	}
 

@@ -91,6 +91,7 @@ import net.nikr.eve.jeveasset.data.settings.TrackerSettings;
 import net.nikr.eve.jeveasset.data.settings.TrackerSettings.DisplayType;
 import net.nikr.eve.jeveasset.data.settings.TrackerSettings.ShowOption;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
+import net.nikr.eve.jeveasset.gui.frame.StatusPanel.JStatusLabel;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.InstantToolTip;
@@ -105,6 +106,7 @@ import net.nikr.eve.jeveasset.gui.shared.components.JMainTabSecondary;
 import net.nikr.eve.jeveasset.gui.shared.components.JMultiSelectionList;
 import net.nikr.eve.jeveasset.gui.shared.components.JSelectionDialog;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
+import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo.AutoNumberFormat;
 import net.nikr.eve.jeveasset.gui.tabs.values.AssetValue;
 import net.nikr.eve.jeveasset.gui.tabs.values.DataSetCreator;
 import net.nikr.eve.jeveasset.gui.tabs.values.Value;
@@ -199,16 +201,16 @@ public class TrackerTab extends JMainTabSecondary {
 	private final JCustomFileChooser jFileChooser;
 	private final JLockWindow jLockWindow;
 
-	private final JLabel jTotalStatus;
-	private final JLabel jWalletBalanceStatus;
-	private final JLabel jAssetsStatus;
-	private final JLabel jSellOrdersStatus;
-	private final JLabel jEscrowsStatus;
-	private final JLabel jEscrowsToCoverStatus;
-	private final JLabel jManufacturingStatus;
-	private final JLabel jContractCollateralStatus;
-	private final JLabel jContractValueStatus;
-	private final JLabel jSkillPointsStatus;
+	private final JStatusLabel jTotalStatus;
+	private final JStatusLabel jWalletBalanceStatus;
+	private final JStatusLabel jAssetsStatus;
+	private final JStatusLabel jSellOrdersStatus;
+	private final JStatusLabel jEscrowsStatus;
+	private final JStatusLabel jEscrowsToCoverStatus;
+	private final JStatusLabel jManufacturingStatus;
+	private final JStatusLabel jContractCollateralStatus;
+	private final JStatusLabel jContractValueStatus;
+	private final JStatusLabel jSkillPointsStatus;
 
 	private final ListenerClass listener = new ListenerClass();
 	private final List<JMenuInfo.MenuItemValue> values;
@@ -418,34 +420,34 @@ public class TrackerTab extends JMainTabSecondary {
 		jOwners.getSelectionModel().addListSelectionListener(listener);
 		JScrollPane jOwnersScroll = new JScrollPane(jOwners);
 
-		jTotalStatus = StatusPanel.createLabel(TabsTracker.get().statusTotal(), new ColorIcon(Color.RED.darker()));
+		jTotalStatus = StatusPanel.createLabel(TabsTracker.get().statusTotal(), new ColorIcon(Color.RED.darker()), AutoNumberFormat.ISK);
 		this.addStatusbarLabel(jTotalStatus);
 
-		jWalletBalanceStatus = StatusPanel.createLabel(TabsTracker.get().statusBalance(), new ColorIcon(Color.BLUE.darker()));
+		jWalletBalanceStatus = StatusPanel.createLabel(TabsTracker.get().statusBalance(), new ColorIcon(Color.BLUE.darker()), AutoNumberFormat.ISK);
 		this.addStatusbarLabel(jWalletBalanceStatus);
 
-		jAssetsStatus = StatusPanel.createLabel(TabsTracker.get().statusAssets(), new ColorIcon(Color.GREEN.darker().darker()));
+		jAssetsStatus = StatusPanel.createLabel(TabsTracker.get().statusAssets(), new ColorIcon(Color.GREEN.darker().darker()), AutoNumberFormat.ISK);
 		this.addStatusbarLabel(jAssetsStatus);
 
-		jSellOrdersStatus = StatusPanel.createLabel(TabsTracker.get().statusSellOrders(), new ColorIcon(Color.CYAN.darker()));
+		jSellOrdersStatus = StatusPanel.createLabel(TabsTracker.get().statusSellOrders(), new ColorIcon(Color.CYAN.darker()), AutoNumberFormat.ISK);
 		this.addStatusbarLabel(jSellOrdersStatus);
 
-		jEscrowsStatus = StatusPanel.createLabel(TabsTracker.get().statusEscrows(), new ColorIcon(Color.BLACK));
+		jEscrowsStatus = StatusPanel.createLabel(TabsTracker.get().statusEscrows(), new ColorIcon(Color.BLACK), AutoNumberFormat.ISK);
 		this.addStatusbarLabel(jEscrowsStatus);
 
-		jEscrowsToCoverStatus = StatusPanel.createLabel(TabsTracker.get().statusEscrowsToCover(), new ColorIcon(Color.GRAY));
+		jEscrowsToCoverStatus = StatusPanel.createLabel(TabsTracker.get().statusEscrowsToCover(), new ColorIcon(Color.GRAY), AutoNumberFormat.ISK);
 		this.addStatusbarLabel(jEscrowsToCoverStatus);
 
-		jManufacturingStatus = StatusPanel.createLabel(TabsTracker.get().statusManufacturing(), new ColorIcon(Color.MAGENTA));
+		jManufacturingStatus = StatusPanel.createLabel(TabsTracker.get().statusManufacturing(), new ColorIcon(Color.MAGENTA), AutoNumberFormat.ISK);
 		this.addStatusbarLabel(jManufacturingStatus);
 
-		jContractCollateralStatus = StatusPanel.createLabel(TabsTracker.get().statusContractCollateral(), new ColorIcon(Color.PINK));
+		jContractCollateralStatus = StatusPanel.createLabel(TabsTracker.get().statusContractCollateral(), new ColorIcon(Color.PINK), AutoNumberFormat.ISK);
 		this.addStatusbarLabel(jContractCollateralStatus);
 
-		jContractValueStatus = StatusPanel.createLabel(TabsTracker.get().statusContractValue(), new ColorIcon(Color.ORANGE));
+		jContractValueStatus = StatusPanel.createLabel(TabsTracker.get().statusContractValue(), new ColorIcon(Color.ORANGE), AutoNumberFormat.ISK);
 		this.addStatusbarLabel(jContractValueStatus);
 
-		jSkillPointsStatus = StatusPanel.createLabel(TabsTracker.get().statusSkillPointValue(), new ColorIcon(Color.YELLOW));
+		jSkillPointsStatus = StatusPanel.createLabel(TabsTracker.get().statusSkillPointValue(), new ColorIcon(Color.YELLOW), AutoNumberFormat.ISK);
 		this.addStatusbarLabel(jSkillPointsStatus);
 
 		JLabel jHelp = new JLabel(TabsTracker.get().help());
@@ -1168,63 +1170,63 @@ public class TrackerTab extends JMainTabSecondary {
 			last = entry.getValue();
 		}
 		if (firstTotal != null && lastTotal != null) {
-			jTotalStatus.setText(Formater.iskFormat(lastTotal - firstTotal));
+			jTotalStatus.setNumber(lastTotal - firstTotal);
 		} else {
-			jTotalStatus.setText(Formater.iskFormat(0.0));
+			jTotalStatus.setNumber(0.0);
 		}
 		jWalletBalanceStatus.setVisible(jWalletBalance.isSelected());
 		if (first != null && last != null) {
-			jWalletBalanceStatus.setText(Formater.iskFormat(last.getBalanceTotal() - first.getBalanceTotal()));
+			jWalletBalanceStatus.setNumber(last.getBalanceTotal() - first.getBalanceTotal());
 		} else {
-			jWalletBalanceStatus.setText(Formater.iskFormat(0.0));
+			jWalletBalanceStatus.setNumber(0.0);
 		}
 		jAssetsStatus.setVisible(jAssets.isSelected());
 		if (first != null && last != null) {
-			jAssetsStatus.setText(Formater.iskFormat(last.getAssetsTotal() - first.getAssetsTotal()));
+			jAssetsStatus.setNumber(last.getAssetsTotal() - first.getAssetsTotal());
 		} else {
-			jAssetsStatus.setText(Formater.iskFormat(0.0));
+			jAssetsStatus.setNumber(0.0);
 		}
 		jSellOrdersStatus.setVisible(jSellOrders.isSelected());
 		if (first != null && last != null) {
-			jSellOrdersStatus.setText(Formater.iskFormat(last.getSellOrders() - first.getSellOrders()));
+			jSellOrdersStatus.setNumber(last.getSellOrders() - first.getSellOrders());
 		} else {
-			jSellOrdersStatus.setText(Formater.iskFormat(0.0));
+			jSellOrdersStatus.setNumber(0.0);
 		}
 		jEscrowsStatus.setVisible(jEscrows.isSelected());
 		if (first != null && last != null) {
-			jEscrowsStatus.setText(Formater.iskFormat(last.getEscrows() - first.getEscrows()));
+			jEscrowsStatus.setNumber(last.getEscrows() - first.getEscrows());
 		} else {
-			jEscrowsStatus.setText(Formater.iskFormat(0.0));
+			jEscrowsStatus.setNumber(0.0);
 		}
 		jEscrowsToCoverStatus.setVisible(jEscrowsToCover.isSelected());
 		if (first != null && last != null) {
-			jEscrowsToCoverStatus.setText(Formater.iskFormat(last.getEscrowsToCover() - first.getEscrowsToCover()));
+			jEscrowsToCoverStatus.setNumber(last.getEscrowsToCover() - first.getEscrowsToCover());
 		} else {
-			jEscrowsToCoverStatus.setText(Formater.iskFormat(0.0));
+			jEscrowsToCoverStatus.setNumber(0.0);
 		}
 		jManufacturingStatus.setVisible(jManufacturing.isSelected());
 		if (first != null && last != null) {
-			jManufacturingStatus.setText(Formater.iskFormat(last.getManufacturing() - first.getManufacturing()));
+			jManufacturingStatus.setNumber(last.getManufacturing() - first.getManufacturing());
 		} else {
-			jManufacturingStatus.setText(Formater.iskFormat(0.0));
+			jManufacturingStatus.setNumber(0.0);
 		}
 		jContractCollateralStatus.setVisible(jContractCollateral.isSelected());
 		if (first != null && last != null) {
-			jContractCollateralStatus.setText(Formater.iskFormat(last.getContractCollateral() - first.getContractCollateral()));
+			jContractCollateralStatus.setNumber(last.getContractCollateral() - first.getContractCollateral());
 		} else {
-			jContractCollateralStatus.setText(Formater.iskFormat(0.0));
+			jContractCollateralStatus.setNumber(0.0);
 		}
 		jContractValueStatus.setVisible(jContractValue.isSelected());
 		if (first != null && last != null) {
-			jContractValueStatus.setText(Formater.iskFormat(last.getContractValue() - first.getContractValue()));
+			jContractValueStatus.setNumber(last.getContractValue() - first.getContractValue());
 		} else {
-			jContractValueStatus.setText(Formater.iskFormat(0.0));
+			jContractValueStatus.setNumber(0.0);
 		}
 		jSkillPointsStatus.setVisible(jSkillPointsValue.isSelected());
 		if (first != null && last != null) {
-			jSkillPointsStatus.setText(Formater.iskFormat(last.getSkillPointValue()- first.getSkillPointValue()));
+			jSkillPointsStatus.setNumber(last.getSkillPointValue()- first.getSkillPointValue());
 		} else {
-			jSkillPointsStatus.setText(Formater.iskFormat(0.0));
+			jSkillPointsStatus.setNumber(0.0);
 		}
 		if (jTotal.isSelected()) { //Update total
 			dataset.addSeries(total);
@@ -1734,7 +1736,7 @@ public class TrackerTab extends JMainTabSecondary {
 						int y = (int) jNextChart.getXYPlot().getRangeAxis().valueToJava2D(yValue, dataArea, yEdge);
 						Date date = new Date((long)xValue);
 						values.clear();
-						JMenuItem jIskValue = JMenuInfo.createMenuItem(values, jPopupMenu, yValue, JMenuInfo.NumberFormat.ISK, TabsTracker.get().selectionIsk(), TabsTracker.get().selectionShortIsk(), Images.TOOL_VALUES.getIcon());
+						JMenuItem jIskValue = JMenuInfo.createMenuItem(values, jPopupMenu, yValue, JMenuInfo.AutoNumberFormat.ISK, TabsTracker.get().selectionIsk(), TabsTracker.get().selectionShortIsk(), Images.TOOL_VALUES.getIcon());
 						JMenuItem jDateValue = JMenuInfo.createMenuItem(values, jPopupMenu, dateFormat.format(date), TabsTracker.get().selectionDate(), TabsTracker.get().selectionShortDate(), Images.EDIT_DATE.getIcon());
 						TrackerNote trackerNote = Settings.get().getTrackerSettings().getNotes().get(new TrackerDate(date));
 						JMenuItem jNote;
