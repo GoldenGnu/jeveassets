@@ -144,6 +144,10 @@ public abstract class GuiShared extends Bundle {
 	public abstract String selectionContractsBoughtToolTip();
 	public abstract String selectionContractsBuying();
 	public abstract String selectionContractsBuyingToolTip();
+	public abstract String selectionContractsCollateralAcceptor();
+	public abstract String selectionContractsCollateralAcceptorToolTip();
+	public abstract String selectionContractsCollateralIssuer();
+	public abstract String selectionContractsCollateralIssuerToolTip();
 	public abstract String selectionContractsSellingAssets();
 	public abstract String selectionContractsSellingAssetsToolTip();
 	public abstract String selectionContractsSellingPrice();
@@ -174,6 +178,7 @@ public abstract class GuiShared extends Bundle {
 	public abstract String selectionTitle();
 	public abstract String selectionTitleBoth();
 	public abstract String selectionTitleBuy();
+	public abstract String selectionTitleCollateral();
 	public abstract String selectionTitleNeeded();
 	public abstract String selectionTitleNow();
 	public abstract String selectionTitleSell();

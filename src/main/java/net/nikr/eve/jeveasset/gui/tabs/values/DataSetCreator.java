@@ -243,7 +243,7 @@ public class DataSetCreator {
 					//If assets is updated, so are all the values
 					if (assetsUpdated(contract.getDateIssued(), issuer) && (contract.isInProgress() || contract.isOpen())) {
 						addContractCollateral(contract, values, total, date, issuer.getOwnerName()); //OK
-					} else if (assetsNotUpdated(contract.getDateCompleted(), issuer)) {
+					} else if (assetsNotUpdated(contract.getDateCompleted(), issuer) && contract.isCompletedSuccessful()) {
 						addContractCollateral(contract, values, total, date, issuer.getOwnerName()); //NOT TESTED
 					}
 				}

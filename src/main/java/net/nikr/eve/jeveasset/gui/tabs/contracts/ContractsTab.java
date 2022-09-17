@@ -79,6 +79,8 @@ public class ContractsTab extends JMainTabPrimary {
 	private final JStatusLabel jBuying;
 	private final JStatusLabel jSold;
 	private final JStatusLabel jBought;
+	private final JStatusLabel jCollateralIssuer;
+	private final JStatusLabel jCollateralAcceptor;
 
 	//Table
 	private final EventList<MyContractItem> eventList;
@@ -170,6 +172,12 @@ public class ContractsTab extends JMainTabPrimary {
 		jBought = StatusPanel.createLabel(TabsContracts.get().bought(), Images.ORDERS_BOUGHT.getIcon(), AutoNumberFormat.ISK);
 		addStatusbarLabel(jBought);
 
+		jCollateralIssuer = StatusPanel.createLabel(TabsContracts.get().collateralIssuer(), Images.ORDERS_ESCROW.getIcon(), AutoNumberFormat.ISK);
+		addStatusbarLabel(jCollateralIssuer);
+
+		jCollateralAcceptor = StatusPanel.createLabel(TabsContracts.get().collateralAcceptor(), Images.UPDATE_WORKING.getIcon(), AutoNumberFormat.ISK);
+		addStatusbarLabel(jCollateralAcceptor);
+
 		layout.setHorizontalGroup(
 				layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
 						.addComponent(filterControl.getPanel())
@@ -251,6 +259,8 @@ public class ContractsTab extends JMainTabPrimary {
 			double buying = 0;
 			double sold = 0;
 			double bought = 0;
+			double collateralIssuer = 0;
+			double collateralAcceptor = 0;
 			try {
 				filterList.getReadWriteLock().readLock().lock();
 				Set<MyContract> contracts = new HashSet<>();
@@ -268,11 +278,19 @@ public class ContractsTab extends JMainTabPrimary {
 					}
 				}
 				for (MyContract contract : contracts) {
+					boolean isIssuer = contract.isForCorp() ? program.getOwners().keySet().contains(contract.getIssuerCorpID()) : program.getOwners().keySet().contains(contract.getIssuerID());
+					boolean isAcceptor = contract.getAcceptorID() > 0 && program.getOwners().keySet().contains(contract.getAcceptorID());
+					if (contract.isCourierContract()) {
+						if (isIssuer && (contract.isInProgress() || contract.isOpen())) { //Collateral Issuer
+							collateralIssuer = collateralIssuer + contract.getCollateral();
+						}
+						if (isAcceptor && contract.isInProgress()) { //Collateral Acceptor
+							collateralAcceptor = collateralAcceptor + contract.getCollateral();
+						}
+					}
 					if (contract.isIgnoreContract()) {
 						continue;
 					}
-					boolean isIssuer = contract.isForCorp() ? program.getOwners().keySet().contains(contract.getIssuerCorpID()) : program.getOwners().keySet().contains(contract.getIssuerID());
-					boolean isAcceptor = contract.getAcceptorID() > 0 && program.getOwners().keySet().contains(contract.getAcceptorID());
 					if (isIssuer //Issuer
 							&& contract.isOpen() //Not completed
 							) { //Selling/Buying
@@ -297,6 +315,8 @@ public class ContractsTab extends JMainTabPrimary {
 			jSold.setNumber(sold);
 			jBuying.setNumber(buying);
 			jBought.setNumber(bought);
+			jCollateralIssuer.setNumber(collateralIssuer);
+			jCollateralAcceptor.setNumber(collateralAcceptor);
 		}
 	}
 

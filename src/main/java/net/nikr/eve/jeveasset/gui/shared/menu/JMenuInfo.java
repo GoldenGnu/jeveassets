@@ -129,6 +129,8 @@ public class JMenuInfo {
 			double buying = 0;
 			double sold = 0;
 			double bought = 0;
+			double collateralIssuer = 0;
+			double collateralAcceptor = 0;
 			Set<MyContract> contracts = new HashSet<>();
 			for (Object object : list) {
 				if (object instanceof SeparatorList.Separator) {
@@ -151,11 +153,19 @@ public class JMenuInfo {
 				}
 			}
 			for (MyContract contract : contracts) {
+				boolean isIssuer = contract.isForCorp() ? program.getOwners().keySet().contains(contract.getIssuerCorpID()) : program.getOwners().keySet().contains(contract.getIssuerID());
+				boolean isAcceptor = contract.getAcceptorID() > 0 && program.getOwners().keySet().contains(contract.getAcceptorID());
+				if (contract.isCourierContract()) {
+					if (isIssuer && (contract.isInProgress() || contract.isOpen())) { //Collateral Issuer
+						collateralIssuer = collateralIssuer + contract.getCollateral();
+					}
+					if (isAcceptor && contract.isInProgress()) { //Collateral Acceptor
+						collateralAcceptor = collateralAcceptor + contract.getCollateral();
+					}
+				}
 				if (contract.isIgnoreContract()) {
 					continue;
 				}
-				boolean isIssuer = contract.isForCorp() ? program.getOwners().keySet().contains(contract.getIssuerCorpID()) : program.getOwners().keySet().contains(contract.getIssuerID());
-				boolean isAcceptor = contract.getAcceptorID() > 0 && program.getOwners().keySet().contains(contract.getAcceptorID());
 				if (isIssuer //Issuer
 						&& contract.isOpen() //Not completed
 						) { //Selling/Buying
@@ -181,6 +191,10 @@ public class JMenuInfo {
 			createMenuItem(buy, jPopupMenu, buying, AutoNumberFormat.ISK, GuiShared.get().selectionContractsBuyingToolTip(), GuiShared.get().selectionContractsBuying(), Images.ORDERS_BUY.getIcon());
 			createMenuItem(buy, jPopupMenu, bought, AutoNumberFormat.ISK, GuiShared.get().selectionContractsBoughtToolTip(), GuiShared.get().selectionContractsBought(), Images.ORDERS_BOUGHT.getIcon());
 			values.addAll(buy);
+			List<MenuItemValue> collateral = createMenuItemGroup(jPopupMenu, GuiShared.get().selectionTitleCollateral(), Images.ORDERS_ESCROW.getIcon());
+			createMenuItem(collateral, jPopupMenu, collateralIssuer, AutoNumberFormat.ISK, GuiShared.get().selectionContractsCollateralIssuerToolTip(), GuiShared.get().selectionContractsCollateralIssuer(), Images.ORDERS_ESCROW.getIcon());
+			createMenuItem(collateral, jPopupMenu, collateralAcceptor, AutoNumberFormat.ISK, GuiShared.get().selectionContractsCollateralAcceptorToolTip(), GuiShared.get().selectionContractsCollateralAcceptor(), Images.UPDATE_WORKING.getIcon());
+			values.addAll(collateral);
 		}
 	}
 
