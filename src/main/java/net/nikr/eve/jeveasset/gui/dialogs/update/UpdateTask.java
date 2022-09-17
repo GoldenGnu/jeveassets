@@ -171,6 +171,14 @@ public abstract class UpdateTask extends SwingWorker<Void, Void> {
 		info = true;
 	}
 
+	public boolean hasInfo() {
+		return info;
+	}
+
+	public boolean hasWarning() {
+		return warning;
+	}
+
 	public boolean hasError() {
 		return error;
 	}

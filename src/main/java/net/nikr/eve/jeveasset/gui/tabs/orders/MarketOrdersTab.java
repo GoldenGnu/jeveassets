@@ -101,6 +101,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
 import net.nikr.eve.jeveasset.gui.shared.table.TableFormatFactory;
+import net.nikr.eve.jeveasset.gui.tabs.orders.MarketOrdersErrorDialog.ErrorLevel;
 import net.nikr.eve.jeveasset.gui.tabs.orders.OutbidProcesser.OutbidProcesserInput;
 import net.nikr.eve.jeveasset.gui.tabs.orders.OutbidProcesser.OutbidProcesserOutput;
 import net.nikr.eve.jeveasset.i18n.DialoguesUpdate;
@@ -210,7 +211,7 @@ public class MarketOrdersTab extends JMainTabPrimary {
 
 		jToolBar.addSpace(7);
 
-		jErrors = new JButton(TabsOrders.get().logOK(), Images.UPDATE_DONE_ERROR.getIcon());
+		jErrors = new JButton(TabsOrders.get().logOK());
 		jErrors.setActionCommand(MarketOrdersAction.ERROR_LOG.name());
 		jErrors.addActionListener(listener);
 		jErrors.setDisabledIcon(Images.EDIT_SET.getIcon());
@@ -469,7 +470,23 @@ public class MarketOrdersTab extends JMainTabPrimary {
 	}
 
 	private void updateErrorLogButton() {
-		jErrors.setEnabled(jMarketOrdersErrorDialog.getDocument().getLength() > 0);
+		switch (jMarketOrdersErrorDialog.getErrorLevel()) {
+			case ERROR:
+				jErrors.setIcon(Images.UPDATE_DONE_ERROR.getIcon());
+				jErrors.setEnabled(true);
+				break;
+			case WARN:
+				jErrors.setIcon(Images.UPDATE_DONE_SOME.getIcon());
+				jErrors.setEnabled(true);
+				break;
+			case INFO:
+				jErrors.setIcon(Images.UPDATE_DONE_INFO.getIcon());
+				jErrors.setEnabled(true);
+				break;
+			case CLEAR:
+				jErrors.setEnabled(false);
+				break;
+		}
 		jErrors.setText(jMarketOrdersErrorDialog.getDocument().getLength() > 0 ? TabsOrders.get().logError() : TabsOrders.get().logOK());
 	}
 
@@ -522,20 +539,6 @@ public class MarketOrdersTab extends JMainTabPrimary {
 		jUpdate.setText(TabsOrders.get().updateOutbidUpdating());
 		jUpdate.setEnabled(false);
 		OutbidProcesserInput input = new OutbidProcesserInput(program.getProfileData(), Settings.get().getOutbidOrderRange());
-		if (input.hasUnknownLocations() && showUnknownLocationsWarning) {
-			showUnknownLocationsWarning = false; //Only shown once per run
-			if (StructureUpdateDialog.structuresUpdatable(program)) { //Strctures updatable
-				//Ask to update structures
-				int returnValue = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), TabsOrders.get().unknownLocationsMsg(), TabsOrders.get().unknownLocationsTitle(), JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
-				if (returnValue == JOptionPane.OK_OPTION) { //Do update structures
-					//Show structures update dialog
-					program.showUpdateStructuresDialog(false);
-				}
-			} else { //Strctures not updatable
-				//Show help text about how to update later
-				JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsOrders.get().unknownLocationsMsgLater(), TabsOrders.get().unknownLocationsTitle(), JOptionPane.PLAIN_MESSAGE);
-			}
-		}
 		if (input.getRegionIDs().isEmpty()) {
 			LOG.info("no active orders found");
 			if (jAutoUpdate.isSelected()) {
@@ -546,7 +549,8 @@ public class MarketOrdersTab extends JMainTabPrimary {
 			return;
 		}
 		OutbidProcesserOutput output = new OutbidProcesserOutput();
-		TaskDialog taskDialog = new TaskDialog(program, new PublicMarkerOrdersUpdateTask(input, output), false, jAutoUpdate.isSelected(), jAutoUpdate.isSelected(), StatusPanel.UpdateType.PUBLIC_MARKET_ORDERS, new TaskDialog.TasksCompletedAdvanced() {
+		final PublicMarkerOrdersUpdateTask updateTask = new PublicMarkerOrdersUpdateTask(input, output);
+		TaskDialog taskDialog = new TaskDialog(program, updateTask, false, jAutoUpdate.isSelected(), jAutoUpdate.isSelected(), StatusPanel.UpdateType.PUBLIC_MARKET_ORDERS, new TaskDialog.TasksCompletedAdvanced() {
 			@Override
 			public void tasksCompleted(TaskDialog taskDialog) {
 				Settings.lock("Outbid (ESI)");
@@ -584,6 +588,29 @@ public class MarketOrdersTab extends JMainTabPrimary {
 
 			@Override
 			public void tasksHidden(TaskDialog taskDialog) {
+				if (output.hasUnknownLocations()) {
+					if (showUnknownLocationsWarning) {
+						showUnknownLocationsWarning = false; //Only shown once per run
+						if (StructureUpdateDialog.structuresUpdatable(program)) { //Strctures updatable
+							//Ask to update structures
+							int returnValue = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), TabsOrders.get().unknownLocationsMsg(), TabsOrders.get().unknownLocationsTitle(), JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+							if (returnValue == JOptionPane.OK_OPTION) { //Do update structures
+								//Show structures update dialog
+								program.showUpdateStructuresDialog(false);
+							}
+						} else { //Strctures not updatable
+							//Show help text about how to update later
+							JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsOrders.get().unknownLocationsMsgLater(), TabsOrders.get().unknownLocationsTitle(), JOptionPane.PLAIN_MESSAGE);
+						}
+					}
+				}
+				if (updateTask.hasError()) {
+					jMarketOrdersErrorDialog.setErrorLevel(ErrorLevel.ERROR);
+				} else if (updateTask.hasWarning()) {
+					jMarketOrdersErrorDialog.setErrorLevel(ErrorLevel.WARN);
+				} else if (updateTask.hasInfo()) {
+					jMarketOrdersErrorDialog.setErrorLevel(ErrorLevel.INFO);
+				}
 				updateErrorLogButton();
 			}
 

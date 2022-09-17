@@ -38,8 +38,13 @@ import net.nikr.eve.jeveasset.i18n.TabsOrders;
 
 public class MarketOrdersErrorDialog extends JDialogCentered {
 
+	public static enum ErrorLevel {
+		CLEAR, INFO, WARN, ERROR
+	}
+
 	private final JButton jClose;
 	private final StyledDocument document;
+	private ErrorLevel errorLevel = ErrorLevel.CLEAR;
 
 	public MarketOrdersErrorDialog(Program program) {
 		super(program, TabsOrders.get().logTitle(), Images.UPDATE_DONE_ERROR.getImage());
@@ -63,6 +68,7 @@ public class MarketOrdersErrorDialog extends JDialogCentered {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				jText.setText("");
+				errorLevel = ErrorLevel.CLEAR;
 			}
 		});
 
@@ -89,6 +95,16 @@ public class MarketOrdersErrorDialog extends JDialogCentered {
 
 	public StyledDocument getDocument() {
 		return document;
+	}
+
+	public void setErrorLevel(ErrorLevel errorLevel) {
+		if (this.errorLevel.ordinal() < errorLevel.ordinal()) {
+			this.errorLevel = errorLevel;
+		}
+	}
+
+	public ErrorLevel getErrorLevel() {
+		return errorLevel;
 	}
 
 	@Override
