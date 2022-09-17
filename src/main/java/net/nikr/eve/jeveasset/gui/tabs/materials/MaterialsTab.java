@@ -36,6 +36,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JMenu;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.settings.types.LocationType;
@@ -266,8 +267,8 @@ public class MaterialsTab extends JMainTabSecondary {
 		}
 
 		@Override
-		public void addInfoMenu(JComponent jComponent) {
-			JMenuInfo.material(jComponent, selectionModel.getSelected(), eventList);
+		public void addInfoMenu(JPopupMenu jPopupMenu) {
+			JMenuInfo.material(jPopupMenu, selectionModel.getSelected(), eventList);
 		}
 
 		@Override

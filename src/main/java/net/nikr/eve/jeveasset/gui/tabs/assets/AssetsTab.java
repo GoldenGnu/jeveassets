@@ -40,6 +40,7 @@ import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JMenu;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JToggleButton;
 import net.nikr.eve.jeveasset.Program;
@@ -303,8 +304,8 @@ public class AssetsTab extends JMainTabPrimary implements TagUpdate {
 		}
 
 		@Override
-		public void addInfoMenu(JComponent jComponent) {
-			JMenuInfo.asset(jComponent, selectionModel.getSelected());
+		public void addInfoMenu(JPopupMenu jPopupMenu) {
+			JMenuInfo.asset(jPopupMenu, selectionModel.getSelected());
 		}
 
 		@Override

@@ -36,6 +36,7 @@ import java.util.Comparator;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JMenu;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.settings.Settings;
@@ -205,7 +206,7 @@ public class ValueTableTab extends JMainTabSecondary {
 		}
 
 		@Override
-		public void addInfoMenu(JComponent jComponent) { }
+		public void addInfoMenu(JPopupMenu jPopupMenu) { }
 
 		@Override
 		public void addToolMenu(JComponent jComponent) { }

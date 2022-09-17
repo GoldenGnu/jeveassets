@@ -405,7 +405,9 @@ public class MenuManager<T extends Enum<T> & EnumTableColumn<Q>, Q> {
 			notEmpty = true;
 		}
 	//INFO
-		tableMenu.addInfoMenu(jComponent);
+		if (jComponent instanceof JPopupMenu) {
+			tableMenu.addInfoMenu((JPopupMenu) jComponent);
+		}
 	//SUM
 		AutoMenu<Q> jSum = menus.get(MenuEnum.SUM);
 		if (jSum != null) {
@@ -621,7 +623,7 @@ public class MenuManager<T extends Enum<T> & EnumTableColumn<Q>, Q> {
 		public MenuData<T> getMenuData();
 		public JMenu getFilterMenu();
 		public JMenu getColumnMenu();
-		public void addInfoMenu(JComponent jComponent);
+		public void addInfoMenu(JPopupMenu jPopupMenu);
 		public void addToolMenu(JComponent jComponent);
 	}
 }
