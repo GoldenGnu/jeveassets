@@ -218,7 +218,7 @@ public class StatusPanel extends JGroupLayoutPanel {
 		JLabel jLabel = new JLabel();
 		jLabel.setIcon(icon);
 		jLabel.setHorizontalAlignment(JLabel.CENTER);
-		jLabel.setToolTipText(toolTip);
+		jLabel.setToolTipText(GuiShared.get().clickToCopyWrap(toolTip));
 		return jLabel;
 	}
 
@@ -377,7 +377,7 @@ public class StatusPanel extends JGroupLayoutPanel {
 				setForeground(getBackground().brighter().brighter());
 			}
 			setIconTextGap(3);
-			setToolTipText(toolTip);
+			setToolTipText(GuiShared.get().clickToCopyWrap(toolTip));
 			setHorizontalAlignment(JLabel.LEFT);
 
 			addMouseListener(new MouseAdapter() {

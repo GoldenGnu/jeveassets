@@ -61,6 +61,7 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JOptionPane;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.Timer;
 import javax.swing.text.StyledDocument;
@@ -650,8 +651,8 @@ public class MarketOrdersTab extends JMainTabPrimary {
 		}
 
 		@Override
-		public void addInfoMenu(JComponent jComponent) {
-			JMenuInfo.marketOrder(jComponent, selectionModel.getSelected());
+		public void addInfoMenu(JPopupMenu jPopupMenu) {
+			JMenuInfo.marketOrder(jPopupMenu, selectionModel.getSelected());
 		}
 
 		@Override

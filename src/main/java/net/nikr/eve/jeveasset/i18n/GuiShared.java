@@ -43,6 +43,9 @@ public abstract class GuiShared extends Bundle {
 	public abstract String background();
 	public abstract String checkAll();
 	public abstract String chruker();
+	public abstract String clickToCopyGroup();
+	public abstract String clickToCopySelectionInfo();
+	public abstract String clickToCopyWrap(String toolTip);
 	public abstract String constellation();
 	public abstract String containerDelete();
 	public abstract String containerEdit();

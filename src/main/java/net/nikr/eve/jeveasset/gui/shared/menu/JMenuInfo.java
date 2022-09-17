@@ -71,7 +71,7 @@ public class JMenuInfo {
 	private JMenuInfo() {
 	}
 
-	public static void treeAsset(final JComponent jComponent, final List<TreeAsset> list) {
+	public static void treeAsset(final JPopupMenu jPopupMenu, final List<TreeAsset> list) {
 		Set<TreeAsset> items = new HashSet<>();
 		for (TreeAsset asset : list) {
 			items.addAll(asset.getItems());
@@ -79,342 +79,310 @@ public class JMenuInfo {
 				items.add(asset);
 			}
 		}
-		infoItem(jComponent, new ArrayList<>(items));
+		infoItem(jPopupMenu, new ArrayList<>(items));
 	}
 
-	public static void asset(final JComponent jComponent, final List<MyAsset> list) {
-		infoItem(jComponent, new ArrayList<>(list));
+	public static void asset(final JPopupMenu jPopupMenu, final List<MyAsset> list) {
+		infoItem(jPopupMenu, new ArrayList<>(list));
 	}
 
-	public static void overview(final JComponent jComponent, final List<Overview> list) {
-		infoItem(jComponent, new ArrayList<>(list));
+	public static void overview(final JPopupMenu jPopupMenu, final List<Overview> list) {
+		infoItem(jPopupMenu, new ArrayList<>(list));
 	}
 
-	private static void infoItem(final JComponent jComponent, final List<InfoItem> list) {
-		if (jComponent instanceof JPopupMenu) {
-			JPopupMenu jPopupMenu = (JPopupMenu) jComponent;
+	private static void infoItem(final JPopupMenu jPopupMenu, final List<InfoItem> list) {
+		List<MenuItemValue> values = createDefault(jPopupMenu);
 
-			List<MenuItemValue> values = createDefault(jPopupMenu);
-
-			double averageValue = 0;
-			double totalValue = 0;
-			long totalCount = 0;
-			double totalVolume = 0;
-			double totalReprocessed = 0;
-			for (InfoItem infoItem : list) {
-				totalValue = totalValue + infoItem.getValue();
-				totalCount = totalCount + infoItem.getCount();
-				totalVolume = totalVolume + infoItem.getVolumeTotal();
-				totalReprocessed = totalReprocessed + infoItem.getValueReprocessed();
-			}
-			if (totalCount > 0 && totalValue > 0) {
-				averageValue = totalValue / totalCount;
-			}
-			createMenuItem(values, jPopupMenu, totalValue, AutoNumberFormat.ISK, GuiShared.get().selectionValue(), GuiShared.get().selectionShortValue(), Images.TOOL_VALUES.getIcon());
-			createMenuItem(values, jPopupMenu, totalReprocessed, AutoNumberFormat.ISK, GuiShared.get().selectionValueReprocessed(), GuiShared.get().selectionShortReprocessedValue(), Images.SETTINGS_REPROCESSING.getIcon());
-			createMenuItem(values, jPopupMenu, averageValue, AutoNumberFormat.ISK, GuiShared.get().selectionAverage(), GuiShared.get().selectionShortAverage(), Images.ASSETS_AVERAGE.getIcon());
-			createMenuItem(values, jPopupMenu, totalVolume, AutoNumberFormat.DOUBLE, GuiShared.get().selectionVolume(), GuiShared.get().selectionShortVolume(), Images.ASSETS_VOLUME.getIcon());
-			createMenuItem(values, jPopupMenu, totalCount, AutoNumberFormat.ITEMS, GuiShared.get().selectionCount(), GuiShared.get().selectionShortCount(), Images.EDIT_ADD.getIcon());
+		double averageValue = 0;
+		double totalValue = 0;
+		long totalCount = 0;
+		double totalVolume = 0;
+		double totalReprocessed = 0;
+		for (InfoItem infoItem : list) {
+			totalValue = totalValue + infoItem.getValue();
+			totalCount = totalCount + infoItem.getCount();
+			totalVolume = totalVolume + infoItem.getVolumeTotal();
+			totalReprocessed = totalReprocessed + infoItem.getValueReprocessed();
 		}
+		if (totalCount > 0 && totalValue > 0) {
+			averageValue = totalValue / totalCount;
+		}
+		createMenuItem(values, jPopupMenu, totalValue, AutoNumberFormat.ISK, GuiShared.get().selectionValue(), GuiShared.get().selectionShortValue(), Images.TOOL_VALUES.getIcon());
+		createMenuItem(values, jPopupMenu, totalReprocessed, AutoNumberFormat.ISK, GuiShared.get().selectionValueReprocessed(), GuiShared.get().selectionShortReprocessedValue(), Images.SETTINGS_REPROCESSING.getIcon());
+		createMenuItem(values, jPopupMenu, averageValue, AutoNumberFormat.ISK, GuiShared.get().selectionAverage(), GuiShared.get().selectionShortAverage(), Images.ASSETS_AVERAGE.getIcon());
+		createMenuItem(values, jPopupMenu, totalVolume, AutoNumberFormat.DOUBLE, GuiShared.get().selectionVolume(), GuiShared.get().selectionShortVolume(), Images.ASSETS_VOLUME.getIcon());
+		createMenuItem(values, jPopupMenu, totalCount, AutoNumberFormat.ITEMS, GuiShared.get().selectionCount(), GuiShared.get().selectionShortCount(), Images.EDIT_ADD.getIcon());
 	}
 
-	public static void contracts(final Program program, final JComponent jComponent, final List<MyContractItem> list) {
-		if (jComponent instanceof JPopupMenu) {
-			JPopupMenu jPopupMenu = (JPopupMenu) jComponent;
+	public static void contracts(final Program program, final JPopupMenu jPopupMenu, final List<MyContractItem> list) {
+		List<MenuItemValue> values = createDefault(jPopupMenu);
 
-			List<MenuItemValue> values = createDefault(jPopupMenu);
-
-			double sellingPrice = 0;
-			double sellingAssets = 0;
-			double buying = 0;
-			double sold = 0;
-			double bought = 0;
-			double collateralIssuer = 0;
-			double collateralAcceptor = 0;
-			Set<MyContract> contracts = new HashSet<>();
-			for (Object object : list) {
-				if (object instanceof SeparatorList.Separator) {
-					continue;
-				}
-				if (object == null) {
-					continue;
-				}
-				MyContractItem contractItem = (MyContractItem) object;
-				contracts.add(contractItem.getContract());
-				MyContract contract = contractItem.getContract();
-				if (contract.isIgnoreContract()) {
-					continue;
-				}
-				boolean isIssuer = contract.isForCorp() ? program.getOwners().keySet().contains(contract.getIssuerCorpID()) : program.getOwners().keySet().contains(contract.getIssuerID());
-				if (isIssuer && //Issuer
-						contract.isOpen() //Not completed
-						&& contractItem.isIncluded()) { //Selling
-					sellingAssets = sellingAssets + contractItem.getDynamicPrice() * contractItem.getQuantity();
-				}
+		double sellingPrice = 0;
+		double sellingAssets = 0;
+		double buying = 0;
+		double sold = 0;
+		double bought = 0;
+		double collateralIssuer = 0;
+		double collateralAcceptor = 0;
+		Set<MyContract> contracts = new HashSet<>();
+		for (Object object : list) {
+			if (object instanceof SeparatorList.Separator) {
+				continue;
 			}
-			for (MyContract contract : contracts) {
-				boolean isIssuer = contract.isForCorp() ? program.getOwners().keySet().contains(contract.getIssuerCorpID()) : program.getOwners().keySet().contains(contract.getIssuerID());
-				boolean isAcceptor = contract.getAcceptorID() > 0 && program.getOwners().keySet().contains(contract.getAcceptorID());
-				if (contract.isCourierContract()) {
-					if (isIssuer && (contract.isInProgress() || contract.isOpen())) { //Collateral Issuer
-						collateralIssuer = collateralIssuer + contract.getCollateral();
-					}
-					if (isAcceptor && contract.isInProgress()) { //Collateral Acceptor
-						collateralAcceptor = collateralAcceptor + contract.getCollateral();
-					}
-				}
-				if (contract.isIgnoreContract()) {
-					continue;
-				}
-				if (isIssuer //Issuer
-						&& contract.isOpen() //Not completed
-						) { //Selling/Buying
-					sellingPrice = sellingPrice + contract.getPrice(); //Positive
-					buying = buying - contract.getReward(); //Negative
-				} else if (contract.isCompletedSuccessful()) { //Completed
-					if (isIssuer) { //Sold/Bought
-						sold = sold + contract.getPrice(); //Positive
-						bought = bought - contract.getReward(); //Negative
-					}
-					if (isAcceptor) { //Reverse of the above
-						sold = sold + contract.getReward(); //Positive
-						bought = bought - contract.getPrice(); //Negative
-					}
-				}
+			if (object == null) {
+				continue;
 			}
-			List<MenuItemValue> sell = createMenuItemGroup(jPopupMenu, GuiShared.get().selectionTitleSell(), Images.ORDERS_SELL.getIcon());
-			createMenuItem(sell, jPopupMenu, sellingPrice, AutoNumberFormat.ISK, GuiShared.get().selectionContractsSellingPriceToolTip(), GuiShared.get().selectionContractsSellingPrice(), Images.ORDERS_SELL.getIcon());
-			createMenuItem(sell, jPopupMenu, sellingAssets, AutoNumberFormat.ISK, GuiShared.get().selectionContractsSellingAssetsToolTip(), GuiShared.get().selectionContractsSellingAssets(), Images.TOOL_VALUES.getIcon());
-			createMenuItem(sell, jPopupMenu, sold, AutoNumberFormat.ISK, GuiShared.get().selectionContractsSoldToolTip(), GuiShared.get().selectionContractsSold(), Images.ORDERS_SOLD.getIcon());
-			values.addAll(sell);
-			List<MenuItemValue> buy = createMenuItemGroup(jPopupMenu, GuiShared.get().selectionTitleBuy(), Images.ORDERS_BUY.getIcon());
-			createMenuItem(buy, jPopupMenu, buying, AutoNumberFormat.ISK, GuiShared.get().selectionContractsBuyingToolTip(), GuiShared.get().selectionContractsBuying(), Images.ORDERS_BUY.getIcon());
-			createMenuItem(buy, jPopupMenu, bought, AutoNumberFormat.ISK, GuiShared.get().selectionContractsBoughtToolTip(), GuiShared.get().selectionContractsBought(), Images.ORDERS_BOUGHT.getIcon());
-			values.addAll(buy);
-			List<MenuItemValue> collateral = createMenuItemGroup(jPopupMenu, GuiShared.get().selectionTitleCollateral(), Images.ORDERS_ESCROW.getIcon());
-			createMenuItem(collateral, jPopupMenu, collateralIssuer, AutoNumberFormat.ISK, GuiShared.get().selectionContractsCollateralIssuerToolTip(), GuiShared.get().selectionContractsCollateralIssuer(), Images.ORDERS_ESCROW.getIcon());
-			createMenuItem(collateral, jPopupMenu, collateralAcceptor, AutoNumberFormat.ISK, GuiShared.get().selectionContractsCollateralAcceptorToolTip(), GuiShared.get().selectionContractsCollateralAcceptor(), Images.UPDATE_WORKING.getIcon());
-			values.addAll(collateral);
+			MyContractItem contractItem = (MyContractItem) object;
+			contracts.add(contractItem.getContract());
+			MyContract contract = contractItem.getContract();
+			if (contract.isIgnoreContract()) {
+				continue;
+			}
+			boolean isIssuer = contract.isForCorp() ? program.getOwners().keySet().contains(contract.getIssuerCorpID()) : program.getOwners().keySet().contains(contract.getIssuerID());
+			if (isIssuer && //Issuer
+					contract.isOpen() //Not completed
+					&& contractItem.isIncluded()) { //Selling
+				sellingAssets = sellingAssets + contractItem.getDynamicPrice() * contractItem.getQuantity();
+			}
 		}
+		for (MyContract contract : contracts) {
+			boolean isIssuer = contract.isForCorp() ? program.getOwners().keySet().contains(contract.getIssuerCorpID()) : program.getOwners().keySet().contains(contract.getIssuerID());
+			boolean isAcceptor = contract.getAcceptorID() > 0 && program.getOwners().keySet().contains(contract.getAcceptorID());
+			if (contract.isCourierContract()) {
+				if (isIssuer && (contract.isInProgress() || contract.isOpen())) { //Collateral Issuer
+					collateralIssuer = collateralIssuer + contract.getCollateral();
+				}
+				if (isAcceptor && contract.isInProgress()) { //Collateral Acceptor
+					collateralAcceptor = collateralAcceptor + contract.getCollateral();
+				}
+			}
+			if (contract.isIgnoreContract()) {
+				continue;
+			}
+			if (isIssuer //Issuer
+					&& contract.isOpen() //Not completed
+					) { //Selling/Buying
+				sellingPrice = sellingPrice + contract.getPrice(); //Positive
+				buying = buying - contract.getReward(); //Negative
+			} else if (contract.isCompletedSuccessful()) { //Completed
+				if (isIssuer) { //Sold/Bought
+					sold = sold + contract.getPrice(); //Positive
+					bought = bought - contract.getReward(); //Negative
+				}
+				if (isAcceptor) { //Reverse of the above
+					sold = sold + contract.getReward(); //Positive
+					bought = bought - contract.getPrice(); //Negative
+				}
+			}
+		}
+		List<MenuItemValue> sell = createMenuItemGroup(jPopupMenu, GuiShared.get().selectionTitleSell(), Images.ORDERS_SELL.getIcon());
+		createMenuItem(sell, jPopupMenu, sellingPrice, AutoNumberFormat.ISK, GuiShared.get().selectionContractsSellingPriceToolTip(), GuiShared.get().selectionContractsSellingPrice(), Images.ORDERS_SELL.getIcon());
+		createMenuItem(sell, jPopupMenu, sellingAssets, AutoNumberFormat.ISK, GuiShared.get().selectionContractsSellingAssetsToolTip(), GuiShared.get().selectionContractsSellingAssets(), Images.TOOL_VALUES.getIcon());
+		createMenuItem(sell, jPopupMenu, sold, AutoNumberFormat.ISK, GuiShared.get().selectionContractsSoldToolTip(), GuiShared.get().selectionContractsSold(), Images.ORDERS_SOLD.getIcon());
+		values.addAll(sell);
+		List<MenuItemValue> buy = createMenuItemGroup(jPopupMenu, GuiShared.get().selectionTitleBuy(), Images.ORDERS_BUY.getIcon());
+		createMenuItem(buy, jPopupMenu, buying, AutoNumberFormat.ISK, GuiShared.get().selectionContractsBuyingToolTip(), GuiShared.get().selectionContractsBuying(), Images.ORDERS_BUY.getIcon());
+		createMenuItem(buy, jPopupMenu, bought, AutoNumberFormat.ISK, GuiShared.get().selectionContractsBoughtToolTip(), GuiShared.get().selectionContractsBought(), Images.ORDERS_BOUGHT.getIcon());
+		values.addAll(buy);
+		List<MenuItemValue> collateral = createMenuItemGroup(jPopupMenu, GuiShared.get().selectionTitleCollateral(), Images.ORDERS_ESCROW.getIcon());
+		createMenuItem(collateral, jPopupMenu, collateralIssuer, AutoNumberFormat.ISK, GuiShared.get().selectionContractsCollateralIssuerToolTip(), GuiShared.get().selectionContractsCollateralIssuer(), Images.ORDERS_ESCROW.getIcon());
+		createMenuItem(collateral, jPopupMenu, collateralAcceptor, AutoNumberFormat.ISK, GuiShared.get().selectionContractsCollateralAcceptorToolTip(), GuiShared.get().selectionContractsCollateralAcceptor(), Images.UPDATE_WORKING.getIcon());
+		values.addAll(collateral);
 	}
 
-	public static void marketOrder(final JComponent jComponent, final List<MyMarketOrder> list) {
-		if (jComponent instanceof JPopupMenu) {
-			JPopupMenu jPopupMenu = (JPopupMenu) jComponent;
+	public static void marketOrder(final JPopupMenu jPopupMenu, final List<MyMarketOrder> list) {
+		List<MenuItemValue> values = createDefault(jPopupMenu);
 
-			List<MenuItemValue> values = createDefault(jPopupMenu);
-
-			double sellOrdersTotal = 0;
-			double sellBrokersFeeTotal = 0;
-			double buyOrdersTotal = 0;
-			double buyBrokersFeeTotal = 0;
-			double toCoverTotal = 0;
-			double escrowTotal = 0;
-			long volumeRemain = 0;
-			long volumeTotal = 0;
-			for (MyMarketOrder marketOrder : list) {
-				if (marketOrder.isBuyOrder()) { //Buy
-					buyOrdersTotal += marketOrder.getPrice() * marketOrder.getVolumeTotal();
-					escrowTotal += marketOrder.getEscrow();
-					toCoverTotal += (marketOrder.getPrice() * marketOrder.getVolumeTotal()) - marketOrder.getEscrow();
-					buyBrokersFeeTotal += marketOrder.getBrokersFeeNotNull();
-				} else { //Sell
-					sellOrdersTotal += marketOrder.getPrice() * marketOrder.getVolumeTotal();
-					sellBrokersFeeTotal += marketOrder.getBrokersFeeNotNull();
-				}
-				volumeRemain += marketOrder.getVolumeRemain();
-				volumeTotal += marketOrder.getVolumeTotal();
+		double sellOrdersTotal = 0;
+		double sellBrokersFeeTotal = 0;
+		double buyOrdersTotal = 0;
+		double buyBrokersFeeTotal = 0;
+		double toCoverTotal = 0;
+		double escrowTotal = 0;
+		long volumeRemain = 0;
+		long volumeTotal = 0;
+		for (MyMarketOrder marketOrder : list) {
+			if (marketOrder.isBuyOrder()) { //Buy
+				buyOrdersTotal += marketOrder.getPrice() * marketOrder.getVolumeTotal();
+				escrowTotal += marketOrder.getEscrow();
+				toCoverTotal += (marketOrder.getPrice() * marketOrder.getVolumeTotal()) - marketOrder.getEscrow();
+				buyBrokersFeeTotal += marketOrder.getBrokersFeeNotNull();
+			} else { //Sell
+				sellOrdersTotal += marketOrder.getPrice() * marketOrder.getVolumeTotal();
+				sellBrokersFeeTotal += marketOrder.getBrokersFeeNotNull();
 			}
-			createMenuItem(values, jPopupMenu, GuiShared.get().selectionOrdersCountValue(Formater.longFormat(volumeRemain), Formater.itemsFormat(volumeTotal)), GuiShared.get().selectionOrdersCount(), GuiShared.get().selectionShortCount(), Images.EDIT_ADD.getIcon());
-			createMenuItem(values, jPopupMenu, sellOrdersTotal + sellBrokersFeeTotal, AutoNumberFormat.ISK, GuiShared.get().selectionOrdersSellTotal(), GuiShared.get().selectionShortSell(), Images.ORDERS_SELL.getIcon());
-			createMenuItem(values, jPopupMenu, buyOrdersTotal + buyBrokersFeeTotal, AutoNumberFormat.ISK, GuiShared.get().selectionOrdersBuyTotal(), GuiShared.get().selectionShortBuy(), Images.ORDERS_BUY.getIcon());
-			createMenuItem(values, jPopupMenu, escrowTotal, AutoNumberFormat.ISK, GuiShared.get().selectionOrdersBuyEscrow(), GuiShared.get().selectionShortEscrow(), Images.ORDERS_ESCROW.getIcon());
-			createMenuItem(values, jPopupMenu, toCoverTotal, AutoNumberFormat.ISK, GuiShared.get().selectionOrdersBuyToCover(), GuiShared.get().selectionShortIskToCover(), Images.ORDERS_TO_COVER.getIcon());
-			createMenuItem(values, jPopupMenu, sellBrokersFeeTotal + buyBrokersFeeTotal, AutoNumberFormat.ISK, GuiShared.get().selectionOrdersBrokersFee(), GuiShared.get().selectionShortBrokerFees(), Images.MISC_COLLAPSED.getIcon());
+			volumeRemain += marketOrder.getVolumeRemain();
+			volumeTotal += marketOrder.getVolumeTotal();
 		}
+		createMenuItem(values, jPopupMenu, GuiShared.get().selectionOrdersCountValue(Formater.longFormat(volumeRemain), Formater.itemsFormat(volumeTotal)), GuiShared.get().selectionOrdersCount(), GuiShared.get().selectionShortCount(), Images.EDIT_ADD.getIcon());
+		createMenuItem(values, jPopupMenu, sellOrdersTotal + sellBrokersFeeTotal, AutoNumberFormat.ISK, GuiShared.get().selectionOrdersSellTotal(), GuiShared.get().selectionShortSell(), Images.ORDERS_SELL.getIcon());
+		createMenuItem(values, jPopupMenu, buyOrdersTotal + buyBrokersFeeTotal, AutoNumberFormat.ISK, GuiShared.get().selectionOrdersBuyTotal(), GuiShared.get().selectionShortBuy(), Images.ORDERS_BUY.getIcon());
+		createMenuItem(values, jPopupMenu, escrowTotal, AutoNumberFormat.ISK, GuiShared.get().selectionOrdersBuyEscrow(), GuiShared.get().selectionShortEscrow(), Images.ORDERS_ESCROW.getIcon());
+		createMenuItem(values, jPopupMenu, toCoverTotal, AutoNumberFormat.ISK, GuiShared.get().selectionOrdersBuyToCover(), GuiShared.get().selectionShortIskToCover(), Images.ORDERS_TO_COVER.getIcon());
+		createMenuItem(values, jPopupMenu, sellBrokersFeeTotal + buyBrokersFeeTotal, AutoNumberFormat.ISK, GuiShared.get().selectionOrdersBrokersFee(), GuiShared.get().selectionShortBrokerFees(), Images.MISC_COLLAPSED.getIcon());
 	}
 
-	public static void transctions(final JComponent jComponent, final List<MyTransaction> transactions) {
-		if (jComponent instanceof JPopupMenu) {
-			JPopupMenu jPopupMenu = (JPopupMenu) jComponent;
+	public static void transctions(final JPopupMenu jPopupMenu, final List<MyTransaction> transactions) {
+		List<MenuItemValue> values = createDefault(jPopupMenu);
 
-			List<MenuItemValue> values = createDefault(jPopupMenu);
-
-			double sellTotal = 0;
-			double sellTaxTotal = 0;
-			double buyTotal = 0;
-			long sellCount = 0;
-			long buyCount = 0;
-			for (MyTransaction transaction : transactions) {
-				if (transaction.isSell()) { //Sell
-					sellTotal += transaction.getPrice() * transaction.getQuantity();
-					sellCount += transaction.getQuantity();
-					sellTaxTotal += transaction.getTaxNotNull();
-				} else { //Buy
-					buyTotal += transaction.getPrice() * transaction.getQuantity();
-					buyCount += transaction.getQuantity();
-				}
+		double sellTotal = 0;
+		double sellTaxTotal = 0;
+		double buyTotal = 0;
+		long sellCount = 0;
+		long buyCount = 0;
+		for (MyTransaction transaction : transactions) {
+			if (transaction.isSell()) { //Sell
+				sellTotal += transaction.getPrice() * transaction.getQuantity();
+				sellCount += transaction.getQuantity();
+				sellTaxTotal += transaction.getTaxNotNull();
+			} else { //Buy
+				buyTotal += transaction.getPrice() * transaction.getQuantity();
+				buyCount += transaction.getQuantity();
 			}
-			double sellAvg = 0;
-			if (sellTotal > 0 && sellCount > 0) {
-				sellAvg = (sellTotal + sellTaxTotal) / sellCount;
-			}
-			double buyAvg = 0;
-			if (buyTotal > 0 && buyCount > 0) {
-				buyAvg = buyTotal / buyCount;
-			}
-			double bothTotal = sellTotal + buyTotal;
-			double bothCount = sellCount + buyCount;
-			double bothAvg = 0;
-			if (bothTotal > 0 && bothCount > 0) {
-				bothAvg = (bothTotal + sellTaxTotal) / bothCount;
-			}
-			//Sell
-			List<MenuItemValue> sell = createMenuItemGroup(jPopupMenu, GuiShared.get().selectionTitleSell(), Images.ORDERS_SELL.getIcon());
-			createMenuItem(sell, jPopupMenu, sellCount, AutoNumberFormat.ITEMS, GuiShared.get().selectionTransactionsSellCount(), GuiShared.get().selectionShortCount(), Images.EDIT_ADD.getIcon());
-			createMenuItem(sell, jPopupMenu, sellTotal + sellTaxTotal, AutoNumberFormat.ISK, GuiShared.get().selectionTransactionsSellTotal(), GuiShared.get().selectionShortValue(), Images.TOOL_VALUES.getIcon());
-			createMenuItem(sell, jPopupMenu, sellAvg, AutoNumberFormat.ISK, GuiShared.get().selectionTransactionsSellAvg(), GuiShared.get().selectionShortAverage(), Images.ASSETS_AVERAGE.getIcon());
-			createMenuItem(sell, jPopupMenu, sellTaxTotal, AutoNumberFormat.ISK, GuiShared.get().selectionTransactionsSellTax(), GuiShared.get().selectionShortTax(), Images.MISC_COLLAPSED.getIcon());
-			values.addAll(sell);
-			//Both
-			List<MenuItemValue> both = createMenuItemGroup(jPopupMenu, GuiShared.get().selectionTitleBoth(), Images.TOOL_TRANSACTION.getIcon());
-			createMenuItem(both, jPopupMenu, sellCount + buyCount, AutoNumberFormat.ITEMS, GuiShared.get().selectionTransactionsBothCount(), GuiShared.get().selectionShortCount(), Images.EDIT_ADD.getIcon());
-			createMenuItem(both, jPopupMenu, bothTotal + sellTaxTotal, AutoNumberFormat.ISK, GuiShared.get().selectionTransactionsBothTotal(), GuiShared.get().selectionShortValue(), Images.TOOL_VALUES.getIcon());
-			createMenuItem(both, jPopupMenu, bothAvg, AutoNumberFormat.ISK, GuiShared.get().selectionTransactionsBothAvg(), GuiShared.get().selectionShortAverage(), Images.ASSETS_AVERAGE.getIcon());
-			values.addAll(both);
-			//Buy
-			List<MenuItemValue> buy = createMenuItemGroup(jPopupMenu, GuiShared.get().selectionTitleBuy(), Images.ORDERS_BUY.getIcon());
-			createMenuItem(buy, jPopupMenu, buyCount, AutoNumberFormat.ITEMS, GuiShared.get().selectionTransactionsBuyCount(), GuiShared.get().selectionShortCount(), Images.EDIT_ADD.getIcon());
-			createMenuItem(buy, jPopupMenu, buyTotal, AutoNumberFormat.ISK, GuiShared.get().selectionTransactionsBuyTotal(), GuiShared.get().selectionShortValue(), Images.TOOL_VALUES.getIcon());
-			createMenuItem(buy, jPopupMenu, buyAvg, AutoNumberFormat.ISK, GuiShared.get().selectionTransactionsBuyAvg(), GuiShared.get().selectionShortAverage(), Images.ASSETS_AVERAGE.getIcon());
-			values.addAll(buy);
 		}
+		double sellAvg = 0;
+		if (sellTotal > 0 && sellCount > 0) {
+			sellAvg = (sellTotal + sellTaxTotal) / sellCount;
+		}
+		double buyAvg = 0;
+		if (buyTotal > 0 && buyCount > 0) {
+			buyAvg = buyTotal / buyCount;
+		}
+		double bothTotal = sellTotal + buyTotal;
+		double bothCount = sellCount + buyCount;
+		double bothAvg = 0;
+		if (bothTotal > 0 && bothCount > 0) {
+			bothAvg = (bothTotal + sellTaxTotal) / bothCount;
+		}
+		//Sell
+		List<MenuItemValue> sell = createMenuItemGroup(jPopupMenu, GuiShared.get().selectionTitleSell(), Images.ORDERS_SELL.getIcon());
+		createMenuItem(sell, jPopupMenu, sellCount, AutoNumberFormat.ITEMS, GuiShared.get().selectionTransactionsSellCount(), GuiShared.get().selectionShortCount(), Images.EDIT_ADD.getIcon());
+		createMenuItem(sell, jPopupMenu, sellTotal + sellTaxTotal, AutoNumberFormat.ISK, GuiShared.get().selectionTransactionsSellTotal(), GuiShared.get().selectionShortValue(), Images.TOOL_VALUES.getIcon());
+		createMenuItem(sell, jPopupMenu, sellAvg, AutoNumberFormat.ISK, GuiShared.get().selectionTransactionsSellAvg(), GuiShared.get().selectionShortAverage(), Images.ASSETS_AVERAGE.getIcon());
+		createMenuItem(sell, jPopupMenu, sellTaxTotal, AutoNumberFormat.ISK, GuiShared.get().selectionTransactionsSellTax(), GuiShared.get().selectionShortTax(), Images.MISC_COLLAPSED.getIcon());
+		values.addAll(sell);
+		//Both
+		List<MenuItemValue> both = createMenuItemGroup(jPopupMenu, GuiShared.get().selectionTitleBoth(), Images.TOOL_TRANSACTION.getIcon());
+		createMenuItem(both, jPopupMenu, sellCount + buyCount, AutoNumberFormat.ITEMS, GuiShared.get().selectionTransactionsBothCount(), GuiShared.get().selectionShortCount(), Images.EDIT_ADD.getIcon());
+		createMenuItem(both, jPopupMenu, bothTotal + sellTaxTotal, AutoNumberFormat.ISK, GuiShared.get().selectionTransactionsBothTotal(), GuiShared.get().selectionShortValue(), Images.TOOL_VALUES.getIcon());
+		createMenuItem(both, jPopupMenu, bothAvg, AutoNumberFormat.ISK, GuiShared.get().selectionTransactionsBothAvg(), GuiShared.get().selectionShortAverage(), Images.ASSETS_AVERAGE.getIcon());
+		values.addAll(both);
+		//Buy
+		List<MenuItemValue> buy = createMenuItemGroup(jPopupMenu, GuiShared.get().selectionTitleBuy(), Images.ORDERS_BUY.getIcon());
+		createMenuItem(buy, jPopupMenu, buyCount, AutoNumberFormat.ITEMS, GuiShared.get().selectionTransactionsBuyCount(), GuiShared.get().selectionShortCount(), Images.EDIT_ADD.getIcon());
+		createMenuItem(buy, jPopupMenu, buyTotal, AutoNumberFormat.ISK, GuiShared.get().selectionTransactionsBuyTotal(), GuiShared.get().selectionShortValue(), Images.TOOL_VALUES.getIcon());
+		createMenuItem(buy, jPopupMenu, buyAvg, AutoNumberFormat.ISK, GuiShared.get().selectionTransactionsBuyAvg(), GuiShared.get().selectionShortAverage(), Images.ASSETS_AVERAGE.getIcon());
+		values.addAll(buy);
 	}
 
-	public static void industrySlots(final JComponent jComponent, final List<IndustrySlot> list) {
-		if (jComponent instanceof JPopupMenu) {
-			JPopupMenu jPopupMenu = (JPopupMenu) jComponent;
+	public static void industrySlots(final JPopupMenu jPopupMenu, final List<IndustrySlot> list) {
+		List<MenuItemValue> values = createDefault(jPopupMenu);
 
-			List<MenuItemValue> values = createDefault(jPopupMenu);
-
-			IndustrySlot total = new IndustrySlot("");
-			for (IndustrySlot industrySlot : list) {
-				if (industrySlot.isGrandTotal()) {
-					continue;
-				}
-				total.count(industrySlot);
+		IndustrySlot total = new IndustrySlot("");
+		for (IndustrySlot industrySlot : list) {
+			if (industrySlot.isGrandTotal()) {
+				continue;
 			}
-
-			List<MenuItemValue> manufacturing = createMenuItemGroup(jPopupMenu, GuiShared.get().selectionSlotsManufacturing(), Images.MISC_MANUFACTURING.getIcon());
-			createMenuItem(manufacturing, jPopupMenu, total.getManufacturingDone(), AutoNumberFormat.LONG, GuiShared.get().selectionSlotsManufacturingDoneToolTip(), GuiShared.get().selectionSlotsManufacturingDone(), Images.EDIT_SET.getIcon());
-			createMenuItem(manufacturing, jPopupMenu, total.getManufacturingFree(), AutoNumberFormat.LONG, GuiShared.get().selectionSlotsManufacturingFreeToolTip(), GuiShared.get().selectionSlotsManufacturingFree(), Images.EDIT_ADD.getIcon());
-			createMenuItem(manufacturing, jPopupMenu, total.getManufacturingActive(), AutoNumberFormat.LONG, GuiShared.get().selectionSlotsManufacturingActiveToolTip(), GuiShared.get().selectionSlotsManufacturingActive(), Images.UPDATE_WORKING.getIcon());
-			createMenuItem(manufacturing, jPopupMenu, total.getManufacturingMax(), AutoNumberFormat.LONG, GuiShared.get().selectionSlotsManufacturingMaxToolTip(), GuiShared.get().selectionSlotsManufacturingMax(), Images.UPDATE_DONE_OK.getIcon());
-			values.addAll(manufacturing);
-
-			List<MenuItemValue> research = createMenuItemGroup(jPopupMenu, GuiShared.get().selectionSlotsResearch(), Images.MISC_INVENTION.getIcon());
-			createMenuItem(research, jPopupMenu, total.getResearchDone(), AutoNumberFormat.LONG, GuiShared.get().selectionSlotsResearchDoneToolTip(), GuiShared.get().selectionSlotsResearchDone(), Images.EDIT_SET.getIcon());
-			createMenuItem(research, jPopupMenu, total.getResearchFree(), AutoNumberFormat.LONG, GuiShared.get().selectionSlotsResearchFreeToolTip(), GuiShared.get().selectionSlotsResearchFree(), Images.EDIT_ADD.getIcon());
-			createMenuItem(research, jPopupMenu, total.getResearchActive(), AutoNumberFormat.LONG, GuiShared.get().selectionSlotsResearchActiveToolTip(), GuiShared.get().selectionSlotsResearchActive(), Images.UPDATE_WORKING.getIcon());
-			createMenuItem(research, jPopupMenu, total.getResearchMax(), AutoNumberFormat.LONG, GuiShared.get().selectionSlotsResearchMaxToolTip(), GuiShared.get().selectionSlotsResearchMax(), Images.UPDATE_DONE_OK.getIcon());
-			values.addAll(research);
-
-			List<MenuItemValue> reactions = createMenuItemGroup(jPopupMenu, GuiShared.get().selectionSlotsReactions(), Images.MISC_REACTION.getIcon());
-			createMenuItem(reactions, jPopupMenu, total.getReactionsDone(), AutoNumberFormat.LONG, GuiShared.get().selectionSlotsReactionsDoneToolTip(), GuiShared.get().selectionSlotsReactionsDone(), Images.EDIT_SET.getIcon());
-			createMenuItem(reactions, jPopupMenu, total.getReactionsFree(), AutoNumberFormat.LONG, GuiShared.get().selectionSlotsReactionsFreeToolTip(), GuiShared.get().selectionSlotsReactionsFree(), Images.EDIT_ADD.getIcon());
-			createMenuItem(reactions, jPopupMenu, total.getReactionsActive(), AutoNumberFormat.LONG, GuiShared.get().selectionSlotsReactionsActiveToolTip(), GuiShared.get().selectionSlotsReactionsActive(), Images.UPDATE_WORKING.getIcon());
-			createMenuItem(reactions, jPopupMenu, total.getReactionsMax(), AutoNumberFormat.LONG, GuiShared.get().selectionSlotsReactionsMaxToolTip(), GuiShared.get().selectionSlotsReactionsMax(), Images.UPDATE_DONE_OK.getIcon());
-			values.addAll(reactions);
+			total.count(industrySlot);
 		}
+
+		List<MenuItemValue> manufacturing = createMenuItemGroup(jPopupMenu, GuiShared.get().selectionSlotsManufacturing(), Images.MISC_MANUFACTURING.getIcon());
+		createMenuItem(manufacturing, jPopupMenu, total.getManufacturingDone(), AutoNumberFormat.LONG, GuiShared.get().selectionSlotsManufacturingDoneToolTip(), GuiShared.get().selectionSlotsManufacturingDone(), Images.EDIT_SET.getIcon());
+		createMenuItem(manufacturing, jPopupMenu, total.getManufacturingFree(), AutoNumberFormat.LONG, GuiShared.get().selectionSlotsManufacturingFreeToolTip(), GuiShared.get().selectionSlotsManufacturingFree(), Images.EDIT_ADD.getIcon());
+		createMenuItem(manufacturing, jPopupMenu, total.getManufacturingActive(), AutoNumberFormat.LONG, GuiShared.get().selectionSlotsManufacturingActiveToolTip(), GuiShared.get().selectionSlotsManufacturingActive(), Images.UPDATE_WORKING.getIcon());
+		createMenuItem(manufacturing, jPopupMenu, total.getManufacturingMax(), AutoNumberFormat.LONG, GuiShared.get().selectionSlotsManufacturingMaxToolTip(), GuiShared.get().selectionSlotsManufacturingMax(), Images.UPDATE_DONE_OK.getIcon());
+		values.addAll(manufacturing);
+
+		List<MenuItemValue> research = createMenuItemGroup(jPopupMenu, GuiShared.get().selectionSlotsResearch(), Images.MISC_INVENTION.getIcon());
+		createMenuItem(research, jPopupMenu, total.getResearchDone(), AutoNumberFormat.LONG, GuiShared.get().selectionSlotsResearchDoneToolTip(), GuiShared.get().selectionSlotsResearchDone(), Images.EDIT_SET.getIcon());
+		createMenuItem(research, jPopupMenu, total.getResearchFree(), AutoNumberFormat.LONG, GuiShared.get().selectionSlotsResearchFreeToolTip(), GuiShared.get().selectionSlotsResearchFree(), Images.EDIT_ADD.getIcon());
+		createMenuItem(research, jPopupMenu, total.getResearchActive(), AutoNumberFormat.LONG, GuiShared.get().selectionSlotsResearchActiveToolTip(), GuiShared.get().selectionSlotsResearchActive(), Images.UPDATE_WORKING.getIcon());
+		createMenuItem(research, jPopupMenu, total.getResearchMax(), AutoNumberFormat.LONG, GuiShared.get().selectionSlotsResearchMaxToolTip(), GuiShared.get().selectionSlotsResearchMax(), Images.UPDATE_DONE_OK.getIcon());
+		values.addAll(research);
+
+		List<MenuItemValue> reactions = createMenuItemGroup(jPopupMenu, GuiShared.get().selectionSlotsReactions(), Images.MISC_REACTION.getIcon());
+		createMenuItem(reactions, jPopupMenu, total.getReactionsDone(), AutoNumberFormat.LONG, GuiShared.get().selectionSlotsReactionsDoneToolTip(), GuiShared.get().selectionSlotsReactionsDone(), Images.EDIT_SET.getIcon());
+		createMenuItem(reactions, jPopupMenu, total.getReactionsFree(), AutoNumberFormat.LONG, GuiShared.get().selectionSlotsReactionsFreeToolTip(), GuiShared.get().selectionSlotsReactionsFree(), Images.EDIT_ADD.getIcon());
+		createMenuItem(reactions, jPopupMenu, total.getReactionsActive(), AutoNumberFormat.LONG, GuiShared.get().selectionSlotsReactionsActiveToolTip(), GuiShared.get().selectionSlotsReactionsActive(), Images.UPDATE_WORKING.getIcon());
+		createMenuItem(reactions, jPopupMenu, total.getReactionsMax(), AutoNumberFormat.LONG, GuiShared.get().selectionSlotsReactionsMaxToolTip(), GuiShared.get().selectionSlotsReactionsMax(), Images.UPDATE_DONE_OK.getIcon());
+		values.addAll(reactions);
 	}
 
-	public static void industryJob(final JComponent jComponent, final List<MyIndustryJob> list) {
-		if (jComponent instanceof JPopupMenu) {
-			JPopupMenu jPopupMenu = (JPopupMenu) jComponent;
+	public static void industryJob(final JPopupMenu jPopupMenu, final List<MyIndustryJob> list) {
+		List<MenuItemValue> values = createDefault(jPopupMenu);
 
-			List<MenuItemValue> values = createDefault(jPopupMenu);
-
-			int inventionCount = 0;
-			long count = 0;
-			double success = 0;
-			double outputValue = 0;
-			for (MyIndustryJob industryJob : list) {
-				count++;
-				if (industryJob.isInvention() && industryJob.isCompleted()) {
-					inventionCount++;
-					if (industryJob.isDelivered()) {
-						success++;
-					}
-				}
-				if (!industryJob.isDelivered()) { //Only include active jobs
-					outputValue += industryJob.getOutputValue();
+		int inventionCount = 0;
+		long count = 0;
+		double success = 0;
+		double outputValue = 0;
+		for (MyIndustryJob industryJob : list) {
+			count++;
+			if (industryJob.isInvention() && industryJob.isCompleted()) {
+				inventionCount++;
+				if (industryJob.isDelivered()) {
+					success++;
 				}
 			}
-			if (inventionCount <= 0) {
-				createMenuItem(values, jPopupMenu, 0.0, AutoNumberFormat.PERCENT, GuiShared.get().selectionInventionSuccess(), GuiShared.get().selectionShortInventionSuccess(), Images.JOBS_INVENTION_SUCCESS.getIcon());
-			} else {
-				createMenuItem(values, jPopupMenu, success / count, AutoNumberFormat.PERCENT, GuiShared.get().selectionInventionSuccess(), GuiShared.get().selectionShortInventionSuccess(), Images.JOBS_INVENTION_SUCCESS.getIcon());
+			if (!industryJob.isDelivered()) { //Only include active jobs
+				outputValue += industryJob.getOutputValue();
 			}
-			createMenuItem(values, jPopupMenu, outputValue, AutoNumberFormat.ISK, GuiShared.get().selectionManufactureJobsValue(), GuiShared.get().selectionShortOutputValue(), Images.TOOL_VALUES.getIcon());
-			createMenuItem(values, jPopupMenu, count, AutoNumberFormat.ITEMS, GuiShared.get().selectionCount(), GuiShared.get().selectionShortCount(), Images.EDIT_ADD.getIcon());
 		}
+		if (inventionCount <= 0) {
+			createMenuItem(values, jPopupMenu, 0.0, AutoNumberFormat.PERCENT, GuiShared.get().selectionInventionSuccess(), GuiShared.get().selectionShortInventionSuccess(), Images.JOBS_INVENTION_SUCCESS.getIcon());
+		} else {
+			createMenuItem(values, jPopupMenu, success / count, AutoNumberFormat.PERCENT, GuiShared.get().selectionInventionSuccess(), GuiShared.get().selectionShortInventionSuccess(), Images.JOBS_INVENTION_SUCCESS.getIcon());
+		}
+		createMenuItem(values, jPopupMenu, outputValue, AutoNumberFormat.ISK, GuiShared.get().selectionManufactureJobsValue(), GuiShared.get().selectionShortOutputValue(), Images.TOOL_VALUES.getIcon());
+		createMenuItem(values, jPopupMenu, count, AutoNumberFormat.ITEMS, GuiShared.get().selectionCount(), GuiShared.get().selectionShortCount(), Images.EDIT_ADD.getIcon());
 	}
 
-	public static void stockpileItem(final JComponent jComponent, final List<StockpileItem> list) {
-		if (jComponent instanceof JPopupMenu) {
-			JPopupMenu jPopupMenu = (JPopupMenu) jComponent;
+	public static void stockpileItem(final JPopupMenu jPopupMenu, final List<StockpileItem> list) {
+		List<MenuItemValue> values = createDefault(jPopupMenu);
 
-			List<MenuItemValue> values = createDefault(jPopupMenu);
+		double volumnNow = 0;
+		double volumnNeeded = 0;
+		double valueNow = 0;
+		double valueNeeded = 0;
 
-			double volumnNow = 0;
-			double volumnNeeded = 0;
-			double valueNow = 0;
-			double valueNeeded = 0;
-
-			for (int i = 0; i < list.size(); i++) {
-				Object object = list.get(i);
-				if (object instanceof SeparatorList.Separator) {
-					continue;
-				}
-				if (object instanceof StockpileTotal) {
-					continue;
-				}
-				if (object == null) {
-					continue;
-				}
-				StockpileItem item = (StockpileItem) object;
-				volumnNow = volumnNow + item.getVolumeNow();
-				if (item.getVolumeNeeded() < 0) { //Only add if negative
-					volumnNeeded = volumnNeeded + item.getVolumeNeeded();
-				}
-				valueNow = valueNow + item.getValueNow();
-				if (item.getValueNeeded() < 0) { //Only add if negative
-					valueNeeded = valueNeeded + item.getValueNeeded();
-				}
+		for (int i = 0; i < list.size(); i++) {
+			Object object = list.get(i);
+			if (object instanceof SeparatorList.Separator) {
+				continue;
 			}
-			List<MenuItemValue> now = createMenuItemGroup(jPopupMenu, GuiShared.get().selectionTitleNow());
-			createMenuItem(now, jPopupMenu, valueNow, AutoNumberFormat.ISK, GuiShared.get().selectionValueNow(), GuiShared.get().selectionShortValue(), Images.TOOL_VALUES.getIcon());
-			createMenuItem(now, jPopupMenu, volumnNow, AutoNumberFormat.DOUBLE, GuiShared.get().selectionVolumeNow(), GuiShared.get().selectionShortVolume(), Images.ASSETS_VOLUME.getIcon());
-			values.addAll(now);
-			List<MenuItemValue> needed = createMenuItemGroup(jPopupMenu, GuiShared.get().selectionTitleNeeded());
-			createMenuItem(needed, jPopupMenu, valueNeeded, AutoNumberFormat.ISK, GuiShared.get().selectionValueNeeded(), GuiShared.get().selectionShortValue(), Images.TOOL_VALUES.getIcon());
-			createMenuItem(needed, jPopupMenu, volumnNeeded, AutoNumberFormat.DOUBLE, GuiShared.get().selectionVolumeNeeded(), GuiShared.get().selectionShortVolume(), Images.ASSETS_VOLUME.getIcon());
-			values.addAll(needed);
+			if (object instanceof StockpileTotal) {
+				continue;
+			}
+			if (object == null) {
+				continue;
+			}
+			StockpileItem item = (StockpileItem) object;
+			volumnNow = volumnNow + item.getVolumeNow();
+			if (item.getVolumeNeeded() < 0) { //Only add if negative
+				volumnNeeded = volumnNeeded + item.getVolumeNeeded();
+			}
+			valueNow = valueNow + item.getValueNow();
+			if (item.getValueNeeded() < 0) { //Only add if negative
+				valueNeeded = valueNeeded + item.getValueNeeded();
+			}
 		}
+		List<MenuItemValue> now = createMenuItemGroup(jPopupMenu, GuiShared.get().selectionTitleNow());
+		createMenuItem(now, jPopupMenu, valueNow, AutoNumberFormat.ISK, GuiShared.get().selectionValueNow(), GuiShared.get().selectionShortValue(), Images.TOOL_VALUES.getIcon());
+		createMenuItem(now, jPopupMenu, volumnNow, AutoNumberFormat.DOUBLE, GuiShared.get().selectionVolumeNow(), GuiShared.get().selectionShortVolume(), Images.ASSETS_VOLUME.getIcon());
+		values.addAll(now);
+		List<MenuItemValue> needed = createMenuItemGroup(jPopupMenu, GuiShared.get().selectionTitleNeeded());
+		createMenuItem(needed, jPopupMenu, valueNeeded, AutoNumberFormat.ISK, GuiShared.get().selectionValueNeeded(), GuiShared.get().selectionShortValue(), Images.TOOL_VALUES.getIcon());
+		createMenuItem(needed, jPopupMenu, volumnNeeded, AutoNumberFormat.DOUBLE, GuiShared.get().selectionVolumeNeeded(), GuiShared.get().selectionShortVolume(), Images.ASSETS_VOLUME.getIcon());
+		values.addAll(needed);
 	}
 
-	public static void material(final JComponent jComponent, final List<Material> selected, final List<Material> all) {
-		if (jComponent instanceof JPopupMenu) {
-			JPopupMenu jPopupMenu = (JPopupMenu) jComponent;
+	public static void material(final JPopupMenu jPopupMenu, final List<Material> selected, final List<Material> all) {
+		List<MenuItemValue> values = createDefault(jPopupMenu);
 
-			List<MenuItemValue> values = createDefault(jPopupMenu);
+		MaterialTotal materialTotal = calcMaterialTotal(new ArrayList<>(selected), all);
 
-			MaterialTotal materialTotal = calcMaterialTotal(new ArrayList<>(selected), all);
-
-			createMenuItem(values, jPopupMenu, materialTotal.getTotalValue(), AutoNumberFormat.ISK, GuiShared.get().selectionValue(), GuiShared.get().selectionShortValue(), Images.TOOL_VALUES.getIcon());
-			createMenuItem(values, jPopupMenu, materialTotal.getAverageValue(), AutoNumberFormat.ISK, GuiShared.get().selectionAverage(), GuiShared.get().selectionShortAverage(), Images.ASSETS_AVERAGE.getIcon());
-			createMenuItem(values, jPopupMenu, materialTotal.getTotalCount(), AutoNumberFormat.ITEMS, GuiShared.get().selectionCount(), GuiShared.get().selectionShortCount(), Images.EDIT_ADD.getIcon());
-		}
+		createMenuItem(values, jPopupMenu, materialTotal.getTotalValue(), AutoNumberFormat.ISK, GuiShared.get().selectionValue(), GuiShared.get().selectionShortValue(), Images.TOOL_VALUES.getIcon());
+		createMenuItem(values, jPopupMenu, materialTotal.getAverageValue(), AutoNumberFormat.ISK, GuiShared.get().selectionAverage(), GuiShared.get().selectionShortAverage(), Images.ASSETS_AVERAGE.getIcon());
+		createMenuItem(values, jPopupMenu, materialTotal.getTotalCount(), AutoNumberFormat.ITEMS, GuiShared.get().selectionCount(), GuiShared.get().selectionShortCount(), Images.EDIT_ADD.getIcon());
 	}
 
 	static MaterialTotal calcMaterialTotal(final List<Material> selectedList, final List<Material> all) {
@@ -536,15 +504,15 @@ public class JMenuInfo {
 		}
 	}
 
-	public static JMenuItem createMenuItem(List<MenuItemValue> values, final JPopupMenu jPopupMenu, final Number number, AutoNumberFormat numberFormat, final String toolTipText, String shortText, final Icon icon) {
-		return createMenuItem(values, jPopupMenu, null, number, numberFormat, toolTipText, shortText, icon);
+	public static JMenuItem createMenuItem(List<MenuItemValue> values, final JPopupMenu jPopupMenu, final Number number, AutoNumberFormat numberFormat, final String toolTip, String shortText, final Icon icon) {
+		return createMenuItem(values, jPopupMenu, null, number, numberFormat, toolTip, shortText, icon);
 	}
 
-	public static JMenuItem createMenuItem(List<MenuItemValue> values, final JPopupMenu jPopupMenu, final String text, final String toolTipText, String shortText, final Icon icon) {
-		return createMenuItem(values, jPopupMenu, text, null, null, toolTipText, shortText, icon);
+	public static JMenuItem createMenuItem(List<MenuItemValue> values, final JPopupMenu jPopupMenu, final String text, final String toolTip, String shortText, final Icon icon) {
+		return createMenuItem(values, jPopupMenu, text, null, null, toolTip, shortText, icon);
 	}
 
-	private static JMenuItem createMenuItem(List<MenuItemValue> values, final JPopupMenu jPopupMenu, final String text, final Number number, AutoNumberFormat numberFormat, final String toolTipText, String shortText, final Icon icon) {
+	private static JMenuItem createMenuItem(List<MenuItemValue> values, final JPopupMenu jPopupMenu, final String text, final Number number, AutoNumberFormat numberFormat, final String toolTip, String shortText, final Icon icon) {
 		if (values != null) {
 			values.add(new MenuItemValue(shortText, text, number));
 		}
@@ -554,7 +522,7 @@ public class JMenuInfo {
 		} else { //Text value
 			jMenuItem = new JMenuItem(text);
 		}
-		jMenuItem.setToolTipText(toolTipText);
+		jMenuItem.setToolTipText(GuiShared.get().clickToCopyWrap(toolTip));
 		jMenuItem.setEnabled(false);
 		jMenuItem.setDisabledIcon(icon);
 		jMenuItem.setForeground(Color.BLACK);
@@ -600,6 +568,7 @@ public class JMenuInfo {
 	private static List<MenuItemValue> createMenuItemGroup(final JPopupMenu jPopupMenu, final String text, final Icon icon) {
 		List<MenuItemValue> values = new ArrayList<>();
 		JMenuItem jMenuItem = new JMenuItem(text);
+		jMenuItem.setToolTipText(GuiShared.get().clickToCopyGroup());
 		if (icon != null) {
 			jMenuItem.setDisabledIcon(icon);
 		}
@@ -652,6 +621,7 @@ public class JMenuInfo {
 		jPopupMenu.addSeparator();
 
 		jMenuItem.setText(GuiShared.get().selectionTitle());
+		jMenuItem.setToolTipText(GuiShared.get().clickToCopySelectionInfo());
 		jMenuItem.setDisabledIcon(Images.DIALOG_ABOUT.getIcon());
 		jMenuItem.setEnabled(false);
 		jMenuItem.setForeground(Color.BLACK);
