@@ -39,6 +39,8 @@ public abstract class TabsContracts extends Bundle {
 	public abstract String bought();
 	public abstract String buying();
 	public abstract String collapse();
+	public abstract String collateralAcceptor();
+	public abstract String collateralIssuer();
 	public abstract String columnAccepted();
 	public abstract String columnAcceptor();
 	public abstract String columnAssignee();
