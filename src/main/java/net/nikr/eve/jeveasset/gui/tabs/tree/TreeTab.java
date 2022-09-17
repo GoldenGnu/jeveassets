@@ -52,6 +52,7 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JToggleButton;
@@ -423,8 +424,8 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate {
 		}
 
 		@Override
-		public void addInfoMenu(JComponent jComponent) {
-			JMenuInfo.treeAsset(jComponent, selectionModel.getSelected());
+		public void addInfoMenu(JPopupMenu jPopupMenu) {
+			JMenuInfo.treeAsset(jPopupMenu, selectionModel.getSelected());
 		}
 
 		@Override

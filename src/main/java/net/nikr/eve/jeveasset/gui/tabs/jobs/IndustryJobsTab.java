@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import javax.swing.JComponent;
 import javax.swing.JMenu;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
@@ -170,8 +171,8 @@ public class IndustryJobsTab extends JMainTabPrimary {
 		}
 
 		@Override
-		public void addInfoMenu(JComponent jComponent) {
-			JMenuInfo.industryJob(jComponent, selectionModel.getSelected());
+		public void addInfoMenu(JPopupMenu jPopupMenu) {
+			JMenuInfo.industryJob(jPopupMenu, selectionModel.getSelected());
 		}
 
 		@Override

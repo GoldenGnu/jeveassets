@@ -41,6 +41,7 @@ import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JMenu;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.my.MyContract;
@@ -232,8 +233,8 @@ public class ContractsTab extends JMainTabPrimary {
 		}
 
 		@Override
-		public void addInfoMenu(JComponent jComponent) {
-			JMenuInfo.contracts(program, jComponent, selectionModel.getSelected());
+		public void addInfoMenu(JPopupMenu jPopupMenu) {
+			JMenuInfo.contracts(program, jPopupMenu, selectionModel.getSelected());
 		}
 
 		@Override

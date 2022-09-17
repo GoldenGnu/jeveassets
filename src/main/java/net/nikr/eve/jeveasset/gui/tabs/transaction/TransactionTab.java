@@ -39,6 +39,7 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
@@ -259,8 +260,8 @@ public class TransactionTab extends JMainTabPrimary {
 		}
 
 		@Override
-		public void addInfoMenu(JComponent jComponent) {
-			JMenuInfo.transctions(jComponent, selectionModel.getSelected());
+		public void addInfoMenu(JPopupMenu jPopupMenu) {
+			JMenuInfo.transctions(jPopupMenu, selectionModel.getSelected());
 		}
 
 		@Override
