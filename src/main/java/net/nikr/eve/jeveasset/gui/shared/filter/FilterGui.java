@@ -199,7 +199,7 @@ class FilterGui<E> {
 		add();
 
 		filterSave = new FilterSave(jFrame);
-		filterManager = new FilterManager<>(jFrame, filterControl.getName(), this, filterControl.getFilters(), filterControl.getDefaultFilters());
+		filterManager = new FilterManager<>(jFrame, filterControl.getName(), this, tableFormat.getAllColumns(), filterControl.getFilters(), filterControl.getDefaultFilters());
 	}
 
 	protected JPanel getPanel() {
