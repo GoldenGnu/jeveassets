@@ -1679,7 +1679,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		} catch (IllegalArgumentException exception) {
 
 		}
-		//Values (Extra)
+		//Isk
 		try {
 			if (toolName.equals(ValueTableTab.NAME)) {
 				return ValueTableFormat.valueOf(column);
@@ -1687,7 +1687,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		} catch (IllegalArgumentException exception) {
 
 		}
-		//Values (Extra)
+		//Tree
 		try {
 			if (toolName.equals(TreeTab.NAME)) {
 				return TreeTableFormat.valueOf(column);
