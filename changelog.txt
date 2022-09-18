@@ -16,9 +16,15 @@
                   #### #  # #  # #  # #### #### #### #### ####
 
 ________________________________________________________________________________
+_7.3.1__________________________________________________________________________
+
+Bug Fixes:
+-Fixed NPE in MyIndustryJob from MyBlueprint (Issue #342)
+
+________________________________________________________________________________
 _7.3.0__________________________________________________________________________
 
-New Feature:
+New Features:
 -Added filters to the Overview Tool (Issue #336)
 -Added Janice as a price source (Issue #328)
 -Price History (Issue #76)
@@ -39,7 +45,7 @@ New Feature:
 -Added mnemonic to the main menu
 -Added available label to stockpile separator row (Issue #341)
 
-Bug Fix:
+Bug Fixes:
 -Ignore profiles with invalid names
 -Include private structures in the contract appraisal settings reset on save
 -Refining equipment option did not accept decimal values (Issue #340)
