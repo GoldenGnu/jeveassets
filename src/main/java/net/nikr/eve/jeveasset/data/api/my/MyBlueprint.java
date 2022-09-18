@@ -26,55 +26,57 @@ import net.nikr.eve.jeveasset.data.api.raw.RawIndustryJob;
 
 
 public class MyBlueprint {
-	private final Integer runs;
-	private final Integer materialEfficiency;
-	private final Integer timeEfficiency ;
-
-	public MyBlueprint(Integer runs, Integer materialEfficiency, Integer timeEfficiency) {
-		this.runs = runs;
-		this.materialEfficiency = materialEfficiency;
-		this.timeEfficiency = timeEfficiency;
-	}
+	private final int runs;
+	private final int materialEfficiency;
+	private final int timeEfficiency ;
 
 	/**
 	 * Contract Item
-	 * @param contractItem 
+	 * @param contractItem
 	 */
 	public MyBlueprint(RawContractItem contractItem) {
-		this.runs = contractItem.getLicensedRuns();
-		this.materialEfficiency = contractItem.getME();
-		this.timeEfficiency = contractItem.getTE();
+		this(contractItem.getLicensedRuns(), contractItem.getME(), contractItem.getTE());
 	}
 
 	/**
 	 * Blueprint
-	 * @param blueprint 
+	 * @param blueprint
 	 */
 	public MyBlueprint(RawBlueprint blueprint) {
-		runs = blueprint.getRuns();
-		materialEfficiency = blueprint.getMaterialEfficiency();
-		timeEfficiency = blueprint.getTimeEfficiency();
+		this(blueprint.getRuns(), blueprint.getMaterialEfficiency(), blueprint.getTimeEfficiency());
 	}
 
 	/**
 	 * IndustryJob
-	 * @param industryJob 
+	 * @param industryJob
 	 */
 	public MyBlueprint(RawIndustryJob industryJob) {
-		runs = industryJob.getLicensedRuns();
-		materialEfficiency = null;
-		timeEfficiency = null;
+		this(industryJob.getLicensedRuns(), null, null);
 	}
 
-	public Integer getRuns() {
+	public MyBlueprint(Integer runs, Integer materialEfficiency, Integer timeEfficiency) {
+		this.runs = notNull(runs);
+		this.materialEfficiency = notNull(materialEfficiency);
+		this.timeEfficiency = notNull(timeEfficiency);
+	}
+
+	private int notNull(Integer value) {
+		if (value != null) {
+			return value;
+		} else {
+			return 0;
+		}
+	}
+
+	public int getRuns() {
 		return runs;
 	}
 
-	public Integer getMaterialEfficiency() {
+	public int getMaterialEfficiency() {
 		return materialEfficiency;
 	}
 
-	public Integer getTimeEfficiency() {
+	public int getTimeEfficiency() {
 		return timeEfficiency;
 	}
 }
