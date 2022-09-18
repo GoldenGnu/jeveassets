@@ -328,6 +328,9 @@ public class Program implements ActionListener {
 		if (Settings.get().isSettingsLoadError()) {
 			JOptionPane.showMessageDialog(mainWindow.getFrame(), GuiShared.get().errorLoadingSettingsMsg(), GuiShared.get().errorLoadingSettingsTitle(), JOptionPane.ERROR_MESSAGE);
 		}
+		if (NahimicDetector.isNahimicRunning()) {
+			JOptionPane.showMessageDialog(mainWindow.getFrame(), "WARNING: Nahimic service detected. It's known to corrupt the jEveAssets GUI", "Nahimic Detected", JOptionPane.WARNING_MESSAGE);
+		}
 		profileManager.showProfileLoadErrorWarning(mainWindow.getFrame());
 		if (profileManager.getOwnerTypes().isEmpty()) {
 			LOG.info("Show Account Manager");
