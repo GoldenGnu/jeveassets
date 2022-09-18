@@ -192,6 +192,7 @@ public abstract class TabsStockpile extends Bundle {
 	public abstract String universe();
 	public abstract String columnName();
 	public abstract String columnGroup();
+	public abstract String columnCategory();
 	public abstract String columnMeta();
 	public abstract String columnEveUi();
 	public abstract String columnEveUiToolTip();
