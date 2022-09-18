@@ -105,6 +105,7 @@ public class AboutDialog extends JDialogCentered {
 				+ "&nbsp;Kaylee Syntax<br>"
 				+ "&nbsp;Inoruuk<br>"
 				+ "&nbsp;Burberius<br>"
+				+ "&nbsp;Lazaren<br>"
 				+ "<br>"
 				+ "<b>Retired Testers</b><br>"
 				+ "&nbsp;Varo Jan<br>"
