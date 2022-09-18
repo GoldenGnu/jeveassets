@@ -112,6 +112,7 @@ public class DataConverterTest extends TestUtil {
 		for (ConverterTestOptions options : ConverterTestOptionsGetter.getConverterOptions()) {
 			MyContractItem contractItem = ConverterTestUtil.getMyContractItem(ConverterTestUtil.getMyContract(false, true, options), false, true, options);
 			contractItem.setRecordID(contractItem.getRecordID() + 1);
+			contractItem.setItemID(contractItem.getItemID()+ 1);
 			contractItem.getContract().setStartLocationID(options.getLocationTypeEveApi());
 			contractItem.getContract().setEndLocationID(options.getLocationTypeEveApi());
 			final Map<Long, OwnerType> owners = new HashMap<>();
@@ -119,10 +120,7 @@ public class DataConverterTest extends TestUtil {
 			owners.put(owner.getOwnerID(), owner);
 			List<MyAsset> assets = DataConverter.assetContracts(Collections.singletonList(contractItem), owners, true, true);
 			if (assets.isEmpty()) {
-				assertTrue((contractItem.getContract().getStatus() != RawContract.ContractStatus.OUTSTANDING
-						&& contractItem.getContract().getStatus() != RawContract.ContractStatus.IN_PROGRESS)
-						|| contractItem.getContract().isIgnoreContract());
-
+				assertTrue((!contractItem.getContract().isOpen()) || contractItem.getContract().isIgnoreContract());
 			} else {
 				MyAsset asset = assets.get(0);
 				assertEquals(asset.getItemFlag().getFlagName(), General.get().contractIncluded());

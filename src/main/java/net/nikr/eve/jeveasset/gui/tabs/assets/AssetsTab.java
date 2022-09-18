@@ -39,8 +39,8 @@ import java.util.List;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.JLabel;
 import javax.swing.JMenu;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JToggleButton;
 import net.nikr.eve.jeveasset.Program;
@@ -49,14 +49,15 @@ import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.tag.TagUpdate;
 import net.nikr.eve.jeveasset.data.settings.types.LocationType;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
+import net.nikr.eve.jeveasset.gui.frame.StatusPanel.JStatusLabel;
 import net.nikr.eve.jeveasset.gui.images.Images;
-import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.components.JFixedToolBar;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTabPrimary;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuColumns;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
+import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo.AutoNumberFormat;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuData.AssetMenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
@@ -76,11 +77,11 @@ public class AssetsTab extends JMainTabPrimary implements TagUpdate {
 	//GUI
 	private final JAssetTable jTable;
 	private final JToggleButton jReprocessColors;
-	private final JLabel jValue;
-	private final JLabel jReprocessed;
-	private final JLabel jCount;
-	private final JLabel jAverage;
-	private final JLabel jVolume;
+	private final JStatusLabel jValue;
+	private final JStatusLabel jReprocessed;
+	private final JStatusLabel jCount;
+	private final JStatusLabel jAverage;
+	private final JStatusLabel jVolume;
 	private final JButton jClearNew;
 
 	//Table
@@ -158,19 +159,19 @@ public class AssetsTab extends JMainTabPrimary implements TagUpdate {
 		//Menu
 		installTableTool(new AssetTableMenu(), tableFormat, tableModel, jTable, filterControl, MyAsset.class);
 
-		jVolume = StatusPanel.createLabel(TabsAssets.get().totalVolume(), Images.ASSETS_VOLUME.getIcon());
+		jVolume = StatusPanel.createLabel(TabsAssets.get().totalVolume(), Images.ASSETS_VOLUME.getIcon(), AutoNumberFormat.DOUBLE);
 		this.addStatusbarLabel(jVolume);
 
-		jCount = StatusPanel.createLabel(TabsAssets.get().totalCount(), Images.EDIT_ADD.getIcon()); //Add
+		jCount = StatusPanel.createLabel(TabsAssets.get().totalCount(), Images.EDIT_ADD.getIcon(), AutoNumberFormat.ITEMS);
 		this.addStatusbarLabel(jCount);
 
-		jAverage = StatusPanel.createLabel(TabsAssets.get().average(), Images.ASSETS_AVERAGE.getIcon());
+		jAverage = StatusPanel.createLabel(TabsAssets.get().average(), Images.ASSETS_AVERAGE.getIcon(), AutoNumberFormat.ISK);
 		this.addStatusbarLabel(jAverage);
 
-		jReprocessed = StatusPanel.createLabel(TabsAssets.get().totalReprocessed(), Images.SETTINGS_REPROCESSING.getIcon());
+		jReprocessed = StatusPanel.createLabel(TabsAssets.get().totalReprocessed(), Images.SETTINGS_REPROCESSING.getIcon(), AutoNumberFormat.ISK);
 		this.addStatusbarLabel(jReprocessed);
 
-		jValue = StatusPanel.createLabel(TabsAssets.get().totalValue(), Images.TOOL_VALUES.getIcon());
+		jValue = StatusPanel.createLabel(TabsAssets.get().totalValue(), Images.TOOL_VALUES.getIcon(), AutoNumberFormat.ISK);
 		this.addStatusbarLabel(jValue);
 
 		layout.setHorizontalGroup(
@@ -268,11 +269,11 @@ public class AssetsTab extends JMainTabPrimary implements TagUpdate {
 		if (totalCount > 0 && totalValue > 0) {
 			averageValue = totalValue / totalCount;
 		}
-		jVolume.setText(Formater.doubleFormat(totalVolume));
-		jCount.setText(Formater.itemsFormat(totalCount));
-		jAverage.setText(Formater.iskFormat(averageValue));
-		jReprocessed.setText(Formater.iskFormat(totalReprocessed));
-		jValue.setText(Formater.iskFormat(totalValue));
+		jVolume.setNumber(totalVolume);
+		jCount.setNumber(totalCount);
+		jAverage.setNumber(averageValue);
+		jReprocessed.setNumber(totalReprocessed);
+		jValue.setNumber(totalValue);
 	}
 
 	public void updateReprocessColors() {
@@ -303,8 +304,8 @@ public class AssetsTab extends JMainTabPrimary implements TagUpdate {
 		}
 
 		@Override
-		public void addInfoMenu(JComponent jComponent) {
-			JMenuInfo.asset(jComponent, selectionModel.getSelected());
+		public void addInfoMenu(JPopupMenu jPopupMenu) {
+			JMenuInfo.asset(jPopupMenu, selectionModel.getSelected());
 		}
 
 		@Override

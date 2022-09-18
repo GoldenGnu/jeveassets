@@ -21,9 +21,6 @@
 package net.nikr.eve.jeveasset.io.online;
 
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
 import ch.qos.logback.classic.Level;
 import java.io.IOException;
 import java.io.InputStream;
@@ -41,26 +38,28 @@ import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.StaticData;
 import net.nikr.eve.jeveasset.data.settings.PriceData;
 import net.nikr.eve.jeveasset.data.settings.PriceDataSettings.PriceSource;
+import net.nikr.eve.jeveasset.data.settings.PriceHistoryDatabase;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
+import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import org.junit.After;
 import org.junit.AfterClass;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import uk.me.candle.eve.pricing.impl.Janice;
 import uk.me.candle.eve.pricing.options.LocationType;
-import uk.me.candle.eve.pricing.options.PricingFetch;
-import uk.me.candle.eve.pricing.options.PricingNumber;
+import uk.me.candle.eve.pricing.options.PriceLocation;
 import uk.me.candle.eve.pricing.options.PricingOptions;
-import uk.me.candle.eve.pricing.options.PricingType;
 
-/**
- *
- * @author Niklas
- */
+
 public class PriceDataGetterOnlineTest extends TestUtil {
-	private static final long REGION = 10000002L;  //The Forge (Jita region)
-	private static final long SYSTEM = 30000142L;  //Jita
-	private static final long STATION = 60003760L; //Jita 4 - 4
+	private static final String JANICE_API_KEY = "JANICE_API_KEY";
+	private static String JANICE_KEY;
+	private static final long REGION_THE_FORGE = 10000002L;  //The Forge (Jita region)
+	private static final long SYSTEM_JITA = 30000142L;  //Jita
+	private static final long STATION_JITA_4_4 = 60003760L; //Jita 4 - 4
 	private static final long MAX_RUNS = 5000;
 
 	private final PriceGetter getter = new PriceGetter();
@@ -71,6 +70,8 @@ public class PriceDataGetterOnlineTest extends TestUtil {
 	@BeforeClass
 	public static void setUpClass() {
 		setLoggingLevel(Level.ERROR);
+		JANICE_KEY = System.getenv().get(JANICE_API_KEY);
+		PriceHistoryDatabase.load();
 	}
 
 	@AfterClass
@@ -110,26 +111,31 @@ public class PriceDataGetterOnlineTest extends TestUtil {
 	}
 
 	private void test(PriceSource source) {
-		if (source.supportsRegion()) {
-			test(source, LocationType.REGION, Collections.singletonList(REGION));
+		if (source.supportRegions()) {
+			test(source, LocationType.REGION, ApiIdConverter.getLocation(REGION_THE_FORGE));
 		}
-		if (source.supportsSystem()) {
-			test(source, LocationType.SYSTEM, Collections.singletonList(SYSTEM));
+		if (source.supportSystems()) {
+			test(source, LocationType.SYSTEM, ApiIdConverter.getLocation(SYSTEM_JITA));
 		}
-		if (source.supportsStation()) {
-			test(source, LocationType.STATION, Collections.singletonList(STATION));
+		if (source.supportStations()) {
+			if (source == PriceSource.JANICE) {
+				test(source, LocationType.STATION, Janice.JaniceLocation.JITA_4_4.getPriceLocation());
+			} else {
+				test(source, LocationType.STATION, ApiIdConverter.getLocation(STATION_JITA_4_4));
+			}
 		}
 	}
 
-	private void test(PriceSource source, LocationType locationType, List<Long> locations) {
-		TestPricingOptions options = new TestPricingOptions(source, locationType, locations);
+	private void test(PriceSource source, LocationType locationType, PriceLocation location) {
+		TestPricingOptions options = new TestPricingOptions(locationType, location);
 		System.out.println(source.toString()
 				+ " ("
-				+ (options.getLocations().size() == 1 ? "Single" : "Multi")
-				+ " "
 				+ options.getLocationType().name().toLowerCase()
 				+ " - " +typeIDs.size() + " IDs)"
 				);
+		if (source == PriceSource.JANICE && JANICE_KEY != null) {
+			options.addHeader("X-ApiKey", JANICE_KEY);
+		}
 		long start = System.currentTimeMillis();
 		Map<Integer, PriceData> process = getter.process(options, typeIDs, source);
 		long end = System.currentTimeMillis();
@@ -159,14 +165,12 @@ public class PriceDataGetterOnlineTest extends TestUtil {
 
 	private static class TestPricingOptions implements PricingOptions {
 
-		private final PriceSource priceSource;
 		private final LocationType locationType;
-		private final List<Long> locations;
+		private final PriceLocation location;
 
-		public TestPricingOptions(PriceSource priceSource, LocationType locationType, List<Long> locations) {
-			this.priceSource = priceSource;
+		public TestPricingOptions(LocationType locationType, PriceLocation location) {
 			this.locationType = locationType;
-			this.locations = locations;
+			this.location = location;
 		}
 
 		@Override
@@ -175,28 +179,13 @@ public class PriceDataGetterOnlineTest extends TestUtil {
 		}
 
 		@Override
-		public PricingFetch getPricingFetchImplementation() {
-			return priceSource.getPricingFetch();
-		}
-
-		@Override
-		public List<Long> getLocations() {
-			return locations;
+		public PriceLocation getLocation() {
+			return location;
 		}
 
 		@Override
 		public LocationType getLocationType() {
 			return locationType;
-		}
-
-		@Override
-		public PricingType getPricingType() {
-			return PricingType.LOW;
-		}
-
-		@Override
-		public PricingNumber getPricingNumber() {
-			return PricingNumber.SELL;
 		}
 
 		@Override
@@ -232,6 +221,11 @@ public class PriceDataGetterOnlineTest extends TestUtil {
 		@Override
 		public int getTimeout() {
 			return 20000;
+		}
+
+		@Override
+		public String getUserAgent() {
+			return System.getProperty("http.agent");
 		}
 	}
 }

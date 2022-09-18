@@ -205,17 +205,17 @@ public class StockpileToolSettingsPanel extends JSettingsPanel {
 	}
 
 	@Override
-	public boolean save() {
+	public UpdateType save() {
 		int group2 = getNumber(jGroup2);
 		int group3 = getNumber(jGroup3);
-		boolean updated = Settings.get().isStockpileHalfColors() != jThreeGroups.isSelected()
+		boolean repaint = Settings.get().isStockpileHalfColors() != jThreeGroups.isSelected()
 				|| group2 != Settings.get().getStockpileColorGroup2()
 				|| group3 != Settings.get().getStockpileColorGroup3();
 		Settings.get().setStockpileColorGroup2(group2);
 		Settings.get().setStockpileFocusTab(jSwitchTab.isSelected());
 		Settings.get().setStockpileHalfColors(jThreeGroups.isSelected());
 		Settings.get().setStockpileColorGroup3(group3);
-		return updated;
+		return repaint ? UpdateType.REPAINT_STOCKPILE_TABLE : UpdateType.NONE;
 	}
 
 	@Override

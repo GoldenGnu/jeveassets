@@ -38,7 +38,7 @@ public class MyContract extends RawContract implements LocationsType, OwnersType
 	private String assignee = "";
 	private String issuerCorp = "";
 	private String issuer = "";
-	private final Set<Long> owners = new HashSet<Long>();
+	private final Set<Long> owners = new HashSet<>();
 
 	private boolean issuerAfterAssets = false;
 	private boolean acceptorAfterAssets = false;
@@ -115,7 +115,7 @@ public class MyContract extends RawContract implements LocationsType, OwnersType
 	}
 
 	public void setIssuerAfterAssets(Date date) {
-		if (date != null && getDateCompleted() != null) {
+		if (date != null && isCompletedSuccessful()) {
 			this.issuerAfterAssets = getDateCompleted().after(date);
 		} else {
 			this.issuerAfterAssets = false;
@@ -127,7 +127,7 @@ public class MyContract extends RawContract implements LocationsType, OwnersType
 	}
 
 	public void setAcceptorAfterAssets(Date date) {
-		if (date != null && getDateCompleted() != null) {
+		if (date != null && isCompletedSuccessful()) {
 			this.acceptorAfterAssets = getDateCompleted().after(date);
 		} else {
 			this.acceptorAfterAssets = false;
@@ -136,7 +136,7 @@ public class MyContract extends RawContract implements LocationsType, OwnersType
 
 	@Override
 	public Set<MyLocation> getLocations() {
-		Set<MyLocation> locations = new HashSet<MyLocation>();
+		Set<MyLocation> locations = new HashSet<>();
 		if (startLocation != null) {
 			locations.add(startLocation);
 		}
@@ -167,12 +167,32 @@ public class MyContract extends RawContract implements LocationsType, OwnersType
 		return getType() == ContractType.COURIER;
 	}
 
+	public boolean isPublic() {
+		return getAvailability() == ContractAvailability.PUBLIC;
+	}
+
 	public boolean isItemContract() {
 		return getType() == ContractType.AUCTION || getType() == ContractType.ITEM_EXCHANGE;
 	}
 
 	public boolean isIgnoreContract() {
 		return getType() != ContractType.AUCTION && getType() != ContractType.ITEM_EXCHANGE;
+	}
+
+	public boolean isOpen() {
+		return getStatus() == ContractStatus.OUTSTANDING;
+	}
+
+	public boolean isInProgress() {
+		return getStatus() == ContractStatus.IN_PROGRESS;
+	}
+
+	public boolean isDeleted() {
+		return getStatus() == ContractStatus.DELETED;
+	}
+
+	public boolean isCompletedSuccessful() {
+		return getDateCompleted() != null;
 	}
 
 	public String getStatusFormated() {

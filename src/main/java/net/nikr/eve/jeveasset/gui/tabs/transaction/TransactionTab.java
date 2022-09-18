@@ -39,20 +39,22 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.types.LocationType;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
+import net.nikr.eve.jeveasset.gui.frame.StatusPanel.JStatusLabel;
 import net.nikr.eve.jeveasset.gui.images.Images;
-import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.components.JFixedToolBar;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTabPrimary;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuColumns;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
+import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo.AutoNumberFormat;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
@@ -65,15 +67,15 @@ import net.nikr.eve.jeveasset.i18n.TabsTransaction;
 public class TransactionTab extends JMainTabPrimary {
 
 	private final JAutoColumnTable jTable;
-	private final JLabel jSellOrdersCount;
-	private final JLabel jSellOrdersTotal;
-	private final JLabel jSellOrdersAverage;
-	private final JLabel jBothOrdersCount;
-	private final JLabel jBothOrdersTotal;
-	private final JLabel jBothOrdersAverage;
-	private final JLabel jBuyOrdersCount;
-	private final JLabel jBuyOrdersTotal;
-	private final JLabel jBuyOrdersAverage;
+	private final JStatusLabel jSellOrdersCount;
+	private final JStatusLabel jSellOrdersTotal;
+	private final JStatusLabel jSellOrdersAverage;
+	private final JStatusLabel jBothOrdersCount;
+	private final JStatusLabel jBothOrdersTotal;
+	private final JStatusLabel jBothOrdersAverage;
+	private final JStatusLabel jBuyOrdersCount;
+	private final JStatusLabel jBuyOrdersTotal;
+	private final JStatusLabel jBuyOrdersAverage;
 	private final JButton jClearNew;
 
 	//Table
@@ -140,42 +142,42 @@ public class TransactionTab extends JMainTabPrimary {
 		installTableTool(new TransactionTableMenu(), tableFormat, tableModel, jTable, filterControl, MyTransaction.class);
 
 		//Sell
-		JLabel jSellOrders = StatusPanel.createLabel(TabsTransaction.get().sellTitle(), Images.ORDERS_SELL.getIcon());
+		JLabel jSellOrders = StatusPanel.createIcon(Images.ORDERS_SELL.getIcon(), TabsTransaction.get().sellTitle());
 		this.addStatusbarLabel(jSellOrders);
 
-		jSellOrdersTotal = StatusPanel.createLabel(TabsTransaction.get().sellTotal(), Images.TOOL_VALUES.getIcon());
-		this.addStatusbarLabel(jSellOrdersTotal);
-
-		jSellOrdersCount = StatusPanel.createLabel(TabsTransaction.get().sellCount(), Images.EDIT_ADD.getIcon());
+		jSellOrdersCount = StatusPanel.createLabel(TabsTransaction.get().sellCount(), Images.EDIT_ADD.getIcon(), AutoNumberFormat.ITEMS);
 		this.addStatusbarLabel(jSellOrdersCount);
 
-		jSellOrdersAverage = StatusPanel.createLabel(TabsTransaction.get().sellAvg(), Images.ASSETS_AVERAGE.getIcon());
+		jSellOrdersTotal = StatusPanel.createLabel(TabsTransaction.get().sellTotal(), Images.TOOL_VALUES.getIcon(), AutoNumberFormat.ISK);
+		this.addStatusbarLabel(jSellOrdersTotal);
+
+		jSellOrdersAverage = StatusPanel.createLabel(TabsTransaction.get().sellAvg(), Images.ASSETS_AVERAGE.getIcon(), AutoNumberFormat.ISK);
 		this.addStatusbarLabel(jSellOrdersAverage);
 
 		//Both
-		JLabel jBothOrders = StatusPanel.createLabel(TabsTransaction.get().bothTitle(), Images.TOOL_TRANSACTION.getIcon());
+		JLabel jBothOrders = StatusPanel.createIcon(Images.TOOL_TRANSACTION.getIcon(), TabsTransaction.get().bothTitle());
 		this.addStatusbarLabel(jBothOrders);
 
-		jBothOrdersCount = StatusPanel.createLabel(TabsTransaction.get().bothCount(), Images.EDIT_ADD.getIcon());
+		jBothOrdersCount = StatusPanel.createLabel(TabsTransaction.get().bothCount(), Images.EDIT_ADD.getIcon(), AutoNumberFormat.ITEMS);
 		this.addStatusbarLabel(jBothOrdersCount);
 
-		jBothOrdersTotal = StatusPanel.createLabel(TabsTransaction.get().bothTotal(), Images.TOOL_VALUES.getIcon());
+		jBothOrdersTotal = StatusPanel.createLabel(TabsTransaction.get().bothTotal(), Images.TOOL_VALUES.getIcon(), AutoNumberFormat.ISK);
 		this.addStatusbarLabel(jBothOrdersTotal);
 
-		jBothOrdersAverage = StatusPanel.createLabel(TabsTransaction.get().bothAvg(), Images.ASSETS_AVERAGE.getIcon());
+		jBothOrdersAverage = StatusPanel.createLabel(TabsTransaction.get().bothAvg(), Images.ASSETS_AVERAGE.getIcon(), AutoNumberFormat.ISK);
 		this.addStatusbarLabel(jBothOrdersAverage);
 
 		//Buy
-		JLabel jBuyOrders = StatusPanel.createLabel(TabsTransaction.get().buyTitle(), Images.ORDERS_BUY.getIcon());
+		JLabel jBuyOrders = StatusPanel.createIcon(Images.ORDERS_BUY.getIcon(), TabsTransaction.get().buyTitle());
 		this.addStatusbarLabel(jBuyOrders);
 
-		jBuyOrdersCount = StatusPanel.createLabel(TabsTransaction.get().buyCount(), Images.EDIT_ADD.getIcon());
+		jBuyOrdersCount = StatusPanel.createLabel(TabsTransaction.get().buyCount(), Images.EDIT_ADD.getIcon(), AutoNumberFormat.ITEMS);
 		this.addStatusbarLabel(jBuyOrdersCount);
 
-		jBuyOrdersTotal = StatusPanel.createLabel(TabsTransaction.get().buyTotal(), Images.TOOL_VALUES.getIcon());
+		jBuyOrdersTotal = StatusPanel.createLabel(TabsTransaction.get().buyTotal(), Images.TOOL_VALUES.getIcon(), AutoNumberFormat.ISK);
 		this.addStatusbarLabel(jBuyOrdersTotal);
 
-		jBuyOrdersAverage = StatusPanel.createLabel(TabsTransaction.get().buyAvg(), Images.ASSETS_AVERAGE.getIcon());
+		jBuyOrdersAverage = StatusPanel.createLabel(TabsTransaction.get().buyAvg(), Images.ASSETS_AVERAGE.getIcon(), AutoNumberFormat.ISK);
 		this.addStatusbarLabel(jBuyOrdersAverage);
 
 		layout.setHorizontalGroup(
@@ -258,8 +260,8 @@ public class TransactionTab extends JMainTabPrimary {
 		}
 
 		@Override
-		public void addInfoMenu(JComponent jComponent) {
-			JMenuInfo.transctions(jComponent, selectionModel.getSelected());
+		public void addInfoMenu(JPopupMenu jPopupMenu) {
+			JMenuInfo.transctions(jPopupMenu, selectionModel.getSelected());
 		}
 
 		@Override
@@ -303,15 +305,15 @@ public class TransactionTab extends JMainTabPrimary {
 			if (bothTotal > 0 && bothCount > 0) {
 				bothAvg = bothTotal / bothCount;
 			}
-			jSellOrdersCount.setText(Formater.itemsFormat(sellCount));
-			jSellOrdersTotal.setText(Formater.iskFormat(sellTotal));
-			jSellOrdersAverage.setText(Formater.iskFormat(sellAvg));
-			jBothOrdersCount.setText(Formater.itemsFormat(sellCount + buyCount));
-			jBothOrdersTotal.setText(Formater.iskFormat(bothTotal));
-			jBothOrdersAverage.setText(Formater.iskFormat(bothAvg));
-			jBuyOrdersCount.setText(Formater.itemsFormat(buyCount));
-			jBuyOrdersTotal.setText(Formater.iskFormat(buyTotal));
-			jBuyOrdersAverage.setText(Formater.iskFormat(buyAvg));
+			jSellOrdersCount.setNumber(sellCount);
+			jSellOrdersTotal.setNumber(sellTotal);
+			jSellOrdersAverage.setNumber(sellAvg);
+			jBothOrdersCount.setNumber(sellCount + buyCount);
+			jBothOrdersTotal.setNumber(bothTotal);
+			jBothOrdersAverage.setNumber(bothAvg);
+			jBuyOrdersCount.setNumber(buyCount);
+			jBuyOrdersTotal.setNumber(buyTotal);
+			jBuyOrdersAverage.setNumber(buyAvg);
 		}
 	}
 

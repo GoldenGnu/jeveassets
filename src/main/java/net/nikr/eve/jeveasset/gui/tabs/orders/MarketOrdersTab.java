@@ -61,6 +61,7 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JOptionPane;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.Timer;
 import javax.swing.text.StyledDocument;
@@ -78,6 +79,7 @@ import net.nikr.eve.jeveasset.gui.dialogs.update.StructureUpdateDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.update.TaskDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
+import net.nikr.eve.jeveasset.gui.frame.StatusPanel.JStatusLabel;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.CopyHandler;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
@@ -90,6 +92,7 @@ import net.nikr.eve.jeveasset.gui.shared.components.JMainTabPrimary;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuColumns;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
+import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo.AutoNumberFormat;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuUI;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
@@ -98,6 +101,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
 import net.nikr.eve.jeveasset.gui.shared.table.TableFormatFactory;
+import net.nikr.eve.jeveasset.gui.tabs.orders.MarketOrdersErrorDialog.ErrorLevel;
 import net.nikr.eve.jeveasset.gui.tabs.orders.OutbidProcesser.OutbidProcesserInput;
 import net.nikr.eve.jeveasset.gui.tabs.orders.OutbidProcesser.OutbidProcesserOutput;
 import net.nikr.eve.jeveasset.i18n.DialoguesUpdate;
@@ -123,21 +127,21 @@ public class MarketOrdersTab extends JMainTabPrimary {
 	private static final int SIGNIFICANT_FIGURES = 4;
 
 	private final JAutoColumnTable jTable;
-	private final JLabel jSellOrdersTotal;
-	private final JLabel jBuyOrdersTotal;
-	private final JLabel jEscrowTotal;
-	private final JLabel jToCoverTotal;
 	private final JButton jUpdate;
 	private final JButton jErrors;
 	private final JCheckBox jAutoUpdate;
-	private final JLabel jSellOrderRangeLast;
-	private final JLabel jLastEsiUpdate;
-	private final JLabel jLastLogUpdate;
-	private final JLabel jClipboard;
 	private final JButton jClearNew;
 	private final JComboBox<MarketOrderRange> jOrderRangeNext;
 	private final JComboBox<String> jOrderType;
 	private final MarketOrdersErrorDialog jMarketOrdersErrorDialog;
+	private final JStatusLabel jSellOrdersTotal;
+	private final JStatusLabel jBuyOrdersTotal;
+	private final JStatusLabel jEscrowTotal;
+	private final JStatusLabel jToCoverTotal;
+	private final JStatusLabel jSellOrderRangeLast;
+	private final JStatusLabel jLastEsiUpdate;
+	private final JStatusLabel jLastLogUpdate;
+	private final JStatusLabel jClipboard;
 	private final Timer timer;
 	private final FileListener fileListener;
 	private static Date lastLogUpdate = null;
@@ -200,14 +204,14 @@ public class MarketOrdersTab extends JMainTabPrimary {
 
 		jToolBar.addSpace(1);
 
-		JLabel jOrderTypeLabelLabel = new JLabel(Images.MISC_HELP.getIcon());
-		jOrderTypeLabelLabel.setToolTipText(TabsOrders.get().marketLogTypeToolTip());
-		InstantToolTip.install(jOrderTypeLabelLabel);
-		jToolBar.addLabelIcon(jOrderTypeLabelLabel);
+		JLabel jOrderTypeLabel = new JLabel(Images.MISC_HELP.getIcon());
+		jOrderTypeLabel.setToolTipText(TabsOrders.get().marketLogTypeToolTip());
+		InstantToolTip.install(jOrderTypeLabel);
+		jToolBar.addLabelIcon(jOrderTypeLabel);
 
 		jToolBar.addSpace(7);
 
-		jErrors = new JButton(TabsOrders.get().logOK(), Images.UPDATE_DONE_ERROR.getIcon());
+		jErrors = new JButton(TabsOrders.get().logOK());
 		jErrors.setActionCommand(MarketOrdersAction.ERROR_LOG.name());
 		jErrors.addActionListener(listener);
 		jErrors.setDisabledIcon(Images.EDIT_SET.getIcon());
@@ -266,30 +270,30 @@ public class MarketOrdersTab extends JMainTabPrimary {
 		//Menu
 		installTableTool(new OrdersTableMenu(), tableFormat, tableModel, jTable, filterControl, MyMarketOrder.class);
 
-		jSellOrdersTotal = StatusPanel.createLabel(TabsOrders.get().totalSellOrders(), Images.ORDERS_SELL.getIcon());
+		jSellOrdersTotal = StatusPanel.createLabel(TabsOrders.get().totalSellOrders(), Images.ORDERS_SELL.getIcon(), AutoNumberFormat.ISK);
 		this.addStatusbarLabel(jSellOrdersTotal);
 
-		jBuyOrdersTotal = StatusPanel.createLabel(TabsOrders.get().totalBuyOrders(), Images.ORDERS_BUY.getIcon());
+		jBuyOrdersTotal = StatusPanel.createLabel(TabsOrders.get().totalBuyOrders(), Images.ORDERS_BUY.getIcon(), AutoNumberFormat.ISK);
 		this.addStatusbarLabel(jBuyOrdersTotal);
 
-		jEscrowTotal = StatusPanel.createLabel(TabsOrders.get().totalEscrow(), Images.ORDERS_ESCROW.getIcon());
+		jEscrowTotal = StatusPanel.createLabel(TabsOrders.get().totalEscrow(), Images.ORDERS_ESCROW.getIcon(), AutoNumberFormat.ISK);
 		this.addStatusbarLabel(jEscrowTotal);
 
-		jToCoverTotal = StatusPanel.createLabel(TabsOrders.get().totalToCover(), Images.ORDERS_TO_COVER.getIcon());
+		jToCoverTotal = StatusPanel.createLabel(TabsOrders.get().totalToCover(), Images.ORDERS_TO_COVER.getIcon(), AutoNumberFormat.ISK);
 		this.addStatusbarLabel(jToCoverTotal);
 
-		jSellOrderRangeLast = StatusPanel.createLabel(TabsOrders.get().sellOrderRangeLastToolTip(), Images.ORDERS_SELL.getIcon());
+		jSellOrderRangeLast = StatusPanel.createLabel(TabsOrders.get().sellOrderRangeLastToolTip(), Images.ORDERS_SELL.getIcon(), null);
 		this.addStatusbarLabel(jSellOrderRangeLast);
 		jSellOrderRangeLast.setText(TabsOrders.get().sellOrderRangeSelcted(Settings.get().getOutbidOrderRange().toString()));
 
-		jClipboard = StatusPanel.createLabel(TabsOrders.get().lastClipboardToolTip(), Images.EDIT_COPY.getIcon());
+		jClipboard = StatusPanel.createLabel(TabsOrders.get().lastClipboardToolTip(), Images.EDIT_COPY.getIcon(), null);
 		this.addStatusbarLabel(jClipboard);
 		setClipboardData(TabsOrders.get().none());
 
-		jLastLogUpdate = StatusPanel.createLabel(TabsOrders.get().lastLogUpdateToolTip(), null);
+		jLastLogUpdate = StatusPanel.createLabel(TabsOrders.get().lastLogUpdateToolTip(), null, null);
 		this.addStatusbarLabel(jLastLogUpdate);
 
-		jLastEsiUpdate = StatusPanel.createLabel(TabsOrders.get().lastEsiUpdateToolTip(), null);
+		jLastEsiUpdate = StatusPanel.createLabel(TabsOrders.get().lastEsiUpdateToolTip(), null, null);
 		this.addStatusbarLabel(jLastEsiUpdate);
 
 		updateDates();
@@ -466,7 +470,23 @@ public class MarketOrdersTab extends JMainTabPrimary {
 	}
 
 	private void updateErrorLogButton() {
-		jErrors.setEnabled(jMarketOrdersErrorDialog.getDocument().getLength() > 0);
+		switch (jMarketOrdersErrorDialog.getErrorLevel()) {
+			case ERROR:
+				jErrors.setIcon(Images.UPDATE_DONE_ERROR.getIcon());
+				jErrors.setEnabled(true);
+				break;
+			case WARN:
+				jErrors.setIcon(Images.UPDATE_DONE_SOME.getIcon());
+				jErrors.setEnabled(true);
+				break;
+			case INFO:
+				jErrors.setIcon(Images.UPDATE_DONE_INFO.getIcon());
+				jErrors.setEnabled(true);
+				break;
+			case CLEAR:
+				jErrors.setEnabled(false);
+				break;
+		}
 		jErrors.setText(jMarketOrdersErrorDialog.getDocument().getLength() > 0 ? TabsOrders.get().logError() : TabsOrders.get().logOK());
 	}
 
@@ -519,20 +539,6 @@ public class MarketOrdersTab extends JMainTabPrimary {
 		jUpdate.setText(TabsOrders.get().updateOutbidUpdating());
 		jUpdate.setEnabled(false);
 		OutbidProcesserInput input = new OutbidProcesserInput(program.getProfileData(), Settings.get().getOutbidOrderRange());
-		if (input.hasUnknownLocations() && showUnknownLocationsWarning) {
-			showUnknownLocationsWarning = false; //Only shown once per run
-			if (StructureUpdateDialog.structuresUpdatable(program)) { //Strctures updatable
-				//Ask to update structures
-				int returnValue = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), TabsOrders.get().unknownLocationsMsg(), TabsOrders.get().unknownLocationsTitle(), JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
-				if (returnValue == JOptionPane.OK_OPTION) { //Do update structures
-					//Show structures update dialog
-					program.showUpdateStructuresDialog(false);
-				}
-			} else { //Strctures not updatable
-				//Show help text about how to update later
-				JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsOrders.get().unknownLocationsMsgLater(), TabsOrders.get().unknownLocationsTitle(), JOptionPane.PLAIN_MESSAGE);
-			}
-		}
 		if (input.getRegionIDs().isEmpty()) {
 			LOG.info("no active orders found");
 			if (jAutoUpdate.isSelected()) {
@@ -543,7 +549,8 @@ public class MarketOrdersTab extends JMainTabPrimary {
 			return;
 		}
 		OutbidProcesserOutput output = new OutbidProcesserOutput();
-		TaskDialog taskDialog = new TaskDialog(program, new PublicMarkerOrdersUpdateTask(input, output), false, jAutoUpdate.isSelected(), jAutoUpdate.isSelected(), StatusPanel.UpdateType.PUBLIC_MARKET_ORDERS, new TaskDialog.TasksCompletedAdvanced() {
+		final PublicMarkerOrdersUpdateTask updateTask = new PublicMarkerOrdersUpdateTask(input, output);
+		TaskDialog taskDialog = new TaskDialog(program, updateTask, false, jAutoUpdate.isSelected(), jAutoUpdate.isSelected(), StatusPanel.UpdateType.PUBLIC_MARKET_ORDERS, new TaskDialog.TasksCompletedAdvanced() {
 			@Override
 			public void tasksCompleted(TaskDialog taskDialog) {
 				Settings.lock("Outbid (ESI)");
@@ -581,6 +588,29 @@ public class MarketOrdersTab extends JMainTabPrimary {
 
 			@Override
 			public void tasksHidden(TaskDialog taskDialog) {
+				if (output.hasUnknownLocations()) {
+					if (showUnknownLocationsWarning) {
+						showUnknownLocationsWarning = false; //Only shown once per run
+						if (StructureUpdateDialog.structuresUpdatable(program)) { //Strctures updatable
+							//Ask to update structures
+							int returnValue = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), TabsOrders.get().unknownLocationsMsg(), TabsOrders.get().unknownLocationsTitle(), JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+							if (returnValue == JOptionPane.OK_OPTION) { //Do update structures
+								//Show structures update dialog
+								program.showUpdateStructuresDialog(false);
+							}
+						} else { //Strctures not updatable
+							//Show help text about how to update later
+							JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsOrders.get().unknownLocationsMsgLater(), TabsOrders.get().unknownLocationsTitle(), JOptionPane.PLAIN_MESSAGE);
+						}
+					}
+				}
+				if (updateTask.hasError()) {
+					jMarketOrdersErrorDialog.setErrorLevel(ErrorLevel.ERROR);
+				} else if (updateTask.hasWarning()) {
+					jMarketOrdersErrorDialog.setErrorLevel(ErrorLevel.WARN);
+				} else if (updateTask.hasInfo()) {
+					jMarketOrdersErrorDialog.setErrorLevel(ErrorLevel.INFO);
+				}
 				updateErrorLogButton();
 			}
 
@@ -648,8 +678,8 @@ public class MarketOrdersTab extends JMainTabPrimary {
 		}
 
 		@Override
-		public void addInfoMenu(JComponent jComponent) {
-			JMenuInfo.marketOrder(jComponent, selectionModel.getSelected());
+		public void addInfoMenu(JPopupMenu jPopupMenu) {
+			JMenuInfo.marketOrder(jPopupMenu, selectionModel.getSelected());
 		}
 
 		@Override
@@ -679,10 +709,10 @@ public class MarketOrdersTab extends JMainTabPrimary {
 			} finally {
 				filterList.getReadWriteLock().readLock().unlock();
 			}
-			jSellOrdersTotal.setText(Formater.iskFormat(sellOrdersTotal));
-			jBuyOrdersTotal.setText(Formater.iskFormat(buyOrdersTotal));
-			jToCoverTotal.setText(Formater.iskFormat(toCoverTotal));
-			jEscrowTotal.setText(Formater.iskFormat(escrowTotal));
+			jSellOrdersTotal.setNumber(sellOrdersTotal);
+			jBuyOrdersTotal.setNumber(buyOrdersTotal);
+			jToCoverTotal.setNumber(toCoverTotal);
+			jEscrowTotal.setNumber(escrowTotal);
 		}
 
 		@Override

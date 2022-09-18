@@ -33,6 +33,7 @@ import java.util.Date;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JMenu;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.my.MyJournal;
@@ -71,15 +72,6 @@ public class JournalTab extends JMainTabPrimary {
 	public JournalTab(final Program program) {
 		super(program, NAME, TabsJournal.get().title(), Images.TOOL_JOURNAL.getIcon(), true);
 
-		//Table Format
-		tableFormat = TableFormatFactory.journalTableFormat();
-		//Backend
-		eventList = program.getProfileData().getJournalEventList();
-		//Sorting (per column)
-		eventList.getReadWriteLock().readLock().lock();
-		SortedList<MyJournal> sortedList = new SortedList<>(eventList);
-		eventList.getReadWriteLock().readLock().unlock();
-
 		JFixedToolBar jToolBar = new JFixedToolBar();
 
 		jClearNew = new JButton(TabsJournal.get().clearNew(), Images.UPDATE_DONE_OK.getIcon());
@@ -94,6 +86,14 @@ public class JournalTab extends JMainTabPrimary {
 		});
 		jToolBar.addButton(jClearNew);
 
+		//Table Format
+		tableFormat = TableFormatFactory.journalTableFormat();
+		//Backend
+		eventList = program.getProfileData().getJournalEventList();
+		//Sorting (per column)
+		eventList.getReadWriteLock().readLock().lock();
+		SortedList<MyJournal> sortedList = new SortedList<>(eventList);
+		eventList.getReadWriteLock().readLock().unlock();
 		//Filter
 		eventList.getReadWriteLock().readLock().lock();
 		filterList = new FilterList<>(sortedList);
@@ -185,7 +185,7 @@ public class JournalTab extends JMainTabPrimary {
 		}
 
 		@Override
-		public void addInfoMenu(JComponent jComponent) { }
+		public void addInfoMenu(JPopupMenu jPopupMenu) { }
 
 		@Override
 		public void addToolMenu(JComponent jComponent) {

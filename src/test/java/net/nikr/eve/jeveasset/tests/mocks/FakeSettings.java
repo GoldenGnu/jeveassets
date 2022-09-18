@@ -26,6 +26,7 @@ import java.awt.Point;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder.MarketOrderRange;
 import net.nikr.eve.jeveasset.data.settings.ColorSettings;
 import net.nikr.eve.jeveasset.data.settings.ContractPriceManager;
@@ -676,6 +677,11 @@ public abstract class FakeSettings extends Settings {
 
 	@Override
 	public Map<String, List<Filter>> getDefaultTableFilters(String key) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public Map<String, Set<Integer>> getPriceHistorySets() {
 		throw new UnsupportedOperationException("not implemented");
 	}
 }

@@ -49,7 +49,7 @@ public class ProxySettingsPanel extends JSettingsPanel {
 		super(program, optionsDialog, DialoguesSettings.get().proxy(), Images.SETTINGS_PROXY.getIcon());
 
 		JLabel jProxyTypeLabel = new JLabel(DialoguesSettings.get().type());
-		jProxyType = new JComboBox<Proxy.Type>(new ListComboBoxModel<Proxy.Type>(Proxy.Type.values()));
+		jProxyType = new JComboBox<>(new ListComboBoxModel<>(Proxy.Type.values()));
 		jProxyType.setEnabled(true);
 		jProxyType.setPreferredSize(new Dimension(200, (int) jProxyType.getPreferredSize().getHeight()));
 		jProxyType.setSelectedItem(Proxy.Type.DIRECT);
@@ -154,7 +154,7 @@ public class ProxySettingsPanel extends JSettingsPanel {
 	}
 
 	@Override
-	public boolean save() {
+	public UpdateType save() {
 		//Save proxy data
 		if (jProxyType.getSelectedItem() != Proxy.Type.DIRECT) {
 			String address = jProxyAddress.getText();
@@ -174,7 +174,7 @@ public class ProxySettingsPanel extends JSettingsPanel {
 		} else {
 			Settings.get().setProxyData(new ProxyData());
 		}
-		return false;
+		return UpdateType.NONE;
 	}
 
 	@Override

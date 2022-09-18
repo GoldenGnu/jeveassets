@@ -35,6 +35,7 @@ import net.nikr.eve.jeveasset.SplashUpdater;
 import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
 import net.nikr.eve.jeveasset.data.api.my.MyAccountBalance;
 import net.nikr.eve.jeveasset.data.api.my.MyAsset;
+import net.nikr.eve.jeveasset.data.api.my.MyBlueprint;
 import net.nikr.eve.jeveasset.data.api.my.MyContract;
 import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
@@ -185,15 +186,19 @@ public class ProfileData {
 	}
 
 	public List<String> getOwnerNames(boolean all) {
-		List<String> sortedOwners = new ArrayList<>(ownerNames);
-		if (all) {
-			sortedOwners.add(0, General.get().all());
+		synchronized (ownerNames) { //synchronized as ownerNames are modified by updateEventLists
+			List<String> sortedOwners = new ArrayList<>(ownerNames);
+			if (all) {
+				sortedOwners.add(0, General.get().all());
+			}
+			return sortedOwners;
 		}
-		return sortedOwners;
 	}
 
-	public synchronized Map<Long, OwnerType> getOwners() { //synchronized as owners are modified by updateEventLists
-		return new HashMap<>(owners);
+	public Map<Long, OwnerType> getOwners() {
+		synchronized (owners) { //synchronized as owners are modified by updateEventLists
+			return new HashMap<>(owners);
+		}
 	}
 
 	private Set<Integer> createPriceTypeIDs() {
@@ -318,15 +323,17 @@ public class ProfileData {
 		}
 	}
 
-	public synchronized void updateMarketOrders(OutbidProcesserOutput output) { //synchronized as owners are modified by updateEventLists
+	public void updateMarketOrders(OutbidProcesserOutput output) {
 		Date addedDate = new Date();
 		Map<Long, Date> marketOrdersAdded = AddedData.getMarketOrders().getAll();
-		for (OwnerType ownerType : owners.values()) {
-			for (MyMarketOrder order : ownerType.getMarketOrders()) { // getMarketOrders() is thread safe
-				order.setOutbid(output.getOutbids().get(order.getOrderID()));
-				boolean updated = order.addChanges(output.getUpdates().get(order.getOrderID()));
-				if (updated) { //If Market Order have been updated
-					order.setChanged(AddedData.getMarketOrders().getPut(marketOrdersAdded, order.getOrderID(), addedDate));
+		synchronized (owners) { //synchronized as owners are modified by updateEventLists
+			for (OwnerType ownerType : owners.values()) {
+				for (MyMarketOrder order : ownerType.getMarketOrders()) { // getMarketOrders() is thread safe
+					order.setOutbid(output.getOutbids().get(order.getOrderID()));
+					boolean updated = order.addChanges(output.getUpdates().get(order.getOrderID()));
+					if (updated) { //If Market Order have been updated
+						order.setChanged(AddedData.getMarketOrders().getPut(marketOrdersAdded, order.getOrderID(), addedDate));
+					}
 				}
 			}
 		}
@@ -408,7 +415,7 @@ public class ProfileData {
 		Set<MyContractItem> contractItems = new HashSet<>();
 		Set<MyContract> contracts = new HashSet<>();
 		Map<Long, OwnerType> blueprintsMap = new HashMap<>();
-		Map<Long, RawBlueprint> blueprints = new HashMap<>();
+		Map<Long, MyBlueprint> blueprints = new HashMap<>();
 		Map<String, Long> skillPointsTotalCache = new HashMap<>();
 
 		calcTransactionsPriceData();
@@ -441,6 +448,9 @@ public class ProfileData {
 			}
 			//Industry Jobs
 			industryJobs.addAll(owner.getIndustryJobs());
+			for (MyIndustryJob myIndustryJob : owner.getIndustryJobs()) {
+				blueprints.put(myIndustryJob.getBlueprintID(), new MyBlueprint(myIndustryJob));
+			}
 			//Contracts & Contract Items
 			for (Map.Entry<MyContract, List<MyContractItem>> entry : owner.getContracts().entrySet()) {
 				MyContract contract = entry.getKey();
@@ -458,6 +468,16 @@ public class ProfileData {
 					//Add contracts and ContractItems
 					contracts.add(contract);
 					contractItems.addAll(entry.getValue());
+				}
+				for (MyContractItem contractItem : entry.getValue()) {
+					MyBlueprint blueprint = contractItem.getBlueprint();
+					Long itemID = contractItem.getItemID();
+					if (blueprint != null) {
+						if (itemID != null) {
+							blueprints.put(itemID, blueprint);
+						}
+						blueprints.put(contractItem.getRecordID(), blueprint);
+					}
 				}
 			}
 			//Blueprints (Newest)
@@ -498,7 +518,9 @@ public class ProfileData {
 
 		//Fill blueprints
 		for (OwnerType owner : blueprintsMap.values()) {
-			blueprints.putAll(owner.getBlueprints());
+			for (Map.Entry<Long, RawBlueprint> entry : owner.getBlueprints().entrySet()) {
+				blueprints.put(entry.getKey(), new MyBlueprint(entry.getValue())); //Best source - overwrite other sources
+			}
 		}
 		//Prioritize corp market orders over char
 		for (MyMarketOrder marketOrder : charMarketOrders) {
@@ -546,8 +568,7 @@ public class ProfileData {
 			//Update Owners
 			industryJob.setInstaller(ApiIdConverter.getOwnerName(industryJob.getInstallerID()));
 			//Update BPO/BPC status
-			RawBlueprint blueprint = blueprints.get(industryJob.getBlueprintID());
-			industryJob.setBlueprint(blueprint);
+			industryJob.setBlueprint(blueprints.get(industryJob.getBlueprintID()));
 			//Price
 			updatePrice(industryJob);
 		}
@@ -650,6 +671,17 @@ public class ProfileData {
 			updatePrice(editablePriceType);
 		}
 
+		//Owners - Before EventList update - in case owners are referanced in any ListEventListeners
+		synchronized (ownerNames) { //synchronized as ownerNames are modified (here) by updateEventLists
+			ownerNames.clear();
+			ownerNames.addAll(uniqueOwnerNames);
+		}
+		Collections.sort(ownerNames, new CaseInsensitiveComparator());
+		synchronized (owners) { //synchronized as owners are modified (here) by updateEventLists
+			owners.clear();
+			owners.putAll(uniqueOwners);
+		}
+		//Update Lists
 		assetsList.clear();
 		assetsList.addAll(assets);
 		marketOrdersList.clear();
@@ -668,6 +700,7 @@ public class ProfileData {
 		accountBalanceList.addAll(accountBalance);
 		skillPointsTotal.clear();
 		skillPointsTotal.putAll(skillPointsTotalCache);
+		//Update EventLists
 		Program.ensureEDT(new Runnable() {
 			@Override
 			public void run() {
@@ -764,12 +797,6 @@ public class ProfileData {
 				}
 			}
 		});
-		//Sort Owners
-		ownerNames.clear();
-		ownerNames.addAll(uniqueOwnerNames);
-		Collections.sort(ownerNames, new CaseInsensitiveComparator());
-		owners.clear();
-		owners.putAll(uniqueOwners);
 	}
 
 	public void updateNames(EventList<MyAsset> eventList, Set<Long> itemIDs) {
@@ -1153,7 +1180,7 @@ public class ProfileData {
 		}
 	}
 
-	private void addAssets(final List<MyAsset> assets, List<MyAsset> addTo, Map<Long, RawBlueprint> blueprints, Map<Long, Date> assetAdded, Date assetAddedDate) {
+	private void addAssets(final List<MyAsset> assets, List<MyAsset> addTo, Map<Long, MyBlueprint> blueprints, Map<Long, Date> assetAdded, Date assetAddedDate) {
 		for (MyAsset asset : assets) {
 			//XXX Ignore 9e18 locations: https://github.com/ccpgames/esi-issues/issues/684
 			if (asset.getLocationID() > 9000000000000000000L) {
@@ -1166,8 +1193,7 @@ public class ProfileData {
 				}
 			}
 			//Blueprint
-			RawBlueprint blueprint = blueprints.get(asset.getItemID());
-			asset.setBlueprint(blueprint);
+			asset.setBlueprint(blueprints.get(asset.getItemID()));
 			//Tags
 			Tags tags = Settings.get().getTags(asset.getTagID());
 			asset.setTags(tags);

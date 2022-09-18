@@ -140,6 +140,7 @@ public abstract class TabsStockpile extends Bundle {
 	public abstract String itemsRequired();
 	public abstract String itemsShoppingList();
 	public abstract String location();
+	public abstract String marketDetailsOwnerToolTip();
 	public abstract String matchExclude();
 	public abstract String matchInclude();
 	public abstract String materialsManufacturing();
@@ -178,6 +179,7 @@ public abstract class TabsStockpile extends Bundle {
 	public abstract String source();
 	public abstract String station();
 	public abstract String stockpile();
+	public abstract String stockpileAvailable();
 	public abstract String stockpileLocation();
 	public abstract String stockpileOwner();
 	public abstract String stockpilePercent();
@@ -190,6 +192,7 @@ public abstract class TabsStockpile extends Bundle {
 	public abstract String universe();
 	public abstract String columnName();
 	public abstract String columnGroup();
+	public abstract String columnCategory();
 	public abstract String columnMeta();
 	public abstract String columnEveUi();
 	public abstract String columnEveUiToolTip();

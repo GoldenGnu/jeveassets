@@ -44,6 +44,7 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
 import net.nikr.eve.jeveasset.Program;
@@ -269,7 +270,7 @@ public class ReprocessedTab extends JMainTabSecondary {
 		}
 
 		@Override
-		public void addInfoMenu(JComponent jComponent) { }
+		public void addInfoMenu(JPopupMenu jPopupMenu) { }
 
 		@Override
 		public void addToolMenu(JComponent jComponent) { }

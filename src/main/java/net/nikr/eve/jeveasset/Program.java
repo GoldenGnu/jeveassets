@@ -21,7 +21,8 @@
 
 package net.nikr.eve.jeveasset;
 
-import apple.dts.samplecode.osxadapter.OSXAdapter;
+import com.formdev.flatlaf.extras.FlatDesktop;
+import com.formdev.flatlaf.extras.FlatDesktop.QuitResponse;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -31,6 +32,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Consumer;
 import javax.swing.InputMap;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -59,7 +61,9 @@ import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.sde.StaticData;
 import net.nikr.eve.jeveasset.data.settings.AddedData;
 import net.nikr.eve.jeveasset.data.settings.ContractPriceManager;
+import net.nikr.eve.jeveasset.data.settings.PriceHistoryDatabase;
 import net.nikr.eve.jeveasset.data.settings.Settings;
+import net.nikr.eve.jeveasset.data.settings.TempDirs;
 import net.nikr.eve.jeveasset.data.settings.TrackerData;
 import net.nikr.eve.jeveasset.data.settings.tag.TagUpdate;
 import net.nikr.eve.jeveasset.gui.dialogs.AboutDialog;
@@ -91,6 +95,7 @@ import net.nikr.eve.jeveasset.gui.tabs.materials.MaterialsTab;
 import net.nikr.eve.jeveasset.gui.tabs.orders.MarketOrdersTab;
 import net.nikr.eve.jeveasset.gui.tabs.orders.OutbidProcesser.OutbidProcesserOutput;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewTab;
+import net.nikr.eve.jeveasset.gui.tabs.prices.PriceHistoryTab;
 import net.nikr.eve.jeveasset.gui.tabs.reprocessed.ReprocessedTab;
 import net.nikr.eve.jeveasset.gui.tabs.routing.RoutingTab;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileTab;
@@ -117,7 +122,7 @@ public class Program implements ActionListener {
 		TIMER
 	}
 	//Major.Minor.Bugfix [Release Candidate n] [BETA n] [DEV BUILD #n];
-	public static final String PROGRAM_VERSION = "7.2.2 DEV BUILD 1";
+	public static final String PROGRAM_VERSION = "7.3.0";
 	public static final String PROGRAM_NAME = "jEveAssets";
 	public static final String PROGRAM_HOMEPAGE = "https://eve.nikr.net/jeveasset";
 	private static final boolean PROGRAM_DEV_BUILD = false;
@@ -138,6 +143,7 @@ public class Program implements ActionListener {
 	//Tabs
 	private ValueRetroTab valueRetroTab;
 	private ValueTableTab valueTableTab;
+	private PriceHistoryTab priceHistoryTab;
 	private MaterialsTab materialsTab;
 	private LoadoutsTab loadoutsTab;
 	private RoutingTab routingTab;
@@ -238,7 +244,10 @@ public class Program implements ActionListener {
 		SplashUpdater.setProgress(66);
 		LOG.info("Loading: Values Tab");
 		valueRetroTab = new ValueRetroTab(this);
+		LOG.info("Loading: Isk Tab");
 		valueTableTab = new ValueTableTab(this);
+		LOG.info("Loading: Price History Tab");
+		priceHistoryTab = new PriceHistoryTab(this);
 		SplashUpdater.setProgress(68);
 		LOG.info("Loading: Routing Tab");
 		routingTab = new RoutingTab(this);
@@ -311,6 +320,9 @@ public class Program implements ActionListener {
 		if (Settings.get().isSettingsLoadError()) {
 			JOptionPane.showMessageDialog(mainWindow.getFrame(), GuiShared.get().errorLoadingSettingsMsg(), GuiShared.get().errorLoadingSettingsTitle(), JOptionPane.ERROR_MESSAGE);
 		}
+		if (NahimicDetector.isNahimicRunning()) {
+			JOptionPane.showMessageDialog(mainWindow.getFrame(), "WARNING: Nahimic service detected. It's known to corrupt the jEveAssets GUI", "Nahimic Detected", JOptionPane.WARNING_MESSAGE);
+		}
 		profileManager.showProfileLoadErrorWarning(mainWindow.getFrame());
 		if (profileManager.getOwnerTypes().isEmpty()) {
 			LOG.info("Show Account Manager");
@@ -329,10 +341,12 @@ public class Program implements ActionListener {
 		SplashUpdater.setText("Loading DATA");
 		LOG.info("DATA Loading...");
 		FileUtil.autoImportFileUtil();
+		TempDirs.fixTempDir();
 		StaticData.load();
 		Settings.load();
 		TrackerData.load();
 		AddedData.load();
+		PriceHistoryDatabase.load();
 		ContractPriceManager.load();
 	}
 
@@ -651,6 +665,17 @@ public class Program implements ActionListener {
 		});
 	}
 
+	public void repaintTables() {
+		for (JMainTab jMainTab : mainWindow.getTabs()) {
+			ensureEDT(new Runnable() {
+				@Override
+				public void run() {
+					jMainTab.repaintTable();
+				}
+			});
+		}
+	}
+
 	public static void ensureEDT(Runnable runnable) {
 		if (SwingUtilities.isEventDispatchThread()) {
 			runnable.run();
@@ -701,26 +726,30 @@ public class Program implements ActionListener {
 		profileManager.saveProfile();
 	}
 
-	/**
-	 * Used by macOsxCode() - should not be changed
-	 */
 	public void exit() {
+		if (safeExit()) {
+			System.exit(0);
+		}
+	}
+
+	/**
+	 * Make ready to exit
+	 * @return true for exit and false to cancel exit
+	 */
+	private boolean safeExit() {
 		if (getStatusPanel().updateInProgress() > 0) {
 			int value = JOptionPane.showConfirmDialog(getMainWindow().getFrame(), GuiFrame.get().exitMsg(getStatusPanel().updateInProgress()), GuiFrame.get().exitTitle(getStatusPanel().updateInProgress()), JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
 			if (value != JOptionPane.OK_OPTION) {
-				return;
+				return false;
 			}
 		}
 		getStatusPanel().cancelUpdates();
 		saveExit();
 		LOG.info("Running shutdown hook(s) and exiting...");
-		System.exit(0);
+		return true;
 	}
 
-	/**
-	 * Used by macOsxCode() - should not be renamed
-	 */
-	public void saveExit() {
+	private void saveExit() {
 		if (CliOptions.get().isLazySave()) {
 			doSaveSettings("Exit");
 		} else {
@@ -730,18 +759,22 @@ public class Program implements ActionListener {
 		TrackerData.waitForEmptySaveQueue();
 	}
 
-	/**
-	 * Used by macOsxCode() - should not be renamed
-	 */
-	public void showAbout() {
-		aboutDialog.setVisible(true);
+	private void showAbout() {
+		ensureEDT(new Runnable() {
+			@Override
+			public void run() {
+				aboutDialog.setVisible(true);
+			}
+		});
 	}
 
-	/**
-	 * Used by macOsxCode() - should not be renamed
-	 */
-	public void showSettings() {
-		settingsDialog.setVisible(true);
+	private void showSettings() {
+		ensureEDT(new Runnable() {
+			@Override
+			public void run() {
+				settingsDialog.setVisible(true);
+			}
+		});
 	}
 
 	public String getProgramDataVersion() {
@@ -750,15 +783,28 @@ public class Program implements ActionListener {
 
 	private void macOsxCode() {
 		if (FileUtil.onMac()) {
-			try {
-				OSXAdapter.setQuitHandler(this, getClass().getDeclaredMethod("saveExit", (Class[]) null));
-				OSXAdapter.setAboutHandler(this, getClass().getDeclaredMethod("showAbout", (Class[]) null));
-				OSXAdapter.setPreferencesHandler(this, getClass().getDeclaredMethod("showSettings", (Class[]) null));
-			} catch (NoSuchMethodException ex) {
-				LOG.error("NoSuchMethodException: " + ex.getMessage(), ex);
-			} catch (SecurityException ex) {
-				LOG.error("SecurityException: " + ex.getMessage(), ex);
-			}
+			FlatDesktop.setAboutHandler(new Runnable() {
+				@Override
+				public void run() {
+					showAbout();
+				}
+			});
+			FlatDesktop.setPreferencesHandler(new Runnable() {
+				@Override
+				public void run() {
+					showSettings();
+				}
+			});
+			FlatDesktop.setQuitHandler(new Consumer<QuitResponse>() {
+				@Override
+				public void accept(QuitResponse quitResponse) {
+					if (safeExit()) {
+						quitResponse.performQuit();
+					} else {
+						quitResponse.cancelQuit();
+					}
+				}
+			});
 		}
 	}
 
@@ -808,6 +854,14 @@ public class Program implements ActionListener {
 
 	public TransactionTab getTransactionsTab() {
 		return transactionsTab;
+	}
+
+	public PriceHistoryTab getPriceHistoryTab() {
+		return priceHistoryTab;
+	}
+
+	public MarketOrdersTab getMarketOrdersTab() {
+		return marketOrdersTab;
 	}
 
 	public StatusPanel getStatusPanel() {
@@ -967,6 +1021,8 @@ public class Program implements ActionListener {
 			mainWindow.addTab(valueRetroTab);
 		} else if (MainMenuAction.VALUE_TABLE.name().equals(e.getActionCommand())) {
 			mainWindow.addTab(valueTableTab);
+		} else if (MainMenuAction.PRICE_HISTORY.name().equals(e.getActionCommand())) {
+			mainWindow.addTab(priceHistoryTab);
 		} else if (MainMenuAction.MATERIALS.name().equals(e.getActionCommand())) {
 			mainWindow.addTab(materialsTab);
 		} else if (MainMenuAction.LOADOUTS.name().equals(e.getActionCommand())) {

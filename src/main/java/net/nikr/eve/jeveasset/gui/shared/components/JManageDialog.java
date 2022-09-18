@@ -26,6 +26,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import javax.swing.DefaultListModel;
@@ -110,8 +111,8 @@ public abstract class JManageDialog extends JDialogCentered {
 		jClose.addActionListener(listener);
 
 		//List
-		listModel = new DefaultListModel<String>();
-		jList = new JList<String>(listModel);
+		listModel = new DefaultListModel<>();
+		jList = new JList<>(listModel);
 		jList.addMouseListener(listener);
 		jList.addListSelectionListener(listener);
 		JScrollPane jScrollPanel = new JScrollPane(jList);
@@ -160,6 +161,10 @@ public abstract class JManageDialog extends JDialogCentered {
 		jRename.setEnabled(b);
 	}
 
+	protected final void update(Collection<String> list) {
+		update(new ArrayList<>(list));
+	}
+
 	protected final void update(List<String> list) {
 		listModel.clear();
 		Collections.sort(list, new CaseInsensitiveComparator());
@@ -174,6 +179,16 @@ public abstract class JManageDialog extends JDialogCentered {
 		} else {
 			setEnabledAll(false);
 		}
+	}
+
+	protected boolean validateName(final String name, final String oldName, final String title) {
+		if (listModel.contains(name) && (oldName.isEmpty() || !oldName.equals(name))) {
+			int nReturn = JOptionPane.showConfirmDialog(this.getDialog(), GuiShared.get().overwrite(), textOverwrite(), JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE);
+			if (nReturn == JOptionPane.NO_OPTION) { //Overwrite cancelled
+				return false;
+			}
+		}
+		return true;
 	}
 
 	@Override
@@ -200,16 +215,16 @@ public abstract class JManageDialog extends JDialogCentered {
 	protected abstract void delete(final List<String> list);
 	protected abstract void export(final List<String> list);
 	protected abstract void importData();
-	protected abstract boolean validateName(final String name, final String oldName, final String title);
 	protected abstract String textDeleteMultipleMsg(int size);
 	protected abstract String textDelete();
 	protected abstract String textEnterName();
 	protected abstract String textNoName();
 	protected abstract String textMerge();
 	protected abstract String textRename();
+	protected abstract String textOverwrite();
 
 	private void delete() {
-		List<String> list = new ArrayList<String>();
+		List<String> list = new ArrayList<>();
 		for (int index : jList.getSelectedIndices()) {
 			String filterName = listModel.get(index);
 			list.add(filterName);
@@ -228,7 +243,7 @@ public abstract class JManageDialog extends JDialogCentered {
 	}
 
 	private void export() {
-		List<String> list = new ArrayList<String>();
+		List<String> list = new ArrayList<>();
 		for (int index : jList.getSelectedIndices()) {
 			String filterName = listModel.get(index);
 			list.add(filterName);
@@ -249,7 +264,7 @@ public abstract class JManageDialog extends JDialogCentered {
 		if (name == null) {
 			return;
 		}
-		List<String> list = new ArrayList<String>();
+		List<String> list = new ArrayList<>();
 		for (int index : jList.getSelectedIndices()) {
 			String filterName = listModel.get(index);
 			list.add(filterName);

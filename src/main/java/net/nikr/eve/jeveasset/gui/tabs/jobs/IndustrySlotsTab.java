@@ -25,6 +25,8 @@ import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.FilterList;
 import ca.odell.glazedlists.ListSelection;
 import ca.odell.glazedlists.SortedList;
+import ca.odell.glazedlists.event.ListEvent;
+import ca.odell.glazedlists.event.ListEventListener;
 import ca.odell.glazedlists.swing.DefaultEventSelectionModel;
 import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import ca.odell.glazedlists.swing.TableComparatorChooser;
@@ -32,14 +34,20 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import javax.swing.JComponent;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.settings.types.LocationType;
+import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
+import net.nikr.eve.jeveasset.gui.frame.StatusPanel.JStatusLabel;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTabSecondary;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuColumns;
+import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
+import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo.AutoNumberFormat;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
@@ -55,6 +63,21 @@ public class IndustrySlotsTab extends JMainTabSecondary {
 
 	//GUI
 	private final JAutoColumnTable jTable;
+	private final JLabel jManufacturing;
+	private final JStatusLabel jManufacturingDone;
+	private final JStatusLabel jManufacturingFree;
+	private final JStatusLabel jManufacturingActive;
+	private final JStatusLabel jManufacturingMax;
+	private final JLabel jResearch;
+	private final JStatusLabel jResearchDone;
+	private final JStatusLabel jResearchFree;
+	private final JStatusLabel jResearchActive;
+	private final JStatusLabel jResearchMax;
+	private final JLabel jReactions;
+	private final JStatusLabel jReactionsDone;
+	private final JStatusLabel jReactionsFree;
+	private final JStatusLabel jReactionsActive;
+	private final JStatusLabel jReactionsMax;
 
 	//Table
 	private final IndustrySlotFilterControl filterControl;
@@ -70,6 +93,9 @@ public class IndustrySlotsTab extends JMainTabSecondary {
 
 	public IndustrySlotsTab(final Program program) {
 		super(program, NAME, TabsIndustrySlots.get().title(), Images.TOOL_INDUSTRY_SLOTS.getIcon(), true);
+
+		ListenerClass listener = new ListenerClass();
+
 		industrySlotsData = new IndustrySlotsData(program);
 		//Table Format
 		tableFormat = TableFormatFactory.industrySlotTableFormat();
@@ -87,6 +113,7 @@ public class IndustrySlotsTab extends JMainTabSecondary {
 		eventList.getReadWriteLock().readLock().lock();
 		filterList = new FilterList<>(totalSortedList);
 		eventList.getReadWriteLock().readLock().unlock();
+		filterList.addListEventListener(listener);
 		//Table Model
 		tableModel = EventModels.createTableModel(filterList, tableFormat);
 		//Table
@@ -109,6 +136,39 @@ public class IndustrySlotsTab extends JMainTabSecondary {
 		filterControl = new IndustrySlotFilterControl(totalSortedList);
 		//Menu
 		installTableTool(new IndustrySlotTableMenu(), tableFormat, tableModel, jTable, filterControl, IndustrySlot.class);
+
+		jManufacturing = StatusPanel.createIcon(Images.MISC_MANUFACTURING.getIcon(), TabsIndustrySlots.get().manufacturing());
+		this.addStatusbarLabel(jManufacturing);
+		jManufacturingDone = StatusPanel.createLabel(TabsIndustrySlots.get().columnManufacturingDone(), Images.EDIT_SET.getIcon(), AutoNumberFormat.LONG);
+		this.addStatusbarLabel(jManufacturingDone);
+		jManufacturingFree = StatusPanel.createLabel(TabsIndustrySlots.get().columnManufacturingFree(), Images.EDIT_ADD.getIcon(), AutoNumberFormat.LONG);
+		this.addStatusbarLabel(jManufacturingFree);
+		jManufacturingActive = StatusPanel.createLabel(TabsIndustrySlots.get().columnManufacturingActive(), Images.UPDATE_WORKING.getIcon(), AutoNumberFormat.LONG);
+		this.addStatusbarLabel(jManufacturingActive);
+		jManufacturingMax = StatusPanel.createLabel(TabsIndustrySlots.get().columnManufacturingDone(), Images.UPDATE_DONE_OK.getIcon(), AutoNumberFormat.LONG);
+		this.addStatusbarLabel(jManufacturingMax);
+
+		jResearch = StatusPanel.createIcon(Images.MISC_INVENTION.getIcon(), TabsIndustrySlots.get().research());
+		this.addStatusbarLabel(jResearch);
+		jResearchDone = StatusPanel.createLabel(TabsIndustrySlots.get().columnResearchDone(), Images.EDIT_SET.getIcon(), AutoNumberFormat.LONG);
+		this.addStatusbarLabel(jResearchDone);
+		jResearchFree = StatusPanel.createLabel(TabsIndustrySlots.get().columnResearchFree(), Images.EDIT_ADD.getIcon(), AutoNumberFormat.LONG);
+		this.addStatusbarLabel(jResearchFree);
+		jResearchActive = StatusPanel.createLabel(TabsIndustrySlots.get().columnResearchActive(), Images.UPDATE_WORKING.getIcon(), AutoNumberFormat.LONG);
+		this.addStatusbarLabel(jResearchActive);
+		jResearchMax = StatusPanel.createLabel(TabsIndustrySlots.get().columnResearchMax(), Images.UPDATE_DONE_OK.getIcon(), AutoNumberFormat.LONG);
+		this.addStatusbarLabel(jResearchMax);
+
+		jReactions = StatusPanel.createIcon(Images.MISC_REACTION.getIcon(), TabsIndustrySlots.get().reactions());
+		this.addStatusbarLabel(jReactions);
+		jReactionsDone = StatusPanel.createLabel(TabsIndustrySlots.get().columnReactionsDone(), Images.EDIT_SET.getIcon(), AutoNumberFormat.LONG);
+		this.addStatusbarLabel(jReactionsDone);
+		jReactionsFree = StatusPanel.createLabel(TabsIndustrySlots.get().columnReactionsFree(), Images.EDIT_ADD.getIcon(), AutoNumberFormat.LONG);
+		this.addStatusbarLabel(jReactionsFree);
+		jReactionsActive = StatusPanel.createLabel(TabsIndustrySlots.get().columnReactionsActive(), Images.UPDATE_WORKING.getIcon(), AutoNumberFormat.LONG);
+		this.addStatusbarLabel(jReactionsActive);
+		jReactionsMax = StatusPanel.createLabel(TabsIndustrySlots.get().columnReactionsMax(), Images.UPDATE_DONE_OK.getIcon(), AutoNumberFormat.LONG);
+		this.addStatusbarLabel(jReactionsMax);
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()
@@ -175,10 +235,42 @@ public class IndustrySlotsTab extends JMainTabSecondary {
 		}
 
 		@Override
-		public void addInfoMenu(JComponent jComponent) { }
+		public void addInfoMenu(JPopupMenu jPopupMenu) {
+			JMenuInfo.industrySlots(jPopupMenu, selectionModel.getSelected());
+		}
 
 		@Override
 		public void addToolMenu(JComponent jComponent) { }
+	}
+
+	private class ListenerClass implements ListEventListener<IndustrySlot> {
+		@Override
+		public void listChanged(final ListEvent<IndustrySlot> listChanges) {
+			IndustrySlot total = new IndustrySlot("");
+			try {
+				filterList.getReadWriteLock().readLock().lock();
+				for (IndustrySlot industrySlot : filterList) {
+					if (industrySlot.isGrandTotal()) {
+						continue;
+					}
+					total.count(industrySlot);
+				}
+			} finally {
+				filterList.getReadWriteLock().readLock().unlock();
+			}
+			jManufacturingDone.setNumber(total.getManufacturingDone());
+			jManufacturingFree.setNumber(total.getManufacturingFree());
+			jManufacturingActive.setNumber(total.getManufacturingActive());
+			jManufacturingMax.setNumber(total.getManufacturingMax());
+			jReactionsDone.setNumber(total.getReactionsDone());
+			jReactionsFree.setNumber(total.getReactionsFree());
+			jReactionsActive.setNumber(total.getReactionsActive());
+			jReactionsMax.setNumber(total.getReactionsMax());
+			jResearchDone.setNumber(total.getResearchDone());
+			jResearchFree.setNumber(total.getResearchFree());
+			jResearchActive.setNumber(total.getResearchActive());
+			jResearchMax.setNumber(total.getResearchMax());
+		}
 	}
 
 	private class IndustrySlotFilterControl extends FilterControl<IndustrySlot> {
@@ -195,7 +287,7 @@ public class IndustrySlotsTab extends JMainTabSecondary {
 
 		@Override
 		public void saveSettings(final String msg) {
-			program.saveSettings("ISK Talbe: " + msg); //Save ISK Filters and Export Setttings
+			program.saveSettings("ISK Table: " + msg); //Save ISK Filters and Export Setttings
 		}
 	}
 

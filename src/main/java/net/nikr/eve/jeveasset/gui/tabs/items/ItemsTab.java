@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import javax.swing.JComponent;
 import javax.swing.JMenu;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.sde.Item;
@@ -153,7 +154,7 @@ public class ItemsTab extends JMainTabPrimary {
 		}
 
 		@Override
-		public void addInfoMenu(JComponent jComponent) { }
+		public void addInfoMenu(JPopupMenu jPopupMenu) { }
 
 		@Override
 		public void addToolMenu(JComponent jComponent) { }

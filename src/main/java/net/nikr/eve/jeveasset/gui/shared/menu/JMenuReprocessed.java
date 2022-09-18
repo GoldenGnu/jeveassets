@@ -30,7 +30,7 @@ import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.JAutoMenu;
-import net.nikr.eve.jeveasset.i18n.TabsReprocessed;
+import net.nikr.eve.jeveasset.i18n.GuiShared;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 
 
@@ -42,21 +42,21 @@ public class JMenuReprocessed<T> extends JAutoMenu<T> {
 
 	private final JMenuItem jAdd;
 	private final JMenuItem jSet;
-	private final Set<Integer> items = new HashSet<Integer>();
+	private final Set<Integer> items = new HashSet<>();
 
 	public JMenuReprocessed(final Program program) {
-		super(TabsReprocessed.get().title(), program);
+		super(GuiShared.get().reprocessed(), program);
 		setIcon(Images.TOOL_REPROCESSED.getIcon());
 
 		ListenerClass listener = new ListenerClass();
 
-		jAdd = new JMenuItem(TabsReprocessed.get().add());
+		jAdd = new JMenuItem(GuiShared.get().add());
 		jAdd.setIcon(Images.EDIT_ADD.getIcon());
 		jAdd.setActionCommand(MenuReprocessedAction.ADD.name());
 		jAdd.addActionListener(listener);
 		add(jAdd);
 
-		jSet = new JMenuItem(TabsReprocessed.get().set());
+		jSet = new JMenuItem(GuiShared.get().set());
 		jSet.setIcon(Images.EDIT_SET.getIcon());
 		jSet.setActionCommand(MenuReprocessedAction.SET.name());
 		jSet.addActionListener(listener);

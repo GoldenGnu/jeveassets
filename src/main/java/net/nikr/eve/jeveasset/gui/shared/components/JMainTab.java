@@ -40,8 +40,8 @@ import javax.swing.ListSelectionModel;
 import javax.swing.table.TableModel;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.settings.Settings;
-import net.nikr.eve.jeveasset.data.settings.types.LocationType;
 import net.nikr.eve.jeveasset.data.settings.SettingsUpdateListener;
+import net.nikr.eve.jeveasset.data.settings.types.LocationType;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
@@ -113,10 +113,20 @@ public abstract class JMainTab {
 		MenuManager.update(program ,clazz);
 	}
 
+	public void createTableMenu() {
+		MenuManager.create(program ,clazz);
+	}
+
 	public void tableStructureChanged() {
 		if (eventTableModel != null && jTable != null) {
 			eventTableModel.fireTableStructureChanged();
 			jTable.autoResizeColumns();
+		}
+	}
+
+	public void repaintTable() {
+		if (jTable != null) {
+			jTable.repaint();
 		}
 	}
 

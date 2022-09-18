@@ -272,6 +272,10 @@ public final class ProfileWriter extends AbstractXmlWriter {
 				setAttribute(itemNode, "singleton", contractItem.isSingleton());
 				setAttribute(itemNode, "typeid", contractItem.getTypeID());
 				setAttributeOptional(itemNode, "rawquantity", contractItem.getRawQuantity());
+				setAttributeOptional(itemNode, "itemid", contractItem.getItemID());
+				setAttributeOptional(itemNode, "runs", contractItem.getLicensedRuns());
+				setAttributeOptional(itemNode, "me", contractItem.getME());
+				setAttributeOptional(itemNode, "te", contractItem.getTE());
 				contractNode.appendChild(itemNode);
 			}
 		}

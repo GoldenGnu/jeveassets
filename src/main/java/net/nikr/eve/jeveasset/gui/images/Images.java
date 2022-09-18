@@ -38,7 +38,9 @@ public enum Images {
 	JOBS_INVENTION_SUCCESS ("jobs_invention_success.png"),
 
 	ORDERS_SELL ("orders_sell.png"),
+	ORDERS_SOLD ("orders_sold.png"),
 	ORDERS_BUY ("orders_buy.png"),
+	ORDERS_BOUGHT ("orders_bought.png"),
 	ORDERS_ESCROW ("orders_escrow.png"),
 	ORDERS_TO_COVER ("orders_to_cover.png"),
 
@@ -101,8 +103,11 @@ public enum Images {
 	LINK_LOOKUP ("link_lookup.png"),
 	LINK_CHRUKER ("link_chruker.png"),
 	LINK_EVE_TYCOON ("link_eve_tycoon.png"),
+	LINK_JANICE ("link_janice.png"),
+	LINK_JANICE_32 ("link_janice_32.png"),
 	LINK_FUZZWORK ("link_fuzzwork.png"),
 	LINK_ZKILLBOARD ("link_zkillboard.png"),
+	LINK_ZKILLBOARD_32 ("link_zkillboard_32.png"),
 	LINK_ADAM4EVE ("link_adam4eve.png"),
 	LINK_EVEHUB ("link_evehub.png"),
 	LINK_KHON_SPACE ("link_khon_space.png"),
@@ -170,6 +175,7 @@ public enum Images {
 	MISC_CONTRACTS_APPRAISAL ("misc_contracts_appraisal.png"),
 	MISC_SUM ("misc_sum.png"),
 	MISC_FORMULA ("misc_formula.png"),
+	MISC_REACTION ("misc_reaction.png"),
 
 	SETTINGS_TOOLS ("settings_tools.png"),
 	SETTINGS_PRICE_DATA ("settings_price_data.png"),
@@ -216,11 +222,13 @@ public enum Images {
 	TOOL_TRANSACTION ("tool_transaction.png"),
 	TOOL_JOURNAL ("tool_journal.png"),
 	TOOL_TREE ("tool_tree.png"),
+	TOOL_PRICE_HISTORY ("tool_price_history.png"),
 
 	UPDATE_NOT_STARTED ("update_not_started.png"),
 	UPDATE_WORKING ("update_working.png"),
 	UPDATE_CANCELLED ("update_cancelled.png"),
 	UPDATE_DONE_OK ("update_done_ok.png"),
+	UPDATE_DONE_INFO ("update_done_info.png"),
 	UPDATE_DONE_SOME ("update_done_some.png"),
 	UPDATE_DONE_ERROR ("update_done_error.png");
 

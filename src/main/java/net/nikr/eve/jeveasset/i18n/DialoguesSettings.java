@@ -107,6 +107,12 @@ public abstract class DialoguesSettings extends Bundle {
 	public abstract String tracker();
 	public abstract String useAssetPriceForSellOrders();
 
+	// used in PriceHistoryToolSettingsPanel
+	public abstract String priceHistory();
+	public abstract String clearBlacklist();
+	public abstract String clearBlacklistMsg();
+	public abstract String clearBlacklistTitle();
+
 	// used in ColorSettingsPanel
 	public abstract String colors();
 	public abstract String collapse();
@@ -145,6 +151,9 @@ public abstract class DialoguesSettings extends Bundle {
 	public abstract String priceTech1();
 	public abstract String priceTech2();
 	public abstract String source();
+	public abstract String janiceApiKey();
+	public abstract String janiceApiKeyMsg();
+	public abstract String janiceApiKeyTitle();
 
 	// used in ProxySettingsPanel
 	public abstract String proxy();

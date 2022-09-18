@@ -35,6 +35,9 @@ public abstract class TabsIndustrySlots extends Bundle {
 	}
 
 	public abstract String grandTotal();
+	public abstract String manufacturing();
+	public abstract String reactions();
+	public abstract String research();
 	public abstract String title();
 	public abstract String columnOwner();
 	public abstract String columnManufacturingDone();

@@ -118,7 +118,8 @@ public class MyContractItem extends RawContractItem implements Comparable<MyCont
 
 	@Override
 	public boolean isBPO() {
-		return (item.isBlueprint() && this.getRawQuantity() != null && this.getRawQuantity() == -1);
+		//Blueprint && RawQuantity > -2  
+		return (item.isBlueprint() && this.getRawQuantity() != null && this.getRawQuantity() > -2);
 	}
 
 	@Override
@@ -128,7 +129,10 @@ public class MyContractItem extends RawContractItem implements Comparable<MyCont
 
 	@Override
 	public int getRuns() {
-		if (isBPC()) {
+		Integer runs = getLicensedRuns();
+		if (runs != null) {
+			return runs;
+		} else if (isBPC()) {
 			return 1; //BPC
 		} else if (isBPO()) {
 			return -1; //BPO
@@ -139,12 +143,22 @@ public class MyContractItem extends RawContractItem implements Comparable<MyCont
 
 	@Override
 	public int getMaterialEfficiency() {
-		return 0;
+		Integer materialEfficiency = getME();
+		if (materialEfficiency != null) {
+			return materialEfficiency;
+		} else {
+			return 0;
+		}
 	}
 
 	@Override
 	public int getTimeEfficiency() {
-		return 0;
+		Integer timeEfficiency = getTE();
+		if (timeEfficiency != null) {
+			return timeEfficiency;
+		} else {
+			return 0;
+		}
 	}
 
 	@Override

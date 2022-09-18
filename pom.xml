@@ -5,7 +5,7 @@
 	<groupId>net.nikr</groupId>
 	<artifactId>jeveassets</artifactId>
 	<packaging>jar</packaging>
-	<version>7.2.2-SNAPSHOT</version>
+	<version>7.3.0</version>
 	<name>jeveassets</name>
 	<description>jEveAssets is an out-of-game asset manager for Eve-Online, written in Java</description>
 	<url>http://eve.nikr.net/jeveasset</url>
@@ -123,6 +123,7 @@
 									<fileset dir="data" includes="*.dat"/>
 									<fileset dir="data" includes="*.json"/>
 									<fileset dir="data" includes="*.zip"/>
+									<fileset dir="data" includes="*.db"/>
 								</copy>
 								<copy todir="${project.build.directory}">
 									<fileset dir="" includes="*.txt"/>
@@ -411,6 +412,9 @@
 					<excludes>
 						<exclude>${tests.to.skip}</exclude>
 					</excludes>
+					<environmentVariables>
+                        <JANICE_API_KEY>${janice}</JANICE_API_KEY>
+                    </environmentVariables>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -771,7 +775,7 @@
 		<dependency>
 			<groupId>uk.me.candle</groupId>
 			<artifactId>pricing</artifactId>
-			<version>2.1.2</version>
+			<version>3.0.0</version>
 		</dependency>
 		<dependency>
 			<groupId>uk.me.candle</groupId>
@@ -782,11 +786,6 @@
 			<groupId>uk.me.candle</groupId>
 			<artifactId>translations</artifactId>
 			<version>3.1.1</version>
-		</dependency>
-		<dependency>
-			<groupId>apple.dts.samplecode</groupId>
-			<artifactId>osxadapter</artifactId>
-			<version>1.1.0</version>
 		</dependency>
 		<dependency>
 			<groupId>com.glazedlists</groupId>
@@ -897,6 +896,12 @@
 			<groupId>com.formdev</groupId>
 			<artifactId>flatlaf</artifactId>
 			<version>1.6.4</version>
+		</dependency>
+		<dependency>
+			<!-- https://github.com/JFormDesigner/FlatLaf/blob/master/CHANGELOG.md -->
+			<groupId>com.formdev</groupId>
+			<artifactId>flatlaf-extras</artifactId>
+			<version>2.4</version>
 		</dependency>
 		<dependency>
 			<!-- https://github.com/uklimaschewski/EvalEx/releases -->

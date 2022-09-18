@@ -98,8 +98,7 @@ public class LibraryManager {
 			files.add("guava-r09.jar");
 			files.add("LGoodDatePicker-11.2.1.jar");
 			files.add("jfreechart-1.5.3.jar");
-			files.add("osxadapter-1.1.0.jar");
-			files.add("pricing-2.1.2.jar");
+			files.add("pricing-3.0.0.jar");
 			files.add("routing-2.0.0.jar");
 			files.add("slf4j-api-1.7.36.jar");
 			files.add("log4j-over-slf4j-1.7.36.jar");
@@ -138,6 +137,9 @@ public class LibraryManager {
 			files.add("kotlin-stdlib-common-1.4.0.jar");
 			files.add("EvalEx-2.7.jar");
 			files.add("picocli-4.6.2.jar");
+			//Native Mac GUI integration
+			files.add("svgSalamander-1.1.3.jar");
+			files.add("flatlaf-extras-2.4.jar");
 		}
 		return files;
 	}

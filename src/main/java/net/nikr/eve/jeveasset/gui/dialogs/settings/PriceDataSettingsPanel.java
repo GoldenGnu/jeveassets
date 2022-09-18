@@ -33,10 +33,13 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.ButtonGroup;
 import javax.swing.GroupLayout;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JRadioButton;
+import javax.swing.JTextField;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.sde.StaticData;
@@ -51,13 +54,17 @@ import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
+import net.nikr.eve.jeveasset.io.shared.DesktopUtil;
+import uk.me.candle.eve.pricing.impl.Janice.JaniceLocation;
 import uk.me.candle.eve.pricing.options.LocationType;
+import uk.me.candle.eve.pricing.options.NamedPriceLocation;
+import uk.me.candle.eve.pricing.options.impl.NamedLocation;
 
 
 public class PriceDataSettingsPanel extends JSettingsPanel {
 
 	private enum PriceDataSettingsAction {
-		SOURCE_SELECTED, LOCATION_SELECTED
+		SOURCE_SELECTED, LOCATION_SELECTED, JANICE_GET_API_KEY
 	}
 
 	private final JRadioButton jRadioRegions;
@@ -65,19 +72,21 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 	private final JRadioButton jRadioStations;
 	private final JCheckBox jBlueprintsTech1;
 	private final JCheckBox jBlueprintsTech2;
-	private final JComboBox<MyLocation> jRegions;
-	private final JComboBox<MyLocation> jSystems;
-	private final JComboBox<MyLocation> jStations;
+	private final JComboBox<NamedPriceLocation> jRegions;
+	private final JComboBox<NamedPriceLocation> jSystems;
+	private final JComboBox<NamedPriceLocation> jStations;
 	private final JComboBox<PriceMode> jPriceType;
 	private final JComboBox<PriceMode> jPriceReprocessedType;
 	private final JComboBox<PriceSource> jSource;
+	private final JButton jJaniceGetApiKey;
+	private final JTextField jJaniceApiKey;
 
-	private final EventList<MyLocation> stationsEventList = EventListManager.create();
-	private final List<MyLocation> stations = new ArrayList<>();
+	private final EventList<NamedPriceLocation> stationsEventList = EventListManager.create();
+	private final List<NamedPriceLocation> stations = new ArrayList<>();
 
-	private final AutoCompleteSupport<MyLocation> regionsAutoComplete;
-	private final AutoCompleteSupport<MyLocation> systemsAutoComplete;
-	private final AutoCompleteSupport<MyLocation> stationsAutoComplete;
+	private final AutoCompleteSupport<NamedPriceLocation> regionsAutoComplete;
+	private final AutoCompleteSupport<NamedPriceLocation> systemsAutoComplete;
+	private final AutoCompleteSupport<NamedPriceLocation> stationsAutoComplete;
 
 	public PriceDataSettingsPanel(final Program program, final SettingsDialog optionsDialog) {
 		super(program, optionsDialog, DialoguesSettings.get().priceData(), Images.SETTINGS_PRICE_DATA.getIcon());
@@ -87,8 +96,8 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 		MyLocation system = null;
 		MyLocation station = null;
 		MyLocation region = null;
-		EventList<MyLocation> systemsEventList = EventListManager.create();
-		EventList<MyLocation> regionsEventList = EventListManager.create();
+		EventList<NamedPriceLocation> systemsEventList = EventListManager.create();
+		EventList<NamedPriceLocation> regionsEventList = EventListManager.create();
 		try {
 			systemsEventList.getReadWriteLock().writeLock().lock();
 			regionsEventList.getReadWriteLock().writeLock().lock();
@@ -118,11 +127,11 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 			regionsEventList.getReadWriteLock().writeLock().unlock();
 		}
 		systemsEventList.getReadWriteLock().readLock().lock();
-		SortedList<MyLocation> systemsSortedList = new SortedList<>(systemsEventList);
+		SortedList<NamedPriceLocation> systemsSortedList = new SortedList<>(systemsEventList);
 		systemsEventList.getReadWriteLock().readLock().unlock();
 
 		stationsEventList.getReadWriteLock().readLock().lock();
-		SortedList<MyLocation> stationsSortedList = new SortedList<>(stationsEventList);
+		SortedList<NamedPriceLocation> stationsSortedList = new SortedList<>(stationsEventList);
 		stationsEventList.getReadWriteLock().readLock().unlock();
 
 		ButtonGroup group = new ButtonGroup();
@@ -178,6 +187,13 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 		jBlueprintsTech1 = new JCheckBox(DialoguesSettings.get().priceTech1());
 		jBlueprintsTech2 = new JCheckBox(DialoguesSettings.get().priceTech2());
 
+		JLabel jJaniceApiKeyLabel = new JLabel(DialoguesSettings.get().janiceApiKey());
+		jJaniceApiKey = new JTextField();
+
+		jJaniceGetApiKey = new JButton(Images.MISC_HELP.getIcon());
+		jJaniceGetApiKey.setActionCommand(PriceDataSettingsAction.JANICE_GET_API_KEY.name());
+		jJaniceGetApiKey.addActionListener(listener);
+
 		JLabelMultiline jWarning = new JLabelMultiline(DialoguesSettings.get().changeSourceWarning(), 2);
 
 		layout.setHorizontalGroup(
@@ -188,6 +204,7 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 						.addComponent(jPriceTypeLabel)
 						.addComponent(jPriceReprocessedTypeLabel)
 						.addComponent(jBlueprintsLabel)
+						.addComponent(jJaniceApiKeyLabel)
 						.addGroup(layout.createSequentialGroup()
 							.addGroup(layout.createParallelGroup()
 								.addComponent(jRegionsLabel)
@@ -209,6 +226,11 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 						.addComponent(jStations, 200, 200, 200)
 						.addComponent(jPriceType, 200, 200, 200)
 						.addComponent(jPriceReprocessedType, 200, 200, 200)
+						.addGroup(layout.createSequentialGroup()
+							.addComponent(jJaniceApiKey, 169, 169, 169)
+							.addGap(1)
+							.addComponent(jJaniceGetApiKey, Program.getIconButtonsWidth(), Program.getIconButtonsWidth(), Program.getIconButtonsWidth())
+						)
 						.addGroup(layout.createSequentialGroup()
 							.addComponent(jBlueprintsTech1)
 							.addComponent(jBlueprintsTech2)
@@ -247,6 +269,11 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 					.addComponent(jPriceReprocessedType, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				)
 				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+					.addComponent(jJaniceApiKeyLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jJaniceApiKey, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jJaniceGetApiKey, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+				)
+				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
 					.addComponent(jBlueprintsLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jBlueprintsTech1, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jBlueprintsTech2, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
@@ -256,7 +283,7 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 	}
 
 	@Override
-	public boolean save() {
+	public UpdateType save() {
 		Object object;
 		Long locationID;
 		LocationType locationType = null;
@@ -271,9 +298,9 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 			locationType = LocationType.STATION;
 			location = jStations.getSelectedItem();
 		}
-		if (location instanceof MyLocation) {
-			MyLocation myLocation = (MyLocation) location;
-			locationID = myLocation.getLocationID();
+		if (location instanceof NamedPriceLocation) {
+			NamedPriceLocation priceLocation = (NamedPriceLocation) location;
+			locationID = priceLocation.getLocationID();
 		} else { //XXX - Workaround for invalid locations: https://eve.nikr.net/jeveassets/bugs/#bugid631
 			locationID = Settings.get().getPriceDataSettings().getLocationID();
 			locationType = Settings.get().getPriceDataSettings().getLocationType();
@@ -296,7 +323,7 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 		} else {
 			priceReprocessedType = Settings.get().getPriceDataSettings().getPriceReprocessedType();
 		}
-
+		String janiceKey = jJaniceApiKey.getText();
 		//Source
 		PriceSource source = (PriceSource) jSource.getSelectedItem();
 		//Blueprints
@@ -304,18 +331,18 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 		boolean blueprintsTech2 = jBlueprintsTech2.isSelected();
 
 		//Eval if table need to be updated
-		boolean updateTable = !priceType.equals(Settings.get().getPriceDataSettings().getPriceType())
+		boolean update = !priceType.equals(Settings.get().getPriceDataSettings().getPriceType())
 								|| !priceReprocessedType.equals(Settings.get().getPriceDataSettings().getPriceReprocessedType())
 								|| blueprintsTech1 != Settings.get().isBlueprintBasePriceTech1()
 								|| blueprintsTech2 != Settings.get().isBlueprintBasePriceTech2();
 
 		//Update settings
-		Settings.get().setPriceDataSettings(new PriceDataSettings(locationType, locationID, source, priceType, priceReprocessedType));
+		Settings.get().setPriceDataSettings(new PriceDataSettings(locationType, locationID, source, priceType, priceReprocessedType, janiceKey));
 		Settings.get().setBlueprintBasePriceTech1(blueprintsTech1);
 		Settings.get().setBlueprintBasePriceTech2(blueprintsTech2);
 
 		//Update table if needed
-		return updateTable;
+		return update ? UpdateType.FULL_UPDATE : UpdateType.NONE;
 	}
 
 	@Override
@@ -323,16 +350,16 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 		jSource.setSelectedItem(Settings.get().getPriceDataSettings().getSource());
 		jBlueprintsTech1.setSelected(Settings.get().isBlueprintBasePriceTech1());
 		jBlueprintsTech2.setSelected(Settings.get().isBlueprintBasePriceTech2());
+		jJaniceApiKey.setText(Settings.get().getPriceDataSettings().getJaniceKey());
 	}
 
 	private void updateSource(final PriceSource source) {
 		Long locationID = Settings.get().getPriceDataSettings().getLocationID();
-		final LocationType locationType = Settings.get().getPriceDataSettings().getLocationType();
-
+		LocationType locationType = Settings.get().getPriceDataSettings().getLocationType();
 		//Price Types
-		jPriceType.setModel(new ListComboBoxModel<>(source.getPriceTypes()));
+		jPriceType.setModel(new ListComboBoxModel<>(source.getSupportedPriceModes()));
 		jPriceType.setSelectedItem(Settings.get().getPriceDataSettings().getPriceType());
-		if (source.getPriceTypes().length <= 0) { //Empty
+		if (source.getSupportedPriceModes().isEmpty()) { //Empty
 			jPriceType.getModel().setSelectedItem(DialoguesSettings.get().notConfigurable());
 			jPriceType.setEnabled(false);
 		} else {
@@ -340,27 +367,28 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 		}
 
 		//Price Reprocessed Types
-		jPriceReprocessedType.setModel(new ListComboBoxModel<>(source.getPriceTypes()));
+		jPriceReprocessedType.setModel(new ListComboBoxModel<>(source.getSupportedPriceModes()));
 		jPriceReprocessedType.setSelectedItem(Settings.get().getPriceDataSettings().getPriceReprocessedType());
-		if (source.getPriceTypes().length <= 0) { //Empty
+		if (source.getSupportedPriceModes().isEmpty()) { //Empty
 			jPriceReprocessedType.getModel().setSelectedItem(DialoguesSettings.get().notConfigurable());
 			jPriceReprocessedType.setEnabled(false);
 		} else {
 			jPriceReprocessedType.setEnabled(true);
 		}
-
+		jJaniceApiKey.setEnabled(source == PriceSource.JANICE);
+		jJaniceGetApiKey.setEnabled(source == PriceSource.JANICE);
 		//Default
 		jRadioRegions.setSelected(true);
 
 	//REGIONS
-		if (source.supportsRegion()) {
+		if (source.supportRegions()) {
 			regionsAutoComplete.removeFirstItem();
 			jRegions.setEnabled(true);
 			jRadioRegions.setEnabled(true);
 		} else {
 			jRegions.setEnabled(false);
 			jRadioRegions.setEnabled(false);
-			regionsAutoComplete.setFirstItem(new MyLocation(-1, DialoguesSettings.get().notConfigurable(), -1, "", -1, "", -1, "", ""));
+			regionsAutoComplete.setFirstItem(new NamedLocation(DialoguesSettings.get().notConfigurable(), -1, -1));
 		}
 		if (locationType == LocationType.REGION && jRadioRegions.isEnabled()) {
 			if (locationID != null) {
@@ -371,14 +399,14 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 			jRegions.setSelectedIndex(0);
 		}
 	//SYSTEM
-		if (source.supportsSystem()) {
+		if (source.supportSystems()) {
 			systemsAutoComplete.removeFirstItem();
 			jRadioSystems.setEnabled(true);
 			jSystems.setEnabled(true);
 		} else {
 			jRadioSystems.setEnabled(false);
 			jSystems.setEnabled(false);
-			systemsAutoComplete.setFirstItem(new MyLocation(-1, DialoguesSettings.get().notConfigurable(), -1, "", -1, "", -1, "", ""));
+			systemsAutoComplete.setFirstItem(new NamedLocation(DialoguesSettings.get().notConfigurable(), -1, -1));
 		}
 		if (locationType == LocationType.SYSTEM && jRadioSystems.isEnabled()) {
 			if (locationID != null) {
@@ -389,8 +417,8 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 			jSystems.setSelectedIndex(0);
 		}
 	//STATION
-		if (source.supportsStation()) {
-			List<MyLocation> list;
+		if (source.supportStations()) {
+			List<NamedPriceLocation> list;
 			if (source == PriceSource.FUZZWORK) {
 				list = new ArrayList<>();
 				list.add(ApiIdConverter.getLocation(60003760));
@@ -398,6 +426,14 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 				list.add(ApiIdConverter.getLocation(60011866));
 				list.add(ApiIdConverter.getLocation(60004588));
 				list.add(ApiIdConverter.getLocation(60005686));
+			} else if (source == PriceSource.JANICE) {
+				list = new ArrayList<>();
+				list.add(JaniceLocation.AMARR.getPriceLocation());
+				list.add(JaniceLocation.JITA_4_4.getPriceLocation());
+				list.add(JaniceLocation.JITA_4_4_AND_PERIMETER_TTT.getPriceLocation());
+				list.add(JaniceLocation.NPC.getPriceLocation());
+				list.add(JaniceLocation.PERIMETER_TTT.getPriceLocation());
+				locationType = LocationType.STATION;
 			} else {
 				list = stations;
 			}
@@ -414,11 +450,19 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 		} else {
 			jRadioStations.setEnabled(false);
 			jStations.setEnabled(false);
-			stationsAutoComplete.setFirstItem(new MyLocation(-1, DialoguesSettings.get().notConfigurable(), -1, "", -1, "", -1, "", ""));
+			stationsAutoComplete.setFirstItem(new NamedLocation(DialoguesSettings.get().notConfigurable(), -1, -1));
 		}
 		if (locationType == LocationType.STATION && jRadioStations.isEnabled()) {
 			if (locationID != null) {
-				jStations.setSelectedItem(StaticData.get().getLocation(locationID));
+				NamedPriceLocation location;
+				if (source == PriceSource.JANICE) {
+					location = JaniceLocation.getLocation(locationID);
+				} else {
+					location = StaticData.get().getLocation(locationID);
+				}
+				if (location != null && EventListManager.contains(stationsEventList, location)) {
+					jStations.setSelectedItem(location);
+				}
 			}
 			jRadioStations.setSelected(true);
 		} else {
@@ -433,14 +477,18 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 			if (PriceDataSettingsAction.SOURCE_SELECTED.name().equals(e.getActionCommand())) {
 				PriceSource priceSource = (PriceSource) jSource.getSelectedItem();
 				updateSource(priceSource);
-			}
-			if (PriceDataSettingsAction.LOCATION_SELECTED.name().equals(e.getActionCommand())) {
+			} else if (PriceDataSettingsAction.LOCATION_SELECTED.name().equals(e.getActionCommand())) {
 				if (jRadioRegions.isSelected()) {
 					jRegions.requestFocusInWindow();
 				} else if (jRadioSystems.isSelected()) {
 					jSystems.requestFocusInWindow();
 				} else if (jRadioStations.isSelected()) {
 					jStations.requestFocusInWindow();
+				}
+			} else if (PriceDataSettingsAction.JANICE_GET_API_KEY.name().equals(e.getActionCommand())) {
+				int returnValue = JOptionPane.showConfirmDialog(parent,  DialoguesSettings.get().janiceApiKeyMsg(),  DialoguesSettings.get().janiceApiKeyTitle(), JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, Images.LINK_JANICE_32.getIcon());
+				if (returnValue == JOptionPane.OK_OPTION) {
+					DesktopUtil.browse("https://discord.com/invite/7McHR3r", parent);
 				}
 			}
 		}
@@ -462,9 +510,9 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 		public void focusLost(final FocusEvent e) { }
 	}
 
-	static class LocationsFilterator implements TextFilterator<MyLocation> {
+	static class LocationsFilterator implements TextFilterator<NamedPriceLocation> {
 		@Override
-		public void getFilterStrings(final List<String> baseList, final MyLocation element) {
+		public void getFilterStrings(final List<String> baseList, final NamedPriceLocation element) {
 			baseList.add(element.getLocation());
 		}
 	}

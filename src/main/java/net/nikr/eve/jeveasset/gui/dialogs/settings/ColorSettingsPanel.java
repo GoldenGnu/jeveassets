@@ -289,7 +289,7 @@ public class ColorSettingsPanel extends JSettingsPanel {
 	}
 
 	@Override
-	public boolean save() {
+	public UpdateType save() {
 		boolean lookAndfeelChanged = !Settings.get().getColorSettings().getLookAndFeelClass().equals(lookAndFeelClass);
 		Settings.get().getColorSettings().setColorTheme(colorThemeTypes.getInstance(), true); //Later overwritten by table values, but, set uneditable values
 		Settings.get().getColorSettings().setLookAndFeelClass(lookAndFeelClass);
@@ -301,12 +301,12 @@ public class ColorSettingsPanel extends JSettingsPanel {
 		} finally {
 			eventList.getReadWriteLock().readLock().unlock();
 		}
-		boolean update = !Settings.get().getColorSettings().get().equals(colors);
+		boolean repaint = !Settings.get().getColorSettings().get().equals(colors);
 		colors = Settings.get().getColorSettings().get(); //Copy to check for changes on save
 		if (lookAndfeelChanged && !UIManager.getLookAndFeel().getClass().getName().equals(lookAndFeelClass)) {
 			JOptionPane.showMessageDialog(parent, DialoguesSettings.get().lookAndFeelMsg(), DialoguesSettings.get().lookAndFeelTitle(), JOptionPane.PLAIN_MESSAGE);
 		}
-		return update;
+		return repaint ? UpdateType.FULL_REPAINT : UpdateType.NONE;
 	}
 
 	@Override

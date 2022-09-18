@@ -61,6 +61,7 @@ public abstract class UpdateTask extends SwingWorker<Void, Void> {
 	private final String name;
 	private Integer totalProgress = null;
 
+	private boolean info = false;
 	private boolean warning = false;
 	private boolean error = false;
 	private boolean errorShown = false;
@@ -163,6 +164,19 @@ public abstract class UpdateTask extends SwingWorker<Void, Void> {
 	public void addWarning(final String owner, final String msg) {
 		log.add(new LogClass(owner, msg));
 		warning = true;
+	}
+
+	public void addInfo(final String owner, final String msg) {
+		log.add(new LogClass(owner, msg));
+		info = true;
+	}
+
+	public boolean hasInfo() {
+		return info;
+	}
+
+	public boolean hasWarning() {
+		return warning;
 	}
 
 	public boolean hasError() {
@@ -326,6 +340,9 @@ public abstract class UpdateTask extends SwingWorker<Void, Void> {
 					jShow.setVisible(true);
 				} else if (isCancelled() || warning) {
 					jText.setIcon(Images.UPDATE_DONE_SOME.getIcon());
+					jShow.setVisible(true);
+				} else if (info) {
+					jText.setIcon(Images.UPDATE_DONE_INFO.getIcon());
 					jShow.setVisible(true);
 				} else {
 					jShow.setVisible(false);

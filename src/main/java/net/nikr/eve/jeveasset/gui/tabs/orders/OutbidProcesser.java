@@ -35,8 +35,8 @@ import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder.MarketOrderRange;
 import net.nikr.eve.jeveasset.data.api.raw.RawPublicMarketOrder;
 import net.nikr.eve.jeveasset.data.profile.ProfileData;
-import net.nikr.eve.jeveasset.data.sde.RouteFinder;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
+import net.nikr.eve.jeveasset.data.sde.RouteFinder;
 import net.nikr.eve.jeveasset.data.settings.Citadel;
 import net.nikr.eve.jeveasset.io.online.CitadelGetter;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
@@ -138,6 +138,7 @@ public class OutbidProcesser {
 		MyLocation toSystemLocation = ApiIdConverter.getLocation(toSystemID);
 		if (fromSystemLocation.isEmpty() || toSystemLocation.isEmpty()) {
 			LOG.warn("Unknown market location ignored");
+			output.setUnknownLocations();
 			return false; //We can't work with unknown locations
 		}
 		if (!Objects.equals(fromSystemLocation.getRegionID(), toSystemLocation.getRegionID())) {
@@ -224,7 +225,6 @@ public class OutbidProcesser {
 		private final MarketOrderRange sellOrderRange;
 		private UniverseApi structuresApi = null;
 		private MarketApi marketApi = null;
-		private boolean unknownLocations = false;
 
 		public OutbidProcesserInput(ProfileData profileData, MarketOrderRange sellOrderRange) {
 			this.sellOrderRange = sellOrderRange;
@@ -244,13 +244,8 @@ public class OutbidProcesser {
 							}
 							set.add(marketOrder);
 							//RegionIDs
-							MyLocation location = marketOrder.getLocation();
-							if (location == null || location.isEmpty()) { //Unknown Location
-								unknownLocations = true;
-								continue;
-							}
-							Integer regionID = RawConverter.toInteger(location.getRegionID());
-							if (regionID >= 10000000 && regionID <= 13000000) {
+							Integer regionID = marketOrder.getRegionID();
+							if (regionID != null && regionID >= 10000000 && regionID <= 13000000) {
 								regionIDs.add(regionID);
 							}
 						}
@@ -268,10 +263,6 @@ public class OutbidProcesser {
 					}
 				}
 			}
-		}
-
-		public boolean hasUnknownLocations() {
-			return unknownLocations;
 		}
 
 		public void addOrders(Map<Integer, Set<RawPublicMarketOrder>> orders, Date date) {
@@ -337,6 +328,7 @@ public class OutbidProcesser {
 		private final Map<Long, Outbid> outbids = new HashMap<>();
 		private final Map<Long, RawPublicMarketOrder> updates = new HashMap<>();
 		private final Set<Long> regionIDs = new HashSet<>();
+		private boolean unknownLocations = false;
 
 		public Map<Long, Outbid> getOutbids() {
 			return outbids;
@@ -348,6 +340,14 @@ public class OutbidProcesser {
 
 		public Set<Long> getRegionIDs() {
 			return regionIDs;
+		}
+
+		public boolean hasUnknownLocations() {
+			return unknownLocations;
+		}
+
+		public void setUnknownLocations() {
+			this.unknownLocations = true;
 		}
 	}
 

@@ -44,14 +44,17 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
@@ -63,8 +66,9 @@ import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.tag.TagUpdate;
 import net.nikr.eve.jeveasset.data.settings.types.LocationType;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
+import net.nikr.eve.jeveasset.gui.frame.StatusPanel.JStatusLabel;
 import net.nikr.eve.jeveasset.gui.images.Images;
-import net.nikr.eve.jeveasset.gui.shared.Formater;
+import net.nikr.eve.jeveasset.gui.shared.InstantToolTip;
 import net.nikr.eve.jeveasset.gui.shared.MarketDetailsColumn;
 import net.nikr.eve.jeveasset.gui.shared.MarketDetailsColumn.MarketDetailsActionListener;
 import net.nikr.eve.jeveasset.gui.shared.components.JCustomFileChooser;
@@ -78,6 +82,7 @@ import net.nikr.eve.jeveasset.gui.shared.components.JTextDialog;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuColumns;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
+import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo.AutoNumberFormat;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuUI;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager;
@@ -122,13 +127,14 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		EXPAND
 	}
 
-	private final JSeparatorTable jTable;
-	private final JLabel jVolumeNow;
-	private final JLabel jVolumeNeeded;
-	private final JLabel jValueNow;
-	private final JLabel jValueNeeded;
-	private final JCustomFileChooser jFileChooser;
+	//StatusBar
+	private final JStatusLabel jVolumeNow;
+	private final JStatusLabel jVolumeNeeded;
+	private final JStatusLabel jValueNow;
+	private final JStatusLabel jValueNeeded;
 
+	//Dialogs
+	private final JCustomFileChooser jFileChooser;
 	private final StockpileDialog stockpileDialog;
 	private final StockpileItemDialog stockpileItemDialog;
 	private final StockpileShoppingListDialog stockpileShoppingListDialog;
@@ -137,6 +143,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 	private final JTextDialog jTextDialog;
 
 	//Table
+	private final JSeparatorTable jTable;
 	private final EnumTableFormatAdaptor<StockpileTableFormat, StockpileItem> tableFormat;
 	private final DefaultEventTableModel<StockpileItem> tableModel;
 	private final EventList<StockpileItem> eventList;
@@ -144,6 +151,10 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 	private final SeparatorList<StockpileItem> separatorList;
 	private final DefaultEventSelectionModel<StockpileItem> selectionModel;
 	private final StockpileFilterControl filterControl;
+
+	//Toolbar
+	private final JComboBox<EsiOwner> jOwners;
+	private final DefaultComboBoxModel<EsiOwner> ownerModel;
 
 	//Data
 	private final StockpileData stockpileData;
@@ -260,6 +271,21 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		jExportText.setActionCommand(StockpileAction.EXPORT_TEXT.name());
 		jExportText.addActionListener(listener);
 
+		jToolBarLeft.addSeparator();
+
+		ownerModel = new DefaultComboBoxModel<>();
+		jOwners = new JComboBox<>(ownerModel);
+		jToolBarLeft.add(jOwners, 150);
+
+		jToolBarLeft.addSpace(1);
+
+		JLabel jOwnerLabel = new JLabel(Images.MISC_HELP.getIcon());
+		jOwnerLabel.setToolTipText(TabsStockpile.get().marketDetailsOwnerToolTip());
+		InstantToolTip.install(jOwnerLabel);
+		jToolBarLeft.addLabelIcon(jOwnerLabel);
+
+		jToolBarLeft.addSeparator();
+
 		JFixedToolBar jToolBarRight = new JFixedToolBar();
 
 		JButton jCollapse = new JButton(TabsStockpile.get().collapse(), Images.MISC_COLLAPSED.getIcon());
@@ -311,7 +337,10 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		MarketDetailsColumn.install(eventList, new MarketDetailsActionListener<StockpileItem>() {
 			@Override
 			public void openMarketDetails(StockpileItem stockpileItem) {
-				EsiOwner esiOwner = JMenuUI.selectOwner(program, JMenuUI.EsiOwnerRequirement.OPEN_WINDOW);
+				if (!jOwners.isEnabled()) {
+					return;
+				}
+				EsiOwner esiOwner = jOwners.getItemAt(jOwners.getSelectedIndex());
 				JMenuUI.openMarketDetails(program, esiOwner, stockpileItem.getTypeID(), false);
 			}
 		});
@@ -333,7 +362,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 				.addGroup(layout.createSequentialGroup()
 					.addComponent(jToolBarLeft, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
 					.addGap(0)
-					.addComponent(jToolBarRight, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
+					.addComponent(jToolBarRight, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
 				)
 				.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
 		);
@@ -347,16 +376,16 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 				.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
 		);
 
-		jVolumeNow = StatusPanel.createLabel(TabsStockpile.get().shownVolumeNow(), Images.ASSETS_VOLUME.getIcon());
+		jVolumeNow = StatusPanel.createLabel(TabsStockpile.get().shownVolumeNow(), Images.ASSETS_VOLUME.getIcon(), AutoNumberFormat.DOUBLE);
 		this.addStatusbarLabel(jVolumeNow);
 
-		jValueNow = StatusPanel.createLabel(TabsStockpile.get().shownValueNow(), Images.TOOL_VALUES.getIcon());
+		jValueNow = StatusPanel.createLabel(TabsStockpile.get().shownValueNow(), Images.TOOL_VALUES.getIcon(), AutoNumberFormat.ISK);
 		this.addStatusbarLabel(jValueNow);
 
-		jVolumeNeeded = StatusPanel.createLabel(TabsStockpile.get().shownVolumeNeeded(), Images.ASSETS_VOLUME.getIcon());
+		jVolumeNeeded = StatusPanel.createLabel(TabsStockpile.get().shownVolumeNeeded(), Images.ASSETS_VOLUME.getIcon(), AutoNumberFormat.DOUBLE);
 		this.addStatusbarLabel(jVolumeNeeded);
 
-		jValueNeeded = StatusPanel.createLabel(TabsStockpile.get().shownValueNeeded(), Images.TOOL_VALUES.getIcon());
+		jValueNeeded = StatusPanel.createLabel(TabsStockpile.get().shownValueNeeded(), Images.TOOL_VALUES.getIcon(), AutoNumberFormat.ISK);
 		this.addStatusbarLabel(jValueNeeded);
 	}
 
@@ -368,6 +397,14 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		stockpileData.updateData(eventList);
 		//Restore separator expanded/collapsed state
 		jTable.loadExpandedState();
+		//Update owner combobox
+		ownerModel.removeAllElements();
+		for (EsiOwner owner : program.getProfileManager().getEsiOwners()) {
+			if (owner.isOpenWindows()) {
+				ownerModel.addElement(owner);
+			}
+		}
+		jOwners.setEnabled(ownerModel.getSize() > 0);
 	}
 
 	private void updateOwners() {
@@ -808,8 +845,8 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		}
 
 		@Override
-		public void addInfoMenu(JComponent jComponent) {
-			JMenuInfo.stockpileItem(jComponent, selectionModel.getSelected());
+		public void addInfoMenu(JPopupMenu jPopupMenu) {
+			JMenuInfo.stockpileItem(jPopupMenu, selectionModel.getSelected());
 		}
 
 		@Override
@@ -865,10 +902,10 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 				}
 			}
 
-			jVolumeNow.setText(TabsStockpile.get().now() + Formater.doubleFormat(volumnNow));
-			jValueNow.setText(TabsStockpile.get().now() + Formater.iskFormat(valueNow));
-			jVolumeNeeded.setText(TabsStockpile.get().needed() + Formater.doubleFormat(volumnNeeded));
-			jValueNeeded.setText(TabsStockpile.get().needed() + Formater.iskFormat(valueNeeded));
+			jVolumeNow.setNumber(TabsStockpile.get().now(), volumnNow);
+			jValueNow.setNumber(TabsStockpile.get().now(), valueNow);
+			jVolumeNeeded.setNumber(TabsStockpile.get().needed(), volumnNeeded);
+			jValueNeeded.setNumber(TabsStockpile.get().needed(), valueNeeded);
 		}
 
 		@Override

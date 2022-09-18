@@ -47,7 +47,9 @@ import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
 import net.nikr.eve.jeveasset.gui.tabs.assets.AssetsTab;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustrySlotsTab;
 import net.nikr.eve.jeveasset.gui.tabs.loadout.LoadoutsTab;
+import net.nikr.eve.jeveasset.gui.tabs.orders.MarketOrdersTab;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewTab;
+import net.nikr.eve.jeveasset.gui.tabs.prices.PriceHistoryTab;
 import net.nikr.eve.jeveasset.gui.tabs.reprocessed.ReprocessedTab;
 import net.nikr.eve.jeveasset.gui.tabs.routing.RoutingTab;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileTab;
@@ -104,16 +106,6 @@ public abstract class FakeProgram extends Program {
 
 	@Override
 	public void saveSettingsAndProfile() {
-		throw new UnsupportedOperationException("Not implemented");
-	}
-
-	@Override
-	public void showAbout() {
-		throw new UnsupportedOperationException("Not implemented");
-	}
-
-	@Override
-	public void showSettings() {
 		throw new UnsupportedOperationException("Not implemented");
 	}
 
@@ -213,11 +205,6 @@ public abstract class FakeProgram extends Program {
 	}
 
 	@Override
-	public void saveExit() {
-		throw new UnsupportedOperationException("Not implemented");
-	}
-
-	@Override
 	public void saveProfile() {
 		throw new UnsupportedOperationException("Not implemented");
 	}
@@ -309,6 +296,21 @@ public abstract class FakeProgram extends Program {
 
 	@Override
 	public LoadoutsTab getLoadoutsTab() {
+		throw new UnsupportedOperationException("Not implemented");
+	}
+
+	@Override
+	public MarketOrdersTab getMarketOrdersTab() {
+		throw new UnsupportedOperationException("Not implemented");
+	}
+
+	@Override
+	public void repaintTables() {
+		throw new UnsupportedOperationException("Not implemented");
+	}
+
+	@Override
+	public PriceHistoryTab getPriceHistoryTab() {
 		throw new UnsupportedOperationException("Not implemented");
 	}
 }

@@ -34,6 +34,7 @@ Contributors:
   Kaylee Syntax
   Inoruuk
   Burberius
+  Lazaren
 
 Retired Testers:
   Varo Jan
@@ -85,12 +86,28 @@ Link:
   https://evemarketer.com
 
 ________________________________________________________________________________
+_JANICE_________________________________________________________________________
+
+jEveAssets use Janice API to get price data
+
+Link:
+  https://janice.e-351.com/api/rest/docs/index.html
+
+________________________________________________________________________________
 _CONTRACTS_APPRAISAL____________________________________________________________
 
 jEveAssets use Contracts Appraisal API to get contract price data
 
 Link:
   https://app.swaggerhub.com/apis/rihanshazih/contracts-appraisal
+
+________________________________________________________________________________
+_ZKILLBOARD_____________________________________________________________________
+
+jEveAssets use zKillboard  API to get price history
+
+Link:
+  https://github.com/zKillboard/zKillboard/wiki/API-(Prices)
 
 ________________________________________________________________________________
 _SILK_ICONS_____________________________________________________________________
@@ -186,17 +203,6 @@ License:
   GNU General Public License (http://www.gnu.org/copyleft/gpl.html)
 
 ________________________________________________________________________________
-_OSXADAPTER_____________________________________________________________________
-
-jEveAssets use OSXAdapter to enhance support for mac os x environments
-
-Link:
-  http://eve.nikr.net/jeveasset
-
-License:
-  Property (Copyright by Apple)
-
-________________________________________________________________________________
 _SLF4J__________________________________________________________________________
 
 jEveAssets use SLF4J as logging facade
@@ -265,7 +271,7 @@ License:
 ________________________________________________________________________________
 _FLATLAF _______________________________________________________________________
 
-jEveAssets use FlatLaf for themes
+jEveAssets use FlatLaf for themes and enhanced support for mac os x environments
 
 Link:
   https://www.formdev.com/flatlaf

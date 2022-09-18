@@ -20,20 +20,31 @@
  */
 package net.nikr.eve.jeveasset.gui.tabs.routing;
 
+import ca.odell.glazedlists.GlazedLists;
 import ca.odell.glazedlists.TextFilterator;
 import java.util.Comparator;
-import java.util.List;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JAutoCompleteDialog;
+import net.nikr.eve.jeveasset.gui.shared.table.EventModels.LocationFilterator;
 import net.nikr.eve.jeveasset.i18n.TabsRouting;
 
 
 public class JStationDialog extends JAutoCompleteDialog<MyLocation> {
 
 	public JStationDialog(Program program) {
-		super(program, TabsRouting.get().addStationTitle(), Images.TOOL_ROUTING.getImage(), TabsRouting.get().addStationSelect(), true, true);
+		super(program, TabsRouting.get().addStationTitle(), Images.TOOL_ROUTING.getImage(), TabsRouting.get().addStationSelect(), true);
+	}
+
+	@Override
+	protected Comparator<MyLocation> getComparator() {
+		return GlazedLists.comparableComparator();
+	}
+
+	@Override
+	protected TextFilterator<MyLocation> getFilterator() {
+		return new LocationFilterator();
 	}
 
 	@Override
@@ -46,26 +57,8 @@ public class JStationDialog extends JAutoCompleteDialog<MyLocation> {
 	}
 
 	@Override
-	protected Comparator<MyLocation> getComparator() {
-		return new StationComparator();
+	protected boolean isEmpty(MyLocation t) {
+		return false;
 	}
 
-	@Override
-	protected TextFilterator<MyLocation> getFilterator() {
-		return new Filterator();
-	}
-
-	private static class Filterator implements TextFilterator<MyLocation> {
-		@Override
-		public void getFilterStrings(final List<String> baseList, final MyLocation element) {
-			baseList.add(element.getLocation());
-		}
-	}
-
-	private static class StationComparator implements Comparator<MyLocation> {
-		@Override
-		public int compare(MyLocation o1, MyLocation o2) {
-			return o1.getLocation().compareToIgnoreCase(o2.getLocation());
-		}
-	}
 }

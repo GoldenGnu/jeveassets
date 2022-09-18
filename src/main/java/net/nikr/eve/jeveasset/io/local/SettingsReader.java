@@ -102,6 +102,8 @@ import net.nikr.eve.jeveasset.gui.tabs.orders.MarketTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.orders.Outbid;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewGroup;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewLocation;
+import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewTab;
+import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.routing.SolarSystem;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter;
@@ -294,6 +296,12 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 	private Settings loadSettings(final Element element, final Settings settings) throws XmlException {
 		if (!element.getNodeName().equals("settings")) {
 			throw new XmlException("Wrong root element name.");
+		}
+
+		//Price History
+		Element priceHistoryElement = getNodeOptional(element, "pricehistory");
+		if (priceHistoryElement != null) {
+			parsePriceHistorySettings(priceHistoryElement, settings);
 		}
 
 		//Faction Warfare System Owners
@@ -893,6 +901,17 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		Collections.sort(stockpiles);
 	}
 
+	private void parsePriceHistorySettings(Element priceHistoryElement, Settings settings) throws XmlException {
+		NodeList priceListNodes = priceHistoryElement.getElementsByTagName("set");
+		for (int a = 0; a < priceListNodes.getLength(); a++) {
+			Element priceListNode = (Element) priceListNodes.item(a);
+			String name = getString(priceListNode, "name");
+			Set<Integer> typeIDs = new HashSet<>();
+			addIntToList(priceListNode, "ids", typeIDs);
+			settings.getPriceHistorySets().put(name, typeIDs);
+		}
+	}
+
 	private void parseFactionWarfareSystemOwners(Element factionWarfareSystemOwnersElement, Settings settings) throws XmlException {
 		Date factionWarfareNextUpdate = getDateNotNull(factionWarfareSystemOwnersElement, "factionwarfarenextupdate");
 		settings.setFactionWarfareNextUpdate(factionWarfareNextUpdate);
@@ -1267,12 +1286,13 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 				//In case a price source is removed: Use the default
 			}
 		}
+		String janiceKey = getStringOptional(element, "janicekey");
 		//Validate
 		if (!priceSource.isValid(locationType, locationID)) {
 			locationType = priceSource.getDefaultLocationType();
 			locationID = priceSource.getDefaultLocationID();
 		}
-		settings.setPriceDataSettings(new PriceDataSettings(locationType, locationID, priceSource, priceType, priceReprocessedType));
+		settings.setPriceDataSettings(new PriceDataSettings(locationType, locationID, priceSource, priceType, priceReprocessedType, janiceKey));
 	}
 
 	private void parseContractPriceSettings(final Element element, final Settings settings) throws XmlException {
@@ -1635,6 +1655,14 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		} catch (IllegalArgumentException exception) {
 
 		}
+		//Overview
+		try {
+			if (toolName.equals(OverviewTab.NAME)) {
+				return OverviewTableFormat.valueOf(column);
+			}
+		} catch (IllegalArgumentException exception) {
+
+		}
 		//Contracts
 		try {
 			if (toolName.equals(ContractsTab.NAME)) {
@@ -1651,7 +1679,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		} catch (IllegalArgumentException exception) {
 
 		}
-		//Values (Extra)
+		//Isk
 		try {
 			if (toolName.equals(ValueTableTab.NAME)) {
 				return ValueTableFormat.valueOf(column);
@@ -1659,7 +1687,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		} catch (IllegalArgumentException exception) {
 
 		}
-		//Values (Extra)
+		//Tree
 		try {
 			if (toolName.equals(TreeTab.NAME)) {
 				return TreeTableFormat.valueOf(column);

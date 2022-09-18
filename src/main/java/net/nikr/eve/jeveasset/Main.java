@@ -117,6 +117,9 @@ public final class Main {
 		System.setProperty("jdk.http.auth.proxying.disabledSchemes", "");
 		//XXX - Workaround: javax.net.ssl.SSLHandshakeException: Received fatal alert: handshake_failure
 		System.setProperty("https.protocols", "SSLv3,TLSv1,TLSv1.1,TLSv1.2");
+		//Mac OSX
+		System.setProperty("apple.laf.useScreenMenuBar", "true");
+		System.setProperty("apple.awt.application.name", Program.PROGRAM_NAME);
 		//Validate directory
 		LibraryManager.checkLibraries();
 		//install the uncaught exception handlers

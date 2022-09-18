@@ -163,6 +163,9 @@ public class EsiPublicMarketOrdersGetter extends AbstractEsiGetter {
 		input.addOrders(orders, lastUpdate);
 		//Process data
 		OutbidProcesser.process(input, output);
+		if (output.hasUnknownLocations()) {
+			updateTask.addWarning(TaskType.PUBLIC_MARKET_ORDERS.getTaskName(), "Market orders in unknown locations ignored");
+		}
 		if (lastUpdate != null) {
 			Settings.lock("Public Orders (last update)");
 			Settings.get().setPublicMarketOrdersLastUpdate(lastUpdate);

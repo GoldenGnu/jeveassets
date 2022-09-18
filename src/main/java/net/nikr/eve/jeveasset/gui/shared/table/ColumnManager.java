@@ -49,7 +49,7 @@ import net.nikr.eve.jeveasset.gui.shared.menu.JMenuJumps.Jump;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 
-public class ColumnManager<T extends Enum<T> & EnumTableColumn<Q>, Q> {
+public class ColumnManager<T extends Enum<T> & EnumTableColumn<Q>, Q> implements SimpleColumnManager<Q> {
 
 	private static final Map<String, ColumnManager<?, ?>> COLUMN_MANAGERS = new HashMap<>();
 	private static final Set<String> loaded = new HashSet<>();
@@ -264,6 +264,7 @@ public class ColumnManager<T extends Enum<T> & EnumTableColumn<Q>, Q> {
 		updateGUI();
 	}
 
+	@Override
 	public FormulaColumn<Q> addColumn(Formula add) {
 		//Add
 		FormulaColumn<Q> column = add(add);
@@ -277,6 +278,7 @@ public class ColumnManager<T extends Enum<T> & EnumTableColumn<Q>, Q> {
 		return column;
 	}
 
+	@Override
 	public JumpColumn<Q> addColumn(Jump add) {
 		if (contains(add)) {
 			return null; //Skip existing

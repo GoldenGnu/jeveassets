@@ -36,13 +36,18 @@ public abstract class TabsContracts extends Bundle {
 	}
 
 	public abstract String auction();
+	public abstract String bought();
+	public abstract String buying();
 	public abstract String collapse();
+	public abstract String collateralAcceptor();
+	public abstract String collateralIssuer();
 	public abstract String columnAccepted();
 	public abstract String columnAcceptor();
 	public abstract String columnAssignee();
 	public abstract String columnBuyout();
 	public abstract String columnCollateral();
 	public abstract String columnCompleted();
+	public abstract String columnContractID();
 	public abstract String columnEndStation();
 	public abstract String columnExpired();
 	public abstract String columnIncluded();
@@ -50,14 +55,25 @@ public abstract class TabsContracts extends Bundle {
 	public abstract String columnForCorp();
 	public abstract String columnIssuer();
 	public abstract String columnIssuerCorp();
+	public abstract String columnItemID();
+	public abstract String columnMarketPrice();
+	public abstract String columnMarketValue();
+	public abstract String columnMarketValueToolTip();
+	public abstract String columnMaterialEfficiency();
+	public abstract String columnMaterialEfficiencyToolTip();
 	public abstract String columnName();
 	public abstract String columnNumDays();
 	public abstract String columnPrice();
 	public abstract String columnQuantity();
+	public abstract String columnRecordID();
 	public abstract String columnReward();
+	public abstract String columnRuns();
+	public abstract String columnRunsToolTip();
 	public abstract String columnSingleton();
 	public abstract String columnStartStation();
 	public abstract String columnStatus();
+	public abstract String columnTimeEfficiency();
+	public abstract String columnTimeEfficiencyToolTip();
 	public abstract String columnTitle();
 	public abstract String columnType();
 	public abstract String columnTypeID();
@@ -71,6 +87,9 @@ public abstract class TabsContracts extends Bundle {
 	public abstract String notAccepted();
 	public abstract String packaged();
 	public abstract String publicContract();
+	public abstract String sellingPrice();
+	public abstract String sellingAssets();
+	public abstract String sold();
 	public abstract String statusCancelled();
 	public abstract String statusCompleted();
 	public abstract String statusCompletedByContractor();

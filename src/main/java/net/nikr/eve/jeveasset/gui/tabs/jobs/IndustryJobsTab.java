@@ -33,19 +33,20 @@ import ca.odell.glazedlists.swing.TableComparatorChooser;
 import java.util.ArrayList;
 import java.util.Collection;
 import javax.swing.JComponent;
-import javax.swing.JLabel;
 import javax.swing.JMenu;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
 import net.nikr.eve.jeveasset.data.settings.types.LocationType;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
+import net.nikr.eve.jeveasset.gui.frame.StatusPanel.JStatusLabel;
 import net.nikr.eve.jeveasset.gui.images.Images;
-import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTabPrimary;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuColumns;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
+import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo.AutoNumberFormat;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
@@ -59,9 +60,9 @@ import net.nikr.eve.jeveasset.i18n.TabsJobs;
 public class IndustryJobsTab extends JMainTabPrimary {
 
 	private final JAutoColumnTable jTable;
-	private final JLabel jCount;
-	private final JLabel jInventionSuccess;
-	private final JLabel jManufactureOutputValue;
+	private final JStatusLabel jCount;
+	private final JStatusLabel jInventionSuccess;
+	private final JStatusLabel jManufactureOutputValue;
 
 	//Table
 	private final EventList<MyIndustryJob> eventList;
@@ -112,13 +113,13 @@ public class IndustryJobsTab extends JMainTabPrimary {
 		//Menu
 		installTableTool(new JobsTableMenu(), tableFormat, tableModel, jTable, filterControl, MyIndustryJob.class);
 
-		jInventionSuccess = StatusPanel.createLabel(TabsJobs.get().inventionSuccess(), Images.JOBS_INVENTION_SUCCESS.getIcon());
+		jInventionSuccess = StatusPanel.createLabel(TabsJobs.get().inventionSuccess(), Images.JOBS_INVENTION_SUCCESS.getIcon(), AutoNumberFormat.PERCENT);
 		this.addStatusbarLabel(jInventionSuccess);
 
-		jManufactureOutputValue = StatusPanel.createLabel(TabsJobs.get().manufactureJobsValue(), Images.TOOL_VALUES.getIcon());
+		jManufactureOutputValue = StatusPanel.createLabel(TabsJobs.get().manufactureJobsValue(), Images.TOOL_VALUES.getIcon(), AutoNumberFormat.ISK);
 		this.addStatusbarLabel(jManufactureOutputValue);
 
-		jCount = StatusPanel.createLabel(TabsJobs.get().count(), Images.EDIT_ADD.getIcon());
+		jCount = StatusPanel.createLabel(TabsJobs.get().count(), Images.EDIT_ADD.getIcon(), AutoNumberFormat.ITEMS);
 		this.addStatusbarLabel(jCount);
 
 		layout.setHorizontalGroup(
@@ -170,8 +171,8 @@ public class IndustryJobsTab extends JMainTabPrimary {
 		}
 
 		@Override
-		public void addInfoMenu(JComponent jComponent) {
-			JMenuInfo.industryJob(jComponent, selectionModel.getSelected());
+		public void addInfoMenu(JPopupMenu jPopupMenu) {
+			JMenuInfo.industryJob(jPopupMenu, selectionModel.getSelected());
 		}
 
 		@Override
@@ -203,12 +204,12 @@ public class IndustryJobsTab extends JMainTabPrimary {
 				filterList.getReadWriteLock().readLock().unlock();
 			}
 			if (inventionCount <= 0) {
-				jInventionSuccess.setText(Formater.percentFormat(0.0));
+				jInventionSuccess.setNumber(0.0);
 			} else {
-				jInventionSuccess.setText(Formater.percentFormat(success / inventionCount));
+				jInventionSuccess.setNumber(success / inventionCount);
 			}
-			jManufactureOutputValue.setText(Formater.iskFormat(outputValue));
-			jCount.setText(Formater.itemsFormat(count));
+			jManufactureOutputValue.setNumber(outputValue);
+			jCount.setNumber(count);
 		}
 	}
 

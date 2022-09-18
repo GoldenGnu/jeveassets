@@ -47,9 +47,9 @@ public class TrackerToolSettingsPanel extends JSettingsPanel {
 	}
 
 	@Override
-	public boolean save() {
+	public UpdateType save() {
 		Settings.get().setTrackerUseAssetPriceForSellOrders(jUseAssetPriceForSellOrders.isSelected());
-		return false;
+		return UpdateType.NONE;
 	}
 
 	@Override

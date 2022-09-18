@@ -23,6 +23,7 @@ package net.nikr.eve.jeveasset.gui.frame;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.util.concurrent.ExecutionException;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -40,6 +41,7 @@ public class MainMenu extends JMenuBar {
 	public enum MainMenuAction {
 		VALUES,
 		VALUE_TABLE,
+		PRICE_HISTORY,
 		LOADOUTS,
 		MARKET_ORDERS,
 		TRANSACTION,
@@ -81,6 +83,7 @@ public class MainMenu extends JMenuBar {
 
 //FILE
 		menu = new JMenu(GuiFrame.get().file());
+		menu.setMnemonic(KeyEvent.VK_F);
 		this.add(menu);
 
 		menuItem = new JMenuItem(GuiFrame.get().exit());
@@ -91,6 +94,7 @@ public class MainMenu extends JMenuBar {
 
 //TOOLS
 		menu = new JMenu(GuiFrame.get().tools());
+		menu.setMnemonic(KeyEvent.VK_T);
 		this.add(menu);
 
 		submenu = new JMenu(GuiFrame.get().netWorth());
@@ -112,6 +116,12 @@ public class MainMenu extends JMenuBar {
 		menuItem = new JMenuItem(GuiFrame.get().valueTable());
 		menuItem.setIcon(Images.TOOL_VALUE_TABLE.getIcon());
 		menuItem.setActionCommand(MainMenuAction.VALUE_TABLE.name());
+		menuItem.addActionListener(program);
+		submenu.add(menuItem);
+
+		menuItem = new JMenuItem(GuiFrame.get().priceHistory());
+		menuItem.setIcon(Images.TOOL_PRICE_HISTORY.getIcon());
+		menuItem.setActionCommand(MainMenuAction.PRICE_HISTORY.name());
 		menuItem.addActionListener(program);
 		submenu.add(menuItem);
 
@@ -159,11 +169,21 @@ public class MainMenu extends JMenuBar {
 		menuItem.addActionListener(program);
 		submenu.add(menuItem);
 
+		submenu.addSeparator();
+
 		menuItem = new JMenuItem(GuiFrame.get().market());
 		menuItem.setIcon(Images.TOOL_MARKET_ORDERS.getIcon());
 		menuItem.setActionCommand(MainMenuAction.MARKET_ORDERS.name());
 		menuItem.addActionListener(program);
 		submenu.add(menuItem);
+
+		menuItem = new JMenuItem(GuiFrame.get().contracts());
+		menuItem.setIcon(Images.TOOL_CONTRACTS.getIcon());
+		menuItem.setActionCommand(MainMenuAction.CONTRACTS.name());
+		menuItem.addActionListener(program);
+		submenu.add(menuItem);
+
+		submenu.addSeparator();
 
 		menuItem = new JMenuItem(GuiFrame.get().industry());
 		menuItem.setIcon(Images.TOOL_INDUSTRY_JOBS.getIcon());
@@ -174,12 +194,6 @@ public class MainMenu extends JMenuBar {
 		menuItem = new JMenuItem(GuiFrame.get().industrySlots());
 		menuItem.setIcon(Images.TOOL_INDUSTRY_SLOTS.getIcon());
 		menuItem.setActionCommand(MainMenuAction.INDUSTRY_SLOT.name());
-		menuItem.addActionListener(program);
-		submenu.add(menuItem);
-
-		menuItem = new JMenuItem(GuiFrame.get().contracts());
-		menuItem.setIcon(Images.TOOL_CONTRACTS.getIcon());
-		menuItem.setActionCommand(MainMenuAction.CONTRACTS.name());
 		menuItem.addActionListener(program);
 		submenu.add(menuItem);
 
@@ -213,6 +227,7 @@ public class MainMenu extends JMenuBar {
 
 //UPDATE
 		menu = new JMenu(GuiFrame.get().update());
+		menu.setMnemonic(KeyEvent.VK_U);
 		this.add(menu);
 
 		jUpdateMenu = new JMenuItem(GuiFrame.get().update1());
@@ -231,10 +246,12 @@ public class MainMenu extends JMenuBar {
 
 //TABLE
 		jTableMenu = new JMenu(GuiFrame.get().table());
+		jTableMenu.setMnemonic(KeyEvent.VK_A);
 		this.add(jTableMenu);
 
 //OPTIONS
 		menu = new JMenu(GuiFrame.get().options());
+		menu.setMnemonic(KeyEvent.VK_O);
 		this.add(menu);
 
 		menuItem = new JMenuItem(GuiFrame.get().accounts());
@@ -260,6 +277,7 @@ public class MainMenu extends JMenuBar {
 
 //HELP
 		menu = new JMenu(GuiFrame.get().help());
+		menu.setMnemonic(KeyEvent.VK_H);
 		this.add(menu);
 
 		menuItem = new JMenuItem(GuiFrame.get().linkWiki());

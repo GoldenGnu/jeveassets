@@ -21,6 +21,7 @@
 package net.nikr.eve.jeveasset.data.api.raw;
 
 import java.util.Date;
+import net.nikr.eve.jeveasset.i18n.TabsJournal;
 import net.nikr.eve.jeveasset.io.shared.RawConverter;
 import net.troja.eve.esi.model.CharacterWalletJournalResponse;
 import net.troja.eve.esi.model.CorporationWalletJournalResponse;
@@ -51,18 +52,78 @@ public class RawJournal {
 	}
 
 	public enum ContextType {
-		STRUCTURE_ID("structure_id"),
-		STATION_ID("station_id"),
-		MARKET_TRANSACTION_ID("market_transaction_id"),
-		CHARACTER_ID("character_id"),
-		CORPORATION_ID("corporation_id"),
-		ALLIANCE_ID("alliance_id"),
-		EVE_SYSTEM("eve_system"),
-		INDUSTRY_JOB_ID("industry_job_id"),
-		CONTRACT_ID("contract_id"),
-		PLANET_ID("planet_id"),
-		SYSTEM_ID("system_id"),
-		TYPE_ID("type_id");
+		STRUCTURE_ID("structure_id") {
+			@Override
+			protected String getI18N() {
+				return TabsJournal.get().contextStructureID();
+			}
+		},
+		STATION_ID("station_id") {
+			@Override
+			protected String getI18N() {
+				return TabsJournal.get().contextStationID();
+			}
+		},
+		MARKET_TRANSACTION_ID("market_transaction_id") {
+			@Override
+			protected String getI18N() {
+				return TabsJournal.get().contextTransactionID();
+			}
+		},
+		CHARACTER_ID("character_id") {
+			@Override
+			protected String getI18N() {
+				return TabsJournal.get().contextCharacterID();
+			}
+		},
+		CORPORATION_ID("corporation_id") {
+			@Override
+			protected String getI18N() {
+				return TabsJournal.get().contextCorporationID();
+			}
+		},
+		ALLIANCE_ID("alliance_id") {
+			@Override
+			protected String getI18N() {
+				return TabsJournal.get().contextAllianceID();
+			}
+		},
+		EVE_SYSTEM("eve_system") {
+			@Override
+			protected String getI18N() {
+				return TabsJournal.get().contextEveID();
+			}
+		},
+		INDUSTRY_JOB_ID("industry_job_id") {
+			@Override
+			protected String getI18N() {
+				return TabsJournal.get().contextIndustryJobID();
+			}
+		},
+		CONTRACT_ID("contract_id") {
+			@Override
+			protected String getI18N() {
+				return TabsJournal.get().contextContractID();
+			}
+		},
+		PLANET_ID("planet_id") {
+			@Override
+			protected String getI18N() {
+				return TabsJournal.get().contextPlanetID();
+			}
+		},
+		SYSTEM_ID("system_id") {
+			@Override
+			protected String getI18N() {
+				return TabsJournal.get().contextSystemID();
+			}
+		},
+		TYPE_ID("type_id") {
+			@Override
+			protected String getI18N() {
+				return TabsJournal.get().contextTypeID();
+			}
+		};
 
 		private final String value;
 
@@ -73,6 +134,13 @@ public class RawJournal {
 		public String getValue() {
 			return value;
 		}
+
+		@Override
+		public String toString() {
+			return getI18N();
+		}
+
+		protected abstract String getI18N();
 	}
 
 	private Double amount = null;
@@ -202,6 +270,14 @@ public class RawJournal {
 
 	public ContextType getContextType() {
 		return contextIdTypeEnum;
+	}
+
+	public String getContextTypeName() {
+		if (contextIdTypeEnum == null) {
+			return "";
+		} else {
+			return contextIdTypeEnum.toString();
+		}
 	}
 
 	public void setContextType(ContextType contextType) {

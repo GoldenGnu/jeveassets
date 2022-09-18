@@ -35,6 +35,8 @@ import javax.swing.JPopupMenu;
 import javax.swing.JTable;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.event.MenuEvent;
+import javax.swing.event.MenuListener;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.my.MyAsset;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
@@ -64,6 +66,7 @@ public class MenuManager<T extends Enum<T> & EnumTableColumn<Q>, Q> {
 		PRICE,
 		NAME,
 		REPROCESSED,
+		PRICE_HISTORY,
 		JUMPS,
 		ROUTING,
 		COPY_PLUS,
@@ -90,6 +93,7 @@ public class MenuManager<T extends Enum<T> & EnumTableColumn<Q>, Q> {
 	private final Program program;
 	private final ColumnManager<T, Q> columnManager;
 	private static final Map<Class<?>, MenuManager<?, ?>> MANAGERS = new HashMap<Class<?>, MenuManager<?, ?>>();
+	private static Boolean changed = null;
 
 	public static <T extends Enum<T> & EnumTableColumn<Q>, Q> void install(final Program program, final TableMenu<Q> tableMenu, JTable jTable, final ColumnManager<T, Q> columnManager, final Class<Q> clazz) {
 		MenuManager<T, Q> menuManager = new MenuManager<>(program, tableMenu, jTable, columnManager, clazz);
@@ -97,9 +101,44 @@ public class MenuManager<T extends Enum<T> & EnumTableColumn<Q>, Q> {
 		if (put != null) {
 			throw new RuntimeException("Duplicated MenuManager Class");
 		}
+		if (changed == null) { //Only do once
+			changed = false;
+			program.getMainWindow().getMenu().getTableMenu().addMenuListener(new MenuListener() {
+				@Override
+				public void menuSelected(MenuEvent e) {
+					if (changed) {
+						changed = false;
+						Program.ensureEDT(new Runnable() {
+							@Override
+							public void run() {
+								program.getMainWindow().getSelectedTab().createTableMenu();
+							}
+						});
+					}
+				}
+				@Override
+				public void menuDeselected(MenuEvent e) { }
+
+				@Override
+				public void menuCanceled(MenuEvent e) { }
+			});
+		}
 	}
 
 	public static void update(final Program program, final Class<?> clazz) {
+		MenuManager<?, ?> menuManager = MANAGERS.get(clazz);
+		JMenu jMenu = program.getMainWindow().getMenu().getTableMenu();
+		if (menuManager != null) {
+			jMenu.setEnabled(true);
+			changed = true;
+		} else { //No table menu
+			jMenu.removeAll();
+			jMenu.setEnabled(false);
+		}
+
+	}
+
+	public static void create(final Program program, final Class<?> clazz) {
 		MenuManager<?, ?> menuManager = MANAGERS.get(clazz);
 		if (menuManager != null) {
 			menuManager.updateMainTableMenu();
@@ -200,6 +239,10 @@ public class MenuManager<T extends Enum<T> & EnumTableColumn<Q>, Q> {
 	//REPROCESSED
 		if (itemSupported) {
 			menus.put(MenuEnum.REPROCESSED, new JMenuReprocessed<>(program));
+		}
+	//PRICE HISTORY
+		if (itemSupported) {
+			menus.put(MenuEnum.PRICE_HISTORY, new JMenuPriceHistory<>(program));
 		}
 	//JUMPS
 		if (jumpsSupported) {
@@ -321,6 +364,12 @@ public class MenuManager<T extends Enum<T> & EnumTableColumn<Q>, Q> {
 			jComponent.add(jReprocessed.getComponent());
 			notEmpty = true;
 		}
+	//PRICE HISTORY
+		AutoMenu<Q> jPriceHistory = menus.get(MenuEnum.PRICE_HISTORY);
+		if (jPriceHistory != null) {
+			jComponent.add(jPriceHistory.getComponent());
+			notEmpty = true;
+		}
 	//JUMPS
 		AutoMenu<Q> jJumps = menus.get(MenuEnum.JUMPS);
 		if (jJumps != null) {
@@ -356,7 +405,9 @@ public class MenuManager<T extends Enum<T> & EnumTableColumn<Q>, Q> {
 			notEmpty = true;
 		}
 	//INFO
-		tableMenu.addInfoMenu(jComponent);
+		if (jComponent instanceof JPopupMenu) {
+			tableMenu.addInfoMenu((JPopupMenu) jComponent);
+		}
 	//SUM
 		AutoMenu<Q> jSum = menus.get(MenuEnum.SUM);
 		if (jSum != null) {
@@ -491,10 +542,13 @@ public class MenuManager<T extends Enum<T> & EnumTableColumn<Q>, Q> {
 		@Override
 		public void valueChanged(final ListSelectionEvent e) {
 			if (!e.getValueIsAdjusting()) {
+				if (changed) {
+					return; //already changed
+				}
 				if (selectedColumns == null || selectedRows == null || !Arrays.equals(selectedColumns, jTable.getSelectedColumns()) || !Arrays.equals(selectedRows, jTable.getSelectedRows())) {
 					selectedColumns = jTable.getSelectedColumns();
 					selectedRows = jTable.getSelectedRows();
-					updateMainTableMenu();
+					changed = true;
 				}
 			}
 		}
@@ -569,7 +623,7 @@ public class MenuManager<T extends Enum<T> & EnumTableColumn<Q>, Q> {
 		public MenuData<T> getMenuData();
 		public JMenu getFilterMenu();
 		public JMenu getColumnMenu();
-		public void addInfoMenu(JComponent jComponent);
+		public void addInfoMenu(JPopupMenu jPopupMenu);
 		public void addToolMenu(JComponent jComponent);
 	}
 }

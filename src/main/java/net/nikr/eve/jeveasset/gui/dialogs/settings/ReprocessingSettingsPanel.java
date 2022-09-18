@@ -73,12 +73,12 @@ public class ReprocessingSettingsPanel extends JSettingsPanel {
 		jStationButtonGroup.add(jStation50);
 		jStationButtonGroup.add(jStationOther);
 
-		JLabel j0 = new JLabel(DialoguesSettings.get().zero());
-		JLabel j1 = new JLabel(DialoguesSettings.get().one());
-		JLabel j2 = new JLabel(DialoguesSettings.get().two());
-		JLabel j3 = new JLabel(DialoguesSettings.get().three());
-		JLabel j4 = new JLabel(DialoguesSettings.get().four());
-		JLabel j5 = new JLabel(DialoguesSettings.get().five());
+		JLabel jOre0 = new JLabel(DialoguesSettings.get().zero());
+		JLabel jOre1 = new JLabel(DialoguesSettings.get().one());
+		JLabel jOre2 = new JLabel(DialoguesSettings.get().two());
+		JLabel jOre3 = new JLabel(DialoguesSettings.get().three());
+		JLabel jOre4 = new JLabel(DialoguesSettings.get().four());
+		JLabel jOre5 = new JLabel(DialoguesSettings.get().five());
 
 		JLabel jReprocessingLabel= new JLabel(DialoguesSettings.get().reprocessingLevel());
 		jReprocessing = new JRadioButton[6];
@@ -143,6 +143,13 @@ public class ReprocessingSettingsPanel extends JSettingsPanel {
 		jOreButtonGroup.add(jOreProcessing[LEVEL4]);
 		jOreButtonGroup.add(jOreProcessing[LEVEL5]);
 
+		JLabel jScrap0 = new JLabel(DialoguesSettings.get().zero());
+		JLabel jScrap1 = new JLabel(DialoguesSettings.get().one());
+		JLabel jScrap2 = new JLabel(DialoguesSettings.get().two());
+		JLabel jScrap3 = new JLabel(DialoguesSettings.get().three());
+		JLabel jScrap4 = new JLabel(DialoguesSettings.get().four());
+		JLabel jScrap5 = new JLabel(DialoguesSettings.get().five());
+
 		JLabel jScrapmetalLabel = new JLabel(DialoguesSettings.get().scrapmetalProcessingLevel());
 		jScrapmetalProcessing = new JRadioButton[6];
 		jScrapmetalProcessing[LEVEL0] = new JRadioButton();
@@ -182,45 +189,51 @@ public class ReprocessingSettingsPanel extends JSettingsPanel {
 						)
 						.addGroup(layout.createSequentialGroup()
 							.addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
-								.addComponent(j0)
+								.addComponent(jOre0)
 								.addComponent(jReprocessing[LEVEL0])
 								.addComponent(jReprocessingEfficiency[LEVEL0])
 								.addComponent(jOreProcessing[LEVEL0])
+								.addComponent(jScrap0)
 								.addComponent(jScrapmetalProcessing[LEVEL0])
 							)
 							.addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
-								.addComponent(j1)
+								.addComponent(jOre1)
 								.addComponent(jReprocessing[LEVEL1])
 								.addComponent(jReprocessingEfficiency[LEVEL1])
 								.addComponent(jOreProcessing[LEVEL1])
+								.addComponent(jScrap1)
 								.addComponent(jScrapmetalProcessing[LEVEL1])
 							)
 							.addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
-								.addComponent(j2)
+								.addComponent(jOre2)
 								.addComponent(jReprocessing[LEVEL2])
 								.addComponent(jReprocessingEfficiency[LEVEL2])
 								.addComponent(jOreProcessing[LEVEL2])
+								.addComponent(jScrap2)
 								.addComponent(jScrapmetalProcessing[LEVEL2])
 							)
 							.addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
-								.addComponent(j3)
+								.addComponent(jOre3)
 								.addComponent(jReprocessing[LEVEL3])
 								.addComponent(jReprocessingEfficiency[LEVEL3])
 								.addComponent(jOreProcessing[LEVEL3])
+								.addComponent(jScrap3)
 								.addComponent(jScrapmetalProcessing[LEVEL3])
 							)
 							.addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
-								.addComponent(j4)
+								.addComponent(jOre4)
 								.addComponent(jReprocessing[LEVEL4])
 								.addComponent(jReprocessingEfficiency[LEVEL4])
 								.addComponent(jOreProcessing[LEVEL4])
+								.addComponent(jScrap4)
 								.addComponent(jScrapmetalProcessing[LEVEL4])
 							)
 							.addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
-								.addComponent(j5)
+								.addComponent(jOre5)
 								.addComponent(jReprocessing[LEVEL5])
 								.addComponent(jReprocessingEfficiency[LEVEL5])
 								.addComponent(jOreProcessing[LEVEL5])
+								.addComponent(jScrap5)
 								.addComponent(jScrapmetalProcessing[LEVEL5])
 							)
 						)
@@ -237,12 +250,12 @@ public class ReprocessingSettingsPanel extends JSettingsPanel {
 					.addComponent(jStationPercentLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				)
 				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-					.addComponent(j0, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					.addComponent(j1, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					.addComponent(j2, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					.addComponent(j3, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					.addComponent(j4, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					.addComponent(j5, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jOre0, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jOre1, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jOre2, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jOre3, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jOre4, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jOre5, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				)
 				.addGap(0)
 				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
@@ -274,6 +287,15 @@ public class ReprocessingSettingsPanel extends JSettingsPanel {
 				)
 				.addGap(Program.getButtonsHeight())
 				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+					.addComponent(jScrap0, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jScrap1, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jScrap2, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jScrap3, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jScrap4, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jScrap5, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+				)
+				.addGap(0)
+				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
 					.addComponent(jScrapmetalLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jScrapmetalProcessing[LEVEL0], Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jScrapmetalProcessing[LEVEL1], Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
@@ -290,12 +312,12 @@ public class ReprocessingSettingsPanel extends JSettingsPanel {
 
 
 	@Override
-	public boolean save() {
+	public UpdateType save() {
 		ReprocessSettings reprocessSettings = new ReprocessSettings(Double.parseDouble(jStation.getText()), getSelected(jReprocessing), getSelected(jReprocessingEfficiency), getSelected(jOreProcessing), getSelected(jScrapmetalProcessing));
 		boolean update = !Settings.get().getReprocessSettings().equals(reprocessSettings);
 		Settings.get().setReprocessSettings(reprocessSettings);
 		//Update table if needed
-		return update;
+		return update ? UpdateType.FULL_UPDATE : UpdateType.NONE;
 	}
 
 	@Override
