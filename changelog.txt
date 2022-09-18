@@ -16,6 +16,48 @@
                   #### #  # #  # #  # #### #### #### #### ####
 
 ________________________________________________________________________________
+_7.3.0__________________________________________________________________________
+
+New Feature:
+-Added filters to the Overview Tool (Issue #336)
+-Added Janice as a price source (Issue #328)
+-Price History (Issue #76)
+-Added category column to stockpile table (contributed by Lazaren)
+-Added various values to the industry slots tool statusbar (Issue #337)
+-Added various values to the industry slots tool table popup menu (Issue #337)
+-Added various values to the contracts tool statusbar (Issue #333)
+-Added various values to the contracts tool table popup menu (Issue #132)
+-You can now copy statusbar values by clicking on them
+-Added tool tips explain you can click to copy to the info menu and statusbar
+-Added Context Type and Context ID columns to the Journal tool
+-Added ContractID and RecordID columns to the Contracts Tool
+-Added Market Value and Market Price columns to the Contracts Tool
+-Added ItemID/Runs/ME/TE columns to the Contracts Tool (only public contracts)
+-The tracker tool now have prices for blueprints in public contracts
+-Added placeholder examples for filter import (Issue #282) 
+-Improved market details character selection in the Stockpile tool (Issue #307)
+-Added mnemonic to the main menu
+-Added available label to stockpile separator row (Issue #341)
+
+Bug Fix:
+-Ignore profiles with invalid names
+-Include private structures in the contract appraisal settings reset on save
+-Refining equipment option did not accept decimal values (Issue #340)
+
+Changed:
+-Made the business tool menu a bit nicer
+-Added warning message when hitting the maximum of 25000 blueprints
+-Better warning for orders in unknown locations on outbid update (Issue #327)
+-Show warning when Nahimic Overlay is detected (Issue #313)
+
+Code:
+-Update eve-esi to 4.7.0
+-Optimized table main menu to only be updated before showing
+-Updates from setting changes now only update what is needed (Issue #334)
+-Added info level to UpdateTask (Used by "NOT ALLOWED YET")
+-Replaced OSXadapter with FlatDesktop from flatlaf  (Issue #329) 
+
+________________________________________________________________________________
 _7.2.1__________________________________________________________________________
 
 Bug Fixes:
