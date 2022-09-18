@@ -110,16 +110,6 @@ public abstract class FakeProgram extends Program {
 	}
 
 	@Override
-	public void showAbout() {
-		throw new UnsupportedOperationException("Not implemented");
-	}
-
-	@Override
-	public void showSettings() {
-		throw new UnsupportedOperationException("Not implemented");
-	}
-
-	@Override
 	public StockpileTab getStockpileTab() {
 		throw new UnsupportedOperationException("Not implemented");
 	}
@@ -211,11 +201,6 @@ public abstract class FakeProgram extends Program {
 
 	@Override
 	public void saveSettings(String msg) {
-		throw new UnsupportedOperationException("Not implemented");
-	}
-
-	@Override
-	public void saveExit() {
 		throw new UnsupportedOperationException("Not implemented");
 	}
 

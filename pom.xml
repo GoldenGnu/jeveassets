@@ -788,11 +788,6 @@
 			<version>3.1.1</version>
 		</dependency>
 		<dependency>
-			<groupId>apple.dts.samplecode</groupId>
-			<artifactId>osxadapter</artifactId>
-			<version>1.1.0</version>
-		</dependency>
-		<dependency>
 			<groupId>com.glazedlists</groupId>
 			<artifactId>glazedlists</artifactId>
 			<version>1.11.0</version>
@@ -901,6 +896,12 @@
 			<groupId>com.formdev</groupId>
 			<artifactId>flatlaf</artifactId>
 			<version>1.6.4</version>
+		</dependency>
+		<dependency>
+			<!-- https://github.com/JFormDesigner/FlatLaf/blob/master/CHANGELOG.md -->
+			<groupId>com.formdev</groupId>
+			<artifactId>flatlaf-extras</artifactId>
+			<version>2.4</version>
 		</dependency>
 		<dependency>
 			<!-- https://github.com/uklimaschewski/EvalEx/releases -->

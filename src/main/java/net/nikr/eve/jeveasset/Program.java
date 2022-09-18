@@ -21,7 +21,8 @@
 
 package net.nikr.eve.jeveasset;
 
-import apple.dts.samplecode.osxadapter.OSXAdapter;
+import com.formdev.flatlaf.extras.FlatDesktop;
+import com.formdev.flatlaf.extras.FlatDesktop.QuitResponse;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -33,6 +34,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Consumer;
 import javax.swing.InputMap;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -740,26 +742,30 @@ public class Program implements ActionListener {
 		profileManager.saveProfile();
 	}
 
-	/**
-	 * Used by macOsxCode() - should not be changed
-	 */
 	public void exit() {
+		if (safeExit()) {
+			System.exit(0);
+		}
+	}
+
+	/**
+	 * Make ready to exit
+	 * @return true for exit and false to cancel exit
+	 */
+	private boolean safeExit() {
 		if (getStatusPanel().updateInProgress() > 0) {
 			int value = JOptionPane.showConfirmDialog(getMainWindow().getFrame(), GuiFrame.get().exitMsg(getStatusPanel().updateInProgress()), GuiFrame.get().exitTitle(getStatusPanel().updateInProgress()), JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
 			if (value != JOptionPane.OK_OPTION) {
-				return;
+				return false;
 			}
 		}
 		getStatusPanel().cancelUpdates();
 		saveExit();
 		LOG.info("Running shutdown hook(s) and exiting...");
-		System.exit(0);
+		return true;
 	}
 
-	/**
-	 * Used by macOsxCode() - should not be renamed
-	 */
-	public void saveExit() {
+	private void saveExit() {
 		if (CliOptions.get().isLazySave()) {
 			doSaveSettings("Exit");
 		} else {
@@ -769,18 +775,22 @@ public class Program implements ActionListener {
 		TrackerData.waitForEmptySaveQueue();
 	}
 
-	/**
-	 * Used by macOsxCode() - should not be renamed
-	 */
-	public void showAbout() {
-		aboutDialog.setVisible(true);
+	private void showAbout() {
+		ensureEDT(new Runnable() {
+			@Override
+			public void run() {
+				aboutDialog.setVisible(true);
+			}
+		});
 	}
 
-	/**
-	 * Used by macOsxCode() - should not be renamed
-	 */
-	public void showSettings() {
-		settingsDialog.setVisible(true);
+	private void showSettings() {
+		ensureEDT(new Runnable() {
+			@Override
+			public void run() {
+				settingsDialog.setVisible(true);
+			}
+		});
 	}
 
 	public String getProgramDataVersion() {
@@ -789,15 +799,28 @@ public class Program implements ActionListener {
 
 	private void macOsxCode() {
 		if (FileUtil.onMac()) {
-			try {
-				OSXAdapter.setQuitHandler(this, getClass().getDeclaredMethod("saveExit", (Class[]) null));
-				OSXAdapter.setAboutHandler(this, getClass().getDeclaredMethod("showAbout", (Class[]) null));
-				OSXAdapter.setPreferencesHandler(this, getClass().getDeclaredMethod("showSettings", (Class[]) null));
-			} catch (NoSuchMethodException ex) {
-				LOG.error("NoSuchMethodException: " + ex.getMessage(), ex);
-			} catch (SecurityException ex) {
-				LOG.error("SecurityException: " + ex.getMessage(), ex);
-			}
+			FlatDesktop.setAboutHandler(new Runnable() {
+				@Override
+				public void run() {
+					showAbout();
+				}
+			});
+			FlatDesktop.setPreferencesHandler(new Runnable() {
+				@Override
+				public void run() {
+					showSettings();
+				}
+			});
+			FlatDesktop.setQuitHandler(new Consumer<QuitResponse>() {
+				@Override
+				public void accept(QuitResponse quitResponse) {
+					if (safeExit()) {
+						quitResponse.performQuit();
+					} else {
+						quitResponse.cancelQuit();
+					}
+				}
+			});
 		}
 	}
 
