@@ -125,7 +125,7 @@ public class FilterExport {
 		Map<String, List<Filter>> filters = new HashMap<>();
 		boolean headerLoaded = false;
 		if (importText == null) {
-			return null;
+			return filters;
 		}
 		List<String> groups = new ArrayList<>();
 		for (String line : importText.split("[\r\n]+")) {
