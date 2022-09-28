@@ -114,6 +114,9 @@ public class FilterManager<E> extends JManageDialog {
 
 	private void importData(String oldText) {
 		String importText = jTextDialog.importText(oldText, filterExport.createExample(columns));
+		if (importText == null) {
+			return; //Cancel
+		}
 		Map<String, List<Filter>> importedFilters = filterExport.importFilter(importText);
 		if (importedFilters.isEmpty()) {
 			int value = JOptionPane.showConfirmDialog(getDialog(), GuiShared.get().managerImportFailMsg(), GuiShared.get().managerImportFailTitle(), JOptionPane.OK_CANCEL_OPTION);

@@ -69,6 +69,13 @@ public class FilterExportTest extends TestUtil {
 	private final String filterName = "Filter Name";
 
 	@Test
+	public void testNull() {
+		FilterExport filterExport = new FilterExport("Toolname", new TestColumnManager<>());
+		Map<String, List<Filter>> importFilter = filterExport.importFilter(null);
+		assertNotNull(importFilter);
+	}
+
+	@Test
 	public void test() {
 	//Primary Tools
 		//Asset
