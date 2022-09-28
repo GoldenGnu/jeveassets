@@ -63,16 +63,16 @@ jEveAssets use EVE-Online API and SDE
 
 Link:
   Main site: http://www.eveonline.com
-  Toolkit: https://developers.eveonline.com/resource/resources
+  SDE: https://developers.eveonline.com/resource/resources
   API: https://esi.evetech.net/ui
 
-Toolkit License:
+SDE License:
   ©CCP hf. All rights reserved. Used with permission.
 
 ________________________________________________________________________________
 _FUZZWORK_______________________________________________________________________
 
-jEveAssets use fuzzwork API to get price data
+jEveAssets use the Fuzzwork API to get price data
 
 Link:
   https://market.fuzzwork.co.uk/api
@@ -80,7 +80,7 @@ Link:
 ________________________________________________________________________________
 _EVEMARKETER____________________________________________________________________
 
-jEveAssets use evemarketer.com API to get price data
+jEveAssets use the EveMarketer API to get price data
 
 Link:
   https://evemarketer.com
@@ -88,7 +88,7 @@ Link:
 ________________________________________________________________________________
 _JANICE_________________________________________________________________________
 
-jEveAssets use Janice API to get price data
+jEveAssets use the Janice API to get price data
 
 Link:
   https://janice.e-351.com/api/rest/docs/index.html
@@ -104,7 +104,7 @@ Link:
 ________________________________________________________________________________
 _ZKILLBOARD_____________________________________________________________________
 
-jEveAssets use zKillboard  API to get price history
+jEveAssets use zKillboard API to get price history
 
 Link:
   https://github.com/zKillboard/zKillboard/wiki/API-(Prices)
@@ -183,7 +183,7 @@ License:
 ________________________________________________________________________________
 _GRAPH__________________________________________________________________________
 
-EveAssets use the graph library in the routing tool
+EveAssets use the Graph library in the routing tool
 
 Link:
   https://github.com/GoldenGnu/graph
@@ -260,7 +260,7 @@ License:
 ________________________________________________________________________________
 _JFREECHART_____________________________________________________________________
 
-jEveAssets use JFreeChart to make charts (used in the Tracker Tool)
+jEveAssets use JFreeChart to make charts
 
 Link:
   http://www.jfree.org/jfreechart
