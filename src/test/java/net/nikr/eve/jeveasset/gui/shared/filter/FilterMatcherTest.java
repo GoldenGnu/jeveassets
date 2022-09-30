@@ -95,19 +95,10 @@ public class FilterMatcherTest extends TestUtil {
 		}
 
 		@Override
-		public boolean isColumnEditable(Object baseObject) {
-			return false;
+		public String toString() {
+			return getColumnName();
 		}
 
-		@Override
-		public boolean isShowDefault() {
-			return false;
-		}
-
-		@Override
-		public boolean setColumnValue(Object baseObject, Object editedValue) {
-			return false;
-		}
 	}
 
 	private String textColumn = null;

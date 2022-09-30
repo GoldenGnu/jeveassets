@@ -26,6 +26,7 @@ import java.util.Comparator;
 /**
  *
  * @author Candle
+ * @param <Q>
  */
 public interface EnumTableColumn<Q> {
 	public Class<?> getType();
@@ -33,10 +34,17 @@ public interface EnumTableColumn<Q> {
 	public String getColumnName();
 	public Object getColumnValue(Q from);
 	public String name();
-	public boolean isColumnEditable(Object baseObject);
-	public boolean isShowDefault();
-	public boolean setColumnValue(Object baseObject, Object editedValue);
-	default public String getColumnToolTip() {
+	public default boolean isColumnEditable(Object baseObject) {
+		return false;
+	}
+	public default boolean isShowDefault() {
+		return true;
+	}
+	public default boolean setColumnValue(Object baseObject, Object editedValue) {
+		return false;
+	}
+	public default String getColumnToolTip() {
 		return null;
 	}
+
 }
