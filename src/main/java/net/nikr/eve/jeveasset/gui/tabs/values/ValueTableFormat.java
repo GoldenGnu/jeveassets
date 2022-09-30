@@ -285,21 +285,8 @@ public enum ValueTableFormat implements EnumTableColumn<Value> {
 		return comparator;
 	}
 	@Override
-	public boolean isColumnEditable(final Object baseObject) {
-		return false;
-	}
-	@Override
-	public boolean isShowDefault() {
-		return true;
-	}
-	@Override
-	public boolean setColumnValue(final Object baseObject, final Object editedValue) {
-		return false;
-	}
-	@Override
 	public String toString() {
 		return getColumnName();
 	}
-	//XXX - TableFormat.getColumnValue(...) Workaround
-	@Override public abstract Object getColumnValue(final Value from);
+
 }

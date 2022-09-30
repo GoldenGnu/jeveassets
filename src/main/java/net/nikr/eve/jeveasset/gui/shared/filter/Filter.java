@@ -60,21 +60,6 @@ public class Filter {
 		}
 
 		@Override
-		public boolean isColumnEditable(Object baseObject) {
-			return false;
-		}
-
-		@Override
-		public boolean isShowDefault() {
-			return false;
-		}
-
-		@Override
-		public boolean setColumnValue(Object baseObject, Object editedValue) {
-			return false;
-		}
-
-		@Override
 		public String toString() {
 			return GuiShared.get().filterAll();
 		}
