@@ -99,7 +99,6 @@ public enum StockpileTableFormat implements EnumTableColumn<StockpileItem> {
 			}
 			return false;
 		}
-
 		@Override
 		public boolean setColumnValue(final Object baseObject, final Object editedValue) {
 			if ((editedValue instanceof Double) && (baseObject instanceof StockpileItem)) {
