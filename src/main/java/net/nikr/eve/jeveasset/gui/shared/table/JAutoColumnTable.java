@@ -66,6 +66,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.ResizeMode
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.SimpleColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels.FixedEventTableModel;
 import net.nikr.eve.jeveasset.gui.shared.table.SeparatorTableCell.JSeparatorPanel;
+import net.nikr.eve.jeveasset.gui.shared.table.TableCellRenderers.BetterNumberEditor;
 import net.nikr.eve.jeveasset.gui.shared.table.TableCellRenderers.ComponentEditor;
 import net.nikr.eve.jeveasset.gui.shared.table.TableCellRenderers.ComponentRenderer;
 import net.nikr.eve.jeveasset.gui.shared.table.TableCellRenderers.DateCellRenderer;
@@ -135,6 +136,7 @@ public class JAutoColumnTable extends JTable {
 		this.setDefaultRenderer(ExpirerDate.class, new ToStringCellRenderer(SwingConstants.CENTER));
 		this.setDefaultRenderer(Component.class, new ComponentRenderer());
 		this.setDefaultEditor(Component.class, new ComponentEditor(this.getDefaultEditor(Component.class)));
+		this.setDefaultEditor(Number.class, new BetterNumberEditor());
 
 		autoResizeColumns();
 
