@@ -106,23 +106,8 @@ public enum LogTableFormat implements EnumTableColumn<AssetLogSource> {
 		return comparator;
 	}
 	@Override
-	public boolean isColumnEditable(final Object baseObject) {
-		return false;
-	}
-	@Override
-	public boolean isShowDefault() {
-		return true;
-	}
-	@Override
-	public boolean setColumnValue(final Object baseObject, final Object editedValue) {
-		return false;
-	}
-	@Override
 	public String toString() {
 		return getColumnName();
 	}
-	//XXX - TableFormat.getColumnValue(...) Workaround
-	@Override public abstract Object getColumnValue(final AssetLogSource from);
-	//XXX - TableFormat.getColumnName() Workaround
-	@Override public abstract String getColumnName();
+
 }

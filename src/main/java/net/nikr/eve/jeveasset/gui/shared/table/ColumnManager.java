@@ -435,21 +435,6 @@ public class ColumnManager<T extends Enum<T> & EnumTableColumn<Q>, Q> implements
 		}
 
 		@Override
-		public boolean isColumnEditable(Object baseObject) {
-			return false;
-		}
-
-		@Override
-		public boolean isShowDefault() {
-			return true;
-		}
-
-		@Override
-		public boolean setColumnValue(Object baseObject, Object editedValue) {
-			return false;
-		}
-
-		@Override
 		public String toString() {
 			return getColumnName();
 		}
@@ -530,21 +515,6 @@ public class ColumnManager<T extends Enum<T> & EnumTableColumn<Q>, Q> implements
 		@Override
 		public String name() {
 			return jump.getName();
-		}
-
-		@Override
-		public boolean isColumnEditable(Object baseObject) {
-			return false;
-		}
-
-		@Override
-		public boolean isShowDefault() {
-			return true;
-		}
-
-		@Override
-		public boolean setColumnValue(Object baseObject, Object editedValue) {
-			return false;
 		}
 
 		@Override
