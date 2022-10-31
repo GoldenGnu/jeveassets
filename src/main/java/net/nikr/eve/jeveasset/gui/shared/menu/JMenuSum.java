@@ -80,7 +80,7 @@ public class JMenuSum<T> extends JAutoMenuComponent<T> {
 			} else {
 				format = AutoNumberFormat.DOUBLE;
 			}
-			jMenuItem = JMenuInfo.createMenuItem(null, null, bigDecimal.doubleValue(), format, null, null, Images.MISC_SUM.getIcon());
+			jMenuItem = JMenuInfo.createMenuItem(null, null, bigDecimal.doubleValue(), format, GuiShared.get().sum(), null, Images.MISC_SUM.getIcon());
 		} else {
 			jMenuItem = jDefault;
 		}
