@@ -39,6 +39,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JViewport;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
 import javax.swing.event.ChangeEvent;
@@ -571,7 +572,14 @@ public class JAutoColumnTable extends JTable {
 		public void columnSelectionChanged(final ListSelectionEvent e) { }
 
 		@Override
-		public void mouseClicked(final MouseEvent e) { }
+		public void mouseClicked(final MouseEvent e) {
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					autoResizeColumns(); //Sorted!
+				}
+			});
+		}
 
 		@Override
 		public void mousePressed(final MouseEvent e) {
