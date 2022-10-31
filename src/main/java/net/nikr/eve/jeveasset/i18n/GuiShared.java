@@ -236,6 +236,7 @@ public abstract class GuiShared extends Bundle {
 	public abstract String set();
 	public abstract String station();
 	public abstract String stockpile();
+	public abstract String sum();
 	public abstract String system();
 	public abstract String tableColumns();
 	public abstract String tableColumnsReset();
