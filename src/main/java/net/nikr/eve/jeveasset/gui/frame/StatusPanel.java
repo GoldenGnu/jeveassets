@@ -218,7 +218,7 @@ public class StatusPanel extends JGroupLayoutPanel {
 		JLabel jLabel = new JLabel();
 		jLabel.setIcon(icon);
 		jLabel.setHorizontalAlignment(JLabel.CENTER);
-		jLabel.setToolTipText(GuiShared.get().clickToCopyWrap(toolTip));
+		jLabel.setToolTipText(toolTip);
 		return jLabel;
 	}
 
@@ -389,6 +389,12 @@ public class StatusPanel extends JGroupLayoutPanel {
 						} else {
 							CopyHandler.toClipboard(text);
 						}
+						final Icon restore;
+						if (icon == null) {
+							restore = getIcon();
+						} else {
+							restore = icon;
+						}
 						JStatusLabel.super.setText(GuiShared.get().selectionCopiedToClipboard());
 						setIcon(Images.EDIT_COPY.getIcon());
 						final Timer timer = new Timer(JMenuInfo.COPY_DELAY, null);
@@ -396,7 +402,7 @@ public class StatusPanel extends JGroupLayoutPanel {
 							@Override
 							public void actionPerformed(ActionEvent e) {
 								updateText();
-								setIcon(icon);
+								setIcon(restore);
 								timer.stop();
 							}
 						});
