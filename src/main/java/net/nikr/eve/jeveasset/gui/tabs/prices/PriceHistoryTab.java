@@ -86,7 +86,7 @@ import net.nikr.eve.jeveasset.gui.frame.StatusPanel.Progress;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel.UpdateType;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
-import net.nikr.eve.jeveasset.gui.shared.Formater;
+import net.nikr.eve.jeveasset.gui.shared.Formatter;
 import net.nikr.eve.jeveasset.gui.shared.InstantToolTip;
 import net.nikr.eve.jeveasset.gui.shared.components.JAutoCompleteDialog;
 import net.nikr.eve.jeveasset.gui.shared.components.JDateChooser;
@@ -165,7 +165,7 @@ public class PriceHistoryTab extends JMainTabSecondary {
 	private final XYLineAndShapeRenderer renderer;
 
 
-	private final DateFormat dateFormat = new SimpleDateFormat(Formater.COLUMN_DATE);
+	private final DateFormat dateFormat = new SimpleDateFormat(Formatter.COLUMN_DATE);
 	private final NumberFormat iskFormat = new DecimalFormat("#,##0.00 isk");
 
 	//GUI
@@ -375,7 +375,7 @@ public class PriceHistoryTab extends JMainTabSecondary {
 
 		rangeLogarithmicAxis = new LogarithmicAxis("");
 		rangeLogarithmicAxis.setStrictValuesFlag(false);
-		rangeLogarithmicAxis.setNumberFormatOverride(Formater.AUTO_FORMAT);
+		rangeLogarithmicAxis.setNumberFormatOverride(Formatter.AUTO_FORMAT);
 		rangeLogarithmicAxis.setTickLabelFont(jFromLabel.getFont());
 		rangeLogarithmicAxis.setTickLabelPaint(Colors.TEXTFIELD_FOREGROUND.getColor());
 		rangeLogarithmicAxis.setAutoRangeIncludesZero(true);
@@ -797,13 +797,13 @@ public class PriceHistoryTab extends JMainTabSecondary {
 			count = Math.max(count, dataset.getItemCount(i));
 		}
 		if (max >     1_000_000_000_000.0) { //Higher than 1 Trillion
-			rangeLinearAxis.setNumberFormatOverride(Formater.TRILLIONS_FORMAT);
+			rangeLinearAxis.setNumberFormatOverride(Formatter.TRILLIONS_FORMAT);
 		} else if (max >  1_000_000_000.0) { //Higher than 1 Billion
-			rangeLinearAxis.setNumberFormatOverride(Formater.BILLIONS_FORMAT);
+			rangeLinearAxis.setNumberFormatOverride(Formatter.BILLIONS_FORMAT);
 		} else if (max >      1_000_000.0) { //Higher than 1 Million
-			rangeLinearAxis.setNumberFormatOverride(Formater.MILLIONS_FORMAT);
+			rangeLinearAxis.setNumberFormatOverride(Formatter.MILLIONS_FORMAT);
 		} else {
-			rangeLinearAxis.setNumberFormatOverride(Formater.LONG_FORMAT); //Default
+			rangeLinearAxis.setNumberFormatOverride(Formatter.LONG_FORMAT); //Default
 		}
 		renderer.setDefaultShapesVisible(count < 2);
 		jRemove.setEnabled(!selected.isEmpty());

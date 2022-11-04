@@ -29,7 +29,7 @@ import java.util.TimeZone;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import net.nikr.eve.jeveasset.gui.images.Images;
-import net.nikr.eve.jeveasset.gui.shared.Formater;
+import net.nikr.eve.jeveasset.gui.shared.Formatter;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.CompareType;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.LogicType;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
@@ -91,7 +91,7 @@ class FilterMenu<E> extends JMenu {
 	}
 
 	public String daysBetween() {
-		Date date = Formater.columnStringToDate(text);
+		Date date = Formatter.columnStringToDate(text);
 		// reset hour, minutes, seconds and millis
 		Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
 		calendar.setTime(date);
@@ -105,7 +105,7 @@ class FilterMenu<E> extends JMenu {
 	}
 
 	public String hoursBetween() {
-		Date date = Formater.columnStringToDate(text);
+		Date date = Formatter.columnStringToDate(text);
 		int hours = (int)((new Date().getTime() - date.getTime()) / (1000 * 60 * 60)) + 1;
 		return String.valueOf(hours);
 	}

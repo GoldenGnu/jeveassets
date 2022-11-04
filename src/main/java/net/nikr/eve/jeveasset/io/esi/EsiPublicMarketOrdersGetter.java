@@ -31,7 +31,7 @@ import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.settings.Citadel;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
-import net.nikr.eve.jeveasset.gui.shared.Formater;
+import net.nikr.eve.jeveasset.gui.shared.Formatter;
 import net.nikr.eve.jeveasset.gui.tabs.orders.OutbidProcesser;
 import net.nikr.eve.jeveasset.gui.tabs.orders.OutbidProcesser.OutbidProcesserInput;
 import net.nikr.eve.jeveasset.gui.tabs.orders.OutbidProcesser.OutbidProcesserOutput;
@@ -87,7 +87,7 @@ public class EsiPublicMarketOrdersGetter extends AbstractEsiGetter {
 							ApiResponse<List<MarketOrdersResponse>> response = getMarketApiOpen().getMarketsRegionIdOrdersWithHttpInfo("all", k, DATASOURCE, null, page, null);
 							String header = getHeader(response.getHeaders(), "last-modified");
 							if (header != null) {
-								Date date = Formater.parseExpireDate(header);
+								Date date = Formatter.parseExpireDate(header);
 								if (lastUpdate == null) {
 									lastUpdate = date;
 								} else if (!modified && !lastUpdate.equals(date)){

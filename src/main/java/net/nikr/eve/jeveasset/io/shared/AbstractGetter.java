@@ -34,7 +34,7 @@ import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
 import net.nikr.eve.jeveasset.data.api.my.MyAsset;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
-import net.nikr.eve.jeveasset.gui.shared.Formater;
+import net.nikr.eve.jeveasset.gui.shared.Formatter;
 import net.nikr.eve.jeveasset.gui.shared.Updatable;
 import net.nikr.eve.jeveasset.io.shared.ThreadWoker.TaskCancelledException;
 import org.slf4j.Logger;
@@ -378,7 +378,7 @@ public abstract class AbstractGetter<O extends OwnerType> implements Runnable {
 	protected static final Date getHeaderDate(Map<String, List<String>> responseHeaders, String headerName) {
 		String header = getHeader(responseHeaders, headerName);
 		if (header != null) {
-			return Formater.parseExpireDate(header);
+			return Formatter.parseExpireDate(header);
 		}
 		return null;
 	}
@@ -386,7 +386,7 @@ public abstract class AbstractGetter<O extends OwnerType> implements Runnable {
 	protected static final Date getHeaderExpires(Map<String, List<String>> responseHeaders) {
 		String header = getHeader(responseHeaders, "expires");
 		if (header != null) {
-			return Formater.parseExpireDate(header);
+			return Formatter.parseExpireDate(header);
 		}
 		return null;
 	}

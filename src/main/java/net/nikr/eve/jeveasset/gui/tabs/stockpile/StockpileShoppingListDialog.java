@@ -54,7 +54,7 @@ import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.CopyHandler;
-import net.nikr.eve.jeveasset.gui.shared.Formater;
+import net.nikr.eve.jeveasset.gui.shared.Formatter;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
 import net.nikr.eve.jeveasset.gui.shared.components.JIntegerField;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
@@ -231,7 +231,7 @@ class StockpileShoppingListDialog extends JDialogCentered {
 		Map<String, Double> subpiles = new HashMap<>();
 		StringBuilder stockpileNamesBuilder = new StringBuilder();
 		for (Stockpile stockpile : stockpiles) {
-			stockpileNamesBuilder.append(Formater.copyFormat(stockpile.getMultiplier()));
+			stockpileNamesBuilder.append(Formatter.copyFormat(stockpile.getMultiplier()));
 			stockpileNamesBuilder.append("x ");
 			stockpileNamesBuilder.append(stockpile.getName());
 			stockpileNamesBuilder.append("\r\n");
@@ -380,7 +380,7 @@ class StockpileShoppingListDialog extends JDialogCentered {
 		}
 		StringBuilder subpileNamesBuilder = new StringBuilder();
 		for (Map.Entry<String, Double> entry : subpiles.entrySet()) {
-			subpileNamesBuilder.append(Formater.copyFormat(entry.getValue()));
+			subpileNamesBuilder.append(Formatter.copyFormat(entry.getValue()));
 			subpileNamesBuilder.append("x ");
 			subpileNamesBuilder.append(entry.getKey());
 			subpileNamesBuilder.append("\r\n");
@@ -406,7 +406,7 @@ class StockpileShoppingListDialog extends JDialogCentered {
 			eveMultibuyBuilder.append(number.format(count));
 			eveMultibuyBuilder.append("\r\n");
 			//Shopping List
-			shoppingListBuilder.append(Formater.longFormat(count));
+			shoppingListBuilder.append(Formatter.longFormat(count));
 			shoppingListBuilder.append("x ");
 			shoppingListBuilder.append(item.getTypeName());
 			if (bpc) {
@@ -428,10 +428,10 @@ class StockpileShoppingListDialog extends JDialogCentered {
 		} else { //Add total volume and value
 			shoppingListBuilder.append("\r\n");
 			shoppingListBuilder.append(TabsStockpile.get().totalToHaul());
-			shoppingListBuilder.append(Formater.doubleFormat(Math.abs(volume)));
+			shoppingListBuilder.append(Formatter.doubleFormat(Math.abs(volume)));
 			shoppingListBuilder.append("\r\n");
 			shoppingListBuilder.append(TabsStockpile.get().estimatedMarketValue());
-			shoppingListBuilder.append(Formater.iskFormat(Math.abs(value)));
+			shoppingListBuilder.append(Formatter.iskFormat(Math.abs(value)));
 		}
 	}
 

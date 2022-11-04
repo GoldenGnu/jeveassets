@@ -23,7 +23,7 @@ package net.nikr.eve.jeveasset.gui.tabs.materials;
 
 import ca.odell.glazedlists.GlazedLists;
 import java.util.Comparator;
-import net.nikr.eve.jeveasset.gui.shared.Formater;
+import net.nikr.eve.jeveasset.gui.shared.Formatter;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.ISK;
 import net.nikr.eve.jeveasset.i18n.TabsMaterials;
@@ -58,9 +58,9 @@ public enum MaterialTableFormat implements EnumTableColumn<Material> {
 		@Override
 		public Object getColumnValue(final Material from) {
 			if (from.getDynamicPrice() != null) {
-				return new ISK(Formater.iskFormat(from.getDynamicPrice()), from.getDynamicPrice());
+				return new ISK(Formatter.iskFormat(from.getDynamicPrice()), from.getDynamicPrice());
 			} else {
-				return new ISK("(" + Formater.iskFormat(from.getValue() / from.getCount()) + ")", from.getValue() / from.getCount());
+				return new ISK("(" + Formatter.iskFormat(from.getValue() / from.getCount()) + ")", from.getValue() / from.getCount());
 			}
 		}
 	},
@@ -71,7 +71,7 @@ public enum MaterialTableFormat implements EnumTableColumn<Material> {
 		}
 		@Override
 		public Object getColumnValue(final Material from) {
-			return new ISK(Formater.iskFormat(from.getValue()), from.getValue());
+			return new ISK(Formatter.iskFormat(from.getValue()), from.getValue());
 		}
 	};
 

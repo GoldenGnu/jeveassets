@@ -23,7 +23,7 @@ package net.nikr.eve.jeveasset.gui.shared.table.containers;
 import java.util.Date;
 import java.util.Objects;
 import net.nikr.eve.jeveasset.data.settings.Settings;
-import net.nikr.eve.jeveasset.gui.shared.Formater;
+import net.nikr.eve.jeveasset.gui.shared.Formatter;
 
 
 public class ExpirerDate implements Comparable<ExpirerDate> {
@@ -40,7 +40,7 @@ public class ExpirerDate implements Comparable<ExpirerDate> {
 		} else if (Settings.getNow().after(expirer)) {
 			return "Expired";
 		} else {
-			return Formater.dateOnly(expirer);
+			return Formatter.dateOnly(expirer);
 		}
 	}
 

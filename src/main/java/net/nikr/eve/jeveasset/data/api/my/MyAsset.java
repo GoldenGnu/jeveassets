@@ -44,7 +44,7 @@ import net.nikr.eve.jeveasset.data.settings.types.EditablePriceType;
 import net.nikr.eve.jeveasset.data.settings.types.ItemType;
 import net.nikr.eve.jeveasset.data.settings.types.OwnersType;
 import net.nikr.eve.jeveasset.data.settings.types.TagsType;
-import net.nikr.eve.jeveasset.gui.shared.Formater;
+import net.nikr.eve.jeveasset.gui.shared.Formatter;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo.InfoItem;
 import net.nikr.eve.jeveasset.gui.tabs.assets.AssetsTab;
 import net.nikr.eve.jeveasset.i18n.DataModelAsset;
@@ -395,12 +395,12 @@ public class MyAsset extends RawAsset implements Comparable<MyAsset>, InfoItem, 
 
 	@Override
 	public double getValue() {
-		return Formater.round(this.getDynamicPrice() * getCount(), 2);
+		return Formatter.round(this.getDynamicPrice() * getCount(), 2);
 	}
 
 	@Override
 	public double getValueReprocessed() {
-		return Formater.round(this.getPriceReprocessed() * getCount(), 2);
+		return Formatter.round(this.getPriceReprocessed() * getCount(), 2);
 	}
 
 	public float getVolume() {

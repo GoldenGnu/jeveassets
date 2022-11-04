@@ -77,7 +77,7 @@ import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
 import net.nikr.eve.jeveasset.gui.shared.DocumentFactory;
-import net.nikr.eve.jeveasset.gui.shared.Formater;
+import net.nikr.eve.jeveasset.gui.shared.Formatter;
 import net.nikr.eve.jeveasset.gui.shared.InstantToolTip;
 import net.nikr.eve.jeveasset.gui.shared.TextManager;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
@@ -375,7 +375,7 @@ public class StockpileDialog extends JDialogCentered {
 		jName.setText(name);
 
 		//Multiplier
-		jMultiplier.setText(Formater.compareFormat(loadStockpile.getMultiplier()));
+		jMultiplier.setText(Formatter.compareFormat(loadStockpile.getMultiplier()));
 		//Filters
 		for (StockpileFilter filter : loadStockpile.getFilters()) {
 			LocationPanel locationPanel = new LocationPanel(filter);

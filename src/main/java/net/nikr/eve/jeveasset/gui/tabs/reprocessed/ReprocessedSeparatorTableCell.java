@@ -17,7 +17,7 @@ import javax.swing.JTable;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.settings.ColorEntry;
 import net.nikr.eve.jeveasset.data.settings.ColorSettings;
-import net.nikr.eve.jeveasset.gui.shared.Formater;
+import net.nikr.eve.jeveasset.gui.shared.Formatter;
 import net.nikr.eve.jeveasset.gui.shared.table.SeparatorTableCell;
 import net.nikr.eve.jeveasset.i18n.TabsReprocessed;
 
@@ -124,10 +124,10 @@ public class ReprocessedSeparatorTableCell extends SeparatorTableCell<Reprocesse
 		jRemove.setEnabled(!material.getTotal().isGrandTotal());
 		jName.setText(material.getTotal().getTypeName());
 		//Price
-		jPrice.setText(Formater.iskFormat(material.getTotal().getSellPrice()));
+		jPrice.setText(Formatter.iskFormat(material.getTotal().getSellPrice()));
 		//Value
 		if (material.getTotal().getValue() != material.getTotal().getSellPrice()) {
-			jValue.setText(Formater.iskFormat(material.getTotal().getValue()));
+			jValue.setText(Formatter.iskFormat(material.getTotal().getValue()));
 			jValueLabel.setVisible(true);
 			jValue.setVisible(true);
 		} else {
@@ -136,7 +136,7 @@ public class ReprocessedSeparatorTableCell extends SeparatorTableCell<Reprocesse
 		}
 		//Portion Size
 		if (material.getPortionSize() > 1) {
-			jBatchSize.setText(Formater.longFormat(material.getPortionSize()));
+			jBatchSize.setText(Formatter.longFormat(material.getPortionSize()));
 			jBatchSizeLabel.setVisible(true);
 			jBatchSize.setVisible(true);
 		} else {

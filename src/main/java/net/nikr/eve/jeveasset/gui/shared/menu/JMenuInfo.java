@@ -49,7 +49,7 @@ import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.CopyHandler;
-import net.nikr.eve.jeveasset.gui.shared.Formater;
+import net.nikr.eve.jeveasset.gui.shared.Formatter;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo.InfoItem;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustrySlot;
 import net.nikr.eve.jeveasset.gui.tabs.loadout.Loadout;
@@ -214,7 +214,7 @@ public class JMenuInfo {
 			volumeRemain += marketOrder.getVolumeRemain();
 			volumeTotal += marketOrder.getVolumeTotal();
 		}
-		createMenuItem(values, jPopupMenu, GuiShared.get().selectionOrdersCountValue(Formater.longFormat(volumeRemain), Formater.itemsFormat(volumeTotal)), GuiShared.get().selectionOrdersCount(), GuiShared.get().selectionShortCount(), Images.EDIT_ADD.getIcon());
+		createMenuItem(values, jPopupMenu, GuiShared.get().selectionOrdersCountValue(Formatter.longFormat(volumeRemain), Formatter.itemsFormat(volumeTotal)), GuiShared.get().selectionOrdersCount(), GuiShared.get().selectionShortCount(), Images.EDIT_ADD.getIcon());
 		createMenuItem(values, jPopupMenu, sellOrdersTotal + sellBrokersFeeTotal, AutoNumberFormat.ISK, GuiShared.get().selectionOrdersSellTotal(), GuiShared.get().selectionShortSell(), Images.ORDERS_SELL.getIcon());
 		createMenuItem(values, jPopupMenu, buyOrdersTotal + buyBrokersFeeTotal, AutoNumberFormat.ISK, GuiShared.get().selectionOrdersBuyTotal(), GuiShared.get().selectionShortBuy(), Images.ORDERS_BUY.getIcon());
 		createMenuItem(values, jPopupMenu, escrowTotal, AutoNumberFormat.ISK, GuiShared.get().selectionOrdersBuyEscrow(), GuiShared.get().selectionShortEscrow(), Images.ORDERS_ESCROW.getIcon());
@@ -535,7 +535,7 @@ public class JMenuInfo {
 			public void mousePressed(MouseEvent e) {
 				if (e.getButton() == MouseEvent.BUTTON1) {
 					if (number != null) {
-						CopyHandler.toClipboard(Formater.copyFormat(number));
+						CopyHandler.toClipboard(Formatter.copyFormat(number));
 					} else {
 						CopyHandler.toClipboard(text);
 					}
@@ -659,11 +659,11 @@ public class JMenuInfo {
 
 	public static String format(final Number number, AutoNumberFormat numberFormat) {
 		switch(numberFormat) {
-			case ISK: return Formater.iskFormat(number);
-			case DOUBLE: return Formater.doubleFormat(number);
-			case ITEMS: return Formater.itemsFormat(number);
-			case PERCENT: return Formater.percentFormat(number);
-			case LONG: return Formater.longFormat(number);
+			case ISK: return Formatter.iskFormat(number);
+			case DOUBLE: return Formatter.doubleFormat(number);
+			case ITEMS: return Formatter.itemsFormat(number);
+			case PERCENT: return Formatter.percentFormat(number);
+			case LONG: return Formatter.longFormat(number);
 			default: return String.valueOf(number);
 		}
 	}
@@ -676,7 +676,7 @@ public class JMenuInfo {
 				builder.append(": ");
 			}
 			if (item.number != null) {
-				builder.append(Formater.copyFormat(item.number));
+				builder.append(Formatter.copyFormat(item.number));
 				builder.append("\r\n");
 			} else if (item.text != null) {
 				builder.append(item.text);

@@ -37,7 +37,7 @@ import net.nikr.eve.jeveasset.gui.shared.filter.FilterMatcher;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 
-public final class Formater {
+public final class Formatter {
 
 	//Must not be changed! please see: FilterControl
 	public static final String COLUMN_DATETIME = "yyyy-MM-dd HH:mm";
@@ -71,7 +71,7 @@ public final class Formater {
 	private static final DateFormatThreadSafe SIMPLE_DATE = new DateFormatThreadSafe("yyyyMMddHHmm");
 	private static final DateFormatThreadSafe DATE_ONLY = new DateFormatThreadSafe("yyyy-MM-dd");
 
-	private Formater() { }
+	private Formatter() { }
 
 	public static Date parseExpireDate(String date) {
 		try {
@@ -124,8 +124,8 @@ public final class Formater {
 	 * WARNING: This is not an good format for columns
 	 * It does however give a very precise result.
 	 *
-	 * @param obj value to be formated
-	 * @return formated value
+	 * @param obj value to be formatted
+	 * @return formatted value
 	 */
 	public static String floatFormat(final Object obj) {
 		return FLOAT_FORMAT.format(obj);

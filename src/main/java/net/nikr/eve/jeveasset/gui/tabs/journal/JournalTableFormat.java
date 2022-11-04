@@ -62,7 +62,7 @@ public enum JournalTableFormat implements EnumTableColumn<MyJournal> {
 		}
 		@Override
 		public Object getColumnValue(final MyJournal from) {
-			return from.getRefTypeFormated();
+			return from.getRefTypeFormatted();
 		}
 	},
 	AMOUNT(Double.class, GlazedLists.comparableComparator()) {
@@ -122,7 +122,7 @@ public enum JournalTableFormat implements EnumTableColumn<MyJournal> {
 		}
 		@Override
 		public Object getColumnValue(final MyJournal from) {
-			return from.getAccountKeyFormated();
+			return from.getAccountKeyFormatted();
 		}
 	},
 	TAX_AMOUNT(Double.class, GlazedLists.comparableComparator()) {

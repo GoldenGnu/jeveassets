@@ -37,7 +37,7 @@ import net.nikr.eve.jeveasset.data.settings.ExportSettings.ExportFormat;
 import net.nikr.eve.jeveasset.data.settings.ExportSettings.FilterSelection;
 import net.nikr.eve.jeveasset.data.settings.ExportSettings.LineDelimiter;
 import net.nikr.eve.jeveasset.data.settings.Settings;
-import net.nikr.eve.jeveasset.gui.shared.Formater;
+import net.nikr.eve.jeveasset.gui.shared.Formatter;
 import net.nikr.eve.jeveasset.io.shared.FileUtil;
 import picocli.CommandLine;
 import picocli.CommandLine.ArgGroup;
@@ -439,7 +439,7 @@ public class CliOptions {
 		builder.append(getOutputDirectory());
 		builder.append(File.separator);
 		if (!exportOptions.noDate) {
-			builder.append(Formater.fileDate(new Date()));
+			builder.append(Formatter.fileDate(new Date()));
 			builder.append("_");
 		}
 		builder.append(exportTool.getFilename());
