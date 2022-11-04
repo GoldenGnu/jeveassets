@@ -53,6 +53,16 @@ public enum ContractsTableFormat implements EnumTableColumn<MyContractItem> {
 			return from.getContract().getStatusFormatted();
 		}
 	},
+	AVAILABILITY(String.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsContracts.get().columnAvailability();
+		}
+		@Override
+		public Object getColumnValue(final MyContractItem from) {
+			return from.getContract().getAvailabilityFormatted();
+		}
+	},
 	INCLUDED(String.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
