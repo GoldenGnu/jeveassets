@@ -136,19 +136,19 @@ public abstract class JUserListPanel<K, V extends Comparable<V>> extends JSettin
 			load();
 		}
 		String name;
-		String formatedValue = oldValue;
+		String formattedValue = oldValue;
 		if (userItems.size() == 1) {
 			name = userItems.get(0).getName();
 			if (oldValue == null) {
-				formatedValue = userItems.get(0).getValueFormated();
+				formattedValue = userItems.get(0).getValueFormatted();
 			}
 		} else {
 			name = DialoguesSettings.get().items(userItems.size());
 		}
-		if (formatedValue == null) {
-			formatedValue = "0";
+		if (formattedValue == null) {
+			formattedValue = "0";
 		}
-		String value = (String) JOptionInput.showInputDialog(program.getMainWindow().getFrame(), name, DialoguesSettings.get().editTypeTitle(type), JOptionPane.PLAIN_MESSAGE, null, null, formatedValue);
+		String value = (String) JOptionInput.showInputDialog(program.getMainWindow().getFrame(), name, DialoguesSettings.get().editTypeTitle(type), JOptionPane.PLAIN_MESSAGE, null, null, formattedValue);
 		if (value == null) {
 			return false; //Cancel
 		}

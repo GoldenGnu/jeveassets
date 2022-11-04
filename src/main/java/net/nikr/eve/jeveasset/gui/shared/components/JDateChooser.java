@@ -30,7 +30,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import net.nikr.eve.jeveasset.data.settings.Colors;
 import net.nikr.eve.jeveasset.gui.images.Images;
-import net.nikr.eve.jeveasset.gui.shared.Formater;
+import net.nikr.eve.jeveasset.gui.shared.Formatter;
 
 
 public class JDateChooser extends DatePicker {
@@ -76,8 +76,8 @@ public class JDateChooser extends DatePicker {
 		public DefaultDatePickerSettings(boolean allowEmptyDates) {
 			super(Locale.ENGLISH);
 			setAllowEmptyDates(allowEmptyDates);
-			setFormatForDatesCommonEra(Formater.COLUMN_DATE);
-			setFormatForDatesBeforeCommonEra(Formater.COLUMN_DATE);
+			setFormatForDatesCommonEra(Formatter.COLUMN_DATE);
+			setFormatForDatesBeforeCommonEra(Formatter.COLUMN_DATE);
 
 			//Use UIManager default
 			setColor(DatePickerSettings.DateArea.BackgroundOverallCalendarPanel, Colors.COMPONENT_BACKGROUND.getColor());

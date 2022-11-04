@@ -29,7 +29,7 @@ import net.nikr.eve.jeveasset.data.api.my.MyShip;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.settings.types.LocationType;
-import net.nikr.eve.jeveasset.gui.shared.Formater;
+import net.nikr.eve.jeveasset.gui.shared.Formatter;
 import net.nikr.eve.jeveasset.i18n.TabsValues;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 
@@ -65,7 +65,7 @@ public class Value implements Comparable<Value>, LocationType {
 	public Value(String name, Date date) {
 		this.name = name;
 		this.date = date;
-		this.compare = name + Formater.simpleDate(date);
+		this.compare = name + Formatter.simpleDate(date);
 	}
 
 	public void addAssets(double assets) {

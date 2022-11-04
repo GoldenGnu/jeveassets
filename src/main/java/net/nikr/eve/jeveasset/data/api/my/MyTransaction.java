@@ -56,7 +56,7 @@ public class MyTransaction extends RawTransaction implements EditableLocationTyp
 		owners.add(owner.getOwnerID());
 	}
 
-	public int getAccountKeyFormated() {
+	public int getAccountKeyFormatted() {
 		return getAccountKey() - 999;
 	}
 

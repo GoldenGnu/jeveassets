@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.TimeZone;
 import net.nikr.eve.jeveasset.TestUtil;
 import net.nikr.eve.jeveasset.gui.images.Images;
-import net.nikr.eve.jeveasset.gui.shared.Formater;
+import net.nikr.eve.jeveasset.gui.shared.Formatter;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.AllColumn;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.CompareType;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
@@ -366,29 +366,29 @@ public class FilterMatcherTest extends TestUtil {
 		matches(true,  TestEnum.DATE_LAST, Filter.CompareType.LAST_HOURS, "48"); //Last 48 hours
 
 		//Equals column
-		matches(true,  TestEnum.DATE, Filter.CompareType.EQUALS_COLUMN, TestEnum.COLUMN_DATE.name(), Formater.columnStringToDate(DATE));
-		matches(false, TestEnum.DATE, Filter.CompareType.EQUALS_COLUMN, TestEnum.COLUMN_DATE.name(), Formater.columnStringToDate(DATE_NOT_AFTER));
-		matches(false, TestEnum.DATE, Filter.CompareType.EQUALS_COLUMN, TestEnum.COLUMN_DATE.name(), Formater.columnStringToDate(DATE_NOT_BEFORE));
-		matches(false, TestEnum.DATE, Filter.CompareType.EQUALS_COLUMN, TestEnum.COLUMN_DATE.name(), Formater.columnStringToDate(DATE_NOT));
+		matches(true,  TestEnum.DATE, Filter.CompareType.EQUALS_COLUMN, TestEnum.COLUMN_DATE.name(), Formatter.columnStringToDate(DATE));
+		matches(false, TestEnum.DATE, Filter.CompareType.EQUALS_COLUMN, TestEnum.COLUMN_DATE.name(), Formatter.columnStringToDate(DATE_NOT_AFTER));
+		matches(false, TestEnum.DATE, Filter.CompareType.EQUALS_COLUMN, TestEnum.COLUMN_DATE.name(), Formatter.columnStringToDate(DATE_NOT_BEFORE));
+		matches(false, TestEnum.DATE, Filter.CompareType.EQUALS_COLUMN, TestEnum.COLUMN_DATE.name(), Formatter.columnStringToDate(DATE_NOT));
 		//Equals not column
-		matches(false, TestEnum.DATE, Filter.CompareType.EQUALS_NOT_COLUMN, TestEnum.COLUMN_DATE.name(), Formater.columnStringToDate(DATE));
-		matches(true,  TestEnum.DATE, Filter.CompareType.EQUALS_NOT_COLUMN, TestEnum.COLUMN_DATE.name(), Formater.columnStringToDate(DATE_NOT));
+		matches(false, TestEnum.DATE, Filter.CompareType.EQUALS_NOT_COLUMN, TestEnum.COLUMN_DATE.name(), Formatter.columnStringToDate(DATE));
+		matches(true,  TestEnum.DATE, Filter.CompareType.EQUALS_NOT_COLUMN, TestEnum.COLUMN_DATE.name(), Formatter.columnStringToDate(DATE_NOT));
 		//Contains column
-		matches(true,  TestEnum.DATE, Filter.CompareType.CONTAINS_COLUMN, TestEnum.COLUMN_DATE.name(), Formater.columnStringToDate(DATE));
-		matches(false, TestEnum.DATE, Filter.CompareType.CONTAINS_COLUMN, TestEnum.COLUMN_DATE.name(), Formater.columnStringToDate(DATE_NOT));
+		matches(true,  TestEnum.DATE, Filter.CompareType.CONTAINS_COLUMN, TestEnum.COLUMN_DATE.name(), Formatter.columnStringToDate(DATE));
+		matches(false, TestEnum.DATE, Filter.CompareType.CONTAINS_COLUMN, TestEnum.COLUMN_DATE.name(), Formatter.columnStringToDate(DATE_NOT));
 		//Contains not column
-		matches(false, TestEnum.DATE, Filter.CompareType.CONTAINS_NOT_COLUMN, TestEnum.COLUMN_DATE.name(), Formater.columnStringToDate(DATE));
-		matches(true,  TestEnum.DATE, Filter.CompareType.CONTAINS_NOT_COLUMN, TestEnum.COLUMN_DATE.name(), Formater.columnStringToDate(DATE_NOT));
+		matches(false, TestEnum.DATE, Filter.CompareType.CONTAINS_NOT_COLUMN, TestEnum.COLUMN_DATE.name(), Formatter.columnStringToDate(DATE));
+		matches(true,  TestEnum.DATE, Filter.CompareType.CONTAINS_NOT_COLUMN, TestEnum.COLUMN_DATE.name(), Formatter.columnStringToDate(DATE_NOT));
 		//Before column
-		matches(false, TestEnum.DATE, Filter.CompareType.BEFORE_COLUMN, TestEnum.COLUMN_DATE.name(), Formater.columnStringToDate(DATE));
-		matches(false, TestEnum.DATE, Filter.CompareType.BEFORE_COLUMN, TestEnum.COLUMN_DATE.name(), Formater.columnStringToDate(DATE_AFTER));
-		matches(false, TestEnum.DATE, Filter.CompareType.BEFORE_COLUMN, TestEnum.COLUMN_DATE.name(), Formater.columnStringToDate(DATE_NOT_BEFORE));
-		matches(true,  TestEnum.DATE, Filter.CompareType.BEFORE_COLUMN, TestEnum.COLUMN_DATE.name(), Formater.columnStringToDate(DATE_BEFORE));
+		matches(false, TestEnum.DATE, Filter.CompareType.BEFORE_COLUMN, TestEnum.COLUMN_DATE.name(), Formatter.columnStringToDate(DATE));
+		matches(false, TestEnum.DATE, Filter.CompareType.BEFORE_COLUMN, TestEnum.COLUMN_DATE.name(), Formatter.columnStringToDate(DATE_AFTER));
+		matches(false, TestEnum.DATE, Filter.CompareType.BEFORE_COLUMN, TestEnum.COLUMN_DATE.name(), Formatter.columnStringToDate(DATE_NOT_BEFORE));
+		matches(true,  TestEnum.DATE, Filter.CompareType.BEFORE_COLUMN, TestEnum.COLUMN_DATE.name(), Formatter.columnStringToDate(DATE_BEFORE));
 		//After column
-		matches(false, TestEnum.DATE, Filter.CompareType.AFTER_COLUMN, TestEnum.COLUMN_DATE.name(), Formater.columnStringToDate(DATE));
-		matches(true,  TestEnum.DATE, Filter.CompareType.AFTER_COLUMN, TestEnum.COLUMN_DATE.name(), Formater.columnStringToDate(DATE_AFTER));
-		matches(false, TestEnum.DATE, Filter.CompareType.AFTER_COLUMN, TestEnum.COLUMN_DATE.name(), Formater.columnStringToDate(DATE_NOT_AFTER));
-		matches(false, TestEnum.DATE, Filter.CompareType.AFTER_COLUMN, TestEnum.COLUMN_DATE.name(), Formater.columnStringToDate(DATE_BEFORE));
+		matches(false, TestEnum.DATE, Filter.CompareType.AFTER_COLUMN, TestEnum.COLUMN_DATE.name(), Formatter.columnStringToDate(DATE));
+		matches(true,  TestEnum.DATE, Filter.CompareType.AFTER_COLUMN, TestEnum.COLUMN_DATE.name(), Formatter.columnStringToDate(DATE_AFTER));
+		matches(false, TestEnum.DATE, Filter.CompareType.AFTER_COLUMN, TestEnum.COLUMN_DATE.name(), Formatter.columnStringToDate(DATE_NOT_AFTER));
+		matches(false, TestEnum.DATE, Filter.CompareType.AFTER_COLUMN, TestEnum.COLUMN_DATE.name(), Formatter.columnStringToDate(DATE_BEFORE));
 	}
 
 	@Test
@@ -859,7 +859,7 @@ public class FilterMatcherTest extends TestUtil {
 					case PERCENT:
 						return PERCENT;
 					case DATE:
-						return Formater.columnStringToDate(DATE);
+						return Formatter.columnStringToDate(DATE);
 					case DATE_LAST:
 						Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
 						//minus 47 hours

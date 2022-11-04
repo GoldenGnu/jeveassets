@@ -82,7 +82,7 @@ import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel.JStatusLabel;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.CopyHandler;
-import net.nikr.eve.jeveasset.gui.shared.Formater;
+import net.nikr.eve.jeveasset.gui.shared.Formatter;
 import net.nikr.eve.jeveasset.gui.shared.InstantToolTip;
 import net.nikr.eve.jeveasset.gui.shared.MarketDetailsColumn;
 import net.nikr.eve.jeveasset.gui.shared.MarketDetailsColumn.MarketDetailsActionListener;
@@ -461,7 +461,7 @@ public class MarketOrdersTab extends JMainTabPrimary {
 			} else { //Sell
 				price = significantDecrement(price);
 			}
-			String copy = Formater.copyFormat(price);
+			String copy = Formatter.copyFormat(price);
 			CopyHandler.toClipboard(copy);
 			setClipboardData(copy);
 		} else {
@@ -500,7 +500,7 @@ public class MarketOrdersTab extends JMainTabPrimary {
 			if (diff < 1000) {
 				jUpdate.setText(TabsOrders.get().updateOutbidWhen("..."));
 			} else {
-				jUpdate.setText(TabsOrders.get().updateOutbidWhen(Formater.milliseconds(diff, false, false, true, true, true, true)));
+				jUpdate.setText(TabsOrders.get().updateOutbidWhen(Formatter.milliseconds(diff, false, false, true, true, true, true)));
 			}
 			jUpdate.setEnabled(false);
 		}
@@ -526,7 +526,7 @@ public class MarketOrdersTab extends JMainTabPrimary {
 				jLastUpdate.setIcon(new IconColorIcon(Colors.STRONG_RED.getColor(), images.getImage()));
 				ColorSettings.config(jLastUpdate, ColorEntry.GLOBAL_ENTRY_INVALID);
 			}
-			jLastUpdate.setText(Formater.milliseconds(diff, false, false, true, true, true, true));
+			jLastUpdate.setText(Formatter.milliseconds(diff, false, false, true, true, true, true));
 		} else {
 			jLastUpdate.setOpaque(false);
 			jLastUpdate.setIcon(images.getIcon());
@@ -887,7 +887,7 @@ public class MarketOrdersTab extends JMainTabPrimary {
 							LOG.info("Starting marketlog file processing for " + file.getName());
 							long start = System.currentTimeMillis();
 							update(file);
-							LOG.info("Marketlog file processing done in " + Formater.milliseconds(System.currentTimeMillis() - start) + " for " + file.getName());
+							LOG.info("Marketlog file processing done in " + Formatter.milliseconds(System.currentTimeMillis() - start) + " for " + file.getName());
 						}
 					}
 					key.reset();
@@ -928,7 +928,7 @@ public class MarketOrdersTab extends JMainTabPrimary {
 						LOG.info("Saving Profile");
 						program.saveProfile();
 					}
-					LOG.info("Marketlog update thread done in " + Formater.milliseconds(System.currentTimeMillis() - start) + " for " + file.getName());
+					LOG.info("Marketlog update thread done in " + Formatter.milliseconds(System.currentTimeMillis() - start) + " for " + file.getName());
 				}
 			}, file.getName());
 			thread.start();
@@ -1001,7 +1001,7 @@ public class MarketOrdersTab extends JMainTabPrimary {
 				} else { //Sell
 					price = significantDecrement(price);
 				}
-				String copy = Formater.copyFormat(price);
+				String copy = Formatter.copyFormat(price);
 				CopyHandler.toClipboard(copy);
 				setLastLogUpdate();
 				setClipboardData(copy);

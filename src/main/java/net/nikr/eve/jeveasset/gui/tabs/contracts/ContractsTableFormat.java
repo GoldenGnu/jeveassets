@@ -50,7 +50,7 @@ public enum ContractsTableFormat implements EnumTableColumn<MyContractItem> {
 		}
 		@Override
 		public Object getColumnValue(final MyContractItem from) {
-			return from.getContract().getStatusFormated();
+			return from.getContract().getStatusFormatted();
 		}
 	},
 	INCLUDED(String.class, GlazedLists.comparableComparator()) {

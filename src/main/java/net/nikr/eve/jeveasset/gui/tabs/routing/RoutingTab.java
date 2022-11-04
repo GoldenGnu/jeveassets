@@ -75,7 +75,7 @@ import net.nikr.eve.jeveasset.data.sde.StaticData;
 import net.nikr.eve.jeveasset.data.settings.RouteResult;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
-import net.nikr.eve.jeveasset.gui.shared.Formater;
+import net.nikr.eve.jeveasset.gui.shared.Formatter;
 import net.nikr.eve.jeveasset.gui.shared.components.JCustomFileChooser;
 import net.nikr.eve.jeveasset.gui.shared.components.JDropDownButton;
 import net.nikr.eve.jeveasset.gui.shared.components.JFixedToolBar;
@@ -1061,9 +1061,9 @@ public class RoutingTab extends JMainTabSecondary {
 
 	public String getSecurityString() {
 		final StringBuilder builder = new StringBuilder();
-		builder.append(Formater.securityFormat(jSecurityMinimum.getSelectedItem()));
+		builder.append(Formatter.securityFormat(jSecurityMinimum.getSelectedItem()));
 		builder.append(" - ");
-		builder.append(Formater.securityFormat(jSecurityMaximum.getSelectedItem()));
+		builder.append(Formatter.securityFormat(jSecurityMaximum.getSelectedItem()));
 		return builder.toString();
 	}
 
@@ -1130,7 +1130,7 @@ public class RoutingTab extends JMainTabSecondary {
 					routeResult.getWaypoints(),
 					routeResult.getSecurity(),
 					routeResult.getAvoid(),
-					Formater.milliseconds(routeResult.getAlgorithmTime())));
+					Formatter.milliseconds(routeResult.getAlgorithmTime())));
 				jInfo.setEnabled(true);
 				jInfo.setCaretPosition(0);
 				for (ResultToolbar resultToolbar : resultToolbars) {
@@ -1259,7 +1259,7 @@ public class RoutingTab extends JMainTabSecondary {
 		double secMin = Settings.get().getRoutingSettings().getSecMin();
 		double secMax = Settings.get().getRoutingSettings().getSecMax();
 		int size = Settings.get().getRoutingSettings().getAvoid().size();
-		jFilterSecurity.setText(Formater.securityFormat(secMin) + " - " + Formater.securityFormat(secMax));
+		jFilterSecurity.setText(Formatter.securityFormat(secMin) + " - " + Formatter.securityFormat(secMax));
 		if (secMin == 0.0) {
 			jSecurityIcon.setIcon(Images.UPDATE_CANCELLED.getIcon());
 			jFilterSecurityIcon.setIcon(Images.UPDATE_CANCELLED.getIcon());
