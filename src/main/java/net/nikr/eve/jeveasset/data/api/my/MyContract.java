@@ -222,6 +222,14 @@ public class MyContract extends RawContract implements LocationsType, OwnersType
 		}
 	}
 
+	public String getAvailabilityFormatted() {
+		if (isPublic()) {
+			return TabsContracts.get().availabilityPublic();
+		} else {
+			return TabsContracts.get().availabilityPrivate();
+		}
+	}
+
 	@Override
 	public int hashCode() {
 		int hash = 7;
