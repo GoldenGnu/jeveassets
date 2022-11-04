@@ -248,7 +248,7 @@ public enum TransactionTableFormat implements EnumTableColumn<MyTransaction> {
 		}
 		@Override
 		public Object getColumnValue(final MyTransaction from) {
-			return from.getAccountKeyFormated();
+			return from.getAccountKeyFormatted();
 		}
 	};
 

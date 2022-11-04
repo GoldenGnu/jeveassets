@@ -36,7 +36,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.settings.PriceDataSettings.PriceMode;
-import net.nikr.eve.jeveasset.gui.shared.Formater.DateFormatThreadSafe;
+import net.nikr.eve.jeveasset.gui.shared.Formatter.DateFormatThreadSafe;
 import net.nikr.eve.jeveasset.gui.tabs.prices.PriceHistoryTab.PriceHistoryData;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import net.nikr.eve.jeveasset.io.shared.FileUtil;

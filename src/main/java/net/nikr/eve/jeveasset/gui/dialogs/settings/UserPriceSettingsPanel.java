@@ -91,7 +91,7 @@ public class UserPriceSettingsPanel extends JUserListPanel<Integer, Double> {
 		}
 
 		@Override
-		public String getValueFormated() {
+		public String getValueFormatted() {
 			return simpleFormat.format(getValue());
 		}
 

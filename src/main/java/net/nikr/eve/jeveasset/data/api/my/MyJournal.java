@@ -48,7 +48,7 @@ public class MyJournal extends RawJournal implements Comparable<MyJournal>, Owne
 		owners.add(RawConverter.toLong(getSecondPartyID()));
 	}
 
-	public int getAccountKeyFormated() {
+	public int getAccountKeyFormatted() {
 		return getAccountKey() - 999;
 	}
 
@@ -56,7 +56,7 @@ public class MyJournal extends RawJournal implements Comparable<MyJournal>, Owne
 		return owner.getOwnerName();
 	}
 
-	public String getRefTypeFormated() {
+	public String getRefTypeFormatted() {
 		RawJournalRefType refType = getRefType();
 		if (refType != null) {
 			return capitalizeAll(refType.name().replace("_CORP_", CORP).replace('_', ' '));

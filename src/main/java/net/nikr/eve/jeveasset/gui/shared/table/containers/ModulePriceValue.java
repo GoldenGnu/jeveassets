@@ -21,7 +21,7 @@
 package net.nikr.eve.jeveasset.gui.shared.table.containers;
 
 import java.util.Objects;
-import net.nikr.eve.jeveasset.gui.shared.Formater;
+import net.nikr.eve.jeveasset.gui.shared.Formatter;
 
 
 public class ModulePriceValue {
@@ -38,9 +38,9 @@ public class ModulePriceValue {
 	@Override
 	public String toString() {
 		if (count > 1 && price != null) {
-			return Formater.iskFormat(price) + " (" + Formater.iskFormat(value) + ")";
+			return Formatter.iskFormat(price) + " (" + Formatter.iskFormat(value) + ")";
 		} else {
-			return Formater.iskFormat(value);
+			return Formatter.iskFormat(value);
 		}
 	}
 

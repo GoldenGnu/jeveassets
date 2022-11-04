@@ -29,7 +29,7 @@ import net.nikr.eve.jeveasset.data.settings.types.ItemType;
 import net.nikr.eve.jeveasset.data.settings.types.LocationType;
 import net.nikr.eve.jeveasset.data.settings.types.PriceType;
 import net.nikr.eve.jeveasset.gui.shared.CopyHandler.CopySeparator;
-import net.nikr.eve.jeveasset.gui.shared.Formater;
+import net.nikr.eve.jeveasset.gui.shared.Formatter;
 
 
 public class Material implements Comparable<Material>, LocationType, ItemType, PriceType, CopySeparator {
@@ -157,7 +157,7 @@ public class Material implements Comparable<Material>, LocationType, ItemType, P
 	}
 
 	public double getValue() {
-		return Formater.round(value, 2);
+		return Formatter.round(value, 2);
 	}
 
 	public String getSeparator() {

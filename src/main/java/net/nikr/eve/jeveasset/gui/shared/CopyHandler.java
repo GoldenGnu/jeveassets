@@ -193,9 +193,9 @@ public class CopyHandler {
 				}
 				if (value != null) { //Ignore null
 					if (value instanceof Number) {
-						rowText.append(Formater.copyFormat((Number)value));
+						rowText.append(Formatter.copyFormat((Number)value));
 					} else if (value instanceof Date) {
-						rowText.append(Formater.columnDate(value));
+						rowText.append(Formatter.columnDate(value));
 					} else if (value instanceof HierarchyColumn) {
 						HierarchyColumn hierarchyColumn = (HierarchyColumn) value;
 						rowText.append(hierarchyColumn.getExport());

@@ -33,7 +33,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
-import net.nikr.eve.jeveasset.gui.shared.Formater;
+import net.nikr.eve.jeveasset.gui.shared.Formatter;
 import net.nikr.eve.jeveasset.io.shared.AbstractGetter;
 import net.nikr.eve.jeveasset.io.shared.ThreadWoker;
 import net.nikr.eve.jeveasset.io.shared.ThreadWoker.TaskCancelledException;
@@ -241,7 +241,7 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner> {
 		if (errorLimit != null && errorLimit < 10) { //Error limit reached
 			try {
 				long wait = (errorReset.getTime() + 1000) - System.currentTimeMillis();
-				LOG.warn("Error limit reached waiting: " + Formater.milliseconds(wait, false, false));
+				LOG.warn("Error limit reached waiting: " + Formatter.milliseconds(wait, false, false));
 				if (wait > 0) { //Negative values throws an Exception
 					Thread.sleep(wait); //Wait until the error window is reset
 				}

@@ -30,7 +30,7 @@ import java.util.Locale;
 import java.util.TimeZone;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
-import net.nikr.eve.jeveasset.gui.shared.Formater;
+import net.nikr.eve.jeveasset.gui.shared.Formatter;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.CompareType;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.LogicType;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
@@ -198,14 +198,14 @@ public class FilterMatcher<E> implements Matcher<E> {
 		}
 	}
 
-	private boolean equals(final Object object1, final String formatedText) {
+	private boolean equals(final Object object1, final String formattedText) {
 		//Null
-		if (object1 == null || formatedText == null) {
+		if (object1 == null || formattedText == null) {
 			return false;
 		}
 
 		//Equals (case insentive)
-		return format(object1, false).equals(formatedText);
+		return format(object1, false).equals(formattedText);
 	}
 
 	private boolean regex(final Object object1, final Pattern pattern) {
@@ -218,14 +218,14 @@ public class FilterMatcher<E> implements Matcher<E> {
 		return pattern.matcher(format(object1, false)).find();
 	}
 
-	private boolean contains(final Object object1, final String formatedText) {
+	private boolean contains(final Object object1, final String formattedText) {
 		//Null
-		if (object1 == null || formatedText == null) {
+		if (object1 == null || formattedText == null) {
 			return false;
 		}
 
 		//Contains (case insentive)
-		return format(object1, false).contains(formatedText);
+		return format(object1, false).contains(formattedText);
 	}
 
 	private boolean less(final Object object1, final Object object2) {
@@ -422,7 +422,7 @@ public class FilterMatcher<E> implements Matcher<E> {
 		if (obj instanceof Date) {
 			return (Date) obj;
 		} else if (userInput && (obj instanceof String)) {
-			return Formater.columnStringToDate((String) obj);
+			return Formatter.columnStringToDate((String) obj);
 		} else {
 			return null;
 		}
@@ -436,13 +436,13 @@ public class FilterMatcher<E> implements Matcher<E> {
 		//Number
 		Number number = getNumber(object, userInput);
 		if (number != null) {
-			return Formater.compareFormat(number).toLowerCase();
+			return Formatter.compareFormat(number).toLowerCase();
 		}
 
 		//Date
 		Date date = getDate(object, userInput);
 		if (date != null) {
-			return Formater.columnDate(date).toLowerCase();
+			return Formatter.columnDate(date).toLowerCase();
 		}
 
 		//String

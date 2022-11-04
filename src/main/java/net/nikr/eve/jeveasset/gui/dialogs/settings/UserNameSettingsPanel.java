@@ -84,7 +84,7 @@ public class UserNameSettingsPanel extends JUserListPanel<Long, String> {
 		}
 
 		@Override
-		public String getValueFormated() {
+		public String getValueFormatted() {
 			return getValue();
 		}
 

@@ -23,7 +23,7 @@ package net.nikr.eve.jeveasset.gui.shared.table.containers;
 
 import java.util.HashMap;
 import java.util.Map;
-import net.nikr.eve.jeveasset.gui.shared.Formater;
+import net.nikr.eve.jeveasset.gui.shared.Formatter;
 
 
 public class Percent implements NumberValue, Comparable<Percent> {
@@ -45,9 +45,9 @@ public class Percent implements NumberValue, Comparable<Percent> {
 	private Percent(final double percent) {
 		this.percent = percent;
 		if (Double.isInfinite(percent)) {
-			formatted = Formater.integerFormat(percent);
+			formatted = Formatter.integerFormat(percent);
 		} else {
-			formatted = Formater.percentFormat(percent);
+			formatted = Formatter.percentFormat(percent);
 		}
 	}
 

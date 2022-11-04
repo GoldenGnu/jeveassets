@@ -40,7 +40,7 @@ import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.ColorUtil;
 import net.nikr.eve.jeveasset.gui.shared.CopyHandler;
-import net.nikr.eve.jeveasset.gui.shared.Formater;
+import net.nikr.eve.jeveasset.gui.shared.Formatter;
 import net.nikr.eve.jeveasset.gui.shared.components.JFixedToolBar;
 import net.nikr.eve.jeveasset.gui.shared.components.JGroupLayoutPanel;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
@@ -237,7 +237,7 @@ public class StatusPanel extends JGroupLayoutPanel {
 	private class ListenerClass implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			jEveTime.setText(Formater.eveTime(Settings.getNow()));
+			jEveTime.setText(Formatter.eveTime(Settings.getNow()));
 		}
 	}
 
@@ -385,7 +385,7 @@ public class StatusPanel extends JGroupLayoutPanel {
 				public void mousePressed(MouseEvent e) {
 					if (e.getButton() == MouseEvent.BUTTON1) {
 						if (number != null) {
-							CopyHandler.toClipboard(Formater.copyFormat(number));
+							CopyHandler.toClipboard(Formatter.copyFormat(number));
 						} else {
 							CopyHandler.toClipboard(text);
 						}

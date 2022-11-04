@@ -31,9 +31,9 @@ import java.util.concurrent.Future;
 import org.junit.Test;
 
 
-public class FormaterTest {
+public class FormatterTest {
 
-	private final Date DATE = Formater.columnStringToDate("2000-01-01 12:00");
+	private final Date DATE = Formatter.columnStringToDate("2000-01-01 12:00");
 	private final int THREADS = 100;
 
 	@Test
@@ -53,16 +53,16 @@ public class FormaterTest {
 
 	@Test
 	public void testAutoFormat() throws InterruptedException, ExecutionException {
-		Formater.AUTO_FORMAT.format(Long.MAX_VALUE);
-		Formater.AUTO_FORMAT.format(Long.MIN_VALUE);
-		Formater.AUTO_FORMAT.format(Double.MIN_VALUE);
-		Formater.AUTO_FORMAT.format(Double.MAX_VALUE);
+		Formatter.AUTO_FORMAT.format(Long.MAX_VALUE);
+		Formatter.AUTO_FORMAT.format(Long.MIN_VALUE);
+		Formatter.AUTO_FORMAT.format(Double.MIN_VALUE);
+		Formatter.AUTO_FORMAT.format(Double.MAX_VALUE);
 	}
 
 	private class ParseDate implements Callable<Void> {
 		@Override
 		public Void call() throws Exception {
-			Formater.columnStringToDate("2000-01-01 12:00");
+			Formatter.columnStringToDate("2000-01-01 12:00");
 			return null;
 		}
 	}
@@ -70,7 +70,7 @@ public class FormaterTest {
 	private class FormatDate implements Callable<Void> {
 		@Override
 		public Void call() throws Exception {
-			Formater.columnDate(DATE);
+			Formatter.columnDate(DATE);
 			return null;
 		}
 	}
@@ -78,7 +78,7 @@ public class FormaterTest {
 	private class FormatNumber implements Callable<Void> {
 		@Override
 		public Void call() throws Exception {
-			Formater.iskFormat(123456789.1234);
+			Formatter.iskFormat(123456789.1234);
 			return null;
 		}
 	}

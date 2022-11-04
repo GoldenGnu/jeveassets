@@ -70,7 +70,7 @@ import net.nikr.eve.jeveasset.data.settings.ColorEntry;
 import net.nikr.eve.jeveasset.data.settings.ColorSettings;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
-import net.nikr.eve.jeveasset.gui.shared.Formater;
+import net.nikr.eve.jeveasset.gui.shared.Formatter;
 import net.nikr.eve.jeveasset.gui.shared.TextManager;
 import net.nikr.eve.jeveasset.gui.shared.components.JDateChooser;
 import net.nikr.eve.jeveasset.gui.shared.components.ListComboBoxModel;
@@ -384,7 +384,7 @@ class FilterPanel<E> implements Comparable<FilterPanel<E>> {
 				//ignore missing columns...
 			}
 		} else if (isDateCompare()) {
-			setDateString(Formater.columnStringToDate(filter.getText()));
+			setDateString(Formatter.columnStringToDate(filter.getText()));
 		} else {
 			jText.setText(filter.getText());
 			timer.stop();
@@ -414,7 +414,7 @@ class FilterPanel<E> implements Comparable<FilterPanel<E>> {
 	private String getDataString() {
 		LocalDate date = jDate.getDate();
 		Instant instant = date.atStartOfDay().atZone(ZoneId.of("GMT")).toInstant(); //End of day - GMT
-		return Formater.columnDate(Date.from(instant));
+		return Formatter.columnDate(Date.from(instant));
 	}
 
 	private void refilter() {

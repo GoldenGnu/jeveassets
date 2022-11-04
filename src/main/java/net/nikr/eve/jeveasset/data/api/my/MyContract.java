@@ -195,7 +195,7 @@ public class MyContract extends RawContract implements LocationsType, OwnersType
 		return getDateCompleted() != null;
 	}
 
-	public String getStatusFormated() {
+	public String getStatusFormatted() {
 		switch (super.getStatus()) {
 			case CANCELLED:
 				return TabsContracts.get().statusCancelled();

@@ -93,7 +93,7 @@ import net.nikr.eve.jeveasset.data.settings.TrackerSettings.ShowOption;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel.JStatusLabel;
 import net.nikr.eve.jeveasset.gui.images.Images;
-import net.nikr.eve.jeveasset.gui.shared.Formater;
+import net.nikr.eve.jeveasset.gui.shared.Formatter;
 import net.nikr.eve.jeveasset.gui.shared.InstantToolTip;
 import net.nikr.eve.jeveasset.gui.shared.JOptionInput;
 import net.nikr.eve.jeveasset.gui.shared.components.CheckBoxNode;
@@ -159,7 +159,7 @@ public class TrackerTab extends JMainTabSecondary {
 	private final int PANEL_WIDTH_MINIMUM = 160;
 
 	private final NumberFormat iskFormat = new DecimalFormat("#,##0.00 isk");
-	private final DateFormat dateFormat = new SimpleDateFormat(Formater.COLUMN_DATE);
+	private final DateFormat dateFormat = new SimpleDateFormat(Formatter.COLUMN_DATE);
 
 	private final JFreeChart jNextChart;
 	private final JDateChooser jFrom;
@@ -503,7 +503,7 @@ public class TrackerTab extends JMainTabSecondary {
 
 		rangeLogarithmicAxis = new LogarithmicAxis("");
 		rangeLogarithmicAxis.setStrictValuesFlag(false);
-		rangeLogarithmicAxis.setNumberFormatOverride(Formater.AUTO_FORMAT);
+		rangeLogarithmicAxis.setNumberFormatOverride(Formatter.AUTO_FORMAT);
 		rangeLogarithmicAxis.setTickLabelFont(jFromLabel.getFont());
 		rangeLogarithmicAxis.setTickLabelPaint(Colors.TEXTFIELD_FOREGROUND.getColor());
 		rangeLogarithmicAxis.setAutoRangeIncludesZero(trackerSettings.isIncludeZero());
@@ -1296,13 +1296,13 @@ public class TrackerTab extends JMainTabSecondary {
 		if (maxNumber != null && maxNumber instanceof Double) {
 			double max = (Double) maxNumber;
 			if (max >     1_000_000_000_000.0) {	 //Higher than 1 Trillion
-				rangeLinearAxis.setNumberFormatOverride(Formater.TRILLIONS_FORMAT);
+				rangeLinearAxis.setNumberFormatOverride(Formatter.TRILLIONS_FORMAT);
 			} else if (max > 1_000_000_000.0) { //Higher than 1 Billion
-				rangeLinearAxis.setNumberFormatOverride(Formater.BILLIONS_FORMAT);
+				rangeLinearAxis.setNumberFormatOverride(Formatter.BILLIONS_FORMAT);
 			} else if (max >     1_000_000.0) {	 //Higher than 1 Million
-				rangeLinearAxis.setNumberFormatOverride(Formater.MILLIONS_FORMAT);
+				rangeLinearAxis.setNumberFormatOverride(Formatter.MILLIONS_FORMAT);
 			} else {
-				rangeLinearAxis.setNumberFormatOverride(Formater.LONG_FORMAT); //Default
+				rangeLinearAxis.setNumberFormatOverride(Formatter.LONG_FORMAT); //Default
 			}
 		}
 	}
@@ -1350,11 +1350,11 @@ public class TrackerTab extends JMainTabSecondary {
 	}
 
 	private Value getSelectedValue(String owner) {
-		String date = Formater.simpleDate(new Date((long)jNextChart.getXYPlot().getDomainCrosshairValue()));
+		String date = Formatter.simpleDate(new Date((long)jNextChart.getXYPlot().getDomainCrosshairValue()));
 		try {
 			TrackerData.readLock();
 			for (Value value : TrackerData.get().get(owner)) {
-				if (date.equals(Formater.simpleDate(value.getDate()))) {
+				if (date.equals(Formatter.simpleDate(value.getDate()))) {
 					return value;
 				}
 			}

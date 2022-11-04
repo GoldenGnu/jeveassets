@@ -39,7 +39,7 @@ import net.nikr.eve.jeveasset.data.settings.ExportSettings;
 import net.nikr.eve.jeveasset.data.settings.ExportSettings.DecimalSeparator;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.tag.Tags;
-import net.nikr.eve.jeveasset.gui.shared.Formater;
+import net.nikr.eve.jeveasset.gui.shared.Formatter;
 import net.nikr.eve.jeveasset.gui.shared.menu.JFormulaDialog.Formula;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuJumps.Jump;
 import net.nikr.eve.jeveasset.gui.shared.table.ColumnManager.FormulaColumn;
@@ -397,7 +397,7 @@ public class ExportTableData {
 			Tags tags = (Tags) object;
 			return tags.getHtml();
 		} else if (object instanceof Date) {
-			return Formater.columnDate(object);
+			return Formatter.columnDate(object);
 		} else {
 			return object.toString();
 		}
