@@ -24,20 +24,26 @@ package net.nikr.eve.jeveasset.i18n;
 import java.util.Locale;
 import uk.me.candle.translations.Bundle;
 
-public abstract class TabsIndustrySlots extends Bundle {
+public abstract class TabsSlots extends Bundle {
 
-	public static TabsIndustrySlots get() {
-		return BundleServiceFactory.getBundleService().get(TabsIndustrySlots.class);
+	public static TabsSlots get() {
+		return BundleServiceFactory.getBundleService().get(TabsSlots.class);
 	}
 
-	public TabsIndustrySlots(final Locale locale) {
+	public TabsSlots(final Locale locale) {
 		super(locale);
 	}
 
+	public abstract String contractCharacter();
+	public abstract String contractCorporation();
 	public abstract String grandTotal();
 	public abstract String manufacturing();
+	public abstract String marketOrders();
 	public abstract String reactions();
 	public abstract String research();
+	public abstract String tableHeader();
+	public abstract String tableHeaderIcon();
+	public abstract String tableHeaderText();
 	public abstract String title();
 	public abstract String columnOwner();
 	public abstract String columnManufacturingDone();
@@ -52,6 +58,15 @@ public abstract class TabsIndustrySlots extends Bundle {
 	public abstract String columnReactionsDone();
 	public abstract String columnReactionsActive();
 	public abstract String columnReactionsMax();
+	public abstract String columnMarketOrdersFree();
+	public abstract String columnMarketOrdersActive();
+	public abstract String columnMarketOrdersMax();
+	public abstract String columnContractCharacterFree();
+	public abstract String columnContractCharacterActive();
+	public abstract String columnContractCharacterMax();
+	public abstract String columnContractCorporationFree();
+	public abstract String columnContractCorporationActive();
+	public abstract String columnContractCorporationMax();
 	public abstract String columnCurrentShip();
 	public abstract String columnCurrentStation();
 	public abstract String columnCurrentSystem();

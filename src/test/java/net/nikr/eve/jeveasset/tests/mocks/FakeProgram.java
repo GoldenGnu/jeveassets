@@ -45,7 +45,7 @@ import net.nikr.eve.jeveasset.gui.frame.MainWindow;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
 import net.nikr.eve.jeveasset.gui.tabs.assets.AssetsTab;
-import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustrySlotsTab;
+import net.nikr.eve.jeveasset.gui.tabs.slots.SlotsTab;
 import net.nikr.eve.jeveasset.gui.tabs.loadout.LoadoutsTab;
 import net.nikr.eve.jeveasset.gui.tabs.orders.MarketOrdersTab;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewTab;
@@ -75,7 +75,7 @@ public abstract class FakeProgram extends Program {
 	}
 
 	@Override
-	public IndustrySlotsTab getIndustrySlotsTab() {
+	public SlotsTab getSlotsTab() {
 		throw new UnsupportedOperationException("Not implemented");
 	}
 
