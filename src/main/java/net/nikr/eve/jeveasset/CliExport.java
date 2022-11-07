@@ -46,7 +46,7 @@ import net.nikr.eve.jeveasset.gui.tabs.assets.AssetsTab;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractsTab;
 import net.nikr.eve.jeveasset.gui.tabs.items.ItemsTab;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJobsTab;
-import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustrySlotsTab;
+import net.nikr.eve.jeveasset.gui.tabs.slots.SlotsTab;
 import net.nikr.eve.jeveasset.gui.tabs.journal.JournalTab;
 import net.nikr.eve.jeveasset.gui.tabs.loadout.LoadoutsTab;
 import net.nikr.eve.jeveasset.gui.tabs.materials.MaterialsTab;
@@ -66,7 +66,7 @@ import org.slf4j.LoggerFactory;
 import net.nikr.eve.jeveasset.gui.shared.filter.SimpleTableFormat;
 import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
 import net.nikr.eve.jeveasset.gui.shared.table.TableFormatFactory;
-import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustrySlotsData;
+import net.nikr.eve.jeveasset.gui.tabs.slots.SlotsData;
 import net.nikr.eve.jeveasset.gui.tabs.loadout.Loadout;
 import net.nikr.eve.jeveasset.gui.tabs.loadout.LoadoutData;
 import net.nikr.eve.jeveasset.gui.tabs.materials.MaterialsData;
@@ -87,7 +87,7 @@ public class CliExport {
 		ASSETS("Assets", CliOptions.ASSETS, AssetsTab.NAME),
 		CONTRACTS("Contracts", CliOptions.CONTRACTS, ContractsTab.NAME),
 		INDUSTRY_JOBS("Industry Jobs", CliOptions.INDUSTRY_JOBS, IndustryJobsTab.NAME),
-		INDUSTRY_SLOTS("Industry Slots", CliOptions.INDUSTRY_SLOTS, IndustrySlotsTab.NAME),
+		SLOTS("Slots", CliOptions.SLOTS, SlotsTab.NAME),
 		ISK("Isk", CliOptions.ISK, ValueTableTab.NAME),
 		ITEMS("Items", CliOptions.ITEMS, ItemsTab.NAME),
 		JOURNAL("Journal", CliOptions.JOURNAL, JournalTab.NAME),
@@ -163,8 +163,8 @@ public class CliExport {
 					case INDUSTRY_JOBS:
 						ok = export(profileData.getIndustryJobsEventList(), TableFormatFactory.industryJobTableFormat(), toolName, exportSettings);
 						break;
-					case INDUSTRY_SLOTS:
-						ok = export(new IndustrySlotsData(profileManager, profileData).getData(), TableFormatFactory.industrySlotTableFormat(), toolName, exportSettings);
+					case SLOTS:
+						ok = export(new SlotsData(profileManager, profileData).getData(), TableFormatFactory.slotTableFormat(), toolName, exportSettings);
 						break;
 					case ISK:
 						ok = export(new IskData(profileManager, profileData).getData(), TableFormatFactory.valueTableFormat(), toolName, exportSettings);

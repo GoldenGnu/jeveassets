@@ -37,8 +37,8 @@ import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractsExtendedTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractsTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.items.ItemTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJobTableFormat;
-import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustrySlot;
-import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustrySlotTableFormat;
+import net.nikr.eve.jeveasset.gui.tabs.slots.Slots;
+import net.nikr.eve.jeveasset.gui.tabs.slots.SlotsTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.journal.JournalTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.loadout.Loadout;
 import net.nikr.eve.jeveasset.gui.tabs.loadout.LoadoutExtendedTableFormat;
@@ -88,8 +88,8 @@ public class TableFormatFactory {
 		return new EnumTableFormatAdaptor<>(IndustryJobTableFormat.class);
 	}
 
-	public static EnumTableFormatAdaptor<IndustrySlotTableFormat, IndustrySlot> industrySlotTableFormat() {
-		return new EnumTableFormatAdaptor<>(IndustrySlotTableFormat.class);
+	public static EnumTableFormatAdaptor<SlotsTableFormat, Slots> slotTableFormat() {
+		return new EnumTableFormatAdaptor<>(SlotsTableFormat.class);
 	}
 
 	public static EnumTableFormatAdaptor<ItemTableFormat, Item> itemTableFormat() {

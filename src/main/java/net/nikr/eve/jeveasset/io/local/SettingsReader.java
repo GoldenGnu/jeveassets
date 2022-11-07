@@ -93,8 +93,6 @@ import net.nikr.eve.jeveasset.gui.tabs.items.ItemTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.items.ItemsTab;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJobTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJobsTab;
-import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustrySlotTableFormat;
-import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustrySlotsTab;
 import net.nikr.eve.jeveasset.gui.tabs.journal.JournalTab;
 import net.nikr.eve.jeveasset.gui.tabs.journal.JournalTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.orders.MarketOrdersTab;
@@ -105,6 +103,8 @@ import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewLocation;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewTab;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.routing.SolarSystem;
+import net.nikr.eve.jeveasset.gui.tabs.slots.SlotsTab;
+import net.nikr.eve.jeveasset.gui.tabs.slots.SlotsTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter.StockpileContainer;
@@ -1004,6 +1004,10 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 	private void parseShowToolsNodes(Element showToolsElement, Settings settings) throws XmlException {
 		boolean saveOnExit = getBoolean(showToolsElement, "saveonexit");
 		List<String> showTools = getStringList(showToolsElement, "show");
+		int index = showTools.indexOf("Industry Slots");
+		if (index >= 0) {
+			showTools.set(index, "Slots");
+		}
 		settings.setSaveToolsOnExit(saveOnExit);
 		settings.getShowTools().addAll(showTools);
 	}
@@ -1607,10 +1611,10 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		} catch (IllegalArgumentException exception) {
 
 		}
-		//Industry Slots
+		//Slots
 		try {
-			if (toolName.equals(IndustrySlotsTab.NAME)) {
-				return IndustrySlotTableFormat.valueOf(column);
+			if (toolName.equals(SlotsTab.NAME)) {
+				return SlotsTableFormat.valueOf(column);
 			}
 		} catch (IllegalArgumentException exception) {
 
