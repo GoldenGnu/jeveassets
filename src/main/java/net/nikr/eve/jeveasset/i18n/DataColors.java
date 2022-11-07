@@ -71,9 +71,9 @@ public abstract class DataColors extends Bundle {
 	public abstract String industryJobsReverseEngineering();
 	public abstract String industryJobsReverseInvention();
 	public abstract String industryJobsReactions();
-	public abstract String industrySlotsFree();
-	public abstract String industrySlotsDone();
-	public abstract String industrySlotsFull();
+	public abstract String slotsFree();
+	public abstract String slotsDone();
+	public abstract String slotsFull();
 	public abstract String journalNew();
 	public abstract String transactionsBought();
 	public abstract String transactionsSold();
@@ -103,7 +103,7 @@ public abstract class DataColors extends Bundle {
 	public abstract String groupOverview();
 	public abstract String groupMarketOrders();
 	public abstract String groupIndustryJobs();
-	public abstract String groupIndustrySlots();
+	public abstract String groupSlots();
 	public abstract String groupJournal();
 	public abstract String groupTransactions();
 	public abstract String groupGlobal();

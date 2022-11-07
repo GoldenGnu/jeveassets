@@ -51,7 +51,7 @@ import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractsExtendedTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractsTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.items.ItemTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJobTableFormat;
-import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustrySlotTableFormat;
+import net.nikr.eve.jeveasset.gui.tabs.slots.SlotsTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.journal.JournalTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.loadout.Loadout;
 import net.nikr.eve.jeveasset.gui.tabs.loadout.LoadoutExtendedTableFormat;
@@ -156,9 +156,9 @@ public class TableFormatTest extends TestUtil {
 			for (IndustryJobTableFormat tableFormat : IndustryJobTableFormat.values()) {
 				test(tableFormat, tableFormat.getType(), tableFormat.getColumnValue(saveMyIndustryJob));
 			}
-			//Industry Slots
-			test(IndustrySlotTableFormat.class);
 		//Secondary Tools
+			//Slots
+			test(SlotsTableFormat.class);
 			//Item
 			test(ItemTableFormat.class);
 			for (ItemTableFormat tableFormat : ItemTableFormat.values()) {

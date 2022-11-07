@@ -59,7 +59,7 @@ public class CliOptions {
 	public static final String ASSETS = "assets";
 	public static final String CONTRACTS = "contracts";
 	public static final String INDUSTRY_JOBS = "industryjobs";
-	public static final String INDUSTRY_SLOTS = "Industryslots";
+	public static final String SLOTS = "slots";
 	public static final String ISK = "isk";
 	public static final String ITEMS = "items";
 	public static final String JOURNAL = "journal";
@@ -224,8 +224,8 @@ public class CliOptions {
 		boolean contracts;
 		@Option(names = {"-i" ,"-"+INDUSTRY_JOBS}, description = TOOLS_BEFORE+"Industry Jobs"+TOOLS_AFTER)
 		boolean industryJobs;
-		@Option(names = {"-n" ,"-"+INDUSTRY_SLOTS}, description = TOOLS_BEFORE+"Industry Slots"+TOOLS_AFTER)
-		boolean industrySlots;
+		@Option(names = {"-n" ,"-"+SLOTS}, description = TOOLS_BEFORE+"Slots"+TOOLS_AFTER)
+		boolean slots;
 		@Option(names = {"-k" ,"-"+ISK}, description = TOOLS_BEFORE+"Isk"+TOOLS_AFTER)
 		boolean isk;
 		@Option(names = {"-x" ,"-"+ITEMS}, description = TOOLS_BEFORE+"Items"+TOOLS_AFTER)
@@ -272,8 +272,8 @@ public class CliOptions {
 		String contractsFilter;
 		@Option(names = "-"+INDUSTRY_JOBS+FILTER_CMD, fallbackValue = "", arity = "0..1", paramLabel = FILTER_LABEL, description = FILTER_BEFORE+"Industry Jobs"+FILTER_AFTER)
 		String industryJobsFilter;
-		@Option(names = "-"+INDUSTRY_SLOTS+FILTER_CMD, fallbackValue = "", arity = "0..1", paramLabel = FILTER_LABEL, description = FILTER_BEFORE+"Industry Slots"+FILTER_AFTER)
-		String industrySlotsFilter;
+		@Option(names = "-"+SLOTS+FILTER_CMD, fallbackValue = "", arity = "0..1", paramLabel = FILTER_LABEL, description = FILTER_BEFORE+"Slots"+FILTER_AFTER)
+		String slotsFilter;
 		@Option(names = "-"+ISK+FILTER_CMD, fallbackValue = "", arity = "0..1", paramLabel = FILTER_LABEL, description = FILTER_BEFORE+"Isk"+FILTER_AFTER)
 		String iskFilter;
 		@Option(names = "-"+ITEMS+FILTER_CMD, fallbackValue = "", arity = "0..1", paramLabel = FILTER_LABEL, description = FILTER_BEFORE+"Items"+FILTER_AFTER)
@@ -311,8 +311,8 @@ public class CliOptions {
 		String contractsView;
 		@Option(names = "-"+INDUSTRY_JOBS+VIEW_CMD, fallbackValue = "", arity = "0..1", paramLabel = VIEW_LABEL, description = VIEW_BEFORE+"Industry Jobs"+VIEW_AFTER)
 		String industryJobsView;
-		@Option(names = "-"+INDUSTRY_SLOTS+VIEW_CMD, fallbackValue = "", arity = "0..1", paramLabel = VIEW_LABEL, description = VIEW_BEFORE+"Industry Slots"+VIEW_AFTER)
-		String industrySlotsView;
+		@Option(names = "-"+SLOTS+VIEW_CMD, fallbackValue = "", arity = "0..1", paramLabel = VIEW_LABEL, description = VIEW_BEFORE+"Slots"+VIEW_AFTER)
+		String slotsView;
 		@Option(names = "-"+ISK+VIEW_CMD, fallbackValue = "", arity = "0..1", paramLabel = VIEW_LABEL, description = VIEW_BEFORE+"Isk"+VIEW_AFTER)
 		String iskView;
 		@Option(names = "-"+ITEMS+VIEW_CMD, fallbackValue = "", arity = "0..1", paramLabel = VIEW_LABEL, description = VIEW_BEFORE+"Items"+VIEW_AFTER)
@@ -372,7 +372,7 @@ public class CliOptions {
 			if (tools == null || tools.assets) createExportSettings(ExportTool.ASSETS, filters.assetsFilter, views.assetsView);
 			if (tools == null || tools.contracts) createExportSettings(ExportTool.CONTRACTS, filters.contractsFilter, views.contractsView);
 			if (tools == null || tools.industryJobs) createExportSettings(ExportTool.INDUSTRY_JOBS, filters.industryJobsFilter, views.industryJobsView);
-			if (tools == null || tools.industrySlots) createExportSettings(ExportTool.INDUSTRY_SLOTS, filters.industrySlotsFilter, views.industrySlotsView);
+			if (tools == null || tools.slots) createExportSettings(ExportTool.SLOTS, filters.slotsFilter, views.slotsView);
 			if (tools == null || tools.isk) createExportSettings(ExportTool.ISK, filters.iskFilter, views.iskView);
 			if (tools == null || tools.items) createExportSettings(ExportTool.ITEMS, filters.itemsFilter, views.itemsView);
 			if (tools == null || tools.journal) createExportSettings(ExportTool.JOURNAL, filters.journalFilter, views.journalView);

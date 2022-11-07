@@ -52,7 +52,6 @@ public abstract class GuiFrame extends Bundle {
 	public abstract String inventory();
 	public abstract String items();
 	public abstract String industry();
-	public abstract String industrySlots();
 	public abstract String journal();
 	public abstract String license();
 	public abstract String linkFeedbackAndHelp();
@@ -73,6 +72,7 @@ public abstract class GuiFrame extends Bundle {
 	public abstract String reprocessed();
 	public abstract String routing();
 	public abstract String ship();
+	public abstract String slots();
 	public abstract String stockpile();
 	public abstract String table();
 	public abstract String tools();

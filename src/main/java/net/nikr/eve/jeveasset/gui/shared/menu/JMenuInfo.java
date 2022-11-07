@@ -51,11 +51,11 @@ import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.CopyHandler;
 import net.nikr.eve.jeveasset.gui.shared.Formatter;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo.InfoItem;
-import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustrySlot;
 import net.nikr.eve.jeveasset.gui.tabs.loadout.Loadout;
 import net.nikr.eve.jeveasset.gui.tabs.materials.Material;
 import net.nikr.eve.jeveasset.gui.tabs.materials.Material.MaterialType;
 import net.nikr.eve.jeveasset.gui.tabs.overview.Overview;
+import net.nikr.eve.jeveasset.gui.tabs.slots.Slots;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileTotal;
 import net.nikr.eve.jeveasset.gui.tabs.tree.TreeAsset;
@@ -275,15 +275,15 @@ public class JMenuInfo {
 		values.addAll(buy);
 	}
 
-	public static void industrySlots(final JPopupMenu jPopupMenu, final List<IndustrySlot> list) {
+	public static void slots(final JPopupMenu jPopupMenu, final List<Slots> list) {
 		List<MenuItemValue> values = createDefault(jPopupMenu);
 
-		IndustrySlot total = new IndustrySlot("");
-		for (IndustrySlot industrySlot : list) {
-			if (industrySlot.isGrandTotal()) {
+		Slots total = new Slots("");
+		for (Slots slots : list) {
+			if (slots.isGrandTotal()) {
 				continue;
 			}
-			total.count(industrySlot);
+			total.count(slots);
 		}
 
 		List<MenuItemValue> manufacturing = createMenuItemGroup(jPopupMenu, GuiShared.get().selectionSlotsManufacturing(), Images.MISC_MANUFACTURING.getIcon());
@@ -306,6 +306,24 @@ public class JMenuInfo {
 		createMenuItem(reactions, jPopupMenu, total.getReactionsActive(), AutoNumberFormat.LONG, GuiShared.get().selectionSlotsReactionsActiveToolTip(), GuiShared.get().selectionSlotsReactionsActive(), Images.UPDATE_WORKING.getIcon());
 		createMenuItem(reactions, jPopupMenu, total.getReactionsMax(), AutoNumberFormat.LONG, GuiShared.get().selectionSlotsReactionsMaxToolTip(), GuiShared.get().selectionSlotsReactionsMax(), Images.UPDATE_DONE_OK.getIcon());
 		values.addAll(reactions);
+
+		List<MenuItemValue> marketOrders = createMenuItemGroup(jPopupMenu, GuiShared.get().selectionSlotsMarketOrders(), Images.MISC_MARKET_ORDERS.getIcon());
+		createMenuItem(marketOrders, jPopupMenu, total.getMarketOrdersFree(), AutoNumberFormat.LONG, GuiShared.get().selectionSlotsMarketOrdersFreeToolTip(), GuiShared.get().selectionSlotsMarketOrdersFree(), Images.EDIT_ADD.getIcon());
+		createMenuItem(marketOrders, jPopupMenu, total.getMarketOrdersActive(), AutoNumberFormat.LONG, GuiShared.get().selectionSlotsMarketOrdersActiveToolTip(), GuiShared.get().selectionSlotsMarketOrdersActive(), Images.UPDATE_WORKING.getIcon());
+		createMenuItem(marketOrders, jPopupMenu, total.getMarketOrdersMax(), AutoNumberFormat.LONG, GuiShared.get().selectionSlotsMarketOrdersMaxToolTip(), GuiShared.get().selectionSlotsMarketOrdersMax(), Images.UPDATE_DONE_OK.getIcon());
+		values.addAll(marketOrders);
+
+		List<MenuItemValue> contractCharacter = createMenuItemGroup(jPopupMenu, GuiShared.get().selectionSlotsContractCharacter(), Images.MISC_CONTRACTS.getIcon());
+		createMenuItem(contractCharacter, jPopupMenu, total.getContractCharacterFree(), AutoNumberFormat.LONG, GuiShared.get().selectionSlotsContractCharacterFreeToolTip(), GuiShared.get().selectionSlotsContractCharacterFree(), Images.EDIT_ADD.getIcon());
+		createMenuItem(contractCharacter, jPopupMenu, total.getContractCharacterActive(), AutoNumberFormat.LONG, GuiShared.get().selectionSlotsContractCharacterActiveToolTip(), GuiShared.get().selectionSlotsContractCharacterActive(), Images.UPDATE_WORKING.getIcon());
+		createMenuItem(contractCharacter, jPopupMenu, total.getContractCharacterMax(), AutoNumberFormat.LONG, GuiShared.get().selectionSlotsContractCharacterMaxToolTip(), GuiShared.get().selectionSlotsContractCharacterMax(), Images.UPDATE_DONE_OK.getIcon());
+		values.addAll(contractCharacter);
+
+		List<MenuItemValue> contractCorporation = createMenuItemGroup(jPopupMenu, GuiShared.get().selectionSlotsContractCorporation(), Images.MISC_CONTRACTS_CORP.getIcon());
+		createMenuItem(contractCorporation, jPopupMenu, total.getContractCorporationFree(), AutoNumberFormat.LONG, GuiShared.get().selectionSlotsContractCorporationFreeToolTip(), GuiShared.get().selectionSlotsContractCorporationFree(), Images.EDIT_ADD.getIcon());
+		createMenuItem(contractCorporation, jPopupMenu, total.getContractCorporationActive(), AutoNumberFormat.LONG, GuiShared.get().selectionSlotsContractCorporationActiveToolTip(), GuiShared.get().selectionSlotsContractCorporationActive(), Images.UPDATE_WORKING.getIcon());
+		createMenuItem(contractCorporation, jPopupMenu, total.getContractCorporationMax(), AutoNumberFormat.LONG, GuiShared.get().selectionSlotsContractCorporationMaxToolTip(), GuiShared.get().selectionSlotsContractCorporationMax(), Images.UPDATE_DONE_OK.getIcon());
+		values.addAll(contractCorporation);
 	}
 
 	public static void industryJob(final JPopupMenu jPopupMenu, final List<MyIndustryJob> list) {

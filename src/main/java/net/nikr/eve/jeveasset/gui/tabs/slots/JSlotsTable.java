@@ -19,7 +19,7 @@
  *
  */
 
-package net.nikr.eve.jeveasset.gui.tabs.jobs;
+package net.nikr.eve.jeveasset.gui.tabs.slots;
 
 import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import java.awt.Component;
@@ -30,11 +30,11 @@ import net.nikr.eve.jeveasset.data.settings.ColorSettings;
 import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 
 
-public class IndustrySlotTable extends JAutoColumnTable {
+public class JSlotsTable extends JAutoColumnTable {
 
-	private final DefaultEventTableModel<IndustrySlot> tableModel;
+	private final DefaultEventTableModel<Slots> tableModel;
 
-	public IndustrySlotTable(final Program program, final DefaultEventTableModel<IndustrySlot> tableModel) {
+	public JSlotsTable(final Program program, final DefaultEventTableModel<Slots> tableModel) {
 		super(program, tableModel);
 		this.tableModel = tableModel;
 	}
@@ -43,50 +43,74 @@ public class IndustrySlotTable extends JAutoColumnTable {
 	public Component prepareRenderer(final TableCellRenderer renderer, final int row, final int column) {
 		Component component = super.prepareRenderer(renderer, row, column);
 		boolean isSelected = isCellSelected(row, column);
-		IndustrySlot industrySlot = tableModel.getElementAt(row);
+		Slots slots = tableModel.getElementAt(row);
 		String columnName = (String) this.getTableHeader().getColumnModel().getColumn(column).getHeaderValue();
 		//Grand Total
-		if (industrySlot.isGrandTotal()) {
+		if (slots.isGrandTotal()) {
 			ColorSettings.configCell(component, ColorEntry.GLOBAL_GRAND_TOTAL, isSelected);
 			return component;
 		}
-		if (industrySlot.isEmpty() && columnName.equals(IndustrySlotTableFormat.NAME.getColumnName())) {
+		if (slots.isEmpty() && columnName.equals(SlotsTableFormat.NAME.getColumnName())) {
 			ColorSettings.configCell(component, ColorEntry.GLOBAL_ENTRY_INVALID, isSelected);
 			return component;
 		}
-		if (industrySlot.isManufacturingFree() && columnName.equals(IndustrySlotTableFormat.MANUFACTURING_FREE.getColumnName())) {
+		if (slots.isManufacturingFree() && columnName.equals(SlotsTableFormat.MANUFACTURING_FREE.getColumnName())) {
 			ColorSettings.configCell(component, ColorEntry.INDUSTRY_SLOTS_FREE, isSelected);
 			return component;
 		}
-		if (industrySlot.isManufacturingDone() && columnName.equals(IndustrySlotTableFormat.MANUFACTURING_DONE.getColumnName())) {
+		if (slots.isManufacturingDone() && columnName.equals(SlotsTableFormat.MANUFACTURING_DONE.getColumnName())) {
 			ColorSettings.configCell(component, ColorEntry.INDUSTRY_SLOTS_DONE, isSelected);
 			return component;
 		}
-		if (industrySlot.isManufacturingFull() && columnName.equals(IndustrySlotTableFormat.MANUFACTURING_FREE.getColumnName())) {
+		if (slots.isManufacturingFull() && columnName.equals(SlotsTableFormat.MANUFACTURING_FREE.getColumnName())) {
 			ColorSettings.configCell(component, ColorEntry.INDUSTRY_SLOTS_FULL, isSelected);
 			return component;
 		}
-		if (industrySlot.isReactionsFree() && columnName.equals(IndustrySlotTableFormat.REACTIONS_FREE.getColumnName())) {
+		if (slots.isReactionsFree() && columnName.equals(SlotsTableFormat.REACTIONS_FREE.getColumnName())) {
 			ColorSettings.configCell(component, ColorEntry.INDUSTRY_SLOTS_FREE, isSelected);
 			return component;
 		}
-		if (industrySlot.isReactionsDone() && columnName.equals(IndustrySlotTableFormat.REACTIONS_DONE.getColumnName())) {
+		if (slots.isReactionsDone() && columnName.equals(SlotsTableFormat.REACTIONS_DONE.getColumnName())) {
 			ColorSettings.configCell(component, ColorEntry.INDUSTRY_SLOTS_DONE, isSelected);
 			return component;
 		}
-		if (industrySlot.isReactionsFull() && columnName.equals(IndustrySlotTableFormat.REACTIONS_FREE.getColumnName())) {
+		if (slots.isReactionsFull() && columnName.equals(SlotsTableFormat.REACTIONS_FREE.getColumnName())) {
 			ColorSettings.configCell(component, ColorEntry.INDUSTRY_SLOTS_FULL, isSelected);
 			return component;
 		}
-		if (industrySlot.isResearchFree() && columnName.equals(IndustrySlotTableFormat.RESEARCH_FREE.getColumnName())) {
+		if (slots.isResearchFree() && columnName.equals(SlotsTableFormat.RESEARCH_FREE.getColumnName())) {
 			ColorSettings.configCell(component, ColorEntry.INDUSTRY_SLOTS_FREE, isSelected);
 			return component;
 		}
-		if (industrySlot.isResearchDone() && columnName.equals(IndustrySlotTableFormat.RESEARCH_DONE.getColumnName())) {
+		if (slots.isResearchDone() && columnName.equals(SlotsTableFormat.RESEARCH_DONE.getColumnName())) {
 			ColorSettings.configCell(component, ColorEntry.INDUSTRY_SLOTS_DONE, isSelected);
 			return component;
 		}
-		if (industrySlot.isResearchFull() && columnName.equals(IndustrySlotTableFormat.RESEARCH_FREE.getColumnName())) {
+		if (slots.isResearchFull() && columnName.equals(SlotsTableFormat.RESEARCH_FREE.getColumnName())) {
+			ColorSettings.configCell(component, ColorEntry.INDUSTRY_SLOTS_FULL, isSelected);
+			return component;
+		}
+		if (slots.isMarketOrdersFree() && columnName.equals(SlotsTableFormat.MARKET_ORDERS_FREE.getColumnName())) {
+			ColorSettings.configCell(component, ColorEntry.INDUSTRY_SLOTS_FREE, isSelected);
+			return component;
+		}
+		if (slots.isMarketOrdersFull() && columnName.equals(SlotsTableFormat.MARKET_ORDERS_FREE.getColumnName())) {
+			ColorSettings.configCell(component, ColorEntry.INDUSTRY_SLOTS_FULL, isSelected);
+			return component;
+		}
+		if (slots.isContractCharacterFree() && columnName.equals(SlotsTableFormat.CONTRACT_CHARACTER_FREE.getColumnName())) {
+			ColorSettings.configCell(component, ColorEntry.INDUSTRY_SLOTS_FREE, isSelected);
+			return component;
+		}
+		if (slots.isContractCharacterFull() && columnName.equals(SlotsTableFormat.CONTRACT_CHARACTER_FREE.getColumnName())) {
+			ColorSettings.configCell(component, ColorEntry.INDUSTRY_SLOTS_FULL, isSelected);
+			return component;
+		}
+		if (slots.isContractCorporationFree() && columnName.equals(SlotsTableFormat.CONTRACT_CORPORATION_FREE.getColumnName())) {
+			ColorSettings.configCell(component, ColorEntry.INDUSTRY_SLOTS_FREE, isSelected);
+			return component;
+		}
+		if (slots.isContractCorporationFull() && columnName.equals(SlotsTableFormat.CONTRACT_CORPORATION_FREE.getColumnName())) {
 			ColorSettings.configCell(component, ColorEntry.INDUSTRY_SLOTS_FULL, isSelected);
 			return component;
 		}

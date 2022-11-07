@@ -139,8 +139,8 @@ public class TestI18N extends TestUtil {
 		assertNotNull(g.all());
 	}
 
-	@Test public void testTabsIndustrySlotsBundle_en() throws Exception {
-		TabsIndustrySlots g = BundleServiceFactory.getBundleService().get(TabsIndustrySlots.class);
+	@Test public void testTabsSlotsBundle_en() throws Exception {
+		TabsSlots g = BundleServiceFactory.getBundleService().get(TabsSlots.class);
 		assertNotNull(g.title());
 	}
 
