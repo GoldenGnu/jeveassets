@@ -33,7 +33,6 @@ import java.util.List;
 import java.util.Set;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
-import javax.swing.JComponent;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
@@ -471,55 +470,51 @@ public class JMenuInfo {
 		return new MaterialTotal(totalCount, totalValue, averageValue);
 	}
 
-	public static void module(final JComponent jComponent, final List<Loadout> selected) {
-		if (jComponent instanceof JPopupMenu) {
-			JPopupMenu jPopupMenu = (JPopupMenu) jComponent;
+	public static void module(final JPopupMenu jPopupMenu, final List<Loadout> selected) {
+		List<MenuItemValue> values = createDefault(jPopupMenu);
 
-			List<MenuItemValue> values = createDefault(jPopupMenu);
-
-			long totalCount = 0;
-			double totalValue = 0;
-			double averageValue = 0;
-			Loadout totalShip = null;
-			Loadout totalModule = null;
-			Loadout totalAll = null;
-			for (int i = 0; i < selected.size(); i++) {
-				Object object = selected.get(i);
-				if (object instanceof Loadout) {
-					Loadout module = (Loadout) object;
-					if (module.getName().equals(TabsLoadout.get().totalShip())) {
-						totalShip = module;
-					} else if (module.getName().equals(TabsLoadout.get().totalModules())) {
-						totalModule = module;
-					} else if (module.getName().equals(TabsLoadout.get().totalAll())) {
-						totalAll = module;
-						break;
-					} else {
-						totalCount = totalCount + module.getCount();
-						totalValue = totalValue + module.getValue();
-					}
+		long totalCount = 0;
+		double totalValue = 0;
+		double averageValue = 0;
+		Loadout totalShip = null;
+		Loadout totalModule = null;
+		Loadout totalAll = null;
+		for (int i = 0; i < selected.size(); i++) {
+			Object object = selected.get(i);
+			if (object instanceof Loadout) {
+				Loadout module = (Loadout) object;
+				if (module.getName().equals(TabsLoadout.get().totalShip())) {
+					totalShip = module;
+				} else if (module.getName().equals(TabsLoadout.get().totalModules())) {
+					totalModule = module;
+				} else if (module.getName().equals(TabsLoadout.get().totalAll())) {
+					totalAll = module;
+					break;
+				} else {
+					totalCount = totalCount + module.getCount();
+					totalValue = totalValue + module.getValue();
 				}
 			}
-			if (totalAll != null) { //All
-				totalValue = totalAll.getValue();
-				totalCount = totalAll.getCount();
-			} else {
-				if (totalModule != null) { //Module IS total
-					totalValue = totalModule.getValue();
-					totalCount = totalModule.getCount();
-				}
-				if (totalShip != null) { //Ship is added to total
-					totalValue = totalValue + totalShip.getValue();
-					totalCount = totalCount + totalShip.getCount();
-				}
-			}
-			if (totalCount > 0 && totalValue > 0) {
-				averageValue = totalValue / totalCount;
-			}
-			createMenuItem(values, jPopupMenu, totalValue, AutoNumberFormat.ISK, GuiShared.get().selectionValue(), GuiShared.get().selectionShortValue(), Images.TOOL_VALUES.getIcon());
-			createMenuItem(values, jPopupMenu, averageValue, AutoNumberFormat.ISK, GuiShared.get().selectionAverage(), GuiShared.get().selectionShortAverage(), Images.ASSETS_AVERAGE.getIcon());
-			createMenuItem(values, jPopupMenu, totalCount, AutoNumberFormat.ISK, GuiShared.get().selectionCount(), GuiShared.get().selectionShortCount(), Images.EDIT_ADD.getIcon());
 		}
+		if (totalAll != null) { //All
+			totalValue = totalAll.getValue();
+			totalCount = totalAll.getCount();
+		} else {
+			if (totalModule != null) { //Module IS total
+				totalValue = totalModule.getValue();
+				totalCount = totalModule.getCount();
+			}
+			if (totalShip != null) { //Ship is added to total
+				totalValue = totalValue + totalShip.getValue();
+				totalCount = totalCount + totalShip.getCount();
+			}
+		}
+		if (totalCount > 0 && totalValue > 0) {
+			averageValue = totalValue / totalCount;
+		}
+		createMenuItem(values, jPopupMenu, totalValue, AutoNumberFormat.ISK, GuiShared.get().selectionValue(), GuiShared.get().selectionShortValue(), Images.TOOL_VALUES.getIcon());
+		createMenuItem(values, jPopupMenu, averageValue, AutoNumberFormat.ISK, GuiShared.get().selectionAverage(), GuiShared.get().selectionShortAverage(), Images.ASSETS_AVERAGE.getIcon());
+		createMenuItem(values, jPopupMenu, totalCount, AutoNumberFormat.ISK, GuiShared.get().selectionCount(), GuiShared.get().selectionShortCount(), Images.EDIT_ADD.getIcon());
 	}
 
 	public static JMenuItem createMenuItem(List<MenuItemValue> values, final JPopupMenu jPopupMenu, final Number number, AutoNumberFormat numberFormat, final String toolTip, String shortText, final Icon icon) {
