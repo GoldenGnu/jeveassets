@@ -26,13 +26,13 @@ import net.nikr.eve.jeveasset.i18n.TabsReprocessed;
 
 public class ReprocessedGrandItem extends ReprocessedTotal {
 
-	private final ReprocessedItem reprocessedItem;
 	private final ReprocessedGrandTotal grandTotal;
+	private final double price;
 
-	public ReprocessedGrandItem(final ReprocessedItem reprocessedItem, final Item item, final ReprocessedGrandTotal grandTotal) {
-		super(item, 0);
-		this.reprocessedItem = reprocessedItem;
+	public ReprocessedGrandItem(final ReprocessedGrandTotal grandTotal, final Item item, final double price) {
+		super(grandTotal, item, 0, 1);
 		this.grandTotal = grandTotal;
+		this.price = price;
 	}
 
 	@Override
@@ -47,7 +47,7 @@ public class ReprocessedGrandItem extends ReprocessedTotal {
 
 	@Override
 	public String getName() {
-		return reprocessedItem.getName();
+		return getItem().getTypeName();
 	}
 
 	@Override
@@ -63,5 +63,25 @@ public class ReprocessedGrandItem extends ReprocessedTotal {
 	@Override
 	public long getPortionSize() {
 		return 0;
+	}
+
+	@Override
+	public Double getDynamicPrice() {
+		return price;
+	}
+
+	@Override
+	public long getQuantity100() {
+		return super.getQuantity100() * grandTotal.getCount();
+	}
+
+	@Override
+	public long getQuantityMax() {
+		return super.getQuantityMax() * grandTotal.getCount();
+	}
+
+	@Override
+	public long getQuantitySkill() {
+		return super.getQuantitySkill() * grandTotal.getCount();
 	}
 }
