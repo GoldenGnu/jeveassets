@@ -22,20 +22,23 @@ package net.nikr.eve.jeveasset.gui.tabs.reprocessed;
 
 import ca.odell.glazedlists.EventList;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.profile.ProfileData;
 import net.nikr.eve.jeveasset.data.profile.ProfileManager;
 import net.nikr.eve.jeveasset.data.profile.TableData;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.ReprocessedMaterial;
-import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 
 
 public class ReprocessedData extends TableData {
+
+	private final Map<Item, ReprocessedGrandItem> grandItems = new HashMap<>();
+	private ReprocessedGrandTotal grandTotal;
 
 	public ReprocessedData(Program program) {
 		super(program);
@@ -45,53 +48,27 @@ public class ReprocessedData extends TableData {
 		super(profileManager, profileData);
 	}
 
-	public EventList<ReprocessedInterface> getData(Set<Integer> typeID) {
+	public EventList<ReprocessedInterface> getData(Map<Item, Long> items) {
 		EventList<ReprocessedInterface> eventList = EventListManager.create();
-		updateData(eventList, typeID);
+		updateData(eventList, items);
 		return eventList;
 	}
 
-	public void updateData(EventList<ReprocessedInterface> eventList, Set<Integer> typeIDs) {
+	public void updateData(EventList<ReprocessedInterface> eventList, Map<Item, Long> items) {
 		List<ReprocessedInterface> list = new ArrayList<>();
-		List<ReprocessedGrandItem> uniqueList = new ArrayList<>();
-		ReprocessedGrandTotal grandTotal = new ReprocessedGrandTotal();
-		for (Integer typeID : typeIDs) {
-			Item item = ApiIdConverter.getItem(typeID);
-			if (!item.isEmpty()) {
-				if (item.getReprocessedMaterial().isEmpty()) {
-					continue; //Ignore types without materials
-				}
-				double sellPrice = ApiIdConverter.getPriceSimple(typeID, false);
-				ReprocessedTotal total = new ReprocessedTotal(item, sellPrice);
-				list.add(total);
-				for (ReprocessedMaterial material : item.getReprocessedMaterial()) {
-					Item materialItem = ApiIdConverter.getItem(material.getTypeID());
-					if (!materialItem.isEmpty()) {
-						double price = ApiIdConverter.getPriceSimple(materialItem.getTypeID(), false);
-						int quantitySkill = Settings.get().getReprocessSettings().getLeft(material.getQuantity(), item.isOre());
-						ReprocessedItem reprocessedItem = new ReprocessedItem(total, materialItem, material, quantitySkill, price);
-						list.add(reprocessedItem);
-						//Total
-						total.add(reprocessedItem);
-						//Grand Total
-						grandTotal.add(reprocessedItem);
-						//Grand Item
-						ReprocessedGrandItem grandItem = new ReprocessedGrandItem(reprocessedItem, materialItem, grandTotal);
-						int index = uniqueList.indexOf(grandItem);
-						if (index >= 0) {
-							grandItem = uniqueList.get(index);
-						} else {
-							uniqueList.add(grandItem);
-						}
-						grandItem.add(reprocessedItem);
-					}
-				}
-				grandTotal.add(total);
-			}
+		grandItems.clear();
+		long grandTotalCount = 1;
+		if (grandTotal != null) { //Save grand total count
+			grandTotalCount = grandTotal.getCount();
 		}
-		if (typeIDs.size() > 1) {
+		grandTotal = new ReprocessedGrandTotal(grandTotalCount);
+		for (Map.Entry<Item, Long> entry : items.entrySet()) {
+			updateItem(list, entry.getKey(), entry.getValue());
+		}
+		if (items.size() > 1) {
+			grandTotal.reCalc();
 			list.add(grandTotal);
-			list.addAll(uniqueList);
+			list.addAll(grandItems.values());
 		}
 		//Update list
 		try {
@@ -100,6 +77,84 @@ public class ReprocessedData extends TableData {
 			eventList.addAll(list);
 		} finally {
 			eventList.getReadWriteLock().writeLock().unlock();
+		}
+	}
+
+	public void addItem(EventList<ReprocessedInterface> eventList, Item item, Long count) {
+		List<ReprocessedInterface> list = new ArrayList<>();
+		updateItem(list, item, count);
+		if (!EventListManager.isEmpty(eventList)) {
+			grandTotal.reCalc();
+			if (!EventListManager.contains(eventList, grandTotal)) { //Add grand totals if needed
+				list.add(grandTotal);
+				list.addAll(grandItems.values());
+			}
+		}
+		//Add new items
+		try {
+			eventList.getReadWriteLock().writeLock().lock();
+			eventList.addAll(list);
+		} finally {
+			eventList.getReadWriteLock().writeLock().unlock();
+		}
+	}
+
+	public void removeItem(EventList<ReprocessedInterface> eventList, ReprocessedTotal total) {
+		List<ReprocessedInterface> list = new ArrayList<>();
+		list.add(total);
+		list.addAll(total.getItems());
+		int totals = 0;
+		try {
+			eventList.getReadWriteLock().readLock().lock();
+			for (ReprocessedInterface reprocessed : eventList) {
+				if (reprocessed.isTotal() && !reprocessed.isGrandTotal()) {
+					totals++;
+				}
+				if (totals >= 3) {
+					break;
+				}
+			}
+		} finally {
+			eventList.getReadWriteLock().readLock().unlock();
+		}
+		if (totals < 3) { //Remove grand totals if needed
+			list.add(grandTotal);
+			list.addAll(grandItems.values());
+		}
+		//Add new items
+		try {
+			eventList.getReadWriteLock().writeLock().lock();
+			eventList.removeAll(list);
+		} finally {
+			eventList.getReadWriteLock().writeLock().unlock();
+		}
+	}
+
+	private void updateItem(List<ReprocessedInterface> list, Item item, Long count) {
+		if (item.isEmpty() || item.getReprocessedMaterial().isEmpty()) {
+			return; //Ignore types without materials
+		}
+		double sellPrice = ApiIdConverter.getPriceSimple(item.getTypeID(), false);
+		ReprocessedTotal itemTotal = new ReprocessedTotal(grandTotal, item, sellPrice, count);
+		list.add(itemTotal);
+		for (ReprocessedMaterial material : item.getReprocessedMaterial()) {
+			Item materialItem = ApiIdConverter.getItem(material.getTypeID());
+			if (!materialItem.isEmpty()) {
+				double price = ApiIdConverter.getPriceSimple(materialItem.getTypeID(), false);
+				ReprocessedItem reprocessedItem = new ReprocessedItem(itemTotal, materialItem, material, item.isOre(), price);
+				list.add(reprocessedItem);
+				//Total
+				itemTotal.add(reprocessedItem);
+				//Grand Item
+				ReprocessedGrandItem grandItem = grandItems.get(materialItem);
+				if (grandItem == null) {
+					grandItem = new ReprocessedGrandItem(grandTotal, materialItem, price);
+					grandItems.put(materialItem, grandItem);
+					//Grand Total
+					grandTotal.add(grandItem);
+				}
+				grandItem.add(reprocessedItem);
+			}
 		}
 	}
 }

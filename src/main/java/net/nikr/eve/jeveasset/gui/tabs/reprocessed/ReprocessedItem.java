@@ -23,23 +23,23 @@ package net.nikr.eve.jeveasset.gui.tabs.reprocessed;
 
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.ReprocessedMaterial;
+import net.nikr.eve.jeveasset.data.settings.ReprocessSettings;
+import net.nikr.eve.jeveasset.data.settings.Settings;
 
 
 public class ReprocessedItem implements ReprocessedInterface {
 	private final ReprocessedTotal total;
-	private final long portionSize;
-	private final long quantityMax;
-	private final long quantitySkill;
-	private final double price;
 	private final Item item;
+	private final ReprocessedMaterial material;
+	private final boolean ore;
+	private final double price;
 	private final String name;
 
-	public ReprocessedItem(final ReprocessedTotal parent, final Item item, final ReprocessedMaterial material, final int quantitySkill, final double price) {
+	public ReprocessedItem(final ReprocessedTotal parent, final Item item, final ReprocessedMaterial material, final boolean ore, final double price) {
 		this.total = parent;
 		this.item = item;
-		this.portionSize = material.getPortionSize();
-		this.quantityMax = material.getQuantity();
-		this.quantitySkill = quantitySkill;
+		this.material = material;
+		this.ore = ore;
 		this.price = price;
 		this.name = item.getTypeName();
 	}
@@ -51,17 +51,26 @@ public class ReprocessedItem implements ReprocessedInterface {
 
 	@Override
 	public long getPortionSize() {
-		return portionSize;
+		return material.getPortionSize();
+	}
+
+	private long getQuantityRaw() {
+		return material.getQuantity() * total.getCount() / material.getPortionSize();
+	}
+
+	@Override
+	public long getQuantity100() {
+		return getQuantityRaw();
 	}
 
 	@Override
 	public long getQuantityMax() {
-		return quantityMax;
+		return ReprocessSettings.getMax(getQuantityRaw(), ore);
 	}
 
 	@Override
 	public long getQuantitySkill() {
-		return quantitySkill;
+		return Settings.get().getReprocessSettings().getLeft(getQuantityRaw(), ore);
 	}
 
 	@Override
@@ -107,6 +116,11 @@ public class ReprocessedItem implements ReprocessedInterface {
 
 	@Override
 	public boolean isTotal() {
+		return false;
+	}
+
+	@Override
+	public boolean isGrandTotal() {
 		return false;
 	}
 

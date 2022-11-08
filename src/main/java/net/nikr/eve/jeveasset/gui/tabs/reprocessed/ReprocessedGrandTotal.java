@@ -21,19 +21,18 @@
 
 package net.nikr.eve.jeveasset.gui.tabs.reprocessed;
 
+import java.util.ArrayList;
+import java.util.List;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.i18n.TabsReprocessed;
 
 
 public class ReprocessedGrandTotal extends ReprocessedTotal {
 
-	private double sellPrice = 0;
-	private double value = 0;
-	private boolean sell = false;
-	private boolean reprocess = false;
+	private final List<ReprocessedGrandItem> items = new ArrayList<>();
 
-	public ReprocessedGrandTotal() {
-		super(new Item(0), 0);
+	public ReprocessedGrandTotal(long count) {
+		super(null, new Item(0), 0, count);
 	}
 
 	@Override
@@ -41,15 +40,22 @@ public class ReprocessedGrandTotal extends ReprocessedTotal {
 		return true;
 	}
 
-	public void add(ReprocessedTotal item) {
-		sellPrice = sellPrice + item.getSellPrice();
-		value = value + item.getValue();
-		if (item.isSell()) {
-			sell = true;
+	@Override
+	public ReprocessedGrandTotal getGrandTotal() {
+		return this;
+	}
+
+	@Override
+	protected void reCalc() {
+		super.reCalc();
+		for (ReprocessedGrandItem reprocessed : items) {
+			reprocessed.reCalc();
 		}
-		if (item.isReprocess()) {
-			reprocess = true;
-		}
+	}
+
+	public void add(ReprocessedGrandItem item) {
+		super.add(item);
+		items.add(item);
 	}
 
 	@Override
@@ -58,28 +64,8 @@ public class ReprocessedGrandTotal extends ReprocessedTotal {
 	}
 
 	@Override
-	public double getSellPrice() {
-		return sellPrice;
-	}
-
-	@Override
-	public double getValue() {
-		return value;
-	}
-
-	@Override
 	public long getPortionSize() {
 		return 0;
-	}
-
-	@Override
-	public boolean isSell() {
-		return sell && !reprocess;
-	}
-
-	@Override
-	public boolean isReprocess() {
-		return !sell && reprocess;
 	}
 
 }

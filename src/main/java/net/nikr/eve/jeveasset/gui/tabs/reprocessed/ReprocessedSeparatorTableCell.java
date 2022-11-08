@@ -14,10 +14,14 @@ import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.settings.ColorEntry;
 import net.nikr.eve.jeveasset.data.settings.ColorSettings;
+import net.nikr.eve.jeveasset.data.settings.Colors;
+import net.nikr.eve.jeveasset.gui.shared.DocumentFactory;
 import net.nikr.eve.jeveasset.gui.shared.Formatter;
+import net.nikr.eve.jeveasset.gui.shared.components.JIntegerField;
 import net.nikr.eve.jeveasset.gui.shared.table.SeparatorTableCell;
 import net.nikr.eve.jeveasset.i18n.TabsReprocessed;
 
@@ -28,13 +32,15 @@ import net.nikr.eve.jeveasset.i18n.TabsReprocessed;
 public class ReprocessedSeparatorTableCell extends SeparatorTableCell<ReprocessedInterface> {
 
 	public enum ReprocessedCellAction {
-		REMOVE
+		REMOVE, UPDATE_COUNT
 	}
 
 	private final JLabel jColor;
 	private final JButton jRemove;
+	private final JIntegerField jCount;
 	private final JLabel jName;
-	private final JLabel jPrice;
+	private final JLabel jSellPriceLabel;
+	private final JLabel jSellPrice;
 	private final JLabel jBatchSizeLabel;
 	private final JLabel jBatchSize;
 	private final JLabel jValueLabel;
@@ -52,13 +58,24 @@ public class ReprocessedSeparatorTableCell extends SeparatorTableCell<Reprocesse
 		jRemove.setActionCommand(ReprocessedCellAction.REMOVE.name());
 		jRemove.addActionListener(actionListener);
 
+		jCount = new JIntegerField("1", DocumentFactory.ValueFlag.POSITIVE_AND_NOT_ZERO);
+		jCount.setActionCommand(ReprocessedCellAction.UPDATE_COUNT.name());
+		jCount.addActionListener(actionListener);
+		jCount.setHorizontalAlignment(JTextField.RIGHT);
+		jCount.setOpaque(false);
+		jCount.setBackground(Colors.COMPONENT_TRANSPARENT.getColor());
+		jCount.setBorder(null);
+		jCount.setAutoSelectAll(true);
+
+		JLabel jCountLabel = new JLabel(TabsReprocessed.get().multiplierSign());
+
 		jName = new JLabel();
 		Font font = jName.getFont();
 		jName.setFont(new Font(font.getName(), Font.BOLD, font.getSize() + 1));
 
-		JLabel jSellPriceLabel = new JLabel(TabsReprocessed.get().price());
+		jSellPriceLabel = new JLabel(TabsReprocessed.get().price());
 		jSellPriceLabel.setFont(new Font(font.getName(), Font.BOLD, font.getSize()));
-		jPrice = new JLabel();
+		jSellPrice = new JLabel();
 
 		jBatchSizeLabel = new JLabel(TabsReprocessed.get().batch());
 		jBatchSizeLabel.setFont(new Font(font.getName(), Font.BOLD, font.getSize()));
@@ -76,13 +93,14 @@ public class ReprocessedSeparatorTableCell extends SeparatorTableCell<Reprocesse
 				.addGap(10)
 				.addComponent(jRemove, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
 				.addGap(10)
-				//.addComponent(jNameLabel)
-				//.addGap(5)
+				.addComponent(jCount, 50, 50, 50)
+				.addComponent(jCountLabel)
+				.addGap(10)
 				.addComponent(jName, 220, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
 				.addGap(10)
 				.addComponent(jSellPriceLabel)
 				.addGap(5)
-				.addComponent(jPrice)
+				.addComponent(jSellPrice)
 				.addGap(10)
 				.addComponent(jValueLabel)
 				.addGap(5)
@@ -102,10 +120,11 @@ public class ReprocessedSeparatorTableCell extends SeparatorTableCell<Reprocesse
 						.addComponent(jColor, Program.getButtonsHeight() - 6, Program.getButtonsHeight() - 6, Program.getButtonsHeight() - 6)
 					)
 					.addComponent(jRemove, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					//.addComponent(jNameLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jName, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jCount, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jCountLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jSellPriceLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					.addComponent(jPrice, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jSellPrice, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jValueLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jValue, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jBatchSizeLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
@@ -123,8 +142,12 @@ public class ReprocessedSeparatorTableCell extends SeparatorTableCell<Reprocesse
 		}
 		jRemove.setEnabled(!material.getTotal().isGrandTotal());
 		jName.setText(material.getTotal().getTypeName());
-		//Price
-		jPrice.setText(Formatter.iskFormat(material.getTotal().getSellPrice()));
+		//Count
+		jCount.setText(String.valueOf(material.getTotal().getCount()));
+		//Sell Price
+		jSellPriceLabel.setVisible(!material.isGrandTotal());
+		jSellPrice.setVisible(!material.isGrandTotal());
+		jSellPrice.setText(Formatter.iskFormat(material.getTotal().getSellPrice()));
 		//Value
 		if (material.getTotal().getValue() != material.getTotal().getSellPrice()) {
 			jValue.setText(Formatter.iskFormat(material.getTotal().getValue()));

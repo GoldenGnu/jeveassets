@@ -23,6 +23,8 @@ package net.nikr.eve.jeveasset.data.settings;
 
 public class ReprocessSettings {
 
+	private static final ReprocessSettings MAX = new ReprocessSettings(65.129, 5, 5, 5, 5);
+
 	private final double station;
 	private final int reprocessingLevel;
 	private final int reprocessingEfficiencyLevel;
@@ -62,7 +64,11 @@ public class ReprocessSettings {
 		return station;
 	}
 
-	public int getLeft(final int start, final boolean ore) {
+	public static int getMax(final long start, final boolean ore) {
+		return MAX.getLeft(start, ore);
+	}
+
+	public int getLeft(final long start, final boolean ore) {
 		return (int) Math.floor((((double) start) / 100.0) * getPercent(ore));
 	}
 
