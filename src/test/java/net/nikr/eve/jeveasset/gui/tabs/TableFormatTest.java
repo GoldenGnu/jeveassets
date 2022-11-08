@@ -51,7 +51,6 @@ import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractsExtendedTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractsTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.items.ItemTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJobTableFormat;
-import net.nikr.eve.jeveasset.gui.tabs.slots.SlotsTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.journal.JournalTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.loadout.Loadout;
 import net.nikr.eve.jeveasset.gui.tabs.loadout.LoadoutExtendedTableFormat;
@@ -67,6 +66,7 @@ import net.nikr.eve.jeveasset.gui.tabs.reprocessed.ReprocessedInterface;
 import net.nikr.eve.jeveasset.gui.tabs.reprocessed.ReprocessedItem;
 import net.nikr.eve.jeveasset.gui.tabs.reprocessed.ReprocessedTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.reprocessed.ReprocessedTotal;
+import net.nikr.eve.jeveasset.gui.tabs.slots.SlotsTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileExtendedTableFormat;
@@ -183,8 +183,8 @@ public class TableFormatTest extends TestUtil {
 			//Reprocessed
 			test(ReprocessedTableFormat.class);
 			ReprocessedMaterial reprocessedMaterial = new ReprocessedMaterial(INTEGER_VALUE, INTEGER_VALUE, INTEGER_VALUE);
-			ReprocessedTotal parent = new ReprocessedTotal(item, DOUBLE_VALUE);
-			ReprocessedInterface reprocessedItem = new ReprocessedItem(parent, item, reprocessedMaterial, INTEGER_VALUE, DOUBLE_VALUE);
+			ReprocessedTotal parent = new ReprocessedTotal(null, item, DOUBLE_VALUE, LONG_VALUE);
+			ReprocessedInterface reprocessedItem = new ReprocessedItem(parent, item, reprocessedMaterial, BOOLEAN_VALUE, DOUBLE_VALUE);
 			for (ReprocessedTableFormat tableFormat : ReprocessedTableFormat.values()) {
 				test(tableFormat, tableFormat.getType(), tableFormat.getColumnValue(reprocessedItem));
 			}

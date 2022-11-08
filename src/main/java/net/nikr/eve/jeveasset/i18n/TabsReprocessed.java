@@ -41,8 +41,12 @@ public abstract class TabsReprocessed extends Bundle {
 	public abstract String collapse();
 	public abstract String columnName();
 	public abstract String columnPrice();
+	public abstract String columnQuantity100();
+	public abstract String columnQuantity100ToolTip();
 	public abstract String columnQuantityMax();
+	public abstract String columnQuantityMaxToolTip();
 	public abstract String columnQuantitySkill();
+	public abstract String columnQuantitySkillToolTip();
 	public abstract String columnTotalBatch();
 	public abstract String columnTotalName();
 	public abstract String columnTotalPrice();
@@ -53,7 +57,7 @@ public abstract class TabsReprocessed extends Bundle {
 	public abstract String columnValueSkill();
 	public abstract String expand();
 	public abstract String grandTotal();
-	public abstract String info();
+	public abstract String multiplierSign();
 	public abstract String price();
 	public abstract String remove();
 	public abstract String selectItem();
