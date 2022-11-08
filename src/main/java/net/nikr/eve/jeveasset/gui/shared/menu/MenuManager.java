@@ -26,6 +26,8 @@ import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
@@ -291,7 +293,9 @@ public class MenuManager<T extends Enum<T> & EnumTableColumn<Q>, Q> {
 	//COPY+
 		AutoMenu<Q> jcopyPlus = menus.get(MenuEnum.COPY_PLUS);
 		if (jcopyPlus != null) {
-			jComponent.add(jcopyPlus.getComponent());
+			for (JComponent c : jcopyPlus.getMenuItems()) {
+				jComponent.add(c);
+			}
 			notEmpty = true;
 		}
 	//FILTER
@@ -303,7 +307,9 @@ public class MenuManager<T extends Enum<T> & EnumTableColumn<Q>, Q> {
 	//ASSET FILTER
 		AutoMenu<Q> jAssetFilter = menus.get(MenuEnum.ASSET_FILTER);
 		if (jAssetFilter != null) {
-			jComponent.add(jAssetFilter.getComponent());
+			for (JComponent c : jAssetFilter.getMenuItems()) {
+				jComponent.add(c);
+			}
 			notEmpty = true;
 			if (jAssetFilter instanceof JMenuAssetFilter) {
 				JMenuAssetFilter<?> jMenuAssetFilter = (JMenuAssetFilter) jAssetFilter;
@@ -313,7 +319,9 @@ public class MenuManager<T extends Enum<T> & EnumTableColumn<Q>, Q> {
 	//TRANSACTION FILTER
 		AutoMenu<Q> jTransactionFilter = menus.get(MenuEnum.TRANSACTION_FILTER);
 		if (jTransactionFilter != null) {
-			jComponent.add(jTransactionFilter.getComponent());
+			for (JComponent c : jTransactionFilter.getMenuItems()) {
+				jComponent.add(c);
+			}
 			notEmpty = true;
 			if (jTransactionFilter instanceof JMenuTransactionFilter) {
 				JMenuTransactionFilter<?> jMenuAssetFilter = (JMenuTransactionFilter) jTransactionFilter;
@@ -323,13 +331,17 @@ public class MenuManager<T extends Enum<T> & EnumTableColumn<Q>, Q> {
 	//STOCKPILE (Add To)
 		AutoMenu<Q> jStockpile = menus.get(MenuEnum.STOCKPILE);
 		if (jStockpile != null) {
-			jComponent.add(jStockpile.getComponent());
+			for (JComponent c : jStockpile.getMenuItems()) {
+				jComponent.add(c);
+			}
 			notEmpty = true;
 		}
 	//LOOKUP
 		AutoMenu<Q> jLookup = menus.get(MenuEnum.LOOKUP);
 		if (jLookup != null) {
-			jComponent.add(jLookup.getComponent());
+			for (JComponent c : jLookup.getMenuItems()) {
+				jComponent.add(c);
+			}
 			notEmpty = true;
 			if (jLookup instanceof JMenuLookup) {
 				JMenuLookup<?> jMenuLookup = (JMenuLookup) jLookup;
@@ -339,63 +351,85 @@ public class MenuManager<T extends Enum<T> & EnumTableColumn<Q>, Q> {
 	//EDIT
 		AutoMenu<Q> jPrice = menus.get(MenuEnum.PRICE);
 		if (jPrice != null) {
-			jComponent.add(jPrice.getComponent());
+			for (JComponent c : jPrice.getMenuItems()) {
+				jComponent.add(c);
+			}
 			notEmpty = true;
 		}
 		AutoMenu<Q> jName = menus.get(MenuEnum.NAME);
 		if (jName != null) {
-			jComponent.add(jName.getComponent());
+			for (JComponent c : jName.getMenuItems()) {
+				jComponent.add(c);
+			}
 			notEmpty = true;
 		}
 		AutoMenu<Q> jTags = menus.get(MenuEnum.TAGS);
 		if (jTags != null) {
-			jComponent.add(jTags.getComponent());
+			for (JComponent c : jTags.getMenuItems()) {
+				jComponent.add(c);
+			}
 			notEmpty = true;
 		}
 	//LOADOUT
 		AutoMenu<Q> jLoadout = menus.get(MenuEnum.LOADOUT);
 		if (jLoadout != null) {
-			jComponent.add(jLoadout.getComponent());
+			for (JComponent c : jLoadout.getMenuItems()) {
+				jComponent.add(c);
+			}
 			notEmpty = true;
 		}
 	//REPROCESSED
 		AutoMenu<Q> jReprocessed = menus.get(MenuEnum.REPROCESSED);
 		if (jReprocessed != null) {
-			jComponent.add(jReprocessed.getComponent());
+			for (JComponent c : jReprocessed.getMenuItems()) {
+				jComponent.add(c);
+			}
 			notEmpty = true;
 		}
 	//PRICE HISTORY
 		AutoMenu<Q> jPriceHistory = menus.get(MenuEnum.PRICE_HISTORY);
 		if (jPriceHistory != null) {
-			jComponent.add(jPriceHistory.getComponent());
+			for (JComponent c : jPriceHistory.getMenuItems()) {
+				jComponent.add(c);
+			}
 			notEmpty = true;
 		}
 	//JUMPS
 		AutoMenu<Q> jJumps = menus.get(MenuEnum.JUMPS);
 		if (jJumps != null) {
-			jComponent.add(jJumps.getComponent());
+			for (JComponent c : jJumps.getMenuItems()) {
+				jComponent.add(c);
+			}
 			notEmpty = true;
 		}
 		AutoMenu<Q> jRouting = menus.get(MenuEnum.ROUTING);
 		if (jRouting != null) {
-			jComponent.add(jRouting.getComponent());
+			for (JComponent c : jRouting.getMenuItems()) {
+				jComponent.add(c);
+			}
 			notEmpty = true;
 		}
 	//FORMULA
 		AutoMenu<Q> jFormula = menus.get(MenuEnum.FORMULA);
 		if (jFormula != null) {
-			jComponent.add(jFormula.getComponent());
+			for (JComponent c : jFormula.getMenuItems()) {
+				jComponent.add(c);
+			}
 			notEmpty = true;
 		}
 	//LOCATION
 		AutoMenu<Q> jLocation = menus.get(MenuEnum.LOCATION);
 		if (jLocation != null) {
-			jComponent.add(jLocation.getComponent());
+			for (JComponent c : jLocation.getMenuItems()) {
+				jComponent.add(c);
+			}
 			notEmpty = true;
 		}
 		AutoMenu<Q> jUi = menus.get(MenuEnum.UI);
 		if (jUi != null) {
-			jComponent.add(jUi.getComponent());
+			for (JComponent c : jUi.getMenuItems()) {
+				jComponent.add(c);
+			}
 			notEmpty = true;
 		}
 	//COLUMNS
@@ -411,7 +445,14 @@ public class MenuManager<T extends Enum<T> & EnumTableColumn<Q>, Q> {
 	//SUM
 		AutoMenu<Q> jSum = menus.get(MenuEnum.SUM);
 		if (jSum != null) {
-			jComponent.add(jSum.getComponent());
+			if (jComponent instanceof JPopupMenu) {
+				((JPopupMenu) jComponent).addSeparator();
+			} else if (jComponent instanceof JMenu) {
+				((JMenu) jComponent).addSeparator();
+			}
+			for (JComponent c : jSum.getMenuItems()) {
+				jComponent.add(c);
+			}
 			notEmpty = true;
 		}
 		jComponent.setEnabled(notEmpty);
@@ -434,7 +475,9 @@ public class MenuManager<T extends Enum<T> & EnumTableColumn<Q>, Q> {
 		AutoMenu<Q> jSum = tablePopupMenu.get(MenuEnum.SUM);
 		if (jSum instanceof JMenuSum) {
 			((JMenuSum)jSum).updateMenuDataColumn(jTable.columnAtPoint(e.getPoint()));
-			jTableHeaderPopupMenu.add(jSum.getComponent());
+			for (JComponent c : jSum.getMenuItems()) {
+				jTableHeaderPopupMenu.add(c);
+			}
 		}
 		jTableHeaderPopupMenu.show(e.getComponent(), e.getX(), e.getY());
 	}
@@ -571,7 +614,7 @@ public class MenuManager<T extends Enum<T> & EnumTableColumn<Q>, Q> {
 
 	protected static interface AutoMenu<T> {
 		public void setMenuData(MenuData<T> menuData);
-		public JComponent getComponent();
+		public Collection<JComponent> getMenuItems();
 	}
 
 	protected abstract static class JAutoMenu<T> extends JMenu implements AutoMenu<T> {
@@ -591,8 +634,8 @@ public class MenuManager<T extends Enum<T> & EnumTableColumn<Q>, Q> {
 		}
 
 		@Override
-		public JComponent getComponent() {
-			return this;
+		public Collection<JComponent> getMenuItems() {
+			return Collections.singleton(this);
 		}
 
 		protected abstract void updateMenuData();
@@ -614,7 +657,7 @@ public class MenuManager<T extends Enum<T> & EnumTableColumn<Q>, Q> {
 		}
 
 		@Override
-		public abstract JComponent getComponent();
+		public abstract Collection<JComponent> getMenuItems();
 
 		protected abstract void updateMenuData();
 	}
