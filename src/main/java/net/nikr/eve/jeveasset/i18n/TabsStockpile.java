@@ -85,18 +85,9 @@ public abstract class TabsStockpile extends Bundle {
 	public abstract String hideStockpile();
 	public abstract String importButton();
 	public abstract String importEft();
-	public abstract String importEftHelp();
-	public abstract String importEftTitle();
-	public abstract String importEmpty();
 	public abstract String importEveMultibuy();
-	public abstract String importEveMultibuyHelp();
-	public abstract String importEveMultibuyTitle();
 	public abstract String importIskPerHour();
-	public abstract String importIskPerHourTitle();
-	public abstract String importIskPerHourHelp();
 	public abstract String importShoppingList();
-	public abstract String importShoppingListHelp();
-	public abstract String importShoppingListTitle();
 	public abstract String importStockpilesText();
 	public abstract String importTextFailedMsg();
 	public abstract String importStockpilesXml();

@@ -18,27 +18,18 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  */
-package net.nikr.eve.jeveasset.gui.tabs.stockpile;
+package net.nikr.eve.jeveasset.io.local.text;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import net.nikr.eve.jeveasset.i18n.TabsStockpile;
 
 
-public class ImportEveMultibuy extends StockpileImport {
+public class ImportEveMultibuy extends AbstractTextImport {
 
-	@Override
-	public String getTitle() {
-		return TabsStockpile.get().importEveMultibuyTitle();
-	}
-
-	@Override
-	public String getHelp() {
-		return TabsStockpile.get().importEveMultibuyHelp();
-	}
+	protected ImportEveMultibuy() { }
 
 	@Override
 	public String getExample() {
