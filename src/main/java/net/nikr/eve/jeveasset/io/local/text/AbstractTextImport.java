@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  */
-package net.nikr.eve.jeveasset.gui.tabs.stockpile;
+package net.nikr.eve.jeveasset.io.local.text;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,7 +26,8 @@ import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.StaticData;
 
 
-public abstract class StockpileImport {
+public abstract class AbstractTextImport {
+
 	private String name = "";
 
 	public Map<Integer, Double> importText(String text) {
@@ -49,8 +50,6 @@ public abstract class StockpileImport {
 	}
 
 	protected abstract Map<String, Double> doImport(String data);
-	public abstract String getTitle();
-	public abstract String getHelp();
 	public abstract String getExample();
 
 	public String getName() {
