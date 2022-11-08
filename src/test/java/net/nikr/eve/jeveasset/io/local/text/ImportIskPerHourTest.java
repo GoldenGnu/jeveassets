@@ -18,11 +18,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  */
-package net.nikr.eve.jeveasset.gui.tabs.stockpile;
+package net.nikr.eve.jeveasset.io.local.text;
 
 import java.util.Map;
 import net.nikr.eve.jeveasset.TestUtil;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import org.junit.Test;
 
 

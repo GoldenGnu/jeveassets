@@ -418,6 +418,8 @@ public abstract class GuiShared extends Bundle {
 	public abstract String textFromFile();
 	public abstract String textClose();
 	public abstract String textImport();
+	public abstract String textInvalid();
+	public abstract String textEmpty();
 	public abstract String textExport();
 
 	//JSimpleColorPicker
