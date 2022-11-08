@@ -179,6 +179,11 @@ public enum Images {
 	MISC_CONTRACTS ("misc_contracts.png"),
 	MISC_CONTRACTS_CORP ("misc_contracts_corp.png"),
 	MISC_MARKET_ORDERS ("misc_market_orders.png"),
+	MISC_AVG ("misc_avg.png"),
+	MISC_COUNT ("misc_count.png"),
+	MISC_INFO ("misc_info.png"),
+	MISC_MAX ("misc_max.png"),
+	MISC_MIN ("misc_min.png"),
 
 	SETTINGS_TOOLS ("settings_tools.png"),
 	SETTINGS_PRICE_DATA ("settings_price_data.png"),
