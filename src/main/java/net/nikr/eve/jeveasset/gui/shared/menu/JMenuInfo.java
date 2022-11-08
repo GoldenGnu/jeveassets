@@ -517,17 +517,17 @@ public class JMenuInfo {
 		createMenuItem(values, jPopupMenu, totalCount, AutoNumberFormat.ISK, GuiShared.get().selectionCount(), GuiShared.get().selectionShortCount(), Images.EDIT_ADD.getIcon());
 	}
 
-	public static JMenuItem createMenuItem(List<MenuItemValue> values, final JPopupMenu jPopupMenu, final Number number, AutoNumberFormat numberFormat, final String toolTip, String shortText, final Icon icon) {
-		return createMenuItem(values, jPopupMenu, null, number, numberFormat, toolTip, shortText, icon);
+	public static JMenuItem createMenuItem(List<MenuItemValue> values, final JPopupMenu jPopupMenu, final Number number, AutoNumberFormat numberFormat, final String toolTip, String copyText, final Icon icon) {
+		return createMenuItem(values, jPopupMenu, null, number, numberFormat, toolTip, copyText, icon);
 	}
 
-	public static JMenuItem createMenuItem(List<MenuItemValue> values, final JPopupMenu jPopupMenu, final String text, final String toolTip, String shortText, final Icon icon) {
-		return createMenuItem(values, jPopupMenu, text, null, null, toolTip, shortText, icon);
+	public static JMenuItem createMenuItem(List<MenuItemValue> values, final JPopupMenu jPopupMenu, final String text, final String toolTip, String copyText, final Icon icon) {
+		return createMenuItem(values, jPopupMenu, text, null, null, toolTip, copyText, icon);
 	}
 
-	private static JMenuItem createMenuItem(List<MenuItemValue> values, final JPopupMenu jPopupMenu, final String text, final Number number, AutoNumberFormat numberFormat, final String toolTip, String shortText, final Icon icon) {
+	private static JMenuItem createMenuItem(List<MenuItemValue> values, final JPopupMenu jPopupMenu, final String text, final Number number, AutoNumberFormat numberFormat, final String toolTip, String copyText, final Icon icon) {
 		if (values != null) {
-			values.add(new MenuItemValue(shortText, text, number));
+			values.add(new MenuItemValue(copyText, text, number));
 		}
 		JMenuItem jMenuItem;
 		if (text == null) { //Numeric Value
@@ -623,19 +623,22 @@ public class JMenuInfo {
 		return values;
 	}
 
+
 	public static List<MenuItemValue> createDefault(final JPopupMenu jPopupMenu) {
-		return createDefault(jPopupMenu, new JMenuItem());
+		return createDefault(jPopupMenu, new JMenuItem(), GuiShared.get().selectionTitle(), GuiShared.get().clickToCopySelectionInfo(), Images.DIALOG_ABOUT.getIcon());
 	}
 
-	public static List<MenuItemValue> createDefault(final JPopupMenu jPopupMenu, final JMenuItem jMenuItem) {
+	public static List<MenuItemValue> createDefault(final JPopupMenu jPopupMenu, final JMenuItem jMenuItem, String title, String toolTip, Icon icon) {
 		final List<MenuItemValue> values = new ArrayList<>();
-		values.add(new MenuItemValue(null, GuiShared.get().selectionTitle(), null));
+		values.add(new MenuItemValue(null, title, null));
 
-		jPopupMenu.addSeparator();
+		if (jPopupMenu != null) {
+			jPopupMenu.addSeparator();
+		}
 
-		jMenuItem.setText(GuiShared.get().selectionTitle());
-		jMenuItem.setToolTipText(GuiShared.get().clickToCopySelectionInfo());
-		jMenuItem.setDisabledIcon(Images.DIALOG_ABOUT.getIcon());
+		jMenuItem.setText(title);
+		jMenuItem.setToolTipText(toolTip);
+		jMenuItem.setDisabledIcon(icon);
 		jMenuItem.setEnabled(false);
 		jMenuItem.setForeground(Color.BLACK);
 		jMenuItem.addMouseListener(new MouseAdapter() {
@@ -658,15 +661,16 @@ public class JMenuInfo {
 				}
 			}
 		});
-		jPopupMenu.add(jMenuItem);
+		if (jPopupMenu != null) {
+			jPopupMenu.add(jMenuItem);
 
-		JPanel jSpacePanel = new JPanel();
-		jSpacePanel.setOpaque(false);
-		jSpacePanel.setMinimumSize(new Dimension(50, 5));
-		jSpacePanel.setPreferredSize(new Dimension(50, 5));
-		jSpacePanel.setMaximumSize(new Dimension(50, 5));
-		jPopupMenu.add(jSpacePanel);
-
+			JPanel jSpacePanel = new JPanel();
+			jSpacePanel.setOpaque(false);
+			jSpacePanel.setMinimumSize(new Dimension(50, 5));
+			jSpacePanel.setPreferredSize(new Dimension(50, 5));
+			jSpacePanel.setMaximumSize(new Dimension(50, 5));
+			jPopupMenu.add(jSpacePanel);
+		}
 		return values;
 	}
 

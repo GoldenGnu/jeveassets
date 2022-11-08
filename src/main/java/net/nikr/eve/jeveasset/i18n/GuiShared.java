@@ -41,6 +41,20 @@ public abstract class GuiShared extends Bundle {
 	public abstract String addTransactionFilter();
 	public abstract String all();
 	public abstract String background();
+	public abstract String cellAverage();
+	public abstract String cellAverageToolTip();
+	public abstract String cellInformation();
+	public abstract String cellInformationToolTip();
+	public abstract String cellInformationColumn();
+	public abstract String cellInformationColumnToolTip();
+	public abstract String cellCount();
+	public abstract String cellCountToolTip();
+	public abstract String cellMaximum();
+	public abstract String cellMaximumToolTip();
+	public abstract String cellMinimum();
+	public abstract String cellMinimumToolTip();
+	public abstract String cellSum();
+	public abstract String cellSumToolTip();
 	public abstract String checkAll();
 	public abstract String chruker();
 	public abstract String clickToCopyGroup();
@@ -257,7 +271,6 @@ public abstract class GuiShared extends Bundle {
 	public abstract String set();
 	public abstract String station();
 	public abstract String stockpile();
-	public abstract String sum();
 	public abstract String system();
 	public abstract String tableColumns();
 	public abstract String tableColumnsReset();
