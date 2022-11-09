@@ -41,6 +41,7 @@ import java.util.zip.InflaterInputStream;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter.StockpileContainer;
+import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -136,7 +137,7 @@ public class StockpileDataReader extends AbstractBackup {
 				for (JsonElement ownerIdElement : ownerIDsElement.getAsJsonArray()) {
 					ownerIDs.add(ownerIdElement.getAsLong());
 				}
-				filters.add(new Stockpile.StockpileFilter(ApiIdConverter.getLocation(locationID), flagIDs, containers, ownerIDs, exclude, singleton, assets, sellOrders, buyOrders, jobs, buyTransactions, sellTransactions, sellingContracts, soldContracts, buyingContracts, boughtContracts));
+				filters.add(new StockpileFilter(ApiIdConverter.getLocation(locationID), flagIDs, containers, ownerIDs, exclude, singleton, assets, sellOrders, buyOrders, jobs, buyTransactions, sellTransactions, sellingContracts, soldContracts, buyingContracts, boughtContracts));
 			}
 
 			//Create Stockile (then add items)
@@ -146,10 +147,10 @@ public class StockpileDataReader extends AbstractBackup {
 			JsonElement itemsElement = stockpileObject.get("i");
 			for (JsonElement itemElement : itemsElement.getAsJsonArray()) {
 				JsonObject itemObject = itemElement.getAsJsonObject();
-				int typeID = itemObject.get("i").getAsInt();
-				double countMinimum = itemObject.get("i").getAsDouble();
-				boolean runs = itemObject.get("i").getAsBoolean();
-				stockpile.add(new Stockpile.StockpileItem(stockpile, ApiIdConverter.getItem(typeID), typeID, countMinimum, runs));
+				int itemTypeID = itemObject.get("i").getAsInt();
+				double countMinimum = itemObject.get("m").getAsDouble();
+				boolean runs = itemObject.get("r").getAsBoolean();
+				stockpile.add(new StockpileItem(stockpile, ApiIdConverter.getItem(Math.abs(itemTypeID)), itemTypeID, countMinimum, runs));
 			}
 			return stockpile;
 		}
