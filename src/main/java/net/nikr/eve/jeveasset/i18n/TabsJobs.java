@@ -57,6 +57,8 @@ public abstract class TabsJobs extends Bundle {
 	public abstract String columnRegion();
 	public abstract String columnStartDate();
 	public abstract String columnEndDate();
+	public abstract String columnCompletedDate();
+	public abstract String columnPauseDate();
 	public abstract String columnRuns();
 	public abstract String columnOutputCount();
 	public abstract String columnOutputValue();

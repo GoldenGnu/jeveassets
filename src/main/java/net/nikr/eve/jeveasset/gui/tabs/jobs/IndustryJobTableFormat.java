@@ -140,6 +140,26 @@ public enum IndustryJobTableFormat implements EnumTableColumn<MyIndustryJob> {
 			return from.getEndDate();
 		}
 	},
+	COMPLETED_DATE(Date.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsJobs.get().columnCompletedDate();
+		}
+		@Override
+		public Object getColumnValue(final MyIndustryJob from) {
+			return from.getCompletedDate();
+		}
+	},
+	PAUSE_DATE(Date.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsJobs.get().columnPauseDate();
+		}
+		@Override
+		public Object getColumnValue(final MyIndustryJob from) {
+			return from.getPauseDate();
+		}
+	},
 	RUNS(Integer.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
