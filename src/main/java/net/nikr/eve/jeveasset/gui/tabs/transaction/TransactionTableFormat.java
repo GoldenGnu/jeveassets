@@ -250,6 +250,16 @@ public enum TransactionTableFormat implements EnumTableColumn<MyTransaction> {
 		public Object getColumnValue(final MyTransaction from) {
 			return from.getAccountKeyFormatted();
 		}
+	},
+	VOLUME(Float.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsTransaction.get().columnVolume();
+		}
+		@Override
+		public Object getColumnValue(final MyTransaction from) {
+			return from.getItem().getVolume();
+		}
 	};
 
 	private final Class<?> type;
