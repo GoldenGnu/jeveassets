@@ -21,15 +21,18 @@
 package net.nikr.eve.jeveasset.gui.tabs.stockpile;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.TimeZone;
 import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicLong;
 import javax.swing.JButton;
@@ -63,6 +66,9 @@ import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 
 
 public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersType {
+
+	private static final Calendar CALENDAR = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+
 	private static final AtomicLong TS = new AtomicLong();
 	private final long id;
 	private String name;
@@ -758,6 +764,14 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 				if (asset != null && filter.isSingleton() != null && !filter.isSingleton().equals(asset.isSingleton())) {
 					continue; //Do not match - try next filter
 				}
+				//Industry Jobs: must complete in less than X days
+				if (!matchJobsDaysLess(industryJob, filter.getJobsDaysLess())) {
+					continue; //Do not match - try next filter
+				}
+				//Industry Jobs: must complete in more than X days
+				if (!matchJobsDaysMore(industryJob, filter.getJobsDaysMore())) {
+					continue; //Do not match - try next filter
+				}
 				//Location
 				if (!matchLocation(filter, locations)) {
 					continue; //Do not match location - try next filter
@@ -1011,6 +1025,32 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 				}
 			}
 			return false;
+		}
+
+		private boolean matchJobsDaysLess(final MyIndustryJob industryJob, Integer jobsDays) {
+			if (jobsDays == null || industryJob == null || industryJob.getEndDate() == null) {
+				return true;
+			}
+			CALENDAR.setTime(new Date());
+			CALENDAR.set(Calendar.HOUR_OF_DAY, 23); //Less than -> End of day -> OK
+			CALENDAR.set(Calendar.MINUTE, 59);
+			CALENDAR.set(Calendar.SECOND, 59);
+			CALENDAR.set(Calendar.MILLISECOND, 999);
+			CALENDAR.add(Calendar.DAY_OF_MONTH, jobsDays);
+			return industryJob.getEndDate().before(CALENDAR.getTime()); //End before X days
+		}
+
+		private boolean matchJobsDaysMore(final MyIndustryJob industryJob, Integer jobsDays) {
+			if (jobsDays == null || industryJob == null || industryJob.getEndDate() == null) {
+				return true;
+			}
+			CALENDAR.setTime(new Date());
+			CALENDAR.set(Calendar.HOUR_OF_DAY, 0); //More than -> Start of day -> OK
+			CALENDAR.set(Calendar.MINUTE, 0);
+			CALENDAR.set(Calendar.SECOND, 0);
+			CALENDAR.set(Calendar.MILLISECOND, 0);
+			CALENDAR.add(Calendar.DAY_OF_MONTH, jobsDays);
+			return industryJob.getEndDate().after(CALENDAR.getTime()); //End after X days
 		}
 
 		public void setCountMinimum(final double countMinimum) {
@@ -1549,10 +1589,12 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 
 	public static class StockpileFilter {
 		private MyLocation location;
+		private final boolean exclude;
 		private final List<Integer> flagIDs;
 		private final List<StockpileContainer> containers;
 		private final List<Long> ownerIDs;
-		private final boolean exclude;
+		private final Integer jobsDaysLess;
+		private final Integer jobsDaysMore;
 		private final Boolean singleton;
 		private final boolean assets;
 		private final boolean sellOrders;
@@ -1566,12 +1608,14 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 		private final boolean boughtContracts;
 
 
-		public StockpileFilter(MyLocation location, List<Integer> flagIDs, List<StockpileContainer> containers, List<Long> ownerIDs, boolean exclude, Boolean singleton, boolean assets, boolean sellOrders, boolean buyOrders, boolean jobs, boolean buyTransactions, boolean sellTransactions, boolean sellingContracts, boolean soldContracts, boolean buyingContracts, boolean boughtContracts) {
+		public StockpileFilter(MyLocation location, boolean exclude, List<Integer> flagIDs, List<StockpileContainer> containers, List<Long> ownerIDs, Integer jobsDaysLess, Integer jobsDaysMore, Boolean singleton, boolean assets, boolean sellOrders, boolean buyOrders, boolean jobs, boolean buyTransactions, boolean sellTransactions, boolean sellingContracts, boolean soldContracts, boolean buyingContracts, boolean boughtContracts) {
 			this.location = location;
+			this.exclude = exclude;
 			this.flagIDs = flagIDs;
 			this.containers = containers;
 			this.ownerIDs = ownerIDs;
-			this.exclude = exclude;
+			this.jobsDaysLess = jobsDaysLess;
+			this.jobsDaysMore = jobsDaysMore;
 			this.singleton = singleton;
 			this.assets = assets;
 			this.sellOrders = sellOrders;
@@ -1593,6 +1637,10 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 			this.location = location;
 		}
 
+		public boolean isExclude() {
+			return exclude;
+		}
+
 		public List<Integer> getFlagIDs() {
 			return flagIDs;
 		}
@@ -1605,8 +1653,12 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 			return ownerIDs;
 		}
 
-		public boolean isExclude() {
-			return exclude;
+		public Integer getJobsDaysLess() {
+			return jobsDaysLess;
+		}
+
+		public Integer getJobsDaysMore() {
+			return jobsDaysMore;
 		}
 
 		public Boolean isSingleton() {

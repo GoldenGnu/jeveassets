@@ -608,6 +608,8 @@ public class SettingsWriter extends AbstractXmlWriter {
 				setAttribute(locationNode, "boughtcontracts", filter.isBoughtContracts());
 				setAttribute(locationNode, "exclude", filter.isExclude());
 				setAttributeOptional(locationNode, "singleton", filter.isSingleton());
+				setAttributeOptional(locationNode, "jobsdaysless", filter.getJobsDaysLess());
+				setAttributeOptional(locationNode, "jobsdaysmore", filter.getJobsDaysMore());
 				setAttribute(locationNode, "inventory", filter.isAssets());
 				setAttribute(locationNode, "sellorders", filter.isSellOrders());
 				setAttribute(locationNode, "buyorders", filter.isBuyOrders());

@@ -80,6 +80,7 @@ public abstract class TabsStockpile extends Bundle {
 	public abstract String expand();
 	public abstract String exportStockpilesXml();
 	public abstract String exportStockpilesText();
+	public abstract String filters();
 	public abstract String flag();
 	public abstract String getShoppingList();
 	public abstract String hideStockpile();
@@ -130,6 +131,11 @@ public abstract class TabsStockpile extends Bundle {
 	public abstract String itemsOwned();
 	public abstract String itemsRequired();
 	public abstract String itemsShoppingList();
+	public abstract String jobsDays();
+	public abstract String jobsDaysLess();
+	public abstract String jobsDaysMore();
+	public abstract String jobsDaysTip();
+	public abstract String jobsDaysWarning();
 	public abstract String location();
 	public abstract String marketDetailsOwnerToolTip();
 	public abstract String matchExclude();
