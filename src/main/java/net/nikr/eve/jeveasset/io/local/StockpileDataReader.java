@@ -108,6 +108,14 @@ public class StockpileDataReader extends AbstractBackup {
 				boolean sellTransactions = filterObject.get("st").getAsBoolean();
 				boolean exclude = filterObject.get("e").getAsBoolean();
 				boolean jobs = filterObject.get("j").getAsBoolean();
+				Integer jobsDaysLess = null;
+				if (filterObject.has("jdl")) {
+					jobsDaysLess = filterObject.get("jdl").getAsInt();
+				}
+				Integer jobsDaysMore = null;
+				if (filterObject.has("jdm")) {
+					jobsDaysMore = filterObject.get("jdm").getAsInt();
+				}
 				Boolean singleton = null;
 				if (filterObject.has("s")) {
 					singleton = filterObject.get("s").getAsBoolean();
@@ -137,7 +145,7 @@ public class StockpileDataReader extends AbstractBackup {
 				for (JsonElement ownerIdElement : ownerIDsElement.getAsJsonArray()) {
 					ownerIDs.add(ownerIdElement.getAsLong());
 				}
-				filters.add(new StockpileFilter(ApiIdConverter.getLocation(locationID), flagIDs, containers, ownerIDs, exclude, singleton, assets, sellOrders, buyOrders, jobs, buyTransactions, sellTransactions, sellingContracts, soldContracts, buyingContracts, boughtContracts));
+				filters.add(new StockpileFilter(ApiIdConverter.getLocation(locationID), exclude, flagIDs, containers, ownerIDs, jobsDaysLess, jobsDaysMore, singleton, assets, sellOrders, buyOrders, jobs, buyTransactions, sellTransactions, sellingContracts, soldContracts, buyingContracts, boughtContracts));
 			}
 
 			//Create Stockile (then add items)

@@ -102,6 +102,8 @@ public class StockpileDataWriter extends AbstractBackup {
 				filterObject.addProperty("st", stockpileFilter.isSellTransactions());
 				filterObject.addProperty("e", stockpileFilter.isExclude());
 				filterObject.addProperty("j", stockpileFilter.isJobs());
+				filterObject.addProperty("jdl", stockpileFilter.getJobsDaysLess());
+				filterObject.addProperty("jdm", stockpileFilter.getJobsDaysMore());
 				filterObject.addProperty("s", stockpileFilter.isSingleton());
 				filterObject.addProperty("id", stockpileFilter.getLocation().getLocationID());
 
