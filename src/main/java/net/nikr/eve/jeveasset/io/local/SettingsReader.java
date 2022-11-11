@@ -766,7 +766,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			}
 			List<StockpileFilter> filters = new ArrayList<>();
 			if (inventory != null && sellOrders != null && buyOrders != null && jobs != null) {
-				StockpileFilter filter = new StockpileFilter(location, flagIDs, containers, ownerIDs, exclude, null, inventory, sellOrders, buyOrders, jobs, false, false, false, false, false, false);
+				StockpileFilter filter = new StockpileFilter(location, exclude, flagIDs, containers, ownerIDs, null, null, null, inventory, sellOrders, buyOrders, jobs, false, false, false, false, false, false);
 				filters.add(filter);
 			}
 		//NEW
@@ -779,10 +779,9 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 					filterExclude = getBoolean(filterNode, "exclude");
 				}
 				//Singleton
-				Boolean filterSingleton = null;
-				if (haveAttribute(filterNode, "singleton")) {
-					filterSingleton = getBoolean(filterNode, "singleton");
-				}
+				Boolean filterSingleton = getBooleanOptional(filterNode, "singleton");
+				Integer filterJobsDaysLess = getIntOptional(filterNode, "jobsdaysless");
+				Integer filterJobsDaysMore = getIntOptional(filterNode, "jobsdaysmore");
 				boolean filterSellingContracts = false;
 				if (haveAttribute(filterNode, "sellingcontracts")) {
 					filterSellingContracts = getBoolean(filterNode, "sellingcontracts");
@@ -842,7 +841,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 					int filterFlagID = getInt(flagNode, "flagid");
 					filterFlagIDs.add(filterFlagID);
 				}
-				StockpileFilter stockpileFilter = new StockpileFilter(location, filterFlagIDs, filterContainers, filterOwnerIDs, filterExclude, filterSingleton, filterInventory, filterSellOrders, filterBuyOrders, filterJobs, filterBuyTransactions, filterSellTransactions, filterSellingContracts, filterSoldBuy, filterBuyingContracts, filterBoughtContracts);
+				StockpileFilter stockpileFilter = new StockpileFilter(location, filterExclude, filterFlagIDs, filterContainers, filterOwnerIDs, filterJobsDaysLess, filterJobsDaysMore, filterSingleton, filterInventory, filterSellOrders, filterBuyOrders, filterJobs, filterBuyTransactions, filterSellTransactions, filterSellingContracts, filterSoldBuy, filterBuyingContracts, filterBoughtContracts);
 				filters.add(stockpileFilter);
 			}
 		//SUBPILES

@@ -77,6 +77,7 @@ import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
 import net.nikr.eve.jeveasset.gui.shared.DocumentFactory;
+import net.nikr.eve.jeveasset.gui.shared.DocumentFactory.ValueFlag;
 import net.nikr.eve.jeveasset.gui.shared.Formatter;
 import net.nikr.eve.jeveasset.gui.shared.InstantToolTip;
 import net.nikr.eve.jeveasset.gui.shared.TextManager;
@@ -84,6 +85,7 @@ import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
 import net.nikr.eve.jeveasset.gui.shared.components.JDoubleField;
 import net.nikr.eve.jeveasset.gui.shared.components.JDropDownButton;
 import net.nikr.eve.jeveasset.gui.shared.components.JFixedToolBar;
+import net.nikr.eve.jeveasset.gui.shared.components.JIntegerField;
 import net.nikr.eve.jeveasset.gui.shared.components.ListComboBoxModel;
 import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
@@ -111,6 +113,7 @@ public class StockpileDialog extends JDialogCentered {
 		ADD_FLAG,
 		ADD_CONTAINER,
 		ADD_SINGLETON,
+		ADD_JOBS_DAYS,
 		REMOVE,
 		CLONE,
 		CHANGE_LOCATION_TYPE
@@ -625,6 +628,7 @@ public class StockpileDialog extends JDialogCentered {
 		FLAG,
 		CONTAINER,
 		SINGLETON,
+		JOBS_DAYS,
 	}
 
 	private enum LocationType {
@@ -652,6 +656,9 @@ public class StockpileDialog extends JDialogCentered {
 		private JCheckBox jIncludeContainer;
 		//Singleton
 		private JComboBox<String> jSingleton;
+		//Jobs Days
+		private JIntegerField jJobsDays;
+		private JComboBox<String> jJobsMoreOrLess;
 
 		private final ListenerClass listener = new ListenerClass();
 
@@ -681,6 +688,16 @@ public class StockpileDialog extends JDialogCentered {
 			this(locationPanel, FilterType.SINGLETON);
 
 			jSingleton.setSelectedItem(singleton ? DataModelAsset.get().unpackaged() : DataModelAsset.get().packaged());
+		}
+
+		public FilterPanel(final LocationPanel locationPanel, final int days, boolean less) {
+			this(locationPanel, FilterType.JOBS_DAYS);
+			if (less) {
+				jJobsMoreOrLess.setSelectedIndex(0);
+			} else {
+				jJobsMoreOrLess.setSelectedIndex(1);
+			}
+			jJobsDays.setText(String.valueOf(days));
 		}
 
 		public FilterPanel(final LocationPanel locationPanel, final FilterType filterType) {
@@ -801,12 +818,49 @@ public class StockpileDialog extends JDialogCentered {
 						.addComponent(jOwner, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 						.addComponent(jRemove, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				);
+			} else if (filterType == FilterType.JOBS_DAYS) {
+				jType.setIcon(Images.INCLUDE_JOBS.getIcon());
+				jType.setToolTipText(TabsStockpile.get().jobsDaysTip());
+
+				String[] moreOrLess = {TabsStockpile.get().jobsDaysLess(), TabsStockpile.get().jobsDaysMore()};
+				jJobsMoreOrLess = new JComboBox<>(moreOrLess);
+				jJobsMoreOrLess.setPrototypeDisplayValue(TabsStockpile.get().jobsDaysMore());
+
+				jJobsDays = new JIntegerField("1", ValueFlag.POSITIVE_AND_NOT_ZERO);
+				jJobsDays.setHorizontalAlignment(JTextField.RIGHT);
+				jJobsDays.addFocusListener(new FocusAdapter() {
+					@Override
+					public void focusGained(FocusEvent e) {
+						jJobsDays.selectAll();
+					}
+				});
+
+				jWarning.setToolTipText(TabsStockpile.get().jobsDaysWarning());
+
+				groupLayout.setHorizontalGroup(
+					groupLayout.createSequentialGroup()
+						.addComponent(jType)
+						.addComponent(jWarning)
+						.addComponent(jJobsDays, 0, 0, FIELD_WIDTH)
+						.addComponent(jJobsMoreOrLess, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(jRemove, Program.getIconButtonsWidth(), Program.getIconButtonsWidth(), Program.getIconButtonsWidth())
+				);
+				groupLayout.setVerticalGroup(
+					groupLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+						.addComponent(jType, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+						.addComponent(jWarning, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+						.addComponent(jJobsDays, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+						.addComponent(jJobsMoreOrLess, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+						.addComponent(jRemove, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+				);
 			}
 		}
 
 		private void remove() {
 			if (filterType == FilterType.SINGLETON) {
 				locationPanel.removeSingleton();
+			} else if (filterType == FilterType.JOBS_DAYS) {
+				locationPanel.removeJobsDays();
 			} else if (filterType == FilterType.CONTAINER) {
 				locationPanel.removeContainer(this);
 			} else if (filterType == FilterType.FLAG) {
@@ -819,7 +873,28 @@ public class StockpileDialog extends JDialogCentered {
 
 		public StockpileContainer getContainer() {
 			return new StockpileContainer(((JTextComponent) jContainer.getEditor().getEditorComponent()).getText(), jIncludeContainer.isSelected());
-			//return new StockpileContainer(getValue(jContainer, String.class), jIncludeContainer.isSelected());
+		}
+
+		public Integer getJobsDaysLess() {
+			if (jJobsDays == null || !getValue(jJobsMoreOrLess, String.class).equals(TabsStockpile.get().jobsDaysLess())) {
+				return null;
+			}
+			try {
+				return Integer.valueOf(jJobsDays.getText());
+			} catch (NumberFormatException ex) {
+				return null;
+			}
+		}
+
+		public Integer getJobsDaysMore() {
+			if (jJobsDays == null || !getValue(jJobsMoreOrLess, String.class).equals(TabsStockpile.get().jobsDaysMore())) {
+				return null;
+			}
+			try {
+				return Integer.valueOf(jJobsDays.getText());
+			} catch (NumberFormatException ex) {
+				return null;
+			}
 		}
 
 		public boolean getSingleton() {
@@ -884,12 +959,15 @@ public class StockpileDialog extends JDialogCentered {
 		private final List<FilterPanel> flagPanels = new ArrayList<>();
 		private final List<FilterPanel> containerPanels = new ArrayList<>();
 		private FilterPanel singletonPanel = null;
+		private FilterPanel jobsDaysPanel = null;
 
 		private final JPanel jPanel;
 		private final JPanel jFilters;
 		private final ListenerClass listener = new ListenerClass();
 		//Singleton
-		private final JButton jSingleton;
+		private final JMenuItem jSingleton;
+		//Jobs Days
+		private final JMenuItem jJobsDays;
 		//Location
 		private final JLabel jLocationType;
 		private final JComboBox<MyLocation> jLocation;
@@ -982,6 +1060,17 @@ public class StockpileDialog extends JDialogCentered {
 			} else {
 				jSingleton.setEnabled(true);
 			}
+			Integer jobsDaysLess = stockpileFilter.getJobsDaysLess();
+			Integer jobsDaysMore = stockpileFilter.getJobsDaysMore();
+			if (jobsDaysLess != null) {
+				jobsDaysPanel = new FilterPanel(this, jobsDaysLess, true);
+				jJobsDays.setEnabled(false); //One instance only
+			} else if (jobsDaysMore != null) {
+				jobsDaysPanel = new FilterPanel(this, jobsDaysMore, false);
+				jJobsDays.setEnabled(false); //One instance only
+			} else {
+				jJobsDays.setEnabled(stockpileFilter.isJobs()); //Only enabled if indystry jobs are active
+			}
 			//Exclude
 			jMatchExclude.setSelected(stockpileFilter.isExclude());
 			//Includes
@@ -1037,26 +1126,37 @@ public class StockpileDialog extends JDialogCentered {
 			matchButtonGroup.add(jMatchInclude);
 			matchButtonGroup.add(jMatchExclude);
 		//ADD
-			JButton jOwner = new JButton(TabsStockpile.get().owner(), Images.LOC_OWNER.getIcon());
+			JDropDownButton jAdd = new JDropDownButton(TabsStockpile.get().filters(), Images.INCLUDE_ADD_FILTER.getIcon());
+			jAdd.setToolTipText(TabsStockpile.get().include());
+			jToolBar.addButton(jAdd);
+
+			JMenuItem jOwner = new JMenuItem(TabsStockpile.get().owner(), Images.LOC_OWNER.getIcon());
 			jOwner.setActionCommand(StockpileDialogAction.ADD_OWNER.name());
 			jOwner.addActionListener(listener);
 			jOwner.setEnabled(!owners.isEmpty());
-			jToolBar.addButton(jOwner);
+			jAdd.add(jOwner);
 
-			JButton jFlag = new JButton(TabsStockpile.get().flag(), Images.LOC_FLAG.getIcon());
+			JMenuItem jFlag = new JMenuItem(TabsStockpile.get().flag(), Images.LOC_FLAG.getIcon());
 			jFlag.setActionCommand(StockpileDialogAction.ADD_FLAG.name());
 			jFlag.addActionListener(listener);
-			jToolBar.addButton(jFlag);
+			jAdd.add(jFlag);
 
-			JButton jContainer = new JButton(TabsStockpile.get().container(), Images.LOC_CONTAINER_WHITE.getIcon());
+			JMenuItem jContainer = new JMenuItem(TabsStockpile.get().container(), Images.LOC_CONTAINER_WHITE.getIcon());
 			jContainer.setActionCommand(StockpileDialogAction.ADD_CONTAINER.name());
 			jContainer.addActionListener(listener);
-			jToolBar.addButton(jContainer);
+			jAdd.add(jContainer);
 
-			jSingleton = new JButton(TabsStockpile.get().singleton(), Images.INCLUDE_PACKAGED.getIcon());
+			jSingleton = new JMenuItem(TabsStockpile.get().singleton(), Images.INCLUDE_PACKAGED.getIcon());
 			jSingleton.setActionCommand(StockpileDialogAction.ADD_SINGLETON.name());
 			jSingleton.addActionListener(listener);
-			jToolBar.addButton(jSingleton);
+			jAdd.add(jSingleton);
+
+			jJobsDays = new JMenuItem(TabsStockpile.get().jobsDays(), Images.INCLUDE_JOBS.getIcon());
+			jJobsDays.setEnabled(false); //No include selected by default, so defaults to disabled
+			jJobsDays.setToolTipText(TabsStockpile.get().jobsDaysTip());
+			jJobsDays.setActionCommand(StockpileDialogAction.ADD_JOBS_DAYS.name());
+			jJobsDays.addActionListener(listener);
+			jAdd.add(jJobsDays);
 		//INCLUDE
 			jInclude = new JDropDownButton(TabsStockpile.get().include(), Images.LOC_INCLUDE.getIcon());
 			jInclude.setToolTipText(TabsStockpile.get().include());
@@ -1295,6 +1395,10 @@ public class StockpileDialog extends JDialogCentered {
 				horizontalGroup.addComponent(singletonPanel.getPanel());
 				verticalGroup.addComponent(singletonPanel.getPanel());
 			}
+			if (jobsDaysPanel != null) {
+				horizontalGroup.addComponent(jobsDaysPanel.getPanel());
+				verticalGroup.addComponent(jobsDaysPanel.getPanel());
+			}
 
 			layout.setVerticalGroup(verticalGroup);
 			layout.setHorizontalGroup(horizontalGroup);
@@ -1428,8 +1532,15 @@ public class StockpileDialog extends JDialogCentered {
 			} else {
 				singleton = null;
 			}
-			return new StockpileFilter(location, flagIDs, containers, ownerIDs
-					,jMatchExclude.isSelected()
+			Integer jobsDaysLess = null;
+			Integer jobsDaysMore = null;
+			if (jobsDaysPanel != null) {
+				jobsDaysLess = jobsDaysPanel.getJobsDaysLess();
+				jobsDaysMore = jobsDaysPanel.getJobsDaysMore();
+			}
+			return new StockpileFilter(location, jMatchExclude.isSelected(), flagIDs, containers, ownerIDs
+					,jobsDaysLess
+					,jobsDaysMore
 					,singleton
 					,jAssets.isSelected()
 					,jSellingOrders.isSelected()
@@ -1482,6 +1593,16 @@ public class StockpileDialog extends JDialogCentered {
 			}
 			if (singletonPanel != null) {
 				singletonPanel.warning(false);
+			}
+			if (jobsDaysPanel != null) {
+				if (!jJobs.isSelected()) {
+					jobsDaysPanel.warning(true);
+					ok = false;
+				} else {
+					jobsDaysPanel.warning(false);
+				}
+			} else {
+				jJobsDays.setEnabled(jJobs.isSelected());
 			}
 			if (!jAssets.isSelected()
 					&& !jJobs.isSelected()
@@ -1592,6 +1713,11 @@ public class StockpileDialog extends JDialogCentered {
 			jSingleton.setEnabled(true);
 			doLayout();
 		}
+		public void removeJobsDays() {
+			jobsDaysPanel = null;
+			jJobsDays.setEnabled(jJobs.isSelected());
+			doLayout();
+		}
 
 		private void remove() {
 			locationPanels.remove(this);
@@ -1626,6 +1752,13 @@ public class StockpileDialog extends JDialogCentered {
 			singletonPanel.jSingleton.requestFocusInWindow();
 		}
 
+		private void addJobsDays() {
+			jobsDaysPanel = new FilterPanel(this, FilterType.JOBS_DAYS);
+			doLayout();
+			jJobsDays.setEnabled(false);
+			jobsDaysPanel.jJobsDays.requestFocusInWindow();
+		}
+
 		private void changeLocationType() {
 			if (jPlanet.isSelected()) {
 				setLocationType(LocationType.PLANET);
@@ -1655,6 +1788,8 @@ public class StockpileDialog extends JDialogCentered {
 					addContainer();
 				} else if (StockpileDialogAction.ADD_SINGLETON.name().equals(e.getActionCommand())) {
 					addSingleton();
+				} else if (StockpileDialogAction.ADD_JOBS_DAYS.name().equals(e.getActionCommand())) {
+					addJobsDays();
 				} else if (StockpileDialogAction.FILTER_LOCATIONS.name().equals(e.getActionCommand())) {
 					refilter();
 				} else if (StockpileDialogAction.VALIDATE.name().equals(e.getActionCommand())) {

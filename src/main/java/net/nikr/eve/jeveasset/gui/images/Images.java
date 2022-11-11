@@ -150,6 +150,7 @@ public enum Images {
 	INCLUDE_ORDERS_SELECTED ("include_orders_selected.png"),
 	INCLUDE_ORDERS ("include_orders.png"),
 	INCLUDE_PACKAGED ("include_packaged.png"),
+	INCLUDE_ADD_FILTER ("include_add_filter.png"),
 
 	MISC_EVE ("misc_eve.png"),
 	MISC_EVEKIT ("misc_evekit.png"),
