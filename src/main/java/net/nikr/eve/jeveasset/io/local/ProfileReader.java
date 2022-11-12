@@ -367,8 +367,7 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 			NodeList contractNodes = contractsNode.getElementsByTagName("contract");
 			for (int b = 0; b < contractNodes.getLength(); b++) {
 				Element contractNode = (Element) contractNodes.item(b);
-				RawContract rawContract = parseContract(contractNode);
-				MyContract contract = DataConverter.toMyContract(rawContract);
+				MyContract contract = parseContract(contractNode);
 				NodeList itemNodes = contractNode.getElementsByTagName("contractitem");
 				List<MyContractItem> contractItems = new ArrayList<>();
 				for (int c = 0; c < itemNodes.getLength(); c++) {
@@ -384,7 +383,7 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 		owner.setContracts(contracts);
 	}
 
-	private RawContract parseContract(final Element element) throws XmlException {
+	private MyContract parseContract(final Element element) throws XmlException {
 		RawContract contract = RawContract.create();
 		Integer acceptorID = getInt(element, "acceptorid");
 		Integer assigneeID = getInt(element, "assigneeid");
@@ -411,7 +410,10 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 		String typeEnum = getStringOptional(element, "type");
 		Double volume = getDoubleOptional(element, "volume");
 		boolean forCorporation = getBoolean(element, "forcorp");
-
+		boolean esi = true;
+		if (haveAttribute(element, "esi")) {
+			esi = getBoolean(element, "esi");
+		}
 		contract.setAcceptorID(acceptorID);
 		contract.setAssigneeID(assigneeID);
 		contract.setAvailability(RawConverter.toContractAvailability(availabilityEnum, availabilityString));
@@ -437,8 +439,9 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 		contract.setTypeString(typeString);
 		contract.setType(RawConverter.toContractType(typeEnum, typeString));
 		contract.setVolume(volume);
-
-		return contract;
+		MyContract myContract = DataConverter.toMyContract(contract);
+		myContract.setESI(esi);
+		return myContract;
 	}
 
 	private RawContractItem parseContractItem(final Element element) throws XmlException {
@@ -500,15 +503,14 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 			NodeList marketOrderNodes = currentMarketOrdersNode.getElementsByTagName("markerorder");
 			for (int b = 0; b < marketOrderNodes.getLength(); b++) {
 				Element currentNode = (Element) marketOrderNodes.item(b);
-				RawMarketOrder rawMarketOrder = parseMarketOrder(currentNode, owner);
-				MyMarketOrder marketOrder = DataConverter.toMyMarketOrder(rawMarketOrder, owner);
+				MyMarketOrder marketOrder = parseMarketOrder(currentNode, owner);
 				marketOrders.add(marketOrder);
 			}
 		}
 		owner.setMarketOrders(marketOrders);
 	}
 
-	private RawMarketOrder parseMarketOrder(final Element element, final OwnerType owner) throws XmlException {
+	private MyMarketOrder parseMarketOrder(final Element element, final OwnerType owner) throws XmlException {
 		RawMarketOrder apiMarketOrder = RawMarketOrder.create();
 		long orderID = getLong(element, "orderid");
 		long locationID = getLong(element, "stationid");
@@ -534,6 +536,10 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 		boolean corp = owner.isCorporation();
 		if (haveAttribute(element, "corp")) {
 			corp = getBoolean(element, "corp");
+		}
+		boolean esi = true;
+		if (haveAttribute(element, "esi")) {
+			esi = getBoolean(element, "esi");
 		}
 		NodeList changeNodes = element.getElementsByTagName("change");
 		Set<Change> changes = new HashSet<>();
@@ -575,7 +581,10 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 		apiMarketOrder.setTypeID(typeID);
 		apiMarketOrder.setVolumeRemain(volRemaining);
 		apiMarketOrder.setVolumeTotal(volEntered);
-		return apiMarketOrder;
+
+		MyMarketOrder marketOrder = DataConverter.toMyMarketOrder(apiMarketOrder, owner);
+		marketOrder.setESI(esi);
+		return marketOrder;
 	}
 
 	private void parseJournals(final Element element, final OwnerType owner) throws XmlException {

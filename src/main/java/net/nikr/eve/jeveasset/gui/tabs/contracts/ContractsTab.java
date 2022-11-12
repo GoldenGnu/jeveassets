@@ -42,10 +42,12 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JMenu;
 import javax.swing.JPopupMenu;
+import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.my.MyContract;
 import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
+import net.nikr.eve.jeveasset.data.api.raw.RawContract.ContractStatus;
 import net.nikr.eve.jeveasset.data.settings.types.LocationType;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel.JStatusLabel;
@@ -58,6 +60,7 @@ import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo.AutoNumberFormat;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuUI.ContractMenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
+import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
@@ -215,6 +218,23 @@ public class ContractsTab extends JMainTabPrimary {
 		return new ArrayList<>(); //LocationsType
 	}
 
+	private MyContract getSelectedContract() {
+		int index = jTable.getSelectedRow();
+		if (index < 0 || index >= tableModel.getRowCount()) {
+			return null;
+		}
+		Object o = tableModel.getElementAt(index);
+		if (o instanceof SeparatorList.Separator<?>) {
+			SeparatorList.Separator<?> separator = (SeparatorList.Separator<?>) o;
+			MyContractItem item = (MyContractItem) separator.first();
+			return item.getContract();
+		} else if (o instanceof MyContractItem) {
+			MyContractItem item = (MyContractItem) o;
+			return item.getContract();
+		}
+		return null;
+	}
+
 	private class ContractsTableMenu implements TableMenu<MyContractItem> {
 
 		@Override
@@ -238,7 +258,36 @@ public class ContractsTab extends JMainTabPrimary {
 		}
 
 		@Override
-		public void addToolMenu(JComponent jComponent) { }
+		public void addToolMenu(JComponent jComponent) {
+			MyContract contract = getSelectedContract();
+			boolean enabled = contract != null && !contract.isESI() && selectionModel.getSelected().size() == 1;
+
+			JMenu jStatus = new JMenu(TabsContracts.get().status());
+			jStatus.setIcon(Images.MISC_STATUS.getIcon());
+			if (!enabled) {
+				jStatus.setIcon(jStatus.getDisabledIcon());
+			}
+			jComponent.add(jStatus);
+
+			JRadioButtonMenuItem jMenuItem;
+			for (ContractStatus status : ContractStatus.values()) {
+				jMenuItem = new JRadioButtonMenuItem(MyContract.getStatusName(status));
+				jMenuItem.setEnabled(enabled);
+				jMenuItem.setSelected(enabled && status == contract.getStatus());
+				jMenuItem.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						if (contract == null || contract.isESI()) {
+							return;
+						}
+						contract.setStatus(status);
+						tableModel.fireTableDataChanged();
+					}
+				});
+				jStatus.add(jMenuItem);
+			}
+			MenuManager.addSeparator(jComponent);
+		}
 	}
 
 	private class ListenerClass implements ActionListener, ListEventListener<MyContractItem> {

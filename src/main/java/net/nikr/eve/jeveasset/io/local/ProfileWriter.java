@@ -264,6 +264,7 @@ public final class ProfileWriter extends AbstractXmlWriter {
 			setAttributeOptional(contractNode, "type", contract.getType());
 			setAttributeOptional(contractNode, "volume", contract.getVolume());
 			setAttribute(contractNode, "forcorp", contract.isForCorp());
+			setAttribute(contractNode, "esi", contract.isESI());
 			contractsNode.appendChild(contractNode);
 			for (MyContractItem contractItem : entry.getValue()) {
 				Element itemNode = xmldoc.createElement("contractitem");
@@ -322,6 +323,7 @@ public final class ProfileWriter extends AbstractXmlWriter {
 			setAttribute(childNode, "issued", marketOrder.getIssued());
 			setAttributeOptional(childNode, "issuedby", marketOrder.getIssuedBy());
 			setAttribute(childNode, "corp", marketOrder.isCorp());
+			setAttribute(childNode, "esi", marketOrder.isESI());
 			node.appendChild(childNode);
 			for (Change change : marketOrder.getChanges()) {
 				Element changeNode = xmldoc.createElement("change");

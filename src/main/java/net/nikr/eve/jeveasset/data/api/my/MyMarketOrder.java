@@ -36,6 +36,7 @@ import net.nikr.eve.jeveasset.data.settings.types.BlueprintType;
 import net.nikr.eve.jeveasset.data.settings.types.ContractPriceType;
 import net.nikr.eve.jeveasset.data.settings.types.EditableLocationType;
 import net.nikr.eve.jeveasset.data.settings.types.EditablePriceType;
+import net.nikr.eve.jeveasset.data.settings.types.EsiType;
 import net.nikr.eve.jeveasset.data.settings.types.ItemType;
 import net.nikr.eve.jeveasset.data.settings.types.LastTransactionType;
 import net.nikr.eve.jeveasset.data.settings.types.MarketDetailType;
@@ -45,77 +46,12 @@ import net.nikr.eve.jeveasset.gui.shared.table.containers.Percent;
 import net.nikr.eve.jeveasset.gui.tabs.orders.Outbid;
 import net.nikr.eve.jeveasset.i18n.TabsOrders;
 
-public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarketOrder>, EditableLocationType, ItemType, BlueprintType, EditablePriceType, ContractPriceType, OwnersType, LastTransactionType, MarketDetailType {
+public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarketOrder>, EditableLocationType, ItemType, BlueprintType, EditablePriceType, ContractPriceType, OwnersType, LastTransactionType, MarketDetailType, EsiType {
 
-	public enum OrderStatus {
-		ACTIVE() {
-			@Override
-			String getI18N() {
-				return TabsOrders.get().statusActive();
-			}
-		},
-		CLOSED() {
-			@Override
-			String getI18N() {
-				return TabsOrders.get().statusClosed();
-			}
-		},
-		FULFILLED() {
-			@Override
-			String getI18N() {
-				return TabsOrders.get().statusFulfilled();
-			}
-		},
-		EXPIRED() {
-			@Override
-			String getI18N() {
-				return TabsOrders.get().statusExpired();
-			}
-		},
-		PARTIALLY_FULFILLED() {
-			@Override
-			String getI18N() {
-				return TabsOrders.get().statusPartiallyFulfilled();
-			}
-		},
-		CANCELLED() {
-			@Override
-			String getI18N() {
-				return TabsOrders.get().statusCancelled();
-			}
-		},
-		PENDING() {
-			@Override
-			String getI18N() {
-				return TabsOrders.get().statusPending();
-			}
-		},
-		CHARACTER_DELETED() {
-			@Override
-			String getI18N() {
-				return TabsOrders.get().statusCharacterDeleted();
-			}
-		},
-		UNKNOWN() {
-			@Override
-			String getI18N() {
-				return TabsOrders.get().statusUnknown();
-			}
-		};
-
-		abstract String getI18N();
-
-		@Override
-		public String toString() {
-			return getI18N();
-		}
-	}
-
+	private final Item item;
+	private final OwnerType owner;
 	private final Set<Long> owners;
-	private Item item;
 	private MyLocation location;
-	private OrderStatus status;
-	private OwnerType owner;
 	private double price;
 	private double contractPrice;
 	private double transactionPrice;
@@ -125,6 +61,7 @@ public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarket
 	private Double brokersFee;
 	private Outbid outbid;
 	private double priceReprocessed;
+	private boolean esi = true;
 	//soft init
 	private JButton jButton;
 
@@ -133,62 +70,28 @@ public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarket
 		this.item = item;
 		this.owner = owner;
 		this.owners = Collections.singleton(owner.getOwnerID());
-		if (isExpired()) { //expired (status may be out-of-date)
-			if (this.getVolumeRemain() == 0) {
-				status = OrderStatus.FULFILLED;
-			} else if (Objects.equals(this.getVolumeRemain(), this.getVolumeTotal())) {
-				status = OrderStatus.EXPIRED;
-			} else {
-				status = OrderStatus.PARTIALLY_FULFILLED;
-			}
-		} else {
-			MarketOrderState state = getState();
-			if (state == null) {
-				status = null;
-			} else {
-				switch (state) {
-					case OPEN: //open/active
-						status = OrderStatus.ACTIVE;
-						break;
-					case CLOSED: //closed
-						status = OrderStatus.CLOSED;
-						break;
-					case EXPIRED: //expired (or fulfilled)
-						if (this.getVolumeRemain() == 0) {
-							status = OrderStatus.FULFILLED;
-						} else if (Objects.equals(this.getVolumeRemain(), this.getVolumeTotal())) {
-							status = OrderStatus.EXPIRED;
-						} else {
-							status = OrderStatus.PARTIALLY_FULFILLED;
-						}
-						break;
-					case CANCELLED: //cancelled
-						status = OrderStatus.CANCELLED;
-						break;
-					case PENDING: //pending
-						status = OrderStatus.PENDING;
-						break;
-					case CHARACTER_DELETED: //character deleted
-						status = OrderStatus.CHARACTER_DELETED;
-						break;
-					case UNKNOWN: //Unknown or Auto Closed
-						status = OrderStatus.UNKNOWN;
-						break;
-				}
-			}
-		}
 	}
 
 	public void close() {
-		if (status == OrderStatus.ACTIVE) {
+		if (getState() == MarketOrderState.OPEN) {
 			setState(MarketOrderState.UNKNOWN);
-			status = OrderStatus.UNKNOWN;
 		}
+		esi = false;
 	}
 
 	@Override
 	public int compareTo(final MyMarketOrder o) {
 		return Long.compare(o.getOrderID(), this.getOrderID());
+	}
+
+	@Override
+	public boolean isESI() {
+		return esi;
+	}
+
+	@Override
+	public void setESI(boolean esi) {
+		this.esi = esi;
 	}
 
 	public Date getExpires() {
@@ -368,8 +271,39 @@ public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarket
 		return owner.getOwnerID();
 	}
 
-	public OrderStatus getStatus() {
-		return status;
+	public String getStateFormatted() {
+		if (isExpired() || getState() == MarketOrderState.EXPIRED) { //expired (status may be out-of-date)
+			if (this.getVolumeRemain() == 0) {
+				return TabsOrders.get().statusFulfilled();
+			} else if (Objects.equals(this.getVolumeRemain(), this.getVolumeTotal())) {
+				return TabsOrders.get().statusExpired();
+			} else {
+				return TabsOrders.get().statusPartiallyFulfilled();
+			}
+		} else {
+			return getStateName(getState());
+		}
+	}
+
+	public static String getStateName(MarketOrderState state) {
+		switch (state) {
+			case OPEN: //open/active
+				return TabsOrders.get().statusActive();
+			case CLOSED: //closed
+				return TabsOrders.get().statusClosed();
+			case EXPIRED: //expired (or fulfilled)
+				return TabsOrders.get().statusExpired();
+			case CANCELLED: //cancelled
+				return TabsOrders.get().statusCancelled();
+			case PENDING: //pending
+				return TabsOrders.get().statusPending();
+			case CHARACTER_DELETED: //character deleted
+				return TabsOrders.get().statusCharacterDeleted();
+			case UNKNOWN: //Unknown or Auto Closed
+				return TabsOrders.get().statusUnknown();
+			default:
+				return TabsOrders.get().statusUnknown();
+		}
 	}
 
 	public boolean isCorporation() {

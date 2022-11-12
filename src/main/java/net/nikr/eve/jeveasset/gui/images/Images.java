@@ -185,6 +185,7 @@ public enum Images {
 	MISC_INFO ("misc_info.png"),
 	MISC_MAX ("misc_max.png"),
 	MISC_MIN ("misc_min.png"),
+	MISC_STATUS ("misc_status.png"),
 
 	SETTINGS_TOOLS ("settings_tools.png"),
 	SETTINGS_PRICE_DATA ("settings_price_data.png"),
