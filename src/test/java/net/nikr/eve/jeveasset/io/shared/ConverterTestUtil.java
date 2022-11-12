@@ -499,7 +499,7 @@ public class ConverterTestUtil {
 		if (object instanceof MyMarketOrder) {
 			MyMarketOrder marketOrder = (MyMarketOrder) object;
 			marketOrder.setWalletDivision(options.getInteger());
-			if (marketOrder.getStatus() != null) {
+			if (marketOrder.getState() != null) {
 				marketOrder.setState(options.getMarketOrderStateRaw());
 			}
 			marketOrder.setStateString(options.getString());

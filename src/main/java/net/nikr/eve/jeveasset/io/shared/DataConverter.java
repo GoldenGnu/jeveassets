@@ -184,6 +184,9 @@ public abstract class DataConverter {
 		Map<MyContract, List<MyContractItem>> contracts = new HashMap<>();
 		if (saveHistory) { //Will be overwritten by new contracts
 			contracts.putAll(owner.getContracts());
+			for (MyContract contract : owner.getContracts().keySet()) {
+				contract.setESI(false);
+			}
 		}
 		for (RawContract rawContract : rawContracts) {
 			MyContract myContract = toMyContract(rawContract);

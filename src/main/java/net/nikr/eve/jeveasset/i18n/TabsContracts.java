@@ -93,6 +93,7 @@ public abstract class TabsContracts extends Bundle {
 	public abstract String sellingPrice();
 	public abstract String sellingAssets();
 	public abstract String sold();
+	public abstract String status();
 	public abstract String statusCancelled();
 	public abstract String statusCompleted();
 	public abstract String statusCompletedByContractor();

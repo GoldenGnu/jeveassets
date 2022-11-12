@@ -29,8 +29,9 @@ import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.settings.types.LocationsType;
 import net.nikr.eve.jeveasset.data.settings.types.OwnersType;
 import net.nikr.eve.jeveasset.i18n.TabsContracts;
+import net.nikr.eve.jeveasset.data.settings.types.EsiType;
 
-public class MyContract extends RawContract implements LocationsType, OwnersType {
+public class MyContract extends RawContract implements LocationsType, OwnersType, EsiType {
 
 	private MyLocation endLocation;
 	private MyLocation startLocation;
@@ -39,6 +40,7 @@ public class MyContract extends RawContract implements LocationsType, OwnersType
 	private String issuerCorp = "";
 	private String issuer = "";
 	private final Set<Long> owners = new HashSet<>();
+	private boolean esi = true;
 
 	private boolean issuerAfterAssets = false;
 	private boolean acceptorAfterAssets = false;
@@ -196,7 +198,11 @@ public class MyContract extends RawContract implements LocationsType, OwnersType
 	}
 
 	public String getStatusFormatted() {
-		switch (super.getStatus()) {
+		return getStatusName(super.getStatus());
+	}
+
+	public static String getStatusName(ContractStatus status) {
+		switch (status) {
 			case CANCELLED:
 				return TabsContracts.get().statusCancelled();
 			case FINISHED:
@@ -228,6 +234,16 @@ public class MyContract extends RawContract implements LocationsType, OwnersType
 		} else {
 			return TabsContracts.get().availabilityPrivate();
 		}
+	}
+
+	@Override
+	public boolean isESI() {
+		return esi;
+	}
+
+	@Override
+	public void setESI(boolean esi) {
+		this.esi = esi;
 	}
 
 	@Override
