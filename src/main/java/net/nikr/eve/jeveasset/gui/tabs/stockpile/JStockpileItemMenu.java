@@ -164,11 +164,11 @@ public class JStockpileItemMenu extends JMenu {
 						}
 						if ((item.isBlueprint() && blueprintSelect != null && blueprintSelect.equals(TabsStockpile.get().original()))
 								|| (item.getItem().isFormula() && formulaSelect != null && formulaSelect.equals(TabsStockpile.get().original()))) {
-							items.add(new StockpileItem(stockpile, item.getItem(), Math.abs(item.getTypeID()), item.getCountMinimum(), false));
+							items.add(new StockpileItem(stockpile, item.getItem(), item.getTypeID(), item.getCountMinimum(), false));
 						} else if (item.isBlueprint() && blueprintSelect != null && blueprintSelect.equals(TabsStockpile.get().copy())) {
-							items.add(new StockpileItem(stockpile, item.getItem(), -Math.abs(item.getTypeID()), item.getCountMinimum(), false));
+							items.add(new StockpileItem(stockpile, item.getItem(), -item.getTypeID(), item.getCountMinimum(), false));
 						} else if (item.isBlueprint() && blueprintSelect != null && blueprintSelect.equals(TabsStockpile.get().runs())) {
-							items.add(new StockpileItem(stockpile, item.getItem(), -Math.abs(item.getTypeID()), item.getCountMinimum(), true));
+							items.add(new StockpileItem(stockpile, item.getItem(), -item.getTypeID(), item.getCountMinimum(), true));
 						} else if (item.isBlueprint() && blueprintSelect != null && blueprintSelect.equals(TabsStockpile.get().materialsManufacturing())) {
 							for (IndustryMaterial material : item.getItem().getManufacturingMaterials()) {
 								Item materialItem = ApiIdConverter.getItem(material.getTypeID());
@@ -188,116 +188,53 @@ public class JStockpileItemMenu extends JMenu {
 			} else if (StockpileItemMenuAction.RUNS.name().equals(e.getActionCommand())) { //Runs
 				Object source = e.getSource();
 				if (source instanceof JStockpileMenuItem) {
-					JStockpileMenuItem jMenuItem = (JStockpileMenuItem) source;
-					//Find items that will be changed
-					Map<Stockpile, List<StockpileItem>> update = new HashMap<>();
-					for (StockpileItem stockpileItem : jMenuItem.getItems()) {
-						if (stockpileItem.isBlueprint() && !stockpileItem.isRuns()) {
-							List<StockpileItem> list = update.get(stockpileItem.getStockpile());
-							if (list == null) {
-								list = new ArrayList<>();
-								update.put(stockpileItem.getStockpile(), list);
-							}
-							list.add(stockpileItem);
+					updateBlueprint((JStockpileMenuItem) source, new ChangeBlueprintType() {
+						@Override
+						public StockpileItem getUpdatedItem(StockpileItem item) {
+							//Runs: -typeID & runs=true
+							return new StockpileItem(item.getStockpile(), item.getItem(), -item.getTypeID(), item.getCountMinimum(), true);
 						}
-					}
-					Settings.lock("Stokcpile (Stockpile Menu)"); //Lock for Stokcpile (Stockpile Menu)
-					//Remove items that will be changed
-					for (Map.Entry<Stockpile, List<StockpileItem>> entry : update.entrySet()) {
-						for (StockpileItem item : entry.getValue()) {
-							entry.getKey().remove(item);
+						@Override
+						public boolean include(StockpileItem item) {
+							return !item.isRuns();
 						}
-						program.getStockpileTab().removeItems(entry.getValue());
-					}
-					//Change items
-					for (Map.Entry<Stockpile, List<StockpileItem>> entry : update.entrySet()) {
-						for (StockpileItem item : entry.getValue()) {
-							item.update(new StockpileItem(item.getStockpile(), item.getItem(), -Math.abs(item.getTypeID()), item.getCountMinimum(), true));
-						}
-					}
-					Settings.unlock("Stokcpile (Stockpile Menu)"); //Lock for Stokcpile (Stockpile Menu)
-					//Add changed items
-					for (Map.Entry<Stockpile, List<StockpileItem>> entry : update.entrySet()) {
-						program.getStockpileTab().addToStockpile(entry.getKey(), entry.getValue(), true);
-					}
+					});
 				}
 			} else if (StockpileItemMenuAction.ORIGINAL.name().equals(e.getActionCommand())) { //Original
 				Object source = e.getSource();
 				if (source instanceof JStockpileMenuItem) {
-					JStockpileMenuItem jMenuItem = (JStockpileMenuItem) source;
-					//Find items that will be changed
-					Map<Stockpile, List<StockpileItem>> update = new HashMap<>();
-					for (StockpileItem stockpileItem : jMenuItem.getItems()) {
-						if (stockpileItem.isBlueprint() && !stockpileItem.isBPO()) {
-							List<StockpileItem> list = update.get(stockpileItem.getStockpile());
-							if (list == null) {
-								list = new ArrayList<>();
-								update.put(stockpileItem.getStockpile(), list);
-							}
-							list.add(stockpileItem);
+					updateBlueprint((JStockpileMenuItem) source, new ChangeBlueprintType() {
+						@Override
+						public StockpileItem getUpdatedItem(StockpileItem item) {
+							//BPO: +typeID & runs=false
+							return new StockpileItem(item.getStockpile(), item.getItem(), item.getTypeID(), item.getCountMinimum(), false);
 						}
-					}
-					Settings.lock("Stokcpile (Stockpile Menu)"); //Lock for Stokcpile (Stockpile Menu)
-					//Remove items that will be changed
-					for (Map.Entry<Stockpile, List<StockpileItem>> entry : update.entrySet()) {
-						for (StockpileItem item : entry.getValue()) {
-							entry.getKey().remove(item);
+						@Override
+						public boolean include(StockpileItem item) {
+							return !item.isBPO();
 						}
-						program.getStockpileTab().removeItems(entry.getValue());
-					}
-					//Change items
-					for (Map.Entry<Stockpile, List<StockpileItem>> entry : update.entrySet()) {
-						for (StockpileItem item : entry.getValue()) {
-							item.update(new StockpileItem(item.getStockpile(), item.getItem(), Math.abs(item.getTypeID()), item.getCountMinimum(), false));
-						}
-					}
-					Settings.unlock("Stokcpile (Stockpile Menu)"); //Lock for Stokcpile (Stockpile Menu)
-					//Add changed items
-					for (Map.Entry<Stockpile, List<StockpileItem>> entry : update.entrySet()) {
-						program.getStockpileTab().addToStockpile(entry.getKey(), entry.getValue(), true);
-					}
+					});
 				}
 			} else if (StockpileItemMenuAction.COPY.name().equals(e.getActionCommand())) { //Copy
 				Object source = e.getSource();
 				if (source instanceof JStockpileMenuItem) {
-					JStockpileMenuItem jMenuItem = (JStockpileMenuItem) source;
-					//Find items that will be changed
-					Map<Stockpile, List<StockpileItem>> update = new HashMap<>();
-					for (StockpileItem stockpileItem : jMenuItem.getItems()) {
-						if (stockpileItem.isBlueprint() && (stockpileItem.isBPO() || stockpileItem.isRuns())) {
-							List<StockpileItem> list = update.get(stockpileItem.getStockpile());
-							if (list == null) {
-								list = new ArrayList<>();
-								update.put(stockpileItem.getStockpile(), list);
-							}
-							list.add(stockpileItem);
+					updateBlueprint((JStockpileMenuItem) source, new ChangeBlueprintType() {
+						@Override
+						public StockpileItem getUpdatedItem(StockpileItem item) {
+							//BPC: -typeID & runs=false
+							return new StockpileItem(item.getStockpile(), item.getItem(), -item.getTypeID(), item.getCountMinimum(), false);
 						}
-					}
-					Settings.lock("Stokcpile (Stockpile Menu)"); //Lock for Stokcpile (Stockpile Menu)
-					//Remove items that will be changed
-					for (Map.Entry<Stockpile, List<StockpileItem>> entry : update.entrySet()) {
-						for (StockpileItem item : entry.getValue()) {
-							entry.getKey().remove(item);
+						@Override
+						public boolean include(StockpileItem item) {
+							return item.isBPO() || item.isRuns();
 						}
-						program.getStockpileTab().removeItems(entry.getValue());
-					}
-					//Change items
-					for (Map.Entry<Stockpile, List<StockpileItem>> entry : update.entrySet()) {
-						for (StockpileItem item : entry.getValue()) {
-							item.update(new StockpileItem(item.getStockpile(), item.getItem(), -Math.abs(item.getTypeID()), item.getCountMinimum(), false));
-						}
-					}
-					Settings.unlock("Stokcpile (Stockpile Menu)"); //Lock for Stokcpile (Stockpile Menu)
-					//Add changed items
-					for (Map.Entry<Stockpile, List<StockpileItem>> entry : update.entrySet()) {
-						program.getStockpileTab().addToStockpile(entry.getKey(), entry.getValue(), true);
-					}
+					});
 				}
 			} else if (StockpileItemMenuAction.EDIT_ITEM.name().equals(e.getActionCommand())) { //Edit item
 				Object source = e.getSource();
 				if (source instanceof JStockpileMenuItem) {
 					JStockpileMenuItem jMenuItem = (JStockpileMenuItem) source;
-					List<Stockpile.StockpileItem> items = jMenuItem.getItems();
+					List<StockpileItem> items = jMenuItem.getItems();
 					if (items.size() == 1) {
 						program.getStockpileTab().editItem(items.get(0));
 					}
@@ -306,7 +243,7 @@ public class JStockpileItemMenu extends JMenu {
 				Object source = e.getSource();
 				if (source instanceof JStockpileMenuItem) {
 					JStockpileMenuItem jMenuItem = (JStockpileMenuItem) source;
-					List<Stockpile.StockpileItem> items = jMenuItem.getItems();
+					List<StockpileItem> items = jMenuItem.getItems();
 					if (!items.isEmpty()) {
 						int value;
 						if (items.size() == 1) {
@@ -316,7 +253,7 @@ public class JStockpileItemMenu extends JMenu {
 						}
 						if (value == JOptionPane.OK_OPTION) {
 							Settings.lock("Stokcpile (Stockpile Menu)"); //Lock for Stokcpile (Stockpile Menu)
-							for (Stockpile.StockpileItem item : items) {
+							for (StockpileItem item : items) {
 								item.getStockpile().remove(item);
 							}
 							Settings.unlock("Stokcpile (Stockpile Menu)"); //Unlock for Stokcpile (Stockpile Menu)
@@ -327,6 +264,45 @@ public class JStockpileItemMenu extends JMenu {
 				}
 			}
 		}
+	}
+
+	private void updateBlueprint(JStockpileMenuItem jMenuItem, ChangeBlueprintType blueprintTypeChange) {
+		//Find items that will be changed
+		Map<Stockpile, List<StockpileItem>> update = new HashMap<>();
+		for (StockpileItem stockpileItem : jMenuItem.getItems()) {
+			if (stockpileItem.isBlueprint() && blueprintTypeChange.include(stockpileItem)) {
+				List<StockpileItem> list = update.get(stockpileItem.getStockpile());
+				if (list == null) {
+					list = new ArrayList<>();
+					update.put(stockpileItem.getStockpile(), list);
+				}
+				list.add(stockpileItem);
+			}
+		}
+		Settings.lock("Stokcpile (Stockpile Menu)"); //Lock for Stokcpile (Stockpile Menu)
+		//Remove items that will be changed
+		for (Map.Entry<Stockpile, List<StockpileItem>> entry : update.entrySet()) {
+			for (StockpileItem item : entry.getValue()) {
+				entry.getKey().remove(item);
+			}
+			program.getStockpileTab().removeItems(entry.getValue());
+		}
+		//Change items
+		for (Map.Entry<Stockpile, List<StockpileItem>> entry : update.entrySet()) {
+			for (StockpileItem item : entry.getValue()) {
+				item.update(blueprintTypeChange.getUpdatedItem(item));
+			}
+		}
+		Settings.unlock("Stokcpile (Stockpile Menu)"); //Lock for Stokcpile (Stockpile Menu)
+		//Add changed items
+		for (Map.Entry<Stockpile, List<StockpileItem>> entry : update.entrySet()) {
+			program.getStockpileTab().addToStockpile(entry.getKey(), entry.getValue(), true);
+		}
+	}
+
+	private interface ChangeBlueprintType {
+		public StockpileItem getUpdatedItem(StockpileItem item);
+		public boolean include(StockpileItem item);
 	}
 
 	public static class JStockpileMenuItem extends JMenuItem {

@@ -100,9 +100,10 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 	private Stockpile(final Stockpile stockpile) {
 		update(stockpile);
 		for (StockpileItem item : stockpile.getItems()) {
-			if (item.getItemTypeID() != 0) { //Ignore Total
-				items.add(new StockpileItem(this, item));
+			if (item.isTotal()) {
+				continue; //Ignore Total
 			}
+			items.add(new StockpileItem(this, item));
 		}
 		items.add(totalItem);
 		this.id = getNewID(); //New stockpile = new id
@@ -445,8 +446,8 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 		Map<Integer, StockpileItem> map = new HashMap<>();
 		//Items
 		for (StockpileItem item : items) {
-			if (item.getTypeID() == 0) {
-				continue;
+			if (item.isTotal()) {
+				continue; //Ignore Total
 			}
 			map.put(item.getItemTypeID(), item);
 		}
@@ -459,8 +460,8 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 		}
 		//For each item type
 		for (StockpileItem item : map.values()) {
-			if (item.getTypeID() == 0) {
-				continue;
+			if (item.isTotal()) {
+				continue; //Ignore Total
 			}
 			double percent;
 			if (item.getCountNow() == 0) {
@@ -1214,6 +1215,10 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 		@Override
 		public Integer getTypeID() {
 			return Math.abs(typeID);
+		}
+
+		public boolean isTotal() {
+			return typeID == 0;
 		}
 
 		public double getVolume() {
