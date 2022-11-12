@@ -418,23 +418,24 @@ public class StockpileData extends TableData {
 			topStockpile.getSubpileItems().add(subpileStock);
 			for (StockpileItem stockpileItem : currentStockpile.getItems()) {
 				//For each StockpileItem
-				if (stockpileItem.getTypeID() != 0) {
-					StockpileItem parentItem = topItems.get(stockpileItem.getItemTypeID());
-					SubpileItem subpileItem = new SubpileItem(topStockpile, stockpileItem, subpileStock, parentLevel, path);
-					int linkIndex = topStockpile.getSubpileItems().indexOf(subpileItem);
-					if (parentItem != null) { //Add link (Advanced: Item + Link)
-						subpileItem.addItemLink(parentItem, null); //Add link
+				if (stockpileItem.isTotal()) {
+					continue; //Ignore Total
+				}
+				StockpileItem parentItem = topItems.get(stockpileItem.getItemTypeID());
+				SubpileItem subpileItem = new SubpileItem(topStockpile, stockpileItem, subpileStock, parentLevel, path);
+				int linkIndex = topStockpile.getSubpileItems().indexOf(subpileItem);
+				if (parentItem != null) { //Add link (Advanced: Item + Link)
+					subpileItem.addItemLink(parentItem, null); //Add link
+				}
+				if (linkIndex >= 0) { //Update item (Advanced: Link + Link = MultiLink)
+					SubpileItem linkItem = topStockpile.getSubpileItems().get(linkIndex);
+					linkItem.addItemLink(stockpileItem, subpileStock);
+					if (level >= linkItem.getLevel()) {
+						linkItem.setPath(path);
+						linkItem.setLevel(level);
 					}
-					if (linkIndex >= 0) { //Update item (Advanced: Link + Link = MultiLink)
-						SubpileItem linkItem = topStockpile.getSubpileItems().get(linkIndex);
-						linkItem.addItemLink(stockpileItem, subpileStock);
-						if (level >= linkItem.getLevel()) {
-							linkItem.setPath(path);
-							linkItem.setLevel(level);
-						}
-					} else { //Add new item (Simple)
-						topStockpile.getSubpileItems().add(subpileItem);
-					}
+				} else { //Add new item (Simple)
+					topStockpile.getSubpileItems().add(subpileItem);
 				}
 			}
 			updateSubpile(topStockpile, currentStockpile, topItems, subpileStock, level, path);

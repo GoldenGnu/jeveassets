@@ -420,8 +420,8 @@ public class EnumTableFormatAdaptor<T extends Enum<T> & EnumTableColumn<Q>, Q> i
 			Map<Integer, StockpileItem> map = new HashMap<>();
 			//Items
 			for (StockpileItem item : totalItem.getStockpile().getItems()) {
-				if (item.getTypeID() == 0) {
-					continue;
+				if (item.isTotal()) {
+					continue; //Ignore Total
 				}
 				map.put(item.getItemTypeID(), item);
 			}
@@ -434,8 +434,8 @@ public class EnumTableFormatAdaptor<T extends Enum<T> & EnumTableColumn<Q>, Q> i
 			}
 			double total = 0.0;
 			for (StockpileItem item : map.values()) {
-				if (item.getItemTypeID() == 0) {
-					continue;
+				if (item.isTotal()) {
+					continue; //Ignore Total
 				}
 				setVariables(formula, StockpileTableFormat.values(), item);
 				BigDecimal value = safeEval(expression);

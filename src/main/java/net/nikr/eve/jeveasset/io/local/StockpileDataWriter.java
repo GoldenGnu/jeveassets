@@ -136,8 +136,8 @@ public class StockpileDataWriter extends AbstractBackup {
 			JsonArray items = new JsonArray();
 			stockpileObject.add("i", items);
 			for (StockpileItem stockpileItem : stockpile.getItems()) {
-				if (stockpileItem.getItemTypeID() == 0) { //Ignore Total
-					continue;
+				if (stockpileItem.isTotal()) {
+					continue; //Ignore Total
 				}
 				JsonObject item = new JsonObject();
 				item.addProperty("i", stockpileItem.getItemTypeID());
