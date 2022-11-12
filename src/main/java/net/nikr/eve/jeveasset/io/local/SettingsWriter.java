@@ -580,16 +580,17 @@ public class SettingsWriter extends AbstractXmlWriter {
 			setAttribute(strockpileNode, "multiplier", strockpile.getMultiplier());
 			//ITEMS
 			for (StockpileItem item : strockpile.getItems()) {
-				if (item.getItemTypeID() != 0) { //Ignore Total
-					Element itemNode = xmldoc.createElementNS(null, "item");
-					if (!export) { //Risk of collision, better to generate a new one on import
-						setAttribute(itemNode, "id", item.getID());
-					}
-					setAttribute(itemNode, "typeid", item.getItemTypeID());
-					setAttribute(itemNode, "minimum", item.getCountMinimum());
-					setAttribute(itemNode, "runs", item.isRuns());
-					strockpileNode.appendChild(itemNode);
+				if (item.isTotal()) {
+					continue; //Ignore Total
 				}
+				Element itemNode = xmldoc.createElementNS(null, "item");
+				if (!export) { //Risk of collision, better to generate a new one on import
+					setAttribute(itemNode, "id", item.getID());
+				}
+				setAttribute(itemNode, "typeid", item.getItemTypeID());
+				setAttribute(itemNode, "minimum", item.getCountMinimum());
+				setAttribute(itemNode, "runs", item.isRuns());
+				strockpileNode.appendChild(itemNode);
 			}
 			//SUBPILES
 			for (Map.Entry<Stockpile, Double> entry : strockpile.getSubpiles().entrySet()) {
