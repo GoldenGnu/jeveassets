@@ -264,7 +264,7 @@ public enum MarketTableFormat implements EnumTableColumn<MyMarketOrder> {
 		}
 		@Override
 		public Object getColumnValue(final MyMarketOrder from) {
-			return from.getStatus();
+			return from.getStateFormatted();
 		}
 	},
 	MIN_VOLUME(Integer.class, GlazedLists.comparableComparator()) {

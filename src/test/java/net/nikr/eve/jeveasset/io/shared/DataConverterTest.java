@@ -37,7 +37,6 @@ import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob.IndustryJobState;
 import net.nikr.eve.jeveasset.data.api.my.MyJournal;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
-import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder.OrderStatus;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.api.raw.RawAsset;
 import net.nikr.eve.jeveasset.data.api.raw.RawContract;
@@ -362,10 +361,8 @@ public class DataConverterTest extends TestUtil {
 					for (MyMarketOrder marketOrder : esiOwner.getMarketOrders()) {
 						if (marketOrder.getOrderID() <= 10) {
 							assertThat(marketOrder.getState(), is(MarketOrderState.UNKNOWN));
-							assertThat(marketOrder.getStatus(), is(OrderStatus.UNKNOWN));
 						} else {
 							assertThat(marketOrder.getState(), is(MarketOrderState.OPEN));
-							assertThat(marketOrder.getStatus(), is(OrderStatus.ACTIVE));
 						}
 					}
 				}
