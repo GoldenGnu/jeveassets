@@ -40,6 +40,7 @@ import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.api.raw.RawContract;
 import net.nikr.eve.jeveasset.data.api.raw.RawJournalRefType;
+import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder;
 import net.nikr.eve.jeveasset.data.profile.ProfileData;
 import net.nikr.eve.jeveasset.gui.tabs.log.AssetLog;
 import net.nikr.eve.jeveasset.gui.tabs.log.AssetLogData.LogType;
@@ -545,10 +546,10 @@ public class LogManager {
 			if (oldMarketOrder == null) {
 				continue;
 			}
-			if (oldMarketOrder.getStatus().equals(newMarketOrder.getStatus())) {
+			if (oldMarketOrder.getState().equals(newMarketOrder.getState())) {
 				continue;
 			}
-			if (newMarketOrder.getStatus() != MyMarketOrder.OrderStatus.CANCELLED) {
+			if (newMarketOrder.getState() != RawMarketOrder.MarketOrderState.CANCELLED) {
 				continue;
 			}
 			int typeID = newMarketOrder.getTypeID();
