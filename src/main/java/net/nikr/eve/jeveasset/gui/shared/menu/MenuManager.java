@@ -445,11 +445,7 @@ public class MenuManager<T extends Enum<T> & EnumTableColumn<Q>, Q> {
 	//SUM
 		AutoMenu<Q> jSum = menus.get(MenuEnum.SUM);
 		if (jSum != null) {
-			if (jComponent instanceof JPopupMenu) {
-				((JPopupMenu) jComponent).addSeparator();
-			} else if (jComponent instanceof JMenu) {
-				((JMenu) jComponent).addSeparator();
-			}
+			addSeparator(jComponent);
 			for (JComponent c : jSum.getMenuItems()) {
 				jComponent.add(c);
 			}
