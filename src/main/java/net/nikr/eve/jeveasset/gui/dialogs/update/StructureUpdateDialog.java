@@ -263,12 +263,13 @@ public class StructureUpdateDialog extends JDialogCentered {
 			owners.clear();
 			Date structuresNextUpdate = null;
 			for (EsiOwner esiOwner : program.getProfileManager().getEsiOwners()) {
-				if (esiOwner.isShowOwner() && esiOwner.isStructures()) {
-					if (esiOwner.getStructuresNextUpdate() != null && (structuresNextUpdate == null || esiOwner.getStructuresNextUpdate().after(structuresNextUpdate))) {
-						structuresNextUpdate = esiOwner.getStructuresNextUpdate();
-					}
-					owners.add(esiOwner);
+				if (!esiOwner.isShowOwner() || !esiOwner.isStructures() || esiOwner.isInvalid()) {
+					continue;
 				}
+				if (esiOwner.getStructuresNextUpdate() != null && (structuresNextUpdate == null || esiOwner.getStructuresNextUpdate().after(structuresNextUpdate))) {
+					structuresNextUpdate = esiOwner.getStructuresNextUpdate();
+				}
+				owners.add(esiOwner);
 			}
 			if (structuresNextUpdate == null) { //No ESI owners with structure scope
 				JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), DialoguesStructure.get().invalid(), DialoguesStructure.get().title(), JOptionPane.PLAIN_MESSAGE);
@@ -330,13 +331,14 @@ public class StructureUpdateDialog extends JDialogCentered {
 		boolean updatable = true;
 		boolean structures = false;
 		for (EsiOwner esiOwner : program.getProfileManager().getEsiOwners()) {
-			if (esiOwner.isShowOwner() && esiOwner.isStructures()) {
-				structures = true;
-				if (esiOwner.getStructuresNextUpdate() != null
-						&& !Updatable.isUpdatable(esiOwner.getStructuresNextUpdate())) {
-					updatable = false;
-					break;
-				}
+			if (!esiOwner.isShowOwner() || !esiOwner.isStructures() || esiOwner.isInvalid()) {
+				continue;
+			}
+			structures = true;
+			if (esiOwner.getStructuresNextUpdate() != null
+					&& !Updatable.isUpdatable(esiOwner.getStructuresNextUpdate())) {
+				updatable = false;
+				break;
 			}
 		}
 		return updatable && structures;
