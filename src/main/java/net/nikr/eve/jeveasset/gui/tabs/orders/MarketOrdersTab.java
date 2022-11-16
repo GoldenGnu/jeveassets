@@ -713,11 +713,12 @@ public class MarketOrdersTab extends JMainTabPrimary {
 				jMenuItem.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {
-						if (marketOrder == null || marketOrder.isESI()) {
+						if (marketOrder == null || marketOrder.isESI() || marketOrder.getState() == state) {
 							return;
 						}
 						marketOrder.setState(state);
 						tableModel.fireTableDataChanged();
+						program.saveProfile();
 					}
 				});
 				jStatus.add(jMenuItem);
