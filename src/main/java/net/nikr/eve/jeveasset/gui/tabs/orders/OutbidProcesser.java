@@ -255,6 +255,9 @@ public class OutbidProcesser {
 			for (OwnerType ownerType : profileData.getOwners().values()) { //Copy = thread safe
 				if (ownerType instanceof EsiOwner) {
 					EsiOwner esiOwner = (EsiOwner) ownerType;
+					if (!esiOwner.isShowOwner() || esiOwner.isInvalid()) {
+						continue; //Ignore hidden and invalid owners
+					}
 					if (esiOwner.isStructures()) {
 						structuresApi = esiOwner.getUniverseApiAuth();
 					}
