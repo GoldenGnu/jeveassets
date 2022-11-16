@@ -183,13 +183,13 @@ public class MainMenu extends JMenuBar {
 		menuItem.addActionListener(program);
 		submenu.add(menuItem);
 
+		submenu.addSeparator();
+
 		menuItem = new JMenuItem(GuiFrame.get().industry());
 		menuItem.setIcon(Images.TOOL_INDUSTRY_JOBS.getIcon());
 		menuItem.setActionCommand(MainMenuAction.INDUSTRY_JOBS.name());
 		menuItem.addActionListener(program);
 		submenu.add(menuItem);
-
-		submenu.addSeparator();
 
 		menuItem = new JMenuItem(GuiFrame.get().slots());
 		menuItem.setIcon(Images.TOOL_SLOTS.getIcon());
