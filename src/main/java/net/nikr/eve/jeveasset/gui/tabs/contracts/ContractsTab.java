@@ -277,11 +277,12 @@ public class ContractsTab extends JMainTabPrimary {
 				jMenuItem.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {
-						if (contract == null || contract.isESI()) {
+						if (contract == null || contract.isESI() || status == contract.getStatus()) {
 							return;
 						}
 						contract.setStatus(status);
 						tableModel.fireTableDataChanged();
+						program.saveProfile();
 					}
 				});
 				jStatus.add(jMenuItem);
