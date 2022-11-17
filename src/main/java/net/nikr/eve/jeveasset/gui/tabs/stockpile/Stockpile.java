@@ -41,7 +41,6 @@ import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
-import net.nikr.eve.jeveasset.data.api.raw.RawIndustryJob;
 import net.nikr.eve.jeveasset.data.profile.ProfileData;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.ItemFlag;
@@ -802,21 +801,17 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 						continue; //Do not match - try next filter
 					}
 				 //Jobs
-				} else if (industryJob != null) {
+				} else if (industryJob != null) { //Copying in progress (not delivered to assets)
 					if (runs && typeID < 0) {
-						if (filter.isJobs() && industryJob.isCopying() && !industryJob.isDelivered()) {
+						if (filter.isJobs() && industryJob.isCopying() && industryJob.isNotDeliveredToAssets()) {
 							if (add) { //Match
 								jobsCountNow = jobsCountNow + ((long)industryJob.getRuns() * (long)industryJob.getLicensedRuns());
 							} else {
 								count = count + ((long)industryJob.getRuns() * (long)industryJob.getLicensedRuns());
 							}
 						}
-					} else if (industryJob.isManufacturing() //Manufacturing
-							&& (industryJob.getStatus() == RawIndustryJob.IndustryJobStatus.ACTIVE //Inprogress AKA not delivered (1 = Active, 2 = Paused (Facility Offline), 3 = Ready)
-								|| industryJob.getStatus() == RawIndustryJob.IndustryJobStatus.PAUSED
-								|| industryJob.getStatus() == RawIndustryJob.IndustryJobStatus.READY
-							)
-							&& filter.isJobs()) {
+						//Manufacturing in progress (not delivered to assets)
+					} else if (filter.isJobs() && industryJob.isManufacturing() && industryJob.isNotDeliveredToAssets()) {
 						if (add) { //Match
 							jobsCountNow = jobsCountNow + ((long)industryJob.getRuns() * (long)industryJob.getProductQuantity());
 						} else {

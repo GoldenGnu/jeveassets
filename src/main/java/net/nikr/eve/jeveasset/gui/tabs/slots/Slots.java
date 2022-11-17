@@ -88,7 +88,7 @@ public class Slots implements Comparable<Slots>, LocationType {
 	}
 
 	public final void count(MyIndustryJob industryJob) {
-		if (industryJob.isDelivered()) {
+		if (industryJob.isDone()) {
 			return; //Doesn't count as active
 		}
 		switch (industryJob.getActivity()) {
