@@ -41,6 +41,7 @@ public class RawAsset {
 
 	private static final ItemFlag MANUFACTURING_FLAG = new ItemFlag(0, IndustryActivity.ACTIVITY_MANUFACTURING.toString(), IndustryActivity.ACTIVITY_MANUFACTURING.toString());
 	private static final ItemFlag REACTIONS_FLAG = new ItemFlag(0, IndustryActivity.ACTIVITY_REACTIONS.toString(), IndustryActivity.ACTIVITY_REACTIONS.toString());
+	private static final ItemFlag COPYING_FLAG = new ItemFlag(0, IndustryActivity.ACTIVITY_COPYING.toString(), IndustryActivity.ACTIVITY_COPYING.toString());
 	private static final ItemFlag INDUSTRY_JOB_FLAG = new ItemFlag(0, General.get().industryJobFlag(), General.get().industryJobFlag());
 	private static final ItemFlag MARKET_ORDER_BUY_FLAG = new ItemFlag(0, General.get().marketOrderBuyFlag(), General.get().marketOrderBuyFlag());
 	private static final ItemFlag MARKET_ORDER_SELL_FLAG = new ItemFlag(0, General.get().marketOrderSellFlag(), General.get().marketOrderSellFlag());
@@ -69,10 +70,10 @@ public class RawAsset {
 	 * IndustryJob
 	 *
 	 * @param industryJob
-	 * @param manufacturing
+	 * @param output
 	 */
-	public RawAsset(MyIndustryJob industryJob, boolean manufacturing) {
-		if (manufacturing) {
+	public RawAsset(MyIndustryJob industryJob, boolean output) {
+		if (output && industryJob.isManufacturing()) {
 			isSingleton = false;
 			itemId = RawConverter.toLong(industryJob.getJobID()); //This item doesn't exist yet, need a new itemID
 			switch (industryJob.getActivity()) { //Can not be null
@@ -88,6 +89,13 @@ public class RawAsset {
 			locationId = industryJob.getOutputLocationID();
 			quantity = industryJob.getOutputCount();
 			typeId = industryJob.getProductTypeID();
+		} else if (output && industryJob.isCopying()) {
+			isSingleton = true;
+			itemId = RawConverter.toLong(industryJob.getJobID()); //This item doesn't exist yet, need a new itemID
+			itemFlag = COPYING_FLAG;
+			locationId = industryJob.getOutputLocationID();
+			quantity = -2; //BPC
+			typeId = industryJob.getBlueprintTypeID();
 		} else {
 			isSingleton = true;
 			itemId = industryJob.getBlueprintID(); //blueprint itemID
