@@ -45,9 +45,9 @@ import net.nikr.eve.jeveasset.data.profile.ProfileData;
 import net.nikr.eve.jeveasset.gui.tabs.log.AssetLog;
 import net.nikr.eve.jeveasset.gui.tabs.log.AssetLogData.LogType;
 import net.nikr.eve.jeveasset.gui.tabs.log.AssetLogSource;
-import net.nikr.eve.jeveasset.gui.tabs.log.LogSourceType;
 import net.nikr.eve.jeveasset.gui.tabs.log.LogData;
 import net.nikr.eve.jeveasset.gui.tabs.log.LogSource;
+import net.nikr.eve.jeveasset.gui.tabs.log.LogSourceType;
 import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.io.local.LogsReader;
 import net.nikr.eve.jeveasset.io.local.LogsWriter;
@@ -416,7 +416,7 @@ public class LogManager {
 		for (MyIndustryJob industryJob : industryJobs) {
 			Date date = industryJob.getStartDate();
 			int typeID = industryJob.getBlueprintTypeID();
-			if (industryJob.isDelivered()) { //Ignore delivered jobs
+			if (!industryJob.isNotDeliveredToAssets()) { //Ignore jobs delivered to assets
 				continue;
 			}
 			long ownerID = industryJob.getOwnerID();
@@ -518,7 +518,7 @@ public class LogManager {
 			if (oldIndustryJob.getState().equals(newIndustryJob.getState())) {
 				continue;
 			}
-			if (!newIndustryJob.isDelivered()) { //Not delivered AKA not in assets yet
+			if (newIndustryJob.isNotDeliveredToAssets()) { //Jobs not delivered to assets yet
 				continue;
 			}
 			int blueprintTypeID = newIndustryJob.getBlueprintTypeID();

@@ -154,7 +154,7 @@ public class DataSetCreator {
 			profileData.getIndustryJobsEventList().getReadWriteLock().readLock().lock();
 			for (MyIndustryJob industryJob : profileData.getIndustryJobsEventList()) {
 				//Manufacturing and not completed
-				if (industryJob.isManufacturing() && !industryJob.isDelivered()) {
+				if (industryJob.isManufacturing() && industryJob.isNotDeliveredToAssets()) {
 					Value value = getValueInner(values, industryJob.getOwnerName(), date);
 					double manufacturingTotal = industryJob.getProductQuantity() * industryJob.getRuns() * ApiIdConverter.getPriceSimple(industryJob.getProductTypeID(), false);
 					value.addManufacturing(manufacturingTotal);
