@@ -334,13 +334,13 @@ public class JMenuInfo {
 		double outputValue = 0;
 		for (MyIndustryJob industryJob : list) {
 			count++;
-			if (industryJob.isInvention() && industryJob.isCompleted()) {
+			if (industryJob.isInvention() && industryJob.isDone()) {
 				inventionCount++;
-				if (industryJob.isDelivered()) {
+				if (industryJob.isCompletedSuccessful()) {
 					success++;
 				}
 			}
-			if (!industryJob.isDelivered()) { //Only include active jobs
+			if (industryJob.isNotDeliveredToAssets()) { //Only include active jobs
 				outputValue += industryJob.getOutputValue();
 			}
 		}

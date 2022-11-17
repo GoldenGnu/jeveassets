@@ -52,9 +52,13 @@ public abstract class DataConverter {
 	public static List<MyAsset> assetIndustryJob(final Collection<MyIndustryJob> industryJobs, boolean includeManufacturing) {
 		List<MyAsset> assets = new ArrayList<>();
 		for (MyIndustryJob industryJob : industryJobs) {
-			if (!industryJob.isDelivered()) {
-				MyAsset asset = new MyAsset(industryJob, false);
-				assets.add(asset);
+			if (industryJob.isNotDeliveredToAssets()) {
+				//Blueprint
+				if (industryJob.isRemovedFromAssets()) {
+					MyAsset asset = new MyAsset(industryJob, false);
+					assets.add(asset);
+				}
+				//Manufacturing Output
 				if (includeManufacturing && industryJob.isManufacturing() && industryJob.getProductTypeID() != null) {
 					MyAsset product = new MyAsset(industryJob, true);
 					assets.add(product);
