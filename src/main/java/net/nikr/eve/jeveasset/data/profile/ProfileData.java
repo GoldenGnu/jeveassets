@@ -416,6 +416,7 @@ public class ProfileData {
 		List<MyAccountBalance> accountBalance = new ArrayList<>();
 		Map<Long, OwnerType> assetsMap = new HashMap<>();
 		Map<Long, OwnerType> accountBalanceMap = new HashMap<>();
+		Map<Long, MyIndustryJob> copyIndustryJobs = new HashMap<>();
 		Set<MyMarketOrder> marketOrders = new HashSet<>();
 		Set<MyMarketOrder> charMarketOrders = new HashSet<>();
 		Set<MyJournal> journals = new HashSet<>();
@@ -456,10 +457,14 @@ public class ProfileData {
 			} else {
 				charTransactions.addAll(owner.getTransactions());
 			}
-			//Industry Jobs
+			//Industry Jobs > MyBlueprint
 			industryJobs.addAll(owner.getIndustryJobs());
 			for (MyIndustryJob myIndustryJob : owner.getIndustryJobs()) {
 				blueprints.put(myIndustryJob.getBlueprintID(), new MyBlueprint(myIndustryJob));
+				if (myIndustryJob.isCopying()) {
+					blueprints.put(myIndustryJob.getJobID().longValue(), new MyBlueprint(myIndustryJob));
+					copyIndustryJobs.put(myIndustryJob.getBlueprintID(), myIndustryJob);
+				}
 			}
 			//Contracts & Contract Items
 			for (Map.Entry<MyContract, List<MyContractItem>> entry : owner.getContracts().entrySet()) {
@@ -531,10 +536,15 @@ public class ProfileData {
 			accountBalance.addAll(owner.getAccountBalances());
 		}
 
-		//Fill blueprints
+		//RawBlueprint > MyBlueprint
 		for (OwnerType owner : blueprintsMap.values()) {
 			for (Map.Entry<Long, RawBlueprint> entry : owner.getBlueprints().entrySet()) {
 				blueprints.put(entry.getKey(), new MyBlueprint(entry.getValue())); //Best source - overwrite other sources
+				//Copy Industry Jobs
+				MyIndustryJob industryJob = copyIndustryJobs.get(entry.getKey());
+				if (industryJob != null) {
+					blueprints.put(industryJob.getJobID().longValue(), new MyBlueprint(industryJob.getLicensedRuns(), entry.getValue().getMaterialEfficiency(), entry.getValue().getTimeEfficiency()));
+				}
 			}
 		}
 		//Prioritize corp market orders over char
@@ -656,7 +666,7 @@ public class ProfileData {
 				addAssets(DataConverter.assetMarketOrder(marketOrders, Settings.get().isIncludeSellOrders(), Settings.get().isIncludeBuyOrders()), assets, blueprints, assetAdded, addedDate);
 
 				//Add Industry Jobs to Assets
-				addAssets(DataConverter.assetIndustryJob(industryJobs, Settings.get().isIncludeManufacturing()), assets, blueprints, assetAdded, addedDate);
+				addAssets(DataConverter.assetIndustryJob(industryJobs, Settings.get().isIncludeManufacturing(), Settings.get().isIncludeCopying()), assets, blueprints, assetAdded, addedDate);
 
 				//Add Contract Items to Assets
 				addAssets(DataConverter.assetContracts(contractItems, uniqueOwners, Settings.get().isIncludeSellContracts(), Settings.get().isIncludeBuyContracts()), assets, blueprints, assetAdded, addedDate);

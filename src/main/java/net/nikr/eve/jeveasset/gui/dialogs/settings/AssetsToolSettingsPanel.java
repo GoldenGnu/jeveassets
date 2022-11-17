@@ -36,6 +36,7 @@ public class AssetsToolSettingsPanel extends JSettingsPanel {
 	private final JCheckBox jSellContracts;
 	private final JCheckBox jBuyContracts;
 	private final JCheckBox jManufacturing;
+	private final JCheckBox jCopying;
 
 	public AssetsToolSettingsPanel(final Program program, final SettingsDialog settingsDialog) {
 		super(program, settingsDialog, DialoguesSettings.get().assets(), Images.TOOL_ASSETS.getIcon());
@@ -45,6 +46,7 @@ public class AssetsToolSettingsPanel extends JSettingsPanel {
 		jSellContracts = new JCheckBox(DialoguesSettings.get().includeSellContracts());
 		jBuyContracts = new JCheckBox(DialoguesSettings.get().includeBuyContracts());
 		jManufacturing = new JCheckBox(DialoguesSettings.get().includeManufacturing());
+		jCopying = new JCheckBox(DialoguesSettings.get().includeCopying());
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.LEADING)
@@ -53,6 +55,7 @@ public class AssetsToolSettingsPanel extends JSettingsPanel {
 				.addComponent(jSellContracts)
 				.addComponent(jBuyContracts)
 				.addComponent(jManufacturing)
+				.addComponent(jCopying)
 		);
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
@@ -61,6 +64,7 @@ public class AssetsToolSettingsPanel extends JSettingsPanel {
 				.addComponent(jSellContracts, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				.addComponent(jBuyContracts, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				.addComponent(jManufacturing, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+				.addComponent(jCopying, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 		);
 	}
 
@@ -71,12 +75,14 @@ public class AssetsToolSettingsPanel extends JSettingsPanel {
 						|| jSellContracts.isSelected() != Settings.get().isIncludeSellContracts()
 						|| jBuyContracts.isSelected() != Settings.get().isIncludeBuyContracts()
 						|| jManufacturing.isSelected() != Settings.get().isIncludeManufacturing()
+						|| jCopying.isSelected() != Settings.get().isIncludeCopying()
 						;
 		Settings.get().setIncludeSellOrders(jSellOrders.isSelected());
 		Settings.get().setIncludeBuyOrders(jBuyOrders.isSelected());
 		Settings.get().setIncludeSellContracts(jSellContracts.isSelected());
 		Settings.get().setIncludeBuyContracts(jBuyContracts.isSelected());
 		Settings.get().setIncludeManufacturing(jManufacturing.isSelected());
+		Settings.get().setIncludeCopying(jCopying.isSelected());
 		return update ? UpdateType.FULL_UPDATE : UpdateType.NONE;
 	}
 
@@ -87,6 +93,7 @@ public class AssetsToolSettingsPanel extends JSettingsPanel {
 		jSellContracts.setSelected(Settings.get().isIncludeSellContracts());
 		jBuyContracts.setSelected(Settings.get().isIncludeBuyContracts());
 		jManufacturing.setSelected(Settings.get().isIncludeManufacturing());
+		jCopying.setSelected(Settings.get().isIncludeCopying());
 	}
 }
 

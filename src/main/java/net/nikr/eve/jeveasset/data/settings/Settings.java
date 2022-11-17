@@ -79,6 +79,7 @@ public class Settings {
 		FLAG_INCLUDE_SELL_CONTRACTS,
 		FLAG_INCLUDE_BUY_CONTRACTS,
 		FLAG_INCLUDE_MANUFACTURING,
+		FLAG_INCLUDE_COPYING,
 		FLAG_HIGHLIGHT_SELECTED_ROWS,
 		FLAG_STOCKPILE_FOCUS_TAB,
 		FLAG_STOCKPILE_HALF_COLORS,
@@ -269,6 +270,7 @@ public class Settings {
 		flags.put(SettingFlag.FLAG_INCLUDE_SELL_CONTRACTS, false);
 		flags.put(SettingFlag.FLAG_INCLUDE_BUY_CONTRACTS, false);
 		flags.put(SettingFlag.FLAG_INCLUDE_MANUFACTURING, false);
+		flags.put(SettingFlag.FLAG_INCLUDE_COPYING, false);
 		flags.put(SettingFlag.FLAG_BLUEPRINT_BASE_PRICE_TECH_1, true);
 		flags.put(SettingFlag.FLAG_BLUEPRINT_BASE_PRICE_TECH_2, false);
 		flags.put(SettingFlag.FLAG_TRANSACTION_HISTORY, true);
@@ -780,6 +782,14 @@ public class Settings {
 
 	public boolean setIncludeManufacturing(final boolean includeManufacturing) {
 		return flags.put(SettingFlag.FLAG_INCLUDE_MANUFACTURING, includeManufacturing);
+	}
+
+	public boolean isIncludeCopying() {
+		return flags.get(SettingFlag.FLAG_INCLUDE_COPYING);
+	}
+
+	public boolean setIncludeCopying(final boolean includeCopying) {
+		return flags.put(SettingFlag.FLAG_INCLUDE_COPYING, includeCopying);
 	}
 
 	public boolean isBlueprintBasePriceTech1() {
