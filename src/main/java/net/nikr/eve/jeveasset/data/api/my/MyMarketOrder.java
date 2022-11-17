@@ -272,7 +272,8 @@ public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarket
 	}
 
 	public String getStateFormatted() {
-		if (isExpired() || getState() == MarketOrderState.EXPIRED) { //expired (status may be out-of-date)
+		if ((isExpired() && getState() == MarketOrderState.UNKNOWN) //expired (status may be out-of-date)
+				|| getState() == MarketOrderState.EXPIRED) {
 			if (this.getVolumeRemain() == 0) {
 				return TabsOrders.get().statusFulfilled();
 			} else if (Objects.equals(this.getVolumeRemain(), this.getVolumeTotal())) {
