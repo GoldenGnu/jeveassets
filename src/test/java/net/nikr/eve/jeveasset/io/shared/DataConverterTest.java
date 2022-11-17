@@ -68,7 +68,7 @@ public class DataConverterTest extends TestUtil {
 			industryJob.setBlueprintID(industryJob.getBlueprintID() + 1);
 			industryJob.setStationID(options.getLocationTypeEveApi());
 			industryJob.setCompletedDate(new Date(date.getTime() + 1L));
-			List<MyAsset> assets = DataConverter.assetIndustryJob(Collections.singletonList(industryJob), true);
+			List<MyAsset> assets = DataConverter.assetIndustryJob(Collections.singletonList(industryJob), true, true);
 			assertFalse(assets.isEmpty());
 
 			MyAsset asset = assets.get(0);
