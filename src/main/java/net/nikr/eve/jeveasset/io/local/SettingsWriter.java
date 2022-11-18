@@ -572,12 +572,12 @@ public class SettingsWriter extends AbstractXmlWriter {
 		xmldoc.getDocumentElement().appendChild(parentNode);
 		for (Stockpile strockpile : stockpiles) {
 			//STOCKPILE
-			Element strockpileNode = xmldoc.createElementNS(null, "stockpile");
-			setAttribute(strockpileNode, "name", strockpile.getName());
+			Element stockpileNode = xmldoc.createElementNS(null, "stockpile");
+			setAttribute(stockpileNode, "name", strockpile.getName());
 			if (!export) { //Risk of collision, better to generate a new one on import
-				setAttribute(strockpileNode, "id", strockpile.getId());
+				setAttribute(stockpileNode, "id", strockpile.getId());
 			}
-			setAttribute(strockpileNode, "multiplier", strockpile.getMultiplier());
+			setAttribute(stockpileNode, "multiplier", strockpile.getMultiplier());
 			//ITEMS
 			for (StockpileItem item : strockpile.getItems()) {
 				if (item.isTotal()) {
@@ -590,52 +590,52 @@ public class SettingsWriter extends AbstractXmlWriter {
 				setAttribute(itemNode, "typeid", item.getItemTypeID());
 				setAttribute(itemNode, "minimum", item.getCountMinimum());
 				setAttribute(itemNode, "runs", item.isRuns());
-				strockpileNode.appendChild(itemNode);
+				stockpileNode.appendChild(itemNode);
 			}
 			//SUBPILES
 			for (Map.Entry<Stockpile, Double> entry : strockpile.getSubpiles().entrySet()) {
-				Element itemNode = xmldoc.createElementNS(null, "subpile");
-				itemNode.setAttributeNS(null, "name", entry.getKey().getName());
-				itemNode.setAttributeNS(null, "minimum", String.valueOf(entry.getValue()));
-				strockpileNode.appendChild(itemNode);
+				Element subpileNode = xmldoc.createElementNS(null, "subpile");
+				subpileNode.setAttributeNS(null, "name", entry.getKey().getName());
+				subpileNode.setAttributeNS(null, "minimum", String.valueOf(entry.getValue()));
+				stockpileNode.appendChild(subpileNode);
 			}
 			//FILTERS
 			for (StockpileFilter filter : strockpile.getFilters()) {
-				Element locationNode = xmldoc.createElementNS(null, "stockpilefilter");
-				setAttribute(locationNode, "locationid", filter.getLocation().getLocationID());
-				setAttribute(locationNode, "sellingcontracts", filter.isSellingContracts());
-				setAttribute(locationNode, "soldcontracts", filter.isSoldContracts());
-				setAttribute(locationNode, "buyingcontracts", filter.isBuyingContracts());
-				setAttribute(locationNode, "boughtcontracts", filter.isBoughtContracts());
-				setAttribute(locationNode, "exclude", filter.isExclude());
-				setAttributeOptional(locationNode, "singleton", filter.isSingleton());
-				setAttributeOptional(locationNode, "jobsdaysless", filter.getJobsDaysLess());
-				setAttributeOptional(locationNode, "jobsdaysmore", filter.getJobsDaysMore());
-				setAttribute(locationNode, "inventory", filter.isAssets());
-				setAttribute(locationNode, "sellorders", filter.isSellOrders());
-				setAttribute(locationNode, "buyorders", filter.isBuyOrders());
-				setAttribute(locationNode, "buytransactions", filter.isBuyTransactions());
-				setAttribute(locationNode, "selltransactions", filter.isSellTransactions());
-				setAttribute(locationNode, "jobs", filter.isJobs());
-				strockpileNode.appendChild(locationNode);
+				Element filterNode = xmldoc.createElementNS(null, "stockpilefilter");
+				setAttribute(filterNode, "locationid", filter.getLocation().getLocationID());
+				setAttribute(filterNode, "sellingcontracts", filter.isSellingContracts());
+				setAttribute(filterNode, "soldcontracts", filter.isSoldContracts());
+				setAttribute(filterNode, "buyingcontracts", filter.isBuyingContracts());
+				setAttribute(filterNode, "boughtcontracts", filter.isBoughtContracts());
+				setAttribute(filterNode, "exclude", filter.isExclude());
+				setAttributeOptional(filterNode, "singleton", filter.isSingleton());
+				setAttributeOptional(filterNode, "jobsdaysless", filter.getJobsDaysLess());
+				setAttributeOptional(filterNode, "jobsdaysmore", filter.getJobsDaysMore());
+				setAttribute(filterNode, "inventory", filter.isAssets());
+				setAttribute(filterNode, "sellorders", filter.isSellOrders());
+				setAttribute(filterNode, "buyorders", filter.isBuyOrders());
+				setAttribute(filterNode, "buytransactions", filter.isBuyTransactions());
+				setAttribute(filterNode, "selltransactions", filter.isSellTransactions());
+				setAttribute(filterNode, "jobs", filter.isJobs());
+				stockpileNode.appendChild(filterNode);
 				for (Long ownerID : filter.getOwnerIDs()) {
 					Element ownerNode = xmldoc.createElementNS(null, "owner");
 					setAttribute(ownerNode, "ownerid", ownerID);
-					locationNode.appendChild(ownerNode);
+					filterNode.appendChild(ownerNode);
 				}
 				for (StockpileFilter.StockpileContainer container : filter.getContainers()) {
 					Element containerNode = xmldoc.createElementNS(null, "container");
 					setAttribute(containerNode, "container", container.getContainer());
 					setAttribute(containerNode, "includecontainer", container.isIncludeContainer());
-					locationNode.appendChild(containerNode);
+					filterNode.appendChild(containerNode);
 				}
 				for (Integer flagID : filter.getFlagIDs()) {
 					Element flagNode = xmldoc.createElementNS(null, "flag");
 					setAttribute(flagNode, "flagid", flagID);
-					locationNode.appendChild(flagNode);
+					filterNode.appendChild(flagNode);
 				}
 			}
-			parentNode.appendChild(strockpileNode);
+			parentNode.appendChild(stockpileNode);
 		}
 	}
 
