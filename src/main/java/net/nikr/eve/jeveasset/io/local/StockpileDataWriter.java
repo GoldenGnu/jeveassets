@@ -84,6 +84,7 @@ public class StockpileDataWriter extends AbstractBackup {
 			JsonObject stockpileObject = new JsonObject();
 			stockpileObject.addProperty("n", stockpile.getName());
 			stockpileObject.addProperty("m", stockpile.getMultiplier());
+			stockpileObject.addProperty("cma", stockpile.isContractsMatchAll());
 
 			//Filters
 			JsonArray filtersObject = new JsonArray();

@@ -194,7 +194,7 @@ public class TableFormatTest extends TestUtil {
 			//StockpileItem
 			test(StockpileTableFormat.class);
 			test(StockpileExtendedTableFormat.class);
-			Stockpile stockpile = new Stockpile(STRING_VALUE, null, new ArrayList<>(), DOUBLE_VALUE);
+			Stockpile stockpile = new Stockpile(STRING_VALUE, null, new ArrayList<>(), DOUBLE_VALUE, BOOLEAN_VALUE);
 			stockpile.setOwnerName(Collections.singletonList(owner.getOwnerName()));
 			stockpile.setFlagName(Collections.singleton(asset.getItemFlag()));
 			StockpileItem stockpileItem = new StockpileItem(stockpile, item, INTEGER_VALUE, DOUBLE_VALUE, BOOLEAN_VALUE);

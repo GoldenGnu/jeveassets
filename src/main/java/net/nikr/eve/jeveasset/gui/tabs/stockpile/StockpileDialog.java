@@ -123,6 +123,7 @@ public class StockpileDialog extends JDialogCentered {
 
 	private final JTextField jName;
 	private final JDoubleField jMultiplier;
+	private final JCheckBox jContractsMatchAll;;
 	private final JButton jOK;
 	private final List<LocationPanel> locationPanels = new ArrayList<>();
 	private final JPanel jFiltersPanel;
@@ -180,6 +181,13 @@ public class StockpileDialog extends JDialogCentered {
 		jMultiplier = new JDoubleField("1", DocumentFactory.ValueFlag.POSITIVE_AND_NOT_ZERO);
 		jMultiplier.setAutoSelectAll(true);
 		jMultiplierPanel.add(jMultiplier);
+	//Contracts Match All
+		BorderPanel jContractsMatchAllPanel = new BorderPanel(TabsStockpile.get().contracts());
+
+		jContractsMatchAll = new JCheckBox(TabsStockpile.get().contractsMatchAll());
+		jContractsMatchAll.setToolTipText(TabsStockpile.get().contractsMatchAllTip());
+		jContractsMatchAllPanel.add(jContractsMatchAll);
+		jContractsMatchAllPanel.addGab(5);
 	//Add Filter
 		JFixedToolBar jToolBar = new JFixedToolBar();
 		jToolBar.setBorder(BorderFactory.createTitledBorder(TabsStockpile.get().addFilter()));
@@ -243,8 +251,9 @@ public class StockpileDialog extends JDialogCentered {
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
 				.addGroup(layout.createSequentialGroup()
-					.addComponent(jNamePanel.getPanel(), FIELD_WIDTH - 120, FIELD_WIDTH - 120, FIELD_WIDTH - 120)
+					.addComponent(jNamePanel.getPanel(), FIELD_WIDTH - 215, FIELD_WIDTH - 215, FIELD_WIDTH - 215)
 					.addComponent(jMultiplierPanel.getPanel())
+					.addComponent(jContractsMatchAllPanel.getPanel())
 				)
 				.addComponent(jToolBar, FIELD_WIDTH, FIELD_WIDTH, FIELD_WIDTH)
 				.addComponent(jFiltersScroll, FIELD_WIDTH, FIELD_WIDTH, FIELD_WIDTH)
@@ -258,6 +267,7 @@ public class StockpileDialog extends JDialogCentered {
 				.addGroup(layout.createParallelGroup()
 					.addComponent(jNamePanel.getPanel())
 					.addComponent(jMultiplierPanel.getPanel())
+					.addComponent(jContractsMatchAllPanel.getPanel())
 				)
 				.addComponent(jToolBar, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
 				.addComponent(jFiltersScroll, 0, GroupLayout.DEFAULT_SIZE, 500)
@@ -284,8 +294,10 @@ public class StockpileDialog extends JDialogCentered {
 		} catch (NumberFormatException ex) {
 			multiplier = 1;
 		}
+		//Contracts Match All
+		boolean contractsMatchAll = jContractsMatchAll.isSelected();
 		//Add
-		return new Stockpile(name, null, stockpileFilters, multiplier); //New id
+		return new Stockpile(name, null, stockpileFilters, multiplier, contractsMatchAll); //New id
 	}
 
 	private void autoValidate() {
@@ -379,6 +391,10 @@ public class StockpileDialog extends JDialogCentered {
 
 		//Multiplier
 		jMultiplier.setText(Formatter.compareFormat(loadStockpile.getMultiplier()));
+
+		//Contracts Match All
+		jContractsMatchAll.setSelected(loadStockpile.isContractsMatchAll());
+
 		//Filters
 		for (StockpileFilter filter : loadStockpile.getFilters()) {
 			LocationPanel locationPanel = new LocationPanel(filter);
@@ -418,6 +434,7 @@ public class StockpileDialog extends JDialogCentered {
 
 		jName.setText("");
 		jMultiplier.setText("1");
+		jContractsMatchAll.setSelected(false);
 
 		locationPanels.clear();
 		updatePanels();
@@ -1835,8 +1852,22 @@ public class StockpileDialog extends JDialogCentered {
 			jPanel.setBorder(BorderFactory.createTitledBorder(title));
 		}
 
+		public void addGab(int size) {
+			components.add(new BorderPanelGab(size));
+			doLayout();
+		}
+
+		public void addGab(int min, int pref, int max) {
+			components.add(new BorderPanelGab(min, pref, max));
+			doLayout();
+		}
+
 		public void add(JComponent jComponent) {
 			components.add(jComponent);
+			doLayout();
+		}
+
+		private void doLayout() {
 			jPanel.removeAll();
 			Group horizontalGroup;
 			Group verticalGroup;
@@ -1848,11 +1879,20 @@ public class StockpileDialog extends JDialogCentered {
 				verticalGroup = layout.createSequentialGroup();
 			}
 			for (JComponent component : components) {
-				horizontalGroup.addComponent(component);
-				if (alignment == Alignment.HORIZONTAL) {
-					verticalGroup.addComponent(component, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight());
+				if (component instanceof BorderPanelGab) {
+					BorderPanelGab gab = (BorderPanelGab) component;
+					if (alignment == Alignment.HORIZONTAL) {
+						gab.addGab(horizontalGroup);
+					} else {
+						gab.addGab(verticalGroup);
+					}
 				} else {
-					verticalGroup.addComponent(component);
+					horizontalGroup.addComponent(component);
+					if (alignment == Alignment.HORIZONTAL) {
+						verticalGroup.addComponent(component, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight());
+					} else {
+						verticalGroup.addComponent(component);
+					}
 				}
 			}
 			layout.setHorizontalGroup(horizontalGroup);
@@ -1865,6 +1905,26 @@ public class StockpileDialog extends JDialogCentered {
 
 		public JPanel getPanel() {
 			return jPanel;
+		}
+	}
+
+	private static class BorderPanelGab extends JComponent {
+		private final int min;
+		private final int pref;
+		private final int max;
+
+		public BorderPanelGab(int size) {
+			this(size, size, size);
+		}
+
+		public BorderPanelGab(int min, int pref, int max) {
+			this.min = min;
+			this.pref = pref;
+			this.max = max;
+		}
+
+		public void addGab(Group group) {
+			group.addGap(min, pref, max);
 		}
 	}
 }
