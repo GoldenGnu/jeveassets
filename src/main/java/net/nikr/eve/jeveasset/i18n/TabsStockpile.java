@@ -61,6 +61,9 @@ public abstract class TabsStockpile extends Bundle {
 	public abstract String collapse();
 	public abstract String constellation();
 	public abstract String container();
+	public abstract String contracts();
+	public abstract String contractsMatchAll();
+	public abstract String contractsMatchAllTip();
 	public abstract String copy();
 	public abstract String countMinimum();
 	public abstract String deleteItem();

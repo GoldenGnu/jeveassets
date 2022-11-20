@@ -858,8 +858,13 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			if (haveAttribute(stockpileNode, "multiplier")) {
 				multiplier = getDouble(stockpileNode, "multiplier");
 			}
+		//CONTRACTS MATCH ALL
+			boolean contractsMatchAll = false; //NotNull
+			if (haveAttribute(stockpileNode, "contractsmatchall")) {
+				contractsMatchAll = getBoolean(stockpileNode, "contractsmatchall");
+			}
 
-			Stockpile stockpile = new Stockpile(name, stockpileID, filters, multiplier);
+			Stockpile stockpile = new Stockpile(name, stockpileID, filters, multiplier, contractsMatchAll);
 			stockpiles.add(stockpile);
 			subpileMap.put(stockpile, subpileNames);
 			stockpileMap.put(name, stockpile);
