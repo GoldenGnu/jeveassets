@@ -143,7 +143,7 @@ public class StockpileIDsTest extends TestUtil {
 		stockpileIDs.hide(VALUE);
 		assertTrue(stockpileIDs.isHidden(VALUE));
 		stockpileIDs.setNewDatabase(true);
-		stockpileIDs.setShown(VALUES, Collections.singletonList(new Stockpile("some name", VALUE, new ArrayList<>(), 1.0)));
+		stockpileIDs.setShown(VALUES, Collections.singletonList(new Stockpile("some name", VALUE, new ArrayList<>(), 1.0, false)));
 		stockpileIDs.setNewDatabase(false);
 		assertFalse(stockpileIDs.isHidden(VALUE));
 		assertEquals(0, stockpileIDs.getHidden().size());

@@ -83,6 +83,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 	private final List<SubpileItem> subpileItems = new ArrayList<>();
 	private double percentFull;
 	private double multiplier;
+	private boolean contractsMatchAll;
 	private boolean assets = false;
 	private boolean jobs = false;
 	private boolean buyOrders = false;
@@ -108,10 +109,11 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 		this.id = getNewID(); //New stockpile = new id
 	}
 
-	public Stockpile(final String name, final Long id, final List<StockpileFilter> filters, double multiplier) {
+	public Stockpile(final String name, final Long id, final List<StockpileFilter> filters, double multiplier, boolean contractsMatchAll) {
 		this.name = name;
 		this.filters = filters;
 		this.multiplier = multiplier;
+		this.contractsMatchAll = contractsMatchAll;
 		if (id == null) {
 			this.id = getNewID();
 		} else {
@@ -127,6 +129,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 		this.filters = stockpile.getFilters();
 		this.flagName = stockpile.getFlagName();
 		this.multiplier = stockpile.getMultiplier();
+		this.contractsMatchAll = stockpile.isContractsMatchAll();
 		updateDynamicValues();
 	}
 
@@ -309,6 +312,10 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 
 	public double getMultiplier() {
 		return multiplier;
+	}
+
+	public boolean isContractsMatchAll() {
+		return contractsMatchAll;
 	}
 
 	public boolean isAssets() {
@@ -686,6 +693,11 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 			} else {
 				return null;
 			}
+		}
+
+		boolean matchesContract(MyContractItem contractItem) {
+			Long l = matchesContract(contractItem, false);
+			return l != null && l > 0;
 		}
 
 		void updateContract(MyContractItem contractItem) {

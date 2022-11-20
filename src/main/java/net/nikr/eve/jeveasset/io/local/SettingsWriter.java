@@ -578,6 +578,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 				setAttribute(stockpileNode, "id", strockpile.getId());
 			}
 			setAttribute(stockpileNode, "multiplier", strockpile.getMultiplier());
+			setAttribute(stockpileNode, "contractsmatchall", strockpile.isContractsMatchAll());
 			//ITEMS
 			for (StockpileItem item : strockpile.getItems()) {
 				if (item.isTotal()) {

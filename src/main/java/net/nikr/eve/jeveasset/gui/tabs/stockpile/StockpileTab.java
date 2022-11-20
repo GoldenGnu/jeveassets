@@ -576,11 +576,18 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 	}
 
 	protected void removeItems(Collection<StockpileItem> items) {
+		Set<Stockpile> stockpiles = new HashSet<>();
 		for (StockpileItem item : items) {
 			item.getStockpile().updateTotal();
+			stockpiles.add(item.getStockpile());
 		}
 		if (!items.isEmpty()) {
 			updateSubpile(items.iterator().next().getStockpile());
+		}
+		for (Stockpile stockpile : stockpiles) {
+			if (stockpile.isContractsMatchAll()) { //Less items == may match now...
+				updateStockpile(stockpile);
+			}
 		}
 		//Lock Table
 		beforeUpdateData();
