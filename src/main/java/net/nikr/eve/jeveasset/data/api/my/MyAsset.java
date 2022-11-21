@@ -150,6 +150,7 @@ public class MyAsset extends RawAsset implements Comparable<MyAsset>, InfoItem, 
 						|| getFlag().equals(General.get().contractExcluded()) //contracts excluded
 						|| getFlag().equals(IndustryActivity.ACTIVITY_MANUFACTURING.toString()) //industry job manufacturing
 						|| getFlag().equals(IndustryActivity.ACTIVITY_REACTIONS.toString()) //industry job reactions
+						|| getFlag().equals(IndustryActivity.ACTIVITY_COPYING.toString()) //industry job copying
 						;
 		if (getQuantity() == null || getQuantity() <= 0) {
 			this.count = 1;
@@ -187,7 +188,7 @@ public class MyAsset extends RawAsset implements Comparable<MyAsset>, InfoItem, 
 	}
 
 	public MyAsset(MyIndustryJob industryJob, boolean output) {
-		this(new RawAsset(industryJob, output), 
+		this(new RawAsset(industryJob, output),
 				industryJob.isManufacturing() ? ApiIdConverter.getItemUpdate(industryJob.getProductTypeID()) : industryJob.getItem(), industryJob.getOwner(), new ArrayList<MyAsset>());
 	}
 
