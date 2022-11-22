@@ -85,6 +85,7 @@ public abstract class GuiShared extends Bundle {
 	public abstract String eveInfo();
 	public abstract String eveMarketData();
 	public abstract String eveMarketer();
+	public abstract String eveMissioneer();
 	public abstract String eveOnline();
 	public abstract String eveRef();
 	public abstract String eveTycoon();
