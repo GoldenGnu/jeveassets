@@ -69,14 +69,8 @@ public final class CitadelReader extends AbstractXmlReader<CitadelSettings> {
 			long id = getLong(currentNode, "stationid");
 			String name = getString(currentNode, "name");
 			long systemId = getLong(currentNode, "systemid");
-			boolean userLocation = false;
-			if (haveAttribute(currentNode, "userlocation")) {
-				userLocation = getBoolean(currentNode, "userlocation");
-			}
-			boolean citadel = true;
-			if (haveAttribute(currentNode, "citadel")) {
-				citadel = getBoolean(currentNode, "citadel");
-			}
+			boolean userLocation = getBooleanNotNull(currentNode, "userlocation", false) ;
+			boolean citadel = getBooleanNotNull(currentNode, "citadel", true);
 			CitadelSource source = CitadelSource.OLD;
 			if (haveAttribute(currentNode, "source")) {
 				try {

@@ -116,6 +116,14 @@ public class AttributeGetters {
 		return getNodeValueOptional(node, attributeName);
 	}
 
+	protected String getStringNotNull(final Node node, final String attributeName, final String defaultValue) throws XmlException {
+		String value = getNodeValueOptional(node, attributeName);
+		if (value == null) {
+			return defaultValue;
+		}
+		return value;
+	}
+
 	protected Date getDate(final Node node, final String attributeName) throws XmlException {
 		String value = getNodeValue(node, attributeName);
 		return toDate(value, node, attributeName);
@@ -167,6 +175,14 @@ public class AttributeGetters {
 		return toInt(value, node, attributeName);
 	}
 
+	protected int getIntNotNull(final Node node, final String attributeName, final int defaultValue) throws XmlException {
+		String value = getNodeValueOptional(node, attributeName);
+		if (value == null) {
+			return defaultValue;
+		}
+		return toInt(value, node, attributeName);
+	}
+
 	protected Integer toInt(String value, final Node node, final String attributeName) throws XmlException {
 		try {
 			return Integer.parseInt(value);
@@ -184,6 +200,14 @@ public class AttributeGetters {
 		String value = getNodeValueOptional(node, attributeName);
 		if (value == null) {
 			return null;
+		}
+		return toLong(value, node, attributeName);
+	}
+
+	protected long getLongNotNull(final Node node, final String attributeName, final long defaultValue) throws XmlException {
+		String value = getNodeValueOptional(node, attributeName);
+		if (value == null) {
+			return defaultValue;
 		}
 		return toLong(value, node, attributeName);
 	}
@@ -209,6 +233,14 @@ public class AttributeGetters {
 		return toDouble(value, node, attributeName);
 	}
 
+	protected double getDoubleNotNull(final Node node, final String attributeName, final double defaultValue) throws XmlException {
+		String value = getNodeValueOptional(node, attributeName);
+		if (value == null) {
+			return defaultValue;
+		}
+		return toDouble(value, node, attributeName);
+	}
+
 	private Double toDouble(final String value, final Node node, final String attributeName) throws XmlException {
 		try {
 			return Double.valueOf(value);
@@ -230,6 +262,14 @@ public class AttributeGetters {
 		return toFloat(value, node, attributeName);
 	}
 
+	protected float getFloatNotNull(final Node node, final String attributeName, final float defaultValue) throws XmlException {
+		String value = getNodeValueOptional(node, attributeName);
+		if (value == null) {
+			return defaultValue;
+		}
+		return toFloat(value, node, attributeName);
+	}
+
 	private Float toFloat(String value, final Node node, final String attributeName) throws XmlException {
 		try {
 			return Float.valueOf(value);
@@ -247,6 +287,14 @@ public class AttributeGetters {
 		String value = getNodeValueOptional(node, attributeName);
 		if (value == null) {
 			return null;
+		}
+		return (value.equals("true") || value.equals("1"));
+	}
+
+	protected boolean getBooleanNotNull(final Node node, final String attributeName, final boolean defaultValue) throws XmlException {
+		String value = getNodeValueOptional(node, attributeName);
+		if (value == null) {
+			return defaultValue;
 		}
 		return (value.equals("true") || value.equals("1"));
 	}

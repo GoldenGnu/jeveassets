@@ -18,65 +18,88 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  */
-package net.nikr.eve.jeveasset.gui.tabs.jobs;
+package net.nikr.eve.jeveasset.gui.tabs.slots;
 
 import ca.odell.glazedlists.EventList;
 import java.util.HashMap;
 import java.util.Map;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
+import net.nikr.eve.jeveasset.data.api.my.MyContract;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
+import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
 import net.nikr.eve.jeveasset.data.profile.ProfileData;
 import net.nikr.eve.jeveasset.data.profile.ProfileManager;
 import net.nikr.eve.jeveasset.data.profile.TableData;
 import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
-import net.nikr.eve.jeveasset.i18n.TabsIndustrySlots;
+import net.nikr.eve.jeveasset.i18n.TabsSlots;
 
 
-public class IndustrySlotsData extends TableData {
+public class SlotsData extends TableData {
 
-	public IndustrySlotsData(Program program) {
+	public SlotsData(Program program) {
 		super(program);
 	}
 
-	public IndustrySlotsData(ProfileManager profileManager, ProfileData profileData) {
+	public SlotsData(ProfileManager profileManager, ProfileData profileData) {
 		super(profileManager, profileData);
 	}
 
-	public EventList<IndustrySlot> getData() {
-		EventList<IndustrySlot> eventList = EventListManager.create();
+	public EventList<Slots> getData() {
+		EventList<Slots> eventList = EventListManager.create();
 		updateData(eventList);
 		return eventList;
 	}
 
-	public void updateData(EventList<IndustrySlot> eventList) {
-		Map<Long, IndustrySlot> industrySlots = new HashMap<>();
-		IndustrySlot total = new IndustrySlot(TabsIndustrySlots.get().grandTotal());
+	public void updateData(EventList<Slots> eventList) {
+		Map<Long, Slots> slotsByOwnerID = new HashMap<>();
+		Slots total = new Slots(TabsSlots.get().grandTotal());
 		for (OwnerType ownerType : profileManager.getOwnerTypes()) {
 			if (ownerType.isCorporation()) {
 				continue;
 			}
-			IndustrySlot old = industrySlots.put(ownerType.getOwnerID(), new IndustrySlot(ownerType));
+			Slots old = slotsByOwnerID.put(ownerType.getOwnerID(), new Slots(ownerType));
 			if (old == null) {
 				total.count(ownerType);
 			}
 		}
 		for (MyIndustryJob industryJob : profileData.getIndustryJobsList()) {
-			IndustrySlot industrySlot = industrySlots.get(industryJob.getInstallerID());
-			if (industrySlot == null) {
-				industrySlot = industrySlots.get(industryJob.getOwnerID());
+			Slots slots = slotsByOwnerID.get(industryJob.getInstallerID());
+			if (slots == null) {
+				slots = slotsByOwnerID.get(industryJob.getOwnerID());
 			}
-			if (industrySlot == null) {
+			if (slots == null) {
 				continue;
 			}
-			industrySlot.count(industryJob);
+			slots.count(industryJob);
 			total.count(industryJob);
 		}
-		industrySlots.put(0L, total);
+		for (MyContract contract : profileData.getContractList()) {
+			Slots slots = slotsByOwnerID.get(contract.getIssuerID());
+			if (slots == null) {
+				continue;
+			}
+			slots.count(contract);
+			total.count(contract);
+		}
+		for (MyMarketOrder marketOrder : profileData.getMarketOrdersList()) {
+			Slots slots;
+			if (marketOrder.getIssuedBy() != null) {
+				slots = slotsByOwnerID.get((long) marketOrder.getIssuedBy());
+			} else {
+				slots = slotsByOwnerID.get(marketOrder.getOwnerID());
+			}
+			if (slots == null) {
+				continue;
+			}
+			slots.count(marketOrder);
+			total.count(marketOrder);
+		}
+		slotsByOwnerID.put(0L, total);
 		try {
 			eventList.getReadWriteLock().writeLock().lock();
 			eventList.clear();
-			eventList.addAll(industrySlots.values());
+			eventList.addAll(slotsByOwnerID.values());
 		} finally {
 			eventList.getReadWriteLock().writeLock().unlock();
 		}

@@ -29,11 +29,13 @@ import net.nikr.eve.jeveasset.gui.shared.CopyHandler.CopySeparator;
 public interface ReprocessedInterface extends Comparable<ReprocessedInterface>, ItemType, PriceType, CopySeparator {
 	public String getName();
 	public long getPortionSize();
+	public long getQuantity100();
 	public long getQuantityMax();
 	public long getQuantitySkill();
 	public double getValueMax();
 	public double getValueSkill();
 	public double getValueDifference();
 	public boolean isTotal();
+	public boolean isGrandTotal();
 	public ReprocessedTotal getTotal();
 }

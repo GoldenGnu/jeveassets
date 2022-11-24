@@ -34,7 +34,7 @@ import java.util.Map;
 import java.util.Set;
 import javax.swing.filechooser.FileSystemView;
 import net.nikr.eve.jeveasset.data.api.raw.RawPublicMarketOrder;
-import net.nikr.eve.jeveasset.gui.shared.Formater.DateFormatThreadSafe;
+import net.nikr.eve.jeveasset.gui.shared.Formatter.DateFormatThreadSafe;
 import net.nikr.eve.jeveasset.gui.tabs.orders.MarketLog;
 import net.nikr.eve.jeveasset.gui.tabs.orders.OutbidProcesser;
 import net.nikr.eve.jeveasset.gui.tabs.orders.OutbidProcesser.OutbidProcesserInput;

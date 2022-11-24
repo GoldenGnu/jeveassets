@@ -21,15 +21,18 @@
 package net.nikr.eve.jeveasset.gui.tabs.stockpile;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.TimeZone;
 import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicLong;
 import javax.swing.JButton;
@@ -38,7 +41,6 @@ import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
-import net.nikr.eve.jeveasset.data.api.raw.RawIndustryJob;
 import net.nikr.eve.jeveasset.data.profile.ProfileData;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.ItemFlag;
@@ -63,6 +65,9 @@ import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 
 
 public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersType {
+
+	private static final Calendar CALENDAR = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+
 	private static final AtomicLong TS = new AtomicLong();
 	private final long id;
 	private String name;
@@ -78,6 +83,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 	private final List<SubpileItem> subpileItems = new ArrayList<>();
 	private double percentFull;
 	private double multiplier;
+	private boolean contractsMatchAll;
 	private boolean assets = false;
 	private boolean jobs = false;
 	private boolean buyOrders = false;
@@ -94,18 +100,20 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 	private Stockpile(final Stockpile stockpile) {
 		update(stockpile);
 		for (StockpileItem item : stockpile.getItems()) {
-			if (item.getItemTypeID() != 0) { //Ignore Total
-				items.add(new StockpileItem(this, item));
+			if (item.isTotal()) {
+				continue; //Ignore Total
 			}
+			items.add(new StockpileItem(this, item));
 		}
 		items.add(totalItem);
 		this.id = getNewID(); //New stockpile = new id
 	}
 
-	public Stockpile(final String name, final Long id, final List<StockpileFilter> filters, double multiplier) {
+	public Stockpile(final String name, final Long id, final List<StockpileFilter> filters, double multiplier, boolean contractsMatchAll) {
 		this.name = name;
 		this.filters = filters;
 		this.multiplier = multiplier;
+		this.contractsMatchAll = contractsMatchAll;
 		if (id == null) {
 			this.id = getNewID();
 		} else {
@@ -121,6 +129,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 		this.filters = stockpile.getFilters();
 		this.flagName = stockpile.getFlagName();
 		this.multiplier = stockpile.getMultiplier();
+		this.contractsMatchAll = stockpile.isContractsMatchAll();
 		updateDynamicValues();
 	}
 
@@ -305,6 +314,10 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 		return multiplier;
 	}
 
+	public boolean isContractsMatchAll() {
+		return contractsMatchAll;
+	}
+
 	public boolean isAssets() {
 		return assets;
 	}
@@ -439,8 +452,8 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 		Map<Integer, StockpileItem> map = new HashMap<>();
 		//Items
 		for (StockpileItem item : items) {
-			if (item.getTypeID() == 0) {
-				continue;
+			if (item.isTotal()) {
+				continue; //Ignore Total
 			}
 			map.put(item.getItemTypeID(), item);
 		}
@@ -453,8 +466,8 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 		}
 		//For each item type
 		for (StockpileItem item : map.values()) {
-			if (item.getTypeID() == 0) {
-				continue;
+			if (item.isTotal()) {
+				continue; //Ignore Total
 			}
 			double percent;
 			if (item.getCountNow() == 0) {
@@ -682,6 +695,11 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 			}
 		}
 
+		boolean matchesContract(MyContractItem contractItem) {
+			Long l = matchesContract(contractItem, false);
+			return l != null && l > 0;
+		}
+
 		void updateContract(MyContractItem contractItem) {
 			matchesContract(contractItem, true);
 		}
@@ -758,6 +776,14 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 				if (asset != null && filter.isSingleton() != null && !filter.isSingleton().equals(asset.isSingleton())) {
 					continue; //Do not match - try next filter
 				}
+				//Industry Jobs: must complete in less than X days
+				if (!matchJobsDaysLess(industryJob, filter.getJobsDaysLess())) {
+					continue; //Do not match - try next filter
+				}
+				//Industry Jobs: must complete in more than X days
+				if (!matchJobsDaysMore(industryJob, filter.getJobsDaysMore())) {
+					continue; //Do not match - try next filter
+				}
 				//Location
 				if (!matchLocation(filter, locations)) {
 					continue; //Do not match location - try next filter
@@ -787,21 +813,17 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 						continue; //Do not match - try next filter
 					}
 				 //Jobs
-				} else if (industryJob != null) {
+				} else if (industryJob != null) { //Copying in progress (not delivered to assets)
 					if (runs && typeID < 0) {
-						if (filter.isJobs() && industryJob.isCopying() && !industryJob.isDelivered()) {
+						if (filter.isJobs() && industryJob.isCopying() && industryJob.isNotDeliveredToAssets()) {
 							if (add) { //Match
 								jobsCountNow = jobsCountNow + ((long)industryJob.getRuns() * (long)industryJob.getLicensedRuns());
 							} else {
 								count = count + ((long)industryJob.getRuns() * (long)industryJob.getLicensedRuns());
 							}
 						}
-					} else if (industryJob.isManufacturing() //Manufacturing
-							&& (industryJob.getStatus() == RawIndustryJob.IndustryJobStatus.ACTIVE //Inprogress AKA not delivered (1 = Active, 2 = Paused (Facility Offline), 3 = Ready)
-								|| industryJob.getStatus() == RawIndustryJob.IndustryJobStatus.PAUSED
-								|| industryJob.getStatus() == RawIndustryJob.IndustryJobStatus.READY
-							)
-							&& filter.isJobs()) {
+						//Manufacturing in progress (not delivered to assets)
+					} else if (filter.isJobs() && industryJob.isManufacturing() && industryJob.isNotDeliveredToAssets()) {
 						if (add) { //Match
 							jobsCountNow = jobsCountNow + ((long)industryJob.getRuns() * (long)industryJob.getProductQuantity());
 						} else {
@@ -1013,6 +1035,32 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 			return false;
 		}
 
+		private boolean matchJobsDaysLess(final MyIndustryJob industryJob, Integer jobsDays) {
+			if (jobsDays == null || industryJob == null || industryJob.getEndDate() == null) {
+				return true;
+			}
+			CALENDAR.setTime(new Date());
+			CALENDAR.set(Calendar.HOUR_OF_DAY, 23); //Less than -> End of day -> OK
+			CALENDAR.set(Calendar.MINUTE, 59);
+			CALENDAR.set(Calendar.SECOND, 59);
+			CALENDAR.set(Calendar.MILLISECOND, 999);
+			CALENDAR.add(Calendar.DAY_OF_MONTH, jobsDays);
+			return industryJob.getEndDate().before(CALENDAR.getTime()); //End before X days
+		}
+
+		private boolean matchJobsDaysMore(final MyIndustryJob industryJob, Integer jobsDays) {
+			if (jobsDays == null || industryJob == null || industryJob.getEndDate() == null) {
+				return true;
+			}
+			CALENDAR.setTime(new Date());
+			CALENDAR.set(Calendar.HOUR_OF_DAY, 0); //More than -> Start of day -> OK
+			CALENDAR.set(Calendar.MINUTE, 0);
+			CALENDAR.set(Calendar.SECOND, 0);
+			CALENDAR.set(Calendar.MILLISECOND, 0);
+			CALENDAR.add(Calendar.DAY_OF_MONTH, jobsDays);
+			return industryJob.getEndDate().after(CALENDAR.getTime()); //End after X days
+		}
+
 		public void setCountMinimum(final double countMinimum) {
 			this.countMinimum = countMinimum;
 			this.getStockpile().updateTotal();
@@ -1174,6 +1222,10 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 		@Override
 		public Integer getTypeID() {
 			return Math.abs(typeID);
+		}
+
+		public boolean isTotal() {
+			return typeID == 0;
 		}
 
 		public double getVolume() {
@@ -1549,10 +1601,12 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 
 	public static class StockpileFilter {
 		private MyLocation location;
+		private final boolean exclude;
 		private final List<Integer> flagIDs;
 		private final List<StockpileContainer> containers;
 		private final List<Long> ownerIDs;
-		private final boolean exclude;
+		private final Integer jobsDaysLess;
+		private final Integer jobsDaysMore;
 		private final Boolean singleton;
 		private final boolean assets;
 		private final boolean sellOrders;
@@ -1566,12 +1620,14 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 		private final boolean boughtContracts;
 
 
-		public StockpileFilter(MyLocation location, List<Integer> flagIDs, List<StockpileContainer> containers, List<Long> ownerIDs, boolean exclude, Boolean singleton, boolean assets, boolean sellOrders, boolean buyOrders, boolean jobs, boolean buyTransactions, boolean sellTransactions, boolean sellingContracts, boolean soldContracts, boolean buyingContracts, boolean boughtContracts) {
+		public StockpileFilter(MyLocation location, boolean exclude, List<Integer> flagIDs, List<StockpileContainer> containers, List<Long> ownerIDs, Integer jobsDaysLess, Integer jobsDaysMore, Boolean singleton, boolean assets, boolean sellOrders, boolean buyOrders, boolean jobs, boolean buyTransactions, boolean sellTransactions, boolean sellingContracts, boolean soldContracts, boolean buyingContracts, boolean boughtContracts) {
 			this.location = location;
+			this.exclude = exclude;
 			this.flagIDs = flagIDs;
 			this.containers = containers;
 			this.ownerIDs = ownerIDs;
-			this.exclude = exclude;
+			this.jobsDaysLess = jobsDaysLess;
+			this.jobsDaysMore = jobsDaysMore;
 			this.singleton = singleton;
 			this.assets = assets;
 			this.sellOrders = sellOrders;
@@ -1593,6 +1649,10 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 			this.location = location;
 		}
 
+		public boolean isExclude() {
+			return exclude;
+		}
+
 		public List<Integer> getFlagIDs() {
 			return flagIDs;
 		}
@@ -1605,8 +1665,12 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 			return ownerIDs;
 		}
 
-		public boolean isExclude() {
-			return exclude;
+		public Integer getJobsDaysLess() {
+			return jobsDaysLess;
+		}
+
+		public Integer getJobsDaysMore() {
+			return jobsDaysMore;
 		}
 
 		public Boolean isSingleton() {

@@ -43,7 +43,7 @@ import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel.UpdateType;
 import net.nikr.eve.jeveasset.gui.images.Images;
-import net.nikr.eve.jeveasset.gui.shared.Formater;
+import net.nikr.eve.jeveasset.gui.shared.Formatter;
 import net.nikr.eve.jeveasset.gui.shared.Updatable;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
 import net.nikr.eve.jeveasset.gui.shared.components.ListComboBoxModel;
@@ -281,9 +281,9 @@ public class StructureUpdateDialog extends JDialogCentered {
 				if (time <= 1000) { //less than 1 second
 					updatableIn = "seconds";
 				} else if (time < (60 * 1000)) { //less than 1 minute
-					updatableIn = Formater.milliseconds(time, false, true, false, true);
+					updatableIn = Formatter.milliseconds(time, false, true, false, true);
 				} else {
-					updatableIn = Formater.milliseconds(time, false, true, true, true, true, false);
+					updatableIn = Formatter.milliseconds(time, false, true, true, true, true, false);
 				}
 				JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), DialoguesStructure.get().nextUpdate(updatableIn), DialoguesStructure.get().title(), JOptionPane.PLAIN_MESSAGE);
 				return; //Do not show

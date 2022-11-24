@@ -41,6 +41,20 @@ public abstract class GuiShared extends Bundle {
 	public abstract String addTransactionFilter();
 	public abstract String all();
 	public abstract String background();
+	public abstract String cellAverage();
+	public abstract String cellAverageToolTip();
+	public abstract String cellInformation();
+	public abstract String cellInformationToolTip();
+	public abstract String cellInformationColumn();
+	public abstract String cellInformationColumnToolTip();
+	public abstract String cellCount();
+	public abstract String cellCountToolTip();
+	public abstract String cellMaximum();
+	public abstract String cellMaximumToolTip();
+	public abstract String cellMinimum();
+	public abstract String cellMinimumToolTip();
+	public abstract String cellSum();
+	public abstract String cellSumToolTip();
 	public abstract String checkAll();
 	public abstract String chruker();
 	public abstract String clickToCopyGroup();
@@ -71,6 +85,7 @@ public abstract class GuiShared extends Bundle {
 	public abstract String eveInfo();
 	public abstract String eveMarketData();
 	public abstract String eveMarketer();
+	public abstract String eveMissioneer();
 	public abstract String eveOnline();
 	public abstract String eveRef();
 	public abstract String eveTycoon();
@@ -206,6 +221,20 @@ public abstract class GuiShared extends Bundle {
 	public abstract String selectionShortTax();
 	public abstract String selectionShortValue();
 	public abstract String selectionShortVolume();
+	public abstract String selectionSlotsContractCharacter();
+	public abstract String selectionSlotsContractCharacterFree();
+	public abstract String selectionSlotsContractCharacterActive();
+	public abstract String selectionSlotsContractCharacterMax();
+	public abstract String selectionSlotsContractCharacterFreeToolTip();
+	public abstract String selectionSlotsContractCharacterActiveToolTip();
+	public abstract String selectionSlotsContractCharacterMaxToolTip();
+	public abstract String selectionSlotsContractCorporation();
+	public abstract String selectionSlotsContractCorporationFree();
+	public abstract String selectionSlotsContractCorporationActive();
+	public abstract String selectionSlotsContractCorporationMax();
+	public abstract String selectionSlotsContractCorporationFreeToolTip();
+	public abstract String selectionSlotsContractCorporationActiveToolTip();
+	public abstract String selectionSlotsContractCorporationMaxToolTip();
 	public abstract String selectionSlotsManufacturing();
 	public abstract String selectionSlotsManufacturingDone();
 	public abstract String selectionSlotsManufacturingFree();
@@ -215,6 +244,13 @@ public abstract class GuiShared extends Bundle {
 	public abstract String selectionSlotsManufacturingFreeToolTip();
 	public abstract String selectionSlotsManufacturingActiveToolTip();
 	public abstract String selectionSlotsManufacturingMaxToolTip();
+	public abstract String selectionSlotsMarketOrders();
+	public abstract String selectionSlotsMarketOrdersFree();
+	public abstract String selectionSlotsMarketOrdersActive();
+	public abstract String selectionSlotsMarketOrdersMax();
+	public abstract String selectionSlotsMarketOrdersFreeToolTip();
+	public abstract String selectionSlotsMarketOrdersActiveToolTip();
+	public abstract String selectionSlotsMarketOrdersMaxToolTip();
 	public abstract String selectionSlotsReactions();
 	public abstract String selectionSlotsReactionsDone();
 	public abstract String selectionSlotsReactionsFree();
@@ -384,6 +420,8 @@ public abstract class GuiShared extends Bundle {
 	public abstract String textFromFile();
 	public abstract String textClose();
 	public abstract String textImport();
+	public abstract String textInvalid();
+	public abstract String textEmpty();
 	public abstract String textExport();
 
 	//JSimpleColorPicker

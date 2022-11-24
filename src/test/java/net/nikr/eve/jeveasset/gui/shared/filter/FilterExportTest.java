@@ -42,8 +42,8 @@ import net.nikr.eve.jeveasset.gui.tabs.items.ItemTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.items.ItemsTab;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJobTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJobsTab;
-import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustrySlotTableFormat;
-import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustrySlotsTab;
+import net.nikr.eve.jeveasset.gui.tabs.slots.SlotsTableFormat;
+import net.nikr.eve.jeveasset.gui.tabs.slots.SlotsTab;
 import net.nikr.eve.jeveasset.gui.tabs.journal.JournalTab;
 import net.nikr.eve.jeveasset.gui.tabs.journal.JournalTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.orders.MarketOrdersTab;
@@ -91,11 +91,11 @@ public class FilterExportTest extends TestUtil {
 		test(TransactionTab.NAME, TransactionTableFormat.values());
 		//IndustryJob
 		test(IndustryJobsTab.NAME, IndustryJobTableFormat.values());
-		//IndustrySlots
-		test(IndustrySlotsTab.NAME, IndustrySlotTableFormat.values());
+	//Secondary Tools
+		//Slots
+		test(SlotsTab.NAME, SlotsTableFormat.values());
 		//Tree
 		test(TreeTab.NAME, TreeTableFormat.values());
-	//Secondary Tools
 		//Item
 		test(ItemsTab.NAME, ItemTableFormat.values());
 		//Loadout - No filters

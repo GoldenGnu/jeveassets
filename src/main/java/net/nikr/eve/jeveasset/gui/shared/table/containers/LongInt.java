@@ -22,7 +22,7 @@
 package net.nikr.eve.jeveasset.gui.shared.table.containers;
 
 import java.util.Objects;
-import net.nikr.eve.jeveasset.gui.shared.Formater;
+import net.nikr.eve.jeveasset.gui.shared.Formatter;
 
 
 public class LongInt implements NumberValue, Comparable<LongInt> {
@@ -35,7 +35,7 @@ public class LongInt implements NumberValue, Comparable<LongInt> {
 			this.formatted = "";
 		} else {
 			this.number = number;
-			this.formatted = Formater.integerFormat(number);
+			this.formatted = Formatter.integerFormat(number);
 		}
 	}
 

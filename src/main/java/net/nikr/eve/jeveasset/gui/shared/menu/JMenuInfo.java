@@ -33,7 +33,6 @@ import java.util.List;
 import java.util.Set;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
-import javax.swing.JComponent;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
@@ -49,13 +48,13 @@ import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.CopyHandler;
-import net.nikr.eve.jeveasset.gui.shared.Formater;
+import net.nikr.eve.jeveasset.gui.shared.Formatter;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo.InfoItem;
-import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustrySlot;
 import net.nikr.eve.jeveasset.gui.tabs.loadout.Loadout;
 import net.nikr.eve.jeveasset.gui.tabs.materials.Material;
 import net.nikr.eve.jeveasset.gui.tabs.materials.Material.MaterialType;
 import net.nikr.eve.jeveasset.gui.tabs.overview.Overview;
+import net.nikr.eve.jeveasset.gui.tabs.slots.Slots;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileTotal;
 import net.nikr.eve.jeveasset.gui.tabs.tree.TreeAsset;
@@ -214,7 +213,7 @@ public class JMenuInfo {
 			volumeRemain += marketOrder.getVolumeRemain();
 			volumeTotal += marketOrder.getVolumeTotal();
 		}
-		createMenuItem(values, jPopupMenu, GuiShared.get().selectionOrdersCountValue(Formater.longFormat(volumeRemain), Formater.itemsFormat(volumeTotal)), GuiShared.get().selectionOrdersCount(), GuiShared.get().selectionShortCount(), Images.EDIT_ADD.getIcon());
+		createMenuItem(values, jPopupMenu, GuiShared.get().selectionOrdersCountValue(Formatter.longFormat(volumeRemain), Formatter.itemsFormat(volumeTotal)), GuiShared.get().selectionOrdersCount(), GuiShared.get().selectionShortCount(), Images.EDIT_ADD.getIcon());
 		createMenuItem(values, jPopupMenu, sellOrdersTotal + sellBrokersFeeTotal, AutoNumberFormat.ISK, GuiShared.get().selectionOrdersSellTotal(), GuiShared.get().selectionShortSell(), Images.ORDERS_SELL.getIcon());
 		createMenuItem(values, jPopupMenu, buyOrdersTotal + buyBrokersFeeTotal, AutoNumberFormat.ISK, GuiShared.get().selectionOrdersBuyTotal(), GuiShared.get().selectionShortBuy(), Images.ORDERS_BUY.getIcon());
 		createMenuItem(values, jPopupMenu, escrowTotal, AutoNumberFormat.ISK, GuiShared.get().selectionOrdersBuyEscrow(), GuiShared.get().selectionShortEscrow(), Images.ORDERS_ESCROW.getIcon());
@@ -275,15 +274,15 @@ public class JMenuInfo {
 		values.addAll(buy);
 	}
 
-	public static void industrySlots(final JPopupMenu jPopupMenu, final List<IndustrySlot> list) {
+	public static void slots(final JPopupMenu jPopupMenu, final List<Slots> list) {
 		List<MenuItemValue> values = createDefault(jPopupMenu);
 
-		IndustrySlot total = new IndustrySlot("");
-		for (IndustrySlot industrySlot : list) {
-			if (industrySlot.isGrandTotal()) {
+		Slots total = new Slots("");
+		for (Slots slots : list) {
+			if (slots.isGrandTotal()) {
 				continue;
 			}
-			total.count(industrySlot);
+			total.count(slots);
 		}
 
 		List<MenuItemValue> manufacturing = createMenuItemGroup(jPopupMenu, GuiShared.get().selectionSlotsManufacturing(), Images.MISC_MANUFACTURING.getIcon());
@@ -306,6 +305,24 @@ public class JMenuInfo {
 		createMenuItem(reactions, jPopupMenu, total.getReactionsActive(), AutoNumberFormat.LONG, GuiShared.get().selectionSlotsReactionsActiveToolTip(), GuiShared.get().selectionSlotsReactionsActive(), Images.UPDATE_WORKING.getIcon());
 		createMenuItem(reactions, jPopupMenu, total.getReactionsMax(), AutoNumberFormat.LONG, GuiShared.get().selectionSlotsReactionsMaxToolTip(), GuiShared.get().selectionSlotsReactionsMax(), Images.UPDATE_DONE_OK.getIcon());
 		values.addAll(reactions);
+
+		List<MenuItemValue> marketOrders = createMenuItemGroup(jPopupMenu, GuiShared.get().selectionSlotsMarketOrders(), Images.MISC_MARKET_ORDERS.getIcon());
+		createMenuItem(marketOrders, jPopupMenu, total.getMarketOrdersFree(), AutoNumberFormat.LONG, GuiShared.get().selectionSlotsMarketOrdersFreeToolTip(), GuiShared.get().selectionSlotsMarketOrdersFree(), Images.EDIT_ADD.getIcon());
+		createMenuItem(marketOrders, jPopupMenu, total.getMarketOrdersActive(), AutoNumberFormat.LONG, GuiShared.get().selectionSlotsMarketOrdersActiveToolTip(), GuiShared.get().selectionSlotsMarketOrdersActive(), Images.UPDATE_WORKING.getIcon());
+		createMenuItem(marketOrders, jPopupMenu, total.getMarketOrdersMax(), AutoNumberFormat.LONG, GuiShared.get().selectionSlotsMarketOrdersMaxToolTip(), GuiShared.get().selectionSlotsMarketOrdersMax(), Images.UPDATE_DONE_OK.getIcon());
+		values.addAll(marketOrders);
+
+		List<MenuItemValue> contractCharacter = createMenuItemGroup(jPopupMenu, GuiShared.get().selectionSlotsContractCharacter(), Images.MISC_CONTRACTS.getIcon());
+		createMenuItem(contractCharacter, jPopupMenu, total.getContractCharacterFree(), AutoNumberFormat.LONG, GuiShared.get().selectionSlotsContractCharacterFreeToolTip(), GuiShared.get().selectionSlotsContractCharacterFree(), Images.EDIT_ADD.getIcon());
+		createMenuItem(contractCharacter, jPopupMenu, total.getContractCharacterActive(), AutoNumberFormat.LONG, GuiShared.get().selectionSlotsContractCharacterActiveToolTip(), GuiShared.get().selectionSlotsContractCharacterActive(), Images.UPDATE_WORKING.getIcon());
+		createMenuItem(contractCharacter, jPopupMenu, total.getContractCharacterMax(), AutoNumberFormat.LONG, GuiShared.get().selectionSlotsContractCharacterMaxToolTip(), GuiShared.get().selectionSlotsContractCharacterMax(), Images.UPDATE_DONE_OK.getIcon());
+		values.addAll(contractCharacter);
+
+		List<MenuItemValue> contractCorporation = createMenuItemGroup(jPopupMenu, GuiShared.get().selectionSlotsContractCorporation(), Images.MISC_CONTRACTS_CORP.getIcon());
+		createMenuItem(contractCorporation, jPopupMenu, total.getContractCorporationFree(), AutoNumberFormat.LONG, GuiShared.get().selectionSlotsContractCorporationFreeToolTip(), GuiShared.get().selectionSlotsContractCorporationFree(), Images.EDIT_ADD.getIcon());
+		createMenuItem(contractCorporation, jPopupMenu, total.getContractCorporationActive(), AutoNumberFormat.LONG, GuiShared.get().selectionSlotsContractCorporationActiveToolTip(), GuiShared.get().selectionSlotsContractCorporationActive(), Images.UPDATE_WORKING.getIcon());
+		createMenuItem(contractCorporation, jPopupMenu, total.getContractCorporationMax(), AutoNumberFormat.LONG, GuiShared.get().selectionSlotsContractCorporationMaxToolTip(), GuiShared.get().selectionSlotsContractCorporationMax(), Images.UPDATE_DONE_OK.getIcon());
+		values.addAll(contractCorporation);
 	}
 
 	public static void industryJob(final JPopupMenu jPopupMenu, final List<MyIndustryJob> list) {
@@ -317,13 +334,13 @@ public class JMenuInfo {
 		double outputValue = 0;
 		for (MyIndustryJob industryJob : list) {
 			count++;
-			if (industryJob.isInvention() && industryJob.isCompleted()) {
+			if (industryJob.isInvention() && industryJob.isDone()) {
 				inventionCount++;
-				if (industryJob.isDelivered()) {
+				if (industryJob.isCompletedSuccessful()) {
 					success++;
 				}
 			}
-			if (!industryJob.isDelivered()) { //Only include active jobs
+			if (industryJob.isNotDeliveredToAssets()) { //Only include active jobs
 				outputValue += industryJob.getOutputValue();
 			}
 		}
@@ -453,68 +470,64 @@ public class JMenuInfo {
 		return new MaterialTotal(totalCount, totalValue, averageValue);
 	}
 
-	public static void module(final JComponent jComponent, final List<Loadout> selected) {
-		if (jComponent instanceof JPopupMenu) {
-			JPopupMenu jPopupMenu = (JPopupMenu) jComponent;
+	public static void module(final JPopupMenu jPopupMenu, final List<Loadout> selected) {
+		List<MenuItemValue> values = createDefault(jPopupMenu);
 
-			List<MenuItemValue> values = createDefault(jPopupMenu);
-
-			long totalCount = 0;
-			double totalValue = 0;
-			double averageValue = 0;
-			Loadout totalShip = null;
-			Loadout totalModule = null;
-			Loadout totalAll = null;
-			for (int i = 0; i < selected.size(); i++) {
-				Object object = selected.get(i);
-				if (object instanceof Loadout) {
-					Loadout module = (Loadout) object;
-					if (module.getName().equals(TabsLoadout.get().totalShip())) {
-						totalShip = module;
-					} else if (module.getName().equals(TabsLoadout.get().totalModules())) {
-						totalModule = module;
-					} else if (module.getName().equals(TabsLoadout.get().totalAll())) {
-						totalAll = module;
-						break;
-					} else {
-						totalCount = totalCount + module.getCount();
-						totalValue = totalValue + module.getValue();
-					}
+		long totalCount = 0;
+		double totalValue = 0;
+		double averageValue = 0;
+		Loadout totalShip = null;
+		Loadout totalModule = null;
+		Loadout totalAll = null;
+		for (int i = 0; i < selected.size(); i++) {
+			Object object = selected.get(i);
+			if (object instanceof Loadout) {
+				Loadout module = (Loadout) object;
+				if (module.getName().equals(TabsLoadout.get().totalShip())) {
+					totalShip = module;
+				} else if (module.getName().equals(TabsLoadout.get().totalModules())) {
+					totalModule = module;
+				} else if (module.getName().equals(TabsLoadout.get().totalAll())) {
+					totalAll = module;
+					break;
+				} else {
+					totalCount = totalCount + module.getCount();
+					totalValue = totalValue + module.getValue();
 				}
 			}
-			if (totalAll != null) { //All
-				totalValue = totalAll.getValue();
-				totalCount = totalAll.getCount();
-			} else {
-				if (totalModule != null) { //Module IS total
-					totalValue = totalModule.getValue();
-					totalCount = totalModule.getCount();
-				}
-				if (totalShip != null) { //Ship is added to total
-					totalValue = totalValue + totalShip.getValue();
-					totalCount = totalCount + totalShip.getCount();
-				}
-			}
-			if (totalCount > 0 && totalValue > 0) {
-				averageValue = totalValue / totalCount;
-			}
-			createMenuItem(values, jPopupMenu, totalValue, AutoNumberFormat.ISK, GuiShared.get().selectionValue(), GuiShared.get().selectionShortValue(), Images.TOOL_VALUES.getIcon());
-			createMenuItem(values, jPopupMenu, averageValue, AutoNumberFormat.ISK, GuiShared.get().selectionAverage(), GuiShared.get().selectionShortAverage(), Images.ASSETS_AVERAGE.getIcon());
-			createMenuItem(values, jPopupMenu, totalCount, AutoNumberFormat.ISK, GuiShared.get().selectionCount(), GuiShared.get().selectionShortCount(), Images.EDIT_ADD.getIcon());
 		}
+		if (totalAll != null) { //All
+			totalValue = totalAll.getValue();
+			totalCount = totalAll.getCount();
+		} else {
+			if (totalModule != null) { //Module IS total
+				totalValue = totalModule.getValue();
+				totalCount = totalModule.getCount();
+			}
+			if (totalShip != null) { //Ship is added to total
+				totalValue = totalValue + totalShip.getValue();
+				totalCount = totalCount + totalShip.getCount();
+			}
+		}
+		if (totalCount > 0 && totalValue > 0) {
+			averageValue = totalValue / totalCount;
+		}
+		createMenuItem(values, jPopupMenu, totalValue, AutoNumberFormat.ISK, GuiShared.get().selectionValue(), GuiShared.get().selectionShortValue(), Images.TOOL_VALUES.getIcon());
+		createMenuItem(values, jPopupMenu, averageValue, AutoNumberFormat.ISK, GuiShared.get().selectionAverage(), GuiShared.get().selectionShortAverage(), Images.ASSETS_AVERAGE.getIcon());
+		createMenuItem(values, jPopupMenu, totalCount, AutoNumberFormat.ISK, GuiShared.get().selectionCount(), GuiShared.get().selectionShortCount(), Images.EDIT_ADD.getIcon());
 	}
 
-	public static JMenuItem createMenuItem(List<MenuItemValue> values, final JPopupMenu jPopupMenu, final Number number, AutoNumberFormat numberFormat, final String toolTip, String shortText, final Icon icon) {
-		return createMenuItem(values, jPopupMenu, null, number, numberFormat, toolTip, shortText, icon);
+	public static JMenuItem createMenuItem(List<MenuItemValue> values, final JPopupMenu jPopupMenu, final Number number, AutoNumberFormat numberFormat, final String toolTip, String copyText, final Icon icon) {
+		return createMenuItem(values, jPopupMenu, null, number, numberFormat, toolTip, copyText, icon);
 	}
 
-	public static JMenuItem createMenuItem(List<MenuItemValue> values, final JPopupMenu jPopupMenu, final String text, final String toolTip, String shortText, final Icon icon) {
-		return createMenuItem(values, jPopupMenu, text, null, null, toolTip, shortText, icon);
+	public static JMenuItem createMenuItem(List<MenuItemValue> values, final JPopupMenu jPopupMenu, final String text, final String toolTip, String copyText, final Icon icon) {
+		return createMenuItem(values, jPopupMenu, text, null, null, toolTip, copyText, icon);
 	}
 
-	private static JMenuItem createMenuItem(List<MenuItemValue> values, final JPopupMenu jPopupMenu, final String text, final Number number, AutoNumberFormat numberFormat, final String toolTip, String shortText, final Icon icon) {
+	private static JMenuItem createMenuItem(List<MenuItemValue> values, final JPopupMenu jPopupMenu, final String text, final Number number, AutoNumberFormat numberFormat, final String toolTip, String copyText, final Icon icon) {
 		if (values != null) {
-			values.add(new MenuItemValue(shortText, text, number));
+			values.add(new MenuItemValue(copyText, text, number));
 		}
 		JMenuItem jMenuItem;
 		if (text == null) { //Numeric Value
@@ -535,7 +548,7 @@ public class JMenuInfo {
 			public void mousePressed(MouseEvent e) {
 				if (e.getButton() == MouseEvent.BUTTON1) {
 					if (number != null) {
-						CopyHandler.toClipboard(Formater.copyFormat(number));
+						CopyHandler.toClipboard(Formatter.copyFormat(number));
 					} else {
 						CopyHandler.toClipboard(text);
 					}
@@ -610,19 +623,22 @@ public class JMenuInfo {
 		return values;
 	}
 
+
 	public static List<MenuItemValue> createDefault(final JPopupMenu jPopupMenu) {
-		return createDefault(jPopupMenu, new JMenuItem());
+		return createDefault(jPopupMenu, new JMenuItem(), GuiShared.get().selectionTitle(), GuiShared.get().clickToCopySelectionInfo(), Images.DIALOG_ABOUT.getIcon());
 	}
 
-	public static List<MenuItemValue> createDefault(final JPopupMenu jPopupMenu, final JMenuItem jMenuItem) {
+	public static List<MenuItemValue> createDefault(final JPopupMenu jPopupMenu, final JMenuItem jMenuItem, String title, String toolTip, Icon icon) {
 		final List<MenuItemValue> values = new ArrayList<>();
-		values.add(new MenuItemValue(null, GuiShared.get().selectionTitle(), null));
+		values.add(new MenuItemValue(null, title, null));
 
-		jPopupMenu.addSeparator();
+		if (jPopupMenu != null) {
+			jPopupMenu.addSeparator();
+		}
 
-		jMenuItem.setText(GuiShared.get().selectionTitle());
-		jMenuItem.setToolTipText(GuiShared.get().clickToCopySelectionInfo());
-		jMenuItem.setDisabledIcon(Images.DIALOG_ABOUT.getIcon());
+		jMenuItem.setText(title);
+		jMenuItem.setToolTipText(toolTip);
+		jMenuItem.setDisabledIcon(icon);
 		jMenuItem.setEnabled(false);
 		jMenuItem.setForeground(Color.BLACK);
 		jMenuItem.addMouseListener(new MouseAdapter() {
@@ -645,25 +661,26 @@ public class JMenuInfo {
 				}
 			}
 		});
-		jPopupMenu.add(jMenuItem);
+		if (jPopupMenu != null) {
+			jPopupMenu.add(jMenuItem);
 
-		JPanel jSpacePanel = new JPanel();
-		jSpacePanel.setOpaque(false);
-		jSpacePanel.setMinimumSize(new Dimension(50, 5));
-		jSpacePanel.setPreferredSize(new Dimension(50, 5));
-		jSpacePanel.setMaximumSize(new Dimension(50, 5));
-		jPopupMenu.add(jSpacePanel);
-
+			JPanel jSpacePanel = new JPanel();
+			jSpacePanel.setOpaque(false);
+			jSpacePanel.setMinimumSize(new Dimension(50, 5));
+			jSpacePanel.setPreferredSize(new Dimension(50, 5));
+			jSpacePanel.setMaximumSize(new Dimension(50, 5));
+			jPopupMenu.add(jSpacePanel);
+		}
 		return values;
 	}
 
 	public static String format(final Number number, AutoNumberFormat numberFormat) {
 		switch(numberFormat) {
-			case ISK: return Formater.iskFormat(number);
-			case DOUBLE: return Formater.doubleFormat(number);
-			case ITEMS: return Formater.itemsFormat(number);
-			case PERCENT: return Formater.percentFormat(number);
-			case LONG: return Formater.longFormat(number);
+			case ISK: return Formatter.iskFormat(number);
+			case DOUBLE: return Formatter.doubleFormat(number);
+			case ITEMS: return Formatter.itemsFormat(number);
+			case PERCENT: return Formatter.percentFormat(number);
+			case LONG: return Formatter.longFormat(number);
 			default: return String.valueOf(number);
 		}
 	}
@@ -676,7 +693,7 @@ public class JMenuInfo {
 				builder.append(": ");
 			}
 			if (item.number != null) {
-				builder.append(Formater.copyFormat(item.number));
+				builder.append(Formatter.copyFormat(item.number));
 				builder.append("\r\n");
 			} else if (item.text != null) {
 				builder.append(item.text);

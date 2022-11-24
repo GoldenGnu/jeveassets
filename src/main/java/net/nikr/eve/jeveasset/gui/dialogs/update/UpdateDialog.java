@@ -48,7 +48,7 @@ import net.nikr.eve.jeveasset.data.profile.ProfileData;
 import net.nikr.eve.jeveasset.data.profile.ProfileManager;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
-import net.nikr.eve.jeveasset.gui.shared.Formater;
+import net.nikr.eve.jeveasset.gui.shared.Formatter;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
 import net.nikr.eve.jeveasset.gui.tabs.values.AssetValue;
 import net.nikr.eve.jeveasset.i18n.DialoguesUpdate;
@@ -540,13 +540,13 @@ public class UpdateDialog extends JDialogCentered {
 			if (Updatable.isUpdatable(last)) {
 				jFirst.setText("");
 			} else {
-				jFirst.setText(getFormatedDuration(first));
+				jFirst.setText(getFormattedDuration(first));
 			}
 			jFirst.setEnabled(first != null);
 		} else {
 		}
 		if (jAll != null) {
-			jAll.setText(getFormatedDuration(last));
+			jAll.setText(getFormattedDuration(last));
 			jAll.setEnabled(last != null);
 		}
 		if (jCheckBox != null) {
@@ -564,7 +564,7 @@ public class UpdateDialog extends JDialogCentered {
 		}
 	}
 
-	private String getFormatedDuration(Date date) {
+	private String getFormattedDuration(Date date) {
 		if (date == null) { //less than 1 second
 			return DialoguesUpdate.get().noAccounts();
 		} else if (Updatable.isUpdatable(date)) {
@@ -574,9 +574,9 @@ public class UpdateDialog extends JDialogCentered {
 			if (time <= 1000) { //less than 1 second
 				return "...";
 			} else if (time < (60 * 1000)) { //less than 1 minute
-				return Formater.milliseconds(time, false, false, false, true);
+				return Formatter.milliseconds(time, false, false, false, true);
 			} else {
-				return Formater.milliseconds(time, true, true, true, false);
+				return Formatter.milliseconds(time, true, true, true, false);
 			}
 		}
 	}

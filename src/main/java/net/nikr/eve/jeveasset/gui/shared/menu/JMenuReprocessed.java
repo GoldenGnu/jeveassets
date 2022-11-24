@@ -23,15 +23,14 @@ package net.nikr.eve.jeveasset.gui.shared.menu;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 import javax.swing.JMenuItem;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.JAutoMenu;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
-import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 
 
 public class JMenuReprocessed<T> extends JAutoMenu<T> {
@@ -42,7 +41,7 @@ public class JMenuReprocessed<T> extends JAutoMenu<T> {
 
 	private final JMenuItem jAdd;
 	private final JMenuItem jSet;
-	private final Set<Integer> items = new HashSet<>();
+	private final Map<Item, Long> items = new HashMap<>();
 
 	public JMenuReprocessed(final Program program) {
 		super(GuiShared.get().reprocessed(), program);
@@ -66,10 +65,9 @@ public class JMenuReprocessed<T> extends JAutoMenu<T> {
 	@Override
 	public void updateMenuData() {
 		items.clear();
-		for (int typeID : menuData.getTypeIDs()) {
-			Item item = ApiIdConverter.getItem(typeID);
-			if (!item.getReprocessedMaterial().isEmpty()) {
-				items.add(typeID);
+		for (Map.Entry<Item, Long> entry : menuData.getItemCounts().entrySet()) {
+			if (!entry.getKey().getReprocessedMaterial().isEmpty()) {
+				items.put(entry.getKey(), entry.getValue());
 			}
 		}
 		jAdd.setEnabled(!items.isEmpty());

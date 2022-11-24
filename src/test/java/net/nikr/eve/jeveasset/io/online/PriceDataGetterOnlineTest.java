@@ -39,7 +39,7 @@ import net.nikr.eve.jeveasset.data.sde.StaticData;
 import net.nikr.eve.jeveasset.data.settings.PriceData;
 import net.nikr.eve.jeveasset.data.settings.PriceDataSettings.PriceSource;
 import net.nikr.eve.jeveasset.data.settings.PriceHistoryDatabase;
-import net.nikr.eve.jeveasset.gui.shared.Formater;
+import net.nikr.eve.jeveasset.gui.shared.Formatter;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -107,7 +107,7 @@ public class PriceDataGetterOnlineTest extends TestUtil {
 		for (PriceSource source : PriceSource.values()) {
 			test(source);
 		}
-		System.out.println("All tests completed in: " + Formater.milliseconds(System.currentTimeMillis() - time));
+		System.out.println("All tests completed in: " + Formatter.milliseconds(System.currentTimeMillis() - time));
 	}
 
 	private void test(PriceSource source) {
@@ -151,7 +151,7 @@ public class PriceDataGetterOnlineTest extends TestUtil {
 			}
 		}
 
-		System.out.println("    " + process.size() + " of " + typeIDs.size() + " done - " + empty.size() + " empty - " + failed.size() + " failed - completed in: " + Formater.milliseconds(end - start));
+		System.out.println("    " + process.size() + " of " + typeIDs.size() + " done - " + empty.size() + " empty - " + failed.size() + " failed - completed in: " + Formatter.milliseconds(end - start));
 		assertTrue(failed.isEmpty());
 		assertTrue(process.size() >= typeIDs.size());
 	}

@@ -22,7 +22,7 @@ package net.nikr.eve.jeveasset.gui.tabs.tracker;
 
 import java.util.Date;
 import java.util.Objects;
-import net.nikr.eve.jeveasset.gui.shared.Formater;
+import net.nikr.eve.jeveasset.gui.shared.Formatter;
 
 
 public class TrackerDate implements Comparable<TrackerDate> {
@@ -31,7 +31,7 @@ public class TrackerDate implements Comparable<TrackerDate> {
 
 	public TrackerDate(Date date) {
 		this.date = date;
-		this.compare = Formater.dateOnly(date);
+		this.compare = Formatter.dateOnly(date);
 	}
 
 	public Date getDate() {

@@ -49,15 +49,26 @@ import net.nikr.eve.jeveasset.data.sde.Item;
 
 public abstract class DataConverter {
 
-	public static List<MyAsset> assetIndustryJob(final Collection<MyIndustryJob> industryJobs, boolean includeManufacturing) {
+	public static List<MyAsset> assetIndustryJob(final Collection<MyIndustryJob> industryJobs, boolean includeManufacturing, boolean includeCopying) {
 		List<MyAsset> assets = new ArrayList<>();
 		for (MyIndustryJob industryJob : industryJobs) {
-			if (!industryJob.isDelivered()) {
-				MyAsset asset = new MyAsset(industryJob, false);
-				assets.add(asset);
+			if (industryJob.isNotDeliveredToAssets()) {
+				//Blueprint
+				if (industryJob.isRemovedFromAssets()) {
+					MyAsset asset = new MyAsset(industryJob, false);
+					assets.add(asset);
+				}
+				//Manufacturing Output
 				if (includeManufacturing && industryJob.isManufacturing() && industryJob.getProductTypeID() != null) {
 					MyAsset product = new MyAsset(industryJob, true);
 					assets.add(product);
+				}
+				//Copy Output
+				if (includeCopying && industryJob.isCopying()) {
+					for (int i = 0; i < industryJob.getRuns(); i++) {
+						MyAsset product = new MyAsset(industryJob, true);
+						assets.add(product);
+					}
 				}
 			}
 		}
@@ -184,6 +195,9 @@ public abstract class DataConverter {
 		Map<MyContract, List<MyContractItem>> contracts = new HashMap<>();
 		if (saveHistory) { //Will be overwritten by new contracts
 			contracts.putAll(owner.getContracts());
+			for (MyContract contract : owner.getContracts().keySet()) {
+				contract.setESI(false);
+			}
 		}
 		for (RawContract rawContract : rawContracts) {
 			MyContract myContract = toMyContract(rawContract);

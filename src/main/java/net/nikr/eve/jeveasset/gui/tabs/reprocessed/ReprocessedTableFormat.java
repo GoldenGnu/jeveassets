@@ -38,10 +38,28 @@ public enum ReprocessedTableFormat implements EnumTableColumn<ReprocessedInterfa
 			return from.getName();
 		}
 	},
+	QUANTITY_100(Long.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsReprocessed.get().columnQuantity100();
+		}
+		@Override
+		public String getColumnToolTip() {
+			return TabsReprocessed.get().columnQuantity100ToolTip();
+		}
+		@Override
+		public Object getColumnValue(final ReprocessedInterface from) {
+			return from.getQuantity100();
+		}
+	},
 	QUANTITY_MAX(Long.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
 			return TabsReprocessed.get().columnQuantityMax();
+		}
+		@Override
+		public String getColumnToolTip() {
+			return TabsReprocessed.get().columnQuantityMaxToolTip();
 		}
 		@Override
 		public Object getColumnValue(final ReprocessedInterface from) {
@@ -52,6 +70,10 @@ public enum ReprocessedTableFormat implements EnumTableColumn<ReprocessedInterfa
 		@Override
 		public String getColumnName() {
 			return TabsReprocessed.get().columnQuantitySkill();
+		}
+		@Override
+		public String getColumnToolTip() {
+			return TabsReprocessed.get().columnQuantitySkillToolTip();
 		}
 		@Override
 		public Object getColumnValue(final ReprocessedInterface from) {
@@ -124,21 +146,8 @@ public enum ReprocessedTableFormat implements EnumTableColumn<ReprocessedInterfa
 		return comparator;
 	}
 	@Override
-	public boolean isColumnEditable(final Object baseObject) {
-		return false;
-	}
-	@Override
-	public boolean isShowDefault() {
-		return true;
-	}
-	@Override
-	public boolean setColumnValue(final Object baseObject, final Object editedValue) {
-		return false;
-	}
-	@Override
 	public String toString() {
 		return getColumnName();
 	}
-	//XXX - TableFormat.getColumnValue(...) Workaround
-	@Override public abstract Object getColumnValue(final ReprocessedInterface from);
+
 }

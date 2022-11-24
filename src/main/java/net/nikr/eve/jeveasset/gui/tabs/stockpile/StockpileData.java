@@ -30,6 +30,7 @@ import java.util.Set;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
 import net.nikr.eve.jeveasset.data.api.my.MyAsset;
+import net.nikr.eve.jeveasset.data.api.my.MyContract;
 import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
@@ -43,7 +44,6 @@ import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
-import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileTotal;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.SubpileItem;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.SubpileStock;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
@@ -52,7 +52,7 @@ import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 public class StockpileData extends TableData {
 
 	private Map<Long, String> ownersName;
-	private final Map<Integer, Set<MyContractItem>> contractItems = new HashMap<>();
+	private final Map<Stockpile, Map<Integer, Set<MyContractItem>>> contractItems = new HashMap<>();
 	private final Map<Integer, Set<MyAsset>> assets = new HashMap<>();
 	private final Map<Integer, Set<MyMarketOrder>> marketOrders = new HashMap<>();
 	private final Map<Integer, Set<MyIndustryJob>> industryJobs = new HashMap<>();
@@ -134,25 +134,58 @@ public class StockpileData extends TableData {
 		}
 	//Create lookup set of TypeIDs
 		Set<Integer> typeIDs = new HashSet<>();
-		for (StockpileItem item : stockpile.getItems()) {
-			typeIDs.add(item.getItemTypeID());
-		}
 		addTypeIDs(typeIDs, stockpile);
 	//Create lookup maps of Items
 		if (!typeIDs.isEmpty()) {
 			//Contract Items
 			if (stockpile.isContracts()) {
-				for (MyContractItem contractItem : profileData.getContractItemList()) {
-					if (contractItem.getContract().isIgnoreContract()) {
-						continue;
+				get(contractItems, stockpile).clear();
+				if (stockpile.isContractsMatchAll()) {
+					Map<MyContract, List<MyContractItem>> found =  new HashMap<>();
+					for (MyContract contract : profileData.getContractList()) {
+						found.put(contract, new ArrayList<>());
 					}
-					Integer typeID = get(contractItem.getTypeID(), contractItem.isBPC());
-					//Ignore null and wrong typeID
-					if (ignore(typeIDs, typeID)) {
-						continue;
+					//Search
+					for (MyContractItem contractItem : profileData.getContractItemList()) {
+						if (contractItem.getContract().isIgnoreContract()) {
+							continue;
+						}
+						Integer typeID = get(contractItem.getTypeID(), contractItem.isBPC());
+						//Ignore null and wrong typeID
+						if (ignore(typeIDs, typeID)) {
+							continue;
+						}
+						for (StockpileItem stockpileItem : stockpile.getItems()) {
+							if (stockpileItem.isTotal()) {
+								continue; //Ignore Total
+							}
+							List<MyContractItem> items = found.get(contractItem.getContract());
+							if (items != null && stockpileItem.matchesContract(contractItem)) {
+								items.add(contractItem);
+							} else {
+								found.remove(contractItem.getContract());
+							}
+						}
 					}
-					//Add Contract Item
-					add(contractItems, typeID, contractItem);
+					//Add
+					for (List<MyContractItem> list : found.values()) {
+						for (MyContractItem contractItem : list) {
+							add(get(contractItems, stockpile), get(contractItem.getTypeID(), contractItem.isBPC()), contractItem);
+						}
+					}
+				} else {
+					for (MyContractItem contractItem : profileData.getContractItemList()) {
+						if (contractItem.getContract().isIgnoreContract()) {
+							continue;
+						}
+						Integer typeID = get(contractItem.getTypeID(), contractItem.isBPC());
+						//Ignore null and wrong typeID
+						if (ignore(typeIDs, typeID)) {
+							continue;
+						}
+						//Add Contract Item
+						add(get(contractItems, stockpile), typeID, contractItem);
+					}
 				}
 			}
 			//Assets
@@ -214,8 +247,8 @@ public class StockpileData extends TableData {
 		stockpile.reset();
 		if (!stockpile.isEmpty()) {
 			for (StockpileItem item : stockpile.getItems()) {
-				if (item instanceof StockpileTotal) {
-					continue;
+				if (item.isTotal()) {
+					continue; //Ignore Total
 				}
 				updateItem(item, stockpile);
 			}
@@ -260,6 +293,9 @@ public class StockpileData extends TableData {
 
 	private void addTypeIDs(Set<Integer> typeIDs, Stockpile stockpile) {
 		for (StockpileItem item : stockpile.getItems()) {
+			if (item.isTotal()) {
+				continue;
+			}
 			typeIDs.add(item.getItemTypeID());
 		}
 		for (Stockpile subpile : stockpile.getSubpiles().keySet()) {
@@ -275,7 +311,7 @@ public class StockpileData extends TableData {
 		item.updateValues(price, volume, transactionAveragePrice);
 		//Contract Items
 		if (stockpile.isContracts()) {
-			Set<MyContractItem> items = contractItems.get(TYPE_ID);
+			Set<MyContractItem> items = get(contractItems, stockpile).get(TYPE_ID);
 			if (items != null) {
 				for (MyContractItem contractItem : items) {
 					item.updateContract(contractItem);
@@ -318,6 +354,15 @@ public class StockpileData extends TableData {
 				}
 			}
 		}
+	}
+
+	private <E> Map<Integer, Set<E>> get(Map<Stockpile, Map<Integer, Set<E>>> map, Stockpile key) {
+		Map<Integer, Set<E>> value = map.get(key);
+		if (value == null) {
+			value = new HashMap<>();
+			map.put(key, value);
+		}
+		return value;
 	}
 
 	/**
@@ -418,23 +463,24 @@ public class StockpileData extends TableData {
 			topStockpile.getSubpileItems().add(subpileStock);
 			for (StockpileItem stockpileItem : currentStockpile.getItems()) {
 				//For each StockpileItem
-				if (stockpileItem.getTypeID() != 0) {
-					StockpileItem parentItem = topItems.get(stockpileItem.getItemTypeID());
-					SubpileItem subpileItem = new SubpileItem(topStockpile, stockpileItem, subpileStock, parentLevel, path);
-					int linkIndex = topStockpile.getSubpileItems().indexOf(subpileItem);
-					if (parentItem != null) { //Add link (Advanced: Item + Link)
-						subpileItem.addItemLink(parentItem, null); //Add link
+				if (stockpileItem.isTotal()) {
+					continue; //Ignore Total
+				}
+				StockpileItem parentItem = topItems.get(stockpileItem.getItemTypeID());
+				SubpileItem subpileItem = new SubpileItem(topStockpile, stockpileItem, subpileStock, parentLevel, path);
+				int linkIndex = topStockpile.getSubpileItems().indexOf(subpileItem);
+				if (parentItem != null) { //Add link (Advanced: Item + Link)
+					subpileItem.addItemLink(parentItem, null); //Add link
+				}
+				if (linkIndex >= 0) { //Update item (Advanced: Link + Link = MultiLink)
+					SubpileItem linkItem = topStockpile.getSubpileItems().get(linkIndex);
+					linkItem.addItemLink(stockpileItem, subpileStock);
+					if (level >= linkItem.getLevel()) {
+						linkItem.setPath(path);
+						linkItem.setLevel(level);
 					}
-					if (linkIndex >= 0) { //Update item (Advanced: Link + Link = MultiLink)
-						SubpileItem linkItem = topStockpile.getSubpileItems().get(linkIndex);
-						linkItem.addItemLink(stockpileItem, subpileStock);
-						if (level >= linkItem.getLevel()) {
-							linkItem.setPath(path);
-							linkItem.setLevel(level);
-						}
-					} else { //Add new item (Simple)
-						topStockpile.getSubpileItems().add(subpileItem);
-					}
+				} else { //Add new item (Simple)
+					topStockpile.getSubpileItems().add(subpileItem);
 				}
 			}
 			updateSubpile(topStockpile, currentStockpile, topItems, subpileStock, level, path);

@@ -36,7 +36,7 @@ import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellEditor;
 import net.nikr.eve.jeveasset.data.settings.tag.Tags;
-import net.nikr.eve.jeveasset.gui.shared.Formater;
+import net.nikr.eve.jeveasset.gui.shared.Formatter;
 import net.nikr.eve.jeveasset.gui.shared.components.JButtonComparable;
 
 
@@ -52,7 +52,7 @@ public class TableCellRenderers {
 			if (value == null) {
 				setText("");
 			} else if (value instanceof Number) {
-				setText(Formater.longFormat(value));
+				setText(Formatter.longFormat(value));
 			} else {
 				setText(value.toString());
 			}
@@ -69,7 +69,7 @@ public class TableCellRenderers {
 			if (value == null) {
 				setText("");
 			} else if (value instanceof Number) {
-				setText(Formater.doubleFormat(value));
+				setText(Formatter.doubleFormat(value));
 			} else {
 				setText(value.toString());
 			}
@@ -87,7 +87,7 @@ public class TableCellRenderers {
 			if (value == null) {
 				setText("");
 			} else if (value instanceof Number) {
-				setText(Formater.integerFormat(value));
+				setText(Formatter.integerFormat(value));
 			} else {
 				setText(value.toString());
 			}
@@ -104,7 +104,7 @@ public class TableCellRenderers {
 			if (value == null) {
 				setText("");
 			} else if (value instanceof Number) {
-				setText(Formater.floatFormat(value));
+				setText(Formatter.floatFormat(value));
 			} else {
 				setText(value.toString());
 			}
@@ -121,7 +121,7 @@ public class TableCellRenderers {
 			if (value == null) {
 				setText("");
 			} else if (value instanceof Date) {
-				setText(Formater.columnDate(value));
+				setText(Formatter.columnDate(value));
 			} else {
 				setText(value.toString());
 			}

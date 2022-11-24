@@ -19,7 +19,7 @@ import net.nikr.eve.jeveasset.data.settings.Colors;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.DocumentFactory;
-import net.nikr.eve.jeveasset.gui.shared.Formater;
+import net.nikr.eve.jeveasset.gui.shared.Formatter;
 import net.nikr.eve.jeveasset.gui.shared.components.JDoubleField;
 import net.nikr.eve.jeveasset.gui.shared.components.JDropDownButton;
 import net.nikr.eve.jeveasset.gui.shared.table.SeparatorTableCell;
@@ -270,11 +270,11 @@ public class StockpileSeparatorTableCell extends SeparatorTableCell<StockpileIte
 			}
 		}
 		//Multiplier
-		jMultiplier.setText(Formater.compareFormat(stockpileItem.getStockpile().getMultiplier()));
+		jMultiplier.setText(Formatter.compareFormat(stockpileItem.getStockpile().getMultiplier()));
 		//Name
 		jName.setText(stockpileItem.getStockpile().getName());
 		//Available
-		String available = Formater.doubleFormat(stockpileItem.getStockpile().getPercentFull());
+		String available = Formatter.doubleFormat(stockpileItem.getStockpile().getPercentFull());
 		jAvailable.setText(available);
 		//Owner
 		String owner = stockpileItem.getStockpile().getOwnerName();

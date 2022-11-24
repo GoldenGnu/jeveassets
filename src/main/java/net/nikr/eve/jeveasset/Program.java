@@ -88,7 +88,6 @@ import net.nikr.eve.jeveasset.gui.tabs.assets.AssetsTab;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractsTab;
 import net.nikr.eve.jeveasset.gui.tabs.items.ItemsTab;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJobsTab;
-import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustrySlotsTab;
 import net.nikr.eve.jeveasset.gui.tabs.journal.JournalTab;
 import net.nikr.eve.jeveasset.gui.tabs.loadout.LoadoutsTab;
 import net.nikr.eve.jeveasset.gui.tabs.materials.MaterialsTab;
@@ -98,6 +97,7 @@ import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewTab;
 import net.nikr.eve.jeveasset.gui.tabs.prices.PriceHistoryTab;
 import net.nikr.eve.jeveasset.gui.tabs.reprocessed.ReprocessedTab;
 import net.nikr.eve.jeveasset.gui.tabs.routing.RoutingTab;
+import net.nikr.eve.jeveasset.gui.tabs.slots.SlotsTab;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileTab;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerTab;
 import net.nikr.eve.jeveasset.gui.tabs.transaction.TransactionTab;
@@ -122,7 +122,7 @@ public class Program implements ActionListener {
 		TIMER
 	}
 	//Major.Minor.Bugfix [Release Candidate n] [BETA n] [DEV BUILD #n];
-	public static final String PROGRAM_VERSION = "7.3.3 DEV BUILD 1";
+	public static final String PROGRAM_VERSION = "7.4.0";
 	public static final String PROGRAM_NAME = "jEveAssets";
 	public static final String PROGRAM_HOMEPAGE = "https://eve.nikr.net/jeveasset";
 	private static final boolean PROGRAM_DEV_BUILD = false;
@@ -151,7 +151,7 @@ public class Program implements ActionListener {
 	private JournalTab journalTab;
 	private TransactionTab transactionsTab;
 	private IndustryJobsTab industryJobsTab;
-	private IndustrySlotsTab industrySlotsTab;
+	private SlotsTab slotsTab;
 	private AssetsTab assetsTab;
 	private OverviewTab overviewTab;
 	private StockpileTab stockpileTab;
@@ -224,8 +224,8 @@ public class Program implements ActionListener {
 		SplashUpdater.setProgress(54);
 		LOG.info("Loading: Industry Jobs Tab");
 		industryJobsTab = new IndustryJobsTab(this);
-		LOG.info("Loading: Industry Slot Tab");
-		industrySlotsTab = new IndustrySlotsTab(this);
+		LOG.info("Loading: Slots Tab");
+		slotsTab = new SlotsTab(this);
 		SplashUpdater.setProgress(56);
 		LOG.info("Loading: Market Orders Tab");
 		marketOrdersTab = new MarketOrdersTab(this);
@@ -816,8 +816,8 @@ public class Program implements ActionListener {
 		return assetsTab;
 	}
 
-	public IndustrySlotsTab getIndustrySlotsTab() {
-		return industrySlotsTab;
+	public SlotsTab getSlotsTab() {
+		return slotsTab;
 	}
 
 	public OverviewTab getOverviewTab() {
@@ -1035,8 +1035,8 @@ public class Program implements ActionListener {
 			mainWindow.addTab(transactionsTab);
 		} else if (MainMenuAction.INDUSTRY_JOBS.name().equals(e.getActionCommand())) {
 			mainWindow.addTab(industryJobsTab);
-		} else if (MainMenuAction.INDUSTRY_SLOT.name().equals(e.getActionCommand())) {
-			mainWindow.addTab(industrySlotsTab);
+		} else if (MainMenuAction.SLOTS.name().equals(e.getActionCommand())) {
+			mainWindow.addTab(slotsTab);
 		} else if (MainMenuAction.OVERVIEW.name().equals(e.getActionCommand())) {
 			mainWindow.addTab(overviewTab);
 		} else if (MainMenuAction.ROUTING.name().equals(e.getActionCommand())) {

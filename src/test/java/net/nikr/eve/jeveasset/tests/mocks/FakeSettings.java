@@ -684,4 +684,14 @@ public abstract class FakeSettings extends Settings {
 	public Map<String, Set<Integer>> getPriceHistorySets() {
 		throw new UnsupportedOperationException("not implemented");
 	}
+
+	@Override
+	public boolean setIncludeCopying(boolean includeCopying) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public boolean isIncludeCopying() {
+		throw new UnsupportedOperationException("not implemented");
+	}
 }

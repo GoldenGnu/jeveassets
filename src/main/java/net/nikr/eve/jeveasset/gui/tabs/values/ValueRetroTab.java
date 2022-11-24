@@ -44,7 +44,7 @@ import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.types.LocationType;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
-import net.nikr.eve.jeveasset.gui.shared.Formater;
+import net.nikr.eve.jeveasset.gui.shared.Formatter;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTabSecondary;
 import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
 import net.nikr.eve.jeveasset.i18n.TabsValues;
@@ -321,21 +321,21 @@ public class ValueRetroTab extends JMainTabSecondary {
 
 		public void addValue(final double value1, final double value2) {
 			if (value1 != 0 && value2 != 0) {
-				addValue(Formater.iskFormat(value1), " (" + Formater.iskFormat(value2) + ")");
+				addValue(Formatter.iskFormat(value1), " (" + Formatter.iskFormat(value2) + ")");
 			} else if (value1 != 0) {
-				addValue(Formater.iskFormat(value1), null);
+				addValue(Formatter.iskFormat(value1), null);
 			}
 		}
 
 		public void addValue(final double value) {
 			if (value != 0) {
-				addValue(Formater.iskFormat(value), null);
+				addValue(Formatter.iskFormat(value), null);
 			}
 		}
 
 		public void addValue(final String value1, final double value2) {
 			if (value1 != null && value2 != 0) {
-				addValue(value1, "<br>" + Formater.iskFormat(value2));
+				addValue(value1, "<br>" + Formatter.iskFormat(value2));
 			}
 		}
 

@@ -44,7 +44,7 @@ import net.nikr.eve.jeveasset.data.settings.types.EditablePriceType;
 import net.nikr.eve.jeveasset.data.settings.types.ItemType;
 import net.nikr.eve.jeveasset.data.settings.types.OwnersType;
 import net.nikr.eve.jeveasset.data.settings.types.TagsType;
-import net.nikr.eve.jeveasset.gui.shared.Formater;
+import net.nikr.eve.jeveasset.gui.shared.Formatter;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo.InfoItem;
 import net.nikr.eve.jeveasset.gui.tabs.assets.AssetsTab;
 import net.nikr.eve.jeveasset.i18n.DataModelAsset;
@@ -150,6 +150,7 @@ public class MyAsset extends RawAsset implements Comparable<MyAsset>, InfoItem, 
 						|| getFlag().equals(General.get().contractExcluded()) //contracts excluded
 						|| getFlag().equals(IndustryActivity.ACTIVITY_MANUFACTURING.toString()) //industry job manufacturing
 						|| getFlag().equals(IndustryActivity.ACTIVITY_REACTIONS.toString()) //industry job reactions
+						|| getFlag().equals(IndustryActivity.ACTIVITY_COPYING.toString()) //industry job copying
 						;
 		if (getQuantity() == null || getQuantity() <= 0) {
 			this.count = 1;
@@ -186,8 +187,9 @@ public class MyAsset extends RawAsset implements Comparable<MyAsset>, InfoItem, 
 		this.flagName = ApiIdConverter.getFlagName(rawAsset.getItemFlag(), owner);
 	}
 
-	public MyAsset(MyIndustryJob industryJob, boolean manufacturing) {
-		this(new RawAsset(industryJob, manufacturing), manufacturing ? ApiIdConverter.getItemUpdate(industryJob.getProductTypeID()) : industryJob.getItem(), industryJob.getOwner(), new ArrayList<MyAsset>());
+	public MyAsset(MyIndustryJob industryJob, boolean output) {
+		this(new RawAsset(industryJob, output),
+				industryJob.isManufacturing() ? ApiIdConverter.getItemUpdate(industryJob.getProductTypeID()) : industryJob.getItem(), industryJob.getOwner(), new ArrayList<MyAsset>());
 	}
 
 	public MyAsset(MyMarketOrder marketOrder) {
@@ -395,12 +397,12 @@ public class MyAsset extends RawAsset implements Comparable<MyAsset>, InfoItem, 
 
 	@Override
 	public double getValue() {
-		return Formater.round(this.getDynamicPrice() * getCount(), 2);
+		return Formatter.round(this.getDynamicPrice() * getCount(), 2);
 	}
 
 	@Override
 	public double getValueReprocessed() {
-		return Formater.round(this.getPriceReprocessed() * getCount(), 2);
+		return Formatter.round(this.getPriceReprocessed() * getCount(), 2);
 	}
 
 	public float getVolume() {

@@ -356,15 +356,29 @@ public class MyIndustryJob extends RawIndustryJob implements Comparable<MyIndust
 		return getBlueprintTypeID();
 	}
 
-	public final boolean isCompleted() {
-		return getCompletedDate() != null && getCompletedDate().after(Settings.getNow());
+	public final boolean isCompletedSuccessful() {
+		return getState() == IndustryJobState.STATE_DELIVERED;
 	}
 
-	public final boolean isDelivered() {
+	public final boolean isDone() {
 		return getState() == IndustryJobState.STATE_DELIVERED
 				|| getState() == IndustryJobState.STATE_CANCELLED
 				|| getState() == IndustryJobState.STATE_REVERTED
 				;
+	}
+
+	public final boolean isNotDeliveredToAssets() {
+		return owner.getAssetLastUpdate() == null //if null -> never updated -> not delivered to assets -> true
+				|| getCompletedDate() == null //if null -> not completed -> not delivered to assets -> true
+				|| owner.getAssetLastUpdate().before(getCompletedDate() //if assets last updated before completed date -> not delivered to assets -> true
+				);
+	}
+
+	public final boolean isRemovedFromAssets() {
+		return owner.getAssetLastUpdate() != null //if null -> never updated -> not removed from assets -> false
+				&& getStartDate() != null //if null -> not started -> not removed from assets -> false
+				&& owner.getAssetLastUpdate().after(getStartDate() //if assets last updated after started date -> removed from assets -> true
+				);
 	}
 
 	public final boolean isManufacturing() {

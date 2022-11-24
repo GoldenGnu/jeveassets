@@ -44,7 +44,7 @@ import net.nikr.eve.jeveasset.data.settings.ColorEntry;
 import net.nikr.eve.jeveasset.data.settings.ColorSettings;
 import net.nikr.eve.jeveasset.data.settings.TrackerData;
 import net.nikr.eve.jeveasset.gui.images.Images;
-import net.nikr.eve.jeveasset.gui.shared.Formater;
+import net.nikr.eve.jeveasset.gui.shared.Formatter;
 import net.nikr.eve.jeveasset.gui.shared.JOptionInput;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
 import net.nikr.eve.jeveasset.gui.shared.components.JSelectionDialog;
@@ -284,15 +284,15 @@ public class JTrackerEditDialog extends JDialogCentered {
 	}
 
 	private String format(double d) {
-		return Formater.longFormat(d);
+		return Formatter.longFormat(d);
 	}
 
 	private String format(Date d) {
-		return Formater.columnDate(d);
+		return Formatter.columnDate(d);
 	}
 
 	private double parse(String s) throws ParseException {
-		return Formater.longParse(s);
+		return Formatter.longParse(s);
 	}
 
 	@Override

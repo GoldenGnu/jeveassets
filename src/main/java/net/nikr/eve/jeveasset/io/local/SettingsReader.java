@@ -93,8 +93,6 @@ import net.nikr.eve.jeveasset.gui.tabs.items.ItemTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.items.ItemsTab;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJobTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJobsTab;
-import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustrySlotTableFormat;
-import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustrySlotsTab;
 import net.nikr.eve.jeveasset.gui.tabs.journal.JournalTab;
 import net.nikr.eve.jeveasset.gui.tabs.journal.JournalTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.orders.MarketOrdersTab;
@@ -105,6 +103,8 @@ import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewLocation;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewTab;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.routing.SolarSystem;
+import net.nikr.eve.jeveasset.gui.tabs.slots.SlotsTab;
+import net.nikr.eve.jeveasset.gui.tabs.slots.SlotsTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter.StockpileContainer;
@@ -575,18 +575,9 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 				double escrowstocover = getDouble(dataNode, "escrowstocover");
 				double sellorders = getDouble(dataNode, "sellorders");
 				double balanceTotal = getDouble(dataNode, "walletbalance");
-				double manufacturing = 0.0;
-				if (haveAttribute(dataNode, "manufacturing")) {
-					manufacturing = getDouble(dataNode, "manufacturing");
-				}
-				double contractCollateral = 0.0;
-				if (haveAttribute(dataNode, "contractcollateral")) {
-					contractCollateral = getDouble(dataNode, "contractcollateral");
-				}
-				double contractValue = 0.0;
-				if (haveAttribute(dataNode, "contractvalue")) {
-					contractValue = getDouble(dataNode, "contractvalue");
-				}
+				double manufacturing = getDoubleNotNull(dataNode, "manufacturing", 0.0);
+				double contractCollateral = getDoubleNotNull(dataNode, "contractcollateral", 0.0);
+				double contractValue = getDoubleNotNull(dataNode, "contractvalue", 0.0);
 				//Add data
 				Value value = new Value(date);
 				//Balance
@@ -681,10 +672,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 				//No problem already set
 			}
 		}
-		int transactionProfitMargin = 0;
-		if (haveAttribute(assetSettingsElement, "transactionprofitmargin")) {
-			transactionProfitMargin = getInt(assetSettingsElement, "transactionprofitmargin");
-		}
+		int transactionProfitMargin = getIntNotNull(assetSettingsElement, "transactionprofitmargin", 0);
 		settings.setTransactionProfitPrice(transactionProfitPrice);
 		settings.setMaximumPurchaseAge(maximumPurchaseAge);
 		settings.setTransactionProfitMargin(transactionProfitMargin);
@@ -711,10 +699,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		for (int a = 0; a < stockpileNodes.getLength(); a++) {
 			Element stockpileNode = (Element) stockpileNodes.item(a);
 			String name = getString(stockpileNode, "name");
-			Long stockpileID = null; //If null > get new id
-			if (haveAttribute(stockpileNode, "id")) {
-				stockpileID = getLong(stockpileNode, "id");
-			}
+			Long stockpileID = getLongOptional(stockpileNode, "id"); //If null > get new id
 		//LEGACY
 			//Owners
 			List<Long> ownerIDs = new ArrayList<>();
@@ -748,25 +733,13 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			}
 			boolean exclude = false;
 			//Include
-			Boolean inventory = null;
-			if (haveAttribute(stockpileNode, "inventory")) {
-				inventory = getBoolean(stockpileNode, "inventory");
-			}
-			Boolean sellOrders = null;
-			if (haveAttribute(stockpileNode, "sellorders")) {
-				sellOrders = getBoolean(stockpileNode, "sellorders");
-			}
-			Boolean buyOrders = null;
-			if (haveAttribute(stockpileNode, "buyorders")) {
-				buyOrders = getBoolean(stockpileNode, "buyorders");
-			}
-			Boolean jobs = null;
-			if (haveAttribute(stockpileNode, "jobs")) {
-				jobs = getBoolean(stockpileNode, "jobs");
-			}
+			Boolean inventory = getBooleanOptional(stockpileNode, "inventory");
+			Boolean sellOrders = getBooleanOptional(stockpileNode, "sellorders");
+			Boolean buyOrders = getBooleanOptional(stockpileNode, "buyorders");
+			Boolean jobs = getBooleanOptional(stockpileNode, "jobs");
 			List<StockpileFilter> filters = new ArrayList<>();
 			if (inventory != null && sellOrders != null && buyOrders != null && jobs != null) {
-				StockpileFilter filter = new StockpileFilter(location, flagIDs, containers, ownerIDs, exclude, null, inventory, sellOrders, buyOrders, jobs, false, false, false, false, false, false);
+				StockpileFilter filter = new StockpileFilter(location, exclude, flagIDs, containers, ownerIDs, null, null, null, inventory, sellOrders, buyOrders, jobs, false, false, false, false, false, false);
 				filters.add(filter);
 			}
 		//NEW
@@ -774,42 +747,19 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			for (int b = 0; b < filterNodes.getLength(); b++) {
 				Element filterNode = (Element) filterNodes.item(b);
 				//Include
-				boolean filterExclude = false;
-				if (haveAttribute(filterNode, "exclude")) {
-					filterExclude = getBoolean(filterNode, "exclude");
-				}
-				//Singleton
-				Boolean filterSingleton = null;
-				if (haveAttribute(filterNode, "singleton")) {
-					filterSingleton = getBoolean(filterNode, "singleton");
-				}
-				boolean filterSellingContracts = false;
-				if (haveAttribute(filterNode, "sellingcontracts")) {
-					filterSellingContracts = getBoolean(filterNode, "sellingcontracts");
-				}
-				boolean filterSoldBuy = false;
-				if (haveAttribute(filterNode, "soldcontracts")) {
-					filterSoldBuy = getBoolean(filterNode, "soldcontracts");
-				}
-				boolean filterBuyingContracts = false;
-				if (haveAttribute(filterNode, "buyingcontracts")) {
-					filterBuyingContracts = getBoolean(filterNode, "buyingcontracts");
-				}
-				boolean filterBoughtContracts = false;
-				if (haveAttribute(filterNode, "boughtcontracts")) {
-					filterBoughtContracts = getBoolean(filterNode, "boughtcontracts");
-				}
+				boolean filterExclude = getBooleanNotNull(filterNode, "exclude", false);
+				Boolean filterSingleton = getBooleanOptional(filterNode, "singleton");
+				Integer filterJobsDaysLess = getIntOptional(filterNode, "jobsdaysless");
+				Integer filterJobsDaysMore = getIntOptional(filterNode, "jobsdaysmore");
+				boolean filterSellingContracts = getBooleanNotNull(filterNode, "sellingcontracts", false);
+				boolean filterSoldBuy = getBooleanNotNull(filterNode, "soldcontracts", false);
+				boolean filterBuyingContracts = getBooleanNotNull(filterNode, "buyingcontracts", false);
+				boolean filterBoughtContracts = getBooleanNotNull(filterNode, "boughtcontracts", false);
 				boolean filterInventory = getBoolean(filterNode, "inventory");
 				boolean filterSellOrders = getBoolean(filterNode, "sellorders");
 				boolean filterBuyOrders = getBoolean(filterNode, "buyorders");
-				boolean filterBuyTransactions = false;
-				if (haveAttribute(filterNode, "buytransactions")) {
-					filterBuyTransactions = getBoolean(filterNode, "buytransactions");
-				}
-				boolean filterSellTransactions = false;
-				if (haveAttribute(filterNode, "selltransactions")) {
-					filterSellTransactions = getBoolean(filterNode, "selltransactions");
-				}
+				boolean filterBuyTransactions = getBooleanNotNull(filterNode, "buytransactions", false);
+				boolean filterSellTransactions = getBooleanNotNull(filterNode, "selltransactions", false);
 				boolean filterJobs = getBoolean(filterNode, "jobs");
 				//Location
 				long locationID = getLong(filterNode, "locationid");
@@ -828,10 +778,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 				for (int c = 0; c < containerNodes.getLength(); c++) {
 					Element containerNode = (Element) containerNodes.item(c);
 					String filterContainer = getString(containerNode, "container");
-					boolean filterIncludeContainer = false;
-					if (haveAttribute(containerNode, "includecontainer")) {
-						filterIncludeContainer = getBoolean(containerNode, "includecontainer");
-					}
+					boolean filterIncludeContainer = getBooleanNotNull(containerNode, "includecontainer", false);
 					filterContainers.add(new StockpileContainer(filterContainer, filterIncludeContainer));
 				}
 				//Flags
@@ -842,7 +789,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 					int filterFlagID = getInt(flagNode, "flagid");
 					filterFlagIDs.add(filterFlagID);
 				}
-				StockpileFilter stockpileFilter = new StockpileFilter(location, filterFlagIDs, filterContainers, filterOwnerIDs, filterExclude, filterSingleton, filterInventory, filterSellOrders, filterBuyOrders, filterJobs, filterBuyTransactions, filterSellTransactions, filterSellingContracts, filterSoldBuy, filterBuyingContracts, filterBoughtContracts);
+				StockpileFilter stockpileFilter = new StockpileFilter(location, filterExclude, filterFlagIDs, filterContainers, filterOwnerIDs, filterJobsDaysLess, filterJobsDaysMore, filterSingleton, filterInventory, filterSellOrders, filterBuyOrders, filterJobs, filterBuyTransactions, filterSellTransactions, filterSellingContracts, filterSoldBuy, filterBuyingContracts, filterBoughtContracts);
 				filters.add(stockpileFilter);
 			}
 		//SUBPILES
@@ -851,16 +798,15 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			for (int b = 0; b < subpileNodes.getLength(); b++) {
 				Element subpileNode = (Element) subpileNodes.item(b);
 				String subpileName = getString(subpileNode, "name");
-				Double minimum = getDouble(subpileNode, "minimum");
+				double minimum = getDouble(subpileNode, "minimum");
 				subpileNames.put(subpileName, minimum);
 			}
 		//MULTIPLIER
-			double multiplier = 1;
-			if (haveAttribute(stockpileNode, "multiplier")) {
-				multiplier = getDouble(stockpileNode, "multiplier");
-			}
+			double multiplier = getDoubleNotNull(stockpileNode, "multiplier", 1);
+		//CONTRACTS MATCH ALL
+			boolean contractsMatchAll = getBooleanNotNull(stockpileNode, "contractsmatchall", false);
 
-			Stockpile stockpile = new Stockpile(name, stockpileID, filters, multiplier);
+			Stockpile stockpile = new Stockpile(name, stockpileID, filters, multiplier, contractsMatchAll);
 			stockpiles.add(stockpile);
 			subpileMap.put(stockpile, subpileNames);
 			stockpileMap.put(name, stockpile);
@@ -875,10 +821,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 					id = StockpileItem.getNewID();
 				}
 				int typeID = getInt(itemNode, "typeid");
-				boolean runs = false;
-				if (haveAttribute(itemNode, "runs")) {
-					runs = getBoolean(itemNode, "runs");
-				}
+				boolean runs = getBooleanNotNull(itemNode, "runs", false);
 				double countMinimum = getDouble(itemNode, "minimum");
 				if (typeID != 0) { //Ignore Total
 					Item item = ApiIdConverter.getItemUpdate(Math.abs(typeID));
@@ -1004,6 +947,10 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 	private void parseShowToolsNodes(Element showToolsElement, Settings settings) throws XmlException {
 		boolean saveOnExit = getBoolean(showToolsElement, "saveonexit");
 		List<String> showTools = getStringList(showToolsElement, "show");
+		int index = showTools.indexOf("Industry Slots");
+		if (index >= 0) {
+			showTools.set(index, "Slots");
+		}
 		settings.setSaveToolsOnExit(saveOnExit);
 		settings.getShowTools().addAll(showTools);
 	}
@@ -1023,7 +970,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		NodeList outbidNodes = marketOrderOutbidElement.getElementsByTagName("outbid");
 		for (int a = 0; a < outbidNodes.getLength(); a++) {
 			Element outbidNode = (Element) outbidNodes.item(a);
-			Long orderID = getLong(outbidNode, "id");
+			long orderID = getLong(outbidNode, "id");
 			double price = getDouble(outbidNode, "price");
 			long count = getLong(outbidNode, "count");
 			settings.getMarketOrdersOutbid().put(orderID, new Outbid(price, count));
@@ -1038,7 +985,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		NodeList systemNodes = routingElement.getElementsByTagName("routingsystem");
 		for (int a = 0; a < systemNodes.getLength(); a++) {
 			Element systemNode = (Element) systemNodes.item(a);
-			Long systemID = getLong(systemNode, "id");
+			long systemID = getLong(systemNode, "id");
 			MyLocation location = ApiIdConverter.getLocation(systemID);
 			settings.getRoutingSettings().getAvoid().put(systemID, new SolarSystem(location));
 		}
@@ -1050,7 +997,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			NodeList presetSystemNodes = presetNode.getElementsByTagName("presetsystem");
 			for (int b = 0; b < presetSystemNodes.getLength(); b++) {
 				Element systemNode = (Element) presetSystemNodes.item(b);
-				Long systemID = getLong(systemNode, "id");
+				long systemID = getLong(systemNode, "id");
 				systemIDs.add(systemID);
 			}
 			settings.getRoutingSettings().getPresets().put(name, systemIDs);
@@ -1173,10 +1120,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		int width = getInt(windowElement, "width");
 		boolean maximized = getBoolean(windowElement, "maximized");
 		boolean autosave = getBoolean(windowElement, "autosave");
-		boolean alwaysOnTop = false;
-		if (haveAttribute(windowElement, "alwaysontop")) {
-			alwaysOnTop = getBoolean(windowElement, "alwaysontop");
-		}
+		boolean alwaysOnTop = getBooleanNotNull(windowElement, "alwaysontop", false);
 		settings.setWindowLocation(new Point(x, y));
 		settings.setWindowSize(new Dimension(width, height));
 		settings.setWindowMaximized(maximized);
@@ -1193,14 +1137,8 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		}
 		String address = getString(proxyElement, "address");
 		int port = getInt(proxyElement, "port");
-		String username = null;
-		if (haveAttribute(proxyElement, "username")) {
-			username = getString(proxyElement, "username");
-		}
-		String password = null;
-		if (haveAttribute(proxyElement, "password")) {
-			password = getString(proxyElement, "password");
-		}
+		String username = getStringOptional(proxyElement, "username");
+		String password = getStringOptional(proxyElement, "password");
 		if (type != null && type != Proxy.Type.DIRECT && !address.isEmpty() && port != 0) { // check the proxy attributes are all there.
 			settings.setProxyData(new ProxyData(address, type, port, username, password));
 		}
@@ -1298,14 +1236,8 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 	private void parseContractPriceSettings(final Element element, final Settings settings) throws XmlException {
 		boolean defaultBPC = getBoolean(element, "defaultbpc");
 		boolean includePrivate = getBoolean(element, "includeprivate");
-		boolean feedback = false;
-		if (haveAttribute(element, "feedback")) {
-			feedback = getBoolean(element, "feedback");
-		}
-		boolean feedbackAsked = false;
-		if (haveAttribute(element, "feedbackasked")) {
-			feedbackAsked = getBoolean(element, "feedbackasked");
-		}
+		boolean feedback = getBooleanNotNull(element, "feedback", false);
+		boolean feedbackAsked = getBooleanNotNull(element, "feedbackasked", false);
 		ContractPriceMode mode = ContractPriceMode.valueOf(getString(element, "mode"));
 		String sec = getStringOptional(element, "sec");
 		Set<ContractPriceSecurity> security = new HashSet<>();
@@ -1322,17 +1254,8 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 	}
 
 	private void parseMarketOrdersSettings(final Element element, final Settings settings) throws XmlException {
-		int expireWarnDays = settings.getMarketOrdersSettings().getExpireWarnDays(); //Default
-		int remainingWarnPercent = settings.getMarketOrdersSettings().getExpireWarnDays(); //Default
-
-		if (haveAttribute(element, "expirewarndays")) {
-			expireWarnDays = getInt(element, "expirewarndays");
-		}
-
-		if (haveAttribute(element, "remainingwarnpercent")) {
-			remainingWarnPercent = getInt(element, "remainingwarnpercent");
-		}
-
+		int expireWarnDays = getIntNotNull(element, "expirewarndays", settings.getMarketOrdersSettings().getExpireWarnDays());
+		int remainingWarnPercent = getIntNotNull(element, "remainingwarnpercent", settings.getMarketOrdersSettings().getRemainingWarnPercent());
 		MarketOrdersSettings marketOrdersSettings = settings.getMarketOrdersSettings();
 		marketOrdersSettings.setExpireWarnDays(expireWarnDays);
 		marketOrdersSettings.setRemainingWarnPercent(remainingWarnPercent);
@@ -1560,14 +1483,8 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		NodeList rowNodes = filterNode.getElementsByTagName("row");
 		for (int c = 0; c < rowNodes.getLength(); c++) {
 			Element rowNode = (Element) rowNodes.item(c);
-			int group = 1;
-			if (haveAttribute(rowNode, "group")) {
-				group = getInt(rowNode, "group");
-			}
-			boolean enabled = true;
-			if (haveAttribute(rowNode, "enabled")) {
-				enabled = getBoolean(rowNode, "enabled");
-			}
+			int group = getIntNotNull(rowNode, "group", 1);
+			boolean enabled = getBooleanNotNull(rowNode, "enabled", true);
 			String text = getString(rowNode, "text");
 			String columnString = getString(rowNode, "column");
 			EnumTableColumn<?> column = getColumn(columnString, tableName, settings);
@@ -1607,10 +1524,10 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		} catch (IllegalArgumentException exception) {
 
 		}
-		//Industry Slots
+		//Slots
 		try {
-			if (toolName.equals(IndustrySlotsTab.NAME)) {
-				return IndustrySlotTableFormat.valueOf(column);
+			if (toolName.equals(SlotsTab.NAME)) {
+				return SlotsTableFormat.valueOf(column);
 			}
 		} catch (IllegalArgumentException exception) {
 
@@ -1811,32 +1728,14 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		LineDelimiter line = LineDelimiter.valueOf(getString(element, "line"));
 
 		//SQL
-		Boolean createTable = null;
-		Boolean dropTable = null;
-		Boolean extendedInserts = null;
-		if (haveAttribute(element, "sqlcreatetable")) {
-			createTable = getBoolean(element, "sqlcreatetable");
-		}
-		if (haveAttribute(element, "sqldroptable")) {
-			dropTable = getBoolean(element, "sqldroptable");
-		}
-		if (haveAttribute(element, "sqlextendedinserts")) {
-			extendedInserts = getBoolean(element, "sqlextendedinserts");
-		}
+		Boolean createTable = getBooleanOptional(element, "sqlcreatetable");
+		Boolean dropTable = getBooleanOptional(element, "sqldroptable");
+		Boolean extendedInserts = getBooleanOptional(element, "sqlextendedinserts");
 
 		//HTML
-		Boolean htmlStyled = null;
-		Boolean htmlIGB = null;
-		Integer htmlRepeatHeader = null;
-		if (haveAttribute(element, "htmlstyled")) {
-			htmlStyled = getBoolean(element, "htmlstyled");
-		}
-		if (haveAttribute(element, "htmligb")) {
-			htmlIGB = getBoolean(element, "htmligb");
-		}
-		if (haveAttribute(element, "htmlrepeatheader")) {
-			htmlRepeatHeader = getInt(element, "htmlrepeatheader");
-		}
+		Boolean htmlStyled = getBooleanOptional(element, "htmlstyled");
+		Boolean htmlIGB = getBooleanOptional(element, "htmligb");
+		Integer htmlRepeatHeader = getIntOptional(element, "htmlrepeatheader");
 
 		Map<String, String> tableNames = new HashMap<>();
 		Map<String, String> fileNames = new HashMap<>();
@@ -2040,7 +1939,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		Map<Long, Date> assetAdded = new HashMap<>();
 		for (int i = 0; i < assetNodes.getLength(); i++) {
 			Element currentNode = (Element) assetNodes.item(i);
-			Long itemID = getLong(currentNode, "itemid");
+			long itemID = getLong(currentNode, "itemid");
 			Date date = getDate(currentNode, "date");
 			assetAdded.put(itemID, date);
 		}

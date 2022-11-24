@@ -50,7 +50,17 @@ public enum ContractsTableFormat implements EnumTableColumn<MyContractItem> {
 		}
 		@Override
 		public Object getColumnValue(final MyContractItem from) {
-			return from.getContract().getStatusFormated();
+			return from.getContract().getStatusFormatted();
+		}
+	},
+	AVAILABILITY(String.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsContracts.get().columnAvailability();
+		}
+		@Override
+		public Object getColumnValue(final MyContractItem from) {
+			return from.getContract().getAvailabilityFormatted();
 		}
 	},
 	INCLUDED(String.class, GlazedLists.comparableComparator()) {
@@ -375,23 +385,8 @@ public enum ContractsTableFormat implements EnumTableColumn<MyContractItem> {
 		return comparator;
 	}
 	@Override
-	public boolean isColumnEditable(final Object baseObject) {
-		return false;
-	}
-	@Override
-	public boolean isShowDefault() {
-		return true;
-	}
-	@Override
-	public boolean setColumnValue(final Object baseObject, final Object editedValue) {
-		return false;
-	}
-	@Override
 	public String toString() {
 		return getColumnName();
 	}
-	//XXX - TableFormat.getColumnValue(...) Workaround
-	@Override public abstract Object getColumnValue(final MyContractItem from);
-	//XXX - TableFormat.getColumnName() Workaround
-	@Override public abstract String getColumnName();
+
 }

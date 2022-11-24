@@ -24,6 +24,7 @@ import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.FilterList;
 import ca.odell.glazedlists.matchers.Matcher;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -40,43 +41,43 @@ import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.shared.filter.ExportTableData;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterLogicalMatcher;
+import net.nikr.eve.jeveasset.gui.shared.filter.SimpleTableFormat;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
+import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
+import net.nikr.eve.jeveasset.gui.shared.table.TableFormatFactory;
 import net.nikr.eve.jeveasset.gui.tabs.assets.AssetsTab;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractsTab;
 import net.nikr.eve.jeveasset.gui.tabs.items.ItemsTab;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJobsTab;
-import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustrySlotsTab;
 import net.nikr.eve.jeveasset.gui.tabs.journal.JournalTab;
+import net.nikr.eve.jeveasset.gui.tabs.loadout.Loadout;
+import net.nikr.eve.jeveasset.gui.tabs.loadout.LoadoutData;
 import net.nikr.eve.jeveasset.gui.tabs.loadout.LoadoutsTab;
+import net.nikr.eve.jeveasset.gui.tabs.materials.MaterialsData;
 import net.nikr.eve.jeveasset.gui.tabs.materials.MaterialsTab;
 import net.nikr.eve.jeveasset.gui.tabs.orders.MarketOrdersTab;
+import net.nikr.eve.jeveasset.gui.tabs.overview.Overview;
+import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewData;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewTab;
+import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewTab.View;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewTableFormat;
+import net.nikr.eve.jeveasset.gui.tabs.reprocessed.ReprocessedData;
 import net.nikr.eve.jeveasset.gui.tabs.reprocessed.ReprocessedTab;
 import net.nikr.eve.jeveasset.gui.tabs.routing.RoutingTab;
+import net.nikr.eve.jeveasset.gui.tabs.slots.SlotsData;
+import net.nikr.eve.jeveasset.gui.tabs.slots.SlotsTab;
+import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileData;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileTab;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerTab;
 import net.nikr.eve.jeveasset.gui.tabs.transaction.TransactionTab;
+import net.nikr.eve.jeveasset.gui.tabs.tree.TreeData;
 import net.nikr.eve.jeveasset.gui.tabs.tree.TreeTab;
+import net.nikr.eve.jeveasset.gui.tabs.values.IskData;
 import net.nikr.eve.jeveasset.gui.tabs.values.ValueTableTab;
 import net.nikr.eve.jeveasset.io.online.PriceDataGetter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import net.nikr.eve.jeveasset.gui.shared.filter.SimpleTableFormat;
-import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
-import net.nikr.eve.jeveasset.gui.shared.table.TableFormatFactory;
-import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustrySlotsData;
-import net.nikr.eve.jeveasset.gui.tabs.loadout.Loadout;
-import net.nikr.eve.jeveasset.gui.tabs.loadout.LoadoutData;
-import net.nikr.eve.jeveasset.gui.tabs.materials.MaterialsData;
-import net.nikr.eve.jeveasset.gui.tabs.overview.Overview;
-import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewData;
-import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewTab.View;
-import net.nikr.eve.jeveasset.gui.tabs.reprocessed.ReprocessedData;
-import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileData;
-import net.nikr.eve.jeveasset.gui.tabs.tree.TreeData;
-import net.nikr.eve.jeveasset.gui.tabs.values.IskData;
 
 
 public class CliExport {
@@ -87,7 +88,7 @@ public class CliExport {
 		ASSETS("Assets", CliOptions.ASSETS, AssetsTab.NAME),
 		CONTRACTS("Contracts", CliOptions.CONTRACTS, ContractsTab.NAME),
 		INDUSTRY_JOBS("Industry Jobs", CliOptions.INDUSTRY_JOBS, IndustryJobsTab.NAME),
-		INDUSTRY_SLOTS("Industry Slots", CliOptions.INDUSTRY_SLOTS, IndustrySlotsTab.NAME),
+		SLOTS("Slots", CliOptions.SLOTS, SlotsTab.NAME),
 		ISK("Isk", CliOptions.ISK, ValueTableTab.NAME),
 		ITEMS("Items", CliOptions.ITEMS, ItemsTab.NAME),
 		JOURNAL("Journal", CliOptions.JOURNAL, JournalTab.NAME),
@@ -163,8 +164,8 @@ public class CliExport {
 					case INDUSTRY_JOBS:
 						ok = export(profileData.getIndustryJobsEventList(), TableFormatFactory.industryJobTableFormat(), toolName, exportSettings);
 						break;
-					case INDUSTRY_SLOTS:
-						ok = export(new IndustrySlotsData(profileManager, profileData).getData(), TableFormatFactory.industrySlotTableFormat(), toolName, exportSettings);
+					case SLOTS:
+						ok = export(new SlotsData(profileManager, profileData).getData(), TableFormatFactory.slotTableFormat(), toolName, exportSettings);
 						break;
 					case ISK:
 						ok = export(new IskData(profileManager, profileData).getData(), TableFormatFactory.valueTableFormat(), toolName, exportSettings);
@@ -274,36 +275,43 @@ public class CliExport {
 	}
 
 	private boolean exportReprocessed(ProfileManager profileManager, ProfileData profileData, ExportSettings exportSettings, String toolName) {
+		Map<Item, Long> items = new HashMap<>();
 		Set<Integer> typeIDs = CliOptions.get().getReprocessedIDs();
-		if (typeIDs == null) {
-			typeIDs = new HashSet<>();
+		if (typeIDs != null) {
+			//IDs to Items
+			for (Integer typeID : typeIDs) {
+				Item item = StaticData.get().getItems().get(typeID);
+				if (item != null) {
+					items.put(item, 1L);
+				}
+			}
 		}
 		Set<String> typeNames = CliOptions.get().getReprocessedNames();
 		if (typeNames != null && !typeNames.isEmpty()) {
 			if (typeNames.size() > 1) {
-				//Build Cache
-				Map<String, Integer> items = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+				//Build {name, item} Cache
+				Map<String, Item> itemsNyName = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
 				for (Item item : StaticData.get().getItems().values()) {
-					items.put(item.getTypeName(), item.getTypeID());
+					itemsNyName.put(item.getTypeName(), item);
 				}
-				//Translate names to IDs
+				//Names to Items
 				for (String typeName : typeNames) {
-					Integer typeID = items.get(typeName);
-					if (typeID != null) {
-						typeIDs.add(typeID);
+					Item item = itemsNyName.get(typeName);
+					if (item != null) {
+						items.put(item, 1L);
 					}
 				}
 			} else {
 				String typeName = typeNames.iterator().next();
 				for (Item item : StaticData.get().getItems().values()) {
 					if (typeName.equalsIgnoreCase(item.getTypeName())) {
-						typeIDs.add(item.getTypeID());
+						items.put(item, 1L);
 						break;
 					}
 				}
 			}
 		}
-		return export(new ReprocessedData(profileManager, profileData).getData(typeIDs), TableFormatFactory.reprocessedTableFormat(), toolName, exportSettings);
+		return export(new ReprocessedData(profileManager, profileData).getData(items), TableFormatFactory.reprocessedTableFormat(), toolName, exportSettings);
 	}
 
 	private boolean exportOverview(ProfileManager profileManager, ProfileData profileData, ExportSettings exportSettings, String toolName, View view) {

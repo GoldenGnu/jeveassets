@@ -264,7 +264,7 @@ public enum MarketTableFormat implements EnumTableColumn<MyMarketOrder> {
 		}
 		@Override
 		public Object getColumnValue(final MyMarketOrder from) {
-			return from.getStatus();
+			return from.getStateFormatted();
 		}
 	},
 	MIN_VOLUME(Integer.class, GlazedLists.comparableComparator()) {
@@ -472,23 +472,8 @@ public enum MarketTableFormat implements EnumTableColumn<MyMarketOrder> {
 		return comparator;
 	}
 	@Override
-	public boolean isColumnEditable(final Object baseObject) {
-		return false;
-	}
-	@Override
-	public boolean isShowDefault() {
-		return true;
-	}
-	@Override
-	public boolean setColumnValue(final Object baseObject, final Object editedValue) {
-		return false;
-	}
-	@Override
 	public String toString() {
 		return getColumnName();
 	}
-	//XXX - TableFormat.getColumnValue(...) Workaround
-	@Override public abstract Object getColumnValue(final MyMarketOrder from);
-	//XXX - TableFormat.getColumnName() Workaround
-	@Override public abstract String getColumnName();
+
 }

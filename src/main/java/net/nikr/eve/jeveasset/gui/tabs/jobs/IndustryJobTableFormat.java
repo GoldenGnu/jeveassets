@@ -140,6 +140,26 @@ public enum IndustryJobTableFormat implements EnumTableColumn<MyIndustryJob> {
 			return from.getEndDate();
 		}
 	},
+	COMPLETED_DATE(Date.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsJobs.get().columnCompletedDate();
+		}
+		@Override
+		public Object getColumnValue(final MyIndustryJob from) {
+			return from.getCompletedDate();
+		}
+	},
+	PAUSE_DATE(Date.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsJobs.get().columnPauseDate();
+		}
+		@Override
+		public Object getColumnValue(final MyIndustryJob from) {
+			return from.getPauseDate();
+		}
+	},
 	RUNS(Integer.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
@@ -240,23 +260,7 @@ public enum IndustryJobTableFormat implements EnumTableColumn<MyIndustryJob> {
 		return comparator;
 	}
 	@Override
-	public boolean isColumnEditable(final Object baseObject) {
-		return false;
-	}
-	@Override
-	public boolean isShowDefault() {
-		return true;
-	}
-	@Override
-	public boolean setColumnValue(final Object baseObject, final Object editedValue) {
-		return false;
-	}
-	@Override
 	public String toString() {
 		return getColumnName();
 	}
-	//XXX - TableFormat.getColumnValue(...) Workaround
-	@Override public abstract Object getColumnValue(final MyIndustryJob from);
-	//XXX - TableFormat.getColumnName() Workaround
-	@Override public abstract String getColumnName();
 }

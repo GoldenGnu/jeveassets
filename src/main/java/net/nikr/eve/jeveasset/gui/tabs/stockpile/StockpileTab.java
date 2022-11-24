@@ -71,6 +71,8 @@ import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.InstantToolTip;
 import net.nikr.eve.jeveasset.gui.shared.MarketDetailsColumn;
 import net.nikr.eve.jeveasset.gui.shared.MarketDetailsColumn.MarketDetailsActionListener;
+import net.nikr.eve.jeveasset.gui.shared.TextImport;
+import net.nikr.eve.jeveasset.gui.shared.TextImport.TextImportHandler;
 import net.nikr.eve.jeveasset.gui.shared.components.JCustomFileChooser;
 import net.nikr.eve.jeveasset.gui.shared.components.JDropDownButton;
 import net.nikr.eve.jeveasset.gui.shared.components.JFixedToolBar;
@@ -105,6 +107,7 @@ import net.nikr.eve.jeveasset.io.local.SettingsReader;
 import net.nikr.eve.jeveasset.io.local.SettingsWriter;
 import net.nikr.eve.jeveasset.io.local.StockpileDataReader;
 import net.nikr.eve.jeveasset.io.local.StockpileDataWriter;
+import net.nikr.eve.jeveasset.io.local.text.TextImportType;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import net.nikr.eve.jeveasset.io.shared.DesktopUtil.HelpLink;
 
@@ -141,6 +144,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 	private final JMultiSelectionDialog<Stockpile> stockpileSelectionDialog;
 	private final JImportDialog stockpileImportDialog;
 	private final JTextDialog jTextDialog;
+	private final TextImport textImport;
 
 	//Table
 	private final JSeparatorTable jTable;
@@ -206,6 +210,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 			}
 		});
 		jTextDialog = new JTextDialog(program.getMainWindow().getFrame());
+		textImport = new TextImport(program);
 
 		JFixedToolBar jToolBarLeft = new JFixedToolBar();
 
@@ -571,11 +576,18 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 	}
 
 	protected void removeItems(Collection<StockpileItem> items) {
+		Set<Stockpile> stockpiles = new HashSet<>();
 		for (StockpileItem item : items) {
 			item.getStockpile().updateTotal();
+			stockpiles.add(item.getStockpile());
 		}
 		if (!items.isEmpty()) {
 			updateSubpile(items.iterator().next().getStockpile());
+		}
+		for (Stockpile stockpile : stockpiles) {
+			if (stockpile.isContractsMatchAll()) { //Less items == may match now...
+				updateStockpile(stockpile);
+			}
 		}
 		//Lock Table
 		beforeUpdateData();
@@ -623,42 +635,28 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		afterUpdateData();
 	}
 
-	private void importText(StockpileImport stockpileImport) {
-		//Get string from clipboard
-		String text = jTextDialog.importText("", stockpileImport.getExample());
-		if (text == null) {
-			return; //Cancelled
-		}
-
-		//Validate Input
-		text = text.trim();
-		if (text.isEmpty()) { //Empty sting
-			JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsStockpile.get().importEmpty(), stockpileImport.getTitle(), JOptionPane.PLAIN_MESSAGE);
-			return;
-		}
-
-		Map<Integer, Double> data = stockpileImport.importText(text);
-		//Validate Output
-		if (data == null || data.isEmpty()) {
-			JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), stockpileImport.getHelp(), stockpileImport.getTitle(), JOptionPane.PLAIN_MESSAGE);
-			return;
-		}
-		//Create Stockpile
-		Stockpile stockpile = stockpileDialog.showAdd(stockpileImport.getName());
-		if (stockpile == null) { //Dialog cancelled
-			return;
-		}
-		Settings.lock("Stockpile (Import)"); //Lock for Stockpile (Import)
-		for (Map.Entry<Integer, Double> entry : data.entrySet()) {
-			Item item = ApiIdConverter.getItemUpdate(entry.getKey());
-			StockpileItem stockpileItem = new StockpileItem(stockpile, item, entry.getKey(), entry.getValue(), false);
-			stockpile.add(stockpileItem);
-		}
-		Settings.unlock("Stockpile (Import)"); //Unlock for Stockpile (Import)
-		program.saveSettings("Stockpile (Import)"); //Save Stockpile (Import)
-		//Update stockpile data
-		addStockpile(stockpile);
-		scrollToSctockpile(stockpile);
+	private void importText(TextImportType type) {
+		textImport.importText(type, new TextImportHandler() {
+			@Override
+			public void addItems(Map<Integer, Double> data) {
+				//Create Stockpile
+				Stockpile stockpile = stockpileDialog.showAdd(type.getName());
+				if (stockpile == null) { //Dialog cancelled
+					return;
+				}
+				Settings.lock("Stockpile (Import)"); //Lock for Stockpile (Import)
+				for (Map.Entry<Integer, Double> entry : data.entrySet()) {
+					Item item = ApiIdConverter.getItemUpdate(entry.getKey());
+					StockpileItem stockpileItem = new StockpileItem(stockpile, item, entry.getKey(), entry.getValue(), false);
+					stockpile.add(stockpileItem);
+				}
+				Settings.unlock("Stockpile (Import)"); //Unlock for Stockpile (Import)
+				program.saveSettings("Stockpile (Import)"); //Save Stockpile (Import)
+				//Update stockpile data
+				addStockpile(stockpile);
+				scrollToSctockpile(stockpile);
+			}
+		});
 	}
 
 	private void importXml() {
@@ -980,13 +978,13 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 					tableModel.fireTableDataChanged();
 				}
 			} else if (StockpileAction.IMPORT_EFT.name().equals(e.getActionCommand())) { //Add stockpile (EFT Import)
-				importText(new ImportEft());
+				importText(TextImportType.EFT);
 			} else if (StockpileAction.IMPORT_ISK_PER_HOUR.name().equals(e.getActionCommand())) { //Add stockpile (Isk Per Hour)
-				importText(new ImportIskPerHour());
+				importText(TextImportType.ISK_PER_HOUR);
 			} else if (StockpileAction.IMPORT_MULTIBUY.name().equals(e.getActionCommand())) { //Add stockpile (Eve Multibuy)
-				importText(new ImportEveMultibuy());
+				importText(TextImportType.EVE_MULTIBUY);
 			} else if (StockpileAction.IMPORT_SHOPPING_LIST.name().equals(e.getActionCommand())) { //Add stockpile (Shopping List)
-				importText(new ImportShoppingList());
+				importText(TextImportType.STCOKPILE_SHOPPING_LIST);
 			} else if (StockpileAction.IMPORT_XML.name().equals(e.getActionCommand())) { //Add stockpile (Xml)
 				importXml();
 			} else if (StockpileAction.IMPORT_TEXT.name().equals(e.getActionCommand())) { //Add stockpile (Xml)

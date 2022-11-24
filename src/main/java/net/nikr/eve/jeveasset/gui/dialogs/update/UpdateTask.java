@@ -45,7 +45,7 @@ import javax.swing.SwingWorker;
 import javax.swing.text.*;
 import net.nikr.eve.jeveasset.gui.dialogs.update.TaskDialog.ErrorListener;
 import net.nikr.eve.jeveasset.gui.images.Images;
-import net.nikr.eve.jeveasset.gui.shared.Formater;
+import net.nikr.eve.jeveasset.gui.shared.Formatter;
 import net.nikr.eve.jeveasset.i18n.DialoguesUpdate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -319,7 +319,7 @@ public abstract class UpdateTask extends SwingWorker<Void, Void> {
 			String time = error.substring(start, end);
 			try {
 				Date date = df.parse(time);
-				time = Formater.weekdayAndTime(date);
+				time = Formatter.weekdayAndTime(date);
 			} catch (ParseException ex) {
 				time = error.substring(start, end);
 			}

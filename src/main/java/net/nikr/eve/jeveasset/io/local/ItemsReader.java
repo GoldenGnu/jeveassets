@@ -95,28 +95,14 @@ public final class ItemsReader extends AbstractXmlReader<Boolean> {
 		String category = getString(node, "category");
 		long price = getLong(node, "price");
 		float volume = getFloat(node, "volume");
-		Float packagedVolume = getFloatOptional(node, "packagedvolume");
-		if (packagedVolume == null) {
-			packagedVolume = volume;
-		}
-		Float capacity = getFloatOptional(node, "capacity");
-		if (capacity == null) {
-			capacity = 0f;
-		}
+		float packagedVolume = getFloatNotNull(node, "packagedvolume", volume);
+		float capacity = getFloatNotNull(node, "capacity", 0f);
 		int meta = getInt(node, "meta");
 		String tech = getString(node, "tech");
 		boolean marketGroup = getBoolean(node, "marketgroup");
 		int portion = getInt(node, "portion");
-		int product;
-		if (haveAttribute(node, "product")) {
-			product = getInt(node, "product");
-		} else {
-			product = 0;
-		}
-		int productQuantity = 1;
-		if (haveAttribute(node, "productquantity")) {
-			productQuantity = getInt(node, "productquantity");
-		}
+		int product = getIntNotNull(node, "product", 0);
+		int productQuantity = getIntNotNull(node, "productquantity", 1);
 		return new Item(id, name, group, category, price, volume, packagedVolume, capacity, meta, tech, marketGroup, portion, product, productQuantity, version);
 	}
 

@@ -37,7 +37,7 @@ import net.nikr.eve.jeveasset.data.settings.PriceData;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.UserItem;
 import net.nikr.eve.jeveasset.data.settings.types.BlueprintType;
-import net.nikr.eve.jeveasset.gui.shared.Formater;
+import net.nikr.eve.jeveasset.gui.shared.Formatter;
 import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.io.esi.EsiItemsGetter;
 import net.nikr.eve.jeveasset.io.local.ItemsWriter;
@@ -261,7 +261,7 @@ public final class ApiIdConverter {
 				(item.getVersion() != null && !item.getVersion().equals(EsiItemsGetter.ESI_ITEM_VERSION))) { //New ESI item version
 			if (item != null && item.getVersion().startsWith(EsiItemsGetter.ESI_ITEM_EMPTY)) {
 				String lastUpdated = item.getVersion().replace(EsiItemsGetter.ESI_ITEM_EMPTY, "");
-				String today = Formater.dateOnly(Settings.getNow());
+				String today = Formatter.dateOnly(Settings.getNow());
 				if (lastUpdated.equals(today)) {
 					return item;
 				}
@@ -270,7 +270,7 @@ public final class ApiIdConverter {
 			esiItemsGetter.run();
 			item = esiItemsGetter.getItem();
 			if (item == null) { //Empty Item
-				item = new Item(typeID, EsiItemsGetter.ESI_ITEM_EMPTY + Formater.dateOnly(Settings.getNow()));
+				item = new Item(typeID, EsiItemsGetter.ESI_ITEM_EMPTY + Formatter.dateOnly(Settings.getNow()));
 			}
 			StaticData.get().getItems().put(typeID, item);
 			ItemsWriter.save();

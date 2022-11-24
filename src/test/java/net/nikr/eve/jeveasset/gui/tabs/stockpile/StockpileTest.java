@@ -21,8 +21,6 @@
 
 package net.nikr.eve.jeveasset.gui.tabs.stockpile;
 
-import static org.junit.Assert.*;
-
 import java.util.Collections;
 import net.nikr.eve.jeveasset.TestUtil;
 import net.nikr.eve.jeveasset.data.sde.Item;
@@ -31,6 +29,7 @@ import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter.StockpileContainer;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileTotal;
+import static org.junit.Assert.*;
 import org.junit.Test;
 
 
@@ -39,12 +38,14 @@ public class StockpileTest extends TestUtil {
 	@Test
 	public void testSomeMethod() {
 		StockpileFilter filter = new StockpileFilter(MyLocation.create(0),
+				false, //Exclude
 				Collections.singletonList(0),
 				Collections.singletonList(new StockpileContainer("Container", false)),
 				Collections.singletonList(0L),
-				false, //Exclude
+				null, //JobsDaysLess
+				null, //JobsDaysMore
 				true, true, true, true, true, true, true, true, true, true, true);
-		Stockpile stockpile = new Stockpile("Name", null, Collections.singletonList(filter), 1);
+		Stockpile stockpile = new Stockpile("Name", null, Collections.singletonList(filter), 1, false);
 		StockpileItem item1 = new Stockpile.StockpileItem(stockpile, new Item(0), 0, 0, false);
 		StockpileItem item2 = new Stockpile.StockpileItem(stockpile, new Item(0), 0, 0, false);
 		StockpileTotal total1 = new StockpileTotal(stockpile);

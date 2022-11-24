@@ -39,7 +39,7 @@ import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.settings.Citadel;
 import net.nikr.eve.jeveasset.data.settings.TrackerData;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
-import net.nikr.eve.jeveasset.gui.shared.Formater;
+import net.nikr.eve.jeveasset.gui.shared.Formatter;
 import net.nikr.eve.jeveasset.gui.tabs.values.AssetValue;
 import net.nikr.eve.jeveasset.gui.tabs.values.Value;
 import net.nikr.eve.jeveasset.io.online.CitadelGetter;
@@ -78,7 +78,7 @@ public class EsiStructuresGetter extends AbstractEsiGetter {
 			}
 		}
 		total = (int)(total / 100.0 * 60.0 * 1000.0); //100 errors a minute to ms
-		return Formater.milliseconds(total, true, true);
+		return Formatter.milliseconds(total, true, true);
 	}
 
 	public static void createIDsFromOwners(List<OwnerType> ownerTypes, boolean tracker) {

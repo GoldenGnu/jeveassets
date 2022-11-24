@@ -19,27 +19,18 @@
  *
  */
 
-package net.nikr.eve.jeveasset.gui.tabs.stockpile;
+package net.nikr.eve.jeveasset.io.local.text;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
-import net.nikr.eve.jeveasset.i18n.TabsStockpile;
 
 
-public class ImportIskPerHour extends StockpileImport{
+public class ImportIskPerHour extends AbstractTextImport{
 	private static final Integer MATERIAL = 0;
 	private static final Integer QUANTITY = 1;
 
-	@Override
-	public String getTitle() {
-		return TabsStockpile.get().importIskPerHourTitle();
-	}
-
-	@Override
-	public String getHelp() {
-		return TabsStockpile.get().importIskPerHourHelp();
-	}
+	protected ImportIskPerHour() { }
 
 	@Override
 	public String getExample() {

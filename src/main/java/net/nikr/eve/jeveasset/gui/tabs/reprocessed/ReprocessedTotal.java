@@ -31,27 +31,69 @@ public class ReprocessedTotal implements ReprocessedInterface {
 
 	private final Item item;
 	private final double sellPrice;
+	private final ReprocessedGrandTotal grandTotal;
 
 	//Calculated values
+	private long count;
 	private long portionSize;
+	private long quantity100 = 0;
 	private long quantityMax = 0;
 	private long quantitySkill = 0;
 	private double valueMax = 0;
 	private double valueSkill = 0;
-	private final List<Double> prices = new ArrayList<Double>();
+	private final List<ReprocessedInterface> items = new ArrayList<>();
+	private final List<Double> prices = new ArrayList<>();
 
-	public ReprocessedTotal(Item item, double sellPrice) {
+	public ReprocessedTotal(ReprocessedGrandTotal grandTotal, Item item, double sellPrice, long count) {
 		this.item = item;
 		this.sellPrice = sellPrice;
+		this.grandTotal = grandTotal;
+		this.count = count;
 	}
 
-	public void add(final ReprocessedItem item) {
-		portionSize = item.getPortionSize();
-		quantityMax = quantityMax + item.getQuantityMax();
-		quantitySkill = quantitySkill + item.getQuantitySkill();
-		valueMax = valueMax + item.getValueMax();
-		valueSkill = valueSkill + item.getValueSkill();
-		prices.add(item.getDynamicPrice());
+	public void add(final ReprocessedInterface reprocessed) {
+		items.add(reprocessed);
+		portionSize = reprocessed.getPortionSize();
+		quantity100 = quantity100 + reprocessed.getQuantity100();
+		quantityMax = quantityMax + reprocessed.getQuantityMax();
+		quantitySkill = quantitySkill + reprocessed.getQuantitySkill();
+		valueMax = valueMax + reprocessed.getValueMax();
+		valueSkill = valueSkill + reprocessed.getValueSkill();
+		prices.add(reprocessed.getDynamicPrice());
+	}
+
+	public List<ReprocessedInterface> getItems() {
+		return items;
+	}
+
+	public long getCount() {
+		return count;
+	}
+
+	protected void reCalc() {
+		quantity100 = 0;
+		quantityMax = 0;
+		quantitySkill = 0;
+		valueMax = 0;
+		valueSkill = 0;
+		for (ReprocessedInterface reprocessed : items) {
+			quantity100 = quantity100 + reprocessed.getQuantity100();
+			quantityMax = quantityMax + reprocessed.getQuantityMax();
+			quantitySkill = quantitySkill + reprocessed.getQuantitySkill();
+			valueMax = valueMax + reprocessed.getValueMax();
+			valueSkill = valueSkill + reprocessed.getValueSkill();
+		}
+	}
+
+	public void setCount(long count) {
+		boolean update = this.count != count;
+		this.count = count;
+		if (update) {
+			reCalc();
+			if (grandTotal != null) {
+				grandTotal.reCalc();
+			}
+		}
 	}
 
 	public double getSellPrice() {
@@ -74,8 +116,13 @@ public class ReprocessedTotal implements ReprocessedInterface {
 		return getValue() < getValueSkill();
 	}
 
+	@Override
 	public boolean isGrandTotal() {
 		return false;
+	}
+
+	public ReprocessedGrandTotal getGrandTotal() {
+		return grandTotal;
 	}
 
 	@Override
@@ -96,6 +143,11 @@ public class ReprocessedTotal implements ReprocessedInterface {
 	@Override
 	public long getPortionSize() {
 		return portionSize;
+	}
+
+	@Override
+	public long getQuantity100() {
+		return quantity100;
 	}
 
 	@Override
@@ -145,11 +197,11 @@ public class ReprocessedTotal implements ReprocessedInterface {
 	@Override
 	public String getCopyString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append(getTotal().getTypeName());
+		builder.append(getTypeName());
 		builder.append("\t");
-		builder.append(getTotal().getSellPrice());
+		builder.append(getSellPrice());
 		builder.append("\t");
-		builder.append(getTotal().getValue());
+		builder.append(getValue());
 		return builder.toString();
 	}
 

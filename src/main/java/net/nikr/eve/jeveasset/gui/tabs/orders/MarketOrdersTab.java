@@ -62,6 +62,7 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
+import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.Timer;
 import javax.swing.text.StyledDocument;
@@ -70,6 +71,7 @@ import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder.MarketOrderRange;
+import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder.MarketOrderState;
 import net.nikr.eve.jeveasset.data.settings.ColorEntry;
 import net.nikr.eve.jeveasset.data.settings.ColorSettings;
 import net.nikr.eve.jeveasset.data.settings.Colors;
@@ -82,7 +84,7 @@ import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel.JStatusLabel;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.CopyHandler;
-import net.nikr.eve.jeveasset.gui.shared.Formater;
+import net.nikr.eve.jeveasset.gui.shared.Formatter;
 import net.nikr.eve.jeveasset.gui.shared.InstantToolTip;
 import net.nikr.eve.jeveasset.gui.shared.MarketDetailsColumn;
 import net.nikr.eve.jeveasset.gui.shared.MarketDetailsColumn.MarketDetailsActionListener;
@@ -95,6 +97,7 @@ import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo.AutoNumberFormat;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuUI;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
+import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
@@ -461,7 +464,7 @@ public class MarketOrdersTab extends JMainTabPrimary {
 			} else { //Sell
 				price = significantDecrement(price);
 			}
-			String copy = Formater.copyFormat(price);
+			String copy = Formatter.copyFormat(price);
 			CopyHandler.toClipboard(copy);
 			setClipboardData(copy);
 		} else {
@@ -500,7 +503,7 @@ public class MarketOrdersTab extends JMainTabPrimary {
 			if (diff < 1000) {
 				jUpdate.setText(TabsOrders.get().updateOutbidWhen("..."));
 			} else {
-				jUpdate.setText(TabsOrders.get().updateOutbidWhen(Formater.milliseconds(diff, false, false, true, true, true, true)));
+				jUpdate.setText(TabsOrders.get().updateOutbidWhen(Formatter.milliseconds(diff, false, false, true, true, true, true)));
 			}
 			jUpdate.setEnabled(false);
 		}
@@ -526,7 +529,7 @@ public class MarketOrdersTab extends JMainTabPrimary {
 				jLastUpdate.setIcon(new IconColorIcon(Colors.STRONG_RED.getColor(), images.getImage()));
 				ColorSettings.config(jLastUpdate, ColorEntry.GLOBAL_ENTRY_INVALID);
 			}
-			jLastUpdate.setText(Formater.milliseconds(diff, false, false, true, true, true, true));
+			jLastUpdate.setText(Formatter.milliseconds(diff, false, false, true, true, true, true));
 		} else {
 			jLastUpdate.setOpaque(false);
 			jLastUpdate.setIcon(images.getIcon());
@@ -660,6 +663,14 @@ public class MarketOrdersTab extends JMainTabPrimary {
 		return new BigDecimal(value).setScale(2, RoundingMode.HALF_UP).doubleValue();
 	}
 
+	private MyMarketOrder getSelectedMarketOrder() {
+		int index = jTable.getSelectedRow();
+		if (index < 0 || index >= tableModel.getRowCount()) {
+			return null;
+		}
+		return tableModel.getElementAt(index);
+	}
+
 	private class OrdersTableMenu implements TableMenu<MyMarketOrder> {
 
 		@Override
@@ -684,6 +695,35 @@ public class MarketOrdersTab extends JMainTabPrimary {
 
 		@Override
 		public void addToolMenu(JComponent jComponent) {
+			MyMarketOrder marketOrder = getSelectedMarketOrder();
+			boolean enabled = marketOrder != null && !marketOrder.isESI() && selectionModel.getSelected().size() == 1;
+
+			JMenu jStatus = new JMenu(TabsOrders.get().status());
+			jStatus.setIcon(Images.MISC_STATUS.getIcon());
+			if (!enabled) {
+				jStatus.setIcon(jStatus.getDisabledIcon());
+			}
+			jComponent.add(jStatus);
+
+			JRadioButtonMenuItem jMenuItem;
+			for (MarketOrderState state : MarketOrderState.values()) {
+				jMenuItem = new JRadioButtonMenuItem(MyMarketOrder.getStateName(state));
+				jMenuItem.setEnabled(enabled);
+				jMenuItem.setSelected(enabled && state == marketOrder.getState());
+				jMenuItem.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						if (marketOrder == null || marketOrder.isESI() || marketOrder.getState() == state) {
+							return;
+						}
+						marketOrder.setState(state);
+						tableModel.fireTableDataChanged();
+						program.saveProfile();
+					}
+				});
+				jStatus.add(jMenuItem);
+			}
+			MenuManager.addSeparator(jComponent);
 		}
 	}
 
@@ -887,7 +927,7 @@ public class MarketOrdersTab extends JMainTabPrimary {
 							LOG.info("Starting marketlog file processing for " + file.getName());
 							long start = System.currentTimeMillis();
 							update(file);
-							LOG.info("Marketlog file processing done in " + Formater.milliseconds(System.currentTimeMillis() - start) + " for " + file.getName());
+							LOG.info("Marketlog file processing done in " + Formatter.milliseconds(System.currentTimeMillis() - start) + " for " + file.getName());
 						}
 					}
 					key.reset();
@@ -928,7 +968,7 @@ public class MarketOrdersTab extends JMainTabPrimary {
 						LOG.info("Saving Profile");
 						program.saveProfile();
 					}
-					LOG.info("Marketlog update thread done in " + Formater.milliseconds(System.currentTimeMillis() - start) + " for " + file.getName());
+					LOG.info("Marketlog update thread done in " + Formatter.milliseconds(System.currentTimeMillis() - start) + " for " + file.getName());
 				}
 			}, file.getName());
 			thread.start();
@@ -1001,7 +1041,7 @@ public class MarketOrdersTab extends JMainTabPrimary {
 				} else { //Sell
 					price = significantDecrement(price);
 				}
-				String copy = Formater.copyFormat(price);
+				String copy = Formatter.copyFormat(price);
 				CopyHandler.toClipboard(copy);
 				setLastLogUpdate();
 				setClipboardData(copy);

@@ -22,6 +22,7 @@ package net.nikr.eve.jeveasset.io.shared;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,10 +35,8 @@ import net.nikr.eve.jeveasset.data.api.my.MyAsset;
 import net.nikr.eve.jeveasset.data.api.my.MyContract;
 import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
-import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob.IndustryJobState;
 import net.nikr.eve.jeveasset.data.api.my.MyJournal;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
-import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder.OrderStatus;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.api.raw.RawAsset;
 import net.nikr.eve.jeveasset.data.api.raw.RawContract;
@@ -60,27 +59,27 @@ public class DataConverterTest extends TestUtil {
 
 	@Test
 	public void testAssetIndustryJob() {
+		Date date = new Date();
 		for (ConverterTestOptions options : ConverterTestOptionsGetter.getConverterOptions()) {
-			MyIndustryJob industryJob = ConverterTestUtil.getMyIndustryJob(ConverterTestUtil.getEsiOwner(options), false, true, options);
+			EsiOwner esiOwner = ConverterTestUtil.getEsiOwner(options);
+			esiOwner.setAssetLastUpdate(date);
+			MyIndustryJob industryJob = ConverterTestUtil.getMyIndustryJob(esiOwner, false, true, options);
 			industryJob.setJobID(industryJob.getJobID() + 1);
 			industryJob.setBlueprintID(industryJob.getBlueprintID() + 1);
 			industryJob.setStationID(options.getLocationTypeEveApi());
-			List<MyAsset> assets = DataConverter.assetIndustryJob(Collections.singletonList(industryJob), true);
-			if (assets.isEmpty()) {
-				assertTrue(industryJob.getState() == IndustryJobState.STATE_DELIVERED
-				|| industryJob.getState() == IndustryJobState.STATE_CANCELLED
-				|| industryJob.getState() == IndustryJobState.STATE_REVERTED);
-			} else {
-				MyAsset asset = assets.get(0);
-				//Quantity
-				assertEquals((Object) asset.getQuantity(), -2);
-				asset.setQuantity(options.getInteger());
-				assertEquals(asset.getItemFlag().getFlagName(), General.get().industryJobFlag());
-				assertEquals(asset.getItemFlag().getFlagText(), General.get().industryJobFlag());
-				//ItemFlag
-				asset.setItemFlag(options.getItemFlag());
-				ConverterTestUtil.testValues(assets.get(0), options);
-			}
+			industryJob.setCompletedDate(new Date(date.getTime() + 1L));
+			List<MyAsset> assets = DataConverter.assetIndustryJob(Collections.singletonList(industryJob), true, true);
+			assertFalse(assets.isEmpty());
+
+			MyAsset asset = assets.get(0);
+			//Quantity
+			assertEquals((Object) asset.getQuantity(), -2);
+			asset.setQuantity(options.getInteger());
+			assertEquals(asset.getItemFlag().getFlagName(), General.get().industryJobFlag());
+			assertEquals(asset.getItemFlag().getFlagText(), General.get().industryJobFlag());
+			//ItemFlag
+			asset.setItemFlag(options.getItemFlag());
+			ConverterTestUtil.testValues(assets.get(0), options);
 		}
 	}
 
@@ -362,10 +361,8 @@ public class DataConverterTest extends TestUtil {
 					for (MyMarketOrder marketOrder : esiOwner.getMarketOrders()) {
 						if (marketOrder.getOrderID() <= 10) {
 							assertThat(marketOrder.getState(), is(MarketOrderState.UNKNOWN));
-							assertThat(marketOrder.getStatus(), is(OrderStatus.UNKNOWN));
 						} else {
 							assertThat(marketOrder.getState(), is(MarketOrderState.OPEN));
-							assertThat(marketOrder.getStatus(), is(OrderStatus.ACTIVE));
 						}
 					}
 				}

@@ -72,6 +72,9 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 		EVEPRAISAL,
 		ADAM4EVE,
 		EVEHUB,
+		EVEMISSIONEER_SYSTEM,
+		EVEMISSIONEER_CONSTELLATION,
+		EVEMISSIONEER_REGION,
 	}
 
 	public static enum LookupLinks {
@@ -152,6 +155,36 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 				Set<String> urls = new HashSet<>();
 				for (MyLocation location : menuData.getRegionLocations()) {
 					urls.add("https://zkillboard.com/region/" +location.getLocationID() + "/");
+				}
+				return urls;
+			}
+		},
+		EVEMISSIONEER_SYSTEM() {
+			@Override
+			public Set<String> getLinks(MenuData<?> menuData) {
+				Set<String> urls = new HashSet<>();
+				for (MyLocation location : menuData.getSystemLocations()) {
+					urls.add("https://evemissioneer.com/s/" +location.getLocationID());
+				}
+				return urls;
+			}
+		},
+		EVEMISSIONEER_CONSTELLATION() {
+			@Override
+			public Set<String> getLinks(MenuData<?> menuData) {
+				Set<String> urls = new HashSet<>();
+				for (MyLocation location : menuData.getConstellationLocations()) {
+					urls.add("https://evemissioneer.com/c/" +location.getLocationID());
+				}
+				return urls;
+			}
+		},
+		EVEMISSIONEER_REGION() {
+			@Override
+			public Set<String> getLinks(MenuData<?> menuData) {
+				Set<String> urls = new HashSet<>();
+				for (MyLocation location : menuData.getRegionLocations()) {
+					urls.add("https://evemissioneer.com/r/" +location.getLocationID());
 				}
 				return urls;
 			}
@@ -337,6 +370,10 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 	private final JMenuItem jzKillboardConstellation;
 	private final JMenuItem jzKillboardRegion;
 	private final JMenuItem jzKillboardLocations;
+	private final JMenu jEveMissioneer;
+	private final JMenuItem jEveMissioneerSystem;
+	private final JMenuItem jEveMissioneerConstellation;
+	private final JMenuItem jEveMissioneerRegion;
 	private final JMenu jMarket;
 	private final JMenuItem jEveMarketer;
 	private final JMenuItem jFuzzworkMarket;
@@ -433,6 +470,28 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 		jDotlanLocations.setIcon(Images.LOC_LOCATIONS.getIcon());
 		jDotlanLocations.setActionCommand(MenuLookupAction.EVEMAPS_DOTLAN_OVERVIEW_GROUP.name());
 		jDotlanLocations.addActionListener(listener);
+
+		jEveMissioneer = new JMenu(GuiShared.get().eveMissioneer());
+		jEveMissioneer.setIcon(Images.LINK_EVEMISSIONEER.getIcon());
+		jLocations.add(jEveMissioneer);
+
+		jEveMissioneerSystem = new JMenuItem(GuiShared.get().system());
+		jEveMissioneerSystem.setIcon(Images.LOC_SYSTEM.getIcon());
+		jEveMissioneerSystem.setActionCommand(MenuLookupAction.EVEMISSIONEER_SYSTEM.name());
+		jEveMissioneerSystem.addActionListener(listener);
+		jEveMissioneer.add(jEveMissioneerSystem);
+
+		jEveMissioneerConstellation = new JMenuItem(GuiShared.get().constellation());
+		jEveMissioneerConstellation.setIcon(Images.LOC_CONSTELLATION.getIcon());
+		jEveMissioneerConstellation.setActionCommand(MenuLookupAction.EVEMISSIONEER_CONSTELLATION.name());
+		jEveMissioneerConstellation.addActionListener(listener);
+		jEveMissioneer.add(jEveMissioneerConstellation);
+
+		jEveMissioneerRegion = new JMenuItem(GuiShared.get().region());
+		jEveMissioneerRegion.setIcon(Images.LOC_REGION.getIcon());
+		jEveMissioneerRegion.setActionCommand(MenuLookupAction.EVEMISSIONEER_REGION.name());
+		jEveMissioneerRegion.addActionListener(listener);
+		jEveMissioneer.add(jEveMissioneerRegion);
 
 		jMarket = new JMenu(GuiShared.get().market());
 		jMarket.setIcon(Images.ORDERS_SELL.getIcon());
@@ -559,6 +618,9 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 		jzKillboardSystem.setEnabled(!menuData.getSystemLocations().isEmpty());
 		jzKillboardConstellation.setEnabled(!menuData.getConstellationLocations().isEmpty());
 		jzKillboardRegion.setEnabled(!menuData.getRegionLocations().isEmpty());
+		jEveMissioneerSystem.setEnabled(!menuData.getSystemLocations().isEmpty());
+		jEveMissioneerConstellation.setEnabled(!menuData.getConstellationLocations().isEmpty());
+		jEveMissioneerRegion.setEnabled(!menuData.getRegionLocations().isEmpty());
 	//Market
 		jMarket.setEnabled(!menuData.getMarketTypeIDs().isEmpty());
 		jEveMarketer.setEnabled(!menuData.getMarketTypeIDs().isEmpty());
@@ -687,6 +749,12 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 				urls.addAll(LookupLinks.EVEMAPS_DOTLAN_CONSTELLATION.getLinks(menuData));
 				urls.addAll(LookupLinks.EVEMAPS_DOTLAN_REGION.getLinks(menuData));
 				DesktopUtil.browse(urls, program);
+			} else if (MenuLookupAction.EVEMISSIONEER_SYSTEM.name().equals(e.getActionCommand())) {
+				DesktopUtil.browse(LookupLinks.EVEMISSIONEER_SYSTEM.getLinks(menuData), program);
+			} else if (MenuLookupAction.EVEMISSIONEER_CONSTELLATION.name().equals(e.getActionCommand())) {
+				DesktopUtil.browse(LookupLinks.EVEMISSIONEER_CONSTELLATION.getLinks(menuData), program);
+			} else if (MenuLookupAction.EVEMISSIONEER_REGION.name().equals(e.getActionCommand())) {
+				DesktopUtil.browse(LookupLinks.EVEMISSIONEER_REGION.getLinks(menuData), program);
 		//Market
 			} else if (MenuLookupAction.EVEMARKETER.name().equals(e.getActionCommand())) {
 				DesktopUtil.browse(LookupLinks.EVEMARKETER.getLinks(menuData), program);

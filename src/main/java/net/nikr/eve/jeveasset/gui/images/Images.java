@@ -112,6 +112,7 @@ public enum Images {
 	LINK_EVEHUB ("link_evehub.png"),
 	LINK_KHON_SPACE ("link_khon_space.png"),
 	LINK_EVE_COOKBOOK ("link_eve_cookbook.png"),
+	LINK_EVEMISSIONEER ("link_evemissioneer.png"),
 
 	LOC_GROUPS ("loc_groups.png"),
 	LOC_PIN_COMMAND ("loc_pin_command.png"),
@@ -150,6 +151,7 @@ public enum Images {
 	INCLUDE_ORDERS_SELECTED ("include_orders_selected.png"),
 	INCLUDE_ORDERS ("include_orders.png"),
 	INCLUDE_PACKAGED ("include_packaged.png"),
+	INCLUDE_ADD_FILTER ("include_add_filter.png"),
 
 	MISC_EVE ("misc_eve.png"),
 	MISC_EVEKIT ("misc_evekit.png"),
@@ -176,6 +178,15 @@ public enum Images {
 	MISC_SUM ("misc_sum.png"),
 	MISC_FORMULA ("misc_formula.png"),
 	MISC_REACTION ("misc_reaction.png"),
+	MISC_CONTRACTS ("misc_contracts.png"),
+	MISC_CONTRACTS_CORP ("misc_contracts_corp.png"),
+	MISC_MARKET_ORDERS ("misc_market_orders.png"),
+	MISC_AVG ("misc_avg.png"),
+	MISC_COUNT ("misc_count.png"),
+	MISC_INFO ("misc_info.png"),
+	MISC_MAX ("misc_max.png"),
+	MISC_MIN ("misc_min.png"),
+	MISC_STATUS ("misc_status.png"),
 
 	SETTINGS_TOOLS ("settings_tools.png"),
 	SETTINGS_PRICE_DATA ("settings_price_data.png"),
@@ -192,6 +203,13 @@ public enum Images {
 	SETTINGS_COLOR_CHECK_WHITE_ALPHA ("settings_color_check_white_alpha.png"),
 	SETTINGS_COLOR_FOREGROUND ("settings_color_foreground.png"),
 	SETTINGS_COLOR_BACKGROUND ("settings_color_background.png"),
+
+	SLOTS_CONTRACTS ("slots_contracts.png"),
+	SLOTS_CONTRACTS_CORP ("slots_contracts_corp.png"),
+	SLOTS_MANUFACTURING ("slots_manufacturing.png"),
+	SLOTS_MARKET_ORDERS ("slots_market_orders.png"),
+	SLOTS_REACTIONS ("slots_reactions.png"),
+	SLOTS_RESEARCH ("slots_research.png"),
 
 	STOCKPILE_SHOPPING_LIST ("stockpile_shopping_list.png"),
 
@@ -210,7 +228,7 @@ public enum Images {
 	TOOL_VALUES ("tool_values.png"),
 	TOOL_VALUE_TABLE ("tool_value_table.png"),
 	TOOL_INDUSTRY_JOBS ("tool_industry_jobs.png"),
-	TOOL_INDUSTRY_SLOTS ("tool_industry_slots.png"),
+	TOOL_SLOTS ("tool_slots.png"),
 	TOOL_ROUTING ("tool_routing.png"),
 	TOOL_MATERIALS ("tool_materials.png"),
 	TOOL_SHIP_LOADOUTS ("tool_ship_loadouts.png"),

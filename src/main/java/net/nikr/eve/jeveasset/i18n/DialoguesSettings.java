@@ -70,6 +70,7 @@ public abstract class DialoguesSettings extends Bundle {
 	public abstract String includeBuyContracts();
 	public abstract String includeBuyOrders();
 	public abstract String includeManufacturing();
+	public abstract String includeCopying();
 
 	// used in OverviewToolSettingsPanel
 	public abstract String overview();

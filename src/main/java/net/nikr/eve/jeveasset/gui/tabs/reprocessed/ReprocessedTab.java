@@ -30,28 +30,30 @@ import ca.odell.glazedlists.SortedList;
 import ca.odell.glazedlists.swing.DefaultEventSelectionModel;
 import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import ca.odell.glazedlists.swing.TableComparatorChooser;
-import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.JLabel;
 import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
-import javax.swing.SwingConstants;
+import javax.swing.JTextField;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.StaticData;
 import net.nikr.eve.jeveasset.data.settings.types.LocationType;
 import net.nikr.eve.jeveasset.gui.images.Images;
+import net.nikr.eve.jeveasset.gui.shared.TextImport;
+import net.nikr.eve.jeveasset.gui.shared.TextImport.TextImportHandler;
+import net.nikr.eve.jeveasset.gui.shared.components.JDropDownButton;
 import net.nikr.eve.jeveasset.gui.shared.components.JFixedToolBar;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTabSecondary;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
@@ -66,6 +68,8 @@ import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
 import net.nikr.eve.jeveasset.gui.shared.table.TableFormatFactory;
 import net.nikr.eve.jeveasset.gui.tabs.reprocessed.ReprocessedSeparatorTableCell.ReprocessedCellAction;
 import net.nikr.eve.jeveasset.i18n.TabsReprocessed;
+import net.nikr.eve.jeveasset.io.local.text.TextImportType;
+import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 
 
 public class ReprocessedTab extends JMainTabSecondary {
@@ -74,7 +78,11 @@ public class ReprocessedTab extends JMainTabSecondary {
 		COLLAPSE,
 		EXPAND,
 		CLEAR,
-		ADD_ITEM
+		ADD_ITEM,
+		IMPORT_EFT,
+		IMPORT_ISK_PER_HOUR,
+		IMPORT_MULTIBUY,
+		IMPORT_STOCKPILE_SHOPPING_LIST,
 	}
 
 	//GUI
@@ -82,6 +90,7 @@ public class ReprocessedTab extends JMainTabSecondary {
 
 	//Dialogs
 	private final JReprocessedAddItemDialog jAddItemDialog;
+	private final TextImport textImport;
 
 	//Table
 	private final ReprocessedFilterControl filterControl;
@@ -96,7 +105,7 @@ public class ReprocessedTab extends JMainTabSecondary {
 	private final ListenerClass listener = new ListenerClass();
 
 	//Data
-	private final Set<Integer> typeIDs = new HashSet<>();
+	private final Map<Item, Long> items = new HashMap<>();
 	private final ReprocessedData reprocessedData;
 
 	public static final String NAME = "reprocessed"; //Not to be changed!
@@ -105,6 +114,18 @@ public class ReprocessedTab extends JMainTabSecondary {
 		super(program, NAME, TabsReprocessed.get().title(), Images.TOOL_REPROCESSED.getIcon(), true);
 
 		reprocessedData = new ReprocessedData(program);
+
+		//Add item dialog
+		ArrayList<Item> reprocessableItems = new ArrayList<>();
+		for(Item item : StaticData.get().getItems().values()) {
+			if(!item.getReprocessedMaterial().isEmpty()) {
+				reprocessableItems.add(item);
+			}
+		}
+		jAddItemDialog = new JReprocessedAddItemDialog(program);
+		jAddItemDialog.updateData(reprocessableItems);
+
+		textImport = new TextImport(program);
 
 		JFixedToolBar jToolBarLeft = new JFixedToolBar();
 
@@ -118,13 +139,28 @@ public class ReprocessedTab extends JMainTabSecondary {
 		jClear.addActionListener(listener);
 		jToolBarLeft.addButton(jClear);
 
-		jToolBarLeft.addSpace(30);
+		JDropDownButton jImport = new JDropDownButton(TabsReprocessed.get().importButton(), Images.EDIT_IMPORT.getIcon());
+		jToolBarLeft.addButton(jImport);
 
-		JLabel jInfo = new JLabel(TabsReprocessed.get().info());
-		jInfo.setMinimumSize(new Dimension(100, Program.getButtonsHeight()));
-		jInfo.setMaximumSize(new Dimension(Short.MAX_VALUE, Program.getButtonsHeight()));
-		jInfo.setHorizontalAlignment(SwingConstants.LEFT);
-		jToolBarLeft.add(jInfo);
+		JMenuItem jImportEFT = new JMenuItem(TabsReprocessed.get().importEft(), Images.TOOL_SHIP_LOADOUTS.getIcon());
+		jImportEFT.setActionCommand(ReprocessedAction.IMPORT_EFT.name());
+		jImportEFT.addActionListener(listener);
+		jImport.add(jImportEFT);
+
+		JMenuItem jImportIskPerHour = new JMenuItem(TabsReprocessed.get().importIskPerHour(), Images.TOOL_VALUES.getIcon());
+		jImportIskPerHour.setActionCommand(ReprocessedAction.IMPORT_ISK_PER_HOUR.name());
+		jImportIskPerHour.addActionListener(listener);
+		jImport.add(jImportIskPerHour);
+
+		JMenuItem jImportEve = new JMenuItem(TabsReprocessed.get().importEveMultibuy(), Images.MISC_EVE.getIcon());
+		jImportEve.setActionCommand(ReprocessedAction.IMPORT_MULTIBUY.name());
+		jImportEve.addActionListener(listener);
+		jImport.add(jImportEve);
+
+		JMenuItem jImportShoppingList = new JMenuItem(TabsReprocessed.get().importStockpilesShoppingList(), Images.STOCKPILE_SHOPPING_LIST.getIcon());
+		jImportShoppingList.setActionCommand(ReprocessedAction.IMPORT_STOCKPILE_SHOPPING_LIST.name());
+		jImportShoppingList.addActionListener(listener);
+		jImport.add(jImportShoppingList);
 
 		JFixedToolBar jToolBarRight = new JFixedToolBar();
 
@@ -180,16 +216,6 @@ public class ReprocessedTab extends JMainTabSecondary {
 		//Menu
 		installTableTool(new ReprocessedTableMenu(), tableFormat, tableModel, jTable, filterControl, ReprocessedInterface.class);
 
-		//Add item dialog
-		ArrayList<Item> reprocessableItems = new ArrayList<>();
-		for(Item item : StaticData.get().getItems().values()) {
-			if(!item.getReprocessedMaterial().isEmpty()) {
-				reprocessableItems.add(item);
-			}
-		}
-		jAddItemDialog = new JReprocessedAddItemDialog(program);
-		jAddItemDialog.updateData(reprocessableItems);
-
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
 				.addComponent(filterControl.getPanel())
@@ -216,7 +242,7 @@ public class ReprocessedTab extends JMainTabSecondary {
 		//Save separator expanded/collapsed state
 		jTable.saveExpandedState();
 		//Update Data
-		reprocessedData.updateData(eventList, typeIDs);
+		reprocessedData.updateData(eventList, items);
 		//Restore separator expanded/collapsed state
 		jTable.loadExpandedState();
 	}
@@ -236,13 +262,31 @@ public class ReprocessedTab extends JMainTabSecondary {
 		return new ArrayList<>(); //No Location
 	}
 
-	public void set(final Set<Integer> newTypeIDs) {
-		typeIDs.clear();
-		add(newTypeIDs);
+	public void set(final Map<Item, Long> newItems) {
+		items.clear();
+		add(newItems);
 	}
 
-	public void add(final Set<Integer> newTypeIDs) {
-		typeIDs.addAll(newTypeIDs);
+	public void add(final Map<Item, Long> newItems) {
+		for (Map.Entry<Item, Long> entry : newItems.entrySet()) {
+			Long previous = items.put(entry.getKey(), entry.getValue());
+			if (previous != null) {
+				items.put(entry.getKey(), entry.getValue() + previous);
+			}
+		}
+	}
+
+	private ReprocessedInterface getSelectedReprocessed() {
+		int index = jTable.getSelectedRow();
+		if (index < 0 || index >= tableModel.getRowCount()) {
+			return null;
+		}
+		Object o = tableModel.getElementAt(index);
+		if (o instanceof SeparatorList.Separator<?>) {
+			SeparatorList.Separator<?> separator = (SeparatorList.Separator<?>) o;
+			return (ReprocessedInterface) separator.first();
+		}
+		return null;
 	}
 
 	public void show() {
@@ -251,6 +295,21 @@ public class ReprocessedTab extends JMainTabSecondary {
 			updateData(); //Also update data when already open
 		}
 		program.getMainWindow().addTab(this);
+	}
+
+	private void importText(TextImportType type) {
+		textImport.importText(type, new TextImportHandler() {
+			@Override
+			public void addItems(Map<Integer, Double> data) {
+				Map<Item, Long> newItems = new HashMap<>();
+				for (Map.Entry<Integer, Double> entry : data.entrySet()) {
+					Item item = ApiIdConverter.getItemUpdate(entry.getKey());
+					newItems.put(item, entry.getValue().longValue());
+				}
+				add(newItems);
+				updateData();
+			}
+		});
 	}
 
 	private class ReprocessedTableMenu implements TableMenu<ReprocessedInterface> {
@@ -277,35 +336,59 @@ public class ReprocessedTab extends JMainTabSecondary {
 	}
 
 	private class ListenerClass implements ActionListener {
+
 		@Override
 		public void actionPerformed(final ActionEvent e) {
 			if (ReprocessedAction.COLLAPSE.name().equals(e.getActionCommand())) {
 				jTable.expandSeparators(false);
-			}
-			if (ReprocessedAction.EXPAND.name().equals(e.getActionCommand())) {
+			} else if (ReprocessedAction.EXPAND.name().equals(e.getActionCommand())) {
 				jTable.expandSeparators(true);
-			}
-			if (ReprocessedAction.CLEAR.name().equals(e.getActionCommand())) {
-				typeIDs.clear();
+			} else if (ReprocessedAction.CLEAR.name().equals(e.getActionCommand())) {
+				items.clear();
 				updateData();
-			}
-			if (ReprocessedCellAction.REMOVE.name().equals(e.getActionCommand())) {
-				int index = jTable.getSelectedRow();
-				Object o = tableModel.getElementAt(index);
-				if (o instanceof SeparatorList.Separator<?>) {
-					SeparatorList.Separator<?> separator = (SeparatorList.Separator<?>) o;
-					ReprocessedInterface item = (ReprocessedInterface) separator.first();
-					ReprocessedTotal total = item.getTotal();
-					typeIDs.remove(total.getItem().getTypeID());
-					updateData();
+			} else if (ReprocessedCellAction.REMOVE.name().equals(e.getActionCommand())) {
+				ReprocessedInterface reprocessed = getSelectedReprocessed();
+				if (reprocessed != null) {
+					ReprocessedTotal total = reprocessed.getTotal();
+					items.remove(total.getItem());
+					reprocessedData.removeItem(eventList, total);
 				}
-			}
-			if (ReprocessedAction.ADD_ITEM.name().equals(e.getActionCommand())) {
+			} else if (ReprocessedAction.ADD_ITEM.name().equals(e.getActionCommand())) {
 				Item selectedItem = jAddItemDialog.show();
-				if(selectedItem != null) {
-					typeIDs.add(selectedItem.getTypeID());
-					updateData();
+				if (selectedItem != null) {
+					items.put(selectedItem, 1L);
+					reprocessedData.addItem(eventList, selectedItem, 1L);
 				}
+			} else if (ReprocessedCellAction.UPDATE_COUNT.name().equals(e.getActionCommand())) {
+				Object source = e.getSource();
+				ReprocessedInterface reprocessed = getSelectedReprocessed();
+				if (reprocessed != null && source instanceof JTextField) {
+					ReprocessedTotal total = reprocessed.getTotal();
+					JTextField jCount = (JTextField) source;
+					long count;
+					try {
+						count = Long.valueOf(jCount.getText());
+					} catch (NumberFormatException ex) {
+						count = 1;
+					}
+					Item item = total.getItem();
+					Long previous = total.getCount();
+					if (count != previous) {
+						if (!total.isGrandTotal()) {
+							items.put(item, count);
+						}
+						total.setCount(count);
+						tableModel.fireTableDataChanged();
+					}
+				}
+			} else if (ReprocessedAction.IMPORT_EFT.name().equals(e.getActionCommand())) { //Add stockpile (EFT Import)
+				importText(TextImportType.EFT);
+			} else if (ReprocessedAction.IMPORT_ISK_PER_HOUR.name().equals(e.getActionCommand())) { //Add stockpile (Isk Per Hour)
+				importText(TextImportType.ISK_PER_HOUR);
+			} else if (ReprocessedAction.IMPORT_MULTIBUY.name().equals(e.getActionCommand())) { //Add stockpile (Eve Multibuy)
+				importText(TextImportType.EVE_MULTIBUY);
+			} else if (ReprocessedAction.IMPORT_STOCKPILE_SHOPPING_LIST.name().equals(e.getActionCommand())) { //Add stockpile (Shopping List)
+				importText(TextImportType.STCOKPILE_SHOPPING_LIST);
 			}
 		}
 	}

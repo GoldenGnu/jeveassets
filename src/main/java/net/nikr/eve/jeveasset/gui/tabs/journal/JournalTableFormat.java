@@ -62,7 +62,7 @@ public enum JournalTableFormat implements EnumTableColumn<MyJournal> {
 		}
 		@Override
 		public Object getColumnValue(final MyJournal from) {
-			return from.getRefTypeFormated();
+			return from.getRefTypeFormatted();
 		}
 	},
 	AMOUNT(Double.class, GlazedLists.comparableComparator()) {
@@ -122,7 +122,7 @@ public enum JournalTableFormat implements EnumTableColumn<MyJournal> {
 		}
 		@Override
 		public Object getColumnValue(final MyJournal from) {
-			return from.getAccountKeyFormated();
+			return from.getAccountKeyFormatted();
 		}
 	},
 	TAX_AMOUNT(Double.class, GlazedLists.comparableComparator()) {
@@ -188,23 +188,8 @@ public enum JournalTableFormat implements EnumTableColumn<MyJournal> {
 		return comparator;
 	}
 	@Override
-	public boolean isColumnEditable(final Object baseObject) {
-		return false;
-	}
-	@Override
-	public boolean isShowDefault() {
-		return true;
-	}
-	@Override
-	public boolean setColumnValue(final Object baseObject, final Object editedValue) {
-		return false;
-	}
-	@Override
 	public String toString() {
 		return getColumnName();
 	}
-	//XXX - TableFormat.getColumnValue(...) Workaround
-	@Override public abstract Object getColumnValue(final MyJournal from);
-	//XXX - TableFormat.getColumnName() Workaround
-	@Override public abstract String getColumnName();
+
 }

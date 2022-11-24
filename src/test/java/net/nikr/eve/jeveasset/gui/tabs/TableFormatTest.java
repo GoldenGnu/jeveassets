@@ -39,7 +39,12 @@ import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.sde.ReprocessedMaterial;
 import net.nikr.eve.jeveasset.data.settings.tag.Tags;
 import net.nikr.eve.jeveasset.gui.dialogs.account.AccountTableFormat;
+import net.nikr.eve.jeveasset.gui.dialogs.settings.ColorsTableFormat;
+import net.nikr.eve.jeveasset.gui.shared.filter.Filter.AllColumn;
+import net.nikr.eve.jeveasset.gui.shared.filter.FilterMatcherTest.TestEnum;
 import net.nikr.eve.jeveasset.gui.shared.menu.JFormulaDialog;
+import net.nikr.eve.jeveasset.gui.shared.table.ColumnManager.FormulaColumn;
+import net.nikr.eve.jeveasset.gui.shared.table.ColumnManager.JumpColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.tabs.assets.AssetTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractsExtendedTableFormat;
@@ -61,10 +66,12 @@ import net.nikr.eve.jeveasset.gui.tabs.reprocessed.ReprocessedInterface;
 import net.nikr.eve.jeveasset.gui.tabs.reprocessed.ReprocessedItem;
 import net.nikr.eve.jeveasset.gui.tabs.reprocessed.ReprocessedTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.reprocessed.ReprocessedTotal;
+import net.nikr.eve.jeveasset.gui.tabs.slots.SlotsTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileExtendedTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileTableFormat;
+import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerSkillPointsFilterTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.transaction.TransactionTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.tree.TreeAsset;
 import net.nikr.eve.jeveasset.gui.tabs.tree.TreeTableFormat;
@@ -99,13 +106,24 @@ public class TableFormatTest extends TestUtil {
 			EsiOwner owner = ConverterTestUtil.getEsiOwner(options);
 			Item item = new Item(INTEGER_VALUE, STRING_VALUE, STRING_VALUE, STRING_VALUE, LONG_VALUE, FLOAT_VALUE, FLOAT_VALUE, FLOAT_VALUE, INTEGER_VALUE, STRING_VALUE, BOOLEAN_VALUE, INTEGER_VALUE, INTEGER_VALUE, INTEGER_VALUE, STRING_VALUE);
 			MyLocation location = new MyLocation(LONG_VALUE, STRING_VALUE, LONG_VALUE, STRING_VALUE, LONG_VALUE, STRING_VALUE, LONG_VALUE, STRING_VALUE, STRING_VALUE);
+		//Diaglogs
+			//Options
+			test(ColorsTableFormat.class);
+			//Accounts
+			test(AccountTableFormat.class);
+			for (AccountTableFormat tableFormat : AccountTableFormat.values()) {
+				test(tableFormat, tableFormat.getType(), tableFormat.getColumnValue(owner));
+			}
 		//Primary Tools
 			//Asset
+			test(AssetTableFormat.class);
 			MyAsset asset = ConverterTestUtil.getMyAsset(owner, setNull, setValues, options);
 			for (AssetTableFormat tableFormat : AssetTableFormat.values()) {
 				test(tableFormat, tableFormat.getType(), tableFormat.getColumnValue(asset));
 			}
 			//Contract
+			test(ContractsTableFormat.class);
+			test(ContractsExtendedTableFormat.class);
 			MyContract saveMyContract = ConverterTestUtil.getMyContract(setNull, setValues, options);
 			MyContractItem saveMyContractItem = ConverterTestUtil.getMyContractItem(saveMyContract, setNull, setValues, options);
 			for (ContractsTableFormat tableFormat : ContractsTableFormat.values()) {
@@ -115,35 +133,40 @@ public class TableFormatTest extends TestUtil {
 				test(tableFormat, tableFormat.getType(), tableFormat.getColumnValue(saveMyContractItem));
 			}
 			//Journal
+			test(JournalTableFormat.class);
 			MyJournal saveMyJournal = ConverterTestUtil.getMyJournal(owner, setNull, setValues, options);
 			for (JournalTableFormat tableFormat : JournalTableFormat.values()) {
 				test(tableFormat, tableFormat.getType(), tableFormat.getColumnValue(saveMyJournal));
 			}
-			//MarketOrder
+			//Market Order
+			test(MarketTableFormat.class);
 			MyMarketOrder saveMyMarketOrder = ConverterTestUtil.getMyMarketOrder(owner, setNull, setValues, options);
 			for (MarketTableFormat tableFormat : MarketTableFormat.values()) {
 				test(tableFormat, tableFormat.getType(), tableFormat.getColumnValue(saveMyMarketOrder));
 			}
 			//Transaction
+			test(TransactionTableFormat.class);
 			MyTransaction saveMyTransaction = ConverterTestUtil.getMyTransaction(owner, setNull, setValues, options);
 			for (TransactionTableFormat tableFormat : TransactionTableFormat.values()) {
 				test(tableFormat, tableFormat.getType(), tableFormat.getColumnValue(saveMyTransaction));
 			}
-			//IndustryJob
+			//Industry Job
+			test(IndustryJobTableFormat.class);
 			MyIndustryJob saveMyIndustryJob = ConverterTestUtil.getMyIndustryJob(owner, setNull, setValues, options);
 			for (IndustryJobTableFormat tableFormat : IndustryJobTableFormat.values()) {
 				test(tableFormat, tableFormat.getType(), tableFormat.getColumnValue(saveMyIndustryJob));
 			}
-			//Owners
-			for (AccountTableFormat tableFormat : AccountTableFormat.values()) {
-				test(tableFormat, tableFormat.getType(), tableFormat.getColumnValue(owner));
-			}
 		//Secondary Tools
+			//Slots
+			test(SlotsTableFormat.class);
 			//Item
+			test(ItemTableFormat.class);
 			for (ItemTableFormat tableFormat : ItemTableFormat.values()) {
 				test(tableFormat, tableFormat.getType(), tableFormat.getColumnValue(item));
 			}
 			//Loadout
+			test(LoadoutTableFormat.class);
+			test(LoadoutExtendedTableFormat.class);
 			Loadout loadout = new Loadout(item, location, owner, STRING_VALUE, asset, STRING_VALUE, DOUBLE_VALUE, DOUBLE_VALUE, LONG_VALUE, BOOLEAN_VALUE);
 			for (LoadoutTableFormat tableFormat : LoadoutTableFormat.values()) {
 				test(tableFormat, tableFormat.getType(), tableFormat.getColumnValue(loadout));
@@ -152,14 +175,16 @@ public class TableFormatTest extends TestUtil {
 				test(tableFormat, tableFormat.getType(), tableFormat.getColumnValue(loadout));
 			}
 			//Overview
+			test(OverviewTableFormat.class);
 			Overview overview = new Overview(STRING_VALUE, location, DOUBLE_VALUE, DOUBLE_VALUE, LONG_VALUE, DOUBLE_VALUE);
 			for (OverviewTableFormat tableFormat : OverviewTableFormat.values()) {
 				test(tableFormat, tableFormat.getType(), tableFormat.getColumnValue(overview));
 			}
 			//Reprocessed
+			test(ReprocessedTableFormat.class);
 			ReprocessedMaterial reprocessedMaterial = new ReprocessedMaterial(INTEGER_VALUE, INTEGER_VALUE, INTEGER_VALUE);
-			ReprocessedTotal parent = new ReprocessedTotal(item, DOUBLE_VALUE);
-			ReprocessedInterface reprocessedItem = new ReprocessedItem(parent, item, reprocessedMaterial, INTEGER_VALUE, DOUBLE_VALUE);
+			ReprocessedTotal parent = new ReprocessedTotal(null, item, DOUBLE_VALUE, LONG_VALUE);
+			ReprocessedInterface reprocessedItem = new ReprocessedItem(parent, item, reprocessedMaterial, BOOLEAN_VALUE, DOUBLE_VALUE);
 			for (ReprocessedTableFormat tableFormat : ReprocessedTableFormat.values()) {
 				test(tableFormat, tableFormat.getType(), tableFormat.getColumnValue(reprocessedItem));
 			}
@@ -167,7 +192,9 @@ public class TableFormatTest extends TestUtil {
 				test(tableFormat, tableFormat.getType(), tableFormat.getColumnValue(reprocessedItem));
 			}
 			//StockpileItem
-			Stockpile stockpile = new Stockpile(STRING_VALUE, null, new ArrayList<>(), DOUBLE_VALUE);
+			test(StockpileTableFormat.class);
+			test(StockpileExtendedTableFormat.class);
+			Stockpile stockpile = new Stockpile(STRING_VALUE, null, new ArrayList<>(), DOUBLE_VALUE, BOOLEAN_VALUE);
 			stockpile.setOwnerName(Collections.singletonList(owner.getOwnerName()));
 			stockpile.setFlagName(Collections.singleton(asset.getItemFlag()));
 			StockpileItem stockpileItem = new StockpileItem(stockpile, item, INTEGER_VALUE, DOUBLE_VALUE, BOOLEAN_VALUE);
@@ -180,6 +207,8 @@ public class TableFormatTest extends TestUtil {
 				test(tableFormat, tableFormat.getType(), tableFormat.getColumnValue(stockpileItem));
 			}
 			//Material
+			test(MaterialTableFormat.class);
+			test(MaterialExtendedTableFormat.class);
 			Material material = new Material(Material.MaterialType.LOCATIONS, asset, STRING_VALUE, STRING_VALUE, STRING_VALUE);
 			for (MaterialTableFormat tableFormat : MaterialTableFormat.values()) {
 				test(tableFormat, tableFormat.getType(), tableFormat.getColumnValue(material));
@@ -187,10 +216,16 @@ public class TableFormatTest extends TestUtil {
 			for (MaterialExtendedTableFormat tableFormat : MaterialExtendedTableFormat.values()) {
 				test(tableFormat, tableFormat.getType(), tableFormat.getColumnValue(material));
 			}
+			//Isk
+			test(ValueTableFormat.class);
 			Value value = new Value(STRING_VALUE, DATE_VALUE);
 			for (ValueTableFormat tableFormat : ValueTableFormat.values()) {
 				test(tableFormat, tableFormat.getType(), tableFormat.getColumnValue(value));
 			}
+			//Tracker
+			test(TrackerSkillPointsFilterTableFormat.class);
+			//Tree
+			test(TreeTableFormat.class);
 			TreeAsset treeAsset = new TreeAsset(asset, TreeAsset.TreeType.CATEGORY, new ArrayList<>(), STRING_VALUE, true);
 			TreeAsset sub = new TreeAsset(asset, TreeAsset.TreeType.CATEGORY, Collections.singletonList(treeAsset), STRING_VALUE, false);
 			treeAsset.addAsset(sub);
@@ -200,6 +235,20 @@ public class TableFormatTest extends TestUtil {
 				test(tableFormat, tableFormat.getType(), tableFormat.getColumnValue(treeAsset));
 				test(tableFormat, tableFormat.getType(), tableFormat.getColumnValue(sub));
 			}
+		//Tables
+			test(FormulaColumn.class);
+			test(JumpColumn.class);
+			test(AllColumn.class);
+		//Tests
+			test(TestEnum.class);
+		}
+	}
+
+	private void test(Class<?> tableFormat) {
+		try {
+			assertTrue(tableFormat + " does not implement toString", tableFormat.getMethod("toString").getDeclaringClass() == tableFormat);
+		} catch (NoSuchMethodException | SecurityException ex) {
+			fail(ex.getMessage());
 		}
 	}
 

@@ -84,6 +84,7 @@ public class StockpileDataWriter extends AbstractBackup {
 			JsonObject stockpileObject = new JsonObject();
 			stockpileObject.addProperty("n", stockpile.getName());
 			stockpileObject.addProperty("m", stockpile.getMultiplier());
+			stockpileObject.addProperty("cma", stockpile.isContractsMatchAll());
 
 			//Filters
 			JsonArray filtersObject = new JsonArray();
@@ -102,6 +103,8 @@ public class StockpileDataWriter extends AbstractBackup {
 				filterObject.addProperty("st", stockpileFilter.isSellTransactions());
 				filterObject.addProperty("e", stockpileFilter.isExclude());
 				filterObject.addProperty("j", stockpileFilter.isJobs());
+				filterObject.addProperty("jdl", stockpileFilter.getJobsDaysLess());
+				filterObject.addProperty("jdm", stockpileFilter.getJobsDaysMore());
 				filterObject.addProperty("s", stockpileFilter.isSingleton());
 				filterObject.addProperty("id", stockpileFilter.getLocation().getLocationID());
 
@@ -134,8 +137,8 @@ public class StockpileDataWriter extends AbstractBackup {
 			JsonArray items = new JsonArray();
 			stockpileObject.add("i", items);
 			for (StockpileItem stockpileItem : stockpile.getItems()) {
-				if (stockpileItem.getItemTypeID() == 0) { //Ignore Total
-					continue;
+				if (stockpileItem.isTotal()) {
+					continue; //Ignore Total
 				}
 				JsonObject item = new JsonObject();
 				item.addProperty("i", stockpileItem.getItemTypeID());

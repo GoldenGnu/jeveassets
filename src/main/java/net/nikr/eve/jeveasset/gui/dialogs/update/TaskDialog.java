@@ -39,7 +39,7 @@ import net.nikr.eve.jeveasset.data.settings.Colors;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel.Progress;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel.UpdateType;
-import net.nikr.eve.jeveasset.gui.shared.Formater;
+import net.nikr.eve.jeveasset.gui.shared.Formatter;
 import net.nikr.eve.jeveasset.gui.shared.components.JLockWindow;
 import net.nikr.eve.jeveasset.gui.shared.components.JLockWindow.LockWorkerAdaptor;
 import net.nikr.eve.jeveasset.i18n.DialoguesUpdate;
@@ -338,7 +338,7 @@ public class TaskDialog {
 		}
 		if (doc.getLength() > length) { //If changed
 			try {
-				doc.insertString(length, Formater.columnDate(new Date()) + "\n\r", null);
+				doc.insertString(length, Formatter.columnDate(new Date()) + "\n\r", null);
 				if (length > 0) {
 					doc.insertString(length, "\n\r", null);
 				}
