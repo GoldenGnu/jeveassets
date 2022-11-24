@@ -141,7 +141,7 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 		Set<Long> stockpileIDs = new HashSet<>();
 		for (int i = 0; i < stockpilesNodes.getLength(); i++) {
 			Element currentNode = (Element) stockpilesNodes.item(i);
-			Long id = getLong(currentNode, "id");
+			long id = getLong(currentNode, "id");
 			stockpileIDs.add(id);
 		}
 		profile.getStockpileIDs().setShown(stockpileIDs);
@@ -203,10 +203,7 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 			Long industryJobsCID = getLongOptional(currentNode, "industryjobscid");
 			Long marketOrdersCID = getLongOptional(currentNode, "marketorderscid");
 			Date accountNextUpdate = getDateOptional(currentNode, "accountnextupdate");
-			boolean migrated = false;
-			if (haveAttribute(currentNode, "migrated")) {
-				migrated = getBoolean(currentNode, "migrated");
-			}
+			boolean migrated = getBooleanNotNull(currentNode, "migrated", false);
 			EveKitOwner owner = new EveKitOwner(accessKey, accessCred, expire, accessmask, corporation, limit, accountName, migrated);
 			owner.setJournalCID(journalCID);
 			owner.setTransactionsCID(transactionsCID);
@@ -247,10 +244,7 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 		if (haveAttribute(node, "name")) {
 			name = getString(node, "name");
 		}
-		long accessMask = 0;
-		if (haveAttribute(node, "accessmask")) {
-			accessMask = getLong(node, "accessmask");
-		}
+		long accessMask = getLongNotNull(node, "accessmask", 0);
 		KeyType type = null;
 		if (haveAttribute(node, "type")) {
 			type = KeyType.valueOf(getString(node, "type").toUpperCase());
@@ -262,10 +256,7 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 				expires = new Date(i);
 			}
 		}
-		boolean invalid = false;
-		if (haveAttribute(node, "invalid")) {
-			invalid = getBoolean(node, "invalid");
-		}
+		boolean invalid = getBooleanNotNull(node, "invalid", false);
 		return new EveApiAccount(keyID, vCode, name, nextUpdate, accessMask, type, expires, invalid);
 	}
 
@@ -273,10 +264,7 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 		NodeList ownerNodes = element.getElementsByTagName("human");
 		for (int i = 0; i < ownerNodes.getLength(); i++) {
 			Element currentNode = (Element) ownerNodes.item(i);
-			boolean migrated = false;
-			if (haveAttribute(currentNode, "migrated")) {
-				migrated = getBoolean(currentNode, "migrated");
-			}
+			boolean migrated = getBooleanNotNull(currentNode, "migrated", false) ;
 			EveApiOwner owner = new EveApiOwner(account, migrated);
 			parseOwnerType(currentNode, owner);
 			account.getOwners().add(owner);
@@ -291,14 +279,8 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 		Date assetsLastUpdate = getDateOptional(node, "assetslastupdate");
 		Date balanceNextUpdate = getDateNotNull(node, "balancenextupdate");
 		Date balanceLastUpdate = getDateOptional(node, "balancelastupdate");
-		boolean showOwner = true;
-		if (haveAttribute(node, "show")) {
-			showOwner = getBoolean(node, "show");
-		}
-		boolean invalid = false;
-		if (haveAttribute(node, "invalid")) {
-			invalid = getBoolean(node, "invalid");
-		}
+		boolean showOwner = getBooleanNotNull(node, "show", true) ;
+		boolean invalid = getBooleanNotNull(node, "invalid", false);
 		Date marketOrdersNextUpdate = getDateNotNull(node, "marketordersnextupdate");
 		Date journalNextUpdate = getDateNotNull(node, "journalnextupdate");
 		Date transactionsNextUpdate = getDateNotNull(node, "wallettransactionsnextupdate");
@@ -385,20 +367,20 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 
 	private MyContract parseContract(final Element element) throws XmlException {
 		RawContract contract = RawContract.create();
-		Integer acceptorID = getInt(element, "acceptorid");
-		Integer assigneeID = getInt(element, "assigneeid");
+		int acceptorID = getInt(element, "acceptorid");
+		int assigneeID = getInt(element, "assigneeid");
 		String availabilityString = getStringOptional(element, "availabilitystring");
 		String availabilityEnum = getStringOptional(element, "availability");
 		Double buyout = getDoubleOptional(element, "buyout");
 		Double collateral = getDoubleOptional(element, "collateral");
-		Integer contractID = getInt(element, "contractid");
+		int contractID = getInt(element, "contractid");
 		Date dateAccepted = getDateOptional(element, "dateaccepted");
 		Date dateCompleted = getDateOptional(element, "datecompleted");
 		Date dateExpired = getDate(element, "dateexpired");
 		Date dateIssued = getDate(element, "dateissued");
 		Long endLocationID = getLongOptional(element, "endstationid");
-		Integer issuerCorporationID = getInt(element, "issuercorpid");
-		Integer issuerID = getInt(element, "issuerid");
+		int issuerCorporationID = getInt(element, "issuercorpid");
+		int issuerID = getInt(element, "issuerid");
 		Integer daysToComplete = getIntOptional(element, "numdays");
 		Double price = getDoubleOptional(element, "price");
 		Double reward = getDoubleOptional(element, "reward");
@@ -410,10 +392,7 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 		String typeEnum = getStringOptional(element, "type");
 		Double volume = getDoubleOptional(element, "volume");
 		boolean forCorporation = getBoolean(element, "forcorp");
-		boolean esi = true;
-		if (haveAttribute(element, "esi")) {
-			esi = getBoolean(element, "esi");
-		}
+		boolean esi = getBooleanNotNull(element, "esi", true);
 		contract.setAcceptorID(acceptorID);
 		contract.setAssigneeID(assigneeID);
 		contract.setAvailability(RawConverter.toContractAvailability(availabilityEnum, availabilityString));
@@ -447,7 +426,7 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 	private RawContractItem parseContractItem(final Element element) throws XmlException {
 		RawContractItem contractItem = RawContractItem.create();
 		boolean included = getBoolean(element, "included");
-		Integer quantity = getInt(element, "quantity");
+		int quantity = getInt(element, "quantity");
 		long recordID = getLong(element, "recordid");
 		boolean singleton = getBoolean(element, "singleton");
 		int typeID = getInt(element, "typeid");
@@ -489,7 +468,7 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 	private RawAccountBalance parseBalance(final Element element) throws XmlException {
 		RawAccountBalance accountBalance = RawAccountBalance.create();
 		int accountKey = getInt(element, "accountkey");
-		Double balance = getDouble(element, "balance");
+		double balance = getDouble(element, "balance");
 		accountBalance.setAccountKey(accountKey);
 		accountBalance.setBalance(balance);
 		return accountBalance;
@@ -526,21 +505,15 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 		String rangeString = getStringOptional(element, "rangestring");
 		int accountID = getInt(element, "accountkey");
 		int duration = getInt(element, "duration");
-		Double escrow = getDouble(element, "escrow");
-		Double price = getDouble(element, "price");
+		double escrow = getDouble(element, "escrow");
+		double price = getDouble(element, "price");
 		int bid = getInt(element, "bid");
 		Date issued = getDate(element, "issued");
 		Date created = getDateOptional(element, "created");
 		String changed = getStringOptional(element, "changed");
 		Integer issuedBy = getIntOptional(element, "issuedby");
-		boolean corp = owner.isCorporation();
-		if (haveAttribute(element, "corp")) {
-			corp = getBoolean(element, "corp");
-		}
-		boolean esi = true;
-		if (haveAttribute(element, "esi")) {
-			esi = getBoolean(element, "esi");
-		}
+		boolean corp = getBooleanNotNull(element, "corp", owner.isCorporation());
+		boolean esi = getBooleanNotNull(element, "esi", true);
 		NodeList changeNodes = element.getElementsByTagName("change");
 		Set<Change> changes = new HashSet<>();
 		for (int a = 0; a < changeNodes.getLength(); a++) {
@@ -675,28 +648,20 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 	private RawTransaction parseTransaction(final Element element) throws XmlException {
 		RawTransaction rawTransaction = RawTransaction.create();
 		Date date = getDate(element, "transactiondatetime");
-		Long transactionID = getLong(element, "transactionid");
+		long transactionID = getLong(element, "transactionid");
 		int quantity = getInt(element, "quantity");
 		int typeID = getInt(element, "typeid");
-		Double price = getDouble(element, "price");
-		Integer clientID = getInt(element, "clientid");
+		double price = getDouble(element, "price");
+		int clientID = getInt(element, "clientid");
 		long locationID = getLong(element, "stationid");
 		String transactionType = getString(element, "transactiontype");
 		String transactionFor = getString(element, "transactionfor");
 
 		//New
-		Long journalRefID;
-		if (haveAttribute(element, "journaltransactionid")) {
-			journalRefID = getLong(element, "journaltransactionid");
-		} else {
-			journalRefID = 0L; //Legacy support
-		}
+		long journalRefID = getLongNotNull(element, "journaltransactionid", 0L);
 
 		//Extra
-		int accountKey = 1000;
-		if (haveAttribute(element, "accountkey")) {
-			accountKey = getInt(element, "accountkey");
-		}
+		int accountKey = getIntNotNull(element, "accountkey", 1000);
 		rawTransaction.setClientID(clientID);
 		rawTransaction.setDate(date);
 		rawTransaction.setBuy(RawConverter.toTransactionIsBuy(transactionType));
@@ -731,8 +696,8 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 
 	private RawIndustryJob parseIndustryJob(final Element element) throws XmlException {
 		RawIndustryJob rawIndustryJob = RawIndustryJob.create();
-		Integer jobID = getInt(element, "jobid");
-		Integer installerID = getInt(element, "installerid");
+		int jobID = getInt(element, "jobid");
+		int installerID = getInt(element, "installerid");
 		long facilityID = getLong(element, "facilityid");
 		long stationID = getLong(element, "stationid");
 		int activityID = getInt(element, "activityid");
@@ -818,12 +783,7 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 			locationID = parentAsset.getLocationID();
 		}
 		boolean singleton = getBoolean(node, "singleton");
-		Integer rawQuantity;
-		if (haveAttribute(node, "rawquantity")) {
-			rawQuantity = getInt(node, "rawquantity");
-		} else {
-			rawQuantity = null; //Legacy support
-		}
+		Integer rawQuantity = getIntOptional(node, "rawquantity");
 		int flagID = 0;
 		if (haveAttribute(node, "flagid")) {
 			flagID = getInt(node, "flagid");
