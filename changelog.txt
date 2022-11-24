@@ -16,6 +16,36 @@
                   #### #  # #  # #  # #### #### #### #### ####
 
 ________________________________________________________________________________
+_7.4.0__________________________________________________________________________
+
+New Features:
+-Added evemissioneer.com to the lookup menu (Issue #351)
+-Added option only including contracts with all the stockpile items (Issue #266)
+-Blueprint copying output as assets (Optional, off by default)
+-Set status for Contracts and Market Orders no longer in ESI (Issue #349)
+-Added Stockpile filter for industry job duration (Issue #348)
+-Added volume column to the Transaction tool (Issue #350)
+-Added Completed Date and Paused Date columns to the Industry Jobs tool
+-Added import to the reprocessing tool (Issue #335)
+-Display total minerals (minerals*count) in the reprocessed tool (Issue #302)
+-Added avg/count/max/min of selected numeric cells/column to the table menu
+-Added market orders and contracts to the slots tool (Issue #347)
+-Added Availability column to the contracts tool (Public or Private)
+
+Changed:
+-Improved the ToolTip for the Transaction Margin columns
+-Only include industry jobs if not delivered to assets yet
+
+Bug Fixes:
+-Handle space and comma thousands separators when editing in tables (Issue #344)
+-Added sum table menu tooltip (was null)
+-Fixed table header not resizing on sorting (if the table didn't change)
+-Fixed StatusPanel icon labels having the copy tooltip + handle dynamic icons
+-Fixed Stockpile text import/export
+-Do not try to update public market orders with invalid accounts
+-Exclude invalid accounts from structure updates
+
+________________________________________________________________________________
 _7.3.2__________________________________________________________________________
 
 Bug Fixes:
