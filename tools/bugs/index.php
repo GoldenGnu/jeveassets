@@ -277,7 +277,7 @@ foreach ($rows as &$row) {
 	echo format($row['count']);
 	echo "</span>";
 	echo ' <b>BugId:</b> <a href="#bugid'.format($row['id']).'" id="bugid'.format($row['id']).'">'.format($row['id']).'</a>';
-	echo "</div>".PHP_EOL;s;
+	echo "</div>".PHP_EOL;
 	if ($admin) {
 		echo '<div>';
 		//Edit
