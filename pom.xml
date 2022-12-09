@@ -168,28 +168,6 @@
 							<goal>run</goal>
 						</goals>
 					</execution>
-					<!-- Delete old release -->
-					<execution>
-						<id>clear-old-release</id>
-						<phase>deploy</phase>
-						<configuration>
-							<target>
-								<ftp action="delete"
-									 server="linux227.unoeuro.com"
-									 userid="${ftp.user}"
-									 password="${ftp.pass}"
-									 passive="true"
-									 remotedir="${upload.program.file}" >
-									<fileset>
-										<include name="*.${project.build.jpackage.installer.type}"/>
-									</fileset>
-								</ftp>
-							</target>
-						</configuration>
-						<goals>
-							<goal>run</goal>
-						</goals>
-					</execution>
 					<execution>
 						<id>move-and-rename</id>
 						<phase>install</phase>
@@ -346,8 +324,24 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>wagon-maven-plugin</artifactId>
-				<version>2.0.0</version>
+				<version>2.0.2</version>
 				<executions>
+					<execution>
+						<id>upload-delete</id>
+						<phase>deploy</phase>
+						<goals>
+							<goal>sshexec</goal>
+						</goals>
+						<configuration>
+							<displayCommandOutputs>true</displayCommandOutputs>
+							<serverId>eve-nikr-net</serverId>
+							<url>${upload.url}</url>
+							<commands> 
+								<!-- remove data directory -->
+								<command>rm -rf ${upload.program.delete}</command>
+							</commands>
+						</configuration>
+					</execution>
 					<execution>
 						<id>upload-update</id>
 						<phase>deploy</phase>
@@ -358,7 +352,7 @@
 							<fromDir>${project.build.directory}/upload</fromDir>
 							<includes>*.${project.build.jpackage.installer.type},*.dat,*.md5,*.php</includes>
 							<serverId>eve-nikr-net</serverId>
-							<url>ftp://linux227.unoeuro.com</url>
+							<url>sftp://${upload.url}</url>
 							<toDir>${upload.program.file}</toDir>
 						</configuration>
 					</execution>
@@ -372,8 +366,8 @@
 							<fromDir>${project.build.directory}/installer</fromDir>
 							<includes>*.*</includes>
 							<serverId>eve-nikr-net</serverId>
-							<url>ftp://linux227.unoeuro.com</url>
-							<toDir>${upload.program.zip}</toDir>
+							<url>sftp://${upload.url}</url>
+							<toDir>${upload.zip}</toDir>
 						</configuration>
 					</execution>
 				</executions>
@@ -448,7 +442,12 @@
 			<extension>
 				<groupId>org.apache.maven.wagon</groupId>
 				<artifactId>wagon-ftp</artifactId>
-				<version>3.3.2</version>
+				<version>3.5.2</version>
+			</extension>
+			<extension>
+				<groupId>org.apache.maven.wagon</groupId>
+				<artifactId>wagon-ssh</artifactId>
+				<version>3.5.2</version>
 			</extension>
 		</extensions>
 		<resources>
@@ -1254,13 +1253,5 @@
 		<arg2></arg2>
 		<!-- always do EDT debug when doing devlopment! -->
 		<edt.debug>-edtdebug</edt.debug>
-		<!-- Live deploy location -->
-		<!--
-		<upload.program.file>eve.nikr.net/jeveassets/update/program</upload.program.file>
-		<upload.program.zip>eve.nikr.net/jeveassets</upload.program.zip>
-		-->
-		<!-- Test deploy location -->
-		<upload.program.file>eve.nikr.net/test/update/program</upload.program.file>
-		<upload.program.zip>eve.nikr.net/test/download</upload.program.zip>
 	</properties>
 </project>
