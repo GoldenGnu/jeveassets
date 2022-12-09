@@ -14,6 +14,7 @@ function dirToArray($dir, $fix = "", &$first = true) {
 				&& !str_ends_with($file, ".md5")
 				&& (!str_ends_with($file, ".dat") || $file == "data.dat")
 				&& !str_starts_with($file, "installer")
+				&& !str_starts_with($file, ".")
 				) {
 			if ($first) {
 				$first = false;
