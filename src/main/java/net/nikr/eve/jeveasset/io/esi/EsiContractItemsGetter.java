@@ -148,6 +148,9 @@ public class EsiContractItemsGetter extends AbstractEsiGetter {
 					if (esiOwner.isCorporation() && contract.isDeleted()) {
 						continue; //Ignore deleted corporation contracts
 					}
+					if (!contract.isESI()) {
+						continue; //No longer in ESI
+					}
 					uniqueContacts.add(contract);
 					//Open public contracts
 					if (contract.isPublic() && contract.isOpen()) {
