@@ -275,10 +275,10 @@ public class EsiConverter extends DataConverter {
 		Map<Integer, Set<RawPublicMarketOrder>> marketOrders = new HashMap<>();
 		for (MarketOrdersResponse response : responses) {
 			RawPublicMarketOrder marketOrder = new RawPublicMarketOrder(response);
-			Set<RawPublicMarketOrder> set = marketOrders.get(marketOrder.getTypeId());
+			Set<RawPublicMarketOrder> set = marketOrders.get(marketOrder.getTypeID());
 			if (set == null) {
 				set = new HashSet<>();
-				marketOrders.put(marketOrder.getTypeId(), set);
+				marketOrders.put(marketOrder.getTypeID(), set);
 			}
 			set.add(marketOrder);
 		}

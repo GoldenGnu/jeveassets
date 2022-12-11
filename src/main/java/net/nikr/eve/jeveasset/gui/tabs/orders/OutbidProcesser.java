@@ -67,7 +67,7 @@ public class OutbidProcesser {
 	private void process() {
 		//Process order updates
 		for (RawPublicMarketOrder ordersResponse : input.getMarketOrders()) {
-			Set<MyMarketOrder> orders = input.getTypeIDs().get(ordersResponse.getTypeId());
+			Set<MyMarketOrder> orders = input.getTypeIDs().get(ordersResponse.getTypeID());
 			if (orders != null) {
 				for (MyMarketOrder marketOrder : orders) {
 					if (isSameOrder(marketOrder, ordersResponse)) { //Orders to be updated
@@ -83,7 +83,7 @@ public class OutbidProcesser {
 			if (!orderLocation.isEmpty()) {
 				output.getRegionIDs().add(orderLocation.getRegionID());
 			}
-			Set<MyMarketOrder> orders = input.getTypeIDs().get(ordersResponse.getTypeId());
+			Set<MyMarketOrder> orders = input.getTypeIDs().get(ordersResponse.getTypeID());
 			if (orders != null) {
 				//Orders to match
 				for (MyMarketOrder marketOrder : orders) {
