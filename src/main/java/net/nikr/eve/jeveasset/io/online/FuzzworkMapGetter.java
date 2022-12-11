@@ -127,10 +127,10 @@ public class FuzzworkMapGetter {
 		public String itemname;
 		public Integer solarsystemid;
 
-		public Integer getSystemId() {
+		public Integer getSystemID() {
 			return solarsystemid;
 		}
-		public Integer getPlanetId() {
+		public Integer getPlanetID() {
 			return itemid;
 		}
 		public String getName() {
