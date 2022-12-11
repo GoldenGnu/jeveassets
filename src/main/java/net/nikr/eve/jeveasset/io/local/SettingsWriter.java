@@ -575,7 +575,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 			Element stockpileNode = xmldoc.createElementNS(null, "stockpile");
 			setAttribute(stockpileNode, "name", strockpile.getName());
 			if (!export) { //Risk of collision, better to generate a new one on import
-				setAttribute(stockpileNode, "id", strockpile.getId());
+				setAttribute(stockpileNode, "id", strockpile.getStockpileID());
 			}
 			setAttribute(stockpileNode, "multiplier", strockpile.getMultiplier());
 			setAttribute(stockpileNode, "contractsmatchall", strockpile.isContractsMatchAll());

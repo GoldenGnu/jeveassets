@@ -145,7 +145,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 		}
 	}
 
-	public long getId() {
+	public long getStockpileID() {
 		return id;
 	}
 
