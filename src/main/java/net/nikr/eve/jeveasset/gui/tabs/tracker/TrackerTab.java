@@ -864,11 +864,11 @@ public class TrackerTab extends JMainTabSecondary {
 
 		//ASSETS - Make nodes for found asset IDs
 		CheckBoxNode assetNode = new CheckBoxNode(null, TabsTracker.get().assets(), TabsTracker.get().assets(), false);
-		assetNodes.put(assetNode.getNodeId(), assetNode);
+		assetNodes.put(assetNode.getNodeID(), assetNode);
 		CheckBoxNode knownLocationsNode = new CheckBoxNode(assetNode, TabsTracker.get().knownLocations(), TabsTracker.get().knownLocations(), false);
-		assetNodes.put(knownLocationsNode.getNodeId(), knownLocationsNode);
+		assetNodes.put(knownLocationsNode.getNodeID(), knownLocationsNode);
 		CheckBoxNode unknownLocationsNode = new CheckBoxNode(assetNode, TabsTracker.get().unknownLocations(), TabsTracker.get().unknownLocations(), false);
-		assetNodes.put(unknownLocationsNode.getNodeId(), unknownLocationsNode);
+		assetNodes.put(unknownLocationsNode.getNodeID(), unknownLocationsNode);
 
 		Map<String, CheckBoxNode> nodeCache = new HashMap<>();
 		for (AssetValue assetValue : assetsIDs) {
@@ -883,7 +883,7 @@ public class TrackerTab extends JMainTabSecondary {
 					locationNode = new CheckBoxNode(knownLocationsNode, location, location, selectNode(location));
 				}
 				nodeCache.put(location, locationNode);
-				assetNodes.put(locationNode.getNodeId(), locationNode);
+				assetNodes.put(locationNode.getNodeID(), locationNode);
 			}
 
 			CheckBoxNode flagNode = nodeCache.get(id);
@@ -896,9 +896,9 @@ public class TrackerTab extends JMainTabSecondary {
 		//For locations with office, you should have the option to exclude all values in corp hangars
 		for (CheckBoxNode locationNode : nodeCache.values()) {
 			if (locationNode.isParent()) {
-				String id = locationNode.getNodeId() + " > unique ID";
+				String id = locationNode.getNodeID() + " > unique ID";
 				CheckBoxNode otherNode = new CheckBoxNode(locationNode, id, TabsTracker.get().other(), selectNode(id));
-				assetNodes.put(otherNode.getNodeId(), otherNode);
+				assetNodes.put(otherNode.getNodeID(), otherNode);
 			}
 		}
 	}
@@ -1320,10 +1320,10 @@ public class TrackerTab extends JMainTabSecondary {
 			if (checkBoxNode.isParent()) {
 				continue;
 			}
-			Settings.get().getTrackerSettings().getFilters().put(checkBoxNode.getNodeId(), checkBoxNode.isSelected());
+			Settings.get().getTrackerSettings().getFilters().put(checkBoxNode.getNodeID(), checkBoxNode.isSelected());
 		}
 		for (CheckBoxNode checkBoxNode : accountNodes.values()) {
-			Settings.get().getTrackerSettings().getFilters().put(checkBoxNode.getNodeId(), checkBoxNode.isSelected());
+			Settings.get().getTrackerSettings().getFilters().put(checkBoxNode.getNodeID(), checkBoxNode.isSelected());
 		}
 		Settings.get().getTrackerSettings().setSelectNew(filterDialog.isSelectNew());
 		Settings.unlock("Tracker Filters: Update");
