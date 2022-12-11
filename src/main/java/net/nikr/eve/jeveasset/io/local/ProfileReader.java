@@ -616,12 +616,12 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 		rawJournal.setRefTypeString(refTypeString);
 		rawJournal.setSecondPartyID(secondPartyID);
 		rawJournal.setTax(taxAmount);
-		rawJournal.setTaxReceiverId(taxReceiverID);
+		rawJournal.setTaxReceiverID(taxReceiverID);
 		if (argID != null || argName != null) {
-			rawJournal.setContextId(RawConverter.toJournalContextID(argID, argName, refType));
+			rawJournal.setContextID(RawConverter.toJournalContextID(argID, argName, refType));
 			rawJournal.setContextType(RawConverter.toJournalContextType(refType));
 		} else {
-			rawJournal.setContextId(contextID);
+			rawJournal.setContextID(contextID);
 			rawJournal.setContextType(RawConverter.toJournalContextType(contextType, contextTypeString));
 		}
 		rawJournal.setContextTypeString(contextTypeString);
