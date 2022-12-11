@@ -261,8 +261,7 @@ public class TransactionTab extends JMainTabPrimary {
 		}
 
 		@Override
-		public void addToolMenu(JComponent jComponent) {
-		}
+		public void addToolMenu(JComponent jComponent) { }
 	}
 
 	private class ListenerClass implements ListEventListener<MyTransaction> {
