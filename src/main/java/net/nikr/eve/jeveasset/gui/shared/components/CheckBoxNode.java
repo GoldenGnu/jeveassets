@@ -119,7 +119,7 @@ public class CheckBoxNode implements Comparable<CheckBoxNode>{
 		return update;
 	}
 
-	public String getNodeId() {
+	public String getNodeID() {
 		return nodeId;
 	}
 
