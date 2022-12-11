@@ -132,6 +132,7 @@
 								</copy>
 								<copy todir="${project.build.directory}">
 									<fileset dir="tools/update" includes="list.php"/>
+									<fileset dir="tools/update" includes=".htaccess"/>
 								</copy>
 							</target>
 						</configuration>
@@ -777,6 +778,7 @@
 										<copy todir="${project.build.directory}/upload">
 											<fileset dir="${project.build.directory}" includes="*.dat"/>
 											<fileset dir="${project.build.directory}" includes="list.php"/>
+											<fileset dir="${project.build.directory}" includes=".htaccess"/>
 										</copy>
 									</target>
 								</configuration>
@@ -829,7 +831,7 @@
 								</goals>
 								<configuration>
 									<fromDir>${project.build.directory}/upload</fromDir>
-									<includes>*.${project.build.jpackage.installer.type},*.dat,*.md5,*.php</includes>
+									<includes>*.${project.build.jpackage.installer.type},*.dat,*.md5,*.php,.htaccess</includes>
 									<serverId>eve-nikr-net</serverId>
 									<url>sftp://${upload.url}</url>
 									<toDir>${upload.program.file}</toDir>
@@ -1092,7 +1094,7 @@
 								</goals>
 								<configuration>
 									<fromDir>${project.build.directory}/upload</fromDir>
-									<includes>*.${project.build.jpackage.installer.type},*.dat,*.md5,*.php</includes>
+									<includes>*.${project.build.jpackage.installer.type},*.dat,*.md5,*.php,.htaccess</includes>
 									<serverId>eve-nikr-net</serverId>
 									<url>sftp://${upload.url}</url>
 									<toDir>${upload.program.file}</toDir>

@@ -1,0 +1,9 @@
+#
+# Disable Caching
+#
+Header add "Cache-Control" "no-cache"
+#
+# Enable indexes
+#
+Options +Indexes
+IndexOptions FancyIndexing FoldersFirst NameWidth=* DescriptionWidth=*
