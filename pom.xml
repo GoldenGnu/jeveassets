@@ -821,6 +821,34 @@
 									</commands>
 								</configuration>
 							</execution>
+							<execution>
+								<id>upload-update</id>
+								<phase>deploy</phase>
+								<goals>
+									<goal>upload</goal>
+								</goals>
+								<configuration>
+									<fromDir>${project.build.directory}/upload</fromDir>
+									<includes>*.${project.build.jpackage.installer.type},*.dat,*.md5,*.php</includes>
+									<serverId>eve-nikr-net</serverId>
+									<url>sftp://${upload.url}</url>
+									<toDir>${upload.program.file}</toDir>
+								</configuration>
+							</execution>
+							<execution>
+								<id>upload-zip</id>
+								<phase>deploy</phase>
+								<goals>
+									<goal>upload</goal>
+								</goals>
+								<configuration>
+									<fromDir>${project.build.directory}/installer</fromDir>
+									<includes>*.*</includes>
+									<serverId>eve-nikr-net</serverId>
+									<url>sftp://${upload.url}</url>
+									<toDir>${upload.program.file}</toDir>
+								</configuration>
+							</execution>
 						</executions>
 					</plugin>
 				</plugins>
