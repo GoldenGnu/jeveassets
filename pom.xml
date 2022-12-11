@@ -322,41 +322,6 @@
 				<version>2.4</version>
 			</plugin>
 			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>wagon-maven-plugin</artifactId>
-				<version>2.0.2</version>
-				<executions>
-					<execution>
-						<id>upload-update</id>
-						<phase>deploy</phase>
-						<goals>
-							<goal>upload</goal>
-						</goals>
-						<configuration>
-							<fromDir>${project.build.directory}/upload</fromDir>
-							<includes>*.${project.build.jpackage.installer.type},*.dat,*.md5,*.php</includes>
-							<serverId>eve-nikr-net</serverId>
-							<url>sftp://${upload.url}</url>
-							<toDir>${upload.program.file}</toDir>
-						</configuration>
-					</execution>
-					<execution>
-						<id>upload-zip</id>
-						<phase>deploy</phase>
-						<goals>
-							<goal>upload</goal>
-						</goals>
-						<configuration>
-							<fromDir>${project.build.directory}/installer</fromDir>
-							<includes>*.*</includes>
-							<serverId>eve-nikr-net</serverId>
-							<url>sftp://${upload.url}</url>
-							<toDir>${upload.program.file}</toDir>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-deploy-plugin</artifactId>
 				<version>2.8.1</version>
@@ -1005,6 +970,7 @@
 							<fileSets>
 								<fileSet>
 									<directory>${project.build.directory}/upload</directory>
+									<directory>${project.build.directory}/installer</directory>
 									<includes>
 										<include>*.*</include>
 									</includes>
@@ -1073,6 +1039,52 @@
 								<version>1.6.5</version>
 							</dependency>
 						</dependencies>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>upload</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+				<jdk>17</jdk>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>wagon-maven-plugin</artifactId>
+						<version>2.0.2</version>
+						<executions>
+							<execution>
+								<id>upload-update</id>
+								<phase>deploy</phase>
+								<goals>
+									<goal>upload</goal>
+								</goals>
+								<configuration>
+									<fromDir>${project.build.directory}/upload</fromDir>
+									<includes>*.${project.build.jpackage.installer.type},*.dat,*.md5,*.php</includes>
+									<serverId>eve-nikr-net</serverId>
+									<url>sftp://${upload.url}</url>
+									<toDir>${upload.program.file}</toDir>
+								</configuration>
+							</execution>
+							<execution>
+								<id>upload-zip</id>
+								<phase>deploy</phase>
+								<goals>
+									<goal>upload</goal>
+								</goals>
+								<configuration>
+									<fromDir>${project.build.directory}/installer</fromDir>
+									<includes>*.*</includes>
+									<serverId>eve-nikr-net</serverId>
+									<url>sftp://${upload.url}</url>
+									<toDir>${upload.program.file}</toDir>
+								</configuration>
+							</execution>
+						</executions>
 					</plugin>
 				</plugins>
 			</build>
