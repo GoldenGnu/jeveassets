@@ -27,6 +27,7 @@ import java.util.Comparator;
 import java.util.Date;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
+import net.nikr.eve.jeveasset.gui.shared.table.containers.LongInt;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.Percent;
 import net.nikr.eve.jeveasset.i18n.TabsOrders;
 
@@ -453,6 +454,20 @@ public enum MarketTableFormat implements EnumTableColumn<MyMarketOrder> {
 		@Override
 		public Object getColumnValue(final MyMarketOrder from) {
 			return from.getTypeID();
+		}
+	},
+	ORDER_ID(LongInt.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsOrders.get().columnOrderID();
+		}
+		@Override
+		public Object getColumnValue(final MyMarketOrder from) {
+			return new LongInt(from.getOrderID());
+		}
+		@Override
+		public boolean isShowDefault() {
+			return false;
 		}
 	};
 
