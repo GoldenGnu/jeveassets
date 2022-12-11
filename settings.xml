@@ -16,9 +16,11 @@
 	</profiles>
 	<servers>
 		<server>
-			<knownHostsProvider implementation="org.apache.maven.wagon.providers.ssh.knownhost.NullKnownHostProvider">
-				<hostKeyChecking>no</hostKeyChecking>
-			</knownHostsProvider>
+			<configuration>
+				<knownHostsProvider implementation="org.apache.maven.wagon.providers.ssh.knownhost.NullKnownHostProvider">
+					<hostKeyChecking>no</hostKeyChecking>
+				</knownHostsProvider>
+			</configuration>
 			<id>eve-nikr-net</id>
 			<username>${ftp.user}</username>
 			<password>${ftp.pass}</password>
