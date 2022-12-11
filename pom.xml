@@ -132,6 +132,7 @@
 								</copy>
 								<copy todir="${project.build.directory}">
 									<fileset dir="tools/update" includes="list.php"/>
+									<fileset dir="tools/update" includes=".htaccess"/>
 								</copy>
 							</target>
 						</configuration>
@@ -338,7 +339,7 @@
 						</goals>
 						<configuration>
 							<fromDir>${project.build.directory}</fromDir>
-							<includes>*.txt,*.jar,*.md5,lib/*,*.dat,*.php,*.properties</includes>
+							<includes>*.txt,*.jar,*.md5,lib/*,*.dat,*.php,*.properties,.htaccess</includes>
 							<serverId>eve-nikr-net</serverId>
 							<url>sftp://${upload.url}</url>
 							<toDir>${upload.program.file}</toDir>

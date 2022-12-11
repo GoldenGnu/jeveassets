@@ -1,0 +1,4 @@
+#
+# Disable Caching
+#
+Header add "Cache-Control" "no-cache"
