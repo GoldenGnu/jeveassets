@@ -89,6 +89,7 @@ public abstract class TabsOrders extends Bundle {
 	public abstract String columnMarketProfit();
 	public abstract String columnMarketProfitToolTip();
 	public abstract String columnTypeID();
+	public abstract String columnOrderID();
 	public abstract String eveUiOpen();
 	public abstract String lastEsiUpdateToolTip();
 	public abstract String lastLogUpdateToolTip();
