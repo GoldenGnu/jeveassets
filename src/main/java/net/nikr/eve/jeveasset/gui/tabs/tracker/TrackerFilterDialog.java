@@ -181,7 +181,7 @@ public class TrackerFilterDialog extends JDialogCentered {
 
 		Map<String, CheckBoxNode> cloneList = cloneList(nodes);
 
-		Map<String, DefaultMutableTreeNode> cache = new HashMap<String, DefaultMutableTreeNode>();
+		Map<String, DefaultMutableTreeNode> cache = new HashMap<>();
 		for (CheckBoxNode node : cloneList.values()) {
 			addTree(cache, node);
 		}
@@ -198,8 +198,8 @@ public class TrackerFilterDialog extends JDialogCentered {
 	}
 
 	private Map<String, CheckBoxNode> cloneList(Map<String, CheckBoxNode> nodes) {
-		Map<String, CheckBoxNode> clonesCache = new HashMap<String, CheckBoxNode>();
-		Map<String, CheckBoxNode> clonedNodes = new TreeMap<String, CheckBoxNode>();
+		Map<String, CheckBoxNode> clonesCache = new HashMap<>();
+		Map<String, CheckBoxNode> clonedNodes = new TreeMap<>();
 		for (Map.Entry<String, CheckBoxNode> entry : nodes.entrySet()) {
 			clonedNodes.put(entry.getKey(), cloneTree(clonesCache, entry.getValue()));
 		}
@@ -214,10 +214,10 @@ public class TrackerFilterDialog extends JDialogCentered {
 			parentNode = addTree(cache, checkBoxNode);
 		}
 		//Add this node, if not already added
-		DefaultMutableTreeNode treeNode = cache.get(node.getNodeId());
+		DefaultMutableTreeNode treeNode = cache.get(node.getNodeID());
 		if (treeNode == null) {
 			treeNode = add(node, parentNode);
-			cache.put(node.getNodeId(), treeNode);
+			cache.put(node.getNodeID(), treeNode);
 		}
 		return treeNode;
 	}
@@ -228,10 +228,10 @@ public class TrackerFilterDialog extends JDialogCentered {
 		if (oldParent != null) {
 			cloneParent = cloneTree(clonesCache, oldParent);
 		}
-		CheckBoxNode cloneNode = clonesCache.get(oldNode.getNodeId());
+		CheckBoxNode cloneNode = clonesCache.get(oldNode.getNodeID());
 		if (cloneNode == null) {
 			cloneNode = new CheckBoxNode(cloneParent, oldNode);
-			clonesCache.put(cloneNode.getNodeId(), cloneNode);
+			clonesCache.put(cloneNode.getNodeID(), cloneNode);
 		}
 		return cloneNode;
 	}
