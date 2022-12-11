@@ -367,7 +367,7 @@
 							<includes>*.*</includes>
 							<serverId>eve-nikr-net</serverId>
 							<url>sftp://${upload.url}</url>
-							<toDir>${upload.zip}</toDir>
+							<toDir>${upload.program.file}</toDir>
 						</configuration>
 					</execution>
 				</executions>

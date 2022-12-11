@@ -2,7 +2,18 @@
 <settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
-
+	<profiles>
+		<profile>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
+				<upload.url>${ftp.host}</upload.url>
+				<upload.program.file>${ftp.file}</upload.program.file>
+				<upload.program.delete>${ftp.delete}</upload.program.delete>
+		</properties>
+		</profile>
+	</profiles>
 	<servers>
 		<server>
 			<id>eve-nikr-net</id>
