@@ -778,7 +778,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 	public static List<Stockpile> getShownStockpiles(ProfileManager profileManager) {
 		List<Stockpile> shown = new ArrayList<>();
 		for (Stockpile stockpile : Settings.get().getStockpiles()) {
-			if (profileManager.getStockpileIDs().isHidden(stockpile.getId())) {
+			if (profileManager.getStockpileIDs().isHidden(stockpile.getStockpileID())) {
 				continue;
 			}
 			shown.add(stockpile);
@@ -922,8 +922,8 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 				List<Stockpile> selected = new ArrayList<>();
 				Set<Long> all = new HashSet<>();
 				for (Stockpile stockpile : Settings.get().getStockpiles()) {
-					all.add(stockpile.getId());
-					if (program.getProfileManager().getStockpileIDs().isShown(stockpile.getId())) {
+					all.add(stockpile.getStockpileID());
+					if (program.getProfileManager().getStockpileIDs().isShown(stockpile.getStockpileID())) {
 						selected.add(stockpile);
 					}
 				}
@@ -933,7 +933,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 				}
 				Set<Long> hidden = new HashSet<>(all);
 				for (Stockpile stockpile : stockpiles) {
-					hidden.remove(stockpile.getId());
+					hidden.remove(stockpile.getStockpileID());
 				}
 				Set<Long> oldData = program.getProfileManager().getStockpileIDs().getHidden();
 				if (!oldData.equals(hidden)) {
@@ -947,7 +947,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 					program.getProfileManager().getStockpileIDs().setHidden(hidden);
 					//Update GUI
 					for (Stockpile stockpile : Settings.get().getStockpiles()) {
-						long stockpileID = stockpile.getId();
+						long stockpileID = stockpile.getStockpileID();
 						if (hide.contains(stockpileID)) { //Hidden
 							removeItems(stockpile.getItems());
 						} else if (show.contains(stockpileID)) { //Shown
@@ -1022,7 +1022,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 				if (stockpile == null) {
 					return;
 				}
-				program.getProfileManager().getStockpileIDs().hide(stockpile.getId());
+				program.getProfileManager().getStockpileIDs().hide(stockpile.getStockpileID());
 				removeItems(stockpile.getItems());
 			} else if (StockpileCellAction.DELETE_STOCKPILE.name().equals(e.getActionCommand())) { //Delete stockpile
 				Stockpile stockpile = getSelectedStockpile();

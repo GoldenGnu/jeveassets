@@ -436,7 +436,7 @@ public class StockpileData extends TableData {
 			removed.addAll(subpileItems);
 		}
 		updated.removeAll(subpileItems);
-		if (profileManager.getStockpileIDs().isShown(parent.getId())) {
+		if (profileManager.getStockpileIDs().isShown(parent.getStockpileID())) {
 			updated.addAll(parent.getSubpileItems());
 		}
 	}
