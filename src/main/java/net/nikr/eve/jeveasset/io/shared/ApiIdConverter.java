@@ -397,7 +397,7 @@ public final class ApiIdConverter {
 		if (planet == null) {
 			return null;
 		}
-		return new Citadel(planet.getPlanetId(), planet.getName(), planet.getSystemId(), false, false, CitadelSource.FUZZWORK_PLANET);
+		return new Citadel(planet.getPlanetID(), planet.getName(), planet.getSystemID(), false, false, CitadelSource.FUZZWORK_PLANET);
 	}
 
 }
