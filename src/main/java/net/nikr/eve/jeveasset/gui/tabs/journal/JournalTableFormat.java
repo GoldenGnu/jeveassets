@@ -166,7 +166,7 @@ public enum JournalTableFormat implements EnumTableColumn<MyJournal> {
 		}
 		@Override
 		public Object getColumnValue(final MyJournal from) {
-			return new LongInt(from.getContextId());
+			return new LongInt(from.getContextID());
 		}
 		@Override
 		public boolean isShowDefault() {

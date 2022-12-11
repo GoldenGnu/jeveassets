@@ -260,11 +260,11 @@ public class RawJournal {
 		this.balance = balance;
 	}
 
-	public Long getContextId() {
+	public Long getContextID() {
 		return contextId;
 	}
 
-	public void setContextId(Long contextId) {
+	public void setContextID(Long contextId) {
 		this.contextId = contextId;
 	}
 
@@ -364,11 +364,11 @@ public class RawJournal {
 		this.tax = tax;
 	}
 
-	public Integer getTaxReceiverId() {
+	public Integer getTaxReceiverID() {
 		return taxReceiverId;
 	}
 
-	public void setTaxReceiverId(Integer taxRecieverId) {
+	public void setTaxReceiverID(Integer taxRecieverId) {
 		this.taxReceiverId = taxRecieverId;
 	}
 
