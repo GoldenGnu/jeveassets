@@ -25,6 +25,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import javax.swing.JMenuItem;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.gui.images.Images;
@@ -132,39 +133,25 @@ public class JMenuTransactionFilter<T> extends JAutoMenu<T> {
 		}
 	}
 
+	private void addFilters(Set<String> names, TransactionTableFormat column, CompareType compareType) {
+		List<Filter> filters = JMenuAssetFilter.getFilters(names, column, compareType);
+		program.getTransactionsTab().addFilters(filters);
+		program.getMainWindow().addTab(program.getTransactionsTab());
+	}
+
 	private class ListenerClass implements ActionListener {
 		@Override
 		public void actionPerformed(final ActionEvent e) {
 			if (MenuTransactionFilterAction.STATION_FILTER.name().equals(e.getActionCommand())) {
-				for (String station : menuData.getStationAndCitadelNames()) {
-					Filter filter = new Filter(LogicType.AND, TransactionTableFormat.LOCATION, CompareType.EQUALS, station);
-					program.getTransactionsTab().addFilter(filter);
-				}
-				program.getMainWindow().addTab(program.getTransactionsTab());
+				addFilters(menuData.getStationAndCitadelNames(), TransactionTableFormat.LOCATION, CompareType.EQUALS);
 			} else if (MenuTransactionFilterAction.PLANET_FILTER.name().equals(e.getActionCommand())) {
-				for (String planet : menuData.getPlanetNames()) {
-					Filter filter = new Filter(LogicType.AND, TransactionTableFormat.LOCATION, CompareType.EQUALS, planet);
-					program.getTransactionsTab().addFilter(filter);
-				}
-				program.getMainWindow().addTab(program.getTransactionsTab());
+				addFilters(menuData.getPlanetNames(), TransactionTableFormat.LOCATION, CompareType.EQUALS);
 			} else if (MenuTransactionFilterAction.SYSTEM_FILTER.name().equals(e.getActionCommand())) {
-				for (String system : menuData.getSystemNames()) {
-					Filter filter = new Filter(LogicType.AND, TransactionTableFormat.SYSTEM, CompareType.EQUALS, system);
-					program.getTransactionsTab().addFilter(filter);
-				}
-				program.getMainWindow().addTab(program.getTransactionsTab());
+				addFilters(menuData.getSystemNames(), TransactionTableFormat.SYSTEM, CompareType.EQUALS);
 			} else if (MenuTransactionFilterAction.CONSTELLATION_FILTER.name().equals(e.getActionCommand())) {
-				for (String constellation : menuData.getConstellationNames()) {
-					Filter filter = new Filter(LogicType.AND, TransactionTableFormat.CONSTELLATION, CompareType.EQUALS, constellation);
-					program.getTransactionsTab().addFilter(filter);
-				}
-				program.getMainWindow().addTab(program.getTransactionsTab());
+				addFilters(menuData.getConstellationNames(), TransactionTableFormat.CONSTELLATION, CompareType.EQUALS);
 			} else if (MenuTransactionFilterAction.REGION_FILTER.name().equals(e.getActionCommand())) {
-				for (String region : menuData.getRegionNames()) {
-					Filter filter = new Filter(LogicType.AND, TransactionTableFormat.REGION, CompareType.EQUALS, region);
-					program.getTransactionsTab().addFilter(filter);
-				}
-				program.getMainWindow().addTab(program.getTransactionsTab());
+				addFilters(menuData.getRegionNames(), TransactionTableFormat.REGION, CompareType.EQUALS);
 			} else if (MenuTransactionFilterAction.OVERVIEW_GROUP_FILTER.name().equals(e.getActionCommand())) {
 				OverviewGroup overviewGroup = program.getOverviewTab().getSelectGroup();
 				if (overviewGroup == null) {
@@ -173,34 +160,25 @@ public class JMenuTransactionFilter<T> extends JAutoMenu<T> {
 				List<Filter> filters = new ArrayList<>();
 				for (OverviewLocation location : overviewGroup.getLocations()) {
 					if (location.isStation()) {
-						Filter filter = new Filter(LogicType.OR, TransactionTableFormat.LOCATION, CompareType.EQUALS, location.getName());
-						filters.add(filter);
+						filters.add(new Filter(LogicType.OR, TransactionTableFormat.LOCATION, CompareType.EQUALS, location.getName()));
 					}
 					if (location.isPlanet()) {
-						Filter filter = new Filter(LogicType.OR, TransactionTableFormat.LOCATION, CompareType.EQUALS, location.getName());
-						filters.add(filter);
+						filters.add(new Filter(LogicType.OR, TransactionTableFormat.LOCATION, CompareType.EQUALS, location.getName()));
 					}
 					if (location.isSystem()) {
-						Filter filter = new Filter(LogicType.OR, TransactionTableFormat.SYSTEM, CompareType.EQUALS, location.getName());
-						filters.add(filter);
+						filters.add(new Filter(LogicType.OR, TransactionTableFormat.SYSTEM, CompareType.EQUALS, location.getName()));
 					}
 					if (location.isConstellation()) {
-						Filter filter = new Filter(LogicType.OR, TransactionTableFormat.CONSTELLATION, CompareType.EQUALS, location.getName());
-						filters.add(filter);
+						filters.add(new Filter(LogicType.OR, TransactionTableFormat.CONSTELLATION, CompareType.EQUALS, location.getName()));
 					}
 					if (location.isRegion()) {
-						Filter filter = new Filter(LogicType.OR, TransactionTableFormat.REGION, CompareType.EQUALS, location.getName());
-						filters.add(filter);
+						filters.add(new Filter(LogicType.OR, TransactionTableFormat.REGION, CompareType.EQUALS, location.getName()));
 					}
 				}
 				program.getTransactionsTab().addFilters(filters);
 				program.getMainWindow().addTab(program.getTransactionsTab());
 			} else if (MenuTransactionFilterAction.ITEM_TYPE_FILTER.name().equals(e.getActionCommand())) {
-				for (String typeName : menuData.getTypeNames()) {
-					Filter filter = new Filter(LogicType.AND, TransactionTableFormat.NAME, CompareType.CONTAINS, typeName);
-					program.getTransactionsTab().addFilter(filter);
-				}
-				program.getMainWindow().addTab(program.getTransactionsTab());
+				addFilters(menuData.getTypeNames(), TransactionTableFormat.NAME, CompareType.CONTAINS);
 			}
 		}
 	}
