@@ -835,6 +835,14 @@ public class Program implements ActionListener {
 		return assetsTab;
 	}
 
+	public ContractsTab getContractsTab() {
+		return contractsTab;
+	}
+
+	public IndustryJobsTab getIndustryJobsTab() {
+		return industryJobsTab;
+	}
+
 	public SlotsTab getSlotsTab() {
 		return slotsTab;
 	}

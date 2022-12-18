@@ -30,9 +30,13 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
@@ -42,7 +46,11 @@ import net.nikr.eve.jeveasset.data.settings.types.LocationType;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JFixedToolBar;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTabPrimary;
+import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
+import net.nikr.eve.jeveasset.gui.shared.filter.Filter.CompareType;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
+import net.nikr.eve.jeveasset.gui.shared.filter.FilterMatcher;
+import net.nikr.eve.jeveasset.gui.shared.menu.JMenuAssetFilter;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuColumns;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
@@ -51,6 +59,9 @@ import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
 import net.nikr.eve.jeveasset.gui.shared.table.TableFormatFactory;
+import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractsTableFormat;
+import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJobTableFormat;
+import net.nikr.eve.jeveasset.gui.tabs.transaction.TransactionTableFormat;
 import net.nikr.eve.jeveasset.i18n.TabsJournal;
 
 
@@ -189,9 +200,73 @@ public class JournalTab extends JMainTabPrimary {
 
 		@Override
 		public void addToolMenu(JComponent jComponent) {
-			//FIXME - - > Journal - ToolMenu
-			//Link with contracts and Transactions
+			JMenu jJournal = new JMenu(TabsJournal.get().findIn());
+			jJournal.setIcon(Images.TOOL_JOURNAL.getIcon());
+			jComponent.add(jJournal);
+
+			Set<String> contractIDs = new HashSet<>();
+			Set<String> industryJobIDs = new HashSet<>();
+			Set<String> transactionIDs = new HashSet<>();
+			for (MyJournal journal : selectionModel.getSelected()) {
+				if (null == journal.getContextType()) {
+					continue;
+				}
+				switch (journal.getContextType()) {
+					case CONTRACT_ID:
+						addSafe(contractIDs, journal.getContextID());
+						break;
+					case INDUSTRY_JOB_ID:
+						addSafe(industryJobIDs, journal.getContextID());
+						break;
+					case MARKET_TRANSACTION_ID:
+						addSafe(transactionIDs, journal.getContextID());
+						break;
+				}
+			}
+
+			JMenuItem jContracts = new JMenuItem(TabsJournal.get().contracts(), Images.TOOL_CONTRACTS.getIcon());
+			jContracts.setEnabled(!contractIDs.isEmpty());
+			jContracts.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					List<Filter> filters = JMenuAssetFilter.getFilters(contractIDs, ContractsTableFormat.CONTRACT_ID, CompareType.EQUALS);
+					program.getContractsTab().addFilters(filters);
+					program.getMainWindow().addTab(program.getContractsTab());
+				}
+			});
+			jJournal.add(jContracts);
+
+			JMenuItem jIndustryJobs = new JMenuItem(TabsJournal.get().industryJobs(), Images.TOOL_INDUSTRY_JOBS.getIcon());
+			jIndustryJobs.setEnabled(!industryJobIDs.isEmpty());
+			jIndustryJobs.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					List<Filter> filters = JMenuAssetFilter.getFilters(industryJobIDs, IndustryJobTableFormat.JOB_ID, CompareType.EQUALS);
+					program.getIndustryJobsTab().addFilters(filters);
+					program.getMainWindow().addTab(program.getIndustryJobsTab());
+				}
+			});
+			jJournal.add(jIndustryJobs);
+
+			JMenuItem jTransactions = new JMenuItem(TabsJournal.get().transactions(), Images.TOOL_TRANSACTION.getIcon());
+			jTransactions.setEnabled(!transactionIDs.isEmpty());
+			jTransactions.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					List<Filter> filters = JMenuAssetFilter.getFilters(transactionIDs, TransactionTableFormat.TRANSACTION_ID, CompareType.EQUALS);
+					program.getTransactionsTab().addFilters(filters);
+					program.getMainWindow().addTab(program.getTransactionsTab());
+				}
+			});
+			jJournal.add(jTransactions);
 		}
+	}
+
+	private void addSafe(Set<String> set, Long value) {
+		if (value == null || value < 100) {
+			return;
+		}
+		set.add(FilterMatcher.format(value, false));
 	}
 
 	private class JournalFilterControl extends FilterControl<MyJournal> {
