@@ -32,6 +32,7 @@ import net.nikr.eve.jeveasset.data.api.my.MyJournal;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.api.raw.RawContainerLog;
+import net.nikr.eve.jeveasset.data.api.raw.RawJournal.ContextType;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.gui.shared.Updatable;
@@ -129,6 +130,13 @@ public class EsiNameGetter extends AbstractEsiGetter {
 			for (MyJournal journal : ownerType.getJournal()) {
 				addOwnerID(list, journal.getFirstPartyID());
 				addOwnerID(list, journal.getSecondPartyID());
+				ContextType contextType = journal.getContextType();
+				if (contextType == ContextType.ALLIANCE_ID
+						|| contextType == ContextType.CHARACTER_ID
+						|| contextType == ContextType.CORPORATION_ID
+						) {
+					addOwnerID(list, journal.getContextID());
+				}
 			}
 			for (RawContainerLog containerLog : ownerType.getContainerLogs()) {
 				addOwnerID(list, containerLog.getCharacterID());

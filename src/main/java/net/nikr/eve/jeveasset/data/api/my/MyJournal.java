@@ -35,10 +35,11 @@ public class MyJournal extends RawJournal implements Comparable<MyJournal>, Owne
 	private static final String CORP = "(Corporation)";
 
 	private final OwnerType owner;
+	private final Set<Long> owners = new HashSet<>();
 	private String firstPartyName = "";
 	private String secondPartyName = "";
-	private final Set<Long> owners = new HashSet<>();
 	private Date added;
+	private String context = null;
 
 	public MyJournal(RawJournal rawJournal, OwnerType owner) {
 		super(rawJournal);
@@ -102,6 +103,14 @@ public class MyJournal extends RawJournal implements Comparable<MyJournal>, Owne
 
 	public void setAdded(Date added) {
 		this.added = added;
+	}
+
+	public String getContext() {
+		return context;
+	}
+
+	public void setContext(String context) {
+		this.context = context;
 	}
 
 	private String capitalizeAll(String in) {
