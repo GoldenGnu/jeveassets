@@ -635,6 +635,8 @@ public class ProfileData {
 			journal.setSecondPartyName(ApiIdConverter.getOwnerName(journal.getSecondPartyID()));
 			//Date added
 			journal.setAdded(AddedData.getJournals().getAdd(journalsAdded, journal.getRefID(), addedDate));
+			//Context
+			journal.setContext(ApiIdConverter.getContext(journal));
 		}
 		AddedData.getJournals().commitQueue();
 

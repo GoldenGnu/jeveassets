@@ -66,6 +66,7 @@ public abstract class TabsJournal extends Bundle {
 	public abstract String columnTaxReceiverID();
 	public abstract String columnAdded();
 	public abstract String columnAddedToolTip();
+	public abstract String columnContextName();
 	public abstract String columnContextType();
 	public abstract String columnContextID();
 }

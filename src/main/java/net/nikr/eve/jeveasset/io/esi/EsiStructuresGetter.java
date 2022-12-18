@@ -31,9 +31,11 @@ import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
 import net.nikr.eve.jeveasset.data.api.my.MyAsset;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
+import net.nikr.eve.jeveasset.data.api.my.MyJournal;
 import net.nikr.eve.jeveasset.data.api.raw.RawAsset;
 import net.nikr.eve.jeveasset.data.api.raw.RawBlueprint;
 import net.nikr.eve.jeveasset.data.api.raw.RawContract;
+import net.nikr.eve.jeveasset.data.api.raw.RawJournal.ContextType;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.settings.Citadel;
@@ -54,8 +56,8 @@ import org.slf4j.LoggerFactory;
 public class EsiStructuresGetter extends AbstractEsiGetter {
 
 	private static final Logger LOG = LoggerFactory.getLogger(EsiStructuresGetter.class);
-	private final static Set<Long> IDS = new HashSet<Long>();
-	private final static Set<Long> DONE = new HashSet<Long>();
+	private final static Set<Long> IDS = new HashSet<>();
+	private final static Set<Long> DONE = new HashSet<>();
 	private final boolean tracker;
 
 	public EsiStructuresGetter(UpdateTask updateTask, EsiOwner owner, boolean tracker) {
@@ -211,6 +213,11 @@ public class EsiStructuresGetter extends AbstractEsiGetter {
 			}
 			for (RawMarketOrder marketOrder : ownerType.getMarketOrders()) {
 				add(locationIDs, marketOrder.getLocationID());
+			}
+			for (MyJournal journal : ownerType.getJournal()) {
+				if (journal.getContextType() == ContextType.STRUCTURE_ID) {
+					add(locationIDs, journal.getContextID());
+				}
 			}
 		}
 		locationIDs.removeAll(itemIDs);

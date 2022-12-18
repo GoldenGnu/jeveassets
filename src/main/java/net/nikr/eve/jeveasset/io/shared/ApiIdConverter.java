@@ -24,6 +24,20 @@ import java.util.ArrayList;
 import java.util.List;
 import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
 import net.nikr.eve.jeveasset.data.api.my.MyAsset;
+import net.nikr.eve.jeveasset.data.api.my.MyJournal;
+import net.nikr.eve.jeveasset.data.api.raw.RawJournal.ContextType;
+import static net.nikr.eve.jeveasset.data.api.raw.RawJournal.ContextType.ALLIANCE_ID;
+import static net.nikr.eve.jeveasset.data.api.raw.RawJournal.ContextType.CHARACTER_ID;
+import static net.nikr.eve.jeveasset.data.api.raw.RawJournal.ContextType.CONTRACT_ID;
+import static net.nikr.eve.jeveasset.data.api.raw.RawJournal.ContextType.CORPORATION_ID;
+import static net.nikr.eve.jeveasset.data.api.raw.RawJournal.ContextType.EVE_SYSTEM;
+import static net.nikr.eve.jeveasset.data.api.raw.RawJournal.ContextType.INDUSTRY_JOB_ID;
+import static net.nikr.eve.jeveasset.data.api.raw.RawJournal.ContextType.MARKET_TRANSACTION_ID;
+import static net.nikr.eve.jeveasset.data.api.raw.RawJournal.ContextType.PLANET_ID;
+import static net.nikr.eve.jeveasset.data.api.raw.RawJournal.ContextType.STATION_ID;
+import static net.nikr.eve.jeveasset.data.api.raw.RawJournal.ContextType.STRUCTURE_ID;
+import static net.nikr.eve.jeveasset.data.api.raw.RawJournal.ContextType.SYSTEM_ID;
+import static net.nikr.eve.jeveasset.data.api.raw.RawJournal.ContextType.TYPE_ID;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.ItemFlag;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
@@ -147,6 +161,50 @@ public final class ApiIdConverter {
 		name = name.replace(" power", "");
 		name = name.replace(" s", " S");
 		return name;
+	}
+
+	public static String getContext(MyJournal journal) {
+		return getContext(journal.getContextType(), journal.getContextID());
+	}
+
+	public static String getContext(final ContextType contextType, final Long contextID) {
+		if (contextType == null || contextID == null) {
+			return null;
+		}
+		switch (contextType) {
+			case ALLIANCE_ID:
+			case CHARACTER_ID:
+			case CORPORATION_ID:
+				return getOwnerName(contextID);
+			case CONTRACT_ID:
+				return General.get().journalContract();
+			case INDUSTRY_JOB_ID:
+				return General.get().journalIndustryJob();
+			case MARKET_TRANSACTION_ID:
+				if (contextID != 1) {
+					return General.get().journalMarketTransaction();
+				} else {
+					return General.get().journalSystemTransaction();
+				}
+			case EVE_SYSTEM:
+			case TYPE_ID:
+				Item item = ApiIdConverter.getItem(contextID.intValue());
+				if (!item.isEmpty()) {
+					return item.getTypeName();
+				}
+				return null;
+			case PLANET_ID:
+			case STATION_ID:
+			case SYSTEM_ID:
+			case STRUCTURE_ID:
+				MyLocation location = ApiIdConverter.getLocation(contextID);
+				if (!location.isEmpty()) {
+					return location.getLocation();
+				}
+				return null;
+			default:
+				return null;
+		}
 	}
 
 	public static double getPriceSimple(final Integer typeID, final boolean isBlueprintCopy) {
