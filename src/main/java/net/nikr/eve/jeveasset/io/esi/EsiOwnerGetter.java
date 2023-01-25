@@ -20,8 +20,11 @@
  */
 package net.nikr.eve.jeveasset.io.esi;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.EnumSet;
+import java.util.List;
 import java.util.Set;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
@@ -31,26 +34,34 @@ import net.troja.eve.esi.ApiException;
 import net.troja.eve.esi.ApiResponse;
 import net.troja.eve.esi.auth.JWT;
 import net.troja.eve.esi.auth.OAuth;
-import net.troja.eve.esi.model.CharacterResponse;
+import net.troja.eve.esi.model.CharacterAffiliationResponse;
 import net.troja.eve.esi.model.CharacterRolesResponse;
 import net.troja.eve.esi.model.CharacterRolesResponse.RolesEnum;
-import net.troja.eve.esi.model.CorporationResponse;
+import net.troja.eve.esi.model.UniverseNamesResponse;
 
 
 public class EsiOwnerGetter extends AbstractEsiGetter implements AccountAdder{
 
+	private static final long CACHE_TIMER = 1 * 60 * 60 * 1000L; // 1 hour (hours*min*sec*ms)
 	private boolean wrongEntry = false;
+	private final Date nextUpdate;
 
 	public EsiOwnerGetter(EsiOwner owner, boolean forceUpdate) {
-		super(null, owner, forceUpdate, owner.getAccountNextUpdate(), TaskType.OWNER);
+		this(null, owner, forceUpdate);
 	}
 
 	public EsiOwnerGetter(UpdateTask updateTask, EsiOwner owner) {
-		super(updateTask, owner, owner.getCorporationName() == null, owner.getAccountNextUpdate(), TaskType.OWNER);
+		this(updateTask, owner, owner.getCorporationName() == null);
+	}
+
+	private EsiOwnerGetter(UpdateTask updateTask, EsiOwner owner, boolean forceUpdate) {
+		super(updateTask, owner, forceUpdate, owner.getAccountNextUpdate(), TaskType.OWNER);
+		nextUpdate = new Date(new Date().getTime() + CACHE_TIMER);
 	}
 
 	@Override
 	protected void update() throws ApiException {
+		//characterID
 		OAuth auth = (OAuth) owner.getApiClient().getAuthentication("evesso");
 		JWT jwt = auth.getJWT();
 		if (jwt == null) {
@@ -66,48 +77,76 @@ public class EsiOwnerGetter extends AbstractEsiGetter implements AccountAdder{
 		}
 		Set<RolesEnum> roles = EnumSet.noneOf(RolesEnum.class);
 		Integer characterID = payload.getCharacterID();
-		//Character
-		CharacterResponse character = update(DEFAULT_RETRIES, new EsiHandler<CharacterResponse>() {
+		//CorporationID
+		List<CharacterAffiliationResponse> affiliationResponse = update(DEFAULT_RETRIES, new EsiHandler<List<CharacterAffiliationResponse>>() {
 			@Override
-			public ApiResponse<CharacterResponse> get() throws ApiException {
-				return getCharacterApiOpen().getCharactersCharacterIdWithHttpInfo(characterID, DATASOURCE, null);
+			public ApiResponse<List<CharacterAffiliationResponse>> get() throws ApiException {
+				return getCharacterApiOpen().postCharactersAffiliationWithHttpInfo(Collections.singletonList(characterID), DATASOURCE);
 			}
 		});
-		Integer corporationID = character.getCorporationId();
-		//CorporationID to CorporationName
-		CorporationResponse corporation = update(DEFAULT_RETRIES, new EsiHandler<CorporationResponse>() {
+		if (affiliationResponse.isEmpty()) {
+			addError("INVALID AUTHORIZATION (AFFILIATION)", "Account Authorization Invalid\r\n(Fix: Options > Accounts... > Edit the account)", null);
+			owner.setInvalid(true);
+			return;
+		}
+		Integer corporationID = affiliationResponse.get(0).getCorporationId();
+		//IDs to Names
+		List<Integer> ids = new ArrayList<>();
+		ids.add(characterID);
+		ids.add(corporationID);
+		List<UniverseNamesResponse> namesResponse = update(DEFAULT_RETRIES, new EsiHandler<List<UniverseNamesResponse>>() {
 			@Override
-			public ApiResponse<CorporationResponse> get() throws ApiException {
-				return getCorporationApiOpen().getCorporationsCorporationIdWithHttpInfo(corporationID, DATASOURCE, null);
+			public ApiResponse<List<UniverseNamesResponse>> get() throws ApiException {
+				return getUniverseApiOpen().postUniverseNamesWithHttpInfo(ids, DATASOURCE);
 			}
 		});
+		String characterName = null;
+		String corporationName = null;
+		for (UniverseNamesResponse response : namesResponse) {
+			if (characterID.equals(response.getId())) {
+				characterName = response.getName();
+			} else if (corporationID.equals(response.getId())) {
+				corporationName = response.getName();
+			}
+		}
+		if (characterName == null || corporationName == null) {
+			addError("INVALID AUTHORIZATION (NAMES)", "Account Authorization Invalid\r\n(Fix: Options > Accounts... > Edit the account)", null);
+			owner.setInvalid(true);
+			return;
+		}
+		//Roles
 		boolean isCorporation = EsiScopes.CORPORATION_ROLES.isInScope(payload.getScopes());
 		if (isCorporation) { //Corporation
 			//Updated Character Roles
-			CharacterRolesResponse characterRolesResponse = getCharacterApiAuth().getCharactersCharacterIdRoles(characterID, DATASOURCE, null, null);
+			CharacterRolesResponse characterRolesResponse = update(DEFAULT_RETRIES, new EsiHandler<CharacterRolesResponse>() {
+				@Override
+				public ApiResponse<CharacterRolesResponse> get() throws ApiException {
+					return getCharacterApiAuth().getCharactersCharacterIdRolesWithHttpInfo(characterID, DATASOURCE, null, null);
+				}
+			});
 			roles.addAll(characterRolesResponse.getRoles());
 		}
-		if (((!isCorporation && characterID != owner.getOwnerID())
-				|| (isCorporation && corporationID != owner.getOwnerID()))
-				&& owner.getOwnerID() != 0) {
+		if (((!isCorporation && characterID != owner.getOwnerID()) || (isCorporation && corporationID != owner.getOwnerID())) && owner.getOwnerID() != 0) {
 			addError(null, "Wrong Entry", null);
 			wrongEntry = true;
 			return;
 		}
+		//Update owner
 		owner.setScopes(payload.getScopes());
 		owner.setRoles(roles);
-		owner.setCorporationName(corporation.getName());
+		owner.setCorporationName(corporationName);
 		if (owner.isCorporation()) {
 			owner.setOwnerID(corporationID);
-			owner.setOwnerName(corporation.getName());
+			owner.setOwnerName(corporationName);
 		} else {
 			owner.setOwnerID(payload.getCharacterID());
-			owner.setOwnerName(character.getName());
+			owner.setOwnerName(characterName);
 		}
 		if (isPrivilegesLimited()) {
 			addWarning("LIMITED ACCOUNT", "Limited account data access\r\n(Fix: Options > Accounts... > Edit)");
 			setError(null);
 		}
+		setNextUpdate(nextUpdate);
 	}
 
 	@Override
