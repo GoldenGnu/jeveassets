@@ -315,8 +315,7 @@ public final class ApiIdConverter {
 			return new Item(0);
 		}
 		Item item = StaticData.get().getItems().get(typeID);
-		if (item == null ||
-				(item.getVersion() != null && !item.getVersion().equals(EsiItemsGetter.ESI_ITEM_VERSION))) { //New ESI item version
+		if (item == null || (item.getVersion() != null && !item.getVersion().equals(EsiItemsGetter.ESI_ITEM_VERSION))) { //New ESI item version
 			if (item != null && item.getVersion().startsWith(EsiItemsGetter.ESI_ITEM_EMPTY)) {
 				String lastUpdated = item.getVersion().replace(EsiItemsGetter.ESI_ITEM_EMPTY, "");
 				String today = Formatter.dateOnly(Settings.getNow());
@@ -324,6 +323,14 @@ public final class ApiIdConverter {
 					return item;
 				}
 			}
+			item = downloadItem(typeID);
+		}
+		return item;
+	}
+
+	private synchronized static Item downloadItem(final Integer typeID) { //Only download one item at the time
+		Item item = StaticData.get().getItems().get(typeID); //May have been downloaded while waiting for sync
+		if (item == null) {
 			EsiItemsGetter esiItemsGetter = new EsiItemsGetter(typeID);
 			esiItemsGetter.run();
 			item = esiItemsGetter.getItem();
