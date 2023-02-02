@@ -40,6 +40,4 @@ public abstract class DialoguesAbout extends Bundle {
 
 	public abstract String about();
 	public abstract String close();
-	public abstract String updates();
-	public abstract String updatesInProgress();
 }

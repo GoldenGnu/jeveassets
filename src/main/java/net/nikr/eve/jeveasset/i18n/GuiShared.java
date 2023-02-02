@@ -37,7 +37,6 @@ public abstract class GuiShared extends Bundle {
 	public abstract String adam4eve();
 	public abstract String add();
 	public abstract String addFilter();
-	public abstract String addStockpileItem();
 	public abstract String addTransactionFilter();
 	public abstract String all();
 	public abstract String background();
@@ -79,14 +78,11 @@ public abstract class GuiShared extends Bundle {
 	public abstract String errorLoadingSettingsTitle();
 	public abstract String errorLoadingProfileMsg();
 	public abstract String errorLoadingProfileTitle();
-	public abstract String eveAddicts();
 	public abstract String eveCookbook();
 	public abstract String eveHub();
 	public abstract String eveInfo();
-	public abstract String eveMarketData();
 	public abstract String eveMarketer();
 	public abstract String eveMissioneer();
-	public abstract String eveOnline();
 	public abstract String eveRef();
 	public abstract String eveTycoon();
 	public abstract String evepraisal();
@@ -282,7 +278,6 @@ public abstract class GuiShared extends Bundle {
 	public abstract String tableResizeNone();
 	public abstract String tableSettings();
 	public abstract String tags();
-	public abstract String tagsEdit();
 	public abstract String tagsEditTitle();
 	public abstract String tagsName(String name, Integer count);
 	public abstract String tagsNew();
@@ -321,7 +316,6 @@ public abstract class GuiShared extends Bundle {
 	public abstract String zKillboard();
 
 	public abstract String today(Object arg0);
-	public abstract String whitespace37(Object arg0, Object arg1);
 	public abstract String files(Object arg0);
 	public abstract String deleteView();
 	public abstract String deleteViews(int size);
@@ -334,20 +328,6 @@ public abstract class GuiShared extends Bundle {
 	public abstract String renameView();
 	public abstract String saveView();
 	public abstract String saveViewMsg();
-
-	//Update
-	public abstract String beta();
-	public abstract String devBuild();
-	public abstract String feedbackMsg(String programName, String versionType);
-	public abstract String newBuildMsg(String buildType, String programName);
-	public abstract String newBuildTitle();
-	public abstract String newVersionTitle();
-	public abstract String newVersionMsg(String programName);
-	public abstract String noNewVersionTitle();
-	public abstract String noNewVersionMsg();
-	public abstract String protableMsg(int i);
-	public abstract String releaseCandidate();
-	public abstract String stable();
 
 	//Filters
 	public abstract String saveFilter();

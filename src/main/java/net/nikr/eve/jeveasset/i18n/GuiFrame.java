@@ -82,7 +82,6 @@ public abstract class GuiFrame extends Bundle {
 	public abstract String updatable();
 	public abstract String update();
 	public abstract String update1();
-	public abstract String updateEveKit();
 	public abstract String updateStructure();
 	public abstract String updatingInProgressMsg();
 	public abstract String updatingInProgressTitle();
