@@ -417,31 +417,31 @@ public class SlotsTab extends JMainTabSecondary {
 
 	public static class IconHeaderRender implements TableCellRenderer, SortableRenderer {
 
-        private static final Map<Icons, Icon> icons = new HashMap<>();
-        private static final String MANUFACTURING = "Manufacturing";
-        private static final String RESEARCH = "Research";
-        private static final String REACTIONS = "Reactions";
-        private static final String MARKET_ORDERS = "Market Orders";
-        private static final String CONTRACTS_CHARACTER  = "Character Contracts";
-        private static final String CONTRACTS_CORPORATION = "Corporation Contracts";
-        private boolean showIcon = false;
-        private TableCellRenderer delegateRenderer;
+		private static final Map<Icons, Icon> icons = new HashMap<>();
+		private static final String MANUFACTURING = "Manufacturing";
+		private static final String RESEARCH = "Research";
+		private static final String REACTIONS = "Reactions";
+		private static final String MARKET_ORDERS = "Market Orders";
+		private static final String CONTRACTS_CHARACTER  = "Character Contracts";
+		private static final String CONTRACTS_CORPORATION = "Corporation Contracts";
+		private boolean showIcon = false;
+		private TableCellRenderer delegateRenderer;
 		private Icon sortIcon;
 
-        public IconHeaderRender(JTable jTable) {
-            this.delegateRenderer = jTable.getTableHeader().getDefaultRenderer();
-        }
+		public IconHeaderRender(JTable jTable) {
+			this.delegateRenderer = jTable.getTableHeader().getDefaultRenderer();
+		}
 
-        public TableCellRenderer getDelegateRenderer() {
-            return delegateRenderer;
-        }
+		public TableCellRenderer getDelegateRenderer() {
+			return delegateRenderer;
+		}
 
 		public void setShowIcon(boolean showIcon) {
 			this.showIcon = showIcon;
 		}
 
-        @Override
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+		@Override
+		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
 			Component rendered = getDelegateTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 			if (rendered instanceof JLabel) {
 				final JLabel jLabel = (JLabel) rendered;
@@ -482,21 +482,21 @@ public class SlotsTab extends JMainTabSecondary {
 				}
 			}
 			return rendered;
-        }
+		}
 
 		@Override
 		public void setSortIcon(Icon sortIcon) {
 			this.sortIcon = sortIcon;
 		}
 
-        private Component getDelegateTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-            try {
-                return delegateRenderer.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-            } catch (RuntimeException e) {
-                delegateRenderer = new DefaultTableCellRenderer();
-                return delegateRenderer.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-            }
-        }
+		private Component getDelegateTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+			try {
+				return delegateRenderer.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+			} catch (RuntimeException e) {
+				delegateRenderer = new DefaultTableCellRenderer();
+				return delegateRenderer.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+			}
+		}
 
 		private Icon getIcon(Icon icon1, Icon icon2) {
 			Icons key = new Icons(icon1, icon2);
