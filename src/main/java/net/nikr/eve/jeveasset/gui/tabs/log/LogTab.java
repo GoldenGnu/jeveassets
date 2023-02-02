@@ -232,7 +232,7 @@ public class LogTab extends JMainTabSecondary {
 
 		@Override
 		public void saveSettings(final String msg) {
-			program.saveSettings("Log Table: " + msg); //Save Asset Filters and Export Setttings
+			program.saveSettings("Log Table: " + msg); //Save Asset Filters and Export Settings
 		}
 	}
 

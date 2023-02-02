@@ -207,11 +207,11 @@ public final class Formatter {
 		return milliseconds(time, first, verbose, true, true, true, true);
 	}
 
-	public static String milliseconds(long time, boolean showDays, boolean showHours, boolean showMinutes, boolean showSecounds) {
-		return milliseconds(time, false, false, showDays, showHours, showMinutes, showSecounds);
+	public static String milliseconds(long time, boolean showDays, boolean showHours, boolean showMinutes, boolean showSeconds) {
+		return milliseconds(time, false, false, showDays, showHours, showMinutes, showSeconds);
 	}
 
-	public static String milliseconds(long time, boolean first, boolean verbose, boolean showDays, boolean showHours, boolean showMinutes, boolean showSecounds) {
+	public static String milliseconds(long time, boolean first, boolean verbose, boolean showDays, boolean showHours, boolean showMinutes, boolean showSeconds) {
 		final StringBuilder timeString = new StringBuilder();
 		long days = time / (24 * 60 * 60 * 1000);
 		boolean space = false;
@@ -281,7 +281,7 @@ public final class Formatter {
 		if (!showMinutes) {
 			seconds = seconds + (minutes * 60);
 		}
-		if (seconds > 0 && showSecounds) {
+		if (seconds > 0 && showSeconds) {
 			if (space) {
 				timeString.append(" ");
 			}
