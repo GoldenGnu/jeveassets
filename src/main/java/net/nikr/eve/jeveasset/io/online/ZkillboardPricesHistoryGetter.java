@@ -48,30 +48,30 @@ public class ZkillboardPricesHistoryGetter {
 	private static Long wait = null;
 	private static Long ended = null;
 	/**
-     * HttpLoggingInterceptor
-     */
-    private static final HttpLoggingInterceptor HTTP_LOGGING_INTERCEPTOR = new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
-                                    @Override
-                                    public void log(String string) {
-                                        LOG.debug(string);
-                                    }
-                                });
-    /**
-     * HTTP Client
-     */
-    private final OkHttpClient client;
+	* HttpLoggingInterceptor
+	*/
+	private static final HttpLoggingInterceptor HTTP_LOGGING_INTERCEPTOR = new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
+									@Override
+									public void log(String string) {
+										LOG.debug(string);
+									}
+								});
+	/**
+	 * HTTP Client
+	 */
+	private final OkHttpClient client;
 
 	private static ZkillboardPricesHistoryGetter getter;
 
 	private ZkillboardPricesHistoryGetter() {
 		if (LOG.isDebugEnabled()) {
-            client = new OkHttpClient().newBuilder()
-                .addNetworkInterceptor(HTTP_LOGGING_INTERCEPTOR)
-                .build();
-            HTTP_LOGGING_INTERCEPTOR.setLevel(HttpLoggingInterceptor.Level.BASIC);
-        } else {
-             client = new OkHttpClient().newBuilder().build();
-        }
+			client = new OkHttpClient().newBuilder()
+				.addNetworkInterceptor(HTTP_LOGGING_INTERCEPTOR)
+				.build();
+			HTTP_LOGGING_INTERCEPTOR.setLevel(HttpLoggingInterceptor.Level.BASIC);
+		} else {
+			 client = new OkHttpClient().newBuilder().build();
+		}
 	}
 
 	public static Map<String, Double> getPriceHistory(int TypeID) {
