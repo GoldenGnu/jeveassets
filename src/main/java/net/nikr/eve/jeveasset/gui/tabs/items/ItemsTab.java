@@ -174,7 +174,7 @@ public class ItemsTab extends JMainTabPrimary {
 
 		@Override
 		public void saveSettings(final String msg) {
-			program.saveSettings("Items Table: " + msg); //Save Item Filters and Export Setttings
+			program.saveSettings("Items Table: " + msg); //Save Item Filters and Export Settings
 		}
 	}
 }

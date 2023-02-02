@@ -233,7 +233,7 @@ public class IndustryJobsTab extends JMainTabPrimary {
 
 		@Override
 		public void saveSettings(final String msg) {
-			program.saveSettings("Industry Jobs Table: " + msg); //Save Industry Job Filters and Export Setttings
+			program.saveSettings("Industry Jobs Table: " + msg); //Save Industry Job Filters and Export Settings
 		}
 	}
 }

@@ -449,7 +449,7 @@ public class ReprocessedTab extends JMainTabSecondary {
 
 		@Override
 		public void saveSettings(final String msg) {
-			program.saveSettings("Reprocessed Table: " + msg); //Save Reprocessed Filters and Export Setttings
+			program.saveSettings("Reprocessed Table: " + msg); //Save Reprocessed Filters and Export Settings
 		}
 	}
 
