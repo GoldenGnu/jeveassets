@@ -297,7 +297,7 @@ public class MaterialsTab extends JMainTabSecondary {
 
 		@Override
 		public void saveSettings(final String msg) {
-			program.saveSettings("Materials Table " + msg); //Save Material Export Setttings (Filters not used)
+			program.saveSettings("Materials Table " + msg); //Save Material Export Settings (Filters not used)
 		}
 	}
 }

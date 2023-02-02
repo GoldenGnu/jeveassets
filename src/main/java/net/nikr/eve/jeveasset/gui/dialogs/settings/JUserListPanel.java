@@ -167,7 +167,7 @@ public abstract class JUserListPanel<K, V extends Comparable<V>> extends JSettin
 			}
 			//Update GUI
 			updateGUI();
-			if (save) { //Save (if not in setttings dialog)
+			if (save) { //Save (if not in settings dialog)
 				Settings.lock("Custom Price/Name (Edit)"); //Lock for Custom Price/Name (Edit)
 				UpdateType updateType = save();
 				Settings.unlock("Custom Price/Name (Edit)"); //Unlock for Custom Price/Name (Edit)
@@ -216,7 +216,7 @@ public abstract class JUserListPanel<K, V extends Comparable<V>> extends JSettin
 		if (value == JOptionPane.OK_OPTION) {
 			items.keySet().removeAll(containedKeys);
 			updateGUI();
-			if (save) { //Save (if not in setttings dialog)
+			if (save) { //Save (if not in settings dialog)
 				Settings.lock("Custom Price/Name (Delete)"); //Lock for Custom Price/Name (Delete)
 				UpdateType updateType = save();
 				Settings.unlock("Custom Price/Name (Delete)"); //Unlock for Custom Price/Name (Delete)

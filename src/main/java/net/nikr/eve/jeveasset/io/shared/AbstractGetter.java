@@ -153,7 +153,7 @@ public abstract class AbstractGetter<O extends OwnerType> implements Runnable {
 			addInfo("NOT ALLOWED YET", "Update skipped: Waiting for cache to expire.\r\n(Updatable again after cache expires)");
 			return false;
 		}
-		//Check if the owner have accesss to the endpoint
+		//Check if the owner have access to the endpoint
 		if (owner != null && !haveAccess()) {
 			//Silent
 			return false;
