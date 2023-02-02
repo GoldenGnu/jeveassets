@@ -67,7 +67,6 @@ public abstract class DialoguesAccount extends Bundle {
 	public abstract String authentication();
 	public abstract String authorize();
 	public abstract String accessKey();
-	public abstract String credential();
 	public abstract String esiHelpText();
 	public abstract String validatingMessage();
 	public abstract String scopes();
@@ -84,7 +83,6 @@ public abstract class DialoguesAccount extends Bundle {
 	public abstract String scopeMarketStructures();
 	public abstract String scopeContracts();
 	public abstract String scopeRoles();
-	public abstract String scopeLocations();
 	public abstract String scopeStructures();
 	public abstract String scopeShipType();
 	public abstract String scopeShipLocation();
@@ -101,8 +99,6 @@ public abstract class DialoguesAccount extends Bundle {
 	public abstract String accountMigrated();
 	public abstract String accountCanMigrate();
 	public abstract String add();
-	public abstract String esiDescription();
-	public abstract String esi();
 	public abstract String collapse();
 	public abstract String expand();
 	public abstract String showAssets();
@@ -120,7 +116,6 @@ public abstract class DialoguesAccount extends Bundle {
 	public abstract String shareImportClipboard();
 	public abstract String shareImportFile();
 	public abstract String shareImportHelp();
-	public abstract String showCorp();
 	public abstract String close();
 	public abstract String noOwners();
 
