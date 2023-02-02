@@ -580,7 +580,7 @@ public class LoadoutsTab extends JMainTabSecondary {
 
 		@Override
 		public void saveSettings(final String msg) {
-			program.saveSettings("Ship Loudouts Table: " + msg); //Save Ship Loudout Export Setttings (Filters not used)
+			program.saveSettings("Ship Loudouts Table: " + msg); //Save Ship Loudout Export Settings (Filters not used)
 		}
 	}
 }

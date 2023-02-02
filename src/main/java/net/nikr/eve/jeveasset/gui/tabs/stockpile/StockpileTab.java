@@ -1137,7 +1137,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 
 		@Override
 		public void saveSettings(final String msg) {
-			program.saveSettings("Stockpile Table: " + msg); //Save Stockpile Filters and Export Setttings
+			program.saveSettings("Stockpile Table: " + msg); //Save Stockpile Filters and Export Settings
 		}
 	}
 

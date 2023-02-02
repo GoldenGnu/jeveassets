@@ -396,7 +396,7 @@ public class SlotsTab extends JMainTabSecondary {
 
 		@Override
 		public void saveSettings(final String msg) {
-			program.saveSettings("ISK Table: " + msg); //Save ISK Filters and Export Setttings
+			program.saveSettings("ISK Table: " + msg); //Save ISK Filters and Export Settings
 		}
 	}
 

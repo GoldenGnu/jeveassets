@@ -84,7 +84,7 @@ public class BackupTest extends TestUtil {
 		assertFalse(newFile.exists());
 		assertFalse(bacFile.exists());
 		assertTrue(reader.read(targetFile));
-		//Secound run
+		//Second run
 		assertTrue(writer.write(targetFile, true));
 		assertTrue(targetFile.exists());
 		assertFalse(newFile.exists());

@@ -63,7 +63,7 @@ public abstract class AbstractBackup extends AttributeGetters {
 		File targetFile = new File(filename);
 		//target to bac (new is safe)
 		renameFile(targetFile, getBackupFile(filename));
-		//new to targe (bac is safe)
+		//new to target (bac is safe)
 		renameFile(getNewFile(filename), targetFile);
 	}
 

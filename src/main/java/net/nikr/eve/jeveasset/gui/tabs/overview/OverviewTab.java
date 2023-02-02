@@ -59,8 +59,8 @@ import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuColumns;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
-import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo.InfoItem;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo.AutoNumberFormat;
+import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo.InfoItem;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
@@ -568,7 +568,7 @@ public class OverviewTab extends JMainTabSecondary {
 
 		@Override
 		public void saveSettings(final String msg) {
-			program.saveSettings("Overview Table: " + msg); //Save Overview Filters and Export Setttings
+			program.saveSettings("Overview Table: " + msg); //Save Overview Filters and Export Settings
 		}
 	}
 }

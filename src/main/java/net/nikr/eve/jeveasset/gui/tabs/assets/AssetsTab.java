@@ -358,7 +358,7 @@ public class AssetsTab extends JMainTabPrimary implements TagUpdate {
 
 		@Override
 		public void saveSettings(final String msg) {
-			program.saveSettings("Assets Table: " + msg); //Save Asset Filters and Export Setttings
+			program.saveSettings("Assets Table: " + msg); //Save Asset Filters and Export Settings
 		}
 	}
 }

@@ -205,7 +205,7 @@ public class AccountManagerDialog extends JDialogCentered {
 				.addComponent(jTableScroll, 450, 450, Short.MAX_VALUE)
 				.addComponent(jClose, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 		);
-		// Pack then take the dialog dimensions to use as the minimun dimension.
+		// Pack then take the dialog dimensions to use as the minimum dimension.
 		getDialog().pack();
 		Dimension d = new Dimension(getDialog().getWidth() + 10, getDialog().getHeight() + 10); // Use 10 pixel buffer to offset the resize 'bug'.
 		getDialog().setMinimumSize(d);
