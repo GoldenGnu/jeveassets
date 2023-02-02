@@ -160,7 +160,7 @@ public class AssetValue implements Comparable<AssetValue> {
 	}
 
 	private Long resolveUnknownLocationID(String locationValue, String match) {
-		String number = locationValue.replaceAll(match, "$1"); //Try to resovle unknown location
+		String number = locationValue.replaceAll(match, "$1"); //Try to resolve unknown location
 		try {
 			return Long.valueOf(number);
 		} catch (NumberFormatException ex) {
