@@ -111,7 +111,6 @@ public abstract class TabsOrders extends Bundle {
 	public abstract String rangeJump();
 	public abstract String rangeJumps(String range);
 	public abstract String sell();
-	public abstract String sellOrderRange();
 	public abstract String sellOrderRangeToolTip();
 	public abstract String sellOrderRangeLastToolTip();
 	public abstract String sellOrderRangeSelcted(String selected);
@@ -138,9 +137,7 @@ public abstract class TabsOrders extends Bundle {
 	public abstract String updateOutbidEsiAuto();
 	public abstract String updateOutbidFileBuy();
 	public abstract String updateOutbidFileSell();
-	public abstract String updateOutbidToolTip();
 	public abstract String updateOutbidWhen(String time);
 	public abstract String updateOutbidUpdating();
 	public abstract String updateTitle();
-	public abstract String whitespace(Object arg0);
 }

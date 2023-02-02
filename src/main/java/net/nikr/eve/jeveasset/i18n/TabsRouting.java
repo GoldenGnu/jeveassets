@@ -39,8 +39,6 @@ public abstract class TabsRouting extends Bundle {
 	public abstract String addStationSelect();
 	public abstract String addStationTitle();
 	public abstract String addSystem();
-	public abstract String addSystemCancel();
-	public abstract String addSystemOK();
 	public abstract String addSystemSelect();
 	public abstract String addSystemTitle();
 	public abstract String algorithm();
@@ -65,7 +63,6 @@ public abstract class TabsRouting extends Bundle {
 	public abstract String importOptionsOverwriteHelp();
 	public abstract String importOptionsRenameHelp();
 	public abstract String importOptionsSkipHelp();
-	public abstract String importOptionsTitle();
 	public abstract String manageFiltersTitle();
 	public abstract String noSystems();
 	public abstract String noSystemsTitle();
