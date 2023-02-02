@@ -69,18 +69,6 @@ public class TestI18N extends TestUtil {
 	}
 
 	@Test
-	public void testDialoguesAddSystem_en() throws Exception {
-		DialoguesAddSystem g = BundleServiceFactory.getBundleService().get(DialoguesAddSystem.class);
-		assertNotNull(g.filterResult(5));
-	}
-
-	@Test
-	public void testDialoguesBugs_en() throws Exception {
-		DialoguesBugs g = BundleServiceFactory.getBundleService().get(DialoguesBugs.class);
-		assertNotNull(g.cancel());
-	}
-
-	@Test
 	public void testDialoguesExport_en() throws Exception {
 		DialoguesExport g = BundleServiceFactory.getBundleService().get(DialoguesExport.class);
 		assertNotNull(g.noFilter());
@@ -101,7 +89,7 @@ public class TestI18N extends TestUtil {
 	@Test
 	public void testDialoguesUpdate_en() throws Exception {
 		DialoguesUpdate g = BundleServiceFactory.getBundleService().get(DialoguesUpdate.class);
-		assertNotNull(g.accountBlances());
+		assertNotNull(g.accountBalance());
 	}
 
 	@Test public void testGeneralBundle_en() throws Exception {

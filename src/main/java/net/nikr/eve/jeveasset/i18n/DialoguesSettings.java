@@ -224,7 +224,6 @@ public abstract class DialoguesSettings extends Bundle {
 	public abstract String windowX();
 	public abstract String windowY();
 	public abstract String windowMaximised();
-	public abstract String windowDefault();
 
 	// used in ContractPriceSettingsPanel
 	public abstract String contractPrices();

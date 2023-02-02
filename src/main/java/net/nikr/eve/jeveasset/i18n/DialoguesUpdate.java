@@ -54,7 +54,7 @@ public abstract class DialoguesUpdate extends Bundle {
 	public abstract String marketOrders();
 	public abstract String industryJobs();
 	public abstract String accounts();
-	public abstract String accountBlances();
+	public abstract String accountBalance();
 	public abstract String assets();
 	public abstract String priceData();
 	public abstract String priceDataNew();
@@ -62,7 +62,6 @@ public abstract class DialoguesUpdate extends Bundle {
 	public abstract String nextUpdate();
 	public abstract String noAccounts();
 	public abstract String now();
-	public abstract String conqStations();
 	public abstract String balance();
 	public abstract String journal();
 	public abstract String transactions();

@@ -152,7 +152,7 @@ public class UpdateDialog extends JDialogCentered {
 		jJournal = new JCheckBox(DialoguesUpdate.get().journal());
 		jTransactions = new JCheckBox(DialoguesUpdate.get().transactions());
 		jIndustryJobs = new JCheckBox(DialoguesUpdate.get().industryJobs());
-		jAccountBalance = new JCheckBox(DialoguesUpdate.get().accountBlances());
+		jAccountBalance = new JCheckBox(DialoguesUpdate.get().accountBalance());
 		jContracts = new JCheckBox(DialoguesUpdate.get().contracts());
 		jAssets = new JCheckBox(DialoguesUpdate.get().assets());
 		jBlueprints = new JCheckBox(DialoguesUpdate.get().blueprints());
