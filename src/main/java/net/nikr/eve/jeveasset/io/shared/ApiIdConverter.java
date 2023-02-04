@@ -20,8 +20,6 @@
  */
 package net.nikr.eve.jeveasset.io.shared;
 
-import java.util.ArrayList;
-import java.util.List;
 import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
 import net.nikr.eve.jeveasset.data.api.my.MyAsset;
 import net.nikr.eve.jeveasset.data.api.my.MyJournal;
@@ -56,7 +54,6 @@ import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.io.esi.EsiItemsGetter;
 import net.nikr.eve.jeveasset.io.local.ItemsWriter;
 import net.nikr.eve.jeveasset.io.online.CitadelGetter;
-import net.nikr.eve.jeveasset.io.online.FuzzworkMapGetter.Planet;
 import net.troja.eve.esi.model.CharacterBookmarkItem;
 import net.troja.eve.esi.model.CharacterBookmarksResponse;
 import net.troja.eve.esi.model.CorporationBookmarkItem;
@@ -367,18 +364,6 @@ public final class ApiIdConverter {
 		return "!" + String.valueOf(ownerID);
 	}
 
-	public static List<MyAsset> getParents(final MyAsset parentAsset) {
-		List<MyAsset> parents;
-		if (parentAsset != null) {
-			parents = new ArrayList<>(parentAsset.getParents());
-			parents.add(parentAsset);
-		} else {
-			parents = new ArrayList<>();
-		}
-
-		return parents;
-	}
-
 	public static boolean isLocationOK(final Long locationID) {
 		return !getLocation(locationID, null).isEmpty();
 	}
@@ -416,15 +401,11 @@ public final class ApiIdConverter {
 		return MyLocation.create(locationID);
 	}
 
-	public static void addLocation(final Citadel citadel, long locationID) {
+	public static void addLocation(final Citadel citadel) {
 		MyLocation location = citadel.toLocation();
 		if (location != null) {
 			StaticData.get().addLocation(location);
 		}
-	}
-
-	public static void removeLocation(final long locationID) {
-		StaticData.get().removeLocation(locationID);
 	}
 
 	public static Citadel getCitadel(final StructureResponse response, final long locationID) {
@@ -456,13 +437,6 @@ public final class ApiIdConverter {
 
 	public static Citadel getCitadel(PlanetResponse planet) {
 		return new Citadel(planet.getPlanetId(), planet.getName(), planet.getSystemId(), false, false, CitadelSource.ESI_PLANET);
-	}
-
-	public static Citadel getCitadel(Planet planet) {
-		if (planet == null) {
-			return null;
-		}
-		return new Citadel(planet.getPlanetID(), planet.getName(), planet.getSystemID(), false, false, CitadelSource.FUZZWORK_PLANET);
 	}
 
 }

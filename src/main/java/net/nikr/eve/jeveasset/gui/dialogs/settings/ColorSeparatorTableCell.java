@@ -16,15 +16,6 @@ import net.nikr.eve.jeveasset.gui.shared.table.SeparatorTableCell;
  */
 public class ColorSeparatorTableCell extends SeparatorTableCell<ColorRow> {
 
-	public enum StockpileCellAction {
-		DELETE_STOCKPILE,
-		EDIT_STOCKPILE,
-		CLONE_STOCKPILE,
-		SHOPPING_LIST_SINGLE,
-		ADD_ITEM,
-		UPDATE_MULTIPLIER
-	}
-
 	private final JLabel jGroup;
 
 	public ColorSeparatorTableCell(final JTable jTable, final SeparatorList<ColorRow> separatorList) {
