@@ -171,16 +171,6 @@ public abstract class ColorTheme {
 			this.foreground = toColor(foreground);
 		}
 
-		public ColorThemeEntry(Color background) {
-			this.background = background;
-			this.foreground = null;
-		}
-
-		public ColorThemeEntry(Color background, Color foreground) {
-			this.background = background;
-			this.foreground = foreground;
-		}
-
 		public Color getBackground() {
 			return background;
 		}
