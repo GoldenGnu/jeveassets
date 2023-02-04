@@ -132,10 +132,6 @@ public abstract class AbstractGetter<O extends OwnerType> implements Runnable {
 	protected abstract void setNextUpdate(Date date);
 	protected abstract boolean haveAccess();
 
-	protected final String getTaskName() {
-		return taskName;
-	}
-
 	protected synchronized void setExpires(Map<String, List<String>> headers) {
 		Date expires = getHeaderDate(headers, "expires");
 		if (expires != null) {
@@ -243,17 +239,12 @@ public abstract class AbstractGetter<O extends OwnerType> implements Runnable {
 		return ownerBuilder.toString();
 	}
 
-	protected final void addMigrationWarning() {
-		if (updateTask != null) {
-			updateTask.addError("EveApi accounts can be migrated to ESI", "Add ESI accounts in the account manager:\r\nOptions > Accounts... > Add > ESI");
-		}
-	}
-
 	protected final void logError(Object logMsg, Object taskMsg) {
 		logError(logMsg, taskMsg, null);
 	}
+
 	protected final void logError(Object logMsg, Object taskMsg, Throwable ex) {
-		String e = getLog(logMsg, taskMsg, ex);
+		String e = getLog(logMsg);
 		setError(e);
 		if (ex != null) {
 			LOG.error(e, ex);
@@ -267,7 +258,7 @@ public abstract class AbstractGetter<O extends OwnerType> implements Runnable {
 	}
 
 	protected final void logWarn(Object logMsg, Object taskMsg, Throwable ex) {
-		String e = getLog(logMsg, taskMsg, null);
+		String e = getLog(logMsg);
 		if (ex != null) {
 			LOG.warn(e, ex);
 		} else {
@@ -280,7 +271,7 @@ public abstract class AbstractGetter<O extends OwnerType> implements Runnable {
 	}
 
 	protected final void logInfo(Object logMsg, Object taskMsg, Throwable ex) {
-		String e = getLog(logMsg, taskMsg, null);
+		String e = getLog(logMsg);
 		if (ex != null) {
 			LOG.info(e, ex);
 		} else {
@@ -288,7 +279,7 @@ public abstract class AbstractGetter<O extends OwnerType> implements Runnable {
 		}
 	}
 
-	protected final String getLog(Object logMsg, Object taskMsg, Throwable ex) {
+	protected final String getLog(Object logMsg) {
 		StringBuilder builder = new StringBuilder();
 		builder.append(apiName);
 		builder.append(" ");
