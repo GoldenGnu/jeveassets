@@ -52,7 +52,6 @@ import net.troja.eve.esi.api.LocationApi;
 import net.troja.eve.esi.api.MarketApi;
 import net.troja.eve.esi.api.PlanetaryInteractionApi;
 import net.troja.eve.esi.api.SkillsApi;
-import net.troja.eve.esi.api.SovereigntyApi;
 import net.troja.eve.esi.api.UniverseApi;
 import net.troja.eve.esi.api.UserInterfaceApi;
 import net.troja.eve.esi.api.WalletApi;
@@ -71,8 +70,6 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner> {
 	private static final ApiClient PUBLIC_CLIENT = new ApiClientBuilder().okHttpClient(getHttpClient()).build();
 	private static final UniverseApi UNIVERSE_API = new UniverseApi(PUBLIC_CLIENT);
 	private static final CharacterApi CHARACTER_API = new CharacterApi(PUBLIC_CLIENT);
-	private static final CorporationApi CORPORATION_API = new CorporationApi(PUBLIC_CLIENT);
-	private static final SovereigntyApi SOVEREIGNTY_API = new SovereigntyApi(PUBLIC_CLIENT);
 	private static final ContractsApi CONTRACTS_API = new ContractsApi(PUBLIC_CLIENT);
 	private static final MarketApi MARKET_API = new MarketApi(PUBLIC_CLIENT);
 	private static final FactionWarfareApi FACTION_WARFARE_API = new FactionWarfareApi(PUBLIC_CLIENT);
@@ -310,14 +307,6 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner> {
 
 	public CharacterApi getCharacterApiOpen() {
 		return CHARACTER_API;
- 	}
-
-	public CorporationApi getCorporationApiOpen() {
-		return CORPORATION_API;
-	}
-
-	public SovereigntyApi getSovereigntyApiOpen() {
-		return SOVEREIGNTY_API;
  	}
 
 	public static MarketApi getMarketApiOpen() {

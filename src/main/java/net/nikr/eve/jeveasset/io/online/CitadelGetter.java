@@ -27,13 +27,9 @@ import net.nikr.eve.jeveasset.data.settings.Citadel;
 import net.nikr.eve.jeveasset.data.settings.CitadelSettings;
 import net.nikr.eve.jeveasset.io.local.CitadelReader;
 import net.nikr.eve.jeveasset.io.local.CitadelWriter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 
 public class CitadelGetter {
-
-	private static final Logger LOG = LoggerFactory.getLogger(CitadelGetter.class);
 
 	private static CitadelGetter citadelGetter;
 	private CitadelSettings citadelSettings = new CitadelSettings();
@@ -78,11 +74,6 @@ public class CitadelGetter {
 
 	private void loadXml() {
 		citadelSettings = CitadelReader.load();
-	}
-
-	protected static interface Setter<T> {
-		public void setETag(CitadelSettings citadelSettings, String eTag);
-		public void setData(CitadelSettings citadelSettings, Map<Long, T> results);
 	}
 
 	private void removeCitadel(long locationID) {

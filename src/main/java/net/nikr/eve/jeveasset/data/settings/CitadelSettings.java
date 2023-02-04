@@ -45,7 +45,7 @@ public class CitadelSettings {
 		}
 		if (old == null) {
 			cache.put(locationID, citadel);
-			ApiIdConverter.addLocation(citadel, locationID);
+			ApiIdConverter.addLocation(citadel);
 		} else {
 			old.update(citadel);
 		}
