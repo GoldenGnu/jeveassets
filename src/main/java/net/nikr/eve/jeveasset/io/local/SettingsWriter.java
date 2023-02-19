@@ -30,7 +30,6 @@ import java.util.Set;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder.MarketOrderRange;
 import net.nikr.eve.jeveasset.data.settings.ColorEntry;
 import net.nikr.eve.jeveasset.data.settings.ColorSettings;
-import net.nikr.eve.jeveasset.data.settings.ContractPriceManager.ContractPriceSettings;
 import net.nikr.eve.jeveasset.data.settings.CopySettings;
 import net.nikr.eve.jeveasset.data.settings.ExportSettings;
 import net.nikr.eve.jeveasset.data.settings.MarketOrdersSettings;
@@ -152,7 +151,6 @@ public class SettingsWriter extends AbstractXmlWriter {
 		writeWindow(xmldoc, settings);
 		writeProxy(xmldoc, settings.getProxyData());
 		writePriceDataSettings(xmldoc, settings.getPriceDataSettings());
-		writeContractPriceSettings(xmldoc, settings.getContractPriceSettings());
 		writeFlags(xmldoc, settings.getFlags());
 		writeUserPrices(xmldoc, settings.getUserPrices());
 		writeUserItemNames(xmldoc, settings.getUserItemNames());
@@ -715,6 +713,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 			parentNode.appendChild(node);
 		}
 	}
+
 	private void writePriceDataSettings(final Document xmldoc, final PriceDataSettings priceDataSettings) {
 		Element parentNode = xmldoc.createElementNS(null, "marketstat");
 		setAttribute(parentNode, "defaultprice", priceDataSettings.getPriceType());
@@ -723,17 +722,6 @@ public class SettingsWriter extends AbstractXmlWriter {
 		setAttribute(parentNode, "locationid", priceDataSettings.getLocationID());
 		setAttribute(parentNode, "type", priceDataSettings.getLocationType());
 		setAttributeOptional(parentNode, "janicekey", priceDataSettings.getJaniceKey());
-		xmldoc.getDocumentElement().appendChild(parentNode);
-	}
-
-	private void writeContractPriceSettings(final Document xmldoc, final ContractPriceSettings contractPriceSettings) {
-		Element parentNode = xmldoc.createElementNS(null, "contractpricesettings");
-		setAttribute(parentNode, "includeprivate", contractPriceSettings.isIncludePrivate());
-		setAttribute(parentNode, "defaultbpc", contractPriceSettings.isDefaultBPC());
-		setAttribute(parentNode, "mode", contractPriceSettings.getContractPriceMode());
-		setAttribute(parentNode, "sec", contractPriceSettings.getSecurityString());
-		setAttribute(parentNode, "feedback", contractPriceSettings.isFeedback());
-		setAttribute(parentNode, "feedbackasked", contractPriceSettings.isFeedbackAsked());
 		xmldoc.getDocumentElement().appendChild(parentNode);
 	}
 

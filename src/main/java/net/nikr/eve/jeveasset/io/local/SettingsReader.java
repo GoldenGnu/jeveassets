@@ -41,9 +41,6 @@ import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.settings.AddedData;
 import net.nikr.eve.jeveasset.data.settings.ColorEntry;
 import net.nikr.eve.jeveasset.data.settings.ColorTheme.ColorThemeTypes;
-import net.nikr.eve.jeveasset.data.settings.ContractPriceManager.ContractPriceSettings;
-import net.nikr.eve.jeveasset.data.settings.ContractPriceManager.ContractPriceSettings.ContractPriceMode;
-import net.nikr.eve.jeveasset.data.settings.ContractPriceManager.ContractPriceSettings.ContractPriceSecurity;
 import net.nikr.eve.jeveasset.data.settings.ExportSettings;
 import net.nikr.eve.jeveasset.data.settings.ExportSettings.ColumnSelection;
 import net.nikr.eve.jeveasset.data.settings.ExportSettings.DecimalSeparator;
@@ -440,12 +437,6 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		//PriceDataSettings
 		Element priceDataSettingsElement = getNode(element, "marketstat");
 		parsePriceDataSettings(priceDataSettingsElement, settings);
-
-		//ContractPriceSettings
-		Element contractPriceSettingsElement = getNodeOptional(element, "contractpricesettings");
-		if (contractPriceSettingsElement != null) {
-			parseContractPriceSettings(contractPriceSettingsElement, settings);
-		}
 
 		//MarketOrdersSettings
 		Element marketOrdersSettingsElement = getNodeOptional(element, "marketorderssettings");
@@ -1231,26 +1222,6 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			locationID = priceSource.getDefaultLocationID();
 		}
 		settings.setPriceDataSettings(new PriceDataSettings(locationType, locationID, priceSource, priceType, priceReprocessedType, janiceKey));
-	}
-
-	private void parseContractPriceSettings(final Element element, final Settings settings) throws XmlException {
-		boolean defaultBPC = getBoolean(element, "defaultbpc");
-		boolean includePrivate = getBoolean(element, "includeprivate");
-		boolean feedback = getBooleanNotNull(element, "feedback", false);
-		boolean feedbackAsked = getBooleanNotNull(element, "feedbackasked", false);
-		ContractPriceMode mode = ContractPriceMode.valueOf(getString(element, "mode"));
-		String sec = getStringOptional(element, "sec");
-		Set<ContractPriceSecurity> security = new HashSet<>();
-		for (String s : sec.split(",")) {
-			security.add(ContractPriceSecurity.valueOf(s));
-		}
-		ContractPriceSettings contractPriceSettings = settings.getContractPriceSettings();
-		contractPriceSettings.setDefaultBPC(defaultBPC);
-		contractPriceSettings.setIncludePrivate(includePrivate);
-		contractPriceSettings.setContractPriceMode(mode);
-		contractPriceSettings.setContractPriceSecurity(security);
-		contractPriceSettings.setFeedback(feedback);
-		contractPriceSettings.setFeedbackAsked(feedbackAsked);
 	}
 
 	private void parseMarketOrdersSettings(final Element element, final Settings settings) throws XmlException {

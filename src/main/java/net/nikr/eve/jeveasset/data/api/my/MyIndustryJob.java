@@ -29,7 +29,6 @@ import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.types.BlueprintType;
-import net.nikr.eve.jeveasset.data.settings.types.ContractPriceType;
 import net.nikr.eve.jeveasset.data.settings.types.EditableLocationType;
 import net.nikr.eve.jeveasset.data.settings.types.EditablePriceType;
 import net.nikr.eve.jeveasset.data.settings.types.ItemType;
@@ -37,7 +36,7 @@ import net.nikr.eve.jeveasset.data.settings.types.OwnersType;
 import net.nikr.eve.jeveasset.i18n.DataModelIndustryJob;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 
-public class MyIndustryJob extends RawIndustryJob implements Comparable<MyIndustryJob>, EditableLocationType, ContractPriceType, ItemType, EditablePriceType, BlueprintType, OwnersType {
+public class MyIndustryJob extends RawIndustryJob implements Comparable<MyIndustryJob>, EditableLocationType, ItemType, EditablePriceType, BlueprintType, OwnersType {
 
 	public enum IndustryJobState {
 		STATE_ALL() {
@@ -201,7 +200,6 @@ public class MyIndustryJob extends RawIndustryJob implements Comparable<MyIndust
 	private final Set<Long> owners = new HashSet<>();
 	private final int outputCount;
 	private double price;
-	private double contractPrice;
 	private double outputValue;
 	private String installer = "";
 	private MyBlueprint blueprint;
@@ -413,16 +411,6 @@ public class MyIndustryJob extends RawIndustryJob implements Comparable<MyIndust
 	@Override
 	public Double getDynamicPrice() {
 		return price;
-	}
-
-	@Override
-	public double getContractPrice() {
-		return contractPrice;
-	}
-
-	@Override
-	public void setContractPrice(double contractPrice) {
-		this.contractPrice = contractPrice;
 	}
 
 	public double getOutputValue() {

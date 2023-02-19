@@ -29,12 +29,9 @@ import net.nikr.eve.jeveasset.data.sde.ReprocessedMaterial;
 import net.nikr.eve.jeveasset.data.sde.StaticData;
 import net.nikr.eve.jeveasset.data.settings.Citadel;
 import net.nikr.eve.jeveasset.data.settings.Citadel.CitadelSource;
-import net.nikr.eve.jeveasset.data.settings.ContractPriceManager;
-import net.nikr.eve.jeveasset.data.settings.ContractPriceManager.ContractPriceItem;
 import net.nikr.eve.jeveasset.data.settings.PriceData;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.UserItem;
-import net.nikr.eve.jeveasset.data.settings.types.BlueprintType;
 import net.nikr.eve.jeveasset.gui.shared.Formatter;
 import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.io.esi.EsiItemsGetter;
@@ -146,25 +143,15 @@ public final class ApiIdConverter {
 		return name;
 	}
 
-	public static double getPriceSimple(final Integer typeID, final boolean isBlueprintCopy) {
-		return getPriceType(typeID, isBlueprintCopy, null, false);
-	}
-
-	public static double getPrice(final Integer typeID, final boolean isBlueprintCopy, Object object) {
-		if (object instanceof BlueprintType) {
-			return getPriceType(typeID, isBlueprintCopy, ContractPriceItem.create((BlueprintType) object), false);
-		} else if (object instanceof ContractPriceItem) {
-			return getPriceType(typeID, isBlueprintCopy, (ContractPriceItem) object, false);
-		} else {
-			return getPriceType(typeID, isBlueprintCopy, null, false);
-		}
+	public static double getPrice(final Integer typeID, final boolean isBlueprintCopy) {
+		return getPriceType(typeID, isBlueprintCopy, false);
 	}
 
 	private static double getPriceReprocessed(final Integer typeID) {
-		return getPriceType(typeID, false, null, true);
+		return getPriceType(typeID, false, true);
 	}
 
-	private static double getPriceType(final Integer typeID, final boolean isBlueprintCopy, ContractPriceItem contractPriceItem, boolean reprocessed) {
+	private static double getPriceType(final Integer typeID, final boolean isBlueprintCopy, boolean reprocessed) {
 		if (typeID == null) {
 			return 0;
 		}
@@ -180,11 +167,7 @@ public final class ApiIdConverter {
 
 		//Blueprint Copy (Default Zero)
 		if (isBlueprintCopy) {
-			if (contractPriceItem != null && Settings.get().getContractPriceSettings().isDefaultBPC()) {
-				return ContractPriceManager.get().getContractPrice(contractPriceItem);
-			} else {
-				return 0;
-			}
+			return 0;
 		}
 
 		//Blueprints Base Price
