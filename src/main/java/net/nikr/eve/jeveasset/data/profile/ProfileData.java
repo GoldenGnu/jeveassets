@@ -54,7 +54,6 @@ import net.nikr.eve.jeveasset.data.sde.StaticData;
 import net.nikr.eve.jeveasset.data.settings.AddedData;
 import net.nikr.eve.jeveasset.data.settings.LogManager;
 import net.nikr.eve.jeveasset.data.settings.MarketPriceData;
-import net.nikr.eve.jeveasset.data.settings.PriceData;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.tag.Tags;
 import net.nikr.eve.jeveasset.data.settings.types.EditableLocationType;
@@ -523,6 +522,8 @@ public class ProfileData {
 			order.setBrokersFee(marketOrdersBrokersFee.get(order.getOrderID()));
 			order.setOutbid(Settings.get().getMarketOrdersOutbid().get(order.getOrderID()));
 			order.setPriceReprocessed(ApiIdConverter.getPriceReprocessed(order.getItem()));
+			//Price Data
+			order.setPriceData(ApiIdConverter.getPriceData(order.getTypeID(), false));
 			//Changed date
 			if (order.isUpdateChanged()) { //Update!
 				order.setChanged(AddedData.getMarketOrders().getPut(marketOrdersAdded, order.getOrderID(), addedDate));
@@ -1186,12 +1187,7 @@ public class ProfileData {
 			//Contaioner
 			updateContainer(asset);
 			//Price data
-			PriceData priceData = Settings.get().getPriceData().get(asset.getItem().getTypeID());
-			if (asset.getItem().isMarketGroup() && priceData != null && !priceData.isEmpty()) { //Market Price
-				asset.setPriceData(priceData);
-			} else { //No Price :(
-				asset.setPriceData(null);
-			}
+			asset.setPriceData(ApiIdConverter.getPriceData(asset.getItem().getTypeID(), asset.isBPC()));
 			//Type Count
 			int typeID;
 			if (asset.isBPC()) {
