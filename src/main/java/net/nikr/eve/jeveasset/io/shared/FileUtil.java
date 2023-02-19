@@ -45,7 +45,6 @@ public class FileUtil extends FileUtilSimple {
 	private static final String PATH_STOCKPILE_IDS_DATABASE = "data" + File.separator + "stockpileids.db";
 	private static final String PATH_PRICE_HISTORY_DATABASE = "data" + File.separator + "pricehistory.db";
 	private static final String PATH_TRACKER_DATA = "data" + File.separator + "tracker.json";
-	private static final String PATH_CONTRACT_PRICES = "data" + File.separator + "contract_prices.json";
 	private static final String PATH_SETTINGS = "data" + File.separator + "settings.xml";
 	private static final String PATH_ITEMS = "data" + File.separator + "items.xml";
 	private static final String PATH_ITEMS_UPDATES = "data" + File.separator + "items_updates.xml";
@@ -148,7 +147,6 @@ public class FileUtil extends FileUtilSimple {
 			Path citadelFrom = Paths.get(getPathCitadel());
 			Path priceFrom = Paths.get(getPathPriceData());
 			Path profilesFrom = Paths.get(getPathProfilesDirectory());
-			Path contractPricesFrom = Paths.get(getPathContractPrices());
 			Path itemsUpdatesFrom = Paths.get(getPathItemsUpdates());
 			CliOptions.get().setPortable(true);
 			Path settingsTo = Paths.get(getPathSettings());
@@ -160,7 +158,6 @@ public class FileUtil extends FileUtilSimple {
 			Path citadelTo = Paths.get(getPathCitadel());
 			Path priceTo = Paths.get(getPathPriceData());
 			Path profilesTo = Paths.get(getPathProfilesDirectory());
-			Path contractPricesTo = Paths.get(getPathContractPrices());
 			Path itemsUpdatesTo = Paths.get(getPathItemsUpdates());
 			if (Files.exists(settingsFrom) && !Files.exists(settingsTo)) {
 				LOG.info("Importing settings");
@@ -234,15 +231,6 @@ public class FileUtil extends FileUtilSimple {
 					LOG.info("	FAILED");
 				}
 			}
-			if (Files.exists(contractPricesFrom) && !Files.exists(contractPricesTo)) {
-				LOG.info("Importing contract prices");
-				try {
-					Files.copy(contractPricesFrom, contractPricesTo);
-					LOG.info("	OK");
-				} catch (IOException ex) {
-					LOG.info("	FAILED");
-				}
-			}
 			if (Files.exists(itemsUpdatesFrom) && !Files.exists(itemsUpdatesTo)) {
 				LOG.info("Importing items updates");
 				try {
@@ -293,10 +281,6 @@ public class FileUtil extends FileUtilSimple {
 
 	public static String getPathTrackerData() {
 		return getLocalFile(PATH_TRACKER_DATA, !CliOptions.get().isPortable());
-	}
-
-	public static String getPathContractPrices() {
-		return getLocalFile(PATH_CONTRACT_PRICES, !CliOptions.get().isPortable());
 	}
 
 	public static String getPathAssetAdded() {

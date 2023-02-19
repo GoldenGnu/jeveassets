@@ -134,13 +134,13 @@ public class ReprocessedData extends TableData {
 		if (item.isEmpty() || item.getReprocessedMaterial().isEmpty()) {
 			return; //Ignore types without materials
 		}
-		double sellPrice = ApiIdConverter.getPriceSimple(item.getTypeID(), false);
+		double sellPrice = ApiIdConverter.getPrice(item.getTypeID(), false);
 		ReprocessedTotal itemTotal = new ReprocessedTotal(grandTotal, item, sellPrice, count);
 		list.add(itemTotal);
 		for (ReprocessedMaterial material : item.getReprocessedMaterial()) {
 			Item materialItem = ApiIdConverter.getItem(material.getTypeID());
 			if (!materialItem.isEmpty()) {
-				double price = ApiIdConverter.getPriceSimple(materialItem.getTypeID(), false);
+				double price = ApiIdConverter.getPrice(materialItem.getTypeID(), false);
 				ReprocessedItem reprocessedItem = new ReprocessedItem(itemTotal, materialItem, material, item.isOre(), price);
 				list.add(reprocessedItem);
 				//Total

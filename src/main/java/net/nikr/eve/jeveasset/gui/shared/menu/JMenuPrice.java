@@ -21,21 +21,14 @@
 
 package net.nikr.eve.jeveasset.gui.shared.menu;
 
-import eve.nikr.net.client.ApiException;
-import eve.nikr.net.client.api.FeedbackApi;
-import eve.nikr.net.client.model.Feedback;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.sde.Item;
-import net.nikr.eve.jeveasset.data.settings.ContractPriceManager;
-import net.nikr.eve.jeveasset.data.settings.ContractPriceManager.ContractPriceItem;
-import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.UserItem;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.UserPriceSettingsPanel.UserPrice;
 import net.nikr.eve.jeveasset.gui.images.Images;
@@ -112,29 +105,7 @@ public class JMenuPrice<T> extends JAutoMenu<T> {
 		public void actionPerformed(final ActionEvent e) {
 			if (MenuPriceAction.EDIT.name().equals(e.getActionCommand())) {
 				if (!menuData.getBpcTypeIDs().isEmpty() && !menuData.getPrices().isEmpty() && !menuData.getTypeNames().isEmpty()) {
-					boolean updated = program.getUserPriceSettingsPanel().edit(createList());
-					if (!updated) {
-						return;
-					}
-					if (menuData.getContractPriceItems().isEmpty()) {
-						return;
-					}
-					if (!Settings.get().getContractPriceSettings().isFeedbackAsked()) {
-						Settings.get().getContractPriceSettings().setFeedbackAsked(true);
-						int value = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame()
-								, GuiShared.get().contractPriceReportMsg()
-								, GuiShared.get().contractPriceReportTitle()
-								, JOptionPane.OK_CANCEL_OPTION);
-						Settings.get().getContractPriceSettings().setFeedback(value == JOptionPane.OK_OPTION);
-						program.saveSettings("Contract Price (Send Feedback)");
-					}
-					if (!Settings.get().getContractPriceSettings().isFeedback()) {
-						return;
-					}
-					for (ContractPriceItem contractPriceItem : menuData.getContractPriceItems()) {
-						sendFeedback(contractPriceItem);
-					}
-					ContractPriceManager.get().save();
+					program.getUserPriceSettingsPanel().edit(createList());
 				}
 			} else if (MenuPriceAction.DELETE.name().equals(e.getActionCommand())) {
 				if (!menuData.getBpcTypeIDs().isEmpty() && !menuData.getPrices().isEmpty() && !menuData.getTypeNames().isEmpty()) {
@@ -144,45 +115,4 @@ public class JMenuPrice<T> extends JAutoMenu<T> {
 		}
 	}
 
-	private static void sendFeedback(final ContractPriceItem contractPriceItem) {
-		FeedbackApi feedbackApi = new FeedbackApi();
-		Feedback feedback = new Feedback();
-		if (contractPriceItem.isBpc()) {
-			feedback.setBpcRuns((long)contractPriceItem.getRuns());
-			feedback.setIsBpc(true);
-		}
-		if (contractPriceItem.isBpo()) {
-			feedback.setIsBpc(false);
-		}
-		if (contractPriceItem.isBpc() || contractPriceItem.isBpo()) {
-			feedback.setMaterialEfficiency(contractPriceItem.getMe());
-			feedback.setTimeEfficiency(contractPriceItem.getTe());
-		}
-		UserItem<Integer, Double> userPrice = getUserPrice(contractPriceItem);
-		if (userPrice != null) {
-			if (contractPriceItem.isBpc() && userPrice.getValue() > 0 && contractPriceItem.getRuns() > 0) {
-				feedback.setSuggestedPricePerUnit(userPrice.getValue() / contractPriceItem.getRuns());
-			} else {
-				feedback.setSuggestedPricePerUnit(userPrice.getValue());
-			}
-		}
-		feedback.setOldPricePerUnit(ContractPriceManager.get().getContractPrice(contractPriceItem, true));
-		feedback.setOldPriceType(Settings.get().getContractPriceSettings().getContractPriceMode().name());
-		feedback.setTypeId(contractPriceItem.getTypeID());
-		feedback.setSecurity(Settings.get().getContractPriceSettings().getSecurityEnums());
-		try {
-			feedbackApi.giveFeedback(feedback);
-			LOG.info("contract price feedback send");
-		} catch (ApiException ex) {
-			LOG.error(ex.getMessage(), ex);
-		}
-	}
-
-	private static UserItem<Integer, Double> getUserPrice(ContractPriceManager.ContractPriceItem contractPriceItem) {
-		if (contractPriceItem.isBpc()) {
-			return Settings.get().getUserPrices().get(-contractPriceItem.getTypeID());
-		} else {
-			return Settings.get().getUserPrices().get(contractPriceItem.getTypeID());
-		}
-	}
 }

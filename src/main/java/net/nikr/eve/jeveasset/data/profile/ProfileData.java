@@ -52,14 +52,11 @@ import net.nikr.eve.jeveasset.data.sde.ReprocessedMaterial;
 import net.nikr.eve.jeveasset.data.sde.RouteFinder;
 import net.nikr.eve.jeveasset.data.sde.StaticData;
 import net.nikr.eve.jeveasset.data.settings.AddedData;
-import net.nikr.eve.jeveasset.data.settings.ContractPriceManager;
-import net.nikr.eve.jeveasset.data.settings.ContractPriceManager.ContractPriceItem;
 import net.nikr.eve.jeveasset.data.settings.LogManager;
 import net.nikr.eve.jeveasset.data.settings.MarketPriceData;
 import net.nikr.eve.jeveasset.data.settings.PriceData;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.tag.Tags;
-import net.nikr.eve.jeveasset.data.settings.types.ContractPriceType;
 import net.nikr.eve.jeveasset.data.settings.types.EditableLocationType;
 import net.nikr.eve.jeveasset.data.settings.types.EditablePriceType;
 import net.nikr.eve.jeveasset.data.settings.types.ItemType;
@@ -115,10 +112,6 @@ public class ProfileData {
 
 	public Set<Integer> getPriceTypeIDs() {
 		return createPriceTypeIDs(); //always needs to be fresh :)
-	}
-
-	public Set<ContractPriceItem> getContractPricesTypes() {
-		return createContractPriceTypes(); //always needs to be fresh :)
 	}
 
 	public EventList<MyAccountBalance> getAccountBalanceEventList() {
@@ -284,50 +277,6 @@ public class ProfileData {
 				priceTypeIDs.add(asset.getItem().getTypeID());
 			}
 			deepAssets(asset.getAssets(), priceTypeIDs);
-		}
-	}
-
-	private Set<ContractPriceItem> createContractPriceTypes() {
-		Set<ContractPriceItem> contractPriceTypes = new HashSet<>();
-		for (OwnerType owner : profileManager.getOwnerTypes()) {
-			//Assets
-			deepAssetsType(owner.getAssets(), contractPriceTypes);
-			//Market Orders
-			for (MyMarketOrder marketOrder : owner.getMarketOrders()) {
-				addContractPrice(contractPriceTypes, ContractPriceItem.create(marketOrder));
-			}
-			//Industry Jobs
-			for (MyIndustryJob industryJob : owner.getIndustryJobs()) {
-				addContractPrice(contractPriceTypes, ContractPriceItem.create(industryJob, true));
-				addContractPrice(contractPriceTypes, ContractPriceItem.create(industryJob, false));
-			}
-			//Contract Items
-			for (Map.Entry<MyContract, List<MyContractItem>> entry : owner.getContracts().entrySet()) {
-				for (MyContractItem contractItem : entry.getValue()) {
-					addContractPrice(contractPriceTypes, ContractPriceItem.create(contractItem));
-				}
-			}
-		}
-		//Stockpile Items
-		for (Stockpile stockpile : Settings.get().getStockpiles()) {
-			for (StockpileItem stockpileItem : stockpile.getItems()) {
-				addContractPrice(contractPriceTypes, ContractPriceItem.create(stockpileItem));
-			}
-		}
-		return contractPriceTypes;
-	}
-
-	private void deepAssetsType(List<MyAsset> assets, Set<ContractPriceItem> contractPriceTypes) {
-		for (MyAsset asset : assets) {
-			//Unique Ids
-			addContractPrice(contractPriceTypes, ContractPriceItem.create(asset));
-			deepAssetsType(asset.getAssets(), contractPriceTypes);
-		}
-	}
-
-	private void addContractPrice(Set<ContractPriceItem> contractPriceTypes, ContractPriceItem contractPriceType) {
-		if (contractPriceType != null) {
-			contractPriceTypes.add(contractPriceType);
 		}
 	}
 
@@ -1275,17 +1224,12 @@ public class ProfileData {
 	}
 
 	private static void updatePrice(EditablePriceType editablePriceType) {
-		editablePriceType.setDynamicPrice(ApiIdConverter.getPrice(editablePriceType.getItem().getTypeID(), editablePriceType.isBPC(), editablePriceType));
-		if (editablePriceType instanceof ContractPriceType) {
-			ContractPriceType contractPriceType = (ContractPriceType) editablePriceType;
-			contractPriceType.setContractPrice(ContractPriceManager.get().getContractPrice(ContractPriceItem.create(contractPriceType)));
-		}
+		editablePriceType.setDynamicPrice(ApiIdConverter.getPrice(editablePriceType.getItem().getTypeID(), editablePriceType.isBPC()));
 	}
 
 	private static void updatePrice(MyIndustryJob industryJob) {
-		industryJob.setDynamicPrice(ApiIdConverter.getPrice(industryJob.getItem().getTypeID(), industryJob.isBPC(), ContractPriceItem.create(industryJob, false)));
-		industryJob.setContractPrice(ContractPriceManager.get().getContractPrice(ContractPriceItem.create(industryJob, false)));
-		industryJob.setOutputPrice(ApiIdConverter.getPrice(industryJob.getProductTypeID(), industryJob.isCopying(), ContractPriceItem.create(industryJob, true)));
+		industryJob.setDynamicPrice(ApiIdConverter.getPrice(industryJob.getItem().getTypeID(), industryJob.isBPC()));
+		industryJob.setOutputPrice(ApiIdConverter.getPrice(industryJob.getProductTypeID(), industryJob.isCopying()));
 	}
 
 	private static void updatePrice(MyAsset asset) {
@@ -1296,8 +1240,7 @@ public class ProfileData {
 			asset.setUserPrice(Settings.get().getUserPrices().get(asset.getItem().getTypeID()));
 		}
 		//Dynamic Price
-		asset.setDynamicPrice(ApiIdConverter.getPrice(asset.getItem().getTypeID(), asset.isBPC(), asset));
-		asset.setContractPrice(ContractPriceManager.get().getContractPrice(ContractPriceItem.create(asset)));
+		asset.setDynamicPrice(ApiIdConverter.getPrice(asset.getItem().getTypeID(), asset.isBPC()));
 	}
 
 	private void updateName(MyAsset asset) {

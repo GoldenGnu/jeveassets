@@ -23,7 +23,6 @@ package net.nikr.eve.jeveasset.gui.dialogs.update;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -49,6 +48,7 @@ import net.nikr.eve.jeveasset.data.profile.ProfileManager;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formatter;
+import net.nikr.eve.jeveasset.gui.shared.Updatable;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
 import net.nikr.eve.jeveasset.gui.tabs.values.AssetValue;
 import net.nikr.eve.jeveasset.i18n.DialoguesUpdate;
@@ -61,6 +61,7 @@ import net.nikr.eve.jeveasset.io.esi.EsiContainerLogsGetter;
 import net.nikr.eve.jeveasset.io.esi.EsiContractItemsGetter;
 import net.nikr.eve.jeveasset.io.esi.EsiContractsGetter;
 import net.nikr.eve.jeveasset.io.esi.EsiDivisionsGetter;
+import net.nikr.eve.jeveasset.io.esi.EsiFactionWarfareGetter;
 import net.nikr.eve.jeveasset.io.esi.EsiIndustryJobsGetter;
 import net.nikr.eve.jeveasset.io.esi.EsiJournalGetter;
 import net.nikr.eve.jeveasset.io.esi.EsiLocationsGetter;
@@ -69,12 +70,8 @@ import net.nikr.eve.jeveasset.io.esi.EsiNameGetter;
 import net.nikr.eve.jeveasset.io.esi.EsiOwnerGetter;
 import net.nikr.eve.jeveasset.io.esi.EsiPlanetaryInteractionGetter;
 import net.nikr.eve.jeveasset.io.esi.EsiShipGetter;
-import net.nikr.eve.jeveasset.io.esi.EsiTransactionsGetter;
-import net.nikr.eve.jeveasset.io.online.ContractPriceGetter;
-import net.nikr.eve.jeveasset.data.settings.ContractPriceManager;
-import net.nikr.eve.jeveasset.gui.shared.Updatable;
-import net.nikr.eve.jeveasset.io.esi.EsiFactionWarfareGetter;
 import net.nikr.eve.jeveasset.io.esi.EsiSkillGetter;
+import net.nikr.eve.jeveasset.io.esi.EsiTransactionsGetter;
 import net.nikr.eve.jeveasset.io.online.PriceDataGetter;
 import net.nikr.eve.jeveasset.io.shared.ThreadWoker;
 
@@ -116,10 +113,6 @@ public class UpdateDialog extends JDialogCentered {
 	private final JCheckBox jSkills;
 	private final JLabel jSkillsLeftFirst;
 	private final JLabel jSkillLeftLast;
-	private final JRadioButton jContractPricesAll;
-	private final JRadioButton jContractPricesNew;
-	private final JRadioButton jContractPricesNone;
-	private final JLabel jContractPricesLeft;
 	private final JCheckBox jContainerLogs;
 	private final JLabel jContainerLogsLeftFirst;
 	private final JLabel jContainerLogsLeftLast;
@@ -159,19 +152,6 @@ public class UpdateDialog extends JDialogCentered {
 		jBookmarks = new JCheckBox(DialoguesUpdate.get().bookmarks());
 		jContainerLogs = new JCheckBox(DialoguesUpdate.get().containerLogs());
 		jSkills = new JCheckBox(DialoguesUpdate.get().skills());
-		jContractPricesAll = new JRadioButton(DialoguesUpdate.get().contractPrices());
-		jContractPricesAll.setActionCommand(UpdateDialogAction.CHANGED.name());
-		jContractPricesAll.addActionListener(listener);
-		jContractPricesNew = new JRadioButton(DialoguesUpdate.get().priceDataNew());
-		jContractPricesNew.setActionCommand(UpdateDialogAction.CHANGED.name());
-		jContractPricesNew.addActionListener(listener);
-		jContractPricesNone = new JRadioButton(DialoguesUpdate.get().priceDataNone());
-		jContractPricesNone.setActionCommand(UpdateDialogAction.CHANGED.name());
-		jContractPricesNone.addActionListener(listener);
-		ButtonGroup jContractPricesGroup = new ButtonGroup();
-		jContractPricesGroup.add(jContractPricesAll);
-		jContractPricesGroup.add(jContractPricesNew);
-		jContractPricesGroup.add(jContractPricesNone);
 		jPriceDataAll = new JRadioButton(DialoguesUpdate.get().priceData());
 		jPriceDataAll.setActionCommand(UpdateDialogAction.CHANGED.name());
 		jPriceDataAll.addActionListener(listener);
@@ -228,7 +208,6 @@ public class UpdateDialog extends JDialogCentered {
 		jBookmarksLeftLast = new JLabel();
 		jSkillLeftLast = new JLabel();
 		jContainerLogsLeftLast = new JLabel();
-		jContractPricesLeft = new JLabel();
 
 		jUpdate = new JButton(DialoguesUpdate.get().update());
 		jUpdate.setActionCommand(UpdateDialogAction.UPDATE.name());
@@ -275,20 +254,11 @@ public class UpdateDialog extends JDialogCentered {
 							.addGap(20)
 						)
 						.addGroup(layout.createSequentialGroup()
-							.addGroup(layout.createParallelGroup()
-								.addComponent(jContractPricesAll)
-								.addComponent(jPriceDataAll)
-							)
+							.addComponent(jPriceDataAll)
 							.addGap(10)
-							.addGroup(layout.createParallelGroup()
-								.addComponent(jContractPricesNew)
-								.addComponent(jPriceDataNew)
-							)
+							.addComponent(jPriceDataNew)
 							.addGap(10)
-							.addGroup(layout.createParallelGroup()
-								.addComponent(jContractPricesNone)
-								.addComponent(jPriceDataNone)
-							)
+							.addComponent(jPriceDataNone)
 						)
 					)
 					.addGroup(layout.createParallelGroup(Alignment.TRAILING)
@@ -304,7 +274,6 @@ public class UpdateDialog extends JDialogCentered {
 						.addComponent(jBookmarksLeftLast)
 						.addComponent(jSkillLeftLast)
 						.addComponent(jContainerLogsLeftLast)
-						.addComponent(jContractPricesLeft)
 						.addComponent(jPriceDataLeft)
 					)
 				)
@@ -376,12 +345,6 @@ public class UpdateDialog extends JDialogCentered {
 					.addComponent(jSkillLeftLast, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				)
 				.addGroup(layout.createParallelGroup()
-					.addComponent(jContractPricesAll, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					.addComponent(jContractPricesNew, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					.addComponent(jContractPricesNone, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					.addComponent(jContractPricesLeft, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-				)
-				.addGroup(layout.createParallelGroup()
 					.addComponent(jPriceDataAll, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jPriceDataNew, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jPriceDataNone, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
@@ -422,19 +385,6 @@ public class UpdateDialog extends JDialogCentered {
 			}
 			allDisabled = false;
 		}
-		if (jContractPricesAll.isEnabled()) {
-			if (jContractPricesAll.isSelected()) {
-				someChecked = true;
-			} else { //Not selected
-				allChecked = false;
-			}
-			allDisabled = false;
-		} else if (jContractPricesNew.isEnabled()) {
-			if (!jContractPricesNew.isSelected()) {
-				allChecked = false;
-			}
-			allDisabled = false;
-		}
 		jUpdate.setEnabled(someChecked);
 		jCheckAll.setSelected(allChecked && !allDisabled);
 		jCheckAll.setEnabled(!allDisabled);
@@ -466,7 +416,6 @@ public class UpdateDialog extends JDialogCentered {
 		Date accountBalanceLast = null;
 
 		Date priceData = program.getPriceDataGetter().getNextUpdate();
-		Date contracePrices = ContractPriceManager.get().getNextUpdate();
 		for (OwnerType owner : program.getOwnerTypes()) {
 			if (!owner.isShowOwner() || owner.isInvalid() || owner.isExpired() || owner.getAccountAPI() == ApiType.EVE_ONLINE || owner.getAccountAPI() == ApiType.EVEKIT) {
 				continue;
@@ -522,11 +471,6 @@ public class UpdateDialog extends JDialogCentered {
 			jPriceDataNew.setEnabled(false);
 			jPriceDataAll.setEnabled(false);
 			setUpdateLabel(null, jPriceDataLeft, jPriceDataAll, null, null, check);
-			jContractPricesNone.setSelected(true);
-			jContractPricesNone.setEnabled(false);
-			jContractPricesNew.setEnabled(false);
-			jContractPricesAll.setEnabled(false);
-			setUpdateLabel(null, jContractPricesLeft, jContractPricesAll, null, null, check);
 		} else {
 			jPriceDataNone.setEnabled(true);
 			jPriceDataNew.setEnabled(true);
@@ -534,13 +478,6 @@ public class UpdateDialog extends JDialogCentered {
 			setUpdateLabel(null, jPriceDataLeft, jPriceDataAll, null, priceData, check);
 			if (!jPriceDataAll.isEnabled() && jPriceDataNew.isEnabled() && !jPriceDataNone.isSelected()) {
 				jPriceDataNew.setSelected(true);
-			}
-			jContractPricesNone.setEnabled(true);
-			jContractPricesNew.setEnabled(true);
-			jContractPricesAll.setEnabled(true);
-			setUpdateLabel(null, jContractPricesLeft, jContractPricesAll, null, contracePrices, check);
-			if (!jContractPricesAll.isEnabled() && jContractPricesNew.isEnabled() && !jContractPricesNone.isSelected()) {
-				jContractPricesNew.setSelected(true);
 			}
 		}
 		setUpdateLabel(jMarketOrdersLeftFirst, jMarketOrdersLeftLast, jMarketOrders, marketOrdersFirst, marketOrdersLast, check);
@@ -650,7 +587,6 @@ public class UpdateDialog extends JDialogCentered {
 			jBookmarks.setSelected(true);
 			jSkills.setSelected(true);
 			jContainerLogs.setSelected(true);
-			jContractPricesAll.setSelected(true);
 			jPriceDataAll.setSelected(true);
 			update(true);
 			timer.start();
@@ -715,9 +651,6 @@ public class UpdateDialog extends JDialogCentered {
 				if (jContracts.isSelected()) {
 					updateTasks.add(new Step4Task(program.getProfileManager()));
 				}
-				if (jContractPricesAll.isSelected() || jContractPricesNew.isSelected()) {
-					updateTasks.add(new ContractPricesTask(program.getProfileData(), jContractPricesAll.isSelected()));
-				}
 				if (jPriceDataAll.isSelected() || jPriceDataNew.isSelected()) {
 					updateTasks.add(new PriceDataTask(program.getPriceDataGetter(), program.getProfileData(), jPriceDataAll.isSelected()));
 				}
@@ -762,15 +695,6 @@ public class UpdateDialog extends JDialogCentered {
 					}
 				} else {
 					jPriceDataNone.setSelected(true);
-				}
-				if (checked) {
-					if (jContractPricesAll.isEnabled()) {
-						jContractPricesAll.setSelected(true);
-					} else {
-						jContractPricesNew.setSelected(true);
-					}
-				} else {
-					jContractPricesNone.setSelected(true);
 				}
 				changed();
 			}
@@ -960,24 +884,6 @@ public class UpdateDialog extends JDialogCentered {
 				updates.add(new EsiContractItemsGetter(this, esiOwner, profileManager.getEsiOwners()));
 			}
 			ThreadWoker.start(this, updates, false);
-		}
-	}
-
-	public static class ContractPricesTask extends UpdateTask {
-
-		private final ProfileData profileData;
-		private final boolean all;
-
-		public ContractPricesTask(ProfileData profileData, boolean all) {
-			super(DialoguesUpdate.get().contractPrices() + " (Contracts Appraisal)");
-			this.profileData = profileData;
-			this.all = all;
-			setIcon(Images.MISC_CONTRACTS_APPRAISAL.getIcon());
-		}
-
-		@Override
-		public void update() {
-			ThreadWoker.start(this, Collections.singletonList(new ContractPriceGetter(this, profileData, all)), false);
 		}
 	}
 

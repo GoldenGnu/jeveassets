@@ -32,11 +32,8 @@ import net.nikr.eve.jeveasset.data.api.my.MyAsset;
 import net.nikr.eve.jeveasset.data.api.my.MyContract;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
-import net.nikr.eve.jeveasset.data.settings.ContractPriceManager;
-import net.nikr.eve.jeveasset.data.settings.ContractPriceManager.ContractPriceItem;
 import net.nikr.eve.jeveasset.data.settings.tag.Tag;
 import net.nikr.eve.jeveasset.data.settings.types.BlueprintType;
-import net.nikr.eve.jeveasset.data.settings.types.ContractPriceType;
 import net.nikr.eve.jeveasset.data.settings.types.ItemType;
 import net.nikr.eve.jeveasset.data.settings.types.LocationType;
 import net.nikr.eve.jeveasset.data.settings.types.LocationsType;
@@ -73,7 +70,6 @@ public class MenuData<T> {
 	private final List<MyAsset> assets = new ArrayList<>();
 	private final Set<MyContract> contracts = new HashSet<>();
 	private final Map<Item, Long> itemCounts = new HashMap<>();
-	private final List<ContractPriceItem> contractPriceItems = new ArrayList<>();
 
 	public MenuData() { }
 
@@ -134,23 +130,18 @@ public class MenuData<T> {
 			if (t instanceof Item) {
 				Item item = (Item) t;
 				if (items.size() == 1) { //Always zero for multiple items
-					price = ApiIdConverter.getPriceSimple(item.getTypeID(), false);
+					price = ApiIdConverter.getPrice(item.getTypeID(), false);
 				}
 				if (price == null || price == 0) {
 					price = item.getPriceBase();
 				}
 			}
 
-			ContractPriceItem contractPriceItem = null;
-			if (t instanceof ContractPriceType) {
-				contractPriceItem = ContractPriceItem.create((ContractPriceType) t);
-			}
-
-			add(itemType, locations, price, blueprint, tagsType, owners, contractPriceItem);
+			add(itemType, locations, price, blueprint, tagsType, owners);
 		}
 	}
 
-	private void add(final Item item, final Collection<MyLocation> locations, final Double price, final BlueprintType blueprintType, final TagsType tagsType, Set<Long> owners, ContractPriceItem contractPriceItem) {
+	private void add(final Item item, final Collection<MyLocation> locations, final Double price, final BlueprintType blueprintType, final TagsType tagsType, Set<Long> owners) {
 		if (item != null && !item.isEmpty()) {
 			//Type Name
 			typeNames.add(item.getTypeName());
@@ -185,9 +176,6 @@ public class MenuData<T> {
 			if (price != null) { //Not unique
 				prices.put(blueprintTypeID, price);
 			}
-		}
-		if (ContractPriceManager.get().haveContractPrice(contractPriceItem)) {
-			contractPriceItems.add(contractPriceItem);
 		}
 
 		ownerIDs.addAll(owners);
@@ -341,10 +329,6 @@ public class MenuData<T> {
 
 	public Set<Integer> getMarketTypeIDs() {
 		return marketTypeIDs;
-	}
-
-	public List<ContractPriceItem> getContractPriceItems() {
-		return contractPriceItems;
 	}
 
 	public Set<Integer> getBpcTypeIDs() {

@@ -33,7 +33,6 @@ import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.types.BlueprintType;
-import net.nikr.eve.jeveasset.data.settings.types.ContractPriceType;
 import net.nikr.eve.jeveasset.data.settings.types.EditableLocationType;
 import net.nikr.eve.jeveasset.data.settings.types.EditablePriceType;
 import net.nikr.eve.jeveasset.data.settings.types.EsiType;
@@ -46,14 +45,13 @@ import net.nikr.eve.jeveasset.gui.shared.table.containers.Percent;
 import net.nikr.eve.jeveasset.gui.tabs.orders.Outbid;
 import net.nikr.eve.jeveasset.i18n.TabsOrders;
 
-public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarketOrder>, EditableLocationType, ItemType, BlueprintType, EditablePriceType, ContractPriceType, OwnersType, LastTransactionType, MarketDetailType, EsiType {
+public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarketOrder>, EditableLocationType, ItemType, BlueprintType, EditablePriceType, OwnersType, LastTransactionType, MarketDetailType, EsiType {
 
 	private final Item item;
 	private final OwnerType owner;
 	private final Set<Long> owners;
 	private MyLocation location;
 	private double price;
-	private double contractPrice;
 	private double transactionPrice;
 	private double transactionProfitDifference;
 	private Percent transactionProfitPercent;
@@ -156,16 +154,6 @@ public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarket
 	@Override
 	public Double getDynamicPrice() {
 		return price;
-	}
-
-	@Override
-	public double getContractPrice() {
-		return contractPrice;
-	}
-
-	@Override
-	public void setContractPrice(double contractPrice) {
-		this.contractPrice = contractPrice;
 	}
 
 	@Override
