@@ -37,6 +37,7 @@ import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.sde.ReprocessedMaterial;
+import net.nikr.eve.jeveasset.data.settings.PriceData;
 import net.nikr.eve.jeveasset.data.settings.tag.Tags;
 import net.nikr.eve.jeveasset.gui.dialogs.account.AccountTableFormat;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.ColorsTableFormat;
@@ -199,7 +200,7 @@ public class TableFormatTest extends TestUtil {
 			stockpile.setFlagName(Collections.singleton(asset.getItemFlag()));
 			StockpileItem stockpileItem = new StockpileItem(stockpile, item, INTEGER_VALUE, DOUBLE_VALUE, BOOLEAN_VALUE);
 			stockpileItem.setTags(tags);
-			stockpileItem.updateValues(0, 0, DOUBLE_VALUE);
+			stockpileItem.updateValues(0, 0, DOUBLE_VALUE, PriceData.EMPTY);
 			for (StockpileTableFormat tableFormat : StockpileTableFormat.values()) {
 				test(tableFormat, tableFormat.getType(), tableFormat.getColumnValue(stockpileItem));
 			}

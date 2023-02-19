@@ -45,6 +45,7 @@ import net.nikr.eve.jeveasset.data.profile.ProfileData;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.ItemFlag;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
+import net.nikr.eve.jeveasset.data.settings.PriceData;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.tag.TagID;
 import net.nikr.eve.jeveasset.data.settings.tag.Tags;
@@ -537,6 +538,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 		private double price = 0.0;
 		private double volume = 0.0f;
 		private Double transactionAveragePrice; //can be null!
+		private PriceData priceData = new PriceData();
 
 		//Dynamic values
 		private Tags tags;
@@ -614,10 +616,11 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 			volume = 0.0f;
 		}
 
-		public void updateValues(final double updatePrice, final float updateVolume, Double transactionAveragePrice) {
+		public void updateValues(final double updatePrice, final float updateVolume, Double transactionAveragePrice, PriceData priceData) {
 			this.price = updatePrice;
 			this.volume = updateVolume;
 			this.transactionAveragePrice = transactionAveragePrice;
+			this.priceData = priceData;
 		}
 
 		Long matches(Object object) {
@@ -1211,6 +1214,14 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 			return price;
 		}
 
+		public double getPriceBuyMax() {
+			return priceData.getBuyMax();
+		}
+
+		public double getPriceSellMin() {
+			return priceData.getSellMin();
+		}
+
 		public Double getTransactionAveragePrice() {
 			return transactionAveragePrice;
 		}
@@ -1383,6 +1394,8 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 		private double countMinimum = 0;
 		private long countMinimumMultiplied = 0;
 		private double totalPrice;
+		private double totalPriceSellMin;
+		private double totalPriceBuyMax;
 		private double totalPriceCount;
 		private double valueNow = 0;
 		private double valueNeeded = 0;
@@ -1401,6 +1414,8 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 			countNeeded = 0;
 			countMinimum = 0;
 			totalPrice = 0;
+			totalPriceSellMin = 0;
+			totalPriceBuyMax = 0;
 			totalPriceCount = 0;
 			valueNow = 0;
 			valueNeeded = 0;
@@ -1439,6 +1454,8 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 			countMinimum = countMinimum + item.getCountMinimum();
 			countMinimumMultiplied = countMinimumMultiplied + item.getCountMinimumMultiplied();
 			totalPrice = totalPrice + item.getDynamicPrice();
+			totalPriceSellMin = totalPriceSellMin + item.getPriceSellMin();
+			totalPriceBuyMax = totalPriceBuyMax + item.getPriceBuyMax();
 			totalPriceCount++;
 			valueNow = valueNow + item.getValueNow();
 			//Only add if negative
@@ -1565,6 +1582,24 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 				return 0.0;
 			} else {
 				return totalPrice / totalPriceCount;
+			}
+		}
+
+		@Override
+		public double getPriceSellMin() {
+			if (totalPriceCount <= 0 || totalPriceSellMin <= 0) {
+				return 0.0;
+			} else {
+				return totalPriceSellMin / totalPriceCount;
+			}
+		}
+
+		@Override
+		public double getPriceBuyMax() {
+			if (totalPriceCount <= 0 || totalPriceBuyMax <= 0) {
+				return 0.0;
+			} else {
+				return totalPriceBuyMax / totalPriceCount;
 			}
 		}
 
