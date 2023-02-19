@@ -201,6 +201,29 @@ public final class ApiIdConverter {
 		}
 	}
 
+	/**
+	 *
+	 * @param typeID
+	 * @param isBlueprintCopy
+	 * @return PriceData for the type or PriceData.EMPTY (all zeros)
+	 */
+	public static PriceData getPriceData(final Integer typeID, final boolean isBlueprintCopy) {
+		if (typeID == null) {
+			return PriceData.EMPTY;
+		}
+		if (isBlueprintCopy) {
+			return PriceData.EMPTY;
+		}
+		PriceData priceData = Settings.get().getPriceData().get(typeID);
+		if (priceData == null) {
+			return PriceData.EMPTY;
+		}
+		if (priceData.isEmpty()) { //No Price :(
+			return PriceData.EMPTY;
+		}
+		return priceData;
+	}
+
 	public static double getPrice(final Integer typeID, final boolean isBlueprintCopy) {
 		return getPriceType(typeID, isBlueprintCopy, false);
 	}

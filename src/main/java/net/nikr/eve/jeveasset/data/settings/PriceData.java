@@ -23,6 +23,8 @@ package net.nikr.eve.jeveasset.data.settings;
 
 public class PriceData {
 
+	public static PriceData EMPTY = new PriceData();
+
 	private double sellMax = 0;
 	private double sellAvg = 0;
 	private double sellMedian = 0;
