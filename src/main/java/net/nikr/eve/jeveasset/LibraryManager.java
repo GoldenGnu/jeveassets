@@ -124,7 +124,6 @@ public class LibraryManager {
 			files.add("org.apache.oltu.oauth2.client-1.0.1.jar");
 			files.add("json-20140107.jar");
 			files.add("commons-codec-1.9.jar");
-			files.add("contracts-pricing-2.0.0.jar");
 			files.add("commons-lang3-3.12.0.jar");
 			files.add("jna-platform-5.6.0.jar");
 			files.add("jna-5.6.0.jar");

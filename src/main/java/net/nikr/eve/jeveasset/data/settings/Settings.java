@@ -36,7 +36,6 @@ import java.util.TreeMap;
 import net.nikr.eve.jeveasset.SplashUpdater;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder.MarketOrderRange;
-import net.nikr.eve.jeveasset.data.settings.ContractPriceManager.ContractPriceSettings;
 import net.nikr.eve.jeveasset.data.settings.tag.Tag;
 import net.nikr.eve.jeveasset.data.settings.tag.TagID;
 import net.nikr.eve.jeveasset.data.settings.tag.Tags;
@@ -178,8 +177,6 @@ public class Settings {
 	private final Map<SettingFlag, Boolean> flags = new EnumMap<>(SettingFlag.class);
 	//Price
 	private PriceDataSettings priceDataSettings = new PriceDataSettings();
-	//Contract price
-	private final ContractPriceSettings contractPriceSettings = new ContractPriceSettings();
 	//Proxy (API)
 	private ProxyData proxyData = new ProxyData();
 	//FIXME - - > Settings: Create windows settings
@@ -407,10 +404,6 @@ public class Settings {
 
 	public void setPriceDataSettings(final PriceDataSettings priceDataSettings) {
 		this.priceDataSettings = priceDataSettings;
-	}
-
-	public ContractPriceSettings getContractPriceSettings() {
-		return contractPriceSettings;
 	}
 
 	public Map<Integer, UserItem<Integer, Double>> getUserPrices() {

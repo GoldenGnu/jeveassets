@@ -60,7 +60,6 @@ import net.nikr.eve.jeveasset.data.profile.ProfileManager;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.sde.StaticData;
 import net.nikr.eve.jeveasset.data.settings.AddedData;
-import net.nikr.eve.jeveasset.data.settings.ContractPriceManager;
 import net.nikr.eve.jeveasset.data.settings.PriceHistoryDatabase;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.TempDirs;
@@ -347,7 +346,6 @@ public class Program implements ActionListener {
 		TrackerData.load();
 		AddedData.load();
 		PriceHistoryDatabase.load();
-		ContractPriceManager.load();
 	}
 
 	/**

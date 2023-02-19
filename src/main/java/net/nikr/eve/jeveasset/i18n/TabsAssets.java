@@ -65,8 +65,6 @@ public abstract class TabsAssets extends Bundle {
 	public abstract String columnPriceSellMinToolTip();
 	public abstract String columnPriceBuyMax();
 	public abstract String columnPriceBuyMaxToolTip();
-	public abstract String columnPriceContract();
-	public abstract String columnPriceContractToolTip();
 	public abstract String columnPriceReprocessed();
 	public abstract String columnPriceReprocessedToolTip();
 	public abstract String columnTransactionPriceLatest();
