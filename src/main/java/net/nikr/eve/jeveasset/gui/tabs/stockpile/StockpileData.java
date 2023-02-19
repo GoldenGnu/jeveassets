@@ -40,6 +40,7 @@ import net.nikr.eve.jeveasset.data.profile.ProfileManager;
 import net.nikr.eve.jeveasset.data.profile.TableData;
 import net.nikr.eve.jeveasset.data.sde.ItemFlag;
 import net.nikr.eve.jeveasset.data.sde.StaticData;
+import net.nikr.eve.jeveasset.data.settings.PriceData;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter;
@@ -308,7 +309,8 @@ public class StockpileData extends TableData {
 		double price = ApiIdConverter.getPrice(TYPE_ID, item.isBPC());
 		float volume = ApiIdConverter.getVolume(item.getItem(), true);
 		Double transactionAveragePrice = profileData.getTransactionAveragePrice(TYPE_ID);
-		item.updateValues(price, volume, transactionAveragePrice);
+		PriceData priceData = ApiIdConverter.getPriceData(TYPE_ID, item.isBPC());
+		item.updateValues(price, volume, transactionAveragePrice, priceData);
 		//Contract Items
 		if (stockpile.isContracts()) {
 			Set<MyContractItem> items = get(contractItems, stockpile).get(TYPE_ID);
