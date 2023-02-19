@@ -239,20 +239,6 @@ public enum TreeTableFormat implements EnumTableColumn<TreeAsset> {
 			return from.getAverage(this);
 		}
 	},
-	PRICE_CONTRACT(Double.class, GlazedLists.comparableComparator()) {
-		@Override
-		public String getColumnName() {
-			return TabsAssets.get().columnPriceContract();
-		}
-		@Override
-		public String getColumnToolTip() {
-			return TabsAssets.get().columnPriceContractToolTip();
-		}
-		@Override
-		public Object getColumnValue(final TreeAsset from) {
-			return from.getAverage(this);
-		}
-	},
 	PRICE_REPROCESSED(Double.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {

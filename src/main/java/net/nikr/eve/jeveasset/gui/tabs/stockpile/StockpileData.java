@@ -305,7 +305,7 @@ public class StockpileData extends TableData {
 
 	private void updateItem(StockpileItem item, Stockpile stockpile) {
 		final int TYPE_ID = item.getItemTypeID();
-		double price = ApiIdConverter.getPrice(TYPE_ID, item.isBPC(), item);
+		double price = ApiIdConverter.getPrice(TYPE_ID, item.isBPC());
 		float volume = ApiIdConverter.getVolume(item.getItem(), true);
 		Double transactionAveragePrice = profileData.getTransactionAveragePrice(TYPE_ID);
 		item.updateValues(price, volume, transactionAveragePrice);

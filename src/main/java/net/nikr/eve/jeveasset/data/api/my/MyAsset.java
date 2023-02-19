@@ -38,7 +38,6 @@ import net.nikr.eve.jeveasset.data.settings.UserItem;
 import net.nikr.eve.jeveasset.data.settings.tag.TagID;
 import net.nikr.eve.jeveasset.data.settings.tag.Tags;
 import net.nikr.eve.jeveasset.data.settings.types.BlueprintType;
-import net.nikr.eve.jeveasset.data.settings.types.ContractPriceType;
 import net.nikr.eve.jeveasset.data.settings.types.EditableLocationType;
 import net.nikr.eve.jeveasset.data.settings.types.EditablePriceType;
 import net.nikr.eve.jeveasset.data.settings.types.ItemType;
@@ -51,7 +50,7 @@ import net.nikr.eve.jeveasset.i18n.DataModelAsset;
 import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 
-public class MyAsset extends RawAsset implements Comparable<MyAsset>, InfoItem, ItemType, BlueprintType, EditablePriceType, ContractPriceType, TagsType, EditableLocationType, OwnersType {
+public class MyAsset extends RawAsset implements Comparable<MyAsset>, InfoItem, ItemType, BlueprintType, EditablePriceType, TagsType, EditableLocationType, OwnersType {
 
 //Static values (set by constructor)
 	private final List<MyAsset> assets = new ArrayList<>();
@@ -79,7 +78,6 @@ public class MyAsset extends RawAsset implements Comparable<MyAsset>, InfoItem, 
 	private MarketPriceData marketPriceData;
 	private Date added;
 	private double price;
-	private double contractPrice;
 	private Tags tags;
 	private MyBlueprint blueprint;
 	private MyLocation location;
@@ -103,7 +101,6 @@ public class MyAsset extends RawAsset implements Comparable<MyAsset>, InfoItem, 
 		this.marketPriceData = asset.marketPriceData;
 		this.added = asset.added;
 		this.price = asset.price;
-		this.contractPrice = asset.contractPrice;
 		this.tags = asset.tags;
 		this.blueprint = asset.blueprint;
 		this.location = asset.location;
@@ -313,16 +310,6 @@ public class MyAsset extends RawAsset implements Comparable<MyAsset>, InfoItem, 
 	@Override
 	public void setDynamicPrice(double price) {
 		this.price = price;
-	}
-
-	@Override
-	public double getContractPrice() {
-		return contractPrice;
-	}
-
-	@Override
-	public void setContractPrice(double contractPrice) {
-		this.contractPrice = contractPrice;
 	}
 
 	public double getPriceBuyMax() {

@@ -308,7 +308,7 @@ class StockpileShoppingListDialog extends JDialogCentered {
 				bpo = item.isBlueprint();
 			}
 			float volume = ApiIdConverter.getVolume(item, true);
-			double price = ApiIdConverter.getPriceSimple(entry.getKey().getTypeID(), bpc);
+			double price = ApiIdConverter.getPrice(entry.getKey().getTypeID(), bpc);
 			long ownedCount = 0;
 			for (StockItem stockItem : entry.getValue()) {
 				Set<Count> counts = stockItem.getCounts();
