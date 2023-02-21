@@ -5072,7 +5072,7 @@
     <row c="Q-6LG1" ci="20000552" r="Providence" ri="10000047" s="" se="0.0" si="0" sy="18XA-C" syi="30003785"/>
     <row c="Q-6LG1" ci="20000552" r="Providence" ri="10000047" s="" se="0.0" si="0" sy="3D-CQU" syi="30003786"/>
     <row c="Viriette" ci="20000553" r="Placid" ri="10000048" s="" se="0.2" si="0" sy="Agoze" syi="30003787"/>
-    <row c="Viriette" ci="20000553" r="Placid" ri="10000048" s="" se="0.1" si="0" sy="Intaki" syi="30003788"/>
+    <row c="Viriette" ci="20000553" r="Placid" ri="10000048" s="" se="0.2" si="0" sy="Intaki" syi="30003788"/>
     <row c="Viriette" ci="20000553" r="Placid" ri="10000048" s="" se="0.1" si="0" sy="Brarel" syi="30003789"/>
     <row c="Viriette" ci="20000553" r="Placid" ri="10000048" s="" se="0.2" si="0" sy="Vey" syi="30003790"/>
     <row c="Viriette" ci="20000553" r="Placid" ri="10000048" s="" se="0.1" si="0" sy="Annancale" syi="30003791"/>
@@ -11293,7 +11293,7 @@
     <row c="Argeir" ci="20000504" r="Metropolis" ri="10000042" s="Orduin V - Moon 7 - Republic Parliament Bureau" se="0.8" si="60004714" sy="Orduin" syi="30003453"/>
     <row c="Argeir" ci="20000504" r="Metropolis" ri="10000042" s="Orduin VIII - Moon 1 - Republic Parliament Bureau" se="0.8" si="60004717" sy="Orduin" syi="30003453"/>
     <row c="Eugidi" ci="20000307" r="Metropolis" ri="10000042" s="Vimeini VII - Moon 19 - Republic Parliament Bureau" se="0.4" si="60004720" sy="Vimeini" syi="30002088"/>
-    <row c="Eugidi" ci="20000307" r="Metropolis" ri="10000042" s="Turnur I - Republic Parliament Bureau" se="0.4" si="60004723" sy="Turnur" syi="30002086"/>
+    <row c="Eugidi" ci="20000307" r="Metropolis" ri="10000042" s="Turnur I - Republic Parliament Bureau (Damaged)" se="0.4" si="60004723" sy="Turnur" syi="30002086"/>
     <row c="Eugidi" ci="20000307" r="Metropolis" ri="10000042" s="Avenod V - Moon 1 - Republic Parliament Academy" se="0.4" si="60004726" sy="Avenod" syi="30002089"/>
     <row c="Eugidi" ci="20000307" r="Metropolis" ri="10000042" s="Avenod VI - Moon 9 - Republic Parliament Academy" se="0.4" si="60004729" sy="Avenod" syi="30002089"/>
     <row c="Erada" ci="20000377" r="Heimatar" ri="10000030" s="Oremmulf V - Moon 4 - Republic Parliament Bureau" se="0.9" si="60004732" sy="Oremmulf" syi="30002571"/>
@@ -12847,7 +12847,7 @@
     <row c="Viriette" ci="20000553" r="Placid" ri="10000048" s="Agoze XII - Moon 8 - Federal Freight Storage" se="0.2" si="60009376" sy="Agoze" syi="30003787"/>
     <row c="Viriette" ci="20000553" r="Placid" ri="10000048" s="Ostingele VI - Moon 4 - Federal Freight Storage" se="0.2" si="60009379" sy="Ostingele" syi="30003792"/>
     <row c="Viriette" ci="20000553" r="Placid" ri="10000048" s="Brarel V - Moon 3 - Federal Freight Storage" se="0.1" si="60009382" sy="Brarel" syi="30003789"/>
-    <row c="Viriette" ci="20000553" r="Placid" ri="10000048" s="Intaki VII - Moon 1 - Federal Freight Storage" se="0.1" si="60009385" sy="Intaki" syi="30003788"/>
+    <row c="Viriette" ci="20000553" r="Placid" ri="10000048" s="Intaki VII - Moon 1 - Federal Freight Storage" se="0.2" si="60009385" sy="Intaki" syi="30003788"/>
     <row c="Gallente Border Zone" ci="20000387" r="Sinq Laison" ri="10000032" s="Ignoitton V - Moon 11 - Federal Freight Storage" se="0.4" si="60009388" sy="Ignoitton" syi="30002647"/>
     <row c="Gallente Border Zone" ci="20000387" r="Sinq Laison" ri="10000032" s="Faurent I - Federal Freight Storage" se="0.5" si="60009391" sy="Faurent" syi="30002643"/>
     <row c="Gallente Border Zone" ci="20000387" r="Sinq Laison" ri="10000032" s="Faurent V - Moon 2 - Federal Freight Storage" se="0.5" si="60009394" sy="Faurent" syi="30002643"/>
@@ -12941,7 +12941,7 @@
     <row c="Viriette" ci="20000553" r="Placid" ri="10000048" s="Annancale IV - Moon 16 - Astral Mining Inc. Mineral Reserve" se="0.1" si="60009658" sy="Annancale" syi="30003791"/>
     <row c="Viriette" ci="20000553" r="Placid" ri="10000048" s="Ostingele VI - Moon 5 - Astral Mining Inc. Mineral Reserve" se="0.2" si="60009661" sy="Ostingele" syi="30003792"/>
     <row c="Viriette" ci="20000553" r="Placid" ri="10000048" s="Annancale IV - Moon 1 - Astral Mining Inc. Mining Outpost" se="0.1" si="60009664" sy="Annancale" syi="30003791"/>
-    <row c="Viriette" ci="20000553" r="Placid" ri="10000048" s="Intaki V - Moon 5 - Astral Mining Inc. Refinery" se="0.1" si="60009667" sy="Intaki" syi="30003788"/>
+    <row c="Viriette" ci="20000553" r="Placid" ri="10000048" s="Intaki V (Intaki Prime) - Moon 5 - Astral Mining Inc. Refinery" se="0.2" si="60009667" sy="Intaki" syi="30003788"/>
     <row c="Viriette" ci="20000553" r="Placid" ri="10000048" s="Vey VIII - Moon 19 - Astral Mining Inc. Mining Outpost" se="0.2" si="60009670" sy="Vey" syi="30003790"/>
     <row c="Viriette" ci="20000553" r="Placid" ri="10000048" s="Vey VI - Moon 10 - Astral Mining Inc. Mineral Reserve" se="0.2" si="60009673" sy="Vey" syi="30003790"/>
     <row c="Coriault" ci="20000389" r="Sinq Laison" ri="10000032" s="Agrallarier VIII - Moon 3 - Astral Mining Inc. Refinery" se="0.9" si="60009676" sy="Agrallarier" syi="30002658"/>
@@ -13373,7 +13373,7 @@
     <row c="Viriette" ci="20000553" r="Placid" ri="10000048" s="Agoze V - FedMart Retail Center" se="0.2" si="60010954" sy="Agoze" syi="30003787"/>
     <row c="Viriette" ci="20000553" r="Placid" ri="10000048" s="Vey VIII - Moon 15 - FedMart Warehouse" se="0.2" si="60010957" sy="Vey" syi="30003790"/>
     <row c="Viriette" ci="20000553" r="Placid" ri="10000048" s="Brarel I - FedMart Warehouse" se="0.1" si="60010960" sy="Brarel" syi="30003789"/>
-    <row c="Viriette" ci="20000553" r="Placid" ri="10000048" s="Intaki VI - Moon 5 - FedMart Storage" se="0.1" si="60010963" sy="Intaki" syi="30003788"/>
+    <row c="Viriette" ci="20000553" r="Placid" ri="10000048" s="Intaki VI - Moon 5 - FedMart Storage" se="0.2" si="60010963" sy="Intaki" syi="30003788"/>
     <row c="Viriette" ci="20000553" r="Placid" ri="10000048" s="Harroule VIII - Moon 5 - FedMart Storage" se="0.1" si="60010966" sy="Harroule" syi="30003793"/>
     <row c="Arand" ci="20000733" r="Essence" ri="10000064" s="Allebin VII - Moon 4 - FedMart Retail Center" se="0.5" si="60010969" sy="Allebin" syi="30005009"/>
     <row c="Arand" ci="20000733" r="Essence" ri="10000064" s="Isenan VIII - Moon 12 - FedMart Warehouse" se="0.3" si="60010972" sy="Isenan" syi="30005014"/>
@@ -13510,8 +13510,8 @@
     <row c="Orvanne" ci="20000522" r="Solitude" ri="10000044" s="Sarline IX - Moon 10 - Bank of Luminaire Depository" se="0.4" si="60011365" sy="Sarline" syi="30003584"/>
     <row c="Orvanne" ci="20000522" r="Solitude" ri="10000044" s="Sarline IX - Moon 15 - Bank of Luminaire Depository" se="0.4" si="60011368" sy="Sarline" syi="30003584"/>
     <row c="Viriette" ci="20000553" r="Placid" ri="10000048" s="Ostingele VII - Pend Insurance Depository" se="0.2" si="60011371" sy="Ostingele" syi="30003792"/>
-    <row c="Viriette" ci="20000553" r="Placid" ri="10000048" s="Intaki VI - Moon 5 - Pend Insurance Depository" se="0.1" si="60011374" sy="Intaki" syi="30003788"/>
-    <row c="Viriette" ci="20000553" r="Placid" ri="10000048" s="Intaki III - Pend Insurance Depository" se="0.1" si="60011377" sy="Intaki" syi="30003788"/>
+    <row c="Viriette" ci="20000553" r="Placid" ri="10000048" s="Intaki VI - Moon 5 - Pend Insurance Depository" se="0.2" si="60011374" sy="Intaki" syi="30003788"/>
+    <row c="Viriette" ci="20000553" r="Placid" ri="10000048" s="Intaki III - Pend Insurance Depository" se="0.2" si="60011377" sy="Intaki" syi="30003788"/>
     <row c="Ajah" ci="20000255" r="Tash-Murkon" ri="10000020" s="Sizamod VIII - Moon 5 - Pend Insurance Vault" se="0.7" si="60011380" sy="Sizamod" syi="30001728"/>
     <row c="Ajah" ci="20000255" r="Tash-Murkon" ri="10000020" s="Sizamod V - Moon 1 - Pend Insurance Vault" se="0.7" si="60011383" sy="Sizamod" syi="30001728"/>
     <row c="Ajah" ci="20000255" r="Tash-Murkon" ri="10000020" s="Nosodnis VII - Pend Insurance Vault" se="0.9" si="60011386" sy="Nosodnis" syi="30001725"/>
@@ -14845,7 +14845,7 @@
     <row c="Pegeler" ci="20000559" r="Placid" ri="10000048" s="Eugales V - Federal Defense Union Assembly Plant" se="0.4" si="60015085" sy="Eugales" syi="30003825"/>
     <row c="Pegeler" ci="20000559" r="Placid" ri="10000048" s="Moclinamaud VII - Federal Defense Union Logistic Support" se="0.4" si="60015086" sy="Moclinamaud" syi="30003828"/>
     <row c="Serthoulde" ci="20000563" r="Placid" ri="10000048" s="Mercomesier III - Federal Defense Union Logistic Support" se="0.1" si="60015087" sy="Mercomesier" syi="30003853"/>
-    <row c="Viriette" ci="20000553" r="Placid" ri="10000048" s="Intaki II - Federal Defense Union Logistic Support" se="0.1" si="60015088" sy="Intaki" syi="30003788"/>
+    <row c="Viriette" ci="20000553" r="Placid" ri="10000048" s="Intaki II - Federal Defense Union Logistic Support" se="0.2" si="60015088" sy="Intaki" syi="30003788"/>
     <row c="Viriette" ci="20000553" r="Placid" ri="10000048" s="Ostingele IV - Federal Defense Union Testing Facilities" se="0.2" si="60015089" sy="Ostingele" syi="30003792"/>
     <row c="Fislipesnes" ci="20000554" r="Placid" ri="10000048" s="Covryn III - Federal Defense Union Logistic Support" se="0.4" si="60015090" sy="Covryn" syi="30003795"/>
     <row c="Fislipesnes" ci="20000554" r="Placid" ri="10000048" s="Uphallant II - Federal Defense Union Logistic Support" se="0.2" si="60015091" sy="Uphallant" syi="30003799"/>
@@ -14924,19 +14924,23 @@
     <row c="Ortner" ci="20000367" r="Heimatar" ri="10000030" s="Hulm VIII - AIR Laboratories" se="1.0" si="60015164" sy="Hulm" syi="30002505"/>
     <row c="Algintal" ci="20000392" r="Sinq Laison" ri="10000032" s="Parchanier IV - President Bureau" se="0.6" si="60015165" sy="Parchanier" syi="30002676"/>
     <row c="Osnins" ci="20000441" r="Everyshore" ri="10000037" s="Bereye III - Supreme Court Tribunal" se="0.7" si="60015166" sy="Bereye" syi="30003014"/>
-    <row c="Sanctum" ci="20000761" r="Genesis" ri="10000067" s="Ourapheh V - Paragon Fulfilment Center" se="0.9" si="60015167" sy="Ourapheh" syi="30005203"/>
-    <row c="Throne Worlds" ci="20000322" r="Domain" ri="10000043" s="Amarr VII (Nemantizor) - Paragon Fulfilment Center" se="1.0" si="60015168" sy="Amarr" syi="30002187"/>
-    <row c="Kimotoro" ci="20000020" r="The Forge" ri="10000002" s="Jita VI - Paragon Fulfilment Center" se="0.9" si="60015169" sy="Jita" syi="30000142"/>
-    <row c="Coriault" ci="20000389" r="Sinq Laison" ri="10000032" s="Dodixie V - Paragon Fulfilment Center" se="0.9" si="60015170" sy="Dodixie" syi="30002659"/>
-    <row c="Barvigrard" ci="20000302" r="Metropolis" ri="10000042" s="Hek IX - Paragon Fulfilment Center" se="0.5" si="60015171" sy="Hek" syi="30002053"/>
-    <row c="Ortner" ci="20000367" r="Heimatar" ri="10000030" s="Rens V - Paragon Fulfilment Center" se="0.9" si="60015172" sy="Rens" syi="30002510"/>
+    <row c="Sanctum" ci="20000761" r="Genesis" ri="10000067" s="Ourapheh V - Paragon Fulfillment Center" se="0.9" si="60015167" sy="Ourapheh" syi="30005203"/>
+    <row c="Throne Worlds" ci="20000322" r="Domain" ri="10000043" s="Amarr VII (Nemantizor) - Paragon Fulfillment Center" se="1.0" si="60015168" sy="Amarr" syi="30002187"/>
+    <row c="Kimotoro" ci="20000020" r="The Forge" ri="10000002" s="Jita VI - Paragon Fulfillment Center" se="0.9" si="60015169" sy="Jita" syi="30000142"/>
+    <row c="Coriault" ci="20000389" r="Sinq Laison" ri="10000032" s="Dodixie V - Paragon Fulfillment Center" se="0.9" si="60015170" sy="Dodixie" syi="30002659"/>
+    <row c="Barvigrard" ci="20000302" r="Metropolis" ri="10000042" s="Hek IX - Paragon Fulfillment Center" se="0.5" si="60015171" sy="Hek" syi="30002053"/>
+    <row c="Ortner" ci="20000367" r="Heimatar" ri="10000030" s="Rens V - Paragon Fulfillment Center" se="0.9" si="60015172" sy="Rens" syi="30002510"/>
     <row c="Aokinen" ci="20000784" r="Black Rise" ri="10000069" s="Samanuni VI - Caldari Navy Anchorage" se="0.7" si="60015173" sy="Samanuni" syi="30045322"/>
     <row c="Kiartanne" ci="20000777" r="Verge Vendor" ri="10000068" s="Amygnon III - Federation Navy Anchorage" se="0.6" si="60015174" sy="Amygnon" syi="30005311"/>
-    <row c="Hed" ci="20000372" r="Heimatar" ri="10000030" s="Amamake III - Paragon Fulfilment Center" se="0.4" si="60015175" sy="Amamake" syi="30002537"/>
-    <row c="Bedaleya" ci="20000010" r="Derelik" ri="10000001" s="Assah VI - Paragon Fulfilment Center" se="0.3" si="60015176" sy="Assah" syi="30000075"/>
-    <row c="Pegeler" ci="20000559" r="Placid" ri="10000048" s="Aubenall II - Paragon Fulfilment Center" se="0.4" si="60015177" sy="Aubenall" syi="30003827"/>
-    <row c="Afinoo" ci="20000620" r="Aridia" ri="10000054" s="Yehaba VI - Paragon Fulfilment Center" se="0.2" si="60015178" sy="Yehaba" syi="30004236"/>
-    <row c="Mito" ci="20000212" r="Lonetrek" ri="10000016" s="Hakonen VII - Paragon Fulfilment Center" se="0.3" si="60015179" sy="Hakonen" syi="30001448"/>
+    <row c="Hed" ci="20000372" r="Heimatar" ri="10000030" s="Amamake III - Paragon Fulfillment Center" se="0.4" si="60015175" sy="Amamake" syi="30002537"/>
+    <row c="Bedaleya" ci="20000010" r="Derelik" ri="10000001" s="Assah VI - Paragon Fulfillment Center" se="0.3" si="60015176" sy="Assah" syi="30000075"/>
+    <row c="Pegeler" ci="20000559" r="Placid" ri="10000048" s="Aubenall II - Paragon Fulfillment Center" se="0.4" si="60015177" sy="Aubenall" syi="30003827"/>
+    <row c="Afinoo" ci="20000620" r="Aridia" ri="10000054" s="Yehaba VI - Paragon Fulfillment Center" se="0.2" si="60015178" sy="Yehaba" syi="30004236"/>
+    <row c="Mito" ci="20000212" r="Lonetrek" ri="10000016" s="Hakonen VII - Paragon Fulfillment Center" se="0.3" si="60015179" sy="Hakonen" syi="30001448"/>
+    <row c="Viriette" ci="20000553" r="Placid" ri="10000048" s="Intaki V (Intaki Prime) - Federation Navy Anchorage" se="0.2" si="60015180" sy="Intaki" syi="30003788"/>
+    <row c="DS-M4Q" ci="20000481" r="Syndicate" ri="10000041" s="0EK-NJ V - Caldari Navy Anchorage" se="0.0" si="60015181" sy="0EK-NJ" syi="30003296"/>
+    <row c="DS-M4Q" ci="20000481" r="Syndicate" ri="10000041" s="T-LIWS II - Caldari Navy Anchorage" se="0.0" si="60015182" sy="T-LIWS" syi="30003299"/>
+    <row c="DS-M4Q" ci="20000481" r="Syndicate" ri="10000041" s="UM-Q7F IX - Caldari Navy Anchorage" se="0.0" si="60015183" sy="UM-Q7F" syi="30003298"/>
     <row c="9RW5-Z" ci="20000054" r="UUA-F4" ri="10000004" s="Conquerable Station #61000001" se="0.0" si="61000001" sy="RU-97T" syi="30000377"/>
     <row c="RHG-4O" ci="20000653" r="Feythabolis" ri="10000056" s="Conquerable Station #61000002" se="0.0" si="61000002" sy="5P-AIP" syi="30004477"/>
     <row c="JSZ-X6" ci="20000456" r="Esoteria" ri="10000039" s="Conquerable Station #61000003" se="0.0" si="61000003" sy="16P-PX" syi="30003122"/>
