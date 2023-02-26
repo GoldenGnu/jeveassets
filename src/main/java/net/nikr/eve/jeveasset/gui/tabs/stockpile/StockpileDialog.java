@@ -23,7 +23,6 @@ package net.nikr.eve.jeveasset.gui.tabs.stockpile;
 
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.FilterList;
-import ca.odell.glazedlists.TextFilterator;
 import ca.odell.glazedlists.matchers.Matcher;
 import ca.odell.glazedlists.matchers.TextMatcherEditor;
 import ca.odell.glazedlists.swing.AutoCompleteSupport;
@@ -89,6 +88,7 @@ import net.nikr.eve.jeveasset.gui.shared.components.JIntegerField;
 import net.nikr.eve.jeveasset.gui.shared.components.ListComboBoxModel;
 import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
+import net.nikr.eve.jeveasset.gui.shared.table.EventModels.LocationFilterator;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels.StringFilterator;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter.StockpileContainer;
@@ -616,13 +616,6 @@ public class StockpileDialog extends JDialogCentered {
 		@Override
 		public void caretUpdate(final CaretEvent e) {
 			autoValidate();
-		}
-	}
-
-	static class LocationsFilterator implements TextFilterator<MyLocation> {
-		@Override
-		public void getFilterStrings(final List<String> baseList, final MyLocation element) {
-			baseList.add(element.getLocation());
 		}
 	}
 
@@ -1509,7 +1502,7 @@ public class StockpileDialog extends JDialogCentered {
 					jLocation.getModel().setSelectedItem(TabsStockpile.get().noLocationsFound());
 				} else {
 					jLocation.setEnabled(true);
-					autoComplete = AutoCompleteSupport.install(jLocation, EventModels.createSwingThreadProxyList(filterList), new LocationsFilterator());
+					autoComplete = AutoCompleteSupport.install(jLocation, EventModels.createSwingThreadProxyList(filterList), new LocationFilterator());
 					autoComplete.setStrict(true);
 					jLocation.addItemListener(listener); //Must be added after AutoCompleteSupport
 				}
