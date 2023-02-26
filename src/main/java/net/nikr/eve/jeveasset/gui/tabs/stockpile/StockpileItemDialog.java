@@ -22,7 +22,6 @@
 package net.nikr.eve.jeveasset.gui.tabs.stockpile;
 
 import ca.odell.glazedlists.EventList;
-import ca.odell.glazedlists.TextFilterator;
 import ca.odell.glazedlists.swing.AutoCompleteSupport;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -56,6 +55,7 @@ import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
 import net.nikr.eve.jeveasset.gui.shared.components.JDoubleField;
 import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
+import net.nikr.eve.jeveasset.gui.shared.table.EventModels.ItemFilterator;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.SubpileStock;
 import net.nikr.eve.jeveasset.i18n.TabsStockpile;
@@ -594,13 +594,6 @@ public class StockpileItemDialog extends JDialogCentered {
 		public void itemStateChanged(final ItemEvent e) {
 			autoValidate();
 			autoSet();
-		}
-	}
-
-	static class ItemFilterator implements TextFilterator<Item> {
-		@Override
-		public void getFilterStrings(final List<String> baseList, final Item element) {
-			baseList.add(element.getTypeName());
 		}
 	}
 }
