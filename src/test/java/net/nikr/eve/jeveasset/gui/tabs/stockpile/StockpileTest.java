@@ -27,6 +27,7 @@ import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter.StockpileContainer;
+import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter.StockpileFlag;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileTotal;
 import static org.junit.Assert.*;
@@ -39,7 +40,7 @@ public class StockpileTest extends TestUtil {
 	public void testSomeMethod() {
 		StockpileFilter filter = new StockpileFilter(MyLocation.create(0),
 				false, //Exclude
-				Collections.singletonList(0),
+				Collections.singletonList(new StockpileFlag(0, true)),
 				Collections.singletonList(new StockpileContainer("Container", false)),
 				Collections.singletonList(0L),
 				null, //JobsDaysLess
