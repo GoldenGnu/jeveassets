@@ -44,6 +44,7 @@ import net.nikr.eve.jeveasset.data.settings.PriceData;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter;
+import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter.StockpileFlag;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.SubpileItem;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.SubpileStock;
@@ -126,10 +127,10 @@ public class StockpileData extends TableData {
 		//Update Item flag name
 		Set<ItemFlag> flags = new HashSet<>();
 		for (StockpileFilter filter : stockpile.getFilters()) {
-			for (Integer flagID : filter.getFlagIDs()) {
-				ItemFlag flag = StaticData.get().getItemFlags().get(flagID);
-				if (flag != null) {
-					flags.add(flag);
+			for (StockpileFlag flag : filter.getFlags()) {
+				ItemFlag itemFlag = StaticData.get().getItemFlags().get(flag.getFlagID());
+				if (itemFlag != null) {
+					flags.add(itemFlag);
 				}
 			}
 		}

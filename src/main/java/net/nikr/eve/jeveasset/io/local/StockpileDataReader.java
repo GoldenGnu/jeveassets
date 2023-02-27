@@ -41,6 +41,7 @@ import java.util.zip.InflaterInputStream;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter.StockpileContainer;
+import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter.StockpileFlag;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import org.slf4j.Logger;
@@ -132,15 +133,22 @@ public class StockpileDataReader extends AbstractBackup {
 				for (JsonElement containerElement : containersElement.getAsJsonArray()) {
 					JsonObject containerObject = containerElement.getAsJsonObject();
 					String container = containerObject.get("cc").getAsString();
-					boolean includeContainer = containerObject.get("ic").getAsBoolean();
-					containers.add(new StockpileContainer(container, includeContainer));
+					boolean includeSubs = containerObject.get("ic").getAsBoolean();
+					containers.add(new StockpileContainer(container, includeSubs));
 				}
 
 				//Flags
-				List<Integer> flagIDs = new ArrayList<>();
+				List<StockpileFlag> flags = new ArrayList<>();
 				JsonElement flagIDsElement = filterObject.get("f");
-				for (JsonElement flagIdElement : flagIDsElement.getAsJsonArray()) {
-					flagIDs.add(flagIdElement.getAsInt());
+				for (JsonElement flagElement : flagIDsElement.getAsJsonArray()) {
+					if (flagElement.isJsonObject()) {
+						JsonObject flagObject = flagElement.getAsJsonObject();
+						int flagID = flagObject.get("ff").getAsInt();
+						boolean includeSubs = flagObject.get("ic").getAsBoolean();
+						flags.add(new StockpileFlag(flagID, includeSubs));
+					} else {
+						flags.add(new StockpileFlag(flagElement.getAsInt(), true));
+					}
 				}
 
 				//Owners
@@ -149,7 +157,7 @@ public class StockpileDataReader extends AbstractBackup {
 				for (JsonElement ownerIdElement : ownerIDsElement.getAsJsonArray()) {
 					ownerIDs.add(ownerIdElement.getAsLong());
 				}
-				filters.add(new StockpileFilter(ApiIdConverter.getLocation(locationID), exclude, flagIDs, containers, ownerIDs, jobsDaysLess, jobsDaysMore, singleton, assets, sellOrders, buyOrders, jobs, buyTransactions, sellTransactions, sellingContracts, soldContracts, buyingContracts, boughtContracts));
+				filters.add(new StockpileFilter(ApiIdConverter.getLocation(locationID), exclude, flags, containers, ownerIDs, jobsDaysLess, jobsDaysMore, singleton, assets, sellOrders, buyOrders, jobs, buyTransactions, sellTransactions, sellingContracts, soldContracts, buyingContracts, boughtContracts));
 			}
 
 			//Create Stockile (then add items)

@@ -41,7 +41,6 @@ import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
-import net.nikr.eve.jeveasset.data.profile.ProfileData;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.ItemFlag;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
@@ -60,6 +59,7 @@ import net.nikr.eve.jeveasset.gui.shared.CopyHandler.CopySeparator;
 import net.nikr.eve.jeveasset.gui.shared.components.JButtonComparable;
 import net.nikr.eve.jeveasset.gui.shared.components.JButtonNull;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter.StockpileContainer;
+import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter.StockpileFlag;
 import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.i18n.TabsStockpile;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
@@ -961,20 +961,13 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 			}
 
 			//Build include container String
-			StringBuilder builder = new StringBuilder();
-			if (!asset.getContainer().isEmpty()) {
-				builder.append(asset.getContainer());
-				builder.append(" > ");
-			}
-			builder.append(ProfileData.containerName(asset));
-			String includeContainer = builder.toString().toLowerCase();
 			String container = asset.getContainer().toLowerCase();
 
 			for (StockpileContainer stockpileContainer : filter.getContainers()) {
-				if (container.contains(stockpileContainer.getCompare())) { //Match
+				if (container.endsWith(stockpileContainer.getCompare())) { //Match
 					return true;
 				}
-				if (stockpileContainer.isIncludeContainer() && includeContainer.contains(stockpileContainer.getCompare())) {
+				if (stockpileContainer.isIncludeSubs() && container.contains(stockpileContainer.getCompare())) {
 					return true;
 				}
 			}
@@ -985,11 +978,12 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 			if (flagID == null) {
 				return true;
 			}
-			if (filter.getFlagIDs().isEmpty()) {
+			if (filter.getFlags().isEmpty()) {
 				return true; //All
 			}
-			for (Integer stockpileFlagID : filter.getFlagIDs()) {
-				if (flagID.equals(stockpileFlagID)) { //Match
+
+			for (StockpileFlag flag : filter.getFlags()) {
+				if (flagID.equals(flag.getFlagID())) { //Match
 					return true;
 				}
 			}
@@ -1000,16 +994,18 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 			if (asset == null) {
 				return true;
 			}
-			if (filter.getFlagIDs().isEmpty()) {
+			if (filter.getFlags().isEmpty()) {
 				return true; //All
 			}
-			for (int flagID : filter.getFlagIDs()) {
-				if (asset.getFlagID() == flagID) { //Match self
+			for (StockpileFlag flag : filter.getFlags()) {
+				if (asset.getFlagID() == flag.getFlagID()) { //Match self
 					return true;
 				}
-				for (MyAsset parentAsset : asset.getParents()) { //Test parents
-					if (parentAsset.getFlagID() == flagID) { //Match parent
-						return true;
+				if (flag.isIncludeSubs()) {
+					for (MyAsset parentAsset : asset.getParents()) { //Test parents
+						if (parentAsset.getFlagID() == flag.getFlagID()) { //Match parent
+							return true;
+						}
 					}
 				}
 			}
@@ -1637,7 +1633,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 	public static class StockpileFilter {
 		private MyLocation location;
 		private final boolean exclude;
-		private final List<Integer> flagIDs;
+		private final List<StockpileFlag> flags;
 		private final List<StockpileContainer> containers;
 		private final List<Long> ownerIDs;
 		private final Integer jobsDaysLess;
@@ -1655,10 +1651,10 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 		private final boolean boughtContracts;
 
 
-		public StockpileFilter(MyLocation location, boolean exclude, List<Integer> flagIDs, List<StockpileContainer> containers, List<Long> ownerIDs, Integer jobsDaysLess, Integer jobsDaysMore, Boolean singleton, boolean assets, boolean sellOrders, boolean buyOrders, boolean jobs, boolean buyTransactions, boolean sellTransactions, boolean sellingContracts, boolean soldContracts, boolean buyingContracts, boolean boughtContracts) {
+		public StockpileFilter(MyLocation location, boolean exclude, List<StockpileFlag> flags, List<StockpileContainer> containers, List<Long> ownerIDs, Integer jobsDaysLess, Integer jobsDaysMore, Boolean singleton, boolean assets, boolean sellOrders, boolean buyOrders, boolean jobs, boolean buyTransactions, boolean sellTransactions, boolean sellingContracts, boolean soldContracts, boolean buyingContracts, boolean boughtContracts) {
 			this.location = location;
 			this.exclude = exclude;
-			this.flagIDs = flagIDs;
+			this.flags = flags;
 			this.containers = containers;
 			this.ownerIDs = ownerIDs;
 			this.jobsDaysLess = jobsDaysLess;
@@ -1688,8 +1684,8 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 			return exclude;
 		}
 
-		public List<Integer> getFlagIDs() {
-			return flagIDs;
+		public List<StockpileFlag> getFlags() {
+			return flags;
 		}
 
 		public List<StockpileContainer> getContainers() {
@@ -1755,12 +1751,12 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 		public static class StockpileContainer {
 			private final String container;
 			private final String compare;
-			private final boolean includeContainer;
+			private final boolean includeSubs;
 
-			public StockpileContainer(String container, boolean includeContainer) {
+			public StockpileContainer(String container, boolean includeSubs) {
 				this.container = container;
 				this.compare = container.toLowerCase();
-				this.includeContainer = includeContainer;
+				this.includeSubs = includeSubs;
 			}
 
 			public String getContainer() {
@@ -1771,8 +1767,8 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 				return compare;
 			}
 
-			public boolean isIncludeContainer() {
-				return includeContainer;
+			public boolean isIncludeSubs() {
+				return includeSubs;
 			}
 
 			@Override
@@ -1799,7 +1795,46 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 				}
 				return true;
 			}
+		}
 
+		public static class StockpileFlag {
+			private final int flagID;
+			private final boolean includeSubs;
+
+			public StockpileFlag(int flagID, boolean includeSubs) {
+				this.flagID = flagID;
+				this.includeSubs = includeSubs;
+			}
+
+			public int getFlagID() {
+				return flagID;
+			}
+
+			public boolean isIncludeSubs() {
+				return includeSubs;
+			}
+
+			@Override
+			public int hashCode() {
+				int hash = 7;
+				hash = 43 * hash + this.flagID;
+				return hash;
+			}
+
+			@Override
+			public boolean equals(Object obj) {
+				if (this == obj) {
+					return true;
+				}
+				if (obj == null) {
+					return false;
+				}
+				if (getClass() != obj.getClass()) {
+					return false;
+				}
+				final StockpileFlag other = (StockpileFlag) obj;
+				return this.flagID == other.flagID;
+			}
 		}
 	}
 
