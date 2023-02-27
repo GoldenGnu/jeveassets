@@ -142,34 +142,67 @@ public class StockpileData extends TableData {
 			if (stockpile.isContracts()) {
 				get(contractItems, stockpile).clear();
 				if (stockpile.isContractsMatchAll()) {
-					Map<MyContract, List<MyContractItem>> found =  new HashMap<>();
+					Map<MyContract, Set<Integer>> foundIDs =  new HashMap<>();
+					Map<MyContract, List<MyContractItem>> foundItems =  new HashMap<>();
 					for (MyContract contract : profileData.getContractList()) {
-						found.put(contract, new ArrayList<>());
+						foundIDs.put(contract, new HashSet<>());
+						foundItems.put(contract, new ArrayList<>());
 					}
-					//Search
+					//StockpileItem map lookup
+					Map<Integer, StockpileItem> stockpileItems =  new HashMap<>();
+					for (StockpileItem stockpileItem : stockpile.getItems()) {
+						if (stockpileItem.isTotal()) {
+							continue; //Ignore Total
+						}
+						stockpileItems.put(stockpileItem.getItemTypeID(), stockpileItem);
+					}
+					//Init found maps
+					for (MyContract contract : profileData.getContractList()) {
+						foundIDs.put(contract, new HashSet<>());
+						foundItems.put(contract, new ArrayList<>());
+					}
+					//Contract Items matching
 					for (MyContractItem contractItem : profileData.getContractItemList()) {
+						//Validate contract
 						if (contractItem.getContract().isIgnoreContract()) {
 							continue;
 						}
 						Integer typeID = get(contractItem.getTypeID(), contractItem.isBPC());
-						//Ignore null and wrong typeID
+						//Validate typeID
 						if (ignore(typeIDs, typeID)) {
-							continue;
+							foundItems.remove(contractItem.getContract()); //Contract have items not in the stockpile
+							continue; //Nothing left to do here
 						}
-						for (StockpileItem stockpileItem : stockpile.getItems()) {
-							if (stockpileItem.isTotal()) {
-								continue; //Ignore Total
-							}
-							List<MyContractItem> items = found.get(contractItem.getContract());
-							if (items != null && stockpileItem.matchesContract(contractItem)) {
-								items.add(contractItem);
-							} else {
-								found.remove(contractItem.getContract());
-							}
+						//Get items
+						List<MyContractItem> items = foundItems.get(contractItem.getContract());
+						if (items == null) {
+							continue; //Happens when one or more typeIDs from the contract isn't in the stockpile
+						}
+						//Get contract typeIDs
+						Set<Integer> ids = foundIDs.get(contractItem.getContract());
+						if (ids == null) {
+							continue; //Should never happen, but, better safe than sorry
+						}
+						//Get StockpileItem
+						StockpileItem stockpileItem = stockpileItems.get(typeID);
+						if (stockpileItem == null) {
+							continue; //Should never happen, but, better safe than sorry
+						}
+						if (stockpileItem.matchesContract(contractItem)) {
+							items.add(contractItem);
+							ids.add(typeID);
+						}
+					}
+					//Stockpile Items matching
+					for (Map.Entry<MyContract, Set<Integer>> entry : foundIDs.entrySet()) {
+						//Only compare the size of the sets, as both sets only contains valid and unique ids.
+						//Therefore there should be no reason to compare the actualy IDs (which is really really slow)
+						if (entry.getValue().size() != typeIDs.size()) { //Stockpile have items not in the contract
+							foundItems.remove(entry.getKey());
 						}
 					}
 					//Add
-					for (List<MyContractItem> list : found.values()) {
+					for (List<MyContractItem> list : foundItems.values()) {
 						for (MyContractItem contractItem : list) {
 							add(get(contractItems, stockpile), get(contractItem.getTypeID(), contractItem.isBPC()), contractItem);
 						}
