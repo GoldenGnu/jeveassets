@@ -61,6 +61,8 @@ public abstract class TabsStockpile extends Bundle {
 	public abstract String collapse();
 	public abstract String constellation();
 	public abstract String container();
+	public abstract String containerIncludeSubs();
+	public abstract String containerIncludeSubsToolTip();
 	public abstract String contracts();
 	public abstract String contractsMatchAll();
 	public abstract String contractsMatchAllTip();
@@ -85,6 +87,8 @@ public abstract class TabsStockpile extends Bundle {
 	public abstract String exportStockpilesText();
 	public abstract String filters();
 	public abstract String flag();
+	public abstract String flagIncludeSubs();
+	public abstract String flagIncludeSubsToolTip();
 	public abstract String getShoppingList();
 	public abstract String hideStockpile();
 	public abstract String importButton();
@@ -105,7 +109,6 @@ public abstract class TabsStockpile extends Bundle {
 	public abstract String importOptionsRenameHelp();
 	public abstract String importOptionsSkipHelp();
 	public abstract String include();
-	public abstract String includeContainer();
 	public abstract String includeCount(int i);
 	public abstract String includeHelp();
 	public abstract String includeAssets();
