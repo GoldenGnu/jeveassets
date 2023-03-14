@@ -57,6 +57,7 @@ public class StockpileDataReader extends AbstractBackup {
 	}
 
 	private List<Stockpile> read(String data) {
+		data = data.trim();
 		ByteArrayInputStream inputStream = null;
 		try {
 			inputStream = new ByteArrayInputStream(Base64.getUrlDecoder().decode(data));
