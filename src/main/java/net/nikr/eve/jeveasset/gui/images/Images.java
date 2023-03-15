@@ -174,7 +174,6 @@ public enum Images {
 	MISC_COPYING ("misc_copying.png"),
 	MISC_INVENTION ("misc_invention.png"),
 	MISC_MANUFACTURING ("misc_manufacturing.png"),
-	MISC_CONTRACTS_APPRAISAL ("misc_contracts_appraisal.png"),
 	MISC_SUM ("misc_sum.png"),
 	MISC_FORMULA ("misc_formula.png"),
 	MISC_REACTION ("misc_reaction.png"),
