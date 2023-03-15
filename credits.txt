@@ -94,14 +94,6 @@ Link:
   https://janice.e-351.com/api/rest/docs/index.html
 
 ________________________________________________________________________________
-_CONTRACTS_APPRAISAL____________________________________________________________
-
-jEveAssets use Contracts Appraisal API to get contract price data
-
-Link:
-  https://app.swaggerhub.com/apis/rihanshazih/contracts-appraisal
-
-________________________________________________________________________________
 _ZKILLBOARD_____________________________________________________________________
 
 jEveAssets use zKillboard API to get price history

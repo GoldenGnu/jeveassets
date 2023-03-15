@@ -35,7 +35,9 @@ import ca.odell.glazedlists.swing.TableComparatorChooser;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -76,10 +78,10 @@ import net.nikr.eve.jeveasset.gui.shared.TextImport.TextImportHandler;
 import net.nikr.eve.jeveasset.gui.shared.components.JCustomFileChooser;
 import net.nikr.eve.jeveasset.gui.shared.components.JDropDownButton;
 import net.nikr.eve.jeveasset.gui.shared.components.JFixedToolBar;
-import net.nikr.eve.jeveasset.gui.shared.components.JImportDialog;
-import net.nikr.eve.jeveasset.gui.shared.components.JImportDialog.ImportReturn;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTabSecondary;
 import net.nikr.eve.jeveasset.gui.shared.components.JMultiSelectionDialog;
+import net.nikr.eve.jeveasset.gui.shared.components.JOptionsDialog;
+import net.nikr.eve.jeveasset.gui.shared.components.JOptionsDialog.OptionEnum;
 import net.nikr.eve.jeveasset.gui.shared.components.JTextDialog;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuColumns;
@@ -130,6 +132,91 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		EXPAND
 	}
 
+	public enum ImportOptions implements OptionEnum {
+		KEEP() {
+			@Override
+			public String getText() {
+				return TabsStockpile.get().importOptionsKeep();
+			}
+			@Override
+			public String getHelp() {
+				return TabsStockpile.get().importOptionsKeepHelp();
+			}
+		},
+		NEW() {
+			@Override
+			public String getText() {
+				return TabsStockpile.get().importOptionsNew();
+			}
+			@Override
+			public String getHelp() {
+				return TabsStockpile.get().importOptionsNewHelp();
+			}
+		},
+		RENAME() {
+			@Override
+			public String getText() {
+				return TabsStockpile.get().importOptionsRename();
+			}
+			@Override
+			public String getHelp() {
+				return TabsStockpile.get().importOptionsRenameHelp();
+			}
+		},
+		MERGE() {
+			@Override
+			public String getText() {
+				return TabsStockpile.get().importOptionsMerge();
+			}
+			@Override
+			public String getHelp() {
+				return TabsStockpile.get().importOptionsMergeHelp();
+			}
+		},
+		OVERWRITE() {
+			@Override
+			public String getText() {
+				return TabsStockpile.get().importOptionsOverwrite();
+			}
+			@Override
+			public String getHelp() {
+				return TabsStockpile.get().importOptionsOverwriteHelp();
+			}
+		},
+		ADD() {
+			@Override
+			public String getText() {
+				return TabsStockpile.get().importOptionsAdd();
+			}
+			@Override
+			public String getHelp() {
+				return TabsStockpile.get().importOptionsAddHelp();
+			}
+		},
+		SKIP() {
+			@Override
+			public String getText() {
+				return TabsStockpile.get().importOptionsSkip();
+			}
+			@Override
+			public String getHelp() {
+				return TabsStockpile.get().importOptionsSkipHelp();
+			}
+		};
+
+		private boolean all = false;
+
+		@Override
+		public boolean isAll() {
+			return all;
+		}
+
+		@Override
+		public void setAll(boolean all) {
+			this.all = all;
+		}
+	}
+
 	//StatusBar
 	private final JStatusLabel jVolumeNow;
 	private final JStatusLabel jVolumeNeeded;
@@ -142,7 +229,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 	private final StockpileItemDialog stockpileItemDialog;
 	private final StockpileShoppingListDialog stockpileShoppingListDialog;
 	private final JMultiSelectionDialog<Stockpile> stockpileSelectionDialog;
-	private final JImportDialog stockpileImportDialog;
+	private final JOptionsDialog stockpileImportDialog;
 	private final JTextDialog jTextDialog;
 	private final TextImport textImport;
 
@@ -180,35 +267,8 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		stockpileItemDialog = new StockpileItemDialog(program);
 		stockpileShoppingListDialog = new StockpileShoppingListDialog(program);
 		stockpileSelectionDialog = new JMultiSelectionDialog<>(program, TabsStockpile.get().selectStockpiles());
-		stockpileImportDialog = new JImportDialog(program, new JImportDialog.ImportOptions() {
-			@Override public boolean isRenameSupported() {
-				return true;
-			}
-			@Override public boolean isMergeSupported() {
-				return true;
-			}
-			@Override public boolean isOverwriteSupported() {
-				return true;
-			}
-			@Override public boolean isSkipSupported() {
-				return true;
-			}
-			@Override public String getTextRenameHelp() {
-				return TabsStockpile.get().importOptionsRenameHelp();
-			}
-			@Override public String getTextMergeHelp() {
-				return TabsStockpile.get().importOptionsMergeHelp();
-			}
-			@Override public String getTextOverwriteHelp() {
-				return TabsStockpile.get().importOptionsOverwriteHelp();
-			}
-			@Override public String getTextSkipHelp() {
-				return TabsStockpile.get().importOptionsSkipHelp();
-			}
-			@Override public String getTextAll(int count) {
-				return TabsStockpile.get().importOptionsAll(count);
-			}
-		});
+		stockpileImportDialog = new JOptionsDialog(program);
+
 		jTextDialog = new JTextDialog(program.getMainWindow().getFrame());
 		textImport = new TextImport(program);
 
@@ -468,6 +528,10 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 	}
 
 	protected Stockpile addToStockpile(Stockpile stockpile, Collection<StockpileItem> items, boolean merge) {
+		return addToStockpile(stockpile, items, merge, true);
+	}
+
+	protected Stockpile addToStockpile(Stockpile stockpile, Collection<StockpileItem> items, boolean merge, boolean saveOnChange) {
 		updateOwners();
 		if (stockpile == null) { //new stockpile
 			stockpile = stockpileDialog.showAdd();
@@ -500,7 +564,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 					Settings.unlock("Stockpile (addTo - New)"); //Unlock for Stockpile (addTo - New)
 				}
 			}
-			if (save) {
+			if (save && saveOnChange) {
 				program.saveSettings("Stockpile (addTo)"); //Save Stockpile (Merge);
 			}
 			addStockpile(stockpile);
@@ -639,28 +703,56 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		textImport.importText(type, new TextImportHandler() {
 			@Override
 			public void addItems(Map<Integer, Double> data) {
-				//Create Stockpile
-				Stockpile stockpile = stockpileDialog.showAdd(type.getName());
-				if (stockpile == null) { //Dialog cancelled
-					return;
+				importStockpileItems(data, type.getName());
+			}
+		});
+	}
+
+	private void importStockpileItems(Map<Integer, Double> data, String name) {
+		importOptions(data, null, 1, options(ImportOptions.NEW, ImportOptions.ADD, ImportOptions.SKIP), new StockpileImportAction<Map<Integer, Double>>() {
+			@Override
+			public String getName(Map<Integer, Double> data) {
+				return name;
+			}
+			@Override
+			public boolean action(Map<Integer, Double> data, OptionEnum xmlOptions) {
+				if (xmlOptions == ImportOptions.NEW) {
+					//Create Stockpile
+					Stockpile stockpile = stockpileDialog.showAdd(name);
+					if (stockpile == null) { //Dialog cancelled
+						return false; //Retry
+					}
+					Settings.lock("Stockpile (Import)"); //Lock for Stockpile (Import)
+					for (Map.Entry<Integer, Double> entry : data.entrySet()) {
+						Item item = ApiIdConverter.getItemUpdate(entry.getKey());
+						stockpile.add(new StockpileItem(stockpile, item, entry.getKey(), entry.getValue(), false));
+					}
+					Settings.unlock("Stockpile (Import)"); //Unlock for Stockpile (Import)
+					program.saveSettings("Stockpile (Import)"); //Save Stockpile (Import)
+					//Update stockpile data
+					addStockpile(stockpile);
+					scrollToSctockpile(stockpile);
+				} else if (xmlOptions == ImportOptions.ADD) {
+					//Create items
+					Stockpile stockpile = new Stockpile("", 1L, new ArrayList<>(), 1.0, false); //Stand-in stockpile (will be replaced)
+					List<StockpileItem> items = new ArrayList<>();
+					for (Map.Entry<Integer, Double> entry : data.entrySet()) {
+						Item item = ApiIdConverter.getItemUpdate(entry.getKey());
+						items.add(new StockpileItem(stockpile, item, entry.getKey(), entry.getValue(), false));
+					}
+					//Merge Into
+					if (!importIntoStockpile(items)) {
+						return false;
+					}
 				}
-				Settings.lock("Stockpile (Import)"); //Lock for Stockpile (Import)
-				for (Map.Entry<Integer, Double> entry : data.entrySet()) {
-					Item item = ApiIdConverter.getItemUpdate(entry.getKey());
-					StockpileItem stockpileItem = new StockpileItem(stockpile, item, entry.getKey(), entry.getValue(), false);
-					stockpile.add(stockpileItem);
-				}
-				Settings.unlock("Stockpile (Import)"); //Unlock for Stockpile (Import)
-				program.saveSettings("Stockpile (Import)"); //Save Stockpile (Import)
-				//Update stockpile data
-				addStockpile(stockpile);
-				scrollToSctockpile(stockpile);
+				//Skip - Do nothing
+				return true;
 			}
 		});
 	}
 
 	private void importXml() {
-		jFileChooser.setSelectedFile(null);
+		jFileChooser.setSelectedFile(new File(""));
 		int value = jFileChooser.showOpenDialog(program.getMainWindow().getFrame());
 		if (value == JFileChooser.APPROVE_OPTION) {
 			List<Stockpile> stockpiles = SettingsReader.loadStockpile(jFileChooser.getSelectedFile().getAbsolutePath());
@@ -696,75 +788,106 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 			return;
 		}
 		List<Stockpile> existing = new ArrayList<>();
-		boolean save = false;
+		List<Stockpile> open = new ArrayList<>();
 		for (Stockpile stockpile : stockpiles) {
 			if (Settings.get().getStockpiles().contains(stockpile)) { //Exist
 				existing.add(stockpile);
-			} else { //New
-				//Save Result
-				save = true;
-				Settings.lock("Stockpile (Import new)");
-				addStockpile(program, stockpile); //Add
-				Settings.unlock("Stockpile (Import new)");
-				//Update UI
-				addStockpile(stockpile);
+			} else {
+				open.add(stockpile);
 			}
 		}
-		stockpileImportDialog.resetToDefault();
-		int count = existing.size();
-		ImportReturn importReturn = ImportReturn.SKIP;
-		for (Stockpile stockpile : existing) {
-			importReturn = importOptions(stockpile, importReturn, count);
-			if (importReturn == ImportReturn.OVERWRITE || importReturn == ImportReturn.OVERWRITE_ALL) {
-				save = true;
-			}
-			count--;
-		}
+		boolean save = importStockpiles(open, options(ImportOptions.KEEP, ImportOptions.NEW, ImportOptions.ADD, ImportOptions.SKIP));
+		save = importStockpiles(existing, options(ImportOptions.RENAME, ImportOptions.MERGE, ImportOptions.OVERWRITE, ImportOptions.ADD, ImportOptions.SKIP)) | save;
 		Collections.sort(Settings.get().getStockpiles());
 		if (save) {
 			program.saveSettings("Stockpile (Import)");
 		}
 	}
 
-	private ImportReturn importOptions(Stockpile stockpile, ImportReturn importReturn, int count) {
-		if (importReturn != ImportReturn.OVERWRITE_ALL
-				&& importReturn != ImportReturn.MERGE_ALL
-				&& importReturn != ImportReturn.RENAME_ALL
-				&& importReturn != ImportReturn.SKIP_ALL) { //Not decided - ask what to do
-			importReturn = stockpileImportDialog.show(stockpile.getName(), count);
-		}
-		//Rename
-		if (importReturn == ImportReturn.RENAME || importReturn == ImportReturn.RENAME_ALL) {
-			Stockpile returnRename = stockpileDialog.showRename(stockpile); //Rename stockpile
-			if (returnRename != null) { //OK
-				addStockpile(returnRename); //Update UI
-			} else { //Cancel
-				JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsStockpile.get().importOptionsCancelledMsg(), TabsStockpile.get().importOptionsCancelledTitle(), JOptionPane.PLAIN_MESSAGE);
-				return importOptions(stockpile, ImportReturn.RENAME, count); //Retry - if RENAME_ALL, ask again
+	private List<OptionEnum> options(OptionEnum... options) {
+		return Arrays.asList(options);
+	}
+
+	private boolean importStockpiles(List<Stockpile> stockpiles, List<OptionEnum> options) {
+		boolean save = false;
+		int count = stockpiles.size();
+		OptionEnum option = null;
+		for (Stockpile stockpile : stockpiles) {
+			option = importOptions(stockpile, option, count, options, new StockpileImportAction<Stockpile>() {
+				@Override
+				public String getName(Stockpile value) {
+					return value.getName();
+				}
+				@Override
+				public boolean action(Stockpile value, OptionEnum xmlOptions) {
+					if (xmlOptions == ImportOptions.KEEP) {
+						Settings.lock("Stockpile (Import new)");
+						addStockpile(program, value); //Add
+						Settings.unlock("Stockpile (Import new)");
+						//Update UI
+						addStockpile(value);
+					} else if (xmlOptions == ImportOptions.RENAME || xmlOptions == ImportOptions.NEW) {
+						Stockpile returnRename = stockpileDialog.showRename(value); //Rename stockpile
+						if (returnRename != null) { //OK
+							addStockpile(returnRename); //Update UI
+						} else { //Cancel
+							return false;
+						}
+					} else if (xmlOptions == ImportOptions.MERGE) {
+						int index = Settings.get().getStockpiles().indexOf(value); //Get index of old Stockpile
+						Stockpile mergeStockpile = Settings.get().getStockpiles().get(index); //Get old stockpile
+						addToStockpile(mergeStockpile, value.getItems(), true); //Merge old and imported stockpiles
+					} else if (xmlOptions == ImportOptions.OVERWRITE) {
+						Settings.lock("Stockpile (Import Options overwrite)"); //Lock settings
+						//Remove
+						int index = Settings.get().getStockpiles().indexOf(value); //Get index of old Stockpile
+						Stockpile removeStockpile = Settings.get().getStockpiles().get(index); //Get old stockpile
+						removeStockpile(removeStockpile); //Remove old stockpile from the UI
+						Settings.get().getStockpiles().remove(removeStockpile); //Remove old stockpile from the Settings
+						//Add
+						addStockpile(program, value); //Add imported stockpile to Settings
+						Settings.unlock("Stockpile (Import Options overwrite)"); //Unlock settings
+						//Update UI
+						addStockpile(value); //Add imported stockpile to Settings
+					} else if (xmlOptions == ImportOptions.ADD) {
+						if (!importIntoStockpile(value.getItems())) {
+							return false;
+						}
+					}
+					//Skip - Do nothing
+					return true;
+				}
+			});
+			if (option == ImportOptions.KEEP || option == ImportOptions.OVERWRITE || option == ImportOptions.ADD) {
+				save = true;
 			}
+			count--;
 		}
-		//Merge
-		if (importReturn == ImportReturn.MERGE || importReturn == ImportReturn.MERGE_ALL) {
-			int index = Settings.get().getStockpiles().indexOf(stockpile); //Get index of old Stockpile
-			Stockpile mergeStockpile = Settings.get().getStockpiles().get(index); //Get old stockpile
-			addToStockpile(mergeStockpile, stockpile.getItems(), true); //Merge old and imported stockpiles
+		return save;
+	}
+
+	private boolean importIntoStockpile(Collection<StockpileItem> importedItems) {
+		List<Stockpile> stockpiles = stockpileSelectionDialog.show(getShownStockpiles(), Settings.get().getStockpiles(), TabsStockpile.get().showHidden(), false);
+		if (stockpiles == null) {
+			return false;
 		}
-		//Overwrite
-		if (importReturn == ImportReturn.OVERWRITE || importReturn == ImportReturn.OVERWRITE_ALL) {
-			Settings.lock("Stockpile (Import Options overwrite)"); //Lock settings
-			//Remove
-			int index = Settings.get().getStockpiles().indexOf(stockpile); //Get index of old Stockpile
-			Stockpile removeStockpile = Settings.get().getStockpiles().get(index); //Get old stockpile
-			removeStockpile(removeStockpile); //Remove old stockpile from the UI
-			Settings.get().getStockpiles().remove(removeStockpile); //Remove old stockpile from the Settings
-			//Add
-			addStockpile(program, stockpile); //Add imported stockpile to Settings
-			Settings.unlock("Stockpile (Import Options overwrite)"); //Unlock settings
-			//Update UI
-			addStockpile(stockpile); //Add imported stockpile to Settings
+		for (Stockpile existingStockpile : stockpiles) {
+			addToStockpile(existingStockpile, importedItems, true, false); //Merge imported stockpile items into existing stockpiles
 		}
-		//Skip - Do nothing
-		return importReturn;
+		program.saveSettings("Stockpile (Import)"); //Save Stockpile (Merge);
+		return true;
+	}
+
+	private <T> OptionEnum importOptions(T value, OptionEnum option, int count, List<OptionEnum> options, StockpileImportAction<T> action) {
+		if (option == null || !option.isAll()) { //Not decided - ask what to do
+			option = stockpileImportDialog.show(action.getName(value),  TabsStockpile.get().importOptions(),  TabsStockpile.get().importOptionsAll(count), count > 1, options, option);
+		}
+		boolean ok = action.action(value, option);
+		if (!ok) {
+			option.setAll(false);
+			return importOptions(value, option, count, options, action); //Retry - if RENAME_ALL, ask again
+		}
+		return option;
 	}
 
 	private List<Stockpile> getShownStockpiles() {
@@ -778,7 +901,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 	public static List<Stockpile> getShownStockpiles(ProfileManager profileManager) {
 		List<Stockpile> shown = new ArrayList<>();
 		for (Stockpile stockpile : Settings.get().getStockpiles()) {
-			if (profileManager.getStockpileIDs().isHidden(stockpile.getId())) {
+			if (profileManager.getStockpileIDs().isHidden(stockpile.getStockpileID())) {
 				continue;
 			}
 			shown.add(stockpile);
@@ -793,6 +916,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 	private void exportXml() {
 		List<Stockpile> stockpiles = stockpileSelectionDialog.show(getShownStockpiles(), Settings.get().getStockpiles(), TabsStockpile.get().showHidden(), false);
 		if (stockpiles != null) {
+			jFileChooser.setSelectedFile(new File(""));
 			int value = jFileChooser.showSaveDialog(program.getMainWindow().getFrame());
 			if (value == JFileChooser.APPROVE_OPTION) {
 				SettingsWriter.saveStockpiles(stockpiles, jFileChooser.getSelectedFile().getAbsolutePath());
@@ -922,8 +1046,8 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 				List<Stockpile> selected = new ArrayList<>();
 				Set<Long> all = new HashSet<>();
 				for (Stockpile stockpile : Settings.get().getStockpiles()) {
-					all.add(stockpile.getId());
-					if (program.getProfileManager().getStockpileIDs().isShown(stockpile.getId())) {
+					all.add(stockpile.getStockpileID());
+					if (program.getProfileManager().getStockpileIDs().isShown(stockpile.getStockpileID())) {
 						selected.add(stockpile);
 					}
 				}
@@ -933,7 +1057,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 				}
 				Set<Long> hidden = new HashSet<>(all);
 				for (Stockpile stockpile : stockpiles) {
-					hidden.remove(stockpile.getId());
+					hidden.remove(stockpile.getStockpileID());
 				}
 				Set<Long> oldData = program.getProfileManager().getStockpileIDs().getHidden();
 				if (!oldData.equals(hidden)) {
@@ -947,7 +1071,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 					program.getProfileManager().getStockpileIDs().setHidden(hidden);
 					//Update GUI
 					for (Stockpile stockpile : Settings.get().getStockpiles()) {
-						long stockpileID = stockpile.getId();
+						long stockpileID = stockpile.getStockpileID();
 						if (hide.contains(stockpileID)) { //Hidden
 							removeItems(stockpile.getItems());
 						} else if (show.contains(stockpileID)) { //Shown
@@ -1022,7 +1146,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 				if (stockpile == null) {
 					return;
 				}
-				program.getProfileManager().getStockpileIDs().hide(stockpile.getId());
+				program.getProfileManager().getStockpileIDs().hide(stockpile.getStockpileID());
 				removeItems(stockpile.getItems());
 			} else if (StockpileCellAction.DELETE_STOCKPILE.name().equals(e.getActionCommand())) { //Delete stockpile
 				Stockpile stockpile = getSelectedStockpile();
@@ -1189,5 +1313,10 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 				}
 			}
 		}
+	}
+
+	private static interface StockpileImportAction<T> {
+		public String getName(T value);
+		public boolean action(T value, OptionEnum xmlOptions);
 	}
 }

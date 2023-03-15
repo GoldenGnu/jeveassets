@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
@@ -54,6 +55,7 @@ import net.nikr.eve.jeveasset.gui.frame.StatusPanel.JStatusLabel;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JFixedToolBar;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTabPrimary;
+import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuColumns;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
@@ -233,6 +235,10 @@ public class ContractsTab extends JMainTabPrimary {
 			return item.getContract();
 		}
 		return null;
+	}
+
+	public void addFilters(final List<Filter> filters) {
+		filterControl.addFilters(filters);
 	}
 
 	private class ContractsTableMenu implements TableMenu<MyContractItem> {

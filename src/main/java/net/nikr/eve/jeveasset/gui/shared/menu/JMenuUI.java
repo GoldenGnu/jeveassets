@@ -289,7 +289,7 @@ public class JMenuUI <T> extends MenuManager.JAutoMenu<T> {
 				getLockWindow().show(GuiShared.get().updating(), new EsiUpdate(esiOwner) {
 					@Override
 					protected void updateESI() throws Throwable {
-						getApi().postUiOpenwindowInformation((int)owner.getId(), AbstractEsiGetter.DATASOURCE, null);
+						getApi().postUiOpenwindowInformation((int)owner.getID(), AbstractEsiGetter.DATASOURCE, null);
 					}
 					@Override
 					protected void ok() {
@@ -355,7 +355,7 @@ public class JMenuUI <T> extends MenuManager.JAutoMenu<T> {
 			this.name = name;
 		}
 
-		public long getId() {
+		public long getID() {
 			return id;
 		}
 

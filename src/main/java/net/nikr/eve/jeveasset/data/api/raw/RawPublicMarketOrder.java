@@ -113,7 +113,7 @@ public class RawPublicMarketOrder {
 		return systemId;
 	}
 
-	public Integer getTypeId() {
+	public Integer getTypeID() {
 		return typeId;
 	}
 

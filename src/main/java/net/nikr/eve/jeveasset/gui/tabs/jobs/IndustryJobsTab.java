@@ -32,6 +32,7 @@ import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import ca.odell.glazedlists.swing.TableComparatorChooser;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import javax.swing.JComponent;
 import javax.swing.JMenu;
 import javax.swing.JPopupMenu;
@@ -43,6 +44,7 @@ import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel.JStatusLabel;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTabPrimary;
+import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuColumns;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
@@ -152,6 +154,10 @@ public class IndustryJobsTab extends JMainTabPrimary {
 		} finally {
 			eventList.getReadWriteLock().readLock().unlock();
 		}
+	}
+
+	public void addFilters(final List<Filter> filters) {
+		filterControl.addFilters(filters);
 	}
 
 	private class JobsTableMenu implements TableMenu<MyIndustryJob> {

@@ -354,6 +354,7 @@ public class FilterMatcher<E> implements Matcher<E> {
 			return null;
 		}
 	}
+
 	private Double getDouble(final Object obj) {
 		if (obj instanceof Double) {
 			return (Double) obj;
@@ -365,6 +366,7 @@ public class FilterMatcher<E> implements Matcher<E> {
 			return createDouble(obj);
 		}
 	}
+
 	private Long getLong(final Object obj) {
 		if (obj instanceof Long) {
 			return (Long) obj;
@@ -428,7 +430,7 @@ public class FilterMatcher<E> implements Matcher<E> {
 		}
 	}
 
-	protected static String format(final Object object, final boolean userInput) {
+	public static String format(final Object object, final boolean userInput) {
 		if (object == null) {
 			return null;
 		}

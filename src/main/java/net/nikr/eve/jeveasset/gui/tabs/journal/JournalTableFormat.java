@@ -145,6 +145,16 @@ public enum JournalTableFormat implements EnumTableColumn<MyJournal> {
 			return from.getReason();
 		}
 	},
+	CONTEXT_NAME(String.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsJournal.get().columnContextName();
+		}
+		@Override
+		public Object getColumnValue(final MyJournal from) {
+			return from.getContext();
+		}
+	},
 	CONTEXT_TYPE(String.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
@@ -166,7 +176,7 @@ public enum JournalTableFormat implements EnumTableColumn<MyJournal> {
 		}
 		@Override
 		public Object getColumnValue(final MyJournal from) {
-			return new LongInt(from.getContextId());
+			return new LongInt(from.getContextID());
 		}
 		@Override
 		public boolean isShowDefault() {

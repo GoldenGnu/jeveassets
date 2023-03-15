@@ -56,6 +56,8 @@ import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewLocation;
 import net.nikr.eve.jeveasset.gui.tabs.routing.SolarSystem;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter;
+import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter.StockpileContainer;
+import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter.StockpileFlag;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerDate;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerNote;
@@ -573,7 +575,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 			Element stockpileNode = xmldoc.createElementNS(null, "stockpile");
 			setAttribute(stockpileNode, "name", strockpile.getName());
 			if (!export) { //Risk of collision, better to generate a new one on import
-				setAttribute(stockpileNode, "id", strockpile.getId());
+				setAttribute(stockpileNode, "id", strockpile.getStockpileID());
 			}
 			setAttribute(stockpileNode, "multiplier", strockpile.getMultiplier());
 			setAttribute(stockpileNode, "contractsmatchall", strockpile.isContractsMatchAll());
@@ -622,15 +624,16 @@ public class SettingsWriter extends AbstractXmlWriter {
 					setAttribute(ownerNode, "ownerid", ownerID);
 					filterNode.appendChild(ownerNode);
 				}
-				for (StockpileFilter.StockpileContainer container : filter.getContainers()) {
+				for (StockpileContainer container : filter.getContainers()) {
 					Element containerNode = xmldoc.createElementNS(null, "container");
 					setAttribute(containerNode, "container", container.getContainer());
-					setAttribute(containerNode, "includecontainer", container.isIncludeContainer());
+					setAttribute(containerNode, "includecontainer", container.isIncludeSubs());
 					filterNode.appendChild(containerNode);
 				}
-				for (Integer flagID : filter.getFlagIDs()) {
+				for (StockpileFlag flag : filter.getFlags()) {
 					Element flagNode = xmldoc.createElementNS(null, "flag");
-					setAttribute(flagNode, "flagid", flagID);
+					setAttribute(flagNode, "flagid", flag.getFlagID());
+					setAttribute(flagNode, "includecontainer", flag.isIncludeSubs());
 					filterNode.appendChild(flagNode);
 				}
 			}

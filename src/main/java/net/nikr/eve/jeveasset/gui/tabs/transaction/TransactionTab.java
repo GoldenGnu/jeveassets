@@ -234,10 +234,6 @@ public class TransactionTab extends JMainTabPrimary {
 		}
 	}
 
-	public void addFilter(final Filter filter) {
-		filterControl.addFilter(filter);
-	}
-
 	public void addFilters(final List<Filter> filters) {
 		filterControl.addFilters(filters);
 	}
@@ -265,8 +261,7 @@ public class TransactionTab extends JMainTabPrimary {
 		}
 
 		@Override
-		public void addToolMenu(JComponent jComponent) {
-		}
+		public void addToolMenu(JComponent jComponent) { }
 	}
 
 	private class ListenerClass implements ListEventListener<MyTransaction> {

@@ -45,13 +45,15 @@ import net.nikr.eve.jeveasset.gui.frame.MainWindow;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
 import net.nikr.eve.jeveasset.gui.tabs.assets.AssetsTab;
-import net.nikr.eve.jeveasset.gui.tabs.slots.SlotsTab;
+import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractsTab;
+import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJobsTab;
 import net.nikr.eve.jeveasset.gui.tabs.loadout.LoadoutsTab;
 import net.nikr.eve.jeveasset.gui.tabs.orders.MarketOrdersTab;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewTab;
 import net.nikr.eve.jeveasset.gui.tabs.prices.PriceHistoryTab;
 import net.nikr.eve.jeveasset.gui.tabs.reprocessed.ReprocessedTab;
 import net.nikr.eve.jeveasset.gui.tabs.routing.RoutingTab;
+import net.nikr.eve.jeveasset.gui.tabs.slots.SlotsTab;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileTab;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerTab;
 import net.nikr.eve.jeveasset.gui.tabs.transaction.TransactionTab;
@@ -311,6 +313,16 @@ public abstract class FakeProgram extends Program {
 
 	@Override
 	public PriceHistoryTab getPriceHistoryTab() {
+		throw new UnsupportedOperationException("Not implemented");
+	}
+
+	@Override
+	public IndustryJobsTab getIndustryJobsTab() {
+		throw new UnsupportedOperationException("Not implemented");
+	}
+
+	@Override
+	public ContractsTab getContractsTab() {
 		throw new UnsupportedOperationException("Not implemented");
 	}
 }

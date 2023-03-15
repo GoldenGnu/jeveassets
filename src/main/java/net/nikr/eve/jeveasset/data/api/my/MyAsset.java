@@ -71,7 +71,7 @@ public class MyAsset extends RawAsset implements Comparable<MyAsset>, InfoItem, 
 	private String name;
 	private String itemName = null;
 	private String container = "";
-	private PriceData priceData;
+	private PriceData priceData = new PriceData();
 	private UserItem<Integer, Double> userPrice;
 	private long typeCount = 0;
 	private double priceReprocessed;
@@ -313,19 +313,7 @@ public class MyAsset extends RawAsset implements Comparable<MyAsset>, InfoItem, 
 	}
 
 	public double getPriceBuyMax() {
-		if (item.isBlueprint() && !isBPO()) {
-			return 0;
-		}
-
-		if (this.getPriceData() != null) {
-			return this.getPriceData().getBuyMax();
-		}
-
-		return 0;
-	}
-
-	public PriceData getPriceData() {
-		return priceData;
+		return priceData.getBuyMax();
 	}
 
 	public double getPriceReprocessed() {
@@ -345,15 +333,7 @@ public class MyAsset extends RawAsset implements Comparable<MyAsset>, InfoItem, 
 	}
 
 	public double getPriceSellMin() {
-		if (item.isBlueprint() && !isBPO()) {
-			return 0;
-		}
-
-		if (this.getPriceData() != null) {
-			return this.getPriceData().getSellMin();
-		}
-
-		return 0;
+		return priceData.getSellMin();
 	}
 
 	@Override

@@ -344,7 +344,7 @@ public final class ProfileWriter extends AbstractXmlWriter {
 			//Base
 			setAttributeOptional(childNode, "amount", journal.getAmount());
 			setAttributeOptional(childNode, "balance", journal.getBalance());
-			setAttributeOptional(childNode, "contextid", journal.getContextId());
+			setAttributeOptional(childNode, "contextid", journal.getContextID());
 			setAttributeOptional(childNode, "contexttype", journal.getContextType());
 			setAttributeOptional(childNode, "contexttypestring", journal.getContextTypeString());
 			setAttribute(childNode, "date", journal.getDate());
@@ -358,7 +358,7 @@ public final class ProfileWriter extends AbstractXmlWriter {
 			}
 			setAttribute(childNode, "reftypestring", journal.getRefTypeString());
 			setAttributeOptional(childNode, "taxamount", journal.getTaxAmount());
-			setAttributeOptional(childNode, "taxreceiverid", journal.getTaxReceiverId());
+			setAttributeOptional(childNode, "taxreceiverid", journal.getTaxReceiverID());
 			//Extra
 			setAttribute(childNode, "accountkey", journal.getAccountKey());
 			node.appendChild(childNode);

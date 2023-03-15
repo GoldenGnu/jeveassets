@@ -27,6 +27,7 @@ import java.util.Comparator;
 import java.util.Date;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
+import net.nikr.eve.jeveasset.gui.shared.table.containers.LongInt;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.Percent;
 import net.nikr.eve.jeveasset.i18n.TabsOrders;
 
@@ -417,6 +418,34 @@ public enum MarketTableFormat implements EnumTableColumn<MyMarketOrder> {
 			return from.getDynamicPrice();
 		}
 	},
+	MARKET_PRICE_SELL_MIN(Double.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsOrders.get().columnMarketPriceSellMin();
+		}
+		@Override
+		public String getColumnToolTip() {
+			return TabsOrders.get().columnMarketPriceSellMinToolTip();
+		}
+		@Override
+		public Object getColumnValue(final MyMarketOrder from) {
+			return from.getPriceSellMin();
+		}
+	},
+	MARKET_PRICE_BUY_MAX(Double.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsOrders.get().columnMarketPriceBuyMax();
+		}
+		@Override
+		public String getColumnToolTip() {
+			return TabsOrders.get().columnMarketPriceBuyMaxToolTip();
+		}
+		@Override
+		public Object getColumnValue(final MyMarketOrder from) {
+			return from.getPriceBuyMax();
+		}
+	},
 	MARKET_MARGIN(Percent.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
@@ -445,6 +474,16 @@ public enum MarketTableFormat implements EnumTableColumn<MyMarketOrder> {
 			return from.getMarketProfit();
 		}
 	},
+	VOLUME(Float.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsOrders.get().columnVolume();
+		}
+		@Override
+		public Object getColumnValue(final MyMarketOrder from) {
+			return from.getItem().getVolume();
+		}
+	},
 	TYPE_ID(Integer.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
@@ -453,6 +492,20 @@ public enum MarketTableFormat implements EnumTableColumn<MyMarketOrder> {
 		@Override
 		public Object getColumnValue(final MyMarketOrder from) {
 			return from.getTypeID();
+		}
+	},
+	ORDER_ID(LongInt.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsOrders.get().columnOrderID();
+		}
+		@Override
+		public Object getColumnValue(final MyMarketOrder from) {
+			return new LongInt(from.getOrderID());
+		}
+		@Override
+		public boolean isShowDefault() {
+			return false;
 		}
 	};
 

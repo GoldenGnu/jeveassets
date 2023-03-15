@@ -64,6 +64,10 @@ public class JStockpileTable extends JSeparatorTable {
 					ColorSettings.configCell(component, ColorEntry.GLOBAL_GRAND_TOTAL, isSelected);
 				} else if (columnName.equals(StockpileTableFormat.TAGS.getColumnName())) {
 					ColorSettings.configCell(component, ColorEntry.GLOBAL_GRAND_TOTAL, isSelected);
+				} else if (!columnName.equals(StockpileTableFormat.GROUP.getColumnName())
+							&& !columnName.equals(StockpileTableFormat.COUNT_MINIMUM_MULTIPLIED.getColumnName())
+						) {
+					component.setForeground(component.getBackground());
 				}
 				return component;
 			} else if (object instanceof SubpileItem) { //Total

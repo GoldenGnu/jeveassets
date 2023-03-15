@@ -34,7 +34,6 @@ public abstract class TabsJournal extends Bundle {
 		super(locale);
 	}
 
-	public abstract String title();
 	public abstract String clearNew();
 	public abstract String contextAllianceID();
 	public abstract String contextCharacterID();
@@ -48,6 +47,11 @@ public abstract class TabsJournal extends Bundle {
 	public abstract String contextSystemID();
 	public abstract String contextTransactionID();
 	public abstract String contextTypeID();
+	public abstract String contracts();
+	public abstract String findIn();
+	public abstract String industryJobs();
+	public abstract String title();
+	public abstract String transactions();
 	public abstract String columnAccountKey();
 	public abstract String columnAmount();
 	public abstract String columnBalance();
@@ -60,6 +64,7 @@ public abstract class TabsJournal extends Bundle {
 	public abstract String columnTaxAmount();
 	public abstract String columnAdded();
 	public abstract String columnAddedToolTip();
+	public abstract String columnContextName();
 	public abstract String columnContextType();
 	public abstract String columnContextID();
 }

@@ -40,9 +40,11 @@ import net.nikr.eve.jeveasset.data.profile.ProfileManager;
 import net.nikr.eve.jeveasset.data.profile.TableData;
 import net.nikr.eve.jeveasset.data.sde.ItemFlag;
 import net.nikr.eve.jeveasset.data.sde.StaticData;
+import net.nikr.eve.jeveasset.data.settings.PriceData;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter;
+import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter.StockpileFlag;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.SubpileItem;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.SubpileStock;
@@ -125,10 +127,10 @@ public class StockpileData extends TableData {
 		//Update Item flag name
 		Set<ItemFlag> flags = new HashSet<>();
 		for (StockpileFilter filter : stockpile.getFilters()) {
-			for (Integer flagID : filter.getFlagIDs()) {
-				ItemFlag flag = StaticData.get().getItemFlags().get(flagID);
-				if (flag != null) {
-					flags.add(flag);
+			for (StockpileFlag flag : filter.getFlags()) {
+				ItemFlag itemFlag = StaticData.get().getItemFlags().get(flag.getFlagID());
+				if (itemFlag != null) {
+					flags.add(itemFlag);
 				}
 			}
 		}
@@ -341,7 +343,8 @@ public class StockpileData extends TableData {
 		double price = ApiIdConverter.getPrice(TYPE_ID, item.isBPC());
 		float volume = ApiIdConverter.getVolume(item.getItem(), true);
 		Double transactionAveragePrice = profileData.getTransactionAveragePrice(TYPE_ID);
-		item.updateValues(price, volume, transactionAveragePrice);
+		PriceData priceData = ApiIdConverter.getPriceData(TYPE_ID, item.isBPC());
+		item.updateValues(price, volume, transactionAveragePrice, priceData);
 		//Contract Items
 		if (stockpile.isContracts()) {
 			Set<MyContractItem> items = get(contractItems, stockpile).get(TYPE_ID);
@@ -469,7 +472,7 @@ public class StockpileData extends TableData {
 			removed.addAll(subpileItems);
 		}
 		updated.removeAll(subpileItems);
-		if (profileManager.getStockpileIDs().isShown(parent.getId())) {
+		if (profileManager.getStockpileIDs().isShown(parent.getStockpileID())) {
 			updated.addAll(parent.getSubpileItems());
 		}
 	}

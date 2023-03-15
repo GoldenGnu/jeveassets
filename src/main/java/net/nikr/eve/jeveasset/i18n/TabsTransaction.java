@@ -79,5 +79,6 @@ public abstract class TabsTransaction extends Bundle {
 	public abstract String columnAdded();
 	public abstract String columnAddedToolTip();
 	public abstract String columnVolume();
+	public abstract String columnTransactionID();
 
 }

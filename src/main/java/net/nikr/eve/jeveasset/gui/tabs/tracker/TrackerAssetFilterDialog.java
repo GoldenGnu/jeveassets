@@ -287,10 +287,10 @@ public class TrackerAssetFilterDialog extends JDialogCentered {
 		if (oldParent != null) {
 			cloneParent = cloneTree(clonesCache, oldParent);
 		}
-		CheckBoxNode cloneNode = clonesCache.get(oldNode.getNodeId());
+		CheckBoxNode cloneNode = clonesCache.get(oldNode.getNodeID());
 		if (cloneNode == null) {
 			cloneNode = new CheckBoxNode(cloneParent, oldNode);
-			clonesCache.put(cloneNode.getNodeId(), cloneNode);
+			clonesCache.put(cloneNode.getNodeID(), cloneNode);
 		}
 		return cloneNode;
 	}

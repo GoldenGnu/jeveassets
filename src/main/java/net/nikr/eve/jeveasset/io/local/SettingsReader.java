@@ -105,6 +105,7 @@ import net.nikr.eve.jeveasset.gui.tabs.slots.SlotsTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter.StockpileContainer;
+import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter.StockpileFlag;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileExtendedTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileTab;
@@ -709,11 +710,11 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 				}
 			}
 			//Flags
-			List<Integer> flagIDs = new ArrayList<>();
+			List<StockpileFlag> flags = new ArrayList<>();
 			if (haveAttribute(stockpileNode, "flagid")) {
 				int flagID = getInt(stockpileNode, "flagid");
 				if (flagID > 0) {
-					flagIDs.add(flagID);
+					flags.add(new StockpileFlag(flagID, true));
 				}
 			}
 			//Locations
@@ -730,7 +731,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			Boolean jobs = getBooleanOptional(stockpileNode, "jobs");
 			List<StockpileFilter> filters = new ArrayList<>();
 			if (inventory != null && sellOrders != null && buyOrders != null && jobs != null) {
-				StockpileFilter filter = new StockpileFilter(location, exclude, flagIDs, containers, ownerIDs, null, null, null, inventory, sellOrders, buyOrders, jobs, false, false, false, false, false, false);
+				StockpileFilter filter = new StockpileFilter(location, exclude, flags, containers, ownerIDs, null, null, null, inventory, sellOrders, buyOrders, jobs, false, false, false, false, false, false);
 				filters.add(filter);
 			}
 		//NEW
@@ -769,18 +770,19 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 				for (int c = 0; c < containerNodes.getLength(); c++) {
 					Element containerNode = (Element) containerNodes.item(c);
 					String filterContainer = getString(containerNode, "container");
-					boolean filterIncludeContainer = getBooleanNotNull(containerNode, "includecontainer", false);
-					filterContainers.add(new StockpileContainer(filterContainer, filterIncludeContainer));
+					boolean filterIncludeSubs = getBooleanNotNull(containerNode, "includecontainer", false);
+					filterContainers.add(new StockpileContainer(filterContainer, filterIncludeSubs));
 				}
 				//Flags
-				List<Integer> filterFlagIDs = new ArrayList<>();
+				List<StockpileFlag> filterFlags = new ArrayList<>();
 				NodeList flagNodes = filterNode.getElementsByTagName("flag");
 				for (int c = 0; c < flagNodes.getLength(); c++) {
 					Element flagNode = (Element) flagNodes.item(c);
 					int filterFlagID = getInt(flagNode, "flagid");
-					filterFlagIDs.add(filterFlagID);
+					boolean filterIncludeSubs = getBooleanNotNull(flagNode, "includecontainer", true);
+					filterFlags.add(new StockpileFlag(filterFlagID, filterIncludeSubs));
 				}
-				StockpileFilter stockpileFilter = new StockpileFilter(location, filterExclude, filterFlagIDs, filterContainers, filterOwnerIDs, filterJobsDaysLess, filterJobsDaysMore, filterSingleton, filterInventory, filterSellOrders, filterBuyOrders, filterJobs, filterBuyTransactions, filterSellTransactions, filterSellingContracts, filterSoldBuy, filterBuyingContracts, filterBoughtContracts);
+				StockpileFilter stockpileFilter = new StockpileFilter(location, filterExclude, filterFlags, filterContainers, filterOwnerIDs, filterJobsDaysLess, filterJobsDaysMore, filterSingleton, filterInventory, filterSellOrders, filterBuyOrders, filterJobs, filterBuyTransactions, filterSellTransactions, filterSellingContracts, filterSoldBuy, filterBuyingContracts, filterBoughtContracts);
 				filters.add(stockpileFilter);
 			}
 		//SUBPILES

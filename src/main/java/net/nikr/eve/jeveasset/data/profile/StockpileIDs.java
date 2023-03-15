@@ -119,7 +119,7 @@ public class StockpileIDs {
 		}
 		Set<Long> hide = new HashSet<>(); //To be hidden
 		for (Stockpile stockpile : stockpiles) {
-			long id = stockpile.getId();
+			long id = stockpile.getStockpileID();
 			if (!data.contains(id)) { //Not shown
 				hide.add(id); //Hide
 			}

@@ -37,6 +37,7 @@ import java.util.zip.DeflaterOutputStream;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter.StockpileContainer;
+import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter.StockpileFlag;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -114,15 +115,18 @@ public class StockpileDataWriter extends AbstractBackup {
 				for (StockpileContainer stockpileContainer : stockpileFilter.getContainers()) {
 					JsonObject container = new JsonObject();
 					container.addProperty("cc", stockpileContainer.getContainer());
-					container.addProperty("ic", stockpileContainer.isIncludeContainer());
+					container.addProperty("ic", stockpileContainer.isIncludeSubs());
 					containers.add(container);
 				}
 
 				//Flags
 				JsonArray flags = new JsonArray();
 				filterObject.add("f", flags);
-				for (Integer flagID : stockpileFilter.getFlagIDs()) {
-					flags.add(flagID);
+				for (StockpileFlag flag : stockpileFilter.getFlags()) {
+					JsonObject flagObject = new JsonObject();
+					flagObject.addProperty("ff", flag.getFlagID());
+					flagObject.addProperty("ic", flag.isIncludeSubs());
+					flags.add(flagObject);
 				}
 
 				//Owners

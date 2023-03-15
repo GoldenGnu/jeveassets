@@ -31,6 +31,7 @@ import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
+import net.nikr.eve.jeveasset.data.settings.PriceData;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.types.BlueprintType;
 import net.nikr.eve.jeveasset.data.settings.types.EditableLocationType;
@@ -52,6 +53,7 @@ public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarket
 	private final Set<Long> owners;
 	private MyLocation location;
 	private double price;
+	private PriceData priceData = new PriceData();
 	private double transactionPrice;
 	private double transactionProfitDifference;
 	private Percent transactionProfitPercent;
@@ -361,6 +363,18 @@ public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarket
 
 	public void setPriceReprocessed(double priceReprocessed) {
 		this.priceReprocessed = priceReprocessed;
+	}
+
+	public void setPriceData(PriceData priceData) {
+		this.priceData = priceData;
+	}
+
+	public double getPriceBuyMax() {
+		return priceData.getBuyMax();
+	}
+
+	public double getPriceSellMin() {
+		return priceData.getSellMin();
 	}
 
 	@Override

@@ -257,8 +257,40 @@ public enum StockpileTableFormat implements EnumTableColumn<StockpileItem> {
 			return TabsStockpile.get().columnPrice();
 		}
 		@Override
+		public String getColumnToolTip() {
+			return TabsStockpile.get().columnPriceToolTip();
+		}
+		@Override
 		public Object getColumnValue(final StockpileItem from) {
 			return from.getDynamicPrice();
+		}
+	},
+	PRICE_SELL_MIN(Double.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsStockpile.get().columnPriceSellMin();
+		}
+		@Override
+		public String getColumnToolTip() {
+			return TabsStockpile.get().columnPriceSellMinToolTip();
+		}
+		@Override
+		public Object getColumnValue(final StockpileItem from) {
+			return from.getPriceSellMin();
+		}
+	},
+	PRICE_BUY_MAX(Double.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsStockpile.get().columnPriceBuyMax();
+		}
+		@Override
+		public String getColumnToolTip() {
+			return TabsStockpile.get().columnPriceSellMinToolTip();
+		}
+		@Override
+		public Object getColumnValue(final StockpileItem from) {
+			return from.getPriceBuyMax();
 		}
 	},
 	PRICE_TRANSACTION_AVERAGE(Double.class, GlazedLists.comparableComparator()) {
