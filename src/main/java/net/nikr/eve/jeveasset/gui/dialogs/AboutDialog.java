@@ -122,7 +122,6 @@ public class AboutDialog extends JDialogCentered {
 				+ "&nbsp;<a href=\"https://market.fuzzwork.co.uk/api/\">fuzzwork.co.uk</a> (price data api)<br>"
 				+ "&nbsp;<a href=\"https://evemarketer.com/\">EveMarketer.com</a> (price data api)<br>"
 				+ "&nbsp;<a href=\"https://janice.e-351.com/api/rest/docs/index.html\">Janice</a> (price data api)<br>"
-				+ "&nbsp;<a href=\"https://app.swaggerhub.com/apis-docs/rihanshazih/contracts-appraisal/\">Contracts Appraisal</a> (contract price api)<br>"
 				+ "&nbsp;<a href=\"https://github.com/zKillboard/zKillboard/wiki/API-(Prices)\">zKillboard</a> (price history api)<br>"
 				+ "&nbsp;<a href=\"http://www.famfamfam.com/lab/icons/silk/\">Silk icons</a> (icons)<br>"
 				+ "<br>"
