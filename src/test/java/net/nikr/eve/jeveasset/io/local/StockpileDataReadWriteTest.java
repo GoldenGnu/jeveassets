@@ -64,7 +64,7 @@ public class StockpileDataReadWriteTest extends TestUtil {
 				List<Stockpile> rStockpile = SettingsReader.loadStockpile(filename);
 				File file = new File(filename);
 				assertTrue(file.exists());
-				//assertTrue(file.delete());
+				assertTrue(file.delete());
 				return rStockpile;
 			}
 		});
