@@ -16,6 +16,34 @@
                   #### #  # #  # #  # #### #### #### #### ####
 
 ________________________________________________________________________________
+_7.5.0__________________________________________________________________________
+
+New Features:
+-Streamlined stockpile import and added import into stockpile (Issue #228)
+-Including sub items are now optional for stockpile flag filters (Issue #358) 
+-Added SellMin/BuyMax columns to the stockpile tool (Issue #365)
+-Added Volume/SellMin/BuyMax columns to the market orders tool (Issue #365 #364)
+-Added journal menu for finding related transactions/contracts/industry jobs
+-Added context column to the journal
+-Added Transaction ID column to the Transactions tool
+-Added Order ID column to the Market Orders tool
+-Added Job ID column to the Industry Jobs tool
+
+Bug Fixes:
+-Fixed a bug in include sub container filter (always included subs) 
+-Ignore leading/trailing white space on stockpile text import
+-Stockpile contracts match all wasn't working (Issue #266)
+-Fix for "Contract not public" and "Contract not found" errors (Issue #360)
+-Fixed concurrency problem in ApiIdConverter.getItemUpdate()
+
+Changed:
+-Hide zeroes that are stand-in for no data on subpiles rows in stockpile tool
+
+Code:
+-Switch to using the affiliation and names endpoints
+-Removed the contract price API (Thanks to Rihan for hosting it for so long)
+
+________________________________________________________________________________
 _7.4.0__________________________________________________________________________
 
 New Features:
