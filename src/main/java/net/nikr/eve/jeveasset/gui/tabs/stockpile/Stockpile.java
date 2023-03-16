@@ -1981,7 +1981,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 
 		@Override
 		public String getOrder() {
-			return "0" + super.getPath();
+			return "0";
 		}
 
 		@Override
