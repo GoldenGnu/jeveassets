@@ -147,7 +147,7 @@ public class JMenuStockpile<T> extends JAutoMenu<T> {
 								items.add(new StockpileItem(stockpile, materialItem, material.getTypeID(), material.getQuantity(), false));
 							}
 						} else { //source or not bluepint/formula
-							items.add(new StockpileItem(stockpile, item, typeID, DEFAULT_ADD_COUNT, false));
+							items.add(new StockpileItem(stockpile, item, typeID, menuData.getItemCounts().getOrDefault(item, 1L), false));
 						}
 					}
 					stockpile = program.getStockpileTab().addToStockpile(stockpile, items);
