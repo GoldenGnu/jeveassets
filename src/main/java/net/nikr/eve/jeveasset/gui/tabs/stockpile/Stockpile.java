@@ -1861,7 +1861,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 			updateText();
 		}
 
-		private String getPath() {
+		String getPath() {
 			return path;
 		}
 
@@ -1895,7 +1895,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 		}
 
 		public String getOrder() {
-			return "1" + getPath();
+			return "1";
 		}
 
 		public void addItemLink(StockpileItem parentItem, SubpileStock subpileStock) {
@@ -1981,7 +1981,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 
 		@Override
 		public String getOrder() {
-			return "0";
+			return "0" + getPath();
 		}
 
 		@Override
