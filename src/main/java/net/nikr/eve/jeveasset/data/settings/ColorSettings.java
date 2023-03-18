@@ -101,6 +101,10 @@ public class ColorSettings {
 		return lookAndFeelClass;
 	}
 
+	public boolean isFlatLAF() {
+		return lookAndFeelClass.startsWith("com.formdev.flatlaf");
+	}
+
 	public void setLookAndFeelClass(String lookAndFeelClass) {
 		this.lookAndFeelClass = lookAndFeelClass;
 	}
