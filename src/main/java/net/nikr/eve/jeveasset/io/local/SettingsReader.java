@@ -58,6 +58,7 @@ import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.Settings.SettingFlag;
 import net.nikr.eve.jeveasset.data.settings.Settings.SettingsFactory;
 import net.nikr.eve.jeveasset.data.settings.Settings.TransactionProfitPrice;
+import net.nikr.eve.jeveasset.data.settings.StockpileGroupSettings;
 import net.nikr.eve.jeveasset.data.settings.TrackerData;
 import net.nikr.eve.jeveasset.data.settings.TrackerSettings;
 import net.nikr.eve.jeveasset.data.settings.TrackerSettings.DisplayType;
@@ -273,7 +274,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		NodeList stockpilesNodes = element.getElementsByTagName("stockpiles");
 		if (stockpilesNodes.getLength() == 1) {
 			Element stockpilesElement = (Element) stockpilesNodes.item(0);
-			parseStockpiles(stockpilesElement, stockpiles);
+			parseStockpiles(stockpilesElement, stockpiles, null);
 		}
 		return stockpiles;
 	}
@@ -378,7 +379,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		//Stockpiles
 		Element stockpilesElement = getNodeOptional(element, "stockpiles");
 		if (stockpilesElement != null) {
-			parseStockpiles(stockpilesElement, settings.getStockpiles());
+			parseStockpiles(stockpilesElement, settings.getStockpiles(), settings.getStockpileGroupSettings());
 		}
 
 		//Stockpile Groups
@@ -684,7 +685,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 	 * -!- `!´ IMPORTANT `!´ -!-
 	 * StockpileDataWriter and StockpileDataReader needs to be updated too - on any changes!!!
 	 */
-	private void parseStockpiles(final Element stockpilesElement, final List<Stockpile> stockpiles) throws XmlException {
+	private void parseStockpiles(final Element stockpilesElement, final List<Stockpile> stockpiles, StockpileGroupSettings stockpileGroupSettings) throws XmlException {
 		NodeList stockpileNodes = stockpilesElement.getElementsByTagName("stockpile");
 		Map<String, Stockpile> stockpileMap = new HashMap<>();
 		Map<Stockpile, Map<String, Double>> subpileMap = new HashMap<>();
@@ -796,10 +797,15 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			}
 		//MULTIPLIER
 			double multiplier = getDoubleNotNull(stockpileNode, "multiplier", 1);
+		//GROUP
+			String group = getStringOptional(stockpileNode, "stockpilegroup"); //Null is handled by settings
 		//CONTRACTS MATCH ALL
 			boolean contractsMatchAll = getBooleanNotNull(stockpileNode, "contractsmatchall", false);
 
 			Stockpile stockpile = new Stockpile(name, stockpileID, filters, multiplier, contractsMatchAll);
+			if (stockpileGroupSettings != null) {
+				stockpileGroupSettings.setGroup(stockpile, group);
+			}
 			stockpiles.add(stockpile);
 			subpileMap.put(stockpile, subpileNames);
 			stockpileMap.put(name, stockpile);

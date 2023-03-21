@@ -34,6 +34,7 @@ import net.nikr.eve.jeveasset.data.settings.ProxyData;
 import net.nikr.eve.jeveasset.data.settings.ReprocessSettings;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.Settings.SettingsFactory;
+import net.nikr.eve.jeveasset.data.settings.StockpileGroupSettings;
 import net.nikr.eve.jeveasset.data.settings.TrackerData;
 import net.nikr.eve.jeveasset.data.settings.UserItem;
 import net.nikr.eve.jeveasset.data.settings.tag.Tag;
@@ -330,5 +331,10 @@ public class BackwardCompatibilitySettings extends FakeSettings implements Setti
 	public List<Jump> getTableJumps(String toolName) {
 		ok.put(Function.GET_TABLE_JUMPS, true);
 		return new ArrayList<>();
+	}
+
+	@Override
+	public StockpileGroupSettings getStockpileGroupSettings() {
+		return new StockpileGroupSettings();
 	}
 }

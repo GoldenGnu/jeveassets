@@ -38,6 +38,7 @@ import net.nikr.eve.jeveasset.data.settings.ProxyData;
 import net.nikr.eve.jeveasset.data.settings.ReprocessSettings;
 import net.nikr.eve.jeveasset.data.settings.RoutingSettings;
 import net.nikr.eve.jeveasset.data.settings.Settings;
+import net.nikr.eve.jeveasset.data.settings.StockpileGroupSettings;
 import net.nikr.eve.jeveasset.data.settings.TrackerSettings;
 import net.nikr.eve.jeveasset.data.settings.UserItem;
 import net.nikr.eve.jeveasset.data.settings.tag.Tag;
@@ -686,6 +687,11 @@ public abstract class FakeSettings extends Settings {
 
 	@Override
 	public boolean isIncludeCopying() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public StockpileGroupSettings getStockpileGroupSettings() {
 		throw new UnsupportedOperationException("not implemented");
 	}
 }

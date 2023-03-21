@@ -155,6 +155,7 @@ public class Settings {
 	private final List<Stockpile> stockpiles = new ArrayList<>();
 	private int stockpileColorGroup2 = 100;
 	private int stockpileColorGroup3 = 0;
+	private final StockpileGroupSettings stockpileGroupSettings = new StockpileGroupSettings();
 //Routing						Saved by ???
 	//Lock ???
 	private final RoutingSettings routingSettings = new RoutingSettings();
@@ -878,6 +879,10 @@ public class Settings {
 
 	public List<Stockpile> getStockpiles() {
 		return stockpiles;
+	}
+
+	public StockpileGroupSettings getStockpileGroupSettings() {
+		return stockpileGroupSettings;
 	}
 
 	public int getStockpileColorGroup2() {

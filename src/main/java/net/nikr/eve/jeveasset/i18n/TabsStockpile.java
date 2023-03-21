@@ -90,6 +90,15 @@ public abstract class TabsStockpile extends Bundle {
 	public abstract String flagIncludeSubs();
 	public abstract String flagIncludeSubsToolTip();
 	public abstract String getShoppingList();
+	public abstract String groupAddEmpty();
+	public abstract String groupAddExist();
+	public abstract String groupAddName();
+	public abstract String groupAddNew();
+	public abstract String groupAddTitle();
+	public abstract String groupCollapse();
+	public abstract String groupExpand();
+	public abstract String groupMenu();
+	public abstract String groups();
 	public abstract String hideStockpile();
 	public abstract String importButton();
 	public abstract String importEft();
