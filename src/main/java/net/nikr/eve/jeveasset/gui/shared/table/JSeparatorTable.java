@@ -58,6 +58,10 @@ public class JSeparatorTable extends JAutoColumnTable {
 				Object object = separatorList.get(i);
 				if (object instanceof SeparatorList.Separator) {
 					SeparatorList.Separator<?> separator = (SeparatorList.Separator<?>) object;
+					Object first = separator.first();
+					if (first instanceof IgnoreSeparator) {
+						continue;
+					}
 					if (separator.getLimit() != newLimit) {
 						try {
 							separatorList.getReadWriteLock().readLock().unlock();
@@ -336,7 +340,7 @@ public class JSeparatorTable extends JAutoColumnTable {
 		if (row < 0 || row > getEventTableModel().getRowCount()) {
 			return;
 		}
-		int height = 0;
+		int height;
 		final Object rowValue = getEventTableModel().getElementAt(row);
 		if (rowValue instanceof SeparatorList.Separator) {
 			//Calculate the Separator row height
@@ -351,7 +355,7 @@ public class JSeparatorTable extends JAutoColumnTable {
 
 		//Set row height, if needed (is expensive because repaint is needed)
 		if (this.getRowHeight(row) != height) {
-			this.setRowHeight(row, height);
+			this.setRowHeight(row, Math.max(1, height));
 		}
 	}
 
@@ -370,6 +374,8 @@ public class JSeparatorTable extends JAutoColumnTable {
 		//set row heigh
 		autoResizeRows();
 	}
+
+	public static interface IgnoreSeparator { }
 }
 /**
  * Modified from BasicTableUI to allow for spanning cells.
