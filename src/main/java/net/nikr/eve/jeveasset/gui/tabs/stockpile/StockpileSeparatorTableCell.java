@@ -10,8 +10,29 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.event.*;
-import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.AdjustmentEvent;
+import java.awt.event.AdjustmentListener;
+import java.awt.event.HierarchyEvent;
+import java.awt.event.HierarchyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import javax.swing.BorderFactory;
+import javax.swing.GroupLayout;
+import javax.swing.JButton;
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.JViewport;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.settings.ColorEntry;
 import net.nikr.eve.jeveasset.data.settings.ColorSettings;
@@ -33,6 +54,11 @@ import net.nikr.eve.jeveasset.i18n.TabsStockpile;
 public class StockpileSeparatorTableCell extends SeparatorTableCell<StockpileItem> {
 
 	public enum StockpileCellAction {
+		GROUP_NEW,
+		GROUP_CHANGE_ADD,
+		GROUP_TOGGLE_COLLAPSE,
+		GROUP_EXPAND,
+		GROUP_COLLAPSE,
 		DELETE_STOCKPILE,
 		EDIT_STOCKPILE,
 		CLONE_STOCKPILE,
@@ -43,6 +69,16 @@ public class StockpileSeparatorTableCell extends SeparatorTableCell<StockpileIte
 		UPDATE_MULTIPLIER
 	}
 
+	private final static List<JCheckBoxMenuItem> jGroupMenuItems = new ArrayList<>();
+	private final JPanel jGroupPanel;
+	private final JLabel jGroup;
+	private final JMenu jGroupMenu;
+	private final JMenuItem jGroupNew;
+	private final JButton jExpandGroup;
+	private final JButton jCollapseGroupStockpiles;
+	private final JButton jExpandGroupStockpiles;
+	private final JPanel jInfoPanel;
+	private final JLabel jStartSpaceGroup;
 	private final JLabel jStartSpace;
 	private final JLabel jColor;
 	private final JLabel jColorDisabled;
@@ -67,6 +103,79 @@ public class StockpileSeparatorTableCell extends SeparatorTableCell<StockpileIte
 		ListenerClass listener = new ListenerClass();
 
 		jTable.addHierarchyListener(listener);
+
+		jGroupPanel = new JPanel();
+		jGroupPanel.setBackground(Color.BLACK);
+		GroupLayout groupLayout = new GroupLayout(jGroupPanel);
+		jGroupPanel.setLayout(groupLayout);
+		groupLayout.setAutoCreateGaps(false);
+		groupLayout.setAutoCreateContainerGaps(false);
+
+		jStartSpaceGroup = new JLabel();
+
+		jExpandGroup = new JButton(Images.MISC_COLLAPSED_WHITE.getIcon());
+		jExpandGroup.setOpaque(true);
+		jExpandGroup.setContentAreaFilled(false);
+		jExpandGroup.setBorder(EMPTY_TWO_PIXEL_BORDER);
+		jExpandGroup.setBackground(Color.BLACK);
+		jExpandGroup.setActionCommand(StockpileCellAction.GROUP_TOGGLE_COLLAPSE.name());
+		jExpandGroup.addActionListener(actionListener);
+
+		jCollapseGroupStockpiles = new JButton(Images.MISC_COLLAPSED.getIcon());
+		jCollapseGroupStockpiles.setOpaque(false);
+		jCollapseGroupStockpiles.setActionCommand(StockpileCellAction.GROUP_COLLAPSE.name());
+		jCollapseGroupStockpiles.addActionListener(actionListener);
+
+		jExpandGroupStockpiles = new JButton(Images.MISC_EXPANDED.getIcon());
+		jExpandGroupStockpiles.setOpaque(false);
+		jExpandGroupStockpiles.setActionCommand(StockpileCellAction.GROUP_EXPAND.name());
+		jExpandGroupStockpiles.addActionListener(actionListener);
+
+		jGroup = new JLabel();
+		jGroup.setBorder(null);
+		jGroup.setForeground(Color.WHITE);
+		Font font = jGroup.getFont();
+		jGroup.setFont(new Font(font.getName(), Font.BOLD, font.getSize() + 1));
+		jGroup.addMouseListener(new MouseAdapter() {
+			@Override public void mouseClicked(final MouseEvent e) {
+				if (e.getClickCount() >= 2) {
+					actionListener.actionPerformed(new ActionEvent(jGroup, MouseEvent.MOUSE_RELEASED, StockpileCellAction.GROUP_TOGGLE_COLLAPSE.name()));
+				}
+			}
+		});
+
+		groupLayout.setHorizontalGroup(
+			groupLayout.createParallelGroup()
+				.addGroup(groupLayout.createSequentialGroup()
+					.addComponent(jStartSpaceGroup)
+					.addComponent(jExpandGroup)
+					.addGap(5)
+					.addComponent(jCollapseGroupStockpiles)
+					.addGap(5)
+					.addComponent(jExpandGroupStockpiles)
+					.addGap(10)
+					.addComponent(jGroup, 0, 0, Integer.MAX_VALUE)
+				)
+		);
+		groupLayout.setVerticalGroup(
+			groupLayout.createSequentialGroup()
+				.addGap(2)
+				.addGroup(groupLayout.createParallelGroup()
+					.addComponent(jStartSpaceGroup, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jExpandGroup, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jGroup, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+						.addComponent(jCollapseGroupStockpiles, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jExpandGroupStockpiles, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+				)
+				.addGap(2)
+		);
+
+		jInfoPanel = new JPanel();
+		jInfoPanel.setOpaque(false);
+		GroupLayout infoLayout = new GroupLayout(jInfoPanel);
+		jInfoPanel.setLayout(infoLayout);
+		infoLayout.setAutoCreateGaps(false);
+		infoLayout.setAutoCreateContainerGaps(false);
 
 		jStartSpace = new JLabel();
 
@@ -107,6 +216,27 @@ public class StockpileSeparatorTableCell extends SeparatorTableCell<StockpileIte
 		//Stockpile Edit/Add/etc.
 		jStockpile = new JDropDownButton(TabsStockpile.get().stockpile());
 		jStockpile.setOpaque(false);
+		jStockpile.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) { //Update when shown
+				//Group Menu
+				jGroupMenu.removeAll();
+				jGroupMenu.add(jGroupNew);
+
+				if (!jGroupMenuItems.isEmpty()) {
+					jGroupMenu.addSeparator();
+				}
+				StockpileItem stockpileItem = (StockpileItem) currentSeparator.first();
+				if (stockpileItem == null) { // handle 'late' rendering calls after this separator is invalid
+					return;
+				}
+				String group = stockpileItem.getGroup();
+				for (JCheckBoxMenuItem jMenuItem : jGroupMenuItems) {
+					jMenuItem.setSelected(group.equals(jMenuItem.getText()));
+					jGroupMenu.add(jMenuItem);
+				}
+			}
+		});
 
 		JMenuItem jMenuItem;
 
@@ -139,6 +269,17 @@ public class StockpileSeparatorTableCell extends SeparatorTableCell<StockpileIte
 
 		jStockpile.addSeparator();
 
+		jGroupMenu = new JMenu(TabsStockpile.get().groupMenu());
+		jGroupMenu.setIcon(Images.FILTER_LOAD.getIcon());
+		jStockpile.add(jGroupMenu);
+
+		jGroupNew = new JMenuItem(TabsStockpile.get().groupAddNew(), Images.EDIT_ADD.getIcon());
+		jGroupNew.setActionCommand(StockpileCellAction.GROUP_NEW.name());
+		jGroupNew.addActionListener(actionListener);
+		jGroupMenu.add(jGroupNew);
+
+		jStockpile.addSeparator();
+
 		JMenuItem jSubStockpile = new JMenuItem(TabsStockpile.get().subpiles(), Images.TOOL_STOCKPILE.getIcon());
 		jSubStockpile.setActionCommand(StockpileCellAction.SUBPILES.name());
 		jSubStockpile.addActionListener(actionListener);
@@ -151,9 +292,9 @@ public class StockpileSeparatorTableCell extends SeparatorTableCell<StockpileIte
 		jMenuItem.addActionListener(actionListener);
 		jStockpile.add(jMenuItem);
 
-		layout.setHorizontalGroup(
-			layout.createParallelGroup()
-				.addGroup(layout.createSequentialGroup()
+		infoLayout.setHorizontalGroup(
+			infoLayout.createParallelGroup()
+				.addGroup(infoLayout.createSequentialGroup()
 					.addComponent(jStartSpace)
 					.addComponent(jExpand)
 					.addGap(5)
@@ -179,13 +320,13 @@ public class StockpileSeparatorTableCell extends SeparatorTableCell<StockpileIte
 					.addComponent(jLocation, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
 				)
 		);
-		layout.setVerticalGroup(
-			layout.createSequentialGroup()
+		infoLayout.setVerticalGroup(
+			infoLayout.createSequentialGroup()
 				.addGap(2)
-				.addGroup(layout.createParallelGroup()
+				.addGroup(infoLayout.createParallelGroup()
 					.addComponent(jStartSpace, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jExpand, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					.addGroup(layout.createSequentialGroup()
+					.addGroup(infoLayout.createSequentialGroup()
 						.addGap(3)
 						.addComponent(jColor, Program.getButtonsHeight() - 6, Program.getButtonsHeight() - 6, Program.getButtonsHeight() - 6)
 						.addComponent(jColorDisabled, Program.getButtonsHeight() - 6, Program.getButtonsHeight() - 6, Program.getButtonsHeight() - 6)
@@ -194,9 +335,9 @@ public class StockpileSeparatorTableCell extends SeparatorTableCell<StockpileIte
 					.addComponent(jMultiplier, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jMultiplierLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jName, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					.addGroup(layout.createSequentialGroup()
+					.addGroup(infoLayout.createSequentialGroup()
 						.addGap(4)
-						.addGroup(layout.createParallelGroup()
+						.addGroup(infoLayout.createParallelGroup()
 							.addComponent(jAvailableLabel)
 							.addComponent(jAvailable)
 							.addComponent(jOwnerLabel)
@@ -208,7 +349,35 @@ public class StockpileSeparatorTableCell extends SeparatorTableCell<StockpileIte
 				)
 				.addGap(2)
 		);
+
+		layout.setHorizontalGroup(
+			layout.createParallelGroup()
+				.addComponent(jGroupPanel)
+				.addComponent(jInfoPanel)
+		);
+		layout.setVerticalGroup(
+			layout.createSequentialGroup()
+				.addComponent(jGroupPanel)
+				.addComponent(jInfoPanel)
+		);
+		updateGroups(actionListener);
 	}
+
+	public static void updateGroups(ActionListener actionListener) {
+		Set<String> groups = Settings.get().getStockpileGroupSettings().getGroups();
+		jGroupMenuItems.clear();
+
+		for (String g : groups) {
+			if (g.isEmpty()) {
+				continue;
+			}
+			JCheckBoxMenuItem jMenuItem = new JCheckBoxMenuItem(g);
+			jMenuItem.setActionCommand(StockpileCellAction.GROUP_CHANGE_ADD.name());
+			jMenuItem.addActionListener(actionListener);
+			jGroupMenuItems.add(jMenuItem);
+		}
+	}
+
 	private JLabel createLabel() {
 		return createLabel(null);
 	}
@@ -229,6 +398,9 @@ public class StockpileSeparatorTableCell extends SeparatorTableCell<StockpileIte
 		if (!enabled) { //Save focus owner
 			focusOwner = program.getMainWindow().getFrame().getFocusOwner();
 		}
+		jExpandGroup.setEnabled(enabled);
+		jCollapseGroupStockpiles.setEnabled(enabled);
+		jExpandGroupStockpiles.setEnabled(enabled);
 		jExpand.setEnabled(enabled);
 		jColor.setVisible(enabled);
 		jColorDisabled.setVisible(!enabled);
@@ -269,6 +441,22 @@ public class StockpileSeparatorTableCell extends SeparatorTableCell<StockpileIte
 				ColorSettings.config(jColor, ColorEntry.STOCKPILE_ICON_BELOW_THRESHOLD);
 			}
 		}
+		//Group
+		String group = stockpileItem.getGroup();
+		jGroup.setText(group);
+		if (Settings.get().getStockpileGroupSettings().isGroupExpanded(group)) {
+			jInfoPanel.setVisible(true);
+			jExpandGroup.setIcon(Images.MISC_COLLAPSED_WHITE.getIcon());
+		} else {
+			jInfoPanel.setVisible(false);
+			jExpandGroup.setIcon(Images.MISC_EXPANDED_WHITE.getIcon());
+		}
+		if (Settings.get().getStockpileGroupSettings().isGroupFirst(stockpileItem.getStockpile())) {
+			jGroupPanel.setVisible(true);
+		} else {
+			jGroupPanel.setVisible(false);
+		}
+
 		//Multiplier
 		jMultiplier.setText(Formatter.compareFormat(stockpileItem.getStockpile().getMultiplier()));
 		//Name
@@ -316,6 +504,7 @@ public class StockpileSeparatorTableCell extends SeparatorTableCell<StockpileIte
 			if (!e.getValueIsAdjusting()) {
 				int position = getParentViewport().getViewPosition().x;
 				jStartSpace.setMinimumSize(new Dimension(position, Program.getButtonsHeight()));
+				jStartSpaceGroup.setMinimumSize(new Dimension(position, Program.getButtonsHeight()));
 				setEnabled(true);
 				jTable.repaint();
 			} else {
