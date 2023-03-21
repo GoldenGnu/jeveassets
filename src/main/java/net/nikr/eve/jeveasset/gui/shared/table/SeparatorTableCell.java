@@ -69,7 +69,6 @@ public abstract class SeparatorTableCell<E> extends AbstractCellEditor
 		https://github.com/JFormDesigner/FlatLaf/blob/main/flatlaf-core/src/main/java/com/formdev/flatlaf/ui/FlatUIUtils.java#L215
 		*/
 		if (Settings.get().getColorSettings().isFlatLAF()) {
-			System.out.println("FlatLAF workaround");
 			JSeparatorPanel jLast = jPanel;
 			for (int i = 0; i < 3; i++) {
 				JSeparatorPanel jSeparatorPanel = new JSeparatorPanel(new BorderLayout());
