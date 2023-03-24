@@ -75,63 +75,74 @@ public class JOptionsDialog extends JDialogCentered {
 		jCancel.addActionListener(listenerClass);
 	}
 
-	private void doLayout(List<OptionEnum> options, OptionEnum defaultOption) {
+	private void doLayout(List<OptionEnum> options, OptionEnum defaultOption, boolean showAll) {
 		jPanel.removeAll();
 		containers.clear();
 
-		Group textHorizontalGroup = layout.createParallelGroup(GroupLayout.Alignment.LEADING);
-		Group labelHorizontalGroup = layout.createParallelGroup(GroupLayout.Alignment.LEADING);
+		Group optionHorizontalGroup = layout.createParallelGroup(GroupLayout.Alignment.LEADING);
+		Group helpHorizontalGroup = layout.createParallelGroup(GroupLayout.Alignment.LEADING);
+		Group horizontalGroup = layout.createParallelGroup(GroupLayout.Alignment.CENTER);
 		Group verticalGroup = layout.createSequentialGroup();
-		verticalGroup.addComponent(jName, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight());
-		ButtonGroup buttonGroup = new ButtonGroup();
+		//Name
+		if (!jName.getText().isEmpty()) {
+			verticalGroup.addComponent(jName, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight());
+			horizontalGroup.addComponent(jName);
+		}
+		//Options
 		if (defaultOption == null && !options.isEmpty()) {
 			defaultOption = options.get(0);
 		}
+		ButtonGroup buttonGroup = new ButtonGroup();
 		for (OptionEnum optionEnum : options) {
 			OptionsContainer optionsContainer = new OptionsContainer(optionEnum);
 			containers.add(optionsContainer);
 			buttonGroup.add(optionsContainer.getRadioButton());
-			textHorizontalGroup.addComponent(optionsContainer.getRadioButton());
-			labelHorizontalGroup.addComponent(optionsContainer.getLabel());
+			optionHorizontalGroup.addComponent(optionsContainer.getRadioButton());
+			helpHorizontalGroup.addComponent(optionsContainer.getLabel());
 			optionsContainer.getRadioButton().setSelected(defaultOption == optionEnum);
 			verticalGroup.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
 				.addComponent(optionsContainer.getRadioButton(), Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				.addComponent(optionsContainer.getLabel(), Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 			);
 		}
-
-		layout.setHorizontalGroup(
-			layout.createParallelGroup(GroupLayout.Alignment.CENTER)
-				.addComponent(jName)
+		horizontalGroup
 				.addGroup(layout.createSequentialGroup()
-					.addGroup(textHorizontalGroup)
+					.addGroup(optionHorizontalGroup)
 					.addGap(20)
-					.addGroup(labelHorizontalGroup)
-				)
+					.addGroup(helpHorizontalGroup)
+				);
+		verticalGroup.addGap(20);
+		//All
+		if (showAll) {
+			horizontalGroup
 				.addGroup(layout.createSequentialGroup()
 					.addComponent(jAll)
 					.addGap(0, 0, Integer.MAX_VALUE)
-				)
-				.addGroup(layout.createSequentialGroup()
+				);
+			verticalGroup
+					.addComponent(jAll, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addGap(20);
+
+		}
+		//OK/Cancel
+		verticalGroup.addGroup(layout.createParallelGroup()
+					.addComponent(jOK, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jCancel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+				);
+		horizontalGroup.addGroup(layout.createSequentialGroup()
 					.addComponent(jOK, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
 					.addComponent(jCancel, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
-				)
-		);
-		verticalGroup.addGap(20)
-			.addComponent(jAll, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-			.addGap(20)
-			.addGroup(layout.createParallelGroup()
-				.addComponent(jOK, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-				.addComponent(jCancel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-		);
+				);
+
+		layout.setHorizontalGroup(horizontalGroup);
 		layout.setVerticalGroup(verticalGroup);
 	}
 
-	public OptionEnum show(String heading, String title, String all, boolean enableAll, List<OptionEnum> options, OptionEnum defaultOption) {
+	public OptionEnum show(String heading, String title, String all, boolean enableAll, boolean showAll, List<OptionEnum> options, OptionEnum defaultOption) {
 		option = null;
 		jName.setText(heading);
 		getDialog().setTitle(title);
-		doLayout(options, defaultOption);
+		doLayout(options, defaultOption, showAll);
 		jAll.setSelected(false);
 		jAll.setText(all);
 		jAll.setEnabled(enableAll);
