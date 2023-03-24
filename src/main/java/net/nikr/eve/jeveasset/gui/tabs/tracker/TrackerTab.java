@@ -858,9 +858,9 @@ public class TrackerTab extends JMainTabSecondary {
 		for (String id : walletIDs) {
 			accountNodes.put(id, new CheckBoxNode(corporationWalletNode, id, TabsTracker.get().division(id), selectNode(id)));
 		}
-		String charecterWalletID = "0";
-		CheckBoxNode charecterWalletNode = new CheckBoxNode(null, charecterWalletID, TabsTracker.get().characterWallet(), selectNode(charecterWalletID));
-		accountNodes.put(charecterWalletID, charecterWalletNode);
+		String characterWalletID = "0";
+		CheckBoxNode characterWalletNode = new CheckBoxNode(null, characterWalletID, TabsTracker.get().characterWallet(), selectNode(characterWalletID));
+		accountNodes.put(characterWalletID, characterWalletNode);
 
 		//ASSETS - Make nodes for found asset IDs
 		CheckBoxNode assetNode = new CheckBoxNode(null, TabsTracker.get().assets(), TabsTracker.get().assets(), false);
