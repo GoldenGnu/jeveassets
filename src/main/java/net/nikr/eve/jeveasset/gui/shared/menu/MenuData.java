@@ -70,6 +70,8 @@ public class MenuData<T> {
 	private final List<MyAsset> assets = new ArrayList<>();
 	private final Set<MyContract> contracts = new HashSet<>();
 	private final Map<Item, Long> itemCounts = new HashMap<>();
+	private final Map<Integer, Double> counts = new HashMap<>();
+	private final Map<Integer, Double> runs = new HashMap<>();
 
 	public MenuData() { }
 
@@ -100,15 +102,9 @@ public class MenuData<T> {
 				owners.addAll(ownersType.getOwners());
 			}
 
-			Item itemType = null;
+			ItemType itemType = null;
 			if (t instanceof ItemType) {
-				ItemType type = (ItemType) t;
-				itemType = type.getItem();
-				Long count = itemCounts.get(itemType);
-				if (count == null) {
-					count = 0L;
-				}
-				itemCounts.put(itemType, (count + type.getItemCount()));
+				itemType = (ItemType) t;
 			}
 
 			BlueprintType blueprint = null;
@@ -141,40 +137,57 @@ public class MenuData<T> {
 		}
 	}
 
-	private void add(final Item item, final Collection<MyLocation> locations, final Double price, final BlueprintType blueprintType, final TagsType tagsType, Set<Long> owners) {
-		if (item != null && !item.isEmpty()) {
-			//Type Name
-			typeNames.add(item.getTypeName());
-			//TypeID
-			int typeID = item.getTypeID();
-			typeIDs.add(typeID);
+	private void add(final ItemType itemType, final Collection<MyLocation> locations, final Double price, final BlueprintType blueprintType, final TagsType tagsType, Set<Long> owners) {
+		if (itemType != null) {
+			Item item = itemType.getItem();
+			if (item != null && !item.isEmpty()) {
+				//Type Name
+				typeNames.add(item.getTypeName());
+				//TypeID
+				int typeID = item.getTypeID();
+				typeIDs.add(typeID);
 
-			if (item.isBlueprint()) {
-				blueprintTypeIDs.add(item.getTypeID());
-				if (item.getMeta() == 0 && item.getTypeName().contains(" I ")) {
-					inventionTypeIDs.add(item.getTypeID());
+				if (item.isBlueprint()) {
+					blueprintTypeIDs.add(item.getTypeID());
+					if (item.getMeta() == 0 && item.getTypeName().contains(" I ")) {
+						inventionTypeIDs.add(item.getTypeID());
+					}
+				} else if (item.isProduct()) {
+					blueprintTypeIDs.add(item.getBlueprintTypeID());
+					if (item.getMeta() == 0 && item.getTypeName().endsWith(" I")) {
+						inventionTypeIDs.add(item.getBlueprintTypeID());
+					}
 				}
-			} else if (item.isProduct()) {
-				blueprintTypeIDs.add(item.getBlueprintTypeID());
-				if (item.getMeta() == 0 && item.getTypeName().endsWith(" I")) {
-					inventionTypeIDs.add(item.getBlueprintTypeID());
+				//Market TypeID
+				if (item.isMarketGroup()) {
+					marketTypeIDs.add(typeID);
 				}
-			}
-			//Market TypeID
-			if (item.isMarketGroup()) {
-				marketTypeIDs.add(typeID);
-			}
-			//Blueprint TypeID
-			int blueprintTypeID;
-			if (blueprintType != null && blueprintType.isBPC()) {
-				blueprintTypeID = -typeID;
-			} else {
-				blueprintTypeID = typeID;
-			}
-			bpcTypeIDs.add(blueprintTypeID);
-			//Price TypeID
-			if (price != null) { //Not unique
-				prices.put(blueprintTypeID, price);
+				//Blueprint TypeID
+				int blueprintTypeID;
+				if (blueprintType != null && blueprintType.isBPC()) {
+					blueprintTypeID = -typeID;
+					//Runs
+					double r = blueprintType.getRuns();
+					if (r > 0) {
+						r = r + runs.getOrDefault(blueprintTypeID, 0.0);
+						runs.put(blueprintTypeID, r);
+					}
+				} else {
+					blueprintTypeID = typeID;
+				}
+				bpcTypeIDs.add(blueprintTypeID);
+				//Item Count
+				Long itemCount = itemCounts.getOrDefault(item, 0L);
+				itemCount = itemCount + itemType.getItemCount();
+				itemCounts.put(item, itemCount);
+				//Count
+				double count = counts.getOrDefault(blueprintTypeID, 0.0);
+				count = count + itemType.getItemCount();
+				counts.put(blueprintTypeID, count);
+				//Price TypeID
+				if (price != null) { //Not unique
+					prices.put(blueprintTypeID, price);
+				}
 			}
 		}
 
@@ -367,6 +380,14 @@ public class MenuData<T> {
 
 	public Map<Item, Long> getItemCounts() {
 		return itemCounts;
+	}
+
+	public Map<Integer, Double> getCounts() {
+		return counts;
+	}
+
+	public Map<Integer, Double> getRuns() {
+		return runs;
 	}
 
 	public static class AssetMenuData <T extends MyAsset> extends MenuData<T> {

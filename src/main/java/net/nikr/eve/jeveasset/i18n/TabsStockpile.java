@@ -166,6 +166,7 @@ public abstract class TabsStockpile extends Bundle {
 	public abstract String matchInclude();
 	public abstract String materialsManufacturing();
 	public abstract String materialsReaction();
+	public abstract String me();
 	public abstract String multiple();
 	public abstract String multiplier();
 	public abstract String multiplierSign();
