@@ -42,6 +42,7 @@ import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
 import net.nikr.eve.jeveasset.data.api.my.MyJournal;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
 import net.nikr.eve.jeveasset.data.api.my.MyShip;
+import net.nikr.eve.jeveasset.data.api.my.MySkill;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.api.raw.RawAccountBalance;
 import net.nikr.eve.jeveasset.data.api.raw.RawAsset;
@@ -881,7 +882,7 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 			Element currentSkillsNode = (Element) skillsNodes.item(a);
 			Integer unallocatedSkillPoints = getIntOptional(currentSkillsNode, "unallocated");
 			Long totalSkillPoints = getLongOptional(currentSkillsNode, "total");
-			List<RawSkill> skills = new ArrayList<>();
+			List<MySkill> skills = new ArrayList<>();
 			NodeList skillNodes = currentSkillsNode.getElementsByTagName("skill");
 			for (int b = 0; b < skillNodes.getLength(); b++) {
 				Element currentNode = (Element) skillNodes.item(b);
@@ -896,7 +897,7 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 				skill.setSkillpoints(skillpoints);
 				skill.setActiveSkillLevel(activeSkillLevel);
 				skill.setTrainedSkillLevel(trainedSkillLevel);
-				skills.add(skill);
+				skills.add(DataConverter.toMySkill(skill, owners));
 			}
 			owners.setSkills(skills);
 			owners.setTotalSkillPoints(totalSkillPoints);

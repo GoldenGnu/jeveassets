@@ -240,6 +240,7 @@ public enum Images {
 	TOOL_JOURNAL ("tool_journal.png"),
 	TOOL_TREE ("tool_tree.png"),
 	TOOL_PRICE_HISTORY ("tool_price_history.png"),
+	TOOL_SKILLS ("tool_skills.png"),
 
 	UPDATE_NOT_STARTED ("update_not_started.png"),
 	UPDATE_WORKING ("update_working.png"),

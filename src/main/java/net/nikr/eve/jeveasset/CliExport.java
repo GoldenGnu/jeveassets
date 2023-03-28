@@ -90,6 +90,7 @@ public class CliExport {
 		INDUSTRY_JOBS("Industry Jobs", CliOptions.INDUSTRY_JOBS, IndustryJobsTab.NAME),
 		SLOTS("Slots", CliOptions.SLOTS, SlotsTab.NAME),
 		ISK("Isk", CliOptions.ISK, ValueTableTab.NAME),
+		SKILLS("skills", CliOptions.SKILLS, ValueTableTab.NAME),
 		ITEMS("Items", CliOptions.ITEMS, ItemsTab.NAME),
 		JOURNAL("Journal", CliOptions.JOURNAL, JournalTab.NAME),
 		LOADOUTS("Ship Fittings", CliOptions.LOADOUTS, LoadoutsTab.NAME),
@@ -163,6 +164,9 @@ public class CliExport {
 						break;
 					case INDUSTRY_JOBS:
 						ok = export(profileData.getIndustryJobsEventList(), TableFormatFactory.industryJobTableFormat(), toolName, exportSettings);
+						break;
+					case SKILLS:
+						ok = export(profileData.getSkillsEventList(), TableFormatFactory.skillsTableFormat(), toolName, exportSettings);
 						break;
 					case SLOTS:
 						ok = export(new SlotsData(profileManager, profileData).getData(), TableFormatFactory.slotTableFormat(), toolName, exportSettings);
