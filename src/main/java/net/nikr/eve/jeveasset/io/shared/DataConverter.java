@@ -36,6 +36,7 @@ import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
 import net.nikr.eve.jeveasset.data.api.my.MyJournal;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
+import net.nikr.eve.jeveasset.data.api.my.MySkill;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.api.raw.RawAccountBalance;
 import net.nikr.eve.jeveasset.data.api.raw.RawAsset;
@@ -46,6 +47,7 @@ import net.nikr.eve.jeveasset.data.api.raw.RawIndustryJob;
 import net.nikr.eve.jeveasset.data.api.raw.RawJournal;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder.Change;
+import net.nikr.eve.jeveasset.data.api.raw.RawSkill;
 import net.nikr.eve.jeveasset.data.api.raw.RawTransaction;
 import net.nikr.eve.jeveasset.data.sde.Item;
 
@@ -317,5 +319,18 @@ public abstract class DataConverter {
 
 	public static MyContainerLog toMyContainerLog(RawContainerLog rawContainerLog) {
 		return new MyContainerLog(rawContainerLog);
+	}
+
+	public static List<MySkill> converRawSkills(List<RawSkill> rawSkills, OwnerType owner) {
+		List<MySkill> mySkills = new ArrayList<>();
+		for (RawSkill rawSkill : rawSkills) {
+			mySkills.add(toMySkill(rawSkill, owner));
+		}
+		return mySkills;
+	}
+	
+	public static MySkill toMySkill(RawSkill rawSkill, OwnerType owner) {
+		Item item = ApiIdConverter.getItemUpdate(rawSkill.getTypeID());
+		return new MySkill(rawSkill, item, owner.getOwnerName());
 	}
 }

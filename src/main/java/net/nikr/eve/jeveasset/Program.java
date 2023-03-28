@@ -100,6 +100,7 @@ import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewTab;
 import net.nikr.eve.jeveasset.gui.tabs.prices.PriceHistoryTab;
 import net.nikr.eve.jeveasset.gui.tabs.reprocessed.ReprocessedTab;
 import net.nikr.eve.jeveasset.gui.tabs.routing.RoutingTab;
+import net.nikr.eve.jeveasset.gui.tabs.skills.SkillsTab;
 import net.nikr.eve.jeveasset.gui.tabs.slots.SlotsTab;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileTab;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerTab;
@@ -163,6 +164,7 @@ public class Program implements ActionListener {
 	private ReprocessedTab reprocessedTab;
 	private ContractsTab contractsTab;
 	private TreeTab treeTab;
+	private SkillsTab skillsTab;
 	private LogTab logTab;
 	private StructureUpdateDialog structureUpdateDialog;
 
@@ -277,6 +279,9 @@ public class Program implements ActionListener {
 		LOG.info("Loading: Log Tab");
 		logTab = new LogTab(this);
 		SplashUpdater.setProgress(82);
+		LOG.info("Loading: Skills Tab");
+		skillsTab = new SkillsTab(this);
+		SplashUpdater.setProgress(83);
 	//Dialogs
 		LOG.info("Loading: Account Manager Dialog");
 		accountManagerDialog = new AccountManagerDialog(this);
@@ -1079,6 +1084,8 @@ public class Program implements ActionListener {
 			mainWindow.addTab(contractsTab);
 		} else if (MainMenuAction.TREE.name().equals(e.getActionCommand())) {
 			mainWindow.addTab(treeTab);
+		} else if (MainMenuAction.SKILLS.name().equals(e.getActionCommand())) {
+			mainWindow.addTab(skillsTab);
 		} else if (MainMenuAction.LOG.name().equals(e.getActionCommand())) {
 			mainWindow.addTab(logTab);
 		} else if (MainMenuAction.ACCOUNT_MANAGER.name().equals(e.getActionCommand())) { //Settings

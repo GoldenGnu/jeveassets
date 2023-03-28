@@ -101,6 +101,8 @@ import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewLocation;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewTab;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.routing.SolarSystem;
+import net.nikr.eve.jeveasset.gui.tabs.skills.SkillsTab;
+import net.nikr.eve.jeveasset.gui.tabs.skills.SkillsTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.slots.SlotsTab;
 import net.nikr.eve.jeveasset.gui.tabs.slots.SlotsTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
@@ -1587,6 +1589,14 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		try {
 			if (toolName.equals(TreeTab.NAME)) {
 				return TreeTableFormat.valueOf(column);
+			}
+		} catch (IllegalArgumentException exception) {
+
+		}
+		//Skills
+		try {
+			if (toolName.equals(SkillsTab.NAME)) {
+				return SkillsTableFormat.valueOf(column);
 			}
 		} catch (IllegalArgumentException exception) {
 

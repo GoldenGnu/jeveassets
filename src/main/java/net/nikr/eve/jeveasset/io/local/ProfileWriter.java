@@ -37,10 +37,10 @@ import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
 import net.nikr.eve.jeveasset.data.api.my.MyJournal;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
 import net.nikr.eve.jeveasset.data.api.my.MyShip;
+import net.nikr.eve.jeveasset.data.api.my.MySkill;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.api.raw.RawBlueprint;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder.Change;
-import net.nikr.eve.jeveasset.data.api.raw.RawSkill;
 import net.nikr.eve.jeveasset.data.profile.Profile;
 import net.nikr.eve.jeveasset.io.shared.RawConverter;
 import net.troja.eve.esi.model.CharacterRolesResponse.RolesEnum;
@@ -475,12 +475,12 @@ public final class ProfileWriter extends AbstractXmlWriter {
 		}
 	}
 
-	private void writeSkills(final Document xmldoc, final Element parentNode, final List<RawSkill> skills, Long totalSkillPoints, Integer unallocatedSkillPoints) {
+	private void writeSkills(final Document xmldoc, final Element parentNode, final List<MySkill> skills, Long totalSkillPoints, Integer unallocatedSkillPoints) {
 		Element node = xmldoc.createElement("skills");
 		parentNode.appendChild(node);
 		setAttributeOptional(node, "total", totalSkillPoints);
 		setAttributeOptional(node, "unallocated", unallocatedSkillPoints);
-		for (RawSkill skill : skills) {
+		for (MySkill skill : skills) {
 			Element childNode = xmldoc.createElement("skill");
 			setAttribute(childNode, "id", skill.getTypeID());
 			setAttribute(childNode, "sp", skill.getSkillpoints());

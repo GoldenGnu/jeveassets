@@ -73,6 +73,7 @@ public abstract class GuiFrame extends Bundle {
 	public abstract String reprocessed();
 	public abstract String routing();
 	public abstract String ship();
+	public abstract String skills();
 	public abstract String slots();
 	public abstract String stockpile();
 	public abstract String table();

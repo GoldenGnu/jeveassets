@@ -36,9 +36,9 @@ import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
 import net.nikr.eve.jeveasset.data.api.my.MyJournal;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
 import net.nikr.eve.jeveasset.data.api.my.MyShip;
+import net.nikr.eve.jeveasset.data.api.my.MySkill;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.api.raw.RawBlueprint;
-import net.nikr.eve.jeveasset.data.api.raw.RawSkill;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 
 
@@ -54,7 +54,7 @@ public abstract class AbstractOwner implements OwnerType, Comparable<OwnerType> 
 	private Map<Long, RawBlueprint> blueprints = new HashMap<>();
 	private Map<Integer, String> walletDivisions = new HashMap<>();
 	private Map<Integer, String> assetDivisions = new HashMap<>();
-	private List<RawSkill> skills = new ArrayList<>();
+	private List<MySkill> skills = new ArrayList<>();
 	private Long totalSkillPoints = null;
 	private Integer unallocatedSkillPoints = null;
 	private List<MyContainerLog> containerLogs = new ArrayList<>();
@@ -384,7 +384,7 @@ public abstract class AbstractOwner implements OwnerType, Comparable<OwnerType> 
 	}
 
 	@Override
-	public List<RawSkill> getSkills() {
+	public List<MySkill> getSkills() {
 		return skills;
 	}
 
@@ -479,7 +479,7 @@ public abstract class AbstractOwner implements OwnerType, Comparable<OwnerType> 
 	}
 
 	@Override
-	public void setSkills(List<RawSkill> skills) {
+	public void setSkills(List<MySkill> skills) {
 		this.skills = skills;
 	}
 
