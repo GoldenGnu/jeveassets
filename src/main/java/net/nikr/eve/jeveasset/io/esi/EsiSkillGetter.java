@@ -47,7 +47,7 @@ public class EsiSkillGetter extends AbstractEsiGetter {
 				return getSkillsApiAuth().getCharactersCharacterIdSkillsWithHttpInfo((int)owner.getOwnerID(), DATASOURCE, null, null);
 			}
 		});
-		owner.setSkills(EsiConverter.toSkills(response.getSkills()));
+		owner.setSkills(EsiConverter.toSkills(response.getSkills(), owner));
 		owner.setTotalSkillPoints(response.getTotalSp());
 		owner.setUnallocatedSkillPoints(response.getUnallocatedSp());
 	}

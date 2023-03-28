@@ -26,7 +26,7 @@ import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob.IndustryJobState;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
 import net.nikr.eve.jeveasset.data.api.my.MyShip;
-import net.nikr.eve.jeveasset.data.api.raw.RawSkill;
+import net.nikr.eve.jeveasset.data.api.my.MySkill;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.settings.types.LocationType;
 
@@ -151,7 +151,7 @@ public class Slots implements Comparable<Slots>, LocationType {
 		contractCharacterMax = contractCharacterMax + 1;
 		contractCorporationMax = contractCorporationMax + 10;
 		//From Skills
-		for (RawSkill skill : ownerType.getSkills()) {
+		for (MySkill skill : ownerType.getSkills()) {
 			switch (skill.getTypeID()) {
 				case 3387:  //Mass Production (+1)
 				case 24625: //Advanced Mass Production (+1)

@@ -32,9 +32,9 @@ import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
 import net.nikr.eve.jeveasset.data.api.my.MyJournal;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
 import net.nikr.eve.jeveasset.data.api.my.MyShip;
+import net.nikr.eve.jeveasset.data.api.my.MySkill;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.api.raw.RawBlueprint;
-import net.nikr.eve.jeveasset.data.api.raw.RawSkill;
 
 
 public interface OwnerType extends Comparable<OwnerType> {
@@ -71,7 +71,7 @@ public interface OwnerType extends Comparable<OwnerType> {
 	public Map<Long, RawBlueprint> getBlueprints();
 	public Map<Integer, String> getWalletDivisions();
 	public Map<Integer, String> getAssetDivisions();
-	public List<RawSkill> getSkills();
+	public List<MySkill> getSkills();
 	public Long getTotalSkillPoints();
 	public Integer getUnallocatedSkillPoints();
 	public void setBlueprints(final Map<Long, RawBlueprint> blueprints);
@@ -84,7 +84,7 @@ public interface OwnerType extends Comparable<OwnerType> {
 	public void setAccountBalances(final List<MyAccountBalance> accountBalances);
 	public void setWalletDivisions(final Map<Integer, String> walletDivisions);
 	public void setAssetDivisions(final Map<Integer, String> assetDivisions);
-	public void setSkills(final List<RawSkill> skills);
+	public void setSkills(final List<MySkill> skills);
 	public void setTotalSkillPoints(final Long totalSkillPoints);
 	public void setUnallocatedSkillPoints(final Integer unallocatedSkillPoints);
 	//Account Mask

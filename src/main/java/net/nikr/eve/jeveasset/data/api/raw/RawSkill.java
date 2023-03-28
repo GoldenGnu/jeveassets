@@ -38,6 +38,13 @@ public class RawSkill {
 		return new RawSkill();
 	}
 
+	public RawSkill(RawSkill skill) {
+		this.activeSkillLevel = skill.getActiveSkillLevel();
+		this.skillId = skill.getTypeID();
+		this.skillpointsInSkill = skill.getSkillpoints();
+		this.trainedSkillLevel = skill.getTrainedSkillLevel();
+	}
+
 	public RawSkill(Skill skill) {
 		this.activeSkillLevel = skill.getActiveSkillLevel();
 		this.skillId = skill.getSkillId();
