@@ -29,7 +29,7 @@ import org.junit.Test;
 public class RawSkillTest extends TestUtil {
 
 	@Test
-	public void rawAssetTest() {
+	public void rawSkillTest() {
 		RawUtil.compare(RawSkill.class, Skill.class);
 	}
 
