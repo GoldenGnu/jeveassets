@@ -109,6 +109,16 @@ public enum ItemTableFormat implements EnumTableColumn<Item> {
 			return from.getVolume();
 		}
 	},
+	VOLUME_PACKAGED(Float.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsItems.get().columnVolumePackaged();
+		}
+		@Override
+		public Object getColumnValue(final Item from) {
+			return from.getVolumePackaged();
+		}
+	},
 	TYPE_ID(Integer.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {

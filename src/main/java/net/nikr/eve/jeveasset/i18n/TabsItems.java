@@ -43,6 +43,7 @@ public abstract class TabsItems extends Bundle {
 	public abstract String columnMeta();
 	public abstract String columnTech();
 	public abstract String columnVolume();
+	public abstract String columnVolumePackaged();
 	public abstract String columnTypeID();
 }
 
