@@ -20,9 +20,6 @@
  */
 package net.nikr.eve.jeveasset.data.raw;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.time.OffsetDateTime;
@@ -40,6 +37,8 @@ import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder.MarketOrderState;
 import net.nikr.eve.jeveasset.data.api.raw.RawPublicMarketOrder;
 import net.nikr.eve.jeveasset.data.api.raw.RawTransaction;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 
 public class RawUtil {
@@ -64,85 +63,7 @@ public class RawUtil {
 				continue;
 			}
 			Class<?> type = value.getType();
-			if (value.getName().equals("itemFlag") && (raw.equals(RawAsset.class) || raw.equals(RawBlueprint.class))) {
-				continue;
-			}
-			if (value.getName().equals("locationFlagEnum") && (raw.equals(RawAsset.class) || raw.equals(RawBlueprint.class))) {
-				continue;
-			}
-			if (value.getName().equals("locationType") && (raw.equals(RawAsset.class))) { //Note used be jEveAssets
-				continue;
-			}
-			if (value.getName().equals("locationTypeEnum") && (raw.equals(RawAsset.class))) { //Note used be jEveAssets
-				continue;
-			}
-			if (value.getName().equals("isBlueprintCopy") && raw.equals(RawAsset.class)) { //Converted to quantity
-				continue;
-			}
-			if (value.getName().equals("itemId") && raw.equals(RawContractItem.class)) { //Only in public endpoint
-				continue;
-			}
-			if (value.getName().equals("runs") && raw.equals(RawContractItem.class)) { //Only in public endpoint
-				continue;
-			}
-			if (value.getName().equals("materialEfficiency") && raw.equals(RawContractItem.class)) { //Only in public endpoint
-				continue;
-			}
-			if (value.getName().equals("timeEfficiency") && raw.equals(RawContractItem.class)) { //Only in public endpoint
-				continue;
-			}
-			if (value.getName().equals("isBlueprintCopy") && raw.equals(RawContractItem.class)) { //Only in public endpoint
-				continue;
-			}
-			if (value.getName().equals("isSingleton") && raw.equals(RawContractItem.class)) { //Only in corp/char endpoints (not working, though)
-				continue;
-			}
-			if (value.getName().equals("rawQuantity") && raw.equals(RawContractItem.class)) { //Only in corp/char endpoints (not working, though)
-				continue;
-			}
-			if (value.getName().equals("accountKey") && (raw.equals(RawTransaction.class) || raw.equals(RawJournal.class))) {
-				continue;
-			}
-			if (value.getName().equals("isPersonal") && raw.equals(RawTransaction.class)) { //Only in character endpoint
-				continue;
-			}
-			if (value.getName().equals("stationId") && raw.equals(RawIndustryJob.class)) { //stationId in character endpoint / locationId in corporation endpoint
-				continue;
-			}
-			if (value.getName().equals("locationId") && raw.equals(RawIndustryJob.class)) { //stationId in character endpoint / locationId in corporation endpoint
-				continue;
-			}
-			if (value.getName().equals("accountId") && raw.equals(RawMarketOrder.class)) { //accountId in character endpoint / walletDivision in corporation endpoint
-				continue;
-			}
-			if (value.getName().equals("walletDivision") && raw.equals(RawMarketOrder.class)) { //accountId in character endpoint / walletDivision in corporation endpoint
-				continue;
-			}
-			if (value.getName().equals("issuedBy") && raw.equals(RawMarketOrder.class)) { //Only in corporation endpoint
-				continue;
-			}
-			if (value.getName().equals("state") && raw.equals(RawMarketOrder.class)) { //Only in history endpoints
-				continue;
-			}
-			if (value.getName().equals("stateEnum") && raw.equals(RawMarketOrder.class)) { //Only in history endpoints
-				continue;
-			}
-			if (value.getName().equals("isCorp") && raw.equals(RawMarketOrder.class)) { //Only in character endpoint
-				continue;
-			}
-			if (value.getName().equals("isCorporation") && raw.equals(RawMarketOrder.class)) { //Only in character endpoint
-				continue;
-			}
-			if (value.getName().equals("changes") && raw.equals(RawMarketOrder.class)) { //jEveAssets value
-				continue;
-			}
-			if (value.getName().equals("changed") && raw.equals(RawMarketOrder.class)) { //jEveAssets value
-				continue;
-			}
-			if (value.getName().equals("updateChanged") && raw.equals(RawMarketOrder.class)) { //jEveAssets value
-				continue;
-			}
-			if (value.getName().equals("systemId") && raw.equals(RawPublicMarketOrder.class)) { //Only in RawPublicMarketOrder
+			if (ignore(value, raw)) {
 				continue;
 			}
 			if (type.isEnum()) { //Ignore enums
@@ -165,90 +86,97 @@ public class RawUtil {
 			if (Modifier.isStatic(value.getModifiers())) { //Ignore static fields
 				continue;
 			}
-			if (value.getName().equals("itemFlag") && (raw.equals(RawAsset.class) || raw.equals(RawBlueprint.class))) {
-				continue;
-			}
-			if (value.getName().equals("locationFlagEnum") && (raw.equals(RawAsset.class) || raw.equals(RawBlueprint.class))) {
-				continue;
-			}
-			if (value.getName().equals("locationType") && (raw.equals(RawAsset.class))) { //Note used be jEveAssets
-				continue;
-			}
-			if (value.getName().equals("locationTypeEnum") && (raw.equals(RawAsset.class))) { //Note used be jEveAssets
-				continue;
-			}
-			if (value.getName().equals("isBlueprintCopy") && raw.equals(RawAsset.class)) { //Converted to quantity
-				continue;
-			}
-			if (value.getName().equals("itemId") && raw.equals(RawContractItem.class)) { //Only in public endpoint
-				continue;
-			}
-			if (value.getName().equals("runs") && raw.equals(RawContractItem.class)) { //Only in public endpoint
-				continue;
-			}
-			if (value.getName().equals("materialEfficiency") && raw.equals(RawContractItem.class)) { //Only in public endpoint
-				continue;
-			}
-			if (value.getName().equals("timeEfficiency") && raw.equals(RawContractItem.class)) { //Only in public endpoint
-				continue;
-			}
-			if (value.getName().equals("isBlueprintCopy") && raw.equals(RawContractItem.class)) { //Only in public endpoint
-				continue;
-			}
-			if (value.getName().equals("isSingleton") && raw.equals(RawContractItem.class)) { //Only in corp/char endpoints (not working, though)
-				continue;
-			}
-			if (value.getName().equals("rawQuantity") && raw.equals(RawContractItem.class)) { //Only in corp/char endpoints (not working, though)
-				continue;
-			}
-			if (value.getName().equals("accountKey") && (raw.equals(RawTransaction.class) || raw.equals(RawJournal.class))) {
-				continue;
-			}
-			if (value.getName().equals("isPersonal") && raw.equals(RawTransaction.class)) { //Only in character endpoint
-				continue;
-			}
-			if (value.getName().equals("stationId") && raw.equals(RawIndustryJob.class)) { //stationId in character endpoint / locationId in corporation endpoint
-				continue;
-			}
-			if (value.getName().equals("locationId") && raw.equals(RawIndustryJob.class)) { //stationId in character endpoint / locationId in corporation endpoint
-				continue;
-			}
-			if (value.getName().equals("accountId") && raw.equals(RawMarketOrder.class)) { //accountId in character endpoint / walletDivision in corporation endpoint
-				continue;
-			}
-			if (value.getName().equals("walletDivision") && raw.equals(RawMarketOrder.class)) { //accountId in character endpoint / walletDivision in corporation endpoint
-				continue;
-			}
-			if (value.getName().equals("isCorp") && raw.equals(RawMarketOrder.class)) { //Only in character endpoint
-				continue;
-			}
-			if (value.getName().equals("isCorporation") && raw.equals(RawMarketOrder.class)) { //Only in character endpoint
-				continue;
-			}
-			if (value.getName().equals("issuedBy") && raw.equals(RawMarketOrder.class)) { //Only in corporation endpoint
-				continue;
-			}
-			if (value.getName().equals("state") && raw.equals(RawMarketOrder.class)) { //Only in history endpoints
-				continue;
-			}
-			if (value.getName().equals("stateEnum") && raw.equals(RawMarketOrder.class)) { //Only in history endpoints
-				continue;
-			}
-			if (value.getName().equals("changes") && raw.equals(RawMarketOrder.class)) { //jEveAssets value
-				continue;
-			}
-			if (value.getName().equals("changed") && raw.equals(RawMarketOrder.class)) { //jEveAssets value
-				continue;
-			}
-			if (value.getName().equals("updateChanged") && raw.equals(RawMarketOrder.class)) { //jEveAssets value
-				continue;
-			}
-			if (value.getName().equals("systemId") && raw.equals(RawPublicMarketOrder.class)) { //Only in RawPublicMarketOrder
+			if (ignore(value, raw)) {
 				continue;
 			}
 			names.add(value.getName());
 		}
 		return names;
+	}
+
+	private static boolean ignore(Field value, Class<?> raw) {
+		if (value.getName().equals("itemFlag") && (raw.equals(RawAsset.class) || raw.equals(RawBlueprint.class))) {
+			return true;
+		}
+		if (value.getName().equals("locationFlagEnum") && (raw.equals(RawAsset.class) || raw.equals(RawBlueprint.class))) {
+			return true;
+		}
+		if (value.getName().equals("locationType") && (raw.equals(RawAsset.class))) { //Note used be jEveAssets
+			return true;
+		}
+		if (value.getName().equals("locationTypeEnum") && (raw.equals(RawAsset.class))) { //Note used be jEveAssets
+			return true;
+		}
+		if (value.getName().equals("isBlueprintCopy") && raw.equals(RawAsset.class)) { //Converted to quantity
+			return true;
+		}
+		if (value.getName().equals("itemId") && raw.equals(RawContractItem.class)) { //Only in public endpoint
+			return true;
+		}
+		if (value.getName().equals("runs") && raw.equals(RawContractItem.class)) { //Only in public endpoint
+			return true;
+		}
+		if (value.getName().equals("materialEfficiency") && raw.equals(RawContractItem.class)) { //Only in public endpoint
+			return true;
+		}
+		if (value.getName().equals("timeEfficiency") && raw.equals(RawContractItem.class)) { //Only in public endpoint
+			return true;
+		}
+		if (value.getName().equals("isBlueprintCopy") && raw.equals(RawContractItem.class)) { //Only in public endpoint
+			return true;
+		}
+		if (value.getName().equals("isSingleton") && raw.equals(RawContractItem.class)) { //Only in corp/char endpoints (not working, though)
+			return true;
+		}
+		if (value.getName().equals("rawQuantity") && raw.equals(RawContractItem.class)) { //Only in corp/char endpoints (not working, though)
+			return true;
+		}
+		if (value.getName().equals("accountKey") && (raw.equals(RawTransaction.class) || raw.equals(RawJournal.class))) {
+			return true;
+		}
+		if (value.getName().equals("isPersonal") && raw.equals(RawTransaction.class)) { //Only in character endpoint
+			return true;
+		}
+		if (value.getName().equals("stationId") && raw.equals(RawIndustryJob.class)) { //stationId in character endpoint / locationId in corporation endpoint
+			return true;
+		}
+		if (value.getName().equals("locationId") && raw.equals(RawIndustryJob.class)) { //stationId in character endpoint / locationId in corporation endpoint
+			return true;
+		}
+		if (value.getName().equals("accountId") && raw.equals(RawMarketOrder.class)) { //accountId in character endpoint / walletDivision in corporation endpoint
+			return true;
+		}
+		if (value.getName().equals("walletDivision") && raw.equals(RawMarketOrder.class)) { //accountId in character endpoint / walletDivision in corporation endpoint
+			return true;
+		}
+		if (value.getName().equals("issuedBy") && raw.equals(RawMarketOrder.class)) { //Only in corporation endpoint
+			return true;
+		}
+		if (value.getName().equals("state") && raw.equals(RawMarketOrder.class)) { //Only in history endpoints
+			return true;
+		}
+		if (value.getName().equals("stateEnum") && raw.equals(RawMarketOrder.class)) { //Only in history endpoints
+			return true;
+		}
+		if (value.getName().equals("isCorp") && raw.equals(RawMarketOrder.class)) { //Only in character endpoint
+			return true;
+		}
+		if (value.getName().equals("isCorporation") && raw.equals(RawMarketOrder.class)) { //Only in character endpoint
+			return true;
+		}
+		if (value.getName().equals("changes") && raw.equals(RawMarketOrder.class)) { //jEveAssets value
+			return true;
+		}
+		if (value.getName().equals("changed") && raw.equals(RawMarketOrder.class)) { //jEveAssets value
+			return true;
+		}
+		if (value.getName().equals("updateChanged") && raw.equals(RawMarketOrder.class)) { //jEveAssets value
+			return true;
+		}
+		if (value.getName().equals("systemId") && raw.equals(RawPublicMarketOrder.class)) { //Only in RawPublicMarketOrder
+			return true;
+		}
+		return false;
 	}
 
 	private static Set<String> getNames(Enum<?>[] ... values) {
