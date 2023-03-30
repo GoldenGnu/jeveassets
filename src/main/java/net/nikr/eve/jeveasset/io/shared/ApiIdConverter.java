@@ -294,7 +294,7 @@ public final class ApiIdConverter {
 	public static float getVolume(final Item item, final boolean packaged) {
 		if (item != null) {
 			if (packaged) {
-				return item.getPackagedVolume();
+				return item.getVolumePackaged();
 			} else {
 				return item.getVolume();
 			}

@@ -69,7 +69,7 @@ public class Item implements Comparable<Item>, ItemType {
 	private final String category;
 	private final long price;
 	private final float volume;
-	private final float packagedVolume;
+	private final float volumePackaged;
 	private final float capacity;
 	private final int meta;
 	private final String tech;
@@ -95,14 +95,14 @@ public class Item implements Comparable<Item>, ItemType {
 		this(typeID, emptyType(typeID), "", "", -1, -1, -1, -1, -1, "", false, 0, 0, 1, version);
 	}
 
-	public Item(final int typeID, final String name, final String group, final String category, final long price, final float volume, final float packagedVolume, final float capacity, final int meta, final String tech, final boolean marketGroup, final int portion, final int productTypeID, final int productQuantity, String version) {
+	public Item(final int typeID, final String name, final String group, final String category, final long price, final float volume, final float volumePackaged, final float capacity, final int meta, final String tech, final boolean marketGroup, final int portion, final int productTypeID, final int productQuantity, String version) {
 		this.typeID = typeID;
 		this.name = name;
 		this.group = group.intern();
 		this.category = category.intern();
 		this.price = price;
 		this.volume = volume;
-		this.packagedVolume = packagedVolume;
+		this.volumePackaged = volumePackaged;
 		this.capacity = capacity;
 		this.meta = meta;
 		this.tech = tech.intern();
@@ -199,8 +199,8 @@ public class Item implements Comparable<Item>, ItemType {
 		return volume;
 	}
 
-	public float getPackagedVolume() {
-		return packagedVolume;
+	public float getVolumePackaged() {
+		return volumePackaged;
 	}
 
 	public float getCapacity() {
