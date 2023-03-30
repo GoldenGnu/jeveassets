@@ -27,7 +27,7 @@ import javax.swing.JOptionPane;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.shared.components.JManageDialog;
-import net.nikr.eve.jeveasset.i18n.TabPriceHistory;
+import net.nikr.eve.jeveasset.i18n.TabsPriceHistory;
 
 
 public class JManageItemsDialog extends JManageDialog {
@@ -35,7 +35,7 @@ public class JManageItemsDialog extends JManageDialog {
 	private final PriceHistoryTab priceHistoryTab;
 
 	public JManageItemsDialog(Program program, PriceHistoryTab priceHistoryTab) {
-		super(program, program.getMainWindow().getFrame(), TabPriceHistory.get().manageTitle(), true, false);
+		super(program, program.getMainWindow().getFrame(), TabsPriceHistory.get().manageTitle(), true, false);
 		this.priceHistoryTab = priceHistoryTab;
 	}
 
@@ -51,7 +51,7 @@ public class JManageItemsDialog extends JManageDialog {
 		for (String s : list) {
 			typeIDs.addAll(Settings.get().getPriceHistorySets().get(s));
 			if (typeIDs.size() > priceHistoryTab.MAXIMUM_SHOWN) {
-				JOptionPane.showMessageDialog(parent, TabPriceHistory.get().mergeMax(priceHistoryTab.MAXIMUM_SHOWN), TabPriceHistory.get().merge(), JOptionPane.PLAIN_MESSAGE);
+				JOptionPane.showMessageDialog(parent, TabsPriceHistory.get().mergeMax(priceHistoryTab.MAXIMUM_SHOWN), TabsPriceHistory.get().merge(), JOptionPane.PLAIN_MESSAGE);
 				return;
 			}
 		}
@@ -107,12 +107,12 @@ public class JManageItemsDialog extends JManageDialog {
 		update(Settings.get().getPriceHistorySets().keySet());
 	}
 
-	@Override protected String textDeleteMultipleMsg(int size) { return TabPriceHistory.get().deleteHistorySets(size); }
-	@Override protected String textDelete() { return TabPriceHistory.get().deleteHistorySet(); }
-	@Override protected String textEnterName() { return TabPriceHistory.get().enterName(); }
-	@Override protected String textNoName() { return TabPriceHistory.get().empty(); }
-	@Override protected String textMerge() { return TabPriceHistory.get().merge(); }
-	@Override protected String textRename() { return TabPriceHistory.get().rename(); }
-	@Override protected String textOverwrite() { return TabPriceHistory.get().overwrite(); }
+	@Override protected String textDeleteMultipleMsg(int size) { return TabsPriceHistory.get().deleteHistorySets(size); }
+	@Override protected String textDelete() { return TabsPriceHistory.get().deleteHistorySet(); }
+	@Override protected String textEnterName() { return TabsPriceHistory.get().enterName(); }
+	@Override protected String textNoName() { return TabsPriceHistory.get().empty(); }
+	@Override protected String textMerge() { return TabsPriceHistory.get().merge(); }
+	@Override protected String textRename() { return TabsPriceHistory.get().rename(); }
+	@Override protected String textOverwrite() { return TabsPriceHistory.get().overwrite(); }
 
 }

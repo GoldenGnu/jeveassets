@@ -48,7 +48,7 @@ import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo.AutoNumberFormat;
 import net.nikr.eve.jeveasset.i18n.DialoguesStructure;
 import net.nikr.eve.jeveasset.i18n.GuiFrame;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
-import net.nikr.eve.jeveasset.i18n.TabPriceHistory;
+import net.nikr.eve.jeveasset.i18n.TabsPriceHistory;
 import net.nikr.eve.jeveasset.i18n.TabsOrders;
 
 
@@ -261,7 +261,7 @@ public class StatusPanel extends JGroupLayoutPanel {
 					text = TabsOrders.get().updateTitle();
 					break;
 				case PRICE_HISTORY:
-					text = TabPriceHistory.get().updateTitle();
+					text = TabsPriceHistory.get().updateTitle();
 					break;
 				default:
 					text = "";

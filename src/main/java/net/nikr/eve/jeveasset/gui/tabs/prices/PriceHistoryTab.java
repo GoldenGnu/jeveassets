@@ -96,7 +96,7 @@ import net.nikr.eve.jeveasset.gui.shared.components.JMainTabSecondary;
 import net.nikr.eve.jeveasset.gui.shared.components.JMultiSelectionList;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.QuickDate;
-import net.nikr.eve.jeveasset.i18n.TabPriceHistory;
+import net.nikr.eve.jeveasset.i18n.TabsPriceHistory;
 import net.nikr.eve.jeveasset.io.online.ZkillboardPricesHistoryGetter;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import org.jfree.chart.ChartPanel;
@@ -136,13 +136,13 @@ public class PriceHistoryTab extends JMainTabSecondary {
 		ZKILLBOARD() {
 			@Override
 			String getText() {
-				return TabPriceHistory.get().sourcezKillboard();
+				return TabsPriceHistory.get().sourcezKillboard();
 			}
 		},
 		JEVEASSETS() {
 			@Override
 			String getText() {
-				return TabPriceHistory.get().sourcejEveAssets();
+				return TabsPriceHistory.get().sourcejEveAssets();
 			}
 		};
 
@@ -214,7 +214,7 @@ public class PriceHistoryTab extends JMainTabSecondary {
 
 
 	public PriceHistoryTab(Program program) {
-		super(program, NAME, TabPriceHistory.get().title(), Images.TOOL_PRICE_HISTORY.getIcon(), true);
+		super(program, NAME, TabsPriceHistory.get().title(), Images.TOOL_PRICE_HISTORY.getIcon(), true);
 
 		jLockWindow = new JLockWindow(program.getMainWindow().getFrame());
 
@@ -234,21 +234,21 @@ public class PriceHistoryTab extends JMainTabSecondary {
 		jQuickDate.setActionCommand(PriceHistoryAction.QUICK_DATE.name());
 		jQuickDate.addActionListener(listener);
 
-		JLabel jFromLabel = new JLabel(TabPriceHistory.get().from());
+		JLabel jFromLabel = new JLabel(TabsPriceHistory.get().from());
 		jFrom = new JDateChooser(true);
 		if (fromDate != null) {
 			jFrom.setDate(dateToLocalDate(fromDate));
 		}
 		jFrom.addDateChangeListener(listener);
 
-		JLabel jToLabel = new JLabel(TabPriceHistory.get().to());
+		JLabel jToLabel = new JLabel(TabsPriceHistory.get().to());
 		jTo = new JDateChooser(true);
 		if (toDate != null) {
 			jTo.setDate(dateToLocalDate(toDate));
 		}
 		jTo.addDateChangeListener(listener);
 
-		jAddItemDialog = new JAutoCompleteDialog<Item>(program, TabPriceHistory.get().addTitle(), Images.TOOL_PRICE_HISTORY.getImage(), null, true) {
+		jAddItemDialog = new JAutoCompleteDialog<Item>(program, TabsPriceHistory.get().addTitle(), Images.TOOL_PRICE_HISTORY.getImage(), null, true) {
 			@Override
 			protected Comparator<Item> getComparator() {
 				return GlazedLists.comparableComparator();
@@ -274,7 +274,7 @@ public class PriceHistoryTab extends JMainTabSecondary {
 		};
 		jAddItemDialog.updateData(StaticData.get().getItems().values());
 
-		jSaveItemsDialog = new JAutoCompleteDialog<String>(program, TabPriceHistory.get().saveTitle(), Images.TOOL_PRICE_HISTORY.getImage(), null, false) {
+		jSaveItemsDialog = new JAutoCompleteDialog<String>(program, TabsPriceHistory.get().saveTitle(), Images.TOOL_PRICE_HISTORY.getImage(), null, false) {
 			@Override
 			protected Comparator<String> getComparator() {
 				return GlazedLists.comparableComparator();
@@ -301,7 +301,7 @@ public class PriceHistoryTab extends JMainTabSecondary {
 
 		jSettings.addSeparator();
 
-		jIncludeZero = new JCheckBoxMenuItem(TabPriceHistory.get().includeZero());
+		jIncludeZero = new JCheckBoxMenuItem(TabsPriceHistory.get().includeZero());
 		jIncludeZero.setSelected(true);
 		jIncludeZero.setActionCommand(PriceHistoryAction.INCLUDE_ZERO.name());
 		jIncludeZero.addActionListener(listener);
@@ -311,14 +311,14 @@ public class PriceHistoryTab extends JMainTabSecondary {
 
 		ButtonGroup buttonGroup = new ButtonGroup();
 
-		JRadioButtonMenuItem jLinear = new JRadioButtonMenuItem(TabPriceHistory.get().scaleLinear());
+		JRadioButtonMenuItem jLinear = new JRadioButtonMenuItem(TabsPriceHistory.get().scaleLinear());
 		jLinear.setSelected(true);
 		jLinear.setActionCommand(PriceHistoryAction.LOGARITHMIC.name());
 		jLinear.addActionListener(listener);
 		jSettings.add(jLinear);
 		buttonGroup.add(jLinear);
 
-		jLogarithmic = new JRadioButtonMenuItem(TabPriceHistory.get().scaleLogarithmic());
+		jLogarithmic = new JRadioButtonMenuItem(TabsPriceHistory.get().scaleLogarithmic());
 		jLogarithmic.setSelected(false);
 		jLogarithmic.setActionCommand(PriceHistoryAction.LOGARITHMIC.name());
 		jLogarithmic.addActionListener(listener);
@@ -326,34 +326,34 @@ public class PriceHistoryTab extends JMainTabSecondary {
 		buttonGroup.add(jLogarithmic);
 
 		jEdit = new JDropDownButton(Images.EDIT_EDIT.getIcon());
-		jEdit.setToolTipText(TabPriceHistory.get().edit());
+		jEdit.setToolTipText(TabsPriceHistory.get().edit());
 
-		JMenuItem jAdd = new JMenuItem(TabPriceHistory.get().add(), Images.EDIT_ADD.getIcon());
+		JMenuItem jAdd = new JMenuItem(TabsPriceHistory.get().add(), Images.EDIT_ADD.getIcon());
 		jAdd.setActionCommand(PriceHistoryAction.ADD_ITEM.name());
 		jAdd.addActionListener(listener);
 		jEdit.add(jAdd);
 
-		jRemove = new JMenuItem(TabPriceHistory.get().remove(), Images.EDIT_DELETE.getIcon());
+		jRemove = new JMenuItem(TabsPriceHistory.get().remove(), Images.EDIT_DELETE.getIcon());
 		jRemove.setActionCommand(PriceHistoryAction.REMOVE_ITEMS.name());
 		jRemove.addActionListener(listener);
 		jRemove.setEnabled(false);
 		jEdit.add(jRemove);
 
-		jClear = new JMenuItem(TabPriceHistory.get().clear(), Images.MISC_EXIT.getIcon());
+		jClear = new JMenuItem(TabsPriceHistory.get().clear(), Images.MISC_EXIT.getIcon());
 		jClear.setActionCommand(PriceHistoryAction.CLEAR_ITEMS.name());
 		jClear.addActionListener(listener);
 		jClear.setEnabled(false);
 		jEdit.add(jClear);
 
 		jSave = new JButton(Images.FILTER_SAVE.getIcon());
-		jSave.setToolTipText(TabPriceHistory.get().save());
+		jSave.setToolTipText(TabsPriceHistory.get().save());
 		jSave.setActionCommand(PriceHistoryAction.SAVE.name());
 		jSave.setEnabled(false);
 		jSave.addActionListener(listener);
 
 		jLoad = new JDropDownButton(Images.FILTER_LOAD.getIcon());
 
-		jManage = new JMenuItem(TabPriceHistory.get().manage(), Images.DIALOG_SETTINGS.getIcon());
+		jManage = new JMenuItem(TabsPriceHistory.get().manage(), Images.DIALOG_SETTINGS.getIcon());
 		jManage.setActionCommand(PriceHistoryAction.MANAGE.name());
 		jManage.addActionListener(listener);
 
@@ -393,7 +393,7 @@ public class PriceHistoryTab extends JMainTabSecondary {
 			public String generateToolTip(XYDataset dataset, int series, int item)	{
 				Date date = new Date(dataset.getX(series, item).longValue());
 				Number isk = dataset.getY(series, item);
-				return TabPriceHistory.get().graphToolTip(dataset.getSeriesKey(series), iskFormat.format(isk), dateFormat.format(date));
+				return TabsPriceHistory.get().graphToolTip(dataset.getSeriesKey(series), iskFormat.format(isk), dateFormat.format(date));
 			}
 		});
 
@@ -579,11 +579,11 @@ public class PriceHistoryTab extends JMainTabSecondary {
 
 	private boolean invalid(Collection<Integer> typeIDs) {
 		if (typeIDs.size() > MAXIMUM_SHOWN) {
-			JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabPriceHistory.get().maxItemsMsg(MAXIMUM_SHOWN), TabPriceHistory.get().title(), JOptionPane.PLAIN_MESSAGE);
+			JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsPriceHistory.get().maxItemsMsg(MAXIMUM_SHOWN), TabsPriceHistory.get().title(), JOptionPane.PLAIN_MESSAGE);
 			return true;
 		}
 		if (program.getStatusPanel().updateing(UpdateType.PRICE_HISTORY)) {
-			JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabPriceHistory.get().updatingMsg(), TabPriceHistory.get().updatingTitle(), JOptionPane.PLAIN_MESSAGE, Images.LINK_ZKILLBOARD_32.getIcon());
+			JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsPriceHistory.get().updatingMsg(), TabsPriceHistory.get().updatingTitle(), JOptionPane.PLAIN_MESSAGE, Images.LINK_ZKILLBOARD_32.getIcon());
 			return true;
 		}
 		return false;
@@ -605,7 +605,7 @@ public class PriceHistoryTab extends JMainTabSecondary {
 
 	private void showItems(Set<Integer> typeIDs) {
 		if (program.getStatusPanel().updateing(UpdateType.PRICE_HISTORY)) {
-			JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabPriceHistory.get().updatingMsg(), TabPriceHistory.get().updatingTitle(), JOptionPane.PLAIN_MESSAGE, Images.LINK_ZKILLBOARD_32.getIcon());
+			JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsPriceHistory.get().updatingMsg(), TabsPriceHistory.get().updatingTitle(), JOptionPane.PLAIN_MESSAGE, Images.LINK_ZKILLBOARD_32.getIcon());
 			return;
 		}
 		switch(getPriceHistorySource()) {
