@@ -90,6 +90,7 @@ import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJobsTab;
 import net.nikr.eve.jeveasset.gui.tabs.journal.JournalTab;
 import net.nikr.eve.jeveasset.gui.tabs.loadout.LoadoutsTab;
 import net.nikr.eve.jeveasset.gui.tabs.materials.MaterialsTab;
+import net.nikr.eve.jeveasset.gui.tabs.mining.MiningGraphTab;
 import net.nikr.eve.jeveasset.gui.tabs.mining.MiningTab;
 import net.nikr.eve.jeveasset.gui.tabs.orders.MarketOrdersTab;
 import net.nikr.eve.jeveasset.gui.tabs.orders.OutbidProcesser.OutbidProcesserOutput;
@@ -163,6 +164,7 @@ public class Program implements ActionListener {
 	private TreeTab treeTab;
 	private SkillsTab skillsTab;
 	private MiningTab miningTab;
+	private MiningGraphTab miningGraphTab;
 	private StructureUpdateDialog structureUpdateDialog;
 
 	//Misc
@@ -276,8 +278,11 @@ public class Program implements ActionListener {
 		LOG.info("Loading: Skills Tab");
 		skillsTab = new SkillsTab(this);
 		SplashUpdater.setProgress(83);
-		LOG.info("Loading: Skills Tab");
+		LOG.info("Loading: Mining Log Tab");
 		miningTab = new MiningTab(this);
+		SplashUpdater.setProgress(84);
+		LOG.info("Loading: Mining Graph Tab");
+		miningGraphTab = new MiningGraphTab(this);
 		SplashUpdater.setProgress(84);
 	//Dialogs
 		LOG.info("Loading: Account Manager Dialog");
@@ -1072,8 +1077,13 @@ public class Program implements ActionListener {
 			mainWindow.addTab(treeTab);
 		} else if (MainMenuAction.SKILLS.name().equals(e.getActionCommand())) {
 			mainWindow.addTab(skillsTab);
-		} else if (MainMenuAction.MINING.name().equals(e.getActionCommand())) {
+		} else if (MainMenuAction.MINING_ALL.name().equals(e.getActionCommand())) {
 			mainWindow.addTab(miningTab);
+			mainWindow.addTab(miningGraphTab);
+		} else if (MainMenuAction.MINING_LOG.name().equals(e.getActionCommand())) {
+			mainWindow.addTab(miningTab);
+		} else if (MainMenuAction.MINING_GRAPH.name().equals(e.getActionCommand())) {
+			mainWindow.addTab(miningGraphTab);
 		} else if (MainMenuAction.ACCOUNT_MANAGER.name().equals(e.getActionCommand())) { //Settings
 			accountManagerDialog.setVisible(true);
 		} else if (MainMenuAction.PROFILES.name().equals(e.getActionCommand())) {

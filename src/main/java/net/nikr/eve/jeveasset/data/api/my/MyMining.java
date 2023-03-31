@@ -27,12 +27,12 @@ import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.settings.types.EditableLocationType;
 import net.nikr.eve.jeveasset.data.settings.types.EditablePriceType;
 import net.nikr.eve.jeveasset.data.settings.types.ItemType;
-import net.nikr.eve.jeveasset.gui.shared.Formatter;
+import net.nikr.eve.jeveasset.gui.shared.table.containers.DateOnly;
 
 
 public class MyMining extends RawMining implements Comparable<MyMining>, ItemType, EditablePriceType, EditableLocationType {
 
-	private final String dateFormatted;
+	private final DateOnly dateOnly;
 	private final Item item;
 	private MyLocation location;
 	private double price;
@@ -42,7 +42,7 @@ public class MyMining extends RawMining implements Comparable<MyMining>, ItemTyp
 
 	public MyMining(RawMining mining, Item item, MyLocation location) {
 		super(mining);
-		this.dateFormatted = Formatter.columnDateOnly(getDate());
+		this.dateOnly = new DateOnly(getDate());
 		this.item = item;
 		this.location = location;
 	}
@@ -51,8 +51,8 @@ public class MyMining extends RawMining implements Comparable<MyMining>, ItemTyp
 		return price * getQuantity();
 	}
 
-	public String getDateFormatted() {
-		return dateFormatted;
+	public DateOnly getDateOnly() {
+		return dateOnly;
 	}
 
 	public double getReproccesedPrice() {
@@ -77,6 +77,38 @@ public class MyMining extends RawMining implements Comparable<MyMining>, ItemTyp
 
 	public double getMaxMineralsValue() {
 		return reproccesedPriceMax * getQuantity();
+	}
+
+	private float getVolume() {
+		return item.getVolumePackaged();
+	}
+
+	public float getVolumeTotal() {
+		return item.getVolumePackaged() * getQuantity();
+	}
+
+	public double getValuePerVolumeOre() {
+		if (getVolume() > 0 && getDynamicPrice() > 0) {
+			return getDynamicPrice() / getVolume();
+		} else {
+			return 0;
+		}
+	}
+
+	public double getValuePerVolumeMineralsSkills() {
+		if (getVolume() > 0 && getReproccesedPrice()> 0) {
+			return getReproccesedPrice() / getVolume();
+		} else {
+			return 0;
+		}
+	}
+
+	public double getValuePerVolumeMineralsMax() {
+		if (getVolume() > 0 && getReproccesedPriceMax()> 0) {
+			return getReproccesedPriceMax() / getVolume();
+		} else {
+			return 0;
+		}
 	}
 
 	@Override
@@ -116,7 +148,7 @@ public class MyMining extends RawMining implements Comparable<MyMining>, ItemTyp
 
 	@Override
 	public int compareTo(MyMining o) {
-		return this.getDate().compareTo(o.getDate());
+		return o.getDate().compareTo(this.getDate());
 	}
 
 	@Override
