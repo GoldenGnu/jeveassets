@@ -97,7 +97,7 @@ public class EsiOwner extends AbstractOwner implements OwnerType {
 	}
 
 	public final void setScopes(Set<String> scopes) {
-		this.scopes = scopes;
+		this.scopes = new HashSet<>(scopes);
 	}
 
 	public synchronized Date getStructuresNextUpdate() {
@@ -350,6 +350,7 @@ public class EsiOwner extends AbstractOwner implements OwnerType {
 	public final void updateAuth(EsiOwner esiOwner) {
 		OAuth oAuth = esiOwner.getOAuth();
 		setAuth(esiOwner.getCallbackURL(), oAuth.getRefreshToken(), oAuth.getAccessToken());
+		setScopes(esiOwner.getScopes()); //Is bound to the access token, so should be updated here
 		setInvalid(false);
 	}
 
