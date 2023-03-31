@@ -71,7 +71,9 @@ public class MainMenu extends JMenuBar {
 		CONTRACTS,
 		SLOTS,
 		SKILLS,
-		MINING,
+		MINING_ALL,
+		MINING_LOG,
+		MINING_GRAPH,
 		EXIT_PROGRAM
 	}
 
@@ -162,9 +164,27 @@ public class MainMenu extends JMenuBar {
 		menuItem.addActionListener(program);
 		submenu.add(menuItem);
 
-		menuItem = new JMenuItem(GuiFrame.get().mining());
+		submenu = new JMenu(GuiFrame.get().mining());
+		submenu.setIcon(Images.TOOL_MINING.getIcon());
+		menu.add(submenu);
+
+		menuItem = new JMenuItem(GuiFrame.get().miningAll());
 		menuItem.setIcon(Images.TOOL_MINING.getIcon());
-		menuItem.setActionCommand(MainMenuAction.MINING.name());
+		menuItem.setActionCommand(MainMenuAction.MINING_ALL.name());
+		menuItem.addActionListener(program);
+		submenu.add(menuItem);
+
+		submenu.addSeparator();
+
+		menuItem = new JMenuItem(GuiFrame.get().miningLog());
+		menuItem.setIcon(Images.TOOL_MINING_LOG.getIcon());
+		menuItem.setActionCommand(MainMenuAction.MINING_LOG.name());
+		menuItem.addActionListener(program);
+		submenu.add(menuItem);
+
+		menuItem = new JMenuItem(GuiFrame.get().miningGraph());
+		menuItem.setIcon(Images.TOOL_MINING_GRAPH.getIcon());
+		menuItem.setActionCommand(MainMenuAction.MINING_GRAPH.name());
 		menuItem.addActionListener(program);
 		submenu.add(menuItem);
 	//Business

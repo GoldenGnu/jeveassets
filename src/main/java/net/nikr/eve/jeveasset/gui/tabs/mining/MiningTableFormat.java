@@ -26,18 +26,19 @@ import java.util.Comparator;
 import net.nikr.eve.jeveasset.data.api.my.MyMining;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
+import net.nikr.eve.jeveasset.gui.shared.table.containers.DateOnly;
 import net.nikr.eve.jeveasset.i18n.TabsMining;
 
 
 public enum MiningTableFormat implements EnumTableColumn<MyMining> {
-	DATE(String.class, GlazedLists.comparableComparator()) {
+	DATE(DateOnly.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
-			return TabsMining.get().columnName();
+			return TabsMining.get().columnDate();
 		}
 		@Override
 		public Object getColumnValue(final MyMining from) {
-			return from.getDateFormatted();
+			return from.getDateOnly();
 		}
 	},
 	NAME(String.class, GlazedLists.comparableComparator()) {
@@ -100,80 +101,129 @@ public enum MiningTableFormat implements EnumTableColumn<MyMining> {
 			return from.getQuantity();
 		}
 	},
-	ORE_PRICE(Double.class, GlazedLists.comparableComparator()) {
+	PRICE_ORE(Double.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
-			return TabsMining.get().columnOrePrice();
+			return TabsMining.get().columnPriceOre();
 		}
 		@Override
 		public Object getColumnValue(final MyMining from) {
 			return from.getDynamicPrice();
 		}
 	},
-	ORE_VALUE(Double.class, GlazedLists.comparableComparator()) {
+	PRICE_MINERALS_SKILLS(Double.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
-			return TabsMining.get().columnOreValue();
-		}
-		@Override
-		public Object getColumnValue(final MyMining from) {
-			return from.getOreValue();
-		}
-	},
-	SKILLS_MINERALS_PRICE(Double.class, GlazedLists.comparableComparator()) {
-		@Override
-		public String getColumnName() {
-			return TabsMining.get().columnSkillMineralsPrice();
+			return TabsMining.get().columnPriceMineralsSkill();
 		}
 		@Override
 		public String getColumnToolTip() {
-			return TabsMining.get().columnSkillMineralsPriceToolTip();
+			return TabsMining.get().columnPriceMineralsSkillToolTip();
 		}
 		@Override
 		public Object getColumnValue(final MyMining from) {
 			return from.getReproccesedPrice();
 		}
 	},
-	SKILLS_MINERALS_VALUE(Double.class, GlazedLists.comparableComparator()) {
+	PRICE_MINERALS_MAX(Double.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
-			return TabsMining.get().columnSkillsMineralsValue();
+			return TabsMining.get().columnPriceMineralsMax();
 		}
 		@Override
 		public String getColumnToolTip() {
-			return TabsMining.get().columnSkillsMineralsValueToolTip();
-		}
-		@Override
-		public Object getColumnValue(final MyMining from) {
-			return from.getSkillsMineralsValue();
-		}
-	},
-	MAX_MINERALS_PRICE(Double.class, GlazedLists.comparableComparator()) {
-		@Override
-		public String getColumnName() {
-			return TabsMining.get().columnMaxMineralsPrice();
-		}
-		@Override
-		public String getColumnToolTip() {
-			return TabsMining.get().columnMaxMineralsPriceToolTip();
+			return TabsMining.get().columnPriceMineralsMaxToolTip();
 		}
 		@Override
 		public Object getColumnValue(final MyMining from) {
 			return from.getReproccesedPriceMax();
 		}
 	},
-	MAX_MINERALS_VALUE(Double.class, GlazedLists.comparableComparator()) {
+	VALUE_ORE(Double.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
-			return TabsMining.get().columnMaxMineralsValue();
+			return TabsMining.get().columnValueOre();
+		}
+		@Override
+		public Object getColumnValue(final MyMining from) {
+			return from.getOreValue();
+		}
+	},
+	VALUE_MINERALS_SKILLS(Double.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsMining.get().columnValueMineralsSkills();
 		}
 		@Override
 		public String getColumnToolTip() {
-			return TabsMining.get().columnMaxMineralsValueToolTip();
+			return TabsMining.get().columnValueMineralsSkillsToolTip();
+		}
+		@Override
+		public Object getColumnValue(final MyMining from) {
+			return from.getSkillsMineralsValue();
+		}
+	},
+
+	VALUE_MINERALS_MAX(Double.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsMining.get().columnValueMineralsMax();
+		}
+		@Override
+		public String getColumnToolTip() {
+			return TabsMining.get().columnValueMineralsMaxToolTip();
 		}
 		@Override
 		public Object getColumnValue(final MyMining from) {
 			return from.getMaxMineralsValue();
+		}
+	},
+	VOLUME(Double.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsMining.get().columnVolume();
+		}
+		@Override
+		public Object getColumnValue(final MyMining from) {
+			return from.getVolumeTotal();
+		}
+	},
+	VALUE_PER_VOLUME_ORE(Double.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsMining.get().columnValuePerVolumeOre();
+		}
+		@Override
+		public Object getColumnValue(final MyMining from) {
+			return from.getValuePerVolumeOre();
+		}
+	},
+	VALUE_PER_VOLUME_MINERALS_SKILLS(Double.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsMining.get().columnValuePerVolumeMineralsSkills();
+		}
+		@Override
+		public String getColumnToolTip() {
+			return TabsMining.get().columnValuePerVolumeMineralsSkillsToolTip();
+		}
+		@Override
+		public Object getColumnValue(final MyMining from) {
+			return from.getValuePerVolumeMineralsSkills();
+		}
+	},
+	VALUE_PER_VOLUME_MINERALS_MAX(Double.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsMining.get().columnValuePerVolumeMineralsMax();
+		}
+		@Override
+		public String getColumnToolTip() {
+			return TabsMining.get().columnValuePerVolumeMineralsMaxToolTip();
+		}
+		@Override
+		public Object getColumnValue(final MyMining from) {
+			return from.getValuePerVolumeMineralsMax();
 		}
 	},
 	CORPORATION(String.class, GlazedLists.comparableComparator()) {

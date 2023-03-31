@@ -128,6 +128,23 @@ public class TableCellRenderers {
 		}
 	}
 
+	public static class DateOnlyCellRenderer extends DefaultTableCellRenderer {
+		public DateOnlyCellRenderer() {
+			this.setHorizontalTextPosition(DefaultTableCellRenderer.RIGHT);
+			this.setHorizontalAlignment(DefaultTableCellRenderer.RIGHT);
+		}
+		@Override
+		public void setValue(final Object value) {
+			if (value == null) {
+				setText("");
+			} else if (value instanceof Date) {
+				setText(Formatter.columnDateOnly(value));
+			} else {
+				setText(value.toString());
+			}
+		}
+	}
+
 	public static class ToStringCellRenderer extends DefaultTableCellRenderer {
 
 		public ToStringCellRenderer() {	this(SwingConstants.RIGHT); }
