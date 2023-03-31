@@ -64,6 +64,7 @@ import net.troja.eve.esi.model.CharacterContractsItemsResponse;
 import net.troja.eve.esi.model.CharacterContractsResponse;
 import net.troja.eve.esi.model.CharacterIndustryJobsResponse;
 import net.troja.eve.esi.model.CharacterLocationResponse;
+import net.troja.eve.esi.model.CharacterMiningResponse;
 import net.troja.eve.esi.model.CharacterOrdersHistoryResponse;
 import net.troja.eve.esi.model.CharacterOrdersResponse;
 import net.troja.eve.esi.model.CharacterPlanetResponse;
@@ -82,6 +83,9 @@ import net.troja.eve.esi.model.CorporationContractsItemsResponse;
 import net.troja.eve.esi.model.CorporationContractsResponse;
 import net.troja.eve.esi.model.CorporationDivisionsResponse;
 import net.troja.eve.esi.model.CorporationIndustryJobsResponse;
+import net.troja.eve.esi.model.CorporationMiningExtractionsResponse;
+import net.troja.eve.esi.model.CorporationMiningObserverResponse;
+import net.troja.eve.esi.model.CorporationMiningObserversResponse;
 import net.troja.eve.esi.model.CorporationOrdersHistoryResponse;
 import net.troja.eve.esi.model.CorporationOrdersResponse;
 import net.troja.eve.esi.model.CorporationResponse;
@@ -480,6 +484,46 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 	public void esiMarketOrdersHistoryGetterCorporation() {
 		try {
 			ApiResponse<List<CorporationOrdersHistoryResponse>> apiResponse = MARKET_API.getCorporationsCorporationIdOrdersHistoryWithHttpInfo(1, DATASOURCE, null, null, null);
+			validate(apiResponse.getHeaders());
+		} catch (ApiException ex) {
+			validate(ex.getResponseHeaders());
+		}
+	}
+
+	@Test
+	public void esiMiningGetterCharacter() {
+		try {
+			ApiResponse<List<CharacterMiningResponse>> apiResponse = INDUSTRY_API.getCharactersCharacterIdMiningWithHttpInfo(1, DATASOURCE, null, null, null);
+			validate(apiResponse.getHeaders());
+		} catch (ApiException ex) {
+			validate(ex.getResponseHeaders());
+		}
+	}
+
+	@Test
+	public void esiMiningGetterCorporationExtractions() {
+		try {
+			ApiResponse<List<CorporationMiningExtractionsResponse>> apiResponse = INDUSTRY_API.getCorporationCorporationIdMiningExtractionsWithHttpInfo(1, DATASOURCE, null, null, null);
+			validate(apiResponse.getHeaders());
+		} catch (ApiException ex) {
+			validate(ex.getResponseHeaders());
+		}
+	}
+
+	@Test
+	public void esiMiningGetterCorporationObservers() {
+		try {
+			ApiResponse<List<CorporationMiningObserversResponse>> apiResponse = INDUSTRY_API.getCorporationCorporationIdMiningObserversWithHttpInfo(1, DATASOURCE, null, null, null);
+			validate(apiResponse.getHeaders());
+		} catch (ApiException ex) {
+			validate(ex.getResponseHeaders());
+		}
+	}
+
+	@Test
+	public void esiMiningGetterCorporationObserver() {
+		try {
+			ApiResponse<List<CorporationMiningObserverResponse>> apiResponse = INDUSTRY_API.getCorporationCorporationIdMiningObserversObserverIdWithHttpInfo(1, 1L, DATASOURCE, null, null, null);
 			validate(apiResponse.getHeaders());
 		} catch (ApiException ex) {
 			validate(ex.getResponseHeaders());

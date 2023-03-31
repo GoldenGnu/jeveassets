@@ -241,6 +241,7 @@ public enum Images {
 	TOOL_TREE ("tool_tree.png"),
 	TOOL_PRICE_HISTORY ("tool_price_history.png"),
 	TOOL_SKILLS ("tool_skills.png"),
+	TOOL_MINING ("tool_mining.png"),
 
 	UPDATE_NOT_STARTED ("update_not_started.png"),
 	UPDATE_WORKING ("update_working.png"),

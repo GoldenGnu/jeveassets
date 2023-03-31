@@ -34,6 +34,7 @@ import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
 import net.nikr.eve.jeveasset.data.api.my.MyJournal;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
+import net.nikr.eve.jeveasset.data.api.my.MyMining;
 import net.nikr.eve.jeveasset.data.api.my.MyShip;
 import net.nikr.eve.jeveasset.data.api.my.MySkill;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
@@ -54,6 +55,7 @@ public abstract class AbstractOwner implements OwnerType, Comparable<OwnerType> 
 	private Map<Integer, String> walletDivisions = new HashMap<>();
 	private Map<Integer, String> assetDivisions = new HashMap<>();
 	private List<MySkill> skills = new ArrayList<>();
+	private List<MyMining> mining = new ArrayList<>();
 	private Long totalSkillPoints = null;
 	private Integer unallocatedSkillPoints = null;
 
@@ -77,6 +79,7 @@ public abstract class AbstractOwner implements OwnerType, Comparable<OwnerType> 
 	private Date blueprintsNextUpdate = Settings.getNow();
 	private Date bookmarksNextUpdate = Settings.getNow();
 	private Date skillsNextUpdate = Settings.getNow();
+	private Date miningNextUpdate = Settings.getNow();
 
 	public AbstractOwner() { }
 
@@ -331,6 +334,11 @@ public abstract class AbstractOwner implements OwnerType, Comparable<OwnerType> 
 	}
 
 	@Override
+	public Date getMiningNextUpdate() {
+		return miningNextUpdate;
+	}
+
+	@Override
 	public final Set<MyTransaction> getTransactions() {
 		return transactions;
 	}
@@ -371,6 +379,11 @@ public abstract class AbstractOwner implements OwnerType, Comparable<OwnerType> 
 	@Override
 	public List<MySkill> getSkills() {
 		return skills;
+	}
+
+	@Override
+	public List<MyMining> getMining() {
+		return mining;
 	}
 
 	@Override
@@ -419,6 +432,11 @@ public abstract class AbstractOwner implements OwnerType, Comparable<OwnerType> 
 	}
 
 	@Override
+	public void setMiningNextUpdate(Date miningNextUpdate) {
+		this.miningNextUpdate = miningNextUpdate;
+	}
+
+	@Override
 	public final void setContracts(final Map<MyContract, List<MyContractItem>> contracts) {
 		this.contracts = contracts;
 	}
@@ -456,6 +474,11 @@ public abstract class AbstractOwner implements OwnerType, Comparable<OwnerType> 
 	@Override
 	public void setSkills(List<MySkill> skills) {
 		this.skills = skills;
+	}
+
+	@Override
+	public void setMining(List<MyMining> mining) {
+		this.mining = mining;
 	}
 
 	@Override

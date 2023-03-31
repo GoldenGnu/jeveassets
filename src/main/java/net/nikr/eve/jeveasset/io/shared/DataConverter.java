@@ -35,6 +35,7 @@ import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
 import net.nikr.eve.jeveasset.data.api.my.MyJournal;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
+import net.nikr.eve.jeveasset.data.api.my.MyMining;
 import net.nikr.eve.jeveasset.data.api.my.MySkill;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.api.raw.RawAccountBalance;
@@ -45,9 +46,11 @@ import net.nikr.eve.jeveasset.data.api.raw.RawIndustryJob;
 import net.nikr.eve.jeveasset.data.api.raw.RawJournal;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder.Change;
+import net.nikr.eve.jeveasset.data.api.raw.RawMining;
 import net.nikr.eve.jeveasset.data.api.raw.RawSkill;
 import net.nikr.eve.jeveasset.data.api.raw.RawTransaction;
 import net.nikr.eve.jeveasset.data.sde.Item;
+import net.nikr.eve.jeveasset.data.sde.MyLocation;
 
 public abstract class DataConverter {
 
@@ -314,9 +317,26 @@ public abstract class DataConverter {
 		}
 		return mySkills;
 	}
-	
+
 	public static MySkill toMySkill(RawSkill rawSkill, OwnerType owner) {
 		Item item = ApiIdConverter.getItemUpdate(rawSkill.getTypeID());
 		return new MySkill(rawSkill, item, owner.getOwnerName());
+	}
+
+	public static List<MyMining> converRawMining(List<RawMining> rawMinings, OwnerType owner, boolean saveHistory) {
+		List<MyMining> myMinings = new ArrayList<>();
+		for (RawMining rawMining : rawMinings) {
+			myMinings.add(toMyMining(rawMining));
+		}
+		if (saveHistory) {
+			myMinings.addAll(owner.getMining());
+		}
+		return myMinings;
+	}
+
+	public static MyMining toMyMining(RawMining rawMining) {
+		Item item = ApiIdConverter.getItemUpdate(rawMining.getTypeID());
+		MyLocation location = ApiIdConverter.getLocation(rawMining.getLocationID());
+		return new MyMining(rawMining, item, location);
 	}
 }

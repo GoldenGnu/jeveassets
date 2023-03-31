@@ -31,6 +31,7 @@ import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
 import net.nikr.eve.jeveasset.data.api.my.MyJournal;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
+import net.nikr.eve.jeveasset.data.api.my.MyMining;
 import net.nikr.eve.jeveasset.data.api.my.MyShip;
 import net.nikr.eve.jeveasset.data.api.my.MySkill;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
@@ -74,6 +75,7 @@ public interface OwnerType extends Comparable<OwnerType> {
 	public List<MySkill> getSkills();
 	public Long getTotalSkillPoints();
 	public Integer getUnallocatedSkillPoints();
+	public List<MyMining> getMining();
 	public void setBlueprints(final Map<Long, RawBlueprint> blueprints);
 	public void setIndustryJobs(final List<MyIndustryJob> industryJobs);
 	public void setTransactions(final Set<MyTransaction> transactions);
@@ -87,6 +89,7 @@ public interface OwnerType extends Comparable<OwnerType> {
 	public void setSkills(final List<MySkill> skills);
 	public void setTotalSkillPoints(final Long totalSkillPoints);
 	public void setUnallocatedSkillPoints(final Integer unallocatedSkillPoints);
+	public void setMining(List<MyMining> mining);
 	//Account Mask
 	public boolean isCharacter();
 	public boolean isAssetList();
@@ -109,6 +112,7 @@ public interface OwnerType extends Comparable<OwnerType> {
 	public boolean isPrivilegesLimited();
 	public boolean isPrivilegesInvalid();
 	public boolean isSkills();
+	public boolean isMining();
 	//Last Update
 	public Date getAssetLastUpdate();
 	public Date getBalanceLastUpdate();
@@ -126,6 +130,7 @@ public interface OwnerType extends Comparable<OwnerType> {
 	public void setJournalNextUpdate(final Date journalNextUpdate);
 	public void setTransactionsNextUpdate(final Date transactionsNextUpdate);
 	public void setSkillsNextUpdate(final Date skillsNextUpdate);
+	public void setMiningNextUpdate(final Date miningNextUpdate);
 	public Date getTransactionsNextUpdate();
 	public Date getAssetNextUpdate();
 	public Date getBalanceNextUpdate();
@@ -137,4 +142,5 @@ public interface OwnerType extends Comparable<OwnerType> {
 	public Date getMarketOrdersNextUpdate();
 	public Date getJournalNextUpdate();
 	public Date getSkillsNextUpdate();
+	public Date getMiningNextUpdate();
 }

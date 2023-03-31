@@ -20,7 +20,9 @@
  */
 package net.nikr.eve.jeveasset.io.shared;
 
+import java.time.LocalDate;
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -137,6 +139,14 @@ public class RawConverter {
 			return null;
 		} else {
 			return Date.from(dateTime.toInstant());
+		}
+	}
+
+	public static Date toDate(LocalDate dateTime) {
+		if (dateTime == null) {
+			return null;
+		} else {
+			return Date.from(dateTime.atStartOfDay().toInstant(ZoneOffset.UTC));
 		}
 	}
 

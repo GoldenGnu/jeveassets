@@ -41,6 +41,7 @@ import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
 import net.nikr.eve.jeveasset.data.api.my.MyJournal;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
+import net.nikr.eve.jeveasset.data.api.my.MyMining;
 import net.nikr.eve.jeveasset.data.api.my.MySkill;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.api.raw.RawBlueprint;
@@ -83,6 +84,7 @@ public class ProfileData {
 	private final EventList<MyAccountBalance> accountBalanceEventList = EventListManager.create();
 	private final EventList<MyContract> contractEventList = EventListManager.create();
 	private final EventList<MySkill> skillsEventList = EventListManager.create();
+	private final EventList<MyMining> miningEventList = EventListManager.create();
 	private final List<MyContractItem> contractItemList = new ArrayList<>();
 	private final List<MyIndustryJob> industryJobsList = new ArrayList<>();
 	private final List<MyMarketOrder> marketOrdersList = new ArrayList<>();
@@ -145,6 +147,10 @@ public class ProfileData {
 
 	public EventList<MySkill> getSkillsEventList() {
 		return skillsEventList;
+	}
+
+	public EventList<MyMining> getMiningEventList() {
+		return miningEventList;
 	}
 
 	public List<MyContractItem> getContractItemList() {
@@ -245,6 +251,13 @@ public class ProfileData {
 					}
 				}
 			}
+			//Add Mining to uniqueIds
+			for (MyMining mining : owner.getMining()) {
+				Item item = mining.getItem();
+				if (item.isMarketGroup()) {
+					priceTypeIDs.add(item.getTypeID());
+				}
+			}
 		}
 		//Add StockpileItems to uniqueIds
 		for (Stockpile stockpile : Settings.get().getStockpiles()) {
@@ -343,6 +356,7 @@ public class ProfileData {
 		}
 		updatePrices(marketOrdersEventList, typeIDs);
 		updatePrices(contractItemEventList, typeIDs);
+		updateMiningPrices(miningEventList, typeIDs);
 		updateAssetPrices(assetsEventList, typeIDs);
 		updateIndustryJobPrices(industryJobsEventList, typeIDs);
 	}
@@ -370,6 +384,7 @@ public class ProfileData {
 		Set<MyContractItem> contractItems = new HashSet<>();
 		Set<MyContract> contracts = new HashSet<>();
 		Set<MySkill> skills = new HashSet<>();
+		Set<MyMining> minings = new HashSet<>();
 		Map<Long, OwnerType> blueprintsMap = new HashMap<>();
 		Map<Long, MyBlueprint> blueprints = new HashMap<>();
 		Map<String, Long> skillPointsTotalCache = new HashMap<>();
@@ -469,6 +484,12 @@ public class ProfileData {
 				} else {
 					skillPointsTotalCache.put(owner.getOwnerName(), owner.getTotalSkillPoints());
 				}
+			}
+			//Mining
+			minings.addAll(owner.getMining());
+			for (MyMining mining : owner.getMining()) {
+				mining.setReproccesedPrice(ApiIdConverter.getPriceReprocessed(mining.getItem()));
+				mining.setReproccesedPriceMax(ApiIdConverter.getPriceReprocessedMax(mining.getItem()));
 			}
 		}
 
@@ -630,6 +651,7 @@ public class ProfileData {
 		editableLocationTypes.addAll(marketOrders);
 		editableLocationTypes.addAll(transactions);
 		editableLocationTypes.addAll(industryJobs);
+		editableLocationTypes.addAll(minings);
 		for (EditableLocationType editableLocationType : editableLocationTypes) {
 			editableLocationType.setLocation(ApiIdConverter.getLocation(editableLocationType.getLocationID()));
 		}
@@ -637,6 +659,7 @@ public class ProfileData {
 		List<EditablePriceType> editablePriceTypes = new ArrayList<>();
 		editablePriceTypes.addAll(marketOrders);
 		editablePriceTypes.addAll(contractItems);
+		editablePriceTypes.addAll(minings);
 		for (EditablePriceType editablePriceType : editablePriceTypes) {
 			updatePrice(editablePriceType);
 		}
@@ -779,6 +802,18 @@ public class ProfileData {
 				}
 			}
 		});
+		Program.ensureEDT(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					miningEventList.getReadWriteLock().writeLock().lock();
+					miningEventList.clear();
+					miningEventList.addAll(minings);
+				} finally {
+					miningEventList.getReadWriteLock().writeLock().unlock();
+				}
+			}
+		});
 	}
 
 	public void updateNames(EventList<MyAsset> eventList, Set<Long> itemIDs) {
@@ -842,6 +877,42 @@ public class ProfileData {
 						|| (productTypeID != null && typeIDs.contains(getTypeID(industryJob.isCopying(), productTypeID)))) {
 					found.add(industryJob); //Save for update
 					updatePrice(industryJob); //Update data
+				}
+			}
+		} finally {
+			eventList.getReadWriteLock().readLock().unlock();
+		}
+		updateList(eventList, found);
+	}
+
+	private void updateMiningPrices(EventList<MyMining> eventList, Set<Integer> typeIDs) {
+		if (typeIDs == null || typeIDs.isEmpty()) {
+			return;
+		}
+		List<MyMining> found = new ArrayList<>();
+		try {
+			eventList.getReadWriteLock().readLock().lock();
+			for (MyMining mining : eventList) {
+				//Reprocessed price
+				boolean reprocessed = false;
+				for (ReprocessedMaterial material : mining.getItem().getReprocessedMaterial()) {
+					if (typeIDs.contains(material.getTypeID())) {
+						reprocessed = true;
+						break;
+					}
+				}
+				if (reprocessed) {
+					mining.setReproccesedPrice(ApiIdConverter.getPriceReprocessed(mining.getItem()));
+					mining.setReproccesedPriceMax(ApiIdConverter.getPriceReprocessedMax(mining.getItem()));
+				}
+				//Dynamic Price
+				boolean dynamic = typeIDs.contains(mining.getTypeID());
+				if (dynamic) {
+					updatePrice(mining); //Update data
+				}
+				//Update
+				if (reprocessed || dynamic) { //If changed
+					found.add(mining); //Save for update
 				}
 			}
 		} finally {

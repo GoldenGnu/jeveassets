@@ -58,6 +58,7 @@ public abstract class GuiFrame extends Bundle {
 	public abstract String linkWiki();
 	public abstract String market();
 	public abstract String materials();
+	public abstract String mining();
 	public abstract String misc();
 	public abstract String netWorth();
 	public abstract String not();
