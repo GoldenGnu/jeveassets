@@ -64,7 +64,7 @@ public class MiningTab extends JMainTabPrimary {
 	public static final String NAME = "mining"; //Not to be changed!
 
 	public MiningTab(Program program) {
-		super(program, NAME, TabsMining.get().mining(), Images.TOOL_MINING.getIcon(), true);
+		super(program, NAME, TabsMining.get().miningLog(), Images.TOOL_MINING_LOG.getIcon(), true);
 
 		//Table Format
 		tableFormat = TableFormatFactory.miningTableFormat();

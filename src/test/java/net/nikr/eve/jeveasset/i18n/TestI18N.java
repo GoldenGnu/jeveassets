@@ -119,7 +119,7 @@ public class TestI18N extends TestUtil {
 
 	@Test public void testTabsMiningBundle_en() throws Exception {
 		TabsMining g = BundleServiceFactory.getBundleService().get(TabsMining.class);
-		assertNotNull(g.mining());
+		assertNotNull(g.miningLog());
 	}
 
 	@Test public void testTabsContractsBundle_en() throws Exception {

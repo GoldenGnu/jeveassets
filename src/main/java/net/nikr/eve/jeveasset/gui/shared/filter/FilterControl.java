@@ -316,7 +316,9 @@ public abstract class FilterControl<E> implements ColumnCache<E>, SimpleFilterCo
 	}
 
 	boolean isNumeric(final EnumTableColumn<?> column) {
-		if (column instanceof AllColumn) {
+		if (column == null) {
+			return false;
+		} else if (column instanceof AllColumn) {
 			return false;
 		} else if (Number.class.isAssignableFrom(column.getType())) {
 			return true;
@@ -328,9 +330,11 @@ public abstract class FilterControl<E> implements ColumnCache<E>, SimpleFilterCo
 	}
 
 	boolean isDate(final EnumTableColumn<?> column) {
-		if (column instanceof AllColumn) {
+		if (column == null) {
 			return false;
-		} else if (column.getType().getName().equals(Date.class.getName())) {
+		} else if (column instanceof AllColumn) {
+			return false;
+		} else if (Date.class.isAssignableFrom(column.getType())) {
 			return true;
 		} else {
 			return false;
