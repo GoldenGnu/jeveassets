@@ -694,4 +694,14 @@ public abstract class FakeSettings extends Settings {
 	public StockpileGroupSettings getStockpileGroupSettings() {
 		throw new UnsupportedOperationException("not implemented");
 	}
+
+	@Override
+	public void setMiningHistory(boolean contractHistory) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public boolean isMiningHistory() {
+		throw new UnsupportedOperationException("not implemented");
+	}
 }

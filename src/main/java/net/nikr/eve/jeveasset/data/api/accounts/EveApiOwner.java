@@ -152,6 +152,11 @@ public class EveApiOwner extends DeprecatedOwner implements OwnerType {
 	}
 
 	@Override
+	public boolean isMining() {
+		return false; //Not supported by the XML API
+	}
+
+	@Override
 	public Date getExpire() {
 		return getParentAccount().getExpires();
 	}

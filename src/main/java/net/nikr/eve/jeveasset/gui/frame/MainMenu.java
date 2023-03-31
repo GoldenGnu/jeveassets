@@ -71,6 +71,7 @@ public class MainMenu extends JMenuBar {
 		CONTRACTS,
 		SLOTS,
 		SKILLS,
+		MINING,
 		EXIT_PROGRAM
 	}
 
@@ -158,6 +159,12 @@ public class MainMenu extends JMenuBar {
 		menuItem = new JMenuItem(GuiFrame.get().materials());
 		menuItem.setIcon(Images.TOOL_MATERIALS.getIcon());
 		menuItem.setActionCommand(MainMenuAction.MATERIALS.name());
+		menuItem.addActionListener(program);
+		submenu.add(menuItem);
+
+		menuItem = new JMenuItem(GuiFrame.get().mining());
+		menuItem.setIcon(Images.TOOL_MINING.getIcon());
+		menuItem.setActionCommand(MainMenuAction.MINING.name());
 		menuItem.addActionListener(program);
 		submenu.add(menuItem);
 	//Business

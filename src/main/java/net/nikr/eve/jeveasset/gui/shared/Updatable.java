@@ -78,6 +78,9 @@ public class Updatable {
 			if (owner.isSkills() && isUpdatable(owner.getSkillsNextUpdate())) {
 				return true;
 			}
+			if (owner.isMining()&& isUpdatable(owner.getMiningNextUpdate())){
+				return true;
+			}
 		}
 		return false;
 	}

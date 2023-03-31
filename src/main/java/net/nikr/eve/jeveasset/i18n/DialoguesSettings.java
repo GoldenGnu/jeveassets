@@ -114,6 +114,10 @@ public abstract class DialoguesSettings extends Bundle {
 	public abstract String clearBlacklistMsg();
 	public abstract String clearBlacklistTitle();
 
+	// used in MiningToolSettingsPanel
+	public abstract String mining();
+	public abstract String miningSaveHistory();
+
 	// used in ColorSettingsPanel
 	public abstract String colors();
 	public abstract String collapse();

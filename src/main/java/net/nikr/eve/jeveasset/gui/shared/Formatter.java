@@ -160,6 +160,15 @@ public final class Formatter {
 		return COLUMN_DATETIME_FORMAT.format(date);
 	}
 
+	/**
+	 * Do not use unless only date information is available.
+	 * @param date
+	 * @return
+	 */
+	public static String columnDateOnly(final Object date) {
+		return COLUMN_DATE_FORMAT.format(date);
+	}
+
 	public static String fileDate(final Object date) {
 		return FILETIME.format(date);
 	}

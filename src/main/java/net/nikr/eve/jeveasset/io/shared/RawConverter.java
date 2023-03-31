@@ -20,7 +20,9 @@
  */
 package net.nikr.eve.jeveasset.io.shared;
 
+import java.time.LocalDate;
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -144,6 +146,14 @@ public class RawConverter {
 
 	public static ItemFlag toFlag(CorporationContainersLogsResponse.LocationFlagEnum value) {
 		return toFlagEnum(value);
+	}
+
+	public static Date toDate(LocalDate dateTime) {
+		if (dateTime == null) {
+			return null;
+		} else {
+			return Date.from(dateTime.atStartOfDay().toInstant(ZoneOffset.UTC));
+		}
 	}
 
 	public static long toLocationID(CharacterLocationResponse shipLocation) {

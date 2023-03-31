@@ -94,6 +94,7 @@ import net.nikr.eve.jeveasset.gui.tabs.journal.JournalTab;
 import net.nikr.eve.jeveasset.gui.tabs.loadout.LoadoutsTab;
 import net.nikr.eve.jeveasset.gui.tabs.log.LogTab;
 import net.nikr.eve.jeveasset.gui.tabs.materials.MaterialsTab;
+import net.nikr.eve.jeveasset.gui.tabs.mining.MiningTab;
 import net.nikr.eve.jeveasset.gui.tabs.orders.MarketOrdersTab;
 import net.nikr.eve.jeveasset.gui.tabs.orders.OutbidProcesser.OutbidProcesserOutput;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewTab;
@@ -165,6 +166,7 @@ public class Program implements ActionListener {
 	private ContractsTab contractsTab;
 	private TreeTab treeTab;
 	private SkillsTab skillsTab;
+	private MiningTab miningTab;
 	private LogTab logTab;
 	private StructureUpdateDialog structureUpdateDialog;
 
@@ -282,10 +284,13 @@ public class Program implements ActionListener {
 		LOG.info("Loading: Skills Tab");
 		skillsTab = new SkillsTab(this);
 		SplashUpdater.setProgress(83);
+		LOG.info("Loading: Skills Tab");
+		miningTab = new MiningTab(this);
+		SplashUpdater.setProgress(84);
 	//Dialogs
 		LOG.info("Loading: Account Manager Dialog");
 		accountManagerDialog = new AccountManagerDialog(this);
-		SplashUpdater.setProgress(84);
+		SplashUpdater.setProgress(85);
 		LOG.info("Loading: About Dialog");
 		aboutDialog = new AboutDialog(this);
 		SplashUpdater.setProgress(86);
@@ -1086,6 +1091,8 @@ public class Program implements ActionListener {
 			mainWindow.addTab(treeTab);
 		} else if (MainMenuAction.SKILLS.name().equals(e.getActionCommand())) {
 			mainWindow.addTab(skillsTab);
+		} else if (MainMenuAction.MINING.name().equals(e.getActionCommand())) {
+			mainWindow.addTab(miningTab);
 		} else if (MainMenuAction.LOG.name().equals(e.getActionCommand())) {
 			mainWindow.addTab(logTab);
 		} else if (MainMenuAction.ACCOUNT_MANAGER.name().equals(e.getActionCommand())) { //Settings
