@@ -36,8 +36,8 @@ public class MyMining extends RawMining implements Comparable<MyMining>, ItemTyp
 	private final Item item;
 	private MyLocation location;
 	private double price;
-	private double reproccesedPrice;
-	private double reproccesedPriceMax;
+	private double priceReproccesed;
+	private double priceReproccesedMax;
 
 
 	public MyMining(RawMining mining, Item item, MyLocation location) {
@@ -47,7 +47,7 @@ public class MyMining extends RawMining implements Comparable<MyMining>, ItemTyp
 		this.location = location;
 	}
 
-	public Double getOreValue() {
+	public Double getValueOre() {
 		return price * getQuantity();
 	}
 
@@ -55,28 +55,28 @@ public class MyMining extends RawMining implements Comparable<MyMining>, ItemTyp
 		return dateOnly;
 	}
 
-	public double getReproccesedPrice() {
-		return reproccesedPrice;
+	public double getPriceReproccesed() {
+		return priceReproccesed;
 	}
 
-	public void setReproccesedPrice(double reproccesedPrice) {
-		this.reproccesedPrice = reproccesedPrice;
+	public void setPriceReproccesed(double reproccesedPrice) {
+		this.priceReproccesed = reproccesedPrice;
 	}
 
-	public double getSkillsMineralsValue() {
-		return reproccesedPrice * getQuantity();
+	public double getValueReproccesed() {
+		return priceReproccesed * getQuantity();
 	}
 
-	public double getReproccesedPriceMax() {
-		return reproccesedPriceMax;
+	public double getPriceReproccesedMax() {
+		return priceReproccesedMax;
 	}
 
-	public void setReproccesedPriceMax(double reproccesedPriceMax) {
-		this.reproccesedPriceMax = reproccesedPriceMax;
+	public void setPriceReproccesedMax(double priceReproccesedMax) {
+		this.priceReproccesedMax = priceReproccesedMax;
 	}
 
-	public double getMaxMineralsValue() {
-		return reproccesedPriceMax * getQuantity();
+	public double getValueReproccesedMax() {
+		return priceReproccesedMax * getQuantity();
 	}
 
 	private float getVolume() {
@@ -95,17 +95,17 @@ public class MyMining extends RawMining implements Comparable<MyMining>, ItemTyp
 		}
 	}
 
-	public double getValuePerVolumeMineralsSkills() {
-		if (getVolume() > 0 && getReproccesedPrice()> 0) {
-			return getReproccesedPrice() / getVolume();
+	public double getValuePerVolumeReproccesed() {
+		if (getVolume() > 0 && getPriceReproccesed()> 0) {
+			return getPriceReproccesed() / getVolume();
 		} else {
 			return 0;
 		}
 	}
 
-	public double getValuePerVolumeMineralsMax() {
-		if (getVolume() > 0 && getReproccesedPriceMax()> 0) {
-			return getReproccesedPriceMax() / getVolume();
+	public double getValuePerVolumeReproccesedMax() {
+		if (getVolume() > 0 && getPriceReproccesedMax()> 0) {
+			return getPriceReproccesedMax() / getVolume();
 		} else {
 			return 0;
 		}
