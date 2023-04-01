@@ -511,7 +511,7 @@ public class OverviewTab extends JMainTabSecondary {
 
 		@Override
 		public void addInfoMenu(JPopupMenu jPopupMenu) {
-			JMenuInfo.overview(jPopupMenu, selectionModel.getSelected());
+			JMenuInfo.infoItem(jPopupMenu, selectionModel.getSelected());
 		}
 
 		@Override

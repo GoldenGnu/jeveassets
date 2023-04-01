@@ -111,32 +111,32 @@ public enum MiningTableFormat implements EnumTableColumn<MyMining> {
 			return from.getDynamicPrice();
 		}
 	},
-	PRICE_REPROCCESED(Double.class, GlazedLists.comparableComparator()) {
+	PRICE_REPROCESSED(Double.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
-			return TabsMining.get().columnPriceReproccesed();
+			return TabsMining.get().columnPriceReprocessed();
 		}
 		@Override
 		public String getColumnToolTip() {
-			return TabsMining.get().columnPriceReproccesedToolTip();
+			return TabsMining.get().columnPriceReprocessedToolTip();
 		}
 		@Override
 		public Object getColumnValue(final MyMining from) {
-			return from.getPriceReproccesed();
+			return from.getPriceReprocessed();
 		}
 	},
-	PRICE_REPROCCESED_MAX(Double.class, GlazedLists.comparableComparator()) {
+	PRICE_REPROCESSED_MAX(Double.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
-			return TabsMining.get().columnPriceReproccesedMax();
+			return TabsMining.get().columnPriceReprocessedMax();
 		}
 		@Override
 		public String getColumnToolTip() {
-			return TabsMining.get().columnPriceReproccesedMaxToolTip();
+			return TabsMining.get().columnPriceReprocessedMaxToolTip();
 		}
 		@Override
 		public Object getColumnValue(final MyMining from) {
-			return from.getPriceReproccesedMax();
+			return from.getPriceReprocessedMax();
 		}
 	},
 	VALUE_ORE(Double.class, GlazedLists.comparableComparator()) {
@@ -146,36 +146,36 @@ public enum MiningTableFormat implements EnumTableColumn<MyMining> {
 		}
 		@Override
 		public Object getColumnValue(final MyMining from) {
-			return from.getValueOre();
+			return from.getValue();
 		}
 	},
-	VALUE_REPROCCESED(Double.class, GlazedLists.comparableComparator()) {
+	VALUE_REPROCESSED(Double.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
-			return TabsMining.get().columnValueReproccesed();
+			return TabsMining.get().columnValueReprocessed();
 		}
 		@Override
 		public String getColumnToolTip() {
-			return TabsMining.get().columnValueReproccesedToolTip();
+			return TabsMining.get().columnValueReprocessedToolTip();
 		}
 		@Override
 		public Object getColumnValue(final MyMining from) {
-			return from.getValueReproccesed();
+			return from.getValueReprocessed();
 		}
 	},
 
-	VALUE_REPROCCESED_MAX(Double.class, GlazedLists.comparableComparator()) {
+	VALUE_REPROCESSED_MAX(Double.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
-			return TabsMining.get().columnValueReproccesedMax();
+			return TabsMining.get().columnValueReprocessedMax();
 		}
 		@Override
 		public String getColumnToolTip() {
-			return TabsMining.get().columnValueReproccesedMaxToolTip();
+			return TabsMining.get().columnValueReprocessedMaxToolTip();
 		}
 		@Override
 		public Object getColumnValue(final MyMining from) {
-			return from.getValueReproccesedMax();
+			return from.getValueReprocessedMax();
 		}
 	},
 	VOLUME(Double.class, GlazedLists.comparableComparator()) {
@@ -198,32 +198,32 @@ public enum MiningTableFormat implements EnumTableColumn<MyMining> {
 			return from.getValuePerVolumeOre();
 		}
 	},
-	VALUE_PER_VOLUME_REPROCCESED(Double.class, GlazedLists.comparableComparator()) {
+	VALUE_PER_VOLUME_REPROCESSED(Double.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
-			return TabsMining.get().columnValuePerVolumeReproccesed();
+			return TabsMining.get().columnValuePerVolumeReprocessed();
 		}
 		@Override
 		public String getColumnToolTip() {
-			return TabsMining.get().columnValuePerVolumeReproccesedToolTip();
+			return TabsMining.get().columnValuePerVolumeReprocessedToolTip();
 		}
 		@Override
 		public Object getColumnValue(final MyMining from) {
-			return from.getValuePerVolumeReproccesed();
+			return from.getValuePerVolumeReprocessed();
 		}
 	},
-	VALUE_PER_VOLUME_REPROCCESED_MAX(Double.class, GlazedLists.comparableComparator()) {
+	VALUE_PER_VOLUME_REPROCESSED_MAX(Double.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
-			return TabsMining.get().columnValuePerVolumeReproccesedMax();
+			return TabsMining.get().columnValuePerVolumeReprocessedMax();
 		}
 		@Override
 		public String getColumnToolTip() {
-			return TabsMining.get().columnValuePerVolumeReproccesedMaxToolTip();
+			return TabsMining.get().columnValuePerVolumeReprocessedMaxToolTip();
 		}
 		@Override
 		public Object getColumnValue(final MyMining from) {
-			return from.getValuePerVolumeReproccesedMax();
+			return from.getValuePerVolumeReprocessedMax();
 		}
 	},
 	CORPORATION(String.class, GlazedLists.comparableComparator()) {

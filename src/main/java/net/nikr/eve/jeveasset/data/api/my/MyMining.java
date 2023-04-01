@@ -27,17 +27,18 @@ import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.settings.types.EditableLocationType;
 import net.nikr.eve.jeveasset.data.settings.types.EditablePriceType;
 import net.nikr.eve.jeveasset.data.settings.types.ItemType;
+import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo.InfoItem;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.DateOnly;
 
 
-public class MyMining extends RawMining implements Comparable<MyMining>, ItemType, EditablePriceType, EditableLocationType {
+public class MyMining extends RawMining implements Comparable<MyMining>, InfoItem, ItemType, EditablePriceType, EditableLocationType {
 
 	private final DateOnly dateOnly;
 	private final Item item;
 	private MyLocation location;
 	private double price;
-	private double priceReproccesed;
-	private double priceReproccesedMax;
+	private double priceReprocessed;
+	private double priceReprocessedMax;
 
 
 	public MyMining(RawMining mining, Item item, MyLocation location) {
@@ -47,7 +48,8 @@ public class MyMining extends RawMining implements Comparable<MyMining>, ItemTyp
 		this.location = location;
 	}
 
-	public double getValueOre() {
+	@Override
+	public double getValue() {
 		return price * getQuantity();
 	}
 
@@ -55,36 +57,43 @@ public class MyMining extends RawMining implements Comparable<MyMining>, ItemTyp
 		return dateOnly;
 	}
 
-	public double getPriceReproccesed() {
-		return priceReproccesed;
+	public double getPriceReprocessed() {
+		return priceReprocessed;
 	}
 
-	public void setPriceReproccesed(double reproccesedPrice) {
-		this.priceReproccesed = reproccesedPrice;
+	public void setPriceReprocessed(double priceReprocessed) {
+		this.priceReprocessed = priceReprocessed;
 	}
 
-	public double getValueReproccesed() {
-		return priceReproccesed * getQuantity();
+	@Override
+	public double getValueReprocessed() {
+		return priceReprocessed * getQuantity();
 	}
 
-	public double getPriceReproccesedMax() {
-		return priceReproccesedMax;
+	public double getPriceReprocessedMax() {
+		return priceReprocessedMax;
 	}
 
-	public void setPriceReproccesedMax(double priceReproccesedMax) {
-		this.priceReproccesedMax = priceReproccesedMax;
+	public void setPriceReprocessedMax(double priceReprocessedMax) {
+		this.priceReprocessedMax = priceReprocessedMax;
 	}
 
-	public double getValueReproccesedMax() {
-		return priceReproccesedMax * getQuantity();
+	public double getValueReprocessedMax() {
+		return priceReprocessedMax * getQuantity();
 	}
 
 	private float getVolume() {
 		return item.getVolumePackaged();
 	}
 
-	public float getVolumeTotal() {
+	@Override
+	public double getVolumeTotal() {
 		return item.getVolumePackaged() * getQuantity();
+	}
+
+	@Override
+	public long getCount() {
+		return getQuantity();
 	}
 
 	public double getValuePerVolumeOre() {
@@ -95,17 +104,17 @@ public class MyMining extends RawMining implements Comparable<MyMining>, ItemTyp
 		}
 	}
 
-	public double getValuePerVolumeReproccesed() {
-		if (getVolume() > 0 && getPriceReproccesed()> 0) {
-			return getPriceReproccesed() / getVolume();
+	public double getValuePerVolumeReprocessed() {
+		if (getVolume() > 0 && getPriceReprocessed()> 0) {
+			return getPriceReprocessed() / getVolume();
 		} else {
 			return 0;
 		}
 	}
 
-	public double getValuePerVolumeReproccesedMax() {
-		if (getVolume() > 0 && getPriceReproccesedMax()> 0) {
-			return getPriceReproccesedMax() / getVolume();
+	public double getValuePerVolumeReprocessedMax() {
+		if (getVolume() > 0 && getPriceReprocessedMax()> 0) {
+			return getPriceReprocessedMax() / getVolume();
 		} else {
 			return 0;
 		}

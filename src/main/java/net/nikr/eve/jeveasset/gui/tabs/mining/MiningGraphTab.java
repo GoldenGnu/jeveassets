@@ -328,7 +328,7 @@ public class MiningGraphTab extends JMainTabSecondary {
 			}
 			//Type
 			final String typeName = getTypeName(mining.getItem());
-			final double value = mining.getValueOre();
+			final double value = mining.getValue();
 			Map<String, Double> map = values.get(date);
 			if (map == null) {
 				map = new HashMap<>();
