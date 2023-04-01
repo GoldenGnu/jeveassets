@@ -59,6 +59,16 @@ public enum ItemTableFormat implements EnumTableColumn<Item> {
 			return from.getCategory();
 		}
 	},
+	SLOT(String.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsItems.get().columnSlot();
+		}
+		@Override
+		public Object getColumnValue(final Item from) {
+			return from.getItem().getSlot();
+		}
+	},
 	PRICE_BASE(Double.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
