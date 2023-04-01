@@ -28,6 +28,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -40,7 +41,6 @@ import javax.swing.SwingConstants;
 import javax.swing.Timer;
 import javax.swing.border.Border;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.api.my.MyAsset;
 import net.nikr.eve.jeveasset.data.api.my.MyContract;
 import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
@@ -53,7 +53,6 @@ import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo.InfoItem;
 import net.nikr.eve.jeveasset.gui.tabs.loadout.Loadout;
 import net.nikr.eve.jeveasset.gui.tabs.materials.Material;
 import net.nikr.eve.jeveasset.gui.tabs.materials.Material.MaterialType;
-import net.nikr.eve.jeveasset.gui.tabs.overview.Overview;
 import net.nikr.eve.jeveasset.gui.tabs.slots.Slots;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileTotal;
@@ -78,18 +77,10 @@ public class JMenuInfo {
 				items.add(asset);
 			}
 		}
-		infoItem(jPopupMenu, new ArrayList<>(items));
+		infoItem(jPopupMenu, items);
 	}
 
-	public static void asset(final JPopupMenu jPopupMenu, final List<MyAsset> list) {
-		infoItem(jPopupMenu, new ArrayList<>(list));
-	}
-
-	public static void overview(final JPopupMenu jPopupMenu, final List<Overview> list) {
-		infoItem(jPopupMenu, new ArrayList<>(list));
-	}
-
-	private static void infoItem(final JPopupMenu jPopupMenu, final List<InfoItem> list) {
+	public static <T extends InfoItem> void infoItem(final JPopupMenu jPopupMenu, final Collection<T> list) {
 		List<MenuItemValue> values = createDefault(jPopupMenu);
 
 		double averageValue = 0;
