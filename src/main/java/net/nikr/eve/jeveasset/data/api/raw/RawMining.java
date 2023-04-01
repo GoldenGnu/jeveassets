@@ -28,7 +28,7 @@ import net.troja.eve.esi.model.CharacterMiningResponse;
 
 public class RawMining {
 	private Date date;
-    private Long quantity;
+    private Long count;
     private Long locationID;
     private Integer typeID;
 	private String characterName;
@@ -43,7 +43,7 @@ public class RawMining {
 
 	public RawMining(RawMining mining) {
 		this.date = mining.date;
-		this.quantity = mining.quantity;
+		this.count = mining.count;
 		this.locationID = mining.locationID;
 		this.typeID = mining.typeID;
 		this.characterName = mining.characterName;
@@ -59,7 +59,7 @@ public class RawMining {
 	 */
 	public RawMining(CharacterMiningResponse mining, OwnerType owner) {
 		this.date = RawConverter.toDate(mining.getDate());
-		this.quantity = mining.getQuantity();
+		this.count = mining.getQuantity();
 		this.locationID = RawConverter.toLong(mining.getSolarSystemId());
 		this.typeID = mining.getTypeId();
 		this.characterName = owner.getOwnerName();
@@ -75,12 +75,12 @@ public class RawMining {
 		this.date = date;
 	}
 
-	public Long getQuantity() {
-		return quantity;
+	public long getCount() {
+		return count;
 	}
 
-	public void setQuantity(Long quantity) {
-		this.quantity = quantity;
+	public void setCount(Long count) {
+		this.count = count;
 	}
 
 	public long getLocationID() {

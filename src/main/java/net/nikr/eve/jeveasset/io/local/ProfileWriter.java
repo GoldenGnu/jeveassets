@@ -499,7 +499,7 @@ public final class ProfileWriter extends AbstractXmlWriter {
 			Element childNode = xmldoc.createElement("mining");
 			setAttribute(childNode, "typeid", mining.getTypeID());
 			setAttribute(childNode, "date", mining.getDate());
-			setAttribute(childNode, "count", mining.getQuantity());
+			setAttribute(childNode, "count", mining.getCount());
 			setAttribute(childNode, "locationid", mining.getLocationID());
 			setAttribute(childNode, "character", mining.getCharacterName());
 			setAttribute(childNode, "corporation", mining.getCorporationName());

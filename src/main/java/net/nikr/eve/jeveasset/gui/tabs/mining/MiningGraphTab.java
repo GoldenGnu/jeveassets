@@ -48,6 +48,7 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -58,13 +59,14 @@ import net.nikr.eve.jeveasset.data.settings.types.LocationType;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel.JStatusLabel;
 import net.nikr.eve.jeveasset.gui.images.Images;
-import net.nikr.eve.jeveasset.gui.shared.JFreeChartUtil;
 import net.nikr.eve.jeveasset.gui.shared.ColorIcon;
 import net.nikr.eve.jeveasset.gui.shared.Formatter;
+import net.nikr.eve.jeveasset.gui.shared.JFreeChartUtil;
 import net.nikr.eve.jeveasset.gui.shared.components.JDateChooser;
 import net.nikr.eve.jeveasset.gui.shared.components.JDropDownButton;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTabSecondary;
 import net.nikr.eve.jeveasset.gui.shared.components.JMultiSelectionList;
+import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo.AutoNumberFormat;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.QuickDate;
 import net.nikr.eve.jeveasset.i18n.TabsMining;
@@ -85,14 +87,91 @@ import org.jfree.data.xy.XYDataset;
 public class MiningGraphTab extends JMainTabSecondary {
 
 	private enum PriceHistoryAction {
+		TYPE_CHANGE,
 		QUICK_DATE,
 		INCLUDE_ZERO,
 		LOGARITHMIC
 	}
 
+	private enum Type {
+		ORE(AutoNumberFormat.ISK) {
+			@Override
+			public double toValue(MyMining mining) {
+				return mining.getValue();
+			}
+			@Override
+			public String getText() {
+				return TabsMining.get().valueOre();
+			}
+		},
+		REPROCESSED(AutoNumberFormat.ISK) {
+			@Override
+			public double toValue(MyMining mining) {
+				return mining.getValueReprocessed();
+			}
+			@Override
+			public String getText() {
+				return TabsMining.get().valueReprocessed();
+			}
+		},
+		REPROCESSED_MAX(AutoNumberFormat.ISK) {
+			@Override
+			public double toValue(MyMining mining) {
+				return mining.getValueReprocessedMax();
+			}
+			@Override
+			public String getText() {
+				return TabsMining.get().valueReprocessedMax();
+			}
+		},
+		VOLUME(AutoNumberFormat.DOUBLE) {
+			@Override
+			public double toValue(MyMining mining) {
+				return mining.getVolumeTotal();
+			}
+			@Override
+			public String getText() {
+				return TabsMining.get().volume();
+			}
+		},
+		COUNT(AutoNumberFormat.ITEMS) {
+			@Override
+			public double toValue(MyMining mining) {
+				return mining.getCount();
+			}
+			@Override
+			public String getText() {
+				return TabsMining.get().count();
+			}
+		};
+
+		private final AutoNumberFormat format;
+
+		private Type(AutoNumberFormat format) {
+			this.format = format;
+		}
+
+		public String format(Number value) {
+			return JMenuInfo.format(value, format);
+		}
+
+		private AutoNumberFormat getAutoNumberFormat() {
+			return format;
+		}
+
+		public abstract double toValue(MyMining mining);
+		public abstract String getText();
+
+		@Override
+		public String toString() {
+			return getText();
+		}
+	}
+
 	private final int PANEL_WIDTH_MINIMUM = 215;
 
 	//GUI
+	private final JComboBox<Type> jType;
 	private final JComboBox<QuickDate> jQuickDate;
 	private final JDateChooser jFrom;
 	private final JDateChooser jTo;
@@ -129,6 +208,12 @@ public class MiningGraphTab extends JMainTabSecondary {
 
 	public MiningGraphTab(Program program) {
 		super(program, NAME, TabsMining.get().miningGraph(), Images.TOOL_MINING_GRAPH.getIcon(), true);
+
+		jType = new JComboBox<>(Type.values());
+		jType.setActionCommand(PriceHistoryAction.TYPE_CHANGE.name());
+		jType.addActionListener(listener);
+
+		JSeparator jDateSeparator = new JSeparator();
 
 		jQuickDate = new JComboBox<>(QuickDate.values());
 		jQuickDate.setActionCommand(PriceHistoryAction.QUICK_DATE.name());
@@ -189,8 +274,9 @@ public class MiningGraphTab extends JMainTabSecondary {
 			@Override
 			public String generateToolTip(XYDataset dataset, int series, int item)	{
 				Date date = new Date(dataset.getX(series, item).longValue());
-				Number isk = dataset.getY(series, item);
-				return TabsMining.get().graphToolTip(dataset.getSeriesKey(series), Formatter.iskFormat(isk), Formatter.columnDateOnly(date));
+				Number value = dataset.getY(series, item);
+				Type type = jType.getItemAt(jType.getSelectedIndex());
+				return TabsMining.get().graphToolTip(dataset.getSeriesKey(series), type.format(value), Formatter.columnDateOnly(date));
 			}
 		});
 
@@ -210,6 +296,8 @@ public class MiningGraphTab extends JMainTabSecondary {
 					.addComponent(jChartPanel)
 				)
 				.addGroup(layout.createParallelGroup()
+					.addComponent(jType, panelWidth, panelWidth, panelWidth)
+					.addComponent(jDateSeparator, panelWidth, panelWidth, panelWidth)
 					.addComponent(jQuickDate, panelWidth, panelWidth, panelWidth)
 					.addGroup(layout.createSequentialGroup()
 						.addGroup(layout.createParallelGroup()
@@ -234,6 +322,8 @@ public class MiningGraphTab extends JMainTabSecondary {
 					.addComponent(jChartPanel)
 				)
 				.addGroup(layout.createSequentialGroup()
+					.addComponent(jType, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jDateSeparator, 3, 3, 3)
 					.addComponent(jQuickDate, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addGroup(layout.createParallelGroup()
 						.addComponent(jFromLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
@@ -306,6 +396,7 @@ public class MiningGraphTab extends JMainTabSecondary {
 	private void createData() {
 		Date from = getFromDate();
 		Date to = getToDate();
+		Type type = jType.getItemAt(jType.getSelectedIndex());
 		//Remove All
 		while (dataset.getSeriesCount() != 0) {
 			dataset.removeSeries(0);
@@ -328,7 +419,7 @@ public class MiningGraphTab extends JMainTabSecondary {
 			}
 			//Type
 			final String typeName = getTypeName(mining.getItem());
-			final double value = mining.getValue();
+			final double value = type.toValue(mining);
 			Map<String, Double> map = values.get(date);
 			if (map == null) {
 				map = new HashMap<>();
@@ -409,6 +500,7 @@ public class MiningGraphTab extends JMainTabSecondary {
 	}
 
 	private void updateStatusbar() {
+		Type type = jType.getItemAt(jType.getSelectedIndex());
 		List<String> selected = jItems.getSelectedValuesList();
 		Set<String> shownGroups = new HashSet<>();
 		Set<String> shownTypes = new HashSet<>();
@@ -429,7 +521,7 @@ public class MiningGraphTab extends JMainTabSecondary {
 					(shownGroups.contains(typeName) //Shown group
 					|| (shownTypes.contains(typeName) && !shownGroups.contains(group)))) { //Shown Type
 				final Color color = (Color) renderer.getSeriesPaint(i);
-				JStatusLabel jStatusLabel = StatusPanel.createLabel(typeName, new ColorIcon(color), AutoNumberFormat.ISK);
+				JStatusLabel jStatusLabel = StatusPanel.createLabel(typeName, new ColorIcon(color), type.getAutoNumberFormat());
 				jStatusLabel.setNumber(value);
 				addStatusbarLabel(jStatusLabel);
 			}
@@ -483,7 +575,10 @@ public class MiningGraphTab extends JMainTabSecondary {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			if (PriceHistoryAction.QUICK_DATE.name().equals(e.getActionCommand())) {
+			if (PriceHistoryAction.TYPE_CHANGE.name().equals(e.getActionCommand())) {
+				createData();
+				updateShown();
+			} else if (PriceHistoryAction.QUICK_DATE.name().equals(e.getActionCommand())) {
 				QuickDate quickDate = (QuickDate) jQuickDate.getSelectedItem();
 				if (quickDate == QuickDate.RESET) {
 					jTo.setDate(null);
