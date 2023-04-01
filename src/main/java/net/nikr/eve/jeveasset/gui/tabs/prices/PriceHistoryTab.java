@@ -29,17 +29,12 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Rectangle;
 import java.awt.Shape;
-import java.awt.Stroke;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.geom.Ellipse2D;
-import java.text.DateFormat;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -86,6 +81,7 @@ import net.nikr.eve.jeveasset.gui.frame.StatusPanel.Progress;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel.UpdateType;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
+import net.nikr.eve.jeveasset.gui.shared.ChartUtil;
 import net.nikr.eve.jeveasset.gui.shared.Formatter;
 import net.nikr.eve.jeveasset.gui.shared.InstantToolTip;
 import net.nikr.eve.jeveasset.gui.shared.components.JAutoCompleteDialog;
@@ -155,18 +151,12 @@ public class PriceHistoryTab extends JMainTabSecondary {
 		}
 	}
 
-	private final Shape RECTANGLE = new Rectangle(-5, -5, 10, 10);
-	private final Shape ELLIPSE = new Ellipse2D.Double(-5.0, -5.0, 10.0, 10.0);
-	private final Shape LEGEND = RECTANGLE;
+	private final Shape LEGEND = new Rectangle(-5, -5, 10, 10);
 	private final Shape ITEM_SHAPE = new Ellipse2D.Float(-3.0f, -3.0f, 6.0f, 6.0f);
-	private final Stroke LEGEND_OUTLINE = new BasicStroke(1);
 	private final int PANEL_WIDTH_MINIMUM = 215;
 	public final int MAXIMUM_SHOWN = 50;
 	private final XYLineAndShapeRenderer renderer;
 
-
-	private final DateFormat dateFormat = new SimpleDateFormat(Formatter.COLUMN_DATE);
-	private final NumberFormat iskFormat = new DecimalFormat("#,##0.00 isk");
 
 	//GUI
 	private final JComboBox<PriceHistorySource> jSource;
@@ -188,6 +178,7 @@ public class PriceHistoryTab extends JMainTabSecondary {
 	private final JCheckBoxMenuItem jIncludeZero;
 	private final JRadioButtonMenuItem jLogarithmic;
 	private final LogarithmicAxis rangeLogarithmicAxis;
+	private final DateAxis domainAxis;
 	private final NumberAxis rangeLinearAxis;
 	private final ChartPanel jChartPanel;
 	private final JFreeChart jNextChart;
@@ -297,34 +288,6 @@ public class PriceHistoryTab extends JMainTabSecondary {
 		};
 		jManageItemsDialog = new JManageItemsDialog(program, this);
 
-		JDropDownButton jSettings = new JDropDownButton(Images.DIALOG_SETTINGS.getIcon());
-
-		jSettings.addSeparator();
-
-		jIncludeZero = new JCheckBoxMenuItem(TabsPriceHistory.get().includeZero());
-		jIncludeZero.setSelected(true);
-		jIncludeZero.setActionCommand(PriceHistoryAction.INCLUDE_ZERO.name());
-		jIncludeZero.addActionListener(listener);
-		jSettings.add(jIncludeZero);
-
-		jSettings.addSeparator();
-
-		ButtonGroup buttonGroup = new ButtonGroup();
-
-		JRadioButtonMenuItem jLinear = new JRadioButtonMenuItem(TabsPriceHistory.get().scaleLinear());
-		jLinear.setSelected(true);
-		jLinear.setActionCommand(PriceHistoryAction.LOGARITHMIC.name());
-		jLinear.addActionListener(listener);
-		jSettings.add(jLinear);
-		buttonGroup.add(jLinear);
-
-		jLogarithmic = new JRadioButtonMenuItem(TabsPriceHistory.get().scaleLogarithmic());
-		jLogarithmic.setSelected(false);
-		jLogarithmic.setActionCommand(PriceHistoryAction.LOGARITHMIC.name());
-		jLogarithmic.addActionListener(listener);
-		jSettings.add(jLogarithmic);
-		buttonGroup.add(jLogarithmic);
-
 		jEdit = new JDropDownButton(Images.EDIT_EDIT.getIcon());
 		jEdit.setToolTipText(TabsPriceHistory.get().edit());
 
@@ -363,10 +326,36 @@ public class PriceHistoryTab extends JMainTabSecondary {
 		jItems.addMouseListener(listener);
 		JScrollPane jOwnersScroll = new JScrollPane(jItems);
 
+		JDropDownButton jSettings = new JDropDownButton(Images.DIALOG_SETTINGS.getIcon());
+
+		jIncludeZero = new JCheckBoxMenuItem(TabsPriceHistory.get().includeZero());
+		jIncludeZero.setSelected(true);
+		jIncludeZero.setActionCommand(PriceHistoryAction.INCLUDE_ZERO.name());
+		jIncludeZero.addActionListener(listener);
+		jSettings.add(jIncludeZero);
+
+		jSettings.addSeparator();
+
+		ButtonGroup buttonGroup = new ButtonGroup();
+
+		JRadioButtonMenuItem jLinear = new JRadioButtonMenuItem(TabsPriceHistory.get().scaleLinear());
+		jLinear.setSelected(true);
+		jLinear.setActionCommand(PriceHistoryAction.LOGARITHMIC.name());
+		jLinear.addActionListener(listener);
+		jSettings.add(jLinear);
+		buttonGroup.add(jLinear);
+
+		jLogarithmic = new JRadioButtonMenuItem(TabsPriceHistory.get().scaleLogarithmic());
+		jLogarithmic.setSelected(false);
+		jLogarithmic.setActionCommand(PriceHistoryAction.LOGARITHMIC.name());
+		jLogarithmic.addActionListener(listener);
+		jSettings.add(jLogarithmic);
+		buttonGroup.add(jLogarithmic);
+
 		Font font = new JLabel().getFont();
 
-		DateAxis domainAxis = new DateAxis();
-		domainAxis.setDateFormatOverride(dateFormat);
+		domainAxis = new DateAxis();
+		domainAxis.setDateFormatOverride(ChartUtil.getDateFormat());
 		domainAxis.setVerticalTickLabels(true);
 		domainAxis.setAutoTickUnitSelection(true);
 		domainAxis.setAutoRange(true);
@@ -382,6 +371,7 @@ public class PriceHistoryTab extends JMainTabSecondary {
 
 		rangeLinearAxis = new NumberAxis();
 		rangeLinearAxis.setAutoRange(true);
+		rangeLinearAxis.setNumberFormatOverride(Formatter.AUTO_FORMAT);
 		rangeLinearAxis.setStandardTickUnits(NumberAxis.createStandardTickUnits());
 		rangeLinearAxis.setTickLabelFont(font);
 		rangeLinearAxis.setTickLabelPaint(Colors.TEXTFIELD_FOREGROUND.getColor());
@@ -393,7 +383,7 @@ public class PriceHistoryTab extends JMainTabSecondary {
 			public String generateToolTip(XYDataset dataset, int series, int item)	{
 				Date date = new Date(dataset.getX(series, item).longValue());
 				Number isk = dataset.getY(series, item);
-				return TabsPriceHistory.get().graphToolTip(dataset.getSeriesKey(series), iskFormat.format(isk), dateFormat.format(date));
+				return TabsPriceHistory.get().graphToolTip(dataset.getSeriesKey(series), Formatter.iskFormat(isk), Formatter.columnDateOnly(date));
 			}
 		});
 
@@ -503,10 +493,10 @@ public class PriceHistoryTab extends JMainTabSecondary {
 						)
 					)
 					.addGroup(layout.createSequentialGroup()
-						.addComponent(jSettings)
 						.addComponent(jEdit)
 						.addComponent(jSave)
 						.addComponent(jLoad)
+						.addComponent(jSettings)
 					)
 					.addComponent(jOwnersScroll, panelWidth, panelWidth, panelWidth)
 				)
@@ -530,10 +520,10 @@ public class PriceHistoryTab extends JMainTabSecondary {
 						.addComponent(jTo, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					)
 					.addGroup(layout.createParallelGroup()
-						.addComponent(jSettings, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 						.addComponent(jEdit, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 						.addComponent(jSave, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 						.addComponent(jLoad, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+						.addComponent(jSettings, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					)
 					.addComponent(jOwnersScroll, 70, 70, Integer.MAX_VALUE)
 				)
@@ -796,16 +786,9 @@ public class PriceHistoryTab extends JMainTabSecondary {
 			max = Math.max(max, seriesMax.get(item));
 			count = Math.max(count, dataset.getItemCount(i));
 		}
-		if (max >     1_000_000_000_000.0) { //Higher than 1 Trillion
-			rangeLinearAxis.setNumberFormatOverride(Formatter.TRILLIONS_FORMAT);
-		} else if (max >  1_000_000_000.0) { //Higher than 1 Billion
-			rangeLinearAxis.setNumberFormatOverride(Formatter.BILLIONS_FORMAT);
-		} else if (max >      1_000_000.0) { //Higher than 1 Million
-			rangeLinearAxis.setNumberFormatOverride(Formatter.MILLIONS_FORMAT);
-		} else {
-			rangeLinearAxis.setNumberFormatOverride(Formatter.LONG_FORMAT); //Default
-		}
+		ChartUtil.updateTickScale(domainAxis, rangeLinearAxis, max);
 		renderer.setDefaultShapesVisible(count < 2);
+
 		jRemove.setEnabled(!selected.isEmpty());
 		jClear.setEnabled(!itemsModel.isEmpty());
 		jSave.setEnabled(!itemsModel.isEmpty());

@@ -40,10 +40,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.text.DateFormat;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -93,6 +89,7 @@ import net.nikr.eve.jeveasset.data.settings.TrackerSettings.ShowOption;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel.JStatusLabel;
 import net.nikr.eve.jeveasset.gui.images.Images;
+import net.nikr.eve.jeveasset.gui.shared.ChartUtil;
 import net.nikr.eve.jeveasset.gui.shared.Formatter;
 import net.nikr.eve.jeveasset.gui.shared.InstantToolTip;
 import net.nikr.eve.jeveasset.gui.shared.JOptionInput;
@@ -129,7 +126,6 @@ import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.chart.ui.RectangleEdge;
-import org.jfree.data.general.DatasetUtils;
 import org.jfree.data.time.SimpleTimePeriod;
 import org.jfree.data.time.TimePeriodValues;
 import org.jfree.data.time.TimePeriodValuesCollection;
@@ -157,9 +153,6 @@ public class TrackerTab extends JMainTabSecondary {
 	}
 
 	private final int PANEL_WIDTH_MINIMUM = 160;
-
-	private final NumberFormat iskFormat = new DecimalFormat("#,##0.00 isk");
-	private final DateFormat dateFormat = new SimpleDateFormat(Formatter.COLUMN_DATE);
 
 	private final JFreeChart jNextChart;
 	private final JDateChooser jFrom;
@@ -216,6 +209,7 @@ public class TrackerTab extends JMainTabSecondary {
 	private final List<JMenuInfo.MenuItemValue> values;
 
 	private final TimePeriodValuesCollection dataset = new TimePeriodValuesCollection();
+	private final DateAxis domainAxis;
 	private final LogarithmicAxis rangeLogarithmicAxis;
 	private final NumberAxis rangeLinearAxis;
 	private TimePeriodValues walletBalance;
@@ -493,8 +487,8 @@ public class TrackerTab extends JMainTabSecondary {
 		jSettings.add(jLogarithmic);
 		buttonGroup.add(jLogarithmic);
 
-		DateAxis domainAxis = new DateAxis();
-		domainAxis.setDateFormatOverride(dateFormat);
+		domainAxis = new DateAxis();
+		domainAxis.setDateFormatOverride(ChartUtil.getDateFormat());
 		domainAxis.setVerticalTickLabels(true);
 		domainAxis.setAutoTickUnitSelection(true);
 		domainAxis.setAutoRange(true);
@@ -510,6 +504,7 @@ public class TrackerTab extends JMainTabSecondary {
 
 		rangeLinearAxis = new NumberAxis();
 		rangeLinearAxis.setAutoRange(true);
+		rangeLinearAxis.setNumberFormatOverride(Formatter.AUTO_FORMAT);
 		rangeLinearAxis.setStandardTickUnits(NumberAxis.createStandardTickUnits());
 		rangeLinearAxis.setTickLabelFont(jFromLabel.getFont());
 		rangeLinearAxis.setTickLabelPaint(Colors.TEXTFIELD_FOREGROUND.getColor());
@@ -538,12 +533,12 @@ public class TrackerTab extends JMainTabSecondary {
 				stringBuilder.append("<b>");
 				stringBuilder.append(dataset.getSeriesKey(series));
 				stringBuilder.append(":</b> ");
-				stringBuilder.append(iskFormat.format(isk));
+				stringBuilder.append(Formatter.iskFormat(isk));
 				stringBuilder.append("<br>");
 				stringBuilder.append("<b>");
 				stringBuilder.append(TabsTracker.get().date());
 				stringBuilder.append(":</b> ");
-				stringBuilder.append(dateFormat.format(date));
+				stringBuilder.append(Formatter.columnDateOnly(date));
 				TrackerNote trackerNote = trackerSettings.getNotes().get(new TrackerDate(date));
 				if (trackerNote != null) {
 					stringBuilder.append("<br><b>");
@@ -1292,19 +1287,8 @@ public class TrackerTab extends JMainTabSecondary {
 		rangeLogarithmicAxis.setAutoRange(true);
 		rangeLinearAxis.setAutoRange(true);
 		jNextChart.getXYPlot().getDomainAxis().setAutoRange(true);
-		Number maxNumber = DatasetUtils.findMaximumRangeValue(dataset);
-		if (maxNumber != null && maxNumber instanceof Double) {
-			double max = (Double) maxNumber;
-			if (max >     1_000_000_000_000.0) {	 //Higher than 1 Trillion
-				rangeLinearAxis.setNumberFormatOverride(Formatter.TRILLIONS_FORMAT);
-			} else if (max > 1_000_000_000.0) { //Higher than 1 Billion
-				rangeLinearAxis.setNumberFormatOverride(Formatter.BILLIONS_FORMAT);
-			} else if (max >     1_000_000.0) {	 //Higher than 1 Million
-				rangeLinearAxis.setNumberFormatOverride(Formatter.MILLIONS_FORMAT);
-			} else {
-				rangeLinearAxis.setNumberFormatOverride(Formatter.LONG_FORMAT); //Default
-			}
-		}
+
+		ChartUtil.updateTickScale(domainAxis, rangeLinearAxis, dataset);
 	}
 
 	private void updateRender(int index, Color color) {
@@ -1715,8 +1699,6 @@ public class TrackerTab extends JMainTabSecondary {
 			createData();
 		}
 
-		boolean mouseClicked = false;
-
 		@Override
 		public void chartMouseClicked(final ChartMouseEvent cme) {
 			if (cme.getTrigger().getClickCount() % 2 == 0) {
@@ -1737,7 +1719,7 @@ public class TrackerTab extends JMainTabSecondary {
 						Date date = new Date((long)xValue);
 						values.clear();
 						JMenuItem jIskValue = JMenuInfo.createMenuItem(values, jPopupMenu, yValue, JMenuInfo.AutoNumberFormat.ISK, TabsTracker.get().selectionIsk(), TabsTracker.get().selectionShortIsk(), Images.TOOL_VALUES.getIcon());
-						JMenuItem jDateValue = JMenuInfo.createMenuItem(values, jPopupMenu, dateFormat.format(date), TabsTracker.get().selectionDate(), TabsTracker.get().selectionShortDate(), Images.EDIT_DATE.getIcon());
+						JMenuItem jDateValue = JMenuInfo.createMenuItem(values, jPopupMenu, Formatter.columnDateOnly(date), TabsTracker.get().selectionDate(), TabsTracker.get().selectionShortDate(), Images.EDIT_DATE.getIcon());
 						TrackerNote trackerNote = Settings.get().getTrackerSettings().getNotes().get(new TrackerDate(date));
 						JMenuItem jNote;
 						if (trackerNote != null) {
