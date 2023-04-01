@@ -98,7 +98,7 @@ public enum MiningTableFormat implements EnumTableColumn<MyMining> {
 		}
 		@Override
 		public Object getColumnValue(final MyMining from) {
-			return from.getQuantity();
+			return from.getCount();
 		}
 	},
 	PRICE_ORE(Double.class, GlazedLists.comparableComparator()) {

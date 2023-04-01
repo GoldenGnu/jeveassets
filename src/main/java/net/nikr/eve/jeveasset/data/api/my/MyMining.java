@@ -50,7 +50,7 @@ public class MyMining extends RawMining implements Comparable<MyMining>, InfoIte
 
 	@Override
 	public double getValue() {
-		return price * getQuantity();
+		return price * getCount();
 	}
 
 	public DateOnly getDateOnly() {
@@ -67,7 +67,7 @@ public class MyMining extends RawMining implements Comparable<MyMining>, InfoIte
 
 	@Override
 	public double getValueReprocessed() {
-		return priceReprocessed * getQuantity();
+		return priceReprocessed * getCount();
 	}
 
 	public double getPriceReprocessedMax() {
@@ -79,7 +79,7 @@ public class MyMining extends RawMining implements Comparable<MyMining>, InfoIte
 	}
 
 	public double getValueReprocessedMax() {
-		return priceReprocessedMax * getQuantity();
+		return priceReprocessedMax * getCount();
 	}
 
 	private float getVolume() {
@@ -88,12 +88,7 @@ public class MyMining extends RawMining implements Comparable<MyMining>, InfoIte
 
 	@Override
 	public double getVolumeTotal() {
-		return item.getVolumePackaged() * getQuantity();
-	}
-
-	@Override
-	public long getCount() {
-		return getQuantity();
+		return item.getVolumePackaged() * getCount();
 	}
 
 	public double getValuePerVolumeOre() {
@@ -147,7 +142,7 @@ public class MyMining extends RawMining implements Comparable<MyMining>, InfoIte
 
 	@Override
 	public long getItemCount() {
-		return getQuantity();
+		return getCount();
 	}
 
 	@Override
