@@ -38,6 +38,7 @@ public abstract class TabsMining extends Bundle {
 	public abstract String average();
 	public abstract String character();
 	public abstract String corporation();
+	public abstract String count();
 	public abstract String from();
 	public abstract String grandTotal();
 	public abstract String graphToolTip(Comparable<?> name, String isk, String date);
@@ -54,6 +55,10 @@ public abstract class TabsMining extends Bundle {
 	public abstract String totalReprocessed();
 	public abstract String totalValue();
 	public abstract String totalVolume();
+	public abstract String valueOre();
+	public abstract String valueReprocessed();
+	public abstract String valueReprocessedMax();
+	public abstract String volume();
 	public abstract String columnDate();
 	public abstract String columnName();
 	public abstract String columnGroup();

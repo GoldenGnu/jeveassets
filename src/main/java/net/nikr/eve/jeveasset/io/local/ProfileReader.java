@@ -931,7 +931,7 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 				RawMining mining = RawMining.create();
 				mining.setTypeID(typeID);
 				mining.setDate(date);
-				mining.setQuantity(count);
+				mining.setCount(count);
 				mining.setLocationID(locationID);
 				mining.setCharacterName(characterName);
 				mining.setCorporationName(corporationName);

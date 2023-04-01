@@ -164,7 +164,7 @@ public class MiningTab extends JMainTabPrimary {
 			filterList.getReadWriteLock().readLock().lock();
 			for (MyMining mining : filterList) {
 				totalValue = totalValue + mining.getValue();
-				totalCount = totalCount + mining.getQuantity();
+				totalCount = totalCount + mining.getCount();
 				totalVolume = totalVolume + mining.getVolumeTotal();
 				totalReprocessed = totalReprocessed + mining.getValueReprocessed();
 			}
