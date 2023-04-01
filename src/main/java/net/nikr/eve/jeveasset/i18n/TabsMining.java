@@ -35,6 +35,7 @@ public abstract class TabsMining extends Bundle {
 		super(locale);
 	}
 
+	public abstract String average();
 	public abstract String character();
 	public abstract String corporation();
 	public abstract String from();
@@ -49,6 +50,10 @@ public abstract class TabsMining extends Bundle {
 	public abstract String scaleLinear();
 	public abstract String scaleLogarithmic();
 	public abstract String to();
+	public abstract String totalCount();
+	public abstract String totalReprocessed();
+	public abstract String totalValue();
+	public abstract String totalVolume();
 	public abstract String columnDate();
 	public abstract String columnName();
 	public abstract String columnGroup();
@@ -57,21 +62,21 @@ public abstract class TabsMining extends Bundle {
 	public abstract String columnLocation();
 	public abstract String columnCount();
 	public abstract String columnPriceOre();
-	public abstract String columnPriceMineralsSkill();
-	public abstract String columnPriceMineralsSkillToolTip();
-	public abstract String columnPriceMineralsMax();
-	public abstract String columnPriceMineralsMaxToolTip();
+	public abstract String columnPriceReproccesed();
+	public abstract String columnPriceReproccesedToolTip();
+	public abstract String columnPriceReproccesedMax();
+	public abstract String columnPriceReproccesedMaxToolTip();
 	public abstract String columnValueOre();
-	public abstract String columnValueMineralsSkills();
-	public abstract String columnValueMineralsSkillsToolTip();
-	public abstract String columnValueMineralsMax();
-	public abstract String columnValueMineralsMaxToolTip();
+	public abstract String columnValueReproccesed();
+	public abstract String columnValueReproccesedToolTip();
+	public abstract String columnValueReproccesedMax();
+	public abstract String columnValueReproccesedMaxToolTip();
 	public abstract String columnVolume();
 	public abstract String columnValuePerVolumeOre();
-	public abstract String columnValuePerVolumeMineralsSkills();
-	public abstract String columnValuePerVolumeMineralsSkillsToolTip();
-	public abstract String columnValuePerVolumeMineralsMax();
-	public abstract String columnValuePerVolumeMineralsMaxToolTip();
+	public abstract String columnValuePerVolumeReproccesed();
+	public abstract String columnValuePerVolumeReproccesedToolTip();
+	public abstract String columnValuePerVolumeReproccesedMax();
+	public abstract String columnValuePerVolumeReproccesedMaxToolTip();
 	public abstract String columnCorporation();
 	public abstract String columnForCorporation();
 }
