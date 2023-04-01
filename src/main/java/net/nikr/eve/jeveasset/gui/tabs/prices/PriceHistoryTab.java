@@ -24,16 +24,10 @@ import ca.odell.glazedlists.GlazedLists;
 import ca.odell.glazedlists.TextFilterator;
 import com.github.lgooddatepicker.optionalusertools.DateChangeListener;
 import com.github.lgooddatepicker.zinternaltools.DateChangeEvent;
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Rectangle;
-import java.awt.Shape;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.geom.Ellipse2D;
 import java.text.ParseException;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -71,7 +65,6 @@ import javax.swing.event.ListSelectionListener;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.StaticData;
-import net.nikr.eve.jeveasset.data.settings.Colors;
 import net.nikr.eve.jeveasset.data.settings.PriceDataSettings.PriceMode;
 import net.nikr.eve.jeveasset.data.settings.PriceHistoryDatabase;
 import net.nikr.eve.jeveasset.data.settings.Settings;
@@ -81,9 +74,8 @@ import net.nikr.eve.jeveasset.gui.frame.StatusPanel.Progress;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel.UpdateType;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
-import net.nikr.eve.jeveasset.gui.shared.ChartUtil;
 import net.nikr.eve.jeveasset.gui.shared.Formatter;
-import net.nikr.eve.jeveasset.gui.shared.InstantToolTip;
+import net.nikr.eve.jeveasset.gui.shared.JFreeChartUtil;
 import net.nikr.eve.jeveasset.gui.shared.components.JAutoCompleteDialog;
 import net.nikr.eve.jeveasset.gui.shared.components.JDateChooser;
 import net.nikr.eve.jeveasset.gui.shared.components.JDropDownButton;
@@ -97,7 +89,6 @@ import net.nikr.eve.jeveasset.io.online.ZkillboardPricesHistoryGetter;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
-import org.jfree.chart.LegendItem;
 import org.jfree.chart.axis.DateAxis;
 import org.jfree.chart.axis.LogarithmicAxis;
 import org.jfree.chart.axis.NumberAxis;
@@ -151,12 +142,8 @@ public class PriceHistoryTab extends JMainTabSecondary {
 		}
 	}
 
-	private final Shape LEGEND = new Rectangle(-5, -5, 10, 10);
-	private final Shape ITEM_SHAPE = new Ellipse2D.Float(-3.0f, -3.0f, 6.0f, 6.0f);
 	private final int PANEL_WIDTH_MINIMUM = 215;
 	public final int MAXIMUM_SHOWN = 50;
-	private final XYLineAndShapeRenderer renderer;
-
 
 	//GUI
 	private final JComboBox<PriceHistorySource> jSource;
@@ -170,22 +157,25 @@ public class PriceHistoryTab extends JMainTabSecondary {
 	private final JButton jSave;
 	private final JDropDownButton jLoad;
 	private final JMenuItem jManage;
-	private final JAutoCompleteDialog<Item> jAddItemDialog;
-	private final JAutoCompleteDialog<String> jSaveItemsDialog;
-	private final JManageItemsDialog jManageItemsDialog;
 	private final JMultiSelectionList<Item> jItems;
-	//Graph
 	private final JCheckBoxMenuItem jIncludeZero;
 	private final JRadioButtonMenuItem jLogarithmic;
+
+	//Graph
+	private final JFreeChart jFreeChart;
+	private final ChartPanel jChartPanel;
+	private final XYLineAndShapeRenderer renderer;
 	private final LogarithmicAxis rangeLogarithmicAxis;
 	private final DateAxis domainAxis;
 	private final NumberAxis rangeLinearAxis;
-	private final ChartPanel jChartPanel;
-	private final JFreeChart jNextChart;
 
 	//Dialog
+	private final JAutoCompleteDialog<Item> jAddItemDialog;
+	private final JAutoCompleteDialog<String> jSaveItemsDialog;
+	private final JManageItemsDialog jManageItemsDialog;
 	private final JLockWindow jLockWindow;
 
+	//Listener
 	private final ListenerClass listener = new ListenerClass();
 
 	//Data
@@ -201,7 +191,6 @@ public class PriceHistoryTab extends JMainTabSecondary {
 	private Date fromDate = null;
 	private Date toDate = null;
 	public static final String NAME = "pricehistory"; //Not to be changed!
-
 
 
 	public PriceHistoryTab(Program program) {
@@ -352,32 +341,11 @@ public class PriceHistoryTab extends JMainTabSecondary {
 		jSettings.add(jLogarithmic);
 		buttonGroup.add(jLogarithmic);
 
-		Font font = new JLabel().getFont();
+		domainAxis = JFreeChartUtil.createDateAxis();
+		rangeLogarithmicAxis = JFreeChartUtil.createLogarithmicAxis(true);
+		rangeLinearAxis = JFreeChartUtil.createNumberAxis(true);
 
-		domainAxis = new DateAxis();
-		domainAxis.setDateFormatOverride(ChartUtil.getDateFormat());
-		domainAxis.setVerticalTickLabels(true);
-		domainAxis.setAutoTickUnitSelection(true);
-		domainAxis.setAutoRange(true);
-		domainAxis.setTickLabelFont(font);
-		domainAxis.setTickLabelPaint(Colors.TEXTFIELD_FOREGROUND.getColor());
-
-		rangeLogarithmicAxis = new LogarithmicAxis("");
-		rangeLogarithmicAxis.setStrictValuesFlag(false);
-		rangeLogarithmicAxis.setNumberFormatOverride(Formatter.AUTO_FORMAT);
-		rangeLogarithmicAxis.setTickLabelFont(jFromLabel.getFont());
-		rangeLogarithmicAxis.setTickLabelPaint(Colors.TEXTFIELD_FOREGROUND.getColor());
-		rangeLogarithmicAxis.setAutoRangeIncludesZero(true);
-
-		rangeLinearAxis = new NumberAxis();
-		rangeLinearAxis.setAutoRange(true);
-		rangeLinearAxis.setNumberFormatOverride(Formatter.AUTO_FORMAT);
-		rangeLinearAxis.setStandardTickUnits(NumberAxis.createStandardTickUnits());
-		rangeLinearAxis.setTickLabelFont(font);
-		rangeLinearAxis.setTickLabelPaint(Colors.TEXTFIELD_FOREGROUND.getColor());
-		rangeLinearAxis.setAutoRangeIncludesZero(true);
-
-		renderer = new MyRender();
+		renderer = JFreeChartUtil.createRenderer();
 		renderer.setDefaultToolTipGenerator(new XYToolTipGenerator() {
 			@Override
 			public String generateToolTip(XYDataset dataset, int series, int item)	{
@@ -386,84 +354,9 @@ public class PriceHistoryTab extends JMainTabSecondary {
 				return TabsPriceHistory.get().graphToolTip(dataset.getSeriesKey(series), Formatter.iskFormat(isk), Formatter.columnDateOnly(date));
 			}
 		});
-
-		XYPlot plot = new XYPlot(dataset, domainAxis, rangeLinearAxis, renderer);
-		plot.setBackgroundPaint(Colors.TEXTFIELD_BACKGROUND.getColor());
-		plot.setRangeGridlinePaint(Color.LIGHT_GRAY);
-		plot.setDomainGridlinePaint(Color.LIGHT_GRAY);
-		plot.setDomainCrosshairLockedOnData(true);
-		plot.setDomainCrosshairStroke(new BasicStroke(1));
-		plot.setDomainCrosshairPaint(Color.BLACK);
-		plot.setDomainCrosshairVisible(false);
-		plot.setRangeCrosshairLockedOnData(true);
-		plot.setRangeCrosshairVisible(false);
-
-		jNextChart = new JFreeChart(plot);
-		jNextChart.setAntiAlias(true);
-		jNextChart.setBackgroundPaint(Colors.COMPONENT_BACKGROUND.getColor());
-		jNextChart.addProgressListener(null);
-		jNextChart.getLegend().setItemFont(font);
-		jNextChart.getLegend().setItemPaint(Colors.TEXTFIELD_FOREGROUND.getColor());
-		jNextChart.getLegend().setBackgroundPaint(Colors.COMPONENT_BACKGROUND.getColor());
-		//jNextChart.setTextAntiAlias(false);
-		//jNextChart.setAntiAlias(false);
-		/*
-		Map<RenderingHints.Key,Object> rh = new HashMap<>();
-		rh.put(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-		//rh.put(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_DEFAULT);
-		//rh.put(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
-
-
-		//rh.put(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-		rh.put(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_DEFAULT);
-		//rh.put(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
-
-		//rh.put(RenderingHints.KEY_DITHERING, RenderingHints.VALUE_DITHER_ENABLE);
-		rh.put(RenderingHints.KEY_DITHERING, RenderingHints.VALUE_DITHER_DEFAULT);
-		//rh.put(RenderingHints.KEY_DITHERING, RenderingHints.VALUE_DITHER_DISABLE);
-
-		//rh.put(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-		rh.put(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_DEFAULT);
-		//rh.put(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
-		//rh.put(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HBGR);
-		//rh.put(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
-		//rh.put(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_VBGR);
-		//rh.put(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_VRGB);
-		//rh.put(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
-
-		//rh.put(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
-		rh.put(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_DEFAULT);
-		//rh.put(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_OFF);
-
-		//rh.put(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
-		rh.put(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-		//rh.put(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
-
-		//rh.put(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
-		rh.put(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_DEFAULT);
-		//rh.put(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_SPEED);
-
-		//rh.put(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_QUALITY);
-		rh.put(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_DEFAULT);
-		//rh.put(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_SPEED);
-
-		//rh.put(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_NORMALIZE);
-		rh.put(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_DEFAULT);
-		//rh.put(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
-
-		jNextChart.setRenderingHints(new RenderingHints(rh));
-		*/
-
-		jChartPanel = new ChartPanel(jNextChart);
-		InstantToolTip.install(jChartPanel);
-		jChartPanel.setDomainZoomable(false);
-		jChartPanel.setRangeZoomable(false);
-		jChartPanel.setPopupMenu(null);
-		//jChartPanel.addChartMouseListener(listener);
-		jChartPanel.setMaximumDrawHeight(Integer.MAX_VALUE);
-		jChartPanel.setMaximumDrawWidth(Integer.MAX_VALUE);
-		jChartPanel.setMinimumDrawWidth(10);
-		jChartPanel.setMinimumDrawHeight(10);
+		XYPlot plot = JFreeChartUtil.createPlot(dataset, domainAxis, rangeLinearAxis, renderer);
+		jFreeChart = JFreeChartUtil.createChart(plot);
+		jChartPanel = JFreeChartUtil.createChartPanel(jFreeChart);
 
 		int gapWidth = 5;
 		int labelWidth = Math.max(jFromLabel.getPreferredSize().width, jToLabel.getPreferredSize().width);
@@ -786,7 +679,7 @@ public class PriceHistoryTab extends JMainTabSecondary {
 			max = Math.max(max, seriesMax.get(item));
 			count = Math.max(count, dataset.getItemCount(i));
 		}
-		ChartUtil.updateTickScale(domainAxis, rangeLinearAxis, max);
+		JFreeChartUtil.updateTickScale(domainAxis, rangeLinearAxis, max);
 		renderer.setDefaultShapesVisible(count < 2);
 
 		jRemove.setEnabled(!selected.isEmpty());
@@ -906,9 +799,9 @@ public class PriceHistoryTab extends JMainTabSecondary {
 				rangeLinearAxis.setAutoRangeIncludesZero(jIncludeZero.isSelected());
 			} else if (PriceHistoryAction.LOGARITHMIC.name().equals(e.getActionCommand())) {
 				if (jLogarithmic.isSelected()) {
-					jNextChart.getXYPlot().setRangeAxis(rangeLogarithmicAxis);
+					jFreeChart.getXYPlot().setRangeAxis(rangeLogarithmicAxis);
 				} else {
-					jNextChart.getXYPlot().setRangeAxis(rangeLinearAxis);
+					jFreeChart.getXYPlot().setRangeAxis(rangeLinearAxis);
 				}
 			}
 		}
@@ -1142,33 +1035,5 @@ public class PriceHistoryTab extends JMainTabSecondary {
 		}
 	}
 
-	private class MyRender extends XYLineAndShapeRenderer {
 
-		public MyRender() {
-			super(true, false);
-		}
-
-		@Override
-		public LegendItem getLegendItem(int datasetIndex, int series) {
-			LegendItem original = super.getLegendItem(datasetIndex, series); //To change body of generated methods, choose Tools | Templates.
-			LegendItem fixed = new LegendItem(
-				original.getLabel(),
-				original.getDescription(),
-				original.getToolTipText(),
-				"", //urlText
-				LEGEND,
-				original.getLinePaint(), //set fill paint to line paint
-				original.getOutlineStroke(),
-				Color.BLACK
-			);
-			fixed.setSeriesIndex(series);
-			fixed.setDatasetIndex(datasetIndex);
-			return fixed;
-		}
-
-		@Override
-		public Shape getItemShape(int row, int column) {
-			return ITEM_SHAPE;
-		}
-	}
 }
