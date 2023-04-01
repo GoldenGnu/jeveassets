@@ -39,11 +39,12 @@ import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.my.MyMining;
 import net.nikr.eve.jeveasset.data.settings.types.LocationType;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
+import net.nikr.eve.jeveasset.gui.frame.StatusPanel.JStatusLabel;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTabPrimary;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuColumns;
-import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
+import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo.AutoNumberFormat;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
@@ -56,11 +57,11 @@ import net.nikr.eve.jeveasset.i18n.TabsMining;
 public class MiningTab extends JMainTabPrimary {
 	//GUI
 	private final JAutoColumnTable jTable;
-	private final StatusPanel.JStatusLabel jValue;
-	private final StatusPanel.JStatusLabel jReprocessed;
-	private final StatusPanel.JStatusLabel jCount;
-	private final StatusPanel.JStatusLabel jAverage;
-	private final StatusPanel.JStatusLabel jVolume;
+	private final JStatusLabel jValue;
+	private final JStatusLabel jReprocessed;
+	private final JStatusLabel jCount;
+	private final JStatusLabel jAverage;
+	private final JStatusLabel jVolume;
 
 	//Table
 	private final MiningFilterControl filterControl;
@@ -114,19 +115,19 @@ public class MiningTab extends JMainTabPrimary {
 		//Menu
 		installTableTool(new MiningTableMenu(), tableFormat, tableModel, jTable, filterControl, MyMining.class);
 
-		jVolume = StatusPanel.createLabel(TabsMining.get().totalVolume(), Images.ASSETS_VOLUME.getIcon(), JMenuInfo.AutoNumberFormat.DOUBLE);
+		jVolume = StatusPanel.createLabel(TabsMining.get().totalVolume(), Images.ASSETS_VOLUME.getIcon(), AutoNumberFormat.DOUBLE);
 		this.addStatusbarLabel(jVolume);
 
-		jCount = StatusPanel.createLabel(TabsMining.get().totalCount(), Images.EDIT_ADD.getIcon(), JMenuInfo.AutoNumberFormat.ITEMS);
+		jCount = StatusPanel.createLabel(TabsMining.get().totalCount(), Images.EDIT_ADD.getIcon(), AutoNumberFormat.ITEMS);
 		this.addStatusbarLabel(jCount);
 
-		jAverage = StatusPanel.createLabel(TabsMining.get().average(), Images.ASSETS_AVERAGE.getIcon(), JMenuInfo.AutoNumberFormat.ISK);
+		jAverage = StatusPanel.createLabel(TabsMining.get().average(), Images.ASSETS_AVERAGE.getIcon(), AutoNumberFormat.ISK);
 		this.addStatusbarLabel(jAverage);
 
-		jReprocessed = StatusPanel.createLabel(TabsMining.get().totalReprocessed(), Images.SETTINGS_REPROCESSING.getIcon(), JMenuInfo.AutoNumberFormat.ISK);
+		jReprocessed = StatusPanel.createLabel(TabsMining.get().totalReprocessed(), Images.SETTINGS_REPROCESSING.getIcon(), AutoNumberFormat.ISK);
 		this.addStatusbarLabel(jReprocessed);
 
-		jValue = StatusPanel.createLabel(TabsMining.get().totalValue(), Images.TOOL_VALUES.getIcon(), JMenuInfo.AutoNumberFormat.ISK);
+		jValue = StatusPanel.createLabel(TabsMining.get().totalValue(), Images.TOOL_VALUES.getIcon(), AutoNumberFormat.ISK);
 		this.addStatusbarLabel(jValue);
 
 		layout.setHorizontalGroup(

@@ -90,6 +90,7 @@ import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel.JStatusLabel;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.ChartUtil;
+import net.nikr.eve.jeveasset.gui.shared.ColorIcon;
 import net.nikr.eve.jeveasset.gui.shared.Formatter;
 import net.nikr.eve.jeveasset.gui.shared.InstantToolTip;
 import net.nikr.eve.jeveasset.gui.shared.JOptionInput;
@@ -1779,42 +1780,6 @@ public class TrackerTab extends JMainTabSecondary {
 			}
 			updateFilterButtons();
 			createData();
-		}
-	}
-
-	public static class ColorIcon implements Icon {
-
-		private final Color color;
-
-		public ColorIcon(Color color) {
-			this.color = color;
-		}
-
-		@Override
-		public void paintIcon(Component c, Graphics g, int x, int y) {
-			Graphics2D g2d = (Graphics2D) g;
-			//Render settings
-			//g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
-			g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-			g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-			//Border
-			g2d.setColor(Color.BLACK);
-			g2d.fillOval(x + 2, y + 2, getIconWidth() - 4, getIconHeight() - 4);
-
-			//Background
-			g2d.setColor(color);
-			g2d.fillOval(x + 3, y + 3, getIconWidth() - 6, getIconHeight() - 6);
-		}
-
-		@Override
-		public int getIconWidth() {
-			return 16;
-		}
-
-		@Override
-		public int getIconHeight() {
-			return 16;
 		}
 	}
 

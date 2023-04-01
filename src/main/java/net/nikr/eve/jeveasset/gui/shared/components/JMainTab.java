@@ -146,12 +146,16 @@ public abstract class JMainTab {
 		}
 	}
 
-	public final void addStatusbarLabel(final JLabel jLabel) {
+	public final synchronized void addStatusbarLabel(final JLabel jLabel) {
 		statusbarLabels.add(jLabel);
 	}
 
-	public List<JLabel> getStatusbarLabels() {
-		return statusbarLabels;
+	public final synchronized void clearStatusbarLabels() {
+		statusbarLabels.clear();
+	}
+
+	public synchronized List<JLabel> getStatusbarLabels() {
+		return new ArrayList<>(statusbarLabels); //Copy
 	}
 
 	public final void beforeUpdateData() {
