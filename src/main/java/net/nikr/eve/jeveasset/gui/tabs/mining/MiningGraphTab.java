@@ -53,6 +53,7 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JScrollPane;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import net.nikr.eve.jeveasset.Program;
@@ -60,14 +61,18 @@ import net.nikr.eve.jeveasset.data.api.my.MyMining;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.settings.Colors;
 import net.nikr.eve.jeveasset.data.settings.types.LocationType;
+import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
+import net.nikr.eve.jeveasset.gui.frame.StatusPanel.JStatusLabel;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.ChartUtil;
+import net.nikr.eve.jeveasset.gui.shared.ColorIcon;
 import net.nikr.eve.jeveasset.gui.shared.Formatter;
 import net.nikr.eve.jeveasset.gui.shared.InstantToolTip;
 import net.nikr.eve.jeveasset.gui.shared.components.JDateChooser;
 import net.nikr.eve.jeveasset.gui.shared.components.JDropDownButton;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTabSecondary;
 import net.nikr.eve.jeveasset.gui.shared.components.JMultiSelectionList;
+import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo.AutoNumberFormat;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.QuickDate;
 import net.nikr.eve.jeveasset.i18n.TabsMining;
 import org.jfree.chart.ChartPanel;
@@ -103,6 +108,7 @@ public class MiningGraphTab extends JMainTabSecondary {
 	private final JDateChooser jFrom;
 	private final JDateChooser jTo;
 	private final JMultiSelectionList<String> jItems;
+
 	//Graph
 	private final JCheckBoxMenuItem jIncludeZero;
 	private final JRadioButtonMenuItem jLogarithmic;
@@ -120,6 +126,8 @@ public class MiningGraphTab extends JMainTabSecondary {
 	private final List<String> shownOrder = new ArrayList<>();
 	private final Map<String, TimePeriodValues> series = new HashMap<>();
 	private final Map<String, Double> seriesMax = new HashMap<>();
+	private final Map<String, Double> seriesTotals = new HashMap<>();
+	private final Map<String, String> seriesGroup = new HashMap<>();
 	private final TimePeriodValuesCollection dataset = new TimePeriodValuesCollection();
 
 	//Settings ToDo
@@ -352,6 +360,12 @@ public class MiningGraphTab extends JMainTabSecondary {
 		createData();
 		updateGUI();
 		updateShown();
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				updateStatusbar(); //Must be done after being shown
+			}
+		});
 	}
 
 	@Override
@@ -403,6 +417,8 @@ public class MiningGraphTab extends JMainTabSecondary {
 		series.clear();
 		shownOrder.clear();
 		seriesMax.clear();
+		seriesTotals.clear();
+		seriesGroup.clear();
 		//dataset
 		Map<String, Set<String>> groupCounts = new HashMap<>();
 		Map<Date, Map<String, Double>> values = new HashMap<>();
@@ -416,7 +432,7 @@ public class MiningGraphTab extends JMainTabSecondary {
 			}
 			//Type
 			final String typeName = getTypeName(mining.getItem());
-			final Double value = mining.getValueOre();
+			final double value = mining.getValueOre();
 			Map<String, Double> map = values.get(date);
 			if (map == null) {
 				map = new HashMap<>();
@@ -425,20 +441,32 @@ public class MiningGraphTab extends JMainTabSecondary {
 			names.add(typeName);
 			map.put(typeName, value);
 			//Group Total
-			final String groupTotal = TabsMining.get().groupTotal(mining.getItem().getGroup());
-			double group = map.getOrDefault(groupTotal, 0.0);
-			names.add(groupTotal);
-			map.put(groupTotal, group + value);
-			Set<String> set = groupCounts.get(groupTotal);
+			final String groupName = TabsMining.get().groupTotal(mining.getItem().getGroup());
+			double groupTotal = map.getOrDefault(groupName, 0.0);
+			names.add(groupName);
+			map.put(groupName, groupTotal + value);
+			Set<String> set = groupCounts.get(groupName);
 			if (set == null) {
 				set = new HashSet<>();
-				groupCounts.put(groupTotal, set);
+				groupCounts.put(groupName, set);
 			}
 			set.add(typeName);
+			seriesGroup.put(typeName, groupName);
 			//GrandTotal
 			double total = map.getOrDefault(grandTotal, 0.0);
 			names.add(grandTotal);
 			map.put(grandTotal, total + value);
+			//Totals
+			double d;
+			d = seriesTotals.getOrDefault(typeName, 0.0);
+			d = d + value;
+			seriesTotals.put(typeName, d);
+			d = seriesTotals.getOrDefault(groupName, 0.0);
+			d = d + value;
+			seriesTotals.put(groupName, d);
+			d = seriesTotals.getOrDefault(grandTotal, 0.0);
+			d = d + value;
+			seriesTotals.put(grandTotal, d);
 		}
 		//Remove group totals for groups with only one entry
 		for (Map.Entry<String, Set<String>> entry : groupCounts.entrySet()) {
@@ -484,6 +512,35 @@ public class MiningGraphTab extends JMainTabSecondary {
 		}
 	}
 
+	private void updateStatusbar() {
+		List<String> selected = jItems.getSelectedValuesList();
+		Set<String> shownGroups = new HashSet<>();
+		Set<String> shownTypes = new HashSet<>();
+		for (String typeName : selected) {
+			String groupName = seriesGroup.get(typeName);
+			if (groupName == null) { //Group or Grand total
+				shownGroups.add(typeName);
+			} else {
+				shownTypes.add(typeName);
+			}
+		}
+		clearStatusbarLabels();
+		for (int i = 0; i < shownOrder.size(); i++) {
+			final String typeName = shownOrder.get(i);
+			final Double value = seriesTotals.get(typeName);
+			String group = seriesGroup.get(typeName);
+			if (value != null &&
+					(shownGroups.contains(typeName) //Shown group
+					|| (shownTypes.contains(typeName) && !shownGroups.contains(group)))) { //Shown Type
+				final Color color = (Color) renderer.getSeriesPaint(i);
+				JStatusLabel jStatusLabel = StatusPanel.createLabel(typeName, new ColorIcon(color), AutoNumberFormat.ISK);
+				jStatusLabel.setNumber(value);
+				addStatusbarLabel(jStatusLabel);
+			}
+		}
+		program.getStatusPanel().tabChanged();
+	}
+
 	private void updateShown() {
 		List<String> selected = jItems.getSelectedValuesList();
 		double max = 0;
@@ -500,6 +557,7 @@ public class MiningGraphTab extends JMainTabSecondary {
 		}
 		ChartUtil.updateTickScale(domainAxis, rangeLinearAxis, max);
 		renderer.setDefaultShapesVisible(count < 2);
+		updateStatusbar();
 	}
 
 	private LocalDate dateToLocalDate(Date date) {

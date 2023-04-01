@@ -57,7 +57,7 @@ import net.nikr.eve.jeveasset.i18n.GuiShared;
 public class JSimpleColorPicker {
 
 	private final JDialog jDialog;
-	private final List<ColorIcon> icons = new ArrayList<>();
+	private final List<ButtonColorIcon> icons = new ArrayList<>();
 	private final JButton jDefault;
 	private final JButton jNone;
 	private Color input;
@@ -226,14 +226,14 @@ public class JSimpleColorPicker {
 	private void add(JPanel jPanel, Color color) {
 		if (color == null) {
 			JLabel jLabel = new JLabel();
-			Dimension dimension = new Dimension(ColorIcon.SIZE, ColorIcon.SIZE);
+			Dimension dimension = new Dimension(ButtonColorIcon.SIZE, ButtonColorIcon.SIZE);
 			jLabel.setMinimumSize(dimension);
 			jLabel.setPreferredSize(dimension);
 			jLabel.setMaximumSize(dimension);
 			jPanel.add(jLabel);
 			return;
 		}
-		ColorIcon icon = new ColorIcon(color, ColorUtil.isBrightColor(jPanel.getBackground()));
+		ButtonColorIcon icon = new ButtonColorIcon(color, ColorUtil.isBrightColor(jPanel.getBackground()));
 		icons.add(icon);
 
 		JButton jButton = createButton(icon);
@@ -250,7 +250,7 @@ public class JSimpleColorPicker {
 		this.input = input;
 		this.defaultColor = defaultColor;
 		this.colorListenere = colorListenere;
-		for (ColorIcon icon : icons) {
+		for (ButtonColorIcon icon : icons) {
 			icon.setSelect(input);
 		}
 		jDefault.setEnabled(!Objects.equals(input, defaultColor));
@@ -329,20 +329,20 @@ public class JSimpleColorPicker {
 		}
 		if (icon != null) {
 			jButton.setIcon(icon);
-			if (icon instanceof ColorIcon) {
-				ColorIcon colorIcon = (ColorIcon) icon;
+			if (icon instanceof ButtonColorIcon) {
+				ButtonColorIcon buttonColorIcon = (ButtonColorIcon) icon;
 				jButton.addMouseListener(new MouseAdapter() {
 					@Override
 					public void mouseEntered(MouseEvent e) {
 						if (jButton.isEnabled()) {
-							colorIcon.setHover(true);
+							buttonColorIcon.setHover(true);
 							jButton.repaint();
 						}
 					}
 
 					@Override
 					public void mouseExited(MouseEvent e) {
-						colorIcon.setHover(false);
+						buttonColorIcon.setHover(false);
 						jButton.repaint();
 					}
 				});
@@ -363,7 +363,7 @@ public class JSimpleColorPicker {
 		public void cancelled();
 	}
 
-	public static class ColorIcon implements Icon {
+	public static class ButtonColorIcon implements Icon {
 
 		private static final int SIZE = 22;
 
@@ -373,7 +373,7 @@ public class JSimpleColorPicker {
 		private boolean selected = false;
 		private boolean hover = false;
 
-		public ColorIcon(Color color, boolean brightBorder) {
+		public ButtonColorIcon(Color color, boolean brightBorder) {
 			this.color = color;
 			this.backgroundIsBright = brightBorder;
 			colorIsBright = ColorUtil.isBrightColor(color);

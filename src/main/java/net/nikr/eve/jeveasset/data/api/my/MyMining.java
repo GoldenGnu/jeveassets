@@ -47,7 +47,7 @@ public class MyMining extends RawMining implements Comparable<MyMining>, ItemTyp
 		this.location = location;
 	}
 
-	public Double getValueOre() {
+	public double getValueOre() {
 		return price * getQuantity();
 	}
 
