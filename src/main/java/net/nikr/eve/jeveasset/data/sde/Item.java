@@ -85,17 +85,18 @@ public class Item implements Comparable<Item>, ItemType {
 	private final List<ReprocessedMaterial> reprocessedMaterials = new ArrayList<>();
 	private final List<IndustryMaterial> manufacturingMaterials = new ArrayList<>();
 	private final List<IndustryMaterial> reactionMaterials = new ArrayList<>();
+	private final String slot;
 	private double priceReprocessed;
 
 	public Item(int typeID) {
-		this(typeID, emptyType(typeID), "", "", -1, -1, -1, -1, -1, "", false, 0, 0, 1, null);
+		this(typeID, emptyType(typeID), "", "", -1, -1, -1, -1, -1, "", false, 0, 0, 1, "", null);
 	}
 
 	public Item(int typeID, String version) {
-		this(typeID, emptyType(typeID), "", "", -1, -1, -1, -1, -1, "", false, 0, 0, 1, version);
+		this(typeID, emptyType(typeID), "", "", -1, -1, -1, -1, -1, "", false, 0, 0, 1, "", version);
 	}
 
-	public Item(final int typeID, final String name, final String group, final String category, final long price, final float volume, final float volumePackaged, final float capacity, final int meta, final String tech, final boolean marketGroup, final int portion, final int productTypeID, final int productQuantity, String version) {
+	public Item(final int typeID, final String name, final String group, final String category, final long price, final float volume, final float volumePackaged, final float capacity, final int meta, final String tech, final boolean marketGroup, final int portion, final int productTypeID, final int productQuantity, String slot, String version) {
 		this.typeID = typeID;
 		this.name = name;
 		this.group = group.intern();
@@ -114,6 +115,7 @@ public class Item implements Comparable<Item>, ItemType {
 		this.blueprint = this.category.equals(CATEGORY_BLUEPRINT) && group.toLowerCase().contains("blueprint");
 		this.formula = this.category.equals(CATEGORY_BLUEPRINT) && group.toLowerCase().contains("reaction formulas");
 		this.version = version;
+		this.slot = slot;
 	}
 
 	public String getVersion() {
@@ -229,6 +231,10 @@ public class Item implements Comparable<Item>, ItemType {
 
 	public int getProductQuantity() {
 		return productQuantity;
+	}
+
+	public String getSlot() {
+		return slot;
 	}
 
 	public boolean isEmpty() {

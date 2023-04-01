@@ -103,7 +103,8 @@ public final class ItemsReader extends AbstractXmlReader<Boolean> {
 		int portion = getInt(node, "portion");
 		int product = getIntNotNull(node, "product", 0);
 		int productQuantity = getIntNotNull(node, "productquantity", 1);
-		return new Item(id, name, group, category, price, volume, packagedVolume, capacity, meta, tech, marketGroup, portion, product, productQuantity, version);
+		String slot = getStringNotNull(node, "slot", "Unknown");
+		return new Item(id, name, group, category, price, volume, packagedVolume, capacity, meta, tech, marketGroup, portion, product, productQuantity, slot, version);
 	}
 
 	private void parseMaterials(final Element element, final Item item) throws XmlException {
