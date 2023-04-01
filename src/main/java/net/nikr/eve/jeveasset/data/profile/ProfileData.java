@@ -498,8 +498,8 @@ public class ProfileData {
 			//Mining
 			minings.addAll(owner.getMining());
 			for (MyMining mining : owner.getMining()) {
-				mining.setPriceReproccesed(ApiIdConverter.getPriceReprocessed(mining.getItem()));
-				mining.setPriceReproccesedMax(ApiIdConverter.getPriceReprocessedMax(mining.getItem()));
+				mining.setPriceReprocessed(ApiIdConverter.getPriceReprocessed(mining.getItem()));
+				mining.setPriceReprocessedMax(ApiIdConverter.getPriceReprocessedMax(mining.getItem()));
 			}
 			//Container Logs
 			containerLogsList.addAll(owner.getContainerLogs());
@@ -917,8 +917,8 @@ public class ProfileData {
 					}
 				}
 				if (reprocessed) {
-					mining.setPriceReproccesed(ApiIdConverter.getPriceReprocessed(mining.getItem()));
-					mining.setPriceReproccesedMax(ApiIdConverter.getPriceReprocessedMax(mining.getItem()));
+					mining.setPriceReprocessed(ApiIdConverter.getPriceReprocessed(mining.getItem()));
+					mining.setPriceReprocessedMax(ApiIdConverter.getPriceReprocessedMax(mining.getItem()));
 				}
 				//Dynamic Price
 				boolean dynamic = typeIDs.contains(mining.getTypeID());

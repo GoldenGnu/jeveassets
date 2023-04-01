@@ -306,7 +306,7 @@ public class AssetsTab extends JMainTabPrimary implements TagUpdate {
 
 		@Override
 		public void addInfoMenu(JPopupMenu jPopupMenu) {
-			JMenuInfo.asset(jPopupMenu, selectionModel.getSelected());
+			JMenuInfo.infoItem(jPopupMenu, selectionModel.getSelected());
 		}
 
 		@Override

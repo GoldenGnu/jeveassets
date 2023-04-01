@@ -44,6 +44,7 @@ import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTabPrimary;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuColumns;
+import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo.AutoNumberFormat;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
@@ -162,10 +163,10 @@ public class MiningTab extends JMainTabPrimary {
 		try {
 			filterList.getReadWriteLock().readLock().lock();
 			for (MyMining mining : filterList) {
-				totalValue = totalValue + mining.getValueOre();
+				totalValue = totalValue + mining.getValue();
 				totalCount = totalCount + mining.getQuantity();
 				totalVolume = totalVolume + mining.getVolumeTotal();
-				totalReprocessed = totalReprocessed + mining.getValueReproccesed();
+				totalReprocessed = totalReprocessed + mining.getValueReprocessed();
 			}
 		} finally {
 			filterList.getReadWriteLock().readLock().unlock();
@@ -197,7 +198,9 @@ public class MiningTab extends JMainTabPrimary {
 		}
 
 		@Override
-		public void addInfoMenu(JPopupMenu jPopupMenu) { }
+		public void addInfoMenu(JPopupMenu jPopupMenu) {
+			JMenuInfo.infoItem(jPopupMenu, selectionModel.getSelected());
+		}
 
 		@Override
 		public void addToolMenu(JComponent jComponent) { }
