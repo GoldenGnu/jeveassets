@@ -33,6 +33,7 @@ import net.troja.eve.esi.model.CharacterRolesResponse.RolesEnum;
 import net.troja.eve.esi.model.GroupResponse;
 import net.troja.eve.esi.model.MarketGroupResponse;
 import net.troja.eve.esi.model.TypeDogmaAttribute;
+import net.troja.eve.esi.model.TypeDogmaEffect;
 import net.troja.eve.esi.model.TypeResponse;
 
 
@@ -41,7 +42,7 @@ public class EsiItemsGetter extends AbstractEsiGetter {
 	/**
 	 * Change ESI_ITEM_VERSION to force items_updates.xml items to be updated again.
 	 */
-	public final static String ESI_ITEM_VERSION = "1.0.1";
+	public final static String ESI_ITEM_VERSION = "1.0.2";
 	public final static String ESI_ITEM_EMPTY = "EMPTY";
 
 	private final int typeID;
@@ -147,7 +148,37 @@ public class EsiItemsGetter extends AbstractEsiGetter {
 		int portion = typeResponse.getPortionSize();
 		int productTypeID = 0; //Product
 		int productQuantity = 1; //Product Quantity
-		item = new Item(typeID, name, group, category, price, volume, packagedVolume, capacity, metaLevel, techLevel, marketGroup, portion, productTypeID, productQuantity, ESI_ITEM_VERSION);
+		//Slot
+		String slot = "None";
+		List<TypeDogmaEffect> dogmaEffects = typeResponse.getDogmaEffects();
+		if (dogmaEffects != null) {
+			for (TypeDogmaEffect attribute : dogmaEffects) {
+				if (attribute.getIsDefault()) {
+					continue;
+				}
+				if (attribute.getEffectId() == 11) { //11 = Requires a low power slot
+					slot = "Low";
+					break;
+				}
+				if (attribute.getEffectId() == 12) { //12 = Requires a high power slot
+					slot = "High";
+					break;
+				}
+				if (attribute.getEffectId() == 13) { //13 = Requires a medium power slot
+					slot = "Medium";
+					break;
+				}
+				if (attribute.getEffectId() == 2663) { //2663 = Must be installed into an open rig slot
+					slot = "Rig";
+					break;
+				}
+				if (attribute.getEffectId() == 3772) { //3772 = Must be installed into an available subsystem slot on a Tech III ship.
+					slot = "Subsystem";
+					break;
+				}
+			}
+		}
+		item = new Item(typeID, name, group, category, price, volume, packagedVolume, capacity, metaLevel, techLevel, marketGroup, portion, productTypeID, productQuantity, slot, ESI_ITEM_VERSION);
 	}
 
 	private float getNotNull(Float f) {

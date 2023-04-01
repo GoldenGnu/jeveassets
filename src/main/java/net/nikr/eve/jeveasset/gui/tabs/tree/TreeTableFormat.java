@@ -103,6 +103,16 @@ public enum TreeTableFormat implements EnumTableColumn<TreeAsset> {
 			return from.getItem().getCategory();
 		}
 	},
+	SLOT(String.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsAssets.get().columnSlot();
+		}
+		@Override
+		public Object getColumnValue(final TreeAsset from) {
+			return from.getItem().getSlot();
+		}
+	},
 	OWNER(String.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
