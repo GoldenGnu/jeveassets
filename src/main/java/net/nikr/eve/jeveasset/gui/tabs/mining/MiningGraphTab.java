@@ -32,10 +32,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.geom.Ellipse2D;
-import java.text.DateFormat;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -65,6 +61,7 @@ import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.settings.Colors;
 import net.nikr.eve.jeveasset.data.settings.types.LocationType;
 import net.nikr.eve.jeveasset.gui.images.Images;
+import net.nikr.eve.jeveasset.gui.shared.ChartUtil;
 import net.nikr.eve.jeveasset.gui.shared.Formatter;
 import net.nikr.eve.jeveasset.gui.shared.InstantToolTip;
 import net.nikr.eve.jeveasset.gui.shared.components.JDateChooser;
@@ -101,10 +98,6 @@ public class MiningGraphTab extends JMainTabSecondary {
 	private final int PANEL_WIDTH_MINIMUM = 215;
 	private final XYLineAndShapeRenderer renderer;
 
-
-	private final DateFormat dateFormat = new SimpleDateFormat(Formatter.COLUMN_DATE);
-	private final NumberFormat iskFormat = new DecimalFormat("#,##0.00 isk");
-
 	//GUI
 	private final JComboBox<QuickDate> jQuickDate;
 	private final JDateChooser jFrom;
@@ -113,6 +106,7 @@ public class MiningGraphTab extends JMainTabSecondary {
 	//Graph
 	private final JCheckBoxMenuItem jIncludeZero;
 	private final JRadioButtonMenuItem jLogarithmic;
+	private final DateAxis domainAxis;
 	private final LogarithmicAxis rangeLogarithmicAxis;
 	private final NumberAxis rangeLinearAxis;
 	private final ChartPanel jChartPanel;
@@ -189,8 +183,8 @@ public class MiningGraphTab extends JMainTabSecondary {
 
 		Font font = new JLabel().getFont();
 
-		DateAxis domainAxis = new DateAxis();
-		domainAxis.setDateFormatOverride(dateFormat);
+		domainAxis = new DateAxis();
+		domainAxis.setDateFormatOverride(ChartUtil.getDateFormat());
 		domainAxis.setVerticalTickLabels(true);
 		domainAxis.setAutoTickUnitSelection(true);
 		domainAxis.setAutoRange(true);
@@ -206,6 +200,7 @@ public class MiningGraphTab extends JMainTabSecondary {
 
 		rangeLinearAxis = new NumberAxis();
 		rangeLinearAxis.setAutoRange(true);
+		rangeLinearAxis.setNumberFormatOverride(Formatter.AUTO_FORMAT);
 		rangeLinearAxis.setStandardTickUnits(NumberAxis.createStandardTickUnits());
 		rangeLinearAxis.setTickLabelFont(font);
 		rangeLinearAxis.setTickLabelPaint(Colors.TEXTFIELD_FOREGROUND.getColor());
@@ -217,7 +212,7 @@ public class MiningGraphTab extends JMainTabSecondary {
 			public String generateToolTip(XYDataset dataset, int series, int item)	{
 				Date date = new Date(dataset.getX(series, item).longValue());
 				Number isk = dataset.getY(series, item);
-				return TabsMining.get().graphToolTip(dataset.getSeriesKey(series), iskFormat.format(isk), dateFormat.format(date));
+				return TabsMining.get().graphToolTip(dataset.getSeriesKey(series), Formatter.iskFormat(isk), Formatter.columnDateOnly(date));
 			}
 		});
 
@@ -503,15 +498,7 @@ public class MiningGraphTab extends JMainTabSecondary {
 			max = Math.max(max, seriesMax.get(typeName));
 			count = Math.max(count, dataset.getItemCount(i));
 		}
-		if (max >     1_000_000_000_000.0) { //Higher than 1 Trillion
-			rangeLinearAxis.setNumberFormatOverride(Formatter.TRILLIONS_FORMAT);
-		} else if (max >  1_000_000_000.0) { //Higher than 1 Billion
-			rangeLinearAxis.setNumberFormatOverride(Formatter.BILLIONS_FORMAT);
-		} else if (max >      1_000_000.0) { //Higher than 1 Million
-			rangeLinearAxis.setNumberFormatOverride(Formatter.MILLIONS_FORMAT);
-		} else {
-			rangeLinearAxis.setNumberFormatOverride(Formatter.LONG_FORMAT); //Default
-		}
+		ChartUtil.updateTickScale(domainAxis, rangeLinearAxis, max);
 		renderer.setDefaultShapesVisible(count < 2);
 	}
 
