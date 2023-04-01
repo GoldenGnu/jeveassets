@@ -24,6 +24,8 @@ import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.FilterList;
 import ca.odell.glazedlists.ListSelection;
 import ca.odell.glazedlists.SortedList;
+import ca.odell.glazedlists.event.ListEvent;
+import ca.odell.glazedlists.event.ListEventListener;
 import ca.odell.glazedlists.swing.DefaultEventSelectionModel;
 import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import ca.odell.glazedlists.swing.TableComparatorChooser;
@@ -36,10 +38,12 @@ import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.my.MyMining;
 import net.nikr.eve.jeveasset.data.settings.types.LocationType;
+import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTabPrimary;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuColumns;
+import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
@@ -52,6 +56,11 @@ import net.nikr.eve.jeveasset.i18n.TabsMining;
 public class MiningTab extends JMainTabPrimary {
 	//GUI
 	private final JAutoColumnTable jTable;
+	private final StatusPanel.JStatusLabel jValue;
+	private final StatusPanel.JStatusLabel jReprocessed;
+	private final StatusPanel.JStatusLabel jCount;
+	private final StatusPanel.JStatusLabel jAverage;
+	private final StatusPanel.JStatusLabel jVolume;
 
 	//Table
 	private final MiningFilterControl filterControl;
@@ -66,6 +75,8 @@ public class MiningTab extends JMainTabPrimary {
 	public MiningTab(Program program) {
 		super(program, NAME, TabsMining.get().miningLog(), Images.TOOL_MINING_LOG.getIcon(), true);
 
+		ListenerClass listener = new ListenerClass();
+
 		//Table Format
 		tableFormat = TableFormatFactory.miningTableFormat();
 		//Backend
@@ -78,7 +89,8 @@ public class MiningTab extends JMainTabPrimary {
 		eventList.getReadWriteLock().readLock().lock();
 		filterList = new FilterList<>(sortedList);
 		eventList.getReadWriteLock().readLock().unlock();
-
+		//Listener
+		filterList.addListEventListener(listener);
 		//Table Model
 		tableModel = EventModels.createTableModel(filterList, tableFormat);
 		//Table
@@ -102,6 +114,21 @@ public class MiningTab extends JMainTabPrimary {
 		//Menu
 		installTableTool(new MiningTableMenu(), tableFormat, tableModel, jTable, filterControl, MyMining.class);
 
+		jVolume = StatusPanel.createLabel(TabsMining.get().totalVolume(), Images.ASSETS_VOLUME.getIcon(), JMenuInfo.AutoNumberFormat.DOUBLE);
+		this.addStatusbarLabel(jVolume);
+
+		jCount = StatusPanel.createLabel(TabsMining.get().totalCount(), Images.EDIT_ADD.getIcon(), JMenuInfo.AutoNumberFormat.ITEMS);
+		this.addStatusbarLabel(jCount);
+
+		jAverage = StatusPanel.createLabel(TabsMining.get().average(), Images.ASSETS_AVERAGE.getIcon(), JMenuInfo.AutoNumberFormat.ISK);
+		this.addStatusbarLabel(jAverage);
+
+		jReprocessed = StatusPanel.createLabel(TabsMining.get().totalReprocessed(), Images.SETTINGS_REPROCESSING.getIcon(), JMenuInfo.AutoNumberFormat.ISK);
+		this.addStatusbarLabel(jReprocessed);
+
+		jValue = StatusPanel.createLabel(TabsMining.get().totalValue(), Images.TOOL_VALUES.getIcon(), JMenuInfo.AutoNumberFormat.ISK);
+		this.addStatusbarLabel(jValue);
+
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()
 				.addComponent(filterControl.getPanel())
@@ -123,6 +150,33 @@ public class MiningTab extends JMainTabPrimary {
 	@Override
 	public Collection<LocationType> getLocations() {
 		return new ArrayList<>(); //No Location
+	}
+
+	private void updateStatusbar() {
+		double averageValue = 0;
+		double totalValue = 0;
+		long totalCount = 0;
+		double totalVolume = 0;
+		double totalReprocessed = 0;
+		try {
+			filterList.getReadWriteLock().readLock().lock();
+			for (MyMining mining : filterList) {
+				totalValue = totalValue + mining.getValueOre();
+				totalCount = totalCount + mining.getQuantity();
+				totalVolume = totalVolume + mining.getVolumeTotal();
+				totalReprocessed = totalReprocessed + mining.getValueReproccesed();
+			}
+		} finally {
+			filterList.getReadWriteLock().readLock().unlock();
+		}
+		if (totalCount > 0 && totalValue > 0) {
+			averageValue = totalValue / totalCount;
+		}
+		jVolume.setNumber(totalVolume);
+		jCount.setNumber(totalCount);
+		jAverage.setNumber(averageValue);
+		jReprocessed.setNumber(totalReprocessed);
+		jValue.setNumber(totalValue);
 	}
 
 	private class MiningTableMenu implements TableMenu<MyMining> {
@@ -165,4 +219,12 @@ public class MiningTab extends JMainTabPrimary {
 			program.saveSettings("Mining Table: " + msg); //Save Mining Filters and Export Settings
 		}
 	}
+
+	private class ListenerClass implements ListEventListener<MyMining> {
+		@Override
+		public void listChanged(final ListEvent<MyMining> listChanges) {
+			updateStatusbar();
+		}
+	}
+
 }
