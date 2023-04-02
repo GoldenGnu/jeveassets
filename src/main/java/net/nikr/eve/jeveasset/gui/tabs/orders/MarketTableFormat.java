@@ -271,7 +271,7 @@ public enum MarketTableFormat implements EnumTableColumn<MyMarketOrder> {
 	MIN_VOLUME(Integer.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
-			return TabsOrders.get().columnMinVolume();
+			return TabsOrders.get().columnMinimumQuantity();
 		}
 		@Override
 		public Object getColumnValue(final MyMarketOrder from) {
