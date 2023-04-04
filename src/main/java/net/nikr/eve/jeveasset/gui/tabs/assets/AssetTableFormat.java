@@ -114,6 +114,16 @@ public enum AssetTableFormat implements EnumTableColumn<MyAsset> {
 			return from.getItem().getSlot();
 		}
 	},
+	CHARGE_SIZE(String.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsAssets.get().columnChargeSize();
+		}
+		@Override
+		public Object getColumnValue(final MyAsset from) {
+			return from.getItem().getChargeSize();
+		}
+	},
 	OWNER(String.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {

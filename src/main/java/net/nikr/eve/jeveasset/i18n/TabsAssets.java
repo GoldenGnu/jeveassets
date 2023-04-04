@@ -50,6 +50,7 @@ public abstract class TabsAssets extends Bundle {
 	public abstract String columnGroup();
 	public abstract String columnCategory();
 	public abstract String columnSlot();
+	public abstract String columnChargeSize();
 	public abstract String columnOwner();
 	public abstract String columnLocation();
 	public abstract String columnSecurity();
