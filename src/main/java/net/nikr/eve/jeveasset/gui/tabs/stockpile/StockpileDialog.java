@@ -1088,7 +1088,7 @@ public class StockpileDialog extends JDialogCentered {
 				jobsDaysPanel = new FilterPanel(this, jobsDaysMore, false);
 				jJobsDays.setEnabled(false); //One instance only
 			} else {
-				jJobsDays.setEnabled(stockpileFilter.isJobs()); //Only enabled if indystry jobs are active
+				jJobsDays.setEnabled(stockpileFilter.isJobs()); //Only enabled if industry jobs are active
 			}
 			//Exclude
 			jMatchExclude.setSelected(stockpileFilter.isExclude());
