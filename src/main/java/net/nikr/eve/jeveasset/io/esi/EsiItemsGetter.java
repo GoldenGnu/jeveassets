@@ -26,6 +26,7 @@ import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import static net.nikr.eve.jeveasset.io.esi.AbstractEsiGetter.DATASOURCE;
 import static net.nikr.eve.jeveasset.io.esi.AbstractEsiGetter.getMarketApiOpen;
+import net.nikr.eve.jeveasset.io.local.ItemsReader;
 import net.troja.eve.esi.ApiException;
 import net.troja.eve.esi.ApiResponse;
 import net.troja.eve.esi.model.CategoryResponse;
@@ -93,10 +94,11 @@ public class EsiItemsGetter extends AbstractEsiGetter {
 		float volume = getNotNull(typeResponse.getVolume());
 		float packagedVolume = getNotNull(typeResponse.getPackagedVolume());
 		float capacity = getNotNull(typeResponse.getCapacity());
-	//Meta
+	//Meta / Charge Sire
 		Integer metaGroupID = null;
 		int metaLevel = 0;
 		List<TypeDogmaAttribute> dogmaAttributes = typeResponse.getDogmaAttributes();
+		Integer charge = null;
 		if (dogmaAttributes != null) {
 			for (TypeDogmaAttribute attribute : dogmaAttributes) {
 				if (attribute.getAttributeId() == 1692) { //1692 = meta group
@@ -104,6 +106,9 @@ public class EsiItemsGetter extends AbstractEsiGetter {
 				}
 				if (attribute.getAttributeId() == 633) { //633 = meta level
 					metaLevel = attribute.getValue().intValue();
+				}
+				if (attribute.getAttributeId() == 128) { //128 = The size of the charges that can fit in the turret/whatever.
+					charge = attribute.getValue().intValue();
 				}
 			}
 		}
@@ -149,7 +154,7 @@ public class EsiItemsGetter extends AbstractEsiGetter {
 		int productTypeID = 0; //Product
 		int productQuantity = 1; //Product Quantity
 		//Slot
-		String slot = "None";
+		String slot = null;
 		List<TypeDogmaEffect> dogmaEffects = typeResponse.getDogmaEffects();
 		if (dogmaEffects != null) {
 			for (TypeDogmaEffect attribute : dogmaEffects) {
@@ -178,7 +183,9 @@ public class EsiItemsGetter extends AbstractEsiGetter {
 				}
 			}
 		}
-		item = new Item(typeID, name, group, category, price, volume, packagedVolume, capacity, metaLevel, techLevel, marketGroup, portion, productTypeID, productQuantity, slot, ESI_ITEM_VERSION);
+		//Charge Size
+		String chargeSize = ItemsReader.getChargeSize(charge);
+		item = new Item(typeID, name, group, category, price, volume, packagedVolume, capacity, metaLevel, techLevel, marketGroup, portion, productTypeID, productQuantity, slot, chargeSize, ESI_ITEM_VERSION);
 	}
 
 	private float getNotNull(Float f) {

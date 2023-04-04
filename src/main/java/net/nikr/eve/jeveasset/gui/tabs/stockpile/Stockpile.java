@@ -1871,7 +1871,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 		}
 
 		private SubpileItem(Stockpile stockpile, int level, String path) {
-			super(stockpile, new Item(0, "!"+0, "Stockpile", "", 0, 0, 0, 0, 0, "", false, 0, 0, 1, "", null), 0, 0.0, false);
+			super(stockpile, new Item(0, "!"+0, "Stockpile", "", 0, 0, 0, 0, 0, "", false, 0, 0, 1, "", "", null), 0, 0.0, false);
 			setLevel(level);
 			this.path = path;
 			updateText();

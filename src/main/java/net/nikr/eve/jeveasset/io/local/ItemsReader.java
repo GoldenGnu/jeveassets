@@ -103,8 +103,9 @@ public final class ItemsReader extends AbstractXmlReader<Boolean> {
 		int portion = getInt(node, "portion");
 		int product = getIntNotNull(node, "product", 0);
 		int productQuantity = getIntNotNull(node, "productquantity", 1);
-		String slot = getStringNotNull(node, "slot", "Unknown");
-		return new Item(id, name, group, category, price, volume, packagedVolume, capacity, meta, tech, marketGroup, portion, product, productQuantity, slot, version);
+		String slot = getStringOptional(node, "slot");
+		String chargeSize = getChargeSize(getIntOptional(node, "charges"));
+		return new Item(id, name, group, category, price, volume, packagedVolume, capacity, meta, tech, marketGroup, portion, product, productQuantity, slot, chargeSize, version);
 	}
 
 	private void parseMaterials(final Element element, final Item item) throws XmlException {
@@ -141,5 +142,23 @@ public final class ItemsReader extends AbstractXmlReader<Boolean> {
 		int typeID = getInt(node, "id");
 		int quantity = getInt(node, "q");
 		return new IndustryMaterial(typeID, quantity);
+	}
+
+	public static String getChargeSize(Integer chargeSize) {
+		if (chargeSize == null) {
+			return null;
+		}
+		switch (chargeSize) {
+			case 1:
+				return "Small";
+			case 2:
+				return "Medium";
+			case 3:
+				return "Large";
+			case 4:
+				return "Extra Large";
+			default:
+				return "Unknown (" + chargeSize + ")";
+		}
 	}
 }
