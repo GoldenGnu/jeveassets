@@ -21,7 +21,6 @@
 
 package net.nikr.eve.jeveasset.gui.sounds;
 
-import net.nikr.eve.jeveasset.gui.sounds.Sounds;
 import java.io.File;
 import java.net.URISyntaxException;
 import javax.sound.sampled.Clip;
