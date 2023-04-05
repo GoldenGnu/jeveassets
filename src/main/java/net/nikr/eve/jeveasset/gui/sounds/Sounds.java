@@ -21,9 +21,11 @@
 package net.nikr.eve.jeveasset.gui.sounds;
 
 import java.io.IOException;
+import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
+import javax.sound.sampled.DataLine;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import net.nikr.eve.jeveasset.SplashUpdater;
@@ -86,8 +88,10 @@ public enum Sounds {
 	public static Clip getClip(String filename) {
 		AudioInputStream inputStream = null;
 		try {
-			Clip c = AudioSystem.getClip();
 			inputStream = AudioSystem.getAudioInputStream(Sounds.class.getResourceAsStream(filename));
+			AudioFormat format = inputStream.getFormat();
+			DataLine.Info info = new DataLine.Info(Clip.class, format);
+			Clip c = (Clip) AudioSystem.getLine(info);
 			c.open(inputStream);
 			return c;
 		} catch (UnsupportedAudioFileException ex) {
