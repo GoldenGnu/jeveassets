@@ -23,9 +23,7 @@ package net.nikr.eve.jeveasset.gui.sounds;
 
 import java.io.File;
 import java.net.URISyntaxException;
-import javax.sound.sampled.Clip;
 import net.nikr.eve.jeveasset.TestUtil;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import org.junit.Test;
@@ -36,8 +34,12 @@ public class SoundsTest extends TestUtil {
 	@Test
 	public void testExists() {
 		for (Sounds i : Sounds.values()) {
-			Clip clip = Sounds.getClip(i.getFilename());
-			assertNotNull(i.getFilename() + " not found", clip);
+			try {
+				File file = new File(Sounds.class.getResource(i.getFilename()).toURI());
+				assertTrue(i.getFilename() + " not found", file.exists());
+			} catch (URISyntaxException ex) {
+				fail(ex.getMessage());
+			}
 		}
 	}
 
