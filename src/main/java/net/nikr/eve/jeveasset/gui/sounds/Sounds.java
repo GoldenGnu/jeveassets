@@ -92,16 +92,16 @@ public enum Sounds {
 			inputStream = AudioSystem.getAudioInputStream(new BufferedInputStream(Sounds.class.getResourceAsStream(filename)));
 			AudioFormat format = inputStream.getFormat();
 			DataLine.Info info = new DataLine.Info(Clip.class, format);
-			Clip c = (Clip) AudioSystem.getLine(info);
-			c.open(inputStream);
-			return c;
+			if (AudioSystem.isLineSupported(info)) {
+				Clip c = (Clip) AudioSystem.getLine(info);
+				c.open(inputStream);
+				return c;
+			}
 		} catch (UnsupportedAudioFileException ex) {
 			LOG.error(ex.getMessage(), ex);
 		} catch (IOException ex) {
 			LOG.error(ex.getMessage(), ex);
 		} catch (LineUnavailableException ex) {
-			LOG.error(ex.getMessage(), ex);
-		} catch (IllegalArgumentException ex) {
 			LOG.error(ex.getMessage(), ex);
 		} finally {
 			try {
