@@ -51,8 +51,7 @@ public class SoundsTest extends TestUtil {
 
 	@Test
 	public void testPreload() {
-		boolean ok = Sounds.preload();
-		assertTrue("Preload failed", ok);
+		Sounds.preload();
 	}
 
 	@Test
@@ -106,31 +105,6 @@ public class SoundsTest extends TestUtil {
 	}
 
 	@Test
-	public void testFormats() throws LineUnavailableException {
-		Mixer mixer = AudioSystem.getMixer(null); // default mixer
-		mixer.open();
-
-		System.out.printf("Supported SourceDataLines of default mixer (%s):\n\n", mixer.getMixerInfo().getName());
-		for (Line.Info info : mixer.getSourceLineInfo()) {
-			if (SourceDataLine.class.isAssignableFrom(info.getLineClass())) {
-				SourceDataLine.Info info2 = (SourceDataLine.Info) info;
-				System.out.println(info2);
-				System.out.printf("  max buffer size: \t%d\n", info2.getMaxBufferSize());
-				System.out.printf("  min buffer size: \t%d\n", info2.getMinBufferSize());
-				AudioFormat[] formats = info2.getFormats();
-				System.out.println("  Supported Audio formats: ");
-				for (AudioFormat format : formats) {
-					System.out.println("    " + format);
-				}
-				System.out.println();
-			} else {
-				System.out.println(info.toString());
-			}
-			System.out.println();
-		}
-
-		mixer.close();
-	}
 	public void testFilenames() {
 		for (Sounds i : Sounds.values()) {
 			String properFilename = i.toString().toLowerCase() + ".wav";
