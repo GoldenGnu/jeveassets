@@ -20,6 +20,7 @@
  */
 package net.nikr.eve.jeveasset.gui.sounds;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
@@ -88,7 +89,7 @@ public enum Sounds {
 	public static Clip getClip(String filename) {
 		AudioInputStream inputStream = null;
 		try {
-			inputStream = AudioSystem.getAudioInputStream(Sounds.class.getResourceAsStream(filename));
+			inputStream = AudioSystem.getAudioInputStream(new BufferedInputStream(Sounds.class.getResourceAsStream(filename)));
 			AudioFormat format = inputStream.getFormat();
 			DataLine.Info info = new DataLine.Info(Clip.class, format);
 			Clip c = (Clip) AudioSystem.getLine(info);
