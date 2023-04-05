@@ -67,6 +67,8 @@ import net.nikr.eve.jeveasset.data.settings.UserItem;
 import net.nikr.eve.jeveasset.data.settings.tag.Tag;
 import net.nikr.eve.jeveasset.data.settings.tag.TagColor;
 import net.nikr.eve.jeveasset.data.settings.tag.TagID;
+import net.nikr.eve.jeveasset.gui.dialogs.settings.SoundsSettingsPanel.SoundsOption;
+import net.nikr.eve.jeveasset.gui.dialogs.settings.SoundsSettingsPanel.SoundsSound;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.UserNameSettingsPanel.UserName;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.UserPriceSettingsPanel.UserPrice;
 import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
@@ -317,6 +319,12 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		Element colorSettingsElement = getNodeOptional(element, "colorsettings");
 		if (colorSettingsElement != null) {
 			parseColorSettings(colorSettingsElement, settings);
+		}
+
+		//Sound Settings
+		Element soundSettingsElement = getNodeOptional(element, "soundsettings");
+		if (soundSettingsElement != null) {
+			parseSoundSettings(soundSettingsElement, settings);
 		}
 
 		//Tracker Settings
@@ -897,6 +905,20 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		String lookAndFeelClass = getStringOptional(colorSettingsElement, "lookandfeel");
 		if (lookAndFeelClass != null) {
 			settings.getColorSettings().setLookAndFeelClass(lookAndFeelClass);
+		}
+	}
+
+	private void parseSoundSettings(Element colorSettingsElement, Settings settings) throws XmlException {
+		NodeList soundNodes = colorSettingsElement.getElementsByTagName("sound");
+		for (int a = 0; a < soundNodes.getLength(); a++) {
+			Element soundNode = (Element) soundNodes.item(a);
+			try {
+				SoundsOption option = SoundsOption.valueOf(getString(soundNode, "option"));
+				SoundsSound sound = SoundsSound.valueOf(getString(soundNode, "sound"));
+				settings.getSoundSettings().put(option, sound);
+			} catch (IllegalArgumentException ex ) {
+				LOG.error(ex.getMessage(), ex);
+			}
 		}
 	}
 
