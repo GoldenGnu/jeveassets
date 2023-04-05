@@ -58,6 +58,9 @@ public class SoundPlayer {
 		}
 		if (sounds != null) {
 			Clip clip = sounds.getClip();
+			if (clip == null) {
+				return;
+			}
 			clip.stop();
 			clip.setFramePosition(0);
 			clip.start();
@@ -94,6 +97,9 @@ public class SoundPlayer {
 	private static void stop(Sounds sounds) {
 		if (sounds != null) {
 			Clip clip = sounds.getClip();
+			if (clip == null) {
+				return;
+			}
 			clip.stop();
 		}
 	}
