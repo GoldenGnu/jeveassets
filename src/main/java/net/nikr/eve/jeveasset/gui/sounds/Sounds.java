@@ -101,6 +101,8 @@ public enum Sounds {
 			LOG.error(ex.getMessage(), ex);
 		} catch (LineUnavailableException ex) {
 			LOG.error(ex.getMessage(), ex);
+		} catch (IllegalArgumentException ex) {
+			LOG.error(ex.getMessage(), ex);
 		} finally {
 			try {
 				if (inputStream != null) {
