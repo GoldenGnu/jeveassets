@@ -39,6 +39,8 @@ import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder.MarketOrderRange;
 import net.nikr.eve.jeveasset.data.settings.tag.Tag;
 import net.nikr.eve.jeveasset.data.settings.tag.TagID;
 import net.nikr.eve.jeveasset.data.settings.tag.Tags;
+import net.nikr.eve.jeveasset.gui.dialogs.settings.SoundsSettingsPanel.SoundsOption;
+import net.nikr.eve.jeveasset.gui.dialogs.settings.SoundsSettingsPanel.SoundsSound;
 import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.menu.JFormulaDialog.Formula;
@@ -255,6 +257,8 @@ public class Settings {
 	private final List<String> showTools = new ArrayList<>();
 //Colors
 	private final ColorSettings colorSettings = new ColorSettings();
+//Sounds
+	private final Map<SoundsOption, SoundsSound> soundSettings = new EnumMap<>(SoundsOption.class);
 
 	protected Settings() {
 		//Settings
@@ -475,6 +479,10 @@ public class Settings {
 			tableJumps.put(toolName, jumps);
 		}
 		return jumps;
+	}
+
+	public Map<SoundsOption, SoundsSound> getSoundSettings() {
+		return soundSettings;
 	}
 
 	public Map<String, Date> getTableChanged() {
