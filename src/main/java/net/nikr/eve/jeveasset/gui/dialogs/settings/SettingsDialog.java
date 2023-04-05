@@ -129,16 +129,21 @@ public class SettingsDialog extends JDialogCentered {
 		add(toolNode, new MiningToolSettingsPanel(program, this));
 
 		DefaultMutableTreeNode valuesNode = addGroup(DialoguesSettings.get().values(), Images.EDIT_RENAME.getIcon());
+
 		userPriceSettingsPanel = new UserPriceSettingsPanel(program, this);
 		add(valuesNode, userPriceSettingsPanel);
+
 		userNameSettingsPanel = new UserNameSettingsPanel(program, this);
 		add(valuesNode, userNameSettingsPanel);
+
 		locationSettingsPanel = new UserLocationSettingsPanel(program, this);
 		add(valuesNode, locationSettingsPanel);
 
 		add(valuesNode, new TagsSettingsPanel(program, this));
 
 		add(new ColorSettingsPanel(program, this));
+
+		add(new SoundsSettingsPanel(program, this));
 
 		add(new PriceDataSettingsPanel(program, this));
 

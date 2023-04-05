@@ -45,6 +45,7 @@ import net.nikr.eve.jeveasset.data.api.my.MyMining;
 import net.nikr.eve.jeveasset.data.api.my.MySkill;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.api.raw.RawBlueprint;
+import net.nikr.eve.jeveasset.data.api.raw.RawIndustryJob.IndustryJobStatus;
 import net.nikr.eve.jeveasset.data.api.raw.RawJournalRefType;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder.Change;
 import net.nikr.eve.jeveasset.data.sde.Item;
@@ -61,6 +62,7 @@ import net.nikr.eve.jeveasset.data.settings.types.EditablePriceType;
 import net.nikr.eve.jeveasset.data.settings.types.ItemType;
 import net.nikr.eve.jeveasset.data.settings.types.LastTransactionType;
 import net.nikr.eve.jeveasset.data.settings.types.LocationsType;
+import net.nikr.eve.jeveasset.gui.dialogs.settings.SoundsSettingsPanel.SoundsOption;
 import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
 import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.Percent;
@@ -70,6 +72,7 @@ import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import net.nikr.eve.jeveasset.io.shared.DataConverter;
+import net.nikr.eve.jeveasset.gui.sounds.SoundPlayer;
 
 public class ProfileData {
 
@@ -560,6 +563,10 @@ public class ProfileData {
 			industryJob.setBlueprint(blueprints.get(industryJob.getBlueprintID()));
 			//Price
 			updatePrice(industryJob);
+			//Queue Sound
+			if (industryJob.getStatus() == IndustryJobStatus.ACTIVE) {
+				SoundPlayer.playAt(industryJob.getEndDate(), SoundsOption.INDUSTRY_JOB_COMPLETED);
+			}
 		}
 		//Update Contracts dynamic values
 		for (MyContract contract : contracts) {

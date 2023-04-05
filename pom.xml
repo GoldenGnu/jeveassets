@@ -95,16 +95,6 @@
 				<version>2.5</version>
 				<configuration>
 					<encoding>${project.build.sourceEncoding}</encoding>
-					<resources>
-						<resource>
-							<directory>src/main/izpack</directory>
-							<filtering>true</filtering>
-						</resource>
-						<resource>
-							<directory>src/main/resources</directory>
-							<filtering>true</filtering>
-						</resource>
-					</resources>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -440,6 +430,10 @@
 			</extension>
 		</extensions>
 		<resources>
+			<resource>
+				<directory>src/main/izpack</directory>
+				<filtering>true</filtering>
+			</resource>
 			<resource>
 				<directory>src/main/resources</directory>
 				<filtering>true</filtering>

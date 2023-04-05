@@ -45,6 +45,8 @@ import net.nikr.eve.jeveasset.data.settings.TrackerData;
 import net.nikr.eve.jeveasset.data.settings.UserItem;
 import net.nikr.eve.jeveasset.data.settings.tag.Tag;
 import net.nikr.eve.jeveasset.data.settings.tag.TagID;
+import net.nikr.eve.jeveasset.gui.dialogs.settings.SoundsSettingsPanel.SoundsOption;
+import net.nikr.eve.jeveasset.gui.dialogs.settings.SoundsSettingsPanel.SoundsSound;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.menu.JFormulaDialog.Formula;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuJumps.Jump;
@@ -178,6 +180,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 		writeMarketOrdersSettings(xmldoc, settings.getMarketOrdersSettings());
 		writeShowTool(xmldoc, settings.getShowTools(), settings.isSaveToolsOnExit());
 		writeColorSettings(xmldoc, settings.getColorSettings());
+		writeSoundSettings(xmldoc, settings.getSoundSettings());
 		writeFactionWarfareSystemOwners(xmldoc, settings);
 		writePriceHistorySettings(xmldoc, settings);
 		try {
@@ -224,6 +227,17 @@ public class SettingsWriter extends AbstractXmlWriter {
 			setAttributeOptional(colorNode, "background", colorSettings.getBackground(colorEntry));
 			setAttributeOptional(colorNode, "foreground", colorSettings.getForeground(colorEntry));
 			colorSettingsNode.appendChild(colorNode);
+		}
+	}
+
+	private void writeSoundSettings(Document xmldoc, Map<SoundsOption, SoundsSound> soundSettings) {
+		Element soundSettingsNode = xmldoc.createElementNS(null, "soundsettings");
+		xmldoc.getDocumentElement().appendChild(soundSettingsNode);
+		for (Map.Entry<SoundsOption, SoundsSound> entry : soundSettings.entrySet()) {
+			Element soundNode = xmldoc.createElementNS(null, "sound");
+			setAttribute(soundNode, "option", entry.getKey());
+			setAttribute(soundNode, "sound", entry.getValue());
+			soundSettingsNode.appendChild(soundNode);
 		}
 	}
 

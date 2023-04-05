@@ -77,6 +77,7 @@ import net.nikr.eve.jeveasset.data.settings.ColorSettings;
 import net.nikr.eve.jeveasset.data.settings.Colors;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.types.LocationType;
+import net.nikr.eve.jeveasset.gui.dialogs.settings.SoundsSettingsPanel.SoundsOption;
 import net.nikr.eve.jeveasset.gui.dialogs.update.StructureUpdateDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.update.TaskDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
@@ -111,6 +112,7 @@ import net.nikr.eve.jeveasset.i18n.DialoguesUpdate;
 import net.nikr.eve.jeveasset.i18n.TabsOrders;
 import net.nikr.eve.jeveasset.io.esi.EsiPublicMarketOrdersGetter;
 import net.nikr.eve.jeveasset.io.local.MarketLogReader;
+import net.nikr.eve.jeveasset.gui.sounds.SoundPlayer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -587,6 +589,8 @@ public class MarketOrdersTab extends JMainTabPrimary {
 						updateDates();
 					}
 				});
+				//Play sound
+				SoundPlayer.play(SoundsOption.OUTBID_UPDATE_COMPLETED);
 			}
 
 			@Override
