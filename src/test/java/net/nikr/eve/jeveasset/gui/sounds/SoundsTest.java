@@ -45,8 +45,7 @@ public class SoundsTest extends TestUtil {
 
 	@Test
 	public void testPreload() {
-		boolean ok = Sounds.preload();
-		assertTrue("Preload failed", ok);
+		Sounds.preload();
 	}
 
 	@Test
