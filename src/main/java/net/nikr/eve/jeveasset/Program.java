@@ -113,6 +113,8 @@ import net.nikr.eve.jeveasset.io.online.PriceDataGetter;
 import net.nikr.eve.jeveasset.io.online.Updater;
 import net.nikr.eve.jeveasset.io.shared.DesktopUtil;
 import net.nikr.eve.jeveasset.io.shared.FileUtil;
+import net.nikr.eve.jeveasset.gui.sounds.SoundPlayer;
+import net.nikr.eve.jeveasset.gui.sounds.Sounds;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -216,6 +218,9 @@ public class Program implements ActionListener {
 		LOG.info("GUI Loading:");
 		LOG.info("Loading: Images");
 		Images.preload();
+		LOG.info("Loading: Sounds");
+		Sounds.preload();
+		SoundPlayer.enable();
 		LOG.info("Loading: Main Window");
 		mainWindow = new MainWindow(this);
 		SplashUpdater.setProgress(50);
@@ -608,6 +613,7 @@ public class Program implements ActionListener {
 		} else if (typeIDs != null) {
 			profileData.updatePrice(typeIDs);
 		} else {
+			SoundPlayer.cancelAll(); //Stop sounds
 			profileData.updateEventLists();
 		}
 		if (locationIDs != null) { //Update locations
