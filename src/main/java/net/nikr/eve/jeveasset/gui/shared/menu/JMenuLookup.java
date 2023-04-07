@@ -71,7 +71,6 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 		EVE_INFO,
 		EVEPRAISAL,
 		ADAM4EVE,
-		EVEHUB,
 		EVEMISSIONEER_SYSTEM,
 		EVEMISSIONEER_CONSTELLATION,
 		EVEMISSIONEER_REGION,
@@ -206,16 +205,6 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 				Set<String> urls = new HashSet<>();
 				for (int marketTypeID : menuData.getMarketTypeIDs()) {
 					urls.add("https://www.adam4eve.eu/commodity.php?typeID=" + marketTypeID);
-				}
-				return urls;
-			}
-		},
-		EVEHUB() {
-			@Override
-			public Set<String> getLinks(MenuData<?> menuData) {
-				Set<String> urls = new HashSet<>();
-				for (int marketTypeID : menuData.getMarketTypeIDs()) {
-					urls.add("https://eve-hub.com/market/chart/10000002/" + marketTypeID);
 				}
 				return urls;
 			}
@@ -379,7 +368,6 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 	private final JMenuItem jFuzzworkMarket;
 	private final JMenuItem jEveTycoon;
 	private final JMenuItem jEvepraisal;
-	private final JMenuItem jEveHub;
 	private final JMenu jItemDatabase;
 	private final JMenuItem jFuzzworkItems;
 	private final JMenuItem jChruker;
@@ -527,12 +515,6 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 		jAdam4eve.addActionListener(listener);
 		jMarket.add(jAdam4eve);
 
-		jEveHub = new JMenuItem(GuiShared.get().eveHub());
-		jEveHub.setIcon(Images.LINK_EVEHUB.getIcon());
-		jEveHub.setActionCommand(MenuLookupAction.EVEHUB.name());
-		jEveHub.addActionListener(listener);
-		jMarket.add(jEveHub);
-
 		jItemDatabase = new JMenu(GuiShared.get().itemDatabase());
 		jItemDatabase.setIcon(Images.TOOL_ASSETS.getIcon());
 		add(jItemDatabase);
@@ -627,7 +609,6 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 		jFuzzworkMarket.setEnabled(!menuData.getMarketTypeIDs().isEmpty());
 		jEveTycoon.setEnabled(!menuData.getMarketTypeIDs().isEmpty());
 		jAdam4eve.setEnabled(!menuData.getMarketTypeIDs().isEmpty());
-		jEveHub.setEnabled(!menuData.getMarketTypeIDs().isEmpty());
 	//Info
 		jItemDatabase.setEnabled(!menuData.getTypeIDs().isEmpty());
 		jFuzzworkItems.setEnabled(!menuData.getTypeIDs().isEmpty());
@@ -760,8 +741,6 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 				DesktopUtil.browse(LookupLinks.EVEMARKETER.getLinks(menuData), program);
 			} else if (MenuLookupAction.ADAM4EVE.name().equals(e.getActionCommand())) {
 				DesktopUtil.browse(LookupLinks.ADAM4EVE.getLinks(menuData), program);
-			} else if (MenuLookupAction.EVEHUB.name().equals(e.getActionCommand())) {
-				DesktopUtil.browse(LookupLinks.EVEHUB.getLinks(menuData), program);
 			} else if (MenuLookupAction.EVEPRAISAL.name().equals(e.getActionCommand())) {
 				DesktopUtil.browse(LookupLinks.EVEPRAISAL.getLinks(menuData), program);
 			} else if (MenuLookupAction.FUZZWORK_MARKET.name().equals(e.getActionCommand())) {
