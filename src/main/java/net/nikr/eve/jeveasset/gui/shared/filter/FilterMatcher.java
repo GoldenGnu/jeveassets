@@ -30,8 +30,10 @@ import java.util.Locale;
 import java.util.TimeZone;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.shared.Formatter;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.CompareType;
+import static net.nikr.eve.jeveasset.gui.shared.filter.Filter.CompareType.NEXT_DAYS;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.LogicType;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.NumberValue;
@@ -148,8 +150,12 @@ public class FilterMatcher<E> implements Matcher<E> {
 				return after(column, tableFormat.getColumnValue(item, text));
 			case LAST_DAYS:
 				return lastDays(column, text);
+			case NEXT_DAYS:
+				return nextDays(column, text);
 			case LAST_HOURS:
 				return lastHours(column, text);
+			case NEXT_HOURS:
+				return nextHours(column, text);
 			default:
 				//Fallback: show all...
 				return true;
@@ -327,7 +333,22 @@ public class FilterMatcher<E> implements Matcher<E> {
 			CALENDAR.set(Calendar.SECOND, 0);
 			CALENDAR.set(Calendar.MILLISECOND, 0);
 			CALENDAR.add(Calendar.DAY_OF_MONTH, -days.intValue());
-			return date.after(CALENDAR.getTime());
+			return date.before(Settings.getNow()) && date.after(CALENDAR.getTime());
+		}
+		return false;
+	}
+
+	private boolean nextDays(final Object object1, final Object object2) {
+		Date date = getDate(object1, false);
+		Number days = createNumber(object2);
+		if (date != null && days != null) {
+			CALENDAR.setTime(new Date());
+			CALENDAR.set(Calendar.HOUR_OF_DAY, 23);
+			CALENDAR.set(Calendar.MINUTE, 59);
+			CALENDAR.set(Calendar.SECOND, 59);
+			CALENDAR.set(Calendar.MILLISECOND, 999);
+			CALENDAR.add(Calendar.DAY_OF_MONTH, days.intValue());
+			return date.after(Settings.getNow()) && date.before(CALENDAR.getTime());
 		}
 		return false;
 	}
@@ -338,7 +359,18 @@ public class FilterMatcher<E> implements Matcher<E> {
 		if (date != null && hours != null) {
 			CALENDAR.setTime(new Date());
 			CALENDAR.add(Calendar.HOUR_OF_DAY, -hours.intValue());
-			return date.after(CALENDAR.getTime());
+			return date.before(Settings.getNow()) && date.after(CALENDAR.getTime());
+		}
+		return false;
+	}
+
+	private boolean nextHours(final Object object1, final Object object2) {
+		Date date = getDate(object1, false);
+		Number hours = createNumber(object2);
+		if (date != null && hours != null) {
+			CALENDAR.setTime(new Date());
+			CALENDAR.add(Calendar.HOUR_OF_DAY, hours.intValue());
+			return date.after(Settings.getNow()) && date.before(CALENDAR.getTime());
 		}
 		return false;
 	}

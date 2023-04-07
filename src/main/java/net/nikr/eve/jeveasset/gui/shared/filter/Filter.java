@@ -32,7 +32,7 @@ public class Filter {
 
 	public static class AllColumn<T> implements EnumTableColumn<T> {
 
-		public static final AllColumn<Object> ALL = new AllColumn<Object>();
+		public static final AllColumn<Object> ALL = new AllColumn<>();
 
 		@Override
 		public Class<?> getType() {
@@ -120,8 +120,14 @@ public class Filter {
 		LAST_DAYS(Images.FILTER_LAST_DAYS.getIcon()) {
 			@Override String getI18N() { return GuiShared.get().filterLastDays(); }
 		},
+		NEXT_DAYS(Images.FILTER_NEXT_DAYS.getIcon()) {
+			@Override String getI18N() { return GuiShared.get().filterNextDays(); }
+		},
 		LAST_HOURS(Images.FILTER_LAST_HOURS.getIcon()) {
 			@Override String getI18N() { return GuiShared.get().filterLastHours(); }
+		},
+		NEXT_HOURS(Images.FILTER_NEXT_HOURS.getIcon()) {
+			@Override String getI18N() { return GuiShared.get().filterNextHours(); }
 		},
 		CONTAINS_COLUMN(Images.FILTER_CONTAIN_COLUMN.getIcon()) {
 			@Override String getI18N() { return GuiShared.get().filterContainsColumn(); }
@@ -192,7 +198,9 @@ public class Filter {
 			BEFORE,
 			AFTER,
 			LAST_DAYS,
+			NEXT_DAYS,
 			LAST_HOURS,
+			NEXT_HOURS,
 			//CONTAINS_COLUMN,
 			//CONTAINS_NOT_COLUMN,
 			EQUALS_COLUMN,
