@@ -111,7 +111,6 @@ public enum Images {
 	LINK_ZKILLBOARD ("link_zkillboard.png"),
 	LINK_ZKILLBOARD_32 ("link_zkillboard_32.png"),
 	LINK_ADAM4EVE ("link_adam4eve.png"),
-	LINK_EVEHUB ("link_evehub.png"),
 	LINK_KHON_SPACE ("link_khon_space.png"),
 	LINK_EVE_COOKBOOK ("link_eve_cookbook.png"),
 	LINK_EVEMISSIONEER ("link_evemissioneer.png"),
