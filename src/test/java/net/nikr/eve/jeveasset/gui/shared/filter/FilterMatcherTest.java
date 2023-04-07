@@ -51,6 +51,9 @@ public class FilterMatcherTest extends TestUtil {
 		PERCENT(true, false),
 		DATE(false, true),
 		DATE_LAST(false, true),
+		DATE_LAST_LONG(false, true),
+		DATE_NEXT(false, true),
+		DATE_NEXT_LONG(false, true),
 		COLUMN_TEXT(false, false),
 		COLUMN_NUMBER(true, false),
 		COLUMN_PERCENT(true, false),
@@ -296,7 +299,9 @@ public class FilterMatcherTest extends TestUtil {
 			matches(false, column, CompareType.LESS_THAN, NULL);
 			matches(false, column, CompareType.LAST_HOURS, NULL);
 			matches(false, column, CompareType.LAST_DAYS, NULL);
-			matches(false,  column, CompareType.REGEX, NULL);
+			matches(false, column, CompareType.NEXT_HOURS, NULL);
+			matches(false, column, CompareType.NEXT_DAYS, NULL);
+			matches(false, column, CompareType.REGEX, NULL);
 		}
 		TestEnum[] columns2 = {TestEnum.COLUMN_DATE, TestEnum.COLUMN_NUMBER, TestEnum.COLUMN_PERCENT, TestEnum.COLUMN_TEXT};
 		for (TestEnum column : columns2) {
@@ -358,12 +363,26 @@ public class FilterMatcherTest extends TestUtil {
 		matches(true,  TestEnum.DATE, Filter.CompareType.AFTER, DATE_AFTER);
 		matches(false, TestEnum.DATE, Filter.CompareType.BEFORE, DATE_NOT_AFTER);
 		matches(false, TestEnum.DATE, Filter.CompareType.AFTER, DATE_BEFORE);
-		//Last X Days
-		matches(false, TestEnum.DATE_LAST, Filter.CompareType.LAST_DAYS, "1"); //Last 1 days
-		matches(true,  TestEnum.DATE_LAST, Filter.CompareType.LAST_DAYS, "2"); //Last 2 days
-		//Last X Hours
+		//Last x days
+		matches(false, TestEnum.DATE_LAST, Filter.CompareType.LAST_DAYS, "1");  //Last 1 days
+		matches(true,  TestEnum.DATE_LAST, Filter.CompareType.LAST_DAYS, "2");  //Last 2 days
+		matches(false, TestEnum.DATE_LAST_LONG, Filter.CompareType.LAST_DAYS, "399");  //Last 399 days
+		matches(true,  TestEnum.DATE_LAST_LONG, Filter.CompareType.LAST_DAYS, "400");  //Last 400 days
+		//Next x days
+		matches(false, TestEnum.DATE_NEXT, Filter.CompareType.NEXT_DAYS, "1");  //Next 1 days
+		matches(true,  TestEnum.DATE_NEXT, Filter.CompareType.NEXT_DAYS, "2");  //Next 2 days
+		matches(false, TestEnum.DATE_NEXT_LONG, Filter.CompareType.NEXT_DAYS, "399");  //Next 399 days
+		matches(true,  TestEnum.DATE_NEXT_LONG, Filter.CompareType.NEXT_DAYS, "400");  //Next 400 days
+		//Last x hours
 		matches(false, TestEnum.DATE_LAST, Filter.CompareType.LAST_HOURS, "24"); //Last 24 hours
 		matches(true,  TestEnum.DATE_LAST, Filter.CompareType.LAST_HOURS, "48"); //Last 48 hours
+		matches(false, TestEnum.DATE_LAST_LONG, Filter.CompareType.LAST_HOURS, "9599"); //Last 9599 hours
+		matches(true,  TestEnum.DATE_LAST_LONG, Filter.CompareType.LAST_HOURS, "9600"); //Last 9600 hours
+		//Next x hours
+		matches(false, TestEnum.DATE_NEXT, Filter.CompareType.NEXT_HOURS, "24"); //Next 24 hours
+		matches(true,  TestEnum.DATE_NEXT, Filter.CompareType.NEXT_HOURS, "48"); //Next 48 hours
+		matches(false, TestEnum.DATE_NEXT_LONG, Filter.CompareType.NEXT_HOURS, "9599"); //Next 9599 hours
+		matches(true,  TestEnum.DATE_NEXT_LONG, Filter.CompareType.NEXT_HOURS, "9600"); //Next 9600 hours
 
 		//Equals column
 		matches(true,  TestEnum.DATE, Filter.CompareType.EQUALS_COLUMN, TestEnum.COLUMN_DATE.name(), Formatter.columnStringToDate(DATE));
@@ -840,6 +859,7 @@ public class FilterMatcherTest extends TestUtil {
 
 		@Override
 		public Object getColumnValue(final Item item, final String columnString) {
+			Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
 			EnumTableColumn<?> column = valueOf(columnString);
 			if (column instanceof TestEnum) {
 				TestEnum format = (TestEnum) column;
@@ -861,13 +881,38 @@ public class FilterMatcherTest extends TestUtil {
 					case DATE:
 						return Formatter.columnStringToDate(DATE);
 					case DATE_LAST:
-						Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
 						//minus 47 hours
+						calendar.setTime(new Date());
 						calendar.set(Calendar.MINUTE, 0);
 						calendar.set(Calendar.SECOND, 0);
 						calendar.set(Calendar.MILLISECOND, 0);
 						calendar.add(Calendar.HOUR_OF_DAY, +1);
 						calendar.add(Calendar.DAY_OF_MONTH, -2);
+						return calendar.getTime();
+					case DATE_LAST_LONG:
+						//minus 400 days
+						calendar.setTime(new Date());
+						calendar.set(Calendar.MINUTE, 0);
+						calendar.set(Calendar.SECOND, 0);
+						calendar.set(Calendar.MILLISECOND, 0);
+						calendar.add(Calendar.HOUR_OF_DAY, +1);
+						calendar.add(Calendar.DAY_OF_MONTH, -400);
+						return calendar.getTime();
+					case DATE_NEXT:
+						//plus 49 hours
+						calendar.setTime(new Date());
+						calendar.set(Calendar.MINUTE, 0);
+						calendar.set(Calendar.SECOND, 0);
+						calendar.set(Calendar.MILLISECOND, 0);
+						calendar.add(Calendar.DAY_OF_MONTH, 2);
+						return calendar.getTime();
+					case DATE_NEXT_LONG:
+						//plus 400 days
+						calendar.setTime(new Date());
+						calendar.set(Calendar.MINUTE, 0);
+						calendar.set(Calendar.SECOND, 0);
+						calendar.set(Calendar.MILLISECOND, 0);
+						calendar.add(Calendar.DAY_OF_MONTH, 400);
 						return calendar.getTime();
 					case COLUMN_TEXT:
 						return textColumn;

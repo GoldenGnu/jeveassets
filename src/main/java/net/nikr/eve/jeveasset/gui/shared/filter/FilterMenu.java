@@ -23,11 +23,11 @@ package net.nikr.eve.jeveasset.gui.shared.filter;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.TimeZone;
+import java.util.concurrent.TimeUnit;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formatter;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.CompareType;
@@ -38,9 +38,9 @@ import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 class FilterMenu<E> extends JMenu {
 
-	private FilterGui<E> gui;
-	private EnumTableColumn<?> column;
-	private String text;
+	private final FilterGui<E> gui;
+	private final EnumTableColumn<?> column;
+	private final String text;
 
 	FilterMenu(final FilterGui<E> gui, final EnumTableColumn<?> column, final String text, final boolean isNumeric, final boolean isDate) {
 		super(GuiShared.get().popupMenuAddField());
@@ -80,33 +80,22 @@ class FilterMenu<E> extends JMenu {
 			CompareType compareType = Filter.CompareType.valueOf(e.getActionCommand());
 			if (CompareType.isColumnCompare(compareType)) {
 				gui.addFilter(new Filter(LogicType.AND, column, compareType, column.name()));
-			} else if (compareType == CompareType.LAST_DAYS) {
-				gui.addFilter(new Filter(LogicType.AND, column, compareType, daysBetween()));
-			} else if (compareType == CompareType.LAST_HOURS) {
-				gui.addFilter(new Filter(LogicType.AND, column, compareType, hoursBetween()));
+			} else if (compareType == CompareType.LAST_DAYS || compareType == CompareType.NEXT_DAYS) {
+				gui.addFilter(new Filter(LogicType.AND, column, compareType, between(TimeUnit.DAYS)));
+			} else if (compareType == CompareType.LAST_HOURS || compareType == CompareType.NEXT_HOURS) {
+				gui.addFilter(new Filter(LogicType.AND, column, compareType, between(TimeUnit.HOURS)));
 			} else {
 				gui.addFilter(new Filter(LogicType.AND, column, compareType, text));
 			}
 		}
 	}
 
-	public String daysBetween() {
+	public String between(TimeUnit unit) {
 		Date date = Formatter.columnStringToDate(text);
-		// reset hour, minutes, seconds and millis
-		Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
-		calendar.setTime(date);
-		calendar.set(Calendar.HOUR_OF_DAY, 0);
-		calendar.set(Calendar.MINUTE, 0);
-		calendar.set(Calendar.SECOND, 0);
-		calendar.set(Calendar.MILLISECOND, 0);
 
-		int days = (int)( (new Date().getTime() - calendar.getTime().getTime()) / (1000 * 60 * 60 * 24));
-		return String.valueOf(days);
-	}
+		long diff = Math.abs(date.getTime() - Settings.getNow().getTime());
+		long hours = unit.convert(diff, TimeUnit.MILLISECONDS) + 1;
 
-	public String hoursBetween() {
-		Date date = Formatter.columnStringToDate(text);
-		int hours = (int)((new Date().getTime() - date.getTime()) / (1000 * 60 * 60)) + 1;
 		return String.valueOf(hours);
 	}
 }
