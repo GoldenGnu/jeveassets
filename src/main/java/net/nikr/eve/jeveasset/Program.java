@@ -83,6 +83,8 @@ import net.nikr.eve.jeveasset.gui.shared.Updatable;
 import net.nikr.eve.jeveasset.gui.shared.components.JLockWindow;
 import net.nikr.eve.jeveasset.gui.shared.components.JLockWindow.LockWorkerAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
+import net.nikr.eve.jeveasset.gui.sounds.SoundPlayer;
+import net.nikr.eve.jeveasset.gui.sounds.Sounds;
 import net.nikr.eve.jeveasset.gui.tabs.assets.AssetsTab;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractsTab;
 import net.nikr.eve.jeveasset.gui.tabs.items.ItemsTab;
@@ -113,8 +115,6 @@ import net.nikr.eve.jeveasset.io.online.PriceDataGetter;
 import net.nikr.eve.jeveasset.io.online.Updater;
 import net.nikr.eve.jeveasset.io.shared.DesktopUtil;
 import net.nikr.eve.jeveasset.io.shared.FileUtil;
-import net.nikr.eve.jeveasset.gui.sounds.SoundPlayer;
-import net.nikr.eve.jeveasset.gui.sounds.Sounds;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
