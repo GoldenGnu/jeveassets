@@ -110,8 +110,12 @@ public class EsiMiningGetter extends AbstractEsiGetter {
 
 	@Override
 	protected RolesEnum[] getRequiredRoles() {
+		return null;
+		//Not doing corporation mining ledger, yet!
+		/*
 		RolesEnum[] roles = {RolesEnum.DIRECTOR, RolesEnum.ACCOUNTANT, RolesEnum.STATION_MANAGER};
 		return roles;
+		*/
 	}
 
 }
