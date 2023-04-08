@@ -24,22 +24,11 @@ import ca.odell.glazedlists.GlazedLists;
 import ca.odell.glazedlists.TextFilterator;
 import com.github.lgooddatepicker.optionalusertools.DateChangeListener;
 import com.github.lgooddatepicker.zinternaltools.DateChangeEvent;
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Rectangle;
-import java.awt.Shape;
-import java.awt.Stroke;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.geom.Ellipse2D;
-import java.text.DateFormat;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -76,7 +65,6 @@ import javax.swing.event.ListSelectionListener;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.StaticData;
-import net.nikr.eve.jeveasset.data.settings.Colors;
 import net.nikr.eve.jeveasset.data.settings.PriceDataSettings.PriceMode;
 import net.nikr.eve.jeveasset.data.settings.PriceHistoryDatabase;
 import net.nikr.eve.jeveasset.data.settings.Settings;
@@ -87,7 +75,7 @@ import net.nikr.eve.jeveasset.gui.frame.StatusPanel.UpdateType;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
 import net.nikr.eve.jeveasset.gui.shared.Formatter;
-import net.nikr.eve.jeveasset.gui.shared.InstantToolTip;
+import net.nikr.eve.jeveasset.gui.shared.JFreeChartUtil;
 import net.nikr.eve.jeveasset.gui.shared.components.JAutoCompleteDialog;
 import net.nikr.eve.jeveasset.gui.shared.components.JDateChooser;
 import net.nikr.eve.jeveasset.gui.shared.components.JDropDownButton;
@@ -96,12 +84,11 @@ import net.nikr.eve.jeveasset.gui.shared.components.JMainTabSecondary;
 import net.nikr.eve.jeveasset.gui.shared.components.JMultiSelectionList;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.QuickDate;
-import net.nikr.eve.jeveasset.i18n.TabPriceHistory;
+import net.nikr.eve.jeveasset.i18n.TabsPriceHistory;
 import net.nikr.eve.jeveasset.io.online.ZkillboardPricesHistoryGetter;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
-import org.jfree.chart.LegendItem;
 import org.jfree.chart.axis.DateAxis;
 import org.jfree.chart.axis.LogarithmicAxis;
 import org.jfree.chart.axis.NumberAxis;
@@ -136,13 +123,13 @@ public class PriceHistoryTab extends JMainTabSecondary {
 		ZKILLBOARD() {
 			@Override
 			String getText() {
-				return TabPriceHistory.get().sourcezKillboard();
+				return TabsPriceHistory.get().sourcezKillboard();
 			}
 		},
 		JEVEASSETS() {
 			@Override
 			String getText() {
-				return TabPriceHistory.get().sourcejEveAssets();
+				return TabsPriceHistory.get().sourcejEveAssets();
 			}
 		};
 
@@ -155,18 +142,8 @@ public class PriceHistoryTab extends JMainTabSecondary {
 		}
 	}
 
-	private final Shape RECTANGLE = new Rectangle(-5, -5, 10, 10);
-	private final Shape ELLIPSE = new Ellipse2D.Double(-5.0, -5.0, 10.0, 10.0);
-	private final Shape LEGEND = RECTANGLE;
-	private final Shape ITEM_SHAPE = new Ellipse2D.Float(-3.0f, -3.0f, 6.0f, 6.0f);
-	private final Stroke LEGEND_OUTLINE = new BasicStroke(1);
 	private final int PANEL_WIDTH_MINIMUM = 215;
 	public final int MAXIMUM_SHOWN = 50;
-	private final XYLineAndShapeRenderer renderer;
-
-
-	private final DateFormat dateFormat = new SimpleDateFormat(Formatter.COLUMN_DATE);
-	private final NumberFormat iskFormat = new DecimalFormat("#,##0.00 isk");
 
 	//GUI
 	private final JComboBox<PriceHistorySource> jSource;
@@ -180,21 +157,25 @@ public class PriceHistoryTab extends JMainTabSecondary {
 	private final JButton jSave;
 	private final JDropDownButton jLoad;
 	private final JMenuItem jManage;
+	private final JMultiSelectionList<Item> jItems;
+	private final JCheckBoxMenuItem jIncludeZero;
+	private final JRadioButtonMenuItem jLogarithmic;
+
+	//Graph
+	private final JFreeChart jFreeChart;
+	private final ChartPanel jChartPanel;
+	private final XYLineAndShapeRenderer renderer;
+	private final LogarithmicAxis rangeLogarithmicAxis;
+	private final DateAxis domainAxis;
+	private final NumberAxis rangeLinearAxis;
+
+	//Dialog
 	private final JAutoCompleteDialog<Item> jAddItemDialog;
 	private final JAutoCompleteDialog<String> jSaveItemsDialog;
 	private final JManageItemsDialog jManageItemsDialog;
-	private final JMultiSelectionList<Item> jItems;
-	//Graph
-	private final JCheckBoxMenuItem jIncludeZero;
-	private final JRadioButtonMenuItem jLogarithmic;
-	private final LogarithmicAxis rangeLogarithmicAxis;
-	private final NumberAxis rangeLinearAxis;
-	private final ChartPanel jChartPanel;
-	private final JFreeChart jNextChart;
-
-	//Dialog
 	private final JLockWindow jLockWindow;
 
+	//Listener
 	private final ListenerClass listener = new ListenerClass();
 
 	//Data
@@ -212,9 +193,8 @@ public class PriceHistoryTab extends JMainTabSecondary {
 	public static final String NAME = "pricehistory"; //Not to be changed!
 
 
-
 	public PriceHistoryTab(Program program) {
-		super(program, NAME, TabPriceHistory.get().title(), Images.TOOL_PRICE_HISTORY.getIcon(), true);
+		super(program, NAME, TabsPriceHistory.get().title(), Images.TOOL_PRICE_HISTORY.getIcon(), true);
 
 		jLockWindow = new JLockWindow(program.getMainWindow().getFrame());
 
@@ -234,21 +214,21 @@ public class PriceHistoryTab extends JMainTabSecondary {
 		jQuickDate.setActionCommand(PriceHistoryAction.QUICK_DATE.name());
 		jQuickDate.addActionListener(listener);
 
-		JLabel jFromLabel = new JLabel(TabPriceHistory.get().from());
+		JLabel jFromLabel = new JLabel(TabsPriceHistory.get().from());
 		jFrom = new JDateChooser(true);
 		if (fromDate != null) {
 			jFrom.setDate(dateToLocalDate(fromDate));
 		}
 		jFrom.addDateChangeListener(listener);
 
-		JLabel jToLabel = new JLabel(TabPriceHistory.get().to());
+		JLabel jToLabel = new JLabel(TabsPriceHistory.get().to());
 		jTo = new JDateChooser(true);
 		if (toDate != null) {
 			jTo.setDate(dateToLocalDate(toDate));
 		}
 		jTo.addDateChangeListener(listener);
 
-		jAddItemDialog = new JAutoCompleteDialog<Item>(program, TabPriceHistory.get().addTitle(), Images.TOOL_PRICE_HISTORY.getImage(), null, true) {
+		jAddItemDialog = new JAutoCompleteDialog<Item>(program, TabsPriceHistory.get().addTitle(), Images.TOOL_PRICE_HISTORY.getImage(), null, true) {
 			@Override
 			protected Comparator<Item> getComparator() {
 				return GlazedLists.comparableComparator();
@@ -274,7 +254,7 @@ public class PriceHistoryTab extends JMainTabSecondary {
 		};
 		jAddItemDialog.updateData(StaticData.get().getItems().values());
 
-		jSaveItemsDialog = new JAutoCompleteDialog<String>(program, TabPriceHistory.get().saveTitle(), Images.TOOL_PRICE_HISTORY.getImage(), null, false) {
+		jSaveItemsDialog = new JAutoCompleteDialog<String>(program, TabsPriceHistory.get().saveTitle(), Images.TOOL_PRICE_HISTORY.getImage(), null, false) {
 			@Override
 			protected Comparator<String> getComparator() {
 				return GlazedLists.comparableComparator();
@@ -297,63 +277,35 @@ public class PriceHistoryTab extends JMainTabSecondary {
 		};
 		jManageItemsDialog = new JManageItemsDialog(program, this);
 
-		JDropDownButton jSettings = new JDropDownButton(Images.DIALOG_SETTINGS.getIcon());
-
-		jSettings.addSeparator();
-
-		jIncludeZero = new JCheckBoxMenuItem(TabPriceHistory.get().includeZero());
-		jIncludeZero.setSelected(true);
-		jIncludeZero.setActionCommand(PriceHistoryAction.INCLUDE_ZERO.name());
-		jIncludeZero.addActionListener(listener);
-		jSettings.add(jIncludeZero);
-
-		jSettings.addSeparator();
-
-		ButtonGroup buttonGroup = new ButtonGroup();
-
-		JRadioButtonMenuItem jLinear = new JRadioButtonMenuItem(TabPriceHistory.get().scaleLinear());
-		jLinear.setSelected(true);
-		jLinear.setActionCommand(PriceHistoryAction.LOGARITHMIC.name());
-		jLinear.addActionListener(listener);
-		jSettings.add(jLinear);
-		buttonGroup.add(jLinear);
-
-		jLogarithmic = new JRadioButtonMenuItem(TabPriceHistory.get().scaleLogarithmic());
-		jLogarithmic.setSelected(false);
-		jLogarithmic.setActionCommand(PriceHistoryAction.LOGARITHMIC.name());
-		jLogarithmic.addActionListener(listener);
-		jSettings.add(jLogarithmic);
-		buttonGroup.add(jLogarithmic);
-
 		jEdit = new JDropDownButton(Images.EDIT_EDIT.getIcon());
-		jEdit.setToolTipText(TabPriceHistory.get().edit());
+		jEdit.setToolTipText(TabsPriceHistory.get().edit());
 
-		JMenuItem jAdd = new JMenuItem(TabPriceHistory.get().add(), Images.EDIT_ADD.getIcon());
+		JMenuItem jAdd = new JMenuItem(TabsPriceHistory.get().add(), Images.EDIT_ADD.getIcon());
 		jAdd.setActionCommand(PriceHistoryAction.ADD_ITEM.name());
 		jAdd.addActionListener(listener);
 		jEdit.add(jAdd);
 
-		jRemove = new JMenuItem(TabPriceHistory.get().remove(), Images.EDIT_DELETE.getIcon());
+		jRemove = new JMenuItem(TabsPriceHistory.get().remove(), Images.EDIT_DELETE.getIcon());
 		jRemove.setActionCommand(PriceHistoryAction.REMOVE_ITEMS.name());
 		jRemove.addActionListener(listener);
 		jRemove.setEnabled(false);
 		jEdit.add(jRemove);
 
-		jClear = new JMenuItem(TabPriceHistory.get().clear(), Images.MISC_EXIT.getIcon());
+		jClear = new JMenuItem(TabsPriceHistory.get().clear(), Images.MISC_EXIT.getIcon());
 		jClear.setActionCommand(PriceHistoryAction.CLEAR_ITEMS.name());
 		jClear.addActionListener(listener);
 		jClear.setEnabled(false);
 		jEdit.add(jClear);
 
 		jSave = new JButton(Images.FILTER_SAVE.getIcon());
-		jSave.setToolTipText(TabPriceHistory.get().save());
+		jSave.setToolTipText(TabsPriceHistory.get().save());
 		jSave.setActionCommand(PriceHistoryAction.SAVE.name());
 		jSave.setEnabled(false);
 		jSave.addActionListener(listener);
 
 		jLoad = new JDropDownButton(Images.FILTER_LOAD.getIcon());
 
-		jManage = new JMenuItem(TabPriceHistory.get().manage(), Images.DIALOG_SETTINGS.getIcon());
+		jManage = new JMenuItem(TabsPriceHistory.get().manage(), Images.DIALOG_SETTINGS.getIcon());
 		jManage.setActionCommand(PriceHistoryAction.MANAGE.name());
 		jManage.addActionListener(listener);
 
@@ -363,117 +315,48 @@ public class PriceHistoryTab extends JMainTabSecondary {
 		jItems.addMouseListener(listener);
 		JScrollPane jOwnersScroll = new JScrollPane(jItems);
 
-		Font font = new JLabel().getFont();
+		JDropDownButton jSettings = new JDropDownButton(Images.DIALOG_SETTINGS.getIcon());
 
-		DateAxis domainAxis = new DateAxis();
-		domainAxis.setDateFormatOverride(dateFormat);
-		domainAxis.setVerticalTickLabels(true);
-		domainAxis.setAutoTickUnitSelection(true);
-		domainAxis.setAutoRange(true);
-		domainAxis.setTickLabelFont(font);
-		domainAxis.setTickLabelPaint(Colors.TEXTFIELD_FOREGROUND.getColor());
+		jIncludeZero = new JCheckBoxMenuItem(TabsPriceHistory.get().includeZero());
+		jIncludeZero.setSelected(true);
+		jIncludeZero.setActionCommand(PriceHistoryAction.INCLUDE_ZERO.name());
+		jIncludeZero.addActionListener(listener);
+		jSettings.add(jIncludeZero);
 
-		rangeLogarithmicAxis = new LogarithmicAxis("");
-		rangeLogarithmicAxis.setStrictValuesFlag(false);
-		rangeLogarithmicAxis.setNumberFormatOverride(Formatter.AUTO_FORMAT);
-		rangeLogarithmicAxis.setTickLabelFont(jFromLabel.getFont());
-		rangeLogarithmicAxis.setTickLabelPaint(Colors.TEXTFIELD_FOREGROUND.getColor());
-		rangeLogarithmicAxis.setAutoRangeIncludesZero(true);
+		jSettings.addSeparator();
 
-		rangeLinearAxis = new NumberAxis();
-		rangeLinearAxis.setAutoRange(true);
-		rangeLinearAxis.setStandardTickUnits(NumberAxis.createStandardTickUnits());
-		rangeLinearAxis.setTickLabelFont(font);
-		rangeLinearAxis.setTickLabelPaint(Colors.TEXTFIELD_FOREGROUND.getColor());
-		rangeLinearAxis.setAutoRangeIncludesZero(true);
+		ButtonGroup buttonGroup = new ButtonGroup();
 
-		renderer = new MyRender();
+		JRadioButtonMenuItem jLinear = new JRadioButtonMenuItem(TabsPriceHistory.get().scaleLinear());
+		jLinear.setSelected(true);
+		jLinear.setActionCommand(PriceHistoryAction.LOGARITHMIC.name());
+		jLinear.addActionListener(listener);
+		jSettings.add(jLinear);
+		buttonGroup.add(jLinear);
+
+		jLogarithmic = new JRadioButtonMenuItem(TabsPriceHistory.get().scaleLogarithmic());
+		jLogarithmic.setSelected(false);
+		jLogarithmic.setActionCommand(PriceHistoryAction.LOGARITHMIC.name());
+		jLogarithmic.addActionListener(listener);
+		jSettings.add(jLogarithmic);
+		buttonGroup.add(jLogarithmic);
+
+		domainAxis = JFreeChartUtil.createDateAxis();
+		rangeLogarithmicAxis = JFreeChartUtil.createLogarithmicAxis(true);
+		rangeLinearAxis = JFreeChartUtil.createNumberAxis(true);
+
+		renderer = JFreeChartUtil.createRenderer();
 		renderer.setDefaultToolTipGenerator(new XYToolTipGenerator() {
 			@Override
 			public String generateToolTip(XYDataset dataset, int series, int item)	{
 				Date date = new Date(dataset.getX(series, item).longValue());
 				Number isk = dataset.getY(series, item);
-				return TabPriceHistory.get().graphToolTip(dataset.getSeriesKey(series), iskFormat.format(isk), dateFormat.format(date));
+				return TabsPriceHistory.get().graphToolTip(dataset.getSeriesKey(series), Formatter.iskFormat(isk), Formatter.columnDateOnly(date));
 			}
 		});
-
-		XYPlot plot = new XYPlot(dataset, domainAxis, rangeLinearAxis, renderer);
-		plot.setBackgroundPaint(Colors.TEXTFIELD_BACKGROUND.getColor());
-		plot.setRangeGridlinePaint(Color.LIGHT_GRAY);
-		plot.setDomainGridlinePaint(Color.LIGHT_GRAY);
-		plot.setDomainCrosshairLockedOnData(true);
-		plot.setDomainCrosshairStroke(new BasicStroke(1));
-		plot.setDomainCrosshairPaint(Color.BLACK);
-		plot.setDomainCrosshairVisible(false);
-		plot.setRangeCrosshairLockedOnData(true);
-		plot.setRangeCrosshairVisible(false);
-
-		jNextChart = new JFreeChart(plot);
-		jNextChart.setAntiAlias(true);
-		jNextChart.setBackgroundPaint(Colors.COMPONENT_BACKGROUND.getColor());
-		jNextChart.addProgressListener(null);
-		jNextChart.getLegend().setItemFont(font);
-		jNextChart.getLegend().setItemPaint(Colors.TEXTFIELD_FOREGROUND.getColor());
-		jNextChart.getLegend().setBackgroundPaint(Colors.COMPONENT_BACKGROUND.getColor());
-		//jNextChart.setTextAntiAlias(false);
-		//jNextChart.setAntiAlias(false);
-		/*
-		Map<RenderingHints.Key,Object> rh = new HashMap<>();
-		rh.put(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-		//rh.put(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_DEFAULT);
-		//rh.put(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
-
-
-		//rh.put(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-		rh.put(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_DEFAULT);
-		//rh.put(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
-
-		//rh.put(RenderingHints.KEY_DITHERING, RenderingHints.VALUE_DITHER_ENABLE);
-		rh.put(RenderingHints.KEY_DITHERING, RenderingHints.VALUE_DITHER_DEFAULT);
-		//rh.put(RenderingHints.KEY_DITHERING, RenderingHints.VALUE_DITHER_DISABLE);
-
-		//rh.put(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-		rh.put(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_DEFAULT);
-		//rh.put(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
-		//rh.put(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HBGR);
-		//rh.put(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
-		//rh.put(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_VBGR);
-		//rh.put(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_VRGB);
-		//rh.put(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
-
-		//rh.put(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
-		rh.put(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_DEFAULT);
-		//rh.put(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_OFF);
-
-		//rh.put(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
-		rh.put(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-		//rh.put(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
-
-		//rh.put(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
-		rh.put(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_DEFAULT);
-		//rh.put(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_SPEED);
-
-		//rh.put(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_QUALITY);
-		rh.put(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_DEFAULT);
-		//rh.put(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_SPEED);
-
-		//rh.put(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_NORMALIZE);
-		rh.put(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_DEFAULT);
-		//rh.put(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
-
-		jNextChart.setRenderingHints(new RenderingHints(rh));
-		*/
-
-		jChartPanel = new ChartPanel(jNextChart);
-		InstantToolTip.install(jChartPanel);
-		jChartPanel.setDomainZoomable(false);
-		jChartPanel.setRangeZoomable(false);
-		jChartPanel.setPopupMenu(null);
-		//jChartPanel.addChartMouseListener(listener);
-		jChartPanel.setMaximumDrawHeight(Integer.MAX_VALUE);
-		jChartPanel.setMaximumDrawWidth(Integer.MAX_VALUE);
-		jChartPanel.setMinimumDrawWidth(10);
-		jChartPanel.setMinimumDrawHeight(10);
+		XYPlot plot = JFreeChartUtil.createPlot(dataset, domainAxis, rangeLinearAxis, renderer);
+		jFreeChart = JFreeChartUtil.createChart(plot);
+		jChartPanel = JFreeChartUtil.createChartPanel(jFreeChart);
 
 		int gapWidth = 5;
 		int labelWidth = Math.max(jFromLabel.getPreferredSize().width, jToLabel.getPreferredSize().width);
@@ -503,10 +386,10 @@ public class PriceHistoryTab extends JMainTabSecondary {
 						)
 					)
 					.addGroup(layout.createSequentialGroup()
-						.addComponent(jSettings)
 						.addComponent(jEdit)
 						.addComponent(jSave)
 						.addComponent(jLoad)
+						.addComponent(jSettings)
 					)
 					.addComponent(jOwnersScroll, panelWidth, panelWidth, panelWidth)
 				)
@@ -530,10 +413,10 @@ public class PriceHistoryTab extends JMainTabSecondary {
 						.addComponent(jTo, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					)
 					.addGroup(layout.createParallelGroup()
-						.addComponent(jSettings, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 						.addComponent(jEdit, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 						.addComponent(jSave, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 						.addComponent(jLoad, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+						.addComponent(jSettings, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					)
 					.addComponent(jOwnersScroll, 70, 70, Integer.MAX_VALUE)
 				)
@@ -579,11 +462,11 @@ public class PriceHistoryTab extends JMainTabSecondary {
 
 	private boolean invalid(Collection<Integer> typeIDs) {
 		if (typeIDs.size() > MAXIMUM_SHOWN) {
-			JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabPriceHistory.get().maxItemsMsg(MAXIMUM_SHOWN), TabPriceHistory.get().title(), JOptionPane.PLAIN_MESSAGE);
+			JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsPriceHistory.get().maxItemsMsg(MAXIMUM_SHOWN), TabsPriceHistory.get().title(), JOptionPane.PLAIN_MESSAGE);
 			return true;
 		}
 		if (program.getStatusPanel().updateing(UpdateType.PRICE_HISTORY)) {
-			JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabPriceHistory.get().updatingMsg(), TabPriceHistory.get().updatingTitle(), JOptionPane.PLAIN_MESSAGE, Images.LINK_ZKILLBOARD_32.getIcon());
+			JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsPriceHistory.get().updatingMsg(), TabsPriceHistory.get().updatingTitle(), JOptionPane.PLAIN_MESSAGE, Images.LINK_ZKILLBOARD_32.getIcon());
 			return true;
 		}
 		return false;
@@ -605,7 +488,7 @@ public class PriceHistoryTab extends JMainTabSecondary {
 
 	private void showItems(Set<Integer> typeIDs) {
 		if (program.getStatusPanel().updateing(UpdateType.PRICE_HISTORY)) {
-			JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabPriceHistory.get().updatingMsg(), TabPriceHistory.get().updatingTitle(), JOptionPane.PLAIN_MESSAGE, Images.LINK_ZKILLBOARD_32.getIcon());
+			JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsPriceHistory.get().updatingMsg(), TabsPriceHistory.get().updatingTitle(), JOptionPane.PLAIN_MESSAGE, Images.LINK_ZKILLBOARD_32.getIcon());
 			return;
 		}
 		switch(getPriceHistorySource()) {
@@ -796,16 +679,9 @@ public class PriceHistoryTab extends JMainTabSecondary {
 			max = Math.max(max, seriesMax.get(item));
 			count = Math.max(count, dataset.getItemCount(i));
 		}
-		if (max >     1_000_000_000_000.0) { //Higher than 1 Trillion
-			rangeLinearAxis.setNumberFormatOverride(Formatter.TRILLIONS_FORMAT);
-		} else if (max >  1_000_000_000.0) { //Higher than 1 Billion
-			rangeLinearAxis.setNumberFormatOverride(Formatter.BILLIONS_FORMAT);
-		} else if (max >      1_000_000.0) { //Higher than 1 Million
-			rangeLinearAxis.setNumberFormatOverride(Formatter.MILLIONS_FORMAT);
-		} else {
-			rangeLinearAxis.setNumberFormatOverride(Formatter.LONG_FORMAT); //Default
-		}
+		JFreeChartUtil.updateTickScale(domainAxis, rangeLinearAxis, max);
 		renderer.setDefaultShapesVisible(count < 2);
+
 		jRemove.setEnabled(!selected.isEmpty());
 		jClear.setEnabled(!itemsModel.isEmpty());
 		jSave.setEnabled(!itemsModel.isEmpty());
@@ -923,9 +799,9 @@ public class PriceHistoryTab extends JMainTabSecondary {
 				rangeLinearAxis.setAutoRangeIncludesZero(jIncludeZero.isSelected());
 			} else if (PriceHistoryAction.LOGARITHMIC.name().equals(e.getActionCommand())) {
 				if (jLogarithmic.isSelected()) {
-					jNextChart.getXYPlot().setRangeAxis(rangeLogarithmicAxis);
+					jFreeChart.getXYPlot().setRangeAxis(rangeLogarithmicAxis);
 				} else {
-					jNextChart.getXYPlot().setRangeAxis(rangeLinearAxis);
+					jFreeChart.getXYPlot().setRangeAxis(rangeLinearAxis);
 				}
 			}
 		}
@@ -1159,33 +1035,5 @@ public class PriceHistoryTab extends JMainTabSecondary {
 		}
 	}
 
-	private class MyRender extends XYLineAndShapeRenderer {
 
-		public MyRender() {
-			super(true, false);
-		}
-
-		@Override
-		public LegendItem getLegendItem(int datasetIndex, int series) {
-			LegendItem original = super.getLegendItem(datasetIndex, series); //To change body of generated methods, choose Tools | Templates.
-			LegendItem fixed = new LegendItem(
-				original.getLabel(),
-				original.getDescription(),
-				original.getToolTipText(),
-				"", //urlText
-				LEGEND,
-				original.getLinePaint(), //set fill paint to line paint
-				original.getOutlineStroke(),
-				Color.BLACK
-			);
-			fixed.setSeriesIndex(series);
-			fixed.setDatasetIndex(datasetIndex);
-			return fixed;
-		}
-
-		@Override
-		public Shape getItemShape(int row, int column) {
-			return ITEM_SHAPE;
-		}
-	}
 }

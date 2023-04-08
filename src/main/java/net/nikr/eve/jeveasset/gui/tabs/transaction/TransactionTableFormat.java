@@ -259,7 +259,7 @@ public enum TransactionTableFormat implements EnumTableColumn<MyTransaction> {
 		}
 		@Override
 		public Object getColumnValue(final MyTransaction from) {
-			return from.getItem().getVolume();
+			return from.getItem().getVolumePackaged();
 		}
 	},
 	TRANSACTION_ID(LongInt.class, GlazedLists.comparableComparator()) {

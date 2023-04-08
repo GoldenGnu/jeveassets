@@ -114,6 +114,10 @@ public abstract class DialoguesSettings extends Bundle {
 	public abstract String clearBlacklistMsg();
 	public abstract String clearBlacklistTitle();
 
+	// used in MiningToolSettingsPanel
+	public abstract String mining();
+	public abstract String miningSaveHistory();
+
 	// used in ColorSettingsPanel
 	public abstract String colors();
 	public abstract String collapse();
@@ -138,6 +142,23 @@ public abstract class DialoguesSettings extends Bundle {
 	public abstract String lookAndFeelNimbusDark();
 	public abstract String lookAndFeelMsg();
 	public abstract String lookAndFeelTitle();
+
+	//used in SoundSettingsPanel
+	public abstract String sounds();
+	public abstract String soundsBeep();
+	public abstract String soundsEveArmor();
+	public abstract String soundsEveCapacitor();
+	public abstract String soundsEveCargo();
+	public abstract String soundsEveCharacterSelection();
+	public abstract String soundsEveLogin();
+	public abstract String soundsEveNotificationPing();
+	public abstract String soundsEveShield();
+	public abstract String soundsEveSkill();
+	public abstract String soundsEveStart();
+	public abstract String soundsEveStructure();
+	public abstract String soundsNone();
+	public abstract String soundsOutbidUpdateCompleted();
+	public abstract String soundsIndustryJobCompleted();
 
 	// used in PriceDataSettingsPanel
 	public abstract String changeSourceWarning();

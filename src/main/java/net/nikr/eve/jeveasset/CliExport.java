@@ -95,6 +95,7 @@ public class CliExport {
 		LOADOUTS("Ship Fittings", CliOptions.LOADOUTS, LoadoutsTab.NAME),
 		MATERIALS("Materials", CliOptions.MATERIALS, MaterialsTab.NAME),
 		MARKET_ORDERS("Market Orders", CliOptions.MARKET_ORDERS, MarketOrdersTab.NAME),
+		MINING("Mining", CliOptions.MARKET_ORDERS, MarketOrdersTab.NAME),
 		OVERVIEW_PLANETS("Overview Planets", CliOptions.OVERVIEW, OverviewTab.NAME),
 		OVERVIEW_STATIONS("Overview Stations", CliOptions.OVERVIEW, OverviewTab.NAME),
 		OVERVIEW_SYSTEMS("Overview Systems", CliOptions.OVERVIEW, OverviewTab.NAME),
@@ -103,6 +104,7 @@ public class CliExport {
 		OVERVIEW_GROUPS("Overview Groups", CliOptions.OVERVIEW, OverviewTab.NAME),
 		REPROCESSED("Reprocessed", CliOptions.REPROCESSED, ReprocessedTab.NAME),
 		ROUTING("Routing", CliOptions.ROUTING, RoutingTab.NAME),
+		SKILLS("Skills", CliOptions.SKILLS, ValueTableTab.NAME),
 		STOCKPILE("Stockpile", CliOptions.STOCKPILE, StockpileTab.NAME),
 		TRACKER("Tracker", CliOptions.TRACKER, TrackerTab.NAME),
 		TRANSACTIONS("Transactions", CliOptions.TRANSACTIONS, TransactionTab.NAME),
@@ -185,6 +187,9 @@ public class CliExport {
 					case MATERIALS:
 						ok = export(new MaterialsData(profileManager, profileData).getData(CliOptions.get().getMaterialsOwner(), CliOptions.get().isMaterialsPI()), TableFormatFactory.materialTableFormat(), toolName, exportSettings);
 						break;
+					case MINING:
+						ok = export(profileData.getMiningEventList(), TableFormatFactory.miningTableFormat(), toolName, exportSettings);
+						break;
 					case OVERVIEW_STATIONS:
 						ok = exportOverview(profileManager, profileData, exportSettings, toolName, View.STATIONS);
 						break;
@@ -208,6 +213,9 @@ public class CliExport {
 						break;
 					case ROUTING: //ToDo: Not a table tool
 						ok = false;
+						break;
+					case SKILLS:
+						ok = export(profileData.getSkillsEventList(), TableFormatFactory.skillsTableFormat(), toolName, exportSettings);
 						break;
 					case STOCKPILE:
 						ok = export(new StockpileData(profileManager, profileData).getData(), TableFormatFactory.stockpileTableFormat(), toolName, exportSettings);

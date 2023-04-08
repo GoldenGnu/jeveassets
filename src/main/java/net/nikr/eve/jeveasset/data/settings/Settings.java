@@ -39,6 +39,8 @@ import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder.MarketOrderRange;
 import net.nikr.eve.jeveasset.data.settings.tag.Tag;
 import net.nikr.eve.jeveasset.data.settings.tag.TagID;
 import net.nikr.eve.jeveasset.data.settings.tag.Tags;
+import net.nikr.eve.jeveasset.gui.dialogs.settings.SoundsSettingsPanel.SoundsOption;
+import net.nikr.eve.jeveasset.gui.dialogs.settings.SoundsSettingsPanel.SoundsSound;
 import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.menu.JFormulaDialog.Formula;
@@ -91,7 +93,8 @@ public class Settings {
 		FLAG_TRACKER_USE_ASSET_PRICE_FOR_SELL_ORDERS,
 		FLAG_FOCUS_EVE_ONLINE_ON_ESI_UI_CALLS,
 		FLAG_SAVE_TOOLS_ON_EXIT,
-		FLAG_SAVE_CONTRACT_HISTORY
+		FLAG_SAVE_CONTRACT_HISTORY,
+		FLAG_SAVE_MINING_HISTORY
 	}
 
 	public static enum TransactionProfitPrice {
@@ -155,6 +158,7 @@ public class Settings {
 	private final List<Stockpile> stockpiles = new ArrayList<>();
 	private int stockpileColorGroup2 = 100;
 	private int stockpileColorGroup3 = 0;
+	private final StockpileGroupSettings stockpileGroupSettings = new StockpileGroupSettings();
 //Routing						Saved by ???
 	//Lock ???
 	private final RoutingSettings routingSettings = new RoutingSettings();
@@ -253,6 +257,8 @@ public class Settings {
 	private final List<String> showTools = new ArrayList<>();
 //Colors
 	private final ColorSettings colorSettings = new ColorSettings();
+//Sounds
+	private final Map<SoundsOption, SoundsSound> soundSettings = new EnumMap<>(SoundsOption.class);
 
 	protected Settings() {
 		//Settings
@@ -278,6 +284,7 @@ public class Settings {
 		flags.put(SettingFlag.FLAG_FOCUS_EVE_ONLINE_ON_ESI_UI_CALLS, true);
 		flags.put(SettingFlag.FLAG_SAVE_TOOLS_ON_EXIT, false);
 		flags.put(SettingFlag.FLAG_SAVE_CONTRACT_HISTORY, true);
+		flags.put(SettingFlag.FLAG_SAVE_MINING_HISTORY, true);
 		cacheFlags();
 		//Default Filters
 		List<Filter> filter;
@@ -472,6 +479,10 @@ public class Settings {
 			tableJumps.put(toolName, jumps);
 		}
 		return jumps;
+	}
+
+	public Map<SoundsOption, SoundsSound> getSoundSettings() {
+		return soundSettings;
 	}
 
 	public Map<String, Date> getTableChanged() {
@@ -832,6 +843,14 @@ public class Settings {
 		flags.put(SettingFlag.FLAG_SAVE_CONTRACT_HISTORY, contractHistory);
 	}
 
+	public boolean isMiningHistory() {
+		return flags.get(SettingFlag.FLAG_SAVE_MINING_HISTORY);
+	}
+
+	public void setMiningHistory(final boolean contractHistory) {
+		flags.put(SettingFlag.FLAG_SAVE_MINING_HISTORY, contractHistory);
+	}
+
 	public MarketOrdersSettings getMarketOrdersSettings() {
 		return marketOrdersSettings;
 	}
@@ -878,6 +897,10 @@ public class Settings {
 
 	public List<Stockpile> getStockpiles() {
 		return stockpiles;
+	}
+
+	public StockpileGroupSettings getStockpileGroupSettings() {
+		return stockpileGroupSettings;
 	}
 
 	public int getStockpileColorGroup2() {

@@ -38,11 +38,14 @@ public abstract class TabsItems extends Bundle {
 	public abstract String columnName();
 	public abstract String columnGroup();
 	public abstract String columnCategory();
+	public abstract String columnSlot();
+	public abstract String columnChargeSize();
 	public abstract String columnPriceBase();
 	public abstract String columnPriceReprocessed();
 	public abstract String columnMeta();
 	public abstract String columnTech();
 	public abstract String columnVolume();
+	public abstract String columnVolumePackaged();
 	public abstract String columnTypeID();
 }
 

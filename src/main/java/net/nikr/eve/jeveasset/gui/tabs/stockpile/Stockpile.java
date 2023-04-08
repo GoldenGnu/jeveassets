@@ -58,6 +58,7 @@ import net.nikr.eve.jeveasset.data.settings.types.TagsType;
 import net.nikr.eve.jeveasset.gui.shared.CopyHandler.CopySeparator;
 import net.nikr.eve.jeveasset.gui.shared.components.JButtonComparable;
 import net.nikr.eve.jeveasset.gui.shared.components.JButtonNull;
+import net.nikr.eve.jeveasset.gui.shared.table.JSeparatorTable.IgnoreSeparator;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter.StockpileContainer;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter.StockpileFlag;
 import net.nikr.eve.jeveasset.i18n.General;
@@ -79,6 +80,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 	private List<StockpileFilter> filters = new ArrayList<>();
 	private final Set<StockpileItem> items = new TreeSet<>();
 	private final StockpileTotal totalItem = new StockpileTotal(this);
+	private final IgnoreItem ignoreItem = new IgnoreItem(this);
 	private final Map<Stockpile, Double> subpiles = new HashMap<>();
 	private final List<Stockpile> subpileLinks = new ArrayList<>();
 	private final List<SubpileItem> subpileItems = new ArrayList<>();
@@ -406,6 +408,10 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 		return items;
 	}
 
+	public IgnoreItem getIgnoreItem() {
+		return ignoreItem;
+	}
+
 	public List<StockpileItem> getClaims() {
 		List<StockpileItem> list = new ArrayList<>();
 		list.addAll(items);
@@ -519,6 +525,12 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 	@Override
 	public int compareTo(final Stockpile o) {
 		return this.getName().compareToIgnoreCase(o.getName());
+	}
+
+	public static class IgnoreItem extends StockpileItem implements IgnoreSeparator {
+		public IgnoreItem(Stockpile stockpile) {
+			super(stockpile, ApiIdConverter.getItem(null), 0, 0, false);
+		}
 	}
 
 	public static class StockpileItem implements Comparable<StockpileItem>, LocationsType, ItemType, BlueprintType, PriceType, CopySeparator, TagsType, OwnersType, MarketDetailType {
@@ -1071,7 +1083,11 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 		}
 
 		public String getSeparator() {
-			return stockpile.getName().toLowerCase() + "\r\n" + stockpile.getName(); //Sort lower case, but unique by case
+			return getGroup() + "\r\n" + stockpile.getName().toLowerCase() + "\r\n" + stockpile.getName(); //Sort lower case, but unique by case
+		}
+
+		public String getGroup() {
+			return Settings.get().getStockpileGroupSettings().getGroup(stockpile);
 		}
 
 		public Stockpile getStockpile() {
@@ -1855,13 +1871,13 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 		}
 
 		private SubpileItem(Stockpile stockpile, int level, String path) {
-			super(stockpile, new Item(0, "!"+0, "Stockpile", "", 0, 0, 0, 0, 0, "", false, 0, 0, 1, null), 0, 0.0, false);
+			super(stockpile, new Item(0, "!"+0, "Stockpile", "", 0, 0, 0, 0, 0, "", false, 0, 0, 1, "", "", null), 0, 0.0, false);
 			setLevel(level);
 			this.path = path;
 			updateText();
 		}
 
-		private String getPath() {
+		String getPath() {
 			return path;
 		}
 
@@ -1895,7 +1911,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 		}
 
 		public String getOrder() {
-			return "1" + getPath();
+			return "1";
 		}
 
 		public void addItemLink(StockpileItem parentItem, SubpileStock subpileStock) {
@@ -1981,7 +1997,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 
 		@Override
 		public String getOrder() {
-			return "0" + super.getPath();
+			return "0" + getPath();
 		}
 
 		@Override

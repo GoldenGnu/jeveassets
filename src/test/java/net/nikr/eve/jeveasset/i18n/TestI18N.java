@@ -112,6 +112,16 @@ public class TestI18N extends TestUtil {
 		assertNotNull(g.assets());
 	}
 
+	@Test public void testTabsSkillsBundle_en() throws Exception {
+		TabsSkills g = BundleServiceFactory.getBundleService().get(TabsSkills.class);
+		assertNotNull(g.skills());
+	}
+
+	@Test public void testTabsMiningBundle_en() throws Exception {
+		TabsMining g = BundleServiceFactory.getBundleService().get(TabsMining.class);
+		assertNotNull(g.miningLog());
+	}
+
 	@Test public void testTabsContractsBundle_en() throws Exception {
 		TabsContracts g = BundleServiceFactory.getBundleService().get(TabsContracts.class);
 		assertNotNull(g.auction());

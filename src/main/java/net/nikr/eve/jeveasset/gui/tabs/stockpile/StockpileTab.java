@@ -49,6 +49,7 @@ import java.util.Set;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
@@ -63,7 +64,6 @@ import javax.swing.SwingUtilities;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.data.profile.ProfileManager;
-import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.tag.TagUpdate;
 import net.nikr.eve.jeveasset.data.settings.types.LocationType;
@@ -71,6 +71,7 @@ import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel.JStatusLabel;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.InstantToolTip;
+import net.nikr.eve.jeveasset.gui.shared.JOptionInput;
 import net.nikr.eve.jeveasset.gui.shared.MarketDetailsColumn;
 import net.nikr.eve.jeveasset.gui.shared.MarketDetailsColumn.MarketDetailsActionListener;
 import net.nikr.eve.jeveasset.gui.shared.TextImport;
@@ -87,6 +88,8 @@ import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuColumns;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo.AutoNumberFormat;
+import net.nikr.eve.jeveasset.gui.shared.menu.JMenuStockpile;
+import net.nikr.eve.jeveasset.gui.shared.menu.JMenuStockpile.BpOptions;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuUI;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager;
@@ -110,7 +113,6 @@ import net.nikr.eve.jeveasset.io.local.SettingsWriter;
 import net.nikr.eve.jeveasset.io.local.StockpileDataReader;
 import net.nikr.eve.jeveasset.io.local.StockpileDataWriter;
 import net.nikr.eve.jeveasset.io.local.text.TextImportType;
-import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import net.nikr.eve.jeveasset.io.shared.DesktopUtil.HelpLink;
 
 
@@ -129,7 +131,9 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		EXPORT_TEXT,
 		EXPORT_XML,
 		COLLAPSE,
-		EXPAND
+		EXPAND,
+		COLLAPSE_GROUPS,
+		EXPAND_GROUPS
 	}
 
 	public enum ImportOptions implements OptionEnum {
@@ -216,6 +220,8 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 			this.all = all;
 		}
 	}
+
+	private static final MatchAllGroups MATCH_ALL_GROUPS = new MatchAllGroups();
 
 	//StatusBar
 	private final JStatusLabel jVolumeNow;
@@ -352,6 +358,19 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		jToolBarLeft.addSeparator();
 
 		JFixedToolBar jToolBarRight = new JFixedToolBar();
+
+		JDropDownButton jGroup = new JDropDownButton(TabsStockpile.get().groups(), Images.MISC_EXPANDED.getIcon());
+		jToolBarRight.addButton(jGroup);
+
+		JMenuItem jCollapseGroup = new JMenuItem(TabsStockpile.get().groupCollapse(), Images.MISC_COLLAPSED.getIcon());
+		jCollapseGroup.setActionCommand(StockpileAction.COLLAPSE_GROUPS.name());
+		jCollapseGroup.addActionListener(listener);
+		jGroup.add(jCollapseGroup);
+
+		JMenuItem jExpandGroup = new JMenuItem(TabsStockpile.get().groupExpand(), Images.MISC_EXPANDED.getIcon());
+		jExpandGroup.setActionCommand(StockpileAction.EXPAND_GROUPS.name());
+		jExpandGroup.addActionListener(listener);
+		jGroup.add(jExpandGroup);
 
 		JButton jCollapse = new JButton(TabsStockpile.get().collapse(), Images.MISC_COLLAPSED.getIcon());
 		jCollapse.setActionCommand(StockpileAction.COLLAPSE.name());
@@ -519,19 +538,26 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		stockpileDialog.updateData();
 	}
 
-	public Stockpile addToStockpile(Stockpile stockpile, Collection<StockpileItem> items) {
-		return addToStockpile(stockpile, items, false);
+	/**
+	 * @param stockpile Stockpile to add item to
+	 * @param item Item to add to stockpile
+	 * @param merge True: Add new and old item count. False: Skip the new item if it exist
+	 * @param saveOnChange Save settings when done
+	 * @return
+	 */
+	public Stockpile addToStockpile(Stockpile stockpile, StockpileItem item, boolean merge, boolean saveOnChange) {
+		return addToStockpile(stockpile, Collections.singletonList(item), merge, saveOnChange);
 	}
 
-	protected Stockpile addToStockpile(Stockpile stockpile, StockpileItem item) {
-		return addToStockpile(stockpile, Collections.singletonList(item), false);
-	}
-
-	protected Stockpile addToStockpile(Stockpile stockpile, Collection<StockpileItem> items, boolean merge) {
-		return addToStockpile(stockpile, items, merge, true);
-	}
-
-	protected Stockpile addToStockpile(Stockpile stockpile, Collection<StockpileItem> items, boolean merge, boolean saveOnChange) {
+	/**
+	 *
+	 * @param stockpile Stockpile to add item to
+	 * @param items Items to add to stockpile
+	 * @param merge  True: Add new and old item count. False: Skip new items if they exist
+	 * @param saveOnChange Save settings when done
+	 * @return
+	 */
+	public Stockpile addToStockpile(Stockpile stockpile, Collection<StockpileItem> items, boolean merge, boolean saveOnChange) {
 		updateOwners();
 		if (stockpile == null) { //new stockpile
 			stockpile = stockpileDialog.showAdd();
@@ -631,7 +657,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 	protected void editItem(StockpileItem item) {
 		StockpileItem editItem = stockpileItemDialog.showEdit(item);
 		if (editItem != null) {
-			addToStockpile(editItem.getStockpile(), editItem);
+			addToStockpile(editItem.getStockpile(), editItem, false, true);
 		}
 	}
 
@@ -685,6 +711,288 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		afterUpdateData();
 	}
 
+	private void expandGroups(boolean expand, GroupMatching match) {
+		List<StockpileItem> stockpileItems = new ArrayList<>();
+		List<StockpileItem> ignoreItems = new ArrayList<>();
+		List<Stockpile> changed = new ArrayList<>();
+		List<String> groups = new ArrayList<>();
+		for (Stockpile stockpile : getShownStockpiles()) {
+			String group = Settings.get().getStockpileGroupSettings().getGroup(stockpile);
+			if (match.matches(group) && Settings.get().getStockpileGroupSettings().isGroupExpanded(group) != expand) { //Match group + is changed
+				stockpileItems.addAll(stockpile.getItems());
+				stockpileItems.addAll(stockpile.getSubpileItems());
+				if (Settings.get().getStockpileGroupSettings().isGroupFirst(stockpile)) {
+					ignoreItems.add(stockpile.getIgnoreItem());
+				}
+				changed.add(stockpile);
+				groups.add(group);
+			}
+		}
+		//Update groups (must be done after the ShownStockpiles loop)
+		for (String group : groups) {
+			Settings.get().getStockpileGroupSettings().setGroupExpanded(group, expand);
+		}
+		if (expand) { //Expand
+			//Lock Table
+			beforeUpdateData();
+			try {
+				eventList.getReadWriteLock().writeLock().lock();
+				eventList.removeAll(ignoreItems);
+				eventList.addAll(stockpileItems);
+			} finally {
+				eventList.getReadWriteLock().writeLock().unlock();
+			}
+			//Unlcok Table
+			afterUpdateData();
+			//Load state
+			try {
+				separatorList.getReadWriteLock().writeLock().lock();
+				for (int i = 0; i < separatorList.size(); i++) {
+					Object object = separatorList.get(i);
+					if (object instanceof SeparatorList.Separator<?>) {
+						SeparatorList.Separator<?> separator = (SeparatorList.Separator<?>) object;
+						StockpileItem currentItem = (StockpileItem) separator.first();
+						if (match.matches(currentItem.getGroup()) && changed.contains(currentItem.getStockpile())) {
+							if (Settings.get().getStockpileGroupSettings().isStockpileExpanded(currentItem.getStockpile())) {
+								separator.setLimit(Integer.MAX_VALUE);
+							} else {
+								separator.setLimit(0);
+							}
+						}
+					}
+				}
+			} finally {
+				separatorList.getReadWriteLock().writeLock().unlock();
+			}
+		} else { //Collapse
+			//Save state
+			try {
+				separatorList.getReadWriteLock().writeLock().lock();
+				for (int i = 0; i < separatorList.size(); i++) {
+					Object object = separatorList.get(i);
+					if (object instanceof SeparatorList.Separator<?>) {
+						SeparatorList.Separator<?> separator = (SeparatorList.Separator<?>) object;
+						StockpileItem currentItem = (StockpileItem) separator.first();
+						if (match.matches(currentItem.getGroup()) && changed.contains(currentItem.getStockpile())) {
+							Settings.get().getStockpileGroupSettings().setStockpileExpanded(currentItem.getStockpile(), separator.getLimit() != 0);
+						}
+					}
+				}
+			} finally {
+				separatorList.getReadWriteLock().writeLock().unlock();
+			}
+			//Lock Table
+			beforeUpdateData();
+			try {
+				eventList.getReadWriteLock().writeLock().lock();
+				eventList.removeAll(stockpileItems);
+				eventList.addAll(ignoreItems);
+			} finally {
+				eventList.getReadWriteLock().writeLock().unlock();
+			}
+			//Unlcok Table
+			afterUpdateData();
+			//Collapse
+			try {
+				separatorList.getReadWriteLock().writeLock().lock();
+				for (int i = 0; i < separatorList.size(); i++) {
+					Object object = separatorList.get(i);
+					if (object instanceof SeparatorList.Separator<?>) {
+						SeparatorList.Separator<?> separator = (SeparatorList.Separator<?>) object;
+						StockpileItem currentItem = (StockpileItem) separator.first();
+						if (match.matches(currentItem.getGroup()) && changed.contains(currentItem.getStockpile())) {
+							separator.setLimit(0);
+						}
+					}
+				}
+			} finally {
+				separatorList.getReadWriteLock().writeLock().unlock();
+			}
+		}
+	}
+
+	private void expandGroupStockpiles(boolean expand) {
+		Stockpile stockpile = getSelectedStockpile();
+		if (stockpile == null) {
+			return;
+		}
+		String group = Settings.get().getStockpileGroupSettings().getGroup(stockpile);
+		if (!Settings.get().getStockpileGroupSettings().isGroupExpanded(group)) { //Group is collapsed (Just update settings)
+			for (Stockpile s : getShownStockpiles()) {
+				if (group.equals(Settings.get().getStockpileGroupSettings().getGroup(s))) {
+					Settings.get().getStockpileGroupSettings().setStockpileExpanded(s, expand);
+				}
+			}
+			return;
+		}
+		try {
+			separatorList.getReadWriteLock().writeLock().lock();
+			for (int i = 0; i < separatorList.size(); i++) {
+				Object object = separatorList.get(i);
+				if (object instanceof SeparatorList.Separator<?>) {
+					SeparatorList.Separator<?> separator = (SeparatorList.Separator<?>) object;
+					StockpileItem currentItem = (StockpileItem) separator.first();
+					if (currentItem instanceof JSeparatorTable.IgnoreSeparator || currentItem == null) {
+						continue;
+					}
+					if (group.equals(currentItem.getGroup())) {
+						if (expand) {
+							separator.setLimit(Integer.MAX_VALUE);
+						} else {
+							separator.setLimit(0);
+						}
+					}
+				}
+			}
+		} finally {
+			separatorList.getReadWriteLock().writeLock().unlock();
+		}
+	}
+
+	private void removeFromGroup(Stockpile stockpile, boolean update) {
+		List<StockpileItem> stockpileItems = new ArrayList<>();
+		stockpileItems.addAll(stockpile.getItems());
+		stockpileItems.addAll(stockpile.getSubpileItems());
+		//Remove
+		Settings.lock("Stockpile (Stockpile Group)");
+		Settings.get().getStockpileGroupSettings().removeGroup(stockpile);
+		Settings.unlock("Stockpile (Stockpile Group)");
+		if (update) {
+			//Lock Table
+			beforeUpdateData();
+			try {
+				//Update
+				eventList.getReadWriteLock().writeLock().lock();
+				eventList.removeAll(stockpileItems);
+				eventList.addAll(stockpileItems);
+			} finally {
+				eventList.getReadWriteLock().writeLock().unlock();
+			}
+			//Unlcok Table
+			afterUpdateData();
+		}
+	}
+
+	private void addToGroup(String group, Stockpile stockpile) {
+		List<StockpileItem> stockpileItems = new ArrayList<>();
+		stockpileItems.addAll(stockpile.getItems());
+		stockpileItems.addAll(stockpile.getSubpileItems());
+		//Old First
+		Stockpile oldFirst = Settings.get().getStockpileGroupSettings().getGroupFirst(group);
+		//Add
+		Settings.lock("Stockpile (Stockpile Group)");
+		Settings.get().getStockpileGroupSettings().setGroup(stockpile, group);
+		Settings.unlock("Stockpile (Stockpile Group)");
+		//New First
+		Stockpile newFirst = Settings.get().getStockpileGroupSettings().getGroupFirst(group);
+		if (Settings.get().getStockpileGroupSettings().isGroupExpanded(group)) { //Expanded
+			//Lock Table
+			beforeUpdateData();
+			try {
+				//Update
+				eventList.getReadWriteLock().writeLock().lock();
+				eventList.removeAll(stockpileItems);
+				eventList.addAll(stockpileItems);
+			} finally {
+				eventList.getReadWriteLock().writeLock().unlock();
+			}
+			//Unlcok Table
+			afterUpdateData();
+		} else { //Collapsed
+			//Save state
+			try {
+				separatorList.getReadWriteLock().writeLock().lock();
+				for (int i = 0; i < separatorList.size(); i++) {
+					Object object = separatorList.get(i);
+					if (object instanceof SeparatorList.Separator<?>) {
+						SeparatorList.Separator<?> separator = (SeparatorList.Separator<?>) object;
+						StockpileItem currentItem = (StockpileItem) separator.first();
+						if (stockpile.equals(currentItem.getStockpile())) {
+							Settings.get().getStockpileGroupSettings().setStockpileExpanded(currentItem.getStockpile(), separator.getLimit() != 0);
+							break; //Search Done
+						}
+					}
+				}
+			} finally {
+				separatorList.getReadWriteLock().writeLock().unlock();
+			}
+			//Lock Table
+			beforeUpdateData();
+			try {
+				//Remove (if group was expanded)
+				eventList.getReadWriteLock().writeLock().lock();
+				eventList.removeAll(stockpileItems);
+			} finally {
+				eventList.getReadWriteLock().writeLock().unlock();
+			}
+			//Unlcok Table
+			afterUpdateData();
+			//Update Group First
+			updateGroupFirst(group, oldFirst, newFirst);
+		}
+	}
+
+	private void updateGroupFirst(String group, Stockpile oldFirst, Stockpile newFirst) {
+		if (newFirst == null) {
+			//Lock Table
+			beforeUpdateData();
+			try {
+				//Remove
+				eventList.getReadWriteLock().writeLock().lock();
+				eventList.remove(oldFirst.getIgnoreItem());
+			} finally {
+				eventList.getReadWriteLock().writeLock().unlock();
+			}
+			//Unlcok Table
+			afterUpdateData();
+		} else if (!oldFirst.equals(newFirst)) {
+			//Lock Table
+			beforeUpdateData();
+			try {
+				//Update
+				eventList.getReadWriteLock().writeLock().lock();
+				eventList.remove(oldFirst.getIgnoreItem());
+				eventList.add(newFirst.getIgnoreItem());
+			} finally {
+				eventList.getReadWriteLock().writeLock().unlock();
+			}
+			//Unlcok Table
+			afterUpdateData();
+			//Collapse
+			for (int i = 0; i < separatorList.size(); i++) {
+				Object object = separatorList.get(i);
+				if (object instanceof SeparatorList.Separator<?>) {
+					SeparatorList.Separator<?> separator = (SeparatorList.Separator<?>) object;
+					StockpileItem currentItem = (StockpileItem) separator.first();
+					if (group.equals(currentItem.getGroup())) {
+						separator.setLimit(0);
+					}
+				}
+			}
+		}
+	}
+
+	private String getGroupName(String last) {
+		String group = (String)JOptionInput.showInputDialog(program.getMainWindow().getFrame(), TabsStockpile.get().groupAddName(), TabsStockpile.get().groupAddTitle(), JOptionPane.PLAIN_MESSAGE, null, null, last);
+		if (group == null) {
+			return null;
+		}
+		if (group.isEmpty()) {
+			JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsStockpile.get().groupAddEmpty(), TabsStockpile.get().groupAddTitle(), JOptionPane.WARNING_MESSAGE);
+			return getGroupName(null);
+		}
+		Set<String> groups = Settings.get().getStockpileGroupSettings().getGroups();
+		if (groups.contains(group)) {
+			int returnValue = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), TabsStockpile.get().groupAddExist(), TabsStockpile.get().groupAddTitle(), JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+			if (returnValue == JOptionPane.OK_OPTION) {
+				return group;
+			} else {
+				return getGroupName(group);
+			}
+		}
+		return group;
+	}
+
 	private void removeStockpile(Stockpile stockpile) {
 		//Lock Table
 		beforeUpdateData();
@@ -709,7 +1017,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 	}
 
 	private void importStockpileItems(Map<Integer, Double> data, String name) {
-		importOptions(data, null, 1, options(ImportOptions.NEW, ImportOptions.ADD, ImportOptions.SKIP), new StockpileImportAction<Map<Integer, Double>>() {
+		importOptions(data, null, 1, false, options(ImportOptions.NEW, ImportOptions.ADD), new StockpileImportAction<Map<Integer, Double>>() {
 			@Override
 			public String getName(Map<Integer, Double> data) {
 				return name;
@@ -717,15 +1025,24 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 			@Override
 			public boolean action(Map<Integer, Double> data, OptionEnum xmlOptions) {
 				if (xmlOptions == ImportOptions.NEW) {
+					//Blueprint/Formula Options
+					BpOptions bpOptions = JMenuStockpile.selectBpImportOptions(program, data.keySet(), false);
+					if (bpOptions == null) {
+						return false; //Cancelled
+					}
 					//Create Stockpile
 					Stockpile stockpile = stockpileDialog.showAdd(name);
 					if (stockpile == null) { //Dialog cancelled
 						return false; //Retry
 					}
+					//Create items
+					List<StockpileItem> items = JMenuStockpile.toStockpileItems(program, bpOptions, stockpile, data.keySet(), data, Collections.emptyMap());
+					if (items == null) {
+						return false; //Cancelled
+					}
 					Settings.lock("Stockpile (Import)"); //Lock for Stockpile (Import)
-					for (Map.Entry<Integer, Double> entry : data.entrySet()) {
-						Item item = ApiIdConverter.getItemUpdate(entry.getKey());
-						stockpile.add(new StockpileItem(stockpile, item, entry.getKey(), entry.getValue(), false));
+					for (StockpileItem item : items) {
+						stockpile.add(item);
 					}
 					Settings.unlock("Stockpile (Import)"); //Unlock for Stockpile (Import)
 					program.saveSettings("Stockpile (Import)"); //Save Stockpile (Import)
@@ -733,17 +1050,23 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 					addStockpile(stockpile);
 					scrollToSctockpile(stockpile);
 				} else if (xmlOptions == ImportOptions.ADD) {
-					//Create items
-					Stockpile stockpile = new Stockpile("", 1L, new ArrayList<>(), 1.0, false); //Stand-in stockpile (will be replaced)
-					List<StockpileItem> items = new ArrayList<>();
-					for (Map.Entry<Integer, Double> entry : data.entrySet()) {
-						Item item = ApiIdConverter.getItemUpdate(entry.getKey());
-						items.add(new StockpileItem(stockpile, item, entry.getKey(), entry.getValue(), false));
-					}
-					//Merge Into
-					if (!importIntoStockpile(items)) {
+					//Select Stockpiles
+					List<Stockpile> stockpiles = stockpileSelectionDialog.show(getShownStockpiles(), Settings.get().getStockpiles(), TabsStockpile.get().showHidden(), false);
+					if (stockpiles == null) {
 						return false;
 					}
+					//Stand-in stockpile (will be replaced)
+					Stockpile stockpile = new Stockpile("", 1L, new ArrayList<>(), 1.0, false);
+					//Create items
+					List<StockpileItem> items = JMenuStockpile.toStockpileItems(program, stockpile, data.keySet(), data, Collections.emptyMap(), false);
+					if (items == null) {
+						return false; //Cancelled
+					}
+					//Merge Into
+					for (Stockpile existingStockpile : stockpiles) {
+						addToStockpile(existingStockpile, items, true, false); //Merge imported stockpile items into existing stockpiles
+					}
+					program.saveSettings("Stockpile (Import)"); //Save Stockpile (Merge);
 				}
 				//Skip - Do nothing
 				return true;
@@ -813,7 +1136,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		int count = stockpiles.size();
 		OptionEnum option = null;
 		for (Stockpile stockpile : stockpiles) {
-			option = importOptions(stockpile, option, count, options, new StockpileImportAction<Stockpile>() {
+			option = importOptions(stockpile, option, count, true, options, new StockpileImportAction<Stockpile>() {
 				@Override
 				public String getName(Stockpile value) {
 					return value.getName();
@@ -836,7 +1159,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 					} else if (xmlOptions == ImportOptions.MERGE) {
 						int index = Settings.get().getStockpiles().indexOf(value); //Get index of old Stockpile
 						Stockpile mergeStockpile = Settings.get().getStockpiles().get(index); //Get old stockpile
-						addToStockpile(mergeStockpile, value.getItems(), true); //Merge old and imported stockpiles
+						addToStockpile(mergeStockpile, value.getItems(), true, true); //Merge old and imported stockpiles
 					} else if (xmlOptions == ImportOptions.OVERWRITE) {
 						Settings.lock("Stockpile (Import Options overwrite)"); //Lock settings
 						//Remove
@@ -850,9 +1173,14 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 						//Update UI
 						addStockpile(value); //Add imported stockpile to Settings
 					} else if (xmlOptions == ImportOptions.ADD) {
-						if (!importIntoStockpile(value.getItems())) {
+						List<Stockpile> stockpiles = stockpileSelectionDialog.show(getShownStockpiles(), Settings.get().getStockpiles(), TabsStockpile.get().showHidden(), false);
+						if (stockpiles == null) {
 							return false;
 						}
+						for (Stockpile existingStockpile : stockpiles) {
+							addToStockpile(existingStockpile, value.getItems(), true, false); //Merge imported stockpile items into existing stockpiles
+						}
+						program.saveSettings("Stockpile (Import)"); //Save Stockpile (Merge);
 					}
 					//Skip - Do nothing
 					return true;
@@ -866,26 +1194,14 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		return save;
 	}
 
-	private boolean importIntoStockpile(Collection<StockpileItem> importedItems) {
-		List<Stockpile> stockpiles = stockpileSelectionDialog.show(getShownStockpiles(), Settings.get().getStockpiles(), TabsStockpile.get().showHidden(), false);
-		if (stockpiles == null) {
-			return false;
-		}
-		for (Stockpile existingStockpile : stockpiles) {
-			addToStockpile(existingStockpile, importedItems, true, false); //Merge imported stockpile items into existing stockpiles
-		}
-		program.saveSettings("Stockpile (Import)"); //Save Stockpile (Merge);
-		return true;
-	}
-
-	private <T> OptionEnum importOptions(T value, OptionEnum option, int count, List<OptionEnum> options, StockpileImportAction<T> action) {
+	private <T> OptionEnum importOptions(T value, OptionEnum option, int count, boolean showAll, List<OptionEnum> options, StockpileImportAction<T> action) {
 		if (option == null || !option.isAll()) { //Not decided - ask what to do
-			option = stockpileImportDialog.show(action.getName(value),  TabsStockpile.get().importOptions(),  TabsStockpile.get().importOptionsAll(count), count > 1, options, option);
+			option = stockpileImportDialog.show(action.getName(value),  TabsStockpile.get().importOptions(),  TabsStockpile.get().importOptionsAll(count), count > 1, showAll, options, option);
 		}
 		boolean ok = action.action(value, option);
 		if (!ok) {
 			option.setAll(false);
-			return importOptions(value, option, count, options, action); //Retry - if RENAME_ALL, ask again
+			return importOptions(value, option, count, showAll, options, action); //Retry - if RENAME_ALL, ask again
 		}
 		return option;
 	}
@@ -1081,8 +1397,10 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 				}
 			} else if (StockpileAction.COLLAPSE.name().equals(e.getActionCommand())) { //Collapse all
 				jTable.expandSeparators(false);
+				Settings.get().getStockpileGroupSettings().setStockpilesExpanded(getShownStockpiles(), false);
 			} else if (StockpileAction.EXPAND.name().equals(e.getActionCommand())) { //Expand all
 				jTable.expandSeparators(true);
+				Settings.get().getStockpileGroupSettings().setStockpilesExpanded(getShownStockpiles(), true);
 			} else if (StockpileCellAction.UPDATE_MULTIPLIER.name().equals(e.getActionCommand())) { //Multiplier
 				Object source = e.getSource();
 				Stockpile stockpile = getSelectedStockpile();
@@ -1090,7 +1408,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 					JTextField jMultiplier = (JTextField) source;
 					double multiplier;
 					try {
-						multiplier = Double.valueOf(jMultiplier.getText());
+						multiplier = Double.parseDouble(jMultiplier.getText());
 					} catch (NumberFormatException ex) {
 						multiplier = 1;
 					}
@@ -1154,7 +1472,10 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 					int value = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), stockpile.getName(), TabsStockpile.get().deleteStockpileTitle(), JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
 					if (value == JOptionPane.OK_OPTION) {
 						Settings.lock("Stockpile (Delete Stockpile)");
+						//Remove stockpile
 						Settings.get().getStockpiles().remove(stockpile);
+						//Remove Group
+						Settings.get().getStockpileGroupSettings().removeGroup(stockpile);
 						//Remove subpile links
 						for (Stockpile parentStockpile : stockpile.getSubpiles().keySet()) {
 							parentStockpile.removeSubpileLink(stockpile);
@@ -1176,9 +1497,69 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 				if (stockpile != null) {
 					List<StockpileItem> stockpileItems = stockpileItemDialog.showAdd(stockpile);
 					if (stockpileItems != null) { //Edit/Add/Update existing or cancel
-						addToStockpile(stockpile, stockpileItems);
+						addToStockpile(stockpile, stockpileItems, false, true);
 					}
 				}
+			} else if (StockpileAction.COLLAPSE_GROUPS.name().equals(e.getActionCommand())) {
+				expandGroups(false, MATCH_ALL_GROUPS);
+			} else if (StockpileAction.EXPAND_GROUPS.name().equals(e.getActionCommand())) {
+				expandGroups(true, MATCH_ALL_GROUPS);
+			} else if (StockpileCellAction.GROUP_EXPAND.name().equals(e.getActionCommand())) {
+				expandGroupStockpiles(true);
+			} else if (StockpileCellAction.GROUP_COLLAPSE.name().equals(e.getActionCommand())) {
+				expandGroupStockpiles(false);
+			} else if (StockpileCellAction.GROUP_TOGGLE_COLLAPSE.name().equals(e.getActionCommand())) {
+				Stockpile stockpile = getSelectedStockpile();
+				if (stockpile == null) {
+					return;
+				}
+				String group = Settings.get().getStockpileGroupSettings().getGroup(stockpile);
+				boolean expand = !Settings.get().getStockpileGroupSettings().isGroupExpanded(group);
+				expandGroups(expand, new MatchGroup(group));
+			} else if (StockpileCellAction.GROUP_NEW.name().equals(e.getActionCommand())) {
+				Stockpile stockpile = getSelectedStockpile();
+				if (stockpile == null) {
+					return;
+				}
+				String group = getGroupName(null);
+				if (group == null) {
+					return; //Cancelled
+				}
+				String oldGroup = Settings.get().getStockpileGroupSettings().getGroup(stockpile);
+				if (oldGroup.equals(group)) {
+					return; //No change
+				}
+				if (!oldGroup.isEmpty()) {
+					removeFromGroup(stockpile, false); //Change group
+				}
+				addToGroup(group, stockpile); //Change or add group
+				//Update EventList (GUI)
+				StockpileSeparatorTableCell.updateGroups(this);
+				program.saveSettings("Stockpile (Stockpile Group)");
+			} else if (StockpileCellAction.GROUP_CHANGE_ADD.name().equals(e.getActionCommand())) {
+				Stockpile stockpile = getSelectedStockpile();
+				if (stockpile == null) {
+					return;
+				}
+				Object source = e.getSource();
+				String newGroup;
+				if (source instanceof JCheckBoxMenuItem) {
+					newGroup = ((JCheckBoxMenuItem)source).getText();
+				} else {
+					return;
+				}
+				String oldGroup = Settings.get().getStockpileGroupSettings().getGroup(stockpile);
+				if (newGroup.equals(oldGroup)) {
+					removeFromGroup(stockpile, true); //Remove from group
+				}
+				if (!oldGroup.isEmpty()) {
+					removeFromGroup(stockpile, false); //Change group
+				}
+				if (!newGroup.equals(oldGroup)) {
+					addToGroup(newGroup, stockpile); //Change or add group
+				}
+				StockpileSeparatorTableCell.updateGroups(this);
+				program.saveSettings("Stockpile (Stockpile Group)");
 			} else if (StockpileCellAction.SUBPILES.name().equals(e.getActionCommand())) {
 				Stockpile stockpile = getSelectedStockpile();
 				if (stockpile != null) {
@@ -1318,5 +1699,30 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 	private static interface StockpileImportAction<T> {
 		public String getName(T value);
 		public boolean action(T value, OptionEnum xmlOptions);
+	}
+
+	private static interface GroupMatching {
+		public boolean matches(String group);
+	}
+
+	private static class MatchAllGroups implements GroupMatching {
+		@Override
+		public boolean matches(String group) {
+			return !group.isEmpty();
+		}
+	}
+
+	private static class MatchGroup implements GroupMatching {
+
+		private final String group;
+
+		public MatchGroup(String group) {
+			this.group = group;
+		}
+
+		@Override
+		public boolean matches(String group) {
+			return this.group.equals(group);
+		}
 	}
 }

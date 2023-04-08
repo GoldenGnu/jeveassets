@@ -58,6 +58,10 @@ public abstract class GuiFrame extends Bundle {
 	public abstract String linkWiki();
 	public abstract String market();
 	public abstract String materials();
+	public abstract String mining();
+	public abstract String miningAll();
+	public abstract String miningLog();
+	public abstract String miningGraph();
 	public abstract String misc();
 	public abstract String netWorth();
 	public abstract String not();
@@ -72,6 +76,7 @@ public abstract class GuiFrame extends Bundle {
 	public abstract String reprocessed();
 	public abstract String routing();
 	public abstract String ship();
+	public abstract String skills();
 	public abstract String slots();
 	public abstract String stockpile();
 	public abstract String table();

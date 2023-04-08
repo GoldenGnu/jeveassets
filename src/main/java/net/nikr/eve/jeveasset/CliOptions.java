@@ -66,9 +66,11 @@ public class CliOptions {
 	public static final String LOADOUTS = "fittings";
 	public static final String MATERIALS = "materials";
 	public static final String MARKET_ORDERS = "marketorders";
+	public static final String MINING = "mining";
 	public static final String OVERVIEW = "overview";
 	public static final String REPROCESSED = "reprocessed";
 	public static final String ROUTING = "routing"; //ToDo
+	public static final String SKILLS = "skills";
 	public static final String STOCKPILE = "stockpile";
 	public static final String TRACKER = "tracker"; //ToDo
 	public static final String TRANSACTIONS = "transactions";
@@ -218,6 +220,9 @@ public class CliOptions {
 	}
 
 	static class ExportOptionsTools {
+		/**
+		 * Free letters: b w
+		 */
 		@Option(names = {"-a" ,"-"+ASSETS}, description = TOOLS_BEFORE+"Assets"+TOOLS_AFTER)
 		boolean assets;
 		@Option(names = {"-c" ,"-"+CONTRACTS}, description = TOOLS_BEFORE+"Contracts"+TOOLS_AFTER)
@@ -238,6 +243,10 @@ public class CliOptions {
 		boolean materials;
 		@Option(names = {"-o" ,"-"+MARKET_ORDERS}, description = TOOLS_BEFORE+"Market Orders"+TOOLS_AFTER)
 		boolean marketOrders;
+		@Option(names = {"-d" ,"-"+MINING}, description = TOOLS_BEFORE+"Mining"+TOOLS_AFTER)
+		boolean mining;
+		@Option(names = {"-q" ,"-"+SKILLS}, description = TOOLS_BEFORE+"Skills"+TOOLS_AFTER)
+		boolean skills;
 		@Option(names = {"-s" ,"-"+STOCKPILE}, description = TOOLS_BEFORE+"Stockpile"+TOOLS_AFTER)
 		boolean stockpile;
 		@Option(names = {"-t" ,"-"+TRANSACTIONS}, description = TOOLS_BEFORE+"Transaction"+TOOLS_AFTER)
@@ -290,9 +299,13 @@ public class CliOptions {
 		boolean materialsPI;
 		@Option(names = "-"+MARKET_ORDERS+FILTER_CMD, fallbackValue = "", arity = "0..1", paramLabel = FILTER_LABEL, description = FILTER_BEFORE+"Market Orders"+FILTER_AFTER)
 		String marketOrdersFilter;
+		@Option(names = "-"+MINING+FILTER_CMD, fallbackValue = "", arity = "0..1", paramLabel = FILTER_LABEL, description = FILTER_BEFORE+"Mining"+FILTER_AFTER)
+		String miningFilter;
 		//Reprocesseddoes not support filters
 		@Option(names = "-"+OVERVIEW+FILTER_CMD, fallbackValue = "", arity = "0..1", paramLabel = FILTER_LABEL, description = FILTER_BEFORE+"Asset filter to use with Overview")
 		String overviewFilter;
+		@Option(names = "-"+SKILLS+FILTER_CMD, fallbackValue = "", arity = "0..1", paramLabel = FILTER_LABEL, description = FILTER_BEFORE+"Skills"+FILTER_AFTER)
+		String skillsFilter;
 		@Option(names = "-"+STOCKPILE+FILTER_CMD, fallbackValue = "", arity = "0..1", paramLabel = FILTER_LABEL, description = FILTER_BEFORE+"Stockpile"+FILTER_AFTER)
 		String stockpileFilter;
 		@Option(names = "-"+TRANSACTIONS+FILTER_CMD, fallbackValue = "", arity = "0..1", paramLabel = FILTER_LABEL, description = FILTER_BEFORE+"Transaction"+FILTER_AFTER)
@@ -324,9 +337,13 @@ public class CliOptions {
 		String materialsView;
 		@Option(names = "-"+MARKET_ORDERS+VIEW_CMD, fallbackValue = "", arity = "0..1", paramLabel = VIEW_LABEL, description = VIEW_BEFORE+"Market Orders"+VIEW_AFTER)
 		String marketOrdersView;
+		@Option(names = "-"+MINING+VIEW_CMD, fallbackValue = "", arity = "0..1", paramLabel = VIEW_LABEL, description = VIEW_BEFORE+"Mining"+VIEW_AFTER)
+		String miningView;
 		@Option(names = "-"+REPROCESSED+VIEW_CMD, fallbackValue = "", arity = "0..1", paramLabel = VIEW_LABEL, description = VIEW_BEFORE+"Reprocessed"+VIEW_AFTER)
 		String reprocessedView;
 		//Overview does not support views
+		@Option(names = "-"+SKILLS+VIEW_CMD, fallbackValue = "", arity = "0..1", paramLabel = VIEW_LABEL, description = VIEW_BEFORE+"Skills"+VIEW_AFTER)
+		String skillsView;
 		@Option(names = "-"+STOCKPILE+VIEW_CMD, fallbackValue = "", arity = "0..1", paramLabel = VIEW_LABEL, description = VIEW_BEFORE+"Stockpile"+VIEW_AFTER)
 		String stockpileView;
 		@Option(names = "-"+TRANSACTIONS+VIEW_CMD, fallbackValue = "", arity = "0..1", paramLabel = VIEW_LABEL, description = VIEW_BEFORE+"Transaction"+VIEW_AFTER)
@@ -379,6 +396,7 @@ public class CliOptions {
 			if (tools == null || tools.loadouts) createExportSettings(ExportTool.LOADOUTS, null, null);
 			if (tools == null || tools.materials) createExportSettings(ExportTool.MATERIALS, filters.materialsOwner, views.materialsView);
 			if (tools == null || tools.marketOrders) createExportSettings(ExportTool.MARKET_ORDERS, filters.marketOrdersFilter, views.marketOrdersView);
+			if (tools == null || tools.mining) createExportSettings(ExportTool.MINING, filters.miningFilter, views.miningView);
 			if (tools != null && (tools.reprocessedIDs != null || tools.reprocessedNames != null)) createExportSettings(ExportTool.REPROCESSED, null, views.reprocessedView);
 			if (tools == null || tools.overviewStations) createExportSettings(ExportTool.OVERVIEW_STATIONS, filters.overviewFilter, null);
 			if (tools == null || tools.overviewPlanets) createExportSettings(ExportTool.OVERVIEW_PLANETS, filters.overviewFilter, null);
@@ -386,6 +404,7 @@ public class CliOptions {
 			if (tools == null || tools.overviewConstellations) createExportSettings(ExportTool.OVERVIEW_CONSTELLATIONS, filters.overviewFilter, null);
 			if (tools == null || tools.overviewRegions) createExportSettings(ExportTool.OVERVIEW_REGIONS, filters.overviewFilter, null);
 			if (tools == null || tools.overviewGroups) createExportSettings(ExportTool.OVERVIEW_GROUPS, filters.overviewFilter, null);
+			if (tools == null || tools.skills) createExportSettings(ExportTool.SKILLS, filters.skillsFilter, views.skillsView);
 			if (tools == null || tools.stockpile) createExportSettings(ExportTool.STOCKPILE, filters.stockpileFilter, views.stockpileView);
 			if (tools == null || tools.transaction) createExportSettings(ExportTool.TRANSACTIONS, filters.transactionFilter, views.transactionView);
 			if (tools == null || tools.treeLocation) createExportSettings(ExportTool.TREE_LOCATION, filters.treeFilterLocation, views.treeViewLocation);

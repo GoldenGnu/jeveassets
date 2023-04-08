@@ -291,7 +291,7 @@ public class StockpileDialog extends JDialogCentered {
 		//Multiplier
 		double multiplier;
 		try {
-			multiplier = Double.valueOf(jMultiplier.getText());
+			multiplier = Double.parseDouble(jMultiplier.getText());
 		} catch (NumberFormatException ex) {
 			multiplier = 1;
 		}
@@ -564,7 +564,10 @@ public class StockpileDialog extends JDialogCentered {
 	protected void save() {
 		Settings.lock("Stockpile (Stockpile dialog)"); //Lock for Stockpile (Stockpile dialog)
 		if (stockpile != null) { //Edit
+			String group = Settings.get().getStockpileGroupSettings().getGroup(stockpile);
+			Settings.get().getStockpileGroupSettings().removeGroup(stockpile);
 			stockpile.update(getStockpile());
+			Settings.get().getStockpileGroupSettings().setGroup(stockpile, group);
 		} else if (cloneStockpile != null) { //Clone
 			cloneStockpile.update(getStockpile());
 			StockpileTab.addStockpile(program, cloneStockpile); //Add Clone
@@ -1088,7 +1091,7 @@ public class StockpileDialog extends JDialogCentered {
 				jobsDaysPanel = new FilterPanel(this, jobsDaysMore, false);
 				jJobsDays.setEnabled(false); //One instance only
 			} else {
-				jJobsDays.setEnabled(stockpileFilter.isJobs()); //Only enabled if indystry jobs are active
+				jJobsDays.setEnabled(stockpileFilter.isJobs()); //Only enabled if industry jobs are active
 			}
 			//Exclude
 			jMatchExclude.setSelected(stockpileFilter.isExclude());

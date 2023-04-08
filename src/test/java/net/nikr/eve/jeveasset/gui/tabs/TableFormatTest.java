@@ -59,6 +59,7 @@ import net.nikr.eve.jeveasset.gui.tabs.loadout.LoadoutTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.materials.Material;
 import net.nikr.eve.jeveasset.gui.tabs.materials.MaterialExtendedTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.materials.MaterialTableFormat;
+import net.nikr.eve.jeveasset.gui.tabs.mining.MiningTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.orders.MarketTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.overview.Overview;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewTableFormat;
@@ -67,6 +68,7 @@ import net.nikr.eve.jeveasset.gui.tabs.reprocessed.ReprocessedInterface;
 import net.nikr.eve.jeveasset.gui.tabs.reprocessed.ReprocessedItem;
 import net.nikr.eve.jeveasset.gui.tabs.reprocessed.ReprocessedTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.reprocessed.ReprocessedTotal;
+import net.nikr.eve.jeveasset.gui.tabs.skills.SkillsTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.slots.SlotsTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
@@ -105,7 +107,7 @@ public class TableFormatTest extends TestUtil {
 			//Shared
 			Tags tags = new Tags();
 			EsiOwner owner = ConverterTestUtil.getEsiOwner(options);
-			Item item = new Item(INTEGER_VALUE, STRING_VALUE, STRING_VALUE, STRING_VALUE, LONG_VALUE, FLOAT_VALUE, FLOAT_VALUE, FLOAT_VALUE, INTEGER_VALUE, STRING_VALUE, BOOLEAN_VALUE, INTEGER_VALUE, INTEGER_VALUE, INTEGER_VALUE, STRING_VALUE);
+			Item item = new Item(INTEGER_VALUE, STRING_VALUE, STRING_VALUE, STRING_VALUE, LONG_VALUE, FLOAT_VALUE, FLOAT_VALUE, FLOAT_VALUE, INTEGER_VALUE, STRING_VALUE, BOOLEAN_VALUE, INTEGER_VALUE, INTEGER_VALUE, INTEGER_VALUE, STRING_VALUE, STRING_VALUE, STRING_VALUE);
 			MyLocation location = new MyLocation(LONG_VALUE, STRING_VALUE, LONG_VALUE, STRING_VALUE, LONG_VALUE, STRING_VALUE, LONG_VALUE, STRING_VALUE, STRING_VALUE);
 		//Diaglogs
 			//Options
@@ -157,6 +159,10 @@ public class TableFormatTest extends TestUtil {
 			for (IndustryJobTableFormat tableFormat : IndustryJobTableFormat.values()) {
 				test(tableFormat, tableFormat.getType(), tableFormat.getColumnValue(saveMyIndustryJob));
 			}
+			//Skills
+			test(SkillsTableFormat.class);
+			//Mining
+			test(MiningTableFormat.class);
 		//Secondary Tools
 			//Slots
 			test(SlotsTableFormat.class);

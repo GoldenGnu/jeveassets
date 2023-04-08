@@ -69,6 +69,10 @@ public class MainMenu extends JMenuBar {
 		REPROCESSED,
 		CONTRACTS,
 		SLOTS,
+		SKILLS,
+		MINING_ALL,
+		MINING_LOG,
+		MINING_GRAPH,
 		EXIT_PROGRAM
 	}
 
@@ -96,7 +100,7 @@ public class MainMenu extends JMenuBar {
 		menu = new JMenu(GuiFrame.get().tools());
 		menu.setMnemonic(KeyEvent.VK_T);
 		this.add(menu);
-
+	//ISK
 		submenu = new JMenu(GuiFrame.get().netWorth());
 		submenu.setIcon(Images.TOOL_VALUES.getIcon());
 		menu.add(submenu);
@@ -124,7 +128,7 @@ public class MainMenu extends JMenuBar {
 		menuItem.setActionCommand(MainMenuAction.PRICE_HISTORY.name());
 		menuItem.addActionListener(program);
 		submenu.add(menuItem);
-
+	//Invertory
 		submenu = new JMenu(GuiFrame.get().inventory()); //
 		submenu.setIcon(Images.TOOL_ASSETS.getIcon());
 		menu.add(submenu);
@@ -153,6 +157,30 @@ public class MainMenu extends JMenuBar {
 		menuItem.addActionListener(program);
 		submenu.add(menuItem);
 
+		submenu = new JMenu(GuiFrame.get().mining());
+		submenu.setIcon(Images.TOOL_MINING.getIcon());
+		menu.add(submenu);
+
+		menuItem = new JMenuItem(GuiFrame.get().miningAll());
+		menuItem.setIcon(Images.TOOL_MINING.getIcon());
+		menuItem.setActionCommand(MainMenuAction.MINING_ALL.name());
+		menuItem.addActionListener(program);
+		submenu.add(menuItem);
+
+		submenu.addSeparator();
+
+		menuItem = new JMenuItem(GuiFrame.get().miningLog());
+		menuItem.setIcon(Images.TOOL_MINING_LOG.getIcon());
+		menuItem.setActionCommand(MainMenuAction.MINING_LOG.name());
+		menuItem.addActionListener(program);
+		submenu.add(menuItem);
+
+		menuItem = new JMenuItem(GuiFrame.get().miningGraph());
+		menuItem.setIcon(Images.TOOL_MINING_GRAPH.getIcon());
+		menuItem.setActionCommand(MainMenuAction.MINING_GRAPH.name());
+		menuItem.addActionListener(program);
+		submenu.add(menuItem);
+	//Business
 		submenu = new JMenu(GuiFrame.get().business());
 		submenu.setIcon(Images.TOOL_JOURNAL.getIcon());
 		menu.add(submenu);
@@ -196,7 +224,7 @@ public class MainMenu extends JMenuBar {
 		menuItem.setActionCommand(MainMenuAction.SLOTS.name());
 		menuItem.addActionListener(program);
 		submenu.add(menuItem);
-
+	//Misc
 		submenu = new JMenu(GuiFrame.get().misc());
 		submenu.setIcon(Images.TOOL_ROUTING.getIcon());
 		menu.add(submenu);
@@ -222,6 +250,12 @@ public class MainMenu extends JMenuBar {
 		menuItem = new JMenuItem(GuiFrame.get().items());
 		menuItem.setIcon(Images.TOOL_ITEMS.getIcon());
 		menuItem.setActionCommand(MainMenuAction.ITEMS.name());
+		menuItem.addActionListener(program);
+		submenu.add(menuItem);
+
+		menuItem = new JMenuItem(GuiFrame.get().skills());
+		menuItem.setIcon(Images.TOOL_SKILLS.getIcon());
+		menuItem.setActionCommand(MainMenuAction.SKILLS.name());
 		menuItem.addActionListener(program);
 		submenu.add(menuItem);
 

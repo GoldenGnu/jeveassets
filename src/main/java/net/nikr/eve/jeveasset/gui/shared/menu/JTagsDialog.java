@@ -335,12 +335,12 @@ public class JTagsDialog extends JDialogCentered {
 			jButtonPanel.setLayout(gridLayout);
 
 			for (TagColor tagColor : TagColor.getValues()) {
-				final TagIcon colorIcon = new TagIcon(tagColor);
-				JButton button = new JButton(colorIcon);
+				final TagIcon tagIcon = new TagIcon(tagColor);
+				JButton button = new JButton(tagIcon);
 				button.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {
-						jButton.setIcon(colorIcon);
+						jButton.setIcon(tagIcon);
 						jWindow.setVisible(false);
 					}
 				});

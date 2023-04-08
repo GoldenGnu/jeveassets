@@ -59,6 +59,26 @@ public enum ItemTableFormat implements EnumTableColumn<Item> {
 			return from.getCategory();
 		}
 	},
+	SLOT(String.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsItems.get().columnSlot();
+		}
+		@Override
+		public Object getColumnValue(final Item from) {
+			return from.getSlot();
+		}
+	},
+	CHARGE_SIZE(String.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsItems.get().columnChargeSize();
+		}
+		@Override
+		public Object getColumnValue(final Item from) {
+			return from.getChargeSize();
+		}
+	},
 	PRICE_BASE(Double.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
@@ -107,6 +127,16 @@ public enum ItemTableFormat implements EnumTableColumn<Item> {
 		@Override
 		public Object getColumnValue(final Item from) {
 			return from.getVolume();
+		}
+	},
+	VOLUME_PACKAGED(Float.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsItems.get().columnVolumePackaged();
+		}
+		@Override
+		public Object getColumnValue(final Item from) {
+			return from.getVolumePackaged();
 		}
 	},
 	TYPE_ID(Integer.class, GlazedLists.comparableComparator()) {

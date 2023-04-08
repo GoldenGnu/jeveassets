@@ -77,7 +77,6 @@ public abstract class GuiShared extends Bundle {
 	public abstract String errorLoadingProfileMsg();
 	public abstract String errorLoadingProfileTitle();
 	public abstract String eveCookbook();
-	public abstract String eveHub();
 	public abstract String eveInfo();
 	public abstract String eveMarketer();
 	public abstract String eveMissioneer();
@@ -365,7 +364,9 @@ public abstract class GuiShared extends Bundle {
 	public abstract String filterRegex();
 	public abstract String filterGreaterThan();
 	public abstract String filterLastDays();
+	public abstract String filterNextDays();
 	public abstract String filterLastHours();
+	public abstract String filterNextHours();
 	public abstract String filterLessThan();
 	public abstract String filterBefore();
 	public abstract String filterAfter();

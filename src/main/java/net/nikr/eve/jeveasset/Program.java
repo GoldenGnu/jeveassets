@@ -83,6 +83,8 @@ import net.nikr.eve.jeveasset.gui.shared.Updatable;
 import net.nikr.eve.jeveasset.gui.shared.components.JLockWindow;
 import net.nikr.eve.jeveasset.gui.shared.components.JLockWindow.LockWorkerAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
+import net.nikr.eve.jeveasset.gui.sounds.SoundPlayer;
+import net.nikr.eve.jeveasset.gui.sounds.Sounds;
 import net.nikr.eve.jeveasset.gui.tabs.assets.AssetsTab;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractsTab;
 import net.nikr.eve.jeveasset.gui.tabs.items.ItemsTab;
@@ -90,12 +92,15 @@ import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJobsTab;
 import net.nikr.eve.jeveasset.gui.tabs.journal.JournalTab;
 import net.nikr.eve.jeveasset.gui.tabs.loadout.LoadoutsTab;
 import net.nikr.eve.jeveasset.gui.tabs.materials.MaterialsTab;
+import net.nikr.eve.jeveasset.gui.tabs.mining.MiningGraphTab;
+import net.nikr.eve.jeveasset.gui.tabs.mining.MiningTab;
 import net.nikr.eve.jeveasset.gui.tabs.orders.MarketOrdersTab;
 import net.nikr.eve.jeveasset.gui.tabs.orders.OutbidProcesser.OutbidProcesserOutput;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewTab;
 import net.nikr.eve.jeveasset.gui.tabs.prices.PriceHistoryTab;
 import net.nikr.eve.jeveasset.gui.tabs.reprocessed.ReprocessedTab;
 import net.nikr.eve.jeveasset.gui.tabs.routing.RoutingTab;
+import net.nikr.eve.jeveasset.gui.tabs.skills.SkillsTab;
 import net.nikr.eve.jeveasset.gui.tabs.slots.SlotsTab;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileTab;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerTab;
@@ -121,7 +126,7 @@ public class Program implements ActionListener {
 		TIMER
 	}
 	//Major.Minor.Bugfix [Release Candidate n] [BETA n] [DEV BUILD #n];
-	public static final String PROGRAM_VERSION = "7.5.1 DEV BUILD 1";
+	public static final String PROGRAM_VERSION = "7.6.0";
 	public static final String PROGRAM_NAME = "jEveAssets";
 	public static final String PROGRAM_HOMEPAGE = "https://eve.nikr.net/jeveasset";
 	private static final boolean PROGRAM_DEV_BUILD = false;
@@ -159,6 +164,9 @@ public class Program implements ActionListener {
 	private ReprocessedTab reprocessedTab;
 	private ContractsTab contractsTab;
 	private TreeTab treeTab;
+	private SkillsTab skillsTab;
+	private MiningTab miningTab;
+	private MiningGraphTab miningGraphTab;
 	private StructureUpdateDialog structureUpdateDialog;
 
 	//Misc
@@ -210,6 +218,9 @@ public class Program implements ActionListener {
 		LOG.info("GUI Loading:");
 		LOG.info("Loading: Images");
 		Images.preload();
+		LOG.info("Loading: Sounds");
+		Sounds.preload();
+		SoundPlayer.enable();
 		LOG.info("Loading: Main Window");
 		mainWindow = new MainWindow(this);
 		SplashUpdater.setProgress(50);
@@ -269,10 +280,19 @@ public class Program implements ActionListener {
 		LOG.info("Loading: Contracts Tab");
 		contractsTab = new ContractsTab(this);
 		SplashUpdater.setProgress(82);
+		LOG.info("Loading: Skills Tab");
+		skillsTab = new SkillsTab(this);
+		SplashUpdater.setProgress(83);
+		LOG.info("Loading: Mining Log Tab");
+		miningTab = new MiningTab(this);
+		SplashUpdater.setProgress(84);
+		LOG.info("Loading: Mining Graph Tab");
+		miningGraphTab = new MiningGraphTab(this);
+		SplashUpdater.setProgress(84);
 	//Dialogs
 		LOG.info("Loading: Account Manager Dialog");
 		accountManagerDialog = new AccountManagerDialog(this);
-		SplashUpdater.setProgress(84);
+		SplashUpdater.setProgress(85);
 		LOG.info("Loading: About Dialog");
 		aboutDialog = new AboutDialog(this);
 		SplashUpdater.setProgress(86);
@@ -593,6 +613,7 @@ public class Program implements ActionListener {
 		} else if (typeIDs != null) {
 			profileData.updatePrice(typeIDs);
 		} else {
+			SoundPlayer.cancelAll(); //Stop sounds
 			profileData.updateEventLists();
 		}
 		if (locationIDs != null) { //Update locations
@@ -1060,6 +1081,15 @@ public class Program implements ActionListener {
 			mainWindow.addTab(contractsTab);
 		} else if (MainMenuAction.TREE.name().equals(e.getActionCommand())) {
 			mainWindow.addTab(treeTab);
+		} else if (MainMenuAction.SKILLS.name().equals(e.getActionCommand())) {
+			mainWindow.addTab(skillsTab);
+		} else if (MainMenuAction.MINING_ALL.name().equals(e.getActionCommand())) {
+			mainWindow.addTab(miningTab);
+			mainWindow.addTab(miningGraphTab);
+		} else if (MainMenuAction.MINING_LOG.name().equals(e.getActionCommand())) {
+			mainWindow.addTab(miningTab);
+		} else if (MainMenuAction.MINING_GRAPH.name().equals(e.getActionCommand())) {
+			mainWindow.addTab(miningGraphTab);
 		} else if (MainMenuAction.ACCOUNT_MANAGER.name().equals(e.getActionCommand())) { //Settings
 			accountManagerDialog.setVisible(true);
 		} else if (MainMenuAction.PROFILES.name().equals(e.getActionCommand())) {

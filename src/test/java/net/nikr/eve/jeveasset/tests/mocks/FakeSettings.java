@@ -38,11 +38,13 @@ import net.nikr.eve.jeveasset.data.settings.ProxyData;
 import net.nikr.eve.jeveasset.data.settings.ReprocessSettings;
 import net.nikr.eve.jeveasset.data.settings.RoutingSettings;
 import net.nikr.eve.jeveasset.data.settings.Settings;
+import net.nikr.eve.jeveasset.data.settings.StockpileGroupSettings;
 import net.nikr.eve.jeveasset.data.settings.TrackerSettings;
 import net.nikr.eve.jeveasset.data.settings.UserItem;
 import net.nikr.eve.jeveasset.data.settings.tag.Tag;
 import net.nikr.eve.jeveasset.data.settings.tag.TagID;
 import net.nikr.eve.jeveasset.data.settings.tag.Tags;
+import net.nikr.eve.jeveasset.gui.dialogs.settings.SoundsSettingsPanel;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.menu.JFormulaDialog;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuJumps;
@@ -686,6 +688,26 @@ public abstract class FakeSettings extends Settings {
 
 	@Override
 	public boolean isIncludeCopying() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public StockpileGroupSettings getStockpileGroupSettings() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public void setMiningHistory(boolean contractHistory) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public boolean isMiningHistory() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public Map<SoundsSettingsPanel.SoundsOption, SoundsSettingsPanel.SoundsSound> getSoundSettings() {
 		throw new UnsupportedOperationException("not implemented");
 	}
 }

@@ -69,7 +69,7 @@ public class Item implements Comparable<Item>, ItemType {
 	private final String category;
 	private final long price;
 	private final float volume;
-	private final float packagedVolume;
+	private final float volumePackaged;
 	private final float capacity;
 	private final int meta;
 	private final String tech;
@@ -85,24 +85,26 @@ public class Item implements Comparable<Item>, ItemType {
 	private final List<ReprocessedMaterial> reprocessedMaterials = new ArrayList<>();
 	private final List<IndustryMaterial> manufacturingMaterials = new ArrayList<>();
 	private final List<IndustryMaterial> reactionMaterials = new ArrayList<>();
+	private final String slot;
+	private final String chargeSize;
 	private double priceReprocessed;
 
 	public Item(int typeID) {
-		this(typeID, emptyType(typeID), "", "", -1, -1, -1, -1, -1, "", false, 0, 0, 1, null);
+		this(typeID, emptyType(typeID), "", "", -1, -1, -1, -1, -1, "", false, 0, 0, 1, "", "", null);
 	}
 
 	public Item(int typeID, String version) {
-		this(typeID, emptyType(typeID), "", "", -1, -1, -1, -1, -1, "", false, 0, 0, 1, version);
+		this(typeID, emptyType(typeID), "", "", -1, -1, -1, -1, -1, "", false, 0, 0, 1, "", "", version);
 	}
 
-	public Item(final int typeID, final String name, final String group, final String category, final long price, final float volume, final float packagedVolume, final float capacity, final int meta, final String tech, final boolean marketGroup, final int portion, final int productTypeID, final int productQuantity, String version) {
+	public Item(final int typeID, final String name, final String group, final String category, final long price, final float volume, final float volumePackaged, final float capacity, final int meta, final String tech, final boolean marketGroup, final int portion, final int productTypeID, final int productQuantity, String slot, String chargeSize, String version) {
 		this.typeID = typeID;
 		this.name = name;
 		this.group = group.intern();
 		this.category = category.intern();
 		this.price = price;
 		this.volume = volume;
-		this.packagedVolume = packagedVolume;
+		this.volumePackaged = volumePackaged;
 		this.capacity = capacity;
 		this.meta = meta;
 		this.tech = tech.intern();
@@ -114,6 +116,16 @@ public class Item implements Comparable<Item>, ItemType {
 		this.blueprint = this.category.equals(CATEGORY_BLUEPRINT) && group.toLowerCase().contains("blueprint");
 		this.formula = this.category.equals(CATEGORY_BLUEPRINT) && group.toLowerCase().contains("reaction formulas");
 		this.version = version;
+		if (slot != null) {
+			this.slot = slot;
+		} else {
+			this.slot = "None";
+		}
+		if (chargeSize != null) {
+			this.chargeSize = chargeSize;
+		} else {
+			this.chargeSize = "None";
+		}
 	}
 
 	public String getVersion() {
@@ -199,8 +211,8 @@ public class Item implements Comparable<Item>, ItemType {
 		return volume;
 	}
 
-	public float getPackagedVolume() {
-		return packagedVolume;
+	public float getVolumePackaged() {
+		return volumePackaged;
 	}
 
 	public float getCapacity() {
@@ -229,6 +241,14 @@ public class Item implements Comparable<Item>, ItemType {
 
 	public int getProductQuantity() {
 		return productQuantity;
+	}
+
+	public String getSlot() {
+		return slot;
+	}
+
+	public String getChargeSize() {
+		return chargeSize;
 	}
 
 	public boolean isEmpty() {

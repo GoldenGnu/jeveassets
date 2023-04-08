@@ -40,10 +40,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.text.DateFormat;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -84,7 +80,6 @@ import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
-import net.nikr.eve.jeveasset.data.settings.Colors;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.TrackerData;
 import net.nikr.eve.jeveasset.data.settings.TrackerSettings;
@@ -93,8 +88,10 @@ import net.nikr.eve.jeveasset.data.settings.TrackerSettings.ShowOption;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel.JStatusLabel;
 import net.nikr.eve.jeveasset.gui.images.Images;
+import net.nikr.eve.jeveasset.gui.shared.JFreeChartUtil;
+import net.nikr.eve.jeveasset.gui.shared.JFreeChartUtil.SimpleRenderer;
+import net.nikr.eve.jeveasset.gui.shared.ColorIcon;
 import net.nikr.eve.jeveasset.gui.shared.Formatter;
-import net.nikr.eve.jeveasset.gui.shared.InstantToolTip;
 import net.nikr.eve.jeveasset.gui.shared.JOptionInput;
 import net.nikr.eve.jeveasset.gui.shared.components.CheckBoxNode;
 import net.nikr.eve.jeveasset.gui.shared.components.JCustomFileChooser;
@@ -107,6 +104,7 @@ import net.nikr.eve.jeveasset.gui.shared.components.JMultiSelectionList;
 import net.nikr.eve.jeveasset.gui.shared.components.JSelectionDialog;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo.AutoNumberFormat;
+import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo.MenuItemValue;
 import net.nikr.eve.jeveasset.gui.tabs.values.AssetValue;
 import net.nikr.eve.jeveasset.gui.tabs.values.DataSetCreator;
 import net.nikr.eve.jeveasset.gui.tabs.values.Value;
@@ -126,10 +124,7 @@ import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.labels.XYToolTipGenerator;
 import org.jfree.chart.plot.DefaultDrawingSupplier;
 import org.jfree.chart.plot.XYPlot;
-import org.jfree.chart.renderer.xy.XYItemRenderer;
-import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.chart.ui.RectangleEdge;
-import org.jfree.data.general.DatasetUtils;
 import org.jfree.data.time.SimpleTimePeriod;
 import org.jfree.data.time.TimePeriodValues;
 import org.jfree.data.time.TimePeriodValuesCollection;
@@ -156,12 +151,11 @@ public class TrackerTab extends JMainTabSecondary {
 		FILTER_SKILL_POINTS
 	}
 
+	private final Shape NO_FILTER = new Rectangle(-3, -3, 6, 6);
+	private final Shape FILTER_AND_DEFAULT = new Ellipse2D.Float(-3.0f, -3.0f, 6.0f, 6.0f);
 	private final int PANEL_WIDTH_MINIMUM = 160;
 
-	private final NumberFormat iskFormat = new DecimalFormat("#,##0.00 isk");
-	private final DateFormat dateFormat = new SimpleDateFormat(Formatter.COLUMN_DATE);
-
-	private final JFreeChart jNextChart;
+	//GUI
 	private final JDateChooser jFrom;
 	private final JDateChooser jTo;
 	private final JMultiSelectionList<String> jOwners;
@@ -187,20 +181,9 @@ public class TrackerTab extends JMainTabSecondary {
 	private final JCheckBoxMenuItem jIncludeZero;
 	private final JRadioButtonMenuItem jLogarithmic;
 	private final JPopupMenu jPopupMenu;
-	private final JTrackerEditDialog jEditDialog;
-	private final JSelectionDialog<String> jSelectionDialog;
-	private final ChartPanel jChartPanel;
-	private final TrackerFilterDialog filterDialog;
-	private final TrackerAssetFilterDialog assetFilterDialog;
-	private final TrackerSkillPointsFilterDialog skillPointsFilterDialog;
-	private final MyRender render;
-	private final Shape NO_FILTER = new Rectangle(-3, -3, 6, 6);
-	private final Shape FILTER_AND_DEFAULT = new Ellipse2D.Float(-3.0f, -3.0f, 6.0f, 6.0f);
 	private final JMenuItem jAddNote;
 	private final JMenu jEditNote;
-	private final JCustomFileChooser jFileChooser;
-	private final JLockWindow jLockWindow;
-
+	private final List<MenuItemValue> values;
 	private final JStatusLabel jTotalStatus;
 	private final JStatusLabel jWalletBalanceStatus;
 	private final JStatusLabel jAssetsStatus;
@@ -212,10 +195,12 @@ public class TrackerTab extends JMainTabSecondary {
 	private final JStatusLabel jContractValueStatus;
 	private final JStatusLabel jSkillPointsStatus;
 
-	private final ListenerClass listener = new ListenerClass();
-	private final List<JMenuInfo.MenuItemValue> values;
-
+	//Graph
+	private final JFreeChart jFreeChart;
+	private final ChartPanel jChartPanel;
+	private final MyRenderer renderer;
 	private final TimePeriodValuesCollection dataset = new TimePeriodValuesCollection();
+	private final DateAxis domainAxis;
 	private final LogarithmicAxis rangeLogarithmicAxis;
 	private final NumberAxis rangeLinearAxis;
 	private TimePeriodValues walletBalance;
@@ -227,6 +212,20 @@ public class TrackerTab extends JMainTabSecondary {
 	private TimePeriodValues contractCollateral;
 	private TimePeriodValues contractValue;
 	private TimePeriodValues skillPointsValue;
+
+	//Dialog
+	private final JTrackerEditDialog jEditDialog;
+	private final JSelectionDialog<String> jSelectionDialog;
+	private final TrackerFilterDialog filterDialog;
+	private final TrackerAssetFilterDialog assetFilterDialog;
+	private final TrackerSkillPointsFilterDialog skillPointsFilterDialog;
+	private final JCustomFileChooser jFileChooser;
+	private final JLockWindow jLockWindow;
+
+	//Listener
+	private final ListenerClass listener = new ListenerClass();
+
+	//Data
 	private Map<SimpleTimePeriod, Value> cache;
 	private final Map<String, CheckBoxNode> accountNodes = new TreeMap<>();
 	private final Map<String, CheckBoxNode> assetNodes = new TreeMap<>();
@@ -493,42 +492,12 @@ public class TrackerTab extends JMainTabSecondary {
 		jSettings.add(jLogarithmic);
 		buttonGroup.add(jLogarithmic);
 
-		DateAxis domainAxis = new DateAxis();
-		domainAxis.setDateFormatOverride(dateFormat);
-		domainAxis.setVerticalTickLabels(true);
-		domainAxis.setAutoTickUnitSelection(true);
-		domainAxis.setAutoRange(true);
-		domainAxis.setTickLabelFont(jFromLabel.getFont());
-		domainAxis.setTickLabelPaint(Colors.TEXTFIELD_FOREGROUND.getColor());
+		domainAxis = JFreeChartUtil.createDateAxis();
+		rangeLogarithmicAxis = JFreeChartUtil.createLogarithmicAxis(trackerSettings.isIncludeZero());
+		rangeLinearAxis = JFreeChartUtil.createNumberAxis(trackerSettings.isIncludeZero());
 
-		rangeLogarithmicAxis = new LogarithmicAxis("");
-		rangeLogarithmicAxis.setStrictValuesFlag(false);
-		rangeLogarithmicAxis.setNumberFormatOverride(Formatter.AUTO_FORMAT);
-		rangeLogarithmicAxis.setTickLabelFont(jFromLabel.getFont());
-		rangeLogarithmicAxis.setTickLabelPaint(Colors.TEXTFIELD_FOREGROUND.getColor());
-		rangeLogarithmicAxis.setAutoRangeIncludesZero(trackerSettings.isIncludeZero());
-
-		rangeLinearAxis = new NumberAxis();
-		rangeLinearAxis.setAutoRange(true);
-		rangeLinearAxis.setStandardTickUnits(NumberAxis.createStandardTickUnits());
-		rangeLinearAxis.setTickLabelFont(jFromLabel.getFont());
-		rangeLinearAxis.setTickLabelPaint(Colors.TEXTFIELD_FOREGROUND.getColor());
-		rangeLinearAxis.setAutoRangeIncludesZero(trackerSettings.isIncludeZero());
-
-		//XYPlot plot = new XYPlot(dataset, domainAxis, rangeAxis, new XYLineAndShapeRenderer(true, true));
-		render = new MyRender();
-		XYPlot plot;
-		if (trackerSettings.getDisplayType() == DisplayType.LINEAR) {
-			plot = new XYPlot(dataset, domainAxis, rangeLinearAxis, render);
-		} else {
-			plot = new XYPlot(dataset, domainAxis, rangeLogarithmicAxis, render);
-		}
-
-		plot.setBackgroundPaint(Colors.TEXTFIELD_BACKGROUND.getColor());
-		plot.setRangeGridlinePaint(Color.LIGHT_GRAY);
-		plot.setDomainGridlinePaint(Color.LIGHT_GRAY);
-		plot.setDrawingSupplier(new MyDrawingSupplier());
-		plot.getRenderer().setDefaultToolTipGenerator(new XYToolTipGenerator() {
+		renderer = new MyRenderer();
+		renderer.setDefaultToolTipGenerator(new XYToolTipGenerator() {
 			@Override
 			public String generateToolTip(XYDataset dataset, int series, int item)	{
 				Date date = new Date(dataset.getX(series, item).longValue());
@@ -538,12 +507,12 @@ public class TrackerTab extends JMainTabSecondary {
 				stringBuilder.append("<b>");
 				stringBuilder.append(dataset.getSeriesKey(series));
 				stringBuilder.append(":</b> ");
-				stringBuilder.append(iskFormat.format(isk));
+				stringBuilder.append(Formatter.iskFormat(isk));
 				stringBuilder.append("<br>");
 				stringBuilder.append("<b>");
 				stringBuilder.append(TabsTracker.get().date());
 				stringBuilder.append(":</b> ");
-				stringBuilder.append(dateFormat.format(date));
+				stringBuilder.append(Formatter.columnDateOnly(date));
 				TrackerNote trackerNote = trackerSettings.getNotes().get(new TrackerDate(date));
 				if (trackerNote != null) {
 					stringBuilder.append("<br><b>");
@@ -554,31 +523,17 @@ public class TrackerTab extends JMainTabSecondary {
 				return stringBuilder.toString();
 			}
 		});
-		plot.setDomainCrosshairLockedOnData(true);
-		plot.setDomainCrosshairStroke(new BasicStroke(1));
-		plot.setDomainCrosshairPaint(Color.BLACK);
-		plot.setDomainCrosshairVisible(false);
-		plot.setRangeCrosshairLockedOnData(true);
-		plot.setRangeCrosshairVisible(false);
 
-		jNextChart = new JFreeChart(plot);
-		jNextChart.setAntiAlias(true);
-		jNextChart.setBackgroundPaint(Colors.COMPONENT_BACKGROUND.getColor());
-		jNextChart.addProgressListener(null);
-		jNextChart.getLegend().setItemFont(jFrom.getFont());
-		jNextChart.getLegend().setItemPaint(Colors.TEXTFIELD_FOREGROUND.getColor());
-		jNextChart.getLegend().setBackgroundPaint(Colors.COMPONENT_BACKGROUND.getColor());
-
-		jChartPanel = new ChartPanel(jNextChart);
-		InstantToolTip.install(jChartPanel);
-		jChartPanel.setDomainZoomable(false);
-		jChartPanel.setRangeZoomable(false);
-		jChartPanel.setPopupMenu(null);
+		XYPlot plot;
+		if (trackerSettings.getDisplayType() == DisplayType.LINEAR) {
+			plot = JFreeChartUtil.createPlot(dataset, domainAxis, rangeLinearAxis, renderer);
+		} else {
+			plot = JFreeChartUtil.createPlot(dataset, domainAxis, rangeLogarithmicAxis, renderer);
+		}
+		plot.setDrawingSupplier(new MyDrawingSupplier());
+		jFreeChart = JFreeChartUtil.createChart(plot);
+		jChartPanel = JFreeChartUtil.createChartPanel(jFreeChart);
 		jChartPanel.addChartMouseListener(listener);
-		jChartPanel.setMaximumDrawHeight(Integer.MAX_VALUE);
-		jChartPanel.setMaximumDrawWidth(Integer.MAX_VALUE);
-		jChartPanel.setMinimumDrawWidth(10);
-		jChartPanel.setMinimumDrawHeight(10);
 
 		int gapWidth = 5;
 		int labelWidth = Math.max(jFromLabel.getPreferredSize().width, jToLabel.getPreferredSize().width);
@@ -858,9 +813,9 @@ public class TrackerTab extends JMainTabSecondary {
 		for (String id : walletIDs) {
 			accountNodes.put(id, new CheckBoxNode(corporationWalletNode, id, TabsTracker.get().division(id), selectNode(id)));
 		}
-		String charecterWalletID = "0";
-		CheckBoxNode charecterWalletNode = new CheckBoxNode(null, charecterWalletID, TabsTracker.get().characterWallet(), selectNode(charecterWalletID));
-		accountNodes.put(charecterWalletID, charecterWalletNode);
+		String characterWalletID = "0";
+		CheckBoxNode characterWalletNode = new CheckBoxNode(null, characterWalletID, TabsTracker.get().characterWallet(), selectNode(characterWalletID));
+		accountNodes.put(characterWalletID, characterWalletNode);
 
 		//ASSETS - Make nodes for found asset IDs
 		CheckBoxNode assetNode = new CheckBoxNode(null, TabsTracker.get().assets(), TabsTracker.get().assets(), false);
@@ -1121,7 +1076,7 @@ public class TrackerTab extends JMainTabSecondary {
 		while (dataset.getSeriesCount() != 0) {
 			dataset.removeSeries(0);
 		}
-		render.clear();
+		renderer.clear();
 		TimePeriodValues total = new TimePeriodValues(TabsTracker.get().total());
 		Value first = null;
 		Value last = null;
@@ -1241,18 +1196,18 @@ public class TrackerTab extends JMainTabSecondary {
 					minColumn = assetColumn;
 				}
 			}
-			render.add(dataset.getSeriesCount() - 1, minColumn);
+			renderer.add(dataset.getSeriesCount() - 1, minColumn);
 			updateRender(dataset.getSeriesCount() - 1, Color.RED.darker());
 		}
 		if (jWalletBalance.isSelected() && walletBalance != null) {
 			dataset.addSeries(walletBalance);
-			render.add(dataset.getSeriesCount() - 1, walletColumn);
+			renderer.add(dataset.getSeriesCount() - 1, walletColumn);
 			updateRender(dataset.getSeriesCount() - 1, Color.BLUE.darker());
 
 		}
 		if (jAssets.isSelected() && assets != null) {
 			dataset.addSeries(assets);
-			render.add(dataset.getSeriesCount() - 1, assetColumn);
+			renderer.add(dataset.getSeriesCount() - 1, assetColumn);
 			updateRender(dataset.getSeriesCount() - 1, Color.GREEN.darker().darker());
 		}
 		if (jSellOrders.isSelected() && sellOrders != null) {
@@ -1291,24 +1246,12 @@ public class TrackerTab extends JMainTabSecondary {
 		}
 		rangeLogarithmicAxis.setAutoRange(true);
 		rangeLinearAxis.setAutoRange(true);
-		jNextChart.getXYPlot().getDomainAxis().setAutoRange(true);
-		Number maxNumber = DatasetUtils.findMaximumRangeValue(dataset);
-		if (maxNumber != null && maxNumber instanceof Double) {
-			double max = (Double) maxNumber;
-			if (max >     1_000_000_000_000.0) {	 //Higher than 1 Trillion
-				rangeLinearAxis.setNumberFormatOverride(Formatter.TRILLIONS_FORMAT);
-			} else if (max > 1_000_000_000.0) { //Higher than 1 Billion
-				rangeLinearAxis.setNumberFormatOverride(Formatter.BILLIONS_FORMAT);
-			} else if (max >     1_000_000.0) {	 //Higher than 1 Million
-				rangeLinearAxis.setNumberFormatOverride(Formatter.MILLIONS_FORMAT);
-			} else {
-				rangeLinearAxis.setNumberFormatOverride(Formatter.LONG_FORMAT); //Default
-			}
-		}
+		jFreeChart.getXYPlot().getDomainAxis().setAutoRange(true);
+
+		JFreeChartUtil.updateTickScale(domainAxis, rangeLinearAxis, dataset);
 	}
 
 	private void updateRender(int index, Color color) {
-		XYItemRenderer renderer = jNextChart.getXYPlot().getRenderer();
 		renderer.setSeriesPaint(index, color);
 		renderer.setSeriesStroke(index, new BasicStroke(1));
 	}
@@ -1350,7 +1293,7 @@ public class TrackerTab extends JMainTabSecondary {
 	}
 
 	private Value getSelectedValue(String owner) {
-		String date = Formatter.simpleDate(new Date((long)jNextChart.getXYPlot().getDomainCrosshairValue()));
+		String date = Formatter.simpleDate(new Date((long)jFreeChart.getXYPlot().getDomainCrosshairValue()));
 		try {
 			TrackerData.readLock();
 			for (Value value : TrackerData.get().get(owner)) {
@@ -1365,7 +1308,7 @@ public class TrackerTab extends JMainTabSecondary {
 	}
 
 	private void addNote() {
-		Date date = new Date((long)jNextChart.getXYPlot().getDomainCrosshairValue());
+		Date date = new Date((long)jFreeChart.getXYPlot().getDomainCrosshairValue());
 		TrackerNote trackerNote = Settings.get().getTrackerSettings().getNotes().get(new TrackerDate(date));
 		String newNote;
 		if (trackerNote == null) {
@@ -1382,7 +1325,7 @@ public class TrackerTab extends JMainTabSecondary {
 	}
 
 	private void removeNote() {
-		Date date = new Date((long)jNextChart.getXYPlot().getDomainCrosshairValue());
+		Date date = new Date((long)jFreeChart.getXYPlot().getDomainCrosshairValue());
 		TrackerNote trackerNote = Settings.get().getTrackerSettings().getNotes().get(new TrackerDate(date));
 		int returnValue = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), TabsTracker.get().notesDeleteMsg(trackerNote.getNote()), TabsTracker.get().notesDeleteTitle(), JOptionPane.OK_CANCEL_OPTION);
 		if (returnValue == JOptionPane.OK_OPTION) {
@@ -1399,11 +1342,12 @@ public class TrackerTab extends JMainTabSecondary {
 			return FILTER_AND_DEFAULT;
 		}
 	}
-	private class MyRender extends XYLineAndShapeRenderer {
+
+	private class MyRenderer extends SimpleRenderer {
 
 		private final Map<Integer, Integer> renders = new HashMap<>();
 
-		public MyRender() {
+		public MyRenderer() {
 			super(true, true);
 		}
 
@@ -1532,10 +1476,10 @@ public class TrackerTab extends JMainTabSecondary {
 				updateSettings();
 			} else if (TrackerAction.LOGARITHMIC.name().equals(e.getActionCommand())) {
 				if (jLogarithmic.isSelected()) {
-					jNextChart.getXYPlot().setRangeAxis(rangeLogarithmicAxis);
+					jFreeChart.getXYPlot().setRangeAxis(rangeLogarithmicAxis);
 					trackerSettings.setDisplayType(DisplayType.LOGARITHMIC);
 				} else {
-					jNextChart.getXYPlot().setRangeAxis(rangeLinearAxis);
+					jFreeChart.getXYPlot().setRangeAxis(rangeLinearAxis);
 					trackerSettings.setDisplayType(DisplayType.LINEAR);
 				}
 				updateSettings();
@@ -1613,7 +1557,7 @@ public class TrackerTab extends JMainTabSecondary {
 				updateShown();
 				updateSettings();
 			} else if (TrackerAction.EDIT.name().equals(e.getActionCommand())) {
-				jNextChart.getXYPlot().setDomainCrosshairVisible(true);
+				jFreeChart.getXYPlot().setDomainCrosshairVisible(true);
 				String owner = getSelectedOwner(false);
 				if (owner == null) {
 					return;
@@ -1626,9 +1570,9 @@ public class TrackerTab extends JMainTabSecondary {
 				if (update) {
 					createData();
 				}
-				jNextChart.getXYPlot().setDomainCrosshairVisible(false);
+				jFreeChart.getXYPlot().setDomainCrosshairVisible(false);
 			} else if (TrackerAction.DELETE.name().equals(e.getActionCommand())) {
-				jNextChart.getXYPlot().setDomainCrosshairVisible(true);
+				jFreeChart.getXYPlot().setDomainCrosshairVisible(true);
 				String owner = getSelectedOwner(true);
 				if (owner == null) {
 					return;
@@ -1659,15 +1603,15 @@ public class TrackerTab extends JMainTabSecondary {
 					TrackerData.save("Deleted");
 					updateData();
 				}
-				jNextChart.getXYPlot().setDomainCrosshairVisible(false);
+				jFreeChart.getXYPlot().setDomainCrosshairVisible(false);
 			} else if (TrackerAction.NOTE_DELETE.name().equals(e.getActionCommand())) {
-				jNextChart.getXYPlot().setDomainCrosshairVisible(true);
+				jFreeChart.getXYPlot().setDomainCrosshairVisible(true);
 				removeNote();
-				jNextChart.getXYPlot().setDomainCrosshairVisible(false);
+				jFreeChart.getXYPlot().setDomainCrosshairVisible(false);
 			} else if (TrackerAction.NOTE_ADD.name().equals(e.getActionCommand())) {
-				jNextChart.getXYPlot().setDomainCrosshairVisible(true);
+				jFreeChart.getXYPlot().setDomainCrosshairVisible(true);
 				addNote();
-				jNextChart.getXYPlot().setDomainCrosshairVisible(false);
+				jFreeChart.getXYPlot().setDomainCrosshairVisible(false);
 			} else if (TrackerAction.PROFILE.name().equals(e.getActionCommand())) {
 				if (!updateLock) {
 					boolean allProfiles = jAllProfiles.isSelected();
@@ -1715,8 +1659,6 @@ public class TrackerTab extends JMainTabSecondary {
 			createData();
 		}
 
-		boolean mouseClicked = false;
-
 		@Override
 		public void chartMouseClicked(final ChartMouseEvent cme) {
 			if (cme.getTrigger().getClickCount() % 2 == 0) {
@@ -1726,18 +1668,18 @@ public class TrackerTab extends JMainTabSecondary {
 						if (cache.isEmpty()) {
 							return;
 						}
-						jNextChart.getXYPlot().setDomainCrosshairVisible(true);
-						double xValue = jNextChart.getXYPlot().getDomainCrosshairValue();
-						double yValue = jNextChart.getXYPlot().getRangeCrosshairValue();
-						RectangleEdge xEdge = jNextChart.getXYPlot().getDomainAxisEdge();
-						RectangleEdge yEdge = jNextChart.getXYPlot().getRangeAxisEdge();
+						jFreeChart.getXYPlot().setDomainCrosshairVisible(true);
+						double xValue = jFreeChart.getXYPlot().getDomainCrosshairValue();
+						double yValue = jFreeChart.getXYPlot().getRangeCrosshairValue();
+						RectangleEdge xEdge = jFreeChart.getXYPlot().getDomainAxisEdge();
+						RectangleEdge yEdge = jFreeChart.getXYPlot().getRangeAxisEdge();
 						Rectangle2D dataArea = jChartPanel.getScreenDataArea(); // jChartPanel.getChartRenderingInfo().getPlotInfo().getSubplotInfo(0).getDataArea();
-						int x = (int) jNextChart.getXYPlot().getDomainAxis().valueToJava2D(xValue, dataArea, xEdge);
-						int y = (int) jNextChart.getXYPlot().getRangeAxis().valueToJava2D(yValue, dataArea, yEdge);
+						int x = (int) jFreeChart.getXYPlot().getDomainAxis().valueToJava2D(xValue, dataArea, xEdge);
+						int y = (int) jFreeChart.getXYPlot().getRangeAxis().valueToJava2D(yValue, dataArea, yEdge);
 						Date date = new Date((long)xValue);
 						values.clear();
 						JMenuItem jIskValue = JMenuInfo.createMenuItem(values, jPopupMenu, yValue, JMenuInfo.AutoNumberFormat.ISK, TabsTracker.get().selectionIsk(), TabsTracker.get().selectionShortIsk(), Images.TOOL_VALUES.getIcon());
-						JMenuItem jDateValue = JMenuInfo.createMenuItem(values, jPopupMenu, dateFormat.format(date), TabsTracker.get().selectionDate(), TabsTracker.get().selectionShortDate(), Images.EDIT_DATE.getIcon());
+						JMenuItem jDateValue = JMenuInfo.createMenuItem(values, jPopupMenu, Formatter.columnDateOnly(date), TabsTracker.get().selectionDate(), TabsTracker.get().selectionShortDate(), Images.EDIT_DATE.getIcon());
 						TrackerNote trackerNote = Settings.get().getTrackerSettings().getNotes().get(new TrackerDate(date));
 						JMenuItem jNote;
 						if (trackerNote != null) {
@@ -1779,7 +1721,7 @@ public class TrackerTab extends JMainTabSecondary {
 
 		@Override
 		public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
-			jNextChart.getXYPlot().setDomainCrosshairVisible(false);
+			jFreeChart.getXYPlot().setDomainCrosshairVisible(false);
 		}
 
 		@Override
@@ -1797,42 +1739,6 @@ public class TrackerTab extends JMainTabSecondary {
 			}
 			updateFilterButtons();
 			createData();
-		}
-	}
-
-	public static class ColorIcon implements Icon {
-
-		private final Color color;
-
-		public ColorIcon(Color color) {
-			this.color = color;
-		}
-
-		@Override
-		public void paintIcon(Component c, Graphics g, int x, int y) {
-			Graphics2D g2d = (Graphics2D) g;
-			//Render settings
-			//g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
-			g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-			g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-			//Border
-			g2d.setColor(Color.BLACK);
-			g2d.fillOval(x + 2, y + 2, getIconWidth() - 4, getIconHeight() - 4);
-
-			//Background
-			g2d.setColor(color);
-			g2d.fillOval(x + 3, y + 3, getIconWidth() - 6, getIconHeight() - 6);
-		}
-
-		@Override
-		public int getIconWidth() {
-			return 16;
-		}
-
-		@Override
-		public int getIconHeight() {
-			return 16;
 		}
 	}
 

@@ -24,6 +24,7 @@ package net.nikr.eve.jeveasset.io.local;
 import java.io.File;
 import java.net.Proxy;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -44,6 +45,8 @@ import net.nikr.eve.jeveasset.data.settings.TrackerData;
 import net.nikr.eve.jeveasset.data.settings.UserItem;
 import net.nikr.eve.jeveasset.data.settings.tag.Tag;
 import net.nikr.eve.jeveasset.data.settings.tag.TagID;
+import net.nikr.eve.jeveasset.gui.dialogs.settings.SoundsSettingsPanel.SoundsOption;
+import net.nikr.eve.jeveasset.gui.dialogs.settings.SoundsSettingsPanel.SoundsSound;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.menu.JFormulaDialog.Formula;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuJumps.Jump;
@@ -97,7 +100,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 			return false;
 		}
 
-		writeStockpiles(xmldoc, stockpiles, true);
+		writeStockpiles(xmldoc, stockpiles, new HashMap<>(), true);
 		try {
 			writeXmlFile(xmldoc, filename, false);
 		} catch (XmlException ex) {
@@ -147,7 +150,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 
 		writeAssetSettings(xmldoc, settings);
 		writeStockpileGroups(xmldoc, settings);
-		writeStockpiles(xmldoc, settings.getStockpiles(), false);
+		writeStockpiles(xmldoc, settings.getStockpiles(), settings.getStockpileGroupSettings().getStockpileGroups(), false);
 		writeOverviewGroups(xmldoc, settings.getOverviewGroups());
 		writeReprocessSettings(xmldoc, settings.getReprocessSettings());
 		writeWindow(xmldoc, settings);
@@ -177,6 +180,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 		writeMarketOrdersSettings(xmldoc, settings.getMarketOrdersSettings());
 		writeShowTool(xmldoc, settings.getShowTools(), settings.isSaveToolsOnExit());
 		writeColorSettings(xmldoc, settings.getColorSettings());
+		writeSoundSettings(xmldoc, settings.getSoundSettings());
 		writeFactionWarfareSystemOwners(xmldoc, settings);
 		writePriceHistorySettings(xmldoc, settings);
 		try {
@@ -223,6 +227,17 @@ public class SettingsWriter extends AbstractXmlWriter {
 			setAttributeOptional(colorNode, "background", colorSettings.getBackground(colorEntry));
 			setAttributeOptional(colorNode, "foreground", colorSettings.getForeground(colorEntry));
 			colorSettingsNode.appendChild(colorNode);
+		}
+	}
+
+	private void writeSoundSettings(Document xmldoc, Map<SoundsOption, SoundsSound> soundSettings) {
+		Element soundSettingsNode = xmldoc.createElementNS(null, "soundsettings");
+		xmldoc.getDocumentElement().appendChild(soundSettingsNode);
+		for (Map.Entry<SoundsOption, SoundsSound> entry : soundSettings.entrySet()) {
+			Element soundNode = xmldoc.createElementNS(null, "sound");
+			setAttribute(soundNode, "option", entry.getKey());
+			setAttribute(soundNode, "sound", entry.getValue());
+			soundSettingsNode.appendChild(soundNode);
 		}
 	}
 
@@ -567,20 +582,24 @@ public class SettingsWriter extends AbstractXmlWriter {
 	 * -!- `!´ IMPORTANT `!´ -!-
 	 * StockpileDataWriter and StockpileDataReader needs to be updated too - on any changes!!!
 	 */
-	private void writeStockpiles(final Document xmldoc, final List<Stockpile> stockpiles, boolean export) {
+	private void writeStockpiles(final Document xmldoc, final List<Stockpile> stockpiles, Map<Stockpile, String> groups, boolean export) {
 		Element parentNode = xmldoc.createElementNS(null, "stockpiles");
 		xmldoc.getDocumentElement().appendChild(parentNode);
-		for (Stockpile strockpile : stockpiles) {
+		for (Stockpile stockpile : stockpiles) {
 			//STOCKPILE
 			Element stockpileNode = xmldoc.createElementNS(null, "stockpile");
-			setAttribute(stockpileNode, "name", strockpile.getName());
+			setAttribute(stockpileNode, "name", stockpile.getName());
 			if (!export) { //Risk of collision, better to generate a new one on import
-				setAttribute(stockpileNode, "id", strockpile.getStockpileID());
+				setAttribute(stockpileNode, "id", stockpile.getStockpileID());
 			}
-			setAttribute(stockpileNode, "multiplier", strockpile.getMultiplier());
-			setAttribute(stockpileNode, "contractsmatchall", strockpile.isContractsMatchAll());
+			setAttribute(stockpileNode, "multiplier", stockpile.getMultiplier());
+			String group = groups.get(stockpile);
+			if (group != null && !group.isEmpty()) {
+				setAttribute(stockpileNode, "stockpilegroup", group);
+			}
+			setAttribute(stockpileNode, "contractsmatchall", stockpile.isContractsMatchAll());
 			//ITEMS
-			for (StockpileItem item : strockpile.getItems()) {
+			for (StockpileItem item : stockpile.getItems()) {
 				if (item.isTotal()) {
 					continue; //Ignore Total
 				}
@@ -594,14 +613,14 @@ public class SettingsWriter extends AbstractXmlWriter {
 				stockpileNode.appendChild(itemNode);
 			}
 			//SUBPILES
-			for (Map.Entry<Stockpile, Double> entry : strockpile.getSubpiles().entrySet()) {
+			for (Map.Entry<Stockpile, Double> entry : stockpile.getSubpiles().entrySet()) {
 				Element subpileNode = xmldoc.createElementNS(null, "subpile");
 				subpileNode.setAttributeNS(null, "name", entry.getKey().getName());
 				subpileNode.setAttributeNS(null, "minimum", String.valueOf(entry.getValue()));
 				stockpileNode.appendChild(subpileNode);
 			}
 			//FILTERS
-			for (StockpileFilter filter : strockpile.getFilters()) {
+			for (StockpileFilter filter : stockpile.getFilters()) {
 				Element filterNode = xmldoc.createElementNS(null, "stockpilefilter");
 				setAttribute(filterNode, "locationid", filter.getLocation().getLocationID());
 				setAttribute(filterNode, "sellingcontracts", filter.isSellingContracts());

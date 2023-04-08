@@ -14,6 +14,7 @@ import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
+import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.ColorUtil;
 
@@ -32,6 +33,7 @@ public abstract class SeparatorTableCell<E> extends AbstractCellEditor
 	protected SeparatorList.Separator<?> currentSeparator;
 	protected int currentRow;
 
+	private final JSeparatorPanel jEditor;
 	protected final JSeparatorPanel jPanel;
 	protected final JButton jExpand;
 	protected final GroupLayout layout;
@@ -61,6 +63,23 @@ public abstract class SeparatorTableCell<E> extends AbstractCellEditor
 		layout.setAutoCreateGaps(false);
 		layout.setAutoCreateContainerGaps(false);
 
+		/*
+		XXX - Workaround for square button borders in table with FlatLAF
+		https://stackoverflow.com/questions/67657036/jbuttons-in-jtable-cell-change-shape-on-row-selection
+		https://github.com/JFormDesigner/FlatLaf/blob/main/flatlaf-core/src/main/java/com/formdev/flatlaf/ui/FlatUIUtils.java#L215
+		*/
+		if (Settings.get().getColorSettings().isFlatLAF()) {
+			JSeparatorPanel jLast = jPanel;
+			for (int i = 0; i < 3; i++) {
+				JSeparatorPanel jSeparatorPanel = new JSeparatorPanel(new BorderLayout());
+				jSeparatorPanel.add(jLast);
+				jLast = jSeparatorPanel;
+			}
+			jEditor = jLast;
+		} else {
+			jEditor = jPanel;
+		}
+
 		jExpand = new JButton(Images.MISC_EXPANDED.getIcon());
 		jExpand.setOpaque(false);
 		jExpand.setContentAreaFilled(false);
@@ -76,13 +95,13 @@ public abstract class SeparatorTableCell<E> extends AbstractCellEditor
 	@Override
 	public Component getTableCellEditorComponent(final JTable table, final Object value, final boolean isSelected, final int row, final int column) {
 		configure(value, row);
-		return jPanel;
+		return jEditor;
 	}
 
 	@Override
 	public Component getTableCellRendererComponent(final JTable table, final Object value, final boolean isSelected, final boolean hasFocus, final int row, final int column) {
 		configure(value, row);
-		return jPanel;
+		return jEditor;
 	}
 
 	@Override

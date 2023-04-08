@@ -42,14 +42,18 @@ import net.nikr.eve.jeveasset.gui.tabs.items.ItemTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.items.ItemsTab;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJobTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJobsTab;
-import net.nikr.eve.jeveasset.gui.tabs.slots.SlotsTableFormat;
-import net.nikr.eve.jeveasset.gui.tabs.slots.SlotsTab;
 import net.nikr.eve.jeveasset.gui.tabs.journal.JournalTab;
 import net.nikr.eve.jeveasset.gui.tabs.journal.JournalTableFormat;
+import net.nikr.eve.jeveasset.gui.tabs.mining.MiningTab;
+import net.nikr.eve.jeveasset.gui.tabs.mining.MiningTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.orders.MarketOrdersTab;
 import net.nikr.eve.jeveasset.gui.tabs.orders.MarketTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewTab;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewTableFormat;
+import net.nikr.eve.jeveasset.gui.tabs.skills.SkillsTab;
+import net.nikr.eve.jeveasset.gui.tabs.skills.SkillsTableFormat;
+import net.nikr.eve.jeveasset.gui.tabs.slots.SlotsTab;
+import net.nikr.eve.jeveasset.gui.tabs.slots.SlotsTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileExtendedTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileTab;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileTableFormat;
@@ -91,6 +95,10 @@ public class FilterExportTest extends TestUtil {
 		test(TransactionTab.NAME, TransactionTableFormat.values());
 		//IndustryJob
 		test(IndustryJobsTab.NAME, IndustryJobTableFormat.values());
+		//Skills
+		test(SkillsTab.NAME, SkillsTableFormat.values());
+		//Mining
+		test(MiningTab.NAME, MiningTableFormat.values());
 	//Secondary Tools
 		//Slots
 		test(SlotsTab.NAME, SlotsTableFormat.values());

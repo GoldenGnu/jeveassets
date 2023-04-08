@@ -40,7 +40,7 @@ import net.nikr.eve.jeveasset.i18n.GuiShared;
 public final class Formatter {
 
 	//Must not be changed! please see: FilterControl
-	public static final String COLUMN_DATETIME = "yyyy-MM-dd HH:mm";
+	private static final String COLUMN_DATETIME = "yyyy-MM-dd HH:mm";
 	public static final String COLUMN_DATE = "yyyy-MM-dd";
 
 	private static final DecimalFormat ISK_FORMAT = new DecimalFormat("#,##0.00 isk");
@@ -55,9 +55,9 @@ public final class Formatter {
 	private static final DecimalFormat SECURITY_FORMAT = new DecimalFormat("0.0", new DecimalFormatSymbols(Locale.ENGLISH));
 	private static final DecimalFormat COPY_FORMAT = new DecimalFormat("0.##", new DecimalFormatSymbols(Locale.ENGLISH));
 	public static final DecimalFormat LONG_FORMAT = new DecimalFormat("#,##0");
-	public static final NumberFormat MILLIONS_FORMAT = new FixedFormat(1000000.0, "M");
-	public static final NumberFormat BILLIONS_FORMAT = new FixedFormat(1000000000.0, "B");
-	public static final NumberFormat TRILLIONS_FORMAT = new FixedFormat(1000000000000.0, "T");
+	public static final NumberFormat MILLIONS_FORMAT = new FixedFormat(1_000_000.0, "M");
+	public static final NumberFormat BILLIONS_FORMAT = new FixedFormat(1_000_000_000.0, "B");
+	public static final NumberFormat TRILLIONS_FORMAT = new FixedFormat(1_000_000_000_000.0, "T");
 	public static final NumberFormat AUTO_FORMAT = new AutoFormat();
 
 	private static final DateFormatThreadSafe EXPIRE_DATE1 = new DateFormatThreadSafe("EEE, dd MMM yyyy kk:mm:ss zzz"); //Tue, 04 Oct 2016 18:21:28 GMT
@@ -158,6 +158,15 @@ public final class Formatter {
 
 	public static String columnDate(final Object date) {
 		return COLUMN_DATETIME_FORMAT.format(date);
+	}
+
+	/**
+	 * Do not use unless only date information is available.
+	 * @param date
+	 * @return
+	 */
+	public static String columnDateOnly(final Object date) {
+		return COLUMN_DATE_FORMAT.format(date);
 	}
 
 	public static String fileDate(final Object date) {

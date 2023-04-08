@@ -44,6 +44,7 @@ import net.nikr.eve.jeveasset.data.sde.StaticData;
 import net.nikr.eve.jeveasset.data.settings.Citadel;
 import net.nikr.eve.jeveasset.data.settings.Citadel.CitadelSource;
 import net.nikr.eve.jeveasset.data.settings.PriceData;
+import net.nikr.eve.jeveasset.data.settings.ReprocessSettings;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.UserItem;
 import net.nikr.eve.jeveasset.gui.shared.Formatter;
@@ -277,13 +278,27 @@ public final class ApiIdConverter {
 	}
 
 	public static double getPriceReprocessed(Item item) {
+		return getPriceReprocessed(item, false);
+	}
+
+	public static double getPriceReprocessedMax(Item item) {
+		return getPriceReprocessed(item, true);
+	}
+
+	private static double getPriceReprocessed(Item item, boolean max) {
 		double priceReprocessed = 0;
 		int portionSize = 0;
 		for (ReprocessedMaterial material : item.getReprocessedMaterial()) {
 			//Calculate reprocessed price
 			portionSize = material.getPortionSize();
 			double price = ApiIdConverter.getPriceReprocessed(material.getTypeID());
-			priceReprocessed = priceReprocessed + (price * Settings.get().getReprocessSettings().getLeft(material.getQuantity(), item.isOre()));
+			int count;
+			if (max) {
+				count = ReprocessSettings.getMax(material.getQuantity(), item.isOre());
+			} else {
+				count = Settings.get().getReprocessSettings().getLeft(material.getQuantity(), item.isOre());
+			}
+			priceReprocessed = priceReprocessed + (price * count);
 		}
 		if (priceReprocessed > 0 && portionSize > 0) {
 			priceReprocessed = priceReprocessed / portionSize;
@@ -294,7 +309,7 @@ public final class ApiIdConverter {
 	public static float getVolume(final Item item, final boolean packaged) {
 		if (item != null) {
 			if (packaged) {
-				return item.getPackagedVolume();
+				return item.getVolumePackaged();
 			} else {
 				return item.getVolume();
 			}

@@ -58,6 +58,7 @@ import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.Settings.SettingFlag;
 import net.nikr.eve.jeveasset.data.settings.Settings.SettingsFactory;
 import net.nikr.eve.jeveasset.data.settings.Settings.TransactionProfitPrice;
+import net.nikr.eve.jeveasset.data.settings.StockpileGroupSettings;
 import net.nikr.eve.jeveasset.data.settings.TrackerData;
 import net.nikr.eve.jeveasset.data.settings.TrackerSettings;
 import net.nikr.eve.jeveasset.data.settings.TrackerSettings.DisplayType;
@@ -66,6 +67,8 @@ import net.nikr.eve.jeveasset.data.settings.UserItem;
 import net.nikr.eve.jeveasset.data.settings.tag.Tag;
 import net.nikr.eve.jeveasset.data.settings.tag.TagColor;
 import net.nikr.eve.jeveasset.data.settings.tag.TagID;
+import net.nikr.eve.jeveasset.gui.dialogs.settings.SoundsSettingsPanel.SoundsOption;
+import net.nikr.eve.jeveasset.gui.dialogs.settings.SoundsSettingsPanel.SoundsSound;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.UserNameSettingsPanel.UserName;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.UserPriceSettingsPanel.UserPrice;
 import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
@@ -92,6 +95,8 @@ import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJobTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJobsTab;
 import net.nikr.eve.jeveasset.gui.tabs.journal.JournalTab;
 import net.nikr.eve.jeveasset.gui.tabs.journal.JournalTableFormat;
+import net.nikr.eve.jeveasset.gui.tabs.mining.MiningTab;
+import net.nikr.eve.jeveasset.gui.tabs.mining.MiningTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.orders.MarketOrdersTab;
 import net.nikr.eve.jeveasset.gui.tabs.orders.MarketTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.orders.Outbid;
@@ -100,6 +105,8 @@ import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewLocation;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewTab;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.routing.SolarSystem;
+import net.nikr.eve.jeveasset.gui.tabs.skills.SkillsTab;
+import net.nikr.eve.jeveasset.gui.tabs.skills.SkillsTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.slots.SlotsTab;
 import net.nikr.eve.jeveasset.gui.tabs.slots.SlotsTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
@@ -273,7 +280,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		NodeList stockpilesNodes = element.getElementsByTagName("stockpiles");
 		if (stockpilesNodes.getLength() == 1) {
 			Element stockpilesElement = (Element) stockpilesNodes.item(0);
-			parseStockpiles(stockpilesElement, stockpiles);
+			parseStockpiles(stockpilesElement, stockpiles, null);
 		}
 		return stockpiles;
 	}
@@ -312,6 +319,12 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		Element colorSettingsElement = getNodeOptional(element, "colorsettings");
 		if (colorSettingsElement != null) {
 			parseColorSettings(colorSettingsElement, settings);
+		}
+
+		//Sound Settings
+		Element soundSettingsElement = getNodeOptional(element, "soundsettings");
+		if (soundSettingsElement != null) {
+			parseSoundSettings(soundSettingsElement, settings);
 		}
 
 		//Tracker Settings
@@ -378,7 +391,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		//Stockpiles
 		Element stockpilesElement = getNodeOptional(element, "stockpiles");
 		if (stockpilesElement != null) {
-			parseStockpiles(stockpilesElement, settings.getStockpiles());
+			parseStockpiles(stockpilesElement, settings.getStockpiles(), settings.getStockpileGroupSettings());
 		}
 
 		//Stockpile Groups
@@ -684,7 +697,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 	 * -!- `!´ IMPORTANT `!´ -!-
 	 * StockpileDataWriter and StockpileDataReader needs to be updated too - on any changes!!!
 	 */
-	private void parseStockpiles(final Element stockpilesElement, final List<Stockpile> stockpiles) throws XmlException {
+	private void parseStockpiles(final Element stockpilesElement, final List<Stockpile> stockpiles, StockpileGroupSettings stockpileGroupSettings) throws XmlException {
 		NodeList stockpileNodes = stockpilesElement.getElementsByTagName("stockpile");
 		Map<String, Stockpile> stockpileMap = new HashMap<>();
 		Map<Stockpile, Map<String, Double>> subpileMap = new HashMap<>();
@@ -796,10 +809,15 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			}
 		//MULTIPLIER
 			double multiplier = getDoubleNotNull(stockpileNode, "multiplier", 1);
+		//GROUP
+			String group = getStringOptional(stockpileNode, "stockpilegroup"); //Null is handled by settings
 		//CONTRACTS MATCH ALL
 			boolean contractsMatchAll = getBooleanNotNull(stockpileNode, "contractsmatchall", false);
 
 			Stockpile stockpile = new Stockpile(name, stockpileID, filters, multiplier, contractsMatchAll);
+			if (stockpileGroupSettings != null) {
+				stockpileGroupSettings.setGroup(stockpile, group);
+			}
 			stockpiles.add(stockpile);
 			subpileMap.put(stockpile, subpileNames);
 			stockpileMap.put(name, stockpile);
@@ -887,6 +905,20 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		String lookAndFeelClass = getStringOptional(colorSettingsElement, "lookandfeel");
 		if (lookAndFeelClass != null) {
 			settings.getColorSettings().setLookAndFeelClass(lookAndFeelClass);
+		}
+	}
+
+	private void parseSoundSettings(Element colorSettingsElement, Settings settings) throws XmlException {
+		NodeList soundNodes = colorSettingsElement.getElementsByTagName("sound");
+		for (int a = 0; a < soundNodes.getLength(); a++) {
+			Element soundNode = (Element) soundNodes.item(a);
+			try {
+				SoundsOption option = SoundsOption.valueOf(getString(soundNode, "option"));
+				SoundsSound sound = SoundsSound.valueOf(getString(soundNode, "sound"));
+				settings.getSoundSettings().put(option, sound);
+			} catch (IllegalArgumentException ex ) {
+				LOG.error(ex.getMessage(), ex);
+			}
 		}
 	}
 
@@ -1581,6 +1613,22 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		try {
 			if (toolName.equals(TreeTab.NAME)) {
 				return TreeTableFormat.valueOf(column);
+			}
+		} catch (IllegalArgumentException exception) {
+
+		}
+		//Skills
+		try {
+			if (toolName.equals(SkillsTab.NAME)) {
+				return SkillsTableFormat.valueOf(column);
+			}
+		} catch (IllegalArgumentException exception) {
+
+		}
+		//Mining
+		try {
+			if (toolName.equals(MiningTab.NAME)) {
+				return MiningTableFormat.valueOf(column);
 			}
 		} catch (IllegalArgumentException exception) {
 

@@ -24,13 +24,13 @@ import java.util.Locale;
 import uk.me.candle.translations.Bundle;
 
 
-public abstract class TabPriceHistory extends Bundle {
+public abstract class TabsPriceHistory extends Bundle {
 
-	public static TabPriceHistory get() {
-		return BundleServiceFactory.getBundleService().get(TabPriceHistory.class);
+	public static TabsPriceHistory get() {
+		return BundleServiceFactory.getBundleService().get(TabsPriceHistory.class);
 	}
 
-	public TabPriceHistory(final Locale locale) {
+	public TabsPriceHistory(final Locale locale) {
 		super(locale);
 	}
 

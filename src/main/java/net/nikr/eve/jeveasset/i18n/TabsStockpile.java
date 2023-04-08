@@ -90,6 +90,15 @@ public abstract class TabsStockpile extends Bundle {
 	public abstract String flagIncludeSubs();
 	public abstract String flagIncludeSubsToolTip();
 	public abstract String getShoppingList();
+	public abstract String groupAddEmpty();
+	public abstract String groupAddExist();
+	public abstract String groupAddName();
+	public abstract String groupAddNew();
+	public abstract String groupAddTitle();
+	public abstract String groupCollapse();
+	public abstract String groupExpand();
+	public abstract String groupMenu();
+	public abstract String groups();
 	public abstract String hideStockpile();
 	public abstract String importButton();
 	public abstract String importEft();
@@ -157,6 +166,7 @@ public abstract class TabsStockpile extends Bundle {
 	public abstract String matchInclude();
 	public abstract String materialsManufacturing();
 	public abstract String materialsReaction();
+	public abstract String me();
 	public abstract String multiple();
 	public abstract String multiplier();
 	public abstract String multiplierSign();
@@ -204,6 +214,8 @@ public abstract class TabsStockpile extends Bundle {
 	public abstract String columnName();
 	public abstract String columnGroup();
 	public abstract String columnCategory();
+	public abstract String columnSlot();
+	public abstract String columnChargeSize();
 	public abstract String columnMeta();
 	public abstract String columnEveUi();
 	public abstract String columnEveUiToolTip();

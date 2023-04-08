@@ -41,7 +41,9 @@ import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
 import net.nikr.eve.jeveasset.data.api.my.MyJournal;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
+import net.nikr.eve.jeveasset.data.api.my.MyMining;
 import net.nikr.eve.jeveasset.data.api.my.MyShip;
+import net.nikr.eve.jeveasset.data.api.my.MySkill;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.api.raw.RawAccountBalance;
 import net.nikr.eve.jeveasset.data.api.raw.RawAsset;
@@ -53,6 +55,7 @@ import net.nikr.eve.jeveasset.data.api.raw.RawJournal;
 import net.nikr.eve.jeveasset.data.api.raw.RawJournalRefType;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder.Change;
+import net.nikr.eve.jeveasset.data.api.raw.RawMining;
 import net.nikr.eve.jeveasset.data.api.raw.RawSkill;
 import net.nikr.eve.jeveasset.data.api.raw.RawTransaction;
 import net.nikr.eve.jeveasset.data.profile.Profile;
@@ -290,6 +293,7 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 		Date blueprintsNextUpdate = getDateNotNull(node, "blueprintsnextupdate");
 		Date bookmarksNextUpdate = getDateNotNull(node, "bookmarksnextupdate");
 		Date skillsNextUpdate = getDateNotNull(node, "skillsnextupdate");
+		Date miningNextUpdate = getDateNotNull(node, "miningnextupdate");
 		owner.setOwnerName(ownerName);
 		owner.setCorporationName(corporationName);
 		owner.setOwnerID(ownerID);
@@ -308,6 +312,7 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 		owner.setBlueprintsNextUpdate(blueprintsNextUpdate);
 		owner.setBookmarksNextUpdate(bookmarksNextUpdate);
 		owner.setSkillsNextUpdate(skillsNextUpdate);
+		owner.setMiningNextUpdate(miningNextUpdate);
 
 		NodeList assetNodes = node.getElementsByTagName("assets");
 		if (assetNodes.getLength() == 1) {
@@ -324,6 +329,7 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 		parseAssetDivisions(node, owner);
 		parseWalletDivisions(node, owner);
 		parseSkills(node, owner);
+		parseMining(node, owner);
 	}
 
 	private void parseActiveShip(final Element element, final OwnerType owner) throws XmlException {
@@ -881,7 +887,7 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 			Element currentSkillsNode = (Element) skillsNodes.item(a);
 			Integer unallocatedSkillPoints = getIntOptional(currentSkillsNode, "unallocated");
 			Long totalSkillPoints = getLongOptional(currentSkillsNode, "total");
-			List<RawSkill> skills = new ArrayList<>();
+			List<MySkill> skills = new ArrayList<>();
 			NodeList skillNodes = currentSkillsNode.getElementsByTagName("skill");
 			for (int b = 0; b < skillNodes.getLength(); b++) {
 				Element currentNode = (Element) skillNodes.item(b);
@@ -896,11 +902,42 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 				skill.setSkillpoints(skillpoints);
 				skill.setActiveSkillLevel(activeSkillLevel);
 				skill.setTrainedSkillLevel(trainedSkillLevel);
-				skills.add(skill);
+				skills.add(DataConverter.toMySkill(skill, owners));
 			}
 			owners.setSkills(skills);
 			owners.setTotalSkillPoints(totalSkillPoints);
 			owners.setUnallocatedSkillPoints(unallocatedSkillPoints);
+		}
+	}
+
+	private void parseMining(final Element element, final OwnerType owners) throws XmlException {
+		NodeList miningsNodes = element.getElementsByTagName("minings");
+		for (int a = 0; a < miningsNodes.getLength(); a++) {
+			Element currentMiningsNode = (Element) miningsNodes.item(a);
+			List<MyMining> minings = new ArrayList<>();
+			NodeList miningNodes = currentMiningsNode.getElementsByTagName("mining");
+			for (int b = 0; b < miningNodes.getLength(); b++) {
+				Element currentNode = (Element) miningNodes.item(b);
+				int typeID = getInt(currentNode, "typeid");
+				Date date = getDate(currentNode, "date");
+				long count = getLong(currentNode, "count");
+				long locationID = getLong(currentNode, "locationid");
+				String characterName = getString(currentNode, "character");
+				String corporationName = getString(currentNode, "corporation");
+				boolean forCorporation = getBoolean(currentNode, "forcorp");
+
+				RawMining mining = RawMining.create();
+				mining.setTypeID(typeID);
+				mining.setDate(date);
+				mining.setCount(count);
+				mining.setLocationID(locationID);
+				mining.setCharacterName(characterName);
+				mining.setCorporationName(corporationName);
+				mining.setForCorporation(forCorporation);
+
+				minings.add(DataConverter.toMyMining(mining));
+			}
+			owners.setMining(minings);
 		}
 	}
 }

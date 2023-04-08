@@ -20,7 +20,10 @@
  */
 package net.nikr.eve.jeveasset.io.shared;
 
+import java.time.LocalDate;
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -137,6 +140,21 @@ public class RawConverter {
 			return null;
 		} else {
 			return Date.from(dateTime.toInstant());
+		}
+	}
+
+	public static Date toDate(LocalDate dateTime) {
+		if (dateTime == null) {
+			return null;
+		} else {
+			Date date = Date.from(dateTime.atStartOfDay().toInstant(ZoneOffset.UTC));
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(date);
+			cal.set(Calendar.HOUR_OF_DAY, 12);
+			cal.set(Calendar.MINUTE, 0);
+			cal.set(Calendar.SECOND, 0);
+			cal.set(Calendar.MILLISECOND, 0);
+			return cal.getTime();
 		}
 	}
 
