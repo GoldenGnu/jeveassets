@@ -16,6 +16,31 @@
                   #### #  # #  # #  # #### #### #### #### ####
 
 ________________________________________________________________________________
+_7.6.0__________________________________________________________________________
+
+New Features:
+-Added character mining ledger (graph and log) (Issue #20)
+-Added a new tool with character skills (Issue #345)
+-Added stockpile groups (issue #321)
+-Stockpile import now have BPO/PBC/Runs/Materials options (issue #357)
+-Use item count when add to stockpiles (contributed by Boran Lordsworth)
+-Added volume packaged column to the items tool
+-Allowed subpile total rows to be column sorted (issue #352)
+-Added slot type column to the assets/tree/stockpile/items tools (Issue #89)
+-Added charge size column to the assets/tree/stockpile/items tools (Issue #89)
+-Play sound when industry jobs are completed. Off by default (Issue #293)
+-Play sound when outbid data is updated. Off by default (Issue #287)
+-Added next x hours/days date filters (Issue #246)
+-Chart date labels are now scaled according to the shown range (Issue #356)
+
+Bug Fixes:
+-Fixed buttons shapes in separator tables with the FlatLAF
+-Editing accounts did not update the scopes
+
+Changed:
+-Market orders and transaction volume columns now use packaged volume
+
+________________________________________________________________________________
 _7.5.0__________________________________________________________________________
 
 New Features:
