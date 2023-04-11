@@ -66,13 +66,13 @@ import net.nikr.eve.jeveasset.gui.dialogs.settings.SoundsSettingsPanel.SoundsOpt
 import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
 import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.Percent;
+import net.nikr.eve.jeveasset.gui.sounds.SoundPlayer;
 import net.nikr.eve.jeveasset.gui.tabs.orders.OutbidProcesser.OutbidProcesserOutput;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import net.nikr.eve.jeveasset.io.shared.DataConverter;
-import net.nikr.eve.jeveasset.gui.sounds.SoundPlayer;
 
 public class ProfileData {
 
@@ -357,10 +357,22 @@ public class ProfileData {
 		if (typeIDs == null || typeIDs.isEmpty()) {
 			return;
 		}
+		//Update Items dynamic values
+		for (Item item : StaticData.get().getItems().values()) {
+			double before = item.getPriceReprocessed();
+			double price = ApiIdConverter.getPriceReprocessed(item);
+			item.setPriceReprocessed(price);
+			double beforeMax = item.getPriceReprocessedMax();
+			double priceMax = ApiIdConverter.getPriceReprocessedMax(item);
+			item.setPriceReprocessedMax(priceMax);
+			if (before != price || beforeMax != priceMax) {
+				typeIDs.add(item.getTypeID());
+			}
+		}
 		updatePrices(marketOrdersEventList, typeIDs);
 		updatePrices(contractItemEventList, typeIDs);
-		updateMiningPrices(miningEventList, typeIDs);
-		updateAssetPrices(assetsEventList, typeIDs);
+		updatePrices(miningEventList, typeIDs);
+		updatePrices(assetsEventList, typeIDs);
 		updateIndustryJobPrices(industryJobsEventList, typeIDs);
 	}
 
@@ -490,10 +502,6 @@ public class ProfileData {
 			}
 			//Mining
 			minings.addAll(owner.getMining());
-			for (MyMining mining : owner.getMining()) {
-				mining.setPriceReprocessed(ApiIdConverter.getPriceReprocessed(mining.getItem()));
-				mining.setPriceReprocessedMax(ApiIdConverter.getPriceReprocessedMax(mining.getItem()));
-			}
 		}
 
 		//Fill accountBalance
@@ -538,7 +546,6 @@ public class ProfileData {
 			order.setIssuedByName(ApiIdConverter.getOwnerName(order.getIssuedBy()));
 			order.setBrokersFee(marketOrdersBrokersFee.get(order.getOrderID()));
 			order.setOutbid(Settings.get().getMarketOrdersOutbid().get(order.getOrderID()));
-			order.setPriceReprocessed(ApiIdConverter.getPriceReprocessed(order.getItem()));
 			//Price Data
 			order.setPriceData(ApiIdConverter.getPriceData(order.getTypeID(), false));
 			//Changed date
@@ -629,6 +636,7 @@ public class ProfileData {
 		//Update Items dynamic values
 		for (Item item : StaticData.get().getItems().values()) {
 			item.setPriceReprocessed(ApiIdConverter.getPriceReprocessed(item));
+			item.setPriceReprocessedMax(ApiIdConverter.getPriceReprocessedMax(item));
 		}
 
 		Map<Long, Date> assetAdded = AddedData.getAssets().getAll();
@@ -884,77 +892,6 @@ public class ProfileData {
 						|| (productTypeID != null && typeIDs.contains(getTypeID(industryJob.isCopying(), productTypeID)))) {
 					found.add(industryJob); //Save for update
 					updatePrice(industryJob); //Update data
-				}
-			}
-		} finally {
-			eventList.getReadWriteLock().readLock().unlock();
-		}
-		updateList(eventList, found);
-	}
-
-	private void updateMiningPrices(EventList<MyMining> eventList, Set<Integer> typeIDs) {
-		if (typeIDs == null || typeIDs.isEmpty()) {
-			return;
-		}
-		List<MyMining> found = new ArrayList<>();
-		try {
-			eventList.getReadWriteLock().readLock().lock();
-			for (MyMining mining : eventList) {
-				//Reprocessed price
-				boolean reprocessed = false;
-				for (ReprocessedMaterial material : mining.getItem().getReprocessedMaterial()) {
-					if (typeIDs.contains(material.getTypeID())) {
-						reprocessed = true;
-						break;
-					}
-				}
-				if (reprocessed) {
-					mining.setPriceReprocessed(ApiIdConverter.getPriceReprocessed(mining.getItem()));
-					mining.setPriceReprocessedMax(ApiIdConverter.getPriceReprocessedMax(mining.getItem()));
-				}
-				//Dynamic Price
-				boolean dynamic = typeIDs.contains(mining.getTypeID());
-				if (dynamic) {
-					updatePrice(mining); //Update data
-				}
-				//Update
-				if (reprocessed || dynamic) { //If changed
-					found.add(mining); //Save for update
-				}
-			}
-		} finally {
-			eventList.getReadWriteLock().readLock().unlock();
-		}
-		updateList(eventList, found);
-	}
-
-	private void updateAssetPrices(EventList<MyAsset> eventList, Set<Integer> typeIDs) {
-		if (typeIDs == null || typeIDs.isEmpty()) {
-			return;
-		}
-		List<MyAsset> found = new ArrayList<>();
-		try {
-			eventList.getReadWriteLock().readLock().lock();
-			for (MyAsset asset : eventList) {
-				//Reprocessed price
-				boolean reprocessed = false;
-				for (ReprocessedMaterial material : asset.getItem().getReprocessedMaterial()) {
-					if (typeIDs.contains(material.getTypeID())) {
-						reprocessed = true;
-						break;
-					}
-				}
-				if (reprocessed) {
-					asset.setPriceReprocessed(ApiIdConverter.getPriceReprocessed(asset.getItem())); //Update data
-				}
-				//Dynamic Price
-				boolean dynamic = typeIDs.contains(getTypeID(asset.isBPC(), asset.getItem().getTypeID()));
-				if (dynamic) {
-					updatePrice(asset); //Update data
-				}
-				//Update
-				if (reprocessed || dynamic) { //If changed
-					found.add(asset); //Save for update
 				}
 			}
 		} finally {
@@ -1261,8 +1198,6 @@ public class ProfileData {
 			asset.setAdded(AddedData.getAssets().getAdd(assetAdded, asset.getItemID(), assetAddedDate));
 			//Price
 			updatePrice(asset);
-			//Reprocessed price
-			asset.setPriceReprocessed(ApiIdConverter.getPriceReprocessed(asset.getItem()));
 			//Market price
 			asset.setMarketPriceData(transactionBuyPriceData.get(asset.getItem().getTypeID()));
 			//User Item Names

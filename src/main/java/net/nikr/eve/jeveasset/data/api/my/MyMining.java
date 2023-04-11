@@ -37,9 +37,6 @@ public class MyMining extends RawMining implements Comparable<MyMining>, InfoIte
 	private final Item item;
 	private MyLocation location;
 	private double price;
-	private double priceReprocessed;
-	private double priceReprocessedMax;
-
 
 	public MyMining(RawMining mining, Item item, MyLocation location) {
 		super(mining);
@@ -58,28 +55,20 @@ public class MyMining extends RawMining implements Comparable<MyMining>, InfoIte
 	}
 
 	public double getPriceReprocessed() {
-		return priceReprocessed;
-	}
-
-	public void setPriceReprocessed(double priceReprocessed) {
-		this.priceReprocessed = priceReprocessed;
+		return item.getPriceReprocessed();
 	}
 
 	@Override
 	public double getValueReprocessed() {
-		return priceReprocessed * getCount();
+		return item.getPriceReprocessed() * getCount();
 	}
 
 	public double getPriceReprocessedMax() {
-		return priceReprocessedMax;
-	}
-
-	public void setPriceReprocessedMax(double priceReprocessedMax) {
-		this.priceReprocessedMax = priceReprocessedMax;
+		return item.getPriceReprocessedMax();
 	}
 
 	public double getValueReprocessedMax() {
-		return priceReprocessedMax * getCount();
+		return item.getPriceReprocessedMax() * getCount();
 	}
 
 	private float getVolume() {

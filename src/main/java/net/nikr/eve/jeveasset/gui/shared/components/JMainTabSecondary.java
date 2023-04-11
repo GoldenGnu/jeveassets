@@ -20,14 +20,9 @@
  */
 package net.nikr.eve.jeveasset.gui.shared.components;
 
-import ca.odell.glazedlists.EventList;
 import java.util.Set;
 import javax.swing.Icon;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.profile.ProfileData;
-import net.nikr.eve.jeveasset.data.settings.types.EditableLocationType;
-import net.nikr.eve.jeveasset.data.settings.types.EditablePriceType;
-import net.nikr.eve.jeveasset.data.settings.types.ItemType;
 import net.nikr.eve.jeveasset.gui.tabs.tree.TreeTab;
 
 
@@ -50,30 +45,11 @@ public abstract class JMainTabSecondary extends JMainTab {
 
 	@Override
 	public void updateLocations(Set<Long> locationIDs) {
-		if (this instanceof LocationsUpdater) {
-			LocationsUpdater<?> locationUpdater = (LocationsUpdater) this;
-			ProfileData.updateLocation(locationUpdater.getEventList(), locationIDs);
-		} else {
-			updateData();
-		}
+		updateData();
 	}
 
 	@Override
 	public void updatePrices(Set<Integer> typeIDs) {
-		if (this instanceof PricesUpdater) {
-			PricesUpdater<?> locationUpdater = (PricesUpdater) this;
-			ProfileData.updatePrices(locationUpdater.getEventList(), typeIDs);
-		} else {
-			updateData();
-		}
+		updateData();
 	}
-
-	public interface LocationsUpdater<T extends EditableLocationType> {
-		public EventList<T> getEventList();
-	}
-
-	public interface PricesUpdater<T extends ItemType & EditablePriceType> {
-		public EventList<T> getEventList();
-	}
-
 }
