@@ -88,6 +88,7 @@ public class Item implements Comparable<Item>, ItemType {
 	private final String slot;
 	private final String chargeSize;
 	private double priceReprocessed;
+	private double priceReprocessedMax;
 
 	public Item(int typeID) {
 		this(typeID, emptyType(typeID), "", "", -1, -1, -1, -1, -1, "", false, 0, 0, 1, "", "", null);
@@ -207,6 +208,10 @@ public class Item implements Comparable<Item>, ItemType {
 		return priceReprocessed;
 	}
 
+	public double getPriceReprocessedMax() {
+		return priceReprocessedMax;
+	}
+
 	public float getVolume() {
 		return volume;
 	}
@@ -283,6 +288,10 @@ public class Item implements Comparable<Item>, ItemType {
 
 	public void setPriceReprocessed(double priceReprocessed) {
 		this.priceReprocessed = priceReprocessed;
+	}
+
+	public void setPriceReprocessedMax(double priceReprocessedMax) {
+		this.priceReprocessedMax = priceReprocessedMax;
 	}
 
 	@Override
