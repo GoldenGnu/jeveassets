@@ -298,6 +298,16 @@ public enum MarketTableFormat implements EnumTableColumn<MyMarketOrder> {
 			return from.getIssuedByName();
 		}
 	},
+	WalletDivision(Integer.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsOrders.get().columnWalletDivision();
+		}
+		@Override
+		public Object getColumnValue(final MyMarketOrder from) {
+			return from.getWalletDivision();
+		}
+	},
 	LOCATION(String.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
