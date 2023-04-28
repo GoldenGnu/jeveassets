@@ -20,6 +20,7 @@
  */
 package net.nikr.eve.jeveasset.gui.sounds;
 
+import java.io.IOException;
 import java.io.InputStream;
 import javazoom.jl.decoder.JavaLayerException;
 import javazoom.jl.player.Player;
@@ -48,6 +49,8 @@ public class SoundThread extends Thread {
 			player = new Player(is);
 			player.play();
 		} catch (JavaLayerException ex) {
+			LOG.error(ex.getMessage(), ex);
+		} catch (IOException ex) {
 			LOG.error(ex.getMessage(), ex);
 		} finally {
 			player.close();

@@ -40,6 +40,7 @@ import org.slf4j.LoggerFactory;
 public class FileUtil extends FileUtilSimple {
 	private static final Logger LOG = LoggerFactory.getLogger(FileUtil.class);
 
+	private static final String PATH_SOUNDS = "sounds";
 	private static final String PATH_ASSET_ADDED = "data" + File.separator + "added.json";
 	private static final String PATH_ASSET_ADDED_DATABASE = "data" + File.separator + "addedsql.db";
 	private static final String PATH_STOCKPILE_IDS_DATABASE = "data" + File.separator + "stockpileids.db";
@@ -90,6 +91,14 @@ public class FileUtil extends FileUtilSimple {
 			throw new RuntimeException("Failed to create .jUpdate directory");
 		}
 		return file.getAbsolutePath();
+	}
+
+	public static String getPathSounds(String filename) {
+		return getLocalFile(PATH_SOUNDS + File.separator + filename, !CliOptions.get().isPortable());
+	}
+
+	public static String getPathSoundsDirectory() {
+		return getLocalFile(PATH_SOUNDS, !CliOptions.get().isPortable());
 	}
 
 	/**

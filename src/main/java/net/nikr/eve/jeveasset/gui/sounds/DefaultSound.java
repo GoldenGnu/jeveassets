@@ -21,6 +21,7 @@
 package net.nikr.eve.jeveasset.gui.sounds;
 
 import java.awt.Toolkit;
+import java.io.IOException;
 import java.io.InputStream;
 import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 
@@ -145,7 +146,7 @@ public enum DefaultSound implements Sound {
 	}
 
 	@Override
-	public InputStream createInputStream() {
+	public InputStream createInputStream() throws IOException {
 		return DefaultSound.class.getResourceAsStream(filename);
 	}
 
