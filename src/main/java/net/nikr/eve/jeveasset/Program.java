@@ -84,7 +84,6 @@ import net.nikr.eve.jeveasset.gui.shared.components.JLockWindow;
 import net.nikr.eve.jeveasset.gui.shared.components.JLockWindow.LockWorkerAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
 import net.nikr.eve.jeveasset.gui.sounds.SoundPlayer;
-import net.nikr.eve.jeveasset.gui.sounds.Sounds;
 import net.nikr.eve.jeveasset.gui.tabs.assets.AssetsTab;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractsTab;
 import net.nikr.eve.jeveasset.gui.tabs.items.ItemsTab;
@@ -129,7 +128,7 @@ public class Program implements ActionListener {
 	public static final String PROGRAM_VERSION = "9.0.0 DEV BUILD 1";
 	public static final String PROGRAM_NAME = "jEveAssets";
 	public static final String PROGRAM_HOMEPAGE = "https://eve.nikr.net/jeveasset";
-	private static final boolean PROGRAM_DEV_BUILD = false;
+	private static final boolean PROGRAM_DEV_BUILD = true;
 
 	//Height
 	private static int height = 22; //Defaults to 22
@@ -219,8 +218,7 @@ public class Program implements ActionListener {
 		LOG.info("Loading: Images");
 		Images.preload();
 		LOG.info("Loading: Sounds");
-		Sounds.preload();
-		SoundPlayer.enable();
+		SoundPlayer.load();
 		LOG.info("Loading: Main Window");
 		mainWindow = new MainWindow(this);
 		SplashUpdater.setProgress(50);

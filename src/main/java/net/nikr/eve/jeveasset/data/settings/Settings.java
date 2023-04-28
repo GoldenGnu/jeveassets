@@ -39,8 +39,7 @@ import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder.MarketOrderRange;
 import net.nikr.eve.jeveasset.data.settings.tag.Tag;
 import net.nikr.eve.jeveasset.data.settings.tag.TagID;
 import net.nikr.eve.jeveasset.data.settings.tag.Tags;
-import net.nikr.eve.jeveasset.gui.dialogs.settings.SoundsSettingsPanel.SoundsOption;
-import net.nikr.eve.jeveasset.gui.dialogs.settings.SoundsSettingsPanel.SoundsSound;
+import net.nikr.eve.jeveasset.gui.dialogs.settings.SoundsSettingsPanel.SoundOption;
 import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.menu.JFormulaDialog.Formula;
@@ -48,6 +47,7 @@ import net.nikr.eve.jeveasset.gui.shared.menu.JMenuJumps.Jump;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.ResizeMode;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.SimpleColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.View;
+import net.nikr.eve.jeveasset.gui.sounds.Sound;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJobTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJobsTab;
 import net.nikr.eve.jeveasset.gui.tabs.orders.MarketOrdersTab;
@@ -258,7 +258,7 @@ public class Settings {
 //Colors
 	private final ColorSettings colorSettings = new ColorSettings();
 //Sounds
-	private final Map<SoundsOption, SoundsSound> soundSettings = new EnumMap<>(SoundsOption.class);
+	private final Map<SoundOption, Sound> soundSettings = new EnumMap<>(SoundOption.class);
 
 	protected Settings() {
 		//Settings
@@ -481,7 +481,7 @@ public class Settings {
 		return jumps;
 	}
 
-	public Map<SoundsOption, SoundsSound> getSoundSettings() {
+	public Map<SoundOption, Sound> getSoundSettings() {
 		return soundSettings;
 	}
 

@@ -139,6 +139,8 @@ public class LibraryManager {
 			//Native Mac GUI integration
 			files.add("svgSalamander-1.1.3.jar");
 			files.add("flatlaf-extras-2.4.jar");
+			//MP3
+			files.add("jlayer-1.0.2.jar");
 		}
 		return files;
 	}
