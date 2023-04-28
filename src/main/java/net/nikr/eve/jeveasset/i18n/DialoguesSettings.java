@@ -156,9 +156,16 @@ public abstract class DialoguesSettings extends Bundle {
 	public abstract String soundsEveSkill();
 	public abstract String soundsEveStart();
 	public abstract String soundsEveStructure();
+	public abstract String soundsIndustryJobCompleted();
+	public abstract String soundsMp3Add();
+	public abstract String soundsMp3DeleteMsg(String id);
+	public abstract String soundsMp3DeleteTitle();
+	public abstract String soundsMp3ImportCopy();
+	public abstract String soundsMp3ImportExist();
+	public abstract String soundsMp3ImportTitle();
+	public abstract String soundsMp3NoFilesAdded();
 	public abstract String soundsNone();
 	public abstract String soundsOutbidUpdateCompleted();
-	public abstract String soundsIndustryJobCompleted();
 
 	// used in PriceDataSettingsPanel
 	public abstract String changeSourceWarning();

@@ -24,6 +24,7 @@ package net.nikr.eve.jeveasset.io.local;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Point;
+import java.io.File;
 import java.net.Proxy;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -132,6 +133,7 @@ import net.nikr.eve.jeveasset.gui.tabs.values.ValueTableTab;
 import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.io.local.update.Update;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
+import net.nikr.eve.jeveasset.io.shared.FileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
@@ -918,7 +920,12 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			try {
 				settings.getSoundSettings().put(option, DefaultSound.valueOf(sound));
 			} catch (IllegalArgumentException ex ) {
-				settings.getSoundSettings().put(option, new FileSound(sound));
+				File file = new File(FileUtil.getPathSounds(sound));
+				if (file.exists()) {
+					settings.getSoundSettings().put(option, new FileSound(file));
+				} else {
+					settings.getSoundSettings().put(option, DefaultSound.BEEP); //Fallback
+				}
 			}
 		}
 	}

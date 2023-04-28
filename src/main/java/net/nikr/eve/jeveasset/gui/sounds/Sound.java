@@ -20,6 +20,7 @@
  */
 package net.nikr.eve.jeveasset.gui.sounds;
 
+import java.io.IOException;
 import java.io.InputStream;
 
 
@@ -27,7 +28,7 @@ public interface Sound {
 	public void play();
 	public void stop();
 	public boolean exist();
-	public InputStream createInputStream();
+	public InputStream createInputStream() throws IOException;
 	public String getID();
 	
 }

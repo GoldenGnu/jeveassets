@@ -21,6 +21,8 @@
 package net.nikr.eve.jeveasset.gui.sounds;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Objects;
 
@@ -30,8 +32,8 @@ public class FileSound implements Sound {
 	private final File file;
 	private SoundThread thread = null;
 
-	public FileSound(String filename) {
-		this.file = new File(filename);
+	public FileSound(File file) {
+		this.file = file;
 	}
 
 	@Override
@@ -45,8 +47,8 @@ public class FileSound implements Sound {
 	}
 
 	@Override
-	public InputStream createInputStream() {
-		return null;
+	public InputStream createInputStream() throws IOException {
+		return new FileInputStream(file);
 	}
 
 	@Override
