@@ -23,6 +23,7 @@ package net.nikr.eve.jeveasset.gui.dialogs.settings;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
@@ -31,14 +32,15 @@ import javax.swing.JLabel;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
+import net.nikr.eve.jeveasset.gui.sounds.DefaultSound;
+import net.nikr.eve.jeveasset.gui.sounds.Sound;
 import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 import net.nikr.eve.jeveasset.gui.sounds.SoundPlayer;
-import net.nikr.eve.jeveasset.gui.sounds.Sounds;
 
 
 public class SoundsSettingsPanel extends JSettingsPanel {
 
-	public static enum SoundsOption {
+	public static enum SoundOption {
 		OUTBID_UPDATE_COMPLETED() {
 			@Override
 			public String getText() {
@@ -60,107 +62,19 @@ public class SoundsSettingsPanel extends JSettingsPanel {
 		public abstract String getText();
 	}
 
-	
-
-	public static enum SoundsSound {
-		NONE(null) {
-			@Override
-			public String getText() {
-				return DialoguesSettings.get().soundsNone();
-			}
-		},
-		ARMOR(Sounds.ARMOR) {
-			@Override
-			public String getText() {
-				return DialoguesSettings.get().soundsEveArmor();
-			}
-		},
-		CAPACITOR(Sounds.CAPACITOR) {
-			@Override
-			public String getText() {
-				return DialoguesSettings.get().soundsEveCapacitor();
-			}
-		},
-		CARGO(Sounds.CARGO) {
-			@Override
-			public String getText() {
-				return DialoguesSettings.get().soundsEveCargo();
-			}
-		},
-		CHARACTER_SELECT(Sounds.CHARACTER_SELECT) {
-			@Override
-			public String getText() {
-				return DialoguesSettings.get().soundsEveCharacterSelection();
-			}
-		},
-		LOGIN(Sounds.LOGIN) {
-			@Override
-			public String getText() {
-				return DialoguesSettings.get().soundsEveLogin();
-			}
-		},
-		NOTIFICATION_PING(Sounds.NOTIFICATION_PING) {
-			@Override
-			public String getText() {
-				return DialoguesSettings.get().soundsEveNotificationPing();
-			}
-		},
-		SHIELD(Sounds.SHIELD) {
-			@Override
-			public String getText() {
-				return DialoguesSettings.get().soundsEveShield();
-			}
-		},
-		SKILL(Sounds.SKILL) {
-			@Override
-			public String getText() {
-				return DialoguesSettings.get().soundsEveSkill();
-			}
-		},
-		START(Sounds.START) {
-			@Override
-			public String getText() {
-				return DialoguesSettings.get().soundsEveStart();
-			}
-		},
-		STRUCTURE(Sounds.STRUCTURE) {
-			@Override
-			public String getText() {
-				return DialoguesSettings.get().soundsEveStructure();
-			}
-		},
-		BEEP(null) {
-			@Override
-			public String getText() {
-				return DialoguesSettings.get().soundsBeep();
-			}
-		};
-
-		private final Sounds sounds;
-
-		private SoundsSound(Sounds sounds) {
-			this.sounds = sounds;
-		}
-
-		public Sounds getSound() {
-			return sounds;
-		}
-
-		@Override
-		public String toString() {
-			return getText();
-		}
-
-		public abstract String getText();
-	}
-
 	private final List<SoundPanel> soundPanels = new ArrayList<>();
 
 	public SoundsSettingsPanel(final Program program, final SettingsDialog settingsDialog) {
 		super(program, settingsDialog, DialoguesSettings.get().sounds(), Images.MISC_SOUNDS.getIcon());
 
-		soundPanels.add(new SoundPanel(SoundsOption.OUTBID_UPDATE_COMPLETED, SoundsSound.values()));
-		soundPanels.add(new SoundPanel(SoundsOption.INDUSTRY_JOB_COMPLETED, SoundsSound.values()));
+		List<Sound> sounds = new ArrayList<>();
+		sounds.addAll(Arrays.asList(DefaultSound.values()));
+		Sound[] arrSounds = new Sound[sounds.size()];
+
+		sounds.toArray(arrSounds);
+
+		soundPanels.add(new SoundPanel(SoundOption.OUTBID_UPDATE_COMPLETED, arrSounds));
+		soundPanels.add(new SoundPanel(SoundOption.INDUSTRY_JOB_COMPLETED, arrSounds));
 
 		GroupLayout.ParallelGroup horizontalLabels = layout.createParallelGroup(GroupLayout.Alignment.LEADING);
 		GroupLayout.ParallelGroup horizontalComboBoxs = layout.createParallelGroup(GroupLayout.Alignment.LEADING);
@@ -214,14 +128,14 @@ public class SoundsSettingsPanel extends JSettingsPanel {
 	}
 
 	private class SoundPanel {
-		private final SoundsOption option;
+		private final SoundOption option;
 		private final JLabel jLabel;
-		private final JComboBox<SoundsSound> jComboBox;
+		private final JComboBox<Sound> jComboBox;
 		private final JButton jPlay;
 		private final JButton jStop;
-		private SoundsSound playing = null;
+		private Sound playing = null;
 
-		public SoundPanel(SoundsOption key, SoundsSound[] options) {
+		public SoundPanel(SoundOption key, Sound[] options) {
 			this.option = key;
 			jLabel = new JLabel(key.getText());
 			jComboBox = new JComboBox<>(options);
@@ -242,12 +156,12 @@ public class SoundsSettingsPanel extends JSettingsPanel {
 		}
 
 		public void save() {
-			SoundsSound sound = jComboBox.getItemAt(jComboBox.getSelectedIndex());
+			Sound sound = jComboBox.getItemAt(jComboBox.getSelectedIndex());
 			Settings.get().getSoundSettings().put(option, sound);
 		}
 
 		public void load() {
-			SoundsSound sound = Settings.get().getSoundSettings().get(option);
+			Sound sound = Settings.get().getSoundSettings().get(option);
 			if (sound == null) {
 				jComboBox.setSelectedIndex(0);
 			} else {

@@ -33,9 +33,9 @@ public class SoundsTest extends TestUtil {
 
 	@Test
 	public void testExists() {
-		for (Sounds i : Sounds.values()) {
+		for (DefaultSound i : DefaultSound.values()) {
 			try {
-				File file = new File(Sounds.class.getResource(i.getFilename()).toURI());
+				File file = new File(DefaultSound.class.getResource(i.getFilename()).toURI());
 				assertTrue(i.getFilename() + " not found", file.exists());
 			} catch (URISyntaxException ex) {
 				fail(ex.getMessage());
@@ -44,54 +44,22 @@ public class SoundsTest extends TestUtil {
 	}
 
 	@Test
-	public void testPreload() {
-		Sounds.preload();
-	}
-
-	@Test
 	public void testUnused() {
 		try {
-			File dir = new File(Sounds.class.getResource("Sounds.class").toURI()).getParentFile();
-			String[] children = dir.list();
-
-			if (children != null) {
-				for (String filename : children) {
-					if (filename.equals("Sounds.class")
-							|| filename.equals("SoundPlayer$1.class")
-							|| filename.equals("SoundPlayer.class")
-							) {
-						continue;
-					}
-					boolean ok = false;
-					//Images Class
-					for (Sounds i : Sounds.values()) {
-						if (filename.equals(i.getFilename())) {
-							ok = true;
-							break;
-						}
-					}
-					//loading 01-08
-					for (int a = 0; a < 8; a++) {
-						if (filename.equals("loading0" + (a + 1) + ".png")) {
-							ok = true;
-							break;
-						}
-					}
-					//working 01-24
-					for (int a = 0; a < 24; a++) {
-						String number;
-						if ((a + 1) < 10) {
-							number = "0" + (a + 1);
-						} else {
-							number = "" + (a + 1);
-						}
-						if (filename.equals("working" + number + ".png")) {
-							ok = true;
-							break;
-						}
-					}
-					assertTrue(filename + " is not used anywhere", ok);
+			File dir = new File(DefaultSound.class.getResource("DefaultSound.class").toURI()).getParentFile();
+			for (String filename : dir.list()) {
+				if (filename.endsWith(".class")) {
+					continue;
 				}
+				boolean ok = false;
+				//Images Class
+				for (DefaultSound i : DefaultSound.values()) {
+					if (filename.equals(i.getFilename())) {
+						ok = true;
+						break;
+					}
+				}
+				assertTrue(filename + " is not used anywhere", ok);
 			}
 		} catch (URISyntaxException ex) {
 			fail("Directory not found");
@@ -100,9 +68,9 @@ public class SoundsTest extends TestUtil {
 
 	@Test
 	public void testFilenames() {
-		for (Sounds i : Sounds.values()) {
-			String properFilename = i.toString().toLowerCase() + ".wav";
-			if (!properFilename.equals(i.getFilename())) {
+		for (DefaultSound i : DefaultSound.values()) {
+			String properFilename = i.name().toLowerCase() + ".mp3";
+			if (!i.getFilename().isEmpty() && !properFilename.equals(i.getFilename())) {
 				fail(i.toString() + " filename should be " + properFilename + " but is " + i.getFilename());
 			}
 		}

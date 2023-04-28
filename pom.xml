@@ -743,6 +743,10 @@
 			</snapshots>
 			<url>https://maven.nikr.net/</url>
 		</repository>
+		<repository>
+			<id>jitpack.io</id>
+			<url>https://jitpack.io</url>
+		</repository>
 	</repositories>
 
 	<dependencies>
@@ -887,6 +891,11 @@
 			<groupId>com.udojava</groupId>
 			<artifactId>EvalEx</artifactId>
 			<version>2.7</version>
+		</dependency>
+		<dependency>
+			<groupId>com.github.umjammer</groupId>
+			<artifactId>jlayer</artifactId>
+			<version>1.0.2</version>
 		</dependency>
 	</dependencies>
 

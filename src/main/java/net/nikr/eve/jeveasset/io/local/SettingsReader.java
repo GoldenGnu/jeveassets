@@ -67,8 +67,7 @@ import net.nikr.eve.jeveasset.data.settings.UserItem;
 import net.nikr.eve.jeveasset.data.settings.tag.Tag;
 import net.nikr.eve.jeveasset.data.settings.tag.TagColor;
 import net.nikr.eve.jeveasset.data.settings.tag.TagID;
-import net.nikr.eve.jeveasset.gui.dialogs.settings.SoundsSettingsPanel.SoundsOption;
-import net.nikr.eve.jeveasset.gui.dialogs.settings.SoundsSettingsPanel.SoundsSound;
+import net.nikr.eve.jeveasset.gui.dialogs.settings.SoundsSettingsPanel.SoundOption;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.UserNameSettingsPanel.UserName;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.UserPriceSettingsPanel.UserPrice;
 import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
@@ -84,6 +83,8 @@ import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.ResizeMode;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.SimpleColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.View;
+import net.nikr.eve.jeveasset.gui.sounds.DefaultSound;
+import net.nikr.eve.jeveasset.gui.sounds.FileSound;
 import net.nikr.eve.jeveasset.gui.tabs.assets.AssetTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.assets.AssetsTab;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractsExtendedTableFormat;
@@ -912,12 +913,12 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		NodeList soundNodes = colorSettingsElement.getElementsByTagName("sound");
 		for (int a = 0; a < soundNodes.getLength(); a++) {
 			Element soundNode = (Element) soundNodes.item(a);
+			SoundOption option = SoundOption.valueOf(getString(soundNode, "option"));
+			String sound = getString(soundNode, "sound");
 			try {
-				SoundsOption option = SoundsOption.valueOf(getString(soundNode, "option"));
-				SoundsSound sound = SoundsSound.valueOf(getString(soundNode, "sound"));
-				settings.getSoundSettings().put(option, sound);
+				settings.getSoundSettings().put(option, DefaultSound.valueOf(sound));
 			} catch (IllegalArgumentException ex ) {
-				LOG.error(ex.getMessage(), ex);
+				settings.getSoundSettings().put(option, new FileSound(sound));
 			}
 		}
 	}
