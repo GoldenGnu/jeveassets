@@ -62,7 +62,7 @@ import net.nikr.eve.jeveasset.data.settings.types.EditablePriceType;
 import net.nikr.eve.jeveasset.data.settings.types.ItemType;
 import net.nikr.eve.jeveasset.data.settings.types.LastTransactionType;
 import net.nikr.eve.jeveasset.data.settings.types.LocationsType;
-import net.nikr.eve.jeveasset.gui.dialogs.settings.SoundsSettingsPanel.SoundsOption;
+import net.nikr.eve.jeveasset.gui.dialogs.settings.SoundsSettingsPanel.SoundOption;
 import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
 import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.Percent;
@@ -572,7 +572,7 @@ public class ProfileData {
 			updatePrice(industryJob);
 			//Queue Sound
 			if (industryJob.getStatus() == IndustryJobStatus.ACTIVE) {
-				SoundPlayer.playAt(industryJob.getEndDate(), SoundsOption.INDUSTRY_JOB_COMPLETED);
+				SoundPlayer.playAt(industryJob.getEndDate(), SoundOption.INDUSTRY_JOB_COMPLETED);
 			}
 		}
 		//Update Contracts dynamic values
