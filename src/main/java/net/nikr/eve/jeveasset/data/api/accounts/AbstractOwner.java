@@ -97,7 +97,10 @@ public abstract class AbstractOwner implements OwnerType, Comparable<OwnerType> 
 		contracts.putAll(abstractOwner.contracts);
 		assets.addAll(abstractOwner.assets);
 		blueprints.putAll(abstractOwner.blueprints);
+		walletDivisions.putAll(abstractOwner.walletDivisions);
+		assetDivisions.putAll(abstractOwner.assetDivisions);
 		skills.addAll(abstractOwner.skills);
+		mining.addAll(abstractOwner.mining);
 		this.totalSkillPoints = abstractOwner.totalSkillPoints;
 		this.unallocatedSkillPoints = abstractOwner.unallocatedSkillPoints;
 		this.ownerName = abstractOwner.ownerName;
@@ -117,6 +120,8 @@ public abstract class AbstractOwner implements OwnerType, Comparable<OwnerType> 
 		this.locationsNextUpdate = abstractOwner.locationsNextUpdate;
 		this.blueprintsNextUpdate = abstractOwner.blueprintsNextUpdate;
 		this.bookmarksNextUpdate = abstractOwner.bookmarksNextUpdate;
+		this.skillsNextUpdate = abstractOwner.skillsNextUpdate;
+		this.miningNextUpdate = abstractOwner.miningNextUpdate;
 	}
 
 	@Override
