@@ -41,6 +41,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultListModel;
 import javax.swing.JCheckBoxMenuItem;
@@ -408,7 +409,7 @@ public class MiningGraphTab extends JMainTabSecondary {
 		seriesGroup.clear();
 		//dataset
 		Map<String, Set<String>> groupCounts = new HashMap<>();
-		Map<Date, Map<String, Double>> values = new HashMap<>();
+		Map<Date, Map<String, Double>> values = new TreeMap<>();
 		Set<String> names = new HashSet<>();
 		final String grandTotal = TabsMining.get().grandTotal();
 		for (MyMining mining : program.getProfileData().getMiningEventList()) {
