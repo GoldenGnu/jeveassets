@@ -137,4 +137,6 @@
     <row flagid="180" flagname="StructureDeedBay" flagtext="Structure Deed Bay"/>
     <row flagid="181" flagname="SpecializedIceHold" flagtext="Specialized Ice Hold"/>
     <row flagid="182" flagname="SpecializedAsteroidHold" flagtext="Specialized Asteroid Hold"/>
+    <row flagid="183" flagname="MobileDepot" flagtext="Mobile Depot"/>
+    <row flagid="184" flagname="CorpProjectsHangar" flagtext="Corporation Projects Hangar "/>
 </rows>
