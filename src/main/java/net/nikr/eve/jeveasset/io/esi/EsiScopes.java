@@ -51,8 +51,7 @@ public enum EsiScopes {
 	CORPORATION_BOOKMARKS(SsoScopes.ESI_BOOKMARKS_READ_CORPORATION_BOOKMARKS_V1, DialoguesAccount.get().scopeBookmarks(), ScopeType.CORPORATION),
 	CORPORATION_CONTRACTS(SsoScopes.ESI_CONTRACTS_READ_CORPORATION_CONTRACTS_V1, DialoguesAccount.get().scopeContracts(), ScopeType.CORPORATION),
 	CORPORATION_DIVISIONS(SsoScopes.ESI_CORPORATIONS_READ_DIVISIONS_V1, DialoguesAccount.get().scopeDivisions(), ScopeType.CORPORATION),
-	//Not doing corporation mining ledger, yet!
-	//CORPORATION_MINING(SsoScopes.ESI_INDUSTRY_READ_CORPORATION_MINING_V1, DialoguesAccount.get().scopeMining(), ScopeType.CORPORATION),
+	CORPORATION_MINING(SsoScopes.ESI_INDUSTRY_READ_CORPORATION_MINING_V1, DialoguesAccount.get().scopeMining(), ScopeType.CORPORATION),
 	NAMES(), //Public
 	CONQUERABLE_STATIONS(), //Public
 	;

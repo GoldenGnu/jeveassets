@@ -38,6 +38,7 @@ import net.nikr.eve.jeveasset.data.api.my.MyAccountBalance;
 import net.nikr.eve.jeveasset.data.api.my.MyAsset;
 import net.nikr.eve.jeveasset.data.api.my.MyContract;
 import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
+import net.nikr.eve.jeveasset.data.api.my.MyExtraction;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
 import net.nikr.eve.jeveasset.data.api.my.MyJournal;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
@@ -50,6 +51,7 @@ import net.nikr.eve.jeveasset.data.api.raw.RawAsset;
 import net.nikr.eve.jeveasset.data.api.raw.RawBlueprint;
 import net.nikr.eve.jeveasset.data.api.raw.RawContract;
 import net.nikr.eve.jeveasset.data.api.raw.RawContractItem;
+import net.nikr.eve.jeveasset.data.api.raw.RawExtraction;
 import net.nikr.eve.jeveasset.data.api.raw.RawIndustryJob;
 import net.nikr.eve.jeveasset.data.api.raw.RawJournal;
 import net.nikr.eve.jeveasset.data.api.raw.RawJournalRefType;
@@ -922,8 +924,12 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 				Date date = getDate(currentNode, "date");
 				long count = getLong(currentNode, "count");
 				long locationID = getLong(currentNode, "locationid");
-				String characterName = getString(currentNode, "character");
-				String corporationName = getString(currentNode, "corporation");
+				Long characterID = getLongOptional(currentNode, "characterid");
+				if (characterID == null) {
+					characterID = owners.getOwnerID();
+				}
+				String corporationName = getStringOptional(currentNode, "corporation");
+				Long corporationID = getLongOptional(currentNode, "corporationid");
 				boolean forCorporation = getBoolean(currentNode, "forcorp");
 
 				RawMining mining = RawMining.create();
@@ -931,13 +937,34 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 				mining.setDate(date);
 				mining.setCount(count);
 				mining.setLocationID(locationID);
-				mining.setCharacterName(characterName);
+				mining.setCharacterID(characterID);
+				mining.setCorporationID(corporationID);
 				mining.setCorporationName(corporationName);
 				mining.setForCorporation(forCorporation);
 
 				minings.add(DataConverter.toMyMining(mining));
 			}
 			owners.setMining(minings);
+
+			List<MyExtraction> extractions = new ArrayList<>();
+			NodeList extractionNodes = currentMiningsNode.getElementsByTagName("extraction");
+			for (int b = 0; b < extractionNodes.getLength(); b++) {
+				Element currentNode = (Element) extractionNodes.item(b);
+				Date arrival = getDate(currentNode, "arrival");
+				Date start = getDate(currentNode, "start");
+				Date decay = getDate(currentNode, "decay");
+				int moon = getInt(currentNode, "moon");
+				long structure = getLong(currentNode, "structure");
+				
+				RawExtraction mining = RawExtraction.create();
+				mining.setChunkArrivalTime(arrival);
+				mining.setExtractionStartTime(start);
+				mining.setMoonID(moon);
+				mining.setNaturalDecayTime(decay);
+				mining.setStructureID(structure);
+				extractions.add(DataConverter.toMyExtraction(mining));
+			}
+			owners.setExtractions(extractions);
 		}
 	}
 }

@@ -44,6 +44,8 @@ import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJobTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJobsTab;
 import net.nikr.eve.jeveasset.gui.tabs.journal.JournalTab;
 import net.nikr.eve.jeveasset.gui.tabs.journal.JournalTableFormat;
+import net.nikr.eve.jeveasset.gui.tabs.mining.ExtractionsTab;
+import net.nikr.eve.jeveasset.gui.tabs.mining.ExtractionsTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.mining.MiningTab;
 import net.nikr.eve.jeveasset.gui.tabs.mining.MiningTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.orders.MarketOrdersTab;
@@ -99,6 +101,8 @@ public class FilterExportTest extends TestUtil {
 		test(SkillsTab.NAME, SkillsTableFormat.values());
 		//Mining
 		test(MiningTab.NAME, MiningTableFormat.values());
+		//Extractions
+		test(ExtractionsTab.NAME, ExtractionsTableFormat.values());
 	//Secondary Tools
 		//Slots
 		test(SlotsTab.NAME, SlotsTableFormat.values());

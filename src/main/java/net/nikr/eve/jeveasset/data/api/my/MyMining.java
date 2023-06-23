@@ -37,12 +37,21 @@ public class MyMining extends RawMining implements Comparable<MyMining>, InfoIte
 	private final Item item;
 	private MyLocation location;
 	private double price;
+	private String characterName;
 
 	public MyMining(RawMining mining, Item item, MyLocation location) {
 		super(mining);
 		this.dateOnly = new DateOnly(getDate());
 		this.item = item;
 		this.location = location;
+	}
+
+	public String getCharacterName() {
+		return characterName;
+	}
+
+	public void setCharacterName(String characterName) {
+		this.characterName = characterName;
 	}
 
 	@Override
@@ -150,8 +159,8 @@ public class MyMining extends RawMining implements Comparable<MyMining>, InfoIte
 		hash = 17 * hash + Objects.hashCode(this.getDate());
 		hash = 17 * hash + Objects.hashCode(this.getLocationID());
 		hash = 17 * hash + Objects.hashCode(this.getTypeID());
-		hash = 17 * hash + Objects.hashCode(this.getCharacterName());
-		hash = 17 * hash + Objects.hashCode(this.getCorporationName());
+		hash = 17 * hash + Objects.hashCode(this.getCharacterID());
+		hash = 17 * hash + Objects.hashCode(this.isForCorporation());
 		return hash;
 	}
 
@@ -176,9 +185,9 @@ public class MyMining extends RawMining implements Comparable<MyMining>, InfoIte
 		if (!Objects.equals(this.getTypeID(), other.getTypeID())) {
 			return false;
 		}
-		if (!Objects.equals(this.getCharacterName(), other.getCharacterName())) {
+		if (!Objects.equals(this.getCharacterID(), other.getCharacterID())) {
 			return false;
 		}
-		return Objects.equals(this.getCorporationName(), other.getCorporationName());
+		return Objects.equals(this.isForCorporation(), other.isForCorporation());
 	}
 }
