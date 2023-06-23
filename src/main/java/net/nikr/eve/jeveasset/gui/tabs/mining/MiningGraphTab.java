@@ -427,7 +427,8 @@ public class MiningGraphTab extends JMainTabSecondary {
 				values.put(date, map);
 			}
 			names.add(typeName);
-			map.put(typeName, value);
+			Double typeTotal = map.getOrDefault(typeName, 0.0);
+			map.put(typeName, typeTotal + value);
 			//Group Total
 			final String groupName = TabsMining.get().groupTotal(mining.getItem().getGroup());
 			double groupTotal = map.getOrDefault(groupName, 0.0);
