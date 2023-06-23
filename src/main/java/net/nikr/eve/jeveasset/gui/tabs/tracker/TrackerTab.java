@@ -317,6 +317,7 @@ public class TrackerTab extends JMainTabSecondary {
 
 		jShow = new JDropDownButton(TabsTracker.get().show(), Images.LOC_INCLUDE.getIcon());
 		jShow.setHorizontalAlignment(JButton.LEFT);
+		jShow.setIcon(trackerSettings.hasShowOption(ShowOption.ALL) ? Images.LOC_INCLUDE.getIcon() : Images.EDIT_EDIT_WHITE.getIcon());
 
 		jAll = new JCheckBoxMenuItem(General.get().all());
 		jAll.setSelected(trackerSettings.hasShowOption(ShowOption.ALL));
