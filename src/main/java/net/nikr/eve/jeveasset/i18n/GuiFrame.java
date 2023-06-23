@@ -47,6 +47,7 @@ public abstract class GuiFrame extends Bundle {
 	public abstract String exit();
 	public abstract String exitMsg(int size);
 	public abstract String exitTitle(int size);
+	public abstract String extractions();
 	public abstract String file();
 	public abstract String help();
 	public abstract String inventory();

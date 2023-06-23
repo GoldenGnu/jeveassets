@@ -24,6 +24,7 @@ import java.util.Arrays;
 import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
 import net.nikr.eve.jeveasset.data.api.my.MyAsset;
 import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
+import net.nikr.eve.jeveasset.data.api.my.MyExtraction;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
 import net.nikr.eve.jeveasset.data.api.my.MyJournal;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
@@ -46,6 +47,7 @@ import net.nikr.eve.jeveasset.gui.tabs.loadout.LoadoutTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.materials.Material;
 import net.nikr.eve.jeveasset.gui.tabs.materials.MaterialExtendedTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.materials.MaterialTableFormat;
+import net.nikr.eve.jeveasset.gui.tabs.mining.ExtractionsTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.mining.MiningTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.orders.MarketTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.overview.Overview;
@@ -152,5 +154,9 @@ public class TableFormatFactory {
 
 	public static EnumTableFormatAdaptor<MiningTableFormat, MyMining> miningTableFormat() {
 		return new EnumTableFormatAdaptor<>(MiningTableFormat.class);
+	}
+
+	public static EnumTableFormatAdaptor<ExtractionsTableFormat, MyExtraction> extractionsTableFormat() {
+		return new EnumTableFormatAdaptor<>(ExtractionsTableFormat.class);
 	}
 }

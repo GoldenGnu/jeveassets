@@ -33,6 +33,7 @@ import net.nikr.eve.jeveasset.data.api.my.MyAccountBalance;
 import net.nikr.eve.jeveasset.data.api.my.MyAsset;
 import net.nikr.eve.jeveasset.data.api.my.MyContract;
 import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
+import net.nikr.eve.jeveasset.data.api.my.MyExtraction;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
 import net.nikr.eve.jeveasset.data.api.my.MyJournal;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
@@ -196,7 +197,7 @@ public final class ProfileWriter extends AbstractXmlWriter {
 		writeAssetDivisions(xmldoc, node, owner.getAssetDivisions());
 		writeWalletDivisions(xmldoc, node, owner.getWalletDivisions());
 		writeSkills(xmldoc, node, owner.getSkills(), owner.getTotalSkillPoints(), owner.getUnallocatedSkillPoints());
-		writeMining(xmldoc, node, owner.getMining());
+		writeMining(xmldoc, node, owner.getMining(), owner.getExtractions());
 	}
 
 	private void writeAssets(final Document xmldoc, final Element parentNode, final List<MyAsset> assets) {
@@ -492,7 +493,7 @@ public final class ProfileWriter extends AbstractXmlWriter {
 		}
 	}
 
-	private void writeMining(final Document xmldoc, final Element parentNode, final List<MyMining> minings) {
+	private void writeMining(final Document xmldoc, final Element parentNode, final List<MyMining> minings, List<MyExtraction> extractions) {
 		Element node = xmldoc.createElement("minings");
 		parentNode.appendChild(node);
 		for (MyMining mining : minings) {
@@ -501,9 +502,19 @@ public final class ProfileWriter extends AbstractXmlWriter {
 			setAttribute(childNode, "date", mining.getDate());
 			setAttribute(childNode, "count", mining.getCount());
 			setAttribute(childNode, "locationid", mining.getLocationID());
-			setAttribute(childNode, "character", mining.getCharacterName());
-			setAttribute(childNode, "corporation", mining.getCorporationName());
+			setAttribute(childNode, "characterid", mining.getCharacterID());
+			setAttributeOptional(childNode, "corporationid", mining.getCorporationID());
+			setAttributeOptional(childNode, "corporation", mining.getCorporationName());
 			setAttribute(childNode, "forcorp", mining.isForCorporation());
+			node.appendChild(childNode);
+		}
+		for (MyExtraction extraction : extractions) {
+			Element childNode = xmldoc.createElement("extraction");
+			setAttribute(childNode, "arrival", extraction.getChunkArrivalTime());
+			setAttribute(childNode, "start", extraction.getExtractionStartTime());
+			setAttribute(childNode, "moon", extraction.getMoonID());
+			setAttribute(childNode, "decay", extraction.getNaturalDecayTime());
+			setAttribute(childNode, "structure", extraction.getStructureID());
 			node.appendChild(childNode);
 		}
 	}
