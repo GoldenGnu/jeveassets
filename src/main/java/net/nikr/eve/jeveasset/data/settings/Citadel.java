@@ -29,6 +29,7 @@ public class Citadel {
 		ESI_STRUCTURES(3), //Certified fresh
 		ESI_LOCATIONS(3), //Good source
 		ESI_PLANET(3), //Planet source
+		ESI_MOON(3), //Moon source
 		FUZZWORK_PLANET(3), //Planet source
 		USER(2), //User set this data (unless we have top-notch info, don't overwrite)
 		ZKILL(1), //Outdated source

@@ -20,16 +20,28 @@
  */
 package net.nikr.eve.jeveasset.io.esi;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
+import net.nikr.eve.jeveasset.data.sde.MyLocation;
+import net.nikr.eve.jeveasset.data.settings.Citadel;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import static net.nikr.eve.jeveasset.io.esi.AbstractEsiGetter.DATASOURCE;
 import static net.nikr.eve.jeveasset.io.esi.AbstractEsiGetter.DEFAULT_RETRIES;
+import net.nikr.eve.jeveasset.io.online.CitadelGetter;
+import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import net.troja.eve.esi.ApiException;
 import net.troja.eve.esi.ApiResponse;
 import net.troja.eve.esi.model.CharacterMiningResponse;
 import net.troja.eve.esi.model.CharacterRolesResponse.RolesEnum;
+import net.troja.eve.esi.model.CorporationMiningExtractionsResponse;
+import net.troja.eve.esi.model.CorporationMiningObserverResponse;
+import net.troja.eve.esi.model.CorporationMiningObserversResponse;
+import net.troja.eve.esi.model.MoonResponse;
 
 public class EsiMiningGetter extends AbstractEsiGetter {
 
@@ -43,50 +55,56 @@ public class EsiMiningGetter extends AbstractEsiGetter {
 	@Override
 	protected void update() throws ApiException {
 		if (owner.isCorporation()) {
-			//Not doing corporation mining ledger, yet!
-			/*
+			//Moon Extractions
 			List<CorporationMiningExtractionsResponse> extractions = updatePages(DEFAULT_RETRIES, new EsiPagesHandler<CorporationMiningExtractionsResponse>() {
 				@Override
 				public ApiResponse<List<CorporationMiningExtractionsResponse>> get(Integer page) throws ApiException {
 					return getIndustryApiAuth().getCorporationCorporationIdMiningExtractionsWithHttpInfo((int) owner.getOwnerID(), DATASOURCE, null, page, null);
 				}
 			});
-			//owner.setAssets(EsiConverter.toAssetsCorporation(extractions, owner));
+			//Moon Locations
+			Set<Integer> moonIDs = new HashSet<>();
+			for (CorporationMiningExtractionsResponse response : extractions) { //For each planet
+				Integer planetID = response.getMoonId();
+				MyLocation location = ApiIdConverter.getLocation(planetID);
+				if (location.isEmpty()) {
+					moonIDs.add(planetID);
+				}
+			}
+			Map<Integer, MoonResponse> locationResponses = updateList(moonIDs, DEFAULT_RETRIES, new ListHandler<Integer, MoonResponse>() {
+				@Override
+				protected ApiResponse<MoonResponse> get(Integer planetID) throws ApiException {
+					return getUniverseApiOpen().getUniverseMoonsMoonIdWithHttpInfo(planetID, DATASOURCE, null);
+				}
+			});
+			List<Citadel> citadels = new ArrayList<>();
+			for (MoonResponse moon : locationResponses.values()) {
+				Citadel citadel = ApiIdConverter.getCitadel(moon);
+				if (citadel != null) {
+					citadels.add(citadel);
+				}
+			}
+			CitadelGetter.set(citadels);
+			owner.setExtractions(EsiConverter.toExtraction(extractions, owner, saveHistory)); //Must be after the moon location update
+			//Mining Ledger
 			List<CorporationMiningObserversResponse> observers = updatePages(DEFAULT_RETRIES, new EsiPagesHandler<CorporationMiningObserversResponse>() {
 				@Override
 				public ApiResponse<List<CorporationMiningObserversResponse>> get(Integer page) throws ApiException {
 					return getIndustryApiAuth().getCorporationCorporationIdMiningObserversWithHttpInfo((int) owner.getOwnerID(), DATASOURCE, null, page, null);
 				}
 			});
-			Set<Long> observerIDs = new HashSet<>();
-			for (CorporationMiningObserversResponse observersResponse : observers) {
-				observerIDs.add(observersResponse.getObserverId());
-			}
-			Map<Long, List<CorporationMiningObserverResponse>> miningObservers = updatePagedMap(observerIDs, new PagedListHandler<Long, CorporationMiningObserverResponse>() {
+			Map<CorporationMiningObserversResponse, List<CorporationMiningObserverResponse>> miningObservers = updatePagedMap(observers, new PagedListHandler<CorporationMiningObserversResponse, CorporationMiningObserverResponse>() {
 				@Override
-				protected List<CorporationMiningObserverResponse> get(Long observerID) throws ApiException {
+				protected List<CorporationMiningObserverResponse> get(CorporationMiningObserversResponse observer) throws ApiException {
 					return updatePages(DEFAULT_RETRIES, new EsiPagesHandler<CorporationMiningObserverResponse>() {
 						@Override
 						public ApiResponse<List<CorporationMiningObserverResponse>> get(Integer page) throws ApiException {
-							return getIndustryApiAuth().getCorporationCorporationIdMiningObserversObserverIdWithHttpInfo((int) owner.getOwnerID(), observerID, DATASOURCE, null, page, null);
+							return getIndustryApiAuth().getCorporationCorporationIdMiningObserversObserverIdWithHttpInfo((int) owner.getOwnerID(), observer.getObserverId(), DATASOURCE, null, page, null);
 						}
 					});
 				}
 			});
-
-			List<CorporationMiningObserverResponse> miningObservers = updatePagedList(observerIDs, new PagedListHandler<Long, CorporationMiningObserverResponse>() {
-				@Override
-				protected List<CorporationMiningObserverResponse> get(Long observerID) throws ApiException {
-					return updatePages(DEFAULT_RETRIES, new EsiPagesHandler<CorporationMiningObserverResponse>() {
-						@Override
-						public ApiResponse<List<CorporationMiningObserverResponse>> get(Integer page) throws ApiException {
-							return getIndustryApiAuth().getCorporationCorporationIdMiningObserversObserverIdWithHttpInfo((int) owner.getOwnerID(), observerID, DATASOURCE, null, page, null);
-						}
-					});
-				}
-			});
-			*/
-			//owner.setMining(EsiConverter.toMiningCorporation(miningObservers, owner, true));
+			owner.setMining(EsiConverter.toMining(miningObservers, owner, true));
 		} else {
 			List<CharacterMiningResponse> responses = updatePages(DEFAULT_RETRIES, new EsiPagesHandler<CharacterMiningResponse>() {
 				@Override
@@ -110,12 +128,9 @@ public class EsiMiningGetter extends AbstractEsiGetter {
 
 	@Override
 	protected RolesEnum[] getRequiredRoles() {
-		return null;
-		//Not doing corporation mining ledger, yet!
-		/*
 		RolesEnum[] roles = {RolesEnum.DIRECTOR, RolesEnum.ACCOUNTANT, RolesEnum.STATION_MANAGER};
 		return roles;
-		*/
+
 	}
 
 }

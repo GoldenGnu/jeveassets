@@ -32,6 +32,7 @@ import net.nikr.eve.jeveasset.data.api.my.MyAsset;
 import net.nikr.eve.jeveasset.data.api.my.MyContainerLog;
 import net.nikr.eve.jeveasset.data.api.my.MyContract;
 import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
+import net.nikr.eve.jeveasset.data.api.my.MyExtraction;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
 import net.nikr.eve.jeveasset.data.api.my.MyJournal;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
@@ -57,6 +58,7 @@ public abstract class AbstractOwner implements OwnerType, Comparable<OwnerType> 
 	private Map<Integer, String> assetDivisions = new HashMap<>();
 	private List<MySkill> skills = new ArrayList<>();
 	private List<MyMining> mining = new ArrayList<>();
+	private List<MyExtraction> extractions = new ArrayList<>();
 	private Long totalSkillPoints = null;
 	private Integer unallocatedSkillPoints = null;
 	private List<MyContainerLog> containerLogs = new ArrayList<>();
@@ -407,6 +409,11 @@ public abstract class AbstractOwner implements OwnerType, Comparable<OwnerType> 
 	}
 
 	@Override
+	public List<MyExtraction> getExtractions() {
+		return extractions;
+	}
+
+	@Override
 	public Long getTotalSkillPoints() {
 		return totalSkillPoints;
 	}
@@ -509,6 +516,11 @@ public abstract class AbstractOwner implements OwnerType, Comparable<OwnerType> 
 	@Override
 	public void setMining(List<MyMining> mining) {
 		this.mining = mining;
+	}
+
+	@Override
+	public void setExtractions(List<MyExtraction> extractions) {
+		this.extractions = extractions;
 	}
 
 	@Override

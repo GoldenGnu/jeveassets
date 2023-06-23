@@ -30,6 +30,7 @@ import net.nikr.eve.jeveasset.data.api.my.MyContract;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
 import net.nikr.eve.jeveasset.data.api.my.MyJournal;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
+import net.nikr.eve.jeveasset.data.api.my.MyMining;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.api.raw.RawContainerLog;
 import net.nikr.eve.jeveasset.data.api.raw.RawJournal.ContextType;
@@ -56,7 +57,7 @@ public class EsiNameGetter extends AbstractEsiGetter {
 	@Override
 	protected void update() throws ApiException {
 		Set<Integer> ids = getOwnerIDs(ownerTypes);
-		Map<List<Integer>, List<UniverseNamesResponse>> responses = updateList(splitList(ids, UNIVERSE_BATCH_SIZE), NO_RETRIES, new ListHandler<List<Integer>, List<UniverseNamesResponse>>() {
+		Map<List<Integer>, List<UniverseNamesResponse>> responses = updateList(splitList(ids, UNIVERSE_BATCH_SIZE), DEFAULT_RETRIES, new ListHandler<List<Integer>, List<UniverseNamesResponse>>() {
 			@Override
 			public ApiResponse<List<UniverseNamesResponse>> get(List<Integer> t) throws ApiException {
 				try {
@@ -79,7 +80,7 @@ public class EsiNameGetter extends AbstractEsiGetter {
 			}
 			retries.removeAll(entry.getKey());
 		}
-		Map<List<Integer>, List<UniverseNamesResponse>> retryResponses = updateList(splitList(retries, 1), NO_RETRIES, new ListHandler<List<Integer>, List<UniverseNamesResponse>>() {
+		Map<List<Integer>, List<UniverseNamesResponse>> retryResponses = updateList(splitList(retries, 1), DEFAULT_RETRIES, new ListHandler<List<Integer>, List<UniverseNamesResponse>>() {
 			@Override
 			public ApiResponse<List<UniverseNamesResponse>> get(List<Integer> t) throws ApiException {
 				try {
@@ -136,8 +137,12 @@ public class EsiNameGetter extends AbstractEsiGetter {
 						|| contextType == ContextType.CORPORATION_ID
 						) {
 					addOwnerID(list, journal.getContextID());
-				}
 			}
+			for (MyMining mining : ownerType.getMining()) {
+				addOwnerID(list, mining.getCharacterID());
+				addOwnerID(list, mining.getCorporationID());
+			}
+		}
 			for (RawContainerLog containerLog : ownerType.getContainerLogs()) {
 				addOwnerID(list, containerLog.getCharacterID());
 			}

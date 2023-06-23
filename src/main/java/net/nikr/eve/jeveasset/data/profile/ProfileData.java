@@ -39,6 +39,7 @@ import net.nikr.eve.jeveasset.data.api.my.MyBlueprint;
 import net.nikr.eve.jeveasset.data.api.my.MyContainerLog;
 import net.nikr.eve.jeveasset.data.api.my.MyContract;
 import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
+import net.nikr.eve.jeveasset.data.api.my.MyExtraction;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
 import net.nikr.eve.jeveasset.data.api.my.MyJournal;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
@@ -90,6 +91,7 @@ public class ProfileData {
 	private final EventList<MyContract> contractEventList = EventListManager.create();
 	private final EventList<MySkill> skillsEventList = EventListManager.create();
 	private final EventList<MyMining> miningEventList = EventListManager.create();
+	private final EventList<MyExtraction> extractionsEventList = EventListManager.create();
 	private final List<MyContractItem> contractItemList = new ArrayList<>();
 	private final List<MyIndustryJob> industryJobsList = new ArrayList<>();
 	private final List<MyMarketOrder> marketOrdersList = new ArrayList<>();
@@ -158,6 +160,10 @@ public class ProfileData {
 
 	public EventList<MyMining> getMiningEventList() {
 		return miningEventList;
+	}
+
+	public EventList<MyExtraction> getExtractionsEventList() {
+		return extractionsEventList;
 	}
 
 	public List<MyContractItem> getContractItemList() {
@@ -410,6 +416,7 @@ public class ProfileData {
 		Set<MyContract> contracts = new HashSet<>();
 		Set<MySkill> skills = new HashSet<>();
 		Set<MyMining> minings = new HashSet<>();
+		Set<MyExtraction> extractions = new HashSet<>();
 		Map<Long, OwnerType> blueprintsMap = new HashMap<>();
 		Map<Long, MyBlueprint> blueprints = new HashMap<>();
 		Map<String, Long> skillPointsTotalCache = new HashMap<>();
@@ -512,6 +519,8 @@ public class ProfileData {
 			}
 			//Mining
 			minings.addAll(owner.getMining());
+			//Extractions
+			extractions.addAll(owner.getExtractions());
 			//Container Logs
 			containerLogsList.addAll(owner.getContainerLogs());
 			for (MyContainerLog containerLog : owner.getContainerLogs()) {
@@ -648,6 +657,14 @@ public class ProfileData {
 		}
 		AddedData.getJournals().commitQueue();
 
+		//Update Mining dynamic values
+		for (MyMining mining : minings) {
+			mining.setCharacterName(ApiIdConverter.getOwnerName(mining.getCharacterID()));
+			if (mining.getCorporationID() != null && mining.getCorporationName() == null) {
+				mining.setCorporationName(ApiIdConverter.getOwnerName(mining.getCorporationID()));
+			}
+		}
+
 		//Update Items dynamic values
 		for (Item item : StaticData.get().getItems().values()) {
 			item.setPriceReprocessed(ApiIdConverter.getPriceReprocessed(item));
@@ -682,6 +699,7 @@ public class ProfileData {
 		editableLocationTypes.addAll(transactions);
 		editableLocationTypes.addAll(industryJobs);
 		editableLocationTypes.addAll(minings);
+		editableLocationTypes.addAll(extractions);
 		for (EditableLocationType editableLocationType : editableLocationTypes) {
 			editableLocationType.setLocation(ApiIdConverter.getLocation(editableLocationType.getLocationID()));
 		}
@@ -841,6 +859,18 @@ public class ProfileData {
 					miningEventList.addAll(minings);
 				} finally {
 					miningEventList.getReadWriteLock().writeLock().unlock();
+				}
+			}
+		});
+		Program.ensureEDT(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					extractionsEventList.getReadWriteLock().writeLock().lock();
+					extractionsEventList.clear();
+					extractionsEventList.addAll(extractions);
+				} finally {
+					extractionsEventList.getReadWriteLock().writeLock().unlock();
 				}
 			}
 		});

@@ -248,6 +248,7 @@ public enum Images {
 	TOOL_MINING ("tool_mining.png"),
 	TOOL_MINING_LOG ("tool_mining_log.png"),
 	TOOL_MINING_GRAPH ("tool_mining_graph.png"),
+	TOOL_EXTRACTIONS ("tool_extractions.png"),
 	TOOL_LOG ("tool_log.png"),
 
 	UPDATE_NOT_STARTED ("update_not_started.png"),

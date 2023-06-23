@@ -56,6 +56,7 @@ import net.troja.eve.esi.model.CharacterBookmarkItem;
 import net.troja.eve.esi.model.CharacterBookmarksResponse;
 import net.troja.eve.esi.model.CorporationBookmarkItem;
 import net.troja.eve.esi.model.CorporationBookmarksResponse;
+import net.troja.eve.esi.model.MoonResponse;
 import net.troja.eve.esi.model.PlanetResponse;
 import net.troja.eve.esi.model.StructureResponse;
 
@@ -458,6 +459,10 @@ public final class ApiIdConverter {
 
 	public static Citadel getCitadel(PlanetResponse planet) {
 		return new Citadel(planet.getPlanetId(), planet.getName(), planet.getSystemId(), false, false, CitadelSource.ESI_PLANET);
+	}
+
+	public static Citadel getCitadel(MoonResponse planet) {
+		return new Citadel(planet.getMoonId(), planet.getName(), planet.getSystemId(), false, false, CitadelSource.ESI_MOON);
 	}
 
 }
