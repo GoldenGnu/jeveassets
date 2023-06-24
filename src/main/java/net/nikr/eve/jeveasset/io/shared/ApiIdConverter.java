@@ -304,20 +304,49 @@ public final class ApiIdConverter {
 	 * @return 
 	 */
 	public static double getPriceManufacturing(Item item) {
-		final boolean debug = false;
+		return getPriceManufacturing(Settings.get().getManufacturingSettings(), item);
+	}
+
+	protected static double getPriceManufacturing(ManufacturingSettings manufacturingSettings, Item item) {
 		//Installation Fee
-		Double baseCost = Settings.get().getManufacturingSettings().getPrices().get(item.getTypeID());
+		Double baseCost = manufacturingSettings.getPrices().get(item.getTypeID());
 		if (baseCost == null) {
 			return 0;
 		}
-		int systemID = Settings.get().getManufacturingSettings().getSystemID();
-		Float systemIndex = Settings.get().getManufacturingSettings().getSystems().get(systemID);
+		int systemID = manufacturingSettings.getSystemID();
+		Float systemIndex = manufacturingSettings.getSystems().get(systemID);
 		if (systemIndex == null) {
 			return 0.1;
 		}
-		ManufacturingFacility facility = Settings.get().getManufacturingSettings().getFacility();
+		double installationFee = getManufacturingInstallationFee(manufacturingSettings, systemIndex, baseCost, item);
+		//Materials Cost
+		double materialCost = 0;
+		Item blueprint = getItem(item.getBlueprintTypeID());
+		for (IndustryMaterial material : blueprint.getManufacturingMaterials()) {
+			double quantity = getManufacturingQuantity(manufacturingSettings, material.getQuantity());
+			double price = getPriceManufacturing(material.getTypeID());
+			materialCost = materialCost + (price * quantity);
+			/*
+			if (item.getTypeName().endsWith("Dominix")) {
+				System.out.println("	q=" + material.getQuantity() + " qmod=" + quantity + " p=" + price);
+			}
+			*/
+		}
+		/*
+		if (item.getTypeName().endsWith("Dominix")) {
+			System.out.println("	materialCost: " + Formatter.iskFormat(materialCost));
+			System.out.println("	baseCost: " + Formatter.iskFormat(baseCost));
+			System.out.println("	Fee: " + Formatter.iskFormat(installationFee));
+		}
+		*/
+		return installationFee + materialCost;
+	}
+
+	protected static double getManufacturingInstallationFee(ManufacturingSettings manufacturingSettings, Float systemIndex, Double baseCost, Item item) {
+		//Installation Fee
+		ManufacturingFacility facility = manufacturingSettings.getFacility();
 		double bonuses = percentToBonus(facility.getFeeBonus());
-		double tax = Settings.get().getManufacturingSettings().getTax() / 100;
+		double tax = manufacturingSettings.getTax() / 100;
 		double scc = 0.25 / 100;
 
 		//TIF = EIV * ((SCI * bonuses) + FacilityTax + SCC + AlphaClone) 
@@ -327,29 +356,10 @@ public final class ApiIdConverter {
 		//SCC: SCC surcharge, this is a fixed value and cannot be affected by anything 
 		//Bonuses: Any bonuses that are applicable 
 		//AlphaClone: Tax applicable to alpha clones, set at 0.25% (Just add to tax)
-		double installationFee = baseCost * ((systemIndex * bonuses) + tax + scc); 
-
-		//Materials Cost
-		double materialCost = 0;
-		Item blueprint = getItem(item.getBlueprintTypeID());
-		for (IndustryMaterial material : blueprint.getManufacturingMaterials()) {
-			double quantity = getManufacturingQuantity(material.getQuantity());
-			double price = getPriceManufacturing(material.getTypeID());
-			materialCost = materialCost + (price * quantity);
-			if (debug && item.getTypeName().endsWith("Dominix")) {
-				System.out.println("	q=" + material.getQuantity() + " qmod=" + quantity + " p=" + price);
-			}
-		}
-		if (debug && item.getTypeName().endsWith("Dominix")) {
-			System.out.println("	materialCost: " + Formatter.iskFormat(materialCost));
-			System.out.println("	baseCost: " + Formatter.iskFormat(baseCost));
-			System.out.println("	Fee: " + Formatter.iskFormat(installationFee));
-		}
-		return installationFee + materialCost;
+		return baseCost * ((systemIndex * bonuses) + tax + scc); 
 	}
 
-	private static double getManufacturingQuantity(int quantity) {
-		ManufacturingSettings manufacturingSettings = Settings.get().getManufacturingSettings();
+	private static double getManufacturingQuantity(ManufacturingSettings manufacturingSettings, int quantity) {
 		int me = manufacturingSettings.getMaterialEfficiency();
 		ManufacturingFacility facility = manufacturingSettings.getFacility();
 		ManufacturingRigs rigs = manufacturingSettings.getRigs();
@@ -369,12 +379,12 @@ public final class ApiIdConverter {
 	 */
 	public static double getManufacturingQuantity(int quantity, int me, ManufacturingFacility facility, ManufacturingRigs rigs, ManufacturingSecurity security, double runs) {
 		//base * ((100-ME)/100) * (EC modifier) * (EC Rig modifier))
-		return roundManufactoringQuantity(quantity * percentToBonus(me) * percentToBonus(facility.getMaterialBonus()) * rigToBonus(rigs, security), runs);
+		return roundManufacturingQuantity(quantity * percentToBonus(me) * percentToBonus(facility.getMaterialBonus()) * rigToBonus(rigs, security), runs);
 	}
 
-	private static double roundManufactoringQuantity(double manufactoringQuantity, double runs) {
+	private static double roundManufacturingQuantity(double manufacturingQuantity, double runs) {
 		//max(runs,ceil(round((base * ((100-ME)/100) * (EC modifier) * (EC Rig modifier))*runs,2)))
-		return Math.max(runs, Math.ceil(roundQuantity(manufactoringQuantity, 2)) * runs);
+		return Math.max(runs, Math.ceil(roundQuantity(manufacturingQuantity, 2)) * runs);
 	}
 
 	private static double percentToBonus(double value) {
