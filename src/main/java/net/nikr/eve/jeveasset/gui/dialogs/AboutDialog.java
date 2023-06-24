@@ -147,6 +147,9 @@ public class AboutDialog extends JDialogCentered {
 
 		JScrollPane jInfoScroll = new JScrollPane(jInfo, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
+		JLabel jPartner = new JLabel();
+		jPartner.setIcon(Images.MISC_PARTNER.getIcon());
+
 		jClose = new JButton(DialoguesAbout.get().close());
 		jClose.setActionCommand(AboutAction.CLOSE.name());
 		jClose.addActionListener(listener);
@@ -155,12 +158,13 @@ public class AboutDialog extends JDialogCentered {
 			layout.createParallelGroup(GroupLayout.Alignment.LEADING)
 				.addGroup(layout.createSequentialGroup()
 					.addComponent(jIcon)
-					.addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-						.addComponent(jProgram)
-						.addComponent(jClose, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
-					)
+					.addComponent(jProgram)
 				)
-				.addComponent(jInfoScroll)
+				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
+					.addComponent(jInfoScroll)
+					.addComponent(jPartner, 300, 300, 300)
+					.addComponent(jClose, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
+				)
 		);
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
@@ -169,6 +173,7 @@ public class AboutDialog extends JDialogCentered {
 					.addComponent(jProgram)
 				)
 				.addComponent(jInfoScroll, 300, 300, 300)
+				.addComponent(jPartner, 50, 50, 50)
 				.addComponent(jClose, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 		);
 	}
