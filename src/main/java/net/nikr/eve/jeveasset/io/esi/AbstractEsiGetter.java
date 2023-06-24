@@ -72,6 +72,7 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner> {
 	private static final CharacterApi CHARACTER_API = new CharacterApi(PUBLIC_CLIENT);
 	private static final ContractsApi CONTRACTS_API = new ContractsApi(PUBLIC_CLIENT);
 	private static final MarketApi MARKET_API = new MarketApi(PUBLIC_CLIENT);
+	private static final IndustryApi INDUSTRY_API = new IndustryApi(PUBLIC_CLIENT);
 	private static final FactionWarfareApi FACTION_WARFARE_API = new FactionWarfareApi(PUBLIC_CLIENT);
 	public static final UserInterfaceApi USER_INTERFACE_API = new UserInterfaceApi(PUBLIC_CLIENT);
 	public static final String DATASOURCE = "tranquility";
@@ -319,6 +320,10 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner> {
 
 	public static ContractsApi getContractsApiOpen() {
 		return CONTRACTS_API;
+	}
+
+	public static IndustryApi getIndustryApiOpen() {
+		return INDUSTRY_API;
 	}
 
 	protected final <K, V> Map<K, V> updateListSlow(Collection<K> list, boolean trackProgress, int maxRetries, ListHandlerSlow<K, V> handler) throws ApiException {

@@ -274,6 +274,20 @@ public enum AssetTableFormat implements EnumTableColumn<MyAsset> {
 			return from.getPriceReprocessed();
 		}
 	},
+	PRICE_MANUFACTURING(Double.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsAssets.get().columnPriceManufacturing();
+		}
+		@Override
+		public String getColumnToolTip() {
+			return TabsAssets.get().columnPriceManufacturingToolTip();
+		}
+		@Override
+		public Object getColumnValue(final MyAsset from) {
+			return from.getItem().getPriceManufacturing();
+		}
+	},
 	TRANSACTION_PRICE_LATEST(Double.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
