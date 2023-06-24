@@ -22,6 +22,9 @@ Developers:
   Niklas Kyster Rasmussen (Golden Gnu)
   Dultas
 
+Tester:
+  Huzid
+
 Contributors:
   Flaming Candle
   Jochen Bedersdorfer
