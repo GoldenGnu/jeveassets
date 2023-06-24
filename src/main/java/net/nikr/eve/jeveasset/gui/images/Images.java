@@ -190,6 +190,7 @@ public enum Images {
 	MISC_SOUNDS ("misc_sounds.png"),
 	MISC_PLAY ("misc_play.png"),
 	MISC_STOP ("misc_stop.png"),
+	MISC_PARTNER ("misc_partner.png"),
 
 	SETTINGS_TOOLS ("settings_tools.png"),
 	SETTINGS_PRICE_DATA ("settings_price_data.png"),
