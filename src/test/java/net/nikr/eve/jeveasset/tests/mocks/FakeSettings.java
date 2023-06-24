@@ -31,6 +31,7 @@ import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder.MarketOrderRange;
 import net.nikr.eve.jeveasset.data.settings.ColorSettings;
 import net.nikr.eve.jeveasset.data.settings.CopySettings;
 import net.nikr.eve.jeveasset.data.settings.ExportSettings;
+import net.nikr.eve.jeveasset.data.settings.ManufacturingSettings;
 import net.nikr.eve.jeveasset.data.settings.MarketOrdersSettings;
 import net.nikr.eve.jeveasset.data.settings.PriceData;
 import net.nikr.eve.jeveasset.data.settings.PriceDataSettings;
@@ -709,6 +710,21 @@ public abstract class FakeSettings extends Settings {
 
 	@Override
 	public Map<SoundOption, Sound> getSoundSettings() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public void setManufacturingDefault(boolean manufacturingDefault) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public boolean isManufacturingDefault() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public ManufacturingSettings getManufacturingSettings() {
 		throw new UnsupportedOperationException("not implemented");
 	}
 }
