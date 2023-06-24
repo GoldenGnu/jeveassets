@@ -50,6 +50,7 @@ import net.nikr.eve.jeveasset.data.api.raw.RawBlueprint;
 import net.nikr.eve.jeveasset.data.api.raw.RawIndustryJob.IndustryJobStatus;
 import net.nikr.eve.jeveasset.data.api.raw.RawJournalRefType;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder.Change;
+import net.nikr.eve.jeveasset.data.sde.IndustryMaterial;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.sde.ReprocessedMaterial;
@@ -111,6 +112,7 @@ public class ProfileData {
 	private Map<Long, Double> marketOrdersBrokersFee; //OrderID : long
 	private final List<String> ownerNames = new ArrayList<>();
 	private final Map<Long, OwnerType> owners = new HashMap<>();
+	private Set<Integer> staticTypeIDs = null;
 
 	public ProfileData(ProfileManager profileManager) {
 		this.profileManager = profileManager;
@@ -284,16 +286,27 @@ public class ProfileData {
 				}
 			}
 		}
-		//Add reprocessed items to price queue
-		for (Item item : StaticData.get().getItems().values()) {
-			for (ReprocessedMaterial reprocessedMaterial : item.getReprocessedMaterial()) {
-				int typeID = reprocessedMaterial.getTypeID();
-				Item reprocessedItem = ApiIdConverter.getItem(typeID);
-				if (reprocessedItem.isMarketGroup()) {
-					priceTypeIDs.add(typeID);
+		//Add reprocessed and manufacturing items to the price queue
+		if (staticTypeIDs == null) {
+			staticTypeIDs = new HashSet<>();
+			for (Item item : StaticData.get().getItems().values()) {
+				for (ReprocessedMaterial reprocessedMaterial : item.getReprocessedMaterial()) {
+					int typeID = reprocessedMaterial.getTypeID();
+					Item reprocessedItem = ApiIdConverter.getItem(typeID);
+					if (reprocessedItem.isMarketGroup()) {
+						staticTypeIDs.add(typeID);
+					}
+				}
+				for (IndustryMaterial industryMaterial : item.getManufacturingMaterials()) {
+					int typeID = industryMaterial.getTypeID();
+					Item reprocessedItem = ApiIdConverter.getItem(typeID);
+					if (reprocessedItem.isMarketGroup()) {
+						staticTypeIDs.add(typeID);
+					}
 				}
 			}
 		}
+		priceTypeIDs.addAll(staticTypeIDs);
 		return priceTypeIDs;
 	}
 
@@ -379,7 +392,10 @@ public class ProfileData {
 			double beforeMax = item.getPriceReprocessedMax();
 			double priceMax = ApiIdConverter.getPriceReprocessedMax(item);
 			item.setPriceReprocessedMax(priceMax);
-			if (before != price || beforeMax != priceMax) {
+			double beforeManufacturing = item.getPriceManufacturing();
+			double priceManufacturing = ApiIdConverter.getPriceManufacturing(item);
+			item.setPriceManufacturing(priceManufacturing);
+			if (before != price || beforeMax != priceMax || beforeManufacturing != priceManufacturing) {
 				typeIDs.add(item.getTypeID());
 			}
 		}
@@ -669,6 +685,7 @@ public class ProfileData {
 		for (Item item : StaticData.get().getItems().values()) {
 			item.setPriceReprocessed(ApiIdConverter.getPriceReprocessed(item));
 			item.setPriceReprocessedMax(ApiIdConverter.getPriceReprocessedMax(item));
+			item.setPriceManufacturing(ApiIdConverter.getPriceManufacturing(item));
 		}
 
 		Map<Long, Date> assetAdded = AddedData.getAssets().getAll();

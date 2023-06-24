@@ -46,10 +46,10 @@ public abstract class TabsStockpile extends Bundle {
 	public abstract String addStockpileTitle();
 	public abstract String addToNewStockpile();
 	public abstract String addToStockpile();
-	public abstract String blueprintEngineeringComplex();
 	public abstract String blueprintFacility();
 	public abstract String blueprintMe();
-	public abstract String blueprintPercent();
+	public abstract String blueprintRigs();
+	public abstract String blueprintSecurity();
 	public abstract String blueprintType();
 	public abstract String blueprints();
 	public abstract String cancel();

@@ -48,6 +48,10 @@ import net.nikr.eve.jeveasset.data.settings.ExportSettings.DecimalSeparator;
 import net.nikr.eve.jeveasset.data.settings.ExportSettings.ExportFormat;
 import net.nikr.eve.jeveasset.data.settings.ExportSettings.FilterSelection;
 import net.nikr.eve.jeveasset.data.settings.ExportSettings.LineDelimiter;
+import net.nikr.eve.jeveasset.data.settings.ManufacturingSettings;
+import net.nikr.eve.jeveasset.data.settings.ManufacturingSettings.ManufacturingFacility;
+import net.nikr.eve.jeveasset.data.settings.ManufacturingSettings.ManufacturingRigs;
+import net.nikr.eve.jeveasset.data.settings.ManufacturingSettings.ManufacturingSecurity;
 import net.nikr.eve.jeveasset.data.settings.MarketOrdersSettings;
 import net.nikr.eve.jeveasset.data.settings.PriceDataSettings;
 import net.nikr.eve.jeveasset.data.settings.PriceDataSettings.PriceMode;
@@ -306,6 +310,12 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 	private Settings loadSettings(final Element element, final Settings settings) throws XmlException {
 		if (!element.getNodeName().equals("settings")) {
 			throw new XmlException("Wrong root element name.");
+		}
+
+		//Manufacturing Prices
+		Element manufacturingElement = getNodeOptional(element, "manufacturing");
+		if (manufacturingElement != null) {
+			parseManufacturingPriceSettings(manufacturingElement, settings);
 		}
 
 		//Price History
@@ -860,6 +870,60 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		Collections.sort(stockpiles);
 	}
 
+	private void parseManufacturingPriceSettings(Element manufacturingElement, Settings settings) throws XmlException {
+		ManufacturingSettings manufacturingSettings = settings.getManufacturingSettings();
+		Date nextUpdate = getDate(manufacturingElement, "nextupdate");
+		ManufacturingFacility facility;
+		try {
+			facility = ManufacturingFacility.valueOf(getString(manufacturingElement, "facility"));
+		} catch (IllegalArgumentException ex) {
+			facility = ManufacturingFacility.getDefault();
+		}
+		ManufacturingRigs rigs;
+		try {
+			rigs = ManufacturingRigs.valueOf(getString(manufacturingElement, "rigs"));
+		} catch (IllegalArgumentException ex) {
+			rigs = ManufacturingRigs.getDefault();
+		}
+		ManufacturingSecurity security;
+		try {
+			security = ManufacturingSecurity.valueOf(getString(manufacturingElement, "security"));
+		} catch (IllegalArgumentException ex) {
+			security = ManufacturingSecurity.getDefault();
+		}
+		int system = getInt(manufacturingElement, "systemid");
+		int materialEfficiency = getInt(manufacturingElement, "me");
+		double tax = getDouble(manufacturingElement, "tax");
+		manufacturingSettings.setNextUpdate(nextUpdate);
+		manufacturingSettings.setFacility(facility);
+		manufacturingSettings.setRigs(rigs);
+		manufacturingSettings.setSecurity(security);
+		manufacturingSettings.setSystemID(system);
+		manufacturingSettings.setMaterialEfficiency(materialEfficiency);
+		manufacturingSettings.setTax(tax);
+		//Manufacturing Adjusted Prices
+		Map<Integer, Double> manufacturingPrices = new HashMap<>();
+		NodeList priceNodes = manufacturingElement.getElementsByTagName("price");
+		for (int a = 0; a < priceNodes.getLength(); a++) {
+			Element priceNode = (Element) priceNodes.item(a);
+			int typeID = getInt(priceNode, "typeid");
+			double price = getDouble(priceNode, "price");
+			manufacturingPrices.put(typeID, price);
+		}
+		manufacturingSettings.setPrices(manufacturingPrices);
+
+		Map<Integer, Float> manufacturingSystems = new HashMap<>();
+		NodeList systemNodes = manufacturingElement.getElementsByTagName("system");
+		for (int a = 0; a < systemNodes.getLength(); a++) {
+			Element systemNode = (Element) systemNodes.item(a);
+			int systemID = getInt(systemNode, "systemid");
+			float index = getFloat(systemNode, "index");
+			manufacturingSystems.put(systemID, index);
+		}
+
+		manufacturingSettings.setSystems(manufacturingSystems);
+	}
+
 	private void parsePriceHistorySettings(Element priceHistoryElement, Settings settings) throws XmlException {
 		NodeList priceListNodes = priceHistoryElement.getElementsByTagName("set");
 		for (int a = 0; a < priceListNodes.getLength(); a++) {
@@ -1223,6 +1287,10 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		if (haveAttribute(element, "defaultreprocessedprice")) {
 			priceReprocessedType = PriceMode.valueOf(getString(element, "defaultreprocessedprice"));
 		}
+		PriceMode priceManufacturingType = settings.getPriceDataSettings().getPriceManufacturingType(); //Default
+		if (haveAttribute(element, "defaultmanufacturingprice")) {
+			priceManufacturingType = PriceMode.valueOf(getString(element, "defaultmanufacturingprice"));
+		}
 
 		//null = default
 		Long locationID = null;
@@ -1265,7 +1333,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			locationType = priceSource.getDefaultLocationType();
 			locationID = priceSource.getDefaultLocationID();
 		}
-		settings.setPriceDataSettings(new PriceDataSettings(locationType, locationID, priceSource, priceType, priceReprocessedType, janiceKey));
+		settings.setPriceDataSettings(new PriceDataSettings(locationType, locationID, priceSource, priceType, priceReprocessedType, priceManufacturingType, janiceKey));
 	}
 
 	private void parseMarketOrdersSettings(final Element element, final Settings settings) throws XmlException {
