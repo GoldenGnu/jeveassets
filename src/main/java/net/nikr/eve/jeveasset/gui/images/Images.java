@@ -206,6 +206,7 @@ public enum Images {
 	SETTINGS_COLOR_CHECK_WHITE_ALPHA ("settings_color_check_white_alpha.png"),
 	SETTINGS_COLOR_FOREGROUND ("settings_color_foreground.png"),
 	SETTINGS_COLOR_BACKGROUND ("settings_color_background.png"),
+	SETTINGS_MANUFACTURING ("settings_manufacturing.png"),
 
 	SLOTS_CONTRACTS ("slots_contracts.png"),
 	SLOTS_CONTRACTS_CORP ("slots_contracts_corp.png"),

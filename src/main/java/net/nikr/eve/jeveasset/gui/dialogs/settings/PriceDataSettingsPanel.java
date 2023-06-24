@@ -72,11 +72,13 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 	private final JRadioButton jRadioStations;
 	private final JCheckBox jBlueprintsTech1;
 	private final JCheckBox jBlueprintsTech2;
+	private final JCheckBox jManufacturingDefault;
 	private final JComboBox<NamedPriceLocation> jRegions;
 	private final JComboBox<NamedPriceLocation> jSystems;
 	private final JComboBox<NamedPriceLocation> jStations;
 	private final JComboBox<PriceMode> jPriceType;
 	private final JComboBox<PriceMode> jPriceReprocessedType;
+	private final JComboBox<PriceMode> jPriceManufacturingType;
 	private final JComboBox<PriceSource> jSource;
 	private final JButton jJaniceGetApiKey;
 	private final JTextField jJaniceApiKey;
@@ -178,6 +180,9 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 		JLabel jPriceReprocessedTypeLabel = new JLabel(DialoguesSettings.get().priceReprocessed());
 		jPriceReprocessedType = new JComboBox<>(PriceMode.values());
 
+		JLabel jPriceManufacturingTypeLabel = new JLabel(DialoguesSettings.get().priceManufacturing());
+		jPriceManufacturingType = new JComboBox<>(PriceMode.values());
+
 		JLabel jSourceLabel = new JLabel(DialoguesSettings.get().source());
 		jSource = new JComboBox<>(PriceSource.values());
 		jSource.setActionCommand(PriceDataSettingsAction.SOURCE_SELECTED.name());
@@ -186,6 +191,9 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 		JLabel jBlueprintsLabel = new JLabel(DialoguesSettings.get().priceBase());
 		jBlueprintsTech1 = new JCheckBox(DialoguesSettings.get().priceTech1());
 		jBlueprintsTech2 = new JCheckBox(DialoguesSettings.get().priceTech2());
+
+		JLabel jManufacturingDefaultLabel = new JLabel(DialoguesSettings.get().priceManufacturing());
+		jManufacturingDefault = new JCheckBox(DialoguesSettings.get().manufacturingDefault());
 
 		JLabel jJaniceApiKeyLabel = new JLabel(DialoguesSettings.get().janiceApiKey());
 		jJaniceApiKey = new JTextField();
@@ -203,7 +211,9 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 						.addComponent(jSourceLabel)
 						.addComponent(jPriceTypeLabel)
 						.addComponent(jPriceReprocessedTypeLabel)
+						.addComponent(jPriceManufacturingTypeLabel)
 						.addComponent(jBlueprintsLabel)
+						.addComponent(jManufacturingDefaultLabel)
 						.addComponent(jJaniceApiKeyLabel)
 						.addGroup(layout.createSequentialGroup()
 							.addGroup(layout.createParallelGroup()
@@ -226,6 +236,8 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 						.addComponent(jStations, 200, 200, 200)
 						.addComponent(jPriceType, 200, 200, 200)
 						.addComponent(jPriceReprocessedType, 200, 200, 200)
+						.addComponent(jPriceManufacturingType, 200, 200, 200)
+						.addComponent(jManufacturingDefault, 200, 200, 200)
 						.addGroup(layout.createSequentialGroup()
 							.addComponent(jJaniceApiKey, 169, 169, 169)
 							.addGap(1)
@@ -269,9 +281,17 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 					.addComponent(jPriceReprocessedType, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				)
 				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+					.addComponent(jPriceManufacturingTypeLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jPriceManufacturingType, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+				)
+				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
 					.addComponent(jJaniceApiKeyLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jJaniceApiKey, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jJaniceGetApiKey, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+				)
+				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+					.addComponent(jManufacturingDefaultLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jManufacturingDefault, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				)
 				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
 					.addComponent(jBlueprintsLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
@@ -284,7 +304,6 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 
 	@Override
 	public UpdateType save() {
-		Object object;
 		Long locationID;
 		LocationType locationType = null;
 		Object location = null;
@@ -305,41 +324,35 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 			locationID = Settings.get().getPriceDataSettings().getLocationID();
 			locationType = Settings.get().getPriceDataSettings().getLocationType();
 		}
-
-		//Price Type (can be a String)
-		object = jPriceType.getSelectedItem();
-		PriceMode priceType;
-		if (object instanceof PriceMode) {
-			priceType = (PriceMode) object;
-		} else {
-			priceType = Settings.get().getPriceDataSettings().getPriceType();
-		}
-
-		//Price Reprocessed Type (can be a String)
-		object = jPriceReprocessedType.getSelectedItem();
-		PriceMode priceReprocessedType;
-		if (object instanceof PriceMode) {
-			priceReprocessedType = (PriceMode) object;
-		} else {
-			priceReprocessedType = Settings.get().getPriceDataSettings().getPriceReprocessedType();
-		}
+		//Price Type
+		PriceMode priceType = get(jPriceType, Settings.get().getPriceDataSettings().getPriceType());
+		//Price Reprocessed Type
+		PriceMode priceReprocessedType = get(jPriceReprocessedType, Settings.get().getPriceDataSettings().getPriceReprocessedType());
+		//Price Manufacturing Type
+		PriceMode priceManufacturingType = get(jPriceManufacturingType, Settings.get().getPriceDataSettings().getPriceManufacturingType());
+		//Janice
 		String janiceKey = jJaniceApiKey.getText();
 		//Source
 		PriceSource source = (PriceSource) jSource.getSelectedItem();
 		//Blueprints
 		boolean blueprintsTech1 = jBlueprintsTech1.isSelected();
 		boolean blueprintsTech2 = jBlueprintsTech2.isSelected();
+		//Manufacturing Price for non-market items
+		boolean manufacturingDefault = jManufacturingDefault.isSelected();
 
 		//Eval if table need to be updated
-		boolean update = !priceType.equals(Settings.get().getPriceDataSettings().getPriceType())
-								|| !priceReprocessedType.equals(Settings.get().getPriceDataSettings().getPriceReprocessedType())
-								|| blueprintsTech1 != Settings.get().isBlueprintBasePriceTech1()
-								|| blueprintsTech2 != Settings.get().isBlueprintBasePriceTech2();
+		boolean update = priceType != Settings.get().getPriceDataSettings().getPriceType()
+						|| priceReprocessedType != Settings.get().getPriceDataSettings().getPriceReprocessedType()
+						|| priceManufacturingType != Settings.get().getPriceDataSettings().getPriceManufacturingType()
+						|| blueprintsTech1 != Settings.get().isBlueprintBasePriceTech1()
+						|| blueprintsTech2 != Settings.get().isBlueprintBasePriceTech2()
+						|| manufacturingDefault != Settings.get().isManufacturingDefault();
 
 		//Update settings
-		Settings.get().setPriceDataSettings(new PriceDataSettings(locationType, locationID, source, priceType, priceReprocessedType, janiceKey));
+		Settings.get().setPriceDataSettings(new PriceDataSettings(locationType, locationID, source, priceType, priceReprocessedType, priceManufacturingType, janiceKey));
 		Settings.get().setBlueprintBasePriceTech1(blueprintsTech1);
 		Settings.get().setBlueprintBasePriceTech2(blueprintsTech2);
+		Settings.get().setManufacturingDefault(manufacturingDefault);
 
 		//Update table if needed
 		return update ? UpdateType.FULL_UPDATE : UpdateType.NONE;
@@ -350,6 +363,7 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 		jSource.setSelectedItem(Settings.get().getPriceDataSettings().getSource());
 		jBlueprintsTech1.setSelected(Settings.get().isBlueprintBasePriceTech1());
 		jBlueprintsTech2.setSelected(Settings.get().isBlueprintBasePriceTech2());
+		jManufacturingDefault.setSelected(Settings.get().isManufacturingDefault());
 		jJaniceApiKey.setText(Settings.get().getPriceDataSettings().getJaniceKey());
 	}
 
@@ -357,24 +371,11 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 		Long locationID = Settings.get().getPriceDataSettings().getLocationID();
 		LocationType locationType = Settings.get().getPriceDataSettings().getLocationType();
 		//Price Types
-		jPriceType.setModel(new ListComboBoxModel<>(source.getSupportedPriceModes()));
-		jPriceType.setSelectedItem(Settings.get().getPriceDataSettings().getPriceType());
-		if (source.getSupportedPriceModes().isEmpty()) { //Empty
-			jPriceType.getModel().setSelectedItem(DialoguesSettings.get().notConfigurable());
-			jPriceType.setEnabled(false);
-		} else {
-			jPriceType.setEnabled(true);
-		}
-
+		set(jPriceType, Settings.get().getPriceDataSettings().getPriceType(), source);
 		//Price Reprocessed Types
-		jPriceReprocessedType.setModel(new ListComboBoxModel<>(source.getSupportedPriceModes()));
-		jPriceReprocessedType.setSelectedItem(Settings.get().getPriceDataSettings().getPriceReprocessedType());
-		if (source.getSupportedPriceModes().isEmpty()) { //Empty
-			jPriceReprocessedType.getModel().setSelectedItem(DialoguesSettings.get().notConfigurable());
-			jPriceReprocessedType.setEnabled(false);
-		} else {
-			jPriceReprocessedType.setEnabled(true);
-		}
+		set(jPriceReprocessedType, Settings.get().getPriceDataSettings().getPriceReprocessedType(), source);
+		//Price Manufacturing Types
+		set(jPriceManufacturingType, Settings.get().getPriceDataSettings().getPriceManufacturingType(), source);
 		jJaniceApiKey.setEnabled(source == PriceSource.JANICE);
 		jJaniceGetApiKey.setEnabled(source == PriceSource.JANICE);
 		//Default
@@ -467,6 +468,26 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 			jRadioStations.setSelected(true);
 		} else {
 			jStations.setSelectedIndex(0);
+		}
+	}
+
+	private void set(final JComboBox<PriceMode> jComboBox, PriceMode priceMode, final PriceSource source) {
+		jComboBox.setModel(new ListComboBoxModel<>(source.getSupportedPriceModes()));
+		jComboBox.setSelectedItem(priceMode);
+		if (source.getSupportedPriceModes().isEmpty()) { //Empty
+			jComboBox.getModel().setSelectedItem(DialoguesSettings.get().notConfigurable());
+			jComboBox.setEnabled(false);
+		} else {
+			jComboBox.setEnabled(true);
+		}
+	}
+
+	private PriceMode get(final JComboBox<PriceMode> jComboBox, PriceMode defaultPriceMode) {
+		Object object = jComboBox.getSelectedItem();
+		if (object instanceof PriceMode) {
+			return (PriceMode) object;
+		} else {
+			return defaultPriceMode;
 		}
 	}
 

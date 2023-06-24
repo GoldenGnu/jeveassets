@@ -313,6 +313,7 @@ public class PriceDataSettings {
 	private final PriceSource priceSource;
 	private PriceMode priceType;
 	private PriceMode priceReprocessedType;
+	private PriceMode priceManufacturingType;
 	private String janiceKey;
 
 	public PriceDataSettings() {
@@ -321,9 +322,10 @@ public class PriceDataSettings {
 		priceSource = getDefaultPriceSource();
 		priceType = PriceMode.getDefaultPriceType();
 		priceReprocessedType = PriceMode.getDefaultPriceType();
+		priceManufacturingType = PriceMode.getDefaultPriceType();
 	}
 
-	public PriceDataSettings(final LocationType locationType, final Long locationID, final PriceSource priceSource, final PriceMode priceType, final PriceMode priceReprocessedType, final String janiceKey) {
+	public PriceDataSettings(final LocationType locationType, final Long locationID, final PriceSource priceSource, final PriceMode priceType, final PriceMode priceReprocessedType, final PriceMode priceManufacturingType, final String janiceKey) {
 		if (locationType != null && locationID != null) {
 			this.locationType = locationType;
 			this.locationID = locationID;
@@ -334,6 +336,7 @@ public class PriceDataSettings {
 		this.priceSource = priceSource;
 		this.priceType = priceType;
 		this.priceReprocessedType = priceReprocessedType;
+		this.priceManufacturingType = priceManufacturingType;
 		if (janiceKey == null) { //empty string instead of null
 			this.janiceKey = "";
 		} else {
@@ -361,6 +364,10 @@ public class PriceDataSettings {
 		return PriceMode.getDefaultPrice(priceData, priceReprocessedType);
 	}
 
+	public double getDefaultPriceManufacturing(final PriceData priceData) {
+		return PriceMode.getDefaultPrice(priceData, priceManufacturingType);
+	}
+
 	public static Long getDefaultLocationID() {
 		return 10000002L;
 	}
@@ -377,12 +384,20 @@ public class PriceDataSettings {
 		this.priceReprocessedType = reprocessedPriceType;
 	}
 
+	public void setPriceManufacturingType(PriceMode priceManufacturingType) {
+		this.priceManufacturingType = priceManufacturingType;
+	}
+
 	public PriceMode getPriceType() {
 		return priceType;
 	}
 
 	public PriceMode getPriceReprocessedType() {
 		return priceReprocessedType;
+	}
+
+	public PriceMode getPriceManufacturingType() {
+		return priceManufacturingType;
 	}
 
 	public String getJaniceKey() {

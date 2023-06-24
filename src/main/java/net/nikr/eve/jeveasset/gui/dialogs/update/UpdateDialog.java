@@ -23,6 +23,7 @@ package net.nikr.eve.jeveasset.gui.dialogs.update;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -64,6 +65,7 @@ import net.nikr.eve.jeveasset.io.esi.EsiFactionWarfareGetter;
 import net.nikr.eve.jeveasset.io.esi.EsiIndustryJobsGetter;
 import net.nikr.eve.jeveasset.io.esi.EsiJournalGetter;
 import net.nikr.eve.jeveasset.io.esi.EsiLocationsGetter;
+import net.nikr.eve.jeveasset.io.esi.EsiManufacturingPrices;
 import net.nikr.eve.jeveasset.io.esi.EsiMarketOrdersGetter;
 import net.nikr.eve.jeveasset.io.esi.EsiMiningGetter;
 import net.nikr.eve.jeveasset.io.esi.EsiNameGetter;
@@ -891,6 +893,7 @@ public class UpdateDialog extends JDialogCentered {
 		@Override
 		public void update() {
 			setIcon(Settings.get().getPriceDataSettings().getSource().getIcon());
+			ThreadWoker.start(this, Collections.singleton(new EsiManufacturingPrices(this)), false);
 			if (update) {
 				priceDataGetter.updateAll(profileData, this);
 			} else {

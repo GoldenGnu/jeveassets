@@ -94,7 +94,8 @@ public class Settings {
 		FLAG_FOCUS_EVE_ONLINE_ON_ESI_UI_CALLS,
 		FLAG_SAVE_TOOLS_ON_EXIT,
 		FLAG_SAVE_CONTRACT_HISTORY,
-		FLAG_SAVE_MINING_HISTORY
+		FLAG_SAVE_MINING_HISTORY,
+		FLAG_MANUFACTURING_DEFAULT
 	}
 
 	public static enum TransactionProfitPrice {
@@ -259,6 +260,8 @@ public class Settings {
 	private final ColorSettings colorSettings = new ColorSettings();
 //Sounds
 	private final Map<SoundOption, Sound> soundSettings = new EnumMap<>(SoundOption.class);
+//Manufacturing
+	private final ManufacturingSettings manufacturingSettings = new ManufacturingSettings();
 
 	protected Settings() {
 		//Settings
@@ -285,6 +288,7 @@ public class Settings {
 		flags.put(SettingFlag.FLAG_SAVE_TOOLS_ON_EXIT, false);
 		flags.put(SettingFlag.FLAG_SAVE_CONTRACT_HISTORY, true);
 		flags.put(SettingFlag.FLAG_SAVE_MINING_HISTORY, true);
+		flags.put(SettingFlag.FLAG_MANUFACTURING_DEFAULT, true);
 		cacheFlags();
 		//Default Filters
 		List<Filter> filter;
@@ -637,6 +641,10 @@ public class Settings {
 		this.factionWarfareNextUpdate = factionWarfareNextUpdate;
 	}
 
+	public ManufacturingSettings getManufacturingSettings() {
+		return manufacturingSettings;
+	}
+
 	public Date getPublicMarketOrdersNextUpdate() {
 		return publicMarketOrdersNextUpdate;
 	}
@@ -810,6 +818,14 @@ public class Settings {
 
 	public void setBlueprintBasePriceTech2(final boolean blueprintsTech2) {
 		flags.put(SettingFlag.FLAG_BLUEPRINT_BASE_PRICE_TECH_2, blueprintsTech2);
+	}
+
+	public boolean isManufacturingDefault() {
+		return flags.get(SettingFlag.FLAG_MANUFACTURING_DEFAULT);
+	}
+
+	public void setManufacturingDefault(final boolean manufacturingDefault) {
+		flags.put(SettingFlag.FLAG_MANUFACTURING_DEFAULT, manufacturingDefault);
 	}
 
 	public boolean isTransactionHistory() {
