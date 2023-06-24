@@ -24,12 +24,69 @@ package net.nikr.eve.jeveasset.io.shared;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import net.nikr.eve.jeveasset.TestUtil;
+import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.sde.StaticData;
+import net.nikr.eve.jeveasset.data.settings.ManufacturingSettings;
+import net.nikr.eve.jeveasset.data.settings.ManufacturingSettings.ManufacturingFacility;
+import net.nikr.eve.jeveasset.data.settings.ManufacturingSettings.ManufacturingRigs;
+import net.nikr.eve.jeveasset.data.settings.ManufacturingSettings.ManufacturingSecurity;
+import net.nikr.eve.jeveasset.gui.shared.Formatter;
 import org.junit.Test;
 
 
 public class ApiIdConverterTest extends TestUtil {
+
+	private static final double DOMINIX_BASE_PRICE = 130_856_251.94;
+
+	/**
+	 * Tested against Isk Per Hour 2023-06-24 
+	 */
+	@Test
+	public void testInstallationFee() {
+		Item item = ApiIdConverter.getItem(645); //Dominix
+		float systemIndex = 0.001f;
+		ManufacturingSettings manufacturingSettings = new ManufacturingSettings();
+		manufacturingSettings.setFacility(ManufacturingFacility.STATION);
+		manufacturingSettings.setRigs(ManufacturingRigs.NONE);
+		manufacturingSettings.setSecurity(ManufacturingSecurity.HIGHSEC);
+		manufacturingSettings.setTax(0.25);
+		testInstallationFee(manufacturingSettings, item, systemIndex, 785_137.51);
+
+		
+		manufacturingSettings.setTax(0.0);
+
+		manufacturingSettings.setFacility(ManufacturingFacility.ENGINEERING_COMPLEX_MEDIUM);
+		testInstallationFee(manufacturingSettings, item, systemIndex, 454_071.91);
+
+		manufacturingSettings.setFacility(ManufacturingFacility.ENGINEERING_COMPLEX_LARGE);
+		testInstallationFee(manufacturingSettings, item, systemIndex, 452_762.63);
+
+		manufacturingSettings.setFacility(ManufacturingFacility.ENGINEERING_COMPLEX_XLARGE);
+		testInstallationFee(manufacturingSettings, item, systemIndex, 451_454.07);
+
+
+		manufacturingSettings.setTax(0.25);
+
+		manufacturingSettings.setFacility(ManufacturingFacility.ENGINEERING_COMPLEX_MEDIUM);
+		testInstallationFee(manufacturingSettings, item, systemIndex, 781_211.82);
+
+		manufacturingSettings.setFacility(ManufacturingFacility.ENGINEERING_COMPLEX_LARGE);
+		testInstallationFee(manufacturingSettings, item, systemIndex, 779_903.26);
+
+		manufacturingSettings.setFacility(ManufacturingFacility.ENGINEERING_COMPLEX_XLARGE);
+		testInstallationFee(manufacturingSettings, item, systemIndex, 778_594.70);
+
+
+		systemIndex = 0.2321f;
+		manufacturingSettings.setFacility(ManufacturingFacility.STATION);
+		testInstallationFee(manufacturingSettings, item, systemIndex, 31_026_017.35);
+	}
+
+	public void testInstallationFee(ManufacturingSettings manufacturingSettings, Item item, Float systemIndex, double expected) {
+		double actual = ApiIdConverter.getManufacturingInstallationFee(manufacturingSettings, systemIndex, DOMINIX_BASE_PRICE, item);
+		assertEquals(Formatter.doubleFormat(actual) + "!=" + Formatter.doubleFormat(expected), expected,actual , 1);
+	}
 
 	/**
 	 * Test of location method, of class ApiIdConverter.
