@@ -20,6 +20,7 @@
  */
 package net.nikr.eve.jeveasset.data.api.my;
 
+import java.util.Objects;
 import net.nikr.eve.jeveasset.data.api.raw.RawExtraction;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.settings.types.EditableLocationType;
@@ -57,5 +58,27 @@ public class MyExtraction extends RawExtraction implements EditableLocationType,
 	@Override
 	public int compareTo(MyExtraction o) {
 		return this.moon.compareTo(o.moon);
+	}
+
+	@Override
+	public int hashCode() {
+		int hash = 5;
+		hash = 47 * hash + Objects.hashCode(this.getMoonID());
+		return hash;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		final RawExtraction other = (RawExtraction) obj;
+		return Objects.equals(this.getMoonID(), other.getMoonID());
 	}
 }
