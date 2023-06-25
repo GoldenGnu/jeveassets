@@ -23,6 +23,7 @@ package net.nikr.eve.jeveasset.gui.dialogs;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.URL;
 import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
@@ -146,6 +147,8 @@ public class AboutDialog extends JDialogCentered {
 				+ "&nbsp;<a href=\"https://github.com/GoldenGnu/translations\">Translations</a> (i18n)<br>"
 				+ "&nbsp;<a href=\"https://github.com/uklimaschewski/EvalEx\">EvalEx</a> (formula columns)<br>"
 				+ "&nbsp;<a href=\"https://picocli.info\">Picocli</a> (CLI)<br>"
+				+ "<br>"
+				+ "<center><a href=\"https://cultofthepartyparrot.com/\"><img border=\"0\" src=\"" + getPartyParrot() +"\" /></a><br></center>"
 				);
 
 		JScrollPane jInfoScroll = new JScrollPane(jInfo, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
@@ -179,6 +182,14 @@ public class AboutDialog extends JDialogCentered {
 				.addComponent(jPartner, 50, 50, 50)
 				.addComponent(jClose, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 		);
+	}
+
+	private String getPartyParrot() {
+		URL url = Images.class.getResource(Images.MISC_PARTYPARROT.getFilename());
+		if (url != null) {
+			return url.toString();
+		}
+		return "";
 	}
 
 	private JEditorPane createEditorPane(final String text) {
