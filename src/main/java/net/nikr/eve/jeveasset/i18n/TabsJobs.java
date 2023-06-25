@@ -50,6 +50,7 @@ public abstract class TabsJobs extends Bundle {
 	public abstract String columnName();
 	public abstract String columnOwner();
 	public abstract String columnInstaller();
+	public abstract String columnCompletedCharacter();
 	public abstract String columnLocation();
 	public abstract String columnSystem();
 	public abstract String columnConstellation();

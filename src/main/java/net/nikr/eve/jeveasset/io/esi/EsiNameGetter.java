@@ -114,6 +114,7 @@ public class EsiNameGetter extends AbstractEsiGetter {
 			addOwnerID(list, ownerType.getOwnerID());
 			for (MyIndustryJob myIndustryJob : ownerType.getIndustryJobs()) {
 				addOwnerID(list, myIndustryJob.getInstallerID());
+				addOwnerID(list, myIndustryJob.getCompletedCharacterID());
 			}
 			for (MyMarketOrder marketOrder : ownerType.getMarketOrders()) {
 				addOwnerID(list, marketOrder.getIssuedBy());

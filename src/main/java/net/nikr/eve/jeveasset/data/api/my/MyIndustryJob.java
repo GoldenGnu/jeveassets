@@ -202,6 +202,7 @@ public class MyIndustryJob extends RawIndustryJob implements Comparable<MyIndust
 	private double price;
 	private double outputValue;
 	private String installer = "";
+	private String completedCharacter = "";
 	private MyBlueprint blueprint;
 	private MyLocation location;
 
@@ -445,6 +446,14 @@ public class MyIndustryJob extends RawIndustryJob implements Comparable<MyIndust
 
 	public void setInstaller(String installer) {
 		this.installer = installer;
+	}
+
+	public String getCompletedCharacter() {
+		return completedCharacter;
+	}
+
+	public void setCompletedCharacter(String completedCharacter) {
+		this.completedCharacter = completedCharacter;
 	}
 
 	@Override
