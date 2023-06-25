@@ -591,6 +591,7 @@ public class ProfileData {
 		for (MyIndustryJob industryJob : industryJobs) {
 			//Update Owners
 			industryJob.setInstaller(ApiIdConverter.getOwnerName(industryJob.getInstallerID()));
+			industryJob.setCompletedCharacter(ApiIdConverter.getOwnerName(industryJob.getCompletedCharacterID()));
 			//Update BPO/BPC status
 			industryJob.setBlueprint(blueprints.get(industryJob.getBlueprintID()));
 			//Price
