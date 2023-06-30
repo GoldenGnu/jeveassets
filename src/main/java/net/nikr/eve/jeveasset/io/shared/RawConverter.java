@@ -867,6 +867,8 @@ public class RawConverter {
 		STRUCTUREDEEDBAY("StructureDeedBay", 180), //QuantumCoreRoom
 		SPECIALIZEDICEHOLD("SpecializedIceHold", 181),
 		SPECIALIZEDASTEROIDHOLD("SpecializedAsteroidHold", 182),
+		MOBILEDEPOTHOLD("MobileDepot", 183),
+		CORPORATIONGOALDELIVERIES("CorpProjectsHangar", 184),
 		;
 
 		private final String value;

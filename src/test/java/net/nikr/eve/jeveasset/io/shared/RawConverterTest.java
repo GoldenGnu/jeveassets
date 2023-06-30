@@ -78,6 +78,8 @@ public class RawConverterTest extends TestUtil {
 					|| (locationFlagEnum.toString().equals("CorpseBay") && itemFlag.getFlagName().equals("CrateLoot"))
 					|| (locationFlagEnum.toString().equals("Module") && itemFlag.getFlagName().equals("Skill"))
 					|| (locationFlagEnum.toString().equals("SpecializedOreHold") && itemFlag.getFlagName().equals("SpecializedAsteroidHold"))
+					|| (locationFlagEnum.toString().equals("CorporationGoalDeliveries") && itemFlag.getFlagName().equals("CorpProjectsHangar"))
+					|| (locationFlagEnum.toString().equals("MobileDepotHold") && itemFlag.getFlagName().equals("MobileDepot"))
 			);
 
 		}
@@ -107,6 +109,8 @@ public class RawConverterTest extends TestUtil {
 					|| (locationFlagEnum.toString().equals("HiddenModifers") && itemFlag.getFlagName().equals("HiddenModifiers"))
 					|| (locationFlagEnum.toString().equals("QuantumCoreRoom") && itemFlag.getFlagName().equals("StructureDeedBay"))
 					|| (locationFlagEnum.toString().equals("SpecializedOreHold") && itemFlag.getFlagName().equals("SpecializedAsteroidHold"))
+					|| (locationFlagEnum.toString().equals("CorporationGoalDeliveries") && itemFlag.getFlagName().equals("CorpProjectsHangar"))
+					|| (locationFlagEnum.toString().equals("MobileDepotHold") && itemFlag.getFlagName().equals("MobileDepot"))
 			);
 		}
 	}
@@ -303,7 +307,7 @@ public class RawConverterTest extends TestUtil {
 			assertEquals(value, RawConverter.toIndustryJobStatus(null, null, value.getValue()));
 		}
 		//EveAPI
-		Map<Integer, RawIndustryJob.IndustryJobStatus> map = new HashMap<Integer, RawIndustryJob.IndustryJobStatus>();
+		Map<Integer, RawIndustryJob.IndustryJobStatus> map = new HashMap<>();
 		map.put(1, RawIndustryJob.IndustryJobStatus.ACTIVE);
 		map.put(2, RawIndustryJob.IndustryJobStatus.PAUSED);
 		map.put(3, RawIndustryJob.IndustryJobStatus.READY);
@@ -500,7 +504,7 @@ public class RawConverterTest extends TestUtil {
 		for (RawMarketOrder.MarketOrderRange value : RawMarketOrder.MarketOrderRange.values()) {
 			assertEquals(value, RawConverter.toMarketOrderRange(null, null, value.getValue()));
 		}
-		Map<Integer, RawMarketOrder.MarketOrderRange> map = new HashMap<Integer, RawMarketOrder.MarketOrderRange>();
+		Map<Integer, RawMarketOrder.MarketOrderRange> map = new HashMap<>();
 		map.put(-1, RawMarketOrder.MarketOrderRange.STATION);
 		map.put(0, RawMarketOrder.MarketOrderRange.SOLARSYSTEM);
 		map.put(1, RawMarketOrder.MarketOrderRange._1);
@@ -577,7 +581,7 @@ public class RawConverterTest extends TestUtil {
 		for (RawMarketOrder.MarketOrderState value : RawMarketOrder.MarketOrderState.values()) {
 			assertEquals(value, RawConverter.toMarketOrderState(null, null, value.getValue()));
 		}
-		Map<Integer, RawMarketOrder.MarketOrderState> map = new HashMap<Integer, RawMarketOrder.MarketOrderState>();
+		Map<Integer, RawMarketOrder.MarketOrderState> map = new HashMap<>();
 		map.put(0, RawMarketOrder.MarketOrderState.OPEN);
 		map.put(1, RawMarketOrder.MarketOrderState.CLOSED);
 		map.put(2, RawMarketOrder.MarketOrderState.EXPIRED);
@@ -609,7 +613,7 @@ public class RawConverterTest extends TestUtil {
 
 	@Test
 	public void testFromMarketOrderIsBuyOrder() {
-		Map<Boolean, Integer> map = new HashMap<Boolean, Integer>();
+		Map<Boolean, Integer> map = new HashMap<>();
 		map.put(true, 1);
 		map.put(false, 0);
 		for (Map.Entry<Boolean, Integer> entry : map.entrySet()) {
@@ -619,7 +623,7 @@ public class RawConverterTest extends TestUtil {
 
 	@Test
 	public void testToTransactionIsBuy() {
-		Map<String, Boolean> map = new HashMap<String, Boolean>();
+		Map<String, Boolean> map = new HashMap<>();
 		map.put("buy", true);
 		map.put("sell", false);
 		for (Map.Entry<String, Boolean> entry : map.entrySet()) {
@@ -629,7 +633,7 @@ public class RawConverterTest extends TestUtil {
 
 	@Test
 	public void testToTransactionIsPersonal() {
-		Map<String, Boolean> map = new HashMap<String, Boolean>();
+		Map<String, Boolean> map = new HashMap<>();
 		map.put("personal", true);
 		map.put("corporate", false);
 		for (Map.Entry<String, Boolean> entry : map.entrySet()) {
@@ -639,7 +643,7 @@ public class RawConverterTest extends TestUtil {
 
 	@Test
 	public void testFromTransactionIsBuy() {
-		Map<Boolean, String> map = new HashMap<Boolean, String>();
+		Map<Boolean, String> map = new HashMap<>();
 		map.put(true, "buy");
 		map.put(false, "sell");
 		for (Map.Entry<Boolean, String> entry : map.entrySet()) {
@@ -649,7 +653,7 @@ public class RawConverterTest extends TestUtil {
 
 	@Test
 	public void testFromTransactionIsPersonal() {
-		Map<Boolean, String> map = new HashMap<Boolean, String>();
+		Map<Boolean, String> map = new HashMap<>();
 		map.put(true, "personal");
 		map.put(false, "corporate");
 		for (Map.Entry<Boolean, String> entry : map.entrySet()) {
