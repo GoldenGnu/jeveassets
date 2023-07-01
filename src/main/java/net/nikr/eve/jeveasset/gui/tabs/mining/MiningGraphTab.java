@@ -393,13 +393,18 @@ public class MiningGraphTab extends JMainTabSecondary {
 	private void updateGUI() {
 		Set<String> ownerSet = new HashSet<>(program.getOwnerNames(false));
 		Set<String> itemsSet = new HashSet<>();
-		for (MyMining mining : program.getProfileData().getMiningEventList()) {
-			itemsSet.add(getTypeName(mining.getItem()));
-			ownerSet.add(mining.getCharacterName());
-			if(mining.isForCorporation()) {
-				ownerSet.add(mining.getCorporationName());
+		try {
+			program.getProfileData().getMiningEventList().getReadWriteLock().readLock().lock();
+			for (MyMining mining : program.getProfileData().getMiningEventList()) {
+				itemsSet.add(getTypeName(mining.getItem()));
+				ownerSet.add(mining.getCharacterName());
+				if(mining.isForCorporation()) {
+					ownerSet.add(mining.getCorporationName());
+				}
 			}
-		}
+		} finally {
+			program.getProfileData().getMiningEventList().getReadWriteLock().readLock().unlock();
+ 		}
 		List<String> owners = new ArrayList<>(ownerSet);
 		listener.valueIsAdjusting = true;
 		if (owners.isEmpty()) {
@@ -486,54 +491,59 @@ public class MiningGraphTab extends JMainTabSecondary {
 		Set<String> names = new HashSet<>();
 		final String grandTotal = TabsMining.get().grandTotal();
 		List<String> selectedOwners = getSelectedOwners();
-		for (MyMining mining : program.getProfileData().getMiningEventList()) {
-			final Date date = mining.getDate();
-			//Filter
-			if ((from != null && !date.after(from)) || (to != null && !date.before(to))) {
-				continue;
+		try {
+			program.getProfileData().getMiningEventList().getReadWriteLock().readLock().lock();
+			for (MyMining mining : program.getProfileData().getMiningEventList()) {
+				final Date date = mining.getDate();
+				//Filter
+				if ((from != null && !date.after(from)) || (to != null && !date.before(to))) {
+					continue;
+				}
+				if (!selectedOwners.contains(mining.getCharacterName()) || (mining.isForCorporation() && !selectedOwners.contains(mining.getCorporationName()))) {
+					continue;
+				}
+				//Type
+				final String typeName = getTypeName(mining.getItem());
+				final double value = type.toValue(mining);
+				Map<String, Double> map = values.get(date);
+				if (map == null) {
+					map = new HashMap<>();
+					values.put(date, map);
+				}
+				names.add(typeName);
+				Double typeTotal = map.getOrDefault(typeName, 0.0);
+				map.put(typeName, typeTotal + value);
+				//Group Total
+				final String groupName = TabsMining.get().groupTotal(mining.getItem().getGroup());
+				double groupTotal = map.getOrDefault(groupName, 0.0);
+				names.add(groupName);
+				map.put(groupName, groupTotal + value);
+				Set<String> set = groupCounts.get(groupName);
+				if (set == null) {
+					set = new HashSet<>();
+					groupCounts.put(groupName, set);
+				}
+				set.add(typeName);
+				seriesGroup.put(typeName, groupName);
+				//GrandTotal
+				double total = map.getOrDefault(grandTotal, 0.0);
+				names.add(grandTotal);
+				map.put(grandTotal, total + value);
+				//Totals
+				double d;
+				d = seriesTotals.getOrDefault(typeName, 0.0);
+				d = d + value;
+				seriesTotals.put(typeName, d);
+				d = seriesTotals.getOrDefault(groupName, 0.0);
+				d = d + value;
+				seriesTotals.put(groupName, d);
+				d = seriesTotals.getOrDefault(grandTotal, 0.0);
+				d = d + value;
+				seriesTotals.put(grandTotal, d);
 			}
-			if (!selectedOwners.contains(mining.getCharacterName()) || (mining.isForCorporation() && !selectedOwners.contains(mining.getCorporationName()))) {
-				continue;
-			}
-			//Type
-			final String typeName = getTypeName(mining.getItem());
-			final double value = type.toValue(mining);
-			Map<String, Double> map = values.get(date);
-			if (map == null) {
-				map = new HashMap<>();
-				values.put(date, map);
-			}
-			names.add(typeName);
-			Double typeTotal = map.getOrDefault(typeName, 0.0);
-			map.put(typeName, typeTotal + value);
-			//Group Total
-			final String groupName = TabsMining.get().groupTotal(mining.getItem().getGroup());
-			double groupTotal = map.getOrDefault(groupName, 0.0);
-			names.add(groupName);
-			map.put(groupName, groupTotal + value);
-			Set<String> set = groupCounts.get(groupName);
-			if (set == null) {
-				set = new HashSet<>();
-				groupCounts.put(groupName, set);
-			}
-			set.add(typeName);
-			seriesGroup.put(typeName, groupName);
-			//GrandTotal
-			double total = map.getOrDefault(grandTotal, 0.0);
-			names.add(grandTotal);
-			map.put(grandTotal, total + value);
-			//Totals
-			double d;
-			d = seriesTotals.getOrDefault(typeName, 0.0);
-			d = d + value;
-			seriesTotals.put(typeName, d);
-			d = seriesTotals.getOrDefault(groupName, 0.0);
-			d = d + value;
-			seriesTotals.put(groupName, d);
-			d = seriesTotals.getOrDefault(grandTotal, 0.0);
-			d = d + value;
-			seriesTotals.put(grandTotal, d);
-		}
+		} finally {
+			program.getProfileData().getMiningEventList().getReadWriteLock().readLock().unlock();
+ 		}
 		//Remove group totals for groups with only one entry
 		for (Map.Entry<String, Set<String>> entry : groupCounts.entrySet()) {
 			if (entry.getValue().size() < 2) {
