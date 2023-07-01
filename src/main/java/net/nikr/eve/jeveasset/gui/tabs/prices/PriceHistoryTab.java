@@ -903,9 +903,11 @@ public class PriceHistoryTab extends JMainTabSecondary {
 				//Verify Data
 				if (input == null || input.isEmpty() || !input.containsKey(PriceHistoryDatabase.getZKillboardDate())) {
 					blacklist.add(typeID);
-					done++;
-					updateProgress(done, total);
-					continue;
+					if (input == null || input.isEmpty()) {
+						done++;
+						updateProgress(done, total);
+						continue;
+					}
 				}
 				//Add Data
 				for (Map.Entry<String, Double> entry : input.entrySet()) {
