@@ -16,6 +16,18 @@
                   #### #  # #  # #  # #### #### #### #### ####
 
 ________________________________________________________________________________
+_7.6.2__________________________________________________________________________
+
+Bug Fixes:
+-Corporation accounts did not work
+-Price History remained empty after adding items
+-Tracker Show icon was not correct on startup
+-Mining Graph showed wrong values with multiple mining characters
+
+Code:
+-Updated eve-esi to 4.8.1
+
+________________________________________________________________________________
 _7.6.1__________________________________________________________________________
 
 Bug Fixes:
