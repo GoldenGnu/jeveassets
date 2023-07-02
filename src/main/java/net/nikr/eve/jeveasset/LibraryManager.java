@@ -111,7 +111,7 @@ public class LibraryManager {
 			files.add("swagger-annotations-1.6.5.jar");
 			files.add("annotations-13.0.jar");
 			files.add("hamcrest-core-1.3.jar");
-			files.add("eve-esi-4.8.1-SNAPSHOT.jar");
+			files.add("eve-esi-4.8.1.jar");
 			files.add("okio-jvm-3.0.0.jar");
 			files.add("hamcrest-core-1.3.jar");
 			files.add("jaxb-api-2.3.1.jar");
