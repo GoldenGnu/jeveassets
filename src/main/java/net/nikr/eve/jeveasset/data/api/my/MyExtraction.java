@@ -62,8 +62,9 @@ public class MyExtraction extends RawExtraction implements EditableLocationType,
 
 	@Override
 	public int hashCode() {
-		int hash = 5;
-		hash = 47 * hash + Objects.hashCode(this.getMoonID());
+		int hash = 7;
+		hash = 59 * hash + Objects.hashCode(this.getExtractionStartTime());
+		hash = 59 * hash + Objects.hashCode(this.getMoonID());
 		return hash;
 	}
 
@@ -79,6 +80,9 @@ public class MyExtraction extends RawExtraction implements EditableLocationType,
 			return false;
 		}
 		final RawExtraction other = (RawExtraction) obj;
+		if (!Objects.equals(this.getExtractionStartTime(), other.getExtractionStartTime())) {
+			return false;
+		}
 		return Objects.equals(this.getMoonID(), other.getMoonID());
 	}
 }
