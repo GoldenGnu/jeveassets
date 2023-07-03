@@ -392,11 +392,9 @@ public class MiningGraphTab extends JMainTabSecondary {
 
 	private void updateGUI() {
 		Set<String> ownerSet = new HashSet<>(program.getOwnerNames(false));
-		Set<String> itemsSet = new HashSet<>();
 		try {
 			program.getProfileData().getMiningEventList().getReadWriteLock().readLock().lock();
 			for (MyMining mining : program.getProfileData().getMiningEventList()) {
-				itemsSet.add(getTypeName(mining.getItem()));
 				ownerSet.add(mining.getCharacterName());
 				if(mining.isForCorporation()) {
 					ownerSet.add(mining.getCorporationName());
@@ -446,13 +444,16 @@ public class MiningGraphTab extends JMainTabSecondary {
 				}
 			}
 		}
+
+		createData();
+
 		jShow.removeAll();
-		if (itemsSet.isEmpty()) {
+		if (shownOrder.isEmpty()) {
 			jShow.setEnabled(false);
 		} else {
 			jShow.setEnabled(true);
 			jShow.add(jAll, true);
-			List<String> itemsList = new ArrayList<>(itemsSet);
+			List<String> itemsList = new ArrayList<>(shownOrder);
 			Collections.sort(itemsList, comparator);
 			for (String s : itemsList) {
 				JCheckBoxMenuItem jMenuItem = items.get(s);
@@ -467,8 +468,6 @@ public class MiningGraphTab extends JMainTabSecondary {
 			}
 		}
 		listener.valueIsAdjusting = false;
-
-		createData();
 		updateShown();
 	}
 
