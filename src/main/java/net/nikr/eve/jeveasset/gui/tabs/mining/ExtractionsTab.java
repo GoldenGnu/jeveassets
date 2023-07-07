@@ -81,7 +81,7 @@ public class ExtractionsTab extends JMainTabPrimary {
 		//Table Model
 		tableModel = EventModels.createTableModel(filterList, tableFormat);
 		//Table
-		jTable = new JAutoColumnTable(program, tableModel);
+		jTable = new JExtractionsTable(program, tableModel);
 		jTable.setCellSelectionEnabled(true);
 		jTable.setRowSelectionAllowed(true);
 		jTable.setColumnSelectionAllowed(true);

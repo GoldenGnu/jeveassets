@@ -57,6 +57,10 @@ public class MyExtraction extends RawExtraction implements EditableLocationType,
 
 	@Override
 	public int compareTo(MyExtraction o) {
+		int compared = o.getChunkArrivalTime().compareTo(this.getChunkArrivalTime());
+		if (compared != 0) {
+			return compared;
+		}
 		return this.moon.compareTo(o.moon);
 	}
 

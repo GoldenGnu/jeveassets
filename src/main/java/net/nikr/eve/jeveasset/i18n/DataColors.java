@@ -46,6 +46,9 @@ public abstract class DataColors extends Bundle {
 	public abstract String contractsCourier();
 	public abstract String contractsIncluded();
 	public abstract String contractsExcluded();
+	public abstract String extractionsDays();
+	public abstract String extractionsWeek();
+	public abstract String extractionsWeeks();
 	public abstract String overviewGroupedLocations();
 	public abstract String stockpileTableBelowThreshold();
 	public abstract String stockpileIconBelowThreshold();
@@ -100,6 +103,7 @@ public abstract class DataColors extends Bundle {
 	public abstract String groupAssets();
 	public abstract String groupCustom();
 	public abstract String groupContracts();
+	public abstract String groupExtractions();
 	public abstract String groupOverview();
 	public abstract String groupMarketOrders();
 	public abstract String groupIndustryJobs();
