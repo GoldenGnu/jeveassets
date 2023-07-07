@@ -40,6 +40,7 @@ public abstract class TabsMining extends Bundle {
 	public abstract String corporation();
 	public abstract String count();
 	public abstract String extractions();
+	public abstract String extractionsActiveSoon();
 	public abstract String from();
 	public abstract String grandTotal();
 	public abstract String graphToolTip(Comparable<?> name, String isk, String date);
