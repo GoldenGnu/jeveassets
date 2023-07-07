@@ -269,9 +269,13 @@ public class ReprocessedTab extends JMainTabSecondary {
 
 	public void add(final Map<Item, Long> newItems) {
 		for (Map.Entry<Item, Long> entry : newItems.entrySet()) {
-			Long previous = items.put(entry.getKey(), entry.getValue());
+			Long value = entry.getValue();
+			if (value == null || value < 1) {
+				value = 1L;
+			}
+			Long previous = items.put(entry.getKey(), value);
 			if (previous != null) {
-				items.put(entry.getKey(), entry.getValue() + previous);
+				items.put(entry.getKey(), value + previous);
 			}
 		}
 	}
@@ -367,7 +371,7 @@ public class ReprocessedTab extends JMainTabSecondary {
 					JTextField jCount = (JTextField) source;
 					long count;
 					try {
-						count = Long.valueOf(jCount.getText());
+						count = Long.parseLong(jCount.getText());
 					} catch (NumberFormatException ex) {
 						count = 1;
 					}
