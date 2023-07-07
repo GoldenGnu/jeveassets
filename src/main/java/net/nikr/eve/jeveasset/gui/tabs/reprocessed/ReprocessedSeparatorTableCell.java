@@ -62,9 +62,6 @@ public class ReprocessedSeparatorTableCell extends SeparatorTableCell<Reprocesse
 		jCount.setActionCommand(ReprocessedCellAction.UPDATE_COUNT.name());
 		jCount.addActionListener(actionListener);
 		jCount.setHorizontalAlignment(JTextField.RIGHT);
-		jCount.setOpaque(false);
-		jCount.setBackground(Colors.COMPONENT_TRANSPARENT.getColor());
-		jCount.setBorder(null);
 		jCount.setAutoSelectAll(true);
 
 		JLabel jCountLabel = new JLabel(TabsReprocessed.get().multiplierSign());
