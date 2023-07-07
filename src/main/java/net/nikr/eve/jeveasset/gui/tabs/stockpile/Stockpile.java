@@ -1452,13 +1452,13 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 			//Jobs
 			jobsCountNow = jobsCountNow + item.getJobsCountNow();
 			//Transactions
-			buyTransactionsCountNow = item.getBuyTransactionsCountNow();
-			sellTransactionsCountNow = item.getSellTransactionsCountNow();
+			buyTransactionsCountNow = buyTransactionsCountNow + item.getBuyTransactionsCountNow();
+			sellTransactionsCountNow = sellTransactionsCountNow + item.getSellTransactionsCountNow();
 			//Contracts
-			buyingContractsCountNow = item.getBuyingContractsCountNow();
-			boughtContractsCountNow = item.getBoughtContractsCountNow();
-			sellingContractsCountNow = item.getSellingContractsCountNow();
-			soldContractsCountNow = item.getSoldContractsCountNow();
+			buyingContractsCountNow = buyingContractsCountNow + item.getBuyingContractsCountNow();
+			boughtContractsCountNow = boughtContractsCountNow + item.getBoughtContractsCountNow();
+			sellingContractsCountNow = sellingContractsCountNow + item.getSellingContractsCountNow();
+			soldContractsCountNow = soldContractsCountNow + item.getSoldContractsCountNow();
 			//Only add if negative
 			if (item.getCountNeeded() < 0) {
 				countNeeded = countNeeded + item.getCountNeeded();
