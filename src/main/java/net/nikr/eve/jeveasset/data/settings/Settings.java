@@ -50,6 +50,8 @@ import net.nikr.eve.jeveasset.gui.shared.table.View;
 import net.nikr.eve.jeveasset.gui.sounds.Sound;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJobTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJobsTab;
+import net.nikr.eve.jeveasset.gui.tabs.mining.ExtractionsTab;
+import net.nikr.eve.jeveasset.gui.tabs.mining.ExtractionsTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.orders.MarketOrdersTab;
 import net.nikr.eve.jeveasset.gui.tabs.orders.MarketTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.orders.Outbid;
@@ -59,6 +61,7 @@ import net.nikr.eve.jeveasset.gui.tabs.transaction.TransactionTab;
 import net.nikr.eve.jeveasset.gui.tabs.transaction.TransactionTableFormat;
 import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 import net.nikr.eve.jeveasset.i18n.TabsJobs;
+import net.nikr.eve.jeveasset.i18n.TabsMining;
 import net.nikr.eve.jeveasset.i18n.TabsOrders;
 import net.nikr.eve.jeveasset.i18n.TabsTransaction;
 import net.nikr.eve.jeveasset.io.local.SettingsReader;
@@ -321,6 +324,13 @@ public class Settings {
 		filter.add(new Filter(Filter.LogicType.AND, IndustryJobTableFormat.STATE, Filter.CompareType.EQUALS, MyIndustryJob.IndustryJobState.STATE_DELIVERED.toString()));
 		industryJobsTabDefaultFilters.put(TabsJobs.get().completed(), filter);
 		defaultTableFilters.put(IndustryJobsTab.NAME, industryJobsTabDefaultFilters);
+		//Extractions Default Filters
+		Map<String, List<Filter>> extractionsDefaultFilters = new HashMap<>();
+		filter = new ArrayList<>();
+		filter.add(new Filter(Filter.LogicType.OR, ExtractionsTableFormat.ARRIVAL, Filter.CompareType.NEXT_DAYS, "2"));
+		filter.add(new Filter(Filter.LogicType.OR, ExtractionsTableFormat.DECAY, Filter.CompareType.LAST_DAYS, "2"));
+		extractionsDefaultFilters.put(TabsMining.get().extractionsActiveSoon(), filter);
+		defaultTableFilters.put(ExtractionsTab.NAME, extractionsDefaultFilters);
 	}
 
 	public static Settings get() {
