@@ -36,6 +36,7 @@ import net.nikr.eve.jeveasset.data.sde.IndustryMaterial;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
+import net.nikr.eve.jeveasset.gui.shared.MenuScroller;
 import static net.nikr.eve.jeveasset.gui.shared.menu.JMenuStockpile.getBlueprintSelect;
 import static net.nikr.eve.jeveasset.gui.shared.menu.JMenuStockpile.getFormulaSelect;
 import static net.nikr.eve.jeveasset.gui.shared.menu.JMenuStockpile.match;
@@ -69,23 +70,29 @@ public class JStockpileItemMenu extends JMenu {
 		JMenuItem jMenuItem;
 		JMenu jMenu;
 
-		JMenu jSubMenu = new JMenu(TabsStockpile.get().addToStockpile());
-		jSubMenu.setIcon(Images.EDIT_ADD.getIcon());
-		jSubMenu.setEnabled(!items.isEmpty());
-		this.add(jSubMenu);
+		JMenu jAddToo = new JMenu(TabsStockpile.get().addToStockpile());
+		jAddToo.setIcon(Images.EDIT_ADD.getIcon());
+		jAddToo.setEnabled(!items.isEmpty());
+		this.add(jAddToo);
+
+		MenuScroller menuScroller = new MenuScroller(jAddToo);
+		menuScroller.keepVisible(2);
+		menuScroller.setTopFixedCount(2);
+		menuScroller.setInterval(125);
+
 		if (!items.isEmpty()) {
 			jMenuItem = new JStockpileMenuItem(TabsStockpile.get().addToNewStockpile(), Images.EDIT_ADD.getIcon(), items);
 			jMenuItem.setActionCommand(StockpileItemMenuAction.ADD_TO.name());
 			jMenuItem.addActionListener(listener);
-			jSubMenu.add(jMenuItem);
+			jAddToo.add(jMenuItem);
 
-			jSubMenu.addSeparator();
+			jAddToo.addSeparator();
 
 			for (Stockpile stockpile : StockpileTab.getShownStockpiles(program)) {
 				jMenuItem = new JStockpileMenuItem(stockpile, Images.TOOL_STOCKPILE.getIcon(), items);
 				jMenuItem.setActionCommand(StockpileItemMenuAction.ADD_TO.name());
 				jMenuItem.addActionListener(listener);
-				jSubMenu.add(jMenuItem);
+				jAddToo.add(jMenuItem);
 			}
 		}
 
