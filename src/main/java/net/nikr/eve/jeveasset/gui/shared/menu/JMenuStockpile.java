@@ -33,6 +33,7 @@ import net.nikr.eve.jeveasset.data.sde.IndustryMaterial;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
+import net.nikr.eve.jeveasset.gui.shared.MenuScroller;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.JAutoMenu;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
@@ -61,6 +62,11 @@ public class JMenuStockpile<T> extends JAutoMenu<T> {
 	public JMenuStockpile(final Program program) {
 		super(GuiShared.get().stockpile(), program);
 		this.setIcon(Images.TOOL_STOCKPILE.getIcon());
+
+		MenuScroller menuScroller = new MenuScroller(this);
+		menuScroller.keepVisible(2);
+		menuScroller.setTopFixedCount(2);
+		menuScroller.setInterval(125);
 
 		jAddToNew = new JStockpileMenu(GuiShared.get().newStockpile());
 		jAddToNew.setIcon(Images.EDIT_ADD.getIcon());
