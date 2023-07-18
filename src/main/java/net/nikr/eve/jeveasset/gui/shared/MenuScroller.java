@@ -26,11 +26,15 @@ package net.nikr.eve.jeveasset.gui.shared;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.event.MenuEvent;
+import javax.swing.event.MenuListener;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 
@@ -45,12 +49,12 @@ import javax.swing.event.PopupMenuListener;
  */
 public class MenuScroller {
 
-	private JPopupMenu menu;
+	private MenuContainer menu;
 	private Component[] menuItems;
-	private MenuScroller.MenuScrollItem upItem;
-	private MenuScroller.MenuScrollItem downItem;
-	private final MenuScroller.MenuScrollListener menuListener = new MenuScroller.MenuScrollListener();
-	private final MenuScroller.MouseScrollListener mouseListener = new MenuScroller.MouseScrollListener();
+	private MenuScrollItem upItem;
+	private MenuScrollItem downItem;
+	private final MenuScrollListener menuListener = new MenuScrollListener();
+	private final MouseScrollListener mouseListener = new MouseScrollListener();
 	private int scrollCount;
 	private int interval;
 	private int topFixedCount;
@@ -99,6 +103,22 @@ public class MenuScroller {
 	 * negative or if topFixedCount or bottomFixedCount is negative
 	 */
 	public MenuScroller(final JPopupMenu menu, final int interval, final int topFixedCount, final int bottomFixedCount) {
+		this(new MenuContainer(menu), interval, topFixedCount, bottomFixedCount);
+	}
+
+	public MenuScroller(final JMenu menu) {
+		this(menu, 15);
+	}
+
+	public MenuScroller(final JMenu menu, final int interval) {
+		this(menu, interval, 0, 0);
+	}
+
+	public MenuScroller(final JMenu menu, final int interval, final int topFixedCount, final int bottomFixedCount) {
+		this(new MenuContainer(menu), interval, topFixedCount, bottomFixedCount);
+	}
+
+	private MenuScroller(final MenuContainer menu, final int interval, final int topFixedCount, final int bottomFixedCount) {
 		if (interval <= 0) {
 			throw new IllegalArgumentException("interval must be greater than 0");
 		}
@@ -106,16 +126,16 @@ public class MenuScroller {
 			throw new IllegalArgumentException("topFixedCount and bottomFixedCount cannot be negative");
 		}
 
-		upItem = new MenuScroller.MenuScrollItem(MenuScroller.MenuIcon.UP, -1);
-		downItem = new MenuScroller.MenuScrollItem(MenuScroller.MenuIcon.DOWN, +1);
+		upItem = new MenuScrollItem(MenuIcon.UP, -1);
+		downItem = new MenuScrollItem(MenuIcon.DOWN, +1);
 		scrollCount = 0;
 		setInterval(interval);
 		setTopFixedCount(topFixedCount);
 		setBottomFixedCount(bottomFixedCount);
 
 		this.menu = menu;
-		menu.addPopupMenuListener(menuListener);
-		menu.addMouseWheelListener(mouseListener);
+		
+		menu.addListener(menuListener, mouseListener);
 	}
 
 	/**
@@ -221,7 +241,7 @@ public class MenuScroller {
 	 */
 	public void dispose() {
 		if (menu != null) {
-			menu.removePopupMenuListener(menuListener);
+			menu.removeListener(menuListener, mouseListener);
 			menu = null;
 		}
 	}
@@ -275,12 +295,27 @@ public class MenuScroller {
 			}
 			Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 			int height = screenSize.height;
-			int maxScroll = (height / maxHeight) - (topFixedCount + bottomFixedCount + 1); // 2 just takes the menu up a bit from the bottom which looks nicer
+			int maxScroll = (height / maxHeight) - (topFixedCount + bottomFixedCount + 2); // 2 just takes the menu up a bit from the bottom which looks nicer
 			scrollCount = Math.min(maxScroll, menuItems.length - (topFixedCount + bottomFixedCount + 2));
 		}
 	}
 
-	private class MenuScrollListener implements PopupMenuListener {
+	private class MenuScrollListener implements PopupMenuListener, MenuListener {
+
+		@Override
+		public void menuSelected(MenuEvent e) {
+			setMenuItems();
+		}
+
+		@Override
+		public void menuDeselected(MenuEvent e) {
+			restoreMenuItems();
+		}
+
+		@Override
+		public void menuCanceled(MenuEvent e) {
+			//restoreMenuItems();
+		}
 
 		@Override
 		public void popupMenuWillBecomeVisible(final PopupMenuEvent e) {
@@ -330,11 +365,11 @@ public class MenuScroller {
 		}
 	}
 
-	private class MenuScrollItem extends JMenuItem implements ChangeListener {
+	private class MenuScrollItem extends JMenuItem implements ChangeListener, MouseListener{
 
 		private Timer timer;
 
-		public MenuScrollItem(final MenuScroller.MenuIcon icon, final int increment) {
+		public MenuScrollItem(final MenuIcon icon, final int increment) {
 			setIcon(icon);
 			setDisabledIcon(icon);
 			timer = new Timer(interval, new ActionListener() {
@@ -346,10 +381,41 @@ public class MenuScroller {
 				}
 			});
 			addChangeListener(this);
+			addMouseListener(this);
 		}
 
 		public void setInterval(final int interval) {
 			timer.setDelay(interval);
+		}
+
+		@Override
+		protected void processMouseEvent(MouseEvent e) {
+			if (e.getButton() == MouseEvent.NOBUTTON) { //Ignore mouse clicks
+				super.processMouseEvent(e); //Process mouse event like normal
+			}
+		}
+
+		@Override
+		public void mouseClicked(MouseEvent e) { }
+
+		@Override
+		public void mousePressed(MouseEvent e) { }
+
+		@Override
+		public void mouseReleased(MouseEvent e) { }
+
+		@Override
+		public void mouseEntered(MouseEvent e) {
+			if (!isArmed()) {
+				setArmed(true);
+			}
+		}
+
+		@Override
+		public void mouseExited(MouseEvent e) {
+			if (isArmed()) {
+				setArmed(false);
+			}
 		}
 
 		@Override
@@ -369,25 +435,43 @@ public class MenuScroller {
 		DOWN(3, 7, 3);
 		private final int[] xPoints = {1, 5, 9};
 		private final int[] yPoints;
+		private final boolean bright;
 
 		MenuIcon(final int... yPoints) {
 			this.yPoints = yPoints;
+			bright = ColorUtil.isBrightColor(new JPanel().getBackground());
 		}
 
 		@Override
 		public void paintIcon(final Component c, final Graphics g, final int x, final int y) {
 			Dimension size = c.getSize();
 			Graphics g2 = g.create(size.width / 2 - 5, size.height / 2 - 5, 10, 10);
-			if (c.isEnabled()) {
-				g2.setColor(Color.BLACK);
+			if (bright) {
+				if (c.isEnabled()) {
+					g2.setColor(Color.BLACK);
+				} else {
+					g2.setColor(Color.LIGHT_GRAY);
+				}
 			} else {
-				g2.setColor(Color.LIGHT_GRAY);
+				if (c.isEnabled()) {
+					g2.setColor(Color.GRAY.brighter());
+				} else {
+					g2.setColor(Color.GRAY.darker());
+				}
 			}
 			g2.fillPolygon(xPoints, yPoints, 3);
-			if (c.isEnabled()) {
-				g2.setColor(Color.DARK_GRAY);
+			if (bright) {
+				if (c.isEnabled()) {
+					g2.setColor(Color.DARK_GRAY);
+				} else {	
+					g2.setColor(Color.LIGHT_GRAY);
+				}
 			} else {
-				g2.setColor(Color.LIGHT_GRAY);
+				if (c.isEnabled()) {
+					g2.setColor(Color.LIGHT_GRAY);
+				} else {
+					g2.setColor(Color.DARK_GRAY);
+				}
 			}
 			g2.drawPolygon(xPoints, yPoints, 3);
 			g2.dispose();
@@ -401,6 +485,89 @@ public class MenuScroller {
 		@Override
 		public int getIconHeight() {
 			return 10;
+		}
+	}
+
+	private static class MenuContainer {
+		private final JPopupMenu jPopupMenu;
+		private final JMenu jMenu;
+		private final JComponent component;
+
+		public MenuContainer(JPopupMenu jPopupMenu) {
+			this.jPopupMenu = jPopupMenu;
+			this.jMenu = null;
+			this.component = jPopupMenu;
+		}		
+
+		public MenuContainer(JMenu jMenu) {
+			this.jPopupMenu = null;
+			this.jMenu = jMenu;
+			this.component = jMenu;
+		}		
+
+		private int getComponentIndex(JMenuItem item) {
+			if (jPopupMenu != null) {
+				return jPopupMenu.getComponentIndex(item);
+			} else {
+				int ncomponents = jMenu.getComponentCount();
+				Component[] components = jMenu.getComponents();
+				for (int i = 0 ; i < ncomponents ; i++) {
+					Component comp = components[i];
+					if (comp == item)
+						return i;
+				}
+				return -1;
+			}
+		}
+
+		private void setPreferredSize(Dimension preferredSize) {
+			component.setPreferredSize(preferredSize);
+		}
+
+		private void removeAll() {
+			component.removeAll();
+		}
+
+		private void add(Component menuItem) {
+			component.add(menuItem);
+		}
+
+		private Dimension getPreferredSize() {
+			return component.getPreferredSize();
+		}
+
+		private Component[] getComponents() {
+			if (jPopupMenu != null) {
+				return jPopupMenu.getComponents();
+			} else {
+				return jMenu.getMenuComponents();
+			}
+		}
+
+		private void addListener(MenuScrollListener menuListener, MouseScrollListener mouseListener) {
+			if (jPopupMenu != null) {
+				jPopupMenu.addPopupMenuListener(menuListener);
+				jPopupMenu.addMouseWheelListener(mouseListener);
+			} else {
+				jMenu.addMenuListener(menuListener);
+				JPopupMenu popup = jMenu.getPopupMenu();
+				if (popup != null) {
+					popup.addMouseWheelListener(mouseListener);
+				}
+			}
+		}
+
+		private void removeListener(MenuScrollListener menuListener, MouseScrollListener mouseListener) {
+			if (jPopupMenu != null) {
+				jPopupMenu.removePopupMenuListener(menuListener);
+				jPopupMenu.removeMouseWheelListener(mouseListener);
+			} else {
+				jMenu.removeMenuListener(menuListener);
+				JPopupMenu popup = jMenu.getPopupMenu();
+				if (popup != null) {
+					popup.removeMouseWheelListener(mouseListener);
+				}
+			}
 		}
 	}
 }
