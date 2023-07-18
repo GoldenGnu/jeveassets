@@ -319,9 +319,13 @@ public class Settings {
 		Map<String, List<Filter>> industryJobsTabDefaultFilters = new HashMap<>();
 		filter = new ArrayList<>();
 		filter.add(new Filter(Filter.LogicType.AND, IndustryJobTableFormat.STATE, Filter.CompareType.EQUALS_NOT, MyIndustryJob.IndustryJobState.STATE_DELIVERED.toString()));
+		filter.add(new Filter(Filter.LogicType.AND, IndustryJobTableFormat.STATE, Filter.CompareType.EQUALS_NOT, MyIndustryJob.IndustryJobState.STATE_CANCELLED.toString()));
+		filter.add(new Filter(Filter.LogicType.AND, IndustryJobTableFormat.STATE, Filter.CompareType.EQUALS_NOT, MyIndustryJob.IndustryJobState.STATE_REVERTED.toString()));
 		industryJobsTabDefaultFilters.put(TabsJobs.get().active(), filter);
 		filter = new ArrayList<>();
-		filter.add(new Filter(Filter.LogicType.AND, IndustryJobTableFormat.STATE, Filter.CompareType.EQUALS, MyIndustryJob.IndustryJobState.STATE_DELIVERED.toString()));
+		filter.add(new Filter(Filter.LogicType.OR, IndustryJobTableFormat.STATE, Filter.CompareType.EQUALS, MyIndustryJob.IndustryJobState.STATE_DELIVERED.toString()));
+		filter.add(new Filter(Filter.LogicType.OR, IndustryJobTableFormat.STATE, Filter.CompareType.EQUALS, MyIndustryJob.IndustryJobState.STATE_CANCELLED.toString()));
+		filter.add(new Filter(Filter.LogicType.OR, IndustryJobTableFormat.STATE, Filter.CompareType.EQUALS, MyIndustryJob.IndustryJobState.STATE_REVERTED.toString()));
 		industryJobsTabDefaultFilters.put(TabsJobs.get().completed(), filter);
 		defaultTableFilters.put(IndustryJobsTab.NAME, industryJobsTabDefaultFilters);
 		//Extractions Default Filters
