@@ -100,6 +100,10 @@ public abstract class DialoguesAccount extends Bundle {
 	public abstract String accountMigrated();
 	public abstract String accountCanMigrate();
 	public abstract String add();
+	public abstract String revalidate();
+	public abstract String revalidateMsgAll(int total);
+	public abstract String revalidateMsgNone(int total);
+	public abstract String revalidateMsgSome(int total, int done, int failed);
 	public abstract String collapse();
 	public abstract String expand();
 	public abstract String showAssets();
