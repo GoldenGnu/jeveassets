@@ -25,6 +25,7 @@ import java.awt.Dimension;
 import javax.swing.AbstractButton;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -56,6 +57,21 @@ public class JFixedToolBar extends JToolBar {
 		getSize();
 	}
 
+	public void addGlue() {
+		add(Box.createGlue());
+	}
+
+	public void addGlue(int width) {
+		add(new Box.Filler(new Dimension(width, 0), new Dimension(width, 0), new Dimension(Short.MAX_VALUE, Short.MAX_VALUE)));
+	}
+
+	public void add(JCheckBox jCheckBox) {
+		addSpace(5);
+		jCheckBox.setBorder(null);
+        super.add(jCheckBox);
+		addSpace(5);
+    }
+
 	public void add(final JComponent jComponent, int width) {
 		if (width > 0) {
 			setSize(jComponent, width);
@@ -67,9 +83,7 @@ public class JFixedToolBar extends JToolBar {
 		if (width > 0) {
 			setSize(jComboBox, width);
 		}
-		addSpace(10);
 		super.add(jComboBox);
-		addSpace(10);
 	}
 
 	public void addLabelIcon(final JLabel jButton) {
@@ -115,12 +129,11 @@ public class JFixedToolBar extends JToolBar {
 		Dimension dimension;
 		if (preferredWidth > width) {
 			dimension = new Dimension(preferredWidth, height);
-			jComponent.setPreferredSize(dimension);
-			jComponent.setMaximumSize(dimension);
 		} else {
 			dimension = new Dimension(width, height);
-			jComponent.setMaximumSize(dimension);
 		}
+		jComponent.setPreferredSize(dimension);
+		jComponent.setMaximumSize(dimension);
 	}
 
 	@Override

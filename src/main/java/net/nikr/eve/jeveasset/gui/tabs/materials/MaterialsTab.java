@@ -100,38 +100,38 @@ public class MaterialsTab extends JMainTabSecondary {
 
 		ListenerClass listener = new ListenerClass();
 
-		JFixedToolBar jToolBarLeft = new JFixedToolBar();
+		JFixedToolBar jToolBar = new JFixedToolBar();
 
 		jOwners = new JComboBox<>();
 		jOwners.setActionCommand(MaterialsAction.SELECTED.name());
 		jOwners.addActionListener(listener);
-		jToolBarLeft.addComboBox(jOwners, 200);
+		jToolBar.addComboBox(jOwners, 200);
+
+		jToolBar.addSpace(5);
 
 		jPiMaterial = new JCheckBox(TabsMaterials.get().includePI());
 		jPiMaterial.setActionCommand(MaterialsAction.SELECTED.name());
 		jPiMaterial.addActionListener(listener);
-		jToolBarLeft.add(jPiMaterial);
+		jToolBar.add(jPiMaterial);
 
-		jToolBarLeft.addSpace(10);
-
-		jToolBarLeft.addSeparator();
+		jToolBar.addSeparator();
 
 		jExport = new JButton(GuiShared.get().export(), Images.DIALOG_CSV_EXPORT.getIcon());
 		jExport.setActionCommand(MaterialsAction.EXPORT.name());
 		jExport.addActionListener(listener);
-		jToolBarLeft.addButton(jExport);
+		jToolBar.addButton(jExport);
 
-		JFixedToolBar jToolBarRight = new JFixedToolBar();
+		jToolBar.addGlue();
 
 		jCollapse = new JButton(TabsMaterials.get().collapse(), Images.MISC_COLLAPSED.getIcon());
 		jCollapse.setActionCommand(MaterialsAction.COLLAPSE.name());
 		jCollapse.addActionListener(listener);
-		jToolBarRight.addButton(jCollapse);
+		jToolBar.addButton(jCollapse);
 
 		jExpand = new JButton(TabsMaterials.get().expand(), Images.MISC_EXPANDED.getIcon());
 		jExpand.setActionCommand(MaterialsAction.EXPAND.name());
 		jExpand.addActionListener(listener);
-		jToolBarRight.addButton(jExpand);
+		jToolBar.addButton(jExpand);
 
 		//Table Format
 		tableFormat = TableFormatFactory.materialTableFormat();
@@ -163,19 +163,12 @@ public class MaterialsTab extends JMainTabSecondary {
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()
-				.addGroup(layout.createSequentialGroup()
-					.addComponent(jToolBarLeft, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
-					.addGap(0)
-					.addComponent(jToolBarRight)
-				)
+				.addComponent(jToolBar, jToolBar.getMinimumSize().width, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
 				.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
 		);
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
-				.addGroup(layout.createParallelGroup()
-					.addComponent(jToolBarLeft, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-					.addComponent(jToolBarRight, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-				)
+				.addComponent(jToolBar, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
 				.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
 		);
 	}

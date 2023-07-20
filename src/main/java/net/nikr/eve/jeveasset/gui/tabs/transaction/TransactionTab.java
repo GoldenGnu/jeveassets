@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -183,13 +184,13 @@ public class TransactionTab extends JMainTabPrimary {
 		layout.setHorizontalGroup(
 				layout.createParallelGroup()
 						.addComponent(filterControl.getPanel())
-						.addComponent(jToolBar)
+						.addComponent(jToolBar, jToolBar.getMinimumSize().width, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
 						.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
 		);
 		layout.setVerticalGroup(
 				layout.createSequentialGroup()
 						.addComponent(filterControl.getPanel())
-						.addComponent(jToolBar)
+						.addComponent(jToolBar, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
 						.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
 		);
 	}

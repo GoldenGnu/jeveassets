@@ -185,6 +185,10 @@ public class MarketOrdersTab extends JMainTabPrimary {
 		});
 		jToolBar.addButton(jClearNew);
 
+		jToolBar.addSeparator();
+
+		jToolBar.addSpace(5);
+
 		jOrderRangeNext = new JComboBox<>(MarketOrderRange.valuesSorted());
 		jOrderRangeNext.setSelectedItem(Settings.get().getOutbidOrderRange());
 		jOrderRangeNext.setActionCommand(MarketOrdersAction.ORDER_RANGE.name());
@@ -215,6 +219,8 @@ public class MarketOrdersTab extends JMainTabPrimary {
 		jToolBar.addLabelIcon(jOrderTypeLabel);
 
 		jToolBar.addSpace(7);
+
+		jToolBar.addSeparator();
 
 		jErrors = new JButton(TabsOrders.get().logOK());
 		jErrors.setActionCommand(MarketOrdersAction.ERROR_LOG.name());
@@ -315,16 +321,16 @@ public class MarketOrdersTab extends JMainTabPrimary {
 		fileListener.start();
 
 		layout.setHorizontalGroup(
-				layout.createParallelGroup()
-						.addComponent(filterControl.getPanel())
-						.addComponent(jToolBar, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
-						.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
+			layout.createParallelGroup()
+				.addComponent(filterControl.getPanel())
+				.addComponent(jToolBar, jToolBar.getMinimumSize().width, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
+				.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
 		);
 		layout.setVerticalGroup(
-				layout.createSequentialGroup()
-						.addComponent(filterControl.getPanel())
-						.addComponent(jToolBar, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
+			layout.createSequentialGroup()
+				.addComponent(filterControl.getPanel())
+				.addComponent(jToolBar, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+				.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
 		);
 	}
 

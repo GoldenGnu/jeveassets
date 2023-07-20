@@ -66,8 +66,7 @@ class FilterGui<E> {
 
 	private final JPanel jPanel;
 	private final GroupLayout layout;
-	private final JFixedToolBar jToolBarLeft;
-	private final JFixedToolBar jToolBarRight;
+	private final JFixedToolBar jToolBar;
 	private final JButton jExportButton;
 	private final JDropDownButton jExportMenu;
 	private final JDropDownButton jLoadFilter;
@@ -105,51 +104,57 @@ class FilterGui<E> {
 		layout.setAutoCreateGaps(true);
 		layout.setAutoCreateContainerGaps(false);
 
-		jToolBarLeft = new JFixedToolBar();
+		jToolBar = new JFixedToolBar();
 
 		//Add
 		JButton jAddField = new JButton(GuiShared.get().addField());
+		jAddField.setToolTipText(GuiShared.get().addFieldToolTip());
 		jAddField.setIcon(Images.EDIT_ADD.getIcon());
 		jAddField.setActionCommand(FilterGuiAction.ADD.name());
 		jAddField.addActionListener(listener);
-		jToolBarLeft.addButton(jAddField);
+		jToolBar.addButton(jAddField);
 
 		//Reset
 		JButton jClearFields = new JButton(GuiShared.get().clearField());
+		jClearFields.setToolTipText(GuiShared.get().clearFieldToolTip());
 		jClearFields.setIcon(Images.FILTER_CLEAR.getIcon());
 		jClearFields.setActionCommand(FilterGuiAction.CLEAR.name());
 		jClearFields.addActionListener(listener);
-		jToolBarLeft.addButton(jClearFields);
+		jToolBar.addButton(jClearFields);
 
-		jToolBarLeft.addSeparator();
+		jToolBar.addSeparator();
 
 		//Save Filter
 		JButton jSaveFilter = new JButton(GuiShared.get().saveFilter());
+		jSaveFilter.setToolTipText(GuiShared.get().saveFilterToolTip());
 		jSaveFilter.setIcon(Images.FILTER_SAVE.getIcon());
 		jSaveFilter.setActionCommand(FilterGuiAction.SAVE.name());
 		jSaveFilter.addActionListener(listener);
-		jToolBarLeft.addButton(jSaveFilter);
+		jToolBar.addButton(jSaveFilter);
 
 		//Load Filter
 		jLoadFilter = new JDropDownButton(GuiShared.get().loadFilter());
+		jLoadFilter.setToolTipText(GuiShared.get().loadFilterToolTip());
 		jLoadFilter.setIcon(Images.FILTER_LOAD.getIcon());
 		jLoadFilter.keepVisible(2);
 		jLoadFilter.setTopFixedCount(2);
 		jLoadFilter.setInterval(125);
-		jToolBarLeft.addButton(jLoadFilter);
+		jToolBar.addButton(jLoadFilter);
 
-		jToolBarLeft.addSeparator();
+		jToolBar.addSeparator();
 
 		//Export
 		jExportButton = new JButton(GuiShared.get().export());
+		jExportButton.setToolTipText(GuiShared.get().exportToolTip());
 		jExportButton.setIcon(Images.DIALOG_CSV_EXPORT.getIcon());
 		jExportButton.setActionCommand(FilterGuiAction.EXPORT.name());
 		jExportButton.addActionListener(listener);
-		jToolBarLeft.addButton(jExportButton);
+		jToolBar.addButton(jExportButton);
 
 		jExportMenu = new JDropDownButton(GuiShared.get().export(), Images.DIALOG_CSV_EXPORT.getIcon());
+		jExportMenu.setToolTipText(GuiShared.get().exportToolTip());
 		jExportMenu.setVisible(false);
-		jToolBarLeft.addButton(jExportMenu);
+		jToolBar.addButton(jExportMenu);
 
 		JMenuItem jExportMenuItem = new JMenuItem(GuiShared.get().exportTableData());
 		jExportMenuItem.setIcon(Images.DIALOG_CSV_EXPORT.getIcon());
@@ -157,28 +162,28 @@ class FilterGui<E> {
 		jExportMenuItem.addActionListener(listener);
 		jExportMenu.add(jExportMenuItem);
 
-		jToolBarLeft.addSeparator();
+		jToolBar.addSeparator();
 
 		//Show Filters
 		jShowFilters = new JCheckBox(GuiShared.get().showFilters());
+		jShowFilters.setToolTipText(GuiShared.get().showFiltersToolTip());
 		jShowFilters.setActionCommand(FilterGuiAction.SHOW_FILTERS.name());
 		jShowFilters.addActionListener(listener);
 		jShowFilters.setSelected(true);
-		jToolBarLeft.add(jShowFilters);
+		jToolBar.add(jShowFilters);
 
-		jToolBarRight = new JFixedToolBar();
-
-		jToolBarRight.addSpace(10);
+		jToolBar.addGlue(5);
 
 		//Showing
 		jShowing = new JLabel();
-		jToolBarRight.add(jShowing);
+		jShowing.setHorizontalAlignment(JLabel.RIGHT);
+		jToolBar.add(jShowing);
 
-		jToolBarRight.addSpace(5);
+		jToolBar.addSpace(5);
 
 		jHelp = new JDropDownButton(Images.MISC_HELP.getIcon());
 		jHelp.setVisible(false);
-		jToolBarRight.addButtonIcon(jHelp);
+		jToolBar.addButtonIcon(jHelp);
 
 		JMenuItem jFilterHelpMenuItem = new JMenuItem(GuiShared.get().helpFilter(), Images.MISC_HELP.getIcon());
 		jFilterHelpMenuItem.setActionCommand(FilterGuiAction.MANUAL_FILTER.name());
@@ -193,7 +198,7 @@ class FilterGui<E> {
 		jFilterHelp = new JButton(Images.MISC_HELP.getIcon());
 		jFilterHelp.setActionCommand(FilterGuiAction.MANUAL_FILTER.name());
 		jFilterHelp.addActionListener(listener);
-		jToolBarRight.addButtonIcon(jFilterHelp);
+		jToolBar.addButtonIcon(jFilterHelp);
 
 		updateFilters();
 		add();
@@ -304,17 +309,8 @@ class FilterGui<E> {
 		GroupLayout.ParallelGroup horizontalGroup = layout.createParallelGroup();
 		GroupLayout.SequentialGroup verticalGroup = layout.createSequentialGroup();
 		//Toolbars
-		horizontalGroup.addGroup(
-			layout.createSequentialGroup()
-				.addComponent(jToolBarLeft, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
-				.addGap(0)
-				.addComponent(jToolBarRight, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-		);
-		verticalGroup.addGroup(
-			layout.createParallelGroup()
-				.addComponent(jToolBarLeft, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-				.addComponent(jToolBarRight, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-		);
+		horizontalGroup.addComponent(jToolBar, jToolBar.getMinimumSize().width, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE);
+		verticalGroup.addComponent(jToolBar, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE);
 		//Filters
 		if (jShowFilters.isSelected()) {
 			if (sort) {
@@ -420,7 +416,7 @@ class FilterGui<E> {
 
 	protected void clear() {
 		multiUpdate = true;
-		while (filterPanels.size() > 0) {
+		while (!filterPanels.isEmpty()) {
 			remove(filterPanels.get(0));
 		}
 		addEmpty();
@@ -445,7 +441,7 @@ class FilterGui<E> {
 
 	protected void setFilters(final List<Filter> filters) {
 		multiUpdate = true;
-		while (filterPanels.size() > 0) {
+		while (!filterPanels.isEmpty()) {
 			remove(filterPanels.get(0));
 		}
 		multiUpdate = false;
@@ -542,8 +538,8 @@ class FilterGui<E> {
 	 * Loop though set update listeners and trigger their action.
 	 */
 	private void fireSettingsUpdate() {
-		for (SettingsUpdateListener listener : filterControl.getSettingsUpdateListenerList()) {
-			listener.settingChanged();
+		for (SettingsUpdateListener updateListener : filterControl.getSettingsUpdateListenerList()) {
+			updateListener.settingChanged();
 		}
 	}
 
