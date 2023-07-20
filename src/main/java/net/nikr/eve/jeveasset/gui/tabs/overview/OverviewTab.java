@@ -123,49 +123,49 @@ public class OverviewTab extends JMainTabSecondary {
 
 		overviewData = new OverviewData(program);
 
-		JFixedToolBar jToolBarLeft = new JFixedToolBar();
+		JFixedToolBar jToolBar = new JFixedToolBar();
 
 		JLabel jViewsLabel = new JLabel(TabsOverview.get().view());
-		jToolBarLeft.add(jViewsLabel);
+		jToolBar.add(jViewsLabel);
 
-		jToolBarLeft.addSpace(10);
+		jToolBar.addSpace(10);
 
 		jStations = new JToggleButton(Images.LOC_STATION.getIcon());
 		jStations.setSelected(true);
 		jStations.setToolTipText(TabsOverview.get().stations());
 		jStations.setActionCommand(OverviewAction.UPDATE_LIST.name());
 		jStations.addActionListener(listener);
-		jToolBarLeft.addButtonIcon(jStations);
+		jToolBar.addButtonIcon(jStations);
 
 		jPlanets = new JToggleButton(Images.LOC_PLANET.getIcon());
 		jPlanets.setToolTipText(TabsOverview.get().planets());
 		jPlanets.setActionCommand(OverviewAction.UPDATE_LIST.name());
 		jPlanets.addActionListener(listener);
-		jToolBarLeft.addButtonIcon(jPlanets);
+		jToolBar.addButtonIcon(jPlanets);
 
 		jSystems = new JToggleButton(Images.LOC_SYSTEM.getIcon());
 		jSystems.setToolTipText(TabsOverview.get().systems());
 		jSystems.setActionCommand(OverviewAction.UPDATE_LIST.name());
 		jSystems.addActionListener(listener);
-		jToolBarLeft.addButtonIcon(jSystems);
+		jToolBar.addButtonIcon(jSystems);
 
 		jConstellations = new JToggleButton(Images.LOC_CONSTELLATION.getIcon());
 		jConstellations.setToolTipText(TabsOverview.get().constellations());
 		jConstellations.setActionCommand(OverviewAction.UPDATE_LIST.name());
 		jConstellations.addActionListener(listener);
-		jToolBarLeft.addButtonIcon(jConstellations);
+		jToolBar.addButtonIcon(jConstellations);
 
 		jRegions = new JToggleButton(Images.LOC_REGION.getIcon());
 		jRegions.setToolTipText(TabsOverview.get().regions());
 		jRegions.setActionCommand(OverviewAction.UPDATE_LIST.name());
 		jRegions.addActionListener(listener);
-		jToolBarLeft.addButtonIcon(jRegions);
+		jToolBar.addButtonIcon(jRegions);
 
 		jGroups = new JToggleButton(Images.LOC_GROUPS.getIcon());
 		jGroups.setToolTipText(TabsOverview.get().groups());
 		jGroups.setActionCommand(OverviewAction.UPDATE_LIST.name());
 		jGroups.addActionListener(listener);
-		jToolBarLeft.addButtonIcon(jGroups);
+		jToolBar.addButtonIcon(jGroups);
 
 		ButtonGroup group = new ButtonGroup();
 		group.add(jStations);
@@ -175,28 +175,31 @@ public class OverviewTab extends JMainTabSecondary {
 		group.add(jRegions);
 		group.add(jGroups);
 
-		jToolBarLeft.addSeparator();
+		jToolBar.addSeparator();
 
 		jLoadFilter = new JDropDownButton(TabsOverview.get().loadFilter());
 		jLoadFilter.setIcon(Images.FILTER_LOAD.getIcon());
-		jToolBarLeft.addButton(jLoadFilter);
+		jToolBar.addButton(jLoadFilter);
 
-		jToolBarLeft.addSeparator();
+		jToolBar.addSeparator();
+
+		jToolBar.addSpace(5);
 
 		JLabel jOwnerLabel = new JLabel(TabsOverview.get().owner());
-		jToolBarLeft.add(jOwnerLabel);
+		jToolBar.add(jOwnerLabel);
+
+		jToolBar.addSpace(5);
 
 		jOwner = new JComboBox<>();
 		jOwner.setActionCommand(OverviewAction.UPDATE_LIST.name());
 		jOwner.addActionListener(listener);
-		jToolBarLeft.addComboBox(jOwner, 150);
+		jToolBar.addComboBox(jOwner, 150);
 
-		JFixedToolBar jToolBarRight = new JFixedToolBar();
-
-		jToolBarRight.addSpace(10);
+		jToolBar.addGlue(10);
 
 		jShowing = new JLabel();
-		jToolBarRight.add(jShowing);
+		jShowing.setHorizontalAlignment(JLabel.RIGHT);
+		jToolBar.add(jShowing);
 
 		updateFilters();
 
@@ -249,20 +252,13 @@ public class OverviewTab extends JMainTabSecondary {
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()
 				.addComponent(filterControl.getPanel())
-				.addGroup(layout.createSequentialGroup()
-					.addComponent(jToolBarLeft, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
-					.addGap(0)
-					.addComponent(jToolBarRight, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-				)
+				.addComponent(jToolBar, jToolBar.getMinimumSize().width, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
 				.addComponent(jTableScroll, 400, 400, Short.MAX_VALUE)
 		);
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
 				.addComponent(filterControl.getPanel())
-				.addGroup(layout.createParallelGroup()
-					.addComponent(jToolBarLeft, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-					.addComponent(jToolBarRight, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-				)
+				.addComponent(jToolBar, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
 				.addComponent(jTableScroll, 100, 400, Short.MAX_VALUE)
 		);
 	}
