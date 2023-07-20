@@ -104,19 +104,19 @@ public class ContractsTab extends JMainTabPrimary {
 
 		ListenerClass listener = new ListenerClass();
 
-		JFixedToolBar jToolBarLeft = new JFixedToolBar();
+		JFixedToolBar jToolBar = new JFixedToolBar();
 
-		JFixedToolBar jToolBarRight = new JFixedToolBar();
+		jToolBar.addGlue();
 
 		JButton jCollapse = new JButton(TabsContracts.get().collapse(), Images.MISC_COLLAPSED.getIcon());
 		jCollapse.setActionCommand(ContractsAction.COLLAPSE.name());
 		jCollapse.addActionListener(listener);
-		jToolBarRight.addButton(jCollapse);
+		jToolBar.addButton(jCollapse);
 
 		JButton jExpand = new JButton(TabsContracts.get().expand(), Images.MISC_EXPANDED.getIcon());
 		jExpand.setActionCommand(ContractsAction.EXPAND.name());
 		jExpand.addActionListener(listener);
-		jToolBarRight.addButton(jExpand);
+		jToolBar.addButton(jExpand);
 
 		//Table Format
 		tableFormat = TableFormatFactory.contractsTableFormat();
@@ -185,23 +185,16 @@ public class ContractsTab extends JMainTabPrimary {
 		addStatusbarLabel(jCollateralAcceptor);
 
 		layout.setHorizontalGroup(
-				layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-						.addComponent(filterControl.getPanel())
-						.addGroup(layout.createSequentialGroup()
-								.addComponent(jToolBarLeft, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
-								.addGap(0)
-								.addComponent(jToolBarRight)
-						)
-						.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
+			layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+				.addComponent(filterControl.getPanel())
+				.addComponent(jToolBar, jToolBar.getMinimumSize().width, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
+				.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
 		);
 		layout.setVerticalGroup(
-				layout.createSequentialGroup()
-						.addComponent(filterControl.getPanel())
-						.addGroup(layout.createParallelGroup()
-								.addComponent(jToolBarLeft, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-								.addComponent(jToolBarRight, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-						)
-						.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
+			layout.createSequentialGroup()
+				.addComponent(filterControl.getPanel())
+				.addComponent(jToolBar, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+				.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
 		);
 	}
 

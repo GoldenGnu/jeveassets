@@ -127,20 +127,20 @@ public class ReprocessedTab extends JMainTabSecondary {
 
 		textImport = new TextImport(program);
 
-		JFixedToolBar jToolBarLeft = new JFixedToolBar();
+		JFixedToolBar jToolBar = new JFixedToolBar();
 
 		JButton jAddItem = new JButton(TabsReprocessed.get().addItem(), Images.EDIT_ADD.getIcon());
 		jAddItem.setActionCommand(ReprocessedAction.ADD_ITEM.name());
 		jAddItem.addActionListener(listener);
-		jToolBarLeft.addButton(jAddItem);
+		jToolBar.addButton(jAddItem);
 
 		JButton jClear = new JButton(TabsReprocessed.get().removeAll(), Images.EDIT_DELETE.getIcon());
 		jClear.setActionCommand(ReprocessedAction.CLEAR.name());
 		jClear.addActionListener(listener);
-		jToolBarLeft.addButton(jClear);
+		jToolBar.addButton(jClear);
 
 		JDropDownButton jImport = new JDropDownButton(TabsReprocessed.get().importButton(), Images.EDIT_IMPORT.getIcon());
-		jToolBarLeft.addButton(jImport);
+		jToolBar.addButton(jImport);
 
 		JMenuItem jImportEFT = new JMenuItem(TabsReprocessed.get().importEft(), Images.TOOL_SHIP_LOADOUTS.getIcon());
 		jImportEFT.setActionCommand(ReprocessedAction.IMPORT_EFT.name());
@@ -162,17 +162,17 @@ public class ReprocessedTab extends JMainTabSecondary {
 		jImportShoppingList.addActionListener(listener);
 		jImport.add(jImportShoppingList);
 
-		JFixedToolBar jToolBarRight = new JFixedToolBar();
+		jToolBar.addGlue();
 
 		JButton jCollapse = new JButton(TabsReprocessed.get().collapse(), Images.MISC_COLLAPSED.getIcon());
 		jCollapse.setActionCommand(ReprocessedAction.COLLAPSE.name());
 		jCollapse.addActionListener(listener);
-		jToolBarRight.addButton(jCollapse);
+		jToolBar.addButton(jCollapse);
 
 		JButton jExpand = new JButton(TabsReprocessed.get().expand(), Images.MISC_EXPANDED.getIcon());
 		jExpand.setActionCommand(ReprocessedAction.EXPAND.name());
 		jExpand.addActionListener(listener);
-		jToolBarRight.addButton(jExpand);
+		jToolBar.addButton(jExpand);
 
 		//Table Format
 		tableFormat = TableFormatFactory.reprocessedTableFormat();
@@ -219,20 +219,13 @@ public class ReprocessedTab extends JMainTabSecondary {
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
 				.addComponent(filterControl.getPanel())
-				.addGroup(layout.createSequentialGroup()
-					.addComponent(jToolBarLeft, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
-					.addGap(0)
-					.addComponent(jToolBarRight)
-				)
+				.addComponent(jToolBar, jToolBar.getMinimumSize().width, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
 				.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
 		);
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
 				.addComponent(filterControl.getPanel())
-				.addGroup(layout.createParallelGroup()
-					.addComponent(jToolBarLeft, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-					.addComponent(jToolBarRight, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-				)
+				.addComponent(jToolBar, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
 				.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
 		);
 	}

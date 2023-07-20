@@ -328,6 +328,7 @@ public abstract class GuiShared extends Bundle {
 
 	//Filters
 	public abstract String saveFilter();
+	public abstract String saveFilterToolTip();
 	public abstract String enterFilterName();
 	public abstract String save();
 	public abstract String cancel();
@@ -335,9 +336,13 @@ public abstract class GuiShared extends Bundle {
 	public abstract String overwriteDefaultFilter();
 	public abstract String overwriteFilter();
 	public abstract String addField();
+	public abstract String addFieldToolTip();
 	public abstract String clearField();
+	public abstract String clearFieldToolTip();
 	public abstract String loadFilter();
+	public abstract String loadFilterToolTip();
 	public abstract String showFilters();
+	public abstract String showFiltersToolTip();
 	public abstract String manageFilters();
 	public abstract String nothingToSave();
 	public abstract String filterManager();
@@ -385,6 +390,7 @@ public abstract class GuiShared extends Bundle {
 	public abstract String filterShowing(int rowCount, int size, String filterName);
 	public abstract String popupMenuAddField();
 	public abstract String export();
+	public abstract String exportToolTip();
 	public abstract String exportTableData();
 
 	//Text Dialog

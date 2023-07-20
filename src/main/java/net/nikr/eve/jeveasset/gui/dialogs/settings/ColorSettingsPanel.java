@@ -276,8 +276,8 @@ public class ColorSettingsPanel extends JSettingsPanel {
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-				.addComponent(jToolBarTop, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
-				.addComponent(jToolBarBottom, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
+				.addComponent(jToolBarTop, jToolBarTop.getMinimumSize().width, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
+				.addComponent(jToolBarBottom, jToolBarBottom.getMinimumSize().width, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
 				.addComponent(jTableScroll, 375, 375, Integer.MAX_VALUE)
 		);
 		layout.setVerticalGroup(

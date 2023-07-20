@@ -133,7 +133,7 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate {
 
 		ListenerClass listener = new ListenerClass();
 
-		JFixedToolBar jToolBarLeft = new JFixedToolBar();
+		JFixedToolBar jToolBar = new JFixedToolBar();
 
 		ButtonGroup buttonGroup = new ButtonGroup();
 
@@ -141,35 +141,35 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate {
 		jCategories.setActionCommand(TreeAction.TYPE.name());
 		jCategories.addActionListener(listener);
 		buttonGroup.add(jCategories);
-		jToolBarLeft.addButton(jCategories);
+		jToolBar.addButton(jCategories);
 
 		JToggleButton jLocation = new JToggleButton(TabsTree.get().locations(), Images.LOC_LOCATIONS.getIcon());
 		jLocation.setActionCommand(TreeAction.TYPE.name());
 		jLocation.addActionListener(listener);
 		jLocation.setSelected(true);
 		buttonGroup.add(jLocation);
-		jToolBarLeft.addButton(jLocation);
+		jToolBar.addButton(jLocation);
 
-		jToolBarLeft.addSeparator();
+		jToolBar.addSeparator();
 
 		jReprocessColors = new JToggleButton(TabsAssets.get().reprocessColors(), Images.TOOL_REPROCESSED.getIcon());
 		jReprocessColors.setToolTipText(TabsAssets.get().reprocessColorsToolTip());
 		jReprocessColors.setSelected(Settings.get().isReprocessColors());
 		jReprocessColors.setActionCommand(TreeAction.REPROCESS_COLORS.name());
 		jReprocessColors.addActionListener(listener);
-		jToolBarLeft.addButton(jReprocessColors);
+		jToolBar.addButton(jReprocessColors);
 
-		JFixedToolBar jToolBarRight = new JFixedToolBar();
+		jToolBar.addGlue();
 
 		JButton jCollapse = new JButton(TabsTree.get().collapse(), Images.MISC_COLLAPSED.getIcon());
 		jCollapse.setActionCommand(TreeAction.COLLAPSE.name());
 		jCollapse.addActionListener(listener);
-		jToolBarRight.addButton(jCollapse);
+		jToolBar.addButton(jCollapse);
 
 		JButton jExpand = new JButton(TabsTree.get().expand(), Images.MISC_EXPANDED.getIcon());
 		jExpand.setActionCommand(TreeAction.EXPAND.name());
 		jExpand.addActionListener(listener);
-		jToolBarRight.addButton(jExpand);
+		jToolBar.addButton(jExpand);
 
 		jVolume = StatusPanel.createLabel(TabsAssets.get().totalVolume(), Images.ASSETS_VOLUME.getIcon(), AutoNumberFormat.DOUBLE);
 		this.addStatusbarLabel(jVolume);
@@ -241,20 +241,13 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate {
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()
 				.addComponent(filterControl.getPanel())
-				.addGroup(layout.createSequentialGroup()
-					.addComponent(jToolBarLeft, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
-					.addGap(0)
-					.addComponent(jToolBarRight)
-				)
+				.addComponent(jToolBar, jToolBar.getMinimumSize().width, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
 				.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
 		);
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
 				.addComponent(filterControl.getPanel())
-				.addGroup(layout.createParallelGroup()
-					.addComponent(jToolBarLeft, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-					.addComponent(jToolBarRight, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-				)
+				.addComponent(jToolBar, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
 				.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
 		);
 	}
