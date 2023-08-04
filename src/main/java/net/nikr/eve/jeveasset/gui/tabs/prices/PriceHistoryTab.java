@@ -24,6 +24,8 @@ import ca.odell.glazedlists.GlazedLists;
 import ca.odell.glazedlists.TextFilterator;
 import com.github.lgooddatepicker.optionalusertools.DateChangeListener;
 import com.github.lgooddatepicker.zinternaltools.DateChangeEvent;
+import java.awt.Color;
+import java.awt.Paint;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -74,6 +76,7 @@ import net.nikr.eve.jeveasset.gui.frame.StatusPanel.Progress;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel.UpdateType;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
+import net.nikr.eve.jeveasset.gui.shared.ColorUtil;
 import net.nikr.eve.jeveasset.gui.shared.Formatter;
 import net.nikr.eve.jeveasset.gui.shared.JFreeChartUtil;
 import net.nikr.eve.jeveasset.gui.shared.components.JAutoCompleteDialog;
@@ -93,6 +96,7 @@ import org.jfree.chart.axis.DateAxis;
 import org.jfree.chart.axis.LogarithmicAxis;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.labels.XYToolTipGenerator;
+import org.jfree.chart.plot.DefaultDrawingSupplier;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.time.SimpleTimePeriod;
@@ -430,6 +434,11 @@ public class PriceHistoryTab extends JMainTabSecondary {
 	}
 
 	@Override
+	public void repaintTable() {
+		updateSeries();
+	}
+
+	@Override
 	public void updateCache() { }
 
 	@Override
@@ -659,10 +668,38 @@ public class PriceHistoryTab extends JMainTabSecondary {
 			dataset.removeSeries(0);
 		}
 		//Add all
+		boolean bright = ColorUtil.isBrightColor(jPanel.getBackground());
+		DefaultDrawingSupplier drawingSupplier = new DefaultDrawingSupplier();
 		for (Item item : shownOrder) {
 			dataset.addSeries(series.get(item));
+			Paint paint = getColor(bright, drawingSupplier);
+			if (paint != null) {
+				renderer.setSeriesPaint(dataset.getSeriesCount() - 1, paint);
+			}
 		}
 		updateShown();
+	}
+
+	private Paint getColor(boolean bright, DefaultDrawingSupplier drawingSupplier) {
+		Paint paint = drawingSupplier.getNextPaint();
+		if (Settings.get().isEasyChartColors() && paint instanceof Color) {
+			Color color = (Color) paint;
+			if (bright) {
+				if (ColorUtil.luminance(color) > 0.8) { //Skip color > get next color
+					return getColor(bright, drawingSupplier);
+				} else { //OK: return color
+					return color;
+				}
+			} else {
+				if (ColorUtil.luminance(color) < 0.2) { //Skip color > get next color
+					return getColor(bright, drawingSupplier);
+				} else { //OK: return color
+					return color;
+				}
+			}
+			
+		}
+		return paint;
 	}
 
 	private void updateShown() {
