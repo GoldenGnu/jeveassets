@@ -209,7 +209,7 @@ public class ManufacturingSettingsPanel extends JSettingsPanel {
 		ManufacturingSecurity security = jSecurity.getItemAt(jSecurity.getSelectedIndex());
 		double tax = taxModel.getNumber().doubleValue();
 		//Eval if table need to be updated
-		boolean update = !Objects.equals(systemIndex, Settings.get().getManufacturingSettings().getSystemID())
+		boolean update = !Objects.equals(systemIndex.getSystemID(), Settings.get().getManufacturingSettings().getSystemID())
 								|| !Objects.equals(materialEfficiency, Settings.get().getManufacturingSettings().getMaterialEfficiency())
 								|| !Objects.equals(facility, Settings.get().getManufacturingSettings().getFacility())
 								|| !Objects.equals(rigs, Settings.get().getManufacturingSettings().getRigs())
