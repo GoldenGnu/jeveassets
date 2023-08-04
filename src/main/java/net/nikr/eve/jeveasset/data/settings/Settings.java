@@ -98,7 +98,8 @@ public class Settings {
 		FLAG_SAVE_TOOLS_ON_EXIT,
 		FLAG_SAVE_CONTRACT_HISTORY,
 		FLAG_SAVE_MINING_HISTORY,
-		FLAG_MANUFACTURING_DEFAULT
+		FLAG_MANUFACTURING_DEFAULT,
+		FLAG_EASY_CHART_COLORS
 	}
 
 	public static enum TransactionProfitPrice {
@@ -292,6 +293,7 @@ public class Settings {
 		flags.put(SettingFlag.FLAG_SAVE_CONTRACT_HISTORY, true);
 		flags.put(SettingFlag.FLAG_SAVE_MINING_HISTORY, true);
 		flags.put(SettingFlag.FLAG_MANUFACTURING_DEFAULT, true);
+		flags.put(SettingFlag.FLAG_EASY_CHART_COLORS, false);
 		cacheFlags();
 		//Default Filters
 		List<Filter> filter;
@@ -840,6 +842,14 @@ public class Settings {
 
 	public void setManufacturingDefault(final boolean manufacturingDefault) {
 		flags.put(SettingFlag.FLAG_MANUFACTURING_DEFAULT, manufacturingDefault);
+	}
+
+	public boolean isEasyChartColors() {
+		return flags.get(SettingFlag.FLAG_EASY_CHART_COLORS);
+	}
+
+	public void setEasyChartColors(final boolean easyChartColors) {
+		flags.put(SettingFlag.FLAG_EASY_CHART_COLORS, easyChartColors);
 	}
 
 	public boolean isTransactionHistory() {

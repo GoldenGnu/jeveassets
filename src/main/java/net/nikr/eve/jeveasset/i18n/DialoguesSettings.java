@@ -119,6 +119,7 @@ public abstract class DialoguesSettings extends Bundle {
 	public abstract String miningSaveHistory();
 
 	// used in ColorSettingsPanel
+	public abstract String chartColors();
 	public abstract String colors();
 	public abstract String collapse();
 	public abstract String expand();
