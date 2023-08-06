@@ -134,74 +134,24 @@ public class StockpileData extends TableData {
 				}
 			}
 		}
-	//Create lookup set of TypeIDs
+		stockpile.setFlagName(flags);
+		//Update Tags
+		stockpile.updateTags();
+		//Update Items
+		updateStockpileItems(stockpile, true);
+	}
+
+	private void updateStockpileItems(Stockpile stockpile, boolean updateClaims) {
+		//Create lookup set of TypeIDs
 		Set<Integer> typeIDs = new HashSet<>();
 		addTypeIDs(typeIDs, stockpile);
-	//Create lookup maps of Items
+		//Create lookup maps of Items
 		if (!typeIDs.isEmpty()) {
 			//Contract Items
 			if (stockpile.isContracts()) {
 				get(contractItems, stockpile).clear();
 				if (stockpile.isContractsMatchAll()) {
-					Map<MyContract, Set<Integer>> foundIDs =  new HashMap<>();
-					Map<MyContract, List<MyContractItem>> foundItems =  new HashMap<>();
-					for (MyContract contract : profileData.getContractList()) {
-						foundIDs.put(contract, new HashSet<>());
-						foundItems.put(contract, new ArrayList<>());
-					}
-					//StockpileItem map lookup
-					Map<Integer, StockpileItem> stockpileItems =  new HashMap<>();
-					for (StockpileItem stockpileItem : stockpile.getItems()) {
-						if (stockpileItem.isTotal()) {
-							continue; //Ignore Total
-						}
-						stockpileItems.put(stockpileItem.getItemTypeID(), stockpileItem);
-					}
-					//Init found maps
-					for (MyContract contract : profileData.getContractList()) {
-						foundIDs.put(contract, new HashSet<>());
-						foundItems.put(contract, new ArrayList<>());
-					}
-					//Contract Items matching
-					for (MyContractItem contractItem : profileData.getContractItemList()) {
-						//Validate contract
-						if (contractItem.getContract().isIgnoreContract()) {
-							continue;
-						}
-						Integer typeID = get(contractItem.getTypeID(), contractItem.isBPC());
-						//Validate typeID
-						if (ignore(typeIDs, typeID)) {
-							foundItems.remove(contractItem.getContract()); //Contract have items not in the stockpile
-							continue; //Nothing left to do here
-						}
-						//Get items
-						List<MyContractItem> items = foundItems.get(contractItem.getContract());
-						if (items == null) {
-							continue; //Happens when one or more typeIDs from the contract isn't in the stockpile
-						}
-						//Get contract typeIDs
-						Set<Integer> ids = foundIDs.get(contractItem.getContract());
-						if (ids == null) {
-							continue; //Should never happen, but, better safe than sorry
-						}
-						//Get StockpileItem
-						StockpileItem stockpileItem = stockpileItems.get(typeID);
-						if (stockpileItem == null) {
-							continue; //Should never happen, but, better safe than sorry
-						}
-						if (stockpileItem.matchesContract(contractItem)) {
-							items.add(contractItem);
-							ids.add(typeID);
-						}
-					}
-					//Stockpile Items matching
-					for (Map.Entry<MyContract, Set<Integer>> entry : foundIDs.entrySet()) {
-						//Only compare the size of the sets, as both sets only contains valid and unique ids.
-						//Therefore there should be no reason to compare the actualy IDs (which is really really slow)
-						if (entry.getValue().size() != typeIDs.size()) { //Stockpile have items not in the contract
-							foundItems.remove(entry.getKey());
-						}
-					}
+					Map<MyContract, List<MyContractItem>> foundItems = contractsMatchAll(profileData, stockpile, updateClaims);
 					//Add
 					for (List<MyContractItem> list : foundItems.values()) {
 						for (MyContractItem contractItem : list) {
@@ -278,7 +228,6 @@ public class StockpileData extends TableData {
 				}
 			}
 		}
-		stockpile.setFlagName(flags);
 		stockpile.reset();
 		if (!stockpile.isEmpty()) {
 			for (StockpileItem item : stockpile.getItems()) {
@@ -289,10 +238,74 @@ public class StockpileData extends TableData {
 			}
 		}
 		stockpile.updateTotal();
-		stockpile.updateTags();
 	}
 
-	private Integer get(Integer typeID, boolean bpc) {
+	public static Map<MyContract, List<MyContractItem>> contractsMatchAll(ProfileData profileData, Stockpile stockpile, boolean updateClaims) {
+		Map<MyContract, Set<Integer>> foundIDs =  new HashMap<>();
+		Map<MyContract, List<MyContractItem>> foundItems =  new HashMap<>();
+		Set<Integer> typeIDs = new HashSet<>();
+		//Init found maps
+		for (MyContract contract : profileData.getContractList()) {
+			foundIDs.put(contract, new HashSet<>());
+			foundItems.put(contract, new ArrayList<>());
+		}
+		//Update subpile claims
+		if (updateClaims && !stockpile.getSubpiles().isEmpty()) {
+			updateSubpileClaims(stockpile);
+		}
+		//StockpileItem map lookup
+		Map<Integer, StockpileItem> stockpileItems =  new HashMap<>();
+		for (StockpileItem stockpileItem : stockpile.getClaims()) {
+			if (stockpileItem.isTotal()) {
+				continue; //Ignore Total
+			}
+			typeIDs.add(stockpileItem.getItemTypeID());
+			stockpileItems.put(stockpileItem.getItemTypeID(), stockpileItem);
+		}
+		//Contract Items matching
+		for (MyContractItem contractItem : profileData.getContractItemList()) {
+			//Validate contract
+			if (contractItem.getContract().isIgnoreContract()) {
+				continue;
+			}
+			Integer typeID = get(contractItem.getTypeID(), contractItem.isBPC());
+			//Validate typeID
+			if (ignore(typeIDs, typeID)) {
+				foundItems.remove(contractItem.getContract()); //Contract have items not in the stockpile
+				continue; //Nothing left to do here
+			}
+			//Get items
+			List<MyContractItem> items = foundItems.get(contractItem.getContract());
+			if (items == null) {
+				continue; //Happens when one or more typeIDs from the contract isn't in the stockpile
+			}
+			//Get contract typeIDs
+			Set<Integer> ids = foundIDs.get(contractItem.getContract());
+			if (ids == null) {
+				continue; //Should never happen, but, better safe than sorry
+			}
+			//Get StockpileItem
+			StockpileItem stockpileItem = stockpileItems.get(typeID);
+			if (stockpileItem == null) {
+				continue; //Should never happen, but, better safe than sorry
+			}
+			if (stockpileItem.matchesContract(contractItem)) {
+				items.add(contractItem);
+				ids.add(typeID);
+			}
+		}
+		//Stockpile Items matching
+		for (Map.Entry<MyContract, Set<Integer>> entry : foundIDs.entrySet()) {
+			//Only compare the size of the sets, as both sets only contains valid and unique ids.
+			//Therefore there should be no reason to compare the actualy IDs (which is really really slow)
+			if (entry.getValue().size() != typeIDs.size()) { //Stockpile have items not in the contract
+				foundItems.remove(entry.getKey());
+			}
+		}
+		return foundItems;
+	}
+
+	public static Integer get(Integer typeID, boolean bpc) {
 		//Ignore null
 		if (typeID == null) {
 			return null;
@@ -305,7 +318,7 @@ public class StockpileData extends TableData {
 		return typeID;
 	}
 
-	private boolean ignore(Set<Integer> typeIDs, Integer typeID) {
+	private static boolean ignore(Set<Integer> typeIDs, Integer typeID) {
 		//Ignore null
 		if (typeID == null) {
 			return true;
@@ -461,7 +474,11 @@ public class StockpileData extends TableData {
 			updateSubpile(updated, removed, stockpile);
 		}
 		//Add new items
-		updateSubpile(parent, parent, parentItems, null, 0, "");
+		updateSubpileClaims(parent, parentItems);
+		//Update stockpile items
+		if (parent.isContracts() && parent.isContractsMatchAll()) {
+			updateStockpileItems(parent, false);
+		}
 		//Update items
 		for (SubpileItem subpileItem : parent.getSubpileItems()) {
 			updateItem(subpileItem, subpileItem.getStockpile());
@@ -477,6 +494,18 @@ public class StockpileData extends TableData {
 		}
 	}
 
+	private static void updateSubpileClaims(Stockpile topStockpile) {
+		Map<Integer, StockpileItem> parentItems = new HashMap<>();
+		for (StockpileItem item : topStockpile.getItems()) {
+			parentItems.put(item.getItemTypeID(), item);
+		}
+		updateSubpileClaims(topStockpile, parentItems);
+	}
+
+	private static void updateSubpileClaims(Stockpile topStockpile, Map<Integer, StockpileItem> topItems) {
+		updateSubpileClaims(topStockpile, topStockpile, topItems, null, 0, "");
+	}
+
 	/**
 	 * Internal: Don't use this.
 	 * Do all the subpile calculations
@@ -488,7 +517,7 @@ public class StockpileData extends TableData {
 	 * @param parentLevel
 	 * @param parentPath
 	 */
-	private void updateSubpile(Stockpile topStockpile, Stockpile parentStockpile, Map<Integer, StockpileItem> topItems, SubpileStock parentStock, int parentLevel, String parentPath) {
+	private static void updateSubpileClaims(Stockpile topStockpile, Stockpile parentStockpile, Map<Integer, StockpileItem> topItems, SubpileStock parentStock, int parentLevel, String parentPath) {
 		for (Map.Entry<Stockpile, Double> entry : parentStockpile.getSubpiles().entrySet()) {
 			//For each subpile (stockpile)
 			Stockpile currentStockpile = entry.getKey();
@@ -519,7 +548,7 @@ public class StockpileData extends TableData {
 					topStockpile.getSubpileItems().add(subpileItem);
 				}
 			}
-			updateSubpile(topStockpile, currentStockpile, topItems, subpileStock, level, path);
+			updateSubpileClaims(topStockpile, currentStockpile, topItems, subpileStock, level, path);
 		}
 	}
 }
