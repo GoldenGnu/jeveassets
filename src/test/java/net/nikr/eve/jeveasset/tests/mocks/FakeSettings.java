@@ -727,4 +727,14 @@ public abstract class FakeSettings extends Settings {
 	public ManufacturingSettings getManufacturingSettings() {
 		throw new UnsupportedOperationException("not implemented");
 	}
+
+	@Override
+	public void setEasyChartColors(boolean easyChartColors) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public boolean isEasyChartColors() {
+		throw new UnsupportedOperationException("not implemented");
+	}
 }
