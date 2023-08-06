@@ -28,6 +28,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -47,6 +48,7 @@ import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.my.MyAsset;
+import net.nikr.eve.jeveasset.data.api.my.MyContract;
 import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
@@ -207,7 +209,7 @@ class StockpileShoppingListDialog extends JDialogCentered {
 		//Multiplier
 		long percent;
 		try {
-			percent = Long.valueOf(jPercentFull.getText());
+			percent = Long.parseLong(jPercentFull.getText());
 			if (percent <= 0) {
 				percent = 100;
 			}
@@ -216,7 +218,7 @@ class StockpileShoppingListDialog extends JDialogCentered {
 		}
 		long hide;
 		try {
-			hide = Long.valueOf(jPercentIgnore.getText());
+			hide = Long.parseLong(jPercentIgnore.getText());
 			if (hide <= 0) {
 				hide = 100;
 			} else if (hide > 100) {
@@ -235,6 +237,15 @@ class StockpileShoppingListDialog extends JDialogCentered {
 			stockpileNamesBuilder.append("x ");
 			stockpileNamesBuilder.append(stockpile.getName());
 			stockpileNamesBuilder.append("\r\n");
+			Set<Integer> contractIDs = null;
+			if (stockpile.isContracts() && stockpile.isContractsMatchAll()) {
+				contractIDs = new HashSet<>();
+				Map<MyContract, List<MyContractItem>> foundItems = StockpileData.contractsMatchAll(program.getProfileData(), stockpile, false);
+				//Add
+				for (MyContract contract : foundItems.keySet()) {
+					contractIDs.add(contract.getContractID());
+				}
+			}
 			for (StockpileItem stockpileItem : stockpile.getClaims()) {
 				if (stockpileItem instanceof SubpileStock) {
 					String key = stockpileItem.getName().trim();
@@ -248,7 +259,7 @@ class StockpileShoppingListDialog extends JDialogCentered {
 						claimList = new ArrayList<>();
 						claims.put(typeID, claimList);
 					}
-					claimList.add(new StockClaim(stockpileItem, percent));
+					claimList.add(new StockClaim(stockpileItem, contractIDs, percent));
 				}
 			}
 		}
@@ -260,7 +271,7 @@ class StockpileShoppingListDialog extends JDialogCentered {
 			if (asset.isGenerated()) { //Skip generated assets
 				continue;
 			}
-			int typeID = asset.isBPC() ? -asset.getTypeID() : asset.getTypeID();
+			Integer typeID = StockpileData.get(asset.getTypeID(), asset.isBPC());
 			add(new TypeIdentifier(typeID, false), asset, claims, items);
 			add(new TypeIdentifier(typeID, true), asset, claims, items);
 		}
@@ -270,10 +281,12 @@ class StockpileShoppingListDialog extends JDialogCentered {
 		}
 		//Industry Jobs
 		for (MyIndustryJob industryJob : program.getIndustryJobsList()) {
+			//Manufacturing
 			Integer productTypeID = industryJob.getProductTypeID();
 			if (productTypeID != null) {
 				add(new TypeIdentifier(productTypeID, false), industryJob, claims, items);
 			}
+			//Copying
 			add(new TypeIdentifier(-industryJob.getBlueprintTypeID(), true), industryJob, claims, items);
 		}
 		//Transactions
@@ -285,7 +298,7 @@ class StockpileShoppingListDialog extends JDialogCentered {
 			if (contractItem.getContract().isIgnoreContract()) {
 				continue;
 			}
-			int typeID = contractItem.isBPC() ? -contractItem.getTypeID() : contractItem.getTypeID();
+			Integer typeID = StockpileData.get(contractItem.getTypeID(), contractItem.isBPC());
 			add(new TypeIdentifier(typeID, false), contractItem, claims, items);
 		}
 
@@ -478,6 +491,12 @@ class StockpileShoppingListDialog extends JDialogCentered {
 
 		StockItem stockItem = null;
 		for (StockClaim stockMinimum : minimumList) {
+			if (stockMinimum.isContractMatchAll() && object instanceof MyContractItem) {
+				MyContractItem contractItem = (MyContractItem) object;
+				if (!stockMinimum.getContractIDs().contains(contractItem.getContract().getContractID())) {
+					continue; //Ignore none matching contracts
+				}
+			}
 			Long count = stockMinimum.matches(object);
 			if (count != null && count != 0) { //if match (have claim)
 				if (stockItem == null) { //if item not added already - add to items list
@@ -551,12 +570,14 @@ class StockpileShoppingListDialog extends JDialogCentered {
 
 	private static class StockClaim implements Comparable<StockClaim>{
 		private final StockpileItem stockpileItem;
+		private final Set<Integer> contractIDs;
 		private final long totalNeed;
 		private long countMinimum;
 		private long available = 0;
 
-		public StockClaim(StockpileItem stockpileItem, long percent) {
+		public StockClaim(StockpileItem stockpileItem, Set<Integer> contractIDs, long percent) {
 			this.stockpileItem = stockpileItem;
+			this.contractIDs = contractIDs;
 			this.totalNeed = (long)(stockpileItem.getCountMinimumMultiplied() * percent / 100.0);
 			this.countMinimum = this.totalNeed;
 		}
@@ -597,9 +618,21 @@ class StockpileShoppingListDialog extends JDialogCentered {
 			return available - countMinimum;
 		}
 
+		public Set<Integer> getContractIDs() {
+			return contractIDs;
+		}
+
+		public boolean isContractMatchAll() {
+			return contractIDs != null;
+		}
+
 		@Override
 		public int compareTo(StockClaim o) {
-			if (this.getNeed() > o.getNeed()) {
+			if (this.isContractMatchAll() && !o.isContractMatchAll()) {
+				return 1;
+			} else if (!this.isContractMatchAll() && o.isContractMatchAll()) {
+				return -1;
+			} else if (this.getNeed() > o.getNeed()) {
 				return 1;
 			} else if (this.getNeed() < o.getNeed()) {
 				return -1;
