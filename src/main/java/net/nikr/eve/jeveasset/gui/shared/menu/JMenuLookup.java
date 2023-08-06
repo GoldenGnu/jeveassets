@@ -23,7 +23,6 @@ package net.nikr.eve.jeveasset.gui.shared.menu;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import javax.swing.JMenu;
@@ -39,7 +38,6 @@ import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewTab;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewTab.OverviewTableMenu;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 import net.nikr.eve.jeveasset.i18n.TabsOverview;
-import net.nikr.eve.jeveasset.io.online.EvepraisalGetter;
 import net.nikr.eve.jeveasset.io.shared.DesktopUtil;
 
 
@@ -69,7 +67,6 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 		EVEMAPS_DOTLAN_REGION,
 		EVEMAPS_DOTLAN_OVERVIEW_GROUP,
 		EVE_INFO,
-		EVEPRAISAL,
 		ADAM4EVE,
 		EVEMISSIONEER_SYSTEM,
 		EVEMISSIONEER_CONSTELLATION,
@@ -207,16 +204,6 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 					urls.add("https://www.adam4eve.eu/commodity.php?typeID=" + marketTypeID);
 				}
 				return urls;
-			}
-		},
-		EVEPRAISAL() {
-			@Override
-			public Set<String> getLinks(MenuData<?> menuData) {
-				String evepraisal = EvepraisalGetter.post(menuData.getItemCounts());
-				if (evepraisal != null) {
-					return Collections.singleton("https://evepraisal.com/a/" + evepraisal);
-				}
-				return new HashSet<>();
 			}
 		},
 		FUZZWORK_MARKET() {
@@ -367,7 +354,6 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 	private final JMenuItem jEveMarketer;
 	private final JMenuItem jFuzzworkMarket;
 	private final JMenuItem jEveTycoon;
-	private final JMenuItem jEvepraisal;
 	private final JMenu jItemDatabase;
 	private final JMenuItem jFuzzworkItems;
 	private final JMenuItem jChruker;
@@ -502,12 +488,6 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 		jEveTycoon.setActionCommand(MenuLookupAction.EVE_TYCOON.name());
 		jEveTycoon.addActionListener(listener);
 		jMarket.add(jEveTycoon);
-
-		jEvepraisal = new JMenuItem(GuiShared.get().evepraisal());
-		jEvepraisal.setIcon(Images.LINK_EVEPRAISAL.getIcon());
-		jEvepraisal.setActionCommand(MenuLookupAction.EVEPRAISAL.name());
-		jEvepraisal.addActionListener(listener);
-		jMarket.add(jEvepraisal);
 
 		jAdam4eve = new JMenuItem(GuiShared.get().adam4eve());
 		jAdam4eve.setIcon(Images.LINK_ADAM4EVE.getIcon());
@@ -741,8 +721,6 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 				DesktopUtil.browse(LookupLinks.EVEMARKETER.getLinks(menuData), program);
 			} else if (MenuLookupAction.ADAM4EVE.name().equals(e.getActionCommand())) {
 				DesktopUtil.browse(LookupLinks.ADAM4EVE.getLinks(menuData), program);
-			} else if (MenuLookupAction.EVEPRAISAL.name().equals(e.getActionCommand())) {
-				DesktopUtil.browse(LookupLinks.EVEPRAISAL.getLinks(menuData), program);
 			} else if (MenuLookupAction.FUZZWORK_MARKET.name().equals(e.getActionCommand())) {
 				DesktopUtil.browse(LookupLinks.FUZZWORK_MARKET.getLinks(menuData), program);
 			} else if (MenuLookupAction.EVE_TYCOON.name().equals(e.getActionCommand())) {
