@@ -74,6 +74,7 @@ public abstract class TabsStockpile extends Bundle {
 	public abstract String deleteStockpile();
 	public abstract String deleteStockpileTitle();
 	public abstract String duplicate();
+	public abstract String editCell();
 	public abstract String editItem();
 	public abstract String editStockpile();
 	public abstract String editStockpileFilter();
