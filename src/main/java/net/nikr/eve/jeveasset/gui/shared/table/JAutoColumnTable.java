@@ -435,6 +435,9 @@ public class JAutoColumnTable extends JTable {
 					continue;
 				}
 				component = renderer.getTableCellRendererComponent(jTable, jTable.getValueAt(rowIndex, columnIndex), false, false, rowIndex, columnIndex);
+				if (overwrite) {
+					component = prepareRenderer(renderer, rowIndex, columnIndex);
+				}
 				int width = component.getPreferredSize().width;
 				if (useCache) {
 					rowsWidth.put(cellValue, width);
