@@ -24,25 +24,74 @@ package net.nikr.eve.jeveasset.gui.tabs.stockpile;
 import ca.odell.glazedlists.SeparatorList;
 import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import java.awt.Component;
+import java.awt.Cursor;
+import java.awt.Point;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
+import javax.swing.JLabel;
+import javax.swing.ToolTipManager;
 import javax.swing.table.TableCellRenderer;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.settings.ColorEntry;
 import net.nikr.eve.jeveasset.data.settings.ColorSettings;
 import net.nikr.eve.jeveasset.data.settings.Settings;
+import net.nikr.eve.jeveasset.gui.images.Images;
+import net.nikr.eve.jeveasset.gui.shared.InstantToolTip;
 import net.nikr.eve.jeveasset.gui.shared.table.JSeparatorTable;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileTotal;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.SubpileItem;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.SubpileStock;
+import net.nikr.eve.jeveasset.i18n.TabsStockpile;
 
 
 public class JStockpileTable extends JSeparatorTable {
 
 	private final DefaultEventTableModel<StockpileItem> tableModel;
+	private int lastColumn = -1;
+	private int lastRow = -1;
 
 	public JStockpileTable(final Program program, final DefaultEventTableModel<StockpileItem> tableModel, SeparatorList<?> separatorList) {
 		super(program, tableModel, separatorList);
 		this.tableModel = tableModel;
+		InstantToolTip.install(this);
+		final Cursor cursor = getCursor();
+		addMouseMotionListener(new MouseMotionListener() {
+			@Override
+			public void mouseDragged(MouseEvent e) { }
+
+			@Override
+			public void mouseMoved(MouseEvent e) {
+				Point p = e.getPoint();
+
+				int column = columnAtPoint(p);
+				int row = rowAtPoint(p);
+
+				if (lastColumn == column && lastRow == row) {
+					return;
+				}
+				lastColumn = column;
+				lastRow = row;
+
+				String columnName = (String) getTableHeader().getColumnModel().getColumn(column).getHeaderValue();
+				if (columnName.equals(StockpileTableFormat.COUNT_MINIMUM.getColumnName())) {
+					Object object = tableModel.getElementAt(row);
+					if (object instanceof StockpileItem) {
+						StockpileItem stockpileItem = (StockpileItem) object;
+						if (stockpileItem.isEditable()) {
+							setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+							ToolTipManager.sharedInstance().setEnabled(false);
+							ToolTipManager.sharedInstance().setEnabled(true);
+							setToolTipText(TabsStockpile.get().editCell());
+							return; //Don't set default
+						}
+					}
+				}
+				//Default
+				setToolTipText(null);
+				setCursor(cursor);
+			}
+		});
 	}
 
 	@Override
@@ -52,6 +101,11 @@ public class JStockpileTable extends JSeparatorTable {
 		Object object = tableModel.getElementAt(row);
 		String columnName = (String) this.getTableHeader().getColumnModel().getColumn(column).getHeaderValue();
 
+		if (component instanceof JLabel) {
+			JLabel jLabel = (JLabel) component;
+			jLabel.setIcon(null);
+			jLabel.setIconTextGap(0);
+		}
 		if (object instanceof StockpileItem) {
 			StockpileItem stockpileItem = (StockpileItem) object;
 			//Background
@@ -59,17 +113,19 @@ public class JStockpileTable extends JSeparatorTable {
 				if (columnName.equals(StockpileTableFormat.COUNT_MINIMUM.getColumnName())) {
 					if (!stockpileItem.isEditable()) {
 						ColorSettings.configCell(component, ColorEntry.GLOBAL_GRAND_TOTAL, isSelected);
+						return component;
 					}
 				} else if (columnName.equals(StockpileTableFormat.NAME.getColumnName())) {
 					ColorSettings.configCell(component, ColorEntry.GLOBAL_GRAND_TOTAL, isSelected);
+					return component;
 				} else if (columnName.equals(StockpileTableFormat.TAGS.getColumnName())) {
 					ColorSettings.configCell(component, ColorEntry.GLOBAL_GRAND_TOTAL, isSelected);
+					return component;
 				} else if (!columnName.equals(StockpileTableFormat.GROUP.getColumnName())
-							&& !columnName.equals(StockpileTableFormat.COUNT_MINIMUM_MULTIPLIED.getColumnName())
-						) {
+							&& !columnName.equals(StockpileTableFormat.COUNT_MINIMUM_MULTIPLIED.getColumnName())) {
 					component.setForeground(component.getBackground());
+					return component;
 				}
-				return component;
 			} else if (object instanceof SubpileItem) { //Total
 				if (!stockpileItem.isEditable() && columnName.equals(StockpileTableFormat.COUNT_MINIMUM.getColumnName())) {
 					ColorSettings.configCell(component, ColorEntry.GLOBAL_GRAND_TOTAL, isSelected);
@@ -79,6 +135,16 @@ public class JStockpileTable extends JSeparatorTable {
 				}
 			} else if (object instanceof StockpileTotal) { //Total
 				ColorSettings.configCell(component, ColorEntry.GLOBAL_GRAND_TOTAL, isSelected);
+			}
+			if (stockpileItem.isEditable() && columnName.equals(StockpileTableFormat.COUNT_MINIMUM.getColumnName())) {
+				if (component instanceof JLabel) {
+					JLabel jLabel = (JLabel) component;
+					jLabel.setIcon(Images.EDIT_EDIT_BACKGROUND.getIcon());
+					jLabel.setHorizontalTextPosition(JLabel.TRAILING);
+					int columnWidth = getColumnModel().getColumn(column).getWidth();
+					int jLabelWidth = jLabel.getMaximumSize().width + 1;
+					jLabel.setIconTextGap(Math.max(0, columnWidth - jLabelWidth));
+				}
 			}
 			if (columnName.equals(StockpileTableFormat.NAME.getColumnName())) {
 				if (Settings.get().isStockpileHalfColors()) {
