@@ -16,6 +16,36 @@
                   #### #  # #  # #  # #### #### #### #### ####
 
 ________________________________________________________________________________
+_7.7.0__________________________________________________________________________
+
+New Features:
+-Added corporation mining ledger (Issue #371)
+-Added wallet division column to the market orders tool (Issue #375)
+-Added completed by column to the industry jobs tool (Issue #389)
+-Allow users to add their own mp3 files for sound alerts (Issue #378)
+-Manufacturing price column to assets/tree/items/market orders (Issue #138)
+-Made the stockpile dialog for adding manufacturing materials more detailed
+-Retry invalid accounts from the account manager
+-Added options for more visible chart colors (Issue #387 & #404)
+-Added tooltips for filter buttons
+
+Bug Fixes:
+-Stockpile total for transaction and contract columns showed wrong value
+-Ensure adding to the reprocessed tool is always great than zero
+-Industry jobs default filters didn't include cancelled/reverted (Issue #399)
+-Stockpile menu could overflow (Issue #381)
+-Shopping list and subpiles didn't work with "matching all" (Issue #403)
+
+Changed:
+-Made it more obvious that reprocessed count is editable
+-Made it more obvious that stockpile multiplier and target cells are editable
+-Removed evepraisal from the lookup menu
+
+Code:
+-Moved reprocessed price to the item class (Issue #373)
+-Changed audio format from wave to mp3 (Issue #378)
+
+________________________________________________________________________________
 _7.6.2__________________________________________________________________________
 
 Bug Fixes:
