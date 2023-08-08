@@ -260,7 +260,7 @@ public class AccountManagerDialog extends JDialogCentered {
 		}
 		jRevalidate.setEnabled(invalid);
 
-		if (ownerTypes.isEmpty()) {
+		if (!ownerTypes.isEmpty()) {
 			jTable.setRowSelectionInterval(1, 1);
 			jAssets.setEnabled(true);
 			jCollapse.setEnabled(true);
