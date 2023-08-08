@@ -32,6 +32,7 @@ import net.nikr.eve.jeveasset.data.api.my.MyAccountBalance;
 import net.nikr.eve.jeveasset.data.api.my.MyAsset;
 import net.nikr.eve.jeveasset.data.api.my.MyContract;
 import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
+import net.nikr.eve.jeveasset.data.api.my.MyExtraction;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
 import net.nikr.eve.jeveasset.data.api.my.MyJournal;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
@@ -44,6 +45,7 @@ import net.nikr.eve.jeveasset.data.api.raw.RawAsset;
 import net.nikr.eve.jeveasset.data.api.raw.RawBlueprint;
 import net.nikr.eve.jeveasset.data.api.raw.RawContract;
 import net.nikr.eve.jeveasset.data.api.raw.RawContractItem;
+import net.nikr.eve.jeveasset.data.api.raw.RawExtraction;
 import net.nikr.eve.jeveasset.data.api.raw.RawIndustryJob;
 import net.nikr.eve.jeveasset.data.api.raw.RawJournal;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder;
@@ -72,6 +74,9 @@ import net.troja.eve.esi.model.CorporationContractsResponse;
 import net.troja.eve.esi.model.CorporationDivisionsHangar;
 import net.troja.eve.esi.model.CorporationDivisionsWallet;
 import net.troja.eve.esi.model.CorporationIndustryJobsResponse;
+import net.troja.eve.esi.model.CorporationMiningExtractionsResponse;
+import net.troja.eve.esi.model.CorporationMiningObserverResponse;
+import net.troja.eve.esi.model.CorporationMiningObserversResponse;
 import net.troja.eve.esi.model.CorporationOrdersHistoryResponse;
 import net.troja.eve.esi.model.CorporationOrdersResponse;
 import net.troja.eve.esi.model.CorporationWalletJournalResponse;
@@ -303,5 +308,23 @@ public class EsiConverter extends DataConverter {
 			mining.add(new RawMining(response, owner));
 		}
 		return converRawMining(mining, owner, saveHistory);
+	}
+
+	public static List<MyMining> toMining(Map<CorporationMiningObserversResponse, List<CorporationMiningObserverResponse>> responses, OwnerType owner, boolean saveHistory) {
+		List<RawMining> mining = new ArrayList<>();
+		for (Map.Entry<CorporationMiningObserversResponse, List<CorporationMiningObserverResponse>> response : responses.entrySet()) {
+			for (CorporationMiningObserverResponse miningObserver : response.getValue()) {
+				mining.add(new RawMining(response.getKey(), miningObserver, owner));
+			}
+		}
+		return converRawMining(mining, owner, saveHistory);
+	}
+
+	public static List<MyExtraction> toExtraction(List<CorporationMiningExtractionsResponse> responses, OwnerType owner, boolean saveHistory) {
+		List<RawExtraction> extractions = new ArrayList<>();
+		for (CorporationMiningExtractionsResponse response : responses) {
+			extractions.add(new RawExtraction(response));
+		}
+		return converRawExtraction(extractions, owner, saveHistory);
 	}
 }

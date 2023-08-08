@@ -20,15 +20,12 @@
  */
 package net.nikr.eve.jeveasset.gui.sounds;
 
-import java.awt.Toolkit;
 import java.util.Date;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import javax.sound.sampled.Clip;
 import net.nikr.eve.jeveasset.data.settings.Settings;
-import net.nikr.eve.jeveasset.gui.dialogs.settings.SoundsSettingsPanel.SoundsOption;
-import net.nikr.eve.jeveasset.gui.dialogs.settings.SoundsSettingsPanel.SoundsSound;
+import net.nikr.eve.jeveasset.gui.dialogs.settings.SoundsSettingsPanel.SoundOption;
 
 
 public class SoundPlayer {
@@ -38,38 +35,24 @@ public class SoundPlayer {
 
 	private SoundPlayer() { }
 
-	public static void enable() {
+	public static void load() {
 		SoundPlayer.play = true;
 	}
 
-	public static void play(SoundsOption option) {
+	public static void play(SoundOption option) {
 		play(Settings.get().getSoundSettings().get(option));
 	}
 
-	public static void play(SoundsSound sound) {
-		if (sound != null && sound != SoundsSound.NONE) {
-			play(sound.getSound());
-		}
-	}
-
-	private static void play(Sounds sounds) {
+	public static void play(Sound sound) {
 		if (!play) {
 			return;
 		}
-		if (sounds != null) {
-			Clip clip = sounds.getClip();
-			if (clip == null) {
-				return;
-			}
-			clip.stop();
-			clip.setFramePosition(0);
-			clip.start();
-		} else {
-			Toolkit.getDefaultToolkit().beep();
+		if (sound != null) {
+			sound.play();
 		}
 	}
 
-	public synchronized static void playAt(Date date, SoundsOption option) {
+	public synchronized static void playAt(Date date, SoundOption option) {
 		if (date == null || date.before(Settings.getNow())) {
 			return; //In the past
 		}
@@ -88,19 +71,10 @@ public class SoundPlayer {
 		EXECUTOR = Executors.newSingleThreadScheduledExecutor();
 	}
 
-	public static void stop(SoundsSound sounds) {
-		if (sounds != null) {
-			stop(sounds.getSound());
+	public static void stop(Sound sound) {
+		if (sound != null) {
+			sound.stop();
 		}
 	}
 
-	private static void stop(Sounds sounds) {
-		if (sounds != null) {
-			Clip clip = sounds.getClip();
-			if (clip == null) {
-				return;
-			}
-			clip.stop();
-		}
-	}
 }

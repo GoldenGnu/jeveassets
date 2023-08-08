@@ -23,10 +23,9 @@ package net.nikr.eve.jeveasset.gui.tabs.mining;
 import com.github.lgooddatepicker.optionalusertools.DateChangeListener;
 import com.github.lgooddatepicker.zinternaltools.DateChangeEvent;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -42,14 +41,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import javax.swing.AbstractListModel;
 import javax.swing.ButtonGroup;
-import javax.swing.DefaultListModel;
+import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
+import javax.swing.ListModel;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -70,7 +71,9 @@ import net.nikr.eve.jeveasset.gui.shared.components.JMultiSelectionList;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo.AutoNumberFormat;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.QuickDate;
+import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.i18n.TabsMining;
+import net.nikr.eve.jeveasset.i18n.TabsTracker;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.DateAxis;
@@ -87,11 +90,13 @@ import org.jfree.data.xy.XYDataset;
 
 public class MiningGraphTab extends JMainTabSecondary {
 
-	private enum PriceHistoryAction {
+	private enum MiningGraphAction {
 		TYPE_CHANGE,
 		QUICK_DATE,
 		INCLUDE_ZERO,
-		LOGARITHMIC
+		LOGARITHMIC,
+		SHOW_ALL,
+		UPDATE_SHOWN,
 	}
 
 	private enum Type {
@@ -176,7 +181,9 @@ public class MiningGraphTab extends JMainTabSecondary {
 	private final JComboBox<QuickDate> jQuickDate;
 	private final JDateChooser jFrom;
 	private final JDateChooser jTo;
-	private final JMultiSelectionList<String> jItems;
+	private final JDropDownButton jShow;
+	private final JCheckBoxMenuItem jAll;
+	private final JMultiSelectionList<String> jOwners;
 	private final JCheckBoxMenuItem jIncludeZero;
 	private final JRadioButtonMenuItem jLogarithmic;
 
@@ -193,13 +200,13 @@ public class MiningGraphTab extends JMainTabSecondary {
 
 	//Data
 	private final TotalComparator comparator = new TotalComparator();
-	private final DefaultListModel<String> itemsModel;
 	private final List<String> shownOrder = new ArrayList<>();
 	private final Map<String, TimePeriodValues> series = new HashMap<>();
 	private final Map<String, Double> seriesMax = new HashMap<>();
 	private final Map<String, Double> seriesTotals = new HashMap<>();
 	private final Map<String, String> seriesGroup = new HashMap<>();
 	private final TimePeriodValuesCollection dataset = new TimePeriodValuesCollection();
+	private final Map<String, JCheckBoxMenuItem> items = new TreeMap<>();
 
 	//Settings ToDo
 	private Date fromDate = null;
@@ -211,13 +218,13 @@ public class MiningGraphTab extends JMainTabSecondary {
 		super(program, NAME, TabsMining.get().miningGraph(), Images.TOOL_MINING_GRAPH.getIcon(), true);
 
 		jType = new JComboBox<>(Type.values());
-		jType.setActionCommand(PriceHistoryAction.TYPE_CHANGE.name());
+		jType.setActionCommand(MiningGraphAction.TYPE_CHANGE.name());
 		jType.addActionListener(listener);
 
-		JSeparator jDateSeparator = new JSeparator();
+		JSeparator jTypeSeparator = new JSeparator();
 
 		jQuickDate = new JComboBox<>(QuickDate.values());
-		jQuickDate.setActionCommand(PriceHistoryAction.QUICK_DATE.name());
+		jQuickDate.setActionCommand(MiningGraphAction.QUICK_DATE.name());
 		jQuickDate.addActionListener(listener);
 
 		JLabel jFromLabel = new JLabel(TabsMining.get().from());
@@ -234,11 +241,24 @@ public class MiningGraphTab extends JMainTabSecondary {
 		}
 		jTo.addDateChangeListener(listener);
 
+		JSeparator jDateSeparator = new JSeparator();
+
+		jShow = new JDropDownButton(TabsMining.get().show(), Images.LOC_INCLUDE.getIcon());
+		jShow.setHorizontalAlignment(JButton.LEFT);
+
+		jAll = new JCheckBoxMenuItem(General.get().all());
+		jAll.setSelected(true);
+		jAll.setActionCommand(MiningGraphAction.SHOW_ALL.name());
+		jAll.addActionListener(listener);
+		jAll.setFont(new Font(jAll.getFont().getName(), Font.ITALIC, jAll.getFont().getSize()));
+
+		JSeparator jShowSeparator = new JSeparator();
+
 		JDropDownButton jSettings = new JDropDownButton(Images.DIALOG_SETTINGS.getIcon());
 
 		jIncludeZero = new JCheckBoxMenuItem(TabsMining.get().includeZero());
 		jIncludeZero.setSelected(true);
-		jIncludeZero.setActionCommand(PriceHistoryAction.INCLUDE_ZERO.name());
+		jIncludeZero.setActionCommand(MiningGraphAction.INCLUDE_ZERO.name());
 		jIncludeZero.addActionListener(listener);
 		jSettings.add(jIncludeZero);
 
@@ -248,23 +268,21 @@ public class MiningGraphTab extends JMainTabSecondary {
 
 		JRadioButtonMenuItem jLinear = new JRadioButtonMenuItem(TabsMining.get().scaleLinear());
 		jLinear.setSelected(true);
-		jLinear.setActionCommand(PriceHistoryAction.LOGARITHMIC.name());
+		jLinear.setActionCommand(MiningGraphAction.LOGARITHMIC.name());
 		jLinear.addActionListener(listener);
 		jSettings.add(jLinear);
 		buttonGroup.add(jLinear);
 
 		jLogarithmic = new JRadioButtonMenuItem(TabsMining.get().scaleLogarithmic());
 		jLogarithmic.setSelected(false);
-		jLogarithmic.setActionCommand(PriceHistoryAction.LOGARITHMIC.name());
+		jLogarithmic.setActionCommand(MiningGraphAction.LOGARITHMIC.name());
 		jLogarithmic.addActionListener(listener);
 		jSettings.add(jLogarithmic);
 		buttonGroup.add(jLogarithmic);
 
-		itemsModel = new DefaultListModel<>();
-		jItems = new JMultiSelectionList<>(itemsModel);
-		jItems.getSelectionModel().addListSelectionListener(listener);
-		jItems.addMouseListener(listener);
-		JScrollPane jOwnersScroll = new JScrollPane(jItems);
+		jOwners = new JMultiSelectionList<>();
+		jOwners.getSelectionModel().addListSelectionListener(listener);
+		JScrollPane jOwnersScroll = new JScrollPane(jOwners);
 
 		domainAxis = JFreeChartUtil.createDateAxis();
 		rangeLogarithmicAxis = JFreeChartUtil.createLogarithmicAxis(true);
@@ -298,7 +316,7 @@ public class MiningGraphTab extends JMainTabSecondary {
 				)
 				.addGroup(layout.createParallelGroup()
 					.addComponent(jType, panelWidth, panelWidth, panelWidth)
-					.addComponent(jDateSeparator, panelWidth, panelWidth, panelWidth)
+					.addComponent(jTypeSeparator, panelWidth, panelWidth, panelWidth)
 					.addComponent(jQuickDate, panelWidth, panelWidth, panelWidth)
 					.addGroup(layout.createSequentialGroup()
 						.addGroup(layout.createParallelGroup()
@@ -311,6 +329,9 @@ public class MiningGraphTab extends JMainTabSecondary {
 							.addComponent(jTo, dateWidth, dateWidth, dateWidth)
 						)
 					)
+					.addComponent(jDateSeparator, panelWidth, panelWidth, panelWidth)
+					.addComponent(jShow, panelWidth, panelWidth, panelWidth)
+					.addComponent(jShowSeparator, panelWidth, panelWidth, panelWidth)
 					.addGroup(layout.createSequentialGroup()
 						.addComponent(jSettings)
 					)
@@ -324,7 +345,7 @@ public class MiningGraphTab extends JMainTabSecondary {
 				)
 				.addGroup(layout.createSequentialGroup()
 					.addComponent(jType, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					.addComponent(jDateSeparator, 3, 3, 3)
+					.addComponent(jTypeSeparator, 3, 3, 3)
 					.addComponent(jQuickDate, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addGroup(layout.createParallelGroup()
 						.addComponent(jFromLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
@@ -334,6 +355,9 @@ public class MiningGraphTab extends JMainTabSecondary {
 						.addComponent(jToLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 						.addComponent(jTo, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					)
+					.addComponent(jDateSeparator, 3, 3, 3)
+					.addComponent(jShow, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jShowSeparator, 3, 3, 3)
 					.addGroup(layout.createParallelGroup()
 						.addComponent(jSettings, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					)
@@ -367,31 +391,84 @@ public class MiningGraphTab extends JMainTabSecondary {
 	}
 
 	private void updateGUI() {
-		boolean firstUpdate = itemsModel.size() == 0;
-		Set<String> ok = new HashSet<>();
-		Set<String> remove = new HashSet<>();
-		for (int i = 0; i < itemsModel.getSize(); i++) {
-			String name = itemsModel.get(i);
-			if (!shownOrder.contains(name)) {
-				remove.add(name);
+		Set<String> ownerSet = new HashSet<>(program.getOwnerNames(false));
+		try {
+			program.getProfileData().getMiningEventList().getReadWriteLock().readLock().lock();
+			for (MyMining mining : program.getProfileData().getMiningEventList()) {
+				ownerSet.add(mining.getCharacterName());
+				if(mining.isForCorporation()) {
+					ownerSet.add(mining.getCorporationName());
+				}
+			}
+		} finally {
+			program.getProfileData().getMiningEventList().getReadWriteLock().readLock().unlock();
+ 		}
+		List<String> owners = new ArrayList<>(ownerSet);
+		listener.valueIsAdjusting = true;
+		if (owners.isEmpty()) {
+			jOwners.setEnabled(false);
+			jOwners.setModel(new AbstractListModel<String>() {
+				@Override
+				public int getSize() {
+					return 1;
+				}
+
+				@Override
+				public String getElementAt(int index) {
+					return TabsTracker.get().noDataFound();
+				}
+			});
+		} else {
+			List<String> selectedOwners = jOwners.getSelectedValuesList();
+			jOwners.setEnabled(true);
+			jOwners.setModel(new AbstractListModel<String>() {
+				@Override
+				public int getSize() {
+					return owners.size();
+				}
+				@Override
+				public String getElementAt(int index) {
+					return owners.get(index);
+				}
+			});
+			
+			if (items.isEmpty()) {
+				jOwners.selectAll();
 			} else {
-				ok.add(name);
+				ListModel<String> model = jOwners.getModel();
+				for (int i = 0; i < model.getSize(); i++) {
+					String ownerName = model.getElementAt(i);
+					if (selectedOwners.contains(ownerName)) {
+						jOwners.addSelectionInterval(i, i);
+					}
+				}
 			}
 		}
-		for (String name : remove) {
-			itemsModel.removeElement(name);
-		}
-		Set<String> add = new HashSet<>(shownOrder);
-		add.removeAll(ok);
-		for (int i = 0; i < shownOrder.size(); i++) {
-			String name = shownOrder.get(i);
-			if (add.contains(name)) {
-				itemsModel.add(i, name);
+
+		createData();
+
+		jShow.removeAll();
+		if (shownOrder.isEmpty()) {
+			jShow.setEnabled(false);
+		} else {
+			jShow.setEnabled(true);
+			jShow.add(jAll, true);
+			List<String> itemsList = new ArrayList<>(shownOrder);
+			Collections.sort(itemsList, comparator);
+			for (String s : itemsList) {
+				JCheckBoxMenuItem jMenuItem = items.get(s);
+				if (jMenuItem == null) { //Create new item
+					jMenuItem = new JCheckBoxMenuItem(s);
+					jMenuItem.setSelected(true);
+					jMenuItem.setActionCommand(MiningGraphAction.UPDATE_SHOWN.name());
+					jMenuItem.addActionListener(listener);
+					items.put(s, jMenuItem);
+				}
+				jShow.add(jMenuItem, true);
 			}
 		}
-		if (firstUpdate) {
-			jItems.selectAll();
-		}
+		listener.valueIsAdjusting = false;
+		updateShown();
 	}
 
 	private void createData() {
@@ -412,12 +489,16 @@ public class MiningGraphTab extends JMainTabSecondary {
 		Map<Date, Map<String, Double>> values = new TreeMap<>();
 		Set<String> names = new HashSet<>();
 		final String grandTotal = TabsMining.get().grandTotal();
+		List<String> selectedOwners = getSelectedOwners();
 		try {
 			program.getProfileData().getMiningEventList().getReadWriteLock().readLock().lock();
 			for (MyMining mining : program.getProfileData().getMiningEventList()) {
 				final Date date = mining.getDate();
 				//Filter
 				if ((from != null && !date.after(from)) || (to != null && !date.before(to))) {
+					continue;
+				}
+				if (!selectedOwners.contains(mining.getCharacterName()) || (mining.isForCorporation() && !selectedOwners.contains(mining.getCorporationName()))) {
 					continue;
 				}
 				//Type
@@ -461,7 +542,7 @@ public class MiningGraphTab extends JMainTabSecondary {
 			}
 		} finally {
 			program.getProfileData().getMiningEventList().getReadWriteLock().readLock().unlock();
-		}
+ 		}
 		//Remove group totals for groups with only one entry
 		for (Map.Entry<String, Set<String>> entry : groupCounts.entrySet()) {
 			if (entry.getValue().size() < 2) {
@@ -506,9 +587,24 @@ public class MiningGraphTab extends JMainTabSecondary {
 		}
 	}
 
+	private List<String> getSelectedItems() {
+		List<String> selected = new ArrayList<>();
+		for (Map.Entry<String, JCheckBoxMenuItem> entry : items.entrySet()) {
+			if (!entry.getValue().isSelected()) {
+				continue; //Not selected
+			}
+			selected.add(entry.getKey());
+		}
+		return selected;
+	}
+
+	private List<String> getSelectedOwners() {
+		return jOwners.getSelectedValuesList();
+	}
+
 	private void updateStatusbar() {
 		Type type = jType.getItemAt(jType.getSelectedIndex());
-		List<String> selected = jItems.getSelectedValuesList();
+		List<String> selected = getSelectedItems();
 		Set<String> shownGroups = new HashSet<>();
 		Set<String> shownTypes = new HashSet<>();
 		for (String typeName : selected) {
@@ -537,7 +633,7 @@ public class MiningGraphTab extends JMainTabSecondary {
 	}
 
 	private void updateShown() {
-		List<String> selected = jItems.getSelectedValuesList();
+		List<String> selected = getSelectedItems();
 		double max = 0;
 		int count = 0;
 		for (int i = 0; i < dataset.getSeriesCount(); i++) {
@@ -578,14 +674,16 @@ public class MiningGraphTab extends JMainTabSecondary {
 		return Date.from(instant);
 	}
 
-	private class ListenerClass implements ActionListener, MouseListener, DateChangeListener, ListSelectionListener {
+	private class ListenerClass implements ActionListener, DateChangeListener, ListSelectionListener {
+
+		boolean valueIsAdjusting = false;
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			if (PriceHistoryAction.TYPE_CHANGE.name().equals(e.getActionCommand())) {
+			if (MiningGraphAction.TYPE_CHANGE.name().equals(e.getActionCommand())) {
 				createData();
 				updateShown();
-			} else if (PriceHistoryAction.QUICK_DATE.name().equals(e.getActionCommand())) {
+			} else if (MiningGraphAction.QUICK_DATE.name().equals(e.getActionCommand())) {
 				QuickDate quickDate = (QuickDate) jQuickDate.getSelectedItem();
 				if (quickDate == QuickDate.RESET) {
 					jTo.setDate(null);
@@ -600,32 +698,35 @@ public class MiningGraphTab extends JMainTabSecondary {
 						jFrom.setDate(dateToLocalDate(fromDate));
 					}
 				}
-			} else if (PriceHistoryAction.INCLUDE_ZERO.name().equals(e.getActionCommand())) {
+			} else if (MiningGraphAction.INCLUDE_ZERO.name().equals(e.getActionCommand())) {
 				rangeLogarithmicAxis.setAutoRangeIncludesZero(jIncludeZero.isSelected());
 				rangeLinearAxis.setAutoRangeIncludesZero(jIncludeZero.isSelected());
-			} else if (PriceHistoryAction.LOGARITHMIC.name().equals(e.getActionCommand())) {
+			} else if (MiningGraphAction.LOGARITHMIC.name().equals(e.getActionCommand())) {
 				if (jLogarithmic.isSelected()) {
 					jFreeChart.getXYPlot().setRangeAxis(rangeLogarithmicAxis);
 				} else {
 					jFreeChart.getXYPlot().setRangeAxis(rangeLinearAxis);
 				}
+			} else if (MiningGraphAction.SHOW_ALL.name().equals(e.getActionCommand())) {
+				if (valueIsAdjusting) {
+					return;
+				}
+				valueIsAdjusting = true;
+				for (JCheckBoxMenuItem jMenuItem : items.values()) {
+					jMenuItem.setSelected(jAll.isSelected());
+				}
+				valueIsAdjusting = false;
+				updateShown();
+			} else if (MiningGraphAction.UPDATE_SHOWN.name().equals(e.getActionCommand())) {
+				if (valueIsAdjusting) {
+					return;
+				}
+				valueIsAdjusting = true;
+				jAll.setSelected(getSelectedItems().size() == items.size());
+				valueIsAdjusting = false;
+				updateShown();
 			}
 		}
-
-		@Override
-		public void mouseClicked(MouseEvent e) { }
-
-		@Override
-		public void mousePressed(MouseEvent e) { }
-
-		@Override
-		public void mouseReleased(MouseEvent e) { }
-
-		@Override
-		public void mouseEntered(MouseEvent e) { }
-
-		@Override
-		public void mouseExited(MouseEvent e) { }
 
 		@Override
 		public void dateChanged(DateChangeEvent event) {
@@ -645,9 +746,10 @@ public class MiningGraphTab extends JMainTabSecondary {
 
 		@Override
 		public void valueChanged(ListSelectionEvent e) {
-			if (e.getValueIsAdjusting()) {
+			if (e.getValueIsAdjusting() || valueIsAdjusting) {
 				return;
 			}
+			createData();
 			updateShown();
 		}
 	}

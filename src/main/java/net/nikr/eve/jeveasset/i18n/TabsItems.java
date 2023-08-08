@@ -42,6 +42,8 @@ public abstract class TabsItems extends Bundle {
 	public abstract String columnChargeSize();
 	public abstract String columnPriceBase();
 	public abstract String columnPriceReprocessed();
+	public abstract String columnPriceManufacturing();
+	public abstract String columnPriceManufacturingToolTip();
 	public abstract String columnMeta();
 	public abstract String columnTech();
 	public abstract String columnVolume();

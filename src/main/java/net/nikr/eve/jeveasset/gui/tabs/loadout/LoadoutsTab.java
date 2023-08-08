@@ -140,23 +140,29 @@ public class LoadoutsTab extends JMainTabSecondary {
 		JLabel jOwnersLabel = new JLabel(TabsLoadout.get().owner());
 		jToolBarTop.add(jOwnersLabel);
 
+		jToolBarTop.addSpace(5);
+
 		jOwners = new JComboBox<>();
 		jOwners.setActionCommand(LoadoutsAction.OWNERS.name());
 		jOwners.addActionListener(listener);
 		jToolBarTop.addComboBox(jOwners, 200);
 
+		jToolBarTop.addSpace(15);
+
 		JLabel jShipsLabel = new JLabel(TabsLoadout.get().ship1());
 		jToolBarTop.add(jShipsLabel);
+
+		jToolBarTop.addSpace(5);
 
 		jShips = new JComboBox<>();
 		jShips.setActionCommand(LoadoutsAction.FILTER.name());
 		jShips.addActionListener(listener);
 		jToolBarTop.addComboBox(jShips, 0);
 
-		JFixedToolBar jToolBarLeft = new JFixedToolBar();
+		JFixedToolBar jToolBarBottom = new JFixedToolBar();
 
 		jExport = new JDropDownButton(GuiShared.get().export(), Images.DIALOG_CSV_EXPORT.getIcon());
-		jToolBarLeft.addButton(jExport);
+		jToolBarBottom.addButton(jExport);
 
 		JMenuItem jExportSqlCsvHtml = new JMenuItem(TabsLoadout.get().exportTableData(), Images.DIALOG_CSV_EXPORT.getIcon());
 		jExportSqlCsvHtml.setActionCommand(LoadoutsAction.EXPORT.name());
@@ -183,17 +189,17 @@ public class LoadoutsTab extends JMainTabSecondary {
 		jExportEft.setIcon(Images.TOOL_SHIP_LOADOUTS.getIcon());
 		jExport.add(jExportEft);
 
-		JFixedToolBar jToolBarRight = new JFixedToolBar();
+		jToolBarBottom.addGlue();
 
 		jCollapse = new JButton(TabsLoadout.get().collapse(), Images.MISC_COLLAPSED.getIcon());
 		jCollapse.setActionCommand(LoadoutsAction.COLLAPSE.name());
 		jCollapse.addActionListener(listener);
-		jToolBarRight.addButton(jCollapse);
+		jToolBarBottom.addButton(jCollapse);
 
 		jExpand = new JButton(TabsLoadout.get().expand(), Images.MISC_EXPANDED.getIcon());
 		jExpand.setActionCommand(LoadoutsAction.EXPAND.name());
 		jExpand.addActionListener(listener);
-		jToolBarRight.addButton(jExpand);
+		jToolBarBottom.addButton(jExpand);
 
 		//Table Format
 		tableFormat = TableFormatFactory.loadoutTableFormat();
@@ -228,20 +234,13 @@ public class LoadoutsTab extends JMainTabSecondary {
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.LEADING)
 				.addComponent(jToolBarTop, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
-				.addGroup(layout.createSequentialGroup()
-					.addComponent(jToolBarLeft, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
-					.addGap(0)
-					.addComponent(jToolBarRight)
-				)
+				.addComponent(jToolBarBottom, jToolBarBottom.getMinimumSize().width, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
 				.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
 		);
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
 				.addComponent(jToolBarTop, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-					.addComponent(jToolBarLeft, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-					.addComponent(jToolBarRight, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-				)
+				.addComponent(jToolBarBottom, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
 				.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
 		);
 	}

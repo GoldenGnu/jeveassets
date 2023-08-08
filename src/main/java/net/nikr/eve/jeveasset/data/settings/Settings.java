@@ -39,8 +39,7 @@ import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder.MarketOrderRange;
 import net.nikr.eve.jeveasset.data.settings.tag.Tag;
 import net.nikr.eve.jeveasset.data.settings.tag.TagID;
 import net.nikr.eve.jeveasset.data.settings.tag.Tags;
-import net.nikr.eve.jeveasset.gui.dialogs.settings.SoundsSettingsPanel.SoundsOption;
-import net.nikr.eve.jeveasset.gui.dialogs.settings.SoundsSettingsPanel.SoundsSound;
+import net.nikr.eve.jeveasset.gui.dialogs.settings.SoundsSettingsPanel.SoundOption;
 import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.menu.JFormulaDialog.Formula;
@@ -48,8 +47,11 @@ import net.nikr.eve.jeveasset.gui.shared.menu.JMenuJumps.Jump;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.ResizeMode;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.SimpleColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.View;
+import net.nikr.eve.jeveasset.gui.sounds.Sound;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJobTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJobsTab;
+import net.nikr.eve.jeveasset.gui.tabs.mining.ExtractionsTab;
+import net.nikr.eve.jeveasset.gui.tabs.mining.ExtractionsTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.orders.MarketOrdersTab;
 import net.nikr.eve.jeveasset.gui.tabs.orders.MarketTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.orders.Outbid;
@@ -59,6 +61,7 @@ import net.nikr.eve.jeveasset.gui.tabs.transaction.TransactionTab;
 import net.nikr.eve.jeveasset.gui.tabs.transaction.TransactionTableFormat;
 import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 import net.nikr.eve.jeveasset.i18n.TabsJobs;
+import net.nikr.eve.jeveasset.i18n.TabsMining;
 import net.nikr.eve.jeveasset.i18n.TabsOrders;
 import net.nikr.eve.jeveasset.i18n.TabsTransaction;
 import net.nikr.eve.jeveasset.io.local.SettingsReader;
@@ -94,7 +97,9 @@ public class Settings {
 		FLAG_FOCUS_EVE_ONLINE_ON_ESI_UI_CALLS,
 		FLAG_SAVE_TOOLS_ON_EXIT,
 		FLAG_SAVE_CONTRACT_HISTORY,
-		FLAG_SAVE_MINING_HISTORY
+		FLAG_SAVE_MINING_HISTORY,
+		FLAG_MANUFACTURING_DEFAULT,
+		FLAG_EASY_CHART_COLORS
 	}
 
 	public static enum TransactionProfitPrice {
@@ -258,7 +263,9 @@ public class Settings {
 //Colors
 	private final ColorSettings colorSettings = new ColorSettings();
 //Sounds
-	private final Map<SoundsOption, SoundsSound> soundSettings = new EnumMap<>(SoundsOption.class);
+	private final Map<SoundOption, Sound> soundSettings = new EnumMap<>(SoundOption.class);
+//Manufacturing
+	private final ManufacturingSettings manufacturingSettings = new ManufacturingSettings();
 
 	protected Settings() {
 		//Settings
@@ -285,6 +292,8 @@ public class Settings {
 		flags.put(SettingFlag.FLAG_SAVE_TOOLS_ON_EXIT, false);
 		flags.put(SettingFlag.FLAG_SAVE_CONTRACT_HISTORY, true);
 		flags.put(SettingFlag.FLAG_SAVE_MINING_HISTORY, true);
+		flags.put(SettingFlag.FLAG_MANUFACTURING_DEFAULT, true);
+		flags.put(SettingFlag.FLAG_EASY_CHART_COLORS, false);
 		cacheFlags();
 		//Default Filters
 		List<Filter> filter;
@@ -321,6 +330,13 @@ public class Settings {
 		filter.add(new Filter(Filter.LogicType.OR, IndustryJobTableFormat.STATE, Filter.CompareType.EQUALS, MyIndustryJob.IndustryJobState.STATE_REVERTED.toString()));
 		industryJobsTabDefaultFilters.put(TabsJobs.get().completed(), filter);
 		defaultTableFilters.put(IndustryJobsTab.NAME, industryJobsTabDefaultFilters);
+		//Extractions Default Filters
+		Map<String, List<Filter>> extractionsDefaultFilters = new HashMap<>();
+		filter = new ArrayList<>();
+		filter.add(new Filter(Filter.LogicType.OR, ExtractionsTableFormat.ARRIVAL, Filter.CompareType.NEXT_DAYS, "2"));
+		filter.add(new Filter(Filter.LogicType.OR, ExtractionsTableFormat.DECAY, Filter.CompareType.LAST_DAYS, "2"));
+		extractionsDefaultFilters.put(TabsMining.get().extractionsActiveSoon(), filter);
+		defaultTableFilters.put(ExtractionsTab.NAME, extractionsDefaultFilters);
 	}
 
 	public static Settings get() {
@@ -485,7 +501,7 @@ public class Settings {
 		return jumps;
 	}
 
-	public Map<SoundsOption, SoundsSound> getSoundSettings() {
+	public Map<SoundOption, Sound> getSoundSettings() {
 		return soundSettings;
 	}
 
@@ -639,6 +655,10 @@ public class Settings {
 
 	public void setFactionWarfareNextUpdate(Date factionWarfareNextUpdate) {
 		this.factionWarfareNextUpdate = factionWarfareNextUpdate;
+	}
+
+	public ManufacturingSettings getManufacturingSettings() {
+		return manufacturingSettings;
 	}
 
 	public Date getPublicMarketOrdersNextUpdate() {
@@ -814,6 +834,22 @@ public class Settings {
 
 	public void setBlueprintBasePriceTech2(final boolean blueprintsTech2) {
 		flags.put(SettingFlag.FLAG_BLUEPRINT_BASE_PRICE_TECH_2, blueprintsTech2);
+	}
+
+	public boolean isManufacturingDefault() {
+		return flags.get(SettingFlag.FLAG_MANUFACTURING_DEFAULT);
+	}
+
+	public void setManufacturingDefault(final boolean manufacturingDefault) {
+		flags.put(SettingFlag.FLAG_MANUFACTURING_DEFAULT, manufacturingDefault);
+	}
+
+	public boolean isEasyChartColors() {
+		return flags.get(SettingFlag.FLAG_EASY_CHART_COLORS);
+	}
+
+	public void setEasyChartColors(final boolean easyChartColors) {
+		flags.put(SettingFlag.FLAG_EASY_CHART_COLORS, easyChartColors);
 	}
 
 	public boolean isTransactionHistory() {

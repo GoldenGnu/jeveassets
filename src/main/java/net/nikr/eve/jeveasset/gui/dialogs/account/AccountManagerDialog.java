@@ -58,12 +58,14 @@ import net.nikr.eve.jeveasset.gui.shared.table.JSeparatorTable;
 import net.nikr.eve.jeveasset.gui.shared.table.TableFormatFactory;
 import net.nikr.eve.jeveasset.i18n.DialoguesAccount;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
+import net.troja.eve.esi.auth.OAuth;
 
 
 public class AccountManagerDialog extends JDialogCentered {
 
 	private enum AccountManagerAction {
 		ADD,
+		REVALIDATE,
 		SHARE_EXPORT,
 		SHARE_IMPORT,
 		CLOSE,
@@ -79,6 +81,7 @@ public class AccountManagerDialog extends JDialogCentered {
 	private final AccountImportDialog accountImportDialog;
 	private final JSeparatorTable jTable;
 	private final JButton jAdd;
+	private final JButton jRevalidate;
 	private final JButton jExpand;
 	private final JButton jCollapse;
 	private final JDropDownButton jAssets;
@@ -89,6 +92,7 @@ public class AccountManagerDialog extends JDialogCentered {
 	private final DefaultEventSelectionModel<OwnerType> selectionModel;
 	private final JMigrateDialog jMigrateDialog;
 	private final JLockWindow jLockWindow;
+	private final JLockWindow jRevalidateLock;
 	private final Map<OwnerType, Boolean> ownersShownCache = new HashMap<>();
 
 	private boolean updated = false;
@@ -101,6 +105,7 @@ public class AccountManagerDialog extends JDialogCentered {
 		jMigrateDialog = new JMigrateDialog(program, this);
 
 		jLockWindow = new JLockWindow(program.getMainWindow().getFrame());
+		jRevalidateLock = new JLockWindow(getDialog());
 
 		ListenerClass listener = new ListenerClass();
 
@@ -127,6 +132,10 @@ public class AccountManagerDialog extends JDialogCentered {
 		jAdd = new JButton(DialoguesAccount.get().add());
 		jAdd.setActionCommand(AccountManagerAction.ADD.name());
 		jAdd.addActionListener(listener);
+
+		jRevalidate = new JButton(DialoguesAccount.get().revalidate());
+		jRevalidate.setActionCommand(AccountManagerAction.REVALIDATE.name());
+		jRevalidate.addActionListener(listener);
 
 		JDropDownButton jShare = new JDropDownButton(DialoguesAccount.get().share());
 
@@ -186,6 +195,7 @@ public class AccountManagerDialog extends JDialogCentered {
 				)
 				.addGroup(layout.createSequentialGroup()
 					.addComponent(jAdd, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
+					.addComponent(jRevalidate, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
 					.addComponent(jShare, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
 					.addComponent(jCollapse, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
 					.addComponent(jExpand, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
@@ -197,6 +207,7 @@ public class AccountManagerDialog extends JDialogCentered {
 			layout.createSequentialGroup()
 				.addGroup(layout.createParallelGroup()
 					.addComponent(jAdd, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jRevalidate, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jShare, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jCollapse, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jExpand, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
@@ -217,26 +228,39 @@ public class AccountManagerDialog extends JDialogCentered {
 	}
 
 	public void updateTable() {
+		//Collect owners
+		List<OwnerType> ownerTypes = new ArrayList<>();
+		//Eve Online API
+		for (EveApiAccount account : program.getProfileManager().getAccounts()) {
+			if (account.getOwners().isEmpty()) {
+				ownerTypes.add(new EveApiOwner(account, DialoguesAccount.get().noOwners(), 0));
+			} else {
+				ownerTypes.addAll(account.getOwners());
+			}
+		}
+		//EveKit API
+		ownerTypes.addAll(program.getProfileManager().getEveKitOwners());
+		//ESI
+		ownerTypes.addAll(program.getProfileManager().getEsiOwners());
 		//Update rows (Add all rows)
 		try {
 			eventList.getReadWriteLock().writeLock().lock();
 			eventList.clear();
-			//Eve Online API
-			for (EveApiAccount account : program.getProfileManager().getAccounts()) {
-				if (account.getOwners().isEmpty()) {
-					eventList.add(new EveApiOwner(account, DialoguesAccount.get().noOwners(), 0));
-				} else {
-					eventList.addAll(account.getOwners());
-				}
-			}
-			//EveKit API
-			eventList.addAll(program.getProfileManager().getEveKitOwners());
-			//ESI
-			eventList.addAll(program.getProfileManager().getEsiOwners());
+			eventList.addAll(ownerTypes);
 		} finally {
 			eventList.getReadWriteLock().writeLock().unlock();
 		}
-		if (!EventListManager.isEmpty(eventList)) {
+		//Revalidate
+		boolean invalid = false;
+		for (EsiOwner owner : program.getProfileManager().getEsiOwners()) {
+			if (owner.isInvalid()) {
+				invalid = true;
+				break; //search done
+			}
+		}
+		jRevalidate.setEnabled(invalid);
+
+		if (!ownerTypes.isEmpty()) {
 			jTable.setRowSelectionInterval(1, 1);
 			jAssets.setEnabled(true);
 			jCollapse.setEnabled(true);
@@ -416,6 +440,48 @@ public class AccountManagerDialog extends JDialogCentered {
 						updateTable();
 					}
 				}
+			} else if (AccountManagerAction.REVALIDATE.name().equals(e.getActionCommand())) {
+				jRevalidateLock.show(GuiShared.get().updating(), new LockWorkerAdaptor() {
+					private int done = 0;
+					private int total = 0;
+
+					@Override
+					public void task() {
+						for (EsiOwner owner : program.getProfileManager().getEsiOwners()) {
+							if (owner.isInvalid()) {
+								total++;
+								OAuth oAuth = (OAuth) owner.getApiClient().getAuthentication("evesso");
+								String accessToken = oAuth.getAccessToken();
+								if (accessToken != null) {
+									owner.setInvalid(false);
+									done++;
+								}
+							}
+						}
+					}
+
+					@Override
+					public void gui() {
+						if (done > 0) {
+							forceUpdate();
+							updateTable();
+						}
+					}
+
+					@Override
+					public void hidden() {
+						if (total > 0) {
+							if (done == total) { //All
+								JOptionPane.showMessageDialog(getDialog(), DialoguesAccount.get().revalidateMsgAll(total), DialoguesAccount.get().revalidate(), JOptionPane.PLAIN_MESSAGE);
+							} else if (done == 0) { //None
+								JOptionPane.showMessageDialog(getDialog(), DialoguesAccount.get().revalidateMsgNone(total), DialoguesAccount.get().revalidate(), JOptionPane.PLAIN_MESSAGE);
+							} else { //Some
+								JOptionPane.showMessageDialog(getDialog(), DialoguesAccount.get().revalidateMsgSome(total, done, total-done), DialoguesAccount.get().revalidate(), JOptionPane.PLAIN_MESSAGE);
+							}
+						}
+					}
+
+				});
 			} else if (AccountManagerAction.CHECK_ALL.name().equals(e.getActionCommand())) {
 				checkAssets(false, true);
 			} else if (AccountManagerAction.UNCHECK_ALL.name().equals(e.getActionCommand())) {

@@ -23,6 +23,7 @@ package net.nikr.eve.jeveasset.gui.dialogs;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.URL;
 import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
@@ -93,6 +94,9 @@ public class AboutDialog extends JDialogCentered {
 				+ "&nbsp;Niklas Kyster Rasmussen (Golden Gnu)<br>"
 				+ "&nbsp;Dultas<br>"
 				+ "<br>"
+				+ "<b>Testers</b><br>"
+				+ "&nbsp;Huzid<br>"	
+				+ "<br>"
 				+ "<b>Contributors</b><br>"
 				+ "&nbsp;Flaming Candle<br>"
 				+ "&nbsp;Jochen Bedersdorfer<br>"
@@ -143,9 +147,14 @@ public class AboutDialog extends JDialogCentered {
 				+ "&nbsp;<a href=\"https://github.com/GoldenGnu/translations\">Translations</a> (i18n)<br>"
 				+ "&nbsp;<a href=\"https://github.com/uklimaschewski/EvalEx\">EvalEx</a> (formula columns)<br>"
 				+ "&nbsp;<a href=\"https://picocli.info\">Picocli</a> (CLI)<br>"
+				+ "<br>"
+				+ "<center><a href=\"https://cultofthepartyparrot.com/\"><img border=\"0\" src=\"" + getPartyParrot() +"\" /></a><br></center>"
 				);
 
 		JScrollPane jInfoScroll = new JScrollPane(jInfo, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+
+		JLabel jPartner = new JLabel();
+		jPartner.setIcon(Images.MISC_PARTNER.getIcon());
 
 		jClose = new JButton(DialoguesAbout.get().close());
 		jClose.setActionCommand(AboutAction.CLOSE.name());
@@ -155,12 +164,13 @@ public class AboutDialog extends JDialogCentered {
 			layout.createParallelGroup(GroupLayout.Alignment.LEADING)
 				.addGroup(layout.createSequentialGroup()
 					.addComponent(jIcon)
-					.addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-						.addComponent(jProgram)
-						.addComponent(jClose, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
-					)
+					.addComponent(jProgram)
 				)
-				.addComponent(jInfoScroll)
+				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
+					.addComponent(jInfoScroll)
+					.addComponent(jPartner, 300, 300, 300)
+					.addComponent(jClose, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
+				)
 		);
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
@@ -169,8 +179,17 @@ public class AboutDialog extends JDialogCentered {
 					.addComponent(jProgram)
 				)
 				.addComponent(jInfoScroll, 300, 300, 300)
+				.addComponent(jPartner, 50, 50, 50)
 				.addComponent(jClose, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 		);
+	}
+
+	private String getPartyParrot() {
+		URL url = Images.class.getResource(Images.MISC_PARTYPARROT.getFilename());
+		if (url != null) {
+			return url.toString();
+		}
+		return "";
 	}
 
 	private JEditorPane createEditorPane(final String text) {

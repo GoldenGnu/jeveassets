@@ -84,7 +84,6 @@ import net.nikr.eve.jeveasset.gui.shared.components.JLockWindow;
 import net.nikr.eve.jeveasset.gui.shared.components.JLockWindow.LockWorkerAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
 import net.nikr.eve.jeveasset.gui.sounds.SoundPlayer;
-import net.nikr.eve.jeveasset.gui.sounds.Sounds;
 import net.nikr.eve.jeveasset.gui.tabs.assets.AssetsTab;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractsTab;
 import net.nikr.eve.jeveasset.gui.tabs.items.ItemsTab;
@@ -92,6 +91,7 @@ import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJobsTab;
 import net.nikr.eve.jeveasset.gui.tabs.journal.JournalTab;
 import net.nikr.eve.jeveasset.gui.tabs.loadout.LoadoutsTab;
 import net.nikr.eve.jeveasset.gui.tabs.materials.MaterialsTab;
+import net.nikr.eve.jeveasset.gui.tabs.mining.ExtractionsTab;
 import net.nikr.eve.jeveasset.gui.tabs.mining.MiningGraphTab;
 import net.nikr.eve.jeveasset.gui.tabs.mining.MiningTab;
 import net.nikr.eve.jeveasset.gui.tabs.orders.MarketOrdersTab;
@@ -126,7 +126,7 @@ public class Program implements ActionListener {
 		TIMER
 	}
 	//Major.Minor.Bugfix [Release Candidate n] [BETA n] [DEV BUILD #n];
-	public static final String PROGRAM_VERSION = "7.6.3 DEV BUILD 1";
+	public static final String PROGRAM_VERSION = "7.7.0";
 	public static final String PROGRAM_NAME = "jEveAssets";
 	public static final String PROGRAM_HOMEPAGE = "https://eve.nikr.net/jeveasset";
 	private static final boolean PROGRAM_DEV_BUILD = false;
@@ -167,6 +167,7 @@ public class Program implements ActionListener {
 	private SkillsTab skillsTab;
 	private MiningTab miningTab;
 	private MiningGraphTab miningGraphTab;
+	private ExtractionsTab extractionsTab;
 	private StructureUpdateDialog structureUpdateDialog;
 
 	//Misc
@@ -219,8 +220,7 @@ public class Program implements ActionListener {
 		LOG.info("Loading: Images");
 		Images.preload();
 		LOG.info("Loading: Sounds");
-		Sounds.preload();
-		SoundPlayer.enable();
+		SoundPlayer.load();
 		LOG.info("Loading: Main Window");
 		mainWindow = new MainWindow(this);
 		SplashUpdater.setProgress(50);
@@ -270,24 +270,27 @@ public class Program implements ActionListener {
 		SplashUpdater.setProgress(74);
 		LOG.info("Loading: Items Tab");
 		itemsTab = new ItemsTab(this);
-		SplashUpdater.setProgress(76);
+		SplashUpdater.setProgress(75);
 		LOG.info("Loading: Tracker Tab");
 		trackerTab = new TrackerTab(this);
-		SplashUpdater.setProgress(78);
+		SplashUpdater.setProgress(76);
 		LOG.info("Loading: Reprocessed Tab");
 		reprocessedTab = new ReprocessedTab(this);
-		SplashUpdater.setProgress(80);
+		SplashUpdater.setProgress(77);
 		LOG.info("Loading: Contracts Tab");
 		contractsTab = new ContractsTab(this);
-		SplashUpdater.setProgress(82);
+		SplashUpdater.setProgress(78);
 		LOG.info("Loading: Skills Tab");
 		skillsTab = new SkillsTab(this);
-		SplashUpdater.setProgress(83);
+		SplashUpdater.setProgress(79);
 		LOG.info("Loading: Mining Log Tab");
 		miningTab = new MiningTab(this);
-		SplashUpdater.setProgress(84);
+		SplashUpdater.setProgress(80);
 		LOG.info("Loading: Mining Graph Tab");
 		miningGraphTab = new MiningGraphTab(this);
+		SplashUpdater.setProgress(81);
+		LOG.info("Loading: Extractions Tab");
+		extractionsTab = new ExtractionsTab(this);
 		SplashUpdater.setProgress(84);
 	//Dialogs
 		LOG.info("Loading: Account Manager Dialog");
@@ -1086,10 +1089,13 @@ public class Program implements ActionListener {
 		} else if (MainMenuAction.MINING_ALL.name().equals(e.getActionCommand())) {
 			mainWindow.addTab(miningTab);
 			mainWindow.addTab(miningGraphTab);
+			mainWindow.addTab(extractionsTab);
 		} else if (MainMenuAction.MINING_LOG.name().equals(e.getActionCommand())) {
 			mainWindow.addTab(miningTab);
 		} else if (MainMenuAction.MINING_GRAPH.name().equals(e.getActionCommand())) {
 			mainWindow.addTab(miningGraphTab);
+		} else if (MainMenuAction.EXTRACTIONS.name().equals(e.getActionCommand())) {
+			mainWindow.addTab(extractionsTab);
 		} else if (MainMenuAction.ACCOUNT_MANAGER.name().equals(e.getActionCommand())) { //Settings
 			accountManagerDialog.setVisible(true);
 		} else if (MainMenuAction.PROFILES.name().equals(e.getActionCommand())) {

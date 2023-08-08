@@ -91,6 +91,7 @@ import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.JFreeChartUtil;
 import net.nikr.eve.jeveasset.gui.shared.JFreeChartUtil.SimpleRenderer;
 import net.nikr.eve.jeveasset.gui.shared.ColorIcon;
+import net.nikr.eve.jeveasset.gui.shared.ColorUtil;
 import net.nikr.eve.jeveasset.gui.shared.Formatter;
 import net.nikr.eve.jeveasset.gui.shared.JOptionInput;
 import net.nikr.eve.jeveasset.gui.shared.components.CheckBoxNode;
@@ -624,6 +625,11 @@ public class TrackerTab extends JMainTabSecondary {
 		updateOwners();
 		createData();
 		updateFilterButtons();
+	}
+
+	@Override
+	public void repaintTable() {
+		updateShown();
 	}
 
 	@Override
@@ -1184,6 +1190,8 @@ public class TrackerTab extends JMainTabSecondary {
 		} else {
 			jSkillPointsStatus.setNumber(0.0);
 		}
+		//Update Shown
+		boolean bright = ColorUtil.isBrightColor(jPanel.getBackground());
 		if (jTotal.isSelected()) { //Update total
 			dataset.addSeries(total);
 			Integer minColumn = null;
@@ -1198,52 +1206,52 @@ public class TrackerTab extends JMainTabSecondary {
 				}
 			}
 			renderer.add(dataset.getSeriesCount() - 1, minColumn);
-			updateRender(dataset.getSeriesCount() - 1, Color.RED.darker());
+			updateRender(bright, dataset.getSeriesCount() - 1, Color.RED.darker());
 		}
 		if (jWalletBalance.isSelected() && walletBalance != null) {
 			dataset.addSeries(walletBalance);
 			renderer.add(dataset.getSeriesCount() - 1, walletColumn);
-			updateRender(dataset.getSeriesCount() - 1, Color.BLUE.darker());
+			updateRender(bright, dataset.getSeriesCount() - 1, Color.BLUE.darker());
 
 		}
 		if (jAssets.isSelected() && assets != null) {
 			dataset.addSeries(assets);
 			renderer.add(dataset.getSeriesCount() - 1, assetColumn);
-			updateRender(dataset.getSeriesCount() - 1, Color.GREEN.darker().darker());
+			updateRender(bright, dataset.getSeriesCount() - 1, Color.GREEN.darker().darker());
 		}
 		if (jSellOrders.isSelected() && sellOrders != null) {
 			dataset.addSeries(sellOrders);
-			updateRender(dataset.getSeriesCount() - 1, Color.CYAN.darker());
+			updateRender(bright, dataset.getSeriesCount() - 1, Color.CYAN.darker());
 		}
 		if (jEscrows.isSelected() && escrows != null) {
 			dataset.addSeries(escrows);
-			updateRender(dataset.getSeriesCount() - 1, Color.BLACK);
+			updateRender(bright, dataset.getSeriesCount() - 1, Color.BLACK);
 		}
 		if (jEscrowsToCover.isSelected() && escrowsToCover != null) {
 			dataset.addSeries(escrowsToCover);
-			updateRender(dataset.getSeriesCount() - 1, Color.GRAY);
+			updateRender(bright, dataset.getSeriesCount() - 1, Color.GRAY);
 		}
 		if (jManufacturing.isSelected() && manufacturing != null) {
 			dataset.addSeries(manufacturing);
-			updateRender(dataset.getSeriesCount() - 1, Color.MAGENTA);
+			updateRender(bright, dataset.getSeriesCount() - 1, Color.MAGENTA);
 		}
 		if (jContractCollateral.isSelected() && contractCollateral != null) {
 			dataset.addSeries(contractCollateral);
-			updateRender(dataset.getSeriesCount() - 1, Color.PINK);
+			updateRender(bright, dataset.getSeriesCount() - 1, Color.PINK);
 		}
 		if (jContractValue.isSelected() && contractValue != null) {
 			dataset.addSeries(contractValue);
-			updateRender(dataset.getSeriesCount() - 1, Color.ORANGE);
+			updateRender(bright, dataset.getSeriesCount() - 1, Color.ORANGE);
 		}
 		if (jSkillPointsValue.isSelected() && skillPointsValue != null) {
 			dataset.addSeries(skillPointsValue);
-			updateRender(dataset.getSeriesCount() - 1, Color.YELLOW);
+			updateRender(bright, dataset.getSeriesCount() - 1, Color.YELLOW);
 		}
 		//Add empty dataset
 		if (dataset.getSeriesCount() == 0) {
 			TimePeriodValues timePeriodValues = new TimePeriodValues(TabsTracker.get().empty());
 			dataset.addSeries(timePeriodValues);
-			updateRender(dataset.getSeriesCount() - 1, Color.BLACK);
+			updateRender(bright, dataset.getSeriesCount() - 1, Color.BLACK);
 		}
 		rangeLogarithmicAxis.setAutoRange(true);
 		rangeLinearAxis.setAutoRange(true);
@@ -1252,7 +1260,18 @@ public class TrackerTab extends JMainTabSecondary {
 		JFreeChartUtil.updateTickScale(domainAxis, rangeLinearAxis, dataset);
 	}
 
-	private void updateRender(int index, Color color) {
+	private void updateRender(boolean bright, int index, Color color) {
+		if (Settings.get().isEasyChartColors()) {
+			if (bright) {
+				if (ColorUtil.luminance(color) > 0.8) {
+					color = color.darker();
+				}
+			} else {
+				if (ColorUtil.luminance(color) < 0.2) {
+					color = color.brighter();
+				}
+			}
+		}
 		renderer.setSeriesPaint(index, color);
 		renderer.setSeriesStroke(index, new BasicStroke(1));
 	}

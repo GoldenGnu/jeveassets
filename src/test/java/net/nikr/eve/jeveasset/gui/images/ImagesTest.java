@@ -94,8 +94,15 @@ public class ImagesTest extends TestUtil {
 
 	@Test
 	public void testFilenames() {
+		String[] extensions = {".png", ".gif"};
 		for (Images i : Images.values()) {
-			String properFilename = i.toString().toLowerCase() + ".png";
+			String extension = extensions[0];
+			for (String s : extensions) {
+				if (i.getFilename().endsWith(s)) {
+					extension = s;
+				}
+			}
+			String properFilename = i.toString().toLowerCase() + extension;
 			if (!properFilename.equals(i.getFilename())) {
 				fail(i.toString() + " filename should be " + properFilename + " but is " + i.getFilename());
 			}

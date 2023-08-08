@@ -51,6 +51,9 @@ public class ColorThemeStrong extends ColorTheme {
 		colors.put(ColorEntry.CONTRACTS_COURIER, new ColorThemeEntry(Colors.STRONG_YELLOW));
 		colors.put(ColorEntry.CONTRACTS_INCLUDED, new ColorThemeEntry(Colors.STRONG_GREEN));
 		colors.put(ColorEntry.CONTRACTS_EXCLUDED, new ColorThemeEntry(Colors.STRONG_RED));
+		colors.put(ColorEntry.EXTRACTIONS_DAYS, new ColorThemeEntry(Colors.STRONG_RED));
+		colors.put(ColorEntry.EXTRACTIONS_WEEK, new ColorThemeEntry(Colors.STRONG_YELLOW));
+		colors.put(ColorEntry.EXTRACTIONS_WEEKS, new ColorThemeEntry(Colors.STRONG_GREEN));
 		colors.put(ColorEntry.OVERVIEW_GROUPED_LOCATIONS, new ColorThemeEntry(Colors.STRONG_GREEN));
 		colors.put(ColorEntry.STOCKPILE_TABLE_BELOW_THRESHOLD, new ColorThemeEntry(Colors.STRONG_RED));
 		colors.put(ColorEntry.STOCKPILE_ICON_BELOW_THRESHOLD, new ColorThemeEntry(Colors.STRONG_RED));

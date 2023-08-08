@@ -39,6 +39,8 @@ public abstract class TabsMining extends Bundle {
 	public abstract String character();
 	public abstract String corporation();
 	public abstract String count();
+	public abstract String extractions();
+	public abstract String extractionsActiveSoon();
 	public abstract String from();
 	public abstract String grandTotal();
 	public abstract String graphToolTip(Comparable<?> name, String isk, String date);
@@ -50,6 +52,7 @@ public abstract class TabsMining extends Bundle {
 	public abstract String miningLog();
 	public abstract String scaleLinear();
 	public abstract String scaleLogarithmic();
+	public abstract String show();
 	public abstract String to();
 	public abstract String totalCount();
 	public abstract String totalReprocessed();
@@ -84,4 +87,8 @@ public abstract class TabsMining extends Bundle {
 	public abstract String columnValuePerVolumeReprocessedMaxToolTip();
 	public abstract String columnCorporation();
 	public abstract String columnForCorporation();
+	public abstract String columnExtractionStartTime();
+	public abstract String columnMoon();
+	public abstract String columnChunkArrivalTime();
+	public abstract String columnNaturalDecayTime();
 }

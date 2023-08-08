@@ -73,6 +73,7 @@ public class MainMenu extends JMenuBar {
 		MINING_ALL,
 		MINING_LOG,
 		MINING_GRAPH,
+		EXTRACTIONS,
 		EXIT_PROGRAM
 	}
 
@@ -178,6 +179,14 @@ public class MainMenu extends JMenuBar {
 		menuItem = new JMenuItem(GuiFrame.get().miningGraph());
 		menuItem.setIcon(Images.TOOL_MINING_GRAPH.getIcon());
 		menuItem.setActionCommand(MainMenuAction.MINING_GRAPH.name());
+		menuItem.addActionListener(program);
+		submenu.add(menuItem);
+
+		submenu.addSeparator();
+
+		menuItem = new JMenuItem(GuiFrame.get().extractions());
+		menuItem.setIcon(Images.TOOL_EXTRACTIONS.getIcon());
+		menuItem.setActionCommand(MainMenuAction.EXTRACTIONS.name());
 		menuItem.addActionListener(program);
 		submenu.add(menuItem);
 	//Business

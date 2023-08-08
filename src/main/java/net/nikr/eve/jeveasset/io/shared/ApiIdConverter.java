@@ -36,6 +36,7 @@ import static net.nikr.eve.jeveasset.data.api.raw.RawJournal.ContextType.STATION
 import static net.nikr.eve.jeveasset.data.api.raw.RawJournal.ContextType.STRUCTURE_ID;
 import static net.nikr.eve.jeveasset.data.api.raw.RawJournal.ContextType.SYSTEM_ID;
 import static net.nikr.eve.jeveasset.data.api.raw.RawJournal.ContextType.TYPE_ID;
+import net.nikr.eve.jeveasset.data.sde.IndustryMaterial;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.ItemFlag;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
@@ -43,6 +44,10 @@ import net.nikr.eve.jeveasset.data.sde.ReprocessedMaterial;
 import net.nikr.eve.jeveasset.data.sde.StaticData;
 import net.nikr.eve.jeveasset.data.settings.Citadel;
 import net.nikr.eve.jeveasset.data.settings.Citadel.CitadelSource;
+import net.nikr.eve.jeveasset.data.settings.ManufacturingSettings;
+import net.nikr.eve.jeveasset.data.settings.ManufacturingSettings.ManufacturingFacility;
+import net.nikr.eve.jeveasset.data.settings.ManufacturingSettings.ManufacturingRigs;
+import net.nikr.eve.jeveasset.data.settings.ManufacturingSettings.ManufacturingSecurity;
 import net.nikr.eve.jeveasset.data.settings.PriceData;
 import net.nikr.eve.jeveasset.data.settings.ReprocessSettings;
 import net.nikr.eve.jeveasset.data.settings.Settings;
@@ -56,6 +61,7 @@ import net.troja.eve.esi.model.CharacterBookmarkItem;
 import net.troja.eve.esi.model.CharacterBookmarksResponse;
 import net.troja.eve.esi.model.CorporationBookmarkItem;
 import net.troja.eve.esi.model.CorporationBookmarksResponse;
+import net.troja.eve.esi.model.MoonResponse;
 import net.troja.eve.esi.model.PlanetResponse;
 import net.troja.eve.esi.model.StructureResponse;
 
@@ -65,6 +71,10 @@ public final class ApiIdConverter {
 
 	private static final String EMPTY_STRING = "";
 	private static final String UNKNOWN_FLAG = "Unknown";
+
+	private enum PriceType {
+		ITEM, REPROCESSED, MANUFACTURING
+	}
 
 	/*
 	public static String flag(final int flag, final MyAsset parentAsset) {
@@ -226,14 +236,18 @@ public final class ApiIdConverter {
 	}
 
 	public static double getPrice(final Integer typeID, final boolean isBlueprintCopy) {
-		return getPriceType(typeID, isBlueprintCopy, false);
+		return getPriceType(typeID, isBlueprintCopy, PriceType.ITEM);
 	}
 
 	private static double getPriceReprocessed(final Integer typeID) {
-		return getPriceType(typeID, false, true);
+		return getPriceType(typeID, false, PriceType.REPROCESSED);
 	}
 
-	private static double getPriceType(final Integer typeID, final boolean isBlueprintCopy, boolean reprocessed) {
+	private static double getPriceManufacturing(final Integer typeID) {
+		return getPriceType(typeID, false, PriceType.MANUFACTURING);
+	}
+
+	private static double getPriceType(final Integer typeID, final boolean isBlueprintCopy, PriceType type) {
 		if (typeID == null) {
 			return 0;
 		}
@@ -264,17 +278,130 @@ public final class ApiIdConverter {
 				return item.getPriceBase();
 			}
 		}
+		//Manufacturing Price for non-market items
+		if (!item.isMarketGroup() && Settings.get().isManufacturingDefault()) {
+			return item.getPriceManufacturing();
+		}
 
 		//Price data
 		PriceData priceData = Settings.get().getPriceData().get(typeID);
 		if (priceData != null && priceData.isEmpty()) {
 			priceData = null;
 		}
-		if (reprocessed) {
+		if (type == PriceType.REPROCESSED) {
 			return Settings.get().getPriceDataSettings().getDefaultPriceReprocessed(priceData);
+		} else if (type == PriceType.MANUFACTURING) {
+			return Settings.get().getPriceDataSettings().getDefaultPriceManufacturing(priceData);
 		} else {
 			return Settings.get().getPriceDataSettings().getDefaultPrice(priceData);
 		}
+	}
+
+	/**
+	 * Calculate Manufacturing Price - This is expensive!
+	 * Use Item.getPriceManufacturing() to get the manufacturing price
+	 * @param item
+	 * @return 
+	 */
+	public static double getPriceManufacturing(Item item) {
+		return getPriceManufacturing(Settings.get().getManufacturingSettings(), item);
+	}
+
+	protected static double getPriceManufacturing(ManufacturingSettings manufacturingSettings, Item item) {
+		//Installation Fee
+		Double baseCost = manufacturingSettings.getPrices().get(item.getTypeID());
+		if (baseCost == null) {
+			return 0;
+		}
+		int systemID = manufacturingSettings.getSystemID();
+		Float systemIndex = manufacturingSettings.getSystems().get(systemID);
+		if (systemIndex == null) {
+			return 0.1;
+		}
+		double installationFee = getManufacturingInstallationFee(manufacturingSettings, systemIndex, baseCost, item);
+		//Materials Cost
+		double materialCost = 0;
+		Item blueprint = getItem(item.getBlueprintTypeID());
+		for (IndustryMaterial material : blueprint.getManufacturingMaterials()) {
+			double quantity = getManufacturingQuantity(manufacturingSettings, material.getQuantity());
+			double price = getPriceManufacturing(material.getTypeID());
+			materialCost = materialCost + (price * quantity);
+			/*
+			if (item.getTypeName().endsWith("Dominix")) {
+				System.out.println("	q=" + material.getQuantity() + " qmod=" + quantity + " p=" + price);
+			}
+			*/
+		}
+		/*
+		if (item.getTypeName().endsWith("Dominix")) {
+			System.out.println("	materialCost: " + Formatter.iskFormat(materialCost));
+			System.out.println("	baseCost: " + Formatter.iskFormat(baseCost));
+			System.out.println("	Fee: " + Formatter.iskFormat(installationFee));
+		}
+		*/
+		return installationFee + materialCost;
+	}
+
+	protected static double getManufacturingInstallationFee(ManufacturingSettings manufacturingSettings, Float systemIndex, Double baseCost, Item item) {
+		//Installation Fee
+		ManufacturingFacility facility = manufacturingSettings.getFacility();
+		double bonuses = percentToBonus(facility.getFeeBonus());
+		double tax = manufacturingSettings.getTax() / 100;
+		double scc = 0.25 / 100;
+
+		//TIF = EIV * ((SCI * bonuses) + FacilityTax + SCC + AlphaClone) 
+		//EIV: ME 0 quantity of inputs * adjusted price of inputs => baseCost
+		//SCI: System Cost Index 
+		//Facility Tax: Fixed tax for NPC stations set to 0.25% or tax rate set by facility owner.
+		//SCC: SCC surcharge, this is a fixed value and cannot be affected by anything 
+		//Bonuses: Any bonuses that are applicable 
+		//AlphaClone: Tax applicable to alpha clones, set at 0.25% (Just add to tax)
+		return baseCost * ((systemIndex * bonuses) + tax + scc); 
+	}
+
+	private static double getManufacturingQuantity(ManufacturingSettings manufacturingSettings, int quantity) {
+		int me = manufacturingSettings.getMaterialEfficiency();
+		ManufacturingFacility facility = manufacturingSettings.getFacility();
+		ManufacturingRigs rigs = manufacturingSettings.getRigs();
+		ManufacturingSecurity security = manufacturingSettings.getSecurity();
+		return getManufacturingQuantity(quantity, me, facility, rigs, security, 1);
+	}
+
+	/**
+	 * 
+	 * @param quantity
+	 * @param me
+	 * @param facility
+	 * @param rigs
+	 * @param security
+	 * @param runs
+	 * @return Can return less than 1 (one)
+	 */
+	public static double getManufacturingQuantity(int quantity, int me, ManufacturingFacility facility, ManufacturingRigs rigs, ManufacturingSecurity security, double runs) {
+		//base * ((100-ME)/100) * (EC modifier) * (EC Rig modifier))
+		return roundManufacturingQuantity(quantity * percentToBonus(me) * percentToBonus(facility.getMaterialBonus()) * rigToBonus(rigs, security), runs);
+	}
+
+	private static double roundManufacturingQuantity(double manufacturingQuantity, double runs) {
+		//max(runs,ceil(round((base * ((100-ME)/100) * (EC modifier) * (EC Rig modifier))*runs,2)))
+		return Math.max(runs, Math.ceil(roundQuantity(manufacturingQuantity, 2)) * runs);
+	}
+
+	private static double percentToBonus(double value) {
+		return ((100.0 - value) / 100.0);
+	}
+
+	private static double rigToBonus(ManufacturingRigs rigs, ManufacturingSecurity security) {
+		if (rigs == ManufacturingRigs.NONE) {
+			return 1;
+		} else {
+			return percentToBonus(rigs.getMaterialBonus() * security.getRigBonus());
+		}
+	}
+
+	private static double roundQuantity(double value, int places) {
+		double scale = Math.pow(10, places);
+		return Math.round(value * scale) / scale;
 	}
 
 	public static double getPriceReprocessed(Item item) {
@@ -458,6 +585,10 @@ public final class ApiIdConverter {
 
 	public static Citadel getCitadel(PlanetResponse planet) {
 		return new Citadel(planet.getPlanetId(), planet.getName(), planet.getSystemId(), false, false, CitadelSource.ESI_PLANET);
+	}
+
+	public static Citadel getCitadel(MoonResponse planet) {
+		return new Citadel(planet.getMoonId(), planet.getName(), planet.getSystemId(), false, false, CitadelSource.ESI_MOON);
 	}
 
 }

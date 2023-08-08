@@ -74,7 +74,6 @@ public class MyAsset extends RawAsset implements Comparable<MyAsset>, InfoItem, 
 	private PriceData priceData = new PriceData();
 	private UserItem<Integer, Double> userPrice;
 	private long typeCount = 0;
-	private double priceReprocessed;
 	private MarketPriceData marketPriceData;
 	private Date added;
 	private double price;
@@ -97,7 +96,6 @@ public class MyAsset extends RawAsset implements Comparable<MyAsset>, InfoItem, 
 		this.priceData = asset.priceData;
 		this.userPrice = asset.userPrice;
 		this.typeCount = asset.typeCount;
-		this.priceReprocessed = asset.priceReprocessed;
 		this.marketPriceData = asset.marketPriceData;
 		this.added = asset.added;
 		this.price = asset.price;
@@ -317,7 +315,7 @@ public class MyAsset extends RawAsset implements Comparable<MyAsset>, InfoItem, 
 	}
 
 	public double getPriceReprocessed() {
-		return priceReprocessed;
+		return item.getPriceReprocessed();
 	}
 
 	public double getPriceReprocessedDifference() {
@@ -484,10 +482,6 @@ public class MyAsset extends RawAsset implements Comparable<MyAsset>, InfoItem, 
 
 	public void setPriceData(final PriceData priceData) {
 		this.priceData = priceData;
-	}
-
-	public void setPriceReprocessed(final double priceReprocessed) {
-		this.priceReprocessed = priceReprocessed;
 	}
 
 	@Override

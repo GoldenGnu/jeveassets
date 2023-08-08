@@ -119,6 +119,7 @@ public abstract class DialoguesSettings extends Bundle {
 	public abstract String miningSaveHistory();
 
 	// used in ColorSettingsPanel
+	public abstract String chartColors();
 	public abstract String colors();
 	public abstract String collapse();
 	public abstract String expand();
@@ -156,9 +157,16 @@ public abstract class DialoguesSettings extends Bundle {
 	public abstract String soundsEveSkill();
 	public abstract String soundsEveStart();
 	public abstract String soundsEveStructure();
+	public abstract String soundsIndustryJobCompleted();
+	public abstract String soundsMp3Add();
+	public abstract String soundsMp3DeleteMsg(String id);
+	public abstract String soundsMp3DeleteTitle();
+	public abstract String soundsMp3ImportCopy();
+	public abstract String soundsMp3ImportExist();
+	public abstract String soundsMp3ImportTitle();
+	public abstract String soundsMp3NoFilesAdded();
 	public abstract String soundsNone();
 	public abstract String soundsOutbidUpdateCompleted();
-	public abstract String soundsIndustryJobCompleted();
 
 	// used in PriceDataSettingsPanel
 	public abstract String changeSourceWarning();
@@ -170,8 +178,10 @@ public abstract class DialoguesSettings extends Bundle {
 	public abstract String priceBase();
 	public abstract String priceData();
 	public abstract String priceReprocessed();
+	public abstract String priceManufacturing();
 	public abstract String priceTech1();
 	public abstract String priceTech2();
+	public abstract String manufacturingDefault();
 	public abstract String source();
 	public abstract String janiceApiKey();
 	public abstract String janiceApiKeyMsg();
@@ -202,6 +212,27 @@ public abstract class DialoguesSettings extends Bundle {
 	public abstract String three();
 	public abstract String four();
 	public abstract String five();
+
+	// used in ManufacturingSettingsPanel
+	public abstract String manufacturing();
+	public abstract String manufacturingFacility();
+	public abstract String manufacturingFacilityStation();
+	public abstract String manufacturingFacilityMedium();
+	public abstract String manufacturingFacilityLarge();
+	public abstract String manufacturingFacilityXLarge();
+	public abstract String manufacturingME();
+	public abstract String manufacturingPercent();
+	public abstract String manufacturingRigs();
+	public abstract String manufacturingRigsNone();
+	public abstract String manufacturingRigsT1();
+	public abstract String manufacturingRigsT2();
+	public abstract String manufacturingSecurity();
+	public abstract String manufacturingSecurityHighSec();
+	public abstract String manufacturingSecurityLowSec();
+	public abstract String manufacturingSecurityNullSec();
+	public abstract String manufacturingSystems();
+	public abstract String manufacturingSystemsWarning();
+	public abstract String manufacturingTax();
 
 	// used in SettingsDialog
 	public abstract String settings(String programName);

@@ -149,6 +149,8 @@ public class SettingsDialog extends JDialogCentered {
 
 		add(new ReprocessingSettingsPanel(program, this));
 
+		add(new ManufacturingSettingsPanel(program, this));
+
 		add(new ProxySettingsPanel(program, this));
 
 		add(new WindowSettingsPanel(program, this));

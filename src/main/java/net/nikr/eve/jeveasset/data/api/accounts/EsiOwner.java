@@ -337,13 +337,9 @@ public class EsiOwner extends AbstractOwner implements OwnerType {
 	@Override
 	public boolean isMining() {
 		if (isCorporation()) {
-			return false; //Not doing corporation mining ledger, yet!
-			/*
 			return EsiScopes.CORPORATION_MINING.isInScope(scopes)
-					&& (roles.contains(RolesEnum.ACCOUNTANT)
-					|| roles.contains(RolesEnum.STATION_MANAGER)
+					&& ((roles.contains(RolesEnum.ACCOUNTANT) && roles.contains(RolesEnum.STATION_MANAGER))
 					|| roles.contains(RolesEnum.DIRECTOR));
-			*/
 		} else {
 			return EsiScopes.CHARACTER_MINING.isInScope(scopes);
 		}

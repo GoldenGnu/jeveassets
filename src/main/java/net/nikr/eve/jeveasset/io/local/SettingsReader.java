@@ -24,6 +24,7 @@ package net.nikr.eve.jeveasset.io.local;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Point;
+import java.io.File;
 import java.net.Proxy;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -47,6 +48,10 @@ import net.nikr.eve.jeveasset.data.settings.ExportSettings.DecimalSeparator;
 import net.nikr.eve.jeveasset.data.settings.ExportSettings.ExportFormat;
 import net.nikr.eve.jeveasset.data.settings.ExportSettings.FilterSelection;
 import net.nikr.eve.jeveasset.data.settings.ExportSettings.LineDelimiter;
+import net.nikr.eve.jeveasset.data.settings.ManufacturingSettings;
+import net.nikr.eve.jeveasset.data.settings.ManufacturingSettings.ManufacturingFacility;
+import net.nikr.eve.jeveasset.data.settings.ManufacturingSettings.ManufacturingRigs;
+import net.nikr.eve.jeveasset.data.settings.ManufacturingSettings.ManufacturingSecurity;
 import net.nikr.eve.jeveasset.data.settings.MarketOrdersSettings;
 import net.nikr.eve.jeveasset.data.settings.PriceDataSettings;
 import net.nikr.eve.jeveasset.data.settings.PriceDataSettings.PriceMode;
@@ -67,8 +72,7 @@ import net.nikr.eve.jeveasset.data.settings.UserItem;
 import net.nikr.eve.jeveasset.data.settings.tag.Tag;
 import net.nikr.eve.jeveasset.data.settings.tag.TagColor;
 import net.nikr.eve.jeveasset.data.settings.tag.TagID;
-import net.nikr.eve.jeveasset.gui.dialogs.settings.SoundsSettingsPanel.SoundsOption;
-import net.nikr.eve.jeveasset.gui.dialogs.settings.SoundsSettingsPanel.SoundsSound;
+import net.nikr.eve.jeveasset.gui.dialogs.settings.SoundsSettingsPanel.SoundOption;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.UserNameSettingsPanel.UserName;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.UserPriceSettingsPanel.UserPrice;
 import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
@@ -84,6 +88,8 @@ import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.ResizeMode;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.SimpleColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.View;
+import net.nikr.eve.jeveasset.gui.sounds.DefaultSound;
+import net.nikr.eve.jeveasset.gui.sounds.FileSound;
 import net.nikr.eve.jeveasset.gui.tabs.assets.AssetTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.assets.AssetsTab;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractsExtendedTableFormat;
@@ -95,6 +101,8 @@ import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJobTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJobsTab;
 import net.nikr.eve.jeveasset.gui.tabs.journal.JournalTab;
 import net.nikr.eve.jeveasset.gui.tabs.journal.JournalTableFormat;
+import net.nikr.eve.jeveasset.gui.tabs.mining.ExtractionsTab;
+import net.nikr.eve.jeveasset.gui.tabs.mining.ExtractionsTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.mining.MiningTab;
 import net.nikr.eve.jeveasset.gui.tabs.mining.MiningTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.orders.MarketOrdersTab;
@@ -131,6 +139,7 @@ import net.nikr.eve.jeveasset.gui.tabs.values.ValueTableTab;
 import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.io.local.update.Update;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
+import net.nikr.eve.jeveasset.io.shared.FileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
@@ -301,6 +310,12 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 	private Settings loadSettings(final Element element, final Settings settings) throws XmlException {
 		if (!element.getNodeName().equals("settings")) {
 			throw new XmlException("Wrong root element name.");
+		}
+
+		//Manufacturing Prices
+		Element manufacturingElement = getNodeOptional(element, "manufacturing");
+		if (manufacturingElement != null) {
+			parseManufacturingPriceSettings(manufacturingElement, settings);
 		}
 
 		//Price History
@@ -855,6 +870,60 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		Collections.sort(stockpiles);
 	}
 
+	private void parseManufacturingPriceSettings(Element manufacturingElement, Settings settings) throws XmlException {
+		ManufacturingSettings manufacturingSettings = settings.getManufacturingSettings();
+		Date nextUpdate = getDate(manufacturingElement, "nextupdate");
+		ManufacturingFacility facility;
+		try {
+			facility = ManufacturingFacility.valueOf(getString(manufacturingElement, "facility"));
+		} catch (IllegalArgumentException ex) {
+			facility = ManufacturingFacility.getDefault();
+		}
+		ManufacturingRigs rigs;
+		try {
+			rigs = ManufacturingRigs.valueOf(getString(manufacturingElement, "rigs"));
+		} catch (IllegalArgumentException ex) {
+			rigs = ManufacturingRigs.getDefault();
+		}
+		ManufacturingSecurity security;
+		try {
+			security = ManufacturingSecurity.valueOf(getString(manufacturingElement, "security"));
+		} catch (IllegalArgumentException ex) {
+			security = ManufacturingSecurity.getDefault();
+		}
+		int system = getInt(manufacturingElement, "systemid");
+		int materialEfficiency = getInt(manufacturingElement, "me");
+		double tax = getDouble(manufacturingElement, "tax");
+		manufacturingSettings.setNextUpdate(nextUpdate);
+		manufacturingSettings.setFacility(facility);
+		manufacturingSettings.setRigs(rigs);
+		manufacturingSettings.setSecurity(security);
+		manufacturingSettings.setSystemID(system);
+		manufacturingSettings.setMaterialEfficiency(materialEfficiency);
+		manufacturingSettings.setTax(tax);
+		//Manufacturing Adjusted Prices
+		Map<Integer, Double> manufacturingPrices = new HashMap<>();
+		NodeList priceNodes = manufacturingElement.getElementsByTagName("price");
+		for (int a = 0; a < priceNodes.getLength(); a++) {
+			Element priceNode = (Element) priceNodes.item(a);
+			int typeID = getInt(priceNode, "typeid");
+			double price = getDouble(priceNode, "price");
+			manufacturingPrices.put(typeID, price);
+		}
+		manufacturingSettings.setPrices(manufacturingPrices);
+
+		Map<Integer, Float> manufacturingSystems = new HashMap<>();
+		NodeList systemNodes = manufacturingElement.getElementsByTagName("system");
+		for (int a = 0; a < systemNodes.getLength(); a++) {
+			Element systemNode = (Element) systemNodes.item(a);
+			int systemID = getInt(systemNode, "systemid");
+			float index = getFloat(systemNode, "index");
+			manufacturingSystems.put(systemID, index);
+		}
+
+		manufacturingSettings.setSystems(manufacturingSystems);
+	}
+
 	private void parsePriceHistorySettings(Element priceHistoryElement, Settings settings) throws XmlException {
 		NodeList priceListNodes = priceHistoryElement.getElementsByTagName("set");
 		for (int a = 0; a < priceListNodes.getLength(); a++) {
@@ -912,12 +981,17 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		NodeList soundNodes = colorSettingsElement.getElementsByTagName("sound");
 		for (int a = 0; a < soundNodes.getLength(); a++) {
 			Element soundNode = (Element) soundNodes.item(a);
+			SoundOption option = SoundOption.valueOf(getString(soundNode, "option"));
+			String sound = getString(soundNode, "sound");
 			try {
-				SoundsOption option = SoundsOption.valueOf(getString(soundNode, "option"));
-				SoundsSound sound = SoundsSound.valueOf(getString(soundNode, "sound"));
-				settings.getSoundSettings().put(option, sound);
+				settings.getSoundSettings().put(option, DefaultSound.valueOf(sound));
 			} catch (IllegalArgumentException ex ) {
-				LOG.error(ex.getMessage(), ex);
+				File file = new File(FileUtil.getPathSounds(sound));
+				if (file.exists()) {
+					settings.getSoundSettings().put(option, new FileSound(file));
+				} else {
+					settings.getSoundSettings().put(option, DefaultSound.BEEP); //Fallback
+				}
 			}
 		}
 	}
@@ -1213,6 +1287,10 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		if (haveAttribute(element, "defaultreprocessedprice")) {
 			priceReprocessedType = PriceMode.valueOf(getString(element, "defaultreprocessedprice"));
 		}
+		PriceMode priceManufacturingType = settings.getPriceDataSettings().getPriceManufacturingType(); //Default
+		if (haveAttribute(element, "defaultmanufacturingprice")) {
+			priceManufacturingType = PriceMode.valueOf(getString(element, "defaultmanufacturingprice"));
+		}
 
 		//null = default
 		Long locationID = null;
@@ -1255,7 +1333,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			locationType = priceSource.getDefaultLocationType();
 			locationID = priceSource.getDefaultLocationID();
 		}
-		settings.setPriceDataSettings(new PriceDataSettings(locationType, locationID, priceSource, priceType, priceReprocessedType, janiceKey));
+		settings.setPriceDataSettings(new PriceDataSettings(locationType, locationID, priceSource, priceType, priceReprocessedType, priceManufacturingType, janiceKey));
 	}
 
 	private void parseMarketOrdersSettings(final Element element, final Settings settings) throws XmlException {
@@ -1629,6 +1707,14 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		try {
 			if (toolName.equals(MiningTab.NAME)) {
 				return MiningTableFormat.valueOf(column);
+			}
+		} catch (IllegalArgumentException exception) {
+
+		}
+		//Extractions
+		try {
+			if (toolName.equals(ExtractionsTab.NAME)) {
+				return ExtractionsTableFormat.valueOf(column);
 			}
 		} catch (IllegalArgumentException exception) {
 

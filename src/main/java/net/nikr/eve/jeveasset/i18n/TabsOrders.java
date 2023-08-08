@@ -57,6 +57,8 @@ public abstract class TabsOrders extends Bundle {
 	public abstract String columnEdits();
 	public abstract String columnEditsToolTip();
 	public abstract String columnPriceReprocessed();
+	public abstract String columnPriceManufacturing();
+	public abstract String columnPriceManufacturingToolTip();
 	public abstract String columnIssued();
 	public abstract String columnIssuedToolTip();
 	public abstract String columnIssuedFirst();
@@ -70,6 +72,7 @@ public abstract class TabsOrders extends Bundle {
 	public abstract String columnMinimumQuantity();
 	public abstract String columnOwner();
 	public abstract String columnIssuedBy();
+	public abstract String columnWalletDivision();
 	public abstract String columnLocation();
 	public abstract String columnSystem();
 	public abstract String columnConstellation();

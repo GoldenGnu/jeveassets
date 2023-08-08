@@ -24,6 +24,8 @@ import java.util.Date;
 import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
 import net.nikr.eve.jeveasset.io.shared.RawConverter;
 import net.troja.eve.esi.model.CharacterMiningResponse;
+import net.troja.eve.esi.model.CorporationMiningObserverResponse;
+import net.troja.eve.esi.model.CorporationMiningObserversResponse;
 
 
 public class RawMining {
@@ -31,7 +33,8 @@ public class RawMining {
     private Long count;
     private Long locationID;
     private Integer typeID;
-	private String characterName;
+	private long characterID;
+	private Long corporationID = null;
 	private String corporationName;
 	private boolean forCorporation;
 
@@ -46,7 +49,8 @@ public class RawMining {
 		this.count = mining.count;
 		this.locationID = mining.locationID;
 		this.typeID = mining.typeID;
-		this.characterName = mining.characterName;
+		this.characterID = mining.characterID;
+		this.corporationID = mining.corporationID;
 		this.corporationName = mining.corporationName;
 		this.forCorporation = mining.forCorporation;
 	}
@@ -62,9 +66,28 @@ public class RawMining {
 		this.count = mining.getQuantity();
 		this.locationID = RawConverter.toLong(mining.getSolarSystemId());
 		this.typeID = mining.getTypeId();
-		this.characterName = owner.getOwnerName();
+		this.characterID = owner.getOwnerID();
+		this.corporationID = null;
 		this.corporationName = owner.getCorporationName();
 		this.forCorporation = false;
+	}
+
+	/**
+	 * ESI Corporation
+	 *
+	 * @param observers
+	 * @param mining
+	 * @param owner
+	 */
+	public RawMining(CorporationMiningObserversResponse observers, CorporationMiningObserverResponse mining, OwnerType owner) {
+		this.date = RawConverter.toDate(mining.getLastUpdated());
+		this.count = mining.getQuantity();
+		this.locationID = RawConverter.toLong(observers.getObserverId());
+		this.typeID = mining.getTypeId();
+		this.characterID = mining.getCharacterId();
+		this.corporationName = null;
+		this.corporationID = RawConverter.toLong(mining.getRecordedCorporationId());
+		this.forCorporation = true;
 	}
 
 	public Date getDate() {
@@ -99,20 +122,28 @@ public class RawMining {
 		this.typeID = typeID;
 	}
 
+	public long getCharacterID() {
+		return characterID;
+	}
+
+	public void setCharacterID(long characterID) {
+		this.characterID = characterID;
+	}
+
+	public Long getCorporationID() {
+		return corporationID;
+	}
+
+	public void setCorporationID(Long corporationID) {
+		this.corporationID = corporationID;
+	}
+
 	public boolean isForCorporation() {
 		return forCorporation;
 	}
 
 	public void setForCorporation(boolean forCorporation) {
 		this.forCorporation = forCorporation;
-	}
-
-	public String getCharacterName() {
-		return characterName;
-	}
-
-	public void setCharacterName(String characterName) {
-		this.characterName = characterName;
 	}
 
 	public String getCorporationName() {

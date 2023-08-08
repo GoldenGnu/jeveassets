@@ -60,7 +60,6 @@ public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarket
 	private String issuedByName = "";
 	private Double brokersFee;
 	private Outbid outbid;
-	private double priceReprocessed;
 	private boolean esi = true;
 	//soft init
 	private JButton jButton;
@@ -358,11 +357,7 @@ public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarket
 	}
 
 	public double getPriceReprocessed() {
-		return priceReprocessed;
-	}
-
-	public void setPriceReprocessed(double priceReprocessed) {
-		this.priceReprocessed = priceReprocessed;
+		return item.getPriceReprocessed();
 	}
 
 	public void setPriceData(PriceData priceData) {

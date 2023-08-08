@@ -28,16 +28,17 @@ import java.util.List;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.data.settings.ManufacturingSettings.ManufacturingFacility;
+import net.nikr.eve.jeveasset.data.settings.ManufacturingSettings.ManufacturingRigs;
+import net.nikr.eve.jeveasset.data.settings.ManufacturingSettings.ManufacturingSecurity;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
-import net.nikr.eve.jeveasset.gui.shared.components.JDoubleField;
-import static net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileItemDialog.round;
 import net.nikr.eve.jeveasset.i18n.TabsStockpile;
+import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 
 
 public class StockpileBpDialog extends JDialogCentered {
@@ -53,9 +54,10 @@ public class StockpileBpDialog extends JDialogCentered {
 	private final JButton jOK;
 	private final JLabel jBlueprintTypeLabel;
 	private final JComboBox<String> jBlueprintType;
-	private final JComboBox<Integer> jManufacturingMe;
-	private final JCheckBox jManufacturingEngineeringComplex;
-	private final JDoubleField jManufacturingFacility;
+	private final JComboBox<Integer> jMe;
+	private final JComboBox<ManufacturingFacility> jFacility;
+	private final JComboBox<ManufacturingRigs> jRigs;
+	private final JComboBox<ManufacturingSecurity> jSecurity;
 
 	private final List<JComponent> manufacturingComponents = new ArrayList<>();
 	private BpData returnValue;
@@ -70,24 +72,52 @@ public class StockpileBpDialog extends JDialogCentered {
 		jBlueprintType.setActionCommand(StockpileBpAction.TYPE_CHANGE.name());
 		jBlueprintType.addActionListener(listener);
 
-		JLabel jManufacturingMeLabel = new JLabel(TabsStockpile.get().me());
-		manufacturingComponents.add(jManufacturingMeLabel);
+		JLabel jMeLabel = new JLabel(TabsStockpile.get().me());
+		manufacturingComponents.add(jMeLabel);
 		Integer[] me = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-		jManufacturingMe = new JComboBox<>(me);
-		jManufacturingMe.setPrototypeDisplayValue(10);
-		jManufacturingMe.setMaximumRowCount(me.length);
-		manufacturingComponents.add(jManufacturingMe);
+		jMe = new JComboBox<>(me);
+		jMe.setPrototypeDisplayValue(10);
+		jMe.setMaximumRowCount(me.length);
+		manufacturingComponents.add(jMe);
 
-		JLabel jManufacturingFacilityLabel = new JLabel(TabsStockpile.get().blueprintFacility());
-		manufacturingComponents.add(jManufacturingFacilityLabel);
-		jManufacturingFacility = new JDoubleField("0");
-		manufacturingComponents.add(jManufacturingFacility);
+		JLabel jFacilityLabel = new JLabel(TabsStockpile.get().blueprintFacility());
+		manufacturingComponents.add(jFacilityLabel);
+		jFacility = new JComboBox<>(ManufacturingFacility.values());
+		jFacility.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				ManufacturingFacility facility = jFacility.getItemAt(jFacility.getSelectedIndex());
+				if (facility == ManufacturingFacility.STATION) {
+					jRigs.setSelectedIndex(0);
+					jRigs.setEnabled(false);
+				} else {
+					jRigs.setEnabled(true);
+				}
+			}
+		});
+		manufacturingComponents.add(jFacility);
 
-		JLabel jManufacturingPercentLabel = new JLabel(TabsStockpile.get().blueprintPercent());
-		manufacturingComponents.add(jManufacturingPercentLabel);
+		JLabel jRigsLabel = new JLabel(TabsStockpile.get().blueprintRigs());
+		manufacturingComponents.add(jRigsLabel);
+		jRigs = new JComboBox<>(ManufacturingRigs.values());
+		jRigs.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				ManufacturingRigs rigs = jRigs.getItemAt(jRigs.getSelectedIndex());
+				if (rigs == ManufacturingRigs.NONE) {
+					jSecurity.setSelectedIndex(0);
+					jSecurity.setEnabled(false);
+				} else {
+					jSecurity.setEnabled(true);
+				}
+			}
+		});
+		manufacturingComponents.add(jRigs);
 
-		jManufacturingEngineeringComplex = new JCheckBox(TabsStockpile.get().blueprintEngineeringComplex());
-		manufacturingComponents.add(jManufacturingEngineeringComplex);
+		JLabel jSecurityLabel = new JLabel(TabsStockpile.get().blueprintSecurity());
+		manufacturingComponents.add(jSecurityLabel);
+		jSecurity = new JComboBox<>(ManufacturingSecurity.values());
+		manufacturingComponents.add(jSecurity);
 
 		jOK = new JButton(TabsStockpile.get().ok());
 		jOK.setActionCommand(StockpileBpAction.OK.name());
@@ -104,17 +134,16 @@ public class StockpileBpDialog extends JDialogCentered {
 					.addComponent(jBlueprintType, WIDTH, WIDTH, WIDTH)
 					.addGroup(layout.createSequentialGroup()
 						.addGroup(layout.createParallelGroup()
-							.addComponent(jManufacturingMeLabel)
-							.addComponent(jManufacturingFacilityLabel)
+							.addComponent(jMeLabel)
+							.addComponent(jFacilityLabel)
+							.addComponent(jRigsLabel)
+							.addComponent(jSecurityLabel)
 						)
 						.addGroup(layout.createParallelGroup()
-							.addComponent(jManufacturingEngineeringComplex)
-							.addComponent(jManufacturingMe)
-							.addGroup(layout.createSequentialGroup()
-								.addComponent(jManufacturingFacility)
-								.addGap(2)
-								.addComponent(jManufacturingPercentLabel)
-							)
+							.addComponent(jMe)
+							.addComponent(jFacility)
+							.addComponent(jRigs)
+							.addComponent(jSecurity)
 						)
 					)
 				)
@@ -129,15 +158,21 @@ public class StockpileBpDialog extends JDialogCentered {
 				.addGap(0)
 				.addComponent(jBlueprintType, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				.addGroup(layout.createParallelGroup()
-					.addComponent(jManufacturingMeLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					.addComponent(jManufacturingMe, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jMeLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jMe, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				)
 				.addGroup(layout.createParallelGroup()
-					.addComponent(jManufacturingFacilityLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					.addComponent(jManufacturingFacility, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					.addComponent(jManufacturingPercentLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jFacilityLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jFacility, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				)
-				.addComponent(jManufacturingEngineeringComplex, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+				.addGroup(layout.createParallelGroup()
+					.addComponent(jRigsLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jRigs, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+				)
+				.addGroup(layout.createParallelGroup()
+					.addComponent(jSecurityLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jSecurity, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+				)
 				.addGroup(layout.createParallelGroup()
 					.addComponent(jOK, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jCancel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
@@ -151,9 +186,9 @@ public class StockpileBpDialog extends JDialogCentered {
 		getDialog().setTitle(title);
 		jBlueprintType.setModel(new DefaultComboBoxModel<>(options));
 		jBlueprintType.setSelectedIndex(0);
-		jManufacturingMe.setSelectedIndex(0);
-		jManufacturingFacility.setText("0");
-		jManufacturingEngineeringComplex.setSelected(false);
+		jMe.setSelectedIndex(0);
+		jFacility.setSelectedIndex(0);
+		jRigs.setSelectedIndex(0);
 		setVisible(true);
 		return returnValue;
 	}
@@ -176,15 +211,11 @@ public class StockpileBpDialog extends JDialogCentered {
 		String type = jBlueprintType.getItemAt(jBlueprintType.getSelectedIndex());
 		if (type.equals(TabsStockpile.get().materialsManufacturing())
 				|| type.equals(TabsStockpile.get().materialsReaction())) {
-			int me = jManufacturingMe.getItemAt(jManufacturingMe.getSelectedIndex());
-			double ec = jManufacturingEngineeringComplex.isSelected() ? 0.99 : 1;
-			double facility;
-			try {
-				facility = (100.0 - Double.parseDouble(jManufacturingFacility.getText())) / 100.0;
-			} catch (NumberFormatException ex) {
-				facility = 1; //1 = no bonus
-			}
-			returnValue = new BpData(type, me, ec, facility);
+			int me = jMe.getItemAt(jMe.getSelectedIndex());
+			ManufacturingFacility facility = jFacility.getItemAt(jFacility.getSelectedIndex());
+			ManufacturingRigs rigs = jRigs.getItemAt(jRigs.getSelectedIndex());
+			ManufacturingSecurity security = jSecurity.getItemAt(jSecurity.getSelectedIndex());
+			returnValue = new BpData(type, me, facility, rigs, security);
 		} else {
 			returnValue = new BpData(type);
 		}
@@ -219,41 +250,24 @@ public class StockpileBpDialog extends JDialogCentered {
 
 		private final String type;
 		private final Integer me;
-		private final Double ec;
-		private final Double facility;
+		private final ManufacturingFacility facility;
+		private final ManufacturingRigs rigs;
+		private final ManufacturingSecurity security;
 
 		public BpData(String type) {
 			this.type = type;
 			this.me = null;
-			this.ec = null;
 			this.facility = null;
+			this.rigs = null;
+			this.security = null;
 		}
 
-		public BpData(String type, Integer me, double ec, double facility) {
+		public BpData(String type, Integer me, ManufacturingFacility facility, ManufacturingRigs rigs, ManufacturingSecurity security) {
 			this.type = type;
 			this.me = me;
-			this.ec = ec;
 			this.facility = facility;
-		}
-
-		public boolean isManufacturing() {
-			return me != null && ec != null&& facility != null;
-		}
-
-		public String getType() {
-			return type;
-		}
-
-		public Integer getMe() {
-			return me;
-		}
-
-		public Double getEc() {
-			return ec;
-		}
-
-		public Double getFacility() {
-			return facility;
+			this.rigs = rigs;
+			this.security = security;
 		}
 
 		public boolean matches(String value) {
@@ -261,7 +275,7 @@ public class StockpileBpDialog extends JDialogCentered {
 		}
 
 		public double doMath(int quantity, double countMinimum) {
-			return Math.max(countMinimum, Math.ceil(round((quantity * ((100.0 - me) / 100.0) * ec * facility) * countMinimum, 2)));
+			return ApiIdConverter.getManufacturingQuantity(quantity, me, facility, rigs, security, countMinimum);
 		}
 	}
 }

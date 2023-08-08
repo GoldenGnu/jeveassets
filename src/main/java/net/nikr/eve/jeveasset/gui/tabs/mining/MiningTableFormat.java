@@ -24,7 +24,6 @@ package net.nikr.eve.jeveasset.gui.tabs.mining;
 import ca.odell.glazedlists.GlazedLists;
 import java.util.Comparator;
 import net.nikr.eve.jeveasset.data.api.my.MyMining;
-import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.DateOnly;
 import net.nikr.eve.jeveasset.i18n.TabsMining;
@@ -81,14 +80,14 @@ public enum MiningTableFormat implements EnumTableColumn<MyMining> {
 			return from.getCharacterName();
 		}
 	},
-	LOCATION(MyLocation.class, GlazedLists.comparableComparator()) {
+	LOCATION(String.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
 			return TabsMining.get().columnLocation();
 		}
 		@Override
 		public Object getColumnValue(final MyMining from) {
-			return from.getLocation();
+			return from.getLocation().getLocation();
 		}
 	},
 	COUNT(Long.class, GlazedLists.comparableComparator()) {

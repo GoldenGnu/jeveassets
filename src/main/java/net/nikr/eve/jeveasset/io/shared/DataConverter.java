@@ -32,6 +32,7 @@ import net.nikr.eve.jeveasset.data.api.my.MyAccountBalance;
 import net.nikr.eve.jeveasset.data.api.my.MyAsset;
 import net.nikr.eve.jeveasset.data.api.my.MyContract;
 import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
+import net.nikr.eve.jeveasset.data.api.my.MyExtraction;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
 import net.nikr.eve.jeveasset.data.api.my.MyJournal;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
@@ -42,6 +43,7 @@ import net.nikr.eve.jeveasset.data.api.raw.RawAccountBalance;
 import net.nikr.eve.jeveasset.data.api.raw.RawAsset;
 import net.nikr.eve.jeveasset.data.api.raw.RawContract;
 import net.nikr.eve.jeveasset.data.api.raw.RawContractItem;
+import net.nikr.eve.jeveasset.data.api.raw.RawExtraction;
 import net.nikr.eve.jeveasset.data.api.raw.RawIndustryJob;
 import net.nikr.eve.jeveasset.data.api.raw.RawJournal;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder;
@@ -338,5 +340,21 @@ public abstract class DataConverter {
 		Item item = ApiIdConverter.getItemUpdate(rawMining.getTypeID());
 		MyLocation location = ApiIdConverter.getLocation(rawMining.getLocationID());
 		return new MyMining(rawMining, item, location);
+	}
+
+	public static List<MyExtraction> converRawExtraction(List<RawExtraction> rawExtractions, OwnerType owner, boolean saveHistory) {
+		List<MyExtraction> myExtractions = new ArrayList<>();
+		for (RawExtraction rawMining : rawExtractions) {
+			myExtractions.add(toMyExtraction(rawMining));
+		}
+		if (saveHistory) {
+			myExtractions.addAll(owner.getExtractions());
+		}
+		return myExtractions;
+	}
+
+	public static MyExtraction toMyExtraction(RawExtraction rawExtraction) {
+		MyLocation moon = ApiIdConverter.getLocation(rawExtraction.getMoonID());
+		return new MyExtraction(rawExtraction, moon);
 	}
 }

@@ -18,7 +18,6 @@ import javax.swing.JTextField;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.settings.ColorEntry;
 import net.nikr.eve.jeveasset.data.settings.ColorSettings;
-import net.nikr.eve.jeveasset.data.settings.Colors;
 import net.nikr.eve.jeveasset.gui.shared.DocumentFactory;
 import net.nikr.eve.jeveasset.gui.shared.Formatter;
 import net.nikr.eve.jeveasset.gui.shared.components.JIntegerField;
@@ -62,9 +61,6 @@ public class ReprocessedSeparatorTableCell extends SeparatorTableCell<Reprocesse
 		jCount.setActionCommand(ReprocessedCellAction.UPDATE_COUNT.name());
 		jCount.addActionListener(actionListener);
 		jCount.setHorizontalAlignment(JTextField.RIGHT);
-		jCount.setOpaque(false);
-		jCount.setBackground(Colors.COMPONENT_TRANSPARENT.getColor());
-		jCount.setBorder(null);
 		jCount.setAutoSelectAll(true);
 
 		JLabel jCountLabel = new JLabel(TabsReprocessed.get().multiplierSign());

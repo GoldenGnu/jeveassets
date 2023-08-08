@@ -99,6 +99,20 @@ public enum ItemTableFormat implements EnumTableColumn<Item> {
 			return from.getPriceReprocessed();
 		}
 	},
+	PRICE_MANUFACTURING(Double.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsItems.get().columnPriceManufacturing();
+		}
+		@Override
+		public String getColumnToolTip() {
+			return TabsItems.get().columnPriceManufacturingToolTip();
+		}
+		@Override
+		public Object getColumnValue(final Item from) {
+			return from.getItem().getPriceManufacturing();
+		}
+	},
 	META(Integer.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {

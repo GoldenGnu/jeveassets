@@ -33,6 +33,7 @@ import net.nikr.eve.jeveasset.data.settings.ColorEntry;
 import net.nikr.eve.jeveasset.data.settings.ColorSettings;
 import net.nikr.eve.jeveasset.data.settings.CopySettings;
 import net.nikr.eve.jeveasset.data.settings.ExportSettings;
+import net.nikr.eve.jeveasset.data.settings.ManufacturingSettings;
 import net.nikr.eve.jeveasset.data.settings.MarketOrdersSettings;
 import net.nikr.eve.jeveasset.data.settings.PriceDataSettings;
 import net.nikr.eve.jeveasset.data.settings.ProxyData;
@@ -45,14 +46,14 @@ import net.nikr.eve.jeveasset.data.settings.TrackerData;
 import net.nikr.eve.jeveasset.data.settings.UserItem;
 import net.nikr.eve.jeveasset.data.settings.tag.Tag;
 import net.nikr.eve.jeveasset.data.settings.tag.TagID;
-import net.nikr.eve.jeveasset.gui.dialogs.settings.SoundsSettingsPanel.SoundsOption;
-import net.nikr.eve.jeveasset.gui.dialogs.settings.SoundsSettingsPanel.SoundsSound;
+import net.nikr.eve.jeveasset.gui.dialogs.settings.SoundsSettingsPanel.SoundOption;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.menu.JFormulaDialog.Formula;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuJumps.Jump;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.ResizeMode;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.SimpleColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.View;
+import net.nikr.eve.jeveasset.gui.sounds.Sound;
 import net.nikr.eve.jeveasset.gui.tabs.orders.Outbid;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewGroup;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewLocation;
@@ -183,6 +184,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 		writeSoundSettings(xmldoc, settings.getSoundSettings());
 		writeFactionWarfareSystemOwners(xmldoc, settings);
 		writePriceHistorySettings(xmldoc, settings);
+		writeManufacturingPriceSettings(xmldoc, settings.getManufacturingSettings());
 		try {
 			writeXmlFile(xmldoc, filename, true);
 		} catch (XmlException ex) {
@@ -191,6 +193,30 @@ public class SettingsWriter extends AbstractXmlWriter {
 		}
 		LOG.info("Settings saved");
 		return true;
+	}
+
+	private void writeManufacturingPriceSettings(Document xmldoc, ManufacturingSettings settings) {
+		Element manufacturingNode = xmldoc.createElementNS(null, "manufacturing");
+		setAttributeOptional(manufacturingNode, "nextupdate", settings.getNextUpdate());
+		setAttributeOptional(manufacturingNode, "facility", settings.getFacility());
+		setAttributeOptional(manufacturingNode, "rigs", settings.getRigs());
+		setAttributeOptional(manufacturingNode, "security", settings.getSecurity());
+		setAttributeOptional(manufacturingNode, "systemid", settings.getSystemID());
+		setAttributeOptional(manufacturingNode, "me", settings.getMaterialEfficiency());
+		setAttributeOptional(manufacturingNode, "tax", settings.getTax());
+		xmldoc.getDocumentElement().appendChild(manufacturingNode);
+		for (Map.Entry<Integer, Double> entry : settings.getPrices().entrySet()) {
+			Element priceNode = xmldoc.createElementNS(null, "price");
+			setAttribute(priceNode, "typeid", entry.getKey());
+			setAttributeOptional(priceNode, "price", entry.getValue());
+			manufacturingNode.appendChild(priceNode);
+		}
+		for (Map.Entry<Integer, Float> entry : settings.getSystems().entrySet()) {
+			Element systemNode = xmldoc.createElementNS(null, "system");
+			setAttribute(systemNode, "systemid", entry.getKey());
+			setAttributeOptional(systemNode, "index", entry.getValue());
+			manufacturingNode.appendChild(systemNode);
+		}
 	}
 
 	private void writePriceHistorySettings(Document xmldoc, Settings settings) {
@@ -230,13 +256,13 @@ public class SettingsWriter extends AbstractXmlWriter {
 		}
 	}
 
-	private void writeSoundSettings(Document xmldoc, Map<SoundsOption, SoundsSound> soundSettings) {
+	private void writeSoundSettings(Document xmldoc, Map<SoundOption, Sound> soundSettings) {
 		Element soundSettingsNode = xmldoc.createElementNS(null, "soundsettings");
 		xmldoc.getDocumentElement().appendChild(soundSettingsNode);
-		for (Map.Entry<SoundsOption, SoundsSound> entry : soundSettings.entrySet()) {
+		for (Map.Entry<SoundOption, Sound> entry : soundSettings.entrySet()) {
 			Element soundNode = xmldoc.createElementNS(null, "sound");
 			setAttribute(soundNode, "option", entry.getKey());
-			setAttribute(soundNode, "sound", entry.getValue());
+			setAttribute(soundNode, "sound", entry.getValue().getID());
 			soundSettingsNode.appendChild(soundNode);
 		}
 	}
@@ -740,6 +766,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 		Element parentNode = xmldoc.createElementNS(null, "marketstat");
 		setAttribute(parentNode, "defaultprice", priceDataSettings.getPriceType());
 		setAttribute(parentNode, "defaultreprocessedprice", priceDataSettings.getPriceReprocessedType());
+		setAttribute(parentNode, "defaultmanufacturingprice", priceDataSettings.getPriceReprocessedType());
 		setAttribute(parentNode, "pricesource", priceDataSettings.getSource());
 		setAttribute(parentNode, "locationid", priceDataSettings.getLocationID());
 		setAttribute(parentNode, "type", priceDataSettings.getLocationType());

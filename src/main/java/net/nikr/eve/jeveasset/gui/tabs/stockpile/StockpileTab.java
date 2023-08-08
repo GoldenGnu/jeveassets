@@ -278,31 +278,31 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		jTextDialog = new JTextDialog(program.getMainWindow().getFrame());
 		textImport = new TextImport(program);
 
-		JFixedToolBar jToolBarLeft = new JFixedToolBar();
+		JFixedToolBar jToolBar = new JFixedToolBar();
 
 		JButton jAdd = new JButton(TabsStockpile.get().newStockpile(), Images.LOC_GROUPS.getIcon());
 		jAdd.setActionCommand(StockpileAction.ADD_STOCKPILE.name());
 		jAdd.addActionListener(listener);
-		jToolBarLeft.addButton(jAdd);
+		jToolBar.addButton(jAdd);
 
-		jToolBarLeft.addSeparator();
+		jToolBar.addSeparator();
 
 		JButton jShowHide = new JButton(TabsStockpile.get().showHide(), Images.EDIT_SHOW.getIcon());
 		jShowHide.setActionCommand(StockpileAction.SHOW_HIDE.name());
 		jShowHide.addActionListener(listener);
-		jToolBarLeft.addButton(jShowHide);
+		jToolBar.addButton(jShowHide);
 
-		jToolBarLeft.addSeparator();
+		jToolBar.addSeparator();
 
 		JButton jShoppingList = new JButton(TabsStockpile.get().getShoppingList(), Images.STOCKPILE_SHOPPING_LIST.getIcon());
 		jShoppingList.setActionCommand(StockpileAction.SHOPPING_LIST_MULTI.name());
 		jShoppingList.addActionListener(listener);
-		jToolBarLeft.addButton(jShoppingList);
+		jToolBar.addButton(jShoppingList);
 
-		jToolBarLeft.addSeparator();
+		jToolBar.addSeparator();
 
 		JDropDownButton jImport = new JDropDownButton(TabsStockpile.get().importButton(), Images.EDIT_IMPORT.getIcon());
-		jToolBarLeft.addButton(jImport);
+		jToolBar.addButton(jImport);
 
 		JMenuItem jImportEFT = new JMenuItem(TabsStockpile.get().importEft(), Images.TOOL_SHIP_LOADOUTS.getIcon());
 		jImportEFT.setActionCommand(StockpileAction.IMPORT_EFT.name());
@@ -342,25 +342,27 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		jExportText.setActionCommand(StockpileAction.EXPORT_TEXT.name());
 		jExportText.addActionListener(listener);
 
-		jToolBarLeft.addSeparator();
+		jToolBar.addSeparator();
+
+		jToolBar.addSpace(5);
 
 		ownerModel = new DefaultComboBoxModel<>();
 		jOwners = new JComboBox<>(ownerModel);
-		jToolBarLeft.add(jOwners, 150);
+		jToolBar.add(jOwners, 150);
 
-		jToolBarLeft.addSpace(1);
+		jToolBar.addSpace(1);
 
 		JLabel jOwnerLabel = new JLabel(Images.MISC_HELP.getIcon());
 		jOwnerLabel.setToolTipText(TabsStockpile.get().marketDetailsOwnerToolTip());
 		InstantToolTip.install(jOwnerLabel);
-		jToolBarLeft.addLabelIcon(jOwnerLabel);
+		jToolBar.addLabelIcon(jOwnerLabel);
 
-		jToolBarLeft.addSeparator();
+		jToolBar.addSeparator();
 
-		JFixedToolBar jToolBarRight = new JFixedToolBar();
+		jToolBar.addGlue();
 
 		JDropDownButton jGroup = new JDropDownButton(TabsStockpile.get().groups(), Images.MISC_EXPANDED.getIcon());
-		jToolBarRight.addButton(jGroup);
+		jToolBar.addButton(jGroup);
 
 		JMenuItem jCollapseGroup = new JMenuItem(TabsStockpile.get().groupCollapse(), Images.MISC_COLLAPSED.getIcon());
 		jCollapseGroup.setActionCommand(StockpileAction.COLLAPSE_GROUPS.name());
@@ -375,12 +377,12 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		JButton jCollapse = new JButton(TabsStockpile.get().collapse(), Images.MISC_COLLAPSED.getIcon());
 		jCollapse.setActionCommand(StockpileAction.COLLAPSE.name());
 		jCollapse.addActionListener(listener);
-		jToolBarRight.addButton(jCollapse);
+		jToolBar.addButton(jCollapse);
 
 		JButton jExpand = new JButton(TabsStockpile.get().expand(), Images.MISC_EXPANDED.getIcon());
 		jExpand.setActionCommand(StockpileAction.EXPAND.name());
 		jExpand.addActionListener(listener);
-		jToolBarRight.addButton(jExpand);
+		jToolBar.addButton(jExpand);
 
 		//Table Format
 		tableFormat = TableFormatFactory.stockpileTableFormat();
@@ -443,20 +445,13 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
 				.addComponent(filterControl.getPanel())
-				.addGroup(layout.createSequentialGroup()
-					.addComponent(jToolBarLeft, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
-					.addGap(0)
-					.addComponent(jToolBarRight, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-				)
+				.addComponent(jToolBar, jToolBar.getMinimumSize().width, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
 				.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
 		);
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
 				.addComponent(filterControl.getPanel())
-				.addGroup(layout.createParallelGroup()
-					.addComponent(jToolBarLeft, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-					.addComponent(jToolBarRight, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-				)
+				.addComponent(jToolBar, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
 				.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
 		);
 

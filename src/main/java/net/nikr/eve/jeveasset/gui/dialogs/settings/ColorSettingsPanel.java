@@ -43,6 +43,7 @@ import java.util.List;
 import javax.swing.ButtonGroup;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JScrollPane;
@@ -67,6 +68,7 @@ import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 
 public class ColorSettingsPanel extends JSettingsPanel {
 
+	private final JCheckBoxMenuItem  jChartColor;
 	private final JTextField jFilter;
 	//Table
 	private final JColorTable jTable;
@@ -204,10 +206,18 @@ public class ColorSettingsPanel extends JSettingsPanel {
 
 		JScrollPane jTableScroll = new JScrollPane(jTable);
 
-		JFixedToolBar jToolBarTop = new JFixedToolBar();
+		JFixedToolBar jToolBar = new JFixedToolBar();
+
+		JDropDownButton jSetting = new JDropDownButton(Images.DIALOG_SETTINGS.getIcon());
+		jToolBar.addButtonIcon(jSetting);
+
+		jChartColor = new JCheckBoxMenuItem (DialoguesSettings.get().chartColors());
+		jSetting.add(jChartColor);
+
+		jToolBar.addSeparator();
 
 		JDropDownButton jLookAndFeel = new JDropDownButton(DialoguesSettings.get().lookAndFeel(), Images.FILTER_LOAD.getIcon());
-		jToolBarTop.addButton(jLookAndFeel);
+		jToolBar.addButton(jLookAndFeel);
 
 		ButtonGroup lafButtonGroup = new ButtonGroup();
 		//Predefined LookAndFeels
@@ -230,7 +240,7 @@ public class ColorSettingsPanel extends JSettingsPanel {
 		}
 
 		JDropDownButton jTheme = new JDropDownButton(DialoguesSettings.get().theme(), Images.FILTER_LOAD.getIcon());
-		jToolBarTop.addButton(jTheme);
+		jToolBar.addButton(jTheme);
 
 		ButtonGroup buttonGroup = new ButtonGroup();
 		for (ColorThemeTypes theme : ColorThemeTypes.values()) {
@@ -247,7 +257,7 @@ public class ColorSettingsPanel extends JSettingsPanel {
 				jTable.expandSeparators(false);
 			}
 		});
-		jToolBarTop.addButton(jCollapse);
+		jToolBar.addButton(jCollapse);
 
 		JButton jExpand = new JButton(DialoguesSettings.get().expand(), Images.MISC_EXPANDED.getIcon());
 		jExpand.addActionListener(new ActionListener() {
@@ -256,11 +266,11 @@ public class ColorSettingsPanel extends JSettingsPanel {
 				jTable.expandSeparators(true);
 			}
 		});
-		jToolBarTop.addButton(jExpand);
+		jToolBar.addButton(jExpand);
 
-		JFixedToolBar jToolBarBottom = new JFixedToolBar();
+		JFixedToolBar jToolBarSearch = new JFixedToolBar();
 
-		jToolBarBottom.add(jFilter);
+		jToolBarSearch.add(jFilter);
 
 		JButton jClear = new JButton(Images.TAB_CLOSE.getIcon());
 		jClear.setContentAreaFilled(false);
@@ -272,18 +282,18 @@ public class ColorSettingsPanel extends JSettingsPanel {
 				jFilter.setText("");
 			}
 		});
-		jToolBarBottom.add(jClear);
+		jToolBarSearch.add(jClear);
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-				.addComponent(jToolBarTop, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
-				.addComponent(jToolBarBottom, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
+				.addComponent(jToolBar, jToolBar.getMinimumSize().width, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
+				.addComponent(jToolBarSearch, jToolBarSearch.getMinimumSize().width, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
 				.addComponent(jTableScroll, 375, 375, Integer.MAX_VALUE)
 		);
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
-				.addComponent(jToolBarTop ,GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-				.addComponent(jToolBarBottom, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+				.addComponent(jToolBar ,GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+				.addComponent(jToolBarSearch, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
 				.addComponent(jTableScroll, 250, 250, Integer.MAX_VALUE)
 		);
 	}
@@ -301,7 +311,10 @@ public class ColorSettingsPanel extends JSettingsPanel {
 		} finally {
 			eventList.getReadWriteLock().readLock().unlock();
 		}
-		boolean repaint = !Settings.get().getColorSettings().get().equals(colors);
+		boolean easyChartColors = jChartColor.isSelected();
+		boolean repaint = !Settings.get().getColorSettings().get().equals(colors)
+						|| Settings.get().isEasyChartColors() != easyChartColors;
+		Settings.get().setEasyChartColors(easyChartColors);
 		colors = Settings.get().getColorSettings().get(); //Copy to check for changes on save
 		if (lookAndfeelChanged && !UIManager.getLookAndFeel().getClass().getName().equals(lookAndFeelClass)) {
 			JOptionPane.showMessageDialog(parent, DialoguesSettings.get().lookAndFeelMsg(), DialoguesSettings.get().lookAndFeelTitle(), JOptionPane.PLAIN_MESSAGE);
@@ -315,6 +328,7 @@ public class ColorSettingsPanel extends JSettingsPanel {
 		colors = Settings.get().getColorSettings().get(); //Copy to check for changes on save
 		updateTable(Settings.get().getColorSettings().get()); //This copy will be edited
 		colorThemeTypes = Settings.get().getColorSettings().getColorTheme().getType();
+		jChartColor.setSelected(Settings.get().isEasyChartColors());
 		select(colorThemeTypes);
 		lookAndFeelClass = Settings.get().getColorSettings().getLookAndFeelClass();
 		select(lookAndFeelClass);

@@ -36,7 +36,6 @@ import javax.swing.JViewport;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.settings.ColorEntry;
 import net.nikr.eve.jeveasset.data.settings.ColorSettings;
-import net.nikr.eve.jeveasset.data.settings.Colors;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.DocumentFactory;
@@ -192,9 +191,6 @@ public class StockpileSeparatorTableCell extends SeparatorTableCell<StockpileIte
 		jMultiplier.setActionCommand(StockpileCellAction.UPDATE_MULTIPLIER.name());
 		jMultiplier.addActionListener(actionListener);
 		jMultiplier.setHorizontalAlignment(JTextField.RIGHT);
-		jMultiplier.setOpaque(false);
-		jMultiplier.setBackground(Colors.COMPONENT_TRANSPARENT.getColor());
-		jMultiplier.setBorder(null);
 		jMultiplier.setAutoSelectAll(true);
 
 		jMultiplierLabel = new JLabel(TabsStockpile.get().multiplierSign());
@@ -302,6 +298,7 @@ public class StockpileSeparatorTableCell extends SeparatorTableCell<StockpileIte
 					.addComponent(jColorDisabled, Program.getButtonsHeight() - 6, Program.getButtonsHeight() - 6, Program.getButtonsHeight() - 6)
 					.addGap(10)
 					.addComponent(jStockpile, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
+					.addGap(5)
 					.addComponent(jMultiplier, 50, 50, 50)
 					.addComponent(jMultiplierLabel)
 					.addGap(10)
