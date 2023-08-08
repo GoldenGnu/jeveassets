@@ -56,6 +56,7 @@ import net.troja.eve.esi.auth.JWT;
 import net.troja.eve.esi.auth.JWT.Payload;
 import net.troja.eve.esi.auth.OAuth;
 import net.troja.eve.esi.model.CategoryResponse;
+import net.troja.eve.esi.model.CharacterAffiliationResponse;
 import net.troja.eve.esi.model.CharacterAssetsNamesResponse;
 import net.troja.eve.esi.model.CharacterAssetsResponse;
 import net.troja.eve.esi.model.CharacterBlueprintsResponse;
@@ -69,7 +70,6 @@ import net.troja.eve.esi.model.CharacterOrdersHistoryResponse;
 import net.troja.eve.esi.model.CharacterOrdersResponse;
 import net.troja.eve.esi.model.CharacterPlanetResponse;
 import net.troja.eve.esi.model.CharacterPlanetsResponse;
-import net.troja.eve.esi.model.CharacterResponse;
 import net.troja.eve.esi.model.CharacterRolesResponse;
 import net.troja.eve.esi.model.CharacterShipResponse;
 import net.troja.eve.esi.model.CharacterSkillsResponse;
@@ -99,6 +99,7 @@ import net.troja.eve.esi.model.MarketGroupResponse;
 import net.troja.eve.esi.model.MarketOrdersResponse;
 import net.troja.eve.esi.model.MarketStructuresResponse;
 import net.troja.eve.esi.model.PlanetResponse;
+import net.troja.eve.esi.model.PublicContractsItemsResponse;
 import net.troja.eve.esi.model.SovereigntyStructuresResponse;
 import net.troja.eve.esi.model.StructureResponse;
 import net.troja.eve.esi.model.TypeResponse;
@@ -294,6 +295,16 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 	public void esiContractItemsGetterCorporation() {
 		try {
 			ApiResponse<List<CorporationContractsItemsResponse>> apiResponse = CONTRACTS_API.getCorporationsCorporationIdContractsContractIdItemsWithHttpInfo(1, 1, DATASOURCE, null, null);
+			validate(apiResponse.getHeaders());
+		} catch (ApiException ex) {
+			validate(ex.getResponseHeaders());
+		}
+	}
+
+	@Test
+	public void esiContractItemsGetterPublic() {
+		try {
+			ApiResponse<List<PublicContractsItemsResponse>> apiResponse = CONTRACTS_API.getContractsPublicItemsContractIdWithHttpInfo(1, DATASOURCE, null, null);
 			validate(apiResponse.getHeaders());
 		} catch (ApiException ex) {
 			validate(ex.getResponseHeaders());
@@ -573,7 +584,7 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 	@Test
 	public void esiOwnerGetterCharacter() {
 		try {
-			ApiResponse<CharacterResponse> apiResponse = CHARACTER_API.getCharactersCharacterIdWithHttpInfo(1, DATASOURCE, null);
+			ApiResponse<List<CharacterAffiliationResponse>> apiResponse = CHARACTER_API.postCharactersAffiliationWithHttpInfo(Collections.singletonList(1), DATASOURCE);
 			validate(apiResponse.getHeaders());
 		} catch (ApiException ex) {
 			validate(ex.getResponseHeaders());
