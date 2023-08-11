@@ -57,6 +57,7 @@ public class StockpileSeparatorTableCell extends SeparatorTableCell<StockpileIte
 		GROUP_CHANGE_ADD,
 		GROUP_TOGGLE_COLLAPSE,
 		GROUP_EXPAND,
+		GROUP_EDIT,
 		GROUP_COLLAPSE,
 		DELETE_STOCKPILE,
 		EDIT_STOCKPILE,
@@ -76,6 +77,7 @@ public class StockpileSeparatorTableCell extends SeparatorTableCell<StockpileIte
 	private final JButton jExpandGroup;
 	private final JButton jCollapseGroupStockpiles;
 	private final JButton jExpandGroupStockpiles;
+	private final JButton jEditGroup;
 	private final JPanel jInfoPanel;
 	private final JLabel jStartSpaceGroup;
 	private final JLabel jStartSpace;
@@ -130,6 +132,11 @@ public class StockpileSeparatorTableCell extends SeparatorTableCell<StockpileIte
 		jExpandGroupStockpiles.setActionCommand(StockpileCellAction.GROUP_EXPAND.name());
 		jExpandGroupStockpiles.addActionListener(actionListener);
 
+		jEditGroup = new JButton(Images.EDIT_EDIT_WHITE.getIcon());
+		jEditGroup.setOpaque(false);
+		jEditGroup.setActionCommand(StockpileCellAction.GROUP_EDIT.name());
+		jEditGroup.addActionListener(actionListener);
+
 		jGroup = new JLabel();
 		jGroup.setBorder(null);
 		jGroup.setForeground(Color.WHITE);
@@ -149,9 +156,11 @@ public class StockpileSeparatorTableCell extends SeparatorTableCell<StockpileIte
 					.addComponent(jStartSpaceGroup)
 					.addComponent(jExpandGroup)
 					.addGap(5)
-					.addComponent(jCollapseGroupStockpiles)
+					.addComponent(jCollapseGroupStockpiles, Program.getIconButtonsWidth(), Program.getIconButtonsWidth(), Program.getIconButtonsWidth())
 					.addGap(5)
-					.addComponent(jExpandGroupStockpiles)
+					.addComponent(jExpandGroupStockpiles, Program.getIconButtonsWidth(), Program.getIconButtonsWidth(), Program.getIconButtonsWidth())
+					.addGap(5)
+					.addComponent(jEditGroup, Program.getIconButtonsWidth(), Program.getIconButtonsWidth(), Program.getIconButtonsWidth())
 					.addGap(10)
 					.addComponent(jGroup, 0, 0, Integer.MAX_VALUE)
 				)
@@ -162,9 +171,10 @@ public class StockpileSeparatorTableCell extends SeparatorTableCell<StockpileIte
 				.addGroup(groupLayout.createParallelGroup()
 					.addComponent(jStartSpaceGroup, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jExpandGroup, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					.addComponent(jGroup, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-						.addComponent(jCollapseGroupStockpiles, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jCollapseGroupStockpiles, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jExpandGroupStockpiles, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jEditGroup, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jGroup, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				)
 				.addGap(2)
 		);

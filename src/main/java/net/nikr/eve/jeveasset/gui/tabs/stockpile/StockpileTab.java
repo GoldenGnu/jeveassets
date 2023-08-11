@@ -845,12 +845,20 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 	}
 
 	private void removeFromGroup(Stockpile stockpile, boolean update) {
+		removeFromGroup(Collections.singletonList(stockpile), update);
+	}
+
+	private void removeFromGroup(List<Stockpile> stockpiles, boolean update) {
 		List<StockpileItem> stockpileItems = new ArrayList<>();
-		stockpileItems.addAll(stockpile.getItems());
-		stockpileItems.addAll(stockpile.getSubpileItems());
+		for (Stockpile stockpile : stockpiles) {
+			stockpileItems.addAll(stockpile.getItems());
+			stockpileItems.addAll(stockpile.getSubpileItems());
+		}
 		//Remove
 		Settings.lock("Stockpile (Stockpile Group)");
-		Settings.get().getStockpileGroupSettings().removeGroup(stockpile);
+		for (Stockpile stockpile : stockpiles) {
+			Settings.get().getStockpileGroupSettings().removeGroup(stockpile);
+		}
 		Settings.unlock("Stockpile (Stockpile Group)");
 		if (update) {
 			//Lock Table
@@ -869,14 +877,22 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 	}
 
 	private void addToGroup(String group, Stockpile stockpile) {
+		addToGroup(group, Collections.singletonList(stockpile));
+	}
+
+	private void addToGroup(String group, List<Stockpile> stockpiles) {
 		List<StockpileItem> stockpileItems = new ArrayList<>();
-		stockpileItems.addAll(stockpile.getItems());
-		stockpileItems.addAll(stockpile.getSubpileItems());
+		for (Stockpile stockpile : stockpiles) {
+			stockpileItems.addAll(stockpile.getItems());
+			stockpileItems.addAll(stockpile.getSubpileItems());
+		}
 		//Old First
 		Stockpile oldFirst = Settings.get().getStockpileGroupSettings().getGroupFirst(group);
 		//Add
 		Settings.lock("Stockpile (Stockpile Group)");
-		Settings.get().getStockpileGroupSettings().setGroup(stockpile, group);
+		for (Stockpile stockpile : stockpiles) {
+			Settings.get().getStockpileGroupSettings().setGroup(stockpile, group);
+		}
 		Settings.unlock("Stockpile (Stockpile Group)");
 		//New First
 		Stockpile newFirst = Settings.get().getStockpileGroupSettings().getGroupFirst(group);
@@ -902,7 +918,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 					if (object instanceof SeparatorList.Separator<?>) {
 						SeparatorList.Separator<?> separator = (SeparatorList.Separator<?>) object;
 						StockpileItem currentItem = (StockpileItem) separator.first();
-						if (stockpile.equals(currentItem.getStockpile())) {
+						if (stockpiles.contains(currentItem.getStockpile())) {
 							Settings.get().getStockpileGroupSettings().setStockpileExpanded(currentItem.getStockpile(), separator.getLimit() != 0);
 							break; //Search Done
 						}
@@ -967,22 +983,27 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		}
 	}
 
-	private String getGroupName(String last) {
-		String group = (String)JOptionInput.showInputDialog(program.getMainWindow().getFrame(), TabsStockpile.get().groupAddName(), TabsStockpile.get().groupAddTitle(), JOptionPane.PLAIN_MESSAGE, null, null, last);
+	private String getGroupName(String title, boolean canOverwrite, String original, String last) {
+		String group = (String)JOptionInput.showInputDialog(program.getMainWindow().getFrame(), TabsStockpile.get().groupAddName(), title, JOptionPane.PLAIN_MESSAGE, null, null, last);
 		if (group == null) {
 			return null;
 		}
 		if (group.isEmpty()) {
-			JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsStockpile.get().groupAddEmpty(), TabsStockpile.get().groupAddTitle(), JOptionPane.WARNING_MESSAGE);
-			return getGroupName(null);
+			JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsStockpile.get().groupAddEmpty(), title, JOptionPane.WARNING_MESSAGE);
+			return getGroupName(title, canOverwrite, original, null);
 		}
 		Set<String> groups = Settings.get().getStockpileGroupSettings().getGroups();
 		if (groups.contains(group)) {
-			int returnValue = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), TabsStockpile.get().groupAddExist(), TabsStockpile.get().groupAddTitle(), JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
-			if (returnValue == JOptionPane.OK_OPTION) {
-				return group;
-			} else {
-				return getGroupName(group);
+			if (canOverwrite) {
+				int returnValue = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), TabsStockpile.get().groupAddExist(), title, JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+				if (returnValue == JOptionPane.OK_OPTION) {
+					return group;
+				} else {
+					return getGroupName(title, canOverwrite, original, group);
+				}
+			} else if (original != null && !original.equals(group)) {
+				JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsStockpile.get().groupRenameExist(), title, JOptionPane.PLAIN_MESSAGE);
+				return getGroupName(title, canOverwrite, original, group);
 			}
 		}
 		return group;
@@ -1499,6 +1520,27 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 				expandGroups(false, MATCH_ALL_GROUPS);
 			} else if (StockpileAction.EXPAND_GROUPS.name().equals(e.getActionCommand())) {
 				expandGroups(true, MATCH_ALL_GROUPS);
+			} else if (StockpileCellAction.GROUP_EDIT.name().equals(e.getActionCommand())) {
+				Stockpile stockpile = getSelectedStockpile();
+				if (stockpile == null) {
+					return;
+				}
+				String oldGroup = Settings.get().getStockpileGroupSettings().getGroup(stockpile);
+				if (oldGroup == null || oldGroup.isEmpty()) {
+					return;
+				}
+				String newGroup = getGroupName(TabsStockpile.get().groupRenameTitle(), false, oldGroup, oldGroup);
+				if (newGroup == null || newGroup.isEmpty() || newGroup.equals(oldGroup)) {
+					return;
+				}
+				List<Stockpile> stockpiles = Settings.get().getStockpileGroupSettings().getStockpiles(oldGroup);
+				//Backup settings
+				boolean expanded = Settings.get().getStockpileGroupSettings().isGroupExpanded(oldGroup);
+				//Update
+				removeFromGroup(stockpiles, false);
+				addToGroup(newGroup, stockpiles);
+				//Restore settings
+				expandGroups(expanded, new MatchGroup(newGroup));
 			} else if (StockpileCellAction.GROUP_EXPAND.name().equals(e.getActionCommand())) {
 				expandGroupStockpiles(true);
 			} else if (StockpileCellAction.GROUP_COLLAPSE.name().equals(e.getActionCommand())) {
@@ -1516,7 +1558,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 				if (stockpile == null) {
 					return;
 				}
-				String group = getGroupName(null);
+				String group = getGroupName(TabsStockpile.get().groupAddTitle(), true, null, null);
 				if (group == null) {
 					return; //Cancelled
 				}
