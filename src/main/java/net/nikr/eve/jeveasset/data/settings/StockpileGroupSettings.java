@@ -55,10 +55,22 @@ public class StockpileGroupSettings {
 				uniqueGroups.add(group);
 			}
 		}
+		//Remove deleted groups
+		groupExpanded.keySet().retainAll(uniqueGroups);
 	}
 
 	public Map<Stockpile, String> getStockpileGroups() {
 		return stockpileGroups;
+	}
+
+	public List<Stockpile> getStockpiles(String group) {
+		List<Stockpile> stockpiles = new ArrayList<>();
+		for (Map.Entry<Stockpile, String> entry : stockpileGroups.entrySet()) {
+			if (group.equals(entry.getValue())) {
+				stockpiles.add(entry.getKey());
+			}
+		}
+		return stockpiles;
 	}
 
 	public String getGroup(Stockpile stockpile) {
