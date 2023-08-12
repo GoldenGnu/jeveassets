@@ -163,6 +163,7 @@ public enum Images {
 	MISC_COLLAPSED ("misc_collapsed.png"),
 	MISC_EXPANDED_WHITE ("misc_expanded_white.png"),
 	MISC_COLLAPSED_WHITE ("misc_collapsed_white.png"),
+	MISC_COLLAPSE ("misc_collapse.png"),
 	MISC_AND ("misc_and.png"),
 	MISC_ASSETS_32 ("misc_assets_32.png"),
 	MISC_ASSETS_64 ("misc_assets_64.png"),
