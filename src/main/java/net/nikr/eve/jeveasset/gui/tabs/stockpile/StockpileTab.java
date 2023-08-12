@@ -27,6 +27,7 @@ import ca.odell.glazedlists.GlazedLists;
 import ca.odell.glazedlists.ListSelection;
 import ca.odell.glazedlists.SeparatorList;
 import ca.odell.glazedlists.SortedList;
+import ca.odell.glazedlists.TextFilterator;
 import ca.odell.glazedlists.event.ListEvent;
 import ca.odell.glazedlists.event.ListEventListener;
 import ca.odell.glazedlists.swing.DefaultEventSelectionModel;
@@ -35,6 +36,8 @@ import ca.odell.glazedlists.swing.TableComparatorChooser;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -76,6 +79,7 @@ import net.nikr.eve.jeveasset.gui.shared.MarketDetailsColumn;
 import net.nikr.eve.jeveasset.gui.shared.MarketDetailsColumn.MarketDetailsActionListener;
 import net.nikr.eve.jeveasset.gui.shared.TextImport;
 import net.nikr.eve.jeveasset.gui.shared.TextImport.TextImportHandler;
+import net.nikr.eve.jeveasset.gui.shared.components.JAutoCompleteDialog;
 import net.nikr.eve.jeveasset.gui.shared.components.JCustomFileChooser;
 import net.nikr.eve.jeveasset.gui.shared.components.JDropDownButton;
 import net.nikr.eve.jeveasset.gui.shared.components.JFixedToolBar;
@@ -120,6 +124,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 
 	private enum StockpileAction {
 		ADD_STOCKPILE,
+		EDIT_GROUPS,
 		SHOPPING_LIST_MULTI,
 		SHOW_HIDE,
 		IMPORT_EFT,
@@ -250,11 +255,20 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 	private final StockpileFilterControl filterControl;
 
 	//Toolbar
+	private final JFixedToolBar jToolBar;
+	private final JDropDownButton jCollapse;
+	private final JButton jCollapseGroup;
+	private final JButton jExpandGroup;
+	private final JButton jCollapseStockpile;
+	private final JButton jExpandStockpile;
 	private final JComboBox<EsiOwner> jOwners;
 	private final DefaultComboBoxModel<EsiOwner> ownerModel;
+	private final JAutoCompleteDialog<String> jAutoCompleteDialog;
 
 	//Data
 	private final StockpileData stockpileData;
+	private int toolBarMinWidth;
+	private boolean collapsed = false;
 
 	public static final String NAME = "stockpile"; //Not to be changed!
 
@@ -264,6 +278,33 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		stockpileData = new StockpileData(program);
 
 		final ListenerClass listener = new ListenerClass();
+
+		jAutoCompleteDialog = new JAutoCompleteDialog<String>(program, "Edit Group", Images.EDIT_EDIT.getImage(), "Select Group:", false, false) {
+			@Override
+			protected Comparator<String> getComparator() {
+				return GlazedLists.comparableComparator();
+			}
+			
+			@Override
+			protected TextFilterator<String> getFilterator() {
+				return new TextFilterator<String>() {
+					@Override
+					public void getFilterStrings(List<String> baseList, String element) {
+						baseList.add(element);
+					}
+				};
+			}
+			
+			@Override
+			protected String getValue(Object object) {
+				return (String) object;
+			}
+			
+			@Override
+			protected boolean isEmpty(String t) {
+				return t.isEmpty();
+			}
+		};
 
 		jFileChooser = JCustomFileChooser.createFileChooser(program.getMainWindow().getFrame(), "xml");
 		jFileChooser.setMultiSelectionEnabled(false);
@@ -278,14 +319,34 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		jTextDialog = new JTextDialog(program.getMainWindow().getFrame());
 		textImport = new TextImport(program);
 
-		JFixedToolBar jToolBar = new JFixedToolBar();
+		jToolBar = new JFixedToolBar();
+		program.getMainWindow().getFrame().addComponentListener(new ComponentListener() {
+			@Override
+			public void componentResized(ComponentEvent e) {
+				updateToolbar();
+			}
+
+			@Override
+			public void componentMoved(ComponentEvent e) { }
+
+			@Override
+			public void componentShown(ComponentEvent e) {
+				updateToolbar();
+			}
+
+			@Override
+			public void componentHidden(ComponentEvent e) { }
+		});
 
 		JButton jAdd = new JButton(TabsStockpile.get().newStockpile(), Images.LOC_GROUPS.getIcon());
 		jAdd.setActionCommand(StockpileAction.ADD_STOCKPILE.name());
 		jAdd.addActionListener(listener);
 		jToolBar.addButton(jAdd);
 
-		jToolBar.addSeparator();
+		JButton jGroups = new JButton(TabsStockpile.get().groups(), Images.EDIT_EDIT.getIcon());
+		jGroups.setActionCommand(StockpileAction.EDIT_GROUPS.name());
+		jGroups.addActionListener(listener);
+		jToolBar.addButton(jGroups);
 
 		JButton jShowHide = new JButton(TabsStockpile.get().showHide(), Images.EDIT_SHOW.getIcon());
 		jShowHide.setActionCommand(StockpileAction.SHOW_HIDE.name());
@@ -298,8 +359,6 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		jShoppingList.setActionCommand(StockpileAction.SHOPPING_LIST_MULTI.name());
 		jShoppingList.addActionListener(listener);
 		jToolBar.addButton(jShoppingList);
-
-		jToolBar.addSeparator();
 
 		JDropDownButton jImport = new JDropDownButton(TabsStockpile.get().importButton(), Images.EDIT_IMPORT.getIcon());
 		jToolBar.addButton(jImport);
@@ -361,28 +420,44 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 
 		jToolBar.addGlue();
 
-		JDropDownButton jGroup = new JDropDownButton(TabsStockpile.get().groups(), Images.MISC_EXPANDED.getIcon());
-		jToolBar.addButton(jGroup);
-
-		JMenuItem jCollapseGroup = new JMenuItem(TabsStockpile.get().groupCollapse(), Images.MISC_COLLAPSED.getIcon());
-		jCollapseGroup.setActionCommand(StockpileAction.COLLAPSE_GROUPS.name());
-		jCollapseGroup.addActionListener(listener);
-		jGroup.add(jCollapseGroup);
-
-		JMenuItem jExpandGroup = new JMenuItem(TabsStockpile.get().groupExpand(), Images.MISC_EXPANDED.getIcon());
-		jExpandGroup.setActionCommand(StockpileAction.EXPAND_GROUPS.name());
-		jExpandGroup.addActionListener(listener);
-		jGroup.add(jExpandGroup);
-
-		JButton jCollapse = new JButton(TabsStockpile.get().collapse(), Images.MISC_COLLAPSED.getIcon());
-		jCollapse.setActionCommand(StockpileAction.COLLAPSE.name());
-		jCollapse.addActionListener(listener);
+		jCollapse = new JDropDownButton(TabsStockpile.get().collapse(), Images.MISC_COLLAPSE.getIcon());
 		jToolBar.addButton(jCollapse);
 
-		JButton jExpand = new JButton(TabsStockpile.get().expand(), Images.MISC_EXPANDED.getIcon());
-		jExpand.setActionCommand(StockpileAction.EXPAND.name());
-		jExpand.addActionListener(listener);
-		jToolBar.addButton(jExpand);
+		JMenuItem jCollapseStockpileMenuItem = new JMenuItem(TabsStockpile.get().collapse(), Images.MISC_COLLAPSED.getIcon());
+		jCollapseStockpileMenuItem.setActionCommand(StockpileAction.COLLAPSE.name());
+		jCollapseStockpileMenuItem.addActionListener(listener);
+		jCollapse.add(jCollapseStockpileMenuItem);
+
+		JMenuItem jExpandStockpileMenuItem = new JMenuItem(TabsStockpile.get().expand(), Images.MISC_EXPANDED.getIcon());
+		jExpandStockpileMenuItem.setActionCommand(StockpileAction.EXPAND.name());
+		jExpandStockpileMenuItem.addActionListener(listener);
+		jCollapse.add(jExpandStockpileMenuItem);
+
+		JMenuItem jCollapseGroupMenuItem = new JMenuItem(TabsStockpile.get().groupCollapse(), Images.MISC_COLLAPSED.getIcon());
+		jCollapseGroupMenuItem.setActionCommand(StockpileAction.COLLAPSE_GROUPS.name());
+		jCollapseGroupMenuItem.addActionListener(listener);
+		jCollapse.add(jCollapseGroupMenuItem);
+
+		JMenuItem jExpandGroupMenuItem = new JMenuItem(TabsStockpile.get().groupExpand(), Images.MISC_EXPANDED.getIcon());
+		jExpandGroupMenuItem.setActionCommand(StockpileAction.EXPAND_GROUPS.name());
+		jExpandGroupMenuItem.addActionListener(listener);
+		jCollapse.add(jExpandGroupMenuItem);
+
+		jCollapseGroup = new JButton(TabsStockpile.get().groupCollapse(), Images.MISC_COLLAPSED.getIcon());
+		jCollapseGroup.setActionCommand(StockpileAction.COLLAPSE_GROUPS.name());
+		jCollapseGroup.addActionListener(listener);
+
+		jExpandGroup = new JButton(TabsStockpile.get().groupExpand(), Images.MISC_EXPANDED.getIcon());
+		jExpandGroup.setActionCommand(StockpileAction.EXPAND_GROUPS.name());
+		jExpandGroup.addActionListener(listener);
+
+		jCollapseStockpile = new JButton(TabsStockpile.get().collapse(), Images.MISC_COLLAPSED.getIcon());
+		jCollapseStockpile.setActionCommand(StockpileAction.COLLAPSE.name());
+		jCollapseStockpile.addActionListener(listener);
+
+		jExpandStockpile = new JButton(TabsStockpile.get().expand(), Images.MISC_EXPANDED.getIcon());
+		jExpandStockpile.setActionCommand(StockpileAction.EXPAND.name());
+		jExpandStockpile.addActionListener(listener);
 
 		//Table Format
 		tableFormat = TableFormatFactory.stockpileTableFormat();
@@ -591,6 +666,34 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 			addStockpile(stockpile);
 		}
 		return stockpile;
+	}
+
+	private void updateToolbar() {
+		if (toolBarMinWidth == 0) {
+			jToolBar.remove(jCollapse);
+			jToolBar.addButton(jCollapseGroup);
+			jToolBar.addButton(jExpandGroup);
+			jToolBar.addButton(jCollapseStockpile);
+			jToolBar.addButton(jExpandStockpile);
+			toolBarMinWidth = jToolBar.getMinimumSize().width;
+			collapsed = false;
+		}
+		int width = jToolBar.getVisibleRect().width;
+		if (collapsed && width >= toolBarMinWidth) {
+			collapsed = false;
+			jToolBar.remove(jCollapse);
+			jToolBar.addButton(jCollapseGroup);
+			jToolBar.addButton(jExpandGroup);
+			jToolBar.addButton(jCollapseStockpile);
+			jToolBar.addButton(jExpandStockpile);
+		} else if (!collapsed && width < toolBarMinWidth){
+			collapsed = true;
+			jToolBar.remove(jCollapseGroup);
+			jToolBar.remove(jExpandGroup);
+			jToolBar.remove(jCollapseStockpile);
+			jToolBar.remove(jExpandStockpile);
+			jToolBar.addButton(jCollapse);
+		}
 	}
 
 	private SeparatorList.Separator<?> getSeparator(final Stockpile stockpile) {
@@ -855,8 +958,14 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 			stockpileItems.addAll(stockpile.getSubpileItems());
 		}
 		//Remove
+		Map<String, Stockpile> oldFirst = new HashMap<>();
 		Settings.lock("Stockpile (Stockpile Group)");
 		for (Stockpile stockpile : stockpiles) {
+			String previousGroup = Settings.get().getStockpileGroupSettings().getGroup(stockpile);
+			if (!Settings.get().getStockpileGroupSettings().isGroupExpanded(previousGroup)) {
+				Stockpile groupFirst = Settings.get().getStockpileGroupSettings().getGroupFirst(previousGroup);
+				oldFirst.put(previousGroup, groupFirst);
+			}
 			Settings.get().getStockpileGroupSettings().removeGroup(stockpile);
 		}
 		Settings.unlock("Stockpile (Stockpile Group)");
@@ -873,6 +982,10 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 			}
 			//Unlcok Table
 			afterUpdateData();
+			//Update Groups First
+			for (Map.Entry<String, Stockpile> entry : oldFirst.entrySet()) {
+				updateGroupFirst(entry.getKey(), entry.getValue(), Settings.get().getStockpileGroupSettings().getGroupFirst(entry.getKey()));
+			}
 		}
 	}
 
@@ -886,16 +999,19 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 			stockpileItems.addAll(stockpile.getItems());
 			stockpileItems.addAll(stockpile.getSubpileItems());
 		}
-		//Old First
-		Stockpile oldFirst = Settings.get().getStockpileGroupSettings().getGroupFirst(group);
 		//Add
+		Map<String, Stockpile> oldFirst = new HashMap<>();
+		oldFirst.put(group, Settings.get().getStockpileGroupSettings().getGroupFirst(group));
 		Settings.lock("Stockpile (Stockpile Group)");
 		for (Stockpile stockpile : stockpiles) {
+			String previousGroup = Settings.get().getStockpileGroupSettings().getGroup(stockpile);
+			if (!Settings.get().getStockpileGroupSettings().isGroupExpanded(previousGroup)) {
+				Stockpile groupFirst = Settings.get().getStockpileGroupSettings().getGroupFirst(group);
+				oldFirst.put(previousGroup, groupFirst);
+			}
 			Settings.get().getStockpileGroupSettings().setGroup(stockpile, group);
 		}
 		Settings.unlock("Stockpile (Stockpile Group)");
-		//New First
-		Stockpile newFirst = Settings.get().getStockpileGroupSettings().getGroupFirst(group);
 		if (Settings.get().getStockpileGroupSettings().isGroupExpanded(group)) { //Expanded
 			//Lock Table
 			beforeUpdateData();
@@ -938,8 +1054,10 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 			}
 			//Unlcok Table
 			afterUpdateData();
-			//Update Group First
-			updateGroupFirst(group, oldFirst, newFirst);
+		}
+		//Update Groups First
+		for (Map.Entry<String, Stockpile> entry : oldFirst.entrySet()) {
+			updateGroupFirst(entry.getKey(), entry.getValue(), Settings.get().getStockpileGroupSettings().getGroupFirst(entry.getKey()));
 		}
 	}
 
@@ -956,6 +1074,16 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 			}
 			//Unlcok Table
 			afterUpdateData();
+		} else if (oldFirst == null) {
+			//Lock Table
+			beforeUpdateData();
+			try {
+				//Update
+				eventList.getReadWriteLock().writeLock().lock();
+				eventList.add(newFirst.getIgnoreItem());
+			} finally {
+				eventList.getReadWriteLock().writeLock().unlock();
+			}
 		} else if (!oldFirst.equals(newFirst)) {
 			//Lock Table
 			beforeUpdateData();
@@ -1520,7 +1648,29 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 				expandGroups(false, MATCH_ALL_GROUPS);
 			} else if (StockpileAction.EXPAND_GROUPS.name().equals(e.getActionCommand())) {
 				expandGroups(true, MATCH_ALL_GROUPS);
-			} else if (StockpileCellAction.GROUP_EDIT.name().equals(e.getActionCommand())) {
+			} else if (StockpileAction.EDIT_GROUPS.name().equals(e.getActionCommand())) {
+				Set<String> groups = Settings.get().getStockpileGroupSettings().getGroups();
+				jAutoCompleteDialog.updateData(groups);
+				String group = jAutoCompleteDialog.show();
+				if (group == null || group.isEmpty()) {
+					return;
+				}
+				List<Stockpile> oldStockpiles = Settings.get().getStockpileGroupSettings().getStockpiles(group);
+				List<Stockpile> newStockpiles = stockpileSelectionDialog.show(getShownStockpiles(), oldStockpiles, Settings.get().getStockpiles(), TabsStockpile.get().showHidden(), true);
+				if (newStockpiles == null) {
+					return;
+				}
+				List<Stockpile> added = new ArrayList<>(newStockpiles);
+				added.removeAll(oldStockpiles);
+				List<Stockpile> removed = new ArrayList<>(oldStockpiles);
+				removed.removeAll(newStockpiles);
+				if (!removed.isEmpty()) {
+					removeFromGroup(removed, added.isEmpty());
+				}
+				if (!added.isEmpty()) {
+					addToGroup(group, added);
+				}
+			} else if (StockpileCellAction.GROUP_RENAME.name().equals(e.getActionCommand())) {
 				Stockpile stockpile = getSelectedStockpile();
 				if (stockpile == null) {
 					return;

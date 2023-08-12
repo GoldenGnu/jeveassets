@@ -55,14 +55,19 @@ public abstract class JAutoCompleteDialog<T> extends JDialogCentered {
 	private final JButton jOK;
 
 	private final boolean strict;
+	private final boolean askOverwrite;
 
 	private T value;
 
 	public JAutoCompleteDialog(Program program, String title, Image image, String msg, boolean strict) {
+		this(program, title, image, msg, strict, true);
+	}
+
+	public JAutoCompleteDialog(Program program, String title, Image image, String msg, boolean strict, boolean askOverwrite) {
 		super(program, title, image);
-
 		this.strict = strict;
-
+		this.askOverwrite = askOverwrite;
+		
 		ListenerClass listener = new ListenerClass();
 
 		JLabel jText = new JLabel();
@@ -164,7 +169,7 @@ public abstract class JAutoCompleteDialog<T> extends JDialogCentered {
 			JOptionPane.showMessageDialog(getDialog(), GuiShared.get().invalidMsg(), GuiShared.get().invalidTitle(), JOptionPane.PLAIN_MESSAGE);
 			return false;
 		}
-		if (strict) {
+		if (strict || !askOverwrite) {
 			return true;
 		} else {
 			if (EventListManager.contains(eventList, value)) {
