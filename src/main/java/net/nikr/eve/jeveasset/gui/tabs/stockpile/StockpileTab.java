@@ -1639,6 +1639,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 						Settings.get().getStockpiles().remove(stockpile);
 						//Remove Group
 						Settings.get().getStockpileGroupSettings().removeGroup(stockpile);
+						StockpileSeparatorTableCell.updateGroups(this);
 						//Remove subpile links
 						for (Stockpile parentStockpile : stockpile.getSubpiles().keySet()) {
 							parentStockpile.removeSubpileLink(stockpile);
