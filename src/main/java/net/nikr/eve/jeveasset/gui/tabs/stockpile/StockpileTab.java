@@ -1670,6 +1670,10 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 				if (!added.isEmpty()) {
 					addToGroup(group, added);
 				}
+				//Update Table Cell
+				StockpileSeparatorTableCell.updateGroups(this);
+				//Save Settings
+				program.saveSettings("Stockpile (Stockpile Edit Groups)");
 			} else if (StockpileCellAction.GROUP_RENAME.name().equals(e.getActionCommand())) {
 				Stockpile stockpile = getSelectedStockpile();
 				if (stockpile == null) {
@@ -1684,12 +1688,16 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 					return;
 				}
 				List<Stockpile> stockpiles = Settings.get().getStockpileGroupSettings().getStockpiles(oldGroup);
-				//Backup settings
+				//Backup expanded
 				boolean expanded = Settings.get().getStockpileGroupSettings().isGroupExpanded(oldGroup);
 				//Update
 				removeFromGroup(stockpiles, false);
 				addToGroup(newGroup, stockpiles);
-				//Restore settings
+				//Update Table Cell
+				StockpileSeparatorTableCell.updateGroups(this);
+				//Save Settings
+				program.saveSettings("Stockpile (Stockpile Rename Group)");
+				//Restore expanded
 				expandGroups(expanded, new MatchGroup(newGroup));
 			} else if (StockpileCellAction.GROUP_EXPAND.name().equals(e.getActionCommand())) {
 				expandGroupStockpiles(true);
@@ -1720,9 +1728,10 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 					removeFromGroup(stockpile, false); //Change group
 				}
 				addToGroup(group, stockpile); //Change or add group
-				//Update EventList (GUI)
+				//Update Table Cell
 				StockpileSeparatorTableCell.updateGroups(this);
-				program.saveSettings("Stockpile (Stockpile Group)");
+				//Save Settings
+				program.saveSettings("Stockpile (Stockpile New Group)");
 			} else if (StockpileCellAction.GROUP_CHANGE_ADD.name().equals(e.getActionCommand())) {
 				Stockpile stockpile = getSelectedStockpile();
 				if (stockpile == null) {
@@ -1745,8 +1754,10 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 				if (!newGroup.equals(oldGroup)) {
 					addToGroup(newGroup, stockpile); //Change or add group
 				}
+				//Update Table Cell
 				StockpileSeparatorTableCell.updateGroups(this);
-				program.saveSettings("Stockpile (Stockpile Group)");
+				//Save Settings
+				program.saveSettings("Stockpile (Stockpile Add Group)");
 			} else if (StockpileCellAction.SUBPILES.name().equals(e.getActionCommand())) {
 				Stockpile stockpile = getSelectedStockpile();
 				if (stockpile != null) {
