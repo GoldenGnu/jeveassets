@@ -124,6 +124,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 
 	private enum StockpileAction {
 		ADD_STOCKPILE,
+		DELETE_STOCKPILE_MULTI,
 		EDIT_GROUPS,
 		SHOPPING_LIST_MULTI,
 		SHOW_HIDE,
@@ -343,10 +344,20 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		jAdd.addActionListener(listener);
 		jToolBar.addButton(jAdd);
 
-		JButton jGroups = new JButton(TabsStockpile.get().groups(), Images.EDIT_EDIT.getIcon());
+		JDropDownButton jEdit = new JDropDownButton(TabsStockpile.get().edit(), Images.EDIT_EDIT.getIcon());
+		jToolBar.addButton(jEdit);
+
+		JMenuItem jDelete = new JMenuItem(TabsStockpile.get().delete(), Images.EDIT_DELETE.getIcon());
+		jDelete.setActionCommand(StockpileAction.DELETE_STOCKPILE_MULTI.name());
+		jDelete.addActionListener(listener);
+		jEdit.add(jDelete);
+
+		JMenuItem jGroups = new JMenuItem(TabsStockpile.get().groups(), Images.FILTER_LOAD.getIcon());
 		jGroups.setActionCommand(StockpileAction.EDIT_GROUPS.name());
 		jGroups.addActionListener(listener);
-		jToolBar.addButton(jGroups);
+		jEdit.add(jGroups);
+
+		jToolBar.addSeparator();
 
 		JButton jShowHide = new JButton(TabsStockpile.get().showHide(), Images.EDIT_SHOW.getIcon());
 		jShowHide.setActionCommand(StockpileAction.SHOW_HIDE.name());
@@ -982,10 +993,10 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 			}
 			//Unlcok Table
 			afterUpdateData();
-			//Update Groups First
-			for (Map.Entry<String, Stockpile> entry : oldFirst.entrySet()) {
-				updateGroupFirst(entry.getKey(), entry.getValue(), Settings.get().getStockpileGroupSettings().getGroupFirst(entry.getKey()));
-			}
+		}
+		//Update Groups First
+		for (Map.Entry<String, Stockpile> entry : oldFirst.entrySet()) {
+			updateGroupFirst(entry.getKey(), entry.getValue(), Settings.get().getStockpileGroupSettings().getGroupFirst(entry.getKey()));
 		}
 	}
 
@@ -1138,12 +1149,20 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 	}
 
 	private void removeStockpile(Stockpile stockpile) {
+		removeStockpiles(Collections.singletonList(stockpile));
+	}
+
+	private void removeStockpiles(List<Stockpile> stockpiles) {
+		List<StockpileItem> stockpileItems = new ArrayList<>();
+		for (Stockpile stockpile : stockpiles) {
+			stockpileItems.addAll(stockpile.getItems());
+		}
 		//Lock Table
 		beforeUpdateData();
 		//Update list
 		try {
 			eventList.getReadWriteLock().writeLock().lock();
-			eventList.removeAll(stockpile.getItems());
+			eventList.removeAll(stockpileItems);
 		} finally {
 			eventList.getReadWriteLock().writeLock().unlock();
 		}
@@ -1636,6 +1655,46 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 						removeStockpile(stockpile);
 					}
 				}
+			} else if (StockpileAction.DELETE_STOCKPILE_MULTI.name().equals(e.getActionCommand())) { //Delete stockpiles
+				List<Stockpile> stockpiles = stockpileSelectionDialog.show(getShownStockpiles(), Settings.get().getStockpiles(), TabsStockpile.get().showHidden(), false);
+				if (stockpiles == null || stockpiles.isEmpty()) {
+					return;
+				}
+				String msg;
+				if (stockpiles.size() > 1) {
+					msg = TabsStockpile.get().deleteStockpileMsg(stockpiles.size());
+				} else {
+					msg = stockpiles.get(0).getName();
+				}
+				int value = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), msg, TabsStockpile.get().deleteStockpileTitle(), JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+				if (value != JOptionPane.OK_OPTION) {
+					return;
+				}
+				//Remove Groups
+				removeFromGroup(stockpiles, false);
+				//Update Table Cell
+				StockpileSeparatorTableCell.updateGroups(this);
+				Settings.lock("Stockpile (Delete Stockpile)");
+				for (Stockpile stockpile : stockpiles) {
+					//Remove stockpile
+					Settings.get().getStockpiles().remove(stockpile);
+					//Remove subpile links
+					for (Stockpile parentStockpile : stockpile.getSubpiles().keySet()) {
+						parentStockpile.removeSubpileLink(stockpile);
+					}
+					stockpile.getSubpiles().clear(); //Remove all Subpiles
+					updateSubpile(stockpile); //Remove SubpileItems from Table
+					//Remove deleted stockpile from all subpiles
+					for (Stockpile parentStockpile : stockpile.getSubpileLinks()) {
+						parentStockpile.getSubpiles().remove(stockpile);
+						updateSubpile(parentStockpile);
+					}
+				}
+				Settings.unlock("Stockpile (Delete Stockpile)");
+				//Remove stockpiles from GUI
+				removeStockpiles(stockpiles);
+				program.saveSettings("Stockpile (Delete Stockpile)");
+				
 			} else if (StockpileCellAction.ADD_ITEM.name().equals(e.getActionCommand())) { //Add item
 				Stockpile stockpile = getSelectedStockpile();
 				if (stockpile != null) {
