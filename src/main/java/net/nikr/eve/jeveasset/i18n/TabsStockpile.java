@@ -68,12 +68,15 @@ public abstract class TabsStockpile extends Bundle {
 	public abstract String contractsMatchAllTip();
 	public abstract String copy();
 	public abstract String countMinimum();
+	public abstract String delete();
 	public abstract String deleteItem();
 	public abstract String deleteItemTitle();
 	public abstract String deleteItems(int size);
 	public abstract String deleteStockpile();
 	public abstract String deleteStockpileTitle();
+	public abstract String deleteStockpileMsg(int count);
 	public abstract String duplicate();
+	public abstract String edit();
 	public abstract String editCell();
 	public abstract String editItem();
 	public abstract String editStockpile();
