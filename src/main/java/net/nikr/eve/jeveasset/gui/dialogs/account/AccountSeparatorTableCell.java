@@ -11,12 +11,16 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.event.CellEditorListener;
+import javax.swing.event.ChangeEvent;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.accounts.ApiType;
 import net.nikr.eve.jeveasset.data.api.accounts.DeprecatedOwner;
@@ -62,6 +66,7 @@ public class AccountSeparatorTableCell extends SeparatorTableCell<OwnerType> {
 		defaultColor = jPanel.getBackground();
 
 		ListenerClass listener = new ListenerClass();
+		addCellEditorListener(listener);
 
 		jSeparatorLabel = new JLabel();
 		jSeparatorLabel.setBackground(jTable.getBackground());
@@ -85,12 +90,20 @@ public class AccountSeparatorTableCell extends SeparatorTableCell<OwnerType> {
 		jDelete.addActionListener(actionListener);
 
 		jAccountName = new JTextField();
-		jAccountName.addFocusListener(listener);
 		jAccountName.setBorder(null);
 		jAccountName.setOpaque(false);
 		jAccountName.setBackground(Colors.COMPONENT_TRANSPARENT.getColor());
 		jAccountName.setActionCommand(AccountCellAction.ACCOUNT_NAME.name());
 		jAccountName.addActionListener(listener);
+		jAccountName.addKeyListener(listener);
+		jAccountName.addFocusListener(new FocusListener() {
+			@Override
+			public void focusGained(FocusEvent e) {
+				jAccountName.selectAll();
+			}
+			@Override
+			public void focusLost(FocusEvent e) { }
+		});
 
 		jInvalidLabel = new JLabel(DialoguesAccount.get().accountInvalid());
 
@@ -208,18 +221,26 @@ public class AccountSeparatorTableCell extends SeparatorTableCell<OwnerType> {
 		}
 	}
 
-	private class ListenerClass implements FocusListener, ActionListener {
+	private void setAccountName(OwnerType owner) {
+		if (owner == null) {
+			return;
+		}
+		if (jAccountName.getText().isEmpty()) {
+			owner.setResetAccountName();
+		} else {
+			owner.setAccountName(jAccountName.getText());
+		}
+		accountManagerDialog.forceUpdate();
+	}
+
+	private class ListenerClass implements ActionListener, CellEditorListener, KeyListener {
+
+		private boolean update = true;
+
 		@Override
 		public void actionPerformed(final ActionEvent e) {
 			if (AccountCellAction.ACCOUNT_NAME.name().equals(e.getActionCommand())) {
-				OwnerType owner = (OwnerType) currentSeparator.first();
-				if (jAccountName.getText().isEmpty()) {
-					owner.setResetAccountName();
-				} else {
-					owner.setAccountName(jAccountName.getText());
-				}
-				jAccountName.transferFocus();
-				accountManagerDialog.forceUpdate();
+				stopCellEditing();
 				expandSeparator(true);
 				int index = jTable.getSelectedRow() + 1;
 				if (jTable.getRowCount() >= index) {
@@ -229,15 +250,40 @@ public class AccountSeparatorTableCell extends SeparatorTableCell<OwnerType> {
 		}
 
 		@Override
-		public void focusGained(final FocusEvent e) {
-			if (e.getSource() instanceof JTextField) {
-				jTable.setRowSelectionInterval(currentRow, currentRow);
-				jAccountName.selectAll();
+		public void editingStopped(ChangeEvent e) {
+			saveAccountName();
+		}
+
+		@Override
+		public void editingCanceled(ChangeEvent e) {
+			saveAccountName();
+		}
+
+		@Override
+		public void keyTyped(KeyEvent e) { }
+
+		@Override
+		public void keyPressed(KeyEvent e) {
+			if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+				update = false;
+				stopCellEditing();
 			}
 		}
 
 		@Override
-		public void focusLost(final FocusEvent e) { }
-	}
+		public void keyReleased(KeyEvent e) { }
 
+		private void saveAccountName() {
+			if (!update) {
+				update = true;
+				return;
+			}
+			OwnerType owner = (OwnerType) currentSeparator.first();
+			if (owner == null) { // handle 'late' rendering calls after this separator is invalid
+				return;
+			}
+			setAccountName(owner);
+		}
+
+	}
 }
