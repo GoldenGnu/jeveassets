@@ -763,6 +763,25 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		afterUpdateData();
 	}
 
+	protected void setMultiplyer(Stockpile stockpile, JTextField jMultiplier) {
+		if (stockpile == null) {
+			return;
+		}
+		double multiplier;
+		try {
+			multiplier = Double.parseDouble(jMultiplier.getText());
+		} catch (NumberFormatException ex) {
+			multiplier = 1;
+		}
+		System.out.println(multiplier + " != " + stockpile.getMultiplier());
+		if (multiplier != stockpile.getMultiplier()) {
+			stockpile.setMultiplier(multiplier);
+			stockpile.updateTotal();
+			program.saveSettings("Stockpile: Multiplier changed");
+			tableModel.fireTableDataChanged();
+		}
+	}
+
 	protected void editItem(StockpileItem item) {
 		StockpileItem editItem = stockpileItemDialog.showEdit(item);
 		if (editItem != null) {
@@ -1564,24 +1583,6 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 			} else if (StockpileAction.EXPAND.name().equals(e.getActionCommand())) { //Expand all
 				jTable.expandSeparators(true);
 				Settings.get().getStockpileGroupSettings().setStockpilesExpanded(getShownStockpiles(), true);
-			} else if (StockpileCellAction.UPDATE_MULTIPLIER.name().equals(e.getActionCommand())) { //Multiplier
-				Object source = e.getSource();
-				Stockpile stockpile = getSelectedStockpile();
-				if (source instanceof JTextField && stockpile != null) {
-					JTextField jMultiplier = (JTextField) source;
-					double multiplier;
-					try {
-						multiplier = Double.parseDouble(jMultiplier.getText());
-					} catch (NumberFormatException ex) {
-						multiplier = 1;
-					}
-					if (multiplier != stockpile.getMultiplier()) {
-						stockpile.setMultiplier(multiplier);
-						stockpile.updateTotal();
-						program.saveSettings("Stockpile: Multiplier changed");
-					}
-					tableModel.fireTableDataChanged();
-				}
 			} else if (StockpileAction.IMPORT_EFT.name().equals(e.getActionCommand())) { //Add stockpile (EFT Import)
 				importText(TextImportType.EFT);
 			} else if (StockpileAction.IMPORT_ISK_PER_HOUR.name().equals(e.getActionCommand())) { //Add stockpile (Isk Per Hour)
