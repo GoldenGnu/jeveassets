@@ -8,13 +8,18 @@ import ca.odell.glazedlists.SeparatorList;
 import ca.odell.glazedlists.SeparatorList.Separator;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.event.CellEditorListener;
+import javax.swing.event.ChangeEvent;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.settings.ColorEntry;
 import net.nikr.eve.jeveasset.data.settings.ColorSettings;
@@ -36,6 +41,7 @@ public class ReprocessedSeparatorTableCell extends SeparatorTableCell<Reprocesse
 
 	private final JLabel jColor;
 	private final JButton jRemove;
+	private final JButton jRemoveTotal;
 	private final JIntegerField jCount;
 	private final JLabel jName;
 	private final JLabel jSellPriceLabel;
@@ -44,9 +50,14 @@ public class ReprocessedSeparatorTableCell extends SeparatorTableCell<Reprocesse
 	private final JLabel jBatchSize;
 	private final JLabel jValueLabel;
 	private final JLabel jValue;
+	private final Program program;
 
-	public ReprocessedSeparatorTableCell(final JTable jTable, final SeparatorList<ReprocessedInterface> separatorList, final ActionListener actionListener) {
+	public ReprocessedSeparatorTableCell(final Program program, final JTable jTable, final SeparatorList<ReprocessedInterface> separatorList, final ActionListener actionListener) {
 		super(jTable, separatorList);
+		this.program = program;
+
+		ListenerClass listener = new ListenerClass();
+		addCellEditorListener(listener);
 
 		jColor = new JLabel();
 		jColor.setOpaque(true);
@@ -57,11 +68,17 @@ public class ReprocessedSeparatorTableCell extends SeparatorTableCell<Reprocesse
 		jRemove.setActionCommand(ReprocessedCellAction.REMOVE.name());
 		jRemove.addActionListener(actionListener);
 
+		jRemoveTotal = new JButton(TabsReprocessed.get().remove());
+		jRemoveTotal.setOpaque(false);
+		jRemoveTotal.setEnabled(false);
+		jRemoveTotal.setVisible(false);
+
 		jCount = new JIntegerField("1", DocumentFactory.ValueFlag.POSITIVE_AND_NOT_ZERO);
-		jCount.setActionCommand(ReprocessedCellAction.UPDATE_COUNT.name());
-		jCount.addActionListener(actionListener);
-		jCount.setHorizontalAlignment(JTextField.RIGHT);
 		jCount.setAutoSelectAll(true);
+		jCount.setHorizontalAlignment(JTextField.RIGHT);
+		jCount.setActionCommand(ReprocessedCellAction.UPDATE_COUNT.name());
+		jCount.addActionListener(listener);
+		jCount.addKeyListener(listener);
 
 		JLabel jCountLabel = new JLabel(TabsReprocessed.get().multiplierSign());
 
@@ -88,6 +105,7 @@ public class ReprocessedSeparatorTableCell extends SeparatorTableCell<Reprocesse
 				.addComponent(jColor, Program.getButtonsHeight() - 6, Program.getButtonsHeight() - 6, Program.getButtonsHeight() - 6)
 				.addGap(10)
 				.addComponent(jRemove, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
+				.addComponent(jRemoveTotal, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
 				.addGap(10)
 				.addComponent(jCount, 50, 50, 50)
 				.addComponent(jCountLabel)
@@ -116,6 +134,7 @@ public class ReprocessedSeparatorTableCell extends SeparatorTableCell<Reprocesse
 						.addComponent(jColor, Program.getButtonsHeight() - 6, Program.getButtonsHeight() - 6, Program.getButtonsHeight() - 6)
 					)
 					.addComponent(jRemove, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jRemoveTotal, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jName, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jCount, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jCountLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
@@ -136,7 +155,8 @@ public class ReprocessedSeparatorTableCell extends SeparatorTableCell<Reprocesse
 		if (material == null) { // handle 'late' rendering calls after this separator is invalid
 			return;
 		}
-		jRemove.setEnabled(!material.getTotal().isGrandTotal());
+		jRemove.setVisible(!material.getTotal().isGrandTotal());
+		jRemoveTotal.setVisible(material.getTotal().isGrandTotal());
 		jName.setText(material.getTotal().getTypeName());
 		//Count
 		jCount.setText(String.valueOf(material.getTotal().getCount()));
@@ -170,5 +190,54 @@ public class ReprocessedSeparatorTableCell extends SeparatorTableCell<Reprocesse
 		} else {
 			ColorSettings.config(jColor, ColorEntry.REPROCESSED_EQUAL);
 		}
+	}
+
+	private class ListenerClass implements ActionListener, CellEditorListener, KeyListener {
+
+		private boolean update = true;
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if (ReprocessedCellAction.UPDATE_COUNT.name().equals(e.getActionCommand())) {
+				stopCellEditing();
+			}
+		}
+
+		@Override
+		public void editingStopped(ChangeEvent e) {
+			saveMultiplier();
+		}
+
+		@Override
+		public void editingCanceled(ChangeEvent e) {
+			saveMultiplier();
+		}
+
+		@Override
+		public void keyTyped(KeyEvent e) { }
+
+		@Override
+		public void keyPressed(KeyEvent e) {
+			if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+				update = false;
+				stopCellEditing();
+			}
+		}
+
+		@Override
+		public void keyReleased(KeyEvent e) { }
+
+		private void saveMultiplier() {
+			if (!update) {
+				update = true;
+				return;
+			}
+			ReprocessedInterface reprocessed = (ReprocessedInterface) currentSeparator.first();
+			if (reprocessed == null) { // handle 'late' rendering calls after this separator is invalid
+				return;
+			}
+			program.getReprocessedTab().setCount(reprocessed, jCount);
+		}
+
 	}
 }

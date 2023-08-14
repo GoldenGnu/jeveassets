@@ -197,8 +197,8 @@ public class ReprocessedTab extends JMainTabSecondary {
 		tableModel = EventModels.createTableModel(separatorList, tableFormat);
 		//Table
 		jTable = new JReprocessedTable(program, tableModel, separatorList);
-		jTable.setSeparatorRenderer(new ReprocessedSeparatorTableCell(jTable, separatorList, listener));
-		jTable.setSeparatorEditor(new ReprocessedSeparatorTableCell(jTable, separatorList, listener));
+		jTable.setSeparatorRenderer(new ReprocessedSeparatorTableCell(program, jTable, separatorList, listener));
+		jTable.setSeparatorEditor(new ReprocessedSeparatorTableCell(program, jTable, separatorList, listener));
 		jTable.setCellSelectionEnabled(true);
 		PaddingTableCellRenderer.install(jTable, 3);
 		//Sorting
@@ -270,6 +270,27 @@ public class ReprocessedTab extends JMainTabSecondary {
 			if (previous != null) {
 				items.put(entry.getKey(), value + previous);
 			}
+		}
+	}
+
+	protected void setCount(ReprocessedInterface reprocessed, JTextField jCount) {
+		if (reprocessed == null) {
+			return;
+		}
+		ReprocessedTotal total = reprocessed.getTotal();
+		long count;
+		try {
+			count = Long.parseLong(jCount.getText());
+		} catch (NumberFormatException ex) {
+			count = 1;
+		}
+		if (count != total.getCount()) {
+			Item item = total.getItem();
+			if (!total.isGrandTotal()) {
+				items.put(item, count);
+			}
+			total.setCount(count);
+			tableModel.fireTableDataChanged();
 		}
 	}
 
@@ -355,28 +376,6 @@ public class ReprocessedTab extends JMainTabSecondary {
 				if (selectedItem != null) {
 					items.put(selectedItem, 1L);
 					reprocessedData.addItem(eventList, selectedItem, 1L);
-				}
-			} else if (ReprocessedCellAction.UPDATE_COUNT.name().equals(e.getActionCommand())) {
-				Object source = e.getSource();
-				ReprocessedInterface reprocessed = getSelectedReprocessed();
-				if (reprocessed != null && source instanceof JTextField) {
-					ReprocessedTotal total = reprocessed.getTotal();
-					JTextField jCount = (JTextField) source;
-					long count;
-					try {
-						count = Long.parseLong(jCount.getText());
-					} catch (NumberFormatException ex) {
-						count = 1;
-					}
-					Item item = total.getItem();
-					Long previous = total.getCount();
-					if (count != previous) {
-						if (!total.isGrandTotal()) {
-							items.put(item, count);
-						}
-						total.setCount(count);
-						tableModel.fireTableDataChanged();
-					}
 				}
 			} else if (ReprocessedAction.IMPORT_EFT.name().equals(e.getActionCommand())) { //Add stockpile (EFT Import)
 				importText(TextImportType.EFT);
