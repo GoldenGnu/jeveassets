@@ -51,6 +51,9 @@ public abstract class TabsJournal extends Bundle {
 	public abstract String findIn();
 	public abstract String industryJobs();
 	public abstract String title();
+	public abstract String total();
+	public abstract String totalNegative();
+	public abstract String totalPositive();
 	public abstract String transactions();
 	public abstract String columnAccountKey();
 	public abstract String columnAmount();
