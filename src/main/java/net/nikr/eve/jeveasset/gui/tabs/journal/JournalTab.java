@@ -22,6 +22,8 @@
 package net.nikr.eve.jeveasset.gui.tabs.journal;
 
 import ca.odell.glazedlists.*;
+import ca.odell.glazedlists.event.ListEvent;
+import ca.odell.glazedlists.event.ListEventListener;
 import ca.odell.glazedlists.swing.DefaultEventSelectionModel;
 import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import ca.odell.glazedlists.swing.TableComparatorChooser;
@@ -36,6 +38,7 @@ import java.util.Set;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
@@ -44,6 +47,8 @@ import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.my.MyJournal;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.types.LocationType;
+import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
+import net.nikr.eve.jeveasset.gui.frame.StatusPanel.JStatusLabel;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JFixedToolBar;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTabPrimary;
@@ -53,6 +58,7 @@ import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterMatcher;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuAssetFilter;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuColumns;
+import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
@@ -64,9 +70,14 @@ import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractsTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJobTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.transaction.TransactionTableFormat;
 import net.nikr.eve.jeveasset.i18n.TabsJournal;
+import net.nikr.eve.jeveasset.i18n.TabsTransaction;
 
 
 public class JournalTab extends JMainTabPrimary {
+
+	private final JStatusLabel jPositiveTotal;
+	private final JStatusLabel jBothTotal;
+	private final JStatusLabel jNegativeTotal;
 
 	private final JAutoColumnTable jTable;
 	private final JButton jClearNew;
@@ -83,6 +94,8 @@ public class JournalTab extends JMainTabPrimary {
 
 	public JournalTab(final Program program) {
 		super(program, NAME, TabsJournal.get().title(), Images.TOOL_JOURNAL.getIcon(), true);
+
+		ListenerClass listener = new ListenerClass();
 
 		JFixedToolBar jToolBar = new JFixedToolBar();
 
@@ -110,6 +123,7 @@ public class JournalTab extends JMainTabPrimary {
 		eventList.getReadWriteLock().readLock().lock();
 		filterList = new FilterList<>(sortedList);
 		eventList.getReadWriteLock().readLock().unlock();
+		filterList.addListEventListener(listener);
 		//Table Model
 		tableModel = EventModels.createTableModel(filterList, tableFormat);
 		//Table
@@ -130,6 +144,17 @@ public class JournalTab extends JMainTabPrimary {
 		filterControl = new JournalFilterControl(sortedList);
 		//Menu
 		installTableTool(new JournalTableMenu(), tableFormat, tableModel, jTable, filterControl, MyJournal.class);
+
+		//Positive
+		jPositiveTotal = StatusPanel.createLabel(TabsJournal.get().totalPositive(), Images.ORDERS_SELL.getIcon(), JMenuInfo.AutoNumberFormat.ISK);
+		this.addStatusbarLabel(jPositiveTotal);
+
+		jBothTotal = StatusPanel.createLabel(TabsJournal.get().total(), Images.TOOL_TRANSACTION.getIcon(), JMenuInfo.AutoNumberFormat.ISK);
+		this.addStatusbarLabel(jBothTotal);
+
+		//Negative
+		jNegativeTotal = StatusPanel.createLabel(TabsJournal.get().totalNegative(), Images.ORDERS_BUY.getIcon(), JMenuInfo.AutoNumberFormat.ISK);
+		this.addStatusbarLabel(jNegativeTotal);
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()
@@ -268,6 +293,32 @@ public class JournalTab extends JMainTabPrimary {
 			return;
 		}
 		set.add(FilterMatcher.format(value, false));
+	}
+
+	private class ListenerClass implements ListEventListener<MyJournal> {
+
+		@Override
+		public void listChanged(ListEvent<MyJournal> listChanges) {
+			double positiveTotal = 0;
+			double negativeTotal = 0;
+			try {
+				filterList.getReadWriteLock().readLock().lock();
+				for (MyJournal journal : filterList) {
+					Double amount = journal.getAmount();
+					if (amount > 0) { //Sell
+						positiveTotal += journal.getAmount();
+					} else { //Buy
+						negativeTotal += journal.getAmount();
+					}
+				}
+			} finally {
+				filterList.getReadWriteLock().readLock().unlock();
+			}
+			double bothTotal = positiveTotal + negativeTotal;
+			jPositiveTotal.setNumber(positiveTotal);
+			jBothTotal.setNumber(bothTotal);
+			jNegativeTotal.setNumber(negativeTotal);
+		}
 	}
 
 	private class JournalFilterControl extends FilterControl<MyJournal> {
