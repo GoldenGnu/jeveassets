@@ -16,6 +16,8 @@ import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
 import java.awt.event.HierarchyEvent;
 import java.awt.event.HierarchyListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -33,6 +35,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JViewport;
+import javax.swing.event.CellEditorListener;
+import javax.swing.event.ChangeEvent;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.settings.ColorEntry;
 import net.nikr.eve.jeveasset.data.settings.ColorSettings;
@@ -100,6 +104,7 @@ public class StockpileSeparatorTableCell extends SeparatorTableCell<StockpileIte
 		this.program = program;
 
 		ListenerClass listener = new ListenerClass();
+		addCellEditorListener(listener);
 
 		jTable.addHierarchyListener(listener);
 
@@ -188,10 +193,11 @@ public class StockpileSeparatorTableCell extends SeparatorTableCell<StockpileIte
 		jColorDisabled.setVisible(false);
 
 		jMultiplier = new JDoubleField("1", DocumentFactory.ValueFlag.POSITIVE_AND_NOT_ZERO);
-		jMultiplier.setActionCommand(StockpileCellAction.UPDATE_MULTIPLIER.name());
-		jMultiplier.addActionListener(actionListener);
-		jMultiplier.setHorizontalAlignment(JTextField.RIGHT);
 		jMultiplier.setAutoSelectAll(true);
+		jMultiplier.setHorizontalAlignment(JTextField.RIGHT);
+		jMultiplier.setActionCommand(StockpileCellAction.UPDATE_MULTIPLIER.name());
+		jMultiplier.addActionListener(listener);
+		jMultiplier.addKeyListener(listener);
 
 		jMultiplierLabel = new JLabel(TabsStockpile.get().multiplierSign());
 
@@ -478,7 +484,10 @@ public class StockpileSeparatorTableCell extends SeparatorTableCell<StockpileIte
 		}
 	}
 
-	private class ListenerClass implements HierarchyListener, AdjustmentListener {
+	private class ListenerClass implements HierarchyListener, AdjustmentListener, ActionListener, CellEditorListener, KeyListener {
+
+		private boolean update = true;
+
 		@Override
 		public void hierarchyChanged(final HierarchyEvent e) {
 			if ((e.getChangeFlags() & HierarchyEvent.PARENT_CHANGED) == HierarchyEvent.PARENT_CHANGED) {
@@ -511,5 +520,49 @@ public class StockpileSeparatorTableCell extends SeparatorTableCell<StockpileIte
 				}
 			}
 		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if (StockpileCellAction.UPDATE_MULTIPLIER.name().equals(e.getActionCommand())) { //Multiplier
+				stopCellEditing();
+			}
+		}
+
+		@Override
+		public void editingStopped(ChangeEvent e) {
+			saveCount();
+		}
+
+		@Override
+		public void editingCanceled(ChangeEvent e) {
+			saveCount();
+		}
+
+		@Override
+		public void keyTyped(KeyEvent e) { }
+
+		@Override
+		public void keyPressed(KeyEvent e) {
+			if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+				update = false;
+				stopCellEditing();
+			}
+		}
+
+		@Override
+		public void keyReleased(KeyEvent e) { }
+
+		private void saveCount() {
+			if (!update) {
+				update = true;
+				return;
+			}
+			StockpileItem stockpileItem = (StockpileItem) currentSeparator.first();
+			if (stockpileItem == null) { // handle 'late' rendering calls after this separator is invalid
+				return;
+			}
+			program.getStockpileTab().setMultiplyer(stockpileItem.getStockpile(), jMultiplier);
+		}
+
 	}
 }
