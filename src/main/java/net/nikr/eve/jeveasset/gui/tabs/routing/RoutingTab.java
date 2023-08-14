@@ -83,6 +83,7 @@ import net.nikr.eve.jeveasset.gui.shared.components.JImportDialog;
 import net.nikr.eve.jeveasset.gui.shared.components.JImportDialog.ImportReturn;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTabSecondary;
 import net.nikr.eve.jeveasset.gui.shared.components.JMultiSelectionDialog;
+import net.nikr.eve.jeveasset.gui.shared.components.JTextDialog;
 import net.nikr.eve.jeveasset.gui.shared.components.ListComboBoxModel;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuUI;
 import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
@@ -123,6 +124,7 @@ public class RoutingTab extends JMainTabSecondary {
 	private enum RoutingAction {
 		ADD,
 		REMOVE,
+		IMPORT_SYSTEMS,
 		ADD_SYSTEM,
 		ADD_STATION,
 		SOURCE,
@@ -163,6 +165,7 @@ public class RoutingTab extends JMainTabSecondary {
 	private JLabel jAvailableRemaining;
 	private JButton jAdd;
 	private JButton jRemove;
+	private JButton jImportSystems;
 	private JButton jAddSystem;
 	private JButton jAddStation;
 	private MoveJList<SolarSystem> jWaypoints;
@@ -188,7 +191,8 @@ public class RoutingTab extends JMainTabSecondary {
 	private JTextArea jInfo;
 	private List<ResultToolbar> resultToolbars = new ArrayList<>();
 	//Dialogs
-	private JStationDialog jStationDialog ;
+	private JTextDialog jImportSystemsDialog;
+	private JStationDialog jStationDialog;
 	private JSystemDialog jSystemDialog;
 	private JSaveAvoidDialog jSaveSystemDialog;
 	private JManageAvoidDialog jManageAvoidDialog;
@@ -226,6 +230,7 @@ public class RoutingTab extends JMainTabSecondary {
 
 		listener = new ListenerClass();
 
+		jImportSystemsDialog = new JTextDialog(program.getMainWindow().getFrame());
 		jStationDialog = new JStationDialog(program);
 		jSystemDialog = new JSystemDialog(program);
 		jSaveSystemDialog = new JSaveAvoidDialog(program);
@@ -334,7 +339,7 @@ public class RoutingTab extends JMainTabSecondary {
 			}
 		};
 
-		jAvailable = new MoveJList<SolarSystem>(new EditableListModel<>());
+		jAvailable = new MoveJList<>(new EditableListModel<>());
 		jAvailable.getEditableModel().setSortComparator(comp);
 		jAvailable.addMouseListener(listener);
 		jAvailable.addListSelectionListener(listener);
@@ -349,6 +354,10 @@ public class RoutingTab extends JMainTabSecondary {
 		jRemove.setActionCommand(RoutingAction.REMOVE.name());
 		jRemove.addActionListener(listener);
 
+		jImportSystems = new JButton(Images.EDIT_IMPORT.getIcon());
+		jImportSystems.setActionCommand(RoutingAction.IMPORT_SYSTEMS.name());
+		jImportSystems.addActionListener(listener);
+
 		jAddSystem = new JButton(TabsRouting.get().addSystem(), Images.LOC_SYSTEM.getIcon());
 		jAddSystem.setHorizontalAlignment(JToggleButton.LEFT);
 		jAddSystem.setActionCommand(RoutingAction.ADD_SYSTEM.name());
@@ -359,7 +368,7 @@ public class RoutingTab extends JMainTabSecondary {
 		jAddStation.setActionCommand(RoutingAction.ADD_STATION.name());
 		jAddStation.addActionListener(listener);
 
-		jWaypoints = new MoveJList<SolarSystem>(new EditableListModel<>());
+		jWaypoints = new MoveJList<>(new EditableListModel<>());
 		jWaypoints.getEditableModel().setSortComparator(comp);
 		jWaypoints.addMouseListener(listener);
 		jWaypoints.addListSelectionListener(listener);
@@ -419,6 +428,7 @@ public class RoutingTab extends JMainTabSecondary {
 					.addComponent(jWaypointsScroll, 300, 300, Integer.MAX_VALUE)
 					.addGroup(routingLayout.createSequentialGroup()
 						.addComponent(jWaypointsRemaining, 0, 0, Integer.MAX_VALUE)
+						.addComponent(jImportSystems, Program.getIconButtonsWidth(), Program.getIconButtonsWidth(), Program.getIconButtonsWidth())
 						.addComponent(jAddSystem, 65, 65, 65)
 						.addComponent(jAddStation, 65, 65, 65)
 					)
@@ -455,6 +465,7 @@ public class RoutingTab extends JMainTabSecondary {
 					.addComponent(jSystems, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jStations, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jWaypointsRemaining, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jImportSystems, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jAddStation, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jAddSystem, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				)
@@ -1170,6 +1181,7 @@ public class RoutingTab extends JMainTabSecondary {
 		jAvailableRemaining.setEnabled(b);
 		jAdd.setEnabled(b);
 		jRemove.setEnabled(b);
+		jImportSystems.setEnabled(b);
 		jAddSystem.setEnabled(b);
 		jAddStation.setEnabled(b);
 		jSystems.setEnabled(b);
@@ -1487,12 +1499,38 @@ public class RoutingTab extends JMainTabSecondary {
 				Settings.unlock("Routing (Security)");
 				program.saveSettings("Routing (Security)");
 				updateFilterLabels();
+			} else if (RoutingAction.IMPORT_SYSTEMS.name().equals(e.getActionCommand())) {
+				String importText = jImportSystemsDialog.importText();
+				if (importText == null || importText.isEmpty()) {
+					return;
+				}
+				//Build lookup map
+				Map<String, SolarSystem> systems = new HashMap<>();
+				for (SolarSystem node : systemCache.values()) {
+					systems.put(node.getSystem().toLowerCase(), node);
+				}
+				//For each line, check if the line matches a system name
+				for (String line : importText.split("[\r\n]+")) {
+					SolarSystem system = systems.get(line.toLowerCase().trim());
+					if (system != null) {
+						if (!jWaypoints.getEditableModel().contains(system)
+							&& !jAvailable.getEditableModel().contains(system)) {
+							//New
+							jWaypoints.getEditableModel().add(system);
+						} else if (jAvailable.getEditableModel().contains(system)) {
+							//In available: moving to waypoints
+							jAvailable.getEditableModel().remove(system);
+							jWaypoints.getEditableModel().add(system);
+						} //Else: Already in waypoints - do nothing
+					}
+				}
+				updateRemaining();
 			} else if (RoutingAction.ADD_STATION.name().equals(e.getActionCommand())) {
 				MyLocation station = jStationDialog.show();
 				addLocation(station);
 			} else if (RoutingAction.ADD_SYSTEM.name().equals(e.getActionCommand())) {
 				SolarSystem system = jSystemDialog.show();
-				if (system != null ) {
+				if (system != null) {
 					if (!jWaypoints.getEditableModel().contains(system)
 						&& !jAvailable.getEditableModel().contains(system)) {
 						//New
