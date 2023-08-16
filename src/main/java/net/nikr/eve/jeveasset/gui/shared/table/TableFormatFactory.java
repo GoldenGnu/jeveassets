@@ -36,7 +36,6 @@ import net.nikr.eve.jeveasset.data.settings.ColorSettings.ColorRow;
 import net.nikr.eve.jeveasset.gui.dialogs.account.AccountTableFormat;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.ColorsTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.assets.AssetTableFormat;
-import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractsExtendedTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractsTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.items.ItemTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJobTableFormat;
@@ -85,7 +84,7 @@ public class TableFormatFactory {
 
 	//Extended
 	public static EnumTableFormatAdaptor<ContractsTableFormat, MyContractItem> contractsTableFormat() {
-		return new EnumTableFormatAdaptor<>(ContractsTableFormat.class, Arrays.asList(ContractsExtendedTableFormat.values()));
+		return new EnumTableFormatAdaptor<>(ContractsTableFormat.class);
 	}
 
 	public static EnumTableFormatAdaptor<IndustryJobTableFormat, MyIndustryJob> industryJobTableFormat() {

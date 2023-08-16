@@ -92,7 +92,6 @@ import net.nikr.eve.jeveasset.gui.sounds.DefaultSound;
 import net.nikr.eve.jeveasset.gui.sounds.FileSound;
 import net.nikr.eve.jeveasset.gui.tabs.assets.AssetTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.assets.AssetsTab;
-import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractsExtendedTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractsTab;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractsTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.items.ItemTableFormat;
@@ -1667,14 +1666,6 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		try {
 			if (toolName.equals(ContractsTab.NAME)) {
 				return ContractsTableFormat.valueOf(column);
-			}
-		} catch (IllegalArgumentException exception) {
-
-		}
-		//Contracts (Extra)
-		try {
-			if (toolName.equals(ContractsTab.NAME)) {
-				return ContractsExtendedTableFormat.valueOf(column);
 			}
 		} catch (IllegalArgumentException exception) {
 
