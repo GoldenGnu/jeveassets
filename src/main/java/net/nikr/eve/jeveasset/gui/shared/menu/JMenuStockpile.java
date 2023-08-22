@@ -53,8 +53,6 @@ public class JMenuStockpile<T> extends JAutoMenu<T> {
 
 	private static StockpileBpDialog stockpileBpDialog = null;
 
-	private List<Stockpile> stockpilesCashe = null;
-	private final List<JMenuItem> jMenuItems = new ArrayList<>();
 	private final JMenuItem jAddToNew;
 
 	ListenerClass listener = new ListenerClass();
@@ -76,37 +74,25 @@ public class JMenuStockpile<T> extends JAutoMenu<T> {
 
 	@Override
 	public void updateMenuData() {
-		List<Stockpile> newValue = StockpileTab.getShownStockpiles(program);
-		if (stockpilesCashe == null || !stockpilesCashe.equals(newValue)) {
-			stockpilesCashe = new ArrayList<>(newValue); //Update Cache
-			updateMenu(); //Stockpiles changed...
-		}
+		List<Stockpile> stockpiles = StockpileTab.getShownStockpiles(program);
 		boolean enabled = !menuData.getTypeIDs().isEmpty();
 
-		jAddToNew.setEnabled(enabled);
-
-		for (JMenuItem jMenuItem : jMenuItems) {
-			jMenuItem.setEnabled(enabled);
-		}
-	}
-
-	private void updateMenu() {
 		removeAll();
 
+		jAddToNew.setEnabled(enabled);
 		add(jAddToNew); //Add "To new Stockpile"
 
-		if (!stockpilesCashe.isEmpty()) { //Add Separator (if we have stockpiles)
+		if (!stockpiles.isEmpty()) { //Add Separator (if we have stockpiles)
 			addSeparator();
 		}
 
-		jMenuItems.clear(); //Clear update list
-		for (Stockpile stockpile : stockpilesCashe) { //Create menu items
+		for (Stockpile stockpile : stockpiles) { //Create menu items
 			JMenuItem jMenuItem = new JStockpileMenu(stockpile);
 			jMenuItem.setIcon(Images.TOOL_STOCKPILE.getIcon());
 			jMenuItem.setActionCommand(MenuStockpileAction.ADD_TO.name());
 			jMenuItem.addActionListener(listener);
+			jMenuItem.setEnabled(enabled);
 			add(jMenuItem);
-			jMenuItems.add(jMenuItem);
 		}
 	}
 
