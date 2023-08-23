@@ -47,13 +47,13 @@ public class MaterialsData extends TableData {
 		super(profileManager, profileData);
 	}
 
-	public EventList<Material> getData(String owner, boolean piMaterials) {
+	public EventList<Material> getData(String owner, boolean materials, boolean ore, boolean pi) {
 		EventList<Material> eventList = EventListManager.create();
-		updateData(eventList, owner, piMaterials);
+		updateData(eventList, owner, materials, ore, pi);
 		return eventList;
 	}
 
-	protected boolean updateData(EventList<Material> eventList, String owner, boolean piMaterials) {
+	protected boolean updateData(EventList<Material> eventList, String owner, boolean includeMaterials, boolean includeOre, boolean includePI) {
 		if (owner == null || owner.isEmpty()) {
 			owner = General.get().all();
 		}
@@ -68,7 +68,9 @@ public class MaterialsData extends TableData {
 		Material summaryTotalAllMaterial = new Material(Material.MaterialType.SUMMARY_ALL, null, TabsMaterials.get().summary(), TabsMaterials.get().grandTotal(), General.get().all());
 		for (MyAsset asset : profileData.getAssetsList()) {
 			//Skip none-material + none Pi Material (if not enabled)
-			if (!asset.getItem().getCategory().equals(Item.CATEGORY_MATERIAL) && (!asset.getItem().isPiMaterial() || !piMaterials)) {
+			if ((!asset.getItem().getCategory().equals(Item.CATEGORY_MATERIAL) || !includeMaterials)
+					&& (!asset.getItem().isMined() || !includeOre)
+					&& (!asset.getItem().isPiMaterial() || !includePI)) {
 				continue;
 			}
 			//Skip not selected owners

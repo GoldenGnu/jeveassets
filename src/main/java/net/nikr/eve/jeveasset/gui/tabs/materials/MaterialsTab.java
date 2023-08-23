@@ -74,7 +74,9 @@ public class MaterialsTab extends JMainTabSecondary {
 	private final JButton jExport;
 	private final JButton jExpand;
 	private final JButton jCollapse;
-	private final JCheckBox jPiMaterial;
+	private final JCheckBox jMaterials;
+	private final JCheckBox jPi;
+	private final JCheckBox jOre;
 	private final JSeparatorTable jTable;
 	private final JScrollPane jTableScroll;
 
@@ -109,10 +111,21 @@ public class MaterialsTab extends JMainTabSecondary {
 
 		jToolBar.addSpace(5);
 
-		jPiMaterial = new JCheckBox(TabsMaterials.get().includePI());
-		jPiMaterial.setActionCommand(MaterialsAction.SELECTED.name());
-		jPiMaterial.addActionListener(listener);
-		jToolBar.add(jPiMaterial);
+		jMaterials = new JCheckBox(TabsMaterials.get().includeMaterials());
+		jMaterials.setSelected(true);
+		jMaterials.setActionCommand(MaterialsAction.SELECTED.name());
+		jMaterials.addActionListener(listener);
+		jToolBar.add(jMaterials);
+
+		jPi = new JCheckBox(TabsMaterials.get().includePI());
+		jPi.setActionCommand(MaterialsAction.SELECTED.name());
+		jPi.addActionListener(listener);
+		jToolBar.add(jPi);
+
+		jOre = new JCheckBox(TabsMaterials.get().includeOre());
+		jOre.setActionCommand(MaterialsAction.SELECTED.name());
+		jOre.addActionListener(listener);
+		jToolBar.add(jOre);
 
 		jToolBar.addSeparator();
 
@@ -223,11 +236,13 @@ public class MaterialsTab extends JMainTabSecondary {
 	private void updateTable() {
 		beforeUpdateData();
 		String owner = (String) jOwners.getSelectedItem();
-		boolean piMaterials = jPiMaterial.isSelected();
+		boolean includeMaterials = jMaterials.isSelected();
+		boolean includePI = jPi.isSelected();
+		boolean includeOre = jOre.isSelected();
 		//Save separator expanded/collapsed state
 		jTable.saveExpandedState();
 		//Update Data
-		boolean isEmpty = materialsData.updateData(eventList, owner, piMaterials);
+		boolean isEmpty = materialsData.updateData(eventList, owner, includeMaterials, includeOre, includePI);
 		//Restore separator expanded/collapsed state
 		jTable.loadExpandedState();
 		if (!isEmpty) {
