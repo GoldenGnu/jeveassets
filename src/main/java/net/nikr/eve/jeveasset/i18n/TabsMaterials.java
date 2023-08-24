@@ -34,6 +34,7 @@ public abstract class TabsMaterials extends Bundle {
 		super(locale);
 	}
 
+	public abstract String all();
 	public abstract String collapse();
 	public abstract String columnCount();
 	public abstract String columnGroup();
