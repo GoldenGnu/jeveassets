@@ -60,8 +60,16 @@ public abstract class TabsContracts extends Bundle {
 	public abstract String columnIssuerCorp();
 	public abstract String columnItemID();
 	public abstract String columnMarketPrice();
+	public abstract String columnPriceReprocessed();
+	public abstract String columnPriceReprocessedToolTip();
+	public abstract String columnPriceManufacturing();
+	public abstract String columnPriceManufacturingToolTip();
 	public abstract String columnMarketValue();
 	public abstract String columnMarketValueToolTip();
+	public abstract String columnValueReprocessed();
+	public abstract String columnValueReprocessedToolTip();
+	public abstract String columnValueManufacturing();
+	public abstract String columnValueManufacturingToolTip();
 	public abstract String columnMaterialEfficiency();
 	public abstract String columnMaterialEfficiencyToolTip();
 	public abstract String columnName();
