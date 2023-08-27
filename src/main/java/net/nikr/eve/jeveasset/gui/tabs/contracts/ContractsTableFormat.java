@@ -185,6 +185,34 @@ public enum ContractsTableFormat implements EnumTableColumn<MyContractItem> {
 			return from.getDynamicPrice();
 		}
 	},
+	PRICE_REPROCESSED(Double.class, GlazedLists.comparableComparator(), false) {
+		@Override
+		public String getColumnName() {
+			return TabsContracts.get().columnPriceReprocessed();
+		}
+		@Override
+		public String getColumnToolTip() {
+			return TabsContracts.get().columnPriceReprocessedToolTip();
+		}
+		@Override
+		public Object getColumnValue(final MyContractItem from) {
+			return from.getItem().getPriceReprocessed();
+		}
+	},
+	PRICE_MANUFACTURING(Double.class, GlazedLists.comparableComparator(), false) {
+		@Override
+		public String getColumnName() {
+			return TabsContracts.get().columnPriceManufacturing();
+		}
+		@Override
+		public String getColumnToolTip() {
+			return TabsContracts.get().columnPriceManufacturingToolTip();
+		}
+		@Override
+		public Object getColumnValue(final MyContractItem from) {
+			return from.getItem().getPriceManufacturing();
+		}
+	},
 	MARKET_VALUE(Double.class, GlazedLists.comparableComparator(), false) {
 		@Override
 		public String getColumnName() {
@@ -197,6 +225,34 @@ public enum ContractsTableFormat implements EnumTableColumn<MyContractItem> {
 		@Override
 		public Object getColumnValue(final MyContractItem from) {
 			return from.getDynamicPrice() * from.getQuantity();
+		}
+	},
+	REPROCESSED_VALUE(Double.class, GlazedLists.comparableComparator(), false) {
+		@Override
+		public String getColumnName() {
+			return TabsContracts.get().columnValueReprocessed();
+		}
+		@Override
+		public String getColumnToolTip() {
+			return TabsContracts.get().columnValueReprocessedToolTip();
+		}
+		@Override
+		public Object getColumnValue(final MyContractItem from) {
+			return from.getItem().getPriceReprocessed() * from.getQuantity();
+		}
+	},
+	MANUFACTURING_VALUE(Double.class, GlazedLists.comparableComparator(), false) {
+		@Override
+		public String getColumnName() {
+			return TabsContracts.get().columnValueManufacturing();
+		}
+		@Override
+		public String getColumnToolTip() {
+			return TabsContracts.get().columnValueManufacturingToolTip();
+		}
+		@Override
+		public Object getColumnValue(final MyContractItem from) {
+			return from.getItem().getPriceManufacturing() * from.getQuantity();
 		}
 	},
 	PRICE(Double.class, GlazedLists.comparableComparator(), true) {
