@@ -383,9 +383,8 @@ public final class ApiIdConverter {
 	}
 
 	private static double roundManufacturingQuantity(double manufacturingQuantity, double runs) {
-		//max(runs,ceil(round((base * ((100-ME)/100) * (EC modifier) * (EC Rig modifier))*runs,2)))
-		return Math.max(runs, Math.ceil(roundQuantity(manufacturingQuantity, 2)) * runs);
-	}
+		//max(runs,round(ceil((base * ((100-ME)/100) * (EC modifier) * (EC Rig modifier))*runs,2)))
+		return Math.max(runs, roundQuantity(manufacturingQuantity, 6) * runs);	}
 
 	private static double percentToBonus(double value) {
 		return ((100.0 - value) / 100.0);
@@ -401,7 +400,7 @@ public final class ApiIdConverter {
 
 	private static double roundQuantity(double value, int places) {
 		double scale = Math.pow(10, places);
-		return Math.round(value * scale) / scale;
+		return Math.ceil(value * scale) / scale;
 	}
 
 	public static double getPriceReprocessed(Item item) {
