@@ -240,6 +240,7 @@ public class DataSetCreatorTest extends TestUtil {
 		} else {
 			contract.setDateCompleted(null);
 		}
+		contract.setDateExpired(after); //Required, never null
 		contract.setDateIssued(now);
 		contract.setCollateral(COLLATERAL);
 		contract.setPrice(PRICE);
