@@ -26,6 +26,7 @@ import java.util.Objects;
 import java.util.Set;
 import net.nikr.eve.jeveasset.data.api.raw.RawContract;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
+import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.types.LocationsType;
 import net.nikr.eve.jeveasset.data.settings.types.OwnersType;
 import net.nikr.eve.jeveasset.i18n.TabsContracts;
@@ -182,11 +183,13 @@ public class MyContract extends RawContract implements LocationsType, OwnersType
 	}
 
 	public boolean isOpen() {
-		return getStatus() == ContractStatus.OUTSTANDING;
+		//in ESI, not expired, and open
+		return esi && !isExpired() && getStatus() == ContractStatus.OUTSTANDING;
 	}
 
 	public boolean isInProgress() {
-		return getStatus() == ContractStatus.IN_PROGRESS;
+		//in ESI, not expired, and in progress
+		return esi && !isExpired() && getStatus() == ContractStatus.IN_PROGRESS;
 	}
 
 	public boolean isDeleted() {
@@ -197,11 +200,19 @@ public class MyContract extends RawContract implements LocationsType, OwnersType
 		return getDateCompleted() != null;
 	}
 
+	public boolean isExpired() {
+		return Settings.getNow().after(getDateExpired());
+	}
+
 	public String getStatusFormatted() {
-		return getStatusName(super.getStatus());
+		return getStatusName(super.getStatus(), isExpired());
 	}
 
 	public static String getStatusName(ContractStatus status) {
+		return getStatusName(status, false);
+	}
+
+	public static String getStatusName(ContractStatus status, boolean expired) {
 		switch (status) {
 			case CANCELLED:
 				return TabsContracts.get().statusCancelled();
@@ -216,9 +227,17 @@ public class MyContract extends RawContract implements LocationsType, OwnersType
 			case FAILED:
 				return TabsContracts.get().statusFailed();
 			case IN_PROGRESS:
-				return TabsContracts.get().statusInProgress();
+				if (expired) {
+					return TabsContracts.get().statusExpired();
+				} else {
+					return TabsContracts.get().statusInProgress();
+				}
 			case OUTSTANDING:
-				return TabsContracts.get().statusOutstanding();
+				if (expired) {
+					return TabsContracts.get().statusExpired();
+				} else {
+					return TabsContracts.get().statusOutstanding();
+				}
 			case REJECTED:
 				return TabsContracts.get().statusRejected();
 			case REVERSED:
