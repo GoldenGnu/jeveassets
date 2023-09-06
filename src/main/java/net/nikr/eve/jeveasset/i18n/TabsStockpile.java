@@ -109,6 +109,7 @@ public abstract class TabsStockpile extends Bundle {
 	public abstract String importButton();
 	public abstract String importEft();
 	public abstract String importEveMultibuy();
+	public abstract String importEveXml();
 	public abstract String importIskPerHour();
 	public abstract String importShoppingList();
 	public abstract String importStockpilesText();
@@ -132,6 +133,8 @@ public abstract class TabsStockpile extends Bundle {
 	public abstract String importOptionsRenameHelp();
 	public abstract String importOptionsSkip();
 	public abstract String importOptionsSkipHelp();
+	public abstract String importOptionsTemplate();
+	public abstract String importOptionsTemplateHelp();
 	public abstract String include();
 	public abstract String includeCount(int i);
 	public abstract String includeHelp();
@@ -195,6 +198,7 @@ public abstract class TabsStockpile extends Bundle {
 	public abstract String remove();
 	public abstract String renameStockpileTitle();
 	public abstract String runs();
+	public abstract String selectFits();
 	public abstract String selectStockpiles();
 	public abstract String shoppingList();
 	public abstract String showHidden();
