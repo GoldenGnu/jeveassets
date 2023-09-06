@@ -196,6 +196,7 @@ public enum Images {
 	MISC_MATERIALS ("misc_materials.png"),
 	MISC_ORE ("misc_ore.png"),
 	MISC_PI ("misc_pi.png"),
+	MISC_XML ("misc_xml.png"),
 
 	SETTINGS_TOOLS ("settings_tools.png"),
 	SETTINGS_PRICE_DATA ("settings_price_data.png"),
