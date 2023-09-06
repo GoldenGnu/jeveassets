@@ -112,6 +112,19 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 		this.id = getNewID(); //New stockpile = new id
 	}
 
+	/**
+	 * Copy with new name.
+	 * @param name
+	 * @param stockpile 
+	 */
+	public Stockpile(final String name, final Stockpile stockpile) {
+		update(stockpile);
+		this.name = name;
+		this.id = getNewID(); //New stockpile = new id
+		items.add(totalItem);
+		updateDynamicValues();
+	}
+
 	public Stockpile(final String name, final Long id, final List<StockpileFilter> filters, double multiplier, boolean contractsMatchAll) {
 		this.name = name;
 		this.filters = filters;

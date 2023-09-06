@@ -112,6 +112,7 @@ import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.SubpileStock;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileSeparatorTableCell.StockpileCellAction;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 import net.nikr.eve.jeveasset.i18n.TabsStockpile;
+import net.nikr.eve.jeveasset.io.local.EveFittingReader;
 import net.nikr.eve.jeveasset.io.local.SettingsReader;
 import net.nikr.eve.jeveasset.io.local.SettingsWriter;
 import net.nikr.eve.jeveasset.io.local.StockpileDataReader;
@@ -134,6 +135,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		IMPORT_SHOPPING_LIST,
 		IMPORT_TEXT,
 		IMPORT_XML,
+		IMPORT_EVE_XML_FIT,
 		EXPORT_TEXT,
 		EXPORT_XML,
 		COLLAPSE,
@@ -151,6 +153,16 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 			@Override
 			public String getHelp() {
 				return TabsStockpile.get().importOptionsKeepHelp();
+			}
+		},
+		TEMPLATE() {
+			@Override
+			public String getText() {
+				return TabsStockpile.get().importOptionsTemplate();
+			}
+			@Override
+			public String getHelp() {
+				return TabsStockpile.get().importOptionsTemplateHelp();
 			}
 		},
 		NEW() {
@@ -241,6 +253,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 	private final StockpileItemDialog stockpileItemDialog;
 	private final StockpileShoppingListDialog stockpileShoppingListDialog;
 	private final JMultiSelectionDialog<Stockpile> stockpileSelectionDialog;
+	private final JMultiSelectionDialog<String> fitsSelectionDialog;
 	private final JOptionsDialog stockpileImportDialog;
 	private final JTextDialog jTextDialog;
 	private final TextImport textImport;
@@ -269,6 +282,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 	//Data
 	private final StockpileData stockpileData;
 	private int toolBarMinWidth;
+	private Stockpile template = null;
 	private boolean collapsed = false;
 
 	public static final String NAME = "stockpile"; //Not to be changed!
@@ -315,6 +329,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		stockpileItemDialog = new StockpileItemDialog(program);
 		stockpileShoppingListDialog = new StockpileShoppingListDialog(program);
 		stockpileSelectionDialog = new JMultiSelectionDialog<>(program, TabsStockpile.get().selectStockpiles());
+		fitsSelectionDialog = new JMultiSelectionDialog<>(program, TabsStockpile.get().selectFits());
 		stockpileImportDialog = new JOptionsDialog(program);
 
 		jTextDialog = new JTextDialog(program.getMainWindow().getFrame());
@@ -384,10 +399,15 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		jImportIskPerHour.addActionListener(listener);
 		jImport.add(jImportIskPerHour);
 
-		JMenuItem jImportEve = new JMenuItem(TabsStockpile.get().importEveMultibuy(), Images.MISC_EVE.getIcon());
-		jImportEve.setActionCommand(StockpileAction.IMPORT_MULTIBUY.name());
-		jImportEve.addActionListener(listener);
-		jImport.add(jImportEve);
+		JMenuItem jImportEveMultibuy = new JMenuItem(TabsStockpile.get().importEveMultibuy(), Images.MISC_EVE.getIcon());
+		jImportEveMultibuy.setActionCommand(StockpileAction.IMPORT_MULTIBUY.name());
+		jImportEveMultibuy.addActionListener(listener);
+		jImport.add(jImportEveMultibuy);
+
+		JMenuItem jImportEveXmlFit = new JMenuItem(TabsStockpile.get().importEveXml(), Images.MISC_XML.getIcon());
+		jImportEveXmlFit.setActionCommand(StockpileAction.IMPORT_EVE_XML_FIT.name());
+		jImportEveXmlFit.addActionListener(listener);
+		jImport.add(jImportEveXmlFit);
 
 		JMenuItem jImportShoppingList = new JMenuItem(TabsStockpile.get().importShoppingList(), Images.STOCKPILE_SHOPPING_LIST.getIcon());
 		jImportShoppingList.setActionCommand(StockpileAction.IMPORT_SHOPPING_LIST.name());
@@ -1189,6 +1209,55 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		afterUpdateData();
 	}
 
+	private void importEveXml() {
+		jFileChooser.setSelectedFile(new File(""));
+		int value = jFileChooser.showOpenDialog(program.getMainWindow().getFrame());
+		if (value != JFileChooser.APPROVE_OPTION) {
+			return; //Cancel
+		}
+		Map<String, Map<Integer, Double>> fits = EveFittingReader.load(jFileChooser.getSelectedFile().getAbsolutePath());
+		if (fits == null || fits.isEmpty()) {
+			return;
+		}
+		List<String> selectedFits;
+		if (fits.size() > 1) { //Select fits to import
+			selectedFits = fitsSelectionDialog.show(fits.keySet(), false);
+		} else { //one or less, no reason to show selection dialog
+			selectedFits = new ArrayList<>(fits.keySet());
+		}
+		if (selectedFits == null || selectedFits.isEmpty()) {
+			return;
+		}
+		
+		Set<String> stockpiles = new HashSet<>();
+		for (Stockpile stockpile : Settings.get().getStockpiles()) {
+			stockpiles.add(stockpile.getName());
+		}
+		Set<String> existing = new HashSet<>();
+		Set<String> open = new HashSet<>();
+		for (String fit : selectedFits) {
+			if (stockpiles.contains(fit)) { //Exist
+				existing.add(fit);
+			} else {
+				open.add(fit);
+			}
+		}
+		
+		if (open.size() > 1) {
+			OptionEnum option = null;
+			template = null;
+			for (String fit : open) {
+				option = importStockpileItems(fits.get(fit), option, options(ImportOptions.TEMPLATE, ImportOptions.NEW, ImportOptions.ADD), fit);
+			}
+		} else {
+			existing.addAll(open);
+		}
+		OptionEnum option = null;
+		for (String fit : existing) {
+			option = importStockpileItems(fits.get(fit), option, fit);
+		}
+	}
+
 	private void importText(TextImportType type) {
 		textImport.importText(type, new TextImportHandler() {
 			@Override
@@ -1198,15 +1267,53 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		});
 	}
 
-	private void importStockpileItems(Map<Integer, Double> data, String name) {
-		importOptions(data, null, 1, false, options(ImportOptions.NEW, ImportOptions.ADD), new StockpileImportAction<Map<Integer, Double>>() {
+	private OptionEnum importStockpileItems(Map<Integer, Double> data, String name) {
+		return importStockpileItems(data, null, options(ImportOptions.NEW, ImportOptions.ADD), name);
+	}
+
+	private OptionEnum importStockpileItems(Map<Integer, Double> data, OptionEnum option, String name) {
+		return importStockpileItems(data, option, options(ImportOptions.NEW, ImportOptions.ADD), name);
+	}
+
+	private OptionEnum importStockpileItems(Map<Integer, Double> data, OptionEnum option, List<OptionEnum> options, String name) {
+		return importOptions(data, option, 1, false, options, new StockpileImportAction<Map<Integer, Double>>() {
 			@Override
 			public String getName(Map<Integer, Double> data) {
 				return name;
 			}
 			@Override
 			public boolean action(Map<Integer, Double> data, OptionEnum xmlOptions) {
-				if (xmlOptions == ImportOptions.NEW) {
+				if (xmlOptions == ImportOptions.TEMPLATE) {
+					xmlOptions.setAll(true); //Always do this for all
+					//Blueprint/Formula Options
+					BpOptions bpOptions = JMenuStockpile.selectBpImportOptions(program, data.keySet(), false);
+					if (bpOptions == null) {
+						return false; //Cancelled
+					}
+					//Create Template Stockpile
+					if (template == null) {
+						template = stockpileDialog.showTemplate();
+					}
+					if (template == null) { //Dialog cancelled
+						return false; //Retry
+					}
+					//Create Stockpile from template
+					Stockpile stockpile = new Stockpile(name, template);
+					//Create items
+					List<StockpileItem> items = JMenuStockpile.toStockpileItems(program, bpOptions, stockpile, data.keySet(), data, Collections.emptyMap());
+					if (items == null) {
+						return false; //Cancelled
+					}
+					Settings.lock("Stockpile (Import)"); //Lock for Stockpile (Import)
+					for (StockpileItem item : items) {
+						stockpile.add(item);
+					}
+					addStockpile(program, stockpile); //Add imported stockpile to Settings
+					Settings.unlock("Stockpile (Import)"); //Unlock for Stockpile (Import)
+					program.saveSettings("Stockpile (Import)"); //Save Stockpile (Import)
+					//Update UI
+					addStockpile(stockpile); //Add imported stockpile to Settings
+				} else if (xmlOptions == ImportOptions.NEW) {
 					//Blueprint/Formula Options
 					BpOptions bpOptions = JMenuStockpile.selectBpImportOptions(program, data.keySet(), false);
 					if (bpOptions == null) {
@@ -1593,6 +1700,8 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 				importText(TextImportType.STCOKPILE_SHOPPING_LIST);
 			} else if (StockpileAction.IMPORT_XML.name().equals(e.getActionCommand())) { //Add stockpile (Xml)
 				importXml();
+			} else if (StockpileAction.IMPORT_EVE_XML_FIT.name().equals(e.getActionCommand())) { //Add stockpile (Xml)
+				importEveXml();
 			} else if (StockpileAction.IMPORT_TEXT.name().equals(e.getActionCommand())) { //Add stockpile (Xml)
 				importText();
 			} else if (StockpileAction.EXPORT_XML.name().equals(e.getActionCommand())) { //Export XML
