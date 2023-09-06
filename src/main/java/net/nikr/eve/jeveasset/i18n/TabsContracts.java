@@ -104,6 +104,7 @@ public abstract class TabsContracts extends Bundle {
 	public abstract String statusOutstanding();
 	public abstract String statusRejected();
 	public abstract String statusReversed();
+	public abstract String statusExpired();
 	public abstract String statusUnknown();
 	public abstract String title();
 	public abstract String type();
