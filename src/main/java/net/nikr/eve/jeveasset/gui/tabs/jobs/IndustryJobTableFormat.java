@@ -200,6 +200,20 @@ public enum IndustryJobTableFormat implements EnumTableColumn<MyIndustryJob> {
 			return from.getOutputValue();
 		}
 	},
+	OUTPUT_VOLUME(Double.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsJobs.get().columnOutputVolume();
+		}
+		@Override
+		public String getColumnToolTip() {
+			return TabsJobs.get().columnOutputVolumeToolTip();
+		}
+		@Override
+		public Object getColumnValue(final MyIndustryJob from) {
+			return from.getOutputVolume();
+		}
+	},
 	OUTPUT_TYPE(String.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {

@@ -440,6 +440,14 @@ public class MyIndustryJob extends RawIndustryJob implements Comparable<MyIndust
 		return output.getTypeName();
 	}
 
+	public double getOutputVolume() {
+		if (isCopying()) {
+			return output.getVolumePackaged() * getRuns(); // Volume of the output blueprints (bp runs should not be counted)
+		} else {
+			return output.getVolumePackaged() * outputCount;
+		}
+	}
+
 	public String getInstaller() {
 		return installer;
 	}
