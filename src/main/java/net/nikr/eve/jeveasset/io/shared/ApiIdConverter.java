@@ -364,7 +364,7 @@ public final class ApiIdConverter {
 		ManufacturingFacility facility = manufacturingSettings.getFacility();
 		ManufacturingRigs rigs = manufacturingSettings.getRigs();
 		ManufacturingSecurity security = manufacturingSettings.getSecurity();
-		return getManufacturingQuantity(quantity, me, facility, rigs, security, 1);
+		return getManufacturingQuantity(quantity, me, facility, rigs, security, 1, true);
 	}
 
 	/**
@@ -375,16 +375,22 @@ public final class ApiIdConverter {
 	 * @param rigs
 	 * @param security
 	 * @param runs
+	 * @param round
 	 * @return Can return less than 1 (one)
 	 */
-	public static double getManufacturingQuantity(int quantity, int me, ManufacturingFacility facility, ManufacturingRigs rigs, ManufacturingSecurity security, double runs) {
+	public static double getManufacturingQuantity(int quantity, int me, ManufacturingFacility facility, ManufacturingRigs rigs, ManufacturingSecurity security, double runs, boolean round) {
 		//base * ((100-ME)/100) * (EC modifier) * (EC Rig modifier))
-		return roundManufacturingQuantity(quantity * percentToBonus(me) * percentToBonus(facility.getMaterialBonus()) * rigToBonus(rigs, security), runs);
+		return roundManufacturingQuantity(quantity * percentToBonus(me) * percentToBonus(facility.getMaterialBonus()) * rigToBonus(rigs, security), runs, round);
 	}
 
-	private static double roundManufacturingQuantity(double manufacturingQuantity, double runs) {
-		//max(runs,ceil(round((base * ((100-ME)/100) * (EC modifier) * (EC Rig modifier))*runs,2)))
-		return Math.max(runs, Math.ceil(roundQuantity(manufacturingQuantity, 2)) * runs);
+	private static double roundManufacturingQuantity(double manufacturingQuantity, double runs, boolean round) {
+		//max(runs,round(ceil((base * ((100-ME)/100) * (EC modifier) * (EC Rig modifier))*runs,2)))
+		double quantity = Math.max(runs, roundQuantity(manufacturingQuantity, 2) * runs);
+		if (round) {
+			return Math.ceil(quantity);
+		} else {
+			return quantity;
+		}
 	}
 
 	private static double percentToBonus(double value) {

@@ -275,7 +275,7 @@ public class StockpileBpDialog extends JDialogCentered {
 		}
 
 		public double doMath(int quantity, double countMinimum) {
-			return ApiIdConverter.getManufacturingQuantity(quantity, me, facility, rigs, security, countMinimum);
+			return ApiIdConverter.getManufacturingQuantity(quantity, me, facility, rigs, security, countMinimum, false);
 		}
 	}
 }
