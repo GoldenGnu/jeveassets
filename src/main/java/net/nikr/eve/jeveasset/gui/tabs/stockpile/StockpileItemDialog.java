@@ -386,14 +386,14 @@ public class StockpileItemDialog extends JDialogCentered {
 			 //Manufacturing Materials
 			for (IndustryMaterial material : item.getManufacturingMaterials()) {
 				Item materialItem = ApiIdConverter.getItem(material.getTypeID());
-				double count = ApiIdConverter.getManufacturingQuantity(material.getQuantity(), me, facility, rigs, security, countMinimum);
+				double count = ApiIdConverter.getManufacturingQuantity(material.getQuantity(), me, facility, rigs, security, countMinimum, false);
 				itemsMaterial.add(new StockpileItem(getStockpile(), materialItem, material.getTypeID(), count, false));
 			}
 		} else if (jBlueprintType.isEnabled() && jBlueprintType.getItemAt(jBlueprintType.getSelectedIndex()) == BlueprintAddType.REACTION_MATERIALS) {
 			//Reaction Materials
 			for (IndustryMaterial material : item.getReactionMaterials()) {
 				Item materialItem = ApiIdConverter.getItem(material.getTypeID());
-				double count = ApiIdConverter.getManufacturingQuantity(material.getQuantity(), me, facility, rigs, security, countMinimum);
+				double count = ApiIdConverter.getManufacturingQuantity(material.getQuantity(), me, facility, rigs, security, countMinimum, false);
 				itemsMaterial.add(new StockpileItem(getStockpile(), materialItem, material.getTypeID(), count, false));
 			}
 		} else {
