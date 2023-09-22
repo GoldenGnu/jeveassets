@@ -21,9 +21,12 @@
 
 package net.nikr.eve.jeveasset.io.shared;
 
+import java.util.HashMap;
+import java.util.Map;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import net.nikr.eve.jeveasset.TestUtil;
+import net.nikr.eve.jeveasset.data.sde.IndustryMaterial;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.sde.StaticData;
@@ -86,6 +89,91 @@ public class ApiIdConverterTest extends TestUtil {
 	public void testInstallationFee(ManufacturingSettings manufacturingSettings, Item item, Float systemIndex, double expected) {
 		double actual = ApiIdConverter.getManufacturingInstallationFee(manufacturingSettings, systemIndex, DOMINIX_BASE_PRICE, item);
 		assertEquals(Formatter.doubleFormat(actual) + "!=" + Formatter.doubleFormat(expected), expected,actual , 1);
+	}
+
+	/**
+	 * Tested against Isk Per Hour 2023-09-20 
+	 */
+	@Test
+	public void testManufacturingQuantity() {
+		System.out.println("	--- Default ---");
+		int me = 0;
+		ManufacturingFacility facility = ManufacturingFacility.ENGINEERING_COMPLEX_XLARGE;
+		ManufacturingRigs rigs = ManufacturingRigs.NONE;
+		ManufacturingSecurity security = ManufacturingSecurity.LOWSEC;
+		double runs = 1;
+		Map<Integer, Double> expected = new HashMap<>();
+		expected.put(34, 7_920_000.0);
+		expected.put(35, 3_960_000.0);
+		expected.put(36,   594_000.0);
+		expected.put(37,   396_000.0);
+		expected.put(38,    11_880.0);
+		expected.put(39,     5_940.0);
+		expected.put(40,     2_970.0);
+		expected.put(57478,    198.0);
+		expected.put(57486,     99.0);
+		expected.put(57479,      1.0);
+		testManufacturingQuantity(expected, me, facility, rigs, security, runs);
+	}
+
+	/**
+	 * Tested against Isk Per Hour 2023-09-20 
+	 */
+	@Test
+	public void testManufacturingQuantityMe() {
+		System.out.println("	--- ME ---");
+		int me = 10;
+		ManufacturingFacility facility = ManufacturingFacility.ENGINEERING_COMPLEX_XLARGE;
+		ManufacturingRigs rigs = ManufacturingRigs.NONE;
+		ManufacturingSecurity security = ManufacturingSecurity.HIGHSEC;
+		double runs = 1;
+		Map<Integer, Double> expected = new HashMap<>();
+		expected.put(34, 7_128_000.0);
+		expected.put(35, 3_564_000.0);
+		expected.put(36,   534_600.0);
+		expected.put(37,   356_400.0);
+		expected.put(38,    10_692.0);
+		expected.put(39,     5_346.0);
+		expected.put(40,     2_673.0);
+		expected.put(57478,    179.0);
+		expected.put(57486,     90.0);
+		expected.put(57479,      1.0);
+		testManufacturingQuantity(expected, me, facility, rigs, security, runs);
+	}
+
+	/**
+	 * Tested against Isk Per Hour 2023-09-20 
+	 */
+	@Test
+	public void testManufacturingQuantityRuns() {
+		System.out.println("	--- Runs ---");
+		int me = 10;
+		ManufacturingFacility facility = ManufacturingFacility.ENGINEERING_COMPLEX_XLARGE;
+		ManufacturingRigs rigs = ManufacturingRigs.NONE;
+		ManufacturingSecurity security = ManufacturingSecurity.HIGHSEC;
+		double runs = 200;
+		Map<Integer, Double> expected = new HashMap<>();
+		expected.put(34, 1_425_600_000.0);
+		expected.put(35,   712_800_000.0);
+		expected.put(36,   106_920_000.0);
+		expected.put(37,    71_280_000.0);
+		expected.put(38,     2_138_400.0);
+		expected.put(39,     1_069_200.0);
+		expected.put(40,       534_600.0);
+		expected.put(57478,     35_640.0);
+		expected.put(57486,     17_820.0);
+		expected.put(57479,        200.0);
+		testManufacturingQuantity(expected, me, facility, rigs, security, runs);
+	}
+
+	public void testManufacturingQuantity(Map<Integer, Double> expected, int me, ManufacturingFacility facility, ManufacturingRigs rigs, ManufacturingSecurity security, double runs) {
+		Item blueprint = ApiIdConverter.getItem(999); //Domenix Blueprint
+		for (IndustryMaterial material : blueprint.getManufacturingMaterials()) {
+			double quantity = ApiIdConverter.getManufacturingQuantity(material.getQuantity(), me, facility, rigs, security, runs, true);
+			System.out.println("	id=" + material.getTypeID() + " q=" + material.getQuantity() + " qmod=" + Formatter.compareFormat(quantity));
+			assertEquals(expected.get(material.getTypeID()), quantity, 0.001);
+			//System.out.println("expected.put(" + material.getTypeID() + ", " + Formatter.compareFormat(quantity) + ");");
+		}
 	}
 
 	/**
