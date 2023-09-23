@@ -60,6 +60,7 @@ public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarket
 	private String issuedByName = "";
 	private Double brokersFee;
 	private Outbid outbid;
+	private boolean outbidOwned = false;
 	private boolean esi = true;
 	//soft init
 	private JButton jButton;
@@ -323,6 +324,14 @@ public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarket
 		return outbid.getCount() > 0;
 	}
 
+	public boolean isOutbidOwned() {
+		return outbidOwned;
+	}
+
+	public void setOutbidOwned(boolean outbidOwned) {
+		this.outbidOwned = outbidOwned;
+	}
+	
 	public boolean haveOutbid() {
 		return outbid != null;
 	}

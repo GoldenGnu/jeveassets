@@ -22,6 +22,7 @@ package net.nikr.eve.jeveasset.data.profile;
 
 import ca.odell.glazedlists.EventList;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -326,6 +327,7 @@ public class ProfileData {
 				}
 			}
 		}
+		updateOutbidOwned(marketOrdersList);
 		AddedData.getMarketOrders().commitQueue();
 		Program.ensureEDT(new Runnable() {
 			@Override
@@ -586,6 +588,7 @@ public class ProfileData {
 				order.setChanged(AddedData.getMarketOrders().getAdd(marketOrdersAdded, order.getOrderID(), changed));
 			}
 		}
+		updateOutbidOwned(marketOrders);
 		AddedData.getMarketOrders().commitQueue();
 		//Update IndustryJobs dynamic values
 		for (MyIndustryJob industryJob : industryJobs) {
@@ -925,6 +928,41 @@ public class ProfileData {
 			eventList.getReadWriteLock().readLock().unlock();
 		}
 		updateList(eventList, found);
+	}
+
+	private void updateOutbidOwned(Collection<MyMarketOrder> marketOrders) {
+		Map<Integer, Set<Long>> lowestBuy = new HashMap<>();
+		Map<Integer, Set<Long>> lowestSell = new HashMap<>();
+		for (MyMarketOrder order : marketOrders) { //Find lowest
+			if (order.isActive() && order.haveOutbid() && !order.isOutbid()) { //Lowest
+				Map<Integer, Set<Long>> lowest;
+				if (order.isBuyOrder()) {
+					lowest = lowestBuy;
+				} else {
+					lowest = lowestSell;
+				}
+				Set<Long> orderIDs = lowest.get(order.getTypeID());
+				if (orderIDs == null) {
+					orderIDs = new HashSet<>();
+					lowest.put(order.getTypeID(), orderIDs);
+				}
+				orderIDs.add(order.getOrderID());
+			}
+		}
+		for (MyMarketOrder order : marketOrders) { //Set owned
+			if (!order.isActive()) {
+				order.setOutbidOwned(false);
+				continue;
+			}
+			Map<Integer, Set<Long>> lowest;
+			if (order.isBuyOrder()) {
+				lowest = lowestBuy;
+			} else {
+				lowest = lowestSell;
+			}
+			Set<Long> orderIDs = lowest.get(order.getTypeID());
+			order.setOutbidOwned(orderIDs != null && !orderIDs.contains(order.getOrderID())); //Not null and not one of the lowest orders
+		}
 	}
 
 	private void updateIndustryJobPrices(EventList<MyIndustryJob> eventList, Set<Integer> typeIDs) {
