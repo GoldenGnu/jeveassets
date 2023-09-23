@@ -559,14 +559,21 @@ public class MarketOrdersTab extends JMainTabPrimary {
 			JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsOrders.get().updateNoActiveMsg(), TabsOrders.get().updateNoActiveTitle(), JOptionPane.PLAIN_MESSAGE);
 			return;
 		}
+		final Date currentUpdate = Settings.get().getPublicMarketOrdersNextUpdate();
 		OutbidProcesserOutput output = new OutbidProcesserOutput();
 		final PublicMarkerOrdersUpdateTask updateTask = new PublicMarkerOrdersUpdateTask(input, output);
 		TaskDialog taskDialog = new TaskDialog(program, updateTask, false, jAutoUpdate.isSelected(), jAutoUpdate.isSelected(), StatusPanel.UpdateType.PUBLIC_MARKET_ORDERS, new TaskDialog.TasksCompletedAdvanced() {
 			@Override
 			public void tasksCompleted(TaskDialog taskDialog) {
+				//Set data
 				Settings.lock("Outbid (ESI)");
 				Settings.get().setMarketOrdersOutbid(output.getOutbids());
 				Settings.unlock("Outbid (ESI)");
+				//Ensure we don't update repeatedly on errors
+				if (Settings.get().getPublicMarketOrdersNextUpdate().equals(currentUpdate)) {
+					//if next update did not change, set the next update to be 5 minutes in the future
+					Settings.get().setPublicMarketOrdersNextUpdate(new Date(System.currentTimeMillis() + (1000 * 60 * 5)));
+				}
 				//Update eventlists
 				if (!output.getOutbids().isEmpty() || !output.getUpdates().isEmpty()) {
 					LOG.info("Updating Orders EventList");
