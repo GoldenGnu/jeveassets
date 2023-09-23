@@ -62,6 +62,7 @@ public class ColorThemeColorblind extends ColorTheme {
 		colors.put(ColorEntry.STOCKPILE_TABLE_OVER_THRESHOLD, new ColorThemeEntry(Colors.COLORBLIND_YELLOW));
 		colors.put(ColorEntry.STOCKPILE_ICON_OVER_THRESHOLD, new ColorThemeEntry(Colors.COLORBLIND_YELLOW));
 		colors.put(ColorEntry.MARKET_ORDERS_OUTBID_NOT_BEST, new ColorThemeEntry(Colors.COLORBLIND_MAGENTA));
+		colors.put(ColorEntry.MARKET_ORDERS_OUTBID_NOT_BEST_OWNED, new ColorThemeEntry(Colors.COLORBLIND_ORANGE));
 		colors.put(ColorEntry.MARKET_ORDERS_OUTBID_BEST, new ColorThemeEntry(Colors.COLORBLIND_YELLOW));
 		colors.put(ColorEntry.MARKET_ORDERS_OUTBID_UNKNOWN, new ColorThemeEntry(Colors.COLORBLIND_GRAY));
 		colors.put(ColorEntry.MARKET_ORDERS_EXPIRED, new ColorThemeEntry(Colors.COLORBLIND_MAGENTA));
