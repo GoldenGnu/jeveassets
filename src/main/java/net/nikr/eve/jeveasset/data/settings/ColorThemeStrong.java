@@ -62,6 +62,7 @@ public class ColorThemeStrong extends ColorTheme {
 		colors.put(ColorEntry.STOCKPILE_TABLE_OVER_THRESHOLD, new ColorThemeEntry(Colors.STRONG_GREEN));
 		colors.put(ColorEntry.STOCKPILE_ICON_OVER_THRESHOLD, new ColorThemeEntry(Colors.STRONG_GREEN));
 		colors.put(ColorEntry.MARKET_ORDERS_OUTBID_NOT_BEST, new ColorThemeEntry(Colors.STRONG_RED));
+		colors.put(ColorEntry.MARKET_ORDERS_OUTBID_NOT_BEST_OWNED, new ColorThemeEntry(Colors.STRONG_ORANGE));
 		colors.put(ColorEntry.MARKET_ORDERS_OUTBID_BEST, new ColorThemeEntry(Colors.STRONG_GREEN));
 		colors.put(ColorEntry.MARKET_ORDERS_OUTBID_UNKNOWN, new ColorThemeEntry(Colors.STRONG_GRAY));
 		colors.put(ColorEntry.MARKET_ORDERS_EXPIRED, new ColorThemeEntry(Colors.STRONG_RED));

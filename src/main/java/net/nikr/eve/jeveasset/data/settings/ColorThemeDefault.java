@@ -62,6 +62,7 @@ public class ColorThemeDefault extends ColorTheme {
 		colors.put(ColorEntry.STOCKPILE_TABLE_OVER_THRESHOLD, new ColorThemeEntry(Colors.LIGHT_GREEN));
 		colors.put(ColorEntry.STOCKPILE_ICON_OVER_THRESHOLD, new ColorThemeEntry(Colors.LIGHT_GREEN));
 		colors.put(ColorEntry.MARKET_ORDERS_OUTBID_NOT_BEST, new ColorThemeEntry(Colors.LIGHT_RED));
+		colors.put(ColorEntry.MARKET_ORDERS_OUTBID_NOT_BEST_OWNED, new ColorThemeEntry(Colors.LIGHT_ORANGE));
 		colors.put(ColorEntry.MARKET_ORDERS_OUTBID_BEST, new ColorThemeEntry(Colors.LIGHT_GREEN));
 		colors.put(ColorEntry.MARKET_ORDERS_OUTBID_UNKNOWN, new ColorThemeEntry(Colors.LIGHT_GRAY));
 		colors.put(ColorEntry.MARKET_ORDERS_EXPIRED, new ColorThemeEntry(Colors.LIGHT_RED));

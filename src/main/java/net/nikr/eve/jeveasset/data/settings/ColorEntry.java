@@ -47,6 +47,7 @@ public enum ColorEntry {
 	STOCKPILE_TABLE_OVER_THRESHOLD(ColorEntryGroup.STOCKPILE, DataColors.get().stockpileTableOverThreshold()),
 	STOCKPILE_ICON_OVER_THRESHOLD(ColorEntryGroup.STOCKPILE, DataColors.get().stockpileIconOverThreshold(), Background.EDITABLE_AND_NOT_NULL, Foreground.NOT_EDITABLE),
 	MARKET_ORDERS_OUTBID_NOT_BEST(ColorEntryGroup.MARKET_ORDERS, DataColors.get().marketOrdersOutbidNotBest()),
+	MARKET_ORDERS_OUTBID_NOT_BEST_OWNED(ColorEntryGroup.MARKET_ORDERS, DataColors.get().marketOrdersOutbidNotBestOwned()),
 	MARKET_ORDERS_OUTBID_BEST(ColorEntryGroup.MARKET_ORDERS, DataColors.get().marketOrdersOutbidBest()),
 	MARKET_ORDERS_OUTBID_UNKNOWN(ColorEntryGroup.MARKET_ORDERS, DataColors.get().marketOrdersOutbidUnknown()),
 	MARKET_ORDERS_EXPIRED(ColorEntryGroup.MARKET_ORDERS, DataColors.get().marketOrdersExpired()),

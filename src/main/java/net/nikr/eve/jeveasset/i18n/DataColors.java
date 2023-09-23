@@ -57,6 +57,7 @@ public abstract class DataColors extends Bundle {
 	public abstract String stockpileTableOverThreshold();
 	public abstract String stockpileIconOverThreshold();
 	public abstract String marketOrdersOutbidNotBest();
+	public abstract String marketOrdersOutbidNotBestOwned();
 	public abstract String marketOrdersOutbidBest();
 	public abstract String marketOrdersOutbidUnknown();
 	public abstract String marketOrdersExpired();
