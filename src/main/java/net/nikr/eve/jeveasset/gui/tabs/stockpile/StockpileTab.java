@@ -659,7 +659,6 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		} catch (NumberFormatException ex) {
 			multiplier = 1;
 		}
-		System.out.println(multiplier + " != " + stockpile.getMultiplier());
 		if (multiplier != stockpile.getMultiplier()) {
 			stockpile.setMultiplier(multiplier);
 			stockpile.updateTotal();
