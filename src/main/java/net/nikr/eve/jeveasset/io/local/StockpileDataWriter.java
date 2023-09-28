@@ -148,6 +148,7 @@ public class StockpileDataWriter extends AbstractBackup {
 				item.addProperty("i", stockpileItem.getItemTypeID());
 				item.addProperty("m", stockpileItem.getCountMinimum());
 				item.addProperty("r", stockpileItem.isRuns());
+				item.addProperty("im", stockpileItem.isIgnoreMultiplier());
 				items.add(item);
 			}
 
