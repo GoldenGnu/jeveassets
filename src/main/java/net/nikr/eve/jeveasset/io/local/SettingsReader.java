@@ -847,10 +847,11 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 				}
 				int typeID = getInt(itemNode, "typeid");
 				boolean runs = getBooleanNotNull(itemNode, "runs", false);
+				boolean ignoreMultiplier = getBooleanNotNull(itemNode, "ignoremultiplier", false);
 				double countMinimum = getDouble(itemNode, "minimum");
 				if (typeID != 0) { //Ignore Total
 					Item item = ApiIdConverter.getItemUpdate(Math.abs(typeID));
-					StockpileItem stockpileItem = new StockpileItem(stockpile, item, typeID, countMinimum, runs, id);
+					StockpileItem stockpileItem = new StockpileItem(stockpile, item, typeID, countMinimum, runs, ignoreMultiplier, id);
 					stockpile.add(stockpileItem);
 				}
 			}

@@ -35,6 +35,7 @@ import java.util.List;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -102,11 +103,14 @@ public class StockpileItemDialog extends JDialogCentered {
 	private final JComboBox<Item> jItems;
 	private final JLabel jSubpile;
 	private JTextField jCountMinimum;
+	private final JLabel jBlueprintTypeLabel;
 	private final JComboBox<BlueprintAddType> jBlueprintType;
 	private final JComboBox<Integer> jMe;
 	private final JComboBox<ManufacturingFacility> jFacility;
 	private final JComboBox<ManufacturingRigs> jRigs;
 	private final JComboBox<ManufacturingSecurity> jSecurity;
+	private final JLabel jIgnoreMultiplierLabel;
+	private final JCheckBox jIgnoreMultiplier;
 
 	private final List<JComponent> manufacturingComponents = new ArrayList<>();
 	private final EventList<Item> items = EventListManager.create();
@@ -139,7 +143,10 @@ public class StockpileItemDialog extends JDialogCentered {
 		});
 		jCountMinimum.addCaretListener(listener);
 
-		JLabel jBlueprintTypeLabel = new JLabel(TabsStockpile.get().blueprintType());
+		jIgnoreMultiplierLabel = new JLabel(TabsStockpile.get().multiplier());
+		jIgnoreMultiplier = new JCheckBox(TabsStockpile.get().multiplierIgnore());
+
+		jBlueprintTypeLabel = new JLabel(TabsStockpile.get().blueprintType());
 		jBlueprintType = new JComboBox<>(BlueprintAddType.values());
 		jBlueprintType.setActionCommand(StockpileItemAction.TYPE_CHANGE.name());
 		jBlueprintType.addActionListener(listener);
@@ -206,21 +213,23 @@ public class StockpileItemDialog extends JDialogCentered {
 					.addGroup(layout.createParallelGroup()
 						.addComponent(jItemsLabel)
 						.addComponent(jBlueprintTypeLabel)
-						.addComponent(jCountMinimumLabel)
 						.addComponent(jMeLabel)
 						.addComponent(jFacilityLabel)
 						.addComponent(jRigsLabel)
 						.addComponent(jSecurityLabel)
+						.addComponent(jIgnoreMultiplierLabel)
+						.addComponent(jCountMinimumLabel)
 					)
 					.addGroup(layout.createParallelGroup()
 						.addComponent(jItems, 300, 300, 300)
 						.addComponent(jSubpile, 300, 300, 300)
 						.addComponent(jBlueprintType, 300, 300, 300)
-						.addComponent(jCountMinimum, 300, 300, 300)
 						.addComponent(jMe, 300, 300, 300)
 						.addComponent(jFacility, 300, 300, 300)
 						.addComponent(jRigs, 300, 300, 300)
 						.addComponent(jSecurity, 300, 300, 300)
+						.addComponent(jIgnoreMultiplier, 300, 300, 300)
+						.addComponent(jCountMinimum, 300, 300, 300)
 					)
 				)
 				.addGroup(layout.createSequentialGroup()
@@ -256,6 +265,10 @@ public class StockpileItemDialog extends JDialogCentered {
 					.addComponent(jSecurity, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				)
 				.addGroup(layout.createParallelGroup()
+					.addComponent(jIgnoreMultiplierLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jIgnoreMultiplier, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+				)
+				.addGroup(layout.createParallelGroup()
 					.addComponent(jCountMinimumLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jCountMinimum, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				)
@@ -274,10 +287,18 @@ public class StockpileItemDialog extends JDialogCentered {
 		if (editStockpileItem instanceof SubpileStock) {
 			jSubpile.setText(editStockpileItem.getName());
 			jSubpile.setVisible(true);
+			jBlueprintTypeLabel.setVisible(false);
+			jBlueprintType.setVisible(false);
+			jIgnoreMultiplierLabel.setVisible(false);
+			jIgnoreMultiplier.setVisible(false);
 			jItems.setVisible(false);
 		} else {
 			jItems.setSelectedItem(item);
 			jSubpile.setVisible(false);
+			jBlueprintTypeLabel.setVisible(true);
+			jBlueprintType.setVisible(true);
+			jIgnoreMultiplierLabel.setVisible(true);
+			jIgnoreMultiplier.setVisible(true);
 			jItems.setVisible(true);
 		}
 		if (item.isBlueprint()) {
@@ -332,6 +353,7 @@ public class StockpileItemDialog extends JDialogCentered {
 		jItems.setVisible(true);
 		jItems.setSelectedIndex(0);
 		jCountMinimum.setText("");
+		jIgnoreMultiplier.setSelected(false);
 	}
 
 	private void show() {
@@ -366,7 +388,8 @@ public class StockpileItemDialog extends JDialogCentered {
 		} else {
 			typeID = item.getTypeID();
 		}
-		return new StockpileItem(getStockpile(), item, typeID, countMinimum, runs);
+		boolean ignoreMultiplier = jIgnoreMultiplier.isSelected();
+		return new StockpileItem(getStockpile(), item, typeID, countMinimum, runs, ignoreMultiplier);
 	}
 
 	private List<StockpileItem> getStockpileItems() {
@@ -378,6 +401,7 @@ public class StockpileItemDialog extends JDialogCentered {
 		} catch (NumberFormatException ex) {
 			countMinimum = 0;
 		}
+		boolean ignoreMultiplier = jIgnoreMultiplier.isSelected();
 		Integer me = jMe.getItemAt(jMe.getSelectedIndex());
 		ManufacturingFacility facility = jFacility.getItemAt(jFacility.getSelectedIndex());
 		ManufacturingRigs rigs = jRigs.getItemAt(jRigs.getSelectedIndex());
@@ -387,14 +411,14 @@ public class StockpileItemDialog extends JDialogCentered {
 			for (IndustryMaterial material : item.getManufacturingMaterials()) {
 				Item materialItem = ApiIdConverter.getItem(material.getTypeID());
 				double count = ApiIdConverter.getManufacturingQuantity(material.getQuantity(), me, facility, rigs, security, countMinimum, false);
-				itemsMaterial.add(new StockpileItem(getStockpile(), materialItem, material.getTypeID(), count, false));
+				itemsMaterial.add(new StockpileItem(getStockpile(), materialItem, material.getTypeID(), count, false, ignoreMultiplier));
 			}
 		} else if (jBlueprintType.isEnabled() && jBlueprintType.getItemAt(jBlueprintType.getSelectedIndex()) == BlueprintAddType.REACTION_MATERIALS) {
 			//Reaction Materials
 			for (IndustryMaterial material : item.getReactionMaterials()) {
 				Item materialItem = ApiIdConverter.getItem(material.getTypeID());
 				double count = ApiIdConverter.getManufacturingQuantity(material.getQuantity(), me, facility, rigs, security, countMinimum, false);
-				itemsMaterial.add(new StockpileItem(getStockpile(), materialItem, material.getTypeID(), count, false));
+				itemsMaterial.add(new StockpileItem(getStockpile(), materialItem, material.getTypeID(), count, false, ignoreMultiplier));
 			}
 		} else {
 			return null;
@@ -519,6 +543,7 @@ public class StockpileItemDialog extends JDialogCentered {
 					boolean oldUpdateValue = updating;
 					updating = true;
 					jCountMinimum.setText(String.valueOf(item.getCountMinimum()));
+					jIgnoreMultiplier.setSelected(item.isIgnoreMultiplier());
 					updating = oldUpdateValue;
 				}
 			});

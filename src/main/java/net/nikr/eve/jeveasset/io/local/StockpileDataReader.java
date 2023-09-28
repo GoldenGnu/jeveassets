@@ -171,7 +171,12 @@ public class StockpileDataReader extends AbstractBackup {
 				int itemTypeID = itemObject.get("i").getAsInt();
 				double countMinimum = itemObject.get("m").getAsDouble();
 				boolean runs = itemObject.get("r").getAsBoolean();
-				stockpile.add(new StockpileItem(stockpile, ApiIdConverter.getItem(Math.abs(itemTypeID)), itemTypeID, countMinimum, runs));
+				JsonElement element = itemObject.get("im");
+				boolean ignoreMultiplier = false;
+				if (element != null) {
+					ignoreMultiplier = element.getAsBoolean();
+				}
+				stockpile.add(new StockpileItem(stockpile, ApiIdConverter.getItem(Math.abs(itemTypeID)), itemTypeID, countMinimum, runs, ignoreMultiplier));
 			}
 			return stockpile;
 		}
