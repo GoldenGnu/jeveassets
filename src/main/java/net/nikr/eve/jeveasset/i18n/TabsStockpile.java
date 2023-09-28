@@ -178,6 +178,7 @@ public abstract class TabsStockpile extends Bundle {
 	public abstract String me();
 	public abstract String multiple();
 	public abstract String multiplier();
+	public abstract String multiplierIgnore();
 	public abstract String multiplierSign();
 	public abstract String myLocations();
 	public abstract String name();

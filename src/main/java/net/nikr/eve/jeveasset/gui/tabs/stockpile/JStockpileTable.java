@@ -129,8 +129,7 @@ public class JStockpileTable extends JSeparatorTable {
 			} else if (object instanceof SubpileItem) { //Total
 				if (!stockpileItem.isEditable() && columnName.equals(StockpileTableFormat.COUNT_MINIMUM.getColumnName())) {
 					ColorSettings.configCell(component, ColorEntry.GLOBAL_GRAND_TOTAL, isSelected);
-				}
-				if (columnName.equals(StockpileTableFormat.TAGS.getColumnName())) {
+				} else if (columnName.equals(StockpileTableFormat.TAGS.getColumnName())) {
 					ColorSettings.configCell(component, ColorEntry.GLOBAL_GRAND_TOTAL, isSelected);
 				}
 			} else if (object instanceof StockpileTotal) { //Total
@@ -145,8 +144,7 @@ public class JStockpileTable extends JSeparatorTable {
 					int jLabelWidth = jLabel.getMaximumSize().width + 1;
 					jLabel.setIconTextGap(Math.max(0, columnWidth - jLabelWidth));
 				}
-			}
-			if (columnName.equals(StockpileTableFormat.NAME.getColumnName())) {
+			} else if (columnName.equals(StockpileTableFormat.NAME.getColumnName())) {
 				if (Settings.get().isStockpileHalfColors()) {
 					if (stockpileItem.getPercentNeeded() >= (Settings.get().getStockpileColorGroup3() / 100.0) ) {
 						//Group 3
@@ -167,45 +165,35 @@ public class JStockpileTable extends JSeparatorTable {
 						ColorSettings.configCell(component, ColorEntry.STOCKPILE_TABLE_BELOW_THRESHOLD, isSelected);
 					}
 				}
+			} else if (stockpileItem.isIgnoreMultiplier() && columnName.equals(StockpileTableFormat.COUNT_MINIMUM_MULTIPLIED.getColumnName())) {
+				ColorSettings.configCell(component, ColorEntry.GLOBAL_GRAND_TOTAL, isSelected);
 			}
 			//Foreground
 			if (columnName.equals(StockpileTableFormat.COUNT_NOW_INVENTORY.getColumnName()) && !stockpileItem.getStockpile().isAssets()) {
 				component.setForeground(component.getBackground());
-			}
-			if (columnName.equals(StockpileTableFormat.COUNT_NOW_BUY_ORDERS.getColumnName()) && (!stockpileItem.getStockpile().isBuyOrders() || stockpileItem.isRuns())) {
+			} else if (columnName.equals(StockpileTableFormat.COUNT_NOW_BUY_ORDERS.getColumnName()) && (!stockpileItem.getStockpile().isBuyOrders() || stockpileItem.isRuns())) {
 				component.setForeground(component.getBackground());
-			}
-			if (columnName.equals(StockpileTableFormat.COUNT_NOW_SELL_ORDERS.getColumnName()) && (!stockpileItem.getStockpile().isSellOrders() || stockpileItem.isRuns())) {
+			} else if (columnName.equals(StockpileTableFormat.COUNT_NOW_SELL_ORDERS.getColumnName()) && (!stockpileItem.getStockpile().isSellOrders() || stockpileItem.isRuns())) {
 				component.setForeground(component.getBackground());
-			}
-			if (columnName.equals(StockpileTableFormat.COUNT_NOW_BUY_TRANSACTIONS.getColumnName()) && (!stockpileItem.getStockpile().isBuyTransactions() || stockpileItem.isRuns())) {
+			} else if (columnName.equals(StockpileTableFormat.COUNT_NOW_BUY_TRANSACTIONS.getColumnName()) && (!stockpileItem.getStockpile().isBuyTransactions() || stockpileItem.isRuns())) {
 				component.setForeground(component.getBackground());
-			}
-			if (columnName.equals(StockpileTableFormat.COUNT_NOW_SELL_TRANSACTIONS.getColumnName()) && (!stockpileItem.getStockpile().isSellTransactions() || stockpileItem.isRuns())) {
+			} else if (columnName.equals(StockpileTableFormat.COUNT_NOW_SELL_TRANSACTIONS.getColumnName()) && (!stockpileItem.getStockpile().isSellTransactions() || stockpileItem.isRuns())) {
 				component.setForeground(component.getBackground());
-			}
-			if (columnName.equals(StockpileTableFormat.COUNT_NOW_JOBS.getColumnName()) && !stockpileItem.getStockpile().isJobs()) {
+			} else if (columnName.equals(StockpileTableFormat.COUNT_NOW_JOBS.getColumnName()) && !stockpileItem.getStockpile().isJobs()) {
 				component.setForeground(component.getBackground());
-			}
-			if (columnName.equals(StockpileTableFormat.COUNT_NOW_SELLING_CONTRACTS.getColumnName()) && (!stockpileItem.getStockpile().isSellingContracts() || stockpileItem.isRuns())) {
+			} else if (columnName.equals(StockpileTableFormat.COUNT_NOW_SELLING_CONTRACTS.getColumnName()) && (!stockpileItem.getStockpile().isSellingContracts() || stockpileItem.isRuns())) {
 				component.setForeground(component.getBackground());
-			}
-			if (columnName.equals(StockpileTableFormat.COUNT_NOW_SOLD_CONTRACTS.getColumnName()) && (!stockpileItem.getStockpile().isSoldContracts() || stockpileItem.isRuns())) {
+			} else if (columnName.equals(StockpileTableFormat.COUNT_NOW_SOLD_CONTRACTS.getColumnName()) && (!stockpileItem.getStockpile().isSoldContracts() || stockpileItem.isRuns())) {
 				component.setForeground(component.getBackground());
-			}
-			if (columnName.equals(StockpileTableFormat.COUNT_NOW_BUYING_CONTRACTS.getColumnName()) && (!stockpileItem.getStockpile().isBuyingContracts() || stockpileItem.isRuns())) {
+			} else if (columnName.equals(StockpileTableFormat.COUNT_NOW_BUYING_CONTRACTS.getColumnName()) && (!stockpileItem.getStockpile().isBuyingContracts() || stockpileItem.isRuns())) {
 				component.setForeground(component.getBackground());
-			}
-			if (columnName.equals(StockpileTableFormat.COUNT_NOW_BOUGHT_CONTRACTS.getColumnName()) && (!stockpileItem.getStockpile().isBoughtContracts() || stockpileItem.isRuns())) {
+			} else if (columnName.equals(StockpileTableFormat.COUNT_NOW_BOUGHT_CONTRACTS.getColumnName()) && (!stockpileItem.getStockpile().isBoughtContracts() || stockpileItem.isRuns())) {
 				component.setForeground(component.getBackground());
-			}
-			if (columnName.equals(StockpileTableFormat.COUNT_NEEDED.getColumnName()) && stockpileItem.getCountNeeded() < 0) {
+			} else if (columnName.equals(StockpileTableFormat.COUNT_NEEDED.getColumnName()) && stockpileItem.getCountNeeded() < 0) {
 				ColorSettings.configCell(component, ColorEntry.GLOBAL_VALUE_NEGATIVE, isSelected);
-			}
-			if (columnName.equals(StockpileTableFormat.VALUE_NEEDED.getColumnName()) && stockpileItem.getValueNeeded() < 0) {
+			} else if (columnName.equals(StockpileTableFormat.VALUE_NEEDED.getColumnName()) && stockpileItem.getValueNeeded() < 0) {
 				ColorSettings.configCell(component, ColorEntry.GLOBAL_VALUE_NEGATIVE, isSelected);
-			}
-			if (columnName.equals(StockpileTableFormat.VOLUME_NEEDED.getColumnName()) && stockpileItem.getVolumeNeeded() < 0) {
+			} else if (columnName.equals(StockpileTableFormat.VOLUME_NEEDED.getColumnName()) && stockpileItem.getVolumeNeeded() < 0) {
 				ColorSettings.configCell(component, ColorEntry.GLOBAL_VALUE_NEGATIVE, isSelected);
 			}
 		}
