@@ -45,7 +45,7 @@ import uk.me.candle.eve.pricing.options.PricingOptions;
 public class ProxyTest extends TestUtil {
 
 	private ProxyData proxyData;
-	private static final Set<Integer> TYPE_IDS = new HashSet<Integer>();
+	private static final Set<Integer> TYPE_IDS = new HashSet<>();
 
 	@AfterClass
 	public static void afterClass() {
@@ -108,7 +108,7 @@ public class ProxyTest extends TestUtil {
 	private class PriceDataGetterMock extends PriceDataGetter {
 
 		protected void update() {
-			super.processUpdate(null, true, new TestPricingOptions(), TYPE_IDS, PriceSource.EVEMARKETER);
+			super.processUpdate(null, true, new TestPricingOptions(), TYPE_IDS, PriceSource.FUZZWORK);
 		}
 
 	}
