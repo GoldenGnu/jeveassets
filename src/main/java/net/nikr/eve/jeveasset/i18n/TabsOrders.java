@@ -72,6 +72,8 @@ public abstract class TabsOrders extends Bundle {
 	public abstract String columnMinimumQuantity();
 	public abstract String columnOwner();
 	public abstract String columnIssuedBy();
+	public abstract String columnOwned();
+	public abstract String columnOwnedToolTip();
 	public abstract String columnWalletDivision();
 	public abstract String columnLocation();
 	public abstract String columnSystem();

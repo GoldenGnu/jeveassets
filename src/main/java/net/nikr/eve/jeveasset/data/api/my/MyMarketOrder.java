@@ -62,6 +62,7 @@ public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarket
 	private Outbid outbid;
 	private boolean outbidOwned = false;
 	private boolean esi = true;
+	private boolean owned;
 	//soft init
 	private JButton jButton;
 
@@ -70,6 +71,7 @@ public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarket
 		this.item = item;
 		this.owner = owner;
 		this.owners = Collections.singleton(owner.getOwnerID());
+		this.owned = !rawMarketOrder.isCorp();
 	}
 
 	public void close() {
@@ -121,6 +123,14 @@ public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarket
 
 	public boolean isActive() {
 		return getState() == MarketOrderState.OPEN && !isExpired();
+	}
+
+	public boolean isOwned() {
+		return owned;
+	}
+
+	public void setOwned(boolean owned) {
+		this.owned = owned;
 	}
 
 	@Override

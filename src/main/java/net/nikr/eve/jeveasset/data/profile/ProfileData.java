@@ -573,6 +573,11 @@ public class ProfileData {
 			order.setIssuedByName(ApiIdConverter.getOwnerName(order.getIssuedBy()));
 			order.setBrokersFee(marketOrdersBrokersFee.get(order.getOrderID()));
 			order.setOutbid(Settings.get().getMarketOrdersOutbid().get(order.getOrderID()));
+			//Update Owned
+			Integer issuedBy = order.getIssuedBy();
+			if (order.isCorporation() && issuedBy != null) {
+				order.setOwned(uniqueOwners.containsKey((long) issuedBy));
+			}
 			//Price Data
 			order.setPriceData(ApiIdConverter.getPriceData(order.getTypeID(), false));
 			//Changed date
@@ -595,6 +600,10 @@ public class ProfileData {
 			//Update Owners
 			industryJob.setInstaller(ApiIdConverter.getOwnerName(industryJob.getInstallerID()));
 			industryJob.setCompletedCharacter(ApiIdConverter.getOwnerName(industryJob.getCompletedCharacterID()));
+			//Update Owned
+			if (industryJob.getOwner().isCorporation()) {
+				industryJob.setOwned(uniqueOwners.containsKey(industryJob.getInstallerID()));
+			}
 			//Update BPO/BPC status
 			industryJob.setBlueprint(blueprints.get(industryJob.getBlueprintID()));
 			//Price
@@ -613,6 +622,10 @@ public class ProfileData {
 			}
 			if (acceptor != null) {
 				contract.setAcceptorAfterAssets(acceptor.getAssetLastUpdate());
+			}
+			//Update Owned
+			if (contract.isForCorp()) {
+				contract.setOwned(uniqueOwners.containsKey(contract.getIssuerID()));
 			}
 			//Update Locations
 			contract.setStartLocation(ApiIdConverter.getLocation(contract.getStartLocationID()));
