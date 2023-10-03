@@ -24,14 +24,17 @@ import ca.odell.glazedlists.EventList;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.my.MyAsset;
 import net.nikr.eve.jeveasset.data.profile.ProfileData;
 import net.nikr.eve.jeveasset.data.profile.ProfileManager;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.profile.TableData;
+import net.nikr.eve.jeveasset.data.sde.StaticData;
 import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
 import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.i18n.TabsMaterials;
@@ -47,13 +50,29 @@ public class MaterialsData extends TableData {
 		super(profileManager, profileData);
 	}
 
-	public EventList<Material> getData(String owner, boolean piMaterials) {
+	public EventList<Material> getData(String owner, boolean ore, boolean pi) {
+		Set<String> groups = new HashSet<>();
+		for (Item item : StaticData.get().getItems().values()) {
+			if (item.getCategory().equals(Item.CATEGORY_MATERIAL)) {
+				groups.add(item.getGroup());
+			}
+			if (pi && item.isPiMaterial()) {
+				groups.add(item.getGroup());
+			}
+			if (ore && item.isMined()) {
+				groups.add(item.getGroup());
+			}
+		}
+		return getData(owner, groups);
+	}
+
+	public EventList<Material> getData(String owner, Set<String> groups) {
 		EventList<Material> eventList = EventListManager.create();
-		updateData(eventList, owner, piMaterials);
+		updateData(eventList, owner, groups);
 		return eventList;
 	}
 
-	protected boolean updateData(EventList<Material> eventList, String owner, boolean piMaterials) {
+	protected boolean updateData(EventList<Material> eventList, String owner, Set<String> groups) {
 		if (owner == null || owner.isEmpty()) {
 			owner = General.get().all();
 		}
@@ -67,8 +86,8 @@ public class MaterialsData extends TableData {
 		//Summary Total All
 		Material summaryTotalAllMaterial = new Material(Material.MaterialType.SUMMARY_ALL, null, TabsMaterials.get().summary(), TabsMaterials.get().grandTotal(), General.get().all());
 		for (MyAsset asset : profileData.getAssetsList()) {
-			//Skip none-material + none Pi Material (if not enabled)
-			if (!asset.getItem().getCategory().equals(Item.CATEGORY_MATERIAL) && (!asset.getItem().isPiMaterial() || !piMaterials)) {
+			//Skip
+			if (!groups.contains(asset.getItem().getGroup())) {
 				continue;
 			}
 			//Skip not selected owners

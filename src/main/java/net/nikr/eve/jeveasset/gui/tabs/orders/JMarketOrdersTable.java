@@ -58,7 +58,11 @@ public class JMarketOrdersTable extends JAutoColumnTable {
 		if (columnName.equals(MarketTableFormat.OUTBID_PRICE.getColumnName())) {
 			if (marketOrder.haveOutbid()) {
 				if (marketOrder.isOutbid()) {
-					ColorSettings.configCell(component, ColorEntry.MARKET_ORDERS_OUTBID_NOT_BEST, isSelected);
+					if (marketOrder.isOutbidOwned()) {
+						ColorSettings.configCell(component, ColorEntry.MARKET_ORDERS_OUTBID_NOT_BEST_OWNED, isSelected);
+					} else {
+						ColorSettings.configCell(component, ColorEntry.MARKET_ORDERS_OUTBID_NOT_BEST, isSelected);
+					}
 				} else {
 					ColorSettings.configCell(component, ColorEntry.MARKET_ORDERS_OUTBID_BEST, isSelected);
 				}

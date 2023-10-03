@@ -26,6 +26,7 @@ import ca.odell.glazedlists.FilterList;
 import ca.odell.glazedlists.matchers.Matcher;
 import ca.odell.glazedlists.matchers.TextMatcherEditor;
 import ca.odell.glazedlists.swing.AutoCompleteSupport;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
@@ -129,9 +130,11 @@ public class StockpileDialog extends JDialogCentered {
 	private final List<LocationPanel> locationPanels = new ArrayList<>();
 	private final JPanel jFiltersPanel;
 	private final JLabel jWarning;
+	private final Font font;
 
 	private Stockpile stockpile;
 	private Stockpile cloneStockpile;
+	private boolean template;
 	private boolean updated = false;
 
 	//Data
@@ -176,6 +179,7 @@ public class StockpileDialog extends JDialogCentered {
 		});
 		jName.addCaretListener(listener);
 		jNamePanel.add(jName);
+		font = jName.getFont();
 	//Multiplier
 		BorderPanel jMultiplierPanel = new BorderPanel(TabsStockpile.get().multiplier());
 
@@ -282,7 +286,12 @@ public class StockpileDialog extends JDialogCentered {
 
 	private Stockpile getStockpile() {
 		//Name
-		String name = jName.getText();
+		String name;
+		if (jName.isEnabled()) {
+			name = jName.getText();
+		} else {
+			name = "";
+		}
 		//Filters
 		List<StockpileFilter> stockpileFilters = new ArrayList<>();
 		for (LocationPanel locationPanel : locationPanels) {
@@ -319,6 +328,8 @@ public class StockpileDialog extends JDialogCentered {
 				b = false;
 				ColorSettings.config(jName, ColorEntry.GLOBAL_ENTRY_INVALID);
 			}
+		} else if (!jName.isEnabled()) {
+			//Do nothing
 		} else if (jName.getText().isEmpty()) {
 			ColorSettings.config(jName, ColorEntry.GLOBAL_ENTRY_INVALID);
 			b = false;
@@ -346,9 +357,22 @@ public class StockpileDialog extends JDialogCentered {
 		show();
 		return stockpile;
 	}
+
 	Stockpile showAdd(final String name) {
 		clear();
 		jName.setText(name);
+		this.getDialog().setTitle(TabsStockpile.get().addStockpileTitle());
+		show();
+		return stockpile;
+	}
+
+	Stockpile showTemplate() {
+		clear();
+		ColorSettings.configReset(jName);
+		template = true;
+		jName.setEnabled(false);
+		jName.setText(TabsStockpile.get().importOptionsTemplate());
+		jName.setFont(font.deriveFont(Font.ITALIC));
 		this.getDialog().setTitle(TabsStockpile.get().addStockpileTitle());
 		show();
 		return stockpile;
@@ -432,7 +456,10 @@ public class StockpileDialog extends JDialogCentered {
 	private void clear() {
 		stockpile = null;
 		cloneStockpile = null;
+		template = false;
 
+		jName.setEnabled(true);
+		jName.setFont(font);
 		jName.setText("");
 		jMultiplier.setText("1");
 		jContractsMatchAll.setSelected(false);
@@ -563,7 +590,10 @@ public class StockpileDialog extends JDialogCentered {
 	@Override
 	protected void save() {
 		Settings.lock("Stockpile (Stockpile dialog)"); //Lock for Stockpile (Stockpile dialog)
-		if (stockpile != null) { //Edit
+		if (template) { //Edit
+			stockpile = getStockpile();
+			//Don't save anything
+		} else if (stockpile != null) { //Edit
 			String group = Settings.get().getStockpileGroupSettings().getGroup(stockpile);
 			Settings.get().getStockpileGroupSettings().removeGroup(stockpile);
 			stockpile.update(getStockpile());

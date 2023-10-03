@@ -68,12 +68,15 @@ public abstract class TabsStockpile extends Bundle {
 	public abstract String contractsMatchAllTip();
 	public abstract String copy();
 	public abstract String countMinimum();
+	public abstract String delete();
 	public abstract String deleteItem();
 	public abstract String deleteItemTitle();
 	public abstract String deleteItems(int size);
 	public abstract String deleteStockpile();
 	public abstract String deleteStockpileTitle();
+	public abstract String deleteStockpileMsg(int count);
 	public abstract String duplicate();
+	public abstract String edit();
 	public abstract String editCell();
 	public abstract String editItem();
 	public abstract String editStockpile();
@@ -99,11 +102,14 @@ public abstract class TabsStockpile extends Bundle {
 	public abstract String groupCollapse();
 	public abstract String groupExpand();
 	public abstract String groupMenu();
+	public abstract String groupRenameExist();
+	public abstract String groupRenameTitle();
 	public abstract String groups();
 	public abstract String hideStockpile();
 	public abstract String importButton();
 	public abstract String importEft();
 	public abstract String importEveMultibuy();
+	public abstract String importEveXml();
 	public abstract String importIskPerHour();
 	public abstract String importShoppingList();
 	public abstract String importStockpilesText();
@@ -127,6 +133,8 @@ public abstract class TabsStockpile extends Bundle {
 	public abstract String importOptionsRenameHelp();
 	public abstract String importOptionsSkip();
 	public abstract String importOptionsSkipHelp();
+	public abstract String importOptionsTemplate();
+	public abstract String importOptionsTemplateHelp();
 	public abstract String include();
 	public abstract String includeCount(int i);
 	public abstract String includeHelp();
@@ -170,6 +178,7 @@ public abstract class TabsStockpile extends Bundle {
 	public abstract String me();
 	public abstract String multiple();
 	public abstract String multiplier();
+	public abstract String multiplierIgnore();
 	public abstract String multiplierSign();
 	public abstract String myLocations();
 	public abstract String name();
@@ -190,6 +199,7 @@ public abstract class TabsStockpile extends Bundle {
 	public abstract String remove();
 	public abstract String renameStockpileTitle();
 	public abstract String runs();
+	public abstract String selectFits();
 	public abstract String selectStockpiles();
 	public abstract String shoppingList();
 	public abstract String showHidden();

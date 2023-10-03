@@ -50,6 +50,8 @@ public abstract class TabsJobs extends Bundle {
 	public abstract String columnName();
 	public abstract String columnOwner();
 	public abstract String columnInstaller();
+	public abstract String columnOwned();
+	public abstract String columnOwnedToolTip();
 	public abstract String columnCompletedCharacter();
 	public abstract String columnLocation();
 	public abstract String columnSystem();
@@ -62,6 +64,8 @@ public abstract class TabsJobs extends Bundle {
 	public abstract String columnRuns();
 	public abstract String columnOutputCount();
 	public abstract String columnOutputValue();
+	public abstract String columnOutputVolume();
+	public abstract String columnOutputVolumeToolTip();
 	public abstract String columnOutputType();
 	public abstract String columnBPO();
 	public abstract String columnMaterialEfficiency();

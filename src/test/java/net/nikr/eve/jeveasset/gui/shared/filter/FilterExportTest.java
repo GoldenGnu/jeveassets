@@ -35,7 +35,6 @@ import net.nikr.eve.jeveasset.gui.shared.table.SimpleColumnManager;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.NumberValue;
 import net.nikr.eve.jeveasset.gui.tabs.assets.AssetTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.assets.AssetsTab;
-import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractsExtendedTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractsTab;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractsTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.items.ItemTableFormat;
@@ -88,7 +87,6 @@ public class FilterExportTest extends TestUtil {
 		test(AssetsTab.NAME, AssetTableFormat.values());
 		//Contract
 		test(ContractsTab.NAME, ContractsTableFormat.values());
-		test(ContractsTab.NAME, ContractsExtendedTableFormat.values());
 		//Journal
 		test(JournalTab.NAME, JournalTableFormat.values());
 		//MarketOrder

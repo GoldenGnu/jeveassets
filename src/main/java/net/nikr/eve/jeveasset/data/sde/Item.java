@@ -60,8 +60,12 @@ public class Item implements Comparable<Item>, ItemType {
 	public static final String CATEGORY_DEPLOYABLE = "Deployable";
 	//Biomass
 	public static final String GROUP_BIOMASS = "Biomass";
-	//
+	//Station Services
 	public static final String GROUP_STATION_SERVICES = "Station Services";
+	//Compressed Gas
+	public static final String GROUP_COMPRESSED_GAS = "Compressed Gas";
+	//Harvestable Cloud
+	public static final String GROUP_HARVESTABLE_CLOUD = "Harvestable Cloud";
 
 	private final int typeID; //TypeID : int
 	private final String name;
@@ -136,6 +140,13 @@ public class Item implements Comparable<Item>, ItemType {
 
 	public boolean isOre() {
 		return category.equals(CATEGORY_ASTEROID);
+	}
+
+	public boolean isMined() {
+		return category.equals(CATEGORY_ASTEROID)
+				|| group.equals(GROUP_HARVESTABLE_CLOUD)
+				|| group.equals(GROUP_COMPRESSED_GAS)
+				;
 	}
 
 	public boolean isShip() {

@@ -26,6 +26,7 @@ import java.util.Comparator;
 import java.util.Date;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
+import net.nikr.eve.jeveasset.gui.shared.table.containers.YesNo;
 import net.nikr.eve.jeveasset.i18n.TabsJobs;
 
 
@@ -78,6 +79,20 @@ public enum IndustryJobTableFormat implements EnumTableColumn<MyIndustryJob> {
 		@Override
 		public Object getColumnValue(final MyIndustryJob from) {
 			return from.getInstaller();
+		}
+	},
+	OWNED(YesNo.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsJobs.get().columnOwned();
+		}
+		@Override
+		public String getColumnToolTip() {
+			return TabsJobs.get().columnOwnedToolTip();
+		}
+		@Override
+		public Object getColumnValue(final MyIndustryJob from) {
+			return new YesNo(from.isOwned());
 		}
 	},
 	COMPLETED_CHARACTER(String.class, GlazedLists.comparableComparator()) {
@@ -198,6 +213,20 @@ public enum IndustryJobTableFormat implements EnumTableColumn<MyIndustryJob> {
 		@Override
 		public Object getColumnValue(final MyIndustryJob from) {
 			return from.getOutputValue();
+		}
+	},
+	OUTPUT_VOLUME(Double.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsJobs.get().columnOutputVolume();
+		}
+		@Override
+		public String getColumnToolTip() {
+			return TabsJobs.get().columnOutputVolumeToolTip();
+		}
+		@Override
+		public Object getColumnValue(final MyIndustryJob from) {
+			return from.getOutputVolume();
 		}
 	},
 	OUTPUT_TYPE(String.class, GlazedLists.comparableComparator()) {

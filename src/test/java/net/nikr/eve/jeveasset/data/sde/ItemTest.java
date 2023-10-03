@@ -62,8 +62,12 @@ public class ItemTest extends TestUtil {
 		boolean categoryDeployable = false;
 		//Biomass
 		boolean groupBiomass = false;
-		//StationServices
+		//Station Services
 		boolean groupStationServices = false;
+		//Compressed Gas
+		boolean groupCompressedGas = false;
+		//Harvestable Cloud
+		boolean groupHarvestableCloud = false;
 
 		for (Item item : StaticData.get().getItems().values()) {
 			//PI
@@ -150,6 +154,14 @@ public class ItemTest extends TestUtil {
 			if (item.getGroup().equals(Item.GROUP_STATION_SERVICES)) {
 				groupStationServices = true;
 			}
+			//Compressed Gas
+			if (item.getGroup().equals(Item.GROUP_COMPRESSED_GAS)) {
+				groupCompressedGas = true;
+			}
+			//Harvestable Cloud
+			if (item.getGroup().equals(Item.GROUP_HARVESTABLE_CLOUD)) {
+				groupHarvestableCloud = true;
+			}
 		}
 		assertEquals(total, blueprint + reaction);
 		//PI
@@ -184,6 +196,11 @@ public class ItemTest extends TestUtil {
 		assertTrue("no group: Biomass", groupBiomass);
 		//Station Services
 		assertTrue("no group: Station Services", groupStationServices);
+	//Gas
+		//Compressed Gas
+		assertTrue("no group: Compressed Gas", groupCompressedGas);
+		//Harvestable Cloud
+		assertTrue("no group: Harvestable Cloud", groupHarvestableCloud);
 	}
 
 }

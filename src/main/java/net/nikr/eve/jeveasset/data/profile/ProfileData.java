@@ -22,6 +22,7 @@ package net.nikr.eve.jeveasset.data.profile;
 
 import ca.odell.glazedlists.EventList;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -326,6 +327,7 @@ public class ProfileData {
 				}
 			}
 		}
+		updateOutbidOwned(marketOrdersList);
 		AddedData.getMarketOrders().commitQueue();
 		Program.ensureEDT(new Runnable() {
 			@Override
@@ -571,6 +573,11 @@ public class ProfileData {
 			order.setIssuedByName(ApiIdConverter.getOwnerName(order.getIssuedBy()));
 			order.setBrokersFee(marketOrdersBrokersFee.get(order.getOrderID()));
 			order.setOutbid(Settings.get().getMarketOrdersOutbid().get(order.getOrderID()));
+			//Update Owned
+			Integer issuedBy = order.getIssuedBy();
+			if (order.isCorporation() && issuedBy != null) {
+				order.setOwned(uniqueOwners.containsKey((long) issuedBy));
+			}
 			//Price Data
 			order.setPriceData(ApiIdConverter.getPriceData(order.getTypeID(), false));
 			//Changed date
@@ -586,12 +593,17 @@ public class ProfileData {
 				order.setChanged(AddedData.getMarketOrders().getAdd(marketOrdersAdded, order.getOrderID(), changed));
 			}
 		}
+		updateOutbidOwned(marketOrders);
 		AddedData.getMarketOrders().commitQueue();
 		//Update IndustryJobs dynamic values
 		for (MyIndustryJob industryJob : industryJobs) {
 			//Update Owners
 			industryJob.setInstaller(ApiIdConverter.getOwnerName(industryJob.getInstallerID()));
 			industryJob.setCompletedCharacter(ApiIdConverter.getOwnerName(industryJob.getCompletedCharacterID()));
+			//Update Owned
+			if (industryJob.getOwner().isCorporation()) {
+				industryJob.setOwned(uniqueOwners.containsKey(industryJob.getInstallerID()));
+			}
 			//Update BPO/BPC status
 			industryJob.setBlueprint(blueprints.get(industryJob.getBlueprintID()));
 			//Price
@@ -610,6 +622,10 @@ public class ProfileData {
 			}
 			if (acceptor != null) {
 				contract.setAcceptorAfterAssets(acceptor.getAssetLastUpdate());
+			}
+			//Update Owned
+			if (contract.isForCorp()) {
+				contract.setOwned(uniqueOwners.containsKey(contract.getIssuerID()));
 			}
 			//Update Locations
 			contract.setStartLocation(ApiIdConverter.getLocation(contract.getStartLocationID()));
@@ -925,6 +941,41 @@ public class ProfileData {
 			eventList.getReadWriteLock().readLock().unlock();
 		}
 		updateList(eventList, found);
+	}
+
+	private void updateOutbidOwned(Collection<MyMarketOrder> marketOrders) {
+		Map<Integer, Set<Long>> lowestBuy = new HashMap<>();
+		Map<Integer, Set<Long>> lowestSell = new HashMap<>();
+		for (MyMarketOrder order : marketOrders) { //Find lowest
+			if (order.isActive() && order.haveOutbid() && !order.isOutbid()) { //Lowest
+				Map<Integer, Set<Long>> lowest;
+				if (order.isBuyOrder()) {
+					lowest = lowestBuy;
+				} else {
+					lowest = lowestSell;
+				}
+				Set<Long> orderIDs = lowest.get(order.getTypeID());
+				if (orderIDs == null) {
+					orderIDs = new HashSet<>();
+					lowest.put(order.getTypeID(), orderIDs);
+				}
+				orderIDs.add(order.getOrderID());
+			}
+		}
+		for (MyMarketOrder order : marketOrders) { //Set owned
+			if (!order.isActive()) {
+				order.setOutbidOwned(false);
+				continue;
+			}
+			Map<Integer, Set<Long>> lowest;
+			if (order.isBuyOrder()) {
+				lowest = lowestBuy;
+			} else {
+				lowest = lowestSell;
+			}
+			Set<Long> orderIDs = lowest.get(order.getTypeID());
+			order.setOutbidOwned(orderIDs != null && !orderIDs.contains(order.getOrderID())); //Not null and not one of the lowest orders
+		}
 	}
 
 	private void updateIndustryJobPrices(EventList<MyIndustryJob> eventList, Set<Integer> typeIDs) {

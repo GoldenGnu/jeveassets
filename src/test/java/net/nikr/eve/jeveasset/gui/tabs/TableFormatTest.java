@@ -48,7 +48,6 @@ import net.nikr.eve.jeveasset.gui.shared.table.ColumnManager.FormulaColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.ColumnManager.JumpColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.tabs.assets.AssetTableFormat;
-import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractsExtendedTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractsTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.items.ItemTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJobTableFormat;
@@ -127,13 +126,9 @@ public class TableFormatTest extends TestUtil {
 			}
 			//Contract
 			test(ContractsTableFormat.class);
-			test(ContractsExtendedTableFormat.class);
 			MyContract saveMyContract = ConverterTestUtil.getMyContract(setNull, setValues, options);
 			MyContractItem saveMyContractItem = ConverterTestUtil.getMyContractItem(saveMyContract, setNull, setValues, options);
 			for (ContractsTableFormat tableFormat : ContractsTableFormat.values()) {
-				test(tableFormat, tableFormat.getType(), tableFormat.getColumnValue(saveMyContractItem));
-			}
-			for (ContractsExtendedTableFormat tableFormat : ContractsExtendedTableFormat.values()) {
 				test(tableFormat, tableFormat.getType(), tableFormat.getColumnValue(saveMyContractItem));
 			}
 			//Journal

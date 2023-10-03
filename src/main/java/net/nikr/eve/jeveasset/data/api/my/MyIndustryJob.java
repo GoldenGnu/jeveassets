@@ -205,14 +205,16 @@ public class MyIndustryJob extends RawIndustryJob implements Comparable<MyIndust
 	private String completedCharacter = "";
 	private MyBlueprint blueprint;
 	private MyLocation location;
+	private boolean owned;
 
 	public MyIndustryJob(final RawIndustryJob rawIndustryJob, final Item item, final Item output, final OwnerType owner) {
 		super(rawIndustryJob);
 		this.item = item;
 		this.output = output;
 		this.owner = owner;
-		owners.add(getInstallerID());
-		owners.add(owner.getOwnerID());
+		this.owners.add(getInstallerID());
+		this.owners.add(owner.getOwnerID());
+		this.owned = owner.isCharacter();
 
 		switch (getActivityID()) {
 			case 0:
@@ -392,6 +394,14 @@ public class MyIndustryJob extends RawIndustryJob implements Comparable<MyIndust
 		return getActivity() == IndustryActivity.ACTIVITY_REVERSE_INVENTION;
 	}
 
+	public boolean isOwned() {
+		return owned;
+	}
+
+	public void setOwned(boolean owned) {
+		this.owned = owned;
+	}
+
 	public IndustryActivity getActivity() {
 		return activity;
 	}
@@ -438,6 +448,14 @@ public class MyIndustryJob extends RawIndustryJob implements Comparable<MyIndust
 
 	public String getOutputType() {
 		return output.getTypeName();
+	}
+
+	public double getOutputVolume() {
+		if (isCopying()) {
+			return output.getVolumePackaged() * getRuns(); // Volume of the output blueprints (bp runs should not be counted)
+		} else {
+			return output.getVolumePackaged() * outputCount;
+		}
 	}
 
 	public String getInstaller() {

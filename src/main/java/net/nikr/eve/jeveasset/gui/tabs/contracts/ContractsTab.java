@@ -35,8 +35,10 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
@@ -134,7 +136,7 @@ public class ContractsTab extends JMainTabPrimary {
 
 		//Filter
 		eventList.getReadWriteLock().readLock().lock();
-		filterList = new FilterList<>(sortedListSeparator);
+		filterList = new FilterList<>(sortedListColumn);
 		eventList.getReadWriteLock().readLock().unlock();
 		//Statusbar updater
 		filterList.addListEventListener(listener);
@@ -149,7 +151,13 @@ public class ContractsTab extends JMainTabPrimary {
 		jTable.setCellSelectionEnabled(true);
 		PaddingTableCellRenderer.install(jTable, 3);
 		//Sorting
-		TableComparatorChooser.install(jTable, sortedListColumn, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
+		TableComparatorChooser<MyContractItem> install = TableComparatorChooser.install(jTable, sortedListColumn, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
+		install.addSortActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				separatorList.setComparator(new SeparatorComparator(install));
+			}
+		});
 		//Selection Model
 		selectionModel = EventModels.createSelectionModel(separatorList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
@@ -372,11 +380,56 @@ public class ContractsTab extends JMainTabPrimary {
 
 	public class SeparatorComparator implements Comparator<MyContractItem> {
 
+		private final List<Comparator<MyContractItem>> comparators = new ArrayList<>();
+
+		public SeparatorComparator() { }
+
+		@SuppressWarnings({"unchecked", "rawtypes"})
+		public SeparatorComparator(TableComparatorChooser<MyContractItem> install) {
+			if (install == null) {
+				return;
+			}
+			Map<Integer, ContractsTableFormat> formats = new HashMap<>();
+			for (ContractsTableFormat format : ContractsTableFormat.values()) {
+				formats.put(format.ordinal(), format);
+			}
+			List<Integer> sortingColumns = install.getSortingColumns();
+			for (Integer index : sortingColumns) {
+				ContractsTableFormat format = formats.get(index);
+				if (!format.isContract()) {
+					continue;
+				}
+				boolean reverse = install.isColumnReverse(index);
+				List<Comparator> columnComparators = install.getComparatorsForColumn(index);
+				int comparatorIndex = install.getColumnComparatorIndex(index);
+				if (comparatorIndex < 0 || comparatorIndex >= columnComparators.size()) {
+					continue;
+				}
+				Comparator comparator;
+				if (reverse) {
+					comparator = columnComparators.get(comparatorIndex).reversed();
+				} else {
+					comparator = columnComparators.get(comparatorIndex);
+				}
+				this.comparators.add(comparator);
+			}
+		}
+
 		@Override
 		public int compare(final MyContractItem o1, final MyContractItem o2) {
 			Integer l1 = o1.getContract().getContractID();
 			Integer l2 = o2.getContract().getContractID();
-			return l1.compareTo(l2);
+			int group = l1.compareTo(l2);
+			if (group == 0) {
+				return group;
+			}
+			for (Comparator<MyContractItem> comparator : comparators) {
+				int order = comparator.compare(o1, o2);
+				if (order != 0) {
+					return order;
+				}
+			}
+			return group;
 		}
 	}
 

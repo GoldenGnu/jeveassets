@@ -34,6 +34,7 @@ public abstract class TabsMaterials extends Bundle {
 		super(locale);
 	}
 
+	public abstract String all();
 	public abstract String collapse();
 	public abstract String columnCount();
 	public abstract String columnGroup();
@@ -43,6 +44,8 @@ public abstract class TabsMaterials extends Bundle {
 	public abstract String columnValue();
 	public abstract String expand();
 	public abstract String grandTotal();
+	public abstract String includeMaterials();
+	public abstract String includeOre();
 	public abstract String includePI();
 	public abstract String materials();
 	public abstract String no();

@@ -112,6 +112,19 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 		this.id = getNewID(); //New stockpile = new id
 	}
 
+	/**
+	 * Copy with new name.
+	 * @param name
+	 * @param stockpile 
+	 */
+	public Stockpile(final String name, final Stockpile stockpile) {
+		update(stockpile);
+		this.name = name;
+		this.id = getNewID(); //New stockpile = new id
+		items.add(totalItem);
+		updateDynamicValues();
+	}
+
 	public Stockpile(final String name, final Long id, final List<StockpileFilter> filters, double multiplier, boolean contractsMatchAll) {
 		this.name = name;
 		this.filters = filters;
@@ -542,6 +555,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 		private int typeID;
 		private double countMinimum;
 		private boolean runs;
+		private boolean ignoreMultiplier;
 
 		//soft init
 		protected JButton jButton;
@@ -572,20 +586,26 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 					stockpileItem.item,
 					stockpileItem.typeID,
 					stockpileItem.countMinimum,
-					stockpileItem.runs
+					stockpileItem.runs,
+					stockpileItem.ignoreMultiplier
 					);
 		}
 
 		public StockpileItem(final Stockpile stockpile, final Item item, final int typeID, final double countMinimum, final boolean runs) {
-			this(stockpile, item, typeID, countMinimum, runs, getNewID());
+			this(stockpile, item, typeID, countMinimum, runs, false, getNewID());
 		}
 
-		public StockpileItem(final Stockpile stockpile, final Item item, final int typeID, final double countMinimum, final boolean runs, final long id) {
+		public StockpileItem(final Stockpile stockpile, final Item item, final int typeID, final double countMinimum, final boolean runs, boolean ignoreMultiplier) {
+			this(stockpile, item, typeID, countMinimum, runs, ignoreMultiplier, getNewID());
+		}
+
+		public StockpileItem(final Stockpile stockpile, final Item item, final int typeID, final double countMinimum, final boolean runs, boolean ignoreMultiplier, final long id) {
 			this.stockpile = stockpile;
 			this.item = item;
 			this.typeID = typeID;
 			this.countMinimum = countMinimum;
 			this.runs = runs;
+			this.ignoreMultiplier = ignoreMultiplier;
 			this.id = id;
 		}
 
@@ -595,6 +615,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 			this.typeID = stockpileItem.typeID;
 			this.countMinimum = stockpileItem.countMinimum;
 			this.runs = stockpileItem.runs;
+			this.ignoreMultiplier = stockpileItem.ignoreMultiplier;
 		}
 
 		@Override
@@ -611,6 +632,14 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 
 		public boolean isEditable() {
 			return true;
+		}
+
+		public boolean isIgnoreMultiplier() {
+			return ignoreMultiplier;
+		}
+
+		public void setIgnoreMultiplier(boolean ignoreMultiplier) {
+			this.ignoreMultiplier = ignoreMultiplier;
 		}
 
 		private void reset() {
@@ -1150,7 +1179,11 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 		}
 
 		public long getCountMinimumMultiplied() {
-			return (long) Math.ceil(stockpile.getMultiplier() * countMinimum);
+			if (isIgnoreMultiplier()) {
+				return (long) Math.ceil(countMinimum);
+			} else {
+				return (long) Math.ceil(stockpile.getMultiplier() * countMinimum);
+			}
 		}
 
 		public long getCountNow() {
@@ -1415,7 +1448,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 		private double volumeNeeded = 0;
 
 		public StockpileTotal(final Stockpile stockpile) {
-			super(stockpile, new Item(0), 0, 0, false, 0);
+			super(stockpile, new Item(0), 0, 0, false, false, 0);
 		}
 
 		private void reset() {
@@ -1863,7 +1896,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 		private int level;
 
 		public SubpileItem(Stockpile stockpile, StockpileItem parentItem, SubpileStock subpileStock, int level, String path) {
-			super(stockpile, parentItem);
+			super(stockpile, parentItem.getItem(), parentItem.getItemTypeID(), parentItem.getCountMinimum(), parentItem.isRuns(), false);
 			itemLinks.add(new SubpileItemLinks(parentItem, subpileStock));
 			setLevel(level);
 			this.path = path;
@@ -1937,12 +1970,13 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 		@Override
 		public double getCountMinimum() {
 			double countMinimum = 0;
-			for (SubpileItemLinks item : itemLinks) {
-				SubpileStock stock = item.getSubpileStock();
-				if (stock != null) {
-					countMinimum = + countMinimum + (item.getStockpileItem().getCountMinimum() * item.getSubpileStock().getSubMultiplier());
+			for (SubpileItemLinks link : itemLinks) {
+				SubpileStock stock = link.getSubpileStock();
+				StockpileItem item =  link.getStockpileItem();
+				if (item.isIgnoreMultiplier() || stock == null) {
+					countMinimum = countMinimum + item.getCountMinimum();
 				} else {
-					countMinimum = + countMinimum + item.getStockpileItem().getCountMinimum();
+					countMinimum = countMinimum + (item.getCountMinimum() * stock.getSubMultiplier());
 				}
 			}
 			return countMinimum;
@@ -1950,7 +1984,19 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 
 		@Override
 		public long getCountMinimumMultiplied() {
-			return (long) Math.ceil(getStockpile().getMultiplier() * getCountMinimum());
+			double countMinimum = 0;
+			for (SubpileItemLinks link : itemLinks) {
+				SubpileStock stock = link.getSubpileStock();
+				StockpileItem item =  link.getStockpileItem();
+				if (item.isIgnoreMultiplier()) {
+					countMinimum = countMinimum + item.getCountMinimum();
+				} else if (stock != null) {
+					countMinimum = countMinimum + (item.getCountMinimum() * stock.getSubMultiplier() * getStockpile().getMultiplier());
+				} else {
+					countMinimum = countMinimum + (item.getCountMinimum() * getStockpile().getMultiplier());
+				}
+			}
+			return (long) Math.ceil(countMinimum);
 		}
 
 		private static class SubpileItemLinks {

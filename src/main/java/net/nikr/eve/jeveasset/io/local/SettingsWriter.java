@@ -636,6 +636,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 				setAttribute(itemNode, "typeid", item.getItemTypeID());
 				setAttribute(itemNode, "minimum", item.getCountMinimum());
 				setAttribute(itemNode, "runs", item.isRuns());
+				setAttribute(itemNode, "ignoremultiplier", item.isIgnoreMultiplier());
 				stockpileNode.appendChild(itemNode);
 			}
 			//SUBPILES

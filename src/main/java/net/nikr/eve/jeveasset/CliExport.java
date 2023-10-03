@@ -185,7 +185,7 @@ public class CliExport {
 						ok = export(profileData.getMarketOrdersEventList(), TableFormatFactory.marketTableFormat(), toolName, exportSettings);
 						break;
 					case MATERIALS:
-						ok = export(new MaterialsData(profileManager, profileData).getData(CliOptions.get().getMaterialsOwner(), CliOptions.get().isMaterialsPI()), TableFormatFactory.materialTableFormat(), toolName, exportSettings);
+						ok = export(new MaterialsData(profileManager, profileData).getData(CliOptions.get().getMaterialsOwner(), CliOptions.get().isMaterialsOre(), CliOptions.get().isMaterialsPI()), TableFormatFactory.materialTableFormat(), toolName, exportSettings);
 						break;
 					case MINING:
 						ok = export(profileData.getMiningEventList(), TableFormatFactory.miningTableFormat(), toolName, exportSettings);

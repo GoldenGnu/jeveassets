@@ -16,6 +16,38 @@
                   #### #  # #  # #  # #### #### #### #### ####
 
 ________________________________________________________________________________
+_7.8.0__________________________________________________________________________
+
+New Features:
+-Rename Stockpile Groups (Issue #379)
+-Group multiple stockpiles (Issue #377)
+-Delete multiple stockpiles (Issue #377)
+-Added income/expenditure/total to the journal statusbar (Issue #17)
+-Import systems to the routing tool (Issue #208)
+-Sorting contract columns now sort the contract groups too (Issue #374)
+-Added ore/ice/gas to the materials tool (Issue #391)
+-Made each group optional in the materials tool (Issue #391)
+-Added reprocessed/manufacturing columns to the contracts tool (Issue #412)
+-Import eve fitting xml to stockpiles (Issue #382)
+-Added output volume column to the industry jobs tool (Issue #418)
+-Different color for orders outbid by your own orders (Issue #416)
+-Added option to ignore multiplier for stockpile items (Issue #411)
+-Added owned column to industry jobs/market orders/contracts
+
+Bug Fixes:
+-Update table cell on stockpile delete
+-Reprocessed count/account name/stockpile multiplier require enter (Issue #410)
+-Stockpile menu wasn't updating on stockpile rename
+-Added expired status to contracts (Issue #415)
+-PB materials added to stockpiles are rounded up (Issue #413)
+
+Changed:
+-Removed evemarketer.com API as a market price source
+
+Code:
+-Added fail-safe for endless outbid update loop on error
+
+________________________________________________________________________________
 _7.7.0__________________________________________________________________________
 
 New Features:

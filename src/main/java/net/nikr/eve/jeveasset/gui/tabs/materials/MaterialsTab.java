@@ -30,17 +30,24 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JMenu;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.data.api.my.MyAsset;
+import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.settings.types.LocationType;
 import net.nikr.eve.jeveasset.gui.images.Images;
+import net.nikr.eve.jeveasset.gui.shared.components.JDropDownButton;
 import net.nikr.eve.jeveasset.gui.shared.components.JFixedToolBar;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTabSecondary;
 import net.nikr.eve.jeveasset.gui.shared.components.ListComboBoxModel;
@@ -74,7 +81,15 @@ public class MaterialsTab extends JMainTabSecondary {
 	private final JButton jExport;
 	private final JButton jExpand;
 	private final JButton jCollapse;
-	private final JCheckBox jPiMaterial;
+	private final JDropDownButton jMaterial;
+	private final JCheckBoxMenuItem jMaterialAll;
+	private final JDropDownButton jPi;
+	private final JCheckBoxMenuItem jPiAll;
+	private final JDropDownButton jOre;
+	private final JCheckBoxMenuItem jOreAll;
+	private final List<JCheckBoxMenuItem> jMaterialGroups = new ArrayList<>();
+	private final List<JCheckBoxMenuItem> jPiGroups = new ArrayList<>();
+	private final List<JCheckBoxMenuItem> jOreGroups = new ArrayList<>();
 	private final JSeparatorTable jTable;
 	private final JScrollPane jTableScroll;
 
@@ -109,10 +124,20 @@ public class MaterialsTab extends JMainTabSecondary {
 
 		jToolBar.addSpace(5);
 
-		jPiMaterial = new JCheckBox(TabsMaterials.get().includePI());
-		jPiMaterial.setActionCommand(MaterialsAction.SELECTED.name());
-		jPiMaterial.addActionListener(listener);
-		jToolBar.add(jPiMaterial);
+		jMaterial = new JDropDownButton(TabsMaterials.get().includeMaterials(), Images.MISC_MATERIALS.getIcon());
+		jToolBar.addButton(jMaterial);
+		jMaterialAll = new JCheckBoxMenuItem(TabsMaterials.get().all());
+		createAll(jMaterialGroups, jMaterialAll);
+
+		jPi = new JDropDownButton(TabsMaterials.get().includePI(), Images.MISC_PI.getIcon());
+		jToolBar.addButton(jPi);
+		jPiAll = new JCheckBoxMenuItem(TabsMaterials.get().all());
+		createAll(jPiGroups, jPiAll);
+
+		jOre = new JDropDownButton(TabsMaterials.get().includeOre(), Images.MISC_ORE.getIcon());
+		jToolBar.addButton(jOre);
+		jOreAll = new JCheckBoxMenuItem(TabsMaterials.get().all());
+		createAll(jOreGroups, jOreAll);
 
 		jToolBar.addSeparator();
 
@@ -176,6 +201,24 @@ public class MaterialsTab extends JMainTabSecondary {
 	@Override
 	public void updateData() {
 		if (!program.getOwnerNames(false).isEmpty()) {
+			Set<String> materialGroups = new TreeSet<>();
+			Set<String> piGroups = new TreeSet<>();
+			Set<String> oreGroups = new TreeSet<>();
+			for (MyAsset asset : program.getAssetsList()) {
+				Item item = asset.getItem();
+				if (item.getCategory().equals(Item.CATEGORY_MATERIAL)) {
+					materialGroups.add(item.getGroup());
+				}
+				if (item.isPiMaterial()) {
+					piGroups.add(item.getGroup());
+				}
+				if (item.isMined()) {
+					oreGroups.add(item.getGroup());
+				}
+			}
+			createGroups(materialGroups, jMaterialGroups, jMaterialAll, jMaterial);
+			createGroups(piGroups, jPiGroups, jPiAll, jPi);
+			createGroups(oreGroups, jOreGroups, jOreAll, jOre);
 			jExport.setEnabled(true);
 			jExpand.setEnabled(true);
 			jCollapse.setEnabled(true);
@@ -223,11 +266,14 @@ public class MaterialsTab extends JMainTabSecondary {
 	private void updateTable() {
 		beforeUpdateData();
 		String owner = (String) jOwners.getSelectedItem();
-		boolean piMaterials = jPiMaterial.isSelected();
+		Set<String> groups = new HashSet<>();
+		addGroups(groups, jPiGroups, jPiAll);
+		addGroups(groups, jMaterialGroups, jMaterialAll);
+		addGroups(groups, jOreGroups, jOreAll);
 		//Save separator expanded/collapsed state
 		jTable.saveExpandedState();
 		//Update Data
-		boolean isEmpty = materialsData.updateData(eventList, owner, piMaterials);
+		boolean isEmpty = materialsData.updateData(eventList, owner, groups);
 		//Restore separator expanded/collapsed state
 		jTable.loadExpandedState();
 		if (!isEmpty) {
@@ -241,6 +287,53 @@ public class MaterialsTab extends JMainTabSecondary {
 		}
 		jTableScroll.getViewport().setViewPosition(new Point(0, 0));
 		afterUpdateData();
+	}
+
+	private void addGroups(Set<String> groups, List<JCheckBoxMenuItem> jGroups, JCheckBoxMenuItem jAll) {
+		boolean all = true;
+		for (JCheckBoxMenuItem jGroup : jGroups) {
+			if (jGroup.isSelected()) {
+				groups.add(jGroup.getText());
+			} else {
+				all = false;
+			}
+		}
+		jAll.setSelected(all);
+	}
+
+	private void createGroups(Set<String> groups, List<JCheckBoxMenuItem> jGroups, JCheckBoxMenuItem jAll, JDropDownButton jButton) {
+		jButton.removeAll();
+		jGroups.clear();
+
+		jAll.setSelected(true);
+		jButton.add(jAll);
+
+		for (String group : groups) {
+			JCheckBoxMenuItem jGroup = new JCheckBoxMenuItem(group);
+			jGroup.setSelected(true);
+			jGroup.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					updateTable();
+				}
+			});
+			jButton.add(jGroup, true);
+			jGroups.add(jGroup);
+		}
+	}
+
+	private void createAll(List<JCheckBoxMenuItem> jGroups, JCheckBoxMenuItem jAll) {
+		jAll.setSelected(true);
+		jAll.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				boolean selected = jAll.isSelected();
+				for (JCheckBoxMenuItem jGroup : jGroups) {
+					jGroup.setSelected(selected);
+				}
+				updateTable();
+			}
+		});
 	}
 
 	private class MaterialTableMenu implements TableMenu<Material> {
