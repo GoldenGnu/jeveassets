@@ -29,6 +29,7 @@ import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.LongInt;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.Percent;
+import net.nikr.eve.jeveasset.gui.shared.table.containers.YesNo;
 import net.nikr.eve.jeveasset.i18n.TabsOrders;
 
 
@@ -310,6 +311,20 @@ public enum MarketTableFormat implements EnumTableColumn<MyMarketOrder> {
 		@Override
 		public Object getColumnValue(final MyMarketOrder from) {
 			return from.getIssuedByName();
+		}
+	},
+	OWNED(YesNo.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsOrders.get().columnOwned();
+		}
+		@Override
+		public String getColumnToolTip() {
+			return TabsOrders.get().columnOwnedToolTip();
+		}
+		@Override
+		public Object getColumnValue(final MyMarketOrder from) {
+			return new YesNo(from.isOwned());
 		}
 	},
 	WalletDivision(Integer.class, GlazedLists.comparableComparator()) {

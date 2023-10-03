@@ -74,6 +74,8 @@ public abstract class TabsContracts extends Bundle {
 	public abstract String columnMaterialEfficiencyToolTip();
 	public abstract String columnName();
 	public abstract String columnNumDays();
+	public abstract String columnOwned();
+	public abstract String columnOwnedToolTip();
 	public abstract String columnPrice();
 	public abstract String columnQuantity();
 	public abstract String columnRecordID();

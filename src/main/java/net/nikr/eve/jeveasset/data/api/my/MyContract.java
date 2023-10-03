@@ -42,16 +42,18 @@ public class MyContract extends RawContract implements LocationsType, OwnersType
 	private String issuer = "";
 	private final Set<Long> owners = new HashSet<>();
 	private boolean esi = true;
+	private boolean owned;
 
 	private boolean issuerAfterAssets = false;
 	private boolean acceptorAfterAssets = false;
 
 	public MyContract(RawContract rawContract) {
 		super(rawContract);
-		owners.add(getIssuerID());
-		owners.add(getIssuerCorpID());
-		owners.add(getAssigneeID());
-		owners.add(getAcceptorID());
+		this.owners.add(getIssuerID());
+		this.owners.add(getIssuerCorpID());
+		this.owners.add(getAssigneeID());
+		this.owners.add(getAcceptorID());
+		this.owned = !rawContract.isForCorp();
 	}
 
 	public String getTypeName() {
@@ -202,6 +204,14 @@ public class MyContract extends RawContract implements LocationsType, OwnersType
 
 	public boolean isExpired() {
 		return Settings.getNow().after(getDateExpired());
+	}
+
+	public boolean isOwned() {
+		return owned;
+	}
+
+	public void setOwned(boolean owned) {
+		this.owned = owned;
 	}
 
 	public String getStatusFormatted() {
