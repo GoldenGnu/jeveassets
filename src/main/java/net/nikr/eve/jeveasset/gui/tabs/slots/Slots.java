@@ -178,6 +178,7 @@ public class Slots implements Comparable<Slots>, LocationType {
 					marketOrdersMax = marketOrdersMax + (skill.getActiveSkillLevel() * 32);
 					break;
 				case 25235: //Contracting (+4)
+				case 73912: //Advanced Contracting (+4)
 					contractCharacterMax = contractCharacterMax + (skill.getActiveSkillLevel() * 4);
 					break;
 				case 25233: //Corporation Contracting (+10)
