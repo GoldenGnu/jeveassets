@@ -55,7 +55,6 @@ import java.util.Objects;
 import javax.swing.GroupLayout;
 import javax.swing.Icon;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -65,7 +64,6 @@ import javax.swing.JPopupMenu;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.Timer;
-import javax.swing.text.StyledDocument;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
@@ -105,7 +103,6 @@ import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
 import net.nikr.eve.jeveasset.gui.shared.table.TableFormatFactory;
-import net.nikr.eve.jeveasset.gui.tabs.orders.MarketOrdersErrorDialog.ErrorLevel;
 import net.nikr.eve.jeveasset.gui.tabs.orders.OutbidProcesser.OutbidProcesserInput;
 import net.nikr.eve.jeveasset.gui.tabs.orders.OutbidProcesser.OutbidProcesserOutput;
 import net.nikr.eve.jeveasset.i18n.DialoguesUpdate;
@@ -123,9 +120,7 @@ public class MarketOrdersTab extends JMainTabPrimary {
 
 	private enum MarketOrdersAction {
 		UPDATE,
-		AUTO_UPDATE,
 		ORDER_TYPE,
-		ERROR_LOG,
 		ORDER_RANGE
 	}
 
@@ -133,12 +128,9 @@ public class MarketOrdersTab extends JMainTabPrimary {
 
 	private final JAutoColumnTable jTable;
 	private final JButton jUpdate;
-	private final JButton jErrors;
-	private final JCheckBox jAutoUpdate;
 	private final JButton jClearNew;
 	private final JComboBox<MarketOrderRange> jOrderRangeNext;
 	private final JComboBox<String> jOrderType;
-	private final MarketOrdersErrorDialog jMarketOrdersErrorDialog;
 	private final JStatusLabel jSellOrdersTotal;
 	private final JStatusLabel jBuyOrdersTotal;
 	private final JStatusLabel jEscrowTotal;
@@ -151,7 +143,6 @@ public class MarketOrdersTab extends JMainTabPrimary {
 	private final FileListener fileListener;
 	private static Date lastLogUpdate = null;
 	private static String clipboardData = null;
-	private java.util.Timer updateTimer;
 	private boolean showUnknownLocationsWarning = true;
 
 	//Table
@@ -168,8 +159,6 @@ public class MarketOrdersTab extends JMainTabPrimary {
 		super(program, NAME, TabsOrders.get().market(), Images.TOOL_MARKET_ORDERS.getIcon(), true);
 
 		ListenerClass listener = new ListenerClass();
-
-		jMarketOrdersErrorDialog = new MarketOrdersErrorDialog(program);
 
 		JFixedToolBar jToolBar = new JFixedToolBar();
 
@@ -222,22 +211,10 @@ public class MarketOrdersTab extends JMainTabPrimary {
 
 		jToolBar.addSeparator();
 
-		jErrors = new JButton(TabsOrders.get().logOK());
-		jErrors.setActionCommand(MarketOrdersAction.ERROR_LOG.name());
-		jErrors.addActionListener(listener);
-		jErrors.setDisabledIcon(Images.EDIT_SET.getIcon());
-		jErrors.setEnabled(false);
-		jToolBar.addButton(jErrors);
-
 		jUpdate = new JButton(TabsOrders.get().updateOutbidEsi(), Images.DIALOG_UPDATE.getIcon());
 		jUpdate.setActionCommand(MarketOrdersAction.UPDATE.name());
 		jUpdate.addActionListener(listener);
 		jToolBar.addButton(jUpdate);
-
-		jAutoUpdate = new JCheckBox(TabsOrders.get().updateOutbidEsiAuto());
-		jAutoUpdate.setActionCommand(MarketOrdersAction.AUTO_UPDATE.name());
-		jAutoUpdate.addActionListener(listener);
-		jToolBar.addButton(jAutoUpdate);
 
 		//Table Format
 		tableFormat = TableFormatFactory.marketTableFormat();
@@ -374,32 +351,6 @@ public class MarketOrdersTab extends JMainTabPrimary {
 		}
 	}
 
-	private void schedule() {
-		if (jAutoUpdate.isSelected()) {
-			long delay = Math.max(0, Settings.get().getPublicMarketOrdersNextUpdate().getTime() - System.currentTimeMillis());
-			if (updateTimer != null) { //Cancel old tasks
-				updateTimer.cancel();
-			}
-			updateTimer = new java.util.Timer();
-			updateTimer.schedule(new java.util.TimerTask() {
-				@Override
-				public void run() {
-					Program.ensureEDT(new Runnable() {
-						@Override
-						public void run() {
-							updateESI();
-						}
-					});
-					updateTimer = null;
-				}
-			}, delay);
-		} else {
-			if (updateTimer != null) {
-				updateTimer.cancel();
-			}
-		}
-	}
-
 	public synchronized static Date getLastLogUpdate() {
 		return lastLogUpdate;
 	}
@@ -480,32 +431,11 @@ public class MarketOrdersTab extends JMainTabPrimary {
 		}
 	}
 
-	private void updateErrorLogButton() {
-		switch (jMarketOrdersErrorDialog.getErrorLevel()) {
-			case ERROR:
-				jErrors.setIcon(Images.UPDATE_DONE_ERROR.getIcon());
-				jErrors.setEnabled(true);
-				break;
-			case WARN:
-				jErrors.setIcon(Images.UPDATE_DONE_SOME.getIcon());
-				jErrors.setEnabled(true);
-				break;
-			case INFO:
-				jErrors.setIcon(Images.UPDATE_DONE_INFO.getIcon());
-				jErrors.setEnabled(true);
-				break;
-			case CLEAR:
-				jErrors.setEnabled(false);
-				break;
-		}
-		jErrors.setText(jMarketOrdersErrorDialog.getDocument().getLength() > 0 ? TabsOrders.get().logError() : TabsOrders.get().logOK());
-	}
-
 	private void updateDates() {
 		Date nextUpdate = Settings.get().getPublicMarketOrdersNextUpdate();
 		if (Updatable.isUpdatable(nextUpdate)) {
 			jUpdate.setText(TabsOrders.get().updateOutbidEsi());
-			jUpdate.setEnabled(!jAutoUpdate.isSelected());
+			jUpdate.setEnabled(true);
 		} else {
 			long diff = nextUpdate.getTime() - System.currentTimeMillis();
 			if (diff < 1000) {
@@ -552,9 +482,6 @@ public class MarketOrdersTab extends JMainTabPrimary {
 		OutbidProcesserInput input = new OutbidProcesserInput(program.getProfileData(), Settings.get().getOutbidOrderRange());
 		if (input.getRegionIDs().isEmpty()) {
 			LOG.info("no active orders found");
-			if (jAutoUpdate.isSelected()) {
-				jAutoUpdate.setSelected(false);
-			}
 			updateDates();
 			JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsOrders.get().updateNoActiveMsg(), TabsOrders.get().updateNoActiveTitle(), JOptionPane.PLAIN_MESSAGE);
 			return;
@@ -562,7 +489,7 @@ public class MarketOrdersTab extends JMainTabPrimary {
 		final Date currentUpdate = Settings.get().getPublicMarketOrdersNextUpdate();
 		OutbidProcesserOutput output = new OutbidProcesserOutput();
 		final PublicMarkerOrdersUpdateTask updateTask = new PublicMarkerOrdersUpdateTask(input, output);
-		TaskDialog taskDialog = new TaskDialog(program, updateTask, false, jAutoUpdate.isSelected(), jAutoUpdate.isSelected(), StatusPanel.UpdateType.PUBLIC_MARKET_ORDERS, new TaskDialog.TasksCompletedAdvanced() {
+		TaskDialog taskDialog = new TaskDialog(program, updateTask, false, false, false, StatusPanel.UpdateType.PUBLIC_MARKET_ORDERS, new TaskDialog.TasksCompletedAdvanced() {
 			@Override
 			public void tasksCompleted(TaskDialog taskDialog) {
 				//Set data
@@ -591,8 +518,6 @@ public class MarketOrdersTab extends JMainTabPrimary {
 				}
 				//Update time again
 				timer.start();
-				//Schedule next update
-				schedule();
 				Program.ensureEDT(new Runnable() {
 					@Override
 					public void run() {
@@ -624,19 +549,6 @@ public class MarketOrdersTab extends JMainTabPrimary {
 						}
 					}
 				}
-				if (updateTask.hasError()) {
-					jMarketOrdersErrorDialog.setErrorLevel(ErrorLevel.ERROR);
-				} else if (updateTask.hasWarning()) {
-					jMarketOrdersErrorDialog.setErrorLevel(ErrorLevel.WARN);
-				} else if (updateTask.hasInfo()) {
-					jMarketOrdersErrorDialog.setErrorLevel(ErrorLevel.INFO);
-				}
-				updateErrorLogButton();
-			}
-
-			@Override
-			public StyledDocument getStyledDocument() {
-				return jMarketOrdersErrorDialog.getDocument();
 			}
 		});
 	}
@@ -777,17 +689,9 @@ public class MarketOrdersTab extends JMainTabPrimary {
 			if (MarketOrdersAction.UPDATE.name().equals(e.getActionCommand())) {
 				updateDates();
 				updateESI();
-			} else if (MarketOrdersAction.AUTO_UPDATE.name().equals(e.getActionCommand())) {
-				if (jAutoUpdate.isSelected()) {
-					updateDates();
-				}
-				schedule();
 			} else if (MarketOrdersAction.ORDER_TYPE.name().equals(e.getActionCommand())) {
 				String value = jOrderType.getItemAt(jOrderType.getSelectedIndex());
 				fileListener.setBuy(TabsOrders.get().updateOutbidFileBuy().equals(value));
-			} else if (MarketOrdersAction.ERROR_LOG.name().equals(e.getActionCommand())) {
-				jMarketOrdersErrorDialog.setVisible(true);
-				updateErrorLogButton();
 			} else if (MarketOrdersAction.ORDER_RANGE.name().equals(e.getActionCommand())) {
 				MarketOrderRange range = jOrderRangeNext.getItemAt(jOrderRangeNext.getSelectedIndex());
 				Settings.lock("Outbid Range");
