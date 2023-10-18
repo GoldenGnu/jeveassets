@@ -104,11 +104,6 @@ public abstract class TabsOrders extends Bundle {
 	public abstract String lastEsiUpdateToolTip();
 	public abstract String lastLogUpdateToolTip();
 	public abstract String lastClipboardToolTip();
-	public abstract String logClear();
-	public abstract String logClose();
-	public abstract String logError();
-	public abstract String logOK();
-	public abstract String logTitle();
 	public abstract String market();
 	public abstract String marketLogTypeToolTip();
 	public abstract String none();
@@ -145,7 +140,6 @@ public abstract class TabsOrders extends Bundle {
 	public abstract String updateNoActiveMsg();
 	public abstract String updateNoActiveTitle();
 	public abstract String updateOutbidEsi();
-	public abstract String updateOutbidEsiAuto();
 	public abstract String updateOutbidFileBuy();
 	public abstract String updateOutbidFileSell();
 	public abstract String updateOutbidWhen(String time);

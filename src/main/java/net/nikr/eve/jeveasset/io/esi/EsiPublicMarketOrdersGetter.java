@@ -103,7 +103,7 @@ public class EsiPublicMarketOrdersGetter extends AbstractEsiGetter {
 			}
 		});
 		if (modified) {
-			addError("last-modified changed while updating", "Cache expired while updating");
+			addWarning("last-modified changed while updating", "Cache expired while updating");
 		}
 		publicMarketOrders = false;
 		Map<Integer, Set<RawPublicMarketOrder>> orders = EsiConverter.toPublicMarketOrders(responses);
