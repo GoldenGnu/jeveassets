@@ -69,6 +69,7 @@
     <row c="" ci="0" r="Verge Vendor" ri="10000068" s="" se="0.0" si="0" sy="" syi="0"/>
     <row c="" ci="0" r="Black Rise" ri="10000069" s="" se="0.0" si="0" sy="" syi="0"/>
     <row c="" ci="0" r="Pochven" ri="10000070" s="" se="0.0" si="0" sy="" syi="0"/>
+    <row c="" ci="0" r="Yasna Zakh" ri="10001000" s="" se="0.0" si="0" sy="" syi="0"/>
     <row c="" ci="0" r="A-R00001" ri="11000001" s="" se="0.0" si="0" sy="" syi="0"/>
     <row c="" ci="0" r="A-R00002" ri="11000002" s="" se="0.0" si="0" sy="" syi="0"/>
     <row c="" ci="0" r="A-R00003" ri="11000003" s="" se="0.0" si="0" sy="" syi="0"/>
@@ -901,6 +902,7 @@
     <row c="Krai Perun" ci="20000787" r="Pochven" ri="10000070" s="" se="0.0" si="0" sy="" syi="0"/>
     <row c="Krai Svarog" ci="20000788" r="Pochven" ri="10000070" s="" se="0.0" si="0" sy="" syi="0"/>
     <row c="Krai Veles" ci="20000789" r="Pochven" ri="10000070" s="" se="0.0" si="0" sy="" syi="0"/>
+    <row c="Duzna Kah" ci="20010000" r="Yasna Zakh" ri="10001000" s="" se="0.0" si="0" sy="" syi="0"/>
     <row c="A-C00001" ci="21000001" r="A-R00002" ri="11000002" s="" se="0.0" si="0" sy="" syi="0"/>
     <row c="A-C00002" ci="21000002" r="A-R00002" ri="11000002" s="" se="0.0" si="0" sy="" syi="0"/>
     <row c="A-C00003" ci="21000003" r="A-R00002" ri="11000002" s="" se="0.0" si="0" sy="" syi="0"/>
@@ -6716,6 +6718,7 @@
     <row c="Okakuola" ci="20000782" r="Black Rise" ri="10000069" s="" se="0.3" si="0" sy="Nisuwa" syi="30045352"/>
     <row c="Okakuola" ci="20000782" r="Black Rise" ri="10000069" s="" se="0.2" si="0" sy="Pynekastoh" syi="30045353"/>
     <row c="Okakuola" ci="20000782" r="Black Rise" ri="10000069" s="" se="0.2" si="0" sy="Reitsato" syi="30045354"/>
+    <row c="Duzna Kah" ci="20010000" r="Yasna Zakh" ri="10001000" s="" se="0.0" si="0" sy="Zarzakh" syi="30100000"/>
     <row c="K-C00334" ci="21000334" r="K-R00033" ri="11000033" s="" se="0.0" si="0" sy="J055520" syi="31000001"/>
     <row c="K-C00334" ci="21000334" r="K-R00033" ri="11000033" s="" se="0.0" si="0" sy="J110145" syi="31000002"/>
     <row c="K-C00334" ci="21000334" r="K-R00033" ri="11000033" s="" se="0.0" si="0" sy="J164710" syi="31000003"/>
