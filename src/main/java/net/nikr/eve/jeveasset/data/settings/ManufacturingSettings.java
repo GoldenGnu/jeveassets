@@ -127,6 +127,49 @@ public class ManufacturingSettings {
 		}
 	}
 
+	public static enum ReactionRigs {
+		NONE(0) {
+			@Override
+			public String getText() {
+				return DialoguesSettings.get().manufacturingRigsNone();
+			}
+		},
+		T1(2.0) {
+			@Override
+			public String getText() {
+				return DialoguesSettings.get().manufacturingRigsT1();
+			}
+		},
+		T2(2.40) {
+			@Override
+			public String getText() {
+				return DialoguesSettings.get().manufacturingRigsT2();
+			}
+		};
+
+		private final double materialBonus;
+
+		private ReactionRigs(double materialBonus) {
+			this.materialBonus = materialBonus;
+		}
+
+		public abstract String getText();
+
+		@Override
+		public String toString() {
+			return getText();
+			//return getText() + " (" + materialBonus + "%)";
+		}
+
+		public double getMaterialBonus() {
+			return materialBonus;
+		}
+
+		public static ReactionRigs getDefault() {
+			return NONE;
+		}
+	}
+
 	public static enum ManufacturingSecurity {
 		HIGHSEC(1) {
 			@Override
@@ -167,6 +210,43 @@ public class ManufacturingSettings {
 
 		public static ManufacturingSecurity getDefault() {
 			return HIGHSEC;
+		}
+	}
+
+	public static enum ReactionSecurity {
+		LOWSEC(1.0) {
+			@Override
+			public String getText() {
+				return DialoguesSettings.get().manufacturingSecurityLowSec();
+			}
+		},
+		NULLSEC(1.1) {
+			@Override
+			public String getText() {
+				return DialoguesSettings.get().manufacturingSecurityNullSec();
+			}
+		};
+
+		private final double rigBonus;
+
+		private ReactionSecurity(double rigBonus) {
+			this.rigBonus = rigBonus;
+		}
+
+		public abstract String getText();
+
+		public double getRigBonus() {
+			return rigBonus;
+		}
+
+		@Override
+		public String toString() {
+			return getText();
+			//return getText() + " (" + rigBonus + "%)";
+		}
+
+		public static ReactionSecurity getDefault() {
+			return LOWSEC;
 		}
 	}
 
