@@ -389,7 +389,7 @@ public class JFormulaDialog<T extends Enum<T> & EnumTableColumn<Q>, Q> extends J
 		}
 	}
 
-	public static class Formula {
+	public static class Formula implements Comparable<Formula> {
 		private final String columnName;
 		private final Expression expression;
 		private final Map<Object, Object> values = new HashMap<>();
@@ -465,6 +465,11 @@ public class JFormulaDialog<T extends Enum<T> & EnumTableColumn<Q>, Q> extends J
 				return false;
 			}
 			return true;
+		}
+
+		@Override
+		public int compareTo(Formula other) {
+			return this.columnName.compareTo(other.columnName);
 		}
 	}
 }

@@ -34,6 +34,7 @@ import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.tag.Tag;
 import net.nikr.eve.jeveasset.data.settings.types.TagsType;
 import net.nikr.eve.jeveasset.gui.images.Images;
+import net.nikr.eve.jeveasset.gui.shared.MenuScroller;
 import net.nikr.eve.jeveasset.gui.shared.menu.JTagsDialog.TagIcon;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.JAutoMenu;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
@@ -48,12 +49,16 @@ public class JMenuTags<T> extends JAutoMenu<T> {
 	private final JMenuItem jNew;
 	private final ListenerClass listener = new ListenerClass();
 	private final JTagsDialog jTagsDialog;
-	private List<TagsType> tagsTypes = new ArrayList<TagsType>();
+	private List<TagsType> tagsTypes = new ArrayList<>();
 
 	public JMenuTags(Program program) {
 		super(GuiShared.get().tags(), program);
-
 		setIcon(Images.TAG_GRAY.getIcon());
+
+		MenuScroller menuScroller = new MenuScroller(this);
+		menuScroller.keepVisible(2);
+		menuScroller.setTopFixedCount(2);
+		menuScroller.setInterval(125);
 
 		jTagsDialog = new JTagsDialog(program);
 
@@ -75,7 +80,7 @@ public class JMenuTags<T> extends JAutoMenu<T> {
 		jNew.setEnabled(valid);
 
 		//All Tags
-		Set<Tag> allTags = new TreeSet<Tag>(GlazedLists.comparableComparator());
+		Set<Tag> allTags = new TreeSet<>(GlazedLists.comparableComparator());
 		allTags.addAll(Settings.get().getTags().values());
 
 		//Separator
