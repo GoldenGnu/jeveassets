@@ -138,12 +138,12 @@ public class EsiNameGetter extends AbstractEsiGetter {
 						|| contextType == ContextType.CORPORATION_ID
 						) {
 					addOwnerID(list, journal.getContextID());
+				}
 			}
 			for (MyMining mining : ownerType.getMining()) {
 				addOwnerID(list, mining.getCharacterID());
 				addOwnerID(list, mining.getCorporationID());
 			}
-		}
 			for (RawContainerLog containerLog : ownerType.getContainerLogs()) {
 				addOwnerID(list, containerLog.getCharacterID());
 			}

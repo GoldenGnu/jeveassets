@@ -84,7 +84,7 @@ public abstract class AbstractGetter<O extends OwnerType> implements Runnable {
 		public String getTaskName() {
 			return taskName;
 		}
- 	}
+	}
 
 	private final UpdateTask updateTask;
 	private final boolean forceUpdate;

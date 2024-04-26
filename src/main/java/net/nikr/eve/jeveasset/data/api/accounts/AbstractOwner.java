@@ -106,6 +106,7 @@ public abstract class AbstractOwner implements OwnerType, Comparable<OwnerType> 
 		assetDivisions.putAll(abstractOwner.assetDivisions);
 		skills.addAll(abstractOwner.skills);
 		mining.addAll(abstractOwner.mining);
+		extractions.addAll(abstractOwner.extractions);
 		this.totalSkillPoints = abstractOwner.totalSkillPoints;
 		this.unallocatedSkillPoints = abstractOwner.unallocatedSkillPoints;
 		this.containerLogs = abstractOwner.containerLogs;

@@ -1106,7 +1106,7 @@ public class Program implements ActionListener {
 		} else if (MainMenuAction.SKILLS.name().equals(e.getActionCommand())) {
 			mainWindow.addTab(skillsTab);
 		} else if (MainMenuAction.MINING_ALL.name().equals(e.getActionCommand())) {
- 			mainWindow.addTab(miningTab);
+			mainWindow.addTab(miningTab);
 			mainWindow.addTab(miningGraphTab);
 			mainWindow.addTab(extractionsTab);
 		} else if (MainMenuAction.MINING_LOG.name().equals(e.getActionCommand())) {

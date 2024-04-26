@@ -1217,9 +1217,9 @@ public class ProfileData {
 						marketOrdersBrokersFee.put(marketOrder.getOrderID(), fee);
 					}
 				}
-				}
 			}
 		}
+	}
 
 	private void createTransactionsPriceData(Map<Integer, MarketPriceData> transactionPriceData, MyTransaction transaction) {
 		int typeID = transaction.getTypeID();
@@ -1384,7 +1384,6 @@ public class ProfileData {
 	}
 
 	private void updateContainer(MyAsset asset) {
-		String sContainer = "";
 		List<Long> parentIds = new ArrayList<>();
 		StringBuilder builder = new StringBuilder();
 		if (asset.getParents().isEmpty()) {
@@ -1405,11 +1404,10 @@ public class ProfileData {
 		List<MyContainerLog> containers = containerLogs.get(asset.getItemID());
 		if (containers != null) {
 			for (MyContainerLog containerLog : containers) {
-				containerLog.setContainer(sContainer);
+				containerLog.setContainer(builder.toString().intern());
 				containerLog.setParentIDs(parentIds);
 			}
 		}
-		asset.setContainer(sContainer.intern());
 	}
 
 	private void updateStructureAssets(final MyAsset asset, final MyAsset structure) {
