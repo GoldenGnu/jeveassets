@@ -140,8 +140,8 @@ public class JStockpileTable extends JSeparatorTable {
 					JLabel jLabel = (JLabel) component;
 					jLabel.setIcon(Images.EDIT_EDIT_BACKGROUND.getIcon());
 					jLabel.setHorizontalTextPosition(JLabel.TRAILING);
-					int columnWidth = getColumnModel().getColumn(column).getWidth();
-					int jLabelWidth = jLabel.getMaximumSize().width + 1;
+					int columnWidth = getColumnModel().getColumn(column).getWidth() - 2;
+					int jLabelWidth = jLabel.getMinimumSize().width;
 					jLabel.setIconTextGap(Math.max(0, columnWidth - jLabelWidth));
 				}
 			} else if (columnName.equals(StockpileTableFormat.NAME.getColumnName())) {
