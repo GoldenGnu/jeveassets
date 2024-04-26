@@ -33,6 +33,7 @@ import net.nikr.eve.jeveasset.data.sde.RouteFinder;
 import net.nikr.eve.jeveasset.data.sde.StaticData;
 import net.nikr.eve.jeveasset.data.settings.types.LocationType;
 import net.nikr.eve.jeveasset.gui.images.Images;
+import net.nikr.eve.jeveasset.gui.shared.MenuScroller;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuJumps.Jump;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.JAutoMenu;
 import net.nikr.eve.jeveasset.gui.shared.table.ColumnManager;
@@ -58,6 +59,11 @@ public class JMenuJumps<T extends Enum<T> & EnumTableColumn<Q>, Q> extends JAuto
 		ListenerClass listener = new ListenerClass();
 
 		this.setIcon(Images.TOOL_ROUTING.getIcon());
+
+		MenuScroller menuScroller = new MenuScroller(this);
+		menuScroller.keepVisible(4);
+		menuScroller.setTopFixedCount(4);
+		menuScroller.setInterval(125);
 
 		jAddOther = new JMenuItem(GuiShared.get().jumpsAddCustom());
 		jAddOther.setIcon(Images.EDIT_SET.getIcon());
