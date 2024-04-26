@@ -311,6 +311,104 @@
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
 				<version>2.4</version>
+				<configuration>
+					<finalName>${project.name}-${project.version}</finalName>
+					<appendAssemblyId>false</appendAssemblyId>
+					<descriptors>
+						<descriptor>src/main/assembly/assembly.xml</descriptor>
+					</descriptors>
+				</configuration>
+				<executions>
+					<execution>
+						<id>make-assembly</id> <!-- this is used for inheritance merges -->
+						<phase>package</phase> <!-- append to the packaging phase. -->
+						<goals>
+							<goal>single</goal> <!-- goals == mojos -->
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>net.ju-n.maven.plugins</groupId>
+				<artifactId>checksum-maven-plugin</artifactId>
+				<version>1.4</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>files</goal>
+						</goals>
+						<phase>verify</phase>
+					</execution>
+				</executions>
+				<configuration>
+					<fileSets>
+						<fileSet>
+							<directory>${project.build.directory}</directory>
+							<includes>
+								<include>*.txt</include>
+								<include>*.jar</include>
+								<include>*.properties</include>
+								<include>lib/*.jar</include>
+							</includes>
+						</fileSet>
+					</fileSets>
+					<algorithms>
+						<algorithm>MD5</algorithm>
+					</algorithms>
+					<csvSummary>false</csvSummary>
+					<individualFiles>true</individualFiles>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>wagon-maven-plugin</artifactId>
+				<version>2.0.2</version>
+				<executions>
+					<execution>
+						<id>upload-delete</id>
+						<phase>deploy</phase>
+						<goals>
+							<goal>sshexec</goal>
+						</goals>
+						<configuration>
+							<displayCommandOutputs>true</displayCommandOutputs>
+							<serverId>eve-nikr-net</serverId>
+							<url>${upload.url}</url>
+							<commands> 
+								<!-- remove data directory -->
+								<command>rm -rf ${upload.program.delete}</command>
+							</commands>
+						</configuration>
+					</execution>
+					<execution>
+						<id>upload-update</id>
+						<phase>deploy</phase>
+						<goals>
+							<goal>upload</goal>
+						</goals>
+						<configuration>
+							<fromDir>${project.build.directory}</fromDir>
+							<includes>*.txt,*.jar,*.md5,lib/*,*.dat,*.php,*.properties,.htaccess</includes>
+							<serverId>eve-nikr-net</serverId>
+							<url>sftp://${upload.url}</url>
+							<toDir>${upload.program.file}</toDir>
+						</configuration>
+					</execution>
+					<execution>
+						<id>upload-zip</id>
+						<phase>deploy</phase>
+						<goals>
+							<goal>upload</goal>
+						</goals>
+						<configuration>
+							<fromDir>${project.build.directory}</fromDir>
+							<includes>*.zip</includes>
+							<serverId>eve-nikr-net</serverId>
+							<url>sftp://${upload.url}</url>
+							<toDir>${upload.zip}</toDir>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
