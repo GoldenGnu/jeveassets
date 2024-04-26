@@ -38,8 +38,6 @@ public class StockpileGroupSettings {
 	private final Set<String> uniqueGroups = new TreeSet<>();
 	//Groups expanded or collapsed
 	private final Map<String, Boolean> groupExpanded = new HashMap<>();
-	//Stockpile expanded or collapsed (when group is collapsed)
-	private final Map<Stockpile, Boolean> stockpileExpanded = new HashMap<>();
 	//The first stockpile in each group (IgnoreItem stockpile)
 	private final Map<String, Stockpile> groupFirst = new HashMap<>();
 
@@ -100,22 +98,6 @@ public class StockpileGroupSettings {
 
 	public void setGroupExpanded(String group, boolean expanded) {
 		groupExpanded.put(group, expanded);
-	}
-
-	public Boolean isStockpileExpanded(Stockpile stockpile) {
-		return stockpileExpanded.getOrDefault(stockpile, true);
-	}
-
-	public void setStockpileExpanded(Stockpile stockpile, boolean expanded) {
-		System.out.println("Setting: " + stockpile.getName() + " to " + (expanded ? "expanded" : "collapsed"));
-		stockpileExpanded.put(stockpile, expanded);
-	}
-
-	public void setStockpilesExpanded(List<Stockpile> stockpiles, boolean expanded) {
-		System.out.println("Setting all stockpiles to " + (expanded ? "expanded" : "collapsed"));
-		for (Stockpile stockpile : stockpiles) {
-			stockpileExpanded.put(stockpile, expanded);
-		}
 	}
 
 	public boolean isGroupFirst(Stockpile stockpile) {
