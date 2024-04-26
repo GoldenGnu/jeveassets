@@ -98,7 +98,6 @@ public enum Images {
 	FILTER_AFTER_COLUMN ("filter_after_column.png"),
 	FILTER_BEFORE_COLUMN ("filter_before_column.png"),
 
-	LINK_EVEMARKETER ("link_evemarketer.png"),
 	LINK_EVE_MARKETDATA ("link_eve_marketdata.png"),
 	LINK_EVEINFO ("link_eveinfo.png"),
 	LINK_DOTLAN_EVEMAPS ("link_dotlan_evemaps.png"),
