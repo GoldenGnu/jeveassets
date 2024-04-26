@@ -55,6 +55,12 @@ public class JMenuLookupOnlineTest extends TestUtil {
 		menuData.getInventionTypeIDs().add(10679);
 		List<Lookup> lookups = new ArrayList<>();
 		for (LookupLinks lookupLinks : LookupLinks.values()) {
+			if (lookupLinks == LookupLinks.ZKILLBOARD_ITEM
+				|| lookupLinks == LookupLinks.ZKILLBOARD_SYSTEM
+				|| lookupLinks == LookupLinks.ZKILLBOARD_CONSTELLATION
+				|| lookupLinks == LookupLinks.ZKILLBOARD_REGION	) {
+				continue; //Protected by cloudflare
+			}
 			Set<String> links = lookupLinks.getLinks(menuData);
 			assertNotNull(lookupLinks.name() + " is null", links);
 			assertFalse(lookupLinks.name() + " is empty", links.isEmpty());
@@ -79,7 +85,7 @@ public class JMenuLookupOnlineTest extends TestUtil {
 
 		private final LookupLinks lookupLinks;
 		private final String link;
-		private int code = 0;
+		private int code = -1;
 
 		public Lookup(LookupLinks lookupLinks, String link) {
 			this.lookupLinks = lookupLinks;

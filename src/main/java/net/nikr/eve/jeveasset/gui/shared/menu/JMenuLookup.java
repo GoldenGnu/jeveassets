@@ -44,7 +44,6 @@ import net.nikr.eve.jeveasset.io.shared.DesktopUtil;
 public class JMenuLookup<T> extends JAutoMenu<T> {
 
 	private enum MenuLookupAction {
-		EVEMARKETER,
 		GAMES_CHRUKER,
 		FUZZWORK_ITEMS,
 		ZKILLBOARD_ITEM,
@@ -186,16 +185,6 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 			}
 		},
 	//Market
-		EVEMARKETER() {
-			@Override
-			public Set<String> getLinks(MenuData<?> menuData) {
-				Set<String> urls = new HashSet<>();
-				for (int marketTypeID : menuData.getMarketTypeIDs()) {
-					urls.add("https://evemarketer.com/types/" + marketTypeID);
-				}
-				return urls;
-			}
-		},
 		ADAM4EVE() {
 			@Override
 			public Set<String> getLinks(MenuData<?> menuData) {
@@ -221,7 +210,7 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 			public Set<String> getLinks(MenuData<?> menuData) {
 				Set<String> urls = new HashSet<>();
 				for (int marketTypeID : menuData.getMarketTypeIDs()) {
-					urls.add("https://evemarketer.com/types/" + marketTypeID);
+					urls.add("https://evetycoon.com/market/" + marketTypeID);
 				}
 				return urls;
 			}
@@ -293,7 +282,7 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 			public Set<String> getLinks(MenuData<?> menuData) {
 				Set<String> urls = new HashSet<>();
 				for (int typeID : menuData.getInventionTypeIDs()) {
-					urls.add("https://lazy-blacksmith.space/blueprint/invention/" + typeID);
+					urls.add("https://lzb.eveskillboard.com/blueprint/invention/" + typeID);
 				}
 				return urls;
 			}
@@ -303,7 +292,7 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 			public Set<String> getLinks(MenuData<?> menuData) {
 				Set<String> urls = new HashSet<>();
 				for (int typeID : menuData.getBlueprintTypeIDs()) {
-					urls.add("https://lazy-blacksmith.space/blueprint/manufacturing/" + typeID);
+					urls.add("https://lzb.eveskillboard.com/blueprint/manufacturing/" + typeID);
 				}
 				return urls;
 			}
@@ -313,7 +302,7 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 			public Set<String> getLinks(MenuData<?> menuData) {
 				Set<String> urls = new HashSet<>();
 				for (int typeID : menuData.getBlueprintTypeIDs()) {
-					urls.add("https://lazy-blacksmith.space/blueprint/research_copy/" + typeID);
+					urls.add("https://lzb.eveskillboard.com/blueprint/research_copy/" + typeID);
 				}
 				return urls;
 			}
@@ -351,7 +340,6 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 	private final JMenuItem jEveMissioneerConstellation;
 	private final JMenuItem jEveMissioneerRegion;
 	private final JMenu jMarket;
-	private final JMenuItem jEveMarketer;
 	private final JMenuItem jFuzzworkMarket;
 	private final JMenuItem jEveTycoon;
 	private final JMenu jItemDatabase;
@@ -471,12 +459,6 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 		jMarket.setIcon(Images.ORDERS_SELL.getIcon());
 		add(jMarket);
 
-		jEveMarketer = new JMenuItem(GuiShared.get().eveMarketer());
-		jEveMarketer.setIcon(Images.LINK_EVEMARKETER.getIcon());
-		jEveMarketer.setActionCommand(MenuLookupAction.EVEMARKETER.name());
-		jEveMarketer.addActionListener(listener);
-		jMarket.add(jEveMarketer);
-
 		jFuzzworkMarket = new JMenuItem(GuiShared.get().fuzzworkMarket());
 		jFuzzworkMarket.setIcon(Images.LINK_FUZZWORK.getIcon());
 		jFuzzworkMarket.setActionCommand(MenuLookupAction.FUZZWORK_MARKET.name());
@@ -585,7 +567,6 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 		jEveMissioneerRegion.setEnabled(!menuData.getRegionLocations().isEmpty());
 	//Market
 		jMarket.setEnabled(!menuData.getMarketTypeIDs().isEmpty());
-		jEveMarketer.setEnabled(!menuData.getMarketTypeIDs().isEmpty());
 		jFuzzworkMarket.setEnabled(!menuData.getMarketTypeIDs().isEmpty());
 		jEveTycoon.setEnabled(!menuData.getMarketTypeIDs().isEmpty());
 		jAdam4eve.setEnabled(!menuData.getMarketTypeIDs().isEmpty());
@@ -717,8 +698,6 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 			} else if (MenuLookupAction.EVEMISSIONEER_REGION.name().equals(e.getActionCommand())) {
 				DesktopUtil.browse(LookupLinks.EVEMISSIONEER_REGION.getLinks(menuData), program);
 		//Market
-			} else if (MenuLookupAction.EVEMARKETER.name().equals(e.getActionCommand())) {
-				DesktopUtil.browse(LookupLinks.EVEMARKETER.getLinks(menuData), program);
 			} else if (MenuLookupAction.ADAM4EVE.name().equals(e.getActionCommand())) {
 				DesktopUtil.browse(LookupLinks.ADAM4EVE.getLinks(menuData), program);
 			} else if (MenuLookupAction.FUZZWORK_MARKET.name().equals(e.getActionCommand())) {
