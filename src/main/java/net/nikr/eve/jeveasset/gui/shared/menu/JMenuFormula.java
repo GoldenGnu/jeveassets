@@ -22,11 +22,14 @@ package net.nikr.eve.jeveasset.gui.shared.menu;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.gui.images.Images;
+import net.nikr.eve.jeveasset.gui.shared.MenuScroller;
 import net.nikr.eve.jeveasset.gui.shared.menu.JFormulaDialog.Formula;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.JAutoMenu;
 import net.nikr.eve.jeveasset.gui.shared.table.ColumnManager;
@@ -52,6 +55,11 @@ public class JMenuFormula<T extends Enum<T> & EnumTableColumn<Q>, Q> extends JAu
 
 		setIcon(Images.MISC_FORMULA.getIcon());
 
+		MenuScroller menuScroller = new MenuScroller(this);
+		menuScroller.keepVisible(2);
+		menuScroller.setTopFixedCount(2);
+		menuScroller.setInterval(125);
+
 		jFormulaDialog = new JFormulaDialog<>(program, columnManager);
 
 		ListenerClass listener = new ListenerClass();
@@ -68,10 +76,11 @@ public class JMenuFormula<T extends Enum<T> & EnumTableColumn<Q>, Q> extends JAu
 
 		add(jAdd);
 
-		Set<Formula> columns = columnManager.getFormulas();
+		List<Formula> columns = new ArrayList<>(columnManager.getFormulas());
 
 		if (!columns.isEmpty()) {
 			addSeparator();
+			Collections.sort(columns);
 		}
 
 		for (Formula formula : columns) {
