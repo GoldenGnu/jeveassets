@@ -9,9 +9,15 @@ jobs:
     runs-on: ${{ matrix.os }}
     concurrency:
       group: deploy-group
+      cancel-in-progress: false
     strategy:
       matrix:
         include:
+          #Java 8 + Remove old build
+          - os: ubuntu-latest
+            java: 8
+            profile: jpackager-java8
+            name: Java 8 
           #Linux
           - os: ubuntu-latest
             java: 17
@@ -27,11 +33,6 @@ jobs:
             java: 17
             profile: jpackager-deploy
             name: MacOS
-          #Java 8
-          - os: ubuntu-latest
-            java: 8
-            profile: jpackager-java8
-            name: Java 8 
     name: ${{ matrix.name }}
     steps:
     - name: Checkout
