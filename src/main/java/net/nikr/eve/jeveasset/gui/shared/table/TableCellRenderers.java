@@ -21,6 +21,7 @@
 
 package net.nikr.eve.jeveasset.gui.shared.table;
 
+import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import java.awt.Color;
 import java.awt.Component;
 import java.util.Date;
@@ -36,8 +37,11 @@ import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellEditor;
 import net.nikr.eve.jeveasset.data.settings.tag.Tags;
+import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formatter;
 import net.nikr.eve.jeveasset.gui.shared.components.JButtonComparable;
+import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
+import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileTableFormat;
 
 
 public class TableCellRenderers {
@@ -156,6 +160,53 @@ public class TableCellRenderers {
 		public void setValue(final Object value) {
 			if (value == null) {
 				setText("");
+			} else {
+				setText(value.toString());
+			}
+		}
+	}
+
+	public static class TargetCellRenderer extends DefaultTableCellRenderer {
+
+		public static final int MINIMUM_ICON_TEXT_GAP = 10;
+		private final DefaultEventTableModel<StockpileItem> tableModel;
+
+		public TargetCellRenderer(DefaultEventTableModel<StockpileItem> tableModel) {
+			this.tableModel = tableModel;
+			this.setHorizontalTextPosition(DefaultTableCellRenderer.RIGHT);
+			this.setHorizontalAlignment(DefaultTableCellRenderer.RIGHT);
+		}
+
+		@Override
+		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+			String columnName = (String) table.getTableHeader().getColumnModel().getColumn(column).getHeaderValue();
+			Object object = tableModel.getElementAt(row);
+			Component component = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+			if (component instanceof JLabel) {
+				JLabel jLabel = (JLabel) component;
+				jLabel.setIcon(null);
+				jLabel.setIconTextGap(0);
+			}
+			if (object instanceof StockpileItem) {
+				StockpileItem stockpileItem = (StockpileItem) object;
+				if (stockpileItem.isEditable() && columnName.equals(StockpileTableFormat.COUNT_MINIMUM.getColumnName())) {
+					if (component instanceof JLabel) {
+						JLabel jLabel = (JLabel) component;
+						jLabel.setIcon(Images.EDIT_EDIT_BACKGROUND.getIcon());
+						jLabel.setHorizontalTextPosition(JLabel.TRAILING);
+						jLabel.setIconTextGap(MINIMUM_ICON_TEXT_GAP);
+					}
+				}
+			}
+			return component;
+		}
+
+		@Override
+		public void setValue(final Object value) {
+			if (value == null) {
+				setText("");
+			} else if (value instanceof Number) {
+				setText(Formatter.doubleFormat(value));
 			} else {
 				setText(value.toString());
 			}
