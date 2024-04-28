@@ -39,6 +39,7 @@ Contributors:
   Burberius
   Lazaren
   Boran Lordsworth
+  Ed Thelleres
 
 Retired Testers:
   Varo Jan
