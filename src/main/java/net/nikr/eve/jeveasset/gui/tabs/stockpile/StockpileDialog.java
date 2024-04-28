@@ -400,7 +400,7 @@ public class StockpileDialog extends JDialogCentered {
 		//Title
 		this.getDialog().setTitle(TabsStockpile.get().cloneStockpileTitle());
 		//Load
-		loadStockpile(cloneStockpile, "");
+		loadStockpile(cloneStockpile, stockpile.getName());
 		//Show
 		show();
 		if (updated) {
