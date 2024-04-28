@@ -1,8 +1,9 @@
 name: Deploy
-
-on: [push]
 concurrency:
   group: ${{ github.workflow }}
+
+on: [push]
+
 jobs:
   build:
     runs-on: ${{ matrix.os }}
