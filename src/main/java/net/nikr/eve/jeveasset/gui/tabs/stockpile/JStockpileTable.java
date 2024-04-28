@@ -35,9 +35,10 @@ import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.settings.ColorEntry;
 import net.nikr.eve.jeveasset.data.settings.ColorSettings;
 import net.nikr.eve.jeveasset.data.settings.Settings;
-import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.InstantToolTip;
+import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.ResizeMode;
 import net.nikr.eve.jeveasset.gui.shared.table.JSeparatorTable;
+import net.nikr.eve.jeveasset.gui.shared.table.TableCellRenderers.TargetCellRenderer;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileTotal;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.SubpileItem;
@@ -55,6 +56,7 @@ public class JStockpileTable extends JSeparatorTable {
 		super(program, tableModel, separatorList);
 		this.tableModel = tableModel;
 		InstantToolTip.install(this);
+		this.setDefaultRenderer(Double.class, new TargetCellRenderer(tableModel));
 		final Cursor cursor = getCursor();
 		addMouseMotionListener(new MouseMotionListener() {
 			@Override
@@ -101,11 +103,6 @@ public class JStockpileTable extends JSeparatorTable {
 		Object object = tableModel.getElementAt(row);
 		String columnName = (String) this.getTableHeader().getColumnModel().getColumn(column).getHeaderValue();
 
-		if (component instanceof JLabel) {
-			JLabel jLabel = (JLabel) component;
-			jLabel.setIcon(null);
-			jLabel.setIconTextGap(0);
-		}
 		if (object instanceof StockpileItem) {
 			StockpileItem stockpileItem = (StockpileItem) object;
 			//Background
@@ -138,11 +135,9 @@ public class JStockpileTable extends JSeparatorTable {
 			if (stockpileItem.isEditable() && columnName.equals(StockpileTableFormat.COUNT_MINIMUM.getColumnName())) {
 				if (component instanceof JLabel) {
 					JLabel jLabel = (JLabel) component;
-					jLabel.setIcon(Images.EDIT_EDIT_BACKGROUND.getIcon());
-					jLabel.setHorizontalTextPosition(JLabel.TRAILING);
-					int columnWidth = getColumnModel().getColumn(column).getWidth() - 2;
+					int columnWidth = getColumnModel().getColumn(column).getWidth() - 2 + TargetCellRenderer.MINIMUM_ICON_TEXT_GAP;
 					int jLabelWidth = jLabel.getMinimumSize().width;
-					jLabel.setIconTextGap(Math.max(0, columnWidth - jLabelWidth));
+					jLabel.setIconTextGap(Math.max(TargetCellRenderer.MINIMUM_ICON_TEXT_GAP, columnWidth - jLabelWidth));
 				}
 			} else if (columnName.equals(StockpileTableFormat.NAME.getColumnName())) {
 				if (Settings.get().isStockpileHalfColors()) {
