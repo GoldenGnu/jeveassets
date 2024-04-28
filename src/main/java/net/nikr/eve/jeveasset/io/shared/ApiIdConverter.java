@@ -47,7 +47,9 @@ import net.nikr.eve.jeveasset.data.settings.Citadel.CitadelSource;
 import net.nikr.eve.jeveasset.data.settings.ManufacturingSettings;
 import net.nikr.eve.jeveasset.data.settings.ManufacturingSettings.ManufacturingFacility;
 import net.nikr.eve.jeveasset.data.settings.ManufacturingSettings.ManufacturingRigs;
+import net.nikr.eve.jeveasset.data.settings.ManufacturingSettings.ReactionRigs;
 import net.nikr.eve.jeveasset.data.settings.ManufacturingSettings.ManufacturingSecurity;
+import net.nikr.eve.jeveasset.data.settings.ManufacturingSettings.ReactionSecurity;
 import net.nikr.eve.jeveasset.data.settings.PriceData;
 import net.nikr.eve.jeveasset.data.settings.ReprocessSettings;
 import net.nikr.eve.jeveasset.data.settings.Settings;
@@ -383,6 +385,10 @@ public final class ApiIdConverter {
 		return roundManufacturingQuantity(quantity * percentToBonus(me) * percentToBonus(facility.getMaterialBonus()) * rigToBonus(rigs, security), runs, round);
 	}
 
+	public static double getReactionQuantity(int quantity, ManufacturingSettings.ReactionRigs rigs, ManufacturingSettings.ReactionSecurity security, double runs, boolean round) {
+		return roundManufacturingQuantity(quantity * rigToBonus(rigs, security), runs, round);
+	}
+
 	private static double roundManufacturingQuantity(double manufacturingQuantity, double runs, boolean round) {
 		//max(runs,round(ceil((base * ((100-ME)/100) * (EC modifier) * (EC Rig modifier))*runs,2)))
 		double quantity = Math.max(runs, roundQuantity(manufacturingQuantity, 2) * runs);
@@ -399,6 +405,14 @@ public final class ApiIdConverter {
 
 	private static double rigToBonus(ManufacturingRigs rigs, ManufacturingSecurity security) {
 		if (rigs == ManufacturingRigs.NONE) {
+			return 1;
+		} else {
+			return percentToBonus(rigs.getMaterialBonus() * security.getRigBonus());
+		}
+	}
+
+	private static double rigToBonus(ReactionRigs rigs, ReactionSecurity security) {
+		if (rigs == ReactionRigs.NONE) {
 			return 1;
 		} else {
 			return percentToBonus(rigs.getMaterialBonus() * security.getRigBonus());
