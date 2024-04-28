@@ -7,9 +7,6 @@ on: [push]
 jobs:
   build:
     runs-on: ${{ matrix.os }}
-    concurrency:
-      group: deploy-group
-      cancel-in-progress: false
     strategy:
       matrix:
         include:
