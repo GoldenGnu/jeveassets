@@ -108,6 +108,9 @@ public class FilterMatcherTest extends TestUtil {
 	private Number numberColumn = null;
 	private Date dateColumn = null;
 	private Percent percentColumn = null;
+
+	private static final int BENCHMARK_ITERATIONS = 50000;
+
 	private static final String TEXT = "Text";
 	private static final String TEXT_FORMAT = "Text\"'-";
 	private static final String TEXT_PART = "Tex";
@@ -147,21 +150,23 @@ public class FilterMatcherTest extends TestUtil {
 	 * @param args
 	 */
 	public static void main(final String[] args) {
+		initLog();
 		Images.preload();
 		FilterMatcherTest filterMatcherTest = new FilterMatcherTest();
-		filterMatcherTest.testEqualsSingle();
-		filterMatcherTest.testRexexSingle();
-		filterMatcherTest.testEqualsAll();
-		filterMatcherTest.testRexexAll();
-		filterMatcherTest.testRexexAll();
-		filterMatcherTest.testEqualsAll();
-		filterMatcherTest.testRexexSingle();
-		filterMatcherTest.testEqualsSingle();
+		long duration = 0;
+		duration += filterMatcherTest.testEqualsSingle();
+		duration += filterMatcherTest.testRexexSingle();
+		duration += filterMatcherTest.testEqualsAll();
+		duration += filterMatcherTest.testRexexAll();
+		duration += filterMatcherTest.testEqualsSingle();
+		duration += filterMatcherTest.testRexexSingle();
+		duration += filterMatcherTest.testEqualsAll();
+		duration += filterMatcherTest.testRexexAll();
 	}
 
-	private void testEqualsSingle() {
+	private long testEqualsSingle() {
 		long startTime = System.currentTimeMillis();
-		for (int i = 0; i < 1000; i++) {
+		for (int i = 0; i < BENCHMARK_ITERATIONS; i++) {
 			//Equals
 			matches(true,  TestEnum.TEXT, Filter.CompareType.EQUALS, TEXT);
 			matches(false, TestEnum.TEXT, Filter.CompareType.EQUALS, TEXT_PART);
@@ -169,23 +174,25 @@ public class FilterMatcherTest extends TestUtil {
 		}
 		long endTime = System.currentTimeMillis();
 		System.out.println("Equals Single time:" + (endTime - startTime) + "ms");
+		return (endTime - startTime);
 	}
 
-	private void testRexexSingle() {
+	private long testRexexSingle() {
 		long startTime = System.currentTimeMillis();
-		for (int i = 0; i < 1000; i++) {
+		for (int i = 0; i < BENCHMARK_ITERATIONS; i++) {
 			//Regex
 			matches(true,  TestEnum.TEXT, Filter.CompareType.REGEX, TEXT);
-			matches(false, TestEnum.TEXT, Filter.CompareType.REGEX, TEXT_PART);
+			matches(true,  TestEnum.TEXT, Filter.CompareType.REGEX, TEXT_PART);
 			matches(false, TestEnum.TEXT, Filter.CompareType.REGEX, TEXT_NOT);
 		}
 		long endTime = System.currentTimeMillis();
 		System.out.println("Rexex Single time:" + (endTime - startTime) + "ms");
+		return (endTime - startTime);
 	}
 
-	private void testEqualsAll() {
+	private long testEqualsAll() {
 		long startTime = System.currentTimeMillis();
-		for (int i = 0; i < 1000; i++) {
+		for (int i = 0; i < BENCHMARK_ITERATIONS; i++) {
 			//Equals
 			matches(true,  new AllColumn<>(), Filter.CompareType.EQUALS, TEXT);
 			matches(false, new AllColumn<>(), Filter.CompareType.EQUALS, TEXT_PART);
@@ -193,18 +200,20 @@ public class FilterMatcherTest extends TestUtil {
 		}
 		long endTime = System.currentTimeMillis();
 		System.out.println("Equals All time:" + (endTime - startTime) + "ms");
+		return (endTime - startTime);
 	}
 
-	private void testRexexAll() {
+	private long testRexexAll() {
 		long startTime = System.currentTimeMillis();
-		for (int i = 0; i < 1000; i++) {
+		for (int i = 0; i < BENCHMARK_ITERATIONS; i++) {
 			//Regex
 			matches(true,  TestEnum.TEXT, Filter.CompareType.REGEX, TEXT);
-			matches(false, TestEnum.TEXT, Filter.CompareType.REGEX, TEXT_PART);
+			matches(true, TestEnum.TEXT, Filter.CompareType.REGEX, TEXT_PART);
 			matches(false, TestEnum.TEXT, Filter.CompareType.REGEX, TEXT_NOT);
 		}
 		long endTime = System.currentTimeMillis();
 		System.out.println("Rexex All time:" + (endTime - startTime) + "ms");
+		return (endTime - startTime);
 	}
 
 	/**
