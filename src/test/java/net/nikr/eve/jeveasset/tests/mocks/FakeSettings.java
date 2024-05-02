@@ -737,4 +737,14 @@ public abstract class FakeSettings extends Settings {
 	public boolean isEasyChartColors() {
 		throw new UnsupportedOperationException("not implemented");
 	}
+
+	@Override
+	public void setContainersShowItemID(boolean containersShowItemID) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public boolean isContainersShowItemID() {
+		throw new UnsupportedOperationException("not implemented");
+	}
 }

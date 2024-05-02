@@ -70,6 +70,7 @@ import net.nikr.eve.jeveasset.data.settings.types.LocationsType;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.SoundsSettingsPanel.SoundOption;
 import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
 import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
+import net.nikr.eve.jeveasset.gui.shared.table.containers.AssetContainer;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.Percent;
 import net.nikr.eve.jeveasset.gui.sounds.SoundPlayer;
 import net.nikr.eve.jeveasset.gui.tabs.orders.OutbidProcesser.OutbidProcesserOutput;
@@ -1316,7 +1317,7 @@ public class ProfileData {
 			asset.setMarketPriceData(transactionBuyPriceData.get(asset.getItem().getTypeID()));
 			//User Item Names
 			updateName(asset);
-			//Contaioner
+			//Container
 			updateContainer(asset);
 			//Price data
 			asset.setPriceData(ApiIdConverter.getPriceData(asset.getItem().getTypeID(), asset.isBPC()));
@@ -1384,28 +1385,13 @@ public class ProfileData {
 	}
 
 	private void updateContainer(MyAsset asset) {
-		List<Long> parentIds = new ArrayList<>();
-		StringBuilder builder = new StringBuilder();
-		if (asset.getParents().isEmpty()) {
-			builder.append(General.get().none());
-		} else {
-			boolean first = true;
-			for (MyAsset parentAsset : asset.getParents()) {
-				if (first) {
-					first = false;
-				} else {
-					builder.append(" > ");
-				}
-				builder.append(containerName(parentAsset));
-				parentIds.add(parentAsset.getItemID());
- 			}
-		}
-		asset.setContainer(builder.toString().intern());
+		asset.updateContainer();
 		List<MyContainerLog> containers = containerLogs.get(asset.getItemID());
 		if (containers != null) {
+			AssetContainer assetContainer = asset.getAssetContainer();
 			for (MyContainerLog containerLog : containers) {
-				containerLog.setContainer(builder.toString().intern());
-				containerLog.setParentIDs(parentIds);
+				containerLog.setContainer(assetContainer.getContainer());
+				containerLog.setParentIDs(assetContainer.getParentIDs());
 			}
 		}
 	}
@@ -1422,14 +1408,6 @@ public class ProfileData {
 		asset.setLocation(ApiIdConverter.getLocation(locationID));
 		for (MyAsset subAsset : asset.getAssets()) { //Update child assets
 			updateStructureAssets(subAsset, structure);
-		}
-	}
-
-	public static String containerName(MyAsset asset) {
-		if (!asset.isUserName()) {
-			return asset.getName() + " #" + asset.getItemID();
-		} else {
-			return asset.getName();
 		}
 	}
 

@@ -153,15 +153,16 @@ public class FilterMatcherTest extends TestUtil {
 		initLog();
 		Images.preload();
 		FilterMatcherTest filterMatcherTest = new FilterMatcherTest();
+		filterMatcherTest.testEqualsSingle();
+		filterMatcherTest.testRexexSingle();
+		filterMatcherTest.testEqualsAll();
+		filterMatcherTest.testRexexAll();
 		long duration = 0;
 		duration += filterMatcherTest.testEqualsSingle();
 		duration += filterMatcherTest.testRexexSingle();
 		duration += filterMatcherTest.testEqualsAll();
 		duration += filterMatcherTest.testRexexAll();
-		duration += filterMatcherTest.testEqualsSingle();
-		duration += filterMatcherTest.testRexexSingle();
-		duration += filterMatcherTest.testEqualsAll();
-		duration += filterMatcherTest.testRexexAll();
+		System.out.println("Total time:" + duration + "ms");
 	}
 
 	private long testEqualsSingle() {

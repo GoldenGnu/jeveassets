@@ -71,6 +71,7 @@ public abstract class DialoguesSettings extends Bundle {
 	public abstract String includeBuyOrders();
 	public abstract String includeManufacturing();
 	public abstract String includeCopying();
+	public abstract String showContainerItemID();
 
 	// used in OverviewToolSettingsPanel
 	public abstract String overview();
