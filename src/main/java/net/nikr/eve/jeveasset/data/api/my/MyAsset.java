@@ -45,6 +45,7 @@ import net.nikr.eve.jeveasset.data.settings.types.OwnersType;
 import net.nikr.eve.jeveasset.data.settings.types.TagsType;
 import net.nikr.eve.jeveasset.gui.shared.Formatter;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo.InfoItem;
+import net.nikr.eve.jeveasset.gui.shared.table.containers.AssetContainer;
 import net.nikr.eve.jeveasset.gui.tabs.assets.AssetsTab;
 import net.nikr.eve.jeveasset.i18n.DataModelAsset;
 import net.nikr.eve.jeveasset.i18n.General;
@@ -70,7 +71,7 @@ public class MyAsset extends RawAsset implements Comparable<MyAsset>, InfoItem, 
 //Dynamic values
 	private String name;
 	private String itemName = null;
-	private String container = "";
+	private AssetContainer container = new AssetContainer();
 	private PriceData priceData = new PriceData();
 	private UserItem<Integer, Double> userPrice;
 	private long typeCount = 0;
@@ -208,6 +209,10 @@ public class MyAsset extends RawAsset implements Comparable<MyAsset>, InfoItem, 
 	}
 
 	public String getContainer() {
+		return container.getContainer();
+	}
+
+	public AssetContainer getAssetContainer() {
 		return container;
 	}
 
@@ -457,8 +462,8 @@ public class MyAsset extends RawAsset implements Comparable<MyAsset>, InfoItem, 
 		updateBlueprint();
 	}
 
-	public void setContainer(final String container) {
-		this.container = container;
+	public void updateContainer() {
+		this.container = new AssetContainer(this);
 	}
 
 	public void setMarketPriceData(final MarketPriceData marketPriceData) {

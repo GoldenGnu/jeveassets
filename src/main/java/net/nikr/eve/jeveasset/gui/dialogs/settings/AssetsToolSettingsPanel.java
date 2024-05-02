@@ -37,6 +37,7 @@ public class AssetsToolSettingsPanel extends JSettingsPanel {
 	private final JCheckBox jBuyContracts;
 	private final JCheckBox jManufacturing;
 	private final JCheckBox jCopying;
+	private final JCheckBox jContainerItemID;
 
 	public AssetsToolSettingsPanel(final Program program, final SettingsDialog settingsDialog) {
 		super(program, settingsDialog, DialoguesSettings.get().assets(), Images.TOOL_ASSETS.getIcon());
@@ -47,6 +48,7 @@ public class AssetsToolSettingsPanel extends JSettingsPanel {
 		jBuyContracts = new JCheckBox(DialoguesSettings.get().includeBuyContracts());
 		jManufacturing = new JCheckBox(DialoguesSettings.get().includeManufacturing());
 		jCopying = new JCheckBox(DialoguesSettings.get().includeCopying());
+		jContainerItemID = new JCheckBox(DialoguesSettings.get().showContainerItemID());
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.LEADING)
@@ -56,6 +58,7 @@ public class AssetsToolSettingsPanel extends JSettingsPanel {
 				.addComponent(jBuyContracts)
 				.addComponent(jManufacturing)
 				.addComponent(jCopying)
+				.addComponent(jContainerItemID)
 		);
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
@@ -65,25 +68,35 @@ public class AssetsToolSettingsPanel extends JSettingsPanel {
 				.addComponent(jBuyContracts, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				.addComponent(jManufacturing, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				.addComponent(jCopying, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+				.addGap(5)
+				.addComponent(jContainerItemID, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 		);
 	}
 
 	@Override
 	public UpdateType save() {
-		boolean update = jSellOrders.isSelected() != Settings.get().isIncludeSellOrders()
+		boolean fullUpdate = jSellOrders.isSelected() != Settings.get().isIncludeSellOrders()
 						|| jBuyOrders.isSelected() != Settings.get().isIncludeBuyOrders()
 						|| jSellContracts.isSelected() != Settings.get().isIncludeSellContracts()
 						|| jBuyContracts.isSelected() != Settings.get().isIncludeBuyContracts()
 						|| jManufacturing.isSelected() != Settings.get().isIncludeManufacturing()
 						|| jCopying.isSelected() != Settings.get().isIncludeCopying()
 						;
+		boolean updateContainers = jContainerItemID.isSelected() != Settings.get().isContainersShowItemID();
 		Settings.get().setIncludeSellOrders(jSellOrders.isSelected());
 		Settings.get().setIncludeBuyOrders(jBuyOrders.isSelected());
 		Settings.get().setIncludeSellContracts(jSellContracts.isSelected());
 		Settings.get().setIncludeBuyContracts(jBuyContracts.isSelected());
 		Settings.get().setIncludeManufacturing(jManufacturing.isSelected());
 		Settings.get().setIncludeCopying(jCopying.isSelected());
-		return update ? UpdateType.FULL_UPDATE : UpdateType.NONE;
+		Settings.get().setContainersShowItemID(jContainerItemID.isSelected());
+		if (fullUpdate) {
+			return UpdateType.FULL_UPDATE;
+		} else if (updateContainers) {
+			return UpdateType.UPDATE_ASSET_TABLES;
+		} else {
+			return UpdateType.NONE;
+		}
 	}
 
 	@Override
@@ -94,6 +107,7 @@ public class AssetsToolSettingsPanel extends JSettingsPanel {
 		jBuyContracts.setSelected(Settings.get().isIncludeBuyContracts());
 		jManufacturing.setSelected(Settings.get().isIncludeManufacturing());
 		jCopying.setSelected(Settings.get().isIncludeCopying());
+		jContainerItemID.setSelected(Settings.get().isContainersShowItemID());
 	}
 }
 

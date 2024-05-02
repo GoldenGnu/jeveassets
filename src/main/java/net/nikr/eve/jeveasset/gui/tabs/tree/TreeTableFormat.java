@@ -26,6 +26,7 @@ import java.util.Comparator;
 import java.util.Date;
 import net.nikr.eve.jeveasset.data.settings.tag.Tags;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
+import net.nikr.eve.jeveasset.gui.shared.table.containers.AssetContainer;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.HierarchyColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.LongInt;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.Percent;
@@ -197,14 +198,14 @@ public enum TreeTableFormat implements EnumTableColumn<TreeAsset> {
 			return from.getLocation().getFactionWarfareSystemOwner();
 		}
 	},
-	CONTAINER(String.class, GlazedLists.comparableComparator()) {
+	CONTAINER(AssetContainer.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnContainer();
 		}
 		@Override
 		public Object getColumnValue(final TreeAsset from) {
-			return from.getContainer();
+			return from.getAssetContainer();
 		}
 	},
 	FLAG(String.class, GlazedLists.comparableComparator()) {
