@@ -38,7 +38,6 @@ import java.util.Set;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
@@ -70,7 +69,6 @@ import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractsTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJobTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.transaction.TransactionTableFormat;
 import net.nikr.eve.jeveasset.i18n.TabsJournal;
-import net.nikr.eve.jeveasset.i18n.TabsTransaction;
 
 
 public class JournalTab extends JMainTabPrimary {
@@ -292,7 +290,7 @@ public class JournalTab extends JMainTabPrimary {
 		if (value == null || value < 100) {
 			return;
 		}
-		set.add(FilterMatcher.format(value, false));
+		set.add(FilterMatcher.formatFilter(value));
 	}
 
 	private class ListenerClass implements ListEventListener<MyJournal> {

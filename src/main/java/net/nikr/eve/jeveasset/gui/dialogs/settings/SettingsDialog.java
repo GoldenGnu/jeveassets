@@ -311,6 +311,10 @@ public class SettingsDialog extends JDialogCentered {
 					program.getStockpileTab().repaintTable();
 				}
 			}
+			if (updates.contains(UpdateType.UPDATE_ASSET_TABLES)) {
+				program.getAssetsTab().tableDataChanged();
+				program.getTreeTab().tableDataChanged();
+			}
 			if (updates.contains(UpdateType.UPDATE_OVERVIEW)) {
 				program.getOverviewTab().updateData();
 			}
