@@ -747,4 +747,14 @@ public abstract class FakeSettings extends Settings {
 	public boolean isContainersShowItemID() {
 		throw new UnsupportedOperationException("not implemented");
 	}
+
+	@Override
+	public void setToolsLocked(boolean toolsLocked) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public boolean isToolsLocked() {
+		throw new UnsupportedOperationException("not implemented");
+	}
 }
