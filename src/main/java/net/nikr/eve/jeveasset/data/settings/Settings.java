@@ -100,7 +100,8 @@ public class Settings {
 		FLAG_SAVE_MINING_HISTORY,
 		FLAG_MANUFACTURING_DEFAULT,
 		FLAG_EASY_CHART_COLORS,
-		FLAG_CONTAINERS_SHOW_ITEM_ID
+		FLAG_CONTAINERS_SHOW_ITEM_ID,
+		FLAG_LOCK_TOOLS
 	}
 
 	public static enum TransactionProfitPrice {
@@ -297,6 +298,7 @@ public class Settings {
 		flags.put(SettingFlag.FLAG_MANUFACTURING_DEFAULT, true);
 		flags.put(SettingFlag.FLAG_EASY_CHART_COLORS, false);
 		flags.put(SettingFlag.FLAG_CONTAINERS_SHOW_ITEM_ID, true);
+		flags.put(SettingFlag.FLAG_LOCK_TOOLS, false);
 		cacheFlags();
 		//Default Filters
 		List<Filter> filter;
@@ -854,6 +856,14 @@ public class Settings {
 
 	public void setEasyChartColors(final boolean easyChartColors) {
 		flags.put(SettingFlag.FLAG_EASY_CHART_COLORS, easyChartColors);
+	}
+
+	public boolean isToolsLocked() {
+		return flags.get(SettingFlag.FLAG_LOCK_TOOLS);
+	}
+
+	public void setToolsLocked(final boolean toolsLocked) {
+		flags.put(SettingFlag.FLAG_LOCK_TOOLS, toolsLocked);
 	}
 
 	public boolean isContainersShowItemID() {

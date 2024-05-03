@@ -25,11 +25,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.util.concurrent.ExecutionException;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import net.nikr.eve.jeveasset.CliOptions;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.i18n.GuiFrame;
 
@@ -86,6 +88,7 @@ public class MainMenu extends JMenuBar {
 		JMenu menu;
 		JMenu submenu;
 		JMenuItem menuItem;
+		JCheckBoxMenuItem checkBoxMenuItem;
 
 //FILE
 		menu = new JMenu(GuiFrame.get().file());
@@ -274,6 +277,22 @@ public class MainMenu extends JMenuBar {
 		menuItem.setActionCommand(MainMenuAction.SKILLS.name());
 		menuItem.addActionListener(program);
 		submenu.add(menuItem);
+
+		menu.addSeparator();
+
+		checkBoxMenuItem = new JCheckBoxMenuItem(GuiFrame.get().lock());
+		checkBoxMenuItem.setSelected(Settings.get().isToolsLocked());
+		checkBoxMenuItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Settings.lock("Lock Tools");
+				Settings.get().setToolsLocked(checkBoxMenuItem.isSelected());
+				Settings.unlock("Lock Tools");
+				program.saveSettings("Lock Tools");
+				program.getMainWindow().updateTabCloseButtons();
+			}
+		});
+		menu.add(checkBoxMenuItem);
 
 //UPDATE
 		menu = new JMenu(GuiFrame.get().update());
