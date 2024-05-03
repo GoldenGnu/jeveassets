@@ -250,7 +250,7 @@ class StockpileShoppingListDialog extends JDialogCentered {
 				if (stockpileItem instanceof SubpileStock) {
 					String key = stockpileItem.getName().trim();
 					double value = subpiles.getOrDefault(key, 0.0);
-					subpiles.put(key, value + stockpileItem.getCountMinimumMultiplied());
+					subpiles.put(key, value + ((SubpileStock) stockpileItem).getSubMultiplier());
 				}
 				TypeIdentifier typeID = new TypeIdentifier(stockpileItem);
 				if (!typeID.isEmpty()) { //Ignore Total
