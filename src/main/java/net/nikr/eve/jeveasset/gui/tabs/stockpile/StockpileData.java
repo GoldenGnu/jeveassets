@@ -89,8 +89,13 @@ public class StockpileData extends TableData {
 		//Update Stockpiles (StockpileItem)
 		for (Stockpile stockpile : StockpileTab.getShownStockpiles(profileManager)) {
 			stockpile.updateDynamicValues();
-			stockpileItems.addAll(stockpile.getItems());
 			updateStockpile(stockpile);
+			String group = Settings.get().getStockpileGroupSettings().getGroup(stockpile);
+			if (Settings.get().getStockpileGroupSettings().isGroupExpanded(group)) { //Stockpile group expanded or not in group
+				stockpileItems.addAll(stockpile.getItems());
+			} else {
+				stockpileItems.add(stockpile.getIgnoreItem());
+			}
 		}
 		//Update Subpiles (SubpileItem)
 		stockpileItems.addAll(getUpdatedSubpiles());
@@ -490,7 +495,10 @@ public class StockpileData extends TableData {
 		}
 		updated.removeAll(subpileItems);
 		if (profileManager.getStockpileIDs().isShown(parent.getStockpileID())) {
-			updated.addAll(parent.getSubpileItems());
+			String group = Settings.get().getStockpileGroupSettings().getGroup(parent);
+			if (Settings.get().getStockpileGroupSettings().isGroupExpanded(group)) { //Stockpile group expanded or not in group
+				updated.addAll(parent.getSubpileItems());
+			}
 		}
 	}
 
