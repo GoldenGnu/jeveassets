@@ -470,7 +470,7 @@ public class StockpileData extends TableData {
 		//Save old items (for them to be removed)
 		List<SubpileItem> subpileItems = new ArrayList<>(parent.getSubpileItems());
 		//Clear old items
-		parent.getSubpileItems().clear();
+		parent.clearSubpileItems();
 		for (SubpileItem subpileItem : subpileItems) {
 			subpileItem.clearItemLinks();
 		}
@@ -497,7 +497,7 @@ public class StockpileData extends TableData {
 		if (profileManager.getStockpileIDs().isShown(parent.getStockpileID())) {
 			String group = Settings.get().getStockpileGroupSettings().getGroup(parent);
 			if (Settings.get().getStockpileGroupSettings().isGroupExpanded(group)) { //Stockpile group expanded or not in group
-				updated.addAll(parent.getSubpileItems());
+				updated.addAll(parent.getSubpileTableItems());
 			}
 		}
 	}
@@ -533,7 +533,7 @@ public class StockpileData extends TableData {
 			String path = parentPath + currentStockpile.getName() + "\r\n";
 			int level = parentLevel + 1;
 			SubpileStock subpileStock = new SubpileStock(topStockpile, currentStockpile, parentStockpile, parentStock, value, parentLevel, path);
-			topStockpile.getSubpileItems().add(subpileStock);
+			topStockpile.addSubpileStock(subpileStock);
 			for (StockpileItem stockpileItem : currentStockpile.getItems()) {
 				//For each StockpileItem
 				if (stockpileItem.isTotal()) {
@@ -553,7 +553,7 @@ public class StockpileData extends TableData {
 						linkItem.setLevel(level);
 					}
 				} else { //Add new item (Simple)
-					topStockpile.getSubpileItems().add(subpileItem);
+					topStockpile.addSubpileItem(subpileItem);
 				}
 			}
 			updateSubpileClaims(topStockpile, currentStockpile, topItems, subpileStock, level, path);
