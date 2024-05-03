@@ -757,4 +757,14 @@ public abstract class FakeSettings extends Settings {
 	public boolean isToolsLocked() {
 		throw new UnsupportedOperationException("not implemented");
 	}
+
+	@Override
+	public void setShowSubpileTree(boolean showSubpileTree) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public boolean isShowSubpileTree() {
+		throw new UnsupportedOperationException("not implemented");
+	}
 }

@@ -83,7 +83,9 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 	private final IgnoreItem ignoreItem = new IgnoreItem(this);
 	private final Map<Stockpile, Double> subpiles = new HashMap<>();
 	private final List<Stockpile> subpileLinks = new ArrayList<>();
+	private final List<SubpileItem> subpileAll = new ArrayList<>();
 	private final List<SubpileItem> subpileItems = new ArrayList<>();
+	private final List<SubpileStock> subpileStocks = new ArrayList<>();
 	private double percentFull;
 	private double multiplier;
 	private boolean contractsMatchAll;
@@ -193,7 +195,34 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 	}
 
 	public List<SubpileItem> getSubpileItems() {
-		return subpileItems;
+		return subpileAll;
+	}
+
+	public List<SubpileStock> getSubpileStocks() {
+		return subpileStocks;
+	}
+
+	public List<SubpileItem> getSubpileTableItems() {
+		if (Settings.get().isShowSubpileTree()) {
+			return subpileAll;
+		} else {
+			return subpileItems;
+		}
+	}
+
+	public void clearSubpileItems() {
+		subpileAll.clear();
+		subpileItems.clear();
+		subpileStocks.clear();
+	}
+
+	public void addSubpileItem(SubpileItem subpileItem) {
+		subpileAll.add(subpileItem);
+		subpileItems.add(subpileItem);
+	}
+	public void addSubpileStock(SubpileStock subpileStock) {
+		subpileAll.add(subpileStock);
+		subpileStocks.add(subpileStock);
 	}
 
 	private void createLocationName() {
@@ -428,7 +457,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 	public List<StockpileItem> getClaims() {
 		List<StockpileItem> list = new ArrayList<>();
 		list.addAll(items);
-		list.addAll(subpileItems);
+		list.addAll(subpileAll);
 		return list;
 	}
 
@@ -479,9 +508,6 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 		}
 		//SubpileItem (Overwrites StockpileItem items)
 		for (SubpileItem item : subpileItems) {
-			if (item instanceof SubpileStock) {
-				continue;
-			}
 			map.put(item.getItemTypeID(), item);
 		}
 		//For each item type
