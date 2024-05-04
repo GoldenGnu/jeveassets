@@ -168,6 +168,7 @@ public abstract class DialoguesSettings extends Bundle {
 	public abstract String soundsMp3NoFilesAdded();
 	public abstract String soundsNone();
 	public abstract String soundsOutbidUpdateCompleted();
+	public abstract String soundsOutbidUpdateAvailable();
 
 	// used in PriceDataSettingsPanel
 	public abstract String changeSourceWarning();
