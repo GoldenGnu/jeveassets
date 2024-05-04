@@ -25,6 +25,7 @@ import ca.odell.glazedlists.GlazedLists;
 import java.util.Comparator;
 import java.util.Date;
 import net.nikr.eve.jeveasset.data.api.my.MyJournal;
+import net.nikr.eve.jeveasset.data.settings.tag.Tags;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.LongInt;
 import net.nikr.eve.jeveasset.i18n.TabsJournal;
@@ -39,6 +40,16 @@ public enum JournalTableFormat implements EnumTableColumn<MyJournal> {
 		@Override
 		public Object getColumnValue(final MyJournal from) {
 			return from.getDate();
+		}
+	},
+	TAGS(Tags.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsJournal.get().columnTags();
+		}
+		@Override
+		public Object getColumnValue(final MyJournal from) {
+			return from.getTags();
 		}
 	},
 	ADDED(Date.class, GlazedLists.comparableComparator()) {

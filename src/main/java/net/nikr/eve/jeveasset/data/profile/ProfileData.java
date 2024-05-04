@@ -672,6 +672,9 @@ public class ProfileData {
 			journal.setAdded(AddedData.getJournals().getAdd(journalsAdded, journal.getRefID(), addedDate));
 			//Context
 			journal.setContext(ApiIdConverter.getContext(journal));
+			//Tags
+			Tags tags = Settings.get().getTags(journal.getTagID());
+			journal.setTags(tags);
 		}
 		AddedData.getJournals().commitQueue();
 
