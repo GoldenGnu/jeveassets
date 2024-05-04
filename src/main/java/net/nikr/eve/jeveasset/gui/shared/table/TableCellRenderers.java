@@ -225,6 +225,8 @@ public class TableCellRenderers {
 			JLabel jLabel = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column); //To change body of generated methods, choose Tools | Templates.
 			if (value instanceof Tags) {
 				Tags tags = (Tags) value;
+				Tags.setFont(jLabel.getFont());
+				tags.updateFont();
 				JPanel jPanel = tags.getPanel();
 				jPanel.setBackground(jLabel.getBackground());
 				jPanel.setForeground(jLabel.getForeground());
