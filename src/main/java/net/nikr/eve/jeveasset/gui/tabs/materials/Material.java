@@ -69,6 +69,7 @@ public class Material implements Comparable<Material>, LocationType, ItemType, P
 	private final String name;
 	private final MyLocation location; //New objects are created by updateData() - no need to update
 	private final Item item;
+	private final Integer typeID;
 
 	private double value = 0;
 	private long count = 0;
@@ -85,10 +86,12 @@ public class Material implements Comparable<Material>, LocationType, ItemType, P
 			//Has item
 			if (type == MaterialType.LOCATIONS || type == MaterialType.SUMMARY) {
 				this.item = asset.getItem();
+				this.typeID = asset.getTypeID();
 				this.price = asset.getDynamicPrice();
 			} else {
 				this.item = new Item(0);
 				this.price = null;
+				this.typeID = null;
 			}
 			//Has location
 			if (type == MaterialType.LOCATIONS || type == MaterialType.LOCATIONS_TOTAL || type == MaterialType.LOCATIONS_ALL) {
@@ -100,6 +103,7 @@ public class Material implements Comparable<Material>, LocationType, ItemType, P
 			location = MyLocation.create(0);
 			this.item = new Item(0);
 			this.price = null;
+			this.typeID = null;
 		}
 	}
 
@@ -129,6 +133,10 @@ public class Material implements Comparable<Material>, LocationType, ItemType, P
 	@Override
 	public MyLocation getLocation() {
 		return location;
+	}
+
+	public Integer getTypeID() {
+		return typeID;
 	}
 
 	public String getGroup() {
