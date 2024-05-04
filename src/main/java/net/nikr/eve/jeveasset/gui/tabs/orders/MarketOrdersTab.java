@@ -529,6 +529,7 @@ public class MarketOrdersTab extends JMainTabPrimary {
 				});
 				//Play sound
 				SoundPlayer.play(SoundOption.OUTBID_UPDATE_COMPLETED);
+				SoundPlayer.playAt(Settings.get().getPublicMarketOrdersNextUpdate(), SoundOption.OUTBID_UPDATE_AVAILABLE);
 			}
 
 			@Override
