@@ -45,6 +45,7 @@ import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.my.MyJournal;
 import net.nikr.eve.jeveasset.data.settings.Settings;
+import net.nikr.eve.jeveasset.data.settings.tag.TagUpdate;
 import net.nikr.eve.jeveasset.data.settings.types.LocationType;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel.JStatusLabel;
@@ -71,7 +72,7 @@ import net.nikr.eve.jeveasset.gui.tabs.transaction.TransactionTableFormat;
 import net.nikr.eve.jeveasset.i18n.TabsJournal;
 
 
-public class JournalTab extends JMainTabPrimary {
+public class JournalTab extends JMainTabPrimary implements TagUpdate {
 
 	private final JStatusLabel jPositiveTotal;
 	private final JStatusLabel jBothTotal;
@@ -166,6 +167,14 @@ public class JournalTab extends JMainTabPrimary {
 				.addComponent(jToolBar, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
 				.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
 		);
+	}
+
+	@Override
+	public void updateTags() {
+		beforeUpdateData();
+		tableModel.fireTableDataChanged();
+		filterControl.refilter();
+		afterUpdateData();
 	}
 
 	@Override
