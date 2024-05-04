@@ -68,6 +68,7 @@ public abstract class TabsStockpile extends Bundle {
 	public abstract String contractsMatchAllTip();
 	public abstract String copy();
 	public abstract String countMinimum();
+	public abstract String csv();
 	public abstract String delete();
 	public abstract String deleteItem();
 	public abstract String deleteItemTitle();
@@ -212,6 +213,7 @@ public abstract class TabsStockpile extends Bundle {
 	public abstract String shownVolumeNow();
 	public abstract String singleton();
 	public abstract String source();
+	public abstract String spreadsheet();
 	public abstract String station();
 	public abstract String stockpile();
 	public abstract String stockpileAvailable();
