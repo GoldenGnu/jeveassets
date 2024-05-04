@@ -56,9 +56,13 @@ import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 import net.nikr.eve.jeveasset.io.shared.DesktopUtil;
 import net.nikr.eve.jeveasset.io.shared.DesktopUtil.HelpLink;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class SettingsDialog extends JDialogCentered {
+
+	private static final Logger LOG = LoggerFactory.getLogger(SettingsDialog.class);
 
 	private enum SettingsDialogAction {
 		OK, CANCEL, APPLY, HELP
@@ -288,7 +292,11 @@ public class SettingsDialog extends JDialogCentered {
 		Set<UpdateType> updates = new HashSet<>();
 		Settings.lock("Settings Dialog"); //Lock for Settings Dialog
 		for (Map.Entry<String, JSettingsPanel> entry : settingsPanels.entrySet()) {
-			updates.add(entry.getValue().save());
+			UpdateType save = entry.getValue().save();
+			if (save != UpdateType.NONE) {
+				LOG.info(entry.getKey() + " returned " + save.name());
+			}
+			updates.add(save);
 		}
 		Settings.unlock("Settings Dialog"); //Unlock for Settings Dialog
 		if (hideWindow) {
