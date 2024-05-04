@@ -36,9 +36,12 @@ import net.nikr.eve.jeveasset.i18n.General;
 
 public class Tags extends TreeSet<Tag> implements Comparable<Tags>{
 
+	private static Font emptyFont = null;
+	private static Font plainFont = null;
 	private String tags;
 	private String html;
 	private final JPanel jPanel;
+	private Font font = null;
 
 	public Tags() {
 		super(GlazedLists.comparableComparator());
@@ -47,6 +50,13 @@ public class Tags extends TreeSet<Tag> implements Comparable<Tags>{
 		jPanel.setLayout(layout);
 
 		updateTags();
+	}
+
+	public static void setFont(Font font) {
+		if (plainFont == null) {
+			plainFont = font;
+			emptyFont = new Font(font.getName(), Font.ITALIC, font.getSize());
+		}
 	}
 
 	@Override
@@ -89,6 +99,13 @@ public class Tags extends TreeSet<Tag> implements Comparable<Tags>{
 		updateHTML();
 	}
 
+	public final void updateFont() {
+		if (font == null || !font.equals(plainFont)) {
+			font = plainFont;
+			updatePanel();
+		}
+	}
+
 	private void updateString() {
 		StringBuilder sb = new StringBuilder();
 		boolean first = true;
@@ -117,6 +134,9 @@ public class Tags extends TreeSet<Tag> implements Comparable<Tags>{
 				jPanel.add(Box.createHorizontalStrut(3));
 			}
 			JLabel jLabel = new JLabel(tag.getName());
+			if (plainFont != null) {
+				jLabel.setFont(plainFont);
+			}
 			jLabel.setOpaque(true);
 			jLabel.setBackground(tag.getColor().getBackground());
 			jLabel.setForeground(tag.getColor().getForeground());
@@ -125,8 +145,9 @@ public class Tags extends TreeSet<Tag> implements Comparable<Tags>{
 		}
 		if (isEmpty()) {
 			JLabel jLabel = new JLabel(General.get().none());
-			Font font = jLabel.getFont();
-			jLabel.setFont(new Font(font.getName(), Font.ITALIC, font.getSize()));
+			if (emptyFont != null) {
+				jLabel.setFont(emptyFont);
+			}
 			if (ColorUtil.isBrightColor(jLabel.getBackground())) { //Light background color
 				jLabel.setForeground(jLabel.getBackground().darker().darker().darker());
 			} else { //Dark background color
