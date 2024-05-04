@@ -45,6 +45,7 @@ import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.settings.Settings;
+import net.nikr.eve.jeveasset.data.settings.tag.TagUpdate;
 import net.nikr.eve.jeveasset.data.settings.types.LocationType;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel.JStatusLabel;
@@ -65,7 +66,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
 import net.nikr.eve.jeveasset.gui.shared.table.TableFormatFactory;
 import net.nikr.eve.jeveasset.i18n.TabsTransaction;
 
-public class TransactionTab extends JMainTabPrimary {
+public class TransactionTab extends JMainTabPrimary implements TagUpdate {
 
 	private final JAutoColumnTable jTable;
 	private final JStatusLabel jSellOrdersCount;
@@ -193,6 +194,14 @@ public class TransactionTab extends JMainTabPrimary {
 						.addComponent(jToolBar, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
 						.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
 		);
+	}
+
+	@Override
+	public void updateTags() {
+		beforeUpdateData();
+		tableModel.fireTableDataChanged();
+		filterControl.refilter();
+		afterUpdateData();
 	}
 
 	@Override

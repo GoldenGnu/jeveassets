@@ -660,6 +660,9 @@ public class ProfileData {
 			}
 			//Date added
 			transaction.setAdded(AddedData.getTransactions().getAdd(transactionsAdded, transaction.getTransactionID(), addedDate));
+			//Tags
+			Tags tags = Settings.get().getTags(transaction.getTagID());
+			transaction.setTags(tags);
 		}
 		AddedData.getTransactions().commitQueue();
 		//Update Journal dynamic values
