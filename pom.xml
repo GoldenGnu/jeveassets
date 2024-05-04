@@ -365,22 +365,6 @@
 				<version>2.0.2</version>
 				<executions>
 					<execution>
-						<id>upload-delete</id>
-						<phase>deploy</phase>
-						<goals>
-							<goal>sshexec</goal>
-						</goals>
-						<configuration>
-							<displayCommandOutputs>true</displayCommandOutputs>
-							<serverId>eve-nikr-net</serverId>
-							<url>${upload.url}</url>
-							<commands> 
-								<!-- remove data directory -->
-								<command>rm -rf ${upload.program.delete}</command>
-							</commands>
-						</configuration>
-					</execution>
-					<execution>
 						<id>upload-update</id>
 						<phase>deploy</phase>
 						<goals>
