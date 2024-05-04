@@ -25,6 +25,7 @@ import ca.odell.glazedlists.GlazedLists;
 import java.util.Comparator;
 import java.util.Date;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
+import net.nikr.eve.jeveasset.data.settings.tag.Tags;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.LongInt;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.Percent;
@@ -40,6 +41,16 @@ public enum TransactionTableFormat implements EnumTableColumn<MyTransaction> {
 		@Override
 		public Object getColumnValue(final MyTransaction from) {
 			return from.getDate();
+		}
+	},
+	TAGS(Tags.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsTransaction.get().columnTags();
+		}
+		@Override
+		public Object getColumnValue(final MyTransaction from) {
+			return from.getTags();
 		}
 	},
 	ADDED(Date.class, GlazedLists.comparableComparator()) {
