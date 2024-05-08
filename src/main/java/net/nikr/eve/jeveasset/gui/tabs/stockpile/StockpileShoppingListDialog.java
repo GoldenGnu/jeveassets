@@ -32,7 +32,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
+import java.util.TreeSet;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.GroupLayout;
 import javax.swing.Icon;
@@ -234,13 +236,13 @@ class StockpileShoppingListDialog extends JDialogCentered {
 			stockpileNamesBuilder.append("\r\n");
 			Set<Integer> contractIDs = null;
 			if (stockpile.isContracts() && stockpile.isContractsMatchAll()) {
-				contractIDs = new HashSet<>();
-				Map<MyContract, List<MyContractItem>> foundItems = StockpileData.contractsMatchAll(program.getProfileData(), stockpile, false);
-				//Add
-				for (MyContract contract : foundItems.keySet()) {
-					contractIDs.add(contract.getContractID());
+					contractIDs = new HashSet<>();
+					Map<MyContract, List<MyContractItem>> foundItems = StockpileData.contractsMatchAll(program.getProfileData(), stockpile, false);
+					//Add
+					for (MyContract contract : foundItems.keySet()) {
+						contractIDs.add(contract.getContractID());
+					}
 				}
-			}
 			for (StockpileItem stockpileItem : stockpile.getClaims()) {
 				if (stockpileItem instanceof SubpileStock) {
 					String key = stockpileItem.getName().trim();
@@ -394,6 +396,9 @@ class StockpileShoppingListDialog extends JDialogCentered {
 			}
 		}
 		for (ShoppingListData data : outputData.values()) {
+			//Print sorted items
+			data.printItems();
+			//Print footer
 			data.printFooterMissing(missingVolume, missingValue);
 			data.printFooterRequired(requiredVolume, requiredValue);
 			data.printFooterOwned(ownedVolume, ownedValue);
@@ -822,6 +827,9 @@ class StockpileShoppingListDialog extends JDialogCentered {
 
 	private static class ShoppingListData {
 		private final ShoppingListType type;
+		private final Set<ShoppingListDataEntry> missing = new TreeSet<>();
+		private final Set<ShoppingListDataEntry> required = new TreeSet<>();
+		private final Set<ShoppingListDataEntry> owned = new TreeSet<>();
 		private final StringBuilder missingBuilder = new StringBuilder();
 		private final StringBuilder requiredBuilder = new StringBuilder();
 		private final StringBuilder ownedBuilder = new StringBuilder();
@@ -846,21 +854,33 @@ class StockpileShoppingListDialog extends JDialogCentered {
 		private void printOwned(long count, Item item, boolean bpc, boolean bpo, boolean runs) {
 			if (count > 0) {
 				ownedEmpty = false;
-				type.printItem(ownedBuilder, count, item, bpc, bpo, runs);
+				owned.add(new ShoppingListDataEntry(count, item, bpc, bpo, runs));
 			}
 		}
 
 		private void printRequired(long count, Item item, boolean bpc, boolean bpo, boolean runs) {
 			if (count > 0) {
 				requiredEmpty = false;
-				type.printItem(requiredBuilder, count, item, bpc, bpo, runs);
+				required.add(new ShoppingListDataEntry(count, item, bpc, bpo, runs));
 			}
 		}
 
 		private void printMissing(long count, Item item, boolean bpc, boolean bpo, boolean runs) {
 			if (count > 0) {
 				missingEmpty = false;
-				type.printItem(missingBuilder, count, item, bpc, bpo, runs);
+				missing.add(new ShoppingListDataEntry(count, item, bpc, bpo, runs));
+			}
+		}
+
+		private void printItems() {
+			for (ShoppingListDataEntry entry : missing) {
+				entry.print(type, missingBuilder);
+			}
+			for (ShoppingListDataEntry entry : required) {
+				entry.print(type, requiredBuilder);
+			}
+			for (ShoppingListDataEntry entry : owned) {
+				entry.print(type, ownedBuilder);
 			}
 		}
 
@@ -879,6 +899,93 @@ class StockpileShoppingListDialog extends JDialogCentered {
 			type.printHeader(stockpileNamesBuilder, subpileNamesBuilder, requiredBuilder, subpiles, percent);
 			type.printHeader(stockpileNamesBuilder, subpileNamesBuilder, missingBuilder, subpiles, percent);
 		}	
+	}
+
+	private static class ShoppingListDataEntry implements Comparable<ShoppingListDataEntry> {
+		private final long count;
+		private final Item item;
+		private final boolean bpc;
+		private final boolean bpo;
+		private final boolean runs;
+
+		public ShoppingListDataEntry(long count, Item item, boolean bpc, boolean bpo, boolean runs) {
+			this.count = count;
+			this.item = item;
+			this.bpc = bpc;
+			this.bpo = bpo;
+			this.runs = runs;
+		}
+
+		public void print(ShoppingListType type, StringBuilder builder) {
+			type.printItem(builder, count, item, bpc, bpo, runs);
+		}
+
+		@Override
+		public int compareTo(ShoppingListDataEntry o) {
+			int compared;
+			/*
+			//Sort by group first (defualt in the table)
+			compared = item.getGroup().compareTo(o.item.getGroup());
+			if (compared != 0) {
+				return compared;
+			}
+			*/
+			compared = this.item.getTypeName().compareTo(o.item.getTypeName());
+			if (compared != 0) {
+				return compared;
+			}
+			compared = Boolean.compare(this.bpc, o.bpc);
+			if (compared != 0) {
+				return compared;
+			}
+			compared = Boolean.compare(this.bpo, o.bpo);
+			if (compared != 0) {
+				return compared;
+			}
+			compared = Boolean.compare(this.runs, o.runs);
+			if (compared != 0) {
+				return compared;
+			}
+			return 0;
+		}
+
+		@Override
+		public int hashCode() {
+			int hash = 5;
+			hash = 41 * hash + (int) (this.count ^ (this.count >>> 32));
+			hash = 41 * hash + Objects.hashCode(this.item);
+			hash = 41 * hash + (this.bpc ? 1 : 0);
+			hash = 41 * hash + (this.bpo ? 1 : 0);
+			hash = 41 * hash + (this.runs ? 1 : 0);
+			return hash;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj) {
+				return true;
+			}
+			if (obj == null) {
+				return false;
+			}
+			if (getClass() != obj.getClass()) {
+				return false;
+			}
+			final ShoppingListDataEntry other = (ShoppingListDataEntry) obj;
+			if (this.count != other.count) {
+				return false;
+			}
+			if (this.bpc != other.bpc) {
+				return false;
+			}
+			if (this.bpo != other.bpo) {
+				return false;
+			}
+			if (this.runs != other.runs) {
+				return false;
+			}
+			return Objects.equals(this.item, other.item);
+		}
 	}
 
 	private static class IconListCellRendererRenderer implements ListCellRenderer<ShoppingListType> {
