@@ -833,7 +833,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 			updateSubpile(items.iterator().next().getStockpile());
 		}
 		for (Stockpile stockpile : stockpiles) {
-			if (stockpile.isContractsMatchAll()) { //Less items == may match now...
+			if (stockpile.isMatchAll()) { //Less items == may match now...
 				updateStockpile(stockpile);
 			}
 		}

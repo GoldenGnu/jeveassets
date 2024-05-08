@@ -55,7 +55,7 @@ public class StockpileData extends TableData {
 
 	private Map<Long, String> ownersName;
 	private final Map<Stockpile, Map<Integer, Set<MyContractItem>>> contractItems = new HashMap<>();
-	private final Map<Integer, Set<MyAsset>> assets = new HashMap<>();
+	private final Map<Stockpile, Map<Integer, Set<MyAsset>>> assets = new HashMap<>();
 	private final Map<Integer, Set<MyMarketOrder>> marketOrders = new HashMap<>();
 	private final Map<Integer, Set<MyIndustryJob>> industryJobs = new HashMap<>();
 	private final Map<Integer, Set<MyTransaction>> transactions = new HashMap<>();
@@ -155,7 +155,7 @@ public class StockpileData extends TableData {
 			//Contract Items
 			if (stockpile.isContracts()) {
 				get(contractItems, stockpile).clear();
-				if (stockpile.isContractsMatchAll()) {
+				if (stockpile.isMatchAll()) {
 					Map<MyContract, List<MyContractItem>> foundItems = contractsMatchAll(profileData, stockpile, updateClaims);
 					//Add
 					for (List<MyContractItem> list : foundItems.values()) {
@@ -180,17 +180,28 @@ public class StockpileData extends TableData {
 			}
 			//Assets
 			if (stockpile.isAssets()) {
-				for (MyAsset asset : profileData.getAssetsList()) {
-					if (asset.isGenerated()) { //Skip generated assets
-						continue;
+				get(assets, stockpile).clear();
+				if (stockpile.isMatchAll()) {
+					Map<MyAsset, List<MyAsset>> foundItems = assetsMatchAll(profileData, stockpile, updateClaims);
+					//Add
+					for (List<MyAsset> list : foundItems.values()) {
+						for (MyAsset asset : list) {
+							add(get(assets, stockpile), get(asset.getTypeID(), asset.isBPC()), asset);
+						}
 					}
-					Integer typeID = get(asset.getTypeID(), asset.isBPC());
-					//Ignore null and wrong typeID
-					if (ignore(typeIDs, typeID)) {
-						continue;
+				} else {
+					for (MyAsset asset : profileData.getAssetsList()) {
+						if (asset.isGenerated()) { //Skip generated assets
+							continue;
+						}
+						Integer typeID = get(asset.getTypeID(), asset.isBPC());
+						//Ignore null and wrong typeID
+						if (ignore(typeIDs, typeID)) {
+							continue;
+						}
+						//Add Asset
+						add(get(assets, stockpile), typeID, asset);
 					}
-					//Add Asset
-					add(assets, typeID, asset);
 				}
 			}
 			//Market Orders
@@ -310,6 +321,88 @@ public class StockpileData extends TableData {
 		return foundItems;
 	}
 
+	public static Map<MyAsset, List<MyAsset>> assetsMatchAll(ProfileData profileData, Stockpile stockpile, boolean updateClaims) {
+		Map<MyAsset, Set<Integer>> foundIDs =  new HashMap<>();
+		Map<MyAsset, List<MyAsset>> foundItems =  new HashMap<>();
+		Map<MyAsset, List<MyAsset>> parents =  new HashMap<>();
+		Set<Integer> typeIDs = new HashSet<>();
+		//Init found maps
+		for (MyAsset asset : profileData.getAssetsList()) {
+			if (asset.getAssets().isEmpty()) {
+				continue;
+			}
+			List<MyAsset> children = new ArrayList<>();
+			addAssetChildren(children, asset);
+			parents.put(asset, children);
+			foundIDs.put(asset, new HashSet<>());
+			foundItems.put(asset, new ArrayList<>());
+		}
+		//Update subpile claims
+		if (updateClaims && !stockpile.getSubpiles().isEmpty()) {
+			updateSubpileClaims(stockpile);
+		}
+		//StockpileItem map lookup
+		Map<Integer, StockpileItem> stockpileItems =  new HashMap<>();
+		for (StockpileItem stockpileItem : stockpile.getClaims()) {
+			if (stockpileItem.isTotal()) {
+				continue; //Ignore Total
+			}
+			typeIDs.add(stockpileItem.getItemTypeID());
+			stockpileItems.put(stockpileItem.getItemTypeID(), stockpileItem);
+		}
+		//Contract Items matching
+		for (Map.Entry<MyAsset, List<MyAsset>> entry : parents.entrySet()) {
+			MyAsset parent = entry.getKey();
+			for (MyAsset child : entry.getValue()) {
+				//Validate contract
+				if (child.isGenerated()) {
+					continue;
+				}
+				Integer typeID = get(child.getTypeID(), child.isBPC());
+				//Validate typeID
+				if (ignore(typeIDs, typeID)) {
+					foundItems.remove(parent); //Contract have items not in the stockpile
+					continue; //Nothing left to do here
+				}
+				//Get items
+				List<MyAsset> items = foundItems.get(parent);
+				if (items == null) {
+					continue; //Happens when one or more typeIDs from the contract isn't in the stockpile
+				}
+				//Get contract typeIDs
+				Set<Integer> ids = foundIDs.get(parent);
+				if (ids == null) {
+					continue; //Should never happen, but, better safe than sorry
+				}
+				//Get StockpileItem
+				StockpileItem stockpileItem = stockpileItems.get(typeID);
+				if (stockpileItem == null) {
+					continue; //Should never happen, but, better safe than sorry
+				}
+				if (stockpileItem.matchesAsset(child)) {
+					items.add(child);
+					ids.add(typeID);
+				}
+			}
+		}
+		//Stockpile Items matching
+		for (Map.Entry<MyAsset, Set<Integer>> entry : foundIDs.entrySet()) {
+			//Only compare the size of the sets, as both sets only contains valid and unique ids.
+			//Therefore there should be no reason to compare the actualy IDs (which is really really slow)
+			if (entry.getValue().size() != typeIDs.size()) { //Stockpile have items not in the contract
+				foundItems.remove(entry.getKey());
+			}
+		}
+		return foundItems;
+	}
+
+	private static void addAssetChildren(List<MyAsset> assets, MyAsset asset) {
+		assets.add(asset);
+		for (MyAsset child : asset.getAssets()) {
+			addAssetChildren(assets, child);
+		}
+	}
+
 	public static Integer get(Integer typeID, boolean bpc) {
 		//Ignore null
 		if (typeID == null) {
@@ -374,7 +467,7 @@ public class StockpileData extends TableData {
 		}
 		//Assets
 		if (stockpile.isAssets()) {
-			Set<MyAsset> items = assets.get(TYPE_ID);
+			Set<MyAsset> items = get(assets, stockpile).get(TYPE_ID);
 			if (items != null) {
 				for (MyAsset asset : items) {
 					item.updateAsset(asset);
@@ -481,7 +574,7 @@ public class StockpileData extends TableData {
 		//Add new items
 		updateSubpileClaims(parent, parentItems);
 		//Update stockpile items
-		if (parent.isContracts() && parent.isContractsMatchAll()) {
+		if (parent.isMatchAll() && (parent.isContracts() || parent.isAssets())) {
 			updateStockpileItems(parent, false);
 		}
 		//Update items
