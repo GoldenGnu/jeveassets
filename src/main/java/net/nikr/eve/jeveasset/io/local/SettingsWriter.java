@@ -623,7 +623,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 			if (group != null && !group.isEmpty()) {
 				setAttribute(stockpileNode, "stockpilegroup", group);
 			}
-			setAttribute(stockpileNode, "contractsmatchall", stockpile.isContractsMatchAll());
+			setAttribute(stockpileNode, "matchall", stockpile.isMatchAll());
 			//ITEMS
 			for (StockpileItem item : stockpile.getItems()) {
 				if (item.isTotal()) {

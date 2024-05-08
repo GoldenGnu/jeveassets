@@ -63,9 +63,6 @@ public abstract class TabsStockpile extends Bundle {
 	public abstract String container();
 	public abstract String containerIncludeSubs();
 	public abstract String containerIncludeSubsToolTip();
-	public abstract String contracts();
-	public abstract String contractsMatchAll();
-	public abstract String contractsMatchAllTip();
 	public abstract String copy();
 	public abstract String countMinimum();
 	public abstract String csv();
@@ -172,6 +169,9 @@ public abstract class TabsStockpile extends Bundle {
 	public abstract String jobsDaysWarning();
 	public abstract String location();
 	public abstract String marketDetailsOwnerToolTip();
+	public abstract String match();
+	public abstract String matchAll();
+	public abstract String matchAllTip();
 	public abstract String matchExclude();
 	public abstract String matchInclude();
 	public abstract String materialsManufacturing();
