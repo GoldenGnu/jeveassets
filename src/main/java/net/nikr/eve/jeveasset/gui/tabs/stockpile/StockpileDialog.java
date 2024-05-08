@@ -600,12 +600,12 @@ public class StockpileDialog extends JDialogCentered {
 			Settings.get().getStockpileGroupSettings().setGroup(stockpile, group);
 		} else if (cloneStockpile != null) { //Clone
 			cloneStockpile.update(getStockpile());
-			StockpileTab.addStockpile(program, cloneStockpile); //Add Clone
+			StockpileTab.addSettingStockpile(cloneStockpile, false); //Add Clone
 		} else { //Add
 			stockpile = getStockpile();
-			StockpileTab.addStockpile(program, stockpile); //Add
+			StockpileTab.addSettingStockpile(stockpile, false); //Add
 		}
-		Collections.sort(Settings.get().getStockpiles());
+		StockpileTab.sortSettingStockpile();
 		updated = true;
 		Settings.unlock("Stockpile (Stockpile dialog)"); //Unlock for Stockpile (Stockpile dialog)
 		program.saveSettings("Stockpile (Stockpile dialog)"); //Save Stockpile (Stockpile dialog)
