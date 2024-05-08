@@ -125,7 +125,7 @@ public class StockpileDialog extends JDialogCentered {
 
 	private final JTextField jName;
 	private final JDoubleField jMultiplier;
-	private final JCheckBox jContractsMatchAll;;
+	private final JCheckBox jMatchAll;
 	private final JButton jOK;
 	private final List<LocationPanel> locationPanels = new ArrayList<>();
 	private final JPanel jFiltersPanel;
@@ -186,13 +186,13 @@ public class StockpileDialog extends JDialogCentered {
 		jMultiplier = new JDoubleField("1", DocumentFactory.ValueFlag.POSITIVE_AND_NOT_ZERO);
 		jMultiplier.setAutoSelectAll(true);
 		jMultiplierPanel.add(jMultiplier);
-	//Contracts Match All
-		BorderPanel jContractsMatchAllPanel = new BorderPanel(TabsStockpile.get().contracts());
+	//Match All
+		BorderPanel jMatchAllPanel = new BorderPanel(TabsStockpile.get().match());
 
-		jContractsMatchAll = new JCheckBox(TabsStockpile.get().contractsMatchAll());
-		jContractsMatchAll.setToolTipText(TabsStockpile.get().contractsMatchAllTip());
-		jContractsMatchAllPanel.add(jContractsMatchAll);
-		jContractsMatchAllPanel.addGab(5);
+		jMatchAll = new JCheckBox(TabsStockpile.get().matchAll());
+		jMatchAll.setToolTipText(TabsStockpile.get().matchAllTip());
+		jMatchAllPanel.add(jMatchAll);
+		jMatchAllPanel.addGab(5);
 	//Add Filter
 		JFixedToolBar jToolBar = new JFixedToolBar();
 		jToolBar.setBorder(BorderFactory.createTitledBorder(TabsStockpile.get().addFilter()));
@@ -258,7 +258,7 @@ public class StockpileDialog extends JDialogCentered {
 				.addGroup(layout.createSequentialGroup()
 					.addComponent(jNamePanel.getPanel(), FIELD_WIDTH - 215, FIELD_WIDTH - 215, FIELD_WIDTH - 215)
 					.addComponent(jMultiplierPanel.getPanel())
-					.addComponent(jContractsMatchAllPanel.getPanel())
+					.addComponent(jMatchAllPanel.getPanel())
 				)
 				.addComponent(jToolBar, FIELD_WIDTH, FIELD_WIDTH, FIELD_WIDTH)
 				.addComponent(jFiltersScroll, FIELD_WIDTH, FIELD_WIDTH, FIELD_WIDTH)
@@ -272,7 +272,7 @@ public class StockpileDialog extends JDialogCentered {
 				.addGroup(layout.createParallelGroup()
 					.addComponent(jNamePanel.getPanel())
 					.addComponent(jMultiplierPanel.getPanel())
-					.addComponent(jContractsMatchAllPanel.getPanel())
+					.addComponent(jMatchAllPanel.getPanel())
 				)
 				.addComponent(jToolBar, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
 				.addComponent(jFiltersScroll, 0, GroupLayout.DEFAULT_SIZE, 500)
@@ -304,10 +304,10 @@ public class StockpileDialog extends JDialogCentered {
 		} catch (NumberFormatException ex) {
 			multiplier = 1;
 		}
-		//Contracts Match All
-		boolean contractsMatchAll = jContractsMatchAll.isSelected();
+		//Match All
+		boolean matchAll = jMatchAll.isSelected();
 		//Add
-		return new Stockpile(name, null, stockpileFilters, multiplier, contractsMatchAll); //New id
+		return new Stockpile(name, null, stockpileFilters, multiplier, matchAll); //New id
 	}
 
 	private void autoValidate() {
@@ -417,8 +417,8 @@ public class StockpileDialog extends JDialogCentered {
 		//Multiplier
 		jMultiplier.setText(Formatter.compareFormat(loadStockpile.getMultiplier()));
 
-		//Contracts Match All
-		jContractsMatchAll.setSelected(loadStockpile.isContractsMatchAll());
+		//Match All
+		jMatchAll.setSelected(loadStockpile.isMatchAll());
 
 		//Filters
 		for (StockpileFilter filter : loadStockpile.getFilters()) {
@@ -462,7 +462,7 @@ public class StockpileDialog extends JDialogCentered {
 		jName.setFont(font);
 		jName.setText("");
 		jMultiplier.setText("1");
-		jContractsMatchAll.setSelected(false);
+		jMatchAll.setSelected(false);
 
 		locationPanels.clear();
 		updatePanels();

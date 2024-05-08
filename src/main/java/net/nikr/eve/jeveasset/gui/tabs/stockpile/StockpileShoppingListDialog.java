@@ -235,7 +235,9 @@ class StockpileShoppingListDialog extends JDialogCentered {
 			stockpileNamesBuilder.append(stockpile.getName());
 			stockpileNamesBuilder.append("\r\n");
 			Set<Integer> contractIDs = null;
-			if (stockpile.isContracts() && stockpile.isContractsMatchAll()) {
+			Set<Long> assetsIDs = null;
+			if (stockpile.isMatchAll()) {
+				if (stockpile.isContracts()) {
 					contractIDs = new HashSet<>();
 					Map<MyContract, List<MyContractItem>> foundItems = StockpileData.contractsMatchAll(program.getProfileData(), stockpile, false);
 					//Add
@@ -243,6 +245,19 @@ class StockpileShoppingListDialog extends JDialogCentered {
 						contractIDs.add(contract.getContractID());
 					}
 				}
+				if (stockpile.isAssets()) {
+					assetsIDs = new HashSet<>();
+					Map<MyAsset, List<MyAsset>> foundItems = StockpileData.assetsMatchAll(program.getProfileData(), stockpile, false);
+					//Add
+					for (Map.Entry<MyAsset, List<MyAsset>> entry : foundItems.entrySet()) {
+						assetsIDs.add(entry.getKey().getItemID());
+						for (MyAsset asset : entry.getValue()) {
+							assetsIDs.add(asset.getItemID());
+						}
+					}
+					
+				}
+			}
 			for (StockpileItem stockpileItem : stockpile.getClaims()) {
 				if (stockpileItem instanceof SubpileStock) {
 					String key = stockpileItem.getName().trim();
@@ -256,7 +271,7 @@ class StockpileShoppingListDialog extends JDialogCentered {
 						claimList = new ArrayList<>();
 						claims.put(typeID, claimList);
 					}
-					claimList.add(new StockClaim(stockpileItem, contractIDs, percent));
+					claimList.add(new StockClaim(stockpileItem, contractIDs, assetsIDs, percent));
 				}
 			}
 		}
@@ -431,6 +446,12 @@ class StockpileShoppingListDialog extends JDialogCentered {
 					continue; //Ignore none matching contracts
 				}
 			}
+			if (stockMinimum.isAssetMatchAll() && object instanceof MyAsset) {
+				MyAsset asset = (MyAsset) object;
+				if (!stockMinimum.getAssetIDs().contains(asset.getItemID())) {
+					continue; //Ignore none matching assets
+				}
+			}
 			Long count = stockMinimum.matches(object);
 			if (count != null && count != 0) { //if match (have claim)
 				if (stockItem == null) { //if item not added already - add to items list
@@ -492,13 +513,15 @@ class StockpileShoppingListDialog extends JDialogCentered {
 	private static class StockClaim implements Comparable<StockClaim>{
 		private final StockpileItem stockpileItem;
 		private final Set<Integer> contractIDs;
+		private final Set<Long> assetIDs;
 		private final long totalNeed;
 		private long countMinimum;
 		private long available = 0;
 
-		public StockClaim(StockpileItem stockpileItem, Set<Integer> contractIDs, long percent) {
+		public StockClaim(StockpileItem stockpileItem, Set<Integer> contractIDs, Set<Long> assetIDs, long percent) {
 			this.stockpileItem = stockpileItem;
 			this.contractIDs = contractIDs;
+			this.assetIDs = assetIDs;
 			this.totalNeed = (long)(stockpileItem.getCountMinimumMultiplied() * percent / 100.0);
 			this.countMinimum = this.totalNeed;
 		}
@@ -543,15 +566,27 @@ class StockpileShoppingListDialog extends JDialogCentered {
 			return contractIDs;
 		}
 
+		public Set<Long> getAssetIDs() {
+			return assetIDs;
+		}
+
 		public boolean isContractMatchAll() {
 			return contractIDs != null;
 		}
 
+		public boolean isAssetMatchAll() {
+			return assetIDs != null;
+		}
+
+		public boolean isMatchAll() {
+			return assetIDs != null || contractIDs != null;
+		}
+
 		@Override
 		public int compareTo(StockClaim o) {
-			if (this.isContractMatchAll() && !o.isContractMatchAll()) {
+			if (this.isMatchAll() && !o.isMatchAll()) {
 				return 1;
-			} else if (!this.isContractMatchAll() && o.isContractMatchAll()) {
+			} else if (!this.isMatchAll() && o.isMatchAll()) {
 				return -1;
 			} else if (this.getNeed() > o.getNeed()) {
 				return 1;

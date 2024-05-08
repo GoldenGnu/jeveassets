@@ -93,9 +93,11 @@ public class StockpileDataReader extends AbstractBackup {
 			JsonObject stockpileObject = json.getAsJsonObject();
 			String name = stockpileObject.get("n").getAsString();
 			double multiplier = stockpileObject.get("m").getAsDouble();
-			boolean contractsMatchAll = false; //NotNull
-			if (stockpileObject.has("cma")) {
-				contractsMatchAll = stockpileObject.get("cma").getAsBoolean();
+			boolean matchAll = false; //NotNull
+			if (stockpileObject.has("ma")) {
+				matchAll = stockpileObject.get("ma").getAsBoolean();
+			} else if (stockpileObject.has("cma")) {
+				matchAll = stockpileObject.get("cma").getAsBoolean();
 			}
 
 			//Filters
@@ -162,7 +164,7 @@ public class StockpileDataReader extends AbstractBackup {
 			}
 
 			//Create Stockile (then add items)
-			Stockpile stockpile = new Stockpile(name, null, filters, multiplier, contractsMatchAll);
+			Stockpile stockpile = new Stockpile(name, null, filters, multiplier, matchAll);
 
 			//Items
 			JsonElement itemsElement = stockpileObject.get("i");

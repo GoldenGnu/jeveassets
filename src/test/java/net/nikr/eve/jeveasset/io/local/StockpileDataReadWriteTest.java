@@ -270,8 +270,8 @@ public class StockpileDataReadWriteTest extends TestUtil {
 		List<Stockpile> stockpiles = new ArrayList<>();
 		String stockpileName = "StockpileName";
 		double multiplier = 6.0;
-		boolean contractsMatchAll = true;
-		stockpiles.add(new Stockpile(stockpileName, 1L, filters, multiplier, contractsMatchAll));
+		boolean matchAll = true;
+		stockpiles.add(new Stockpile(stockpileName, 1L, filters, multiplier, matchAll));
 
 		//Save and Load
 		List<Stockpile> rStockpiles = saveLoad.saveAndLoad(stockpiles);
@@ -282,7 +282,7 @@ public class StockpileDataReadWriteTest extends TestUtil {
 		Stockpile rStockpile = rStockpiles.get(0);
 		assertEquals(stockpileName, rStockpile.getName());
 		assertEquals(multiplier, rStockpile.getMultiplier(), 0.001);
-		assertEquals(contractsMatchAll, rStockpile.isContractsMatchAll());
+		assertEquals(matchAll, rStockpile.isMatchAll());
 		//Filters
 		assertEquals(1, rStockpile.getFilters().size());
 		//Filter
