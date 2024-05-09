@@ -142,7 +142,7 @@ public class MaterialsTab extends JMainTabSecondary {
 		jOreAll = new JCheckBoxMenuItem(TabsMaterials.get().all());
 		createAll(jOreGroups, jOreAll);
 
-		jCommodity = new JDropDownButton(TabsMaterials.get().includeCommodity(), Images.MISC_ORE.getIcon());
+		jCommodity = new JDropDownButton(TabsMaterials.get().includeCommodity(), Images.MISC_COMMODITY.getIcon());
 		jToolBar.addButton(jCommodity);
 		jCommodityAll = new JCheckBoxMenuItem(TabsMaterials.get().all());
 		createAll(jCommodityGroups, jCommodityAll);
