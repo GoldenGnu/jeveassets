@@ -87,9 +87,12 @@ public class MaterialsTab extends JMainTabSecondary {
 	private final JCheckBoxMenuItem jPiAll;
 	private final JDropDownButton jOre;
 	private final JCheckBoxMenuItem jOreAll;
+	private final JDropDownButton jCommodity;
+	private final JCheckBoxMenuItem jCommodityAll;
 	private final List<JCheckBoxMenuItem> jMaterialGroups = new ArrayList<>();
 	private final List<JCheckBoxMenuItem> jPiGroups = new ArrayList<>();
 	private final List<JCheckBoxMenuItem> jOreGroups = new ArrayList<>();
+	private final List<JCheckBoxMenuItem> jCommodityGroups = new ArrayList<>();
 	private final JSeparatorTable jTable;
 	private final JScrollPane jTableScroll;
 
@@ -138,6 +141,11 @@ public class MaterialsTab extends JMainTabSecondary {
 		jToolBar.addButton(jOre);
 		jOreAll = new JCheckBoxMenuItem(TabsMaterials.get().all());
 		createAll(jOreGroups, jOreAll);
+
+		jCommodity = new JDropDownButton(TabsMaterials.get().includeCommodity(), Images.MISC_ORE.getIcon());
+		jToolBar.addButton(jCommodity);
+		jCommodityAll = new JCheckBoxMenuItem(TabsMaterials.get().all());
+		createAll(jCommodityGroups, jCommodityAll);
 
 		jToolBar.addSeparator();
 
@@ -204,10 +212,14 @@ public class MaterialsTab extends JMainTabSecondary {
 			Set<String> materialGroups = new TreeSet<>();
 			Set<String> piGroups = new TreeSet<>();
 			Set<String> oreGroups = new TreeSet<>();
+			Set<String> commodityGroups = new TreeSet<>();
 			for (MyAsset asset : program.getAssetsList()) {
 				Item item = asset.getItem();
 				if (item.getCategory().equals(Item.CATEGORY_MATERIAL)) {
 					materialGroups.add(item.getGroup());
+				}
+				if (item.getCategory().equals(Item.CATEGORY_COMMODITY)) {
+					commodityGroups.add(item.getGroup());
 				}
 				if (item.isPiMaterial()) {
 					piGroups.add(item.getGroup());
@@ -219,6 +231,7 @@ public class MaterialsTab extends JMainTabSecondary {
 			createGroups(materialGroups, jMaterialGroups, jMaterialAll, jMaterial);
 			createGroups(piGroups, jPiGroups, jPiAll, jPi);
 			createGroups(oreGroups, jOreGroups, jOreAll, jOre);
+			createGroups(commodityGroups, jCommodityGroups, jCommodityAll, jCommodity);
 			jExport.setEnabled(true);
 			jExpand.setEnabled(true);
 			jCollapse.setEnabled(true);
@@ -270,6 +283,7 @@ public class MaterialsTab extends JMainTabSecondary {
 		addGroups(groups, jPiGroups, jPiAll);
 		addGroups(groups, jMaterialGroups, jMaterialAll);
 		addGroups(groups, jOreGroups, jOreAll);
+		addGroups(groups, jCommodityGroups, jCommodityAll);
 		//Save separator expanded/collapsed state
 		jTable.saveExpandedState();
 		//Update Data

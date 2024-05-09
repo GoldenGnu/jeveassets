@@ -50,10 +50,13 @@ public class MaterialsData extends TableData {
 		super(profileManager, profileData);
 	}
 
-	public EventList<Material> getData(String owner, boolean ore, boolean pi) {
+	public EventList<Material> getData(String owner, boolean ore, boolean pi, boolean commodity) {
 		Set<String> groups = new HashSet<>();
 		for (Item item : StaticData.get().getItems().values()) {
 			if (item.getCategory().equals(Item.CATEGORY_MATERIAL)) {
+				groups.add(item.getGroup());
+			}
+			if (commodity && item.getCategory().equals(Item.CATEGORY_COMMODITY)) {
 				groups.add(item.getGroup());
 			}
 			if (pi && item.isPiMaterial()) {
