@@ -194,6 +194,7 @@ public enum Images {
 	MISC_PARTYPARROT ("misc_partyparrot.gif"),
 	MISC_MATERIALS ("misc_materials.png"),
 	MISC_ORE ("misc_ore.png"),
+	MISC_COMMODITY ("misc_commodity.png"),
 	MISC_PI ("misc_pi.png"),
 	MISC_XML ("misc_xml.png"),
 
