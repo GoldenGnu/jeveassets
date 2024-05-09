@@ -58,6 +58,8 @@ public class Item implements Comparable<Item>, ItemType {
 	public static final String CATEGORY_MATERIAL = "Material";
 	//Deployable
 	public static final String CATEGORY_DEPLOYABLE = "Deployable";
+	//Commodity
+	public static final String CATEGORY_COMMODITY = "Commodity";
 	//Biomass
 	public static final String GROUP_BIOMASS = "Biomass";
 	//Station Services

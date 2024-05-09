@@ -60,6 +60,8 @@ public class ItemTest extends TestUtil {
 		boolean categoryMaterial = false;
 		//Deployable
 		boolean categoryDeployable = false;
+		//Commodity
+		boolean categoryCommodity = false;
 		//Biomass
 		boolean groupBiomass = false;
 		//Station Services
@@ -146,6 +148,10 @@ public class ItemTest extends TestUtil {
 			if (item.getCategory().equals(Item.CATEGORY_DEPLOYABLE)) {
 				categoryDeployable = true;
 			}
+			//Commodity
+			if (item.getCategory().equals(Item.CATEGORY_COMMODITY)) {
+				categoryCommodity = true;
+			}
 			//Biomass
 			if (item.getGroup().equals(Item.GROUP_BIOMASS)) {
 				groupBiomass = true;
@@ -192,6 +198,8 @@ public class ItemTest extends TestUtil {
 		assertTrue("no category: Material", categoryMaterial);
 		//Deployable
 		assertTrue("no category: Deployable", categoryDeployable);
+		//categoryCommodity
+		assertTrue("no category: Commodity", categoryCommodity);
 		//Biomass
 		assertTrue("no group: Biomass", groupBiomass);
 		//Station Services
