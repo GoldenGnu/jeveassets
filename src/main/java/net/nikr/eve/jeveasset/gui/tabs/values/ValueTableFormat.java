@@ -58,6 +58,76 @@ public enum ValueTableFormat implements EnumTableColumn<Value> {
 			return from.getBalanceTotal();
 		}
 	},
+	DIVISION_1(Double.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsValues.get().columnWalletDivision1();
+		}
+		@Override
+		public Object getColumnValue(final Value from) {
+			return from.getBalanceFilter().get("1");
+		}
+	},
+	DIVISION_2(Double.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsValues.get().columnWalletDivision2();
+		}
+		@Override
+		public Object getColumnValue(final Value from) {
+			return from.getBalanceFilter().get("2");
+		}
+	},
+	DIVISION_3(Double.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsValues.get().columnWalletDivision3();
+		}
+		@Override
+		public Object getColumnValue(final Value from) {
+			return from.getBalanceFilter().get("3");
+		}
+	},
+	DIVISION_4(Double.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsValues.get().columnWalletDivision4();
+		}
+		@Override
+		public Object getColumnValue(final Value from) {
+			return from.getBalanceFilter().get("4");
+		}
+	},
+	DIVISION_5(Double.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsValues.get().columnWalletDivision5();
+		}
+		@Override
+		public Object getColumnValue(final Value from) {
+			return from.getBalanceFilter().get("5");
+		}
+	},
+	DIVISION_6(Double.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsValues.get().columnWalletDivision6();
+		}
+		@Override
+		public Object getColumnValue(final Value from) {
+			return from.getBalanceFilter().get("6");
+		}
+	},
+	DIVISION_7(Double.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsValues.get().columnWalletDivision7();
+		}
+		@Override
+		public Object getColumnValue(final Value from) {
+			return from.getBalanceFilter().get("7");
+		}
+	},
 	ASSETS(Double.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
