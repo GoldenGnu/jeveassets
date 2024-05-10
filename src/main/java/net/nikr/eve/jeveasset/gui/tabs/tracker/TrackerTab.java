@@ -42,7 +42,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.time.Instant;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -305,14 +304,14 @@ public class TrackerTab extends JMainTabSecondary {
 		JLabel jFromLabel = new JLabel(TabsTracker.get().from());
 		jFrom = new JDateChooser(true);
 		if (trackerSettings.getFromDate() != null) {
-			jFrom.setDate(dateToLocalDate(trackerSettings.getFromDate()));
+			jFrom.setDate(trackerSettings.getFromDate());
 		}
 		jFrom.addDateChangeListener(listener);
 
 		JLabel jToLabel = new JLabel(TabsTracker.get().to());
 		jTo = new JDateChooser(true);
 		if (trackerSettings.getToDate() != null) {
-			jTo.setDate(dateToLocalDate(trackerSettings.getToDate()));
+			jTo.setDate(trackerSettings.getToDate());
 		}
 		jTo.addDateChangeListener(listener);
 
@@ -1450,11 +1449,6 @@ public class TrackerTab extends JMainTabSecondary {
 		return Date.from(instant);
 	}
 
-	private LocalDate dateToLocalDate(Date date) {
-		Instant instant = date.toInstant();
-		return LocalDateTime.ofInstant(instant, ZoneId.of("GMT")).toLocalDate();
-	}
-
 	private void showLocationFilter() {
 		boolean save = assetFilterDialog.showLocations(assetNodes);
 		if (save) { //Need refilter
@@ -1474,8 +1468,8 @@ public class TrackerTab extends JMainTabSecondary {
 			if (TrackerAction.QUICK_DATE.name().equals(e.getActionCommand())) {
 				QuickDate quickDate = (QuickDate) jQuickDate.getSelectedItem();
 				if (quickDate == QuickDate.RESET) {
-					jTo.setDate(null);
-					jFrom.setDate(null);
+					jTo.clearDate();
+					jFrom.clearDate();
 				} else {
 					Date toDate = getToDate();
 					if (toDate == null) {
@@ -1483,7 +1477,7 @@ public class TrackerTab extends JMainTabSecondary {
 					}
 					Date fromDate = quickDate.apply(toDate);
 					if (fromDate != null) {
-						jFrom.setDate(dateToLocalDate(fromDate));
+						jFrom.setDate(fromDate);
 					}
 				}
 				trackerSettings.setFromDate(getFromDate());
@@ -1672,7 +1666,7 @@ public class TrackerTab extends JMainTabSecondary {
 				jQuickDate.setSelectedItem(selected);
 			}
 			if (from != null && to != null && from.after(to)) {
-				jTo.setDate(dateToLocalDate(from));
+				jTo.setDate(from);
 			}
 			Settings.get().getTrackerSettings().setFromDate(getFromDate());
 			Settings.get().getTrackerSettings().setToDate(getToDate());
