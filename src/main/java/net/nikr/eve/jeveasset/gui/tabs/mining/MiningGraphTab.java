@@ -28,7 +28,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.time.Instant;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -230,14 +229,14 @@ public class MiningGraphTab extends JMainTabSecondary {
 		JLabel jFromLabel = new JLabel(TabsMining.get().from());
 		jFrom = new JDateChooser(true);
 		if (fromDate != null) {
-			jFrom.setDate(dateToLocalDate(fromDate));
+			jFrom.setDate(fromDate);
 		}
 		jFrom.addDateChangeListener(listener);
 
 		JLabel jToLabel = new JLabel(TabsMining.get().to());
 		jTo = new JDateChooser(true);
 		if (toDate != null) {
-			jTo.setDate(dateToLocalDate(toDate));
+			jTo.setDate(toDate);
 		}
 		jTo.addDateChangeListener(listener);
 
@@ -651,11 +650,6 @@ public class MiningGraphTab extends JMainTabSecondary {
 		updateStatusbar();
 	}
 
-	private LocalDate dateToLocalDate(Date date) {
-		Instant instant = date.toInstant();
-		return LocalDateTime.ofInstant(instant, ZoneId.of("GMT")).toLocalDate();
-	}
-
 	private Date getFromDate() {
 		LocalDate date = jFrom.getDate();
 		if (date == null) {
@@ -686,8 +680,8 @@ public class MiningGraphTab extends JMainTabSecondary {
 			} else if (MiningGraphAction.QUICK_DATE.name().equals(e.getActionCommand())) {
 				QuickDate quickDate = (QuickDate) jQuickDate.getSelectedItem();
 				if (quickDate == QuickDate.RESET) {
-					jTo.setDate(null);
-					jFrom.setDate(null);
+					jTo.clearDate();
+					jFrom.clearDate();
 				} else {
 					Date toDate = getToDate();
 					if (toDate == null) {
@@ -695,7 +689,7 @@ public class MiningGraphTab extends JMainTabSecondary {
 					}
 					Date fromDate = quickDate.apply(toDate);
 					if (fromDate != null) {
-						jFrom.setDate(dateToLocalDate(fromDate));
+						jFrom.setDate(fromDate);
 					}
 				}
 			} else if (MiningGraphAction.INCLUDE_ZERO.name().equals(e.getActionCommand())) {
@@ -738,7 +732,7 @@ public class MiningGraphTab extends JMainTabSecondary {
 				jQuickDate.setSelectedItem(selected);
 			}
 			if (from != null && to != null && from.after(to)) {
-				jTo.setDate(dateToLocalDate(from));
+				jTo.setDate(from);
 			}
 			createData();
 			updateShown();
