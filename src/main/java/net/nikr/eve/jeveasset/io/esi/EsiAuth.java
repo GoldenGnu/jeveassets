@@ -85,6 +85,8 @@ public class EsiAuth {
 				code = new String(Base64.getUrlDecoder().decode(authCode), "UTF-8");
 			} catch (UnsupportedEncodingException ex) {
 				return false;
+			} catch (IllegalArgumentException ex) {
+				return false;
 			}
 		}
 		try {
