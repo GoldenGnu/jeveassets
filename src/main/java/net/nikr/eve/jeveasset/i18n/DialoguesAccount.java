@@ -64,10 +64,12 @@ public abstract class DialoguesAccount extends Bundle {
 	public abstract String okValidText();
 
 	public abstract String authCode();
-	public abstract String authentication();
 	public abstract String authorize();
+	public abstract String accountType();
 	public abstract String accessKey();
 	public abstract String esiHelpText();
+	public abstract String authCodeHelpText();
+	public abstract String browseHelpText();
 	public abstract String validatingMessage();
 	public abstract String scopes();
 	public abstract String corporation();
