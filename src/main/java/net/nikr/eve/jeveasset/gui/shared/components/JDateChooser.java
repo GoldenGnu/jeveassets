@@ -24,6 +24,11 @@ import com.github.lgooddatepicker.components.DatePicker;
 import com.github.lgooddatepicker.components.DatePickerSettings;
 import com.github.lgooddatepicker.optionalusertools.DateChangeListener;
 import com.github.lgooddatepicker.zinternaltools.DateChangeEvent;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.Locale;
 import javax.swing.JButton;
 import javax.swing.JTextField;
@@ -69,6 +74,19 @@ public class JDateChooser extends DatePicker {
 	@Override
 	public final JButton getComponentToggleCalendarButton() {
 		return super.getComponentToggleCalendarButton();
+	}
+
+	public void setDate(Date date) {
+		super.setDate(dateToLocalDate(date));
+	}
+
+	public void clearDate() {
+		super.setDate(null);
+	}
+
+	private LocalDate dateToLocalDate(Date date) {
+		Instant instant = date.toInstant();
+		return LocalDateTime.ofInstant(instant, ZoneId.of("GMT")).toLocalDate();
 	}
 
 	private static class DefaultDatePickerSettings extends DatePickerSettings {
