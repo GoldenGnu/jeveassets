@@ -33,11 +33,11 @@ public class Percent implements NumberValue, Comparable<Percent> {
 	private final double percent;
 	private final String formatted;
 
-	public static Percent create(final double key) {
-		Percent cached = CACHE.get(key);
+	public static Percent create(final double decimalPercent) {
+		Percent cached = CACHE.get(decimalPercent);
 		if (cached == null) {
-			cached = new Percent(key);
-			CACHE.put(key, cached);
+			cached = new Percent(decimalPercent);
+			CACHE.put(decimalPercent, cached);
 		}
 		return cached;
 	}
