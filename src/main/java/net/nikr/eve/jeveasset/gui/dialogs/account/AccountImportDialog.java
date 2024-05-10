@@ -810,18 +810,18 @@ public class AccountImportDialog extends JDialogCentered {
 
 			JLabelMultiline jHelp = new JLabelMultiline(DialoguesAccount.get().esiHelpText());
 
-			cardLayout.setHorizontalGroup(
-				cardLayout.createParallelGroup()
+			layout.setHorizontalGroup(
+				layout.createParallelGroup()
 					.addComponent(jHelp)
-					.addGroup(cardLayout.createSequentialGroup()
-						.addGroup(cardLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+					.addGroup(layout.createSequentialGroup()
+						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
 							.addComponent(jAuthLabel)
 							.addComponent(jType)
 							.addComponent(jWorkaroundLabel)
 
 						)
-						.addGroup(cardLayout.createParallelGroup()
-							.addGroup(cardLayout.createSequentialGroup()
+						.addGroup(layout.createParallelGroup()
+							.addGroup(layout.createSequentialGroup()
 								.addComponent(jCharacter)
 								.addComponent(jCorporation)
 								.addComponent(jCharacterLabel)
@@ -832,21 +832,21 @@ public class AccountImportDialog extends JDialogCentered {
 						)
 					)
 			);
-			cardLayout.setVerticalGroup(
-				cardLayout.createSequentialGroup()
-					.addComponent(jHelp)
-					.addGroup(cardLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+			layout.setVerticalGroup(
+				layout.createSequentialGroup()
+					.addComponent(jHelp, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+					.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
 						.addComponent(jType, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 						.addComponent(jCharacter, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 						.addComponent(jCorporation, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 						.addComponent(jCharacterLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 						.addComponent(jCorporationLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					)
-					.addGroup(cardLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+					.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
 						.addComponent(jAuthLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 						.addComponent(jScopes, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					)
-					.addGroup(cardLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+					.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
 						.addComponent(jWorkaroundLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 						.addComponent(jWorkaround, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())	
 					)
@@ -862,18 +862,18 @@ public class AccountImportDialog extends JDialogCentered {
 
 			JLabelMultiline jHelp = new JLabelMultiline(DialoguesAccount.get().authCodeHelpText());
 
-			cardLayout.setHorizontalGroup(
-				cardLayout.createParallelGroup()
+			layout.setHorizontalGroup(
+				layout.createParallelGroup()
 					.addComponent(jHelp)
-					.addGroup(cardLayout.createSequentialGroup()
+					.addGroup(layout.createSequentialGroup()
 						.addComponent(jAuthCodeLabel)
 						.addComponent(jAuthCode, 150, 150, Integer.MAX_VALUE)
 					)
 			);
-			cardLayout.setVerticalGroup(
-				cardLayout.createSequentialGroup()
-					.addComponent(jHelp)
-					.addGroup(cardLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+			layout.setVerticalGroup(
+				layout.createSequentialGroup()
+					.addComponent(jHelp, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+					.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
 						.addComponent(jAuthCodeLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 						.addComponent(jAuthCode, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					)
@@ -887,14 +887,14 @@ public class AccountImportDialog extends JDialogCentered {
 		public BrowserPanel() {
 			JLabelMultiline jHelp = new JLabelMultiline(DialoguesAccount.get().browseHelpText());
 
-			cardLayout.setHorizontalGroup(
-				cardLayout.createSequentialGroup()
+			layout.setHorizontalGroup(
+				layout.createSequentialGroup()
 					.addGap(10, 10, Integer.MAX_VALUE)
 					.addComponent(jHelp)
 					.addGap(10, 10, Integer.MAX_VALUE)
 			);
-			cardLayout.setVerticalGroup(
-				cardLayout.createSequentialGroup()
+			layout.setVerticalGroup(
+				layout.createSequentialGroup()
 					.addGap(10, 10, Integer.MAX_VALUE)
 					.addComponent(jHelp)
 					.addGap(10, 10, Integer.MAX_VALUE)
@@ -909,21 +909,21 @@ public class AccountImportDialog extends JDialogCentered {
 
 			JWorking jWorking = new JWorking();
 
-			cardLayout.setHorizontalGroup(
-				cardLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
-					.addGroup(cardLayout.createSequentialGroup()
+			layout.setHorizontalGroup(
+				layout.createParallelGroup(GroupLayout.Alignment.CENTER)
+					.addGroup(layout.createSequentialGroup()
 						.addGap(10, 10, Integer.MAX_VALUE)
 						.addComponent(jWorking)
 						.addGap(10, 10, Integer.MAX_VALUE)
 					)
-					.addGroup(cardLayout.createSequentialGroup()
+					.addGroup(layout.createSequentialGroup()
 						.addGap(10, 10, Integer.MAX_VALUE)
 						.addComponent(jHelp)
 						.addGap(10, 10, Integer.MAX_VALUE)
 					)
 			);
-			cardLayout.setVerticalGroup(
-				cardLayout.createSequentialGroup()
+			layout.setVerticalGroup(
+				layout.createSequentialGroup()
 					.addGap(10, 10, Integer.MAX_VALUE)
 					.addComponent(jWorking)
 					.addComponent(jHelp)
@@ -944,16 +944,16 @@ public class AccountImportDialog extends JDialogCentered {
 			JScrollPane jScroll = new JScrollPane(jResultText, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 			jScroll.setBorder(BorderFactory.createLineBorder(this.getBackground().darker(), 1));
 
-			cardLayout.setHorizontalGroup(
-				cardLayout.createParallelGroup()
-					.addGroup(cardLayout.createSequentialGroup()
+			layout.setHorizontalGroup(
+				layout.createParallelGroup()
+					.addGroup(layout.createSequentialGroup()
 						.addGap(5)
 						.addComponent(jResultHeader)
 					)
 					.addComponent(jScroll, 400, 400, 400)
 			);
-			cardLayout.setVerticalGroup(
-				cardLayout.createSequentialGroup()
+			layout.setVerticalGroup(
+				layout.createSequentialGroup()
 					.addComponent(jResultHeader, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jScroll, 98, 98, 98)
 			);
@@ -964,7 +964,7 @@ public class AccountImportDialog extends JDialogCentered {
 	private class ImportPanel extends JCardPanel {
 
 		public ImportPanel() {
-			JLabelMultiline jHelp = new JLabelMultiline(DialoguesAccount.get().shareImportHelp());
+			JLabelMultiline jHelp = new JLabelMultiline(DialoguesAccount.get().shareImportHelpText());
 
 			jImportClipboard = new JButton(DialoguesAccount.get().shareImportClipboard() , Images.EDIT_PASTE.getIcon());
 			jImportClipboard.setActionCommand(AccountImportAction.SHARE_FROM_CLIPBOARD.name());
@@ -985,23 +985,23 @@ public class AccountImportDialog extends JDialogCentered {
 			JScrollPane jScroll = new JScrollPane(jImport, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 			jScroll.setBorder(BorderFactory.createLineBorder(this.getBackground().darker(), 1));
 
-			cardLayout.setHorizontalGroup(
-				cardLayout.createParallelGroup()
+			layout.setHorizontalGroup(
+				layout.createParallelGroup()
 					.addComponent(jHelp)
-					.addGroup(cardLayout.createSequentialGroup()
+					.addGroup(layout.createSequentialGroup()
 						.addComponent(jScroll)
-						.addGroup(cardLayout.createParallelGroup()
+						.addGroup(layout.createParallelGroup()
 							.addComponent(jImportClipboard, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
 							.addComponent(jImportFile, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
 						)
 					)
 			);
-			cardLayout.setVerticalGroup(
-				cardLayout.createSequentialGroup()
-					.addComponent(jHelp)
-					.addGroup(cardLayout.createParallelGroup()
+			layout.setVerticalGroup(
+				layout.createSequentialGroup()
+					.addComponent(jHelp, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+					.addGroup(layout.createParallelGroup()
 						.addComponent(jScroll)
-						.addGroup(cardLayout.createSequentialGroup()
+						.addGroup(layout.createSequentialGroup()
 							.addComponent(jImportClipboard, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 							.addComponent(jImportFile, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 						)
@@ -1035,23 +1035,23 @@ public class AccountImportDialog extends JDialogCentered {
 			JScrollPane jScroll = new JScrollPane(jExport, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 			jScroll.setBorder(BorderFactory.createLineBorder(this.getBackground().darker(), 1));
 
-			cardLayout.setHorizontalGroup(
-				cardLayout.createParallelGroup()
+			layout.setHorizontalGroup(
+				layout.createParallelGroup()
 					.addComponent(jHelp)
-					.addGroup(cardLayout.createSequentialGroup()
+					.addGroup(layout.createSequentialGroup()
 						.addComponent(jScroll)
-						.addGroup(cardLayout.createParallelGroup()
+						.addGroup(layout.createParallelGroup()
 							.addComponent(jExportClipboard, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
 							.addComponent(jExportFile, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
 						)
 					)
 			);
-			cardLayout.setVerticalGroup(
-				cardLayout.createSequentialGroup()
+			layout.setVerticalGroup(
+				layout.createSequentialGroup()
 					.addComponent(jHelp)
-					.addGroup(cardLayout.createParallelGroup()
+					.addGroup(layout.createParallelGroup()
 						.addComponent(jScroll)
-						.addGroup(cardLayout.createSequentialGroup()
+						.addGroup(layout.createSequentialGroup()
 							.addComponent(jExportClipboard, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 							.addComponent(jExportFile, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 						)
@@ -1062,13 +1062,13 @@ public class AccountImportDialog extends JDialogCentered {
 
 	private abstract class JCardPanel extends JPanel {
 
-		protected GroupLayout cardLayout;
+		protected GroupLayout layout;
 
 		public JCardPanel() {
-			cardLayout = new GroupLayout(this);
-			setLayout(cardLayout);
-			cardLayout.setAutoCreateGaps(true);
-			cardLayout.setAutoCreateContainerGaps(false);
+			layout = new GroupLayout(this);
+			setLayout(layout);
+			layout.setAutoCreateGaps(true);
+			layout.setAutoCreateContainerGaps(false);
 		}
 
 		@Override
