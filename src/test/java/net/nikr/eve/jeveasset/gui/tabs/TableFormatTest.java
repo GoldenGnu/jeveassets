@@ -224,6 +224,9 @@ public class TableFormatTest extends TestUtil {
 			//Isk
 			test(ValueTableFormat.class);
 			Value value = new Value(STRING_VALUE, DATE_VALUE);
+			for (int i = 1; i < 8; i++) {
+				value.addBalance(String.valueOf(i), 0);
+			}
 			for (ValueTableFormat tableFormat : ValueTableFormat.values()) {
 				test(tableFormat, tableFormat.getType(), tableFormat.getColumnValue(value));
 			}
