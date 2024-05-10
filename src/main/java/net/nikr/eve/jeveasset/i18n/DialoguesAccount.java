@@ -122,7 +122,7 @@ public abstract class DialoguesAccount extends Bundle {
 	public abstract String shareImport();
 	public abstract String shareImportClipboard();
 	public abstract String shareImportFile();
-	public abstract String shareImportHelp();
+	public abstract String shareImportHelpText();
 	public abstract String close();
 	public abstract String noOwners();
 
