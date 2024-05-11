@@ -77,6 +77,7 @@ public class MainMenu extends JMenuBar {
 		MINING_LOG,
 		MINING_GRAPH,
 		EXTRACTIONS,
+		PRICE_CHANGES,
 		EXIT_PROGRAM
 	}
 
@@ -128,9 +129,17 @@ public class MainMenu extends JMenuBar {
 		menuItem.addActionListener(program);
 		submenu.add(menuItem);
 
+		submenu.addSeparator();
+
 		menuItem = new JMenuItem(GuiFrame.get().priceHistory());
 		menuItem.setIcon(Images.TOOL_PRICE_HISTORY.getIcon());
 		menuItem.setActionCommand(MainMenuAction.PRICE_HISTORY.name());
+		menuItem.addActionListener(program);
+		submenu.add(menuItem);
+
+		menuItem = new JMenuItem(GuiFrame.get().priceChanges());
+		menuItem.setIcon(Images.TOOL_PRICE_CHANGE.getIcon());
+		menuItem.setActionCommand(MainMenuAction.PRICE_CHANGES.name());
 		menuItem.addActionListener(program);
 		submenu.add(menuItem);
 	//Invertory

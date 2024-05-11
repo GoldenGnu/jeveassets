@@ -32,11 +32,13 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.NavigableSet;
 import java.util.Set;
 import java.util.TreeSet;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.settings.PriceDataSettings.PriceMode;
 import net.nikr.eve.jeveasset.gui.shared.Formatter.DateFormatThreadSafe;
+import net.nikr.eve.jeveasset.gui.tabs.prices.PriceChangesTab.PriceChange;
 import net.nikr.eve.jeveasset.gui.tabs.prices.PriceHistoryTab.PriceHistoryData;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import net.nikr.eve.jeveasset.io.shared.FileUtil;
@@ -162,6 +164,28 @@ public class PriceHistoryDatabase {
 	 */
 	public static Map<Item, Set<PriceHistoryData>> getPriceData(Set<Integer> typeIDs, PriceMode priceMode) {
 		return getInstance().selectPriceData(typeIDs, priceMode);
+	}
+
+	/**
+	 * Get price changes between from and to in database.
+	 * @param priceMode
+	 * @param ownedOnly
+	 * @param typeIDs
+	 * @param from
+	 * @param to
+	 * @return
+	 */
+	public static Set<PriceChange> getPriceChanges(Map<Integer, Long> typeIDs, boolean ownedOnly, PriceMode priceMode, Date from, Date to) {
+		return getInstance().selectPriceChanges(typeIDs, ownedOnly, priceMode, from, to);
+	}
+
+	/**
+	 * Get all dates in database.
+	 * @param typeIDs
+	 * @return
+	 */
+	public static NavigableSet<String> getPriceChangesDate(Set<Integer> typeIDs) {
+		return getInstance().selectPriceChangesDate(typeIDs);
 	}
 
 	private void updateZKillboard(Map<Item, Set<PriceHistoryData>> map) {
@@ -362,6 +386,105 @@ public class PriceHistoryDatabase {
 			LOG.error(ex.getMessage(), ex);
 		}
 		return data;
+	}
+
+	private NavigableSet<String> selectPriceChangesDate(Set<Integer> typeIDs) {
+		NavigableSet<String> data = new TreeSet<>();
+		StringBuilder typeFilter = new StringBuilder();
+		if (!typeIDs.isEmpty()) {
+			typeFilter.append(" WHERE typeid IN (");
+			boolean first = true;
+			for (int typeID : typeIDs) {
+				if (first) {
+					first = false;
+				} else {
+					typeFilter.append(", ");
+				}
+				typeFilter.append(typeID);
+			}
+			typeFilter.append(") ");
+		}
+		String sql = "SELECT date FROM " + PRICEDATA_TABLE + typeFilter.toString()  + " GROUP BY date";
+		try (Connection connection = DriverManager.getConnection(connectionUrl);
+				PreparedStatement statement = connection.prepareStatement(sql);
+				ResultSet rs = statement.executeQuery();) {
+			while (rs.next()) {
+				String date = rs.getString("date");
+				data.add(date);
+			}
+		} catch (SQLException ex) {
+			LOG.error(ex.getMessage(), ex);
+		}
+		return data;
+	}
+
+	private Set<PriceChange> selectPriceChanges(Map<Integer, Long> typeIDs, boolean ownedOnly, PriceMode priceMode, Date from, Date to) {
+		String fromString = DATE.format(from);
+		String toString = DATE.format(to);
+		Map<Integer, PriceChange> data = new HashMap<>();
+		StringBuilder typeFilter = new StringBuilder();
+		if (!typeIDs.isEmpty() && ownedOnly) {
+			typeFilter.append(" AND typeid IN (");
+			boolean first = true;
+			for (int typeID : typeIDs.keySet()) {
+				if (first) {
+					first = false;
+				} else {
+					typeFilter.append(", ");
+				}
+				typeFilter.append(typeID);
+			}
+			typeFilter.append(") ");
+		}
+		StringBuilder dateFilter = new StringBuilder();
+		dateFilter.append("\"");
+		dateFilter.append(fromString);
+		dateFilter.append("\",\"");
+		dateFilter.append(toString);
+		dateFilter.append("\"");
+		String sql = "SELECT * FROM " + PRICEDATA_TABLE + " WHERE date IN (" + dateFilter.toString() + ") " + typeFilter.toString() + " ORDER BY date";
+		try (Connection connection = DriverManager.getConnection(connectionUrl);
+				PreparedStatement statement = connection.prepareStatement(sql);
+				ResultSet rs = statement.executeQuery();) {
+			while (rs.next()) {
+				int typeID = rs.getInt("typeid");
+				String date = rs.getString("date");
+				PriceData priceData = new PriceData();
+				priceData.setSellMax(rs.getDouble("sellmax"));
+				priceData.setSellAvg(rs.getDouble("sellavg"));
+				priceData.setSellMedian(rs.getDouble("sellmedian"));
+				priceData.setSellPercentile(rs.getDouble("sellpercentile"));
+				priceData.setSellMin(rs.getDouble("sellmin"));
+				priceData.setBuyMax(rs.getDouble("buymax"));
+				priceData.setBuyPercentile(rs.getDouble("buypercentile"));
+				priceData.setBuyAvg(rs.getDouble("buyavg"));
+				priceData.setBuyMedian(rs.getDouble("buymedian"));
+				priceData.setBuyMin(rs.getDouble("buymin"));
+				try {
+					PriceChange priceChange = data.get(typeID);
+					double price = PriceMode.getDefaultPrice(priceData, priceMode);
+					if (priceChange == null) {
+						Item item = ApiIdConverter.getItem(typeID);
+						priceChange = new PriceChange(typeID, item, typeIDs.getOrDefault(typeID, 0L));
+						data.put(typeID, priceChange);
+					}
+					if (date.equals(fromString)) {
+						priceChange.setPriceFrom(price);
+					} else if (date.equals(toString)) {
+						priceChange.setPriceTo(price);
+					} else {
+						LOG.warn("Date is don't equals to or from???");
+					}
+
+						
+				} catch (ParseException ex) {
+					//Ignore
+				}
+			}
+		} catch (SQLException ex) {
+			LOG.error(ex.getMessage(), ex);
+		}
+		return new HashSet<>(data.values());
 	}
 
 	public static String getZKillboardDate() {
