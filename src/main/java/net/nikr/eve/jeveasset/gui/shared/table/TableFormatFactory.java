@@ -51,6 +51,8 @@ import net.nikr.eve.jeveasset.gui.tabs.mining.MiningTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.orders.MarketTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.overview.Overview;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewTableFormat;
+import net.nikr.eve.jeveasset.gui.tabs.prices.PriceChangesTab.PriceChange;
+import net.nikr.eve.jeveasset.gui.tabs.prices.PriceChangesTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.reprocessed.ReprocessedExtendedTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.reprocessed.ReprocessedInterface;
 import net.nikr.eve.jeveasset.gui.tabs.reprocessed.ReprocessedTableFormat;
@@ -157,5 +159,9 @@ public class TableFormatFactory {
 
 	public static EnumTableFormatAdaptor<ExtractionsTableFormat, MyExtraction> extractionsTableFormat() {
 		return new EnumTableFormatAdaptor<>(ExtractionsTableFormat.class);
+	}
+
+	public static EnumTableFormatAdaptor<PriceChangesTableFormat, PriceChange> priceChangesTableFormat() {
+		return new EnumTableFormatAdaptor<>(PriceChangesTableFormat.class);
 	}
 }

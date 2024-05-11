@@ -97,6 +97,7 @@ import net.nikr.eve.jeveasset.gui.tabs.mining.MiningTab;
 import net.nikr.eve.jeveasset.gui.tabs.orders.MarketOrdersTab;
 import net.nikr.eve.jeveasset.gui.tabs.orders.OutbidProcesser.OutbidProcesserOutput;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewTab;
+import net.nikr.eve.jeveasset.gui.tabs.prices.PriceChangesTab;
 import net.nikr.eve.jeveasset.gui.tabs.prices.PriceHistoryTab;
 import net.nikr.eve.jeveasset.gui.tabs.reprocessed.ReprocessedTab;
 import net.nikr.eve.jeveasset.gui.tabs.routing.RoutingTab;
@@ -143,6 +144,7 @@ public class Program implements ActionListener {
 	private ProfileDialog profileDialog;
 	private SettingsDialog settingsDialog;
 	private UpdateDialog updateDialog;
+	private StructureUpdateDialog structureUpdateDialog;
 
 	//Tabs
 	private ValueRetroTab valueRetroTab;
@@ -168,7 +170,7 @@ public class Program implements ActionListener {
 	private MiningTab miningTab;
 	private MiningGraphTab miningGraphTab;
 	private ExtractionsTab extractionsTab;
-	private StructureUpdateDialog structureUpdateDialog;
+	private PriceChangesTab priceChangesTab;
 
 	//Misc
 	private Updater updater;
@@ -291,6 +293,9 @@ public class Program implements ActionListener {
 		SplashUpdater.setProgress(81);
 		LOG.info("Loading: Extractions Tab");
 		extractionsTab = new ExtractionsTab(this);
+		SplashUpdater.setProgress(82);
+		LOG.info("Loading: Price Changes Tab");
+		priceChangesTab = new PriceChangesTab(this);
 		SplashUpdater.setProgress(84);
 	//Dialogs
 		LOG.info("Loading: Account Manager Dialog");
@@ -1053,6 +1058,8 @@ public class Program implements ActionListener {
 			mainWindow.addTab(valueTableTab);
 		} else if (MainMenuAction.PRICE_HISTORY.name().equals(e.getActionCommand())) {
 			mainWindow.addTab(priceHistoryTab);
+		} else if (MainMenuAction.PRICE_CHANGES.name().equals(e.getActionCommand())) {
+			mainWindow.addTab(priceChangesTab);
 		} else if (MainMenuAction.MATERIALS.name().equals(e.getActionCommand())) {
 			mainWindow.addTab(materialsTab);
 		} else if (MainMenuAction.LOADOUTS.name().equals(e.getActionCommand())) {
