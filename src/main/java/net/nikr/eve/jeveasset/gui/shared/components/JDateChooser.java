@@ -31,6 +31,7 @@ import java.time.ZoneId;
 import java.util.Date;
 import java.util.Locale;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import net.nikr.eve.jeveasset.data.settings.Colors;
@@ -105,6 +106,7 @@ public class JDateChooser extends DatePicker {
 			setColor(DatePickerSettings.DateArea.TextMonthAndYearMenuLabels, Colors.BUTTON_FOREGROUND.getColor());
 			setColor(DatePickerSettings.DateArea.BackgroundTodayLabel, Colors.BUTTON_BACKGROUND.getColor());
 			setColor(DatePickerSettings.DateArea.TextTodayLabel, Colors.BUTTON_FOREGROUND.getColor());
+			setColor(DatePickerSettings.DateArea.DatePickerTextValidDate, new JLabel().getForeground());
 		}
 
 	}

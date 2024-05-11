@@ -163,6 +163,11 @@ public class TestI18N extends TestUtil {
 		assertNotNull(g.add());
 	}
 
+	@Test public void testTabsPriceChanges_en() throws Exception {
+		TabsPriceChanges g = BundleServiceFactory.getBundleService().get(TabsPriceChanges.class);
+		assertNotNull(g.columnCategory());
+	}
+
 	@Test public void testTabsPriceHistory_en() throws Exception {
 		TabsPriceHistory g = BundleServiceFactory.getBundleService().get(TabsPriceHistory.class);
 		assertNotNull(g.add());
