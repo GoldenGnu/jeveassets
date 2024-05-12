@@ -23,10 +23,10 @@ package net.nikr.eve.jeveasset.gui.tabs.slots;
 import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
 import net.nikr.eve.jeveasset.data.api.my.MyContract;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
-import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob.IndustryJobState;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
 import net.nikr.eve.jeveasset.data.api.my.MyShip;
 import net.nikr.eve.jeveasset.data.api.my.MySkill;
+import net.nikr.eve.jeveasset.data.api.raw.RawIndustryJob.IndustryJobStatus;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.settings.types.LocationType;
 
@@ -93,13 +93,13 @@ public class Slots implements Comparable<Slots>, LocationType {
 		}
 		switch (industryJob.getActivity()) {
 			case ACTIVITY_MANUFACTURING:
-				if (industryJob.getState() == IndustryJobState.STATE_DONE) {
+				if (industryJob.getStatus() == IndustryJobStatus.READY) {
 					manufacturingDone++;
 				}
 				manufacturingActive++;
 				break;
 			case ACTIVITY_REACTIONS:
-				if (industryJob.getState() == IndustryJobState.STATE_DONE) {
+				if (industryJob.getStatus() == IndustryJobStatus.READY) {
 					reactionsDone++;
 				}
 				reactionsActive++;
@@ -111,7 +111,7 @@ public class Slots implements Comparable<Slots>, LocationType {
 			case ACTIVITY_REVERSE_INVENTION:
 			case ACTIVITY_DUPLICATING:
 			case ACTIVITY_COPYING:
-				if (industryJob.getState() == IndustryJobState.STATE_DONE) {
+				if (industryJob.getStatus() == IndustryJobStatus.READY) {
 					researchDone++;
 				}
 				researchActive++;

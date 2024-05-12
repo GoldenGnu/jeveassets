@@ -50,7 +50,7 @@ public abstract class AbstractOwner implements OwnerType, Comparable<OwnerType> 
 	private Set<MyMarketOrder> marketOrders = new HashSet<>();
 	private Set<MyTransaction> transactions = new HashSet<>();
 	private Set<MyJournal> journal = new HashSet<>();
-	private List<MyIndustryJob> industryJobs = new ArrayList<>();
+	private Set<MyIndustryJob> industryJobs = new HashSet<>();
 	private Map<MyContract, List<MyContractItem>> contracts = new HashMap<>();
 	private List<MyAsset> assets = new ArrayList<>();
 	private Map<Long, RawBlueprint> blueprints = new HashMap<>();
@@ -372,7 +372,7 @@ public abstract class AbstractOwner implements OwnerType, Comparable<OwnerType> 
 	}
 
 	@Override
-	public final List<MyIndustryJob> getIndustryJobs() {
+	public final Set<MyIndustryJob> getIndustryJobs() {
 		return industryJobs;
 	}
 
@@ -440,7 +440,7 @@ public abstract class AbstractOwner implements OwnerType, Comparable<OwnerType> 
 	}
 
 	@Override
-	public final void setIndustryJobs(final List<MyIndustryJob> industryJobs) {
+	public final void setIndustryJobs(final Set<MyIndustryJob> industryJobs) {
 		this.industryJobs = industryJobs;
 	}
 

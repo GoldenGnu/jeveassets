@@ -40,15 +40,6 @@ import javax.swing.ListCellRenderer;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.data.api.accounts.DeprecatedOwner;
-import net.nikr.eve.jeveasset.data.api.my.MyAccountBalance;
-import net.nikr.eve.jeveasset.data.api.my.MyAsset;
-import net.nikr.eve.jeveasset.data.api.my.MyContract;
-import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
-import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
-import net.nikr.eve.jeveasset.data.api.my.MyJournal;
-import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
-import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
-import net.nikr.eve.jeveasset.data.api.raw.RawBlueprint;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
 import net.nikr.eve.jeveasset.i18n.DialoguesAccount;
@@ -59,7 +50,7 @@ public class JMigrateDialog extends JDialogCentered {
 	private final JButton jCancel;
 	private final JCheckBox jAll;
 	private final JLabel jHelp;
-	private final List<OwnerContainer> containers = new ArrayList<OwnerContainer>();
+	private final List<OwnerContainer> containers = new ArrayList<>();
 	private boolean returnValue = false;
 
 	public JMigrateDialog(Program program, AccountManagerDialog accountManagerDialog) {
@@ -139,7 +130,7 @@ public class JMigrateDialog extends JDialogCentered {
 		jPanel.removeAll();
 		containers.clear();
 		for (DeprecatedOwner owner : owners) {
-			List<EsiOwner> esiOwners = new ArrayList<EsiOwner>();
+			List<EsiOwner> esiOwners = new ArrayList<>();
 			for (EsiOwner esiOwner : program.getProfileManager().getEsiOwners()) {
 				if (esiOwner.getOwnerID() == owner.getOwnerID()) {
 					esiOwners.add(esiOwner);
@@ -230,7 +221,7 @@ public class JMigrateDialog extends JDialogCentered {
 				jOwner.setSelected(false);
 				jOwner.setEnabled(false);
 
-				jEsiOwners = new JComboBox<EsiOwner>();
+				jEsiOwners = new JComboBox<>();
 				jEsiOwners.setEnabled(false);
 
 				jEsiInfo.setEnabled(false);
@@ -240,7 +231,7 @@ public class JMigrateDialog extends JDialogCentered {
 				jOwner.setSelected(false);
 				jOwner.setEnabled(false);
 
-				jEsiOwners = new JComboBox<EsiOwner>();
+				jEsiOwners = new JComboBox<>();
 				jEsiOwners.setEnabled(false);
 
 				jEsiInfo.setEnabled(false);
@@ -251,7 +242,7 @@ public class JMigrateDialog extends JDialogCentered {
 				jOwner.setEnabled(true);
 
 				EsiOwner[] data = new EsiOwner[esiOwners.size()];
-				jEsiOwners = new JComboBox<EsiOwner>(esiOwners.toArray(data));
+				jEsiOwners = new JComboBox<>(esiOwners.toArray(data));
 
 				jEsiInfo.setEnabled(true);
 			} else { //One Esi Account
@@ -261,7 +252,7 @@ public class JMigrateDialog extends JDialogCentered {
 				jOwner.setEnabled(true);
 
 				EsiOwner[] data = new EsiOwner[esiOwners.size()];
-				jEsiOwners = new JComboBox<EsiOwner>(esiOwners.toArray(data));
+				jEsiOwners = new JComboBox<>(esiOwners.toArray(data));
 				jEsiOwners.setEnabled(false);
 
 				jEsiInfo.setEnabled(true);
@@ -363,14 +354,14 @@ public class JMigrateDialog extends JDialogCentered {
 			//Transactions
 			esiOwner.getTransactions().addAll(owner.getTransactions());
 		//Clear data
-			owner.setAccountBalances(new ArrayList<MyAccountBalance>());
-			owner.setAssets(new ArrayList<MyAsset>());
-			owner.setBlueprints(new HashMap<Long, RawBlueprint>());
-			owner.setContracts(new HashMap<MyContract, List<MyContractItem>>());
-			owner.setIndustryJobs(new ArrayList<MyIndustryJob>());
-			owner.setJournal(new HashSet<MyJournal>());
-			owner.setMarketOrders(new HashSet<MyMarketOrder>());
-			owner.setTransactions(new HashSet<MyTransaction>());
+			owner.setAccountBalances(new ArrayList<>());
+			owner.setAssets(new ArrayList<>());
+			owner.setBlueprints(new HashMap<>());
+			owner.setContracts(new HashMap<>());
+			owner.setIndustryJobs(new HashSet<>());
+			owner.setJournal(new HashSet<>());
+			owner.setMarketOrders(new HashSet<>());
+			owner.setTransactions(new HashSet<>());
 		//Set Migrated
 			owner.setMigrated(true);
 			return true;

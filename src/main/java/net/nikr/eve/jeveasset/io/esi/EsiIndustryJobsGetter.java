@@ -37,8 +37,11 @@ import net.troja.eve.esi.model.CorporationIndustryJobsResponse;
 
 public class EsiIndustryJobsGetter extends AbstractEsiGetter {
 
-	public EsiIndustryJobsGetter(UpdateTask updateTask, EsiOwner owner) {
+	private final boolean saveHistory;
+
+	public EsiIndustryJobsGetter(UpdateTask updateTask, EsiOwner owner, boolean saveHistory) {
 		super(updateTask, owner, false, owner.getIndustryJobsNextUpdate(), TaskType.INDUSTRY_JOBS);
+		this.saveHistory = saveHistory;
 	}
 
 	@Override
@@ -61,7 +64,7 @@ public class EsiIndustryJobsGetter extends AbstractEsiGetter {
 				}
 			});
 			industryJobs.addAll(incomplated);
-			owner.setIndustryJobs(EsiConverter.toIndustryJobsCorporation(industryJobs, owner));
+			owner.setIndustryJobs(EsiConverter.toIndustryJobsCorporation(industryJobs, owner, saveHistory));
 		} else {
 			Set<Boolean> completed = new HashSet<>();
 			completed.add(true);
@@ -76,7 +79,7 @@ public class EsiIndustryJobsGetter extends AbstractEsiGetter {
 			for (List<CharacterIndustryJobsResponse> list : updateList.values()) {
 				industryJobs.addAll(list);
 			}
-			owner.setIndustryJobs(EsiConverter.toIndustryJobs(industryJobs, owner));
+			owner.setIndustryJobs(EsiConverter.toIndustryJobs(industryJobs, owner, saveHistory));
 		}
 	}
 

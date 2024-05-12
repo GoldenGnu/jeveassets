@@ -30,15 +30,19 @@ import ca.odell.glazedlists.event.ListEventListener;
 import ca.odell.glazedlists.swing.DefaultEventSelectionModel;
 import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import ca.odell.glazedlists.swing.TableComparatorChooser;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import javax.swing.JComponent;
 import javax.swing.JMenu;
 import javax.swing.JPopupMenu;
+import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
+import net.nikr.eve.jeveasset.data.api.raw.RawIndustryJob.IndustryJobStatus;
 import net.nikr.eve.jeveasset.data.settings.types.LocationType;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel.JStatusLabel;
@@ -50,6 +54,7 @@ import net.nikr.eve.jeveasset.gui.shared.menu.JMenuColumns;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo.AutoNumberFormat;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
+import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
@@ -160,6 +165,14 @@ public class IndustryJobsTab extends JMainTabPrimary {
 		filterControl.addFilters(filters);
 	}
 
+	private MyIndustryJob getSelectedIndustryJob() {
+		int index = jTable.getSelectedRow();
+		if (index < 0 || index >= tableModel.getRowCount()) {
+			return null;
+		}
+		return tableModel.getElementAt(index);
+	}
+
 	private class JobsTableMenu implements TableMenu<MyIndustryJob> {
 		@Override
 		public MenuData<MyIndustryJob> getMenuData() {
@@ -182,7 +195,37 @@ public class IndustryJobsTab extends JMainTabPrimary {
 		}
 
 		@Override
-		public void addToolMenu(JComponent jComponent) { }
+		public void addToolMenu(JComponent jComponent) {
+			MyIndustryJob industryJob = getSelectedIndustryJob();
+			boolean enabled = industryJob != null && !industryJob.isESI() && selectionModel.getSelected().size() == 1;
+
+			JMenu jStatus = new JMenu(TabsJobs.get().status());
+			jStatus.setIcon(Images.MISC_STATUS.getIcon());
+			if (!enabled) {
+				jStatus.setIcon(jStatus.getDisabledIcon());
+			}
+			jComponent.add(jStatus);
+
+			JRadioButtonMenuItem jMenuItem;
+			for (IndustryJobStatus status : IndustryJobStatus.values()) {
+				jMenuItem = new JRadioButtonMenuItem(MyIndustryJob.getStatusName(status));
+				jMenuItem.setEnabled(enabled);
+				jMenuItem.setSelected(enabled && status == industryJob.getStatus());
+				jMenuItem.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						if (industryJob == null || industryJob.isESI() || industryJob.getStatus() == status) {
+							return;
+						}
+						industryJob.setStatus(status);
+						tableModel.fireTableDataChanged();
+						program.saveProfile();
+					}
+				});
+				jStatus.add(jMenuItem);
+			}
+			MenuManager.addSeparator(jComponent);
+		}
 	}
 
 	private class ListenerClass implements ListEventListener<MyIndustryJob> {

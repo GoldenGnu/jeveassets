@@ -38,7 +38,7 @@ public enum IndustryJobTableFormat implements EnumTableColumn<MyIndustryJob> {
 		}
 		@Override
 		public Object getColumnValue(final MyIndustryJob from) {
-			return from.getState();
+			return from.getStatusFormatted();
 		}
 	},
 	ACTIVITY(String.class, GlazedLists.comparableComparator()) {

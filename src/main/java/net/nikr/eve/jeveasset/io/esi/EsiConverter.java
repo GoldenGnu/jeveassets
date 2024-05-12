@@ -157,20 +157,20 @@ public class EsiConverter extends DataConverter {
 		return rawBlueprints;
 	}
 
-	public static List<MyIndustryJob> toIndustryJobs(List<CharacterIndustryJobsResponse> responses, OwnerType owner) {
+	public static Set<MyIndustryJob> toIndustryJobs(List<CharacterIndustryJobsResponse> responses, OwnerType owner, boolean saveHistory) {
 		List<RawIndustryJob> rawIndustryJobs = new ArrayList<>();
 		for (CharacterIndustryJobsResponse response : responses) {
 			rawIndustryJobs.add(new RawIndustryJob(response));
 		}
-		return convertRawIndustryJobs(rawIndustryJobs, owner);
+		return convertRawIndustryJobs(rawIndustryJobs, owner, saveHistory);
 	}
 
-	public static List<MyIndustryJob> toIndustryJobsCorporation(List<CorporationIndustryJobsResponse> responses, OwnerType owner) {
+	public static Set<MyIndustryJob> toIndustryJobsCorporation(List<CorporationIndustryJobsResponse> responses, OwnerType owner, boolean saveHistory) {
 		List<RawIndustryJob> rawIndustryJobs = new ArrayList<>();
 		for (CorporationIndustryJobsResponse response : responses) {
 			rawIndustryJobs.add(new RawIndustryJob(response));
 		}
-		return convertRawIndustryJobs(rawIndustryJobs, owner);
+		return convertRawIndustryJobs(rawIndustryJobs, owner, saveHistory);
 	}
 
 	public static Set<MyJournal> toJournals(List<CharacterWalletJournalResponse> responses, OwnerType owner, Integer accountKey, boolean saveHistory) {
