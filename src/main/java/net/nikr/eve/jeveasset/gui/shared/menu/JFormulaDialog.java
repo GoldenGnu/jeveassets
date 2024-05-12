@@ -29,6 +29,7 @@ import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -96,9 +97,15 @@ public class JFormulaDialog<T extends Enum<T> & EnumTableColumn<Q>, Q> extends J
 		JDropDownButton jColumns = new JDropDownButton(GuiShared.get().formulaColumns());
 
 		for (T t : columnManager.getEnumConstants()) {
-			if (Number.class.isAssignableFrom(t.getType()) || NumberValue.class.isAssignableFrom(t.getType())) {
+			if (isAssignableFrom(t.getType())) {
 				String column = getSoftName(t);
 				JMenuItem jMenuItem = new JMenuItem(t.getColumnName());
+				if (isNumber(t.getType())) {
+					jMenuItem.setIcon(Images.MISC_NUMBER.getIcon());
+				} else if (isDate(t.getType())) {
+					jMenuItem.setIcon(Images.MISC_DATE.getIcon());
+					jMenuItem.setToolTipText(GuiShared.get().formulaDateToolTip());
+				}
 				jMenuItem.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {
@@ -287,7 +294,7 @@ public class JFormulaDialog<T extends Enum<T> & EnumTableColumn<Q>, Q> extends J
 
 	private String toExpressionString(String text) {
 		for (T t : columnManager.getEnumConstants()) {
-			if (Number.class.isAssignableFrom(t.getType()) || NumberValue.class.isAssignableFrom(t.getType())) {
+			if (isAssignableFrom(t.getType())) {
 				text = text.replace(getSoftName(t), getHardName(t));
 			}
 		}
@@ -296,7 +303,7 @@ public class JFormulaDialog<T extends Enum<T> & EnumTableColumn<Q>, Q> extends J
 
 	private String fromExpressionString(String text) {
 		for (T t : columnManager.getEnumConstants()) {
-			if (Number.class.isAssignableFrom(t.getType()) || NumberValue.class.isAssignableFrom(t.getType())) {
+			if (isAssignableFrom(t.getType())) {
 				text = replaceAll(t, text);
 			}
 		}
@@ -315,13 +322,28 @@ public class JFormulaDialog<T extends Enum<T> & EnumTableColumn<Q>, Q> extends J
 		Expression expression = getExpression();
 		Set<String> hardNames = new HashSet<>();
 		for (T t : columnManager.getEnumConstants()) {
-			if (Number.class.isAssignableFrom(t.getType()) || NumberValue.class.isAssignableFrom(t.getType())) {
+			if (isAssignableFrom(t.getType())) {
 				String hardName = getHardName(t);
 				expression.setVariable(hardName, new BigDecimal(2.0));
 				hardNames.add(hardName);
 			}
 		}
 		return safeEval(hardNames, expression);
+	}
+
+	private boolean isAssignableFrom(Class<?> c) {
+		return Number.class.isAssignableFrom(c)
+				|| NumberValue.class.isAssignableFrom(c)
+				|| Date.class.isAssignableFrom(c);
+	}
+
+	private boolean isNumber(Class<?> c) {
+		return Number.class.isAssignableFrom(c)
+				|| NumberValue.class.isAssignableFrom(c);
+	}
+
+	private boolean isDate(Class<?> c) {
+		return Date.class.isAssignableFrom(c);
 	}
 
 	public static boolean safeEval(Set<String> hardNames, Expression expression) {
