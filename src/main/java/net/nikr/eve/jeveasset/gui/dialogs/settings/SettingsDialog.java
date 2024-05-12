@@ -124,6 +124,8 @@ public class SettingsDialog extends JDialogCentered {
 
 		add(toolNode, new JournalToolSettingsPanel(program, this));
 
+		add(toolNode, new IndustryJobsToolSettingsPanel(program, this));
+
 		add(toolNode, new ContractToolSettingsPanel(program, this));
 
 		add(toolNode, new TrackerToolSettingsPanel(program, this));

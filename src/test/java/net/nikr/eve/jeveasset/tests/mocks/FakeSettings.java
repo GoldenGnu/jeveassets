@@ -767,4 +767,14 @@ public abstract class FakeSettings extends Settings {
 	public boolean isShowSubpileTree() {
 		throw new UnsupportedOperationException("not implemented");
 	}
+
+	@Override
+	public void setIndustryJobsHistory(boolean journalHistory) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public boolean isIndustryJobsHistory() {
+		throw new UnsupportedOperationException("not implemented");
+	}
 }

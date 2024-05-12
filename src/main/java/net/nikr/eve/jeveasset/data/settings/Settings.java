@@ -35,6 +35,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import net.nikr.eve.jeveasset.SplashUpdater;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
+import net.nikr.eve.jeveasset.data.api.raw.RawIndustryJob.IndustryJobStatus;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder.MarketOrderRange;
 import net.nikr.eve.jeveasset.data.settings.tag.Tag;
 import net.nikr.eve.jeveasset.data.settings.tag.TagID;
@@ -102,7 +103,8 @@ public class Settings {
 		FLAG_EASY_CHART_COLORS,
 		FLAG_CONTAINERS_SHOW_ITEM_ID,
 		FLAG_LOCK_TOOLS,
-		FLAG_SHOW_SUBPILE_TREE
+		FLAG_SHOW_SUBPILE_TREE,
+		FLAG_INDUSTRY_JOBS_HISTORY
 	}
 
 	public static enum TransactionProfitPrice {
@@ -301,6 +303,7 @@ public class Settings {
 		flags.put(SettingFlag.FLAG_CONTAINERS_SHOW_ITEM_ID, true);
 		flags.put(SettingFlag.FLAG_LOCK_TOOLS, false);
 		flags.put(SettingFlag.FLAG_SHOW_SUBPILE_TREE, true);
+		flags.put(SettingFlag.FLAG_INDUSTRY_JOBS_HISTORY, true);
 		cacheFlags();
 		//Default Filters
 		List<Filter> filter;
@@ -327,14 +330,16 @@ public class Settings {
 		//Industry Jobs: Default Filters
 		Map<String, List<Filter>> industryJobsTabDefaultFilters = new HashMap<>();
 		filter = new ArrayList<>();
-		filter.add(new Filter(Filter.LogicType.AND, IndustryJobTableFormat.STATE, Filter.CompareType.EQUALS_NOT, MyIndustryJob.IndustryJobState.STATE_DELIVERED.toString()));
-		filter.add(new Filter(Filter.LogicType.AND, IndustryJobTableFormat.STATE, Filter.CompareType.EQUALS_NOT, MyIndustryJob.IndustryJobState.STATE_CANCELLED.toString()));
-		filter.add(new Filter(Filter.LogicType.AND, IndustryJobTableFormat.STATE, Filter.CompareType.EQUALS_NOT, MyIndustryJob.IndustryJobState.STATE_REVERTED.toString()));
+		filter.add(new Filter(Filter.LogicType.AND, IndustryJobTableFormat.STATE, Filter.CompareType.EQUALS_NOT, MyIndustryJob.getStatusName(IndustryJobStatus.DELIVERED)));
+		filter.add(new Filter(Filter.LogicType.AND, IndustryJobTableFormat.STATE, Filter.CompareType.EQUALS_NOT, MyIndustryJob.getStatusName(IndustryJobStatus.CANCELLED)));
+		filter.add(new Filter(Filter.LogicType.AND, IndustryJobTableFormat.STATE, Filter.CompareType.EQUALS_NOT, MyIndustryJob.getStatusName(IndustryJobStatus.REVERTED)));
+		filter.add(new Filter(Filter.LogicType.AND, IndustryJobTableFormat.STATE, Filter.CompareType.EQUALS_NOT, MyIndustryJob.getStatusName(IndustryJobStatus.ARCHIVED)));
 		industryJobsTabDefaultFilters.put(TabsJobs.get().active(), filter);
 		filter = new ArrayList<>();
-		filter.add(new Filter(Filter.LogicType.OR, IndustryJobTableFormat.STATE, Filter.CompareType.EQUALS, MyIndustryJob.IndustryJobState.STATE_DELIVERED.toString()));
-		filter.add(new Filter(Filter.LogicType.OR, IndustryJobTableFormat.STATE, Filter.CompareType.EQUALS, MyIndustryJob.IndustryJobState.STATE_CANCELLED.toString()));
-		filter.add(new Filter(Filter.LogicType.OR, IndustryJobTableFormat.STATE, Filter.CompareType.EQUALS, MyIndustryJob.IndustryJobState.STATE_REVERTED.toString()));
+		filter.add(new Filter(Filter.LogicType.OR, IndustryJobTableFormat.STATE, Filter.CompareType.EQUALS, MyIndustryJob.getStatusName(IndustryJobStatus.DELIVERED)));
+		filter.add(new Filter(Filter.LogicType.OR, IndustryJobTableFormat.STATE, Filter.CompareType.EQUALS, MyIndustryJob.getStatusName(IndustryJobStatus.CANCELLED)));
+		filter.add(new Filter(Filter.LogicType.OR, IndustryJobTableFormat.STATE, Filter.CompareType.EQUALS, MyIndustryJob.getStatusName(IndustryJobStatus.REVERTED)));
+		filter.add(new Filter(Filter.LogicType.OR, IndustryJobTableFormat.STATE, Filter.CompareType.EQUALS, MyIndustryJob.getStatusName(IndustryJobStatus.ARCHIVED)));
 		industryJobsTabDefaultFilters.put(TabsJobs.get().completed(), filter);
 		defaultTableFilters.put(IndustryJobsTab.NAME, industryJobsTabDefaultFilters);
 		//Extractions Default Filters
@@ -900,6 +905,15 @@ public class Settings {
 	public void setJournalHistory(final boolean journalHistory) {
 		flags.put(SettingFlag.FLAG_JOURNAL_HISTORY, journalHistory);
 	}
+
+	public boolean isIndustryJobsHistory() {
+		return flags.get(SettingFlag.FLAG_INDUSTRY_JOBS_HISTORY);
+	}
+
+	public void setIndustryJobsHistory(final boolean journalHistory) {
+		flags.put(SettingFlag.FLAG_INDUSTRY_JOBS_HISTORY, journalHistory);
+	}
+
 	public boolean isMarketOrderHistory() {
 		return flags.get(SettingFlag.FLAG_MARKET_ORDER_HISTORY);
 	}

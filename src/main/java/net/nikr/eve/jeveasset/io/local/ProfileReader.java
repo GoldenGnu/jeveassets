@@ -372,7 +372,7 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 	}
 
 	private MyContract parseContract(final Element element) throws XmlException {
-		RawContract contract = RawContract.create();
+		RawContract rawContract = RawContract.create();
 		int acceptorID = getInt(element, "acceptorid");
 		int assigneeID = getInt(element, "assigneeid");
 		String availabilityString = getStringOptional(element, "availabilitystring");
@@ -399,34 +399,36 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 		Double volume = getDoubleOptional(element, "volume");
 		boolean forCorporation = getBoolean(element, "forcorp");
 		boolean esi = getBooleanNotNull(element, "esi", true);
-		contract.setAcceptorID(acceptorID);
-		contract.setAssigneeID(assigneeID);
-		contract.setAvailability(RawConverter.toContractAvailability(availabilityEnum, availabilityString));
-		contract.setAvailabilityString(availabilityString);
-		contract.setBuyout(buyout);
-		contract.setCollateral(collateral);
-		contract.setContractID(contractID);
-		contract.setDateAccepted(dateAccepted);
-		contract.setDateCompleted(dateCompleted);
-		contract.setDateExpired(dateExpired);
-		contract.setDateIssued(dateIssued);
-		contract.setDaysToComplete(daysToComplete);
-		contract.setEndLocationID(endLocationID);
-		contract.setForCorporation(forCorporation);
-		contract.setIssuerCorporationID(issuerCorporationID);
-		contract.setIssuerID(issuerID);
-		contract.setPrice(price);
-		contract.setReward(reward);
-		contract.setStartLocationID(startLocationID);
-		contract.setStatus(RawConverter.toContractStatus(statusEnum, statusString));
-		contract.setStatusString(statusString);
-		contract.setTitle(title);
-		contract.setTypeString(typeString);
-		contract.setType(RawConverter.toContractType(typeEnum, typeString));
-		contract.setVolume(volume);
-		MyContract myContract = DataConverter.toMyContract(contract);
-		myContract.setESI(esi);
-		return myContract;
+		rawContract.setAcceptorID(acceptorID);
+		rawContract.setAssigneeID(assigneeID);
+		rawContract.setAvailability(RawConverter.toContractAvailability(availabilityEnum, availabilityString));
+		rawContract.setAvailabilityString(availabilityString);
+		rawContract.setBuyout(buyout);
+		rawContract.setCollateral(collateral);
+		rawContract.setContractID(contractID);
+		rawContract.setDateAccepted(dateAccepted);
+		rawContract.setDateCompleted(dateCompleted);
+		rawContract.setDateExpired(dateExpired);
+		rawContract.setDateIssued(dateIssued);
+		rawContract.setDaysToComplete(daysToComplete);
+		rawContract.setEndLocationID(endLocationID);
+		rawContract.setForCorporation(forCorporation);
+		rawContract.setIssuerCorporationID(issuerCorporationID);
+		rawContract.setIssuerID(issuerID);
+		rawContract.setPrice(price);
+		rawContract.setReward(reward);
+		rawContract.setStartLocationID(startLocationID);
+		rawContract.setStatus(RawConverter.toContractStatus(statusEnum, statusString));
+		rawContract.setStatusString(statusString);
+		rawContract.setTitle(title);
+		rawContract.setTypeString(typeString);
+		rawContract.setType(RawConverter.toContractType(typeEnum, typeString));
+		rawContract.setVolume(volume);
+
+		MyContract contract = DataConverter.toMyContract(rawContract);
+		contract.setESI(esi);
+
+		return contract;
 	}
 
 	private RawContractItem parseContractItem(final Element element) throws XmlException {
@@ -496,7 +498,7 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 	}
 
 	private MyMarketOrder parseMarketOrder(final Element element, final OwnerType owner) throws XmlException {
-		RawMarketOrder apiMarketOrder = RawMarketOrder.create();
+		RawMarketOrder rawMarketOrder = RawMarketOrder.create();
 		long orderID = getLong(element, "orderid");
 		long locationID = getLong(element, "stationid");
 		int volEntered = getInt(element, "volentered");
@@ -529,40 +531,41 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 			Integer changeVolRemaining = getIntOptional(changeNode, "volremaining");
 			changes.add(new Change(date, changePrice, changeVolRemaining));
 		}
-		apiMarketOrder.setWalletDivision(accountID);
-		apiMarketOrder.setDuration(duration);
-		apiMarketOrder.setEscrow(escrow);
-		apiMarketOrder.setBuyOrder(bid > 0);
-		apiMarketOrder.setCorp(corp);
-		apiMarketOrder.setIssued(issued);
-		apiMarketOrder.addChanges(changes);
-		apiMarketOrder.addChangesLegacy(created);
+		rawMarketOrder.setWalletDivision(accountID);
+		rawMarketOrder.setDuration(duration);
+		rawMarketOrder.setEscrow(escrow);
+		rawMarketOrder.setBuyOrder(bid > 0);
+		rawMarketOrder.setCorp(corp);
+		rawMarketOrder.setIssued(issued);
+		rawMarketOrder.addChanges(changes);
+		rawMarketOrder.addChangesLegacy(created);
 		if (changed != null) {
 			String[] array = changed.split(",");
 			for (String s : array) {
 				try {
-					apiMarketOrder.addChangesLegacy(new Date(Long.valueOf(s)));
+					rawMarketOrder.addChangesLegacy(new Date(Long.valueOf(s)));
 				} catch (NumberFormatException ex) {
 					//No problem....
 				}
 			}
 		}
-		apiMarketOrder.setIssuedBy(issuedBy);
-		apiMarketOrder.setLocationID(locationID);
-		apiMarketOrder.setMinVolume(minVolume);
-		apiMarketOrder.setOrderID(orderID);
-		apiMarketOrder.setPrice(price);
-		apiMarketOrder.setRange(RawConverter.toMarketOrderRange(rangeInt, rangeEnum, rangeString));
-		apiMarketOrder.setRangeString(rangeString);
-		apiMarketOrder.setRegionID((int) ApiIdConverter.getLocation(locationID).getRegionID());
-		apiMarketOrder.setState(RawConverter.toMarketOrderState(stateInt, stateEnum, stateString));
-		apiMarketOrder.setStateString(stateString);
-		apiMarketOrder.setTypeID(typeID);
-		apiMarketOrder.setVolumeRemain(volRemaining);
-		apiMarketOrder.setVolumeTotal(volEntered);
+		rawMarketOrder.setIssuedBy(issuedBy);
+		rawMarketOrder.setLocationID(locationID);
+		rawMarketOrder.setMinVolume(minVolume);
+		rawMarketOrder.setOrderID(orderID);
+		rawMarketOrder.setPrice(price);
+		rawMarketOrder.setRange(RawConverter.toMarketOrderRange(rangeInt, rangeEnum, rangeString));
+		rawMarketOrder.setRangeString(rangeString);
+		rawMarketOrder.setRegionID((int) ApiIdConverter.getLocation(locationID).getRegionID());
+		rawMarketOrder.setState(RawConverter.toMarketOrderState(stateInt, stateEnum, stateString));
+		rawMarketOrder.setStateString(stateString);
+		rawMarketOrder.setTypeID(typeID);
+		rawMarketOrder.setVolumeRemain(volRemaining);
+		rawMarketOrder.setVolumeTotal(volEntered);
 
-		MyMarketOrder marketOrder = DataConverter.toMyMarketOrder(apiMarketOrder, owner);
+		MyMarketOrder marketOrder = DataConverter.toMyMarketOrder(rawMarketOrder, owner);
 		marketOrder.setESI(esi);
+
 		return marketOrder;
 	}
 
@@ -684,15 +687,14 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 
 	private void parseIndustryJobs(final Element element, final OwnerType owner) throws XmlException {
 		NodeList industryJobsNodes = element.getElementsByTagName("industryjobs");
-		List<MyIndustryJob> industryJobs = new ArrayList<>();
+		Set<MyIndustryJob> industryJobs = new HashSet<>();
 		for (int a = 0; a < industryJobsNodes.getLength(); a++) {
 			Element currentIndustryJobsNode = (Element) industryJobsNodes.item(a);
 			NodeList industryJobNodes = currentIndustryJobsNode.getElementsByTagName("industryjob");
 			for (int b = 0; b < industryJobNodes.getLength(); b++) {
 				Element currentNode = (Element) industryJobNodes.item(b);
 				if (haveAttribute(currentNode, "blueprintid")) {
-					RawIndustryJob rawIndustryJob = parseIndustryJob(currentNode);
-					MyIndustryJob industryJob = DataConverter.toMyIndustryJob(rawIndustryJob, owner);
+					MyIndustryJob industryJob = parseIndustryJob(currentNode, owner);
 					industryJobs.add(industryJob);
 				}
 			}
@@ -700,7 +702,7 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 		owner.setIndustryJobs(industryJobs);
 	}
 
-	private RawIndustryJob parseIndustryJob(final Element element) throws XmlException {
+	private MyIndustryJob parseIndustryJob(final Element element, final OwnerType owner) throws XmlException {
 		RawIndustryJob rawIndustryJob = RawIndustryJob.create();
 		int jobID = getInt(element, "jobid");
 		int installerID = getInt(element, "installerid");
@@ -726,6 +728,7 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 		Date completedDate = getDateOptional(element, "completeddate");
 		Integer completedCharacterID = getIntOptional(element, "completedcharacterid");
 		Integer successfulRuns = getIntOptional(element, "successfulruns");
+		boolean esi = getBooleanNotNull(element, "esi", true);
 
 		rawIndustryJob.setActivityID(activityID);
 		rawIndustryJob.setBlueprintID(blueprintID);
@@ -750,7 +753,11 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 		rawIndustryJob.setStatus(RawConverter.toIndustryJobStatus(statusInt, statusEnum, statusString));
 		rawIndustryJob.setStatusString(statusString);
 		rawIndustryJob.setSuccessfulRuns(successfulRuns);
-		return rawIndustryJob;
+
+		MyIndustryJob industryJob = DataConverter.toMyIndustryJob(rawIndustryJob, owner);
+		industryJob.setESI(esi);
+
+		return industryJob;
 	}
 
 	private void parseAssets(final Node node, final OwnerType owner, final List<MyAsset> assets, final MyAsset parentAsset) throws XmlException {

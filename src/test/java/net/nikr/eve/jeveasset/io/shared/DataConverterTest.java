@@ -264,10 +264,9 @@ public class DataConverterTest extends TestUtil {
 	@Test
 	public void testConvertRawIndustryJobs() {
 		for (ConverterTestOptions options : ConverterTestOptionsGetter.getConverterOptions()) {
-			List<MyIndustryJob> industryJobs = DataConverter.convertRawIndustryJobs(Collections.singletonList(ConverterTestUtil.getRawIndustryJob(false, options)), ConverterTestUtil.getEsiOwner(options));
-			ConverterTestUtil.testValues(industryJobs.get(0), options);
+			Set<MyIndustryJob> industryJobs = DataConverter.convertRawIndustryJobs(Collections.singletonList(ConverterTestUtil.getRawIndustryJob(false, options)), ConverterTestUtil.getEsiOwner(options), false);
+			ConverterTestUtil.testValues(industryJobs.iterator().next(), options);
 		}
-
 	}
 
 	@Test

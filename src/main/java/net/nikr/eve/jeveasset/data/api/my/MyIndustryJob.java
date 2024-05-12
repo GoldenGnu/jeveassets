@@ -31,64 +31,13 @@ import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.types.BlueprintType;
 import net.nikr.eve.jeveasset.data.settings.types.EditableLocationType;
 import net.nikr.eve.jeveasset.data.settings.types.EditablePriceType;
+import net.nikr.eve.jeveasset.data.settings.types.EsiType;
 import net.nikr.eve.jeveasset.data.settings.types.ItemType;
 import net.nikr.eve.jeveasset.data.settings.types.OwnersType;
 import net.nikr.eve.jeveasset.i18n.DataModelIndustryJob;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 
-public class MyIndustryJob extends RawIndustryJob implements Comparable<MyIndustryJob>, EditableLocationType, ItemType, EditablePriceType, BlueprintType, OwnersType {
-
-	public enum IndustryJobState {
-		STATE_ALL() {
-			@Override
-			String getI18N() {
-				return DataModelIndustryJob.get().stateAll();
-			}
-		},
-		STATE_PAUSED() {
-			@Override
-			String getI18N() {
-				return DataModelIndustryJob.get().statePaused();
-			}
-		},
-		STATE_ACTIVE() {
-			@Override
-			String getI18N() {
-				return DataModelIndustryJob.get().stateActive();
-			}
-		},
-		STATE_DONE() {
-			@Override
-			String getI18N() {
-				return DataModelIndustryJob.get().stateDone();
-			}
-		},
-		STATE_DELIVERED() {
-			@Override
-			String getI18N() {
-				return DataModelIndustryJob.get().stateDelivered();
-			}
-		},
-		STATE_CANCELLED() {
-			@Override
-			String getI18N() {
-				return DataModelIndustryJob.get().stateCancelled();
-			}
-		},
-		STATE_REVERTED() {
-			@Override
-			String getI18N() {
-				return DataModelIndustryJob.get().stateReverted();
-			}
-		};
-
-		abstract String getI18N();
-
-		@Override
-		public String toString() {
-			return getI18N();
-		}
-	}
+public class MyIndustryJob extends RawIndustryJob implements Comparable<MyIndustryJob>, EditableLocationType, ItemType, EditablePriceType, BlueprintType, OwnersType, EsiType {
 
 	public enum IndustryActivity {
 		ACTIVITY_ALL() {
@@ -192,7 +141,6 @@ public class MyIndustryJob extends RawIndustryJob implements Comparable<MyIndust
 	}
 
 	private IndustryActivity activity;
-	private IndustryJobState state;
 	private final Item item;
 	private final Item output;
 	private final OwnerType owner;
@@ -205,6 +153,7 @@ public class MyIndustryJob extends RawIndustryJob implements Comparable<MyIndust
 	private String completedCharacter = "";
 	private MyBlueprint blueprint;
 	private MyLocation location;
+	private boolean esi = true;
 	private boolean owned;
 
 	public MyIndustryJob(final RawIndustryJob rawIndustryJob, final Item item, final Item output, final OwnerType owner) {
@@ -253,37 +202,6 @@ public class MyIndustryJob extends RawIndustryJob implements Comparable<MyIndust
 			default:
 				activity = IndustryActivity.ACTIVITY_UNKNOWN;
 				break;
-		}
-		IndustryJobStatus status = getStatus();
-		if (status == null) {
-			state = null;
-		} else {
-			switch (getStatus()) {
-				case ACTIVE: //Active
-					if (getEndDate().before(Settings.getNow())) {
-						state = IndustryJobState.STATE_DONE;
-					} else {
-						state = IndustryJobState.STATE_ACTIVE;
-					}
-					break;
-				case PAUSED:
-					state = IndustryJobState.STATE_PAUSED;
-					break;
-				case READY:
-					state = IndustryJobState.STATE_DONE;
-					break;
-				case DELIVERED:
-					state = IndustryJobState.STATE_DELIVERED;
-					break;
-				case CANCELLED:
-					state = IndustryJobState.STATE_CANCELLED;
-					break;
-				case REVERTED:
-					state = IndustryJobState.STATE_REVERTED;
-					break;
-				default:
-					state = null;
-			}
 		}
 		switch (activity) {
 			case ACTIVITY_MANUFACTURING:
@@ -358,15 +276,17 @@ public class MyIndustryJob extends RawIndustryJob implements Comparable<MyIndust
 	}
 
 	public final boolean isCompletedSuccessful() {
-		return getState() == IndustryJobState.STATE_DELIVERED;
+		return getStatus() == IndustryJobStatus.DELIVERED;
 	}
 
 	public final boolean isDone() {
-		return getState() == IndustryJobState.STATE_DELIVERED
-				|| getState() == IndustryJobState.STATE_CANCELLED
-				|| getState() == IndustryJobState.STATE_REVERTED
+		return getStatus() == IndustryJobStatus.DELIVERED
+				|| getStatus() == IndustryJobStatus.CANCELLED
+				|| getStatus() == IndustryJobStatus.REVERTED
+				|| getStatus() == IndustryJobStatus.ARCHIVED
 				;
 	}
+
 
 	public final boolean isNotDeliveredToAssets() {
 		return owner.getAssetLastUpdate() == null //if null -> never updated -> not delivered to assets -> true
@@ -406,13 +326,52 @@ public class MyIndustryJob extends RawIndustryJob implements Comparable<MyIndust
 		return activity;
 	}
 
-	public IndustryJobState getState() {
-		//Update STATE_DONE (may have changed after loading profile)
-		if (getEndDate().before(Settings.getNow()) && state == IndustryJobState.STATE_ACTIVE) {
-			state = IndustryJobState.STATE_DONE;
-		}
-		return state;
+	public boolean isExpired() {
+		return getEndDate().before(Settings.getNow());
 	}
+
+	@Override
+	public IndustryJobStatus getStatus() {
+		//Update READY (may have changed after loading profile)
+		if (isExpired() && super.getStatus() == IndustryJobStatus.ACTIVE) {
+			setStatus(IndustryJobStatus.READY);
+		}
+		return super.getStatus();
+	}
+
+	public String getStatusFormatted() {
+		return getStatusName(getStatus(), isExpired());
+	}
+
+	public static String getStatusName(IndustryJobStatus status) {
+		return getStatusName(status, false);
+	}
+
+	public static String getStatusName(IndustryJobStatus status, boolean expired) {
+		switch (status) {
+				case ACTIVE: //Active
+					if (expired) {
+						return DataModelIndustryJob.get().statusDone();
+					} else {
+						return DataModelIndustryJob.get().statusActive();
+					}
+				case PAUSED:
+					return DataModelIndustryJob.get().statusPaused();
+				case READY:
+					return DataModelIndustryJob.get().statusDone();
+				case DELIVERED:
+					return DataModelIndustryJob.get().statusDelivered();
+				case CANCELLED:
+					return DataModelIndustryJob.get().statusCancelled();
+				case REVERTED:
+					return DataModelIndustryJob.get().statusReverted();
+				case ARCHIVED:
+					return DataModelIndustryJob.get().statusArchived();
+				default:
+					return DataModelIndustryJob.get().statusUnknown();
+			}
+	}
+
 
 	@Override
 	public void setDynamicPrice(double price) {
@@ -517,6 +476,24 @@ public class MyIndustryJob extends RawIndustryJob implements Comparable<MyIndust
 
 	public int getProductQuantity() {
 		return item.getProductQuantity();
+	}
+
+	@Override
+	public void archive() {
+		if (esi && (getStatus() == IndustryJobStatus.READY || getStatus() == IndustryJobStatus.ACTIVE)) {
+			setStatus(IndustryJobStatus.ARCHIVED);
+		}
+		this.esi = false;
+	}
+
+	@Override
+	public boolean isESI() {
+		return esi;
+	}
+
+	@Override
+	public void setESI(boolean esi) {
+		this.esi = esi;
 	}
 
 	@Override
