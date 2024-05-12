@@ -84,6 +84,7 @@ public abstract class GuiShared extends Bundle {
 	public abstract String eveTycoon();
 	public abstract String foreground();
 	public abstract String formulaColumns();
+	public abstract String formulaDateToolTip();
 	public abstract String formulaFunctions();
 	public abstract String formulaMenu();
 	public abstract String formulaName();
