@@ -34,11 +34,11 @@ import net.nikr.eve.jeveasset.data.api.my.MyContainerLog;
 import net.nikr.eve.jeveasset.data.api.my.MyContract;
 import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
-import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob.IndustryJobState;
 import net.nikr.eve.jeveasset.data.api.my.MyJournal;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.api.raw.RawContract;
+import net.nikr.eve.jeveasset.data.api.raw.RawIndustryJob.IndustryJobStatus;
 import net.nikr.eve.jeveasset.data.api.raw.RawJournalRefType;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder;
 import net.nikr.eve.jeveasset.data.profile.ProfileData;
@@ -122,13 +122,13 @@ public class LogManager {
 		}
 	//New
 		//Added Assets
-		Map<Long, AssetLog> added = new HashMap<Long, AssetLog>(newAssetsMap); //New Assets
+		Map<Long, AssetLog> added = new HashMap<>(newAssetsMap); //New Assets
 		added.keySet().removeAll(oldAssetsMap.keySet()); //Removed Old Assets
 		//Removed Assets
-		Map<Long, AssetLog> removed = new HashMap<Long, AssetLog>(oldAssetsMap); //Old Assets
+		Map<Long, AssetLog> removed = new HashMap<>(oldAssetsMap); //Old Assets
 		removed.keySet().removeAll(newAssetsMap.keySet()); //Remove New Assets
 		//Moved
-		Map<Long, AssetLog> same = new HashMap<Long, AssetLog>(oldAssetsMap); //Old Assets
+		Map<Long, AssetLog> same = new HashMap<>(oldAssetsMap); //Old Assets
 		same.keySet().retainAll(newAssetsMap.keySet()); //Assets in both New and Old (retain)
 
 		Map<Integer, Set<LogSource>> addedSources = getLogData().getAddedSources();
@@ -329,7 +329,7 @@ public class LogManager {
 	public static <K, V> void put(Map<K, List<V>> map, K k, V v) {
 		List<V> list = map.get(k);
 		if (list == null) {
-			list = new ArrayList<V>();
+			list = new ArrayList<>();
 			map.put(k, list);
 		}
 		list.add(v);
@@ -338,7 +338,7 @@ public class LogManager {
 	public static <K, V> void putSet(Map<K, Set<V>> map, K k, V v) {
 		Set<V> list = map.get(k);
 		if (list == null) {
-			list = new HashSet<V>();
+			list = new HashSet<>();
 			map.put(k, list);
 		}
 		list.add(v);
@@ -515,7 +515,7 @@ public class LogManager {
 			if (oldIndustryJob == null) {
 				continue;
 			}
-			if (oldIndustryJob.getState().equals(newIndustryJob.getState())) {
+			if (oldIndustryJob.getStatus().equals(newIndustryJob.getStatus())) {
 				continue;
 			}
 			if (newIndustryJob.isNotDeliveredToAssets()) { //Jobs not delivered to assets yet
@@ -530,7 +530,7 @@ public class LogManager {
 			LogType logType = LogType.INDUSTRY_JOB;
 			long id = newIndustryJob.getJobID();
 			putSet(sources, blueprintTypeID, new LogSource(sourceType, blueprintQuantity, blueprintTypeID, date, ownerID, blueprintLocationID, logType, id));
-			if (newIndustryJob.isManufacturing() && newIndustryJob.getState() == IndustryJobState.STATE_DELIVERED) {
+			if (newIndustryJob.isManufacturing() && newIndustryJob.getStatus() == IndustryJobStatus.DELIVERED) {
 				long productLocationID = newIndustryJob.getOutputLocationID();
 				int productQuantity = newIndustryJob.getOutputCount();
 				LogType productLogType = LogType.INDUSTRY_JOB;
