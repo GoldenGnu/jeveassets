@@ -26,6 +26,7 @@ import java.awt.Component;
 import javax.swing.table.TableCellRenderer;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
+import net.nikr.eve.jeveasset.data.api.raw.RawIndustryJob.IndustryJobStatus;
 import net.nikr.eve.jeveasset.data.settings.ColorEntry;
 import net.nikr.eve.jeveasset.data.settings.ColorSettings;
 import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
@@ -58,7 +59,7 @@ public class JIndustryJobsTable extends JAutoColumnTable {
 			return component;
 		}
 		//Completed
-		if (industryJob.getState() == MyIndustryJob.IndustryJobState.STATE_DONE && columnName.equals(IndustryJobTableFormat.END_DATE.getColumnName())) {
+		if (industryJob.getStatus() == IndustryJobStatus.READY && columnName.equals(IndustryJobTableFormat.END_DATE.getColumnName())) {
 			ColorSettings.configCell(component, ColorEntry.INDUSTRY_JOBS_DONE, isSelected);
 			return component;
 		}
@@ -99,7 +100,7 @@ public class JIndustryJobsTable extends JAutoColumnTable {
 			}
 		}
 		//Delivered
-		if (industryJob.getState() == MyIndustryJob.IndustryJobState.STATE_DELIVERED && columnName.equals(IndustryJobTableFormat.END_DATE.getColumnName())) {
+		if (industryJob.getStatus()== IndustryJobStatus.DELIVERED && columnName.equals(IndustryJobTableFormat.END_DATE.getColumnName())) {
 			ColorSettings.configCell(component, ColorEntry.INDUSTRY_JOBS_DELIVERED, isSelected);
 			return component;
 		}

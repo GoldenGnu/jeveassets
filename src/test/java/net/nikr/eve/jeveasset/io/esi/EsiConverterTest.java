@@ -234,8 +234,8 @@ public class EsiConverterTest extends TestUtil {
 		for (ConverterTestOptions options : ConverterTestOptionsGetter.getConverterOptions()) {
 			CharacterIndustryJobsResponse industryJobsResponse = new CharacterIndustryJobsResponse();
 			ConverterTestUtil.setValues(industryJobsResponse, options, esi);
-			List<MyIndustryJob> industryJobs = EsiConverter.toIndustryJobs(Collections.singletonList(industryJobsResponse), ConverterTestUtil.getEsiOwner(options));
-			ConverterTestUtil.testValues(industryJobs.get(0), options, esi);
+			Set<MyIndustryJob> industryJobs = EsiConverter.toIndustryJobs(Collections.singletonList(industryJobsResponse), ConverterTestUtil.getEsiOwner(options), false);
+			ConverterTestUtil.testValues(industryJobs.iterator().next(), options, esi);
 		}
 	}
 	@Test
@@ -252,8 +252,8 @@ public class EsiConverterTest extends TestUtil {
 		for (ConverterTestOptions options : ConverterTestOptionsGetter.getConverterOptions()) {
 			CorporationIndustryJobsResponse industryJobsResponse = new CorporationIndustryJobsResponse();
 			ConverterTestUtil.setValues(industryJobsResponse, options, esi);
-			List<MyIndustryJob> industryJobs = EsiConverter.toIndustryJobsCorporation(Collections.singletonList(industryJobsResponse), ConverterTestUtil.getEsiOwner(options));
-			ConverterTestUtil.testValues(industryJobs.get(0), options, esi);
+			Set<MyIndustryJob> industryJobs = EsiConverter.toIndustryJobsCorporation(Collections.singletonList(industryJobsResponse), ConverterTestUtil.getEsiOwner(options), false);
+			ConverterTestUtil.testValues(industryJobs.iterator().next(), options, esi);
 		}
 	}
 

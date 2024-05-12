@@ -101,6 +101,10 @@ public abstract class DialoguesSettings extends Bundle {
 	public abstract String journal();
 	public abstract String journalSaveHistory();
 
+	// used in IndustryJobsToolSettingsPanel
+	public abstract String industryJobs();
+	public abstract String industryJobsSaveHistory();
+
 	// used in ContractToolSettingsPanel
 	public abstract String contracts();
 	public abstract String contractsSaveHistory();

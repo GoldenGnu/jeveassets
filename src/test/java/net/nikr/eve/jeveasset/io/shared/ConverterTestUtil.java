@@ -175,7 +175,7 @@ public class ConverterTestUtil {
 
 		//IndustryJob
 		MyIndustryJob saveMyIndustryJob = getMyIndustryJob(owner, setNull, setValues, options);
-		owner.setIndustryJobs(Collections.singletonList(saveMyIndustryJob));
+		owner.setIndustryJobs(Collections.singleton(saveMyIndustryJob));
 
 		//Journal
 		MyJournal saveMyJournal = getMyJournal(owner, setNull, setValues, options);
@@ -365,7 +365,7 @@ public class ConverterTestUtil {
 
 		//IndustryJobs
 		assertEquals(esiOwner.getIndustryJobs().size(), 1);
-		MyIndustryJob loadMyIndustryJob = esiOwner.getIndustryJobs().get(0);
+		MyIndustryJob loadMyIndustryJob = esiOwner.getIndustryJobs().iterator().next();
 		testValues(loadMyIndustryJob, options, setNull ? CharacterIndustryJobsResponse.class : null, false);
 
 		//Journal
@@ -495,6 +495,12 @@ public class ConverterTestUtil {
 			myContractItem.setLicensedRuns(options.getInteger());
 			myContractItem.setME(options.getInteger());
 			myContractItem.setTE(options.getInteger());
+		}
+		if (object instanceof MyIndustryJob) {
+			MyIndustryJob industryJob = (MyIndustryJob) object;
+			if (industryJob.getStatus() != null) {
+				industryJob.setStatus(options.getIndustryJobStatusRaw());
+			}
 		}
 		if (object instanceof MyMarketOrder) {
 			MyMarketOrder marketOrder = (MyMarketOrder) object;

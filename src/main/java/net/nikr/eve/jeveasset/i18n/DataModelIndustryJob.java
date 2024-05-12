@@ -38,13 +38,14 @@ public abstract class DataModelIndustryJob extends Bundle {
 		super(locale);
 	}
 
-	public abstract String stateAll();
-	public abstract String statePaused();
-	public abstract String stateActive();
-	public abstract String stateDone();
-	public abstract String stateReverted();
-	public abstract String stateCancelled();
-	public abstract String stateDelivered();
+	public abstract String statusPaused();
+	public abstract String statusActive();
+	public abstract String statusDone();
+	public abstract String statusReverted();
+	public abstract String statusCancelled();
+	public abstract String statusDelivered();
+	public abstract String statusArchived();
+	public abstract String statusUnknown();
 	public abstract String activityAll();
 	public abstract String activityNone();
 	public abstract String activityManufacturing();

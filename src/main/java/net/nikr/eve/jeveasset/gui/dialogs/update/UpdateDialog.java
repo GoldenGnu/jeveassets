@@ -788,7 +788,7 @@ public class UpdateDialog extends JDialogCentered {
 					}
 				}
 				if (industryJobs) {
-					updates.add(new EsiIndustryJobsGetter(this, esiOwner));
+					updates.add(new EsiIndustryJobsGetter(this, esiOwner, Settings.get().isIndustryJobsHistory()));
 				}
 				if (mining) {
 					updates.add(new EsiMiningGetter(this, esiOwner, Settings.get().isMiningHistory()));

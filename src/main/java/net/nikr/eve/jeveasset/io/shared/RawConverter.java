@@ -383,6 +383,8 @@ public class RawConverter {
 					return RawIndustryJob.IndustryJobStatus.CANCELLED;
 				case 103:
 					return RawIndustryJob.IndustryJobStatus.REVERTED;
+				case -100:
+					return RawIndustryJob.IndustryJobStatus.ARCHIVED;
 			}
 		}
 		return null;

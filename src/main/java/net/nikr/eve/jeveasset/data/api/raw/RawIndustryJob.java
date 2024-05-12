@@ -33,7 +33,8 @@ public class RawIndustryJob {
 		DELIVERED("delivered"),
 		PAUSED("paused"),
 		READY("ready"),
-		REVERTED("reverted");
+		REVERTED("reverted"),
+		ARCHIVED("archived");
 
 		private final String value;
 
@@ -333,7 +334,7 @@ public class RawIndustryJob {
 		this.stationId = stationId;
 	}
 
-	public final IndustryJobStatus getStatus() {
+	public IndustryJobStatus getStatus() {
 		return statusEnum;
 	}
 

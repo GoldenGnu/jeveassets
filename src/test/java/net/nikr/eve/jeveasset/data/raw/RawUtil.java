@@ -32,6 +32,7 @@ import net.nikr.eve.jeveasset.data.api.raw.RawAsset;
 import net.nikr.eve.jeveasset.data.api.raw.RawBlueprint;
 import net.nikr.eve.jeveasset.data.api.raw.RawContractItem;
 import net.nikr.eve.jeveasset.data.api.raw.RawIndustryJob;
+import net.nikr.eve.jeveasset.data.api.raw.RawIndustryJob.IndustryJobStatus;
 import net.nikr.eve.jeveasset.data.api.raw.RawJournal;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder.MarketOrderState;
@@ -196,6 +197,9 @@ public class RawUtil {
 					continue;
 				}
 				if (e.equals(MarketOrderState.PENDING)) { //Only in XML
+					continue;
+				}
+				if (e.equals(IndustryJobStatus.ARCHIVED)) { //jEveAssets value
 					continue;
 				}
 				names.add(e.name());
