@@ -20,14 +20,22 @@
  */
 package net.nikr.eve.jeveasset.data.settings.tag;
 
+import java.util.Objects;
+
 
 public class TagID {
-	private String tool;
-	private long id;
+	private final String tool;
+	private final long id;
+	private final double d;
 
 	public TagID(String tool, long id) {
+		this(tool, id, 0);
+	}
+		
+	public TagID(String tool, long id, double d) {
 		this.tool = tool;
 		this.id = id;
+		this.d = d;
 	}
 
 	public String getTool() {
@@ -38,16 +46,24 @@ public class TagID {
 		return id;
 	}
 
+	public double getDouble() {
+		return d;
+	}
+
 	@Override
 	public int hashCode() {
-		int hash = 7;
-		hash = 37 * hash + (this.tool != null ? this.tool.hashCode() : 0);
-		hash = 37 * hash + (int) (this.id ^ (this.id >>> 32));
+		int hash = 5;
+		hash = 67 * hash + Objects.hashCode(this.tool);
+		hash = 67 * hash + (int) (this.id ^ (this.id >>> 32));
+		hash = 67 * hash + (int) (Double.doubleToLongBits(this.d) ^ (Double.doubleToLongBits(this.d) >>> 32));
 		return hash;
 	}
 
 	@Override
 	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
 		if (obj == null) {
 			return false;
 		}
@@ -55,12 +71,12 @@ public class TagID {
 			return false;
 		}
 		final TagID other = (TagID) obj;
-		if ((this.tool == null) ? (other.tool != null) : !this.tool.equals(other.tool)) {
-			return false;
-		}
 		if (this.id != other.id) {
 			return false;
 		}
-		return true;
+		if (Double.doubleToLongBits(this.d) != Double.doubleToLongBits(other.d)) {
+			return false;
+		}
+		return Objects.equals(this.tool, other.tool);
 	}
 }

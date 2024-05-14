@@ -138,7 +138,7 @@ public class MyJournal extends RawJournal implements Comparable<MyJournal>, Owne
 
 	@Override
 	public TagID getTagID() {
-		return new TagID(JournalTab.NAME, getRefID());
+		return new TagID(JournalTab.NAME, getRefID(), getAmount());
 	}
 
 	@Override
