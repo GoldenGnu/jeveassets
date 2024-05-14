@@ -178,7 +178,7 @@ public class MyTransaction extends RawTransaction implements EditableLocationTyp
 
 	@Override
 	public TagID getTagID() {
-		return new TagID(TransactionTab.NAME, getTransactionID());
+		return new TagID(TransactionTab.NAME, getTransactionID(), getPrice());
 	}
 
 	@Override

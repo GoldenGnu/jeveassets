@@ -357,6 +357,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 				Element tagIdNode = xmldoc.createElementNS(null, "tagid");
 				setAttribute(tagIdNode, "tool", tagID.getTool());
 				setAttribute(tagIdNode, "id", tagID.getID());
+				setAttribute(tagIdNode, "d", tagID.getDouble());
 				tagNode.appendChild(tagIdNode);
 			}
 		}
