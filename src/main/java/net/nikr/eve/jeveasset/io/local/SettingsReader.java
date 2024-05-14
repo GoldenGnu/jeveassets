@@ -1168,8 +1168,9 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 				Element idNode = (Element) idNodes.item(b);
 				String tool = getString(idNode, "tool");
 				long id = getLong(idNode, "id");
+				double d = getDoubleNotNull(idNode, "d", 0);
 
-				TagID tagID = new TagID(tool, id);
+				TagID tagID = new TagID(tool, id, d);
 				tag.getIDs().add(tagID);
 				settings.getTags(tagID).add(tag);
 			}
