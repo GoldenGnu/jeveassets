@@ -50,7 +50,7 @@ import org.junit.BeforeClass;
 
 public class EveRefGetterOnlineTest extends TestUtil {
 
-	private static final long MAX_RUNS = 0;
+	private static final long MAX_RUNS = 500;
 	private static final double DELTA = 0.0000001;
 
 	@BeforeClass
