@@ -22,7 +22,9 @@
 package net.nikr.eve.jeveasset.data.sde;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import net.nikr.eve.jeveasset.data.settings.types.ItemType;
 
 
@@ -73,7 +75,7 @@ public class Item implements Comparable<Item>, ItemType {
 	private final String name;
 	private final String group;
 	private final String category;
-	private final long price;
+	private final long basePrice;
 	private final float volume;
 	private final float volumePackaged;
 	private final float capacity;
@@ -83,7 +85,7 @@ public class Item implements Comparable<Item>, ItemType {
 	private final boolean piMaterial;
 	private final int portion;
 	private final int productTypeID;
-	private int blueprintTypeID = 0;
+	private final Set<Integer> blueprintTypeIDs = new HashSet<>();
 	private final int productQuantity;
 	private final boolean blueprint;
 	private final boolean formula;
@@ -93,6 +95,7 @@ public class Item implements Comparable<Item>, ItemType {
 	private final List<IndustryMaterial> reactionMaterials = new ArrayList<>();
 	private final String slot;
 	private final String chargeSize;
+	//Dynamic values
 	private double priceReprocessed;
 	private double priceReprocessedMax;
 	private double priceManufacturing;
@@ -105,12 +108,20 @@ public class Item implements Comparable<Item>, ItemType {
 		this(typeID, emptyType(typeID), "", "", -1, -1, -1, -1, -1, "", false, 0, 0, 1, "", "", version);
 	}
 
-	public Item(final int typeID, final String name, final String group, final String category, final long price, final float volume, final float volumePackaged, final float capacity, final int meta, final String tech, final boolean marketGroup, final int portion, final int productTypeID, final int productQuantity, String slot, String chargeSize, String version) {
+	public Item(Item item, long basePrice, String tech, int productTypeID, int productQuantity, Set<Integer> blueprintTypeIDs, List<ReprocessedMaterial> reprocessedMaterials, List<IndustryMaterial> manufacturingMaterials, List<IndustryMaterial> reactionMaterials) {
+		this(item.getTypeID(), item.getTypeName(), item.getGroup(), item.getCategory(), basePrice, item.getVolume(), item.getVolumePackaged(), item.getCapacity(), item.getMeta(), tech, item.isMarketGroup(), item.getPortion(), productTypeID, productQuantity, item.getSlot(), item.getChargeSize(), item.getVersion());
+		this.blueprintTypeIDs.addAll(blueprintTypeIDs);
+		this.reprocessedMaterials.addAll(reprocessedMaterials);
+		this.manufacturingMaterials.addAll(manufacturingMaterials);
+		this.reactionMaterials.addAll(reactionMaterials);
+	}
+
+	public Item(final int typeID, final String name, final String group, final String category, final long basePrice, final float volume, final float volumePackaged, final float capacity, final int meta, final String tech, final boolean marketGroup, final int portion, final int productTypeID, final int productQuantity, String slot, String chargeSize, String version) {
 		this.typeID = typeID;
 		this.name = name;
 		this.group = group.intern();
 		this.category = category.intern();
-		this.price = price;
+		this.basePrice = basePrice;
 		this.volume = volume;
 		this.volumePackaged = volumePackaged;
 		this.capacity = capacity;
@@ -215,7 +226,7 @@ public class Item implements Comparable<Item>, ItemType {
 	}
 
 	public double getPriceBase() {
-		return price;
+		return basePrice;
 	}
 
 	public double getPriceReprocessed() {
@@ -293,15 +304,23 @@ public class Item implements Comparable<Item>, ItemType {
 	}
 
 	public boolean isProduct() {
-		return blueprintTypeID > 0;
+		return !blueprintTypeIDs.isEmpty();
 	}
 
-	public int getBlueprintTypeID() {
-		return blueprintTypeID;
+	public Set<Integer> getBlueprintTypeIDs() {
+		return blueprintTypeIDs;
 	}
 
-	public void setBlueprintID(int blueprintID) {
-		this.blueprintTypeID = blueprintID;
+	public Integer getBlueprintTypeID() {
+		if (blueprintTypeIDs.isEmpty()) {
+			return 0;
+		} else {
+			return blueprintTypeIDs.iterator().next();
+		}
+	}
+
+	public void addBlueprintID(int blueprintID) {
+		this.blueprintTypeIDs.add(blueprintID);
 	}
 
 	public void setPriceReprocessed(double priceReprocessed) {
@@ -321,6 +340,7 @@ public class Item implements Comparable<Item>, ItemType {
 		return name;
 	}
 
+	
 	@Override
 	public int compareTo(final Item o) {
 		return this.getTypeName().compareToIgnoreCase(o.getTypeName());

@@ -58,7 +58,7 @@ public class ThreadWoker {
 		ExecutorService threadPool = Executors.newFixedThreadPool(MAIN_THREADS);
 		try {
 			LOG.info("Starting " + updaters.size() + " main threads");
-			List<Future<?>> futures = new ArrayList<Future<?>>();
+			List<Future<?>> futures = new ArrayList<>();
 			for (Runnable runnable : updaters) {
 				futures.add(threadPool.submit(runnable));
 			}
@@ -102,7 +102,7 @@ public class ThreadWoker {
 			throw new TaskCancelledException();
 		}
 		LOG.info("Starting " + updaters.size() + " sub threads");
-		List<Future<K>> futures = new ArrayList<Future<K>>();
+		List<Future<K>> futures = new ArrayList<>();
 		for (Callable<K> callable : updaters) {
 			futures.add(RETURN_THREAD_POOL.submit(callable));
 		}
@@ -127,6 +127,15 @@ public class ThreadWoker {
 			Thread.sleep(500);
 		}
 		return futures;
+	}
+
+	public static <K> K startReturn(UpdateTask updateTask, Callable<K> updater) throws InterruptedException, ExecutionException {
+		if (updateTask != null && updateTask.isCancelled()) {
+			throw new TaskCancelledException();
+		}
+		LOG.info("Starting sub thread");
+		Future<K> future = RETURN_THREAD_POOL.submit(updater);
+		return future.get();
 	}
 
 	public static class TaskCancelledException extends RuntimeException {
