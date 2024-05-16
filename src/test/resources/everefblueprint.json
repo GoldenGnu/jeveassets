@@ -1,0 +1,132 @@
+{
+  "blueprint_type_id": 10,
+  "activities": {
+    "additionalProp1": {
+      "time": 10,
+      "materials": {
+        "additionalProp1": {
+          "type_id": 10,
+          "quantity": 10,
+          "probability": 10
+        },
+        "additionalProp2": {
+          "type_id": 10,
+          "quantity": 10,
+          "probability": 10
+        },
+        "additionalProp3": {
+          "type_id": 10,
+          "quantity": 10,
+          "probability": 10
+        }
+      },
+      "products": {
+        "additionalProp1": {
+          "type_id": 10,
+          "quantity": 10,
+          "probability": 10
+        },
+        "additionalProp2": {
+          "type_id": 10,
+          "quantity": 10,
+          "probability": 10
+        },
+        "additionalProp3": {
+          "type_id": 10,
+          "quantity": 10,
+          "probability": 10
+        }
+      },
+      "required_skills": {
+        "additionalProp1": 10,
+        "additionalProp2": 10,
+        "additionalProp3": 10
+      }
+    },
+    "additionalProp2": {
+      "time": 10,
+      "materials": {
+        "additionalProp1": {
+          "type_id": 10,
+          "quantity": 10,
+          "probability": 10
+        },
+        "additionalProp2": {
+          "type_id": 10,
+          "quantity": 10,
+          "probability": 10
+        },
+        "additionalProp3": {
+          "type_id": 10,
+          "quantity": 10,
+          "probability": 10
+        }
+      },
+      "products": {
+        "additionalProp1": {
+          "type_id": 10,
+          "quantity": 10,
+          "probability": 10
+        },
+        "additionalProp2": {
+          "type_id": 10,
+          "quantity": 10,
+          "probability": 10
+        },
+        "additionalProp3": {
+          "type_id": 10,
+          "quantity": 10,
+          "probability": 10
+        }
+      },
+      "required_skills": {
+        "additionalProp1": 10,
+        "additionalProp2": 10,
+        "additionalProp3": 10
+      }
+    },
+    "additionalProp3": {
+      "time": 10,
+      "materials": {
+        "additionalProp1": {
+          "type_id": 10,
+          "quantity": 10,
+          "probability": 10
+        },
+        "additionalProp2": {
+          "type_id": 10,
+          "quantity": 10,
+          "probability": 10
+        },
+        "additionalProp3": {
+          "type_id": 10,
+          "quantity": 10,
+          "probability": 10
+        }
+      },
+      "products": {
+        "additionalProp1": {
+          "type_id": 10,
+          "quantity": 10,
+          "probability": 10
+        },
+        "additionalProp2": {
+          "type_id": 10,
+          "quantity": 10,
+          "probability": 10
+        },
+        "additionalProp3": {
+          "type_id": 10,
+          "quantity": 10,
+          "probability": 10
+        }
+      },
+      "required_skills": {
+        "additionalProp1": 10,
+        "additionalProp2": 10,
+        "additionalProp3": 10
+      }
+    }
+  },
+  "max_production_limit": 10
+}

@@ -328,19 +328,7 @@ public final class ApiIdConverter {
 			double quantity = getManufacturingQuantity(manufacturingSettings, material.getQuantity());
 			double price = getPriceManufacturing(material.getTypeID());
 			materialCost = materialCost + (price * quantity);
-			/*
-			if (item.getTypeName().endsWith("Dominix")) {
-				System.out.println("	q=" + material.getQuantity() + " qmod=" + quantity + " p=" + price);
-			}
-			*/
 		}
-		/*
-		if (item.getTypeName().endsWith("Dominix")) {
-			System.out.println("	materialCost: " + Formatter.iskFormat(materialCost));
-			System.out.println("	baseCost: " + Formatter.iskFormat(baseCost));
-			System.out.println("	Fee: " + Formatter.iskFormat(installationFee));
-		}
-		*/
 		return installationFee + materialCost;
 	}
 
@@ -479,6 +467,15 @@ public final class ApiIdConverter {
 		if (typeID == null) {
 			return new Item(0);
 		}
+		Item item = updateItem(typeID);
+		if (item != null) {
+			return item;
+		} else {
+			return synchronizedDownloadItem(typeID);
+		}
+	}
+
+	private static Item updateItem(final Integer typeID) {
 		Item item = StaticData.get().getItems().get(typeID);
 		if (item == null || (item.getVersion() != null && !item.getVersion().equals(EsiItemsGetter.ESI_ITEM_VERSION))) { //New ESI item version
 			if (item != null && item.getVersion().startsWith(EsiItemsGetter.ESI_ITEM_EMPTY)) {
@@ -488,23 +485,26 @@ public final class ApiIdConverter {
 					return item;
 				}
 			}
-			item = downloadItem(typeID);
+			return null;
 		}
 		return item;
 	}
 
-	private synchronized static Item downloadItem(final Integer typeID) { //Only download one item at the time
-		Item item = StaticData.get().getItems().get(typeID); //May have been downloaded while waiting for sync
-		if (item == null) {
-			EsiItemsGetter esiItemsGetter = new EsiItemsGetter(typeID);
-			esiItemsGetter.run();
-			item = esiItemsGetter.getItem();
-			if (item == null) { //Empty Item
-				item = new Item(typeID, EsiItemsGetter.ESI_ITEM_EMPTY + Formatter.dateOnly(Settings.getNow()));
-			}
-			StaticData.get().getItems().put(typeID, item);
-			ItemsWriter.save();
+	private synchronized static Item synchronizedDownloadItem(final Integer typeID) { //Only download one item at the time
+		Item item = updateItem(typeID);
+		if (item != null) { //May have been downloaded while waiting for sync
+			return item;
+		} else {
+			return downloadItem(typeID);
 		}
+	}
+
+	private static Item downloadItem(final Integer typeID) { //Only download one item at the time
+		EsiItemsGetter esiItemsGetter = new EsiItemsGetter(typeID);
+		esiItemsGetter.run();
+		Item item = esiItemsGetter.getItem();
+		StaticData.get().getItems().put(typeID, item);
+		ItemsWriter.save();
 		return item;
 	}
 
