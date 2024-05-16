@@ -153,9 +153,9 @@ public class MenuData<T> {
 						inventionTypeIDs.add(item.getTypeID());
 					}
 				} else if (item.isProduct()) {
-					blueprintTypeIDs.add(item.getBlueprintTypeID());
+					blueprintTypeIDs.addAll(item.getBlueprintTypeIDs());
 					if (item.getMeta() == 0 && item.getTypeName().endsWith(" I")) {
-						inventionTypeIDs.add(item.getBlueprintTypeID());
+						inventionTypeIDs.addAll(item.getBlueprintTypeIDs());
 					}
 				}
 				//Market TypeID
