@@ -495,7 +495,7 @@ public final class ApiIdConverter {
 	}
 
 	public static void updateItem(Integer typeID) {
-		if (typeID == null || typeID == 0) {
+		if (!update || typeID == null) {
 			return;
 		}
 		Item item = getUpdateItem(typeID);
