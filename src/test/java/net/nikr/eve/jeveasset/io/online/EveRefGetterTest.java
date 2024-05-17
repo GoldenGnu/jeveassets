@@ -27,15 +27,21 @@ import com.google.gson.reflect.TypeToken;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.lang.reflect.Field;
 import java.net.URISyntaxException;
 import java.net.URL;
 import net.nikr.eve.jeveasset.TestUtil;
+import static net.nikr.eve.jeveasset.TestUtil.initLog;
+import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.io.online.EveRefGetter.EveRefActivity;
 import net.nikr.eve.jeveasset.io.online.EveRefGetter.EveRefBlueprint;
 import net.nikr.eve.jeveasset.io.online.EveRefGetter.EveRefType;
 import org.junit.AfterClass;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import org.junit.Test;
 import org.junit.BeforeClass;
 
@@ -193,6 +199,48 @@ public class EveRefGetterTest extends TestUtil {
 		assertEquals(BOOLEAN_VALUE, type.isMutaplasmid());
 		assertEquals(BOOLEAN_VALUE, type.isDynamicItem());
 		assertEquals(BOOLEAN_VALUE, type.isBlueprint());
+	}
+
+	/**
+	 * Null test
+	 * @param args
+	 */
+	public static void main(final String[] args) {
+		initLog();
+		EveRefGetterTest test = new EveRefGetterTest();
+		test.testNullTest();
+		System.exit(0);
+	}
+
+	@Test
+	public void testNullTest() {
+		Item item = new Item(0);
+		assertNotNull(EveRefGetter.getItem(item, null, null));
+		EveRefType type = new EveRefType();
+		assertNotNull(EveRefGetter.getItem(item, type, null));
+		assertNull(type.isBlueprint());
+		setField(type, "blueprint", true);
+		assertTrue(type.isBlueprint());
+		assertNotNull(EveRefGetter.getItem(item, type, null));
+		EveRefBlueprint blueprint = new EveRefBlueprint();
+		assertNotNull(EveRefGetter.getItem(item, type, blueprint));
+	}
+
+	private static void setField(Object cc, String field, Object value) {
+		try {
+			Field f1 = cc.getClass().getDeclaredField(field);
+			f1.setAccessible(true);
+			f1.set(cc, value);
+			f1.setAccessible(false);
+		} catch (NoSuchFieldException ex) {
+			fail(ex.getMessage());
+		} catch (SecurityException ex) {
+			fail(ex.getMessage());
+		} catch (IllegalArgumentException ex) {
+			fail(ex.getMessage());
+		} catch (IllegalAccessException ex) {
+			fail(ex.getMessage());
+		}
 	}
 
 }
