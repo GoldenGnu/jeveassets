@@ -34,7 +34,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
 import net.nikr.eve.jeveasset.data.sde.IndustryMaterial;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.ReprocessedMaterial;
@@ -173,14 +172,7 @@ public class EveRefGetter {
 			}
 		}) {
 		};
-		try {
-			return ThreadWoker.startReturn(null, update);
-		} catch (InterruptedException ex) {
-			LOG.error(ex.getMessage(), ex);
-		} catch (ExecutionException ex) {
-			LOG.error(ex.getMessage(), ex);
-		}
-		return null; //Failed
+		return ThreadWoker.startReturn(null, update); //Return null on failure
 	}
 
 	private EveRefType type(final int typeID) {
@@ -199,14 +191,7 @@ public class EveRefGetter {
 			}
 		}) {
 		};
-		try {
-			return ThreadWoker.startReturn(null, update);
-		} catch (InterruptedException ex) {
-			LOG.error(ex.getMessage(), ex);
-		} catch (ExecutionException ex) {
-			LOG.error(ex.getMessage(), ex);
-		}
-		return null; //Failed
+		return ThreadWoker.startReturn(null, update); //Return null on failure
 	}
 
 	private abstract class Update<T> implements Callable<T> {
