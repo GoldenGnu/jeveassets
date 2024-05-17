@@ -495,6 +495,9 @@ public final class ApiIdConverter {
 	}
 
 	public static void updateItem(Integer typeID) {
+		if (typeID == null || typeID == 0) {
+			return;
+		}
 		Item item = getUpdateItem(typeID);
 		if (item == null) {
 			Thread thread = new Thread(new Runnable() {
