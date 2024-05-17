@@ -20,6 +20,11 @@
  */
 package net.nikr.eve.jeveasset.io.shared;
 
+import java.util.concurrent.Callable;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
 import net.nikr.eve.jeveasset.data.api.my.MyAsset;
 import net.nikr.eve.jeveasset.data.api.my.MyJournal;
@@ -73,6 +78,9 @@ public final class ApiIdConverter {
 
 	private static final String EMPTY_STRING = "";
 	private static final String UNKNOWN_FLAG = "Unknown";
+	private static final ConcurrentMap<Integer, Object> ITEM_DOWNLOAD_LOCKS = new ConcurrentHashMap<>();
+	private static final ExecutorService ITEM_DOWNLOAD_THREAD_POOL = Executors.newFixedThreadPool(ThreadWoker.MAIN_THREADS);
+	private static boolean update = false;
 
 	private enum PriceType {
 		ITEM, REPROCESSED, MANUFACTURING
@@ -463,11 +471,22 @@ public final class ApiIdConverter {
 		return item;
 	}
 
+	public static void setUpdateItem(boolean update) {
+		ApiIdConverter.update = update;
+	}
+
 	public static Item getItemUpdate(final Integer typeID) {
+		return getItemUpdate(typeID, update);
+	}
+
+	public static Item getItemUpdate(final Integer typeID, boolean update) {
+		if (!update) {
+			return getItem(typeID);
+		}
 		if (typeID == null) {
 			return new Item(0);
 		}
-		Item item = updateItem(typeID);
+		Item item = getUpdateItem(typeID);
 		if (item != null) {
 			return item;
 		} else {
@@ -475,7 +494,20 @@ public final class ApiIdConverter {
 		}
 	}
 
-	private static Item updateItem(final Integer typeID) {
+	public static void updateItem(Integer typeID) {
+		Item item = getUpdateItem(typeID);
+		if (item == null) {
+			Thread thread = new Thread(new Runnable() {
+				@Override
+				public void run() {
+					downloadItem(typeID);
+				}
+			});
+			thread.start();
+		}
+	}
+
+	private static Item getUpdateItem(final Integer typeID) {
 		Item item = StaticData.get().getItems().get(typeID);
 		if (item == null || (item.getVersion() != null && !item.getVersion().equals(EsiItemsGetter.ESI_ITEM_VERSION))) { //New ESI item version
 			if (item != null && item.getVersion().startsWith(EsiItemsGetter.ESI_ITEM_EMPTY)) {
@@ -490,22 +522,50 @@ public final class ApiIdConverter {
 		return item;
 	}
 
-	private synchronized static Item synchronizedDownloadItem(final Integer typeID) { //Only download one item at the time
-		Item item = updateItem(typeID);
-		if (item != null) { //May have been downloaded while waiting for sync
-			return item;
-		} else {
-			return downloadItem(typeID);
+	protected static Item synchronizedDownloadItem(final Integer typeID) { 
+		ITEM_DOWNLOAD_LOCKS.putIfAbsent(typeID, new Object()); //Only download one item type at the time (Locks on typeID)
+		synchronized(ITEM_DOWNLOAD_LOCKS.get(typeID)) {
+			Item item = getUpdateItem(typeID);
+			if (item != null) { //May have been downloaded while waiting for sync
+				return item;
+			} else {
+				return downloadItem(typeID);
+			}
 		}
 	}
 
 	private static Item downloadItem(final Integer typeID) { //Only download one item at the time
-		EsiItemsGetter esiItemsGetter = new EsiItemsGetter(typeID);
-		esiItemsGetter.run();
-		Item item = esiItemsGetter.getItem();
-		StaticData.get().getItems().put(typeID, item);
-		ItemsWriter.save();
+		Item item = ThreadWoker.startReturn(ITEM_DOWNLOAD_THREAD_POOL, null, new DownloadItem(typeID));
+		if (item == null) { //Empty Item
+			item = new Item(typeID, EsiItemsGetter.ESI_ITEM_EMPTY + Formatter.dateOnly(Settings.getNow()));
+		}
+		synchronized(StaticData.get().getItems()) {
+			StaticData.get().getItems().put(typeID, item); //Add Item
+		}
+		ITEM_DOWNLOAD_LOCKS.remove(typeID); //Remove lock after download is completed
+		if (ITEM_DOWNLOAD_LOCKS.isEmpty()) { //Save when the download queue is empty
+			synchronized(StaticData.get().getItems()) {
+				ItemsWriter.save(); //Save XML
+			}
+			
+		}
 		return item;
+	}
+
+	private static class DownloadItem implements Callable<Item> {
+
+		private final Integer typeID;
+
+		public DownloadItem(Integer typeID) {
+			this.typeID = typeID;
+		}
+
+		@Override
+		public Item call() throws Exception {
+			EsiItemsGetter esiItemsGetter = new EsiItemsGetter(typeID);
+			esiItemsGetter.run();
+			return esiItemsGetter.getItem();
+		}
 	}
 
 	public static String getOwnerName(final Integer ownerID) {

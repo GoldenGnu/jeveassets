@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.Map;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.settings.Settings;
-import net.nikr.eve.jeveasset.gui.shared.Formatter;
 import static net.nikr.eve.jeveasset.io.esi.AbstractEsiGetter.DATASOURCE;
 import static net.nikr.eve.jeveasset.io.esi.AbstractEsiGetter.getMarketApiOpen;
 import net.nikr.eve.jeveasset.io.local.ItemsReader;
@@ -251,9 +250,6 @@ public class EsiItemsGetter extends AbstractEsiGetter {
 	}
 
 	public Item getItem() {
-		if (item == null) { //Empty Item
-			item = new Item(typeID, EsiItemsGetter.ESI_ITEM_EMPTY + Formatter.dateOnly(Settings.getNow()));
-		}
 		return item;
 	}
 
