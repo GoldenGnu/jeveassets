@@ -50,7 +50,7 @@ public class StaticData {
 		return staticData;
 	}
 
-	public static void load() {
+	public static synchronized void load() {
 		if (staticData == null) {
 			staticData = new StaticData();
 			staticData.loadData();
