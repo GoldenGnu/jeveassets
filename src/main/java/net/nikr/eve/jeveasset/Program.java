@@ -118,6 +118,7 @@ import net.nikr.eve.jeveasset.i18n.GuiFrame;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 import net.nikr.eve.jeveasset.io.online.PriceDataGetter;
 import net.nikr.eve.jeveasset.io.online.Updater;
+import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import net.nikr.eve.jeveasset.io.shared.DesktopUtil;
 import net.nikr.eve.jeveasset.io.shared.FileUtil;
 import org.slf4j.Logger;
@@ -363,6 +364,7 @@ public class Program implements ActionListener {
 			LOG.info("Show Account Manager");
 			accountManagerDialog.setVisible(true);
 		}
+		ApiIdConverter.setUpdate(true);
 	}
 
 	/**
