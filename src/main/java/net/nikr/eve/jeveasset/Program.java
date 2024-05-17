@@ -364,7 +364,7 @@ public class Program implements ActionListener {
 			LOG.info("Show Account Manager");
 			accountManagerDialog.setVisible(true);
 		}
-		ApiIdConverter.setUpdate(true);
+		ApiIdConverter.setUpdateItem(true);
 	}
 
 	/**
