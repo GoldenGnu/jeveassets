@@ -78,8 +78,22 @@ public class EveRefGetter {
 	}	
 
 	public static Item getItem(Item item) {
-		//Get Type Data
 		EveRefType type = getType(item.getTypeID());
+		if (type == null) {
+			return item;
+		}
+		EveRefBlueprint blueprint = null;
+		if (get(type.isBlueprint(), false)) {
+			//Get Blueprint Data
+			blueprint = getBlueprint(item.getTypeID());
+		}
+		return getItem(item, type, blueprint);
+	}
+
+	protected static Item getItem(Item item, EveRefType type, EveRefBlueprint blueprint) {
+		if (type == null) {
+			return item;
+		}
 		//Tech Level
 		String tech = item.getTech();
 		Integer metaGroupID = type.getMetaGroupID();
@@ -88,51 +102,75 @@ public class EveRefGetter {
 		}
 		//BlueprintIDs
 		Set<Integer> blueprintTypeIDs = new HashSet<>();
-		Map<String, ProducedByBlueprints> producedByBlueprints = type.getProducedByBlueprints();
+		Map<String, EveRefProducedByBlueprints> producedByBlueprints = type.getProducedByBlueprints();
 		if (producedByBlueprints != null) {
-			for (ProducedByBlueprints blueprints : producedByBlueprints.values()) {
-				if (blueprints.getBlueprintActivity().equalsIgnoreCase("manufacturing")) {
-					blueprintTypeIDs.add(blueprints.getBlueprintTypeID());
+			for (EveRefProducedByBlueprints blueprints : producedByBlueprints.values()) {
+				if ("manufacturing".equalsIgnoreCase(blueprints.getBlueprintActivity())) {
+					Integer blueprintTypeID = blueprints.getBlueprintTypeID();
+					if (blueprintTypeID != null) {
+						blueprintTypeIDs.add(blueprintTypeID);
+					}
 				}
 			}
 		}
 		//Reproccesed
 		List<ReprocessedMaterial> reprocessedMaterials = new ArrayList<>();
 		if (type.getTypeMaterials() != null && item.isMarketGroup()) {
-			for (TypeMaterial material : type.getTypeMaterials().values()) {
-				reprocessedMaterials.add(new ReprocessedMaterial(material.getMaterialTypeID(), material.getQuantity(), type.getPortionSize()));
+			for (EveRefTypeMaterial material : type.getTypeMaterials().values()) {
+				Integer typeID = material.getMaterialTypeID();
+				Integer quantity = material.getQuantity();
+				if (typeID != null && quantity != null) {
+					reprocessedMaterials.add(new ReprocessedMaterial(typeID, quantity, type.getPortionSize()));
+				}
 			}
 		}
 		int productTypeID = EsiItemsGetter.PRODUCT_TYPE_ID_DEFAULT;
 		int productQuantity = EsiItemsGetter.PRODUCT_QUANTITY_DEFAULT;
 		List<IndustryMaterial> manufacturingMaterials = new ArrayList<>();
 		List<IndustryMaterial> reactionMaterials = new ArrayList<>();
-		if (get(type.isBlueprint(), false)) {
-			//Get Blueprint Data
-			EveRefBlueprint blueprint = getBlueprint(item.getTypeID());
+		if (blueprint != null) {
 			//Blueprints
-			for (EveRefMaterial eveRefMaterial : blueprint.getManufacturing().getMaterials().values()) {
-				manufacturingMaterials.add(new IndustryMaterial(eveRefMaterial.getTypeID(), eveRefMaterial.getQuantity()));
-			}
-			Map<String, EveRefMaterial> manufacturingProducts = blueprint.getManufacturing().getProducts();
-			if (!manufacturingProducts.isEmpty()) {
-				EveRefMaterial material = manufacturingProducts.values().iterator().next();
-				productTypeID = material.getTypeID();
-				productQuantity = material.getQuantity();
+			safeAdd(blueprint.getManufacturing(), manufacturingMaterials);
+			EveRefMaterial manufacturingMaterial = safeGet(blueprint.getManufacturing());
+			if (manufacturingMaterial != null) {
+				productTypeID = manufacturingMaterial.getTypeID();
+				productQuantity = manufacturingMaterial.getQuantity();
 			}
 			//Reactions
-			for (EveRefMaterial eveRefMaterial : blueprint.getReaction().getMaterials().values()) {
-				reactionMaterials.add(new IndustryMaterial(eveRefMaterial.getTypeID(), eveRefMaterial.getQuantity()));
-			}
-			Map<String, EveRefMaterial> reactionProducts = blueprint.getReaction().getProducts();
-			if (!reactionProducts.isEmpty()) {
-				EveRefMaterial material = reactionProducts.values().iterator().next();
-				productTypeID = material.getTypeID();
-				productQuantity = material.getQuantity();
+			safeAdd(blueprint.getReaction(), reactionMaterials);
+			EveRefMaterial reactionMaterial = safeGet(blueprint.getReaction());
+			if (reactionMaterial != null) {
+				productTypeID = reactionMaterial.getTypeID();
+				productQuantity = reactionMaterial.getQuantity();
 			}
 			
 		}
-		return new Item(item, get(type.getBasePrice(), EsiItemsGetter.BASE_PRICE_DEFAULT).longValue(), tech, productTypeID, productQuantity, blueprintTypeIDs, reprocessedMaterials, manufacturingMaterials, reactionMaterials);
+		//Base Price
+		Long basePrice = get(type.getBasePrice(), EsiItemsGetter.BASE_PRICE_DEFAULT).longValue();
+
+		return new Item(item, basePrice, tech, productTypeID, productQuantity, blueprintTypeIDs, reprocessedMaterials, manufacturingMaterials, reactionMaterials);
+	}
+
+	private static void safeAdd(EveRefActivity activity, List<IndustryMaterial> materials) {
+		if (activity != null && activity.getMaterials() != null) {
+			for (EveRefMaterial eveRefMaterial : activity.getMaterials().values()) {
+				Integer typeID = eveRefMaterial.getTypeID();
+				Integer quantity = eveRefMaterial.getQuantity();
+				if (typeID != null && quantity != null) {
+					materials.add(new IndustryMaterial(typeID, quantity));
+				}
+			}
+		}
+	}
+
+	private static EveRefMaterial safeGet(EveRefActivity activity) {
+		if (activity != null && activity.getProducts() != null) {
+			Map<String, EveRefMaterial> reactionProducts = activity.getProducts();
+			if (!reactionProducts.isEmpty()) {
+				return reactionProducts.values().iterator().next();
+			}
+		}
+		return null;
 	}
 
 	private static <V> V get(V value, V defaultValue) {
@@ -236,31 +274,34 @@ public class EveRefGetter {
 		private Long maxProductionLimit;
 
 		public Map<String, EveRefActivity> getActivities() {
+			if (activities == null) {
+				activities = new HashMap<>();
+			}
 			return activities;
 		}
 
 		public EveRefActivity getCopying() {
-			return activities.getOrDefault("copying", new EveRefActivity());
+			return getActivities().get("copying");
 		}
 		
 		public EveRefActivity getInvention() {
-			return activities.getOrDefault("invention", new EveRefActivity());
+			return getActivities().get("invention");
 		}
 	
 		public EveRefActivity getManufacturing() {
-			return activities.getOrDefault("manufacturing", new EveRefActivity());
+			return getActivities().get("manufacturing");
 		}
 
 		public EveRefActivity getReaction() {
-			return activities.getOrDefault("reaction", new EveRefActivity());
+			return getActivities().get("reaction");
 		}
 	
 		public EveRefActivity getResearchMaterial() {
-			return activities.getOrDefault("research_material", new EveRefActivity());
+			return getActivities().get("research_material");
 		}
 	
 		public EveRefActivity getResearchTime() {
-			return activities.getOrDefault("research_time", new EveRefActivity());
+			return getActivities().get("research_time");
 		}
 
 		public Long getBlueprintTypeID() {
@@ -274,8 +315,8 @@ public class EveRefGetter {
 
 	public static class EveRefActivity {
 
-		private Map<String, EveRefMaterial> materials = new HashMap<>();
-		private Map<String, EveRefMaterial> products = new HashMap<>();
+		private Map<String, EveRefMaterial> materials;
+		private Map<String, EveRefMaterial> products;
 		private Long time;
 		@SerializedName(value = "required_skills")
 		private Map<String, Long> requiredSkills;
@@ -309,16 +350,11 @@ public class EveRefGetter {
 			return probability;
 		}
 
-		public Integer getQuantity() {
-			return quantity;
-		}
-
-		public Integer getTypeID() {
-			return typeID;
-		}
+		public Integer getQuantity() { return quantity; }
+		public Integer getTypeID() { return typeID; }
 	}
 
-	public class EveRefType {
+	public static class EveRefType {
 		@SerializedName(value = "type_id")
 		private Long typeID;
 		@SerializedName(value = "base_price")
@@ -326,9 +362,9 @@ public class EveRefGetter {
 		private Double capacity;
 		private Map<String, String> description;
 		@SerializedName(value = "dogma_attributes")
-		private Map<String, DogmaAttribute> dogmaAttributes;
+		private Map<String, EveRefDogmaAttribute> dogmaAttributes;
 		@SerializedName(value = "dogma_effects")
-		private Map<String, DogmaEffect> dogmaEffects;
+		private Map<String, EveRefDogmaEffect> dogmaEffects;
 		@SerializedName(value = "faction_id")
 		private Long factionID;
 		@SerializedName(value = "graphic_id")
@@ -358,7 +394,7 @@ public class EveRefGetter {
 		private Long sofMaterialSetID;
 		@SerializedName(value = "sound_id")
 		private Long soundID;
-		private Traits traits;
+		private EveRefTraits traits;
 		@SerializedName(value = "variation_parent_type_id")
 		private Long variationParentTypeID;
 		private Double volume;
@@ -375,9 +411,9 @@ public class EveRefGetter {
 		@SerializedName(value = "is_ore")
 		private Boolean ore;
 		@SerializedName(value = "produced_by_blueprints")
-		private Map<String, ProducedByBlueprints> producedByBlueprints;
+		private Map<String, EveRefProducedByBlueprints> producedByBlueprints;
 		@SerializedName(value = "type_materials")
-		private Map<String, TypeMaterial> typeMaterials;
+		private Map<String, EveRefTypeMaterial> typeMaterials;
 		@SerializedName(value = "can_fit_types")
 		private List<Long> canFitTypes;
 		@SerializedName(value = "can_be_fitted_with_types")
@@ -395,8 +431,8 @@ public class EveRefGetter {
 		public Double getBasePrice() { return basePrice; }
 		public Double getCapacity() { return capacity; }
 		public Map<String, String> getDescription() { return description; }
-		public Map<String, DogmaAttribute> getDogmaAttributes() { return dogmaAttributes; }
-		public Map<String, DogmaEffect> getDogmaEffects() { return dogmaEffects; }
+		public Map<String, EveRefDogmaAttribute> getDogmaAttributes() { return dogmaAttributes; }
+		public Map<String, EveRefDogmaEffect> getDogmaEffects() { return dogmaEffects; }
 		public Long getFactionID() { return factionID; }
 		public Long getGraphicID() { return graphicID; }
 		public Long getGroupID() { return groupID; }
@@ -414,7 +450,7 @@ public class EveRefGetter {
 		public String getSofFactionName() { return sofFactionName; }
 		public Long getSofMaterialSetID() { return sofMaterialSetID; }
 		public Long getSoundID() { return soundID; }
-		public Traits getTraits() { return traits; }
+		public EveRefTraits getTraits() { return traits; }
 		public Long getVariationParentTypeID() { return variationParentTypeID; }
 		public Double getVolume() { return volume; }
 		public Map<String, Long> getRequiredSkills() { return requiredSkills; }
@@ -423,8 +459,8 @@ public class EveRefGetter {
 		public Map<String, List<Long>> getTypeVariations() { return typeVariations; }
 		public Map<String, List<Long>> getOreVariations() { return oreVariations; }
 		public Boolean isOre() { return ore; }
-		public Map<String, ProducedByBlueprints> getProducedByBlueprints() { return producedByBlueprints; }
-		public Map<String, TypeMaterial> getTypeMaterials() { return typeMaterials; }
+		public Map<String, EveRefProducedByBlueprints> getProducedByBlueprints() { return producedByBlueprints; }
+		public Map<String, EveRefTypeMaterial> getTypeMaterials() { return typeMaterials; }
 		public List<Long> getCanFitTypes() { return canFitTypes; }
 		public List<Long> getCanBeFittedWithTypes() { return canBeFittedWithTypes; }
 		public Boolean isSkill() { return skill; }
@@ -434,7 +470,7 @@ public class EveRefGetter {
 	}
 
 	
-	public class DogmaAttribute {
+	public static class EveRefDogmaAttribute {
 		@SerializedName(value = "attribute_id")
 		private Long attributeID;
 		private Double value;
@@ -443,7 +479,7 @@ public class EveRefGetter {
 		public Double getValue() { return value; }
 	}
 
-	public class DogmaEffect {
+	public static class EveRefDogmaEffect {
 		@SerializedName(value = "effect_id")
 		private Long effectID;
 		@SerializedName(value = "is_default")
@@ -453,7 +489,7 @@ public class EveRefGetter {
 		public Boolean isDefault() { return isDefault; }
 	}
 
-	public class ProducedByBlueprints {
+	public static class EveRefProducedByBlueprints {
 		@SerializedName(value = "blueprint_type_id")
 		private Integer blueprintTypeID;
 		@SerializedName(value = "blueprint_activity")
@@ -463,19 +499,19 @@ public class EveRefGetter {
 		public String getBlueprintActivity() { return blueprintActivity; }
 	}
 
-	public class Traits {
+	public static class EveRefTraits {
 		@SerializedName(value = "misc_bonuses")
-		private Map<String, RoleBonus> miscBonuses;
+		private Map<String, EveRefRoleBonus> miscBonuses;
 		@SerializedName(value = "role_bonuses")
-		private Map<String, RoleBonus> roleBonuses;
-		private Map<String, Map<String, RoleBonus>> types;
+		private Map<String, EveRefRoleBonus> roleBonuses;
+		private Map<String, Map<String, EveRefRoleBonus>> types;
 
-		public Map<String, RoleBonus> getMiscBonuses() { return miscBonuses; }
-		public Map<String, RoleBonus> getRoleBonuses() { return roleBonuses; }
-		public Map<String, Map<String, RoleBonus>> getTypes() { return types; }
+		public Map<String, EveRefRoleBonus> getMiscBonuses() { return miscBonuses; }
+		public Map<String, EveRefRoleBonus> getRoleBonuses() { return roleBonuses; }
+		public Map<String, Map<String, EveRefRoleBonus>> getTypes() { return types; }
 	}
 
-	public class RoleBonus {
+	public static class EveRefRoleBonus {
 		private Double bonus;
 		@SerializedName(value = "bonus_text")
 		private Map<String, String> bonusText;
@@ -492,7 +528,7 @@ public class EveRefGetter {
 		public Long getUnitID() { return unitID; }
 	}
 
-	public class TypeMaterial {
+	public static class EveRefTypeMaterial {
 		@SerializedName(value = "material_type_id")
 		private Integer materialTypeID;
 		private Integer quantity;
