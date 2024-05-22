@@ -83,14 +83,6 @@ Link:
   https://market.fuzzwork.co.uk/api
 
 ________________________________________________________________________________
-_EVEMARKETER____________________________________________________________________
-
-jEveAssets use the EveMarketer API to get price data
-
-Link:
-  https://evemarketer.com
-
-________________________________________________________________________________
 _JANICE_________________________________________________________________________
 
 jEveAssets use the Janice API to get price data
