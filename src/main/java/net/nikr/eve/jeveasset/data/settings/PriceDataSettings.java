@@ -34,13 +34,6 @@ import uk.me.candle.eve.pricing.options.PricingFetch;
 public class PriceDataSettings {
 
 	public enum PriceSource {
-		/*
-		EVEMARKETER(PricingFetch.EVEMARKETER, LocationType.REGION, 10000002L, Images.LINK_EVEMARKETER.getIcon()) {
-			@Override String getI18N() {
-				return DataModelPriceDataSettings.get().sourceEvemarketer();
-			}
-		},
-		*/
 		FUZZWORK(PricingFetch.FUZZWORK, LocationType.REGION, 10000002L, Images.LINK_FUZZWORK.getIcon()) {
 			@Override String getI18N() {
 				return DataModelPriceDataSettings.get().sourceFuzzwork();
