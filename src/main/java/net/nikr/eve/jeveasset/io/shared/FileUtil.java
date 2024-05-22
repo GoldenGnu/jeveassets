@@ -30,6 +30,7 @@ import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+import javax.swing.JOptionPane;
 import net.nikr.eve.jeveasset.CliOptions;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.settings.Settings;
@@ -121,9 +122,9 @@ public class FileUtil extends FileUtilSimple {
 			}
 			ret = new File(file.getAbsolutePath() + File.separator + filename);
 			File parent = ret.getParentFile();
-			if (!parent.exists()
-					&& !parent.mkdirs()) {
-				throw new RuntimeException("failed to create directories for " + parent.getAbsolutePath());
+			if (!parent.exists() && !parent.mkdirs()) {
+				JOptionPane.showMessageDialog(null, "Failed to create directory " + parent.getAbsolutePath(), Program.PROGRAM_NAME + " - Critical Error", JOptionPane.ERROR_MESSAGE);
+				System.exit(-1);
 			}
 		} else {
 			ret = new File(FileUtilSimple.getLocalFile(filename));
