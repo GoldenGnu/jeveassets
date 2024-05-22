@@ -38,7 +38,6 @@ public abstract class DataModelPriceDataSettings extends Bundle {
 		super(locale);
 	}
 
-	public abstract String sourceEvemarketer();
 	public abstract String sourceFuzzwork();
 	public abstract String sourceEveTycoon();
 	public abstract String sourceJanice();
