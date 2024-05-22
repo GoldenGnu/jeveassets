@@ -99,6 +99,22 @@ Link:
   https://github.com/zKillboard/zKillboard/wiki/API-(Prices)
 
 ________________________________________________________________________________
+_EVE_REF________________________________________________________________________
+
+jEveAssets use Reference Data API to get missing item data
+
+Link:
+  https://docs.everef.net/datasets/reference-data.html
+
+________________________________________________________________________________
+_HOBOLEAKS______________________________________________________________________
+
+jEveAssets use Hoboleaks Data Export via EVE Ref to get missing item data
+
+Link:
+  https://sde.hoboleaks.space
+
+________________________________________________________________________________
 _SILK_ICONS_____________________________________________________________________
 
 jEveAssets use Silk Icons from famfamfam.com
