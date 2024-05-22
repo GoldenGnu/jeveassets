@@ -83,6 +83,7 @@ public class ApiIdConverterOnlineTest extends TestUtil {
 		for (Map.Entry<Integer, Item> entry : removed.entrySet()) {
 			StaticData.get().getItems().put(entry.getKey(), entry.getValue());
 		}
+		ApiIdConverter.setUpdateItem(false);
 	}
 
 	private static class Download extends Thread {
