@@ -483,6 +483,20 @@ public enum AssetTableFormat implements EnumTableColumn<MyAsset> {
 			return from.getVolumeTotal();
 		}
 	},
+	VOLUME_PACKAGED(Float.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsAssets.get().columnVolumePackaged();
+		}
+		@Override
+		public String getColumnToolTip() {
+			return TabsAssets.get().columnVolumePackagedToolTip();
+		}
+		@Override
+		public Object getColumnValue(final MyAsset from) {
+			return from.getItem().getVolumePackaged();
+		}
+	},
 	VALUE_PER_VOLUME(Double.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
