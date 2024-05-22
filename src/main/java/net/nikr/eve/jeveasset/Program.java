@@ -1142,6 +1142,8 @@ public class Program implements ActionListener {
 			DesktopUtil.browse("https://wiki.jeveassets.org", this); //Links
 		} else if (MainMenuAction.LINK_FEEDBACK_AND_HELP.name().equals(e.getActionCommand())) {
 			DesktopUtil.browse("https://wiki.jeveassets.org/faq#feedback_and_help", this);
+		} else if (MainMenuAction.LINK_DISCORD.name().equals(e.getActionCommand())) {
+			DesktopUtil.browse("https://discord.gg/8kYZvbM", this);
 		} else if (MainMenuAction.README.name().equals(e.getActionCommand())) { //External Files
 			DesktopUtil.open(FileUtil.getPathReadme(), this);
 		} else if (MainMenuAction.LICENSE.name().equals(e.getActionCommand())) {
