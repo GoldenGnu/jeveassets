@@ -36,7 +36,6 @@ import net.nikr.eve.jeveasset.data.settings.ColorEntry;
 import net.nikr.eve.jeveasset.data.settings.ColorSettings;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.shared.InstantToolTip;
-import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.ResizeMode;
 import net.nikr.eve.jeveasset.gui.shared.table.JSeparatorTable;
 import net.nikr.eve.jeveasset.gui.shared.table.TableCellRenderers.TargetCellRenderer;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
@@ -71,6 +70,9 @@ public class JStockpileTable extends JSeparatorTable {
 
 				if (lastColumn == column && lastRow == row) {
 					return;
+				}
+				if (column < 0 || column >= getColumnCount()) {
+					return; //Out of bounce
 				}
 				lastColumn = column;
 				lastRow = row;
