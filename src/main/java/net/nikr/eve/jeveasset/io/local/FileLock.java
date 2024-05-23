@@ -25,11 +25,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JEditorPane;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import net.nikr.eve.jeveasset.data.settings.Colors;
+import net.nikr.eve.jeveasset.gui.shared.components.JLabelMultilineHtml;
 import net.nikr.eve.jeveasset.i18n.General;
-import net.nikr.eve.jeveasset.io.shared.DesktopUtil;
 import net.nikr.eve.jeveasset.io.shared.FileUtil;
 import org.slf4j.LoggerFactory;
 
@@ -39,7 +37,7 @@ public class FileLock {
 	private static final Object SYNC_LOCK = new Object();
 	private static final int MAX_TRIES = 12; //1 minute
 	private static final int DELAY = 5000;
-	private static final List<File> LOCKS = new ArrayList<File>();
+	private static final List<File> LOCKS = new ArrayList<>();
 	private static boolean SAFE = false;
 
 	private static void saferShutdown() {
@@ -150,16 +148,7 @@ public class FileLock {
 	}
 
 	private static JEditorPane getMessage(File file) {
-		JLabel jLabel = new JLabel();
-		JEditorPane jEditorPane = new JEditorPane("text/html", "");
-		jEditorPane.setEditable(false);
-		jEditorPane.setFocusable(false);
-		jEditorPane.setOpaque(false);
-		jEditorPane.setBackground(Colors.COMPONENT_TRANSPARENT.getColor());
-		jEditorPane.setText("<html><body style=\"font-family: " + jLabel.getFont().getName() + "; font-size: " + jLabel.getFont().getSize() + "pt\">"
-				+ General.get().fileLockMsg(file.getName())
-				+ "</body></html>");
-		jEditorPane.addHyperlinkListener(DesktopUtil.getHyperlinkListener(null));
+		JLabelMultilineHtml jEditorPane = new JLabelMultilineHtml(General.get().fileLockMsg(file.getName()));
 		return jEditorPane;
 	}
 }

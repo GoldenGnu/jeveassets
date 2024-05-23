@@ -825,10 +825,15 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			double multiplier = getDoubleNotNull(stockpileNode, "multiplier", 1);
 		//GROUP
 			String group = getStringOptional(stockpileNode, "stockpilegroup"); //Null is handled by settings
-		//CONTRACTS MATCH ALL
-			boolean contractsMatchAll = getBooleanNotNull(stockpileNode, "contractsmatchall", false);
+		//MATCH ALL
+			boolean matchAll;
+			if (haveAttribute(stockpileNode, "contractsmatchall")) {
+				matchAll = getBoolean(stockpileNode, "contractsmatchall");
+			} else {
+				matchAll = getBooleanNotNull(stockpileNode, "matchall", false);
+			}
 
-			Stockpile stockpile = new Stockpile(name, stockpileID, filters, multiplier, contractsMatchAll);
+			Stockpile stockpile = new Stockpile(name, stockpileID, filters, multiplier, matchAll);
 			if (stockpileGroupSettings != null) {
 				stockpileGroupSettings.setGroup(stockpile, group);
 			}
@@ -850,7 +855,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 				boolean ignoreMultiplier = getBooleanNotNull(itemNode, "ignoremultiplier", false);
 				double countMinimum = getDouble(itemNode, "minimum");
 				if (typeID != 0) { //Ignore Total
-					Item item = ApiIdConverter.getItemUpdate(Math.abs(typeID));
+					Item item = ApiIdConverter.getItemUpdate(Math.abs(typeID), true);
 					StockpileItem stockpileItem = new StockpileItem(stockpile, item, typeID, countMinimum, runs, ignoreMultiplier, id);
 					stockpile.add(stockpileItem);
 				}
@@ -1163,8 +1168,9 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 				Element idNode = (Element) idNodes.item(b);
 				String tool = getString(idNode, "tool");
 				long id = getLong(idNode, "id");
+				double d = getDoubleNotNull(idNode, "d", 0);
 
-				TagID tagID = new TagID(tool, id);
+				TagID tagID = new TagID(tool, id, d);
 				tag.getIDs().add(tagID);
 				settings.getTags(tagID).add(tag);
 			}

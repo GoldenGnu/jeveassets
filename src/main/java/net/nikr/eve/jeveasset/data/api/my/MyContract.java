@@ -266,6 +266,11 @@ public class MyContract extends RawContract implements LocationsType, OwnersType
 	}
 
 	@Override
+	public void archive() {
+		this.esi = false;
+	}
+
+	@Override
 	public boolean isESI() {
 		return esi;
 	}

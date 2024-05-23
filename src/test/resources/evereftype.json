@@ -1,0 +1,323 @@
+{
+  "type_id": 10,
+  "base_price": 10,
+  "capacity": 10,
+  "description": {
+    "additionalProp1": "string",
+    "additionalProp2": "string",
+    "additionalProp3": "string"
+  },
+  "dogma_attributes": {
+    "additionalProp1": {
+      "attribute_id": 10,
+      "value": 10
+    },
+    "additionalProp2": {
+      "attribute_id": 10,
+      "value": 10
+    },
+    "additionalProp3": {
+      "attribute_id": 10,
+      "value": 10
+    }
+  },
+  "dogma_effects": {
+    "additionalProp1": {
+      "effect_id": 10,
+      "is_default": true
+    },
+    "additionalProp2": {
+      "effect_id": 10,
+      "is_default": true
+    },
+    "additionalProp3": {
+      "effect_id": 10,
+      "is_default": true
+    }
+  },
+  "faction_id": 10,
+  "graphic_id": 10,
+  "group_id": 10,
+  "icon_id": 10,
+  "market_group_id": 10,
+  "mass": 10,
+  "masteries": {
+    "additionalProp1": [
+      10
+    ],
+    "additionalProp2": [
+      10
+    ],
+    "additionalProp3": [
+      10
+    ]
+  },
+  "meta_group_id": 10,
+  "name": {
+    "additionalProp1": "string",
+    "additionalProp2": "string",
+    "additionalProp3": "string"
+  },
+  "packaged_volume": 10,
+  "portion_size": 10,
+  "published": true,
+  "race_id": 10,
+  "radius": 10,
+  "sof_faction_name": "string",
+  "sof_material_set_id": 10,
+  "sound_id": 10,
+  "traits": {
+    "misc_bonuses": {
+      "additionalProp1": {
+        "bonus": 10,
+        "bonus_text": {
+          "additionalProp1": "string",
+          "additionalProp2": "string",
+          "additionalProp3": "string"
+        },
+        "importance": 10,
+        "is_positive": true,
+        "unit_id": 10
+      },
+      "additionalProp2": {
+        "bonus": 10,
+        "bonus_text": {
+          "additionalProp1": "string",
+          "additionalProp2": "string",
+          "additionalProp3": "string"
+        },
+        "importance": 10,
+        "is_positive": true,
+        "unit_id": 10
+      },
+      "additionalProp3": {
+        "bonus": 10,
+        "bonus_text": {
+          "additionalProp1": "string",
+          "additionalProp2": "string",
+          "additionalProp3": "string"
+        },
+        "importance": 10,
+        "is_positive": true,
+        "unit_id": 10
+      }
+    },
+    "role_bonuses": {
+      "additionalProp1": {
+        "bonus": 10,
+        "bonus_text": {
+          "additionalProp1": "string",
+          "additionalProp2": "string",
+          "additionalProp3": "string"
+        },
+        "importance": 10,
+        "is_positive": true,
+        "unit_id": 10
+      },
+      "additionalProp2": {
+        "bonus": 10,
+        "bonus_text": {
+          "additionalProp1": "string",
+          "additionalProp2": "string",
+          "additionalProp3": "string"
+        },
+        "importance": 10,
+        "is_positive": true,
+        "unit_id": 10
+      },
+      "additionalProp3": {
+        "bonus": 10,
+        "bonus_text": {
+          "additionalProp1": "string",
+          "additionalProp2": "string",
+          "additionalProp3": "string"
+        },
+        "importance": 10,
+        "is_positive": true,
+        "unit_id": 10
+      }
+    },
+    "types": {
+      "additionalProp1": {
+        "additionalProp1": {
+          "bonus": 10,
+          "bonus_text": {
+            "additionalProp1": "string",
+            "additionalProp2": "string",
+            "additionalProp3": "string"
+          },
+          "importance": 10,
+          "is_positive": true,
+          "unit_id": 10
+        },
+        "additionalProp2": {
+          "bonus": 10,
+          "bonus_text": {
+            "additionalProp1": "string",
+            "additionalProp2": "string",
+            "additionalProp3": "string"
+          },
+          "importance": 10,
+          "is_positive": true,
+          "unit_id": 10
+        },
+        "additionalProp3": {
+          "bonus": 10,
+          "bonus_text": {
+            "additionalProp1": "string",
+            "additionalProp2": "string",
+            "additionalProp3": "string"
+          },
+          "importance": 10,
+          "is_positive": true,
+          "unit_id": 10
+        }
+      },
+      "additionalProp2": {
+        "additionalProp1": {
+          "bonus": 10,
+          "bonus_text": {
+            "additionalProp1": "string",
+            "additionalProp2": "string",
+            "additionalProp3": "string"
+          },
+          "importance": 10,
+          "is_positive": true,
+          "unit_id": 10
+        },
+        "additionalProp2": {
+          "bonus": 10,
+          "bonus_text": {
+            "additionalProp1": "string",
+            "additionalProp2": "string",
+            "additionalProp3": "string"
+          },
+          "importance": 10,
+          "is_positive": true,
+          "unit_id": 10
+        },
+        "additionalProp3": {
+          "bonus": 10,
+          "bonus_text": {
+            "additionalProp1": "string",
+            "additionalProp2": "string",
+            "additionalProp3": "string"
+          },
+          "importance": 10,
+          "is_positive": true,
+          "unit_id": 10
+        }
+      },
+      "additionalProp3": {
+        "additionalProp1": {
+          "bonus": 10,
+          "bonus_text": {
+            "additionalProp1": "string",
+            "additionalProp2": "string",
+            "additionalProp3": "string"
+          },
+          "importance": 10,
+          "is_positive": true,
+          "unit_id": 10
+        },
+        "additionalProp2": {
+          "bonus": 10,
+          "bonus_text": {
+            "additionalProp1": "string",
+            "additionalProp2": "string",
+            "additionalProp3": "string"
+          },
+          "importance": 10,
+          "is_positive": true,
+          "unit_id": 10
+        },
+        "additionalProp3": {
+          "bonus": 10,
+          "bonus_text": {
+            "additionalProp1": "string",
+            "additionalProp2": "string",
+            "additionalProp3": "string"
+          },
+          "importance": 10,
+          "is_positive": true,
+          "unit_id": 10
+        }
+      }
+    },
+    "icon_id": 10
+  },
+  "variation_parent_type_id": 10,
+  "volume": 10,
+  "required_skills": {
+    "additionalProp1": 10,
+    "additionalProp2": 10,
+    "additionalProp3": 10
+  },
+  "applicable_mutaplasmid_type_ids": [
+    10
+  ],
+  "creating_mutaplasmid_type_ids": [
+    10
+  ],
+  "type_variations": {
+    "additionalProp1": [
+      10
+    ],
+    "additionalProp2": [
+      10
+    ],
+    "additionalProp3": [
+      10
+    ]
+  },
+  "ore_variations": {
+    "additionalProp1": [
+      10
+    ],
+    "additionalProp2": [
+      10
+    ],
+    "additionalProp3": [
+      10
+    ]
+  },
+  "is_ore": true,
+  "produced_by_blueprints": {
+    "additionalProp1": {
+      "blueprint_type_id": 10,
+      "blueprint_activity": "string"
+    },
+    "additionalProp2": {
+      "blueprint_type_id": 10,
+      "blueprint_activity": "string"
+    },
+    "additionalProp3": {
+      "blueprint_type_id": 10,
+      "blueprint_activity": "string"
+    }
+  },
+  "type_materials": {
+    "additionalProp1": {
+      "material_type_id": 10,
+      "quantity": 10
+    },
+    "additionalProp2": {
+      "material_type_id": 10,
+      "quantity": 10
+    },
+    "additionalProp3": {
+      "material_type_id": 10,
+      "quantity": 10
+    }
+  },
+  "can_fit_types": [
+    10
+  ],
+  "can_be_fitted_with_types": [
+    10
+  ],
+  "is_skill": true,
+  "is_mutaplasmid": true,
+  "is_dynamic_item": true,
+  "is_blueprint": true
+}

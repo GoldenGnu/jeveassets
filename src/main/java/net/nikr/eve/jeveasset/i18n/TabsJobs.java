@@ -45,6 +45,7 @@ public abstract class TabsJobs extends Bundle {
 	public abstract String inventionSuccess();
 	public abstract String manufactureJobsValue();
 	public abstract String no();
+	public abstract String status();
 	public abstract String columnState();
 	public abstract String columnActivity();
 	public abstract String columnName();

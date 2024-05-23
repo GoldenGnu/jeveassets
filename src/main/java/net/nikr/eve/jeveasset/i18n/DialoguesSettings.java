@@ -71,6 +71,7 @@ public abstract class DialoguesSettings extends Bundle {
 	public abstract String includeBuyOrders();
 	public abstract String includeManufacturing();
 	public abstract String includeCopying();
+	public abstract String showContainerItemID();
 
 	// used in OverviewToolSettingsPanel
 	public abstract String overview();
@@ -99,6 +100,10 @@ public abstract class DialoguesSettings extends Bundle {
 	// used in TransactionsToolSettingsPanel
 	public abstract String journal();
 	public abstract String journalSaveHistory();
+
+	// used in IndustryJobsToolSettingsPanel
+	public abstract String industryJobs();
+	public abstract String industryJobsSaveHistory();
 
 	// used in ContractToolSettingsPanel
 	public abstract String contracts();
@@ -167,6 +172,7 @@ public abstract class DialoguesSettings extends Bundle {
 	public abstract String soundsMp3NoFilesAdded();
 	public abstract String soundsNone();
 	public abstract String soundsOutbidUpdateCompleted();
+	public abstract String soundsOutbidUpdateAvailable();
 
 	// used in PriceDataSettingsPanel
 	public abstract String changeSourceWarning();

@@ -73,6 +73,21 @@ public enum MaterialTableFormat implements EnumTableColumn<Material> {
 		public Object getColumnValue(final Material from) {
 			return new ISK(Formatter.iskFormat(from.getValue()), from.getValue());
 		}
+	},
+	TYPE_ID(Integer.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsMaterials.get().columnTypeID();
+		}
+		@Override
+		public Object getColumnValue(final Material from) {
+			return from.getTypeID();
+		}
+
+		@Override
+		public boolean isShowDefault() {
+			return false;
+		}
 	};
 
 	private final Class<?> type;

@@ -16,6 +16,50 @@
                   #### #  # #  # #  # #### #### #### #### ####
 
 ________________________________________________________________________________
+_7.9.0__________________________________________________________________________
+
+New Features:
+-Keep original name when cloning stockpiles (contributed by Ed Thelleres)
+-Show/Hide container ItemID in the Assets and Tree tools
+-Lock tool tabs
+-Stockpile can now hide the subpile tree
+-Play sound when outbid data can be updated again
+-Stockpiles shopping list CSV/Spreadsheet format
+-Added TypeID column to the materials tool
+-Added Tags column to the journal tool
+-Added Tags column to the transactions tool
+-Stockpile matching/contains all for assets
+-Added commodity category to the materials tool
+-Added corporation wallet division 1-7 columns to the isk tool
+-Added price changes tool
+-Added date values to formula columns
+-Save industry jobs history (optional, on by default)
+-Get missing item data from EveRef (data not in ESI)
+-Added packaged volume column to the assets and tree tools
+-Added link to jEveAssets discord server
+
+Bug Fixes:
+-Industry Jobs blueprints show as output material
+-Stockpile group editing would sometimes lead to visual artifacts
+-Stockpile target column sometimes truncate editable numbers
+-Overflow in Formula/Jumps/Tags menus
+-Lookup menu Eve Tycoon used the wrong link
+-Fixed reactions calculations (contributed by Ed Thelleres)
+-Subpile count in the stockpile shopping list was always zero
+-Tags was bold on first render
+-CtD when importing stockpile text into new/rename stockpile
+-CtD in the stockpile tool (BugID 1074 & 1076)
+
+Changed:
+-Removed EveMarketer from the lookup menu
+-Replaced lazy-blacksmith.space with lzb.eveskillboard.com in lookup menu
+-Sort stockpile shopping list by name
+-Improved account import usability
+
+Code:
+-Update multiple missing items at the same time
+
+________________________________________________________________________________
 _7.8.1__________________________________________________________________________
 
 Bug Fixes:

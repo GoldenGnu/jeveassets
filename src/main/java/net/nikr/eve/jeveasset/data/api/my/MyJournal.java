@@ -27,10 +27,14 @@ import java.util.Set;
 import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
 import net.nikr.eve.jeveasset.data.api.raw.RawJournal;
 import net.nikr.eve.jeveasset.data.api.raw.RawJournalRefType;
+import net.nikr.eve.jeveasset.data.settings.tag.TagID;
+import net.nikr.eve.jeveasset.data.settings.tag.Tags;
 import net.nikr.eve.jeveasset.data.settings.types.OwnersType;
+import net.nikr.eve.jeveasset.data.settings.types.TagsType;
+import net.nikr.eve.jeveasset.gui.tabs.journal.JournalTab;
 import net.nikr.eve.jeveasset.io.shared.RawConverter;
 
-public class MyJournal extends RawJournal implements Comparable<MyJournal>, OwnersType {
+public class MyJournal extends RawJournal implements Comparable<MyJournal>, OwnersType, TagsType {
 
 	private static final String CORP = "(Corporation)";
 
@@ -40,6 +44,7 @@ public class MyJournal extends RawJournal implements Comparable<MyJournal>, Owne
 	private String secondPartyName = "";
 	private Date added;
 	private String context = null;
+	private Tags tags;
 
 	public MyJournal(RawJournal rawJournal, OwnerType owner) {
 		super(rawJournal);
@@ -124,6 +129,21 @@ public class MyJournal extends RawJournal implements Comparable<MyJournal>, Owne
 			builder.append(capitalize(word));
 		}
 		return builder.toString();
+	}
+
+	@Override
+	public Tags getTags() {
+		return tags;
+	}
+
+	@Override
+	public TagID getTagID() {
+		return new TagID(JournalTab.NAME, getRefID(), getAmount());
+	}
+
+	@Override
+	public void setTags(Tags tags) {
+		this.tags = tags;
 	}
 
 	@Override

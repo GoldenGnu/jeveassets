@@ -124,6 +124,8 @@ public class SettingsDialog extends JDialogCentered {
 
 		add(toolNode, new JournalToolSettingsPanel(program, this));
 
+		add(toolNode, new IndustryJobsToolSettingsPanel(program, this));
+
 		add(toolNode, new ContractToolSettingsPanel(program, this));
 
 		add(toolNode, new TrackerToolSettingsPanel(program, this));
@@ -318,6 +320,10 @@ public class SettingsDialog extends JDialogCentered {
 				if (updates.contains(UpdateType.REPAINT_STOCKPILE_TABLE)) {
 					program.getStockpileTab().repaintTable();
 				}
+			}
+			if (updates.contains(UpdateType.UPDATE_ASSET_TABLES)) {
+				program.getAssetsTab().tableDataChanged();
+				program.getTreeTab().tableDataChanged();
 			}
 			if (updates.contains(UpdateType.UPDATE_OVERVIEW)) {
 				program.getOverviewTab().updateData();

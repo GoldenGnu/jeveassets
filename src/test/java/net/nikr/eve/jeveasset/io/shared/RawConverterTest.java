@@ -284,6 +284,7 @@ public class RawConverterTest extends TestUtil {
 		map.put(101, RawIndustryJob.IndustryJobStatus.DELIVERED);
 		map.put(102, RawIndustryJob.IndustryJobStatus.CANCELLED);
 		map.put(103, RawIndustryJob.IndustryJobStatus.REVERTED);
+		map.put(-100, RawIndustryJob.IndustryJobStatus.ARCHIVED);
 		assertEquals(map.size(), RawIndustryJob.IndustryJobStatus.values().length);
 		for (Map.Entry<Integer, RawIndustryJob.IndustryJobStatus> entry : map.entrySet()) {
 			assertEquals(entry.getValue(), RawConverter.toIndustryJobStatus(entry.getKey(), null, null));

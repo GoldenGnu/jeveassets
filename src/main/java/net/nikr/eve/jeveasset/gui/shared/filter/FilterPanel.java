@@ -32,7 +32,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.time.Instant;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -406,9 +405,7 @@ class FilterPanel<E> implements Comparable<FilterPanel<E>> {
 	}
 
 	private void setDateString(Date date) {
-		Instant instant = Instant.ofEpochMilli(date.getTime());
-		LocalDate localDate = LocalDateTime.ofInstant(instant, ZoneId.of("GMT")).toLocalDate();
-		jDate.setDate(localDate);
+		jDate.setDate(date);
 	}
 
 	private String getDataString() {

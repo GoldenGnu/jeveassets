@@ -79,7 +79,7 @@ public final class ItemsReader extends AbstractXmlReader<Boolean> {
 		for (Map.Entry<Integer, Integer> entry : blueprints.entrySet()) {
 			Item item = items.get(entry.getValue());
 			if (item != null) {
-				item.setBlueprintID(entry.getKey());
+				item.addBlueprintID(entry.getKey());
 			}
 		}
 	}
@@ -93,7 +93,7 @@ public final class ItemsReader extends AbstractXmlReader<Boolean> {
 		String name = getString(node, "name");
 		String group = getString(node, "group");
 		String category = getString(node, "category");
-		long price = getLong(node, "price");
+		long basePrice = getLong(node, "price");
 		float volume = getFloat(node, "volume");
 		float packagedVolume = getFloatNotNull(node, "packagedvolume", volume);
 		float capacity = getFloatNotNull(node, "capacity", 0f);
@@ -105,7 +105,7 @@ public final class ItemsReader extends AbstractXmlReader<Boolean> {
 		int productQuantity = getIntNotNull(node, "productquantity", 1);
 		String slot = getStringOptional(node, "slot");
 		String chargeSize = getChargeSize(getIntOptional(node, "charges"));
-		return new Item(id, name, group, category, price, volume, packagedVolume, capacity, meta, tech, marketGroup, portion, product, productQuantity, slot, chargeSize, version);
+		return new Item(id, name, group, category, basePrice, volume, packagedVolume, capacity, meta, tech, marketGroup, portion, product, productQuantity, slot, chargeSize, version);
 	}
 
 	private void parseMaterials(final Element element, final Item item) throws XmlException {
@@ -125,7 +125,7 @@ public final class ItemsReader extends AbstractXmlReader<Boolean> {
 	private void parseManufacturing(final Element element, final Item item) throws XmlException {
 		NodeList nodes = element.getElementsByTagName("mfg");
 		for (int i = 0; i < nodes.getLength(); i++) {
-			IndustryMaterial material = parseIndustryMaterial(nodes.item(i), item);
+			IndustryMaterial material = parseIndustryMaterial(nodes.item(i));
 			item.addManufacturingMaterial(material);
 		}
 	}
@@ -133,12 +133,12 @@ public final class ItemsReader extends AbstractXmlReader<Boolean> {
 	private void parseReaction(final Element element, final Item item) throws XmlException {
 		NodeList nodes = element.getElementsByTagName("rxn");
 		for (int i = 0; i < nodes.getLength(); i++) {
-			IndustryMaterial material = parseIndustryMaterial(nodes.item(i), item);
+			IndustryMaterial material = parseIndustryMaterial(nodes.item(i));
 			item.addReactionMaterial(material);
 		}
 	}
 
-	private IndustryMaterial parseIndustryMaterial(final Node node, final Item item) throws XmlException {
+	private IndustryMaterial parseIndustryMaterial(final Node node) throws XmlException {
 		int typeID = getInt(node, "id");
 		int quantity = getInt(node, "q");
 		return new IndustryMaterial(typeID, quantity);

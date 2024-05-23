@@ -36,6 +36,7 @@ import net.nikr.eve.jeveasset.gui.shared.filter.Filter.CompareType;
 import static net.nikr.eve.jeveasset.gui.shared.filter.Filter.CompareType.NEXT_DAYS;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.LogicType;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
+import net.nikr.eve.jeveasset.gui.shared.table.containers.AssetContainer;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.NumberValue;
 
 
@@ -80,7 +81,7 @@ public class FilterMatcher<E> implements Matcher<E> {
 		if (CompareType.isColumnCompare(compare)) {
 			this.text = text;
 		} else {
-			this.text = format(text, true);
+			this.text = formatData(text, true);
 		}
 		empty = !enabled || text == null || text.isEmpty();
 		and = logic == Filter.LogicType.AND;
@@ -137,13 +138,13 @@ public class FilterMatcher<E> implements Matcher<E> {
 			case LESS_THAN_COLUMN:
 				return less(column, tableFormat.getColumnValue(item, text));
 			case EQUALS_COLUMN:
-				return equals(column, format(tableFormat.getColumnValue(item, text), false));
+				return equals(column, formatData(tableFormat.getColumnValue(item, text), false));
 			case EQUALS_NOT_COLUMN:
-				return !equals(column, format(tableFormat.getColumnValue(item, text), false));
+				return !equals(column, formatData(tableFormat.getColumnValue(item, text), false));
 			case CONTAINS_COLUMN:
-				return contains(column, format(tableFormat.getColumnValue(item, text), false));
+				return contains(column, formatData(tableFormat.getColumnValue(item, text), false));
 			case CONTAINS_NOT_COLUMN:
-				return !contains(column, format(tableFormat.getColumnValue(item, text), false));
+				return !contains(column, formatData(tableFormat.getColumnValue(item, text), false));
 			case BEFORE_COLUMN:
 				return before(column, tableFormat.getColumnValue(item, text));
 			case AFTER_COLUMN:
@@ -168,7 +169,7 @@ public class FilterMatcher<E> implements Matcher<E> {
 			Object columnValue = filterControl.getColumnValue(e, testColumn.name());
 			if (columnValue != null) {
 				builder.append("\n");
-				builder.append(format(columnValue, false));
+				builder.append(formatData(columnValue, false));
 				builder.append("\r");
 			}
 		}
@@ -211,7 +212,7 @@ public class FilterMatcher<E> implements Matcher<E> {
 		}
 
 		//Equals (case insentive)
-		return format(object1, false).equals(formattedText);
+		return formatData(object1, false).equals(formattedText);
 	}
 
 	private boolean regex(final Object object1, final Pattern pattern) {
@@ -221,7 +222,7 @@ public class FilterMatcher<E> implements Matcher<E> {
 		}
 
 		//Rexex
-		return pattern.matcher(format(object1, false)).find();
+		return pattern.matcher(formatData(object1, false)).find();
 	}
 
 	private boolean contains(final Object object1, final String formattedText) {
@@ -231,7 +232,7 @@ public class FilterMatcher<E> implements Matcher<E> {
 		}
 
 		//Contains (case insentive)
-		return format(object1, false).contains(formattedText);
+		return formatData(object1, false).contains(formattedText);
 	}
 
 	private boolean less(final Object object1, final Object object2) {
@@ -462,7 +463,26 @@ public class FilterMatcher<E> implements Matcher<E> {
 		}
 	}
 
-	public static String format(final Object object, final boolean userInput) {
+	private static AssetContainer getAssetContainer(final Object obj) {
+		if (obj instanceof AssetContainer) {
+			return (AssetContainer) obj;
+		} else {
+			return null;
+		}
+	}
+
+	public static String formatFilter(final Object object) {
+		return format(object, false);
+	}
+
+	private static String formatData(final Object object, final boolean userInput) {
+		if (object == null) {
+			return null;
+		}
+		return format(object, userInput).toLowerCase();
+	}
+
+	private static String format(final Object object, final boolean userInput) {
 		if (object == null) {
 			return null;
 		}
@@ -470,17 +490,23 @@ public class FilterMatcher<E> implements Matcher<E> {
 		//Number
 		Number number = getNumber(object, userInput);
 		if (number != null) {
-			return Formatter.compareFormat(number).toLowerCase();
+			return Formatter.compareFormat(number);
 		}
 
 		//Date
 		Date date = getDate(object, userInput);
 		if (date != null) {
-			return Formatter.columnDate(date).toLowerCase();
+			return Formatter.columnDate(date);
+		}
+
+		//AssetContainer
+		AssetContainer assetContainer = getAssetContainer(object);
+		if (assetContainer != null) {
+			return assetContainer.getContainer();
 		}
 
 		//String
-		return format(object.toString()).toLowerCase();
+		return format(object.toString());
 	}
 
 	private static String format(String string) {

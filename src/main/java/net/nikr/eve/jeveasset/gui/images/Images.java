@@ -194,8 +194,12 @@ public enum Images {
 	MISC_PARTYPARROT ("misc_partyparrot.gif"),
 	MISC_MATERIALS ("misc_materials.png"),
 	MISC_ORE ("misc_ore.png"),
+	MISC_COMMODITY ("misc_commodity.png"),
 	MISC_PI ("misc_pi.png"),
 	MISC_XML ("misc_xml.png"),
+	MISC_DATE ("misc_date.png"),
+	MISC_NUMBER ("misc_number.png"),
+	MISC_DISCORD ("misc_discord.png"),
 
 	SETTINGS_TOOLS ("settings_tools.png"),
 	SETTINGS_PRICE_DATA ("settings_price_data.png"),
@@ -256,6 +260,7 @@ public enum Images {
 	TOOL_MINING_LOG ("tool_mining_log.png"),
 	TOOL_MINING_GRAPH ("tool_mining_graph.png"),
 	TOOL_EXTRACTIONS ("tool_extractions.png"),
+	TOOL_PRICE_CHANGE ("tool_price_change.png"),
 
 	UPDATE_NOT_STARTED ("update_not_started.png"),
 	UPDATE_WORKING ("update_working.png"),

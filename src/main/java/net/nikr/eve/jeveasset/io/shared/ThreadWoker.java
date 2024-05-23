@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
 
 public class ThreadWoker {
 
-	private static final int MAIN_THREADS = 100;
+	public static final int MAIN_THREADS = 100;
 	private static final int SUB_THREADS = 100;
 	private static final ExecutorService RETURN_THREAD_POOL = Executors.newFixedThreadPool(SUB_THREADS);
 
@@ -58,7 +58,7 @@ public class ThreadWoker {
 		ExecutorService threadPool = Executors.newFixedThreadPool(MAIN_THREADS);
 		try {
 			LOG.info("Starting " + updaters.size() + " main threads");
-			List<Future<?>> futures = new ArrayList<Future<?>>();
+			List<Future<?>> futures = new ArrayList<>();
 			for (Runnable runnable : updaters) {
 				futures.add(threadPool.submit(runnable));
 			}
@@ -102,7 +102,7 @@ public class ThreadWoker {
 			throw new TaskCancelledException();
 		}
 		LOG.info("Starting " + updaters.size() + " sub threads");
-		List<Future<K>> futures = new ArrayList<Future<K>>();
+		List<Future<K>> futures = new ArrayList<>();
 		for (Callable<K> callable : updaters) {
 			futures.add(RETURN_THREAD_POOL.submit(callable));
 		}
@@ -127,6 +127,26 @@ public class ThreadWoker {
 			Thread.sleep(500);
 		}
 		return futures;
+	}
+
+	public static <K> K startReturn(UpdateTask updateTask, Callable<K> updater) {
+		return startReturn(RETURN_THREAD_POOL, updateTask, updater);
+	}
+
+	public static <K> K startReturn(ExecutorService executorService, UpdateTask updateTask, Callable<K> updater) {
+		if (updateTask != null && updateTask.isCancelled()) {
+			throw new TaskCancelledException();
+		}
+		LOG.info("Starting sub thread");
+		Future<K> future = executorService.submit(updater);
+		try {
+			return future.get();
+		} catch (InterruptedException ex) {
+			LOG.error(ex.getMessage(), ex);
+		} catch (ExecutionException ex) {
+			LOG.error(ex.getMessage(), ex);
+		}
+		return null;
 	}
 
 	public static class TaskCancelledException extends RuntimeException {

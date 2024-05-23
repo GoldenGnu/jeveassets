@@ -74,7 +74,8 @@ public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarket
 		this.owned = !rawMarketOrder.isCorp();
 	}
 
-	public void close() {
+	@Override
+	public void archive() {
 		if (esi && getState() == MarketOrderState.OPEN) { //Only do once, as the user can set the state to open
 			setState(MarketOrderState.UNKNOWN);
 		}

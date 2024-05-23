@@ -660,6 +660,9 @@ public class ProfileData {
 			}
 			//Date added
 			transaction.setAdded(AddedData.getTransactions().getAdd(transactionsAdded, transaction.getTransactionID(), addedDate));
+			//Tags
+			Tags tags = Settings.get().getTags(transaction.getTagID());
+			transaction.setTags(tags);
 		}
 		AddedData.getTransactions().commitQueue();
 		//Update Journal dynamic values
@@ -672,6 +675,9 @@ public class ProfileData {
 			journal.setAdded(AddedData.getJournals().getAdd(journalsAdded, journal.getRefID(), addedDate));
 			//Context
 			journal.setContext(ApiIdConverter.getContext(journal));
+			//Tags
+			Tags tags = Settings.get().getTags(journal.getTagID());
+			journal.setTags(tags);
 		}
 		AddedData.getJournals().commitQueue();
 
@@ -1301,7 +1307,7 @@ public class ProfileData {
 			asset.setMarketPriceData(transactionBuyPriceData.get(asset.getItem().getTypeID()));
 			//User Item Names
 			updateName(asset);
-			//Contaioner
+			//Container
 			updateContainer(asset);
 			//Price data
 			asset.setPriceData(ApiIdConverter.getPriceData(asset.getItem().getTypeID(), asset.isBPC()));
@@ -1369,21 +1375,7 @@ public class ProfileData {
 	}
 
 	private void updateContainer(MyAsset asset) {
-		StringBuilder builder = new StringBuilder();
-		if (asset.getParents().isEmpty()) {
-			builder.append(General.get().none());
-		} else {
-			boolean first = true;
-			for (MyAsset parentAsset : asset.getParents()) {
-				if (first) {
-					first = false;
-				} else {
-					builder.append(" > ");
-				}
-				builder.append(containerName(parentAsset));
-			}
-		}
-		asset.setContainer(builder.toString().intern());
+		asset.updateContainer();
 	}
 
 	private void updateStructureAssets(final MyAsset asset, final MyAsset structure) {
@@ -1398,14 +1390,6 @@ public class ProfileData {
 		asset.setLocation(ApiIdConverter.getLocation(locationID));
 		for (MyAsset subAsset : asset.getAssets()) { //Update child assets
 			updateStructureAssets(subAsset, structure);
-		}
-	}
-
-	public static String containerName(MyAsset asset) {
-		if (!asset.isUserName()) {
-			return asset.getName() + " #" + asset.getItemID();
-		} else {
-			return asset.getName();
 		}
 	}
 

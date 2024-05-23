@@ -158,6 +158,7 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 	 * @throws net.troja.eve.esi.ApiException
 	 */
 	public static void main(final String... args) throws IOException, URISyntaxException, ApiException {
+		initLog();
 		final String state = "somesecret";
 		final ApiClient client = new ApiClientBuilder().clientID(EsiCallbackURL.LOCALHOST.getA()).build();
 		final OAuth auth = (OAuth) client.getAuthentication("evesso");

@@ -25,11 +25,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.util.concurrent.ExecutionException;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import net.nikr.eve.jeveasset.CliOptions;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.i18n.GuiFrame;
 
@@ -59,6 +61,7 @@ public class MainMenu extends JMenuBar {
 		CHANGELOG,
 		LINK_FEEDBACK_AND_HELP,
 		LINK_WIKI,
+		LINK_DISCORD,
 		ROUTING,
 		STOCKPILE,
 		UPDATE,
@@ -74,6 +77,7 @@ public class MainMenu extends JMenuBar {
 		MINING_LOG,
 		MINING_GRAPH,
 		EXTRACTIONS,
+		PRICE_CHANGES,
 		EXIT_PROGRAM
 	}
 
@@ -85,6 +89,7 @@ public class MainMenu extends JMenuBar {
 		JMenu menu;
 		JMenu submenu;
 		JMenuItem menuItem;
+		JCheckBoxMenuItem checkBoxMenuItem;
 
 //FILE
 		menu = new JMenu(GuiFrame.get().file());
@@ -124,9 +129,17 @@ public class MainMenu extends JMenuBar {
 		menuItem.addActionListener(program);
 		submenu.add(menuItem);
 
+		submenu.addSeparator();
+
 		menuItem = new JMenuItem(GuiFrame.get().priceHistory());
 		menuItem.setIcon(Images.TOOL_PRICE_HISTORY.getIcon());
 		menuItem.setActionCommand(MainMenuAction.PRICE_HISTORY.name());
+		menuItem.addActionListener(program);
+		submenu.add(menuItem);
+
+		menuItem = new JMenuItem(GuiFrame.get().priceChanges());
+		menuItem.setIcon(Images.TOOL_PRICE_CHANGE.getIcon());
+		menuItem.setActionCommand(MainMenuAction.PRICE_CHANGES.name());
 		menuItem.addActionListener(program);
 		submenu.add(menuItem);
 	//Invertory
@@ -268,6 +281,22 @@ public class MainMenu extends JMenuBar {
 		menuItem.addActionListener(program);
 		submenu.add(menuItem);
 
+		menu.addSeparator();
+
+		checkBoxMenuItem = new JCheckBoxMenuItem(GuiFrame.get().lock());
+		checkBoxMenuItem.setSelected(Settings.get().isToolsLocked());
+		checkBoxMenuItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Settings.lock("Lock Tools");
+				Settings.get().setToolsLocked(checkBoxMenuItem.isSelected());
+				Settings.unlock("Lock Tools");
+				program.saveSettings("Lock Tools");
+				program.getMainWindow().updateTabCloseButtons();
+			}
+		});
+		menu.add(checkBoxMenuItem);
+
 //UPDATE
 		menu = new JMenu(GuiFrame.get().update());
 		menu.setMnemonic(KeyEvent.VK_U);
@@ -332,6 +361,12 @@ public class MainMenu extends JMenuBar {
 		menuItem = new JMenuItem(GuiFrame.get().linkFeedbackAndHelp());
 		menuItem.setIcon(Images.MISC_HELP.getIcon());
 		menuItem.setActionCommand(MainMenuAction.LINK_FEEDBACK_AND_HELP.name());
+		menuItem.addActionListener(program);
+		menu.add(menuItem);
+
+		menuItem = new JMenuItem(GuiFrame.get().linkDiscord());
+		menuItem.setIcon(Images.MISC_DISCORD.getIcon());
+		menuItem.setActionCommand(MainMenuAction.LINK_DISCORD.name());
 		menuItem.addActionListener(program);
 		menu.add(menuItem);
 

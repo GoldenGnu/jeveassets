@@ -235,7 +235,7 @@ public abstract class FilterControl<E> implements ColumnCache<E>, SimpleFilterCo
 			column = tableFormat.getShownColumns().get(columnIndex);
 			isNumeric = isNumeric(column);
 			isDate = isDate(column);
-			text = FilterMatcher.format(tableFormat.getColumnValue(items.get(0), column.name()), false);
+			text = FilterMatcher.formatFilter(tableFormat.getColumnValue(items.get(0), column.name()));
 		}
 		return new FilterMenu<>(gui, column, text, isNumeric, isDate);
 	}

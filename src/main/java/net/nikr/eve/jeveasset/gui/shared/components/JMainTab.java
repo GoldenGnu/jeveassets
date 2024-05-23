@@ -124,6 +124,14 @@ public abstract class JMainTab {
 		}
 	}
 
+	public void tableDataChanged() {
+		beforeUpdateDataKeepCache();
+		if (eventTableModel != null) {
+			eventTableModel.fireTableDataChanged();
+		}
+		afterUpdateData();
+	}
+
 	public void repaintTable() {
 		if (jTable != null) {
 			jTable.repaint();

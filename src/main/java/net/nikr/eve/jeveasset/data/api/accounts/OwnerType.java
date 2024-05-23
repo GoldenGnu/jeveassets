@@ -67,7 +67,7 @@ public interface OwnerType extends Comparable<OwnerType> {
 	public Set<MyMarketOrder> getMarketOrders();
 	public Set<MyTransaction> getTransactions();
 	public Set<MyJournal> getJournal();
-	public List<MyIndustryJob> getIndustryJobs();
+	public Set<MyIndustryJob> getIndustryJobs();
 	public Map<MyContract, List<MyContractItem>> getContracts();
 	public List<MyAsset> getAssets();
 	public Map<Long, RawBlueprint> getBlueprints();
@@ -79,7 +79,7 @@ public interface OwnerType extends Comparable<OwnerType> {
 	public List<MyMining> getMining();
 	public List<MyExtraction> getExtractions();
 	public void setBlueprints(final Map<Long, RawBlueprint> blueprints);
-	public void setIndustryJobs(final List<MyIndustryJob> industryJobs);
+	public void setIndustryJobs(final Set<MyIndustryJob> industryJobs);
 	public void setTransactions(final Set<MyTransaction> transactions);
 	public void setJournal(final Set<MyJournal> journal);
 	public void setMarketOrders(final Set<MyMarketOrder> marketOrders);

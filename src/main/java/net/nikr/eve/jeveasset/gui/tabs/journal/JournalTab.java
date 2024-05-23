@@ -38,7 +38,6 @@ import java.util.Set;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
@@ -46,6 +45,7 @@ import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.my.MyJournal;
 import net.nikr.eve.jeveasset.data.settings.Settings;
+import net.nikr.eve.jeveasset.data.settings.tag.TagUpdate;
 import net.nikr.eve.jeveasset.data.settings.types.LocationType;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel.JStatusLabel;
@@ -70,10 +70,9 @@ import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractsTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJobTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.transaction.TransactionTableFormat;
 import net.nikr.eve.jeveasset.i18n.TabsJournal;
-import net.nikr.eve.jeveasset.i18n.TabsTransaction;
 
 
-public class JournalTab extends JMainTabPrimary {
+public class JournalTab extends JMainTabPrimary implements TagUpdate {
 
 	private final JStatusLabel jPositiveTotal;
 	private final JStatusLabel jBothTotal;
@@ -168,6 +167,14 @@ public class JournalTab extends JMainTabPrimary {
 				.addComponent(jToolBar, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
 				.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
 		);
+	}
+
+	@Override
+	public void updateTags() {
+		beforeUpdateData();
+		tableModel.fireTableDataChanged();
+		filterControl.refilter();
+		afterUpdateData();
 	}
 
 	@Override
@@ -292,7 +299,7 @@ public class JournalTab extends JMainTabPrimary {
 		if (value == null || value < 100) {
 			return;
 		}
-		set.add(FilterMatcher.format(value, false));
+		set.add(FilterMatcher.formatFilter(value));
 	}
 
 	private class ListenerClass implements ListEventListener<MyJournal> {

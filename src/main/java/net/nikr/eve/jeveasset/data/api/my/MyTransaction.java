@@ -28,14 +28,18 @@ import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
 import net.nikr.eve.jeveasset.data.api.raw.RawTransaction;
+import net.nikr.eve.jeveasset.data.settings.tag.TagID;
+import net.nikr.eve.jeveasset.data.settings.tag.Tags;
 import net.nikr.eve.jeveasset.data.settings.types.EditableLocationType;
 import net.nikr.eve.jeveasset.data.settings.types.ItemType;
 import net.nikr.eve.jeveasset.data.settings.types.LastTransactionType;
 import net.nikr.eve.jeveasset.data.settings.types.OwnersType;
+import net.nikr.eve.jeveasset.data.settings.types.TagsType;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.Percent;
+import net.nikr.eve.jeveasset.gui.tabs.transaction.TransactionTab;
 import net.nikr.eve.jeveasset.i18n.TabsTransaction;
 
-public class MyTransaction extends RawTransaction implements EditableLocationType, ItemType, Comparable<MyTransaction>, OwnersType, LastTransactionType {
+public class MyTransaction extends RawTransaction implements EditableLocationType, ItemType, Comparable<MyTransaction>, OwnersType, LastTransactionType, TagsType {
 
 	private final Item item;
 	private final OwnerType owner;
@@ -47,6 +51,7 @@ public class MyTransaction extends RawTransaction implements EditableLocationTyp
 	private Percent transactionProfitPercent;
 	private Double tax;
 	private Date added;
+	private Tags tags;
 
 	public MyTransaction(final RawTransaction rawTransaction, final Item item, final OwnerType owner) {
 		super(rawTransaction);
@@ -164,6 +169,21 @@ public class MyTransaction extends RawTransaction implements EditableLocationTyp
 
 	public void setAdded(Date added) {
 		this.added = added;
+	}
+
+	@Override
+	public Tags getTags() {
+		return tags;
+	}
+
+	@Override
+	public TagID getTagID() {
+		return new TagID(TransactionTab.NAME, getTransactionID(), getPrice());
+	}
+
+	@Override
+	public void setTags(Tags tags) {
+		this.tags = tags;
 	}
 
 	@Override

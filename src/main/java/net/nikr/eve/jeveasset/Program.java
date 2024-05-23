@@ -97,6 +97,7 @@ import net.nikr.eve.jeveasset.gui.tabs.mining.MiningTab;
 import net.nikr.eve.jeveasset.gui.tabs.orders.MarketOrdersTab;
 import net.nikr.eve.jeveasset.gui.tabs.orders.OutbidProcesser.OutbidProcesserOutput;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewTab;
+import net.nikr.eve.jeveasset.gui.tabs.prices.PriceChangesTab;
 import net.nikr.eve.jeveasset.gui.tabs.prices.PriceHistoryTab;
 import net.nikr.eve.jeveasset.gui.tabs.reprocessed.ReprocessedTab;
 import net.nikr.eve.jeveasset.gui.tabs.routing.RoutingTab;
@@ -113,6 +114,7 @@ import net.nikr.eve.jeveasset.i18n.GuiFrame;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 import net.nikr.eve.jeveasset.io.online.PriceDataGetter;
 import net.nikr.eve.jeveasset.io.online.Updater;
+import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import net.nikr.eve.jeveasset.io.shared.DesktopUtil;
 import net.nikr.eve.jeveasset.io.shared.FileUtil;
 import org.slf4j.Logger;
@@ -126,7 +128,7 @@ public class Program implements ActionListener {
 		TIMER
 	}
 	//Major.Minor.Bugfix [Release Candidate n] [BETA n] [DEV BUILD #n];
-	public static final String PROGRAM_VERSION = "7.8.2 DEV BUILD 1";
+	public static final String PROGRAM_VERSION = "7.9.0";
 	public static final String PROGRAM_NAME = "jEveAssets";
 	public static final String PROGRAM_HOMEPAGE = "https://eve.nikr.net/jeveasset";
 	private static final boolean PROGRAM_DEV_BUILD = false;
@@ -143,6 +145,7 @@ public class Program implements ActionListener {
 	private ProfileDialog profileDialog;
 	private SettingsDialog settingsDialog;
 	private UpdateDialog updateDialog;
+	private StructureUpdateDialog structureUpdateDialog;
 
 	//Tabs
 	private ValueRetroTab valueRetroTab;
@@ -168,7 +171,7 @@ public class Program implements ActionListener {
 	private MiningTab miningTab;
 	private MiningGraphTab miningGraphTab;
 	private ExtractionsTab extractionsTab;
-	private StructureUpdateDialog structureUpdateDialog;
+	private PriceChangesTab priceChangesTab;
 
 	//Misc
 	private Updater updater;
@@ -291,6 +294,9 @@ public class Program implements ActionListener {
 		SplashUpdater.setProgress(81);
 		LOG.info("Loading: Extractions Tab");
 		extractionsTab = new ExtractionsTab(this);
+		SplashUpdater.setProgress(82);
+		LOG.info("Loading: Price Changes Tab");
+		priceChangesTab = new PriceChangesTab(this);
 		SplashUpdater.setProgress(84);
 	//Dialogs
 		LOG.info("Loading: Account Manager Dialog");
@@ -350,6 +356,7 @@ public class Program implements ActionListener {
 			LOG.info("Show Account Manager");
 			accountManagerDialog.setVisible(true);
 		}
+		ApiIdConverter.setUpdateItem(true);
 	}
 
 	/**
@@ -1053,6 +1060,8 @@ public class Program implements ActionListener {
 			mainWindow.addTab(valueTableTab);
 		} else if (MainMenuAction.PRICE_HISTORY.name().equals(e.getActionCommand())) {
 			mainWindow.addTab(priceHistoryTab);
+		} else if (MainMenuAction.PRICE_CHANGES.name().equals(e.getActionCommand())) {
+			mainWindow.addTab(priceChangesTab);
 		} else if (MainMenuAction.MATERIALS.name().equals(e.getActionCommand())) {
 			mainWindow.addTab(materialsTab);
 		} else if (MainMenuAction.LOADOUTS.name().equals(e.getActionCommand())) {
@@ -1112,6 +1121,8 @@ public class Program implements ActionListener {
 			DesktopUtil.browse("https://wiki.jeveassets.org", this); //Links
 		} else if (MainMenuAction.LINK_FEEDBACK_AND_HELP.name().equals(e.getActionCommand())) {
 			DesktopUtil.browse("https://wiki.jeveassets.org/faq#feedback_and_help", this);
+		} else if (MainMenuAction.LINK_DISCORD.name().equals(e.getActionCommand())) {
+			DesktopUtil.browse("https://discord.gg/8kYZvbM", this);
 		} else if (MainMenuAction.README.name().equals(e.getActionCommand())) { //External Files
 			DesktopUtil.open(FileUtil.getPathReadme(), this);
 		} else if (MainMenuAction.LICENSE.name().equals(e.getActionCommand())) {

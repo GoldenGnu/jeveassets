@@ -737,4 +737,44 @@ public abstract class FakeSettings extends Settings {
 	public boolean isEasyChartColors() {
 		throw new UnsupportedOperationException("not implemented");
 	}
+
+	@Override
+	public void setContainersShowItemID(boolean containersShowItemID) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public boolean isContainersShowItemID() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public void setToolsLocked(boolean toolsLocked) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public boolean isToolsLocked() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public void setShowSubpileTree(boolean showSubpileTree) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public boolean isShowSubpileTree() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public void setIndustryJobsHistory(boolean journalHistory) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public boolean isIndustryJobsHistory() {
+		throw new UnsupportedOperationException("not implemented");
+	}
 }

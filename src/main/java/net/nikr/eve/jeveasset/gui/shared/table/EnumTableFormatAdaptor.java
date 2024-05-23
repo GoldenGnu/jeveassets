@@ -29,9 +29,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import net.nikr.eve.jeveasset.gui.shared.menu.JFormulaDialog;
 import net.nikr.eve.jeveasset.gui.shared.menu.JFormulaDialog.Formula;
 import net.nikr.eve.jeveasset.gui.shared.table.ColumnManager.IndexColumn;
@@ -496,6 +498,10 @@ public class EnumTableFormatAdaptor<T extends Enum<T> & EnumTableColumn<Q>, Q> i
 				return 0;
 			}
 			return number;
+		} else if (Date.class.isAssignableFrom(t.getType())) {
+			Date date = (Date) t.getColumnValue(e);
+			long diff = date.getTime() - System.currentTimeMillis();
+			return TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
 		}
 		return null; //Not a valid numeric column
 	}

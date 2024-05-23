@@ -35,6 +35,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import net.nikr.eve.jeveasset.SplashUpdater;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
+import net.nikr.eve.jeveasset.data.api.raw.RawIndustryJob.IndustryJobStatus;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder.MarketOrderRange;
 import net.nikr.eve.jeveasset.data.settings.tag.Tag;
 import net.nikr.eve.jeveasset.data.settings.tag.TagID;
@@ -99,7 +100,11 @@ public class Settings {
 		FLAG_SAVE_CONTRACT_HISTORY,
 		FLAG_SAVE_MINING_HISTORY,
 		FLAG_MANUFACTURING_DEFAULT,
-		FLAG_EASY_CHART_COLORS
+		FLAG_EASY_CHART_COLORS,
+		FLAG_CONTAINERS_SHOW_ITEM_ID,
+		FLAG_LOCK_TOOLS,
+		FLAG_SHOW_SUBPILE_TREE,
+		FLAG_INDUSTRY_JOBS_HISTORY
 	}
 
 	public static enum TransactionProfitPrice {
@@ -224,6 +229,7 @@ public class Settings {
 	private Boolean highlightSelectedRows = null; //Assets
 	private Boolean reprocessColors = null; //Assets
 	private Boolean stockpileHalfColors = null; //Stockpile
+	private Boolean containersShowItemID = null; //Stockpile
 //Table settings
 	//Filters					Saved by ExportFilterControl.saveSettings()
 	//Lock OK
@@ -294,6 +300,10 @@ public class Settings {
 		flags.put(SettingFlag.FLAG_SAVE_MINING_HISTORY, true);
 		flags.put(SettingFlag.FLAG_MANUFACTURING_DEFAULT, true);
 		flags.put(SettingFlag.FLAG_EASY_CHART_COLORS, false);
+		flags.put(SettingFlag.FLAG_CONTAINERS_SHOW_ITEM_ID, true);
+		flags.put(SettingFlag.FLAG_LOCK_TOOLS, false);
+		flags.put(SettingFlag.FLAG_SHOW_SUBPILE_TREE, true);
+		flags.put(SettingFlag.FLAG_INDUSTRY_JOBS_HISTORY, true);
 		cacheFlags();
 		//Default Filters
 		List<Filter> filter;
@@ -320,14 +330,16 @@ public class Settings {
 		//Industry Jobs: Default Filters
 		Map<String, List<Filter>> industryJobsTabDefaultFilters = new HashMap<>();
 		filter = new ArrayList<>();
-		filter.add(new Filter(Filter.LogicType.AND, IndustryJobTableFormat.STATE, Filter.CompareType.EQUALS_NOT, MyIndustryJob.IndustryJobState.STATE_DELIVERED.toString()));
-		filter.add(new Filter(Filter.LogicType.AND, IndustryJobTableFormat.STATE, Filter.CompareType.EQUALS_NOT, MyIndustryJob.IndustryJobState.STATE_CANCELLED.toString()));
-		filter.add(new Filter(Filter.LogicType.AND, IndustryJobTableFormat.STATE, Filter.CompareType.EQUALS_NOT, MyIndustryJob.IndustryJobState.STATE_REVERTED.toString()));
+		filter.add(new Filter(Filter.LogicType.AND, IndustryJobTableFormat.STATE, Filter.CompareType.EQUALS_NOT, MyIndustryJob.getStatusName(IndustryJobStatus.DELIVERED)));
+		filter.add(new Filter(Filter.LogicType.AND, IndustryJobTableFormat.STATE, Filter.CompareType.EQUALS_NOT, MyIndustryJob.getStatusName(IndustryJobStatus.CANCELLED)));
+		filter.add(new Filter(Filter.LogicType.AND, IndustryJobTableFormat.STATE, Filter.CompareType.EQUALS_NOT, MyIndustryJob.getStatusName(IndustryJobStatus.REVERTED)));
+		filter.add(new Filter(Filter.LogicType.AND, IndustryJobTableFormat.STATE, Filter.CompareType.EQUALS_NOT, MyIndustryJob.getStatusName(IndustryJobStatus.ARCHIVED)));
 		industryJobsTabDefaultFilters.put(TabsJobs.get().active(), filter);
 		filter = new ArrayList<>();
-		filter.add(new Filter(Filter.LogicType.OR, IndustryJobTableFormat.STATE, Filter.CompareType.EQUALS, MyIndustryJob.IndustryJobState.STATE_DELIVERED.toString()));
-		filter.add(new Filter(Filter.LogicType.OR, IndustryJobTableFormat.STATE, Filter.CompareType.EQUALS, MyIndustryJob.IndustryJobState.STATE_CANCELLED.toString()));
-		filter.add(new Filter(Filter.LogicType.OR, IndustryJobTableFormat.STATE, Filter.CompareType.EQUALS, MyIndustryJob.IndustryJobState.STATE_REVERTED.toString()));
+		filter.add(new Filter(Filter.LogicType.OR, IndustryJobTableFormat.STATE, Filter.CompareType.EQUALS, MyIndustryJob.getStatusName(IndustryJobStatus.DELIVERED)));
+		filter.add(new Filter(Filter.LogicType.OR, IndustryJobTableFormat.STATE, Filter.CompareType.EQUALS, MyIndustryJob.getStatusName(IndustryJobStatus.CANCELLED)));
+		filter.add(new Filter(Filter.LogicType.OR, IndustryJobTableFormat.STATE, Filter.CompareType.EQUALS, MyIndustryJob.getStatusName(IndustryJobStatus.REVERTED)));
+		filter.add(new Filter(Filter.LogicType.OR, IndustryJobTableFormat.STATE, Filter.CompareType.EQUALS, MyIndustryJob.getStatusName(IndustryJobStatus.ARCHIVED)));
 		industryJobsTabDefaultFilters.put(TabsJobs.get().completed(), filter);
 		defaultTableFilters.put(IndustryJobsTab.NAME, industryJobsTabDefaultFilters);
 		//Extractions Default Filters
@@ -474,6 +486,7 @@ public class Settings {
 		filterOnEnter = flags.get(SettingFlag.FLAG_FILTER_ON_ENTER);
 		reprocessColors = flags.get(SettingFlag.FLAG_REPROCESS_COLORS);
 		stockpileHalfColors = flags.get(SettingFlag.FLAG_STOCKPILE_HALF_COLORS);
+		containersShowItemID = flags.get(SettingFlag.FLAG_CONTAINERS_SHOW_ITEM_ID);
 	}
 
 	public ReprocessSettings getReprocessSettings() {
@@ -852,6 +865,31 @@ public class Settings {
 		flags.put(SettingFlag.FLAG_EASY_CHART_COLORS, easyChartColors);
 	}
 
+	public boolean isToolsLocked() {
+		return flags.get(SettingFlag.FLAG_LOCK_TOOLS);
+	}
+
+	public void setToolsLocked(final boolean toolsLocked) {
+		flags.put(SettingFlag.FLAG_LOCK_TOOLS, toolsLocked);
+	}
+
+	public boolean isShowSubpileTree() {
+		return flags.get(SettingFlag.FLAG_SHOW_SUBPILE_TREE);
+	}
+
+	public void setShowSubpileTree(final boolean showSubpileTree) {
+		flags.put(SettingFlag.FLAG_SHOW_SUBPILE_TREE, showSubpileTree);
+	}
+
+	public boolean isContainersShowItemID() {
+		return containersShowItemID;
+	}
+
+	public void setContainersShowItemID(final boolean containersShowItemID) {
+		flags.put(SettingFlag.FLAG_CONTAINERS_SHOW_ITEM_ID, containersShowItemID);
+		this.containersShowItemID = containersShowItemID;
+	}
+
 	public boolean isTransactionHistory() {
 		return flags.get(SettingFlag.FLAG_TRANSACTION_HISTORY);
 	}
@@ -867,6 +905,15 @@ public class Settings {
 	public void setJournalHistory(final boolean journalHistory) {
 		flags.put(SettingFlag.FLAG_JOURNAL_HISTORY, journalHistory);
 	}
+
+	public boolean isIndustryJobsHistory() {
+		return flags.get(SettingFlag.FLAG_INDUSTRY_JOBS_HISTORY);
+	}
+
+	public void setIndustryJobsHistory(final boolean journalHistory) {
+		flags.put(SettingFlag.FLAG_INDUSTRY_JOBS_HISTORY, journalHistory);
+	}
+
 	public boolean isMarketOrderHistory() {
 		return flags.get(SettingFlag.FLAG_MARKET_ORDER_HISTORY);
 	}

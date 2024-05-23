@@ -83,14 +83,6 @@ Link:
   https://market.fuzzwork.co.uk/api
 
 ________________________________________________________________________________
-_EVEMARKETER____________________________________________________________________
-
-jEveAssets use the EveMarketer API to get price data
-
-Link:
-  https://evemarketer.com
-
-________________________________________________________________________________
 _JANICE_________________________________________________________________________
 
 jEveAssets use the Janice API to get price data
@@ -105,6 +97,22 @@ jEveAssets use zKillboard API to get price history
 
 Link:
   https://github.com/zKillboard/zKillboard/wiki/API-(Prices)
+
+________________________________________________________________________________
+_EVE_REF________________________________________________________________________
+
+jEveAssets use Reference Data API to get missing item data
+
+Link:
+  https://docs.everef.net/datasets/reference-data.html
+
+________________________________________________________________________________
+_HOBOLEAKS______________________________________________________________________
+
+jEveAssets use Hoboleaks Data Export via EVE Ref to get missing item data
+
+Link:
+  https://sde.hoboleaks.space
 
 ________________________________________________________________________________
 _SILK_ICONS_____________________________________________________________________

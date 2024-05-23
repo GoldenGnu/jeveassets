@@ -63,6 +63,12 @@ public class SoundsSettingsPanel extends JSettingsPanel {
 				return DialoguesSettings.get().soundsOutbidUpdateCompleted();
 			}
 		},
+		OUTBID_UPDATE_AVAILABLE() {
+			@Override
+			public String getText() {
+				return DialoguesSettings.get().soundsOutbidUpdateAvailable();
+			}
+		},
 		INDUSTRY_JOB_COMPLETED() {
 			@Override
 			public String getText() {

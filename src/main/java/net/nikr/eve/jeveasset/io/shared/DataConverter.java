@@ -203,7 +203,7 @@ public abstract class DataConverter {
 		if (saveHistory) { //Will be overwritten by new contracts
 			contracts.putAll(owner.getContracts());
 			for (MyContract contract : owner.getContracts().keySet()) {
-				contract.setESI(false);
+				contract.archive();
 			}
 		}
 		for (RawContract rawContract : rawContracts) {
@@ -242,10 +242,16 @@ public abstract class DataConverter {
 		return new MyContractItem(rawContractItem, contract, item);
 	}
 
-	public static List<MyIndustryJob> convertRawIndustryJobs(List<RawIndustryJob> rawIndustryJobs, OwnerType owner) {
-		List<MyIndustryJob> industryJobs = new ArrayList<>();
+	public static Set<MyIndustryJob> convertRawIndustryJobs(List<RawIndustryJob> rawIndustryJobs, OwnerType owner, boolean saveHistory) {
+		Set<MyIndustryJob> industryJobs = new HashSet<>();
 		for (RawIndustryJob rawIndustryJob : rawIndustryJobs) {
 			industryJobs.add(toMyIndustryJob(rawIndustryJob, owner));
+		}
+		if (saveHistory) {
+			for (MyIndustryJob industryJob : owner.getIndustryJobs()) {
+				industryJob.archive();
+				industryJobs.add(industryJob);
+			}
 		}
 		return industryJobs;
 	}
@@ -284,7 +290,7 @@ public abstract class DataConverter {
 		}
 		if (saveHistory) {
 			for (MyMarketOrder marketOrder : owner.getMarketOrders()) {
-				marketOrder.close();
+				marketOrder.archive();
 				marketOrders.add(marketOrder);
 			}
 		}

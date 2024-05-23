@@ -21,12 +21,15 @@
 package net.nikr.eve.jeveasset.io.esi;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import static net.nikr.eve.jeveasset.io.esi.AbstractEsiGetter.DATASOURCE;
 import static net.nikr.eve.jeveasset.io.esi.AbstractEsiGetter.getMarketApiOpen;
 import net.nikr.eve.jeveasset.io.local.ItemsReader;
+import net.nikr.eve.jeveasset.io.online.EveRefGetter;
 import net.troja.eve.esi.ApiException;
 import net.troja.eve.esi.ApiResponse;
 import net.troja.eve.esi.model.CategoryResponse;
@@ -42,9 +45,20 @@ public class EsiItemsGetter extends AbstractEsiGetter {
 
 	/**
 	 * Change ESI_ITEM_VERSION to force items_updates.xml items to be updated again.
+	 * ChangeLog
+	 * 1.2.0:
+	 * Updated with EveRef type and blueprint data
 	 */
-	public final static String ESI_ITEM_VERSION = "1.0.2";
+	public final static String ESI_ITEM_VERSION = "1.2.0";
 	public final static String ESI_ITEM_EMPTY = "EMPTY";
+
+	private final static Map<Integer, GroupResponse> GROUPS_CACHE = new HashMap<>();
+	private final static Map<Integer, CategoryResponse> CATEGORY_CACHE = new HashMap<>();
+	private final static Map<Integer, MarketGroupResponse> MARKET_GROUP_CACHE = new HashMap<>();
+
+	public final static long BASE_PRICE_DEFAULT = -1;
+	public final static int PRODUCT_TYPE_ID_DEFAULT = 0;
+	public final static int PRODUCT_QUANTITY_DEFAULT = 1;
 
 	private final int typeID;
 	private Item item = null;
@@ -64,33 +78,64 @@ public class EsiItemsGetter extends AbstractEsiGetter {
 			}
 		});
 		//Groups
-		GroupResponse groupResponse = update(DEFAULT_RETRIES, new EsiHandler<GroupResponse>() {
-			@Override
-			public ApiResponse<GroupResponse> get() throws ApiException {
-				return getUniverseApiOpen().getUniverseGroupsGroupIdWithHttpInfo(typeResponse.getGroupId(), null, DATASOURCE, null, null);
-			}
-		});
+		final int groupID = typeResponse.getGroupId();
+		GroupResponse groupResponse = GROUPS_CACHE.get(groupID);
+		if (groupResponse == null) {
+			groupResponse = update(DEFAULT_RETRIES, new EsiHandler<GroupResponse>() {
+				@Override
+				public ApiResponse<GroupResponse> get() throws ApiException {
+					return getUniverseApiOpen().getUniverseGroupsGroupIdWithHttpInfo(groupID, null, DATASOURCE, null, null);
+				}
+			});
+			GROUPS_CACHE.put(groupID, groupResponse);
+		}
+		final int categoryID = groupResponse.getCategoryId();
 		//Categories
-		CategoryResponse categoryResponse = update(DEFAULT_RETRIES, new EsiHandler<CategoryResponse>() {
-			@Override
-			public ApiResponse<CategoryResponse> get() throws ApiException {
-				return getUniverseApiOpen().getUniverseCategoriesCategoryIdWithHttpInfo(groupResponse.getCategoryId(), null, DATASOURCE, null, null);
-			}
-		});
+		CategoryResponse categoryResponse = CATEGORY_CACHE.get(categoryID);
+		if (categoryResponse == null) {
+			categoryResponse = update(DEFAULT_RETRIES, new EsiHandler<CategoryResponse>() {
+				@Override
+				public ApiResponse<CategoryResponse> get() throws ApiException {
+					return getUniverseApiOpen().getUniverseCategoriesCategoryIdWithHttpInfo(categoryID, null, DATASOURCE, null, null);
+				}
+			});
+			CATEGORY_CACHE.put(categoryID, categoryResponse);
+		}
 		//Market Groups
 		MarketGroupResponse marketGroupResponse = null;
 		if (typeResponse.getMarketGroupId() != null) {
-			marketGroupResponse = update(DEFAULT_RETRIES, new EsiHandler<MarketGroupResponse>() {
-				@Override
-				public ApiResponse<MarketGroupResponse> get() throws ApiException {
-					return getMarketApiOpen().getMarketsGroupsMarketGroupIdWithHttpInfo(typeResponse.getMarketGroupId(), null, DATASOURCE, null, null);
-				}
-			});
+			Integer marketGroupID = typeResponse.getMarketGroupId();
+			marketGroupResponse  = MARKET_GROUP_CACHE.get(marketGroupID);
+			if (marketGroupResponse == null) {
+				marketGroupResponse = update(DEFAULT_RETRIES, new EsiHandler<MarketGroupResponse>() {
+					@Override
+					public ApiResponse<MarketGroupResponse> get() throws ApiException {
+						return getMarketApiOpen().getMarketsGroupsMarketGroupIdWithHttpInfo(marketGroupID, null, DATASOURCE, null, null);
+					}
+				});
+				MARKET_GROUP_CACHE.put(marketGroupID, marketGroupResponse);
+			}
 		}
-		String name = typeResponse.getName();
+		String name = typeResponse.getName()
+							.replaceAll(" +", " ") //Replace 2 or more spaces
+							.replace("\t", " ") //Tab
+							.replace("„", "\"") //Index
+							.replace("“", "\"") //Set transmit state
+							.replace("”", "\"") //Cancel character
+							.replace("‘", "'") //Private use one
+							.replace("’", "'") //Private use two
+							.replace("`", "'") //Grave accent
+							.replace("´", "'") //Acute accent
+							.replace("–", "-") //En dash
+							.replace("‐", "-") //Hyphen
+							.replace("‑", "-") //Non-breaking hyphen
+							.replace("‒", "-") //Figure dash
+							.replace("—", "-") //Em dash
+							.trim();
+
 		String group = groupResponse.getName();
 		String category = categoryResponse.getName();
-		long price = -1; //Base Price
+		long basePrice = BASE_PRICE_DEFAULT; //Base Price
 		float volume = getNotNull(typeResponse.getVolume());
 		float packagedVolume = getNotNull(typeResponse.getPackagedVolume());
 		float capacity = getNotNull(typeResponse.getCapacity());
@@ -113,37 +158,8 @@ public class EsiItemsGetter extends AbstractEsiGetter {
 			}
 		}
 	//Tech Level
-		final String techLevel;
-		if (metaGroupID != null) {
-			switch (metaGroupID) {
-				case 1: techLevel = "Tech I"; break;
-				case 2: techLevel = "Tech II"; break;
-				case 3: techLevel = "Storyline"; break;
-				case 4: techLevel = "Faction"; break;
-				case 5: techLevel = "Officer"; break;
-				case 6: techLevel = "Deadspace"; break;
-				/*
-				//No longer in use
-				case 7: tech = "Frigates"; break;
-				case 8: tech = "Elite Frigates"; break;
-				case 9: tech = "Commander Frigates"; break;
-				case 10: tech = "Destroyer"; break;
-				case 11: tech = "Cruiser"; break;
-				case 12: tech = "Elite Cruiser"; break;
-				case 13: tech = "Commander Cruiser"; break;
-				*/
-				case 14: techLevel = "Tech III"; break;
-				case 15: techLevel = "Abyssal"; break;
-				case 17: techLevel = "Premium"; break;
-				case 19: techLevel = "Limited Time"; break;
-				case 52: techLevel = "Faction"; break; //Structure Faction
-				case 53: techLevel = "Tech II"; break; //Structure Tech II
-				case 54: techLevel = "Tech I"; break; //Structure Tech I
-				default: techLevel = "Tech I"; break;
-			}
-		} else {
-			techLevel = "Tech 1";
-		}
+		final String techLevel = getTechLevel(metaGroupID);
+		
 		boolean marketGroup;
 		if (marketGroupResponse != null) {
 			marketGroup = marketGroupResponse.getTypes().contains(typeID);
@@ -151,8 +167,8 @@ public class EsiItemsGetter extends AbstractEsiGetter {
 			marketGroup = false;
 		}
 		int portion = typeResponse.getPortionSize();
-		int productTypeID = 0; //Product
-		int productQuantity = 1; //Product Quantity
+		int productTypeID = PRODUCT_TYPE_ID_DEFAULT; //Product
+		int productQuantity = PRODUCT_QUANTITY_DEFAULT; //Product Quantity
 		//Slot
 		String slot = null;
 		List<TypeDogmaEffect> dogmaEffects = typeResponse.getDogmaEffects();
@@ -185,7 +201,11 @@ public class EsiItemsGetter extends AbstractEsiGetter {
 		}
 		//Charge Size
 		String chargeSize = ItemsReader.getChargeSize(charge);
-		item = new Item(typeID, name, group, category, price, volume, packagedVolume, capacity, metaLevel, techLevel, marketGroup, portion, productTypeID, productQuantity, slot, chargeSize, ESI_ITEM_VERSION);
+		//Item
+		item = new Item(typeID, name, group, category, basePrice, volume, packagedVolume, capacity, metaLevel, techLevel, marketGroup, portion, productTypeID, productQuantity, slot, chargeSize, ESI_ITEM_VERSION);
+
+		//EveRef Update
+		item = EveRefGetter.getItem(item); //Update from EveRef
 	}
 
 	private float getNotNull(Float f) {
@@ -193,6 +213,39 @@ public class EsiItemsGetter extends AbstractEsiGetter {
 			return f;
 		} else {
 			return 0f;
+		}
+	}
+
+	public static String getTechLevel(Integer metaGroupID) {
+		if (metaGroupID == null) {
+			return "Tech I"; 
+		}
+
+		switch (metaGroupID) {
+			case 1: return "Tech I";
+			case 2: return "Tech II";
+			case 3: return "Storyline";
+			case 4: return "Faction";
+			case 5: return "Officer";
+			case 6: return "Deadspace";
+			/*
+			//No longer in use
+			case 7: return "Frigates";
+			case 8: return "Elite Frigates";
+			case 9: return "Commander Frigates";
+			case 10: return "Destroyer";
+			case 11: return "Cruiser";
+			case 12: return "Elite Cruiser";
+			case 13: return "Commander Cruiser";
+			*/
+			case 14: return "Tech III";
+			case 15: return "Abyssal";
+			case 17: return "Premium";
+			case 19: return "Limited Time";
+			case 52: return "Faction"; //Structure Faction
+			case 53: return "Tech II"; //Structure Tech II
+			case 54: return "Tech I"; //Structure Tech I
+			default: return "Tech I";
 		}
 	}
 

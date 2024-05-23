@@ -299,6 +299,8 @@ public class CliOptions {
 		boolean materialsPI;
 		@Option(names = "-"+MATERIALS+"-ore", fallbackValue = "", description = "Materials include Ore")
 		boolean materialsOre;
+		@Option(names = "-"+MATERIALS+"-commodity", fallbackValue = "", description = "Materials include Commodity")
+		boolean materialsCommodity;
 		@Option(names = "-"+MARKET_ORDERS+FILTER_CMD, fallbackValue = "", arity = "0..1", paramLabel = FILTER_LABEL, description = FILTER_BEFORE+"Market Orders"+FILTER_AFTER)
 		String marketOrdersFilter;
 		@Option(names = "-"+MINING+FILTER_CMD, fallbackValue = "", arity = "0..1", paramLabel = FILTER_LABEL, description = FILTER_BEFORE+"Mining"+FILTER_AFTER)
@@ -525,6 +527,13 @@ public class CliOptions {
 			return false;
 		}
 		return exportOptions.filters.materialsOre;
+	}
+
+	public boolean isMaterialsCommodity() {
+		if (exportOptions == null || exportOptions.filters == null) {
+			return false;
+		}
+		return exportOptions.filters.materialsCommodity;
 	}
 
 	public Set<String> getReprocessedNames() {

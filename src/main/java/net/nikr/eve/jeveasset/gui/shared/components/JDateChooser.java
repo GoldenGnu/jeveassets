@@ -24,8 +24,14 @@ import com.github.lgooddatepicker.components.DatePicker;
 import com.github.lgooddatepicker.components.DatePickerSettings;
 import com.github.lgooddatepicker.optionalusertools.DateChangeListener;
 import com.github.lgooddatepicker.zinternaltools.DateChangeEvent;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.Locale;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import net.nikr.eve.jeveasset.data.settings.Colors;
@@ -71,6 +77,19 @@ public class JDateChooser extends DatePicker {
 		return super.getComponentToggleCalendarButton();
 	}
 
+	public void setDate(Date date) {
+		super.setDate(dateToLocalDate(date));
+	}
+
+	public void clearDate() {
+		super.setDate(null);
+	}
+
+	private LocalDate dateToLocalDate(Date date) {
+		Instant instant = date.toInstant();
+		return LocalDateTime.ofInstant(instant, ZoneId.of("GMT")).toLocalDate();
+	}
+
 	private static class DefaultDatePickerSettings extends DatePickerSettings {
 
 		public DefaultDatePickerSettings(boolean allowEmptyDates) {
@@ -87,6 +106,7 @@ public class JDateChooser extends DatePicker {
 			setColor(DatePickerSettings.DateArea.TextMonthAndYearMenuLabels, Colors.BUTTON_FOREGROUND.getColor());
 			setColor(DatePickerSettings.DateArea.BackgroundTodayLabel, Colors.BUTTON_BACKGROUND.getColor());
 			setColor(DatePickerSettings.DateArea.TextTodayLabel, Colors.BUTTON_FOREGROUND.getColor());
+			setColor(DatePickerSettings.DateArea.DatePickerTextValidDate, new JLabel().getForeground());
 		}
 
 	}

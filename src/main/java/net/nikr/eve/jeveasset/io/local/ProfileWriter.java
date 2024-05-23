@@ -396,7 +396,7 @@ public final class ProfileWriter extends AbstractXmlWriter {
 		}
 	}
 
-	private void writeIndustryJobs(final Document xmldoc, final Element parentNode, final List<MyIndustryJob> industryJobs, final boolean bCorp) {
+	private void writeIndustryJobs(final Document xmldoc, final Element parentNode, final Set<MyIndustryJob> industryJobs, final boolean bCorp) {
 		Element node = xmldoc.createElement("industryjobs");
 		if (!industryJobs.isEmpty()) {
 			setAttribute(node, "corp", bCorp);
@@ -427,6 +427,7 @@ public final class ProfileWriter extends AbstractXmlWriter {
 			setAttributeOptional(childNode, "completeddate", industryJob.getCompletedDate());
 			setAttributeOptional(childNode, "completedcharacterid", industryJob.getCompletedCharacterID());
 			setAttributeOptional(childNode, "successfulruns", industryJob.getSuccessfulRuns());
+			setAttribute(childNode, "esi", industryJob.isESI());
 			node.appendChild(childNode);
 		}
 	}

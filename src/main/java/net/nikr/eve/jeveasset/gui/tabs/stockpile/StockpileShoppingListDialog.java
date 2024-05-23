@@ -27,11 +27,14 @@ import java.awt.event.ActionListener;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
+import java.util.TreeSet;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.GroupLayout;
 import javax.swing.Icon;
@@ -77,21 +80,16 @@ class StockpileShoppingListDialog extends JDialogCentered {
 		FORMAT_CHANGED
 	}
 
-	private final DecimalFormat number = new DecimalFormat("0");
+	private static final DecimalFormat NUMBER = new DecimalFormat("0");
 
 	private final JTextArea jText;
 	private final JButton jClose;
 	private final JTextField jPercentFull;
 	private final JTextField jPercentIgnore;
-	private final JComboBox<String> jFormat;
+	private final JComboBox<ShoppingListType> jFormat;
 	private final JComboBox<String> jOutput;
 
-	private String missingShoppingList = "";
-	private String missingEveMultibuy = "";
-	private String requiredShoppingList = "";
-	private String requiredEveMultibuy = "";
-	private String ownedShoppingList = "";
-	private String ownedEveMultibuy = "";
+	private Map<ShoppingListType, ShoppingListData> outputData = new EnumMap<>(ShoppingListType.class);
 	private List<Stockpile> stockpiles;
 	private boolean updating = false;
 
@@ -106,12 +104,8 @@ class StockpileShoppingListDialog extends JDialogCentered {
 		jCopyToClipboard.setActionCommand(StockpileShoppingListAction.CLIPBOARD_STOCKPILE.name());
 		jCopyToClipboard.addActionListener(listener);
 
-		String[] formats = {TabsStockpile.get().shoppingList(), TabsStockpile.get().eveMultibuy()};
-		jFormat = new JComboBox<>(formats);
-		IconListCellRendererRenderer renderer = new IconListCellRendererRenderer();
-		renderer.add(TabsStockpile.get().shoppingList(), Images.STOCKPILE_SHOPPING_LIST.getIcon());
-		renderer.add(TabsStockpile.get().eveMultibuy(), Images.MISC_EVE.getIcon());
-		jFormat.setRenderer(renderer);
+		jFormat = new JComboBox<>(ShoppingListType.values());
+		jFormat.setRenderer(new IconListCellRendererRenderer());
 		jFormat.setActionCommand(StockpileShoppingListAction.FORMAT_CHANGED.name());
 		jFormat.addActionListener(listener);
 
@@ -227,7 +221,10 @@ class StockpileShoppingListDialog extends JDialogCentered {
 		} catch (NumberFormatException e) {
 			hide = 100;
 		}
-
+		outputData.clear();
+		for (ShoppingListType type : ShoppingListType.values()) {
+			outputData.put(type, new ShoppingListData(type));
+		}
 	//All claims
 		Map<TypeIdentifier, List<StockClaim>> claims = new HashMap<>();
 		Map<String, Double> subpiles = new HashMap<>();
@@ -238,12 +235,27 @@ class StockpileShoppingListDialog extends JDialogCentered {
 			stockpileNamesBuilder.append(stockpile.getName());
 			stockpileNamesBuilder.append("\r\n");
 			Set<Integer> contractIDs = null;
-			if (stockpile.isContracts() && stockpile.isContractsMatchAll()) {
-				contractIDs = new HashSet<>();
-				Map<MyContract, List<MyContractItem>> foundItems = StockpileData.contractsMatchAll(program.getProfileData(), stockpile, false);
-				//Add
-				for (MyContract contract : foundItems.keySet()) {
-					contractIDs.add(contract.getContractID());
+			Set<Long> assetsIDs = null;
+			if (stockpile.isMatchAll()) {
+				if (stockpile.isContracts()) {
+					contractIDs = new HashSet<>();
+					Map<MyContract, List<MyContractItem>> foundItems = StockpileData.contractsMatchAll(program.getProfileData(), stockpile, false);
+					//Add
+					for (MyContract contract : foundItems.keySet()) {
+						contractIDs.add(contract.getContractID());
+					}
+				}
+				if (stockpile.isAssets()) {
+					assetsIDs = new HashSet<>();
+					Map<MyAsset, List<MyAsset>> foundItems = StockpileData.assetsMatchAll(program.getProfileData(), stockpile, false);
+					//Add
+					for (Map.Entry<MyAsset, List<MyAsset>> entry : foundItems.entrySet()) {
+						assetsIDs.add(entry.getKey().getItemID());
+						for (MyAsset asset : entry.getValue()) {
+							assetsIDs.add(asset.getItemID());
+						}
+					}
+					
 				}
 			}
 			for (StockpileItem stockpileItem : stockpile.getClaims()) {
@@ -259,12 +271,21 @@ class StockpileShoppingListDialog extends JDialogCentered {
 						claimList = new ArrayList<>();
 						claims.put(typeID, claimList);
 					}
-					claimList.add(new StockClaim(stockpileItem, contractIDs, percent));
+					claimList.add(new StockClaim(stockpileItem, contractIDs, assetsIDs, percent));
 				}
 			}
 		}
-
-	//All items
+		StringBuilder subpileNamesBuilder = new StringBuilder();
+		for (Map.Entry<String, Double> entry : subpiles.entrySet()) {
+			subpileNamesBuilder.append(Formatter.copyFormat(entry.getValue()));
+			subpileNamesBuilder.append("x ");
+			subpileNamesBuilder.append(entry.getKey());
+			subpileNamesBuilder.append("\r\n");
+		}
+		for (ShoppingListData data : outputData.values()) {
+			data.printHeader(stockpileNamesBuilder, subpileNamesBuilder, subpiles, percent);
+		}
+		//All items
 		Map<TypeIdentifier, List<StockItem>> items = new HashMap<>();
 		//Assets
 		for (MyAsset asset : program.getAssetsList()) {
@@ -303,8 +324,6 @@ class StockpileShoppingListDialog extends JDialogCentered {
 		}
 
 	//Owned before claming
-		StringBuilder ownedShoppingListBuilder = new StringBuilder();
-		StringBuilder ownedEveMultibuyBuilder = new StringBuilder();
 		double ownedVolume = 0;
 		double ownedValue = 0;
 		for (Map.Entry<TypeIdentifier, List<StockItem>> entry : items.entrySet()) {
@@ -339,7 +358,9 @@ class StockpileShoppingListDialog extends JDialogCentered {
 				//Required value
 				ownedValue = ownedValue + (count.getCount() * price);
 			}
-			printItem(ownedEveMultibuyBuilder, ownedShoppingListBuilder, ownedCount, item, bpc, bpo, runs);
+			for (ShoppingListData data : outputData.values()) {
+				data.printOwned(ownedCount, item, bpc, bpo, runs);
+			}
 		}
 	//Claim items
 		for (Map.Entry<TypeIdentifier, List<StockItem>> entry : items.entrySet()) {
@@ -348,10 +369,6 @@ class StockpileShoppingListDialog extends JDialogCentered {
 			}
 		}
 	//Show missing
-		StringBuilder missingShoppingListBuilder = new StringBuilder();
-		StringBuilder missingEveMultibuyBuilder = new StringBuilder();
-		StringBuilder requiredShoppingListBuilder = new StringBuilder();
-		StringBuilder requiredEveMultibuyBuilder = new StringBuilder();
 		double missingVolume = 0;
 		double missingValue = 0;
 		double requiredVolume = 0;
@@ -388,91 +405,23 @@ class StockpileShoppingListDialog extends JDialogCentered {
 				//Required value
 				requiredValue = requiredValue + (stockClaim.getTotalNeed() * stockClaim.getDynamicPrice());
 			}
-			printItem(missingEveMultibuyBuilder, missingShoppingListBuilder, missingCount, item, bpc, bpo, runs);
-			printItem(requiredEveMultibuyBuilder, requiredShoppingListBuilder, requiredCount, item, bpc, bpo, runs);
+			for (ShoppingListData data : outputData.values()) {
+				data.printMissing(missingCount, item, bpc, bpo, runs);
+				data.printRequired(requiredCount, item, bpc, bpo, runs);
+			}
 		}
-		StringBuilder subpileNamesBuilder = new StringBuilder();
-		for (Map.Entry<String, Double> entry : subpiles.entrySet()) {
-			subpileNamesBuilder.append(Formatter.copyFormat(entry.getValue()));
-			subpileNamesBuilder.append("x ");
-			subpileNamesBuilder.append(entry.getKey());
-			subpileNamesBuilder.append("\r\n");
+		for (ShoppingListData data : outputData.values()) {
+			//Print sorted items
+			data.printItems();
+			//Print footer
+			data.printFooterMissing(missingVolume, missingValue);
+			data.printFooterRequired(requiredVolume, requiredValue);
+			data.printFooterOwned(ownedVolume, ownedValue);
 		}
-		printTotals(ownedShoppingListBuilder, ownedVolume, ownedValue);
-		printTotals(missingShoppingListBuilder, missingVolume, missingValue);
-		printTotals(requiredShoppingListBuilder, requiredVolume, requiredValue);
-
-		missingShoppingList = printResult(stockpileNamesBuilder, subpileNamesBuilder, missingShoppingListBuilder, subpiles, percent);
-		missingEveMultibuy = missingEveMultibuyBuilder.toString();
-		requiredShoppingList = printResult(stockpileNamesBuilder, subpileNamesBuilder, requiredShoppingListBuilder, subpiles, percent);
-		requiredEveMultibuy = requiredEveMultibuyBuilder.toString();
-		ownedShoppingList = printResult(stockpileNamesBuilder, subpileNamesBuilder, ownedShoppingListBuilder, subpiles, percent);
-		ownedEveMultibuy = ownedEveMultibuyBuilder.toString();
 		setText();
 	}
 
-	private void printItem(StringBuilder eveMultibuyBuilder, StringBuilder shoppingListBuilder, long count, Item item, boolean bpc, boolean bpo, boolean runs) {
-		if (count > 0) { //Add type string (if anything is needed)
-			//Multibuy
-			eveMultibuyBuilder.append(item.getTypeName());
-			eveMultibuyBuilder.append(" ");
-			eveMultibuyBuilder.append(number.format(count));
-			eveMultibuyBuilder.append("\r\n");
-			//Shopping List
-			shoppingListBuilder.append(Formatter.longFormat(count));
-			shoppingListBuilder.append("x ");
-			shoppingListBuilder.append(item.getTypeName());
-			if (bpc) {
-				if (runs) {
-					shoppingListBuilder.append(" (Runs)");
-				} else {
-					shoppingListBuilder.append(" (BPC)");
-				}
-			} else if (bpo) {
-				shoppingListBuilder.append(" (BPO)");
-			}
-			shoppingListBuilder.append("\r\n");
-		}
-	}
 
-	private void printTotals(StringBuilder shoppingListBuilder, double volume, double value) {
-		if (shoppingListBuilder.length() == 0) { //if string is empty, nothing is needed
-			shoppingListBuilder.append(TabsStockpile.get().nothingNeeded());
-		} else { //Add total volume and value
-			shoppingListBuilder.append("\r\n");
-			shoppingListBuilder.append(TabsStockpile.get().totalToHaul());
-			shoppingListBuilder.append(Formatter.doubleFormat(Math.abs(volume)));
-			shoppingListBuilder.append("\r\n");
-			shoppingListBuilder.append(TabsStockpile.get().estimatedMarketValue());
-			shoppingListBuilder.append(Formatter.iskFormat(Math.abs(value)));
-		}
-	}
-
-	private String printResult(StringBuilder stockpileNames, StringBuilder subpileNames, StringBuilder shoppingList, Map<String, Double> subpiles, long percent) {
-		StringBuilder resultBuilder = new StringBuilder();
-		//Add stockpile
-		resultBuilder.append(TabsStockpile.get().stockpileShoppingList());
-		if (percent != 100) { //adds percent if it's not 100%
-			resultBuilder.append(" (");
-			resultBuilder.append(percent);
-			resultBuilder.append(TabsStockpile.get().percent());
-			resultBuilder.append(")");
-		}
-		resultBuilder.append(":\r\n");
-		resultBuilder.append(stockpileNames.toString());
-		resultBuilder.append("\r\n");
-		//Add subpiles
-		if (!subpiles.isEmpty()) {
-			resultBuilder.append(TabsStockpile.get().subpileShoppingList());
-			resultBuilder.append("\r\n");
-			resultBuilder.append(subpileNames.toString());
-			resultBuilder.append("\r\n");
-		}
-		resultBuilder.append(TabsStockpile.get().itemsShoppingList());
-		resultBuilder.append("\r\n");
-		resultBuilder.append(shoppingList.toString());
-		return resultBuilder.toString();
-	}
 
 	//Add claims to item
 	private void add(final TypeIdentifier typeID, final Object object, final Map<TypeIdentifier, List<StockClaim>> claims, final Map<TypeIdentifier, List<StockItem>> items) {
@@ -497,6 +446,12 @@ class StockpileShoppingListDialog extends JDialogCentered {
 					continue; //Ignore none matching contracts
 				}
 			}
+			if (stockMinimum.isAssetMatchAll() && object instanceof MyAsset) {
+				MyAsset asset = (MyAsset) object;
+				if (!stockMinimum.getAssetIDs().contains(asset.getItemID())) {
+					continue; //Ignore none matching assets
+				}
+			}
 			Long count = stockMinimum.matches(object);
 			if (count != null && count != 0) { //if match (have claim)
 				if (stockItem == null) { //if item not added already - add to items list
@@ -509,24 +464,11 @@ class StockpileShoppingListDialog extends JDialogCentered {
 	}
 
 	private void setText() {
-		Object format = jFormat.getSelectedItem();
+		ShoppingListType type = jFormat.getItemAt(jFormat.getSelectedIndex());
 		Object output = jOutput.getSelectedItem();
-		if (TabsStockpile.get().eveMultibuy().equals(format)) {
-			if (TabsStockpile.get().itemsMissing().equals(output)) {
-				jText.setText(missingEveMultibuy);
-			} else if (TabsStockpile.get().itemsOwned().equals(output)) {
-				jText.setText(ownedEveMultibuy);
-			} else {
-				jText.setText(requiredEveMultibuy);
-			}
-		} else { //Default
-			if (TabsStockpile.get().itemsMissing().equals(output)) {
-				jText.setText(missingShoppingList);
-			} else if (TabsStockpile.get().itemsOwned().equals(output)) {
-				jText.setText(ownedShoppingList);
-			} else {
-				jText.setText(requiredShoppingList);
-			}
+		ShoppingListData shoppingListData = outputData.get(type);
+		if (shoppingListData != null) {
+			jText.setText(shoppingListData.get(output));
 		}
 	}
 
@@ -571,13 +513,15 @@ class StockpileShoppingListDialog extends JDialogCentered {
 	private static class StockClaim implements Comparable<StockClaim>{
 		private final StockpileItem stockpileItem;
 		private final Set<Integer> contractIDs;
+		private final Set<Long> assetIDs;
 		private final long totalNeed;
 		private long countMinimum;
 		private long available = 0;
 
-		public StockClaim(StockpileItem stockpileItem, Set<Integer> contractIDs, long percent) {
+		public StockClaim(StockpileItem stockpileItem, Set<Integer> contractIDs, Set<Long> assetIDs, long percent) {
 			this.stockpileItem = stockpileItem;
 			this.contractIDs = contractIDs;
+			this.assetIDs = assetIDs;
 			this.totalNeed = (long)(stockpileItem.getCountMinimumMultiplied() * percent / 100.0);
 			this.countMinimum = this.totalNeed;
 		}
@@ -622,15 +566,27 @@ class StockpileShoppingListDialog extends JDialogCentered {
 			return contractIDs;
 		}
 
+		public Set<Long> getAssetIDs() {
+			return assetIDs;
+		}
+
 		public boolean isContractMatchAll() {
 			return contractIDs != null;
 		}
 
+		public boolean isAssetMatchAll() {
+			return assetIDs != null;
+		}
+
+		public boolean isMatchAll() {
+			return assetIDs != null || contractIDs != null;
+		}
+
 		@Override
 		public int compareTo(StockClaim o) {
-			if (this.isContractMatchAll() && !o.isContractMatchAll()) {
+			if (this.isMatchAll() && !o.isMatchAll()) {
 				return 1;
-			} else if (!this.isContractMatchAll() && o.isContractMatchAll()) {
+			} else if (!this.isMatchAll() && o.isMatchAll()) {
 				return -1;
 			} else if (this.getNeed() > o.getNeed()) {
 				return 1;
@@ -788,30 +744,296 @@ class StockpileShoppingListDialog extends JDialogCentered {
 		}
 	}
 
-	private static class IconListCellRendererRenderer implements ListCellRenderer<String> {
-		DefaultListCellRenderer renderer = new DefaultListCellRenderer();
-		Map<String, Icon> icons = new HashMap<>();
+	private static enum ShoppingListType {
+		SHOPPING_LIST(TabsStockpile.get().shoppingList(), Images.STOCKPILE_SHOPPING_LIST.getIcon()){
+			@Override
+			public void printHeader(StringBuilder stockpileNames, StringBuilder subpileNames, StringBuilder builder, Map<String, Double> subpiles, long percent) {
+				//Add stockpile
+				builder.append(TabsStockpile.get().stockpileShoppingList());
+				if (percent != 100) { //adds percent if it's not 100%
+					builder.append(" (");
+					builder.append(percent);
+					builder.append(TabsStockpile.get().percent());
+					builder.append(")");
+				}
+				builder.append(":\r\n");
+				builder.append(stockpileNames.toString());
+				builder.append("\r\n");
+				//Add subpiles
+				if (!subpiles.isEmpty()) {
+					builder.append(TabsStockpile.get().subpileShoppingList());
+					builder.append("\r\n");
+					builder.append(subpileNames.toString());
+					builder.append("\r\n");
+				}
+				builder.append(TabsStockpile.get().itemsShoppingList());
+				builder.append("\r\n");
+			}
+			@Override
+			public void printItem(StringBuilder builder, long count, Item item, boolean bpc, boolean bpo, boolean runs) {
+				//Shopping List
+				builder.append(Formatter.longFormat(count));
+				builder.append("x ");
+				builder.append(item.getTypeName());
+				if (bpc) {
+					if (runs) {
+						builder.append(" (Runs)");
+					} else {
+						builder.append(" (BPC)");
+					}
+				} else if (bpo) {
+					builder.append(" (BPO)");
+				}
+				builder.append("\r\n");
+			}
+			@Override
+			public void printFooter(StringBuilder builder, double volume, double value, boolean empty) {
+				if (empty) { //if string is empty, nothing is needed
+					builder.append(TabsStockpile.get().nothingNeeded());
+				} else { //Add total volume and value
+					builder.append("\r\n");
+					builder.append(TabsStockpile.get().totalToHaul());
+					builder.append(Formatter.doubleFormat(Math.abs(volume)));
+					builder.append("\r\n");
+					builder.append(TabsStockpile.get().estimatedMarketValue());
+					builder.append(Formatter.iskFormat(Math.abs(value)));
+				}
+			}			
+		},
+		EVE_MULTIBUY(TabsStockpile.get().eveMultibuy(), Images.MISC_EVE.getIcon()){
+			@Override
+			public void printItem(StringBuilder builder, long count, Item item, boolean bpc, boolean bpo, boolean runs) {
+				//Multibuy
+				builder.append(item.getTypeName());
+				builder.append(" ");
+				builder.append(NUMBER.format(count));
+				builder.append("\r\n");
+			}
+		},
+		CSV(TabsStockpile.get().csv(), Images.TABLE_COLUMN_RESIZE.getIcon()){
+			@Override
+			public void printItem(StringBuilder builder, long count, Item item, boolean bpc, boolean bpo, boolean runs) {
+				//CSV
+				if (item.getTypeName().contains("\"")
+						|| item.getTypeName().contains(",")) {
+					builder.append("\"");
+					builder.append(item.getTypeName().replace("\"", "\"\""));
+					builder.append("\"");
+				} else {
+					builder.append(item.getTypeName());
+				}
+				builder.append(",");
+				builder.append(NUMBER.format(count));
+				builder.append("\r\n");
+			}
+		},
+		SPREADSHEET(TabsStockpile.get().spreadsheet(), Images.TABLE_COLUMN_SHOW.getIcon()){
+			@Override
+			public void printItem(StringBuilder builder, long count, Item item, boolean bpc, boolean bpo, boolean runs) {
+				//CSV
+				builder.append(item.getTypeName());
+				builder.append("\t");
+				builder.append(NUMBER.format(count));
+				builder.append("\r\n");
+			}
+		};
+
+		private final String name;
+		private final Icon icon;
+
+		private ShoppingListType(String name, Icon icon) {
+			this.name = name;
+			this.icon = icon;
+		}
+
+		public Icon getIcon() {
+			return icon;
+		}
 
 		@Override
-		public Component getListCellRendererComponent(JList<? extends String> list, String value, int index, boolean isSelected, boolean cellHasFocus) {
+		public String toString() {
+			return name;
+		}
+
+		public void printHeader(StringBuilder stockpileNames, StringBuilder subpileNames, StringBuilder builder, Map<String, Double> subpiles, long percent) { }
+		public abstract void printItem(StringBuilder builder, long count, Item item, boolean bpc, boolean bpo, boolean runs);
+		public void printFooter(StringBuilder builder, double volume, double value, boolean empty) { }
+	}
+
+	private static class ShoppingListData {
+		private final ShoppingListType type;
+		private final Set<ShoppingListDataEntry> missing = new TreeSet<>();
+		private final Set<ShoppingListDataEntry> required = new TreeSet<>();
+		private final Set<ShoppingListDataEntry> owned = new TreeSet<>();
+		private final StringBuilder missingBuilder = new StringBuilder();
+		private final StringBuilder requiredBuilder = new StringBuilder();
+		private final StringBuilder ownedBuilder = new StringBuilder();
+		private boolean missingEmpty = true;
+		private boolean requiredEmpty = true;
+		private boolean ownedEmpty = true;
+
+		public ShoppingListData(ShoppingListType type) {
+			this.type = type;
+		}
+
+		public String get(Object output) {
+			if (TabsStockpile.get().itemsMissing().equals(output)) {
+				return missingBuilder.toString();
+			} else if (TabsStockpile.get().itemsOwned().equals(output)) {
+				return ownedBuilder.toString();
+			} else {
+				return requiredBuilder.toString();
+			}
+		}
+
+		private void printOwned(long count, Item item, boolean bpc, boolean bpo, boolean runs) {
+			if (count > 0) {
+				ownedEmpty = false;
+				owned.add(new ShoppingListDataEntry(count, item, bpc, bpo, runs));
+			}
+		}
+
+		private void printRequired(long count, Item item, boolean bpc, boolean bpo, boolean runs) {
+			if (count > 0) {
+				requiredEmpty = false;
+				required.add(new ShoppingListDataEntry(count, item, bpc, bpo, runs));
+			}
+		}
+
+		private void printMissing(long count, Item item, boolean bpc, boolean bpo, boolean runs) {
+			if (count > 0) {
+				missingEmpty = false;
+				missing.add(new ShoppingListDataEntry(count, item, bpc, bpo, runs));
+			}
+		}
+
+		private void printItems() {
+			for (ShoppingListDataEntry entry : missing) {
+				entry.print(type, missingBuilder);
+			}
+			for (ShoppingListDataEntry entry : required) {
+				entry.print(type, requiredBuilder);
+			}
+			for (ShoppingListDataEntry entry : owned) {
+				entry.print(type, ownedBuilder);
+			}
+		}
+
+		private void printFooterOwned(double volume, double value) {
+			type.printFooter(ownedBuilder, volume, value, ownedEmpty);
+		}
+		private void printFooterRequired(double volume, double value) {
+			type.printFooter(requiredBuilder, volume, value, requiredEmpty);
+		}
+		private void printFooterMissing(double volume, double value) {
+			type.printFooter(missingBuilder, volume, value, missingEmpty);
+		}
+
+		private void printHeader(StringBuilder stockpileNamesBuilder, StringBuilder subpileNamesBuilder, Map<String, Double> subpiles, long percent) {
+			type.printHeader(stockpileNamesBuilder, subpileNamesBuilder, ownedBuilder, subpiles, percent);
+			type.printHeader(stockpileNamesBuilder, subpileNamesBuilder, requiredBuilder, subpiles, percent);
+			type.printHeader(stockpileNamesBuilder, subpileNamesBuilder, missingBuilder, subpiles, percent);
+		}	
+	}
+
+	private static class ShoppingListDataEntry implements Comparable<ShoppingListDataEntry> {
+		private final long count;
+		private final Item item;
+		private final boolean bpc;
+		private final boolean bpo;
+		private final boolean runs;
+
+		public ShoppingListDataEntry(long count, Item item, boolean bpc, boolean bpo, boolean runs) {
+			this.count = count;
+			this.item = item;
+			this.bpc = bpc;
+			this.bpo = bpo;
+			this.runs = runs;
+		}
+
+		public void print(ShoppingListType type, StringBuilder builder) {
+			type.printItem(builder, count, item, bpc, bpo, runs);
+		}
+
+		@Override
+		public int compareTo(ShoppingListDataEntry o) {
+			int compared;
+			/*
+			//Sort by group first (defualt in the table)
+			compared = item.getGroup().compareTo(o.item.getGroup());
+			if (compared != 0) {
+				return compared;
+			}
+			*/
+			compared = this.item.getTypeName().compareTo(o.item.getTypeName());
+			if (compared != 0) {
+				return compared;
+			}
+			compared = Boolean.compare(this.bpc, o.bpc);
+			if (compared != 0) {
+				return compared;
+			}
+			compared = Boolean.compare(this.bpo, o.bpo);
+			if (compared != 0) {
+				return compared;
+			}
+			compared = Boolean.compare(this.runs, o.runs);
+			if (compared != 0) {
+				return compared;
+			}
+			return 0;
+		}
+
+		@Override
+		public int hashCode() {
+			int hash = 5;
+			hash = 41 * hash + (int) (this.count ^ (this.count >>> 32));
+			hash = 41 * hash + Objects.hashCode(this.item);
+			hash = 41 * hash + (this.bpc ? 1 : 0);
+			hash = 41 * hash + (this.bpo ? 1 : 0);
+			hash = 41 * hash + (this.runs ? 1 : 0);
+			return hash;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj) {
+				return true;
+			}
+			if (obj == null) {
+				return false;
+			}
+			if (getClass() != obj.getClass()) {
+				return false;
+			}
+			final ShoppingListDataEntry other = (ShoppingListDataEntry) obj;
+			if (this.count != other.count) {
+				return false;
+			}
+			if (this.bpc != other.bpc) {
+				return false;
+			}
+			if (this.bpo != other.bpo) {
+				return false;
+			}
+			if (this.runs != other.runs) {
+				return false;
+			}
+			return Objects.equals(this.item, other.item);
+		}
+	}
+
+	private static class IconListCellRendererRenderer implements ListCellRenderer<ShoppingListType> {
+		DefaultListCellRenderer renderer = new DefaultListCellRenderer();
+
+		@Override
+		public Component getListCellRendererComponent(JList<? extends ShoppingListType> list, ShoppingListType value, int index, boolean isSelected, boolean cellHasFocus) {
 			Component component = renderer.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 			if (component instanceof JLabel) {
 				JLabel jLabel = (JLabel) component;
-				jLabel.setIcon(icons.get(value));
+				jLabel.setIcon(value.getIcon());
 			}
 			return component;
-		}
-
-		public void add(String text, Icon icon) {
-			icons.put(text, icon);
-		}
-
-		public void remove(String text) {
-			icons.remove(text);
-		}
-
-		public void clear() {
-			icons.clear();
 		}
 	}
 }

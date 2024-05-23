@@ -141,7 +141,8 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		COLLAPSE,
 		EXPAND,
 		COLLAPSE_GROUPS,
-		EXPAND_GROUPS
+		EXPAND_GROUPS,
+		SUBPILE_TREE
 	}
 
 	public enum ImportOptions implements OptionEnum {
@@ -270,6 +271,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 
 	//Toolbar
 	private final JFixedToolBar jToolBar;
+	private final JCheckBoxMenuItem jShowSubpileTree;
 	private final JDropDownButton jCollapse;
 	private final JButton jCollapseGroup;
 	private final JButton jExpandGroup;
@@ -374,10 +376,19 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 
 		jToolBar.addSeparator();
 
-		JButton jShowHide = new JButton(TabsStockpile.get().showHide(), Images.EDIT_SHOW.getIcon());
-		jShowHide.setActionCommand(StockpileAction.SHOW_HIDE.name());
-		jShowHide.addActionListener(listener);
-		jToolBar.addButton(jShowHide);
+		JDropDownButton jShow = new JDropDownButton(TabsStockpile.get().showHide(), Images.EDIT_SHOW.getIcon());
+		jToolBar.addButton(jShow);
+
+		JMenuItem jShowStockpiles = new JMenuItem(TabsStockpile.get().showStockpiles(), Images.TOOL_STOCKPILE.getIcon());
+		jShowStockpiles.setActionCommand(StockpileAction.SHOW_HIDE.name());
+		jShowStockpiles.addActionListener(listener);
+		jShow.add(jShowStockpiles);
+
+		jShowSubpileTree = new JCheckBoxMenuItem(TabsStockpile.get().showSubpileTree());
+		jShowSubpileTree.setSelected(Settings.get().isShowSubpileTree());
+		jShowSubpileTree.setActionCommand(StockpileAction.SUBPILE_TREE.name());
+		jShowSubpileTree.addActionListener(listener);
+		jShow.add(jShowSubpileTree);
 
 		jToolBar.addSeparator();
 
@@ -706,7 +717,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 			jToolBar.addButton(jExpandGroup);
 			jToolBar.addButton(jCollapseStockpile);
 			jToolBar.addButton(jExpandStockpile);
-			toolBarMinWidth = jToolBar.getMinimumSize().width;
+			toolBarMinWidth = jToolBar.getPreferredSize().width;
 			collapsed = false;
 		}
 		int width = jToolBar.getVisibleRect().width;
@@ -822,7 +833,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 			updateSubpile(items.iterator().next().getStockpile());
 		}
 		for (Stockpile stockpile : stockpiles) {
-			if (stockpile.isContractsMatchAll()) { //Less items == may match now...
+			if (stockpile.isMatchAll()) { //Less items == may match now...
 				updateStockpile(stockpile);
 			}
 		}
@@ -867,7 +878,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 			String group = Settings.get().getStockpileGroupSettings().getGroup(stockpile);
 			if (match.matches(group) && Settings.get().getStockpileGroupSettings().isGroupExpanded(group) != expand) { //Match group + is changed
 				stockpileItems.addAll(stockpile.getItems());
-				stockpileItems.addAll(stockpile.getSubpileItems());
+				stockpileItems.addAll(stockpile.getSubpileTableItems());
 				if (Settings.get().getStockpileGroupSettings().isGroupFirst(stockpile)) {
 					ignoreItems.add(stockpile.getIgnoreItem());
 				}
@@ -981,13 +992,13 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		List<StockpileItem> addStockpileItems = new ArrayList<>();
 		for (Stockpile stockpile : addStockiples) {
 			addStockpileItems.addAll(stockpile.getItems());
-			addStockpileItems.addAll(stockpile.getSubpileItems());
+			addStockpileItems.addAll(stockpile.getSubpileTableItems());
 		}
 		//Remove StockpileItems
 		List<StockpileItem> removeStockpileItems = new ArrayList<>();
 		for (Stockpile stockpile : removeStockpiles) {
 			removeStockpileItems.addAll(stockpile.getItems());
-			removeStockpileItems.addAll(stockpile.getSubpileItems());
+			removeStockpileItems.addAll(stockpile.getSubpileTableItems());
 		}
 		//All Stockpile Items
 		List<Stockpile> stockpiles = new ArrayList<>();
@@ -1619,6 +1630,28 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 						} //Else: Not changed
 					}
 				}
+			} else if (StockpileAction.SUBPILE_TREE.name().equals(e.getActionCommand())) {
+				List<StockpileItem> updated = new ArrayList<>();
+				for (Stockpile stockpile : getShownStockpiles()) {
+					String group = Settings.get().getStockpileGroupSettings().getGroup(stockpile);
+					if (Settings.get().getStockpileGroupSettings().isGroupExpanded(group)) { //Stockpile group expanded or not in group
+						updated.addAll(stockpile.getSubpileStocks());
+					}
+				}
+				try {
+					eventList.getReadWriteLock().writeLock().lock();
+					if (jShowSubpileTree.isSelected()) {
+						eventList.addAll(updated);
+					} else {
+						eventList.removeAll(updated);
+					}
+				} finally {
+					eventList.getReadWriteLock().writeLock().unlock();
+				}
+				Settings.lock("Show Subpile Tree");
+				Settings.get().setShowSubpileTree(jShowSubpileTree.isSelected());
+				Settings.unlock("Show Subpile Tree");
+				program.saveSettings("Show Subpile Tree");
 			} else if (StockpileAction.COLLAPSE.name().equals(e.getActionCommand())) { //Collapse all
 				jTable.expandSeparators(false);
 			} else if (StockpileAction.EXPAND.name().equals(e.getActionCommand())) { //Expand all

@@ -50,22 +50,22 @@ import java.util.Set;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import javax.swing.BorderFactory;
+import javax.swing.ButtonGroup;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JComboBox;
 import javax.swing.JComponent;
-import javax.swing.JEditorPane;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
-import javax.swing.text.html.HTMLDocument;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.accounts.ApiType;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
@@ -75,6 +75,8 @@ import net.nikr.eve.jeveasset.gui.shared.CopyHandler;
 import net.nikr.eve.jeveasset.gui.shared.components.JCustomFileChooser;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
 import net.nikr.eve.jeveasset.gui.shared.components.JDropDownButton;
+import net.nikr.eve.jeveasset.gui.shared.components.JLabelMultiline;
+import net.nikr.eve.jeveasset.gui.shared.components.JLabelMultilineHtml;
 import net.nikr.eve.jeveasset.gui.shared.components.JWorking;
 import net.nikr.eve.jeveasset.i18n.DialoguesAccount;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
@@ -84,7 +86,6 @@ import net.nikr.eve.jeveasset.io.esi.EsiOwnerGetter;
 import net.nikr.eve.jeveasset.io.esi.EsiScopes;
 import net.nikr.eve.jeveasset.io.shared.AccountAdder;
 import net.nikr.eve.jeveasset.io.shared.AccountAdderAdapter;
-import net.nikr.eve.jeveasset.io.shared.DesktopUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -107,6 +108,8 @@ public class AccountImportDialog extends JDialogCentered {
 		ADD_ESI,
 		SHARE_EXPORT,
 		SHARE_IMPORT,
+		AUTHCODE,
+		BROWSER,
 		VALIDATE,
 		DONE,
 		EXIT
@@ -130,17 +133,27 @@ public class AccountImportDialog extends JDialogCentered {
 		IMPORT, EXPORT
 	}
 
+	//EsiPanel
 	private JDropDownButton jScopes;
-	private JTextField jAuthCode;
+	private JRadioButton jCharacter;
+	private JRadioButton jCorporation;
+	private JLabel jCharacterLabel;
+	private JLabel jCorporationLabel;
 	private JCheckBox jWorkaround;
-	private JComboBox<String> jType;
-	private JButton jBrowse;
+	//AuthCodePanel
+	private JTextField jAuthCode;
+	//ExportPanel
 	private JTextArea jExport;
 	private JButton jExportClipboard;
 	private JButton jExportFile;
+	//ImportPanel
 	private JTextArea jImport;
 	private JButton jImportClipboard;
 	private JButton jImportFile;
+	//Done
+	private JLabel jResultHeader;
+	private JLabelMultilineHtml jResultText;
+	//Main
 	private final JButton jNext;
 	private final JButton jPrevious;
 	private final CardLayout cardLayout;
@@ -148,8 +161,6 @@ public class AccountImportDialog extends JDialogCentered {
 	private final ListenerClass listener = new ListenerClass();
 	private final EsiAuth esiAuth = new EsiAuth();
 	private final JCustomFileChooser jFileChooser;
-
-	private final DonePanel donePanel;
 
 	private EsiOwner esiOwner;
 	private EsiOwner editEsiOwner;
@@ -163,8 +174,6 @@ public class AccountImportDialog extends JDialogCentered {
 		super(program, DialoguesAccount.get().dialogueNameAccountImport(), apiManager.getDialog());
 		this.apiManager = apiManager;
 
-		donePanel = new DonePanel();
-
 		this.getDialog().addWindowFocusListener(listener);
 
 		jFileChooser = JCustomFileChooser.createFileChooser(getDialog(), "txt");
@@ -175,9 +184,11 @@ public class AccountImportDialog extends JDialogCentered {
 		jContent = new JPanel(cardLayout);
 		jContent.add(new ImportPanel(), AccountImportCard.SHARE_IMPORT.name());
 		jContent.add(new EsiPanel(), AccountImportCard.ADD_ESI.name());
+		jContent.add(new AuthCodePanel(), AccountImportCard.AUTHCODE.name());
+		jContent.add(new BrowserPanel(), AccountImportCard.BROWSER.name());
 		jContent.add(new ValidatePanel(), AccountImportCard.VALIDATE.name());
 		jContent.add(new ExportPanel(), AccountImportCard.SHARE_EXPORT.name());
-		jContent.add(donePanel, AccountImportCard.DONE.name());
+		jContent.add(new DonePanel(), AccountImportCard.DONE.name());
 
 		jPrevious = new JButton(DialoguesAccount.get().previousArrow());
 		jPrevious.setActionCommand(AccountImportAction.PREVIOUS.name());
@@ -217,8 +228,12 @@ public class AccountImportDialog extends JDialogCentered {
 	}
 
 	private void focus() {
-		if (currentCard == AccountImportCard.ADD_ESI) {
-			jScopes.requestFocusInWindow();
+		if (currentCard == AccountImportCard.AUTHCODE) {
+			jAuthCode.requestFocusInWindow();
+		} else if (jNext.isEnabled()) {
+			jNext.requestFocusInWindow();
+		} else if (jPrevious.isEnabled()) {
+			jNext.requestFocusInWindow();
 		}
 	}
 
@@ -259,16 +274,24 @@ public class AccountImportDialog extends JDialogCentered {
 		this.share = share;
 		this.editEsiOwner = editEsiOwner;
 		if (editEsiOwner != null) { //Edit ESI
-			jType.setVisible(false);
+			jCharacter.setVisible(false);
+			jCorporation.setVisible(false);
 			if (editEsiOwner.isCorporation()) {
-				jType.setSelectedIndex(1);
+				jCorporationLabel.setVisible(true);
+				jCharacterLabel.setVisible(false);
+				jCorporation.setSelected(true);
 			} else {
-				jType.setSelectedIndex(0);
+				jCharacterLabel.setVisible(true);
+				jCorporationLabel.setVisible(false);
+				jCharacter.setSelected(true);
 			}
 		} else { //Add
 			jImport.setText("");
-			jType.setVisible(true);
-			jType.setSelectedIndex(0);
+			jCharacter.setVisible(true);
+			jCorporation.setVisible(true);
+			jCharacterLabel.setVisible(false);
+			jCorporationLabel.setVisible(false);
+			jCharacter.setSelected(true);
 		}
 		updateTab();
 		super.setVisible(true);
@@ -283,59 +306,17 @@ public class AccountImportDialog extends JDialogCentered {
 		}
 	}
 
-	private void showEsiTap() {
-		cardLayout.show(jContent, AccountImportCard.ADD_ESI.name());
-		this.getDialog().setIconImage(Images.MISC_ESI.getImage());
-		if (share == Share.EXPORT) {
-			this.getDialog().setTitle(DialoguesAccount.get().dialogueNameAccountExport());
-		} else {
-			this.getDialog().setTitle(DialoguesAccount.get().dialogueNameAccountImport());
+	private Set<String> getScopes() {
+		Set<String> scopes = new HashSet<>();
+		for (Map.Entry<EsiScopes, JCheckBoxMenuItem> entry : scopesMap.entrySet()) {
+			if (entry.getValue().isSelected()) {
+				scopes.add(entry.getKey().getScope());
+			}
 		}
-		jPrevious.setEnabled(false);
-		jWorkaround.setSelected(false);
-		jAuthCode.setEnabled(false);
-		jAuthCode.setText("");
-		jNext.setEnabled(false);
-		esiAuth.cancelImport();
-		updateScopes();
-		jNext.setText(DialoguesAccount.get().nextArrow());
-		focus();
+		return scopes;
 	}
 
-	private void showImportTap() {
-		cardLayout.show(jContent, AccountImportCard.SHARE_IMPORT.name());
-		this.getDialog().setIconImage(Images.MISC_ESI.getImage());
-		this.getDialog().setTitle(DialoguesAccount.get().dialogueNameAccountImport());
-		jPrevious.setEnabled(false);
-		jNext.setEnabled(true);
-		jNext.setText(DialoguesAccount.get().nextArrow());
-	}
-
-	private void showExportTap() {
-		cardLayout.show(jContent, AccountImportCard.SHARE_EXPORT.name());
-		jPrevious.setEnabled(true);
-		jNext.setEnabled(true);
-		jNext.setText(DialoguesAccount.get().ok());
-		try {
-			String value = esiOwner.getCallbackURL().name() + " " + esiOwner.getRefreshToken();
-			String code = new String(Base64.getUrlEncoder().encode(value.getBytes(StandardCharsets.UTF_8)), "UTF-8").replace("=", "");
-			jExport.setText(code);
-			jExport.setFocusable(true);
-			jExportClipboard.setEnabled(true);
-			jExportFile.setEnabled(true);
-		} catch (UnsupportedEncodingException ex) {
-			jExport.setText(DialoguesAccount.get().shareExportFail());
-			jExport.setFocusable(false);
-			jExportClipboard.setEnabled(false);
-			jExportFile.setEnabled(false);
-		}
-	}
-
-	private void showValidateTab() {
-		cardLayout.show(jContent, AccountImportCard.VALIDATE.name());
-		jPrevious.setEnabled(true);
-		jNext.setEnabled(false);
-		jNext.setText(DialoguesAccount.get().nextArrow());
+	private void startImport() {
 		if (share == Share.IMPORT) {
 			esiOwner = new EsiOwner();
 			try {
@@ -358,6 +339,75 @@ public class AccountImportDialog extends JDialogCentered {
 			addTask.addPropertyChangeListener(listener);
 			addTask.execute();
 		}
+	}
+
+	private void showEsiTap() {
+		cardLayout.show(jContent, AccountImportCard.ADD_ESI.name());
+		jPrevious.setEnabled(false);
+		jWorkaround.setSelected(false);
+		jNext.setEnabled(true);
+		jNext.setText(DialoguesAccount.get().nextArrow());
+		getDialog().setIconImage(Images.MISC_ESI.getImage());
+		if (share == Share.EXPORT) {
+			getDialog().setTitle(DialoguesAccount.get().dialogueNameAccountExport());
+		} else {
+			getDialog().setTitle(DialoguesAccount.get().dialogueNameAccountImport());
+		}
+		esiAuth.cancelImport();
+		updateScopes();
+		focus();
+	}
+
+	private void showImportTap() {
+		cardLayout.show(jContent, AccountImportCard.SHARE_IMPORT.name());
+		jPrevious.setEnabled(false);
+		jNext.setEnabled(true);
+		jNext.setText(DialoguesAccount.get().nextArrow());
+		getDialog().setIconImage(Images.MISC_ESI.getImage());
+		getDialog().setTitle(DialoguesAccount.get().dialogueNameAccountImport());
+	}
+
+	private void showExportTap() {
+		cardLayout.show(jContent, AccountImportCard.SHARE_EXPORT.name());
+		jPrevious.setEnabled(true);
+		jNext.setEnabled(true);
+		jNext.setText(DialoguesAccount.get().ok());
+		try {
+			String value = esiOwner.getCallbackURL().name() + " " + esiOwner.getRefreshToken();
+			String code = new String(Base64.getUrlEncoder().encode(value.getBytes(StandardCharsets.UTF_8)), "UTF-8").replace("=", "");
+			jExport.setText(code);
+			jExport.setFocusable(true);
+			jExportClipboard.setEnabled(true);
+			jExportFile.setEnabled(true);
+		} catch (UnsupportedEncodingException ex) {
+			jExport.setText(DialoguesAccount.get().shareExportFail());
+			jExport.setFocusable(false);
+			jExportClipboard.setEnabled(false);
+			jExportFile.setEnabled(false);
+		}
+	}
+
+	private void showAuthCodeTab() {
+		cardLayout.show(jContent, AccountImportCard.AUTHCODE.name());
+		jAuthCode.setText("");
+		jPrevious.setEnabled(true);
+		jNext.setEnabled(true);
+		jNext.setText(DialoguesAccount.get().nextArrow());
+	}
+
+	private void showBrowserTab() {
+		cardLayout.show(jContent, AccountImportCard.BROWSER.name());
+		jPrevious.setEnabled(true);
+		jNext.setEnabled(false);
+		jNext.setText(DialoguesAccount.get().nextArrow());
+		startImport();
+	}
+
+	private void showValidateTab() {
+		cardLayout.show(jContent, AccountImportCard.VALIDATE.name());
+		jPrevious.setEnabled(true);
+		jNext.setEnabled(false);
+		jNext.setText(DialoguesAccount.get().nextArrow());
 	}
 
 	private void showDoneTab() {
@@ -395,15 +445,21 @@ public class AccountImportDialog extends JDialogCentered {
 				apiType = ApiType.ESI;
 				showEsiTap();
 				break;
-			case VALIDATE:
-				showValidateTab();
+			case AUTHCODE:
+				showAuthCodeTab();
 				break;
-			case DONE:
+			case BROWSER:
+				showBrowserTab();
+				break;
+			case VALIDATE:
 				if (apiType == ApiType.ESI) {
 					//Move to front
 					getDialog().setAlwaysOnTop(true);
 					getDialog().setAlwaysOnTop(false);
 				}
+				showValidateTab();
+				break;
+			case DONE:
 				showDoneTab();
 				break;
 			case SHARE_IMPORT:
@@ -426,10 +482,10 @@ public class AccountImportDialog extends JDialogCentered {
 			if (scope.isPublicScope()) {
 				continue;
 			}
-			if (jType.getSelectedIndex() == 0 && !scope.isCharacterScope()) {
+			if (jCharacter.isSelected() && !scope.isCharacterScope()) {
 				continue;
 			}
-			if (jType.getSelectedIndex() == 1 && !scope.isCorporationScope()) {
+			if (jCorporation.isSelected() && !scope.isCorporationScope()) {
 				continue;
 			}
 			JCheckBoxMenuItem jCheckBoxMenuItem = new JCheckBoxMenuItem(scope.toString());
@@ -445,7 +501,7 @@ public class AccountImportDialog extends JDialogCentered {
 							break;
 						}
 					}
-					jBrowse.setEnabled(enabled);
+					jNext.setEnabled(enabled);
 				}
 			});
 			jScopes.add(jCheckBoxMenuItem, true);
@@ -479,6 +535,26 @@ public class AccountImportDialog extends JDialogCentered {
 					case ADD_ESI: //Previous: None
 						currentCard = AccountImportCard.ADD_ESI;
 						break;
+					case AUTHCODE: //Previous: Add
+						if (share == Share.IMPORT) {
+							currentCard = AccountImportCard.SHARE_IMPORT;
+						} else if (apiType == ApiType.ESI) {
+							currentCard = AccountImportCard.ADD_ESI;
+						}
+						if (addTask != null) {
+							addTask.cancel(true);
+						}
+						break;
+					case BROWSER: //Previous: Add
+						if (share == Share.IMPORT) {
+							currentCard = AccountImportCard.SHARE_IMPORT;
+						} else if (apiType == ApiType.ESI) {
+							currentCard = AccountImportCard.ADD_ESI;
+						}
+						if (addTask != null) {
+							addTask.cancel(true);
+						}
+						break;
 					case VALIDATE: //Previous: Add
 						if (share == Share.IMPORT) {
 							currentCard = AccountImportCard.SHARE_IMPORT;
@@ -497,7 +573,7 @@ public class AccountImportDialog extends JDialogCentered {
 						}
 						break;
 					case SHARE_EXPORT:
-						if (donePanel.jResult.getText().isEmpty()) {
+						if (jResultHeader.getText().isEmpty()) {
 							currentCard = AccountImportCard.ADD_ESI;
 						} else {
 							currentCard = AccountImportCard.DONE;
@@ -511,9 +587,24 @@ public class AccountImportDialog extends JDialogCentered {
 			} else if (AccountImportAction.NEXT.name().equals(e.getActionCommand())) {
 				switch (currentCard) {
 					case ADD_ESI: //Next: Validate
-						currentCard = AccountImportCard.VALIDATE;
+						Set<String> scopes = getScopes();
+						if (esiAuth.isServerStarted() && !jWorkaround.isSelected()) { //Localhost
+							esiAuth.openWebpage(EsiCallbackURL.LOCALHOST, scopes, getDialog());
+							currentCard = AccountImportCard.BROWSER;
+						} else {
+							esiAuth.openWebpage(EsiCallbackURL.EVE_NIKR_NET, scopes, getDialog());
+							currentCard = AccountImportCard.AUTHCODE;
+						}
 						break;
-					case SHARE_IMPORT: //Next: Validate
+					case SHARE_IMPORT: //Next: Browser
+						currentCard = AccountImportCard.VALIDATE;
+						startImport();
+						break;
+					case AUTHCODE: //Next Validate
+						currentCard = AccountImportCard.VALIDATE;
+						startImport();
+						break;
+					case BROWSER: //Next Validate
 						currentCard = AccountImportCard.VALIDATE;
 						break;
 					case VALIDATE: //Next Done
@@ -610,26 +701,26 @@ public class AccountImportDialog extends JDialogCentered {
 						case FAIL_API_FAIL:
 							currentCard = AccountImportCard.DONE;
 							jNext.setEnabled(false);
-							donePanel.setResult(DialoguesAccount.get().failApiError());
-							donePanel.setText(DialoguesAccount.get().failApiErrorText(addTask.error));
+							jResultHeader.setText(DialoguesAccount.get().failApiError());
+							jResultText.setText(DialoguesAccount.get().failApiErrorText(addTask.error));
 							break;
 						case FAIL_INVALID:
 							currentCard = AccountImportCard.DONE;
 							jNext.setEnabled(false);
-							donePanel.setResult(DialoguesAccount.get().failNotValid());
-							donePanel.setText(DialoguesAccount.get().failNotValidText());
+							jResultHeader.setText(DialoguesAccount.get().failNotValid());
+							jResultText.setText(DialoguesAccount.get().failNotValidText());
 							break;
 						case FAIL_NOT_ENOUGH_PRIVILEGES:
 							currentCard = AccountImportCard.DONE;
 							jNext.setEnabled(false);
-							donePanel.setResult(DialoguesAccount.get().failNotEnoughPrivileges());
-							donePanel.setText(DialoguesAccount.get().failNotEnoughPrivilegesText());
+							jResultHeader.setText(DialoguesAccount.get().failNotEnoughPrivileges());
+							jResultText.setText(DialoguesAccount.get().failNotEnoughPrivilegesText());
 							break;
 						case FAIL_WRONG_ENTRY:
 							currentCard = AccountImportCard.DONE;
 							jNext.setEnabled(false);
-							donePanel.setResult(DialoguesAccount.get().failWrongEntry());
-							donePanel.setText(DialoguesAccount.get().failWrongEntryText());
+							jResultHeader.setText(DialoguesAccount.get().failWrongEntry());
+							jResultText.setText(DialoguesAccount.get().failWrongEntryText());
 							break;
 						case FAIL_CANCEL:
 							switch(apiType) {
@@ -641,35 +732,35 @@ public class AccountImportDialog extends JDialogCentered {
 						case OK_EXIST:
 							currentCard = AccountImportCard.DONE;
 							jNext.setEnabled(true);
-							donePanel.setResult(DialoguesAccount.get().okUpdate());
-							donePanel.setText(DialoguesAccount.get().okUpdateText());
+							jResultHeader.setText(DialoguesAccount.get().okUpdate());
+							jResultText.setText(DialoguesAccount.get().okUpdateText());
 							break;
 						case OK_EXIST_LIMITED_ACCESS:
 							currentCard = AccountImportCard.DONE;
 							jNext.setEnabled(true);
-							donePanel.setResult(DialoguesAccount.get().okUpdate());
-							donePanel.setText(DialoguesAccount.get().okUpdateLimitedText());
+							jResultHeader.setText(DialoguesAccount.get().okUpdate());
+							jResultText.setText(DialoguesAccount.get().okUpdateLimitedText());
 							break;
 						case OK_LIMITED_ACCESS:
 							currentCard = AccountImportCard.DONE;
 							jNext.setEnabled(true);
-							donePanel.setResult(DialoguesAccount.get().okLimited());
+							jResultHeader.setText(DialoguesAccount.get().okLimited());
 							if (share == Share.EXPORT) {
-								donePanel.setText(DialoguesAccount.get().okLimitedExportText());
+								jResultText.setText(DialoguesAccount.get().okLimitedExportText());
 							} else {
-								donePanel.setText(DialoguesAccount.get().okLimitedText());
+								jResultText.setText(DialoguesAccount.get().okLimitedText());
 							}
 							break;
 						case OK_ACCOUNT_VALID:
 							jNext.setEnabled(true);
 							if (share == Share.EXPORT) {
 								currentCard = AccountImportCard.SHARE_EXPORT;
-								donePanel.setResult("");
-								donePanel.setText("");
+								jResultHeader.setText("");
+								jResultText.setText("");
 							} else {
 								currentCard = AccountImportCard.DONE;
-								donePanel.setResult(DialoguesAccount.get().okValid());
-								donePanel.setText(DialoguesAccount.get().okValidText());
+								jResultHeader.setText(DialoguesAccount.get().okValid());
+								jResultText.setText(DialoguesAccount.get().okValidText());
 							}
 							break;
 					}
@@ -690,106 +781,123 @@ public class AccountImportDialog extends JDialogCentered {
 	private class EsiPanel extends JCardPanel {
 
 		public EsiPanel() {
-			JLabel jAuthLabel = new JLabel(DialoguesAccount.get().authentication());
-			jBrowse = new JButton(DialoguesAccount.get().authorize());
-			jBrowse.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					Set<String> scopes = new HashSet<>();
-					for (Map.Entry<EsiScopes, JCheckBoxMenuItem> entry : scopesMap.entrySet()) {
-						if (entry.getValue().isSelected()) {
-							scopes.add(entry.getKey().getScope());
-						}
-					}
-					if (esiAuth.isServerStarted() && !jWorkaround.isSelected()) { //Localhost
-						boolean ok = esiAuth.openWebpage(EsiCallbackURL.LOCALHOST, scopes, getDialog());
-						if (ok) { //Wait for response
-							currentCard = AccountImportCard.VALIDATE;
-							updateTab();
-						}
-					} else {
-						boolean ok = esiAuth.openWebpage(EsiCallbackURL.EVE_NIKR_NET, scopes, getDialog());
-						if (ok) {
-							jAuthCode.setEnabled(true);
-							jNext.setEnabled(true);
-						}
-					}
-				}
-			});
-
-			String[] types = {DialoguesAccount.get().character(), DialoguesAccount.get().corporation()};
-			jType = new JComboBox<>(types);
-			jType.addActionListener(new ActionListener() {
+			JLabel jAuthLabel = new JLabel(DialoguesAccount.get().authorize());
+			JLabel jType = new JLabel(DialoguesAccount.get().accountType());
+			ButtonGroup type = new ButtonGroup();
+			jCharacterLabel = new JLabel(DialoguesAccount.get().character());
+			jCharacter = new JRadioButton(DialoguesAccount.get().character());
+			jCharacter.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					updateScopes();
 				}
 			});
+			type.add(jCharacter);
+			jCorporationLabel = new JLabel(DialoguesAccount.get().corporation());
+			jCorporation = new JRadioButton(DialoguesAccount.get().corporation());
+			jCorporation.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					updateScopes();
+				}
+			});
+			type.add(jCorporation);
 
 			jScopes = new JDropDownButton(DialoguesAccount.get().scopes(), Images.MISC_ESI.getIcon(), JDropDownButton.LEFT, JDropDownButton.TOP);
 
 			JLabel jWorkaroundLabel = new JLabel(DialoguesAccount.get().workaroundLabel());
 			jWorkaround = new JCheckBox(DialoguesAccount.get().workaroundCheckbox());
-			jWorkaround.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					jAuthCode.setEnabled(jWorkaround.isSelected());
-				}
-			});
 
+			JLabelMultiline jHelp = new JLabelMultiline(DialoguesAccount.get().esiHelpText());
+
+			layout.setHorizontalGroup(
+				layout.createParallelGroup()
+					.addComponent(jHelp)
+					.addGroup(layout.createSequentialGroup()
+						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+							.addComponent(jAuthLabel)
+							.addComponent(jType)
+							.addComponent(jWorkaroundLabel)
+
+						)
+						.addGroup(layout.createParallelGroup()
+							.addGroup(layout.createSequentialGroup()
+								.addComponent(jCharacter)
+								.addComponent(jCorporation)
+								.addComponent(jCharacterLabel)
+								.addComponent(jCorporationLabel)
+							)
+							.addComponent(jScopes, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
+							.addComponent(jWorkaround)
+						)
+					)
+			);
+			layout.setVerticalGroup(
+				layout.createSequentialGroup()
+					.addComponent(jHelp, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+					.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+						.addComponent(jType, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+						.addComponent(jCharacter, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+						.addComponent(jCorporation, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+						.addComponent(jCharacterLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+						.addComponent(jCorporationLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					)
+					.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+						.addComponent(jAuthLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+						.addComponent(jScopes, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					)
+					.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+						.addComponent(jWorkaroundLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+						.addComponent(jWorkaround, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())	
+					)
+			);
+		}
+	}
+
+	private class AuthCodePanel extends JCardPanel {
+
+		public AuthCodePanel() {
 			JLabel jAuthCodeLabel = new JLabel(DialoguesAccount.get().authCode());
 			jAuthCode = new JTextField();
 
-			JEditorPane jHelp = new JEditorPane(
-					"text/html", "<html><body style=\"font-family: " + jAuthLabel.getFont().getName() + "; font-size: " + jAuthLabel.getFont().getSize() + "pt\">"
-				+ DialoguesAccount.get().esiHelpText() + "</body></html>");
-			((HTMLDocument) jHelp.getDocument()).getStyleSheet().addRule("body { font-family: " + this.getFont().getFamily() + "; " + "font-size: " + this.getFont().getSize() + "pt; }");
-			jHelp.setFont(getFont());
-			jHelp.setEditable(false);
-			jHelp.setFocusable(false);
-			jHelp.setOpaque(false);
-			jHelp.setBackground(Colors.COMPONENT_TRANSPARENT.getColor());
-			jHelp.addHyperlinkListener(DesktopUtil.getHyperlinkListener(getDialog()));
+			JLabelMultiline jHelp = new JLabelMultiline(DialoguesAccount.get().authCodeHelpText());
 
-			cardLayout.setHorizontalGroup(
-				cardLayout.createSequentialGroup()
-				.addGroup(cardLayout.createParallelGroup()
+			layout.setHorizontalGroup(
+				layout.createParallelGroup()
 					.addComponent(jHelp)
-					.addGroup(cardLayout.createSequentialGroup()
-						.addGroup(cardLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-							.addComponent(jAuthLabel)
-							.addComponent(jAuthCodeLabel)
-							.addComponent(jWorkaroundLabel)
-						)
-						.addGroup(cardLayout.createParallelGroup()
-							.addGroup(cardLayout.createSequentialGroup()
-								.addComponent(jType, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
-								.addComponent(jScopes, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
-								.addComponent(jBrowse, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
-							)
-							.addComponent(jWorkaround)
-							.addComponent(jAuthCode, 150, 150, Integer.MAX_VALUE)
-						)
+					.addGroup(layout.createSequentialGroup()
+						.addComponent(jAuthCodeLabel)
+						.addComponent(jAuthCode, 150, 150, Integer.MAX_VALUE)
 					)
-				)
 			);
-			cardLayout.setVerticalGroup(
-				cardLayout.createSequentialGroup()
-				.addComponent(jHelp)
-				.addGroup(cardLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-					.addComponent(jAuthLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					.addComponent(jType, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					.addComponent(jScopes, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					.addComponent(jBrowse, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-				)
-				.addGroup(cardLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-					.addComponent(jWorkaroundLabel)
-					.addComponent(jWorkaround)
-				)
-				.addGroup(cardLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-					.addComponent(jAuthCodeLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					.addComponent(jAuthCode, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-				)
+			layout.setVerticalGroup(
+				layout.createSequentialGroup()
+					.addComponent(jHelp, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+					.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+						.addComponent(jAuthCodeLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+						.addComponent(jAuthCode, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					)
+					.addGap(10, 10, Integer.MAX_VALUE)
+			);
+		}
+	}
+
+	private class BrowserPanel extends JCardPanel {
+
+		public BrowserPanel() {
+			JLabelMultiline jHelp = new JLabelMultiline(DialoguesAccount.get().browseHelpText());
+
+			layout.setHorizontalGroup(
+				layout.createSequentialGroup()
+					.addGap(10, 10, Integer.MAX_VALUE)
+					.addComponent(jHelp)
+					.addGap(10, 10, Integer.MAX_VALUE)
+			);
+			layout.setVerticalGroup(
+				layout.createSequentialGroup()
+					.addGap(10, 10, Integer.MAX_VALUE)
+					.addComponent(jHelp)
+					.addGap(10, 10, Integer.MAX_VALUE)
 			);
 		}
 	}
@@ -801,21 +909,21 @@ public class AccountImportDialog extends JDialogCentered {
 
 			JWorking jWorking = new JWorking();
 
-			cardLayout.setHorizontalGroup(
-				cardLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
-					.addGroup(cardLayout.createSequentialGroup()
+			layout.setHorizontalGroup(
+				layout.createParallelGroup(GroupLayout.Alignment.CENTER)
+					.addGroup(layout.createSequentialGroup()
 						.addGap(10, 10, Integer.MAX_VALUE)
 						.addComponent(jWorking)
 						.addGap(10, 10, Integer.MAX_VALUE)
 					)
-					.addGroup(cardLayout.createSequentialGroup()
+					.addGroup(layout.createSequentialGroup()
 						.addGap(10, 10, Integer.MAX_VALUE)
 						.addComponent(jHelp)
 						.addGap(10, 10, Integer.MAX_VALUE)
 					)
 			);
-			cardLayout.setVerticalGroup(
-				cardLayout.createSequentialGroup()
+			layout.setVerticalGroup(
+				layout.createSequentialGroup()
 					.addGap(10, 10, Integer.MAX_VALUE)
 					.addComponent(jWorking)
 					.addComponent(jHelp)
@@ -826,51 +934,29 @@ public class AccountImportDialog extends JDialogCentered {
 
 	private class DonePanel extends JCardPanel {
 
-		private final JLabel jResult;
-
-		private final JEditorPane jHelp;
-
 		public DonePanel() {
-			jResult = new JLabel();
-			jResult.setFont(new Font(this.getFont().getName(), Font.BOLD, this.getFont().getSize()));
+			jResultHeader = new JLabel();
+			jResultHeader.setFont(new Font(this.getFont().getName(), Font.BOLD, this.getFont().getSize()));
 
-			jHelp = new JEditorPane("text/html", "");
-			//jHelp.setLineWrap(true);
-			//jHelp.setWrapStyleWord(true);
-			jHelp.addHyperlinkListener(DesktopUtil.getHyperlinkListener(getDialog()));
-			jHelp.setFont(this.getFont());
-			jHelp.setEditable(false);
-			jHelp.setOpaque(false);
-			jHelp.setBackground(Colors.COMPONENT_TRANSPARENT.getColor());
-			jHelp.setFocusable(false);
-			jHelp.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+			jResultText = new JLabelMultilineHtml(getDialog());
+			jResultText.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-			JScrollPane jScroll = new JScrollPane(jHelp, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+			JScrollPane jScroll = new JScrollPane(jResultText, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 			jScroll.setBorder(BorderFactory.createLineBorder(this.getBackground().darker(), 1));
 
-			cardLayout.setHorizontalGroup(
-				cardLayout.createParallelGroup()
-					.addGroup(cardLayout.createSequentialGroup()
+			layout.setHorizontalGroup(
+				layout.createParallelGroup()
+					.addGroup(layout.createSequentialGroup()
 						.addGap(5)
-						.addComponent(jResult)
+						.addComponent(jResultHeader)
 					)
 					.addComponent(jScroll, 400, 400, 400)
 			);
-			cardLayout.setVerticalGroup(
-				cardLayout.createSequentialGroup()
-					.addComponent(jResult, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+			layout.setVerticalGroup(
+				layout.createSequentialGroup()
+					.addComponent(jResultHeader, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jScroll, 98, 98, 98)
 			);
-		}
-
-		public void setResult(final String text) {
-			jResult.setText(text);
-		}
-
-		public void setText(final String text) {
-			jHelp.setText("<html><body style=\"font-family: " + jResult.getFont().getName() + "; font-size: " + jResult.getFont().getSize() + "pt\">"
-				+ text
-				+ "</body></html>");
 		}
 
 	}
@@ -878,20 +964,13 @@ public class AccountImportDialog extends JDialogCentered {
 	private class ImportPanel extends JCardPanel {
 
 		public ImportPanel() {
-			JEditorPane jHelp = new JEditorPane("text/html", "<html><body style=\"font-family: " + getFont().getName() + "; font-size: " + getFont().getSize() + "pt\">"
-				+ DialoguesAccount.get().shareImportHelp() + "</body></html>");
-			((HTMLDocument) jHelp.getDocument()).getStyleSheet().addRule("body { font-family: " + getFont().getFamily() + "; " + "font-size: " + this.getFont().getSize() + "pt; }");
-			jHelp.setFont(getFont());
-			jHelp.setEditable(false);
-			jHelp.setFocusable(false);
-			jHelp.setOpaque(false);
-			jHelp.setBackground(Colors.COMPONENT_TRANSPARENT.getColor());
+			JLabelMultiline jHelp = new JLabelMultiline(DialoguesAccount.get().shareImportHelpText());
 
 			jImportClipboard = new JButton(DialoguesAccount.get().shareImportClipboard() , Images.EDIT_PASTE.getIcon());
 			jImportClipboard.setActionCommand(AccountImportAction.SHARE_FROM_CLIPBOARD.name());
 			jImportClipboard.addActionListener(listener);
 
-			jImportFile= new JButton(DialoguesAccount.get().shareImportFile(), Images.FILTER_LOAD.getIcon());
+			jImportFile = new JButton(DialoguesAccount.get().shareImportFile(), Images.FILTER_LOAD.getIcon());
 			jImportFile.setActionCommand(AccountImportAction.SHARE_FROM_FILE.name());
 			jImportFile.addActionListener(listener);
 
@@ -906,23 +985,23 @@ public class AccountImportDialog extends JDialogCentered {
 			JScrollPane jScroll = new JScrollPane(jImport, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 			jScroll.setBorder(BorderFactory.createLineBorder(this.getBackground().darker(), 1));
 
-			cardLayout.setHorizontalGroup(
-				cardLayout.createParallelGroup()
+			layout.setHorizontalGroup(
+				layout.createParallelGroup()
 					.addComponent(jHelp)
-					.addGroup(cardLayout.createSequentialGroup()
+					.addGroup(layout.createSequentialGroup()
 						.addComponent(jScroll)
-						.addGroup(cardLayout.createParallelGroup()
+						.addGroup(layout.createParallelGroup()
 							.addComponent(jImportClipboard, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
 							.addComponent(jImportFile, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
 						)
 					)
 			);
-			cardLayout.setVerticalGroup(
-				cardLayout.createSequentialGroup()
-					.addComponent(jHelp)
-					.addGroup(cardLayout.createParallelGroup()
+			layout.setVerticalGroup(
+				layout.createSequentialGroup()
+					.addComponent(jHelp, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+					.addGroup(layout.createParallelGroup()
 						.addComponent(jScroll)
-						.addGroup(cardLayout.createSequentialGroup()
+						.addGroup(layout.createSequentialGroup()
 							.addComponent(jImportClipboard, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 							.addComponent(jImportFile, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 						)
@@ -956,23 +1035,23 @@ public class AccountImportDialog extends JDialogCentered {
 			JScrollPane jScroll = new JScrollPane(jExport, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 			jScroll.setBorder(BorderFactory.createLineBorder(this.getBackground().darker(), 1));
 
-			cardLayout.setHorizontalGroup(
-				cardLayout.createParallelGroup()
+			layout.setHorizontalGroup(
+				layout.createParallelGroup()
 					.addComponent(jHelp)
-					.addGroup(cardLayout.createSequentialGroup()
+					.addGroup(layout.createSequentialGroup()
 						.addComponent(jScroll)
-						.addGroup(cardLayout.createParallelGroup()
+						.addGroup(layout.createParallelGroup()
 							.addComponent(jExportClipboard, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
 							.addComponent(jExportFile, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
 						)
 					)
 			);
-			cardLayout.setVerticalGroup(
-				cardLayout.createSequentialGroup()
+			layout.setVerticalGroup(
+				layout.createSequentialGroup()
 					.addComponent(jHelp)
-					.addGroup(cardLayout.createParallelGroup()
+					.addGroup(layout.createParallelGroup()
 						.addComponent(jScroll)
-						.addGroup(cardLayout.createSequentialGroup()
+						.addGroup(layout.createSequentialGroup()
 							.addComponent(jExportClipboard, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 							.addComponent(jExportFile, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 						)
@@ -983,13 +1062,13 @@ public class AccountImportDialog extends JDialogCentered {
 
 	private abstract class JCardPanel extends JPanel {
 
-		protected GroupLayout cardLayout;
+		protected GroupLayout layout;
 
 		public JCardPanel() {
-			cardLayout = new GroupLayout(this);
-			setLayout(cardLayout);
-			cardLayout.setAutoCreateGaps(true);
-			cardLayout.setAutoCreateContainerGaps(false);
+			layout = new GroupLayout(this);
+			setLayout(layout);
+			layout.setAutoCreateGaps(true);
+			layout.setAutoCreateContainerGaps(false);
 		}
 
 		@Override
@@ -1075,6 +1154,14 @@ public class AccountImportDialog extends JDialogCentered {
 				};
 				return;
 			}
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					currentCard = AccountImportCard.VALIDATE;
+					updateTab();
+				}
+				
+			});
 			accountAdder = esiOwnerGetter;
 			esiOwnerGetter.start();
 		}

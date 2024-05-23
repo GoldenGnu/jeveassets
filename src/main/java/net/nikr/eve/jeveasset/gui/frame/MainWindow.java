@@ -124,7 +124,7 @@ public class MainWindow {
 						return;
 					}
 					JMainTab jMainTab = tabs.get(index);
-					if (jMainTab.isCloseable()) {
+					if (isCloseable(jMainTab)) {
 						removeTab(jMainTab);
 					}
 				}
@@ -286,6 +286,16 @@ public class MainWindow {
 		}
 	}
 
+	public void updateTabCloseButtons() {
+		for (int i =  0; i < jTabbedPane.getTabCount(); i++) {
+			Component component = jTabbedPane.getTabComponentAt(i);
+			if (component instanceof TabCloseButton) {
+				TabCloseButton tabCloseButton = (TabCloseButton) component;
+				tabCloseButton.updateCloseButton();
+			}
+		}
+	}
+
 	private boolean isMaximized() {
 		return ((jFrame.getExtendedState() & JFrame.MAXIMIZED_BOTH) == JFrame.MAXIMIZED_BOTH);
 	}
@@ -374,41 +384,58 @@ public class MainWindow {
 		}
 	}
 
+	private static boolean isCloseable(final JMainTab jMainTab) {
+		return jMainTab.isCloseable() && !Settings.get().isToolsLocked();
+	}
+
 	private class TabCloseButton extends JPanel {
+
+		private final JButton jClose;
+		private final JMainTab jMainTab;
 
 		public TabCloseButton(final JMainTab jMainTab) {
 			super(new FlowLayout(FlowLayout.LEFT, 0, 0));
+			this.jMainTab = jMainTab;
 			this.setOpaque(false);
 			JLabel jTitle = new JLabel(jMainTab.getTitle(), jMainTab.getIcon(), SwingConstants.LEFT);
 			add(jTitle);
-			if (jMainTab.isCloseable()) {
-				JButton jClose = new JButton();
-				jClose.setToolTipText(GuiFrame.get().close());
-				jClose.setIcon(Images.TAB_CLOSE.getIcon());
-				jClose.setRolloverIcon(Images.TAB_CLOSE_ACTIVE.getIcon());
-				jClose.setUI(new BasicButtonUI());
-				jClose.setPreferredSize(new Dimension(16, 16));
-				jClose.setOpaque(false);
-				jClose.setContentAreaFilled(false);
-				jClose.setFocusable(false);
-				jClose.setBorderPainted(false);
-				jClose.setRolloverEnabled(true);
-				jClose.addMouseListener(new MouseAdapter() {
-					@Override
-					public void mousePressed(final MouseEvent e) {
-						if (e.getButton() == MouseEvent.BUTTON2) {
+			jClose = new JButton();
+			jClose.setToolTipText(GuiFrame.get().close());
+			jClose.setIcon(Images.TAB_CLOSE.getIcon());
+			jClose.setRolloverIcon(Images.TAB_CLOSE_ACTIVE.getIcon());
+			jClose.setUI(new BasicButtonUI());
+			jClose.setPreferredSize(new Dimension(16, 16));
+			jClose.setOpaque(false);
+			jClose.setContentAreaFilled(false);
+			jClose.setFocusable(false);
+			jClose.setBorderPainted(false);
+			jClose.setRolloverEnabled(true);
+			jClose.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mousePressed(final MouseEvent e) {
+					if (e.getButton() == MouseEvent.BUTTON2) {
+						if (isCloseable(jMainTab)) {
 							removeTab(jMainTab);
 						}
 					}
-				});
-				jClose.addActionListener(new ActionListener() {
-					@Override
-					public void actionPerformed(final ActionEvent e) {
+				}
+			});
+			jClose.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(final ActionEvent e) {
+					if (isCloseable(jMainTab)) {
 						removeTab(jMainTab);
 					}
-				});
+				}
+			});
+			if (jMainTab.isCloseable()) {
 				add(jClose);
 			}
+			jClose.setEnabled(isCloseable(jMainTab));
+		}
+
+		private void updateCloseButton() {
+			jClose.setEnabled(isCloseable(jMainTab));
 		}
 	}
 }

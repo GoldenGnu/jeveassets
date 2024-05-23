@@ -357,6 +357,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 				Element tagIdNode = xmldoc.createElementNS(null, "tagid");
 				setAttribute(tagIdNode, "tool", tagID.getTool());
 				setAttribute(tagIdNode, "id", tagID.getID());
+				setAttribute(tagIdNode, "d", tagID.getDouble());
 				tagNode.appendChild(tagIdNode);
 			}
 		}
@@ -623,7 +624,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 			if (group != null && !group.isEmpty()) {
 				setAttribute(stockpileNode, "stockpilegroup", group);
 			}
-			setAttribute(stockpileNode, "contractsmatchall", stockpile.isContractsMatchAll());
+			setAttribute(stockpileNode, "matchall", stockpile.isMatchAll());
 			//ITEMS
 			for (StockpileItem item : stockpile.getItems()) {
 				if (item.isTotal()) {
