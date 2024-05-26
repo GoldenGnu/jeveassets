@@ -132,7 +132,7 @@ public abstract class DataConverter {
 		return new MyAccountBalance(rawAccountBalance, owner);
 	}
 
-	protected static List<MyAsset> convertRawAssets(List<RawAsset> rawAssets, OwnerType owner) {
+	public static List<MyAsset> convertRawAssets(List<RawAsset> rawAssets, OwnerType owner) {
 		List<MyAsset> assets = new ArrayList<>();
 
 		Map<Long, RawAsset> lookup = new HashMap<>();

@@ -59,7 +59,7 @@ public final class ProfileWriter extends AbstractXmlWriter {
 	private ProfileWriter() { }
 
 	public static boolean save(final Profile profile) {
-		return save(profile, profile.getFilename());
+		return save(profile, profile.getXmlFilename());
 	}
 
 	public static boolean save(final Profile profile, final String filename) {
@@ -383,7 +383,6 @@ public final class ProfileWriter extends AbstractXmlWriter {
 			setAttribute(childNode, "typeid", transaction.getTypeID());
 			setAttribute(childNode, "price", transaction.getPrice());
 			setAttribute(childNode, "clientid", transaction.getClientID());
-			setAttribute(childNode, "clientname", transaction.getClientName());
 			setAttribute(childNode, "stationid", transaction.getLocationID());
 			setAttribute(childNode, "transactiontype", RawConverter.fromTransactionIsBuy(transaction.isBuy()));
 			setAttribute(childNode, "transactionfor", RawConverter.fromTransactionIsPersonal(transaction.isPersonal()));

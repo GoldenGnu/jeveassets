@@ -32,6 +32,7 @@ import java.util.List;
 import javax.swing.*;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.profile.Profile;
+import net.nikr.eve.jeveasset.data.profile.Profile.ProfileType;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
 import net.nikr.eve.jeveasset.gui.shared.components.JLockWindow;
@@ -357,7 +358,7 @@ public class ProfileDialog extends JDialogCentered {
 
 		@Override
 		public void task() {
-			Profile profile = new Profile(profileName, false, false);
+			Profile profile = new Profile(profileName, false, false, ProfileType.SQLITE);
 			program.getProfileManager().getProfiles().add(profile);
 			loadProfileWork(profile);
 			program.saveProfile();

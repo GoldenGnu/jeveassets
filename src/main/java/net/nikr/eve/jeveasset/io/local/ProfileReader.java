@@ -78,7 +78,7 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 	private final Profile profile;
 
 	public static boolean load(final Profile profile) {
-		return load(profile, profile.getFilename());
+		return load(profile, profile.getXmlFilename());
 	}
 
 	public static boolean load(final Profile profile, final String filename) {
@@ -138,6 +138,21 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 		if (esiOwnersNodes.getLength() == 1) {
 			Element esiElement = (Element) esiOwnersNodes.item(0);
 			parseEsiOwners(esiElement, profile.getEsiOwners());
+			Map<MyContract, List<MyContractItem>> contracts = new HashMap<>();
+			for (EsiOwner esiOwner : profile.getEsiOwners()) {
+				for (Map.Entry<MyContract, List<MyContractItem>> entry : esiOwner.getContracts().entrySet()) {
+					if (!entry.getValue().isEmpty()) {
+						contracts.put(entry.getKey(), entry.getValue());
+					}
+				}
+			}
+			for (Map.Entry<MyContract, List<MyContractItem>> entry : contracts.entrySet()) {
+				for (EsiOwner esiOwner : profile.getEsiOwners()) {
+					if (esiOwner.getContracts().containsKey(entry.getKey())) {
+						esiOwner.getContracts().put(entry.getKey(), entry.getValue());
+					}
+				}
+			}
 		}
 	}
 

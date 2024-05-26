@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import net.nikr.eve.jeveasset.data.profile.Profile;
+import net.nikr.eve.jeveasset.data.profile.Profile.ProfileType;
 import net.nikr.eve.jeveasset.data.profile.ProfileManager;
 import net.nikr.eve.jeveasset.io.shared.FileUtil;
 import org.slf4j.Logger;
@@ -49,37 +50,41 @@ public final class ProfileFinder {
 		backwardCompatibility();
 		List<Profile> profiles = new ArrayList<>();
 		File profilesDirectory = new File(FileUtil.getPathProfilesDirectory());
-		FileFilter fileFilter = new XmlFileFilter();
+		FileFilter profileFilter = new ProfileFileFilter();
 
-		File[] files = profilesDirectory.listFiles(fileFilter);
+		File[] files = profilesDirectory.listFiles(profileFilter);
 		if (files != null) {
 			boolean defaultProfileFound = false;
 			Set<String> unique = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
 			for (File file : files) {
-				String name = file.getName();
-				String profileName = formatName(name);
+				String filename = file.getName();
+				String profileName = formatName(filename);
 				if (!profileName.matches("[\\w\\s]+")) {
-					LOG.warn("Ignoring invalid profile name: {} ({})", profileName, name);
+					LOG.warn("Ignoring invalid profile name: {} ({})", profileName, filename);
 					continue; //Ignore invalid names
 				}
 				if (unique.contains(profileName)) {
-					LOG.warn("Ignoring duplicated profile name: {} ({})", profileName, name);
+					LOG.warn("Ignoring duplicated profile name: {} ({})", profileName, filename);
 					continue; //ignore duplicates
 				}
 				unique.add(profileName);
-				Profile profile = new Profile(profileName, defaultProfile(name), activeProfile(name));
+				ProfileType type = getProfileType(filename);
+				if (type == null) {
+					continue;
+				}
+				Profile profile = new Profile(profileName, defaultProfile(filename), activeProfile(filename), type);
 				if (profile.isDefaultProfile() && !defaultProfileFound) {
-					LOG.info("Default profile found: {} ({})", profileName, name);
+					LOG.info("Default profile found: {} ({})", profileName, filename);
 					defaultProfileFound = true;
 					profiles.add(0, profile);
 					profileManager.setActiveProfile(profile);
 				} else if (profile.isDefaultProfile() && defaultProfileFound) {
-					LOG.warn("Default profile found (again): {} ({})", profileName, name);
+					LOG.warn("Default profile found (again): {} ({})", profileName, filename);
 					profile.setDefaultProfile(false);
 					profile.setActiveProfile(false);
 					profiles.add(profile);
 				} else {
-					LOG.info("Profile found: {} ({})", profileName, name);
+					LOG.info("Profile found: {} ({})", profileName, filename);
 					profiles.add(profile);
 				}
 			}
@@ -149,10 +154,27 @@ public final class ProfileFinder {
 		return name.startsWith("#");
 	}
 
-	private class XmlFileFilter implements FileFilter {
+	private class ProfileFileFilter implements FileFilter {
 		@Override
 		public boolean accept(final File file) {
-			return !file.isDirectory() && file.getName().endsWith(".xml");
+			return !file.isDirectory() && (isXML(file.getName()) || isSQLite(file.getName()));
 		}
+	}
+
+	private static boolean isXML(String filename) {
+		return filename.endsWith(".xml");
+	}
+
+	private static boolean isSQLite(String filename) {
+		return filename.endsWith(".db");
+	}
+
+	private static ProfileType getProfileType(String filename) {
+		if(isXML(filename)) {
+			return ProfileType.XML;
+		} else if (isSQLite(filename)) {
+			return ProfileType.SQLITE;
+		}
+		return null;
 	}
 }
