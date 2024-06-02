@@ -712,8 +712,10 @@ public class PriceHistoryTab extends JMainTabSecondary {
 			if (fromVisible != toVisible) {
 				renderer.setSeriesVisible(i, toVisible);
 			}
-			max = Math.max(max, seriesMax.get(item));
-			count = Math.max(count, dataset.getItemCount(i));
+			if (toVisible) {
+				max = Math.max(max, seriesMax.get(item));
+				count = Math.max(count, dataset.getItemCount(i));
+			}
 		}
 		JFreeChartUtil.updateTickScale(domainAxis, rangeLinearAxis, max);
 		renderer.setDefaultShapesVisible(count < 2);
