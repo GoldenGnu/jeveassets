@@ -56,6 +56,7 @@ public class JStockpileTable extends JSeparatorTable {
 		this.tableModel = tableModel;
 		InstantToolTip.install(this);
 		this.setDefaultRenderer(Double.class, new TargetCellRenderer(tableModel));
+		this.disableColumnResizeCache(StockpileTableFormat.COUNT_MINIMUM);
 		final Cursor cursor = getCursor();
 		addMouseMotionListener(new MouseMotionListener() {
 			@Override
@@ -103,10 +104,17 @@ public class JStockpileTable extends JSeparatorTable {
 		Component component = super.prepareRenderer(renderer, row, column);
 		boolean isSelected = isCellSelected(row, column);
 		Object object = tableModel.getElementAt(row);
-		String columnName = (String) this.getTableHeader().getColumnModel().getColumn(column).getHeaderValue();
-
+		String columnName = (String) this.getTableHeader().getColumnModel().getColumn(column).getHeaderValue();	
 		if (object instanceof StockpileItem) {
 			StockpileItem stockpileItem = (StockpileItem) object;
+			if (stockpileItem.isEditable() && columnName.equals(StockpileTableFormat.COUNT_MINIMUM.getColumnName())) {
+				if (component instanceof JLabel) {
+					JLabel jLabel = (JLabel) component;
+					int columnWidth = getColumnModel().getColumn(column).getWidth() - 2 + TargetCellRenderer.MINIMUM_ICON_TEXT_GAP;
+					int jLabelWidth = jLabel.getPreferredSize().width;
+					jLabel.setIconTextGap(Math.max(TargetCellRenderer.MINIMUM_ICON_TEXT_GAP, columnWidth - jLabelWidth));
+				}
+			}
 			//Background
 			if (object instanceof SubpileStock) { //Subpile
 				if (columnName.equals(StockpileTableFormat.COUNT_MINIMUM.getColumnName())) {
@@ -134,14 +142,7 @@ public class JStockpileTable extends JSeparatorTable {
 			} else if (object instanceof StockpileTotal) { //Total
 				ColorSettings.configCell(component, ColorEntry.GLOBAL_GRAND_TOTAL, isSelected);
 			}
-			if (stockpileItem.isEditable() && columnName.equals(StockpileTableFormat.COUNT_MINIMUM.getColumnName())) {
-				if (component instanceof JLabel) {
-					JLabel jLabel = (JLabel) component;
-					int columnWidth = getColumnModel().getColumn(column).getWidth() - 2 + TargetCellRenderer.MINIMUM_ICON_TEXT_GAP;
-					int jLabelWidth = jLabel.getMinimumSize().width;
-					jLabel.setIconTextGap(Math.max(TargetCellRenderer.MINIMUM_ICON_TEXT_GAP, columnWidth - jLabelWidth));
-				}
-			} else if (columnName.equals(StockpileTableFormat.NAME.getColumnName())) {
+			if (columnName.equals(StockpileTableFormat.NAME.getColumnName())) {
 				if (Settings.get().isStockpileHalfColors()) {
 					if (stockpileItem.getPercentNeeded() >= (Settings.get().getStockpileColorGroup3() / 100.0) ) {
 						//Group 3
