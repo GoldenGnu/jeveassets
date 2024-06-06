@@ -94,7 +94,7 @@ public class JAutoColumnTable extends JTable {
 	private final Map<Object, Integer> rowsWidth = new HashMap<>();
 	protected Program program;
 	private boolean autoResizeLock = false;
-	private final Set<Class<?>> disableColumnResizeCache = new HashSet<>();
+	private final Set<String> disableColumnResizeCache = new HashSet<>();
 	private boolean overwrite;
 
 	public JAutoColumnTable(final Program program, final TableModel tableModel) {
@@ -246,12 +246,12 @@ public class JAutoColumnTable extends JTable {
 		return columnsWidth;
 	}
 
-	public void disableColumnResizeCache(Class<?> columnClass) {
-		disableColumnResizeCache.add(columnClass);
+	public void disableColumnResizeCache(EnumTableColumn<?> column) {
+		disableColumnResizeCache.add(column.getColumnName());
 	}
 
-	public void enableColumnResizeCache(Class<?> columnClass) {
-		disableColumnResizeCache.remove(columnClass);
+	public void enableColumnResizeCache(EnumTableColumn<?> column) {
+		disableColumnResizeCache.remove(column.getColumnName());
 	}
 
 	private JTable getTable() {
@@ -412,6 +412,8 @@ public class JAutoColumnTable extends JTable {
 				renderer = getDefaultRenderer(getColumnClass(columnIndex));
 			}
 		}
+		String columnName = (String) column.getHeaderValue();
+		boolean useCache = !disableColumnResizeCache.contains(columnName);
 		//Rows width
 		final int rowCount = jTable.getRowCount();
 		for (int rowIndex = 0; rowIndex < rowCount; rowIndex++) {
@@ -419,7 +421,6 @@ public class JAutoColumnTable extends JTable {
 			if (cellValue == null) { //Ignore null
 				continue;
 			}
-			boolean useCache = !disableColumnResizeCache.contains(cellValue.getClass());
 			Integer savedWidth;
 			if (useCache) {
 				savedWidth = rowsWidth.get(cellValue);

@@ -184,19 +184,17 @@ public class TableCellRenderers {
 			Component component = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 			if (component instanceof JLabel) {
 				JLabel jLabel = (JLabel) component;
-				jLabel.setIcon(null);
-				jLabel.setIconTextGap(0);
-			}
-			if (object instanceof StockpileItem) {
-				StockpileItem stockpileItem = (StockpileItem) object;
-				if (stockpileItem.isEditable() && columnName.equals(StockpileTableFormat.COUNT_MINIMUM.getColumnName())) {
-					if (component instanceof JLabel) {
-						JLabel jLabel = (JLabel) component;
+				if (object instanceof StockpileItem) {
+					StockpileItem stockpileItem = (StockpileItem) object;
+					if (stockpileItem.isEditable() && columnName.equals(StockpileTableFormat.COUNT_MINIMUM.getColumnName())) {
 						jLabel.setIcon(Images.EDIT_EDIT_BACKGROUND.getIcon());
 						jLabel.setHorizontalTextPosition(JLabel.TRAILING);
 						jLabel.setIconTextGap(MINIMUM_ICON_TEXT_GAP);
+						return component;
 					}
 				}
+				jLabel.setIcon(null);
+				jLabel.setIconTextGap(0);
 			}
 			return component;
 		}

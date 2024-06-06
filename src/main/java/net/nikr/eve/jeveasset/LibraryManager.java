@@ -129,7 +129,7 @@ public class LibraryManager {
 			files.add("jna-5.6.0.jar");
 			files.add("jsr250-api-1.0.jar");
 			files.add("jsr305-3.0.2.jar");
-			files.add("flatlaf-1.6.4.jar");
+			files.add("flatlaf-3.4.1.jar");
 			files.add("kotlin-stdlib-jdk7-1.6.10.jar");
 			files.add("kotlin-stdlib-1.6.20.jar");
 			files.add("kotlin-stdlib-jdk8-1.6.10.jar");
@@ -137,8 +137,8 @@ public class LibraryManager {
 			files.add("EvalEx-2.7.jar");
 			files.add("picocli-4.6.2.jar");
 			//Native Mac GUI integration
-			files.add("svgSalamander-1.1.3.jar");
-			files.add("flatlaf-extras-2.4.jar");
+			files.add("jsvg-1.4.0.jar");
+			files.add("flatlaf-extras-3.4.1.jar");
 			//MP3
 			files.add("jlayer-1.0.2.jar");
 		}
