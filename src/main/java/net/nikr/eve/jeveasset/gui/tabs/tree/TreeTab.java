@@ -211,7 +211,7 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate {
 		//Table
 		jTable = new JTreeTable(program, tableModel);
 		jTable.setCellSelectionEnabled(true);
-		jTable.disableColumnResizeCache(HierarchyColumn.class);
+		jTable.disableColumnResizeCache(TreeTableFormat.NAME);
 		jTable.setRowHeight(22);
 		jTable.addMouseListener(listener);
 		//Sorting
