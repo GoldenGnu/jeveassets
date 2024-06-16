@@ -950,7 +950,7 @@
 					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>exec-maven-plugin</artifactId>
-						<version>1.4.0</version>
+						<version>3.3.0</version>
 						<executions>
 							<!-- jlink: JRE -->
 							<execution>
@@ -998,6 +998,8 @@
 										<argument>net.nikr.eve.jeveasset.Main</argument>
 										<argument>--icon</argument>
 										<argument>${project.build.jpackage.installer.icon}</argument>
+										<argument>--temp</argument>  
+										<argument>${project.build.directory}/temp-image</argument>
 										<!-- Generic Options -->
 										<argument>--verbose</argument>
 										<argument>--name</argument>
