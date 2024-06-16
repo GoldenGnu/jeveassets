@@ -998,19 +998,14 @@
 										<argument>net.nikr.eve.jeveasset.Main</argument>
 										<argument>--icon</argument>
 										<argument>${project.build.jpackage.installer.icon}</argument>
-										<argument>--temp</argument>  
-										<argument>${project.build.directory}/temp-image</argument>
 										<!-- Generic Options -->
 										<argument>--verbose</argument>
 										<argument>--name</argument>
 										<argument>jEveAssets</argument>
 										<argument>--app-version</argument>
-										<argument>6.1.2</argument>
-										<!--
 										<argument>${project.version}</argument>
-										-->
 										<argument>--copyright</argument>  
-										<argument>Copyright 2009-2019 Contributors (see credits.txt)</argument>
+										<argument>Copyright 2009-2024 Contributors (see credits.txt)</argument>
 										<argument>--description</argument>  
 										<argument>jEveAssets is an out-of-game asset manager for Eve-Online</argument>
 									</arguments>
