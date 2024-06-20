@@ -365,7 +365,7 @@
 				<version>2.0.2</version>
 				<executions>
 					<execution>
-						<id>upload-2-update</id>
+						<id>upload-update</id>
 						<phase>deploy</phase>
 						<goals>
 							<goal>upload</goal>
@@ -379,7 +379,7 @@
 						</configuration>
 					</execution>
 					<execution>
-						<id>upload-3-zip</id>
+						<id>upload-zip</id>
 						<phase>deploy</phase>
 						<goals>
 							<goal>upload</goal>
@@ -460,16 +460,16 @@
 			</plugin>
 		</plugins>
 		<extensions>
+			<extension>
+				<groupId>org.apache.maven.wagon</groupId>
+				<artifactId>wagon-ssh</artifactId>
+				<version>3.5.3</version>
+			</extension>
 			<!-- Enabling the use of FTP -->
 			<extension>
 				<groupId>org.apache.maven.wagon</groupId>
 				<artifactId>wagon-ftp</artifactId>
-				<version>3.5.2</version>
-			</extension>
-			<extension>
-				<groupId>org.apache.maven.wagon</groupId>
-				<artifactId>wagon-ssh</artifactId>
-				<version>3.5.2</version>
+				<version>3.5.3</version>
 			</extension>
 		</extensions>
 		<resources>
@@ -885,7 +885,7 @@
 						<version>2.0.2</version>
 						<executions>
 							<execution>
-								<id>upload-1-delete</id>
+								<id>upload-delete</id>
 								<phase>deploy</phase>
 								<goals>
 									<goal>sshexec</goal>
@@ -901,7 +901,7 @@
 								</configuration>
 							</execution>
 							<execution>
-								<id>upload-2-update</id>
+								<id>upload-update</id>
 								<phase>deploy</phase>
 								<goals>
 									<goal>upload</goal>
@@ -915,7 +915,7 @@
 								</configuration>
 							</execution>
 							<execution>
-								<id>upload-3-zip</id>
+								<id>upload-zip</id>
 								<phase>deploy</phase>
 								<goals>
 									<goal>upload</goal>
@@ -1159,7 +1159,7 @@
 						<version>2.0.2</version>
 						<executions>
 							<execution>
-								<id>upload-2-update</id>
+								<id>upload-update</id>
 								<phase>deploy</phase>
 								<goals>
 									<goal>upload</goal>
@@ -1173,7 +1173,7 @@
 								</configuration>
 							</execution>
 							<execution>
-								<id>upload-3-zip</id>
+								<id>upload-zip</id>
 								<phase>deploy</phase>
 								<goals>
 									<goal>upload</goal>
