@@ -885,6 +885,20 @@
 						<version>2.0.2</version>
 						<executions>
 							<execution>
+								<id>upload-update</id>
+								<phase>deploy</phase>
+								<configuration>
+									<skip>true</skip>
+								</configuration>
+							</execution>
+							<execution>
+								<id>upload-zip</id>
+								<phase>deploy</phase>
+								<configuration>
+									<skip>true</skip>
+								</configuration>
+							</execution>
+							<execution>
 								<id>upload-java8-delete</id>
 								<phase>deploy</phase>
 								<goals>
