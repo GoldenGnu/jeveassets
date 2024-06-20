@@ -885,7 +885,7 @@
 						<version>2.0.2</version>
 						<executions>
 							<execution>
-								<id>upload-delete</id>
+								<id>upload-1-delete</id>
 								<phase>deploy</phase>
 								<goals>
 									<goal>sshexec</goal>
@@ -901,7 +901,7 @@
 								</configuration>
 							</execution>
 							<execution>
-								<id>upload-update</id>
+								<id>upload-2-update</id>
 								<phase>deploy</phase>
 								<goals>
 									<goal>upload</goal>
@@ -915,7 +915,7 @@
 								</configuration>
 							</execution>
 							<execution>
-								<id>upload-zip</id>
+								<id>upload-3-zip</id>
 								<phase>deploy</phase>
 								<goals>
 									<goal>upload</goal>
