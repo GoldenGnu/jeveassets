@@ -1142,17 +1142,6 @@
 							</dependency>
 						</dependencies>
 					</plugin>
-				</plugins>
-			</build>
-		</profile>
-		<profile>
-			<id>upload</id>
-			<activation>
-				<activeByDefault>true</activeByDefault>
-				<jdk>17</jdk>
-			</activation>
-			<build>
-				<plugins>
 					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>wagon-maven-plugin</artifactId>
