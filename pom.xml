@@ -785,7 +785,7 @@
 			<id>jpackager-mac</id>
 			<activation>
 				<os>
-					<name>Mac OS X</name>
+					<family>mac</family>
 				</os>
 			</activation>
 			<properties>
@@ -799,7 +799,7 @@
 			<id>jpackager-unix</id>
 			<activation>
 				<os>
-					<name>Linux</name>
+					<family>unix</family>
 				</os>
 			</activation>
 			<properties>
@@ -1035,6 +1035,8 @@
 										<argument>${project.build.jpackage.installer.image}</argument>
 										<argument>--dest</argument>
 										<argument>${project.build.directory}/installer</argument>
+										<argument>--temp</argument>  
+										<argument>${project.build.directory}/temp-install</argument>
 										<argument>--resource-dir</argument>
 										<argument>install-resources</argument>
 										<!-- Generic Options -->
