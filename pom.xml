@@ -998,8 +998,6 @@
 										<argument>net.nikr.eve.jeveasset.Main</argument>
 										<argument>--icon</argument>
 										<argument>${project.build.jpackage.installer.icon}</argument>
-										<argument>--temp</argument>  
-										<argument>${project.build.directory}/temp-image</argument>
 										<!-- Generic Options -->
 										<argument>--verbose</argument>
 										<argument>--name</argument>
@@ -1037,6 +1035,8 @@
 										<argument>${project.build.jpackage.installer.image}</argument>
 										<argument>--dest</argument>
 										<argument>${project.build.directory}/installer</argument>
+										<argument>--temp</argument>  
+										<argument>${project.build.directory}/temp-install</argument>
 										<argument>--resource-dir</argument>
 										<argument>install-resources</argument>
 										<!-- Generic Options -->
