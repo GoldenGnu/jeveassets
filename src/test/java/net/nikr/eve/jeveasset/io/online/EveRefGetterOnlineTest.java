@@ -296,7 +296,7 @@ public class EveRefGetterOnlineTest extends TestUtil {
 		assertEquals((Long)645L, type.getTypeID());
 		assertEquals((Double)153900000.0, type.getBasePrice());
 		assertEquals((Double)750.0, type.getCapacity());
-		assertEquals(7, type.getDescription().size());
+		assertEquals(8, type.getDescription().size());
 		assertNotNull(type.getDescription().get("en"));
 		assertNotNull(type.getDogmaAttributes());
 		assertEquals(92, type.getDogmaAttributes().size());
@@ -318,7 +318,7 @@ public class EveRefGetterOnlineTest extends TestUtil {
 		assertEquals(6, type.getMasteries().get("0").size());
 		assertEquals((Long)96L, type.getMasteries().get("0").get(0));
 		assertEquals((Integer)1, type.getMetaGroupID());
-		assertEquals(7, type.getName().size());
+		assertEquals(8, type.getName().size());
 		assertEquals("Dominix", type.getName().get("en"));
 		assertEquals((Double)50000.0, type.getPackagedVolume());
 		assertEquals((Integer)1, type.getPortionSize());
