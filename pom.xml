@@ -950,7 +950,7 @@
 					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>exec-maven-plugin</artifactId>
-						<version>1.5.0</version>
+						<version>3.0.0</version>
 						<executions>
 							<!-- jlink: JRE -->
 							<execution>
@@ -1037,8 +1037,6 @@
 										<argument>${project.build.jpackage.installer.image}</argument>
 										<argument>--dest</argument>
 										<argument>${project.build.directory}/installer</argument>
-										<argument>--temp</argument>  
-										<argument>${project.build.directory}/temp-install</argument>
 										<argument>--resource-dir</argument>
 										<argument>install-resources</argument>
 										<!-- Generic Options -->
