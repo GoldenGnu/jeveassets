@@ -901,7 +901,7 @@
 								</configuration>
 							</execution>
 							<execution>
-								<id>upload-update</id>
+								<id>upload-java8-update</id>
 								<phase>deploy</phase>
 								<goals>
 									<goal>upload</goal>
@@ -915,7 +915,7 @@
 								</configuration>
 							</execution>
 							<execution>
-								<id>upload-zip</id>
+								<id>upload-java8-zip</id>
 								<phase>deploy</phase>
 								<goals>
 									<goal>upload</goal>
