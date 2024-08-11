@@ -185,6 +185,15 @@ public class EsiOwner extends AbstractOwner implements OwnerType {
 			return EsiScopes.CHARACTER_WALLET.isInScope(scopes);
 		}
 	}
+        
+        @Override
+	public boolean isClone() {
+		if (isCorporation()) {
+			return false; //Character Endpoint
+		} else {
+			return EsiScopes.CHARACTER_CLONE.isInScope(scopes);
+		}
+	}
 
 	@Override
 	public boolean isAccountBalance() {

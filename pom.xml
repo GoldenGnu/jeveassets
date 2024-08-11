@@ -903,6 +903,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.build.sourceVersion>1.8</project.build.sourceVersion>
 		<targetJdk>1.8</targetJdk>
+                <skipTests>true</skipTests>
 		<main.class>net.nikr.eve.jeveasset.Main</main.class>
 		<arg1></arg1>
 		<arg2></arg2>

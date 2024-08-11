@@ -27,6 +27,7 @@ import net.troja.eve.esi.auth.SsoScopes;
 public enum EsiScopes {
 
 	CHARACTER_ASSETS(SsoScopes.ESI_ASSETS_READ_ASSETS_V1, DialoguesAccount.get().scopeAssets(), ScopeType.CHARACTER),
+        CHARACTER_CLONE(SsoScopes.ESI_CLONES_READ_CLONES_V1, DialoguesAccount.get().scopeClones(), ScopeType.CHARACTER),
 	CHARACTER_WALLET(SsoScopes.ESI_WALLET_READ_CHARACTER_WALLET_V1, DialoguesAccount.get().scopeWallet(), ScopeType.CHARACTER),
 	CHARACTER_INDUSTRY_JOBS(SsoScopes.ESI_INDUSTRY_READ_CHARACTER_JOBS_V1, DialoguesAccount.get().scopeIndustryJobs(), ScopeType.CHARACTER),
 	CHARACTER_MARKET_ORDERS(SsoScopes.ESI_MARKETS_READ_CHARACTER_ORDERS_V1, DialoguesAccount.get().scopeMarketOrders(), ScopeType.CHARACTER),
