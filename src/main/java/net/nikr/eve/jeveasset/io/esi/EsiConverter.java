@@ -57,6 +57,7 @@ import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import net.nikr.eve.jeveasset.io.shared.DataConverter;
 import net.troja.eve.esi.model.CharacterAssetsResponse;
 import net.troja.eve.esi.model.CharacterBlueprintsResponse;
+import net.troja.eve.esi.model.CharacterClonesResponse;
 import net.troja.eve.esi.model.CharacterContractsItemsResponse;
 import net.troja.eve.esi.model.CharacterContractsResponse;
 import net.troja.eve.esi.model.CharacterIndustryJobsResponse;
@@ -130,6 +131,10 @@ public class EsiConverter extends DataConverter {
 
 	public static MyAsset toAssetsShip(CharacterShipResponse shipType, CharacterLocationResponse shipLocation, OwnerType owner) {
 		return toMyAsset(new RawAsset(shipType, shipLocation), owner, new ArrayList<>());
+	}
+        
+        public static MyAsset toAssetsImplant(Integer implantType, Long implantLocation, OwnerType owner) {
+		return toMyAsset(new RawAsset(implantType, implantLocation), owner, new ArrayList<>());
 	}
 
 	public static MyAsset toAssetsPlanetaryInteraction(CharacterPlanetsResponse planet, PlanetPin pin, OwnerType owner) {

@@ -41,6 +41,7 @@ public abstract class General extends Bundle {
 	public abstract String uncaughtErrorMessage();
 	public abstract String error();
 	public abstract String contractIncluded();
+        public abstract String pluggedImplant();
 	public abstract String contractExcluded();
 	public abstract String industryJobFlag();
 	public abstract String marketOrderSellFlag();

@@ -80,6 +80,26 @@ public enum AccountTableFormat implements EnumTableColumn<OwnerType> {
 			return new YesNo(from.isCorporation());
 		}
 	},
+        CLONES(YesNo.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return DialoguesAccount.get().tableFormatClones();
+		}
+		@Override
+		public Object getColumnValue(final OwnerType from) {
+			return new YesNo(from.isClones());
+		}
+	},
+        IMPLANTS(YesNo.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return DialoguesAccount.get().tableFormatImplants();
+		}
+		@Override
+		public Object getColumnValue(final OwnerType from) {
+			return new YesNo(from.isImplants());
+		}
+	},
 	ASSET_LIST(YesNo.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
