@@ -105,16 +105,16 @@ public class EveApiOwner extends DeprecatedOwner implements OwnerType {
 	public boolean isShip() {
 		return false; //Not supported by the XML API
 	}
-        
-        @Override
-        public boolean isClones() {
-                return false; //Not supported by the XML API
-        }
-        
-        @Override
-        public boolean isImplants() {
-                return false; //Not supported by the XML API
-        }
+	
+	@Override
+	public boolean isClones() {
+		return false; //Not supported by the XML API
+	}
+	
+	@Override
+	public boolean isImplants() {
+		return false; //Not supported by the XML API
+	}
 
 	@Override
 	public boolean isOpenWindows() {

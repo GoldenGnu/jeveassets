@@ -80,7 +80,7 @@ public enum AccountTableFormat implements EnumTableColumn<OwnerType> {
 			return new YesNo(from.isCorporation());
 		}
 	},
-        CLONES(YesNo.class, GlazedLists.comparableComparator()) {
+	CLONES(YesNo.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
 			return DialoguesAccount.get().tableFormatClones();
@@ -90,7 +90,7 @@ public enum AccountTableFormat implements EnumTableColumn<OwnerType> {
 			return new YesNo(from.isClones());
 		}
 	},
-        IMPLANTS(YesNo.class, GlazedLists.comparableComparator()) {
+	IMPLANTS(YesNo.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
 			return DialoguesAccount.get().tableFormatImplants();

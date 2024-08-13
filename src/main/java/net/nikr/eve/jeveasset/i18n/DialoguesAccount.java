@@ -77,8 +77,8 @@ public abstract class DialoguesAccount extends Bundle {
 	public abstract String workaroundLabel();
 	public abstract String workaroundCheckbox();
 	public abstract String scopeAssets();
-        public abstract String scopeClones();
-        public abstract String scopeImplants();
+	public abstract String scopeClones();
+	public abstract String scopeImplants();
 	public abstract String scopeWallet();
 	public abstract String scopeBlueprints();
 	public abstract String scopeBookmarks();
@@ -147,8 +147,8 @@ public abstract class DialoguesAccount extends Bundle {
 	public abstract String migrate();
 
 	public abstract String tableFormatName();
-        public abstract String tableFormatClones();
-        public abstract String tableFormatImplants();
+	public abstract String tableFormatClones();
+	public abstract String tableFormatImplants();
 	public abstract String tableFormatCorporation();
 	public abstract String tableFormatAssetList();
 	public abstract String tableFormatAccountBalance();

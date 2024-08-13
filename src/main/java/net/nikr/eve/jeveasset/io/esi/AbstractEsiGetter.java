@@ -278,10 +278,10 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner> {
 	protected UniverseApi getUniverseApiAuth() {
 		return owner.getUniverseApiAuth();
  	}
-        
-        public ClonesApi getClonesApiAuth() {
-                return owner.getClonesApiAuth();
-        }
+	
+	public ClonesApi getClonesApiAuth() {
+		return owner.getClonesApiAuth();
+	}
 
 	public ContractsApi getContractsApiAuth() {
 		return owner.getContractsApiAuth();

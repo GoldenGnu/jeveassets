@@ -846,7 +846,7 @@ public class UpdateDialog extends JDialogCentered {
 					updates.add(new EsiLocationsGetter(this, esiOwner));
 					updates.add(new EsiShipGetter(this, esiOwner, assetNextUpdate.getOrDefault(esiOwner, Settings.getNow())));
 					updates.add(new EsiPlanetaryInteractionGetter(this, esiOwner, assetNextUpdate.getOrDefault(esiOwner, Settings.getNow())));
-                                        updates.add(new EsiClonesGetter(this, esiOwner, assetNextUpdate.getOrDefault(esiOwner, Settings.getNow())));
+					updates.add(new EsiClonesGetter(this, esiOwner, assetNextUpdate.getOrDefault(esiOwner, Settings.getNow())));
 				}
 			}
 			updates.add(new EsiFactionWarfareGetter(this));

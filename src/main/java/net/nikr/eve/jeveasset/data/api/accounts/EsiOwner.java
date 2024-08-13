@@ -56,7 +56,7 @@ public class EsiOwner extends AbstractOwner implements OwnerType {
 	private final MarketApi marketApi = new MarketApi(apiClient);
 	private final IndustryApi industryApi = new IndustryApi(apiClient);
 	private final CharacterApi characterApi = new CharacterApi(apiClient);
-        private final ClonesApi clonesApi = new ClonesApi(apiClient);
+	private final ClonesApi clonesApi = new ClonesApi(apiClient);
 	private final AssetsApi assetsApi = new AssetsApi(apiClient);
 	private final WalletApi walletApi = new WalletApi(apiClient);
 	private final UniverseApi universeApi = new UniverseApi(apiClient);
@@ -187,8 +187,8 @@ public class EsiOwner extends AbstractOwner implements OwnerType {
 			return EsiScopes.CHARACTER_WALLET.isInScope(scopes);
 		}
 	}
-        
-        @Override
+	
+	@Override
 	public boolean isClones() {
 		if (isCorporation()) {
 			return false; //Character Endpoint
@@ -196,8 +196,8 @@ public class EsiOwner extends AbstractOwner implements OwnerType {
 			return EsiScopes.CHARACTER_CLONE.isInScope(scopes);
 		}
 	}
-        
-        @Override
+	
+	@Override
 	public boolean isImplants() {
 		if (isCorporation()) {
 			return false; //Character Endpoint
@@ -417,10 +417,10 @@ public class EsiOwner extends AbstractOwner implements OwnerType {
 	public UniverseApi getUniverseApiAuth() {
 		return universeApi;
 	}
-        
-        public ClonesApi getClonesApiAuth() {
-                return clonesApi;
-        }
+	
+	public ClonesApi getClonesApiAuth() {
+		return clonesApi;
+	}
 
 	public ContractsApi getContractsApiAuth() {
 		return contractsApi;

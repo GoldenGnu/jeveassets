@@ -64,49 +64,49 @@ public class EsiClonesGetter extends AbstractEsiGetter {
 				return getClonesApiAuth().getCharactersCharacterIdImplantsWithHttpInfo((int)owner.getOwnerID(), DATASOURCE, null, null);
 			}
 		});
-                //Get Location
+		//Get Location
 		CharacterLocationResponse characterLocation = update(DEFAULT_RETRIES, new EsiHandler<CharacterLocationResponse>() {
 			@Override
 			public ApiResponse<CharacterLocationResponse> get() throws ApiException {
 				return getLocationApiAuth().getCharactersCharacterIdLocationWithHttpInfo((int)owner.getOwnerID(), DATASOURCE, null, null);
 			}
 		});
-                Long activeCloneLocation = RawConverter.toLocationID(characterLocation);
-                
-		//Create assets               
-                List<MyAsset> implants = new ArrayList<>();
-                List<Clone> jumpClones = jumpClonesResponse.getJumpClones();
-                
-                for (Clone clone : jumpClones){
-                        List<Integer> cloneImplants = clone.getImplants();
-                        Long cloneLocation = clone.getLocationId();
-                        for (Integer implant : cloneImplants){
-                                MyAsset implantAsset = EsiConverter.toAssetsImplant(implant, cloneLocation, owner);
-                                implants.add(implantAsset);
-                        }
-                       
-                }
-                
-                for (Integer implant : activeClone){
-                        MyAsset activeCloneImplant = EsiConverter.toAssetsImplant(implant, activeCloneLocation, owner);
-                        implants.add(activeCloneImplant);
-                }
-                
-                
+		Long activeCloneLocation = RawConverter.toLocationID(characterLocation);
+		
+		//Create assets	       
+		List<MyAsset> implants = new ArrayList<>();
+		List<Clone> jumpClones = jumpClonesResponse.getJumpClones();
+		
+		for (Clone clone : jumpClones){
+			List<Integer> cloneImplants = clone.getImplants();
+			Long cloneLocation = clone.getLocationId();
+			for (Integer implant : cloneImplants){
+				MyAsset implantAsset = EsiConverter.toAssetsImplant(implant, cloneLocation, owner);
+				implants.add(implantAsset);
+			}
+		       
+		}
+		
+		for (Integer implant : activeClone){
+			MyAsset activeCloneImplant = EsiConverter.toAssetsImplant(implant, activeCloneLocation, owner);
+			implants.add(activeCloneImplant);
+		}
+		
+		
 		//Clear out implants
 		List<MyAsset> assets;
 		synchronized (owner) {
 			assets = new ArrayList<>(owner.getAssets());
 		}
 		List<MyAsset> existingImplants = assets.stream().filter(asset -> "Plugged in Implant".equals(asset.getFlag())).collect(Collectors.toList());
-                if (!existingImplants.isEmpty()) {
-                        owner.removeAssets(existingImplants);
-                }
-                
-                //Reload Implants
+		if (!existingImplants.isEmpty()) {
+			owner.removeAssets(existingImplants);
+		}
+		
+		//Reload Implants
 		for (MyAsset implant : implants){
-                        owner.addAsset(implant);
-                }
+			owner.addAsset(implant);
+		}
 	}
 
 	/**
