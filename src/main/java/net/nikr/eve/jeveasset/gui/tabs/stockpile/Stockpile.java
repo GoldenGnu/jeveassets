@@ -888,13 +888,21 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 						continue; //Do not match - try next filter
 					}
 				 //Jobs
-				} else if (industryJob != null) { //Copying in progress (not delivered to assets)
-					if (runs && typeID < 0) {
+				} else if (industryJob != null) {
+					if (typeID < 0) { //Copying in progress (not delivered to assets)
 						if (filter.isJobs() && industryJob.isCopying() && industryJob.isNotDeliveredToAssets()) {
-							if (add) { //Match
-								jobsCountNow = jobsCountNow + ((long)industryJob.getRuns() * (long)industryJob.getLicensedRuns());
-							} else {
-								count = count + ((long)industryJob.getRuns() * (long)industryJob.getLicensedRuns());
+							if (runs) { //Runs
+								if (add) { //Match
+									jobsCountNow = jobsCountNow + ((long)industryJob.getRuns() * (long)industryJob.getLicensedRuns());
+								} else {
+									count = count + ((long)industryJob.getRuns() * (long)industryJob.getLicensedRuns());
+								}
+							} else { //BPC
+								if (add) { //Match
+									jobsCountNow = jobsCountNow + (long)industryJob.getRuns();
+								} else {
+									count = count + (long)industryJob.getRuns();
+								}
 							}
 						}
 						//Manufacturing in progress (not delivered to assets)
