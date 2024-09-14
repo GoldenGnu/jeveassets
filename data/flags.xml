@@ -139,4 +139,6 @@
     <row flagid="182" flagname="SpecializedAsteroidHold" flagtext="Specialized Asteroid Hold"/>
     <row flagid="183" flagname="MobileDepot" flagtext="Mobile Depot"/>
     <row flagid="184" flagname="CorpProjectsHangar" flagtext="Corporation Projects Hangar "/>
+    <row flagid="185" flagname="ColonyResourcesHold" flagtext="Infrastructure Hold"/>
+    <row flagid="186" flagname="MoonMaterialBay" flagtext="Moon Material Bay"/>
 </rows>
