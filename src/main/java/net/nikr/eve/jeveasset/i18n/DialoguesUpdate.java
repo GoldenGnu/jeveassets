@@ -71,7 +71,7 @@ public abstract class DialoguesUpdate extends Bundle {
 	public abstract String mining();
 	public abstract String containerLogs();
 	public abstract String structures();
-	public abstract String publicMarkerOrders();
+	public abstract String publicMarketOrders();
 	public abstract String step1();
 	public abstract String step2();
 	public abstract String step3();

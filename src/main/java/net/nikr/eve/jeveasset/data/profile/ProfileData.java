@@ -453,7 +453,7 @@ public class ProfileData {
 			if (!owner.isShowOwner()) {
 				continue;
 			}
-			//Marker Orders
+			//Market Orders
 			//If owner is corporation overwrite the character orders (to use the "right" owner)
 			if (owner.isCorporation()) {
 				marketOrders.addAll(owner.getMarketOrders());
