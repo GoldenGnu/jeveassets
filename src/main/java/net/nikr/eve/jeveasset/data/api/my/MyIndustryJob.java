@@ -283,16 +283,16 @@ public class MyIndustryJob extends RawIndustryJob implements Comparable<MyIndust
 		return getStatus() == IndustryJobStatus.DELIVERED
 				|| getStatus() == IndustryJobStatus.CANCELLED
 				|| getStatus() == IndustryJobStatus.REVERTED
-				|| getStatus() == IndustryJobStatus.ARCHIVED
+				|| getStatus() == IndustryJobStatus.ARCHIVED //Status is unknown -> default to done > true
 				;
 	}
 
-
 	public final boolean isNotDeliveredToAssets() {
-		return owner.getAssetLastUpdate() == null //if null -> never updated -> not delivered to assets -> true
+		return getStatus() != IndustryJobStatus.ARCHIVED //if ARCHIVED  -> unknown if delivered or not -> false
+				&& (owner.getAssetLastUpdate() == null //if null -> never updated -> not delivered to assets -> true
 				|| getCompletedDate() == null //if null -> not completed -> not delivered to assets -> true
 				|| owner.getAssetLastUpdate().before(getCompletedDate() //if assets last updated before completed date -> not delivered to assets -> true
-				);
+				));
 	}
 
 	public final boolean isRemovedFromAssets() {
