@@ -488,7 +488,7 @@ public class MarketOrdersTab extends JMainTabPrimary {
 		}
 		final Date currentUpdate = Settings.get().getPublicMarketOrdersNextUpdate();
 		OutbidProcesserOutput output = new OutbidProcesserOutput();
-		final PublicMarkerOrdersUpdateTask updateTask = new PublicMarkerOrdersUpdateTask(input, output);
+		final PublicMarketOrdersUpdateTask updateTask = new PublicMarketOrdersUpdateTask(input, output);
 		TaskDialog taskDialog = new TaskDialog(program, updateTask, false, false, false, StatusPanel.UpdateType.PUBLIC_MARKET_ORDERS, new TaskDialog.TasksCompletedAdvanced() {
 			@Override
 			public void tasksCompleted(TaskDialog taskDialog) {
@@ -721,13 +721,13 @@ public class MarketOrdersTab extends JMainTabPrimary {
 		}
 	}
 
-	private static class PublicMarkerOrdersUpdateTask extends UpdateTask {
+	private static class PublicMarketOrdersUpdateTask extends UpdateTask {
 
 		private final OutbidProcesserInput input;
 		private final OutbidProcesserOutput output;
 
-		public PublicMarkerOrdersUpdateTask(OutbidProcesserInput input, OutbidProcesserOutput output) {
-			super(DialoguesUpdate.get().publicMarkerOrders());
+		public PublicMarketOrdersUpdateTask(OutbidProcesserInput input, OutbidProcesserOutput output) {
+			super(DialoguesUpdate.get().publicMarketOrders());
 			this.input = input;
 			this.output = output;
 		}
