@@ -40,6 +40,7 @@ import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.api.raw.RawAsset;
 import net.nikr.eve.jeveasset.data.api.raw.RawContract;
+import net.nikr.eve.jeveasset.data.api.raw.RawIndustryJob.IndustryJobStatus;
 import net.nikr.eve.jeveasset.data.api.raw.RawJournal;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder.MarketOrderState;
@@ -69,6 +70,10 @@ public class DataConverterTest extends TestUtil {
 			industryJob.setStationID(options.getLocationTypeEveApi());
 			industryJob.setCompletedDate(new Date(date.getTime() + 1L));
 			List<MyAsset> assets = DataConverter.assetIndustryJob(Collections.singletonList(industryJob), true, true);
+			if (options.getIndustryJobStatusRaw() == IndustryJobStatus.ARCHIVED) {
+				assertTrue(assets.isEmpty());
+				continue;
+			}
 			assertFalse(assets.isEmpty());
 
 			MyAsset asset = assets.get(0);
