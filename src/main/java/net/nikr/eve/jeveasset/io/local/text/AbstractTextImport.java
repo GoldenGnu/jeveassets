@@ -22,8 +22,10 @@ package net.nikr.eve.jeveasset.io.local.text;
 
 import java.util.HashMap;
 import java.util.Map;
+import javax.swing.Icon;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.StaticData;
+import net.nikr.eve.jeveasset.gui.shared.components.JTextDialog.TextImport;
 
 
 public abstract class AbstractTextImport {
@@ -51,6 +53,8 @@ public abstract class AbstractTextImport {
 
 	protected abstract Map<String, Double> doImport(String data);
 	public abstract String getExample();
+	public abstract Icon getIcon();
+	public abstract String getType();
 
 	public String getName() {
 		return name;

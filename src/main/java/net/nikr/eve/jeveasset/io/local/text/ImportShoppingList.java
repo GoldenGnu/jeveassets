@@ -27,6 +27,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.swing.Icon;
+import net.nikr.eve.jeveasset.gui.images.Images;
+import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 
 public class ImportShoppingList extends AbstractTextImport {
@@ -55,6 +58,16 @@ public class ImportShoppingList extends AbstractTextImport {
 				+ "Total m3 to be hauled: 2.648,90\n"
 				+ "Estimated market value: 256.613,00 isk"
 				;
+	}
+
+	@Override
+	public Icon getIcon() {
+		return Images.STOCKPILE_SHOPPING_LIST.getIcon();
+	}
+
+	@Override
+	public String getType() {
+		return GuiShared.get().importStockpilesShoppingList();
 	}
 
 	@Override

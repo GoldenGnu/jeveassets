@@ -21,9 +21,11 @@
 package net.nikr.eve.jeveasset.io.local.text;
 
 import java.util.Map;
+import javax.swing.Icon;
+import net.nikr.eve.jeveasset.gui.shared.components.JTextDialog.TextImport;
 
 
-public enum TextImportType {
+public enum TextImportType implements TextImport {
 	ISK_PER_HOUR(new ImportIskPerHour()),
 	STCOKPILE_SHOPPING_LIST(new ImportShoppingList()),
 	EVE_MULTIBUY(new ImportEveMultibuy()),
@@ -35,8 +37,19 @@ public enum TextImportType {
 		this.textImport = textImport;
 	}
 
+	@Override
 	public String getExample() {
 		return textImport.getExample();
+	}
+
+	@Override
+	public Icon getIcon() {
+		return textImport.getIcon();
+	}
+
+	@Override
+	public String getType() {
+		return textImport.getType();
 	}
 
 	public String getName() {
@@ -45,5 +58,5 @@ public enum TextImportType {
 
 	public Map<Integer, Double> importText(String text) {
 		return textImport.importText(text);
-	}
+	}	
 }

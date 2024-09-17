@@ -25,6 +25,7 @@ import java.util.Map;
 import javax.swing.JOptionPane;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.gui.shared.components.JTextDialog;
+import net.nikr.eve.jeveasset.gui.shared.components.JTextDialog.TextReturn;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 import net.nikr.eve.jeveasset.io.local.text.TextImportType;
 
@@ -39,36 +40,38 @@ public class TextImport {
 		jTextDialog = new JTextDialog(program.getMainWindow().getFrame());
 	}
 
-	public void importText(TextImportType type, TextImportHandler handler) {
-		importText("", type, handler);
+	public void importText(TextImportType[] types, TextImportHandler handler) {
+		importText("", types, null, handler);
 	}
 
-	private void importText(String text, TextImportType type, TextImportHandler handler) {
+	private void importText(String text, TextImportType[] types, TextImportType selected, TextImportHandler handler) {
 		//Get string from clipboard
-		text = jTextDialog.importText(text, type.getExample());
-		if (text == null) {
+		TextReturn<TextImportType> textReturn = jTextDialog.importText(text, types, selected);
+		String importText = textReturn.getText();
+		TextImportType importType = textReturn.getType();
+		if (importText == null || importType == null) {
 			return; //Cancelled
 		}
 
 		//Validate Input
-		text = text.trim();
-		if (text.isEmpty()) { //Empty sting
+		importText = importText.trim();
+		if (importText.isEmpty()) { //Empty sting
 			JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), GuiShared.get().textEmpty(), GuiShared.get().textImport(), JOptionPane.PLAIN_MESSAGE);
 			return;
 		}
 
-		Map<Integer, Double> data = type.importText(text);
+		Map<Integer, Double> data = importType.importText(importText);
 		//Validate Output
 		if (data == null || data.isEmpty()) {
 			JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), GuiShared.get().textInvalid(), GuiShared.get().textImport(), JOptionPane.PLAIN_MESSAGE);
-			importText(text, type, handler); //Again!
+			importText(importText, types, importType, handler); //Again!
 			return;
 		}
 		//Add items
-		handler.addItems(data);
+		handler.addItems(data, importType);
 	}
 
 	public static interface TextImportHandler {
-		public void addItems(Map<Integer, Double> data);
+		public void addItems(Map<Integer, Double> data, TextImportType type);
 	}
 }
