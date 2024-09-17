@@ -24,9 +24,12 @@ package net.nikr.eve.jeveasset.io.local.text;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
+import javax.swing.Icon;
+import net.nikr.eve.jeveasset.gui.images.Images;
+import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 
-public class ImportIskPerHour extends AbstractTextImport{
+public class ImportIskPerHour extends AbstractTextImport {
 	private static final Integer MATERIAL = 0;
 	private static final Integer QUANTITY = 1;
 
@@ -62,6 +65,16 @@ public class ImportIskPerHour extends AbstractTextImport{
 				+ "Material; Quantity; Cost Per Item; Total Cost; Location\n"
 				+ "Tritanium; 2932280; 2; 5864560\n"
 				;
+	}
+
+	@Override
+	public Icon getIcon() {
+		return Images.TOOL_VALUES.getIcon();
+	}
+
+	@Override
+	public String getType() {
+		return GuiShared.get().importIskPerHour();
 	}
 
 	@Override
