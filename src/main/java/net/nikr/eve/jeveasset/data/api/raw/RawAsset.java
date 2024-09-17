@@ -163,6 +163,7 @@ public class RawAsset {
 		isSingleton = asset.isSingleton;
 		itemId = asset.itemId;
 		itemFlag = asset.itemFlag;
+		locationFlag = asset.locationFlag;
 		locationId = asset.locationId;
 		quantity = asset.quantity;
 		typeId = asset.typeId;

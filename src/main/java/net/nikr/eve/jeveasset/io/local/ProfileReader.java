@@ -810,6 +810,7 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 			}
 		}
 		String locationFlagString = getStringOptional(node, "flagstring");
+
 		rawAsset.setItemID(itemId);
 		rawAsset.setItemFlag(RawConverter.toFlag(flagID, locationFlagString));
 		rawAsset.setLocationFlagString(locationFlagString);
@@ -849,6 +850,7 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 
 		blueprint.setItemID(itemID);
 		blueprint.setItemFlag(RawConverter.toFlag(flagID, locationFlagString));
+		blueprint.setLocationFlagString(locationFlagString);
 		blueprint.setLocationID(locationID);
 		blueprint.setMaterialEfficiency(materialEfficiency);
 		blueprint.setQuantity(quantity);
