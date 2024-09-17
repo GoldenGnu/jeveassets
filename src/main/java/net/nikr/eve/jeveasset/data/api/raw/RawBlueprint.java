@@ -55,7 +55,7 @@ public class RawBlueprint {
 	private RawBlueprint(RawBlueprint blueprint) {
 		itemId = blueprint.itemId;
 		itemFlag = blueprint.itemFlag;
-		locationFlag = blueprint.getLocationFlagString();
+		locationFlag = blueprint.locationFlag;
 		locationId = blueprint.locationId;
 		materialEfficiency = blueprint.materialEfficiency;
 		quantity = blueprint.quantity;
