@@ -24,6 +24,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.swing.DefaultListModel;
@@ -157,11 +158,11 @@ public class JRouteEditDialog extends JDialogCentered {
 			Route last = null;
 			for (Route route : list) {
 				if (last != null) {
-					jumps = jumps + distanceBetween(last, route);
+					jumps = jumps + distanceBetween(systemCache, filteredGraph, last, route);
 				}
 				last = route;
 			}
-			jumps = jumps + distanceBetween(last, list.get(0));
+			jumps = jumps + distanceBetween(systemCache, filteredGraph, last, list.get(0));
 			calculateInfo(jumps);
 			return true;
 		} catch (DisconnectedGraphException ex) {
@@ -186,11 +187,12 @@ public class JRouteEditDialog extends JDialogCentered {
 		jJumps.setText(TabsRouting.get().resultEditJumps(jumps));
 	}
 
-	private List<SolarSystem> routeBetween(Route from, Route to) {
+	private static List<SolarSystem> routeBetween(Map<Long, SolarSystem> systemCache, Graph<SolarSystem> filteredGraph, Route from, Route to) {
 		return filteredGraph.routeBetween(systemCache.get(from.getSystemID()), systemCache.get(to.getSystemID()));
 	}
 
-	private int distanceBetween(Route from, Route to) {
+
+	private static int distanceBetween(Map<Long, SolarSystem> systemCache, Graph<SolarSystem> filteredGraph, Route from, Route to) {
 		return filteredGraph.distanceBetween(systemCache.get(from.getSystemID()), systemCache.get(to.getSystemID()));
 	}
 
@@ -238,26 +240,34 @@ public class JRouteEditDialog extends JDialogCentered {
 			list.add(model.get(i));
 		}
 		try {
-			List<List<SolarSystem>> routes = new ArrayList<>();
-			int jumps = 0;
-			Route last = null;
-			for (Route route : list) {
-				if (last != null) {
-					jumps = jumps + distanceBetween(last, route);
-					routes.add(routeBetween(last, route));
-				}
-				last = route;
-			}
-			jumps = jumps + distanceBetween(last, list.get(0));
-			routes.add(routeBetween(last, list.get(0)));
-			returnResult = new RouteResult(routes, routeResult.getStations(), routeResult.getWaypoints(), TabsRouting.get().resultEdited(), 0, jumps, program.getRoutingTab().getAvoidString(), program.getRoutingTab().getSecurityString());
+			returnResult = makeRouteResult(program, systemCache, filteredGraph, list, TabsRouting.get().resultEdited(), routeResult.getStations());
 		} catch (DisconnectedGraphException ex) {
 			returnResult = null;
 		}
 		setVisible(false);
 	}
 
-	private static class Route implements Serializable {
+	public static RouteResult makeRouteResult(Program program, Map<Long, SolarSystem> systemCache, Graph<SolarSystem> filteredGraph, List<Route> list, String algorithmName) throws DisconnectedGraphException {
+		return makeRouteResult(program, systemCache, filteredGraph, list, algorithmName, new HashMap<>());
+	}
+
+	private static RouteResult makeRouteResult(Program program, Map<Long, SolarSystem> systemCache, Graph<SolarSystem> filteredGraph, List<Route> list, String algorithmName, Map<Long, List<SolarSystem>> stations) throws DisconnectedGraphException {
+		List<List<SolarSystem>> routes = new ArrayList<>();
+		int jumps = 0;
+		Route last = null;
+		for (Route route : list) {
+			if (last != null) {
+				jumps = jumps + distanceBetween(systemCache, filteredGraph, last, route);
+				routes.add(routeBetween(systemCache, filteredGraph, last, route));
+			}
+			last = route;
+		}
+		jumps = jumps + distanceBetween(systemCache, filteredGraph, last, list.get(0));
+		routes.add(routeBetween(systemCache, filteredGraph, last, list.get(0)));
+		return new RouteResult(routes, stations, routes.size(), algorithmName, 0, jumps, program.getRoutingTab().getAvoidString(), program.getRoutingTab().getSecurityString());
+	}
+
+	public static class Route implements Serializable {
 		private final long systemID;
 		private final String system;
 
