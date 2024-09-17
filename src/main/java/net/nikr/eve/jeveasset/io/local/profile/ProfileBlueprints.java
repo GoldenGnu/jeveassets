@@ -111,6 +111,7 @@ public class ProfileBlueprints extends ProfileTable {
 
 				blueprint.setItemID(itemID);
 				blueprint.setItemFlag(RawConverter.toFlag(flagID, locationFlagString));
+				blueprint.setLocationFlagString(locationFlagString);
 				blueprint.setLocationID(locationID);
 				blueprint.setMaterialEfficiency(materialEfficiency);
 				blueprint.setQuantity(quantity);
