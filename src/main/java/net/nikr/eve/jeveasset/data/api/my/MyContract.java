@@ -185,13 +185,13 @@ public class MyContract extends RawContract implements LocationsType, OwnersType
 	}
 
 	public boolean isOpen() {
-		//in ESI, not expired, and open
-		return esi && !isExpired() && getStatus() == ContractStatus.OUTSTANDING;
+		//in ESI (if not in ESI, the status is unknown) and open (Note: expired isn't a contract completion)
+		return esi && getStatus() == ContractStatus.OUTSTANDING;
 	}
 
 	public boolean isInProgress() {
-		//in ESI, not expired, and in progress
-		return esi && !isExpired() && getStatus() == ContractStatus.IN_PROGRESS;
+		//in ESI (if not in ESI, the status is unknown) and open (Note: expired isn't a contract completion)
+		return esi && getStatus() == ContractStatus.IN_PROGRESS;
 	}
 
 	public boolean isDeleted() {
