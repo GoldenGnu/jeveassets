@@ -58,10 +58,6 @@ public abstract class TabsReprocessed extends Bundle {
 	public abstract String expand();
 	public abstract String grandTotal();
 	public abstract String importButton();
-	public abstract String importEft();
-	public abstract String importEveMultibuy();
-	public abstract String importIskPerHour();
-	public abstract String importStockpilesShoppingList();
 	public abstract String multiplierSign();
 	public abstract String price();
 	public abstract String remove();
