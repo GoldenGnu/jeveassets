@@ -98,11 +98,15 @@ public abstract class GuiShared extends Bundle {
 	public abstract String helpStockpile();
 	public abstract String helpOpenManual(String title);
 	public abstract String helpOpenManualTitle();
+	public abstract String importEft();
+	public abstract String importEveMultibuy();
+	public abstract String importIskPerHour();
 	public abstract String importOptions();
 	public abstract String importOptionsMerge();
 	public abstract String importOptionsOverwrite();
 	public abstract String importOptionsRename();
 	public abstract String importOptionsSkip();
+	public abstract String importStockpilesShoppingList();
 	public abstract String industry();
 	public abstract String invalidMsg();
 	public abstract String invalidTitle();

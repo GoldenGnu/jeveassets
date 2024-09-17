@@ -129,11 +129,8 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		EDIT_GROUPS,
 		SHOPPING_LIST_MULTI,
 		SHOW_HIDE,
-		IMPORT_EFT,
-		IMPORT_ISK_PER_HOUR,
-		IMPORT_MULTIBUY,
-		IMPORT_SHOPPING_LIST,
 		IMPORT_TEXT,
+		IMPORT_XML_TEXT,
 		IMPORT_XML,
 		IMPORT_EVE_XML_FIT,
 		EXPORT_TEXT,
@@ -400,30 +397,15 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		JDropDownButton jImport = new JDropDownButton(TabsStockpile.get().importButton(), Images.EDIT_IMPORT.getIcon());
 		jToolBar.addButton(jImport);
 
-		JMenuItem jImportEFT = new JMenuItem(TabsStockpile.get().importEft(), Images.TOOL_SHIP_LOADOUTS.getIcon());
-		jImportEFT.setActionCommand(StockpileAction.IMPORT_EFT.name());
-		jImportEFT.addActionListener(listener);
-		jImport.add(jImportEFT);
-
-		JMenuItem jImportIskPerHour = new JMenuItem(TabsStockpile.get().importIskPerHour(), Images.TOOL_VALUES.getIcon());
-		jImportIskPerHour.setActionCommand(StockpileAction.IMPORT_ISK_PER_HOUR.name());
-		jImportIskPerHour.addActionListener(listener);
-		jImport.add(jImportIskPerHour);
-
-		JMenuItem jImportEveMultibuy = new JMenuItem(TabsStockpile.get().importEveMultibuy(), Images.MISC_EVE.getIcon());
-		jImportEveMultibuy.setActionCommand(StockpileAction.IMPORT_MULTIBUY.name());
-		jImportEveMultibuy.addActionListener(listener);
-		jImport.add(jImportEveMultibuy);
+		JMenuItem jImportTextFormats = new JMenuItem(TabsStockpile.get().importText(), Images.STOCKPILE_SHOPPING_LIST.getIcon());
+		jImportTextFormats.setActionCommand(StockpileAction.IMPORT_TEXT.name());
+		jImportTextFormats.addActionListener(listener);
+		jImport.add(jImportTextFormats);
 
 		JMenuItem jImportEveXmlFit = new JMenuItem(TabsStockpile.get().importEveXml(), Images.MISC_XML.getIcon());
 		jImportEveXmlFit.setActionCommand(StockpileAction.IMPORT_EVE_XML_FIT.name());
 		jImportEveXmlFit.addActionListener(listener);
 		jImport.add(jImportEveXmlFit);
-
-		JMenuItem jImportShoppingList = new JMenuItem(TabsStockpile.get().importShoppingList(), Images.STOCKPILE_SHOPPING_LIST.getIcon());
-		jImportShoppingList.setActionCommand(StockpileAction.IMPORT_SHOPPING_LIST.name());
-		jImportShoppingList.addActionListener(listener);
-		jImport.add(jImportShoppingList);
 
 		JMenuItem jImportXml = new JMenuItem(TabsStockpile.get().importStockpilesXml(), Images.TOOL_STOCKPILE.getIcon());
 		jImportXml.setActionCommand(StockpileAction.IMPORT_XML.name());
@@ -431,7 +413,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		jImport.add(jImportXml);
 
 		JMenuItem jImportText = new JMenuItem(TabsStockpile.get().importStockpilesText(), Images.EDIT_COPY.getIcon());
-		jImportText.setActionCommand(StockpileAction.IMPORT_TEXT.name());
+		jImportText.setActionCommand(StockpileAction.IMPORT_XML_TEXT.name());
 		jImportText.addActionListener(listener);
 		jImport.add(jImportText);
 
@@ -1198,10 +1180,10 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		}
 	}
 
-	private void importText(TextImportType type) {
-		textImport.importText(type, new TextImportHandler() {
+	private void importText() {
+		textImport.importText(TextImportType.values(), new TextImportHandler() {
 			@Override
-			public void addItems(Map<Integer, Double> data) {
+			public void addItems(Map<Integer, Double> data, TextImportType type) {
 				importStockpileItems(data, type.getName());
 			}
 		});
@@ -1316,7 +1298,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		}
 	}
 
-	private void importText() {
+	private void importXmlText() {
 		jTextDialog.setLineWrap(true);
 		String importText = jTextDialog.importText();
 		jTextDialog.setLineWrap(false);
@@ -1656,20 +1638,14 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 				jTable.expandSeparators(false);
 			} else if (StockpileAction.EXPAND.name().equals(e.getActionCommand())) { //Expand all
 				jTable.expandSeparators(true);
-			} else if (StockpileAction.IMPORT_EFT.name().equals(e.getActionCommand())) { //Add stockpile (EFT Import)
-				importText(TextImportType.EFT);
-			} else if (StockpileAction.IMPORT_ISK_PER_HOUR.name().equals(e.getActionCommand())) { //Add stockpile (Isk Per Hour)
-				importText(TextImportType.ISK_PER_HOUR);
-			} else if (StockpileAction.IMPORT_MULTIBUY.name().equals(e.getActionCommand())) { //Add stockpile (Eve Multibuy)
-				importText(TextImportType.EVE_MULTIBUY);
-			} else if (StockpileAction.IMPORT_SHOPPING_LIST.name().equals(e.getActionCommand())) { //Add stockpile (Shopping List)
-				importText(TextImportType.STCOKPILE_SHOPPING_LIST);
+			} else if (StockpileAction.IMPORT_TEXT.name().equals(e.getActionCommand())) { //Add stockpile (EFT Import)
+				importText();
 			} else if (StockpileAction.IMPORT_XML.name().equals(e.getActionCommand())) { //Add stockpile (Xml)
 				importXml();
 			} else if (StockpileAction.IMPORT_EVE_XML_FIT.name().equals(e.getActionCommand())) { //Add stockpile (Xml)
 				importEveXml();
-			} else if (StockpileAction.IMPORT_TEXT.name().equals(e.getActionCommand())) { //Add stockpile (Xml)
-				importText();
+			} else if (StockpileAction.IMPORT_XML_TEXT.name().equals(e.getActionCommand())) { //Add stockpile (Xml)
+				importXmlText();
 			} else if (StockpileAction.EXPORT_XML.name().equals(e.getActionCommand())) { //Export XML
 				exportXml();
 			} else if (StockpileAction.EXPORT_TEXT.name().equals(e.getActionCommand())) { //Export XML
