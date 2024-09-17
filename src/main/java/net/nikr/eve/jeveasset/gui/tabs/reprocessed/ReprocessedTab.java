@@ -42,7 +42,6 @@ import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JMenu;
-import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
@@ -53,7 +52,6 @@ import net.nikr.eve.jeveasset.data.settings.types.LocationType;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.TextImport;
 import net.nikr.eve.jeveasset.gui.shared.TextImport.TextImportHandler;
-import net.nikr.eve.jeveasset.gui.shared.components.JDropDownButton;
 import net.nikr.eve.jeveasset.gui.shared.components.JFixedToolBar;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTabSecondary;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
@@ -79,10 +77,7 @@ public class ReprocessedTab extends JMainTabSecondary {
 		EXPAND,
 		CLEAR,
 		ADD_ITEM,
-		IMPORT_EFT,
-		IMPORT_ISK_PER_HOUR,
-		IMPORT_MULTIBUY,
-		IMPORT_STOCKPILE_SHOPPING_LIST,
+		IMPORT_TEXT_FORMATS,
 	}
 
 	//GUI
@@ -139,28 +134,10 @@ public class ReprocessedTab extends JMainTabSecondary {
 		jClear.addActionListener(listener);
 		jToolBar.addButton(jClear);
 
-		JDropDownButton jImport = new JDropDownButton(TabsReprocessed.get().importButton(), Images.EDIT_IMPORT.getIcon());
+		JButton jImport = new JButton(TabsReprocessed.get().importButton(), Images.EDIT_IMPORT.getIcon());
+		jImport.setActionCommand(ReprocessedAction.IMPORT_TEXT_FORMATS.name());
+		jImport.addActionListener(listener);
 		jToolBar.addButton(jImport);
-
-		JMenuItem jImportEFT = new JMenuItem(TabsReprocessed.get().importEft(), Images.TOOL_SHIP_LOADOUTS.getIcon());
-		jImportEFT.setActionCommand(ReprocessedAction.IMPORT_EFT.name());
-		jImportEFT.addActionListener(listener);
-		jImport.add(jImportEFT);
-
-		JMenuItem jImportIskPerHour = new JMenuItem(TabsReprocessed.get().importIskPerHour(), Images.TOOL_VALUES.getIcon());
-		jImportIskPerHour.setActionCommand(ReprocessedAction.IMPORT_ISK_PER_HOUR.name());
-		jImportIskPerHour.addActionListener(listener);
-		jImport.add(jImportIskPerHour);
-
-		JMenuItem jImportEve = new JMenuItem(TabsReprocessed.get().importEveMultibuy(), Images.MISC_EVE.getIcon());
-		jImportEve.setActionCommand(ReprocessedAction.IMPORT_MULTIBUY.name());
-		jImportEve.addActionListener(listener);
-		jImport.add(jImportEve);
-
-		JMenuItem jImportShoppingList = new JMenuItem(TabsReprocessed.get().importStockpilesShoppingList(), Images.STOCKPILE_SHOPPING_LIST.getIcon());
-		jImportShoppingList.setActionCommand(ReprocessedAction.IMPORT_STOCKPILE_SHOPPING_LIST.name());
-		jImportShoppingList.addActionListener(listener);
-		jImport.add(jImportShoppingList);
 
 		jToolBar.addGlue();
 
@@ -315,10 +292,10 @@ public class ReprocessedTab extends JMainTabSecondary {
 		program.getMainWindow().addTab(this);
 	}
 
-	private void importText(TextImportType type) {
-		textImport.importText(type, new TextImportHandler() {
+	private void importText() {
+		textImport.importText(TextImportType.values(), new TextImportHandler() {
 			@Override
-			public void addItems(Map<Integer, Double> data) {
+			public void addItems(Map<Integer, Double> data, TextImportType type) {
 				Map<Item, Long> newItems = new HashMap<>();
 				for (Map.Entry<Integer, Double> entry : data.entrySet()) {
 					Item item = ApiIdConverter.getItemUpdate(entry.getKey());
@@ -377,14 +354,8 @@ public class ReprocessedTab extends JMainTabSecondary {
 					items.put(selectedItem, 1L);
 					reprocessedData.addItem(eventList, selectedItem, 1L);
 				}
-			} else if (ReprocessedAction.IMPORT_EFT.name().equals(e.getActionCommand())) { //Add stockpile (EFT Import)
-				importText(TextImportType.EFT);
-			} else if (ReprocessedAction.IMPORT_ISK_PER_HOUR.name().equals(e.getActionCommand())) { //Add stockpile (Isk Per Hour)
-				importText(TextImportType.ISK_PER_HOUR);
-			} else if (ReprocessedAction.IMPORT_MULTIBUY.name().equals(e.getActionCommand())) { //Add stockpile (Eve Multibuy)
-				importText(TextImportType.EVE_MULTIBUY);
-			} else if (ReprocessedAction.IMPORT_STOCKPILE_SHOPPING_LIST.name().equals(e.getActionCommand())) { //Add stockpile (Shopping List)
-				importText(TextImportType.STCOKPILE_SHOPPING_LIST);
+			} else if (ReprocessedAction.IMPORT_TEXT_FORMATS.name().equals(e.getActionCommand())) { //Add stockpile (EFT Import)
+				importText();
 			}
 		}
 	}
