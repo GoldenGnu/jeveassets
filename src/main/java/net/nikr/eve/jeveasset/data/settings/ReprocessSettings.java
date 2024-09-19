@@ -38,10 +38,27 @@ public class ReprocessSettings {
 
 	public ReprocessSettings(final double station, final int reprocessingLevel, final int reprocessingEfficiencyLevel, int oreProcessingLevel, final int scrapmetalProcessing) {
 		this.station = station;
-		this.reprocessingLevel = reprocessingLevel;
-		this.reprocessingEfficiencyLevel = reprocessingEfficiencyLevel;
-		this.oreProcessingLevel = oreProcessingLevel;
-		this.scrapmetalProcessingLevel = scrapmetalProcessing;
+		this.reprocessingLevel = inRange(reprocessingLevel);
+		this.reprocessingEfficiencyLevel = inRange(reprocessingEfficiencyLevel, this.reprocessingLevel);
+		this.oreProcessingLevel = inRange(oreProcessingLevel, this.reprocessingEfficiencyLevel);
+		this.scrapmetalProcessingLevel = inRange(scrapmetalProcessing);
+	}
+
+	private int inRange(final int level, int required) {
+		if (required < 4) {
+			return 0;
+		}
+		return inRange(level);
+	}
+
+	private int inRange(final int level) {
+		if (level < 0) {
+			return 0;
+		} else if (level > 5) {
+			return 5;
+		} else {
+			return level;
+		}
 	}
 
 	public int getReprocessingEfficiencyLevel() {
