@@ -90,4 +90,50 @@ public class ReprocessSettingsTest extends TestUtil {
 		}
 	}
 
+	@Test
+	public void test() {
+		ReprocessSettings reprocessSettings;
+
+		reprocessSettings = new ReprocessSettings(50, 3, 5, 5, 5);
+		assertEquals(reprocessSettings.getReprocessingLevel(), 3);
+		assertEquals(reprocessSettings.getReprocessingEfficiencyLevel(), 0);
+		assertEquals(reprocessSettings.getOreProcessingLevel(), 0);
+		assertEquals(reprocessSettings.getScrapmetalProcessingLevel(), 5);
+
+		reprocessSettings = new ReprocessSettings(50, 4, 3, 5, 5);
+		assertEquals(reprocessSettings.getReprocessingLevel(), 4);
+		assertEquals(reprocessSettings.getReprocessingEfficiencyLevel(), 3);
+		assertEquals(reprocessSettings.getOreProcessingLevel(), 0);
+		assertEquals(reprocessSettings.getScrapmetalProcessingLevel(), 5);
+
+		reprocessSettings = new ReprocessSettings(50, 4, 4, 4, 5);
+		assertEquals(reprocessSettings.getReprocessingLevel(), 4);
+		assertEquals(reprocessSettings.getReprocessingEfficiencyLevel(), 4);
+		assertEquals(reprocessSettings.getOreProcessingLevel(), 4);
+		assertEquals(reprocessSettings.getScrapmetalProcessingLevel(), 5);
+
+		reprocessSettings = new ReprocessSettings(50, 5, 5, 5, 5);
+		assertEquals(reprocessSettings.getReprocessingLevel(), 5);
+		assertEquals(reprocessSettings.getReprocessingEfficiencyLevel(), 5);
+		assertEquals(reprocessSettings.getOreProcessingLevel(), 5);
+		assertEquals(reprocessSettings.getScrapmetalProcessingLevel(), 5);
+
+		reprocessSettings = new ReprocessSettings(50, 6, 6, 6, 6);
+		assertEquals(reprocessSettings.getReprocessingLevel(), 5);
+		assertEquals(reprocessSettings.getReprocessingEfficiencyLevel(), 5);
+		assertEquals(reprocessSettings.getOreProcessingLevel(), 5);
+		assertEquals(reprocessSettings.getScrapmetalProcessingLevel(), 5);
+
+		reprocessSettings = new ReprocessSettings(50, 0, 0, 0, 0);
+		assertEquals(reprocessSettings.getReprocessingLevel(), 0);
+		assertEquals(reprocessSettings.getReprocessingEfficiencyLevel(), 0);
+		assertEquals(reprocessSettings.getOreProcessingLevel(), 0);
+		assertEquals(reprocessSettings.getScrapmetalProcessingLevel(), 0);
+
+		reprocessSettings = new ReprocessSettings(50, -1, -1, -1, -1);
+		assertEquals(reprocessSettings.getReprocessingLevel(), 0);
+		assertEquals(reprocessSettings.getReprocessingEfficiencyLevel(), 0);
+		assertEquals(reprocessSettings.getOreProcessingLevel(), 0);
+		assertEquals(reprocessSettings.getScrapmetalProcessingLevel(), 0);
+	}
 }
