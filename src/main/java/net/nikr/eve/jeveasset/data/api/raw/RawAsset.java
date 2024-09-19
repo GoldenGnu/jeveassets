@@ -86,14 +86,14 @@ public class RawAsset {
 				default:
 					itemFlag = ApiIdConverter.getFlag(0); //Should never happen, but, better safe than sorry...
 			}
-			locationId = industryJob.getOutputLocationID();
+			locationId = industryJob.getLocationID();
 			quantity = industryJob.getOutputCount();
 			typeId = industryJob.getProductTypeID();
 		} else if (output && industryJob.isCopying()) {
 			isSingleton = true;
 			itemId = RawConverter.toLong(industryJob.getJobID()); //This item doesn't exist yet, need a new itemID
 			itemFlag = COPYING_FLAG;
-			locationId = industryJob.getOutputLocationID();
+			locationId = industryJob.getLocationID();
 			quantity = -2; //BPC
 			typeId = industryJob.getBlueprintTypeID();
 		} else {
