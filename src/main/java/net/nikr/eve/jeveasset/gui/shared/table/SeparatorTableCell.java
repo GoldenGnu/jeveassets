@@ -153,6 +153,12 @@ public abstract class SeparatorTableCell<E> extends AbstractCellEditor
 
 		// Scroll the area into view
 		viewport.scrollRectToVisible(rect);
+
+		//Ensure stockpile cell is visible
+		rect = jTable.getCellRect(currentRow, 0, true);
+		pt = viewport.getViewPosition();
+		rect.setLocation(rect.x - pt.x, rect.y - pt.y);
+		viewport.scrollRectToVisible(rect);
 	}
 
 	public class JSeparatorPanel extends JPanel {
