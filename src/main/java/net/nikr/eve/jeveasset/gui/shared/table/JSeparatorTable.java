@@ -20,6 +20,7 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.plaf.basic.BasicTableUI;
 import javax.swing.table.*;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 
 /**
  * @author <a href="mailto:jesse@swank.ca">Jesse Wilson</a>
@@ -59,7 +60,7 @@ public class JSeparatorTable extends JAutoColumnTable {
 				if (object instanceof SeparatorList.Separator) {
 					SeparatorList.Separator<?> separator = (SeparatorList.Separator<?>) object;
 					Object first = separator.first();
-					if (first instanceof IgnoreSeparator) {
+					if (first instanceof StockpileItem && ((StockpileItem) first).isGroupCollapsed(expand)) {
 						continue;
 					}
 					if (separator.getLimit() != newLimit) {
@@ -375,7 +376,6 @@ public class JSeparatorTable extends JAutoColumnTable {
 		autoResizeRows();
 	}
 
-	public static interface IgnoreSeparator { }
 }
 /**
  * Modified from BasicTableUI to allow for spanning cells.
