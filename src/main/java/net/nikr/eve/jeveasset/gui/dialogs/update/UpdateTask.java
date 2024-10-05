@@ -98,17 +98,17 @@ public abstract class UpdateTask extends SwingWorker<Void, Void> {
 		}
 	}
 
-	public void setTotalProgress(final float end, final float done, final int start, final int max) {
-		int progress = Math.round(((done / end) * (max - start)) + start);
-		if (progress > 100) {
-			progress = 100;
-		} else if (progress < 0) {
-			progress = 0;
+	public void setTotalProgress(final float end, final float progress, final int minimum, final int maximum) {
+		int percent = Math.round(((progress / end) * (maximum - minimum)) + minimum);
+		if (percent > 100) {
+			percent = 100;
+		} else if (percent < 0) {
+			percent = 0;
 		}
-		if (totalProgress == null || totalProgress != progress) {
+		if (totalProgress == null || totalProgress != percent) {
 			Integer oldValue = totalProgress;
-			totalProgress = progress;
-			firePropertyChange("TotalProgress", oldValue, progress);
+			totalProgress = percent;
+			firePropertyChange("TotalProgress", oldValue, percent);
 		}
 	}
 
