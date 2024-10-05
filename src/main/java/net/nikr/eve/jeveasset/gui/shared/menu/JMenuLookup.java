@@ -612,7 +612,7 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 			} else if (MenuLookupAction.ZKILLBOARD_CONSTELLATION.name().equals(e.getActionCommand())) {
 				DesktopUtil.browse(LookupLinks.ZKILLBOARD_CONSTELLATION.getLinks(menuData), program);
 			} else if (MenuLookupAction.ZKILLBOARD_OVERVIEW_GROUP.name().equals(e.getActionCommand())) {
-				OverviewGroup overviewGroup = program.getOverviewTab().getSelectGroup();
+				OverviewGroup overviewGroup = program.getOverviewTab(true).getSelectGroup();
 				if (overviewGroup == null) {
 					return;
 				}
@@ -656,7 +656,7 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 			} else if (MenuLookupAction.EVEMAPS_DOTLAN_REGION.name().equals(e.getActionCommand())) {
 				DesktopUtil.browse(LookupLinks.EVEMAPS_DOTLAN_REGION.getLinks(menuData), program);
 			} else if (MenuLookupAction.EVEMAPS_DOTLAN_OVERVIEW_GROUP.name().equals(e.getActionCommand())) {
-				OverviewGroup overviewGroup = program.getOverviewTab().getSelectGroup();
+				OverviewGroup overviewGroup = program.getOverviewTab(true).getSelectGroup();
 				if (overviewGroup == null) {
 					return;
 				}

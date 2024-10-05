@@ -30,6 +30,7 @@ import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.JAutoMenu;
+import net.nikr.eve.jeveasset.gui.tabs.reprocessed.ReprocessedTab;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 
@@ -78,12 +79,14 @@ public class JMenuReprocessed<T> extends JAutoMenu<T> {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			if (MenuReprocessedAction.ADD.name().equals(e.getActionCommand())) {
-				program.getReprocessedTab().add(items);
-				program.getReprocessedTab().show();
+				ReprocessedTab reprocessedTab = program.getReprocessedTab(true);
+				reprocessedTab.add(items);
+				reprocessedTab.show();
 			}
 			if (MenuReprocessedAction.SET.name().equals(e.getActionCommand())) {
-				program.getReprocessedTab().set(items);
-				program.getReprocessedTab().show();
+				ReprocessedTab reprocessedTab = program.getReprocessedTab(true);
+				reprocessedTab.set(items);
+				reprocessedTab.show();
 			}
 		}
 	}

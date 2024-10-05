@@ -174,8 +174,8 @@ public class ReprocessedTab extends JMainTabSecondary {
 		tableModel = EventModels.createTableModel(separatorList, tableFormat);
 		//Table
 		jTable = new JReprocessedTable(program, tableModel, separatorList);
-		jTable.setSeparatorRenderer(new ReprocessedSeparatorTableCell(program, jTable, separatorList, listener));
-		jTable.setSeparatorEditor(new ReprocessedSeparatorTableCell(program, jTable, separatorList, listener));
+		jTable.setSeparatorRenderer(new ReprocessedSeparatorTableCell(this, jTable, separatorList, listener));
+		jTable.setSeparatorEditor(new ReprocessedSeparatorTableCell(this, jTable, separatorList, listener));
 		jTable.setCellSelectionEnabled(true);
 		PaddingTableCellRenderer.install(jTable, 3);
 		//Sorting

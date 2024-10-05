@@ -104,7 +104,9 @@ public class Settings {
 		FLAG_CONTAINERS_SHOW_ITEM_ID,
 		FLAG_LOCK_TOOLS,
 		FLAG_SHOW_SUBPILE_TREE,
-		FLAG_INDUSTRY_JOBS_HISTORY
+		FLAG_INDUSTRY_JOBS_HISTORY,
+		FLAG_LOAD_TOOLS_BACKGROUND,
+		FLAG_LOAD_TOOLS_STARTUP,
 	}
 
 	public static enum TransactionProfitPrice {
@@ -304,6 +306,8 @@ public class Settings {
 		flags.put(SettingFlag.FLAG_LOCK_TOOLS, false);
 		flags.put(SettingFlag.FLAG_SHOW_SUBPILE_TREE, true);
 		flags.put(SettingFlag.FLAG_INDUSTRY_JOBS_HISTORY, true);
+		flags.put(SettingFlag.FLAG_LOAD_TOOLS_BACKGROUND, true);
+		flags.put(SettingFlag.FLAG_LOAD_TOOLS_STARTUP, false);
 		cacheFlags();
 		//Default Filters
 		List<Filter> filter;
@@ -912,6 +916,22 @@ public class Settings {
 
 	public void setIndustryJobsHistory(final boolean journalHistory) {
 		flags.put(SettingFlag.FLAG_INDUSTRY_JOBS_HISTORY, journalHistory);
+	}
+
+	public boolean isLoadToolsBackground() {
+		return flags.get(SettingFlag.FLAG_LOAD_TOOLS_BACKGROUND);
+	}
+
+	public void setLoadToolsBackground(final boolean loadToolsBackground) {
+		flags.put(SettingFlag.FLAG_LOAD_TOOLS_BACKGROUND, loadToolsBackground);
+	}
+
+	public boolean isLoadToolsStartup() {
+		return flags.get(SettingFlag.FLAG_LOAD_TOOLS_STARTUP);
+	}
+
+	public void setLoadToolsStartup(final boolean loadToolsStartup) {
+		flags.put(SettingFlag.FLAG_LOAD_TOOLS_STARTUP, loadToolsStartup);
 	}
 
 	public boolean isMarketOrderHistory() {

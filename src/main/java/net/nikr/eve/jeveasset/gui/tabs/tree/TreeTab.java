@@ -81,6 +81,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.TableFormatFactory;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.HierarchyColumn;
+import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewTab;
 import net.nikr.eve.jeveasset.gui.tabs.tree.TreeTab.AssetTreeExpansionModel.ExpandedState;
 import net.nikr.eve.jeveasset.i18n.TabsAssets;
 import net.nikr.eve.jeveasset.i18n.TabsTree;
@@ -646,8 +647,11 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate {
 
 		@Override
 		protected void updateFilters() {
-			if (program != null && program.getOverviewTab() != null) {
-				program.getOverviewTab().updateFilters();
+			if (program != null) {
+				OverviewTab overviewTab = program.getOverviewTab(false);
+				if (overviewTab != null) {
+					overviewTab.updateFilters();
+				}
 			}
 		}
 

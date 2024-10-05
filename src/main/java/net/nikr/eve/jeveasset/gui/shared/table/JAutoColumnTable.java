@@ -144,7 +144,12 @@ public class JAutoColumnTable extends JTable {
 		this.setDefaultEditor(Component.class, new ComponentEditor(this.getDefaultEditor(Component.class)));
 		this.setDefaultEditor(Number.class, new BetterNumberEditor());
 
-		autoResizeColumns();
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				autoResizeColumns();
+			}
+		});
 
 		fixScrollPaneRedraw();
 	}

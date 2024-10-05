@@ -28,6 +28,7 @@ import javax.swing.JMenuItem;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.gui.images.Images;
+import net.nikr.eve.jeveasset.gui.tabs.routing.RoutingTab;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 
@@ -80,9 +81,10 @@ public class JMenuRouting<T> extends MenuManager.JAutoMenu<T> {
 				} else {
 					locations = menuData.getAutopilotStationLocations();
 				}
-				program.getMainWindow().addTab(program.getRoutingTab());
+				RoutingTab routingTab = program.getRoutingTab(true);
+				program.getMainWindow().addTab(routingTab);
 				for (MyLocation location : locations) {
-					program.getRoutingTab().addLocation(location);
+					routingTab.addLocation(location);
 				}
 			} else if (MenuRoutingAction.SYSTEM.name().equals(e.getActionCommand())) {
 				Set<MyLocation> locations;
@@ -95,9 +97,10 @@ public class JMenuRouting<T> extends MenuManager.JAutoMenu<T> {
 				} else {
 					locations = menuData.getSystemLocations();
 				}
-				program.getMainWindow().addTab(program.getRoutingTab());
+				RoutingTab routingTab = program.getRoutingTab(true);
+				program.getMainWindow().addTab(routingTab);
 				for (MyLocation location : locations) {
-					program.getRoutingTab().addLocation(location);
+					routingTab.addLocation(location);
 				}
 			}
 		}

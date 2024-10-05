@@ -283,7 +283,7 @@ public class RoutingTab extends JMainTabSecondary {
 		jManageAvoidDialog = new JManageAvoidDialog(this, program);
 		jSaveRouteDialog = new JRouteSaveDialog(program);
 		jManageRoutesDialog = new JRouteManageDialog(this, program);
-		jRouteEditDialog = new JRouteEditDialog(program);
+		jRouteEditDialog = new JRouteEditDialog(this, program);
 		jRouteSelectionDialog = new JMultiSelectionDialog<>(program, TabsRouting.get().resultSelectRoutes());
 		jFileChooser = JCustomFileChooser.createFileChooser(program.getMainWindow().getFrame(), "xml");
 		jFileChooser.setMultiSelectionEnabled(false);
@@ -1471,7 +1471,7 @@ public class RoutingTab extends JMainTabSecondary {
 		}
 		RouteResult result;
 		try {
-			result = JRouteEditDialog.makeRouteResult(program, systemCache, filteredGraph, list, TabsRouting.get().resultImported());
+			result = JRouteEditDialog.makeRouteResult(this, systemCache, filteredGraph, list, TabsRouting.get().resultImported());
 		} catch (DisconnectedGraphException ex) {
 			JOptionPane.showMessageDialog(program.getMainWindow().getFrame(),
 					ex.getMessage(),

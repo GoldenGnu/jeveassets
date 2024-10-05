@@ -98,12 +98,14 @@ public class StockpileSeparatorTableCell extends SeparatorTableCell<StockpileIte
 	private final JLabel jLocation;
 	private final JLabel jLocationLabel;
 	private final Program program;
+	private final StockpileTab stockpileTab;
 
 	private Component focusOwner;
 
-	public StockpileSeparatorTableCell(final Program program, final JTable jTable, final SeparatorList<StockpileItem> separatorList, final ActionListener actionListener) {
+	public StockpileSeparatorTableCell(final StockpileTab stockpileTab, final Program program, final JTable jTable, final SeparatorList<StockpileItem> separatorList, final ActionListener actionListener) {
 		super(jTable, separatorList);
 		this.program = program;
+		this.stockpileTab = stockpileTab;
 
 		ListenerClass listener = new ListenerClass();
 		addCellEditorListener(listener);
@@ -571,7 +573,7 @@ public class StockpileSeparatorTableCell extends SeparatorTableCell<StockpileIte
 			if (stockpileItem == null) { // handle 'late' rendering calls after this separator is invalid
 				return;
 			}
-			program.getStockpileTab().setMultiplyer(stockpileItem.getStockpile(), jMultiplier);
+			stockpileTab.setMultiplyer(stockpileItem.getStockpile(), jMultiplier);
 		}
 
 	}

@@ -343,7 +343,7 @@ public class JSeparatorTable extends JAutoColumnTable {
 		}
 		int height;
 		final Object rowValue = getEventTableModel().getElementAt(row);
-		if (rowValue instanceof SeparatorList.Separator) {
+		if (separatorRenderer != null && rowValue instanceof SeparatorList.Separator) {
 			//Calculate the Separator row height
 			//This is done every time, because Separator can never be identified 100%
 			//Because elements is changed by filters and sorting
