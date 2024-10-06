@@ -223,7 +223,7 @@ public class RawAsset {
 		}
 		typeId = asset.getTypeId();
 	}
-	   
+
 	/**
 	 * ESI Implant
 	 *

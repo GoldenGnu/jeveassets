@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.data.api.my.MyAsset;
-import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import static net.nikr.eve.jeveasset.io.esi.AbstractEsiGetter.DATASOURCE;
 import static net.nikr.eve.jeveasset.io.esi.AbstractEsiGetter.DEFAULT_RETRIES;
@@ -73,7 +72,7 @@ public class EsiClonesGetter extends AbstractEsiGetter {
 		});
 		Long activeCloneLocation = RawConverter.toLocationID(characterLocation);
 		
-		//Create assets	       
+		//Create assets
 		List<MyAsset> implants = new ArrayList<>();
 		List<Clone> jumpClones = jumpClonesResponse.getJumpClones();
 		
@@ -84,9 +83,8 @@ public class EsiClonesGetter extends AbstractEsiGetter {
 				MyAsset implantAsset = EsiConverter.toAssetsImplant(implant, cloneLocation, owner);
 				implants.add(implantAsset);
 			}
-		       
 		}
-		
+
 		for (Integer implant : activeClone){
 			MyAsset activeCloneImplant = EsiConverter.toAssetsImplant(implant, activeCloneLocation, owner);
 			implants.add(activeCloneImplant);
@@ -106,18 +104,6 @@ public class EsiClonesGetter extends AbstractEsiGetter {
 		//Reload Implants
 		for (MyAsset implant : implants){
 			owner.addAsset(implant);
-		}
-	}
-
-	/**
-	 * Set locationID for asset and children.
-	 * @param asset
-	 * @param locationID
-	 */
-	private void setLocationID(MyAsset asset, long locationID) {
-		asset.setLocationID(locationID);
-		for (MyAsset child : asset.getAssets()) {
-			setLocationID(child, locationID);
 		}
 	}
 
