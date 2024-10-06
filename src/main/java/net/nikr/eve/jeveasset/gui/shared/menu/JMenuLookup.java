@@ -251,7 +251,7 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 			public Set<String> getLinks(MenuData<?> menuData) {
 				Set<String> urls = new HashSet<>();
 				for (int typeID : menuData.getTypeIDs()) {
-					urls.add("https://everef.net/type/" + typeID+ "?utm_source=jeveassets");
+					urls.add("https://everef.net/types/" + typeID+ "?utm_source=jeveassets");
 				}
 				return urls;
 			}
