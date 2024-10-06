@@ -858,7 +858,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 				long count = 0;
 				//Assets
 				if (asset != null) {
-					if (runs && typeID < 0) {
+					if (runs && typeID < 0) { //BPC Runs
 						if (filter.isAssets() && asset.isBPC()) {
 							if (add) { //Match
 								inventoryCountNow = inventoryCountNow + asset.getRuns();
@@ -879,7 +879,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 				} else if (industryJob != null) {
 					if (typeID < 0) { //Copying in progress (not delivered to assets)
 						if (filter.isJobs() && industryJob.isCopying() && industryJob.isNotDeliveredToAssets()) {
-							if (runs) { //Runs
+							if (runs) { //BPC Runs
 								if (add) { //Match
 									jobsCountNow = jobsCountNow + ((long)industryJob.getRuns() * (long)industryJob.getLicensedRuns());
 								} else {
