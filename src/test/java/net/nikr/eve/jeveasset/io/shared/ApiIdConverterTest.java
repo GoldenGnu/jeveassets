@@ -92,7 +92,7 @@ public class ApiIdConverterTest extends TestUtil {
 	}
 
 	/**
-	 * Tested against Isk Per Hour 2023-09-20 
+	 * Tested against Isk Per Hour and Fuzzwork 2024-10-06
 	 */
 	@Test
 	public void testManufacturingQuantity() {
@@ -103,21 +103,21 @@ public class ApiIdConverterTest extends TestUtil {
 		ManufacturingSecurity security = ManufacturingSecurity.LOWSEC;
 		double runs = 1;
 		Map<Integer, Double> expected = new HashMap<>();
-		expected.put(34, 7_920_000.0);
-		expected.put(35, 3_960_000.0);
-		expected.put(36,   594_000.0);
-		expected.put(37,   396_000.0);
-		expected.put(38,    11_880.0);
-		expected.put(39,     5_940.0);
-		expected.put(40,     2_970.0);
-		expected.put(57478,    198.0);
-		expected.put(57486,     99.0);
-		expected.put(57479,      1.0);
+		expected.put(34, 7_920_000.0); //Tritanium
+		expected.put(35, 3_960_000.0); //Pyerite
+		expected.put(36,   594_000.0); //Mexallon
+		expected.put(37,   198_000.0); //Isogen
+		expected.put(38,    23_760.0); //Nocxium
+		expected.put(39,     5_940.0); //Zydrine
+		expected.put(40,     2_970.0); //Megacyte
+		expected.put(57478,    198.0); //Auto-Integrity Preservation Seal
+		expected.put(57486,     99.0); //Life Support Backup Unit
+		expected.put(57479,      1.0); //Core Temperature Regulator
 		testManufacturingQuantity(expected, me, facility, rigs, security, runs);
 	}
 
 	/**
-	 * Tested against Isk Per Hour 2023-09-20 
+	 * Tested against Isk Per Hour and Fuzzwork 2024-10-06
 	 */
 	@Test
 	public void testManufacturingQuantityMe() {
@@ -128,21 +128,21 @@ public class ApiIdConverterTest extends TestUtil {
 		ManufacturingSecurity security = ManufacturingSecurity.HIGHSEC;
 		double runs = 1;
 		Map<Integer, Double> expected = new HashMap<>();
-		expected.put(34, 7_128_000.0);
-		expected.put(35, 3_564_000.0);
-		expected.put(36,   534_600.0);
-		expected.put(37,   356_400.0);
-		expected.put(38,    10_692.0);
-		expected.put(39,     5_346.0);
-		expected.put(40,     2_673.0);
-		expected.put(57478,    179.0);
-		expected.put(57486,     90.0);
-		expected.put(57479,      1.0);
+		expected.put(34, 7_128_000.0); //Tritanium
+		expected.put(35, 3_564_000.0); //Pyerite
+		expected.put(36,   534_600.0); //Mexallon
+		expected.put(37,   178_200.0); //Isogen
+		expected.put(38,    21_384.0); //Nocxium
+		expected.put(39,     5_346.0); //Zydrine
+		expected.put(40,     2_673.0); //Megacyte
+		expected.put(57478,    179.0); //Auto-Integrity Preservation Seal
+		expected.put(57486,     90.0); //Life Support Backup Unit
+		expected.put(57479,      1.0); //Core Temperature Regulator
 		testManufacturingQuantity(expected, me, facility, rigs, security, runs);
 	}
 
 	/**
-	 * Tested against Isk Per Hour 2023-09-20 
+	 * Tested against Isk Per Hour and Fuzzwork 2024-10-06
 	 */
 	@Test
 	public void testManufacturingQuantityRuns() {
@@ -153,21 +153,21 @@ public class ApiIdConverterTest extends TestUtil {
 		ManufacturingSecurity security = ManufacturingSecurity.HIGHSEC;
 		double runs = 200;
 		Map<Integer, Double> expected = new HashMap<>();
-		expected.put(34, 1_425_600_000.0);
-		expected.put(35,   712_800_000.0);
-		expected.put(36,   106_920_000.0);
-		expected.put(37,    71_280_000.0);
-		expected.put(38,     2_138_400.0);
-		expected.put(39,     1_069_200.0);
-		expected.put(40,       534_600.0);
-		expected.put(57478,     35_640.0);
-		expected.put(57486,     17_820.0);
-		expected.put(57479,        200.0);
+		expected.put(34, 1_425_600_000.0); //Tritanium
+		expected.put(35,   712_800_000.0); //Pyerite
+		expected.put(36,   106_920_000.0); //Mexallon
+		expected.put(37,    35_640_000.0); //Isogen
+		expected.put(38,     4_276_800.0); //Nocxium
+		expected.put(39,     1_069_200.0); //Zydrine
+		expected.put(40,       534_600.0); //Megacyte
+		expected.put(57478,     35_640.0); //Auto-Integrity Preservation Seal
+		expected.put(57486,     17_820.0); //Life Support Backup Unit
+		expected.put(57479,        200.0); //Core Temperature Regulator
 		testManufacturingQuantity(expected, me, facility, rigs, security, runs);
 	}
 
 	public void testManufacturingQuantity(Map<Integer, Double> expected, int me, ManufacturingFacility facility, ManufacturingRigs rigs, ManufacturingSecurity security, double runs) {
-		Item blueprint = ApiIdConverter.getItem(999); //Domenix Blueprint
+		Item blueprint = ApiIdConverter.getItem(999); //Dominix Blueprint
 		for (IndustryMaterial material : blueprint.getManufacturingMaterials()) {
 			double quantity = ApiIdConverter.getManufacturingQuantity(material.getQuantity(), me, facility, rigs, security, runs, true);
 			System.out.println("	id=" + material.getTypeID() + " q=" + material.getQuantity() + " qmod=" + Formatter.compareFormat(quantity));
