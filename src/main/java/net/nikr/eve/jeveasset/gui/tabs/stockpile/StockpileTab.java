@@ -504,7 +504,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		filterList.addListEventListener(listener);
 		//Separator
 		separatorList = new SeparatorList<>(filterList, new StockpileSeparatorComparator(), 1, Integer.MAX_VALUE);
-		separatorList.addListEventListener(new ListEventListener<>() {
+		separatorList.addListEventListener(new ListEventListener<StockpileItem>() {
 			@Override
 			public void listChanged(ListEvent<StockpileItem> listChanges) {
 				updateGroupFirst();
