@@ -45,6 +45,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -752,6 +753,7 @@ public class TrackerTab extends JMainTabSecondary {
 			}
 		}
 		final List<String> ownersList = new ArrayList<>(uniqueOwners);
+		Collections.sort(ownersList);
 		if (ownersList.isEmpty()) {
 			jOwners.setEnabled(false);
 			jOwners.setModel(new AbstractListModel<String>() {
