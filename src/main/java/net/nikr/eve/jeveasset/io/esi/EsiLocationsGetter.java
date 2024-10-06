@@ -23,6 +23,7 @@ package net.nikr.eve.jeveasset.io.esi;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.data.api.my.MyAsset;
 import net.nikr.eve.jeveasset.data.sde.Item;
@@ -48,16 +49,16 @@ public class EsiLocationsGetter extends AbstractEsiGetter {
 	protected void update() throws ApiException {
 		Map<Long, MyAsset> iDs = getIDs(owner);
 		if (owner.isCorporation()) {
-			Map<List<Long>, List<CorporationAssetsNamesResponse>> responses = updateList(splitList(iDs.keySet(), LOCATIONS_BATCH_SIZE), DEFAULT_RETRIES, new ListHandler<List<Long>, List<CorporationAssetsNamesResponse>>() {
+			Map<Set<Long>, List<CorporationAssetsNamesResponse>> responses = updateList(splitSet(iDs.keySet(), LOCATIONS_BATCH_SIZE), DEFAULT_RETRIES, new ListHandler<Set<Long>, List<CorporationAssetsNamesResponse>>() {
 				@Override
-				public ApiResponse<List<CorporationAssetsNamesResponse>> get(List<Long> t) throws ApiException {
+				public ApiResponse<List<CorporationAssetsNamesResponse>> get(Set<Long> t) throws ApiException {
 					return getAssetsApiAuth().postCorporationsCorporationIdAssetsNamesWithHttpInfo((int) owner.getOwnerID(), t, DATASOURCE, null);
 				}
 			});
 
 			try {
 				Settings.lock("Ship/Container Names");
-				for (Map.Entry<List<Long>, List<CorporationAssetsNamesResponse>> entry : responses.entrySet()) {
+				for (Map.Entry<Set<Long>, List<CorporationAssetsNamesResponse>> entry : responses.entrySet()) {
 					for (CorporationAssetsNamesResponse response : entry.getValue()) {
 						final long itemID = response.getItemId();
 						final String eveName = response.getName();
@@ -76,15 +77,15 @@ public class EsiLocationsGetter extends AbstractEsiGetter {
 				Settings.unlock("Ship/Container Names");
 			}
 		} else {
-			Map<List<Long>, List<CharacterAssetsNamesResponse>> responses = updateList(splitList(iDs.keySet(), LOCATIONS_BATCH_SIZE), DEFAULT_RETRIES, new ListHandler<List<Long>, List<CharacterAssetsNamesResponse>>() {
+			Map<Set<Long>, List<CharacterAssetsNamesResponse>> responses = updateList(splitSet(iDs.keySet(), LOCATIONS_BATCH_SIZE), DEFAULT_RETRIES, new ListHandler<Set<Long>, List<CharacterAssetsNamesResponse>>() {
 				@Override
-				public ApiResponse<List<CharacterAssetsNamesResponse>> get(List<Long> t) throws ApiException {
+				public ApiResponse<List<CharacterAssetsNamesResponse>> get(Set<Long> t) throws ApiException {
 					return getAssetsApiAuth().postCharactersCharacterIdAssetsNamesWithHttpInfo((int) owner.getOwnerID(), t, DATASOURCE, null);
 				}
 			});
 			try {
 				Settings.lock("Ship/Container Names");
-				for (Map.Entry<List<Long>, List<CharacterAssetsNamesResponse>> entry : responses.entrySet()) {
+				for (Map.Entry<Set<Long>, List<CharacterAssetsNamesResponse>> entry : responses.entrySet()) {
 					for (CharacterAssetsNamesResponse response : entry.getValue()) {
 						final long itemID = response.getItemId();
 						final String eveName = response.getName();
