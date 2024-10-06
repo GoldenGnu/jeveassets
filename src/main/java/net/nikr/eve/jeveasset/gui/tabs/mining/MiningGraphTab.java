@@ -403,6 +403,7 @@ public class MiningGraphTab extends JMainTabSecondary {
 			program.getProfileData().getMiningEventList().getReadWriteLock().readLock().unlock();
  		}
 		List<String> owners = new ArrayList<>(ownerSet);
+		Collections.sort(owners);
 		listener.valueIsAdjusting = true;
 		if (owners.isEmpty()) {
 			jOwners.setEnabled(false);
