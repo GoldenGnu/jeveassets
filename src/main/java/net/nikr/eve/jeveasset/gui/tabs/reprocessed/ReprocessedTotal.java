@@ -105,7 +105,7 @@ public class ReprocessedTotal implements ReprocessedInterface {
 	}
 
 	public double getValue() {
-		return getSellPrice() * getPortionSize();
+		return getSellPrice() * count;
 	}
 
 	public boolean isSell() {
