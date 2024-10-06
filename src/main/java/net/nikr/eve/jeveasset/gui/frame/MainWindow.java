@@ -228,7 +228,19 @@ public class MainWindow {
 	}
 
 	public final void setSizeAndLocation(final Dimension windowSize, final Point windowLocation, final boolean windowMaximized) {
-		Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+		Rectangle screen = null;
+		for (GraphicsDevice screenDevices :GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices()) {
+			Rectangle bounds = screenDevices.getDefaultConfiguration().getBounds();
+			if (windowLocation.x > bounds.x && windowLocation.x < bounds.x + bounds.width
+					&& windowLocation.y > bounds.y && windowLocation.y < bounds.y + bounds.height) {
+				screen = bounds;
+				break;
+			}
+		}
+		if (screen == null) {
+			Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
+			screen = new Rectangle(0, 0, d.width, d.height);
+		}
 
 		//Fix size
 		if (windowSize.width > screen.width) {
@@ -245,17 +257,18 @@ public class MainWindow {
 		}
 
 		//Fix location
-		if (windowLocation.x + windowSize.width > screen.width) {
-			windowLocation.x = screen.width - windowSize.width;
+		if (windowLocation.x + windowSize.width > screen.x + screen.width) {
+			windowLocation.x = screen.x + screen.width - windowSize.width;
 		}
-		if (windowLocation.y + windowSize.height > screen.height) {
-			windowLocation.y = screen.height - windowSize.height;
+		if (windowLocation.y + windowSize.height > screen.y + screen.height) {
+			windowLocation.y = screen.y + screen.height - windowSize.height;
 		}
-		if (windowLocation.x < 0) {
-			windowLocation.x = 0;
+		
+		if (windowLocation.x < screen.x) {
+			windowLocation.x = screen.x;
 		}
-		if (windowLocation.y < 0) {
-			windowLocation.y = 0;
+		if (windowLocation.y < screen.y) {
+			windowLocation.y = screen.y;
 		}
 
 		//Set location, size, and state
