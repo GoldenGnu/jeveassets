@@ -217,7 +217,7 @@ public class TrackerTab extends JMainTabSecondary {
 	//Dialog
 	private final JTrackerEditDialog jEditDialog;
 	private final JSelectionDialog<String> jSelectionDialog;
-	private final TrackerFilterDialog filterDialog;
+	private final TrackerWalletFilterDialog walletFilterDialog;
 	private final TrackerAssetFilterDialog assetFilterDialog;
 	private final TrackerSkillPointsFilterDialog skillPointsFilterDialog;
 	private final JCustomFileChooser jFileChooser;
@@ -239,7 +239,7 @@ public class TrackerTab extends JMainTabSecondary {
 	public TrackerTab(Program program) {
 		super(program, NAME, TabsTracker.get().title(), Images.TOOL_TRACKER.getIcon(), true);
 
-		filterDialog = new TrackerFilterDialog(program);
+		walletFilterDialog = new TrackerWalletFilterDialog(program);
 		assetFilterDialog = new TrackerAssetFilterDialog(program);
 		skillPointsFilterDialog = new TrackerSkillPointsFilterDialog(program);
 		TrackerSettings trackerSettings = Settings.get().getTrackerSettings();
@@ -1289,7 +1289,7 @@ public class TrackerTab extends JMainTabSecondary {
 		for (CheckBoxNode checkBoxNode : accountNodes.values()) {
 			Settings.get().getTrackerSettings().getFilters().put(checkBoxNode.getNodeID(), checkBoxNode.isSelected());
 		}
-		Settings.get().getTrackerSettings().setSelectNew(filterDialog.isSelectNew());
+		Settings.get().getTrackerSettings().setSelectNew(assetFilterDialog.isSelectNew());
 		Settings.unlock("Tracker Filters: Update");
 		program.saveSettings("Tracker Filters: Update");
 	}
@@ -1457,6 +1457,11 @@ public class TrackerTab extends JMainTabSecondary {
 			updateSettings();
 			createData();
 			updateButtonIcons();
+		} else if (assetFilterDialog.isSelectNew() != Settings.get().getTrackerSettings().isSelectNew()) {
+			Settings.lock("Tracker Filters: Update");
+			Settings.get().getTrackerSettings().setSelectNew(assetFilterDialog.isSelectNew());
+			Settings.unlock("Tracker Filters: Update");
+			program.saveSettings("Tracker Filters: Update");
 		}
 	}
 
@@ -1638,7 +1643,7 @@ public class TrackerTab extends JMainTabSecondary {
 				}
 				updateData();
 			} else if (TrackerAction.FILTER_WALLET_BALANCE.name().equals(e.getActionCommand())) {
-				boolean save = filterDialog.showWallet(accountNodes);
+				boolean save = walletFilterDialog.showWallet(accountNodes);
 				if (save) { //Need refilter
 					updateSettings();
 					createData();
