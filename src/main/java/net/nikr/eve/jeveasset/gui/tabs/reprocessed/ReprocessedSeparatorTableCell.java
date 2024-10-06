@@ -183,7 +183,9 @@ public class ReprocessedSeparatorTableCell extends SeparatorTableCell<Reprocesse
 			jBatchSize.setVisible(false);
 		}
 		//Color
-		if (material.getTotal().isSell()) {
+		if (material.isGrandTotal()) {
+			ColorSettings.config(jColor, ColorEntry.REPROCESSED_EQUAL);
+		} else if (material.getTotal().isSell()) {
 			ColorSettings.config(jColor, ColorEntry.REPROCESSED_SELL);
 		} else if (material.getTotal().isReprocess()) {
 			ColorSettings.config(jColor, ColorEntry.REPROCESSED_REPROCESS);
