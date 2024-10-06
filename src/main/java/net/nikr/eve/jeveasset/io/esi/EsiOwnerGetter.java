@@ -20,10 +20,10 @@
  */
 package net.nikr.eve.jeveasset.io.esi;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
@@ -81,7 +81,7 @@ public class EsiOwnerGetter extends AbstractEsiGetter implements AccountAdder{
 		List<CharacterAffiliationResponse> affiliationResponse = update(DEFAULT_RETRIES, new EsiHandler<List<CharacterAffiliationResponse>>() {
 			@Override
 			public ApiResponse<List<CharacterAffiliationResponse>> get() throws ApiException {
-				return getCharacterApiOpen().postCharactersAffiliationWithHttpInfo(Collections.singletonList(characterID), DATASOURCE);
+				return getCharacterApiOpen().postCharactersAffiliationWithHttpInfo(Collections.singleton(characterID), DATASOURCE);
 			}
 		});
 		if (affiliationResponse.isEmpty()) {
@@ -91,7 +91,7 @@ public class EsiOwnerGetter extends AbstractEsiGetter implements AccountAdder{
 		}
 		Integer corporationID = affiliationResponse.get(0).getCorporationId();
 		//IDs to Names
-		List<Integer> ids = new ArrayList<>();
+		Set<Integer> ids = new HashSet<>();
 		ids.add(characterID);
 		ids.add(corporationID);
 		List<UniverseNamesResponse> namesResponse = update(DEFAULT_RETRIES, new EsiHandler<List<UniverseNamesResponse>>() {
