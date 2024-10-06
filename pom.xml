@@ -390,6 +390,7 @@
 					<environmentVariables>
                         <JANICE_API_KEY>${janice}</JANICE_API_KEY>
                     </environmentVariables>
+					<trimStackTrace>false</trimStackTrace>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -753,7 +754,7 @@
 		<dependency>
 			<groupId>net.troja.eve</groupId>
 			<artifactId>eve-esi</artifactId>
-			<version>4.8.1</version>
+			<version>4.9.0</version>
 		</dependency>
 		<dependency>
 			<groupId>uk.me.candle</groupId>
