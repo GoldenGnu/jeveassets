@@ -22,7 +22,7 @@ jobs:
     - name: JDK
       uses: actions/setup-java@v2
       with:
-        distribution: 'oracle'
+        distribution: 'temurin'
         java-version: 8
     - name: Build with Maven
       env:

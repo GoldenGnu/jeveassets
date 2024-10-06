@@ -23,7 +23,7 @@ jobs:
     - name: JDK
       uses: actions/setup-java@v2
       with:
-        distribution: 'oracle'
+        distribution: 'temurin'
         java-version: ${{ matrix.java }}
     - name: Build with Maven
       env:
