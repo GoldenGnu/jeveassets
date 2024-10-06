@@ -88,6 +88,18 @@ public class EveRefGetterOnlineTest extends TestUtil {
 		} else {
 			typeIDs.addAll(all);
 		}
+		//Wrong data in SDE 2024-10-06
+		typeIDs.remove(24548); //Manufacturing Wrong
+		typeIDs.remove(57481); //Portion size 1 != 20
+		typeIDs.remove(57482); //Portion size 1 != 20
+		typeIDs.remove(57484); //Portion size 1 != 20
+		typeIDs.remove(57485); //Portion size 1 != 20
+		typeIDs.remove(73431); //Expired
+		typeIDs.remove(73432); //Expired
+		typeIDs.remove(84166); //Pattern name
+		typeIDs.remove(84171); //Pattern name
+		typeIDs.remove(84172); //Pattern name
+		typeIDs.remove(84212); //Pattern name
 		for (int typeID : typeIDs) {
 			updates.add(new Download(typeID));
 		}
@@ -151,9 +163,7 @@ public class EveRefGetterOnlineTest extends TestUtil {
 		assertEquals(msg, itemSDE.getVolumePackaged(), itemEveRef.getVolumePackaged(), DELTA);
 		assertEquals(msg, itemSDE.getCapacity(), itemEveRef.getCapacity(), DELTA);
 		assertEquals(msg, itemSDE.getMeta(), itemEveRef.getMeta());
-		if (itemSDE.getTypeID() != 54383) {
-			assertEquals(msg, itemSDE.isMarketGroup(), itemEveRef.isMarketGroup());
-		}
+		assertEquals(msg, itemSDE.isMarketGroup(), itemEveRef.isMarketGroup());
 		assertEquals(msg, itemSDE.isPiMaterial(), itemEveRef.isPiMaterial());
 		assertEquals(msg, itemSDE.getPortion(), itemEveRef.getPortion());
 		assertEquals(msg, itemSDE.getProductTypeID(), itemEveRef.getProductTypeID());
