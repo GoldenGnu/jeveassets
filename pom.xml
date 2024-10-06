@@ -388,8 +388,9 @@
 						<exclude>${tests.to.skip}</exclude>
 					</excludes>
 					<environmentVariables>
-			<JANICE_API_KEY>${janice}</JANICE_API_KEY>
-		    </environmentVariables>
+						<JANICE_API_KEY>${janice}</JANICE_API_KEY>
+					</environmentVariables>
+					<trimStackTrace>false</trimStackTrace>
 				</configuration>
 			</plugin>
 			<plugin>
