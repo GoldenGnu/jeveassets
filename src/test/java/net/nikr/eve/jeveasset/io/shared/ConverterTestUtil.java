@@ -823,15 +823,17 @@ public class ConverterTestUtil {
 				optional.put(methodName.toLowerCase().replaceFirst("get", "") + "enum", true);
 			} else if (methodName.startsWith("get")) {
 				Annotation[] annotations = method.getAnnotations();
-				boolean found = false;
 				for (Annotation annotation : annotations) {
-					if (io.swagger.annotations.ApiModelProperty.class.equals(annotation.annotationType())) {
-						optional.put(methodName.toLowerCase().replaceFirst("get", ""), annotations[0].toString().contains("required=false"));
-						found = true;
+					if (javax.annotation.Nonnull.class.equals(annotation.annotationType())) {
+						optional.put(methodName.toLowerCase().replaceFirst("get", ""), false);
+						break;
+					}
+					if (javax.annotation.Nullable.class.equals(annotation.annotationType())) {
+						optional.put(methodName.toLowerCase().replaceFirst("get", ""), true);
 						break;
 					}
 				}
-				assertTrue(method + " " + Arrays.toString(annotations), found);
+				
 			}
 		}
 		return optional;

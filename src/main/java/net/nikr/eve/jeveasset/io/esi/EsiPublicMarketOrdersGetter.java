@@ -116,9 +116,9 @@ public class EsiPublicMarketOrdersGetter extends AbstractEsiGetter {
 			input.getLocationToSystem().put(ordersResponse.getLocationId(), RawConverter.toLong(ordersResponse.getSystemId()));
 		}
 		//Get public structures
-		input.getStructureIDs().addAll(update(DEFAULT_RETRIES, new EsiHandler<List<Long>>() {
+		input.getStructureIDs().addAll(update(DEFAULT_RETRIES, new EsiHandler<Set<Long>>() {
 			@Override
-			public ApiResponse<List<Long>> get() throws ApiException {
+			public ApiResponse<Set<Long>> get() throws ApiException {
 				return getUniverseApiOpen().getUniverseStructuresWithHttpInfo(DATASOURCE, "market", null);
 			}
 		}));
