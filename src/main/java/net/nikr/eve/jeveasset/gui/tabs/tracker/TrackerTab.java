@@ -851,18 +851,27 @@ public class TrackerTab extends JMainTabSecondary {
 
 			CheckBoxNode flagNode = nodeCache.get(id);
 			if (flagNode == null) {
+				if (!locationNode.isParent()) { //When adding first child
+					//Replace parent location (don't use location as ID)
+					nodeCache.remove(location);
+					assetNodes.remove(location);
+					String locationNodeID = locationNode.getNodeID() + " > Parent";
+					if (location.startsWith("[Unknown Location #")) {
+						locationNode = new CheckBoxNode(unknownLocationsNode, locationNodeID, location, selectNode(locationNodeID));
+					} else {
+						locationNode = new CheckBoxNode(knownLocationsNode, locationNodeID, location, selectNode(locationNodeID));
+					}
+					nodeCache.put(location, locationNode);
+					assetNodes.put(locationNodeID, locationNode);
+
+					//Other Node (use the location as ID)
+					CheckBoxNode otherNode = new CheckBoxNode(locationNode, location, TabsTracker.get().other(), selectNode(location));
+					assetNodes.put(location, otherNode);
+				}
 				flagNode = new CheckBoxNode(locationNode, id, ApiIdConverter.getFlagName(flag), selectNode(id));
 				nodeCache.put(id, flagNode);
 			}
 			assetNodes.put(id, flagNode);
-		}
-		//For locations with office, you should have the option to exclude all values in corp hangars
-		for (CheckBoxNode locationNode : nodeCache.values()) {
-			if (locationNode.isParent()) {
-				String id = locationNode.getNodeID() + " > unique ID";
-				CheckBoxNode otherNode = new CheckBoxNode(locationNode, id, TabsTracker.get().other(), selectNode(id));
-				assetNodes.put(otherNode.getNodeID(), otherNode);
-			}
 		}
 	}
 
