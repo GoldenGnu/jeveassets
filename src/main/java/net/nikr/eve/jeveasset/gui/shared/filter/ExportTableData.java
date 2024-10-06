@@ -172,7 +172,7 @@ public class ExportTableData {
 						}
 					}
 				} else { //All columns
-					header = tableFormat.getAllColumns();
+					header = new ArrayList<>(tableFormat.getAllColumns()); //Copy (Otherwise added columns to the tableformat will also add it to the header)
 				}
 				break;
 			case SHOWN: //Current shown columns in order
