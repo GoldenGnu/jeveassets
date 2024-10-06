@@ -61,6 +61,11 @@ public class JMenuLookupOnlineTest extends TestUtil {
 				|| lookupLinks == LookupLinks.ZKILLBOARD_REGION	) {
 				continue; //Protected by cloudflare
 			}
+			if (lookupLinks == LookupLinks.EVEMISSIONEER_SYSTEM
+				|| lookupLinks == LookupLinks.EVEMISSIONEER_CONSTELLATION
+				|| lookupLinks == LookupLinks.EVEMISSIONEER_REGION) {
+				continue; //Returns http code 429
+			}
 			Set<String> links = lookupLinks.getLinks(menuData);
 			assertNotNull(lookupLinks.name() + " is null", links);
 			assertFalse(lookupLinks.name() + " is empty", links.isEmpty());
