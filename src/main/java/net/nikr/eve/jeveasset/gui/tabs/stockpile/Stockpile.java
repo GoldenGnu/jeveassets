@@ -58,7 +58,6 @@ import net.nikr.eve.jeveasset.data.settings.types.TagsType;
 import net.nikr.eve.jeveasset.gui.shared.CopyHandler.CopySeparator;
 import net.nikr.eve.jeveasset.gui.shared.components.JButtonComparable;
 import net.nikr.eve.jeveasset.gui.shared.components.JButtonNull;
-import net.nikr.eve.jeveasset.gui.shared.table.JSeparatorTable.IgnoreSeparator;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter.StockpileContainer;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter.StockpileFlag;
 import net.nikr.eve.jeveasset.i18n.General;
@@ -80,7 +79,6 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 	private List<StockpileFilter> filters = new ArrayList<>();
 	private final Set<StockpileItem> items = new TreeSet<>();
 	private final StockpileTotal totalItem = new StockpileTotal(this);
-	private final IgnoreItem ignoreItem = new IgnoreItem(this);
 	private final Map<Stockpile, Double> subpiles = new HashMap<>();
 	private final List<Stockpile> subpileLinks = new ArrayList<>();
 	private final List<SubpileItem> subpileAll = new ArrayList<>();
@@ -450,10 +448,6 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 		return items;
 	}
 
-	public IgnoreItem getIgnoreItem() {
-		return ignoreItem;
-	}
-
 	public List<StockpileItem> getClaims() {
 		List<StockpileItem> list = new ArrayList<>();
 		list.addAll(items);
@@ -564,12 +558,6 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 	@Override
 	public int compareTo(final Stockpile o) {
 		return this.getName().compareToIgnoreCase(o.getName());
-	}
-
-	public static class IgnoreItem extends StockpileItem implements IgnoreSeparator {
-		public IgnoreItem(Stockpile stockpile) {
-			super(stockpile, ApiIdConverter.getItem(null), 0, 0, false);
-		}
 	}
 
 	public static class StockpileItem implements Comparable<StockpileItem>, LocationsType, ItemType, BlueprintType, PriceType, CopySeparator, TagsType, OwnersType, MarketDetailType {
@@ -870,7 +858,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 				long count = 0;
 				//Assets
 				if (asset != null) {
-					if (runs && typeID < 0) {
+					if (runs && typeID < 0) { //BPC Runs
 						if (filter.isAssets() && asset.isBPC()) {
 							if (add) { //Match
 								inventoryCountNow = inventoryCountNow + asset.getRuns();
@@ -888,13 +876,21 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 						continue; //Do not match - try next filter
 					}
 				 //Jobs
-				} else if (industryJob != null) { //Copying in progress (not delivered to assets)
-					if (runs && typeID < 0) {
+				} else if (industryJob != null) {
+					if (typeID < 0) { //Copying in progress (not delivered to assets)
 						if (filter.isJobs() && industryJob.isCopying() && industryJob.isNotDeliveredToAssets()) {
-							if (add) { //Match
-								jobsCountNow = jobsCountNow + ((long)industryJob.getRuns() * (long)industryJob.getLicensedRuns());
-							} else {
-								count = count + ((long)industryJob.getRuns() * (long)industryJob.getLicensedRuns());
+							if (runs) { //BPC Runs
+								if (add) { //Match
+									jobsCountNow = jobsCountNow + ((long)industryJob.getRuns() * (long)industryJob.getLicensedRuns());
+								} else {
+									count = count + ((long)industryJob.getRuns() * (long)industryJob.getLicensedRuns());
+								}
+							} else { //BPC
+								if (add) { //Match
+									jobsCountNow = jobsCountNow + (long)industryJob.getRuns();
+								} else {
+									count = count + (long)industryJob.getRuns();
+								}
 							}
 						}
 						//Manufacturing in progress (not delivered to assets)
@@ -1143,7 +1139,17 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 		}
 
 		public String getSeparator() {
-			return getGroup() + "\r\n" + stockpile.getName().toLowerCase() + "\r\n" + stockpile.getName(); //Sort lower case, but unique by case
+			String group = getGroup();
+			if (group.isEmpty() || Settings.get().getStockpileGroupSettings().isGroupExpanded(group)) {
+				return group + "\r\n" + stockpile.getName().toLowerCase() + "\r\n" + stockpile.getName(); //Sort lower case, but unique by case
+			} else { //Collapsed Group (everything in a single group)
+				return group + "\r\n";
+			}
+		}
+
+		public boolean isGroupCollapsed(boolean expand) {
+			String group = getGroup();
+			return !Settings.get().getStockpileGroupSettings().isGroupExpanded(group);
 		}
 
 		public String getGroup() {

@@ -22,6 +22,7 @@ package net.nikr.eve.jeveasset.gui.shared.components;
 
 import java.util.ArrayList;
 import java.util.List;
+import net.nikr.eve.jeveasset.i18n.TabsTracker;
 
 public class CheckBoxNode implements Comparable<CheckBoxNode>{
 
@@ -90,6 +91,10 @@ public class CheckBoxNode implements Comparable<CheckBoxNode>{
 
 	public boolean isParent() {
 		return !children.isEmpty();
+	}
+
+	private boolean isOther() {
+		return this.nodeName.equals(TabsTracker.get().other());
 	}
 
 	public boolean isSelected() {
@@ -272,7 +277,15 @@ public class CheckBoxNode implements Comparable<CheckBoxNode>{
 
 	@Override
 	public int compareTo(CheckBoxNode o) {
-		return nodeId.compareToIgnoreCase(o.nodeId);
+		if (this.isOther() && o.isOther()) {
+			return nodeId.compareToIgnoreCase(o.nodeId);
+		} else if (this.isOther()) {
+			return 1;
+		} else if (o.isOther()) {
+			return -1;
+		} else {
+			return nodeId.compareToIgnoreCase(o.nodeId);
+		}
 	}
 
 	@Override

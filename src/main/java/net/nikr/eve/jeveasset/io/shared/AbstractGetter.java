@@ -25,8 +25,10 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
@@ -329,6 +331,19 @@ public abstract class AbstractGetter<O extends OwnerType> implements Runnable {
 		final int N = list.size();
 		for (int i = 0; i < N; i += L) {
 			parts.add(new ArrayList<>(list.subList(i, Math.min(N, i + L))));
+		}
+		return parts;
+	}
+
+	protected final <T> List<Set<T>> splitSet(Collection<T> list, final int L) {
+		return splitSet(new ArrayList<>(list), L);
+	}
+
+	private <T> List<Set<T>> splitSet(List<T> list, final int L) {
+		List<Set<T>> parts = new ArrayList<>();
+		final int N = list.size();
+		for (int i = 0; i < N; i += L) {
+			parts.add(new HashSet<>(list.subList(i, Math.min(N, i + L))));
 		}
 		return parts;
 	}

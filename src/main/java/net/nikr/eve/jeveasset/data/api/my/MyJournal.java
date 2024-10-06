@@ -136,9 +136,18 @@ public class MyJournal extends RawJournal implements Comparable<MyJournal>, Owne
 		return tags;
 	}
 
+	private double getAmountNotNull() {
+		Double amount = getAmount();
+		if (amount != null) {
+			return amount;
+		} else {
+			return 0.0;
+		}
+	}
+
 	@Override
 	public TagID getTagID() {
-		return new TagID(JournalTab.NAME, getRefID(), getAmount());
+		return new TagID(JournalTab.NAME, getRefID(), getAmountNotNull());
 	}
 
 	@Override

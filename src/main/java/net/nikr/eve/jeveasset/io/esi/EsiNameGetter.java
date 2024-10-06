@@ -56,9 +56,9 @@ public class EsiNameGetter extends AbstractEsiGetter {
 	@Override
 	protected void update() throws ApiException {
 		Set<Integer> ids = getOwnerIDs(ownerTypes);
-		Map<List<Integer>, List<UniverseNamesResponse>> responses = updateList(splitList(ids, UNIVERSE_BATCH_SIZE), DEFAULT_RETRIES, new ListHandler<List<Integer>, List<UniverseNamesResponse>>() {
+		Map<Set<Integer>, List<UniverseNamesResponse>> responses = updateList(splitSet(ids, UNIVERSE_BATCH_SIZE), DEFAULT_RETRIES, new ListHandler<Set<Integer>, List<UniverseNamesResponse>>() {
 			@Override
-			public ApiResponse<List<UniverseNamesResponse>> get(List<Integer> t) throws ApiException {
+			public ApiResponse<List<UniverseNamesResponse>> get(Set<Integer> t) throws ApiException {
 				try {
 					return getUniverseApiOpen().postUniverseNamesWithHttpInfo(t, DATASOURCE);
 				} catch (ApiException ex) {
@@ -73,15 +73,15 @@ public class EsiNameGetter extends AbstractEsiGetter {
 		});
 
 		Set<Integer> retries = new HashSet<>(ids);
-		for (Map.Entry<List<Integer>, List<UniverseNamesResponse>> entry : responses.entrySet()) {
+		for (Map.Entry<Set<Integer>, List<UniverseNamesResponse>> entry : responses.entrySet()) {
 			for (UniverseNamesResponse lookup : entry.getValue()) {
 				Settings.get().getOwners().put((long)lookup.getId(), lookup.getName());
 			}
 			retries.removeAll(entry.getKey());
 		}
-		Map<List<Integer>, List<UniverseNamesResponse>> retryResponses = updateList(splitList(retries, 1), DEFAULT_RETRIES, new ListHandler<List<Integer>, List<UniverseNamesResponse>>() {
+		Map<Set<Integer>, List<UniverseNamesResponse>> retryResponses = updateList(splitSet(retries, 1), DEFAULT_RETRIES, new ListHandler<Set<Integer>, List<UniverseNamesResponse>>() {
 			@Override
-			public ApiResponse<List<UniverseNamesResponse>> get(List<Integer> t) throws ApiException {
+			public ApiResponse<List<UniverseNamesResponse>> get(Set<Integer> t) throws ApiException {
 				try {
 					return getUniverseApiOpen().postUniverseNamesWithHttpInfo(t, DATASOURCE);
 				} catch (ApiException ex) {
@@ -95,7 +95,7 @@ public class EsiNameGetter extends AbstractEsiGetter {
 			}
 		});
 		int count = 30;
-		for (Map.Entry<List<Integer>, List<UniverseNamesResponse>> entry : retryResponses.entrySet()) {
+		for (Map.Entry<Set<Integer>, List<UniverseNamesResponse>> entry : retryResponses.entrySet()) {
 			for (UniverseNamesResponse lookup : entry.getValue()) {
 				Settings.get().getOwners().put((long)lookup.getId(), lookup.getName());
 				Date date = new Date(System.currentTimeMillis() + (ONE_DAY * count));

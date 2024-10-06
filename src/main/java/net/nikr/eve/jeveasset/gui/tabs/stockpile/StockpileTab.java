@@ -286,6 +286,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 	private int toolBarMinWidth;
 	private Stockpile template = null;
 	private boolean collapsed = false;
+	private static boolean updateFirstStockpileGroup = false;
 
 	public static final String NAME = "stockpile"; //Not to be changed!
 
@@ -521,6 +522,12 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		filterList.addListEventListener(listener);
 		//Separator
 		separatorList = new SeparatorList<>(filterList, new StockpileSeparatorComparator(), 1, Integer.MAX_VALUE);
+		separatorList.addListEventListener(new ListEventListener<StockpileItem>() {
+			@Override
+			public void listChanged(ListEvent<StockpileItem> listChanges) {
+				updateGroupFirst();
+			}
+		});
 		//Table Model
 		tableModel = EventModels.createTableModel(separatorList, tableFormat);
 		//Table
@@ -842,6 +849,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		//Update list
 		try {
 			eventList.getReadWriteLock().writeLock().lock();
+			enableGroupFirstUpdate();
 			eventList.removeAll(items);
 		} finally {
 			eventList.getReadWriteLock().writeLock().unlock();
@@ -861,60 +869,80 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		//Update list
 		try {
 			eventList.getReadWriteLock().writeLock().lock();
+			enableGroupFirstUpdate();
 			eventList.addAll(stockpile.getItems());
 		} finally {
 			eventList.getReadWriteLock().writeLock().unlock();
 		}
 		//Unlcok Table
 		afterUpdateData();
+		//Load groups states
+		String group = Settings.get().getStockpileGroupSettings().getGroup(stockpile);
+		boolean expand = Settings.get().getStockpileGroupSettings().isGroupExpanded(group);
+		if (!group.isEmpty()) {
+			if (expand) { //Expanse - Load stockpiles expanded state
+				try {
+					separatorList.getReadWriteLock().writeLock().lock();
+					for (int i = 0; i < separatorList.size(); i++) {
+						Object object = separatorList.get(i);
+						if (object instanceof SeparatorList.Separator<?>) {
+							SeparatorList.Separator<?> separator = (SeparatorList.Separator<?>) object;
+							StockpileItem currentItem = (StockpileItem) separator.first();
+							if (currentItem.getGroup().equals(group)) {
+								if (Settings.get().getStockpileGroupSettings().isStockpileExpanded(currentItem.getStockpile())) {
+									separator.setLimit(Integer.MAX_VALUE);
+								} else {
+									separator.setLimit(0);
+								}
+							}
+						}
+					}
+				} finally {
+					separatorList.getReadWriteLock().writeLock().unlock();
+				}
+			} else { //Collapse group
+				try {
+					separatorList.getReadWriteLock().writeLock().lock();
+					for (int i = 0; i < separatorList.size(); i++) {
+						Object object = separatorList.get(i);
+						if (object instanceof SeparatorList.Separator<?>) {
+							SeparatorList.Separator<?> separator = (SeparatorList.Separator<?>) object;
+							StockpileItem currentItem = (StockpileItem) separator.first();
+							if (currentItem.getGroup().equals(group)) {
+								separator.setLimit(0);
+							}
+						}
+					}
+				} finally {
+					separatorList.getReadWriteLock().writeLock().unlock();
+				}
+			}
+		}
 	}
 
 	private void expandGroups(boolean expand, GroupMatching match) {
+		//Changed groups
 		List<StockpileItem> stockpileItems = new ArrayList<>();
-		List<StockpileItem> ignoreItems = new ArrayList<>();
-		List<Stockpile> changed = new ArrayList<>();
-		List<String> groups = new ArrayList<>();
 		for (Stockpile stockpile : getShownStockpiles()) {
 			String group = Settings.get().getStockpileGroupSettings().getGroup(stockpile);
 			if (match.matches(group) && Settings.get().getStockpileGroupSettings().isGroupExpanded(group) != expand) { //Match group + is changed
 				stockpileItems.addAll(stockpile.getItems());
 				stockpileItems.addAll(stockpile.getSubpileTableItems());
-				if (Settings.get().getStockpileGroupSettings().isGroupFirst(stockpile)) {
-					ignoreItems.add(stockpile.getIgnoreItem());
-				}
-				changed.add(stockpile);
+			}
+		}
+		//Groups affected
+		List<String> groups = new ArrayList<>();
+		for (Stockpile stockpile : Settings.get().getStockpiles()) {
+			String group = Settings.get().getStockpileGroupSettings().getGroup(stockpile);
+			if (match.matches(group)) { //Match group
 				groups.add(group);
 			}
 		}
-		//Update groups (must be done after the ShownStockpiles loop)
+		//Update group settings (must be done after the ShownStockpiles loop)
 		for (String group : groups) {
 			Settings.get().getStockpileGroupSettings().setGroupExpanded(group, expand);
 		}
-		if (expand) { //Expand
-			//Lock Table
-			beforeUpdateData();
-			try {
-				eventList.getReadWriteLock().writeLock().lock();
-				eventList.removeAll(ignoreItems);
-				eventList.addAll(stockpileItems);
-			} finally {
-				eventList.getReadWriteLock().writeLock().unlock();
-			}
-			//Unlcok Table
-			afterUpdateData();
-		} else { //Collapse
-			//Lock Table
-			beforeUpdateData();
-			try {
-				eventList.getReadWriteLock().writeLock().lock();
-				eventList.removeAll(stockpileItems);
-				eventList.addAll(ignoreItems);
-			} finally {
-				eventList.getReadWriteLock().writeLock().unlock();
-			}
-			//Unlcok Table
-			afterUpdateData();
-			//Collapse
+		if (!expand) { //Collapse - Save stockpile expanded state
 			try {
 				separatorList.getReadWriteLock().writeLock().lock();
 				for (int i = 0; i < separatorList.size(); i++) {
@@ -922,7 +950,59 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 					if (object instanceof SeparatorList.Separator<?>) {
 						SeparatorList.Separator<?> separator = (SeparatorList.Separator<?>) object;
 						StockpileItem currentItem = (StockpileItem) separator.first();
-						if (match.matches(currentItem.getGroup()) && changed.contains(currentItem.getStockpile())) {
+						if (match.matches(currentItem.getGroup())) {
+							Settings.get().getStockpileGroupSettings().setStockpileExpanded(currentItem.getStockpile(), separator.getLimit() != 0);
+						}
+					}
+				}
+			} finally {
+				separatorList.getReadWriteLock().writeLock().unlock();
+			}
+		}
+		//Lock Table
+		beforeUpdateData();
+		try {
+			eventList.getReadWriteLock().writeLock().lock();
+			eventList.removeAll(stockpileItems);
+			if (expand) {
+				enableGroupFirstUpdate();
+			}
+			eventList.addAll(stockpileItems);
+		} finally {
+			eventList.getReadWriteLock().writeLock().unlock();
+		}
+		//Unlcok Table
+		afterUpdateData();		
+		if (expand) { //Expanse - Load stockpiles(s) expanded state
+			try {
+				separatorList.getReadWriteLock().writeLock().lock();
+				for (int i = 0; i < separatorList.size(); i++) {
+					Object object = separatorList.get(i);
+					if (object instanceof SeparatorList.Separator<?>) {
+						SeparatorList.Separator<?> separator = (SeparatorList.Separator<?>) object;
+						StockpileItem currentItem = (StockpileItem) separator.first();
+						if (match.matches(currentItem.getGroup())) {
+							if (Settings.get().getStockpileGroupSettings().isStockpileExpanded(currentItem.getStockpile())) {
+								separator.setLimit(Integer.MAX_VALUE);
+							} else {
+								separator.setLimit(0);
+							}
+						}
+					}
+				}
+			} finally {
+				separatorList.getReadWriteLock().writeLock().unlock();
+			}
+		} else { //Collapse group(s)
+			try {
+				separatorList.getReadWriteLock().writeLock().lock();
+				for (int i = 0; i < separatorList.size(); i++) {
+					Object object = separatorList.get(i);
+					if (object instanceof SeparatorList.Separator<?>) {
+						SeparatorList.Separator<?> separator = (SeparatorList.Separator<?>) object;
+						StockpileItem currentItem = (StockpileItem) separator.first();
+						//if (match.matches(currentItem.getGroup()) && changed.contains(currentItem.getStockpile())) {
+						if (match.matches(currentItem.getGroup())) {
 							separator.setLimit(0);
 						}
 					}
@@ -939,27 +1019,33 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 			return;
 		}
 		String group = Settings.get().getStockpileGroupSettings().getGroup(stockpile);
-		try {
-			separatorList.getReadWriteLock().writeLock().lock();
-			for (int i = 0; i < separatorList.size(); i++) {
-				Object object = separatorList.get(i);
-				if (object instanceof SeparatorList.Separator<?>) {
-					SeparatorList.Separator<?> separator = (SeparatorList.Separator<?>) object;
-					StockpileItem currentItem = (StockpileItem) separator.first();
-					if (currentItem instanceof JSeparatorTable.IgnoreSeparator || currentItem == null) {
-						continue;
-					}
-					if (group.equals(currentItem.getGroup())) {
-						if (expand) {
-							separator.setLimit(Integer.MAX_VALUE);
-						} else {
-							separator.setLimit(0);
+		//Save state
+		List<Stockpile> stockpiles = Settings.get().getStockpileGroupSettings().getStockpiles(group);
+		Settings.get().getStockpileGroupSettings().setStockpileExpanded(stockpiles, expand);
+		//Expand/Collapse shown stockpiles in group
+		if (Settings.get().getStockpileGroupSettings().isGroupExpanded(group)) {
+			try {
+				separatorList.getReadWriteLock().writeLock().lock();
+				for (int i = 0; i < separatorList.size(); i++) {
+					Object object = separatorList.get(i);
+					if (object instanceof SeparatorList.Separator<?>) {
+						SeparatorList.Separator<?> separator = (SeparatorList.Separator<?>) object;
+						StockpileItem currentItem = (StockpileItem) separator.first();
+						if (currentItem == null) {
+							continue;
+						}
+						if (group.equals(currentItem.getGroup())) {
+							if (expand) {
+								separator.setLimit(Integer.MAX_VALUE);
+							} else {
+								separator.setLimit(0);
+							}
 						}
 					}
 				}
+			} finally {
+				separatorList.getReadWriteLock().writeLock().unlock();
 			}
-		} finally {
-			separatorList.getReadWriteLock().writeLock().unlock();
 		}
 	}
 
@@ -989,115 +1075,90 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 
 	private void updateGroups(String group, List<Stockpile> removeStockpiles, List<Stockpile> addStockiples, boolean updateTable) {
 		//Add StockpileItems
-		List<StockpileItem> addStockpileItems = new ArrayList<>();
-		for (Stockpile stockpile : addStockiples) {
-			addStockpileItems.addAll(stockpile.getItems());
-			addStockpileItems.addAll(stockpile.getSubpileTableItems());
-		}
-		//Remove StockpileItems
-		List<StockpileItem> removeStockpileItems = new ArrayList<>();
-		for (Stockpile stockpile : removeStockpiles) {
-			removeStockpileItems.addAll(stockpile.getItems());
-			removeStockpileItems.addAll(stockpile.getSubpileTableItems());
-		}
-		//All Stockpile Items
-		List<Stockpile> stockpiles = new ArrayList<>();
-		stockpiles.addAll(removeStockpiles);
-		stockpiles.addAll(addStockiples);
+		List<StockpileItem> stockpileItems = new ArrayList<>();
 		//Updated
-		Set<String> updatedGroups = new HashSet<>();
-		if (group != null) {
-			updatedGroups.add(group);
-		}
-		for (Stockpile stockpile : stockpiles) {
-			String previousGroup = Settings.get().getStockpileGroupSettings().getGroup(stockpile);
-			if (previousGroup != null) {
-				updatedGroups.add(previousGroup);
-			}
-		}
-		Map<String, Stockpile> updated = new HashMap<>();
-		for (String previousGroup : updatedGroups) {
-			if (!Settings.get().getStockpileGroupSettings().isGroupExpanded(previousGroup)) {
-				Stockpile groupFirst = Settings.get().getStockpileGroupSettings().getGroupFirst(previousGroup);
-				updated.put(previousGroup, groupFirst);
-			}
-		}
 		Settings.lock("Stockpile (Stockpile Group)");
 		//Add
 		for (Stockpile stockpile : addStockiples) {
 			Settings.get().getStockpileGroupSettings().setGroup(stockpile, group);
+			stockpileItems.addAll(stockpile.getItems());
+			stockpileItems.addAll(stockpile.getSubpileTableItems());
 		}
 		//Remove
 		for (Stockpile stockpile : removeStockpiles) {
 			Settings.get().getStockpileGroupSettings().removeGroup(stockpile);
+			stockpileItems.addAll(stockpile.getItems());
+			stockpileItems.addAll(stockpile.getSubpileTableItems());
 		}
 		Settings.unlock("Stockpile (Stockpile Group)");
-		Set<String> collapse = new HashSet<>();
-		List<StockpileItem> remove = new ArrayList<>();
-		List<StockpileItem> add =  new ArrayList<>();
-		for (Map.Entry<String, Stockpile> entry : updated.entrySet()) {
-			Stockpile groupFirst = Settings.get().getStockpileGroupSettings().getGroupFirst(entry.getKey());
-			if (groupFirst == null) {
-				remove.add(entry.getValue().getIgnoreItem());
-			} else if (!groupFirst.equals(entry.getValue())) {
-				remove.add(entry.getValue().getIgnoreItem());
-				collapse.add(entry.getKey());
-				add.add(groupFirst.getIgnoreItem());
-			}
-		}
-		//Remove
 		if (updateTable) {
-			remove.addAll(removeStockpileItems);
-			add.addAll(removeStockpileItems);
-		}
-		//Add
-		if (group != null) {
-			if (Settings.get().getStockpileGroupSettings().isGroupExpanded(group)) { //Expanded
-				remove.addAll(addStockpileItems);
-				add.addAll(addStockpileItems);
-			} else { //Collapsed
-				remove.addAll(addStockpileItems);
-				if (remove.isEmpty() && add.isEmpty()) {
-					return; //Do nothing
-				}
-			}
-		}
-		if (remove.isEmpty() && add.isEmpty()) {
-			return; //Do nothing
-		}
-		//Lock Table
-		beforeUpdateData();
-		try {
-			//Remove (if group was expanded)
-			eventList.getReadWriteLock().writeLock().lock();
-			if (!remove.isEmpty()) {
-				eventList.removeAll(remove); //Remove StockpileItems and Old IgnoreItems
-			}
-			if (!add.isEmpty()) {
-				eventList.addAll(add); //Add new IgnoreItems
-			}
-		} finally {
-			eventList.getReadWriteLock().writeLock().unlock();
-		}
-		//Unlcok Table
-		afterUpdateData();
-		//Collapse IgnoreItem
-		if (!collapse.isEmpty()) {
+			//Lock Table
+			beforeUpdateData();
 			try {
-				separatorList.getReadWriteLock().writeLock().lock();
-				for (int i = 0; i < separatorList.size(); i++) {
-					Object object = separatorList.get(i);
-					if (object instanceof SeparatorList.Separator<?>) {
-						SeparatorList.Separator<?> separator = (SeparatorList.Separator<?>) object;
-						StockpileItem currentItem = (StockpileItem) separator.first();
-						if (collapse.contains(currentItem.getGroup())) {
-							separator.setLimit(0);
-						}
+				eventList.getReadWriteLock().writeLock().lock();
+				eventList.removeAll(stockpileItems);
+				enableGroupFirstUpdate();
+				eventList.addAll(stockpileItems);
+			} finally {
+				eventList.getReadWriteLock().writeLock().unlock();
+			}
+			//Unlcok Table
+			afterUpdateData();
+		}
+	}
+
+	private void loadGroupStockpileExpandedState() {
+		try {
+			separatorList.getReadWriteLock().writeLock().lock();
+			for (int i = 0; i < separatorList.size(); i++) {
+				Object object = separatorList.get(i);
+				if (object instanceof SeparatorList.Separator<?>) {
+					SeparatorList.Separator<?> separator = (SeparatorList.Separator<?>) object;
+					StockpileItem currentItem = (StockpileItem) separator.first();
+					if (Settings.get().getStockpileGroupSettings().isGroupExpanded(currentItem.getGroup())
+						&& Settings.get().getStockpileGroupSettings().isStockpileExpanded(currentItem.getStockpile())) {
+						separator.setLimit(Integer.MAX_VALUE);
+					} else {
+						separator.setLimit(0);
 					}
 				}
-			} finally {
-				separatorList.getReadWriteLock().writeLock().unlock();
 			}
+		} finally {
+			separatorList.getReadWriteLock().writeLock().unlock();
+		}
+	}
+
+	protected static void enableGroupFirstUpdate() {
+		updateFirstStockpileGroup = true;
+	}
+
+	private void updateGroupFirst() {
+		if (!updateFirstStockpileGroup) {
+			return;
+		}
+		try {
+			Map<String, Stockpile> groups = new HashMap<>();
+			separatorList.getReadWriteLock().writeLock().lock();
+			for (int i = 0; i < separatorList.size(); i++) {
+				Object object = separatorList.get(i);
+				if (object instanceof SeparatorList.Separator<?>) {
+					SeparatorList.Separator<?> separator = (SeparatorList.Separator<?>) object;
+					StockpileItem stockpileItem = (StockpileItem) separator.first();
+					if (stockpileItem == null) { // handle 'late' rendering calls after this separator is invalid
+						continue;
+					}
+					String group = stockpileItem.getGroup();
+					//if (Settings.get().getStockpileGroupSettings().isGroupExpanded(group)
+					//		&& !group.isEmpty() && !groups.containsKey(group)) {
+					if(!group.isEmpty() && !groups.containsKey(group)) {
+						groups.put(group, stockpileItem.getStockpile());
+					}
+				}
+			}
+			Settings.get().getStockpileGroupSettings().setGroupFirst(groups);
+		} finally {
+			updateFirstStockpileGroup = false;
+			separatorList.getReadWriteLock().writeLock().unlock();
 		}
 	}
 
@@ -1633,10 +1694,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 			} else if (StockpileAction.SUBPILE_TREE.name().equals(e.getActionCommand())) {
 				List<StockpileItem> updated = new ArrayList<>();
 				for (Stockpile stockpile : getShownStockpiles()) {
-					String group = Settings.get().getStockpileGroupSettings().getGroup(stockpile);
-					if (Settings.get().getStockpileGroupSettings().isGroupExpanded(group)) { //Stockpile group expanded or not in group
-						updated.addAll(stockpile.getSubpileStocks());
-					}
+					updated.addAll(stockpile.getSubpileStocks());
 				}
 				try {
 					eventList.getReadWriteLock().writeLock().lock();
@@ -1652,10 +1710,6 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 				Settings.get().setShowSubpileTree(jShowSubpileTree.isSelected());
 				Settings.unlock("Show Subpile Tree");
 				program.saveSettings("Show Subpile Tree");
-			} else if (StockpileAction.COLLAPSE.name().equals(e.getActionCommand())) { //Collapse all
-				jTable.expandSeparators(false);
-			} else if (StockpileAction.EXPAND.name().equals(e.getActionCommand())) { //Expand all
-				jTable.expandSeparators(true);
 			} else if (StockpileAction.IMPORT_EFT.name().equals(e.getActionCommand())) { //Add stockpile (EFT Import)
 				importText(TextImportType.EFT);
 			} else if (StockpileAction.IMPORT_ISK_PER_HOUR.name().equals(e.getActionCommand())) { //Add stockpile (Isk Per Hour)
@@ -1829,6 +1883,12 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 				program.saveSettings("Stockpile (Stockpile Rename Group)");
 				//Restore expanded
 				expandGroups(expanded, new MatchGroup(newGroup));
+			} else if (StockpileAction.COLLAPSE.name().equals(e.getActionCommand())) { //Collapse all
+				jTable.expandSeparators(false);
+				Settings.get().getStockpileGroupSettings().setStockpileExpanded(Settings.get().getStockpiles(), false);
+			} else if (StockpileAction.EXPAND.name().equals(e.getActionCommand())) { //Expand all
+				jTable.expandSeparators(true);
+				Settings.get().getStockpileGroupSettings().setStockpileExpanded(Settings.get().getStockpiles(), true);
 			} else if (StockpileCellAction.GROUP_EXPAND.name().equals(e.getActionCommand())) {
 				expandGroupStockpiles(true);
 			} else if (StockpileCellAction.GROUP_COLLAPSE.name().equals(e.getActionCommand())) {
@@ -1954,10 +2014,13 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		@Override
 		protected void afterFilter() {
 			jTable.loadExpandedState();
+			//Load Expanded State 
+			loadGroupStockpileExpandedState();
 		}
 
 		@Override
 		protected void beforeFilter() {
+			enableGroupFirstUpdate();
 			jTable.saveExpandedState();
 		}
 

@@ -553,7 +553,7 @@ New Features:
 -Added Dark Nimbus look and feel
 -Added toggle all for Tracker skill points filter dialog
 -Include hidden stockpiles in Export (Issue #211)
--Added Outbid delta column to the Marker Order tool (Issue #204)
+-Added Outbid delta column to the Market Order tool (Issue #204)
 -Added Group column to the Market Orders tool (Issue #220)
 -Added Market Price/Margin/Profit columns to the Market Orders tool (Issue #222)
 -Highlight Market Orders prior to expiring (Issue #219)
@@ -1522,7 +1522,7 @@ ________________________________________________________________________________
 _3.1.4__________________________________________________________________________
 
 Bug Fixes:
--All Marker Order/Journal/Transaction history deleted on update
+-All Market Order/Journal/Transaction history deleted on update
 
 ________________________________________________________________________________
 _3.1.3__________________________________________________________________________

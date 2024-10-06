@@ -45,6 +45,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -216,7 +217,7 @@ public class TrackerTab extends JMainTabSecondary {
 	//Dialog
 	private final JTrackerEditDialog jEditDialog;
 	private final JSelectionDialog<String> jSelectionDialog;
-	private final TrackerFilterDialog filterDialog;
+	private final TrackerWalletFilterDialog walletFilterDialog;
 	private final TrackerAssetFilterDialog assetFilterDialog;
 	private final TrackerSkillPointsFilterDialog skillPointsFilterDialog;
 	private final JCustomFileChooser jFileChooser;
@@ -238,7 +239,7 @@ public class TrackerTab extends JMainTabSecondary {
 	public TrackerTab(Program program) {
 		super(program, NAME, TabsTracker.get().title(), Images.TOOL_TRACKER.getIcon(), true);
 
-		filterDialog = new TrackerFilterDialog(program);
+		walletFilterDialog = new TrackerWalletFilterDialog(program);
 		assetFilterDialog = new TrackerAssetFilterDialog(program);
 		skillPointsFilterDialog = new TrackerSkillPointsFilterDialog(program);
 		TrackerSettings trackerSettings = Settings.get().getTrackerSettings();
@@ -752,6 +753,7 @@ public class TrackerTab extends JMainTabSecondary {
 			}
 		}
 		final List<String> ownersList = new ArrayList<>(uniqueOwners);
+		Collections.sort(ownersList);
 		if (ownersList.isEmpty()) {
 			jOwners.setEnabled(false);
 			jOwners.setModel(new AbstractListModel<String>() {
@@ -849,18 +851,27 @@ public class TrackerTab extends JMainTabSecondary {
 
 			CheckBoxNode flagNode = nodeCache.get(id);
 			if (flagNode == null) {
+				if (!locationNode.isParent()) { //When adding first child
+					//Replace parent location (don't use location as ID)
+					nodeCache.remove(location);
+					assetNodes.remove(location);
+					String locationNodeID = locationNode.getNodeID() + " > Parent";
+					if (location.startsWith("[Unknown Location #")) {
+						locationNode = new CheckBoxNode(unknownLocationsNode, locationNodeID, location, selectNode(locationNodeID));
+					} else {
+						locationNode = new CheckBoxNode(knownLocationsNode, locationNodeID, location, selectNode(locationNodeID));
+					}
+					nodeCache.put(location, locationNode);
+					assetNodes.put(locationNodeID, locationNode);
+
+					//Other Node (use the location as ID)
+					CheckBoxNode otherNode = new CheckBoxNode(locationNode, location, TabsTracker.get().other(), selectNode(location));
+					assetNodes.put(location, otherNode);
+				}
 				flagNode = new CheckBoxNode(locationNode, id, ApiIdConverter.getFlagName(flag), selectNode(id));
 				nodeCache.put(id, flagNode);
 			}
 			assetNodes.put(id, flagNode);
-		}
-		//For locations with office, you should have the option to exclude all values in corp hangars
-		for (CheckBoxNode locationNode : nodeCache.values()) {
-			if (locationNode.isParent()) {
-				String id = locationNode.getNodeID() + " > unique ID";
-				CheckBoxNode otherNode = new CheckBoxNode(locationNode, id, TabsTracker.get().other(), selectNode(id));
-				assetNodes.put(otherNode.getNodeID(), otherNode);
-			}
 		}
 	}
 
@@ -1287,7 +1298,7 @@ public class TrackerTab extends JMainTabSecondary {
 		for (CheckBoxNode checkBoxNode : accountNodes.values()) {
 			Settings.get().getTrackerSettings().getFilters().put(checkBoxNode.getNodeID(), checkBoxNode.isSelected());
 		}
-		Settings.get().getTrackerSettings().setSelectNew(filterDialog.isSelectNew());
+		Settings.get().getTrackerSettings().setSelectNew(assetFilterDialog.isSelectNew());
 		Settings.unlock("Tracker Filters: Update");
 		program.saveSettings("Tracker Filters: Update");
 	}
@@ -1455,6 +1466,11 @@ public class TrackerTab extends JMainTabSecondary {
 			updateSettings();
 			createData();
 			updateButtonIcons();
+		} else if (assetFilterDialog.isSelectNew() != Settings.get().getTrackerSettings().isSelectNew()) {
+			Settings.lock("Tracker Filters: Update");
+			Settings.get().getTrackerSettings().setSelectNew(assetFilterDialog.isSelectNew());
+			Settings.unlock("Tracker Filters: Update");
+			program.saveSettings("Tracker Filters: Update");
 		}
 	}
 
@@ -1636,7 +1652,7 @@ public class TrackerTab extends JMainTabSecondary {
 				}
 				updateData();
 			} else if (TrackerAction.FILTER_WALLET_BALANCE.name().equals(e.getActionCommand())) {
-				boolean save = filterDialog.showWallet(accountNodes);
+				boolean save = walletFilterDialog.showWallet(accountNodes);
 				if (save) { //Need refilter
 					updateSettings();
 					createData();

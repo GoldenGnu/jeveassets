@@ -448,7 +448,7 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 	@Test
 	public void esiLocationsGetterCharacterLocations() {
 		try {
-			ApiResponse<List<CharacterAssetsNamesResponse>> apiResponse = ASSETS_API.postCharactersCharacterIdAssetsNamesWithHttpInfo(1, Collections.singletonList(1L), DATASOURCE, null);
+			ApiResponse<List<CharacterAssetsNamesResponse>> apiResponse = ASSETS_API.postCharactersCharacterIdAssetsNamesWithHttpInfo(1, Collections.singleton(1L), DATASOURCE, null);
 			validate(apiResponse.getHeaders());
 		} catch (ApiException ex) {
 			validate(ex.getResponseHeaders());
@@ -458,7 +458,7 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 	@Test
 	public void esiLocationsGetterCorporation() {
 		try {
-			ApiResponse<List<CorporationAssetsNamesResponse>> apiResponse = ASSETS_API.postCorporationsCorporationIdAssetsNamesWithHttpInfo(1, Collections.singletonList(1L), DATASOURCE, null);
+			ApiResponse<List<CorporationAssetsNamesResponse>> apiResponse = ASSETS_API.postCorporationsCorporationIdAssetsNamesWithHttpInfo(1, Collections.singleton(1L), DATASOURCE, null);
 			validate(apiResponse.getHeaders());
 		} catch (ApiException ex) {
 			validate(ex.getResponseHeaders());
@@ -578,7 +578,7 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 	@Test
 	public void esiNameGetter() {
 		try {
-			ApiResponse<List<UniverseNamesResponse>> apiResponse = UNIVERSE_API.postUniverseNamesWithHttpInfo(Collections.singletonList(1), DATASOURCE);
+			ApiResponse<List<UniverseNamesResponse>> apiResponse = UNIVERSE_API.postUniverseNamesWithHttpInfo(Collections.singleton(1), DATASOURCE);
 			validate(apiResponse.getHeaders());
 		} catch (ApiException ex) {
 			validate(ex.getResponseHeaders());
@@ -588,7 +588,7 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 	@Test
 	public void esiOwnerGetterCharacter() {
 		try {
-			ApiResponse<List<CharacterAffiliationResponse>> apiResponse = CHARACTER_API.postCharactersAffiliationWithHttpInfo(Collections.singletonList(1), DATASOURCE);
+			ApiResponse<List<CharacterAffiliationResponse>> apiResponse = CHARACTER_API.postCharactersAffiliationWithHttpInfo(Collections.singleton(1), DATASOURCE);
 			validate(apiResponse.getHeaders());
 		} catch (ApiException ex) {
 			validate(ex.getResponseHeaders());
@@ -658,7 +658,7 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 	@Test
 	public void esiPublicMarketOrdersGetterPublicStructures() {
 		try {
-			ApiResponse<List<Long>> apiResponse = UNIVERSE_API.getUniverseStructuresWithHttpInfo(DATASOURCE, null, null);
+			ApiResponse<Set<Long>> apiResponse = UNIVERSE_API.getUniverseStructuresWithHttpInfo(DATASOURCE, null, null);
 			validate(apiResponse.getHeaders());
 		} catch (ApiException ex) {
 			validate(ex.getResponseHeaders());
