@@ -28,7 +28,6 @@ import java.util.Map;
 import java.util.TreeMap;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
@@ -38,7 +37,6 @@ import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.CheckBoxNode;
 import net.nikr.eve.jeveasset.gui.shared.components.CheckBoxNodeEditor;
@@ -48,16 +46,15 @@ import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 import net.nikr.eve.jeveasset.i18n.TabsTracker;
 
 
-public class TrackerFilterDialog extends JDialogCentered {
+public class TrackerWalletFilterDialog extends JDialogCentered {
 
 	private final JTree jTree;
-	private final JCheckBox jNewSelected;
 	private final DefaultMutableTreeNode rootNode;
 	private final DefaultTreeModel treeModel;
 
 	private boolean save = false;
 
-	public TrackerFilterDialog(Program program) {
+	public TrackerWalletFilterDialog(Program program) {
 		super(program, TabsTracker.get().filterTitle(), Images.TOOL_TRACKER.getImage());
 
 		rootNode = new DefaultMutableTreeNode(DialoguesSettings.get().root());
@@ -73,9 +70,6 @@ public class TrackerFilterDialog extends JDialogCentered {
 		jTree.setCellRenderer(new CheckBoxNodeRenderer());
 		jTree.setCellEditor(new CheckBoxNodeEditor(jTree));
 		jTree.setEditable(true);
-
-		jNewSelected = new JCheckBox(TabsTracker.get().newSelected());
-		jNewSelected.setSelected(Settings.get().getTrackerSettings().isSelectNew());
 
 		JButton jOK = new JButton(TabsTracker.get().ok());
 		jOK.addActionListener(new ActionListener() {
@@ -100,7 +94,6 @@ public class TrackerFilterDialog extends JDialogCentered {
 			layout.createParallelGroup(GroupLayout.Alignment.LEADING)
 				.addComponent(jTreeScroll, 0, GroupLayout.PREFERRED_SIZE, 600)
 				.addGroup(layout.createSequentialGroup()
-					.addComponent(jNewSelected)
 					.addGap(0, 0, Integer.MAX_VALUE)
 					.addComponent(jOK, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
 					.addComponent(jCancel, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
@@ -110,7 +103,6 @@ public class TrackerFilterDialog extends JDialogCentered {
 			layout.createSequentialGroup()
 				.addComponent(jTreeScroll, 0, GroupLayout.PREFERRED_SIZE, 500)
 				.addGroup(layout.createParallelGroup()
-					.addComponent(jNewSelected)
 					.addComponent(jOK, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jCancel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				)
@@ -160,25 +152,12 @@ public class TrackerFilterDialog extends JDialogCentered {
 	@Override
 	protected void save() { }
 
-	public boolean isSelectNew() {
-		return jNewSelected.isSelected();
-	}
-
-	public boolean showLocations(Map<String, CheckBoxNode> nodes) {
-		return show(nodes, true);
-	}
-
 	public boolean showWallet(Map<String, CheckBoxNode> nodes) {
-		return show(nodes, false);
-	}
-
-	private boolean show(Map<String, CheckBoxNode> nodes, boolean selected) {
 		save = false;
 		rootNode.removeAllChildren();
 		treeModel.reload();
 		jTree.setVisibleRowCount(0);
-		jNewSelected.setVisible(selected);
-
+	
 		Map<String, CheckBoxNode> cloneList = cloneList(nodes);
 
 		Map<String, DefaultMutableTreeNode> cache = new HashMap<>();
