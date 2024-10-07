@@ -58,6 +58,7 @@ import net.nikr.eve.jeveasset.io.esi.EsiAccountBalanceGetter;
 import net.nikr.eve.jeveasset.io.esi.EsiAssetsGetter;
 import net.nikr.eve.jeveasset.io.esi.EsiBlueprintsGetter;
 import net.nikr.eve.jeveasset.io.esi.EsiBookmarksGetter;
+import net.nikr.eve.jeveasset.io.esi.EsiClonesGetter;
 import net.nikr.eve.jeveasset.io.esi.EsiContractItemsGetter;
 import net.nikr.eve.jeveasset.io.esi.EsiContractsGetter;
 import net.nikr.eve.jeveasset.io.esi.EsiDivisionsGetter;
@@ -845,6 +846,7 @@ public class UpdateDialog extends JDialogCentered {
 					updates.add(new EsiLocationsGetter(this, esiOwner));
 					updates.add(new EsiShipGetter(this, esiOwner, assetNextUpdate.getOrDefault(esiOwner, Settings.getNow())));
 					updates.add(new EsiPlanetaryInteractionGetter(this, esiOwner, assetNextUpdate.getOrDefault(esiOwner, Settings.getNow())));
+					updates.add(new EsiClonesGetter(this, esiOwner, assetNextUpdate.getOrDefault(esiOwner, Settings.getNow())));
 				}
 			}
 			updates.add(new EsiFactionWarfareGetter(this));

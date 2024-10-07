@@ -68,9 +68,9 @@ public class JFixedToolBar extends JToolBar {
 	public void add(JCheckBox jCheckBox) {
 		addSpace(5);
 		jCheckBox.setBorder(null);
-        super.add(jCheckBox);
+		super.add(jCheckBox);
 		addSpace(5);
-    }
+	}
 
 	public void add(final JComponent jComponent, int width) {
 		if (width > 0) {

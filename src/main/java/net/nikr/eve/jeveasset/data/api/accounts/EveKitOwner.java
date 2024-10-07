@@ -205,6 +205,16 @@ public class EveKitOwner extends DeprecatedOwner implements OwnerType {
 	}
 
 	@Override
+	public boolean isClones() {
+	    return false; //Not supported by the EveKit, Yet
+	}
+
+	@Override
+	public boolean isImplants() {
+	    return false; //Not supported by the EveKit, Yet
+	}
+
+	@Override
 	public boolean isOpenWindows() {
 		return false; //Not supported by the EveKit, Yet?
 	}

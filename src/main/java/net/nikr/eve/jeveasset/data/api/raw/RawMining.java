@@ -30,9 +30,9 @@ import net.troja.eve.esi.model.CorporationMiningObserversResponse;
 
 public class RawMining {
 	private Date date;
-    private Long count;
-    private Long locationID;
-    private Integer typeID;
+	private Long count;
+	private Long locationID;
+	private Integer typeID;
 	private long characterID;
 	private Long corporationID = null;
 	private String corporationName;

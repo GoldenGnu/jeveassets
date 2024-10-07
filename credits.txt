@@ -40,6 +40,7 @@ Contributors:
   Lazaren
   Boran Lordsworth
   Ed Thelleres
+  Tsuro Tsero
 
 Retired Testers:
   Varo Jan
