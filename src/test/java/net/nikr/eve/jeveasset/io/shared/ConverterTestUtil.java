@@ -79,6 +79,7 @@ import net.troja.eve.esi.ApiClient;
 import net.troja.eve.esi.api.AssetsApi;
 import net.troja.eve.esi.api.BookmarksApi;
 import net.troja.eve.esi.api.CharacterApi;
+import net.troja.eve.esi.api.ClonesApi;
 import net.troja.eve.esi.api.ContractsApi;
 import net.troja.eve.esi.api.CorporationApi;
 import net.troja.eve.esi.api.IndustryApi;
@@ -625,6 +626,9 @@ public class ConverterTestUtil {
 			return true;
 		}
 		if (type.equals(SkillsApi.class)) {
+			return true;
+		}
+		if (type.equals(ClonesApi.class)) {
 			return true;
 		}
 		return false;

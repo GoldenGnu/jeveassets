@@ -99,6 +99,8 @@ public interface OwnerType extends Comparable<OwnerType> {
 	//Account Mask
 	public boolean isCharacter();
 	public boolean isAssetList();
+	public boolean isClones();
+	public boolean isImplants();
 	public boolean isAccountBalance();
 	public boolean isIndustryJobs();
 	public boolean isMarketOrders();
