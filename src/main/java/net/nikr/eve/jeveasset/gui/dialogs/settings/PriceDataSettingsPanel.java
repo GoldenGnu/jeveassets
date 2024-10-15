@@ -429,11 +429,9 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 				list.add(ApiIdConverter.getLocation(60005686));
 			} else if (source == PriceSource.JANICE) {
 				list = new ArrayList<>();
-				list.add(JaniceLocation.AMARR.getPriceLocation());
-				list.add(JaniceLocation.JITA_4_4.getPriceLocation());
-				list.add(JaniceLocation.JITA_4_4_AND_PERIMETER_TTT.getPriceLocation());
-				list.add(JaniceLocation.NPC.getPriceLocation());
-				list.add(JaniceLocation.PERIMETER_TTT.getPriceLocation());
+				for (JaniceLocation janiceLocation : JaniceLocation.values()) {
+					list.add(janiceLocation.getPriceLocation());
+				}
 				locationType = LocationType.STATION;
 			} else {
 				list = stations;
