@@ -67,7 +67,6 @@ public class PriceDataGetter implements PricingListener {
 	private static final int ATTEMPT_COUNT = 2;
 	private static final int ZERO_PRICES_WARNING_LIMIT = 10;
 	private static final int FAILED_PERCENT_CANCEL_LIMIT = 5;
-	private static final int ZERO_PERCENT_CANCEL_LIMIT = 25;
 
 	private UpdateTask updateTask;
 	private boolean update;
@@ -197,6 +196,9 @@ public class PriceDataGetter implements PricingListener {
 				pricingOptions.addHeader("X-ApiKey", janiceKey);
 			} else if (!JANICE.isEmpty()) {
 				pricingOptions.addHeader("X-ApiKey", JANICE);
+			} else if (updateTask != null) {
+				updateTask.addError("Price data", "No Janice API Key");
+				return null;
 			}
 		}
 
@@ -235,8 +237,9 @@ public class PriceDataGetter implements PricingListener {
 				return null;
 			}
 		}
-		boolean updated = (!okay.isEmpty() && (typeIDs.size() * FAILED_PERCENT_CANCEL_LIMIT / 100) > failed.size() && (typeIDs.size() * ZERO_PERCENT_CANCEL_LIMIT / 100) > zero.size());
-		if (updated && !failed.isEmpty()) {
+		boolean updated = !okay.isEmpty() && typeIDs.size() * FAILED_PERCENT_CANCEL_LIMIT / 100 > failed.size();
+
+		if (!failed.isEmpty()) {
 			StringBuilder errorString = new StringBuilder();
 			boolean first = true;
 			synchronized (failed) {
@@ -250,11 +253,11 @@ public class PriceDataGetter implements PricingListener {
 				}
 			}
 			LOG.error("Failed to update price data for the following typeIDs: " + errorString.toString());
-			if (updateTask != null) {
+			if (updated && updateTask != null) {
 				updateTask.addError("Price data", "Failed to update price data for " + failed.size() + " of " + typeIDs.size() + " item types");
 			}
 		}
-		if (updated && !zero.isEmpty()) {
+		if (!zero.isEmpty()) {
 			StringBuilder errorString = new StringBuilder();
 			synchronized (zero) {
 				boolean first = true;
@@ -268,7 +271,7 @@ public class PriceDataGetter implements PricingListener {
 				}
 			}
 			LOG.warn("Price data is zero for the following typeIDs: " + errorString.toString());
-			if (updateTask != null && zero.size() > ZERO_PRICES_WARNING_LIMIT) {
+			if (updated && updateTask != null && typeIDs.size() * ZERO_PRICES_WARNING_LIMIT / 100 < zero.size()) {
 				updateTask.addWarning("Price data", "Price data is zero for " + zero.size() + " of " + typeIDs.size() + " item types");
 			}
 		}

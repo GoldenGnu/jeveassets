@@ -26,6 +26,7 @@ import java.util.Objects;
 import javax.swing.Icon;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.i18n.DataModelPriceDataSettings;
+import uk.me.candle.eve.pricing.impl.Janice.JaniceLocation;
 import uk.me.candle.eve.pricing.options.LocationType;
 import uk.me.candle.eve.pricing.options.PriceType;
 import uk.me.candle.eve.pricing.options.PricingFetch;
@@ -46,7 +47,7 @@ public class PriceDataSettings {
 			}
 		},
 		*/
-		JANICE(PricingFetch.JANICE, LocationType.STATION, 1L, Images.LINK_JANICE.getIcon()) {
+		JANICE(PricingFetch.JANICE, LocationType.STATION, JaniceLocation.JITA_4_4.getPriceLocation().getLocationID(), Images.LINK_JANICE.getIcon()) {
 			@Override String getI18N() {
 				return DataModelPriceDataSettings.get().sourceJanice();
 			}
@@ -118,6 +119,9 @@ public class PriceDataSettings {
 
 		public boolean isValid(LocationType locationType, Long locationID) {
 			if (null != locationType && locationID != null) {
+				if (this == JANICE && !JaniceLocation.isValid(locationID)) {
+					return false;
+				}
 				switch (locationType) {
 					case REGION:
 						return supportRegions();
