@@ -48,8 +48,9 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import uk.me.candle.eve.pricing.impl.Janice;
+import uk.me.candle.eve.pricing.impl.Janice.JaniceLocation;
 import uk.me.candle.eve.pricing.options.LocationType;
+import uk.me.candle.eve.pricing.options.NamedPriceLocation;
 import uk.me.candle.eve.pricing.options.PriceLocation;
 import uk.me.candle.eve.pricing.options.PricingOptions;
 
@@ -119,19 +120,22 @@ public class PriceDataGetterOnlineTest extends TestUtil {
 		}
 		if (source.supportStations()) {
 			if (source == PriceSource.JANICE) {
-				test(source, LocationType.STATION, Janice.JaniceLocation.JITA_4_4.getPriceLocation());
+				for (JaniceLocation location : JaniceLocation.values()) {
+					test(source, LocationType.STATION, location.getPriceLocation());
+				}
 			} else {
 				test(source, LocationType.STATION, ApiIdConverter.getLocation(STATION_JITA_4_4));
 			}
 		}
 	}
 
-	private void test(PriceSource source, LocationType locationType, PriceLocation location) {
+	private void test(PriceSource source, LocationType locationType, NamedPriceLocation location) {
 		TestPricingOptions options = new TestPricingOptions(locationType, location);
 		System.out.println(source.toString()
 				+ " ("
 				+ options.getLocationType().name().toLowerCase()
-				+ " - " +typeIDs.size() + " IDs)"
+				+ " - " + location.getLocation()
+				+ " - " + typeIDs.size() + " IDs)"
 				);
 		if (source == PriceSource.JANICE && JANICE_KEY != null) {
 			options.addHeader("X-ApiKey", JANICE_KEY);
@@ -175,7 +179,7 @@ public class PriceDataGetterOnlineTest extends TestUtil {
 
 		@Override
 		public long getPriceCacheTimer() {
-			return 60*60*1000l; // 1 hour
+			return 60*60*1000L; // 1 hour
 		}
 
 		@Override
@@ -200,7 +204,7 @@ public class PriceDataGetterOnlineTest extends TestUtil {
 
 		@Override
 		public boolean getCacheTimersEnabled() {
-			return true;
+			return false;
 		}
 
 		@Override
