@@ -105,8 +105,10 @@ public class Settings {
 		FLAG_LOCK_TOOLS,
 		FLAG_SHOW_SUBPILE_TREE,
 		FLAG_INDUSTRY_JOBS_HISTORY,
+		FLAG_ASSETS_CONTRACTS_OWNER_CORP,
+		FLAG_ASSETS_CONTRACTS_OWNER_BOTH,
 		FLAG_LOAD_TOOLS_BACKGROUND,
-		FLAG_LOAD_TOOLS_STARTUP,
+		FLAG_LOAD_TOOLS_STARTUP
 	}
 
 	public static enum TransactionProfitPrice {
@@ -306,6 +308,8 @@ public class Settings {
 		flags.put(SettingFlag.FLAG_LOCK_TOOLS, false);
 		flags.put(SettingFlag.FLAG_SHOW_SUBPILE_TREE, true);
 		flags.put(SettingFlag.FLAG_INDUSTRY_JOBS_HISTORY, true);
+		flags.put(SettingFlag.FLAG_ASSETS_CONTRACTS_OWNER_CORP, false);
+		flags.put(SettingFlag.FLAG_ASSETS_CONTRACTS_OWNER_BOTH, false);
 		flags.put(SettingFlag.FLAG_LOAD_TOOLS_BACKGROUND, true);
 		flags.put(SettingFlag.FLAG_LOAD_TOOLS_STARTUP, false);
 		cacheFlags();
@@ -916,6 +920,22 @@ public class Settings {
 
 	public void setIndustryJobsHistory(final boolean journalHistory) {
 		flags.put(SettingFlag.FLAG_INDUSTRY_JOBS_HISTORY, journalHistory);
+	}
+
+	public boolean isAssetsContractsOwnerCorporation() {
+		return flags.get(SettingFlag.FLAG_ASSETS_CONTRACTS_OWNER_CORP);
+	}
+
+	public void setAssetsContractsOwnerCorporation(final boolean assetsContractsOwnerCorporation) {
+		flags.put(SettingFlag.FLAG_ASSETS_CONTRACTS_OWNER_CORP, assetsContractsOwnerCorporation);
+	}
+
+	public boolean isAssetsContractsOwnerBoth() {
+		return flags.get(SettingFlag.FLAG_ASSETS_CONTRACTS_OWNER_BOTH);
+	}
+
+	public void setAssetsContractsOwnerBoth(final boolean assetsContractsOwnerBoth) {
+		flags.put(SettingFlag.FLAG_ASSETS_CONTRACTS_OWNER_BOTH, assetsContractsOwnerBoth);
 	}
 
 	public boolean isLoadToolsBackground() {

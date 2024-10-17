@@ -25,7 +25,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
+import net.nikr.eve.jeveasset.data.api.accounts.SimpleOwner;
 import net.nikr.eve.jeveasset.data.api.my.MyAsset;
 import net.nikr.eve.jeveasset.data.api.my.MyJournal;
 import net.nikr.eve.jeveasset.data.api.raw.RawJournal.ContextType;
@@ -126,7 +126,7 @@ public final class ApiIdConverter {
 		return getFlagName(itemFlag, null);
 	}
 
-	public static String getFlagName(ItemFlag itemFlag, OwnerType ownerType) {
+	public static String getFlagName(ItemFlag itemFlag, SimpleOwner ownerType) {
 		switch (itemFlag.getFlagID()) {
 			case 62: return "Corporation Deliveries";
 			case 63: return itemFlag.getFlagName();
@@ -148,7 +148,7 @@ public final class ApiIdConverter {
 		return itemFlag.getFlagText();
 	}
 
-	private static String getDivisionName(OwnerType ownerType, int i) {
+	private static String getDivisionName(SimpleOwner ownerType, int i) {
 		final String division;
 		switch (i) {
 			case 1: division = "1st Division"; break;
