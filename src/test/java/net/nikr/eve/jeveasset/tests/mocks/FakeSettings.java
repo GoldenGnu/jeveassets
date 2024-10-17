@@ -779,6 +779,26 @@ public abstract class FakeSettings extends Settings {
 	}
 
 	@Override
+	public void setAssetsContractsOwnerBoth(boolean assetsContractsOwnerBoth) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public boolean isAssetsContractsOwnerBoth() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public void setAssetsContractsOwnerCorporation(boolean assetsContractsOwnerCorporation) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public boolean isAssetsContractsOwnerCorporation() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
 	public void setLoadToolsStartup(boolean loadToolsStartup) {
 		throw new UnsupportedOperationException("not implemented");
 	}
