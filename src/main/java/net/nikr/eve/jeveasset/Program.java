@@ -213,7 +213,7 @@ public class Program implements ActionListener {
 		priceDataGetter.load();
 		SplashUpdater.setProgress(45);
 	//Timer
-		timer = new Timer(15000, this); //Once a minute
+		timer = new Timer(15000, this); //4 times each minute
 		timer.setActionCommand(ProgramAction.TIMER.name());
 	//Updatable
 		updatable = new Updatable(this);
@@ -232,72 +232,12 @@ public class Program implements ActionListener {
 		assetsTab = new AssetsTab(this);
 		mainWindow.addTab(assetsTab);
 		SplashUpdater.setProgress(52);
-		LOG.info("Loading: Tree Tab");
-		treeTab = new TreeTab(this);
-		SplashUpdater.setProgress(54);
-		LOG.info("Loading: Industry Jobs Tab");
-		industryJobsTab = new IndustryJobsTab(this);
-		LOG.info("Loading: Slots Tab");
-		slotsTab = new SlotsTab(this);
-		SplashUpdater.setProgress(56);
-		LOG.info("Loading: Market Orders Tab");
-		marketOrdersTab = new MarketOrdersTab(this);
-		SplashUpdater.setProgress(58);
-		LOG.info("Loading: Journal Tab");
-		journalTab = new JournalTab(this);
-		SplashUpdater.setProgress(60);
-		LOG.info("Loading: Transactions Tab");
-		transactionsTab = new TransactionTab(this);
-		SplashUpdater.setProgress(62);
-		LOG.info("Loading: Materials Tab");
-		materialsTab = new MaterialsTab(this);
-		SplashUpdater.setProgress(64);
-		LOG.info("Loading: Ship Loadouts Tab");
-		loadoutsTab = new LoadoutsTab(this);
-		SplashUpdater.setProgress(66);
-		LOG.info("Loading: Values Tab");
-		valueRetroTab = new ValueRetroTab(this);
-		LOG.info("Loading: Isk Tab");
-		valueTableTab = new ValueTableTab(this);
-		LOG.info("Loading: Price History Tab");
-		priceHistoryTab = new PriceHistoryTab(this);
-		SplashUpdater.setProgress(68);
-		LOG.info("Loading: Routing Tab");
-		routingTab = new RoutingTab(this);
-		SplashUpdater.setProgress(70);
-		LOG.info("Loading: Overview Tab");
-		overviewTab = new OverviewTab(this);
-		SplashUpdater.setProgress(72);
-		LOG.info("Loading: Stockpile Tab");
-		stockpileTab = new StockpileTab(this);
-		SplashUpdater.setProgress(74);
-		LOG.info("Loading: Items Tab");
-		itemsTab = new ItemsTab(this);
-		SplashUpdater.setProgress(75);
-		LOG.info("Loading: Tracker Tab");
-		trackerTab = new TrackerTab(this);
-		SplashUpdater.setProgress(76);
-		LOG.info("Loading: Reprocessed Tab");
-		reprocessedTab = new ReprocessedTab(this);
-		SplashUpdater.setProgress(77);
-		LOG.info("Loading: Contracts Tab");
-		contractsTab = new ContractsTab(this);
-		SplashUpdater.setProgress(78);
-		LOG.info("Loading: Skills Tab");
-		skillsTab = new SkillsTab(this);
-		SplashUpdater.setProgress(79);
-		LOG.info("Loading: Mining Log Tab");
-		miningTab = new MiningTab(this);
-		SplashUpdater.setProgress(80);
-		LOG.info("Loading: Mining Graph Tab");
-		miningGraphTab = new MiningGraphTab(this);
-		SplashUpdater.setProgress(81);
-		LOG.info("Loading: Extractions Tab");
-		extractionsTab = new ExtractionsTab(this);
-		SplashUpdater.setProgress(82);
-		LOG.info("Loading: Price Changes Tab");
-		priceChangesTab = new PriceChangesTab(this);
-		SplashUpdater.setProgress(84);
+		if (Settings.get().isLoadToolsStartup()) {
+			ToolLoader.initAllTools(this);
+		} else {
+			ToolLoader.initTools(this,Settings.get().getShowTools());
+		}
+		
 	//Dialogs
 		LOG.info("Loading: Account Manager Dialog");
 		accountManagerDialog = new AccountManagerDialog(this);
@@ -324,19 +264,18 @@ public class Program implements ActionListener {
 	//OSXAdapter
 		macOsxCode();
 	//Open Tools
-		for (String title : Settings.get().getShowTools()) {
-			for (JMainTab jMainTab : jMainTabs.values()) {
-				if (title.equals(jMainTab.getTitle())) {
-					mainWindow.addTab(jMainTab, false);
-				}
-			}
-		}
+		ToolLoader.openTools(this, Settings.get().getShowTools());
 		SplashUpdater.setProgress(100);
 		LOG.info("Showing GUI");
 		mainWindow.show();
 		SplashUpdater.hide();
 		//Start timer
 		timerTicked();
+		//Background tool loader
+		ToolLoader.init(this);
+		if (Settings.get().isLoadToolsBackground()) {
+			ToolLoader.startBackgroundToolLoading(this);
+		}
 		LOG.info("Startup Done");
 		if (CliOptions.get().isDebug()) {
 			LOG.info("Show Debug Warning");
@@ -357,6 +296,14 @@ public class Program implements ActionListener {
 			accountManagerDialog.setVisible(true);
 		}
 		ApiIdConverter.setUpdateItem(true);
+	}
+
+	/**
+	 * To be REMOVED!
+	 * @return 
+	 */
+	public Map<String, JMainTab> getMainTabs() {
+		return jMainTabs;
 	}
 
 	/**
@@ -509,7 +456,7 @@ public class Program implements ActionListener {
 		}
 	}
 
-	public Map<String, JMainTab> getMainTabs() {
+	public Map<String, JMainTab> getInitTabs() {
 		return jMainTabs;
 	}
 
@@ -675,8 +622,9 @@ public class Program implements ActionListener {
 		ensureEDT(new Runnable() {
 			@Override
 			public void run() {
-				if (stockpileTab != null) {
-					stockpileTab.updateStockpileDialog();
+				StockpileTab stockpile = getStockpileTab(false);
+				if (stockpile != null) {
+					stockpile.updateStockpileDialog();
 				}
 			}
 		});
@@ -733,7 +681,7 @@ public class Program implements ActionListener {
 		LOG.info("Saving Settings: " + msg);
 		Settings.lock("Table (Column/Width/Resize) and Window Settings"); //Lock for Table (Column/Width/Resize) and Window Settings
 		mainWindow.updateSettings();
-		for (JMainTab jMainTab : jMainTabs.values()) {
+		for (JMainTab jMainTab : getInitTabs().values()) {
 			jMainTab.saveSettings();
 		}
 		Settings.unlock("Table (Column/Width/Resize) and Window Settings"); //Unlock for Table (Column/Width/Resize) and Window Settings
@@ -845,60 +793,189 @@ public class Program implements ActionListener {
 		return assetsTab;
 	}
 
-	public ContractsTab getContractsTab() {
+	public ContractsTab getContractsTab(boolean init) {
+		if (init && contractsTab == null) {
+			LOG.info("Loading: Contracts Tab");
+			contractsTab = new ContractsTab(this);
+		}
 		return contractsTab;
 	}
 
-	public IndustryJobsTab getIndustryJobsTab() {
+	public IndustryJobsTab getIndustryJobsTab(boolean init) {
+		if (init && industryJobsTab == null) {
+			LOG.info("Loading: Industry Jobs Tab");
+			industryJobsTab = new IndustryJobsTab(this);
+		}
 		return industryJobsTab;
 	}
 
-	public SlotsTab getSlotsTab() {
+	public SlotsTab getSlotsTab(boolean init) {
+		if (init && slotsTab == null) {
+			LOG.info("Loading: Slots Tab");
+			slotsTab = new SlotsTab(this);
+		}
 		return slotsTab;
 	}
 
-	public OverviewTab getOverviewTab() {
+	public OverviewTab getOverviewTab(boolean init) {
+		if (init && overviewTab == null) {
+			LOG.info("Loading: Overview Tab");
+			overviewTab = new OverviewTab(this);
+		}
 		return overviewTab;
 	}
 
-	public TreeTab getTreeTab() {
+	public TreeTab getTreeTab(boolean init) {
+		if (init && treeTab == null) {
+			LOG.info("Loading: Tree Tab");
+			treeTab = new TreeTab(this);
+		}
 		return treeTab;
 	}
 
-	public LoadoutsTab getLoadoutsTab() {
+	public LoadoutsTab getLoadoutsTab(boolean init) {
+		if (init && loadoutsTab == null) {
+			LOG.info("Loading: Ship Loadouts Tab");
+			loadoutsTab = new LoadoutsTab(this);
+		}
 		return loadoutsTab;
 	}
 
-	public StockpileTab getStockpileTab() {
+	public StockpileTab getStockpileTab(boolean init) {
+		if (init && stockpileTab == null) {
+			LOG.info("Loading: Stockpile Tab");
+			stockpileTab = new StockpileTab(this);
+		}
 		return stockpileTab;
 	}
 
-	public ReprocessedTab getReprocessedTab() {
+	public ReprocessedTab getReprocessedTab(boolean init) {
+		if (init && reprocessedTab == null) {
+			LOG.info("Loading: Reprocessed Tab");
+			reprocessedTab = new ReprocessedTab(this);
+		}
 		return reprocessedTab;
 	}
 
-	public RoutingTab getRoutingTab() {
+	public RoutingTab getRoutingTab(boolean init) {
+		if (init && routingTab == null) {
+			LOG.info("Loading: Routing Tab");
+			routingTab = new RoutingTab(this);
+		}
 		return routingTab;
 	}
 
-	public TrackerTab getTrackerTab() {
+	public TrackerTab getTrackerTab(boolean init) {
+		if (init && trackerTab == null) {
+			LOG.info("Loading: Tracker Tab");
+			trackerTab = new TrackerTab(this);
+		}
 		return trackerTab;
 	}
 
-	public ValueTableTab getValueTableTab() {
+	public ValueRetroTab getValueTab(boolean init) {
+		if (init && valueRetroTab == null) {
+			LOG.info("Loading: Values Tab");
+			valueRetroTab = new ValueRetroTab(this);
+		}
+		return valueRetroTab;
+	}
+
+	public ValueTableTab getIskTab(boolean init) {
+		if (init && valueTableTab == null) {
+			LOG.info("Loading: Isk Tab");
+			valueTableTab = new ValueTableTab(this);
+		}
 		return valueTableTab;
 	}
 
-	public TransactionTab getTransactionsTab() {
+	public TransactionTab getTransactionsTab(boolean init) {
+		if (init && transactionsTab == null) {
+			LOG.info("Loading: Transactions Tab");
+			transactionsTab = new TransactionTab(this);
+		}
 		return transactionsTab;
 	}
 
-	public PriceHistoryTab getPriceHistoryTab() {
+	public PriceHistoryTab getPriceHistoryTab(boolean init) {
+		if (init && priceHistoryTab == null) {
+			LOG.info("Loading: Price History Tab");
+			priceHistoryTab = new PriceHistoryTab(Program.this);
+		}
 		return priceHistoryTab;
+		
 	}
 
-	public MarketOrdersTab getMarketOrdersTab() {
+	public MarketOrdersTab getMarketOrdersTab(boolean init) {
+		if (init && marketOrdersTab == null) {
+			LOG.info("Loading: Market Orders Tab");
+			marketOrdersTab = new MarketOrdersTab(this);
+		}
 		return marketOrdersTab;
+	}
+
+	public MiningTab getMiningTab(boolean init) {
+		if (init && miningTab == null) {
+			LOG.info("Loading: Mining Log Tab");
+			miningTab = new MiningTab(this);
+		}
+		return miningTab;
+	}
+
+	public MiningGraphTab getMiningGraphTab(boolean init) {
+		if (init && miningGraphTab == null) {
+			LOG.info("Loading: Mining Graph Tab");
+			miningGraphTab = new MiningGraphTab(this);
+		}
+		return miningGraphTab;
+	}
+
+	public ExtractionsTab getExtractionsTab(boolean init) {
+		if (init && extractionsTab == null) {
+			LOG.info("Loading: Extractions Tab");
+			extractionsTab = new ExtractionsTab(this);
+		}
+		return extractionsTab;
+	}
+
+	public MaterialsTab getMaterialsTab(boolean init) {
+		if (init && materialsTab == null) {
+			LOG.info("Loading: Materials Tab");
+			materialsTab = new MaterialsTab(this);
+		}
+		return materialsTab;
+	}
+
+	public PriceChangesTab getPriceChangesTab(boolean init) {
+		if (init && priceChangesTab == null) {
+			LOG.info("Loading: Price Changes Tab");
+			priceChangesTab = new PriceChangesTab(this);
+		}
+		return priceChangesTab;
+	}
+
+	public JournalTab getJournalTab(boolean init) {
+		if (init && journalTab == null) {
+			LOG.info("Loading: Journal Tab");
+			journalTab = new JournalTab(this);
+		}
+		return journalTab;
+	}
+
+	public ItemsTab getItemsTab(boolean init) {
+		if (init && itemsTab == null) {
+			LOG.info("Loading: Items Tab");
+			itemsTab = new ItemsTab(this);
+		}
+		return itemsTab;
+	}
+
+	public SkillsTab getSkillsTab(boolean init) {
+		if (init && skillsTab == null) {
+			LOG.info("Loading: Skills Tab");
+			skillsTab = new SkillsTab(this);
+		}
+		return skillsTab;
 	}
 
 	public StatusPanel getStatusPanel() {
@@ -991,7 +1068,10 @@ public class Program implements ActionListener {
 		ensureEDT(new Runnable() {
 			@Override
 			public void run() {
-				trackerTab.updateData();
+				TrackerTab tracker = getTrackerTab(false);
+				if (tracker != null) {
+					tracker.updateData();
+				}
 			}
 		});
 	}
@@ -1012,7 +1092,7 @@ public class Program implements ActionListener {
 		jLockWindow.show(GuiShared.get().updating(), new LockWorkerAdaptor() {
 			@Override
 			public void task() {
-				for (JMainTab mainTab : jMainTabs.values()) {
+				for (JMainTab mainTab : getInitTabs().values()) {
 					if (mainTab instanceof TagUpdate) {
 						mainTab.updateCache();
 					}
@@ -1020,7 +1100,7 @@ public class Program implements ActionListener {
 			}
 			@Override
 			public void gui() {
-				for (JMainTab mainTab : jMainTabs.values()) {
+				for (JMainTab mainTab : getInitTabs().values()) {
 					if (mainTab instanceof TagUpdate) {
 						TagUpdate tagUpdate = (TagUpdate) mainTab;
 						tagUpdate.updateTags();
@@ -1033,7 +1113,10 @@ public class Program implements ActionListener {
 	 * Called when Overview Groups are changed.
 	 */
 	public void overviewGroupsChanged() {
-		routingTab.overviewGroupsChanged();
+		RoutingTab routing = getRoutingTab(false);
+		if (routing != null) {
+			routing.overviewGroupsChanged();
+		}
 	}
 
 	/**
@@ -1055,56 +1138,57 @@ public class Program implements ActionListener {
 	public void actionPerformed(final ActionEvent e) {
 	//Tools
 		if (MainMenuAction.VALUES.name().equals(e.getActionCommand())) {
-			mainWindow.addTab(valueRetroTab);
+			mainWindow.addTab(getValueTab(true));
 		} else if (MainMenuAction.VALUE_TABLE.name().equals(e.getActionCommand())) {
-			mainWindow.addTab(valueTableTab);
+			mainWindow.addTab(getIskTab(true));
 		} else if (MainMenuAction.PRICE_HISTORY.name().equals(e.getActionCommand())) {
-			mainWindow.addTab(priceHistoryTab);
+			mainWindow.addTab(getPriceHistoryTab(true));
 		} else if (MainMenuAction.PRICE_CHANGES.name().equals(e.getActionCommand())) {
-			mainWindow.addTab(priceChangesTab);
+			mainWindow.addTab(getPriceChangesTab(true));
 		} else if (MainMenuAction.MATERIALS.name().equals(e.getActionCommand())) {
-			mainWindow.addTab(materialsTab);
+			mainWindow.addTab(getMaterialsTab(true));
 		} else if (MainMenuAction.LOADOUTS.name().equals(e.getActionCommand())) {
-			mainWindow.addTab(loadoutsTab);
+			mainWindow.addTab(getLoadoutsTab(true));
 		} else if (MainMenuAction.MARKET_ORDERS.name().equals(e.getActionCommand())) {
-			mainWindow.addTab(marketOrdersTab);
+			mainWindow.addTab(getMarketOrdersTab(true));
 		} else if (MainMenuAction.JOURNAL.name().equals(e.getActionCommand())) {
-			mainWindow.addTab(journalTab);
+			mainWindow.addTab(getJournalTab(true));
 		} else if (MainMenuAction.TRANSACTION.name().equals(e.getActionCommand())) {
-			mainWindow.addTab(transactionsTab);
+			mainWindow.addTab(getTransactionsTab(true));
 		} else if (MainMenuAction.INDUSTRY_JOBS.name().equals(e.getActionCommand())) {
-			mainWindow.addTab(industryJobsTab);
+			mainWindow.addTab(getIndustryJobsTab(true));
 		} else if (MainMenuAction.SLOTS.name().equals(e.getActionCommand())) {
-			mainWindow.addTab(slotsTab);
+			mainWindow.addTab(getSlotsTab(true));
 		} else if (MainMenuAction.OVERVIEW.name().equals(e.getActionCommand())) {
-			mainWindow.addTab(overviewTab);
+			mainWindow.addTab(getOverviewTab(true));
 		} else if (MainMenuAction.ROUTING.name().equals(e.getActionCommand())) {
-			mainWindow.addTab(routingTab);
+			mainWindow.addTab(getRoutingTab(true));
 		} else if (MainMenuAction.STOCKPILE.name().equals(e.getActionCommand())) {
-			mainWindow.addTab(stockpileTab);
+			mainWindow.addTab(getStockpileTab(true));
 		} else if (MainMenuAction.ITEMS.name().equals(e.getActionCommand())) {
-			mainWindow.addTab(itemsTab);
+			mainWindow.addTab(getItemsTab(true));
 		} else if (MainMenuAction.TRACKER.name().equals(e.getActionCommand())) {
-			mainWindow.addTab(trackerTab);
-			trackerTab.checkAll();
+			TrackerTab tracker = getTrackerTab(true);
+			mainWindow.addTab(tracker);
+			tracker.checkAll();
 		} else if (MainMenuAction.REPROCESSED.name().equals(e.getActionCommand())) {
-			mainWindow.addTab(reprocessedTab);
+			mainWindow.addTab(getReprocessedTab(true));
 		} else if (MainMenuAction.CONTRACTS.name().equals(e.getActionCommand())) {
-			mainWindow.addTab(contractsTab);
+			mainWindow.addTab(getContractsTab(true));
 		} else if (MainMenuAction.TREE.name().equals(e.getActionCommand())) {
-			mainWindow.addTab(treeTab);
+			mainWindow.addTab(getTreeTab(true));
 		} else if (MainMenuAction.SKILLS.name().equals(e.getActionCommand())) {
-			mainWindow.addTab(skillsTab);
+			mainWindow.addTab(getSkillsTab(true));
 		} else if (MainMenuAction.MINING_ALL.name().equals(e.getActionCommand())) {
-			mainWindow.addTab(miningTab);
-			mainWindow.addTab(miningGraphTab);
-			mainWindow.addTab(extractionsTab);
+			mainWindow.addTab(getMiningTab(true));
+			mainWindow.addTab(getMiningGraphTab(true));
+			mainWindow.addTab(getExtractionsTab(true));
 		} else if (MainMenuAction.MINING_LOG.name().equals(e.getActionCommand())) {
-			mainWindow.addTab(miningTab);
+			mainWindow.addTab(getMiningTab(true));
 		} else if (MainMenuAction.MINING_GRAPH.name().equals(e.getActionCommand())) {
-			mainWindow.addTab(miningGraphTab);
+			mainWindow.addTab(getMiningGraphTab(true));
 		} else if (MainMenuAction.EXTRACTIONS.name().equals(e.getActionCommand())) {
-			mainWindow.addTab(extractionsTab);
+			mainWindow.addTab(getExtractionsTab(true));
 		} else if (MainMenuAction.ACCOUNT_MANAGER.name().equals(e.getActionCommand())) { //Settings
 			accountManagerDialog.setVisible(true);
 		} else if (MainMenuAction.PROFILES.name().equals(e.getActionCommand())) {
