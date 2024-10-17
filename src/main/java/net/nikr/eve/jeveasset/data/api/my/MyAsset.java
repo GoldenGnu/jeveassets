@@ -27,7 +27,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
+import net.nikr.eve.jeveasset.data.api.accounts.SimpleOwner;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob.IndustryActivity;
 import net.nikr.eve.jeveasset.data.api.raw.RawAsset;
 import net.nikr.eve.jeveasset.data.sde.Item;
@@ -57,7 +57,7 @@ public class MyAsset extends RawAsset implements Comparable<MyAsset>, InfoItem, 
 	private final List<MyAsset> assets = new ArrayList<>();
 	private final RawAsset rawAsset;
 	private final Item item;
-	private final OwnerType owner;
+	private final SimpleOwner owner;
 	private final List<MyAsset> parents;
 	private final Set<Long> owners;
 	private final boolean generated;
@@ -129,7 +129,7 @@ public class MyAsset extends RawAsset implements Comparable<MyAsset>, InfoItem, 
 		setLocationID(location.getLocationID());
 	}
 
-	public MyAsset(final RawAsset rawAsset, final Item item, final OwnerType owner, final List<MyAsset> parents) {
+	public MyAsset(final RawAsset rawAsset, final Item item, final SimpleOwner owner, final List<MyAsset> parents) {
 		super(rawAsset);
 		this.rawAsset = rawAsset;
 		this.item = item;
@@ -185,15 +185,15 @@ public class MyAsset extends RawAsset implements Comparable<MyAsset>, InfoItem, 
 
 	public MyAsset(MyIndustryJob industryJob, boolean output) {
 		this(new RawAsset(industryJob, output),
-				industryJob.isManufacturing() && output ? ApiIdConverter.getItemUpdate(industryJob.getProductTypeID()) : industryJob.getItem(), industryJob.getOwner(), new ArrayList<MyAsset>());
+				industryJob.isManufacturing() && output ? ApiIdConverter.getItemUpdate(industryJob.getProductTypeID()) : industryJob.getItem(), industryJob.getOwner(), new ArrayList<>());
 	}
 
 	public MyAsset(MyMarketOrder marketOrder) {
-		this(new RawAsset(marketOrder), marketOrder.getItem(), marketOrder.getOwner(), new ArrayList<MyAsset>());
+		this(new RawAsset(marketOrder), marketOrder.getItem(), marketOrder.getOwner(), new ArrayList<>());
 	}
 
-	public MyAsset(MyContractItem contractItem, final OwnerType owner) {
-		this(new RawAsset(contractItem), contractItem.getItem(), owner, new ArrayList<MyAsset>());
+	public MyAsset(MyContractItem contractItem, final SimpleOwner owner) {
+		this(new RawAsset(contractItem), contractItem.getItem(), owner, new ArrayList<>());
 	}
 
 	public void addAsset(final MyAsset asset) {
@@ -281,7 +281,7 @@ public class MyAsset extends RawAsset implements Comparable<MyAsset>, InfoItem, 
 		return owner.getOwnerName();
 	}
 
-	public OwnerType getOwner() {
+	public SimpleOwner getOwner() {
 		return owner;
 	}
 

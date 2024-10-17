@@ -72,6 +72,11 @@ public abstract class DialoguesSettings extends Bundle {
 	public abstract String includeManufacturing();
 	public abstract String includeCopying();
 	public abstract String showContainerItemID();
+	public abstract String contractAssetsBoth();
+	public abstract String contractAssetsCharacter();
+	public abstract String contractAssetsCorporation();
+	public abstract String contractAssetsLabel();
+	public abstract String contractAssetsLabelWarn();
 
 	// used in OverviewToolSettingsPanel
 	public abstract String overview();

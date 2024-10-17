@@ -39,16 +39,13 @@ import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.api.raw.RawBlueprint;
 
 
-public interface OwnerType extends Comparable<OwnerType> {
+public interface OwnerType extends SimpleOwner {
 
 	//Info
-	public String getOwnerName();
 	public String getCorporationName();
 	public void setOwnerName(final String ownerName);
 	public void setCorporationName(String corporationName);
-	public long getOwnerID();
 	public void setOwnerID(final long ownerID);
-	public boolean isCorporation();
 	public boolean isShowOwner();
 	public Date getExpire();
 	public String getComparator();
@@ -60,7 +57,6 @@ public interface OwnerType extends Comparable<OwnerType> {
 	public void setInvalid(boolean invalid);
 	public void setResetAccountName();
 	public void setAccountName(final String accountName);
-	public MyShip getActiveShip();
 	public void setActiveShip(MyShip activeShip);
 	//Data
 	public List<MyAccountBalance> getAccountBalances();
@@ -72,7 +68,6 @@ public interface OwnerType extends Comparable<OwnerType> {
 	public List<MyAsset> getAssets();
 	public Map<Long, RawBlueprint> getBlueprints();
 	public Map<Integer, String> getWalletDivisions();
-	public Map<Integer, String> getAssetDivisions();
 	public List<MySkill> getSkills();
 	public Long getTotalSkillPoints();
 	public Integer getUnallocatedSkillPoints();
