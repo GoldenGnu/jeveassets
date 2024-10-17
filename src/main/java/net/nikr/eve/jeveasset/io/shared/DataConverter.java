@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
+import net.nikr.eve.jeveasset.data.api.accounts.SimpleOwner;
 import net.nikr.eve.jeveasset.data.api.my.MyAccountBalance;
 import net.nikr.eve.jeveasset.data.api.my.MyAsset;
 import net.nikr.eve.jeveasset.data.api.my.MyContainerLog;
@@ -55,6 +56,8 @@ import net.nikr.eve.jeveasset.data.api.raw.RawSkill;
 import net.nikr.eve.jeveasset.data.api.raw.RawTransaction;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
+import net.nikr.eve.jeveasset.data.settings.Settings;
+import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 public abstract class DataConverter {
 
@@ -102,14 +105,41 @@ public abstract class DataConverter {
 		//Only includes issuer buying and selling items
 		//TODO Could add issuer bought/sold and acceptor bought/sold items to the assets list
 		for (MyContractItem contractItem : contractItems) {
-			OwnerType issuer = owners.get(contractItem.getContract().getIssuerID());
-			/*
+			SimpleOwner issuer;
 			if (contractItem.getContract().isForCorp()) {
-				issuer = owners.get(contractItem.getContract().getIssuerCorporationID());
+				issuer = new SimpleOwner() {
+					@Override
+					public long getOwnerID() {
+						if (Settings.get().isAssetsContractsOwnerCorporation() ||Settings.get().isAssetsContractsOwnerBoth()) {
+							return contractItem.getContract().getIssuerCorpID();
+						} else {
+							return contractItem.getContract().getIssuerID();
+						}
+					}
+
+					@Override
+					public String getOwnerName() {
+						if (Settings.get().isAssetsContractsOwnerCorporation()) {
+							return ApiIdConverter.getOwnerName(contractItem.getContract().getIssuerCorpID());
+						} else if (Settings.get().isAssetsContractsOwnerBoth()) {
+							String characterName =  ApiIdConverter.getOwnerName(contractItem.getContract().getIssuerID());
+							String corporationName =  ApiIdConverter.getOwnerName(contractItem.getContract().getIssuerCorpID());
+							return GuiShared.get().contractCorporationOwner(corporationName, characterName);
+						} else { //Character
+							return ApiIdConverter.getOwnerName(contractItem.getContract().getIssuerID());
+						}
+					}
+
+					@Override
+					public boolean isCorporation() {
+						return Settings.get().isAssetsContractsOwnerCorporation()
+								|| Settings.get().isAssetsContractsOwnerBoth();
+						
+					}
+				};
 			} else {
 				issuer = owners.get(contractItem.getContract().getIssuerID());
 			}
-			 */
 			if (contractItem.getContract().isOpen() //Not completed
 					&& issuer != null //Owned
 					&& contractItem.getContract().isItemContract() //Not courier
