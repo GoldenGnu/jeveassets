@@ -25,7 +25,7 @@ package net.nikr.eve.jeveasset.gui.tabs.loadout;
 import ca.odell.glazedlists.matchers.Matcher;
 import java.util.Collections;
 import java.util.Set;
-import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
+import net.nikr.eve.jeveasset.data.api.accounts.SimpleOwner;
 import net.nikr.eve.jeveasset.data.api.my.MyAsset;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
@@ -107,7 +107,7 @@ public class Loadout implements Comparable<Loadout>, LocationType, ItemType, Pri
 
 	private final Item item;
 	private final MyLocation location; //New objects are created by updateData() - no need to update
-	private final OwnerType owner;
+	private final SimpleOwner owner;
 	private final String name;
 	private final String shipTypeName;
 	private final String shipItemName;
@@ -120,7 +120,7 @@ public class Loadout implements Comparable<Loadout>, LocationType, ItemType, Pri
 	private final boolean first;
 	private final Set<Long> owners;
 
-	public Loadout(Item item, MyLocation location, OwnerType owner, String name, MyAsset ship, String flag, Double price, double value, long count, boolean first) {
+	public Loadout(Item item, MyLocation location, SimpleOwner owner, String name, MyAsset ship, String flag, Double price, double value, long count, boolean first) {
 		this.item = item;
 		this.location = location;
 		this.owner = owner;

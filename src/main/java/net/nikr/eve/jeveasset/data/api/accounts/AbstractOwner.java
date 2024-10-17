@@ -43,7 +43,7 @@ import net.nikr.eve.jeveasset.data.api.raw.RawBlueprint;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 
 
-public abstract class AbstractOwner implements OwnerType, Comparable<OwnerType> {
+public abstract class AbstractOwner implements OwnerType {
 
 	private List<MyAccountBalance> accountBalances = new ArrayList<>();
 	private Set<MyMarketOrder> marketOrders = new HashSet<>();
@@ -513,10 +513,4 @@ public abstract class AbstractOwner implements OwnerType, Comparable<OwnerType> 
 	public void setActiveShip(MyShip activeShip) {
 		this.activeShip = activeShip;
 	}
-
-	@Override
-	public final int compareTo(final OwnerType o) {
-		return this.getOwnerName().compareToIgnoreCase(o.getOwnerName());
-	}
-
 }
