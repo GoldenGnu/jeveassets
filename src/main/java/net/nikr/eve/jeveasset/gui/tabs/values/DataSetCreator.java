@@ -250,7 +250,7 @@ public class DataSetCreator {
 				//Transporting cargo (will get collateral back)
 				if (acceptor != null) {
 					//Not Done & Balance Updated = Add Collateral
-					//If ballance is not updated, there is nothing to counter...
+					//If balance is not updated, there is nothing to counter...
 					if (balanceUpdated(contract.getDateIssued(), acceptor) && contract.isInProgress()) {
 						addContractCollateral(contract, values, total, date, acceptor.getOwnerName()); //OK
 					}
@@ -260,14 +260,14 @@ public class DataSetCreator {
 			if (issuer != null) { //Issuer
 				if (contract.isOpen()) { //Not Completed
 					//Not Done & Balance Updated = Add Reward (We still own the isk, until the contract is completed)
-					//If ballance is not updated, there is nothing to counter...
+					//If balance is not updated, there is nothing to counter...
 					if (balanceUpdated(contract.getDateIssued(), issuer)) {
 						//Buying: +Reward
 						addContractValue(values, total, date, issuer.getOwnerName(), contract.getReward()); //OK
 					} // else: Selling: we do not own the price isk, until the contract is completed
 				} else if (contract.isCompletedSuccessful()) { //Completed
-					//Done & Ballance not updated yet = Add Price + Remove Reward (Contract completed, update with the current values)
-					//If ballance is updated, so are all the values
+					//Done & Balance not updated yet = Add Price + Remove Reward (Contract completed, update with the current values)
+					//If balance is updated, so are all the values
 					if (balanceNotUpdated(contract.getDateCompleted(), issuer)) { //NOT TESTED
 						//Sold: +Price
 						addContractValue(values, total, date, issuer.getOwnerName(), contract.getPrice());
@@ -277,8 +277,8 @@ public class DataSetCreator {
 				}
 			}
 			if (acceptor != null && contract.isCompletedSuccessful()) { //Completed
-				//Done & Ballance not updated yet = Remove Price & Add Reward (Contract completed, update with the current values)
-				//If ballance is updated, so are all the values
+				//Done & Balance not updated yet = Remove Price & Add Reward (Contract completed, update with the current values)
+				//If balance is updated, so are all the values
 				if (balanceNotUpdated(contract.getDateCompleted(), acceptor)) { //NOT TESTED
 					//Bought: -Price
 					addContractValue(values, total, date, acceptor.getOwnerName(), -contract.getPrice());
