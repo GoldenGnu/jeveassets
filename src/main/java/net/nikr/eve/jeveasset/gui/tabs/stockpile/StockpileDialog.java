@@ -554,6 +554,9 @@ public class StockpileDialog extends JDialogCentered {
 			myLocations.add(asset.getLocation().getRegion());
 		}
 		for (MyIndustryJob industryJob : program.getIndustryJobsList()) {
+			if (!industryJob.isNotDeliveredToAssets()) {
+				continue; //Only open industry jobs
+			}
 			myLocations.add(industryJob.getLocation().getLocation());
 			myLocations.add(industryJob.getLocation().getSystem());
 			myLocations.add(industryJob.getLocation().getConstellation());
