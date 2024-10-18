@@ -41,6 +41,7 @@ Contributors:
   Boran Lordsworth
   Ed Thelleres
   Tsuro Tsero
+  Salartarium
 
 Retired Testers:
   Varo Jan
@@ -68,7 +69,7 @@ _EVE-ONLINE_____________________________________________________________________
 jEveAssets use EVE-Online API and SDE
 
 Link:
-  Main site: http://www.eveonline.com
+  Main site: https://www.eveonline.com
   SDE: https://developers.eveonline.com/resource/resources
   API: https://esi.evetech.net/ui
 
