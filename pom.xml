@@ -8,7 +8,7 @@
 	<version>9.0.0-SNAPSHOT</version>
 	<name>jeveassets</name>
 	<description>jEveAssets is an out-of-game asset manager for Eve-Online, written in Java</description>
-	<url>http://eve.nikr.net/jeveasset</url>
+	<url>https://eve.nikr.net/jeveasset</url>
 	<issueManagement>
 		<system>GitHub</system>
 		<url>https://github.com/GoldenGnu/jeveassets/issues</url>
@@ -18,7 +18,7 @@
 			<id>niklas</id>
 			<name>Niklas Kyster Rasmussen</name>
 			<email>niklaskr@gmail.com</email>
-			<url>http://nikr.net/</url>
+			<url>https://nikr.net/</url>
 			<timezone>+1</timezone>
 		</developer>
 		<developer>
