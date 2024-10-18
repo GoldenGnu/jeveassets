@@ -6,7 +6,7 @@
 		<appname>jEveAssets</appname>
 		<appversion>@{project.version}</appversion>
 		<appsubpath>jEveAssets</appsubpath>
-		<url>http://eve.nikr.net/jeveasset</url>
+		<url>https://eve.nikr.net/jeveasset</url>
 		<javaversion>1.6</javaversion>
 		<requiresjdk>no</requiresjdk>
 		<run-privileged/>

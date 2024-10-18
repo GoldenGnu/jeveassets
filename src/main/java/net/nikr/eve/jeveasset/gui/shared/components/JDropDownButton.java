@@ -188,8 +188,8 @@ public class JDropDownButton extends JButton {
 			return;
 		}
 		///XXX Workaround for BugID: 281
-		//http://eve.nikr.net/jeveassets/bugs/#bugid281
-		//http://eve.nikr.net/jeveassets/bugs/#bugid420
+		//https://eve.nikr.net/jeveassets/bugs/#bugid281
+		//https://eve.nikr.net/jeveassets/bugs/#bugid420
 		if (!this.isShowing()) {
 			return;
 		}
