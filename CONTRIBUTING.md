@@ -6,9 +6,7 @@ https://github.com/GoldenGnu/jeveassets/tree/develop
   * Bug Fixes:  
 https://github.com/GoldenGnu/jeveassets/tree/main
 
-Bug fixes are committed to both branches.  
-Experimental features get their own branch.  
-The develop branch is merged back into trunk after release.  
+It's **strongly** adviced to make a new branch for each PR
 
 # Git Clone #
 

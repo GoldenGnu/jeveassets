@@ -253,6 +253,7 @@ public class JTextDialog extends JDialogCentered {
 		jCancel.setVisible(false);
 		jFromClipboard.setVisible(false);
 		jFromFile.setVisible(false);
+		jImportTypes.setVisible(false);
 		jToClipboard.setVisible(true);
 		jToFile.setVisible(true);
 		setVisible(true);
