@@ -66,6 +66,7 @@ import javax.swing.text.JTextComponent;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
 import net.nikr.eve.jeveasset.data.api.my.MyAsset;
+import net.nikr.eve.jeveasset.data.api.my.MyContract;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
 import net.nikr.eve.jeveasset.data.sde.ItemFlag;
@@ -570,6 +571,19 @@ public class StockpileDialog extends JDialogCentered {
 			myLocations.add(marketOrder.getLocation().getSystem());
 			myLocations.add(marketOrder.getLocation().getConstellation());
 			myLocations.add(marketOrder.getLocation().getRegion());
+		}
+		for (MyContract contract : program.getContractList()) {
+			if (!contract.isOpen()) {
+				continue; //Only include open contracts
+			}
+			myLocations.add(contract.getStartLocation().getLocation());
+			myLocations.add(contract.getStartLocation().getSystem());
+			myLocations.add(contract.getStartLocation().getConstellation());
+			myLocations.add(contract.getStartLocation().getRegion());
+			myLocations.add(contract.getEndLocation().getLocation());
+			myLocations.add(contract.getEndLocation().getSystem());
+			myLocations.add(contract.getEndLocation().getConstellation());
+			myLocations.add(contract.getEndLocation().getRegion());
 		}
 		//Containers
 		containers.clear();
