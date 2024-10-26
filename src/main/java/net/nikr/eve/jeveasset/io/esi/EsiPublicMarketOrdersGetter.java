@@ -20,6 +20,7 @@
  */
 package net.nikr.eve.jeveasset.io.esi;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -77,31 +78,30 @@ public class EsiPublicMarketOrdersGetter extends AbstractEsiGetter {
 		AtomicInteger count = new AtomicInteger(0);
 		//Update public market orders
 		publicMarketOrders = true;
-		List<MarketOrdersResponse> responses = updatePagedList(input.getRegionIDs(), new PagedListHandler<Integer, MarketOrdersResponse>() {
-			@Override
-			protected List<MarketOrdersResponse> get(Integer k) throws ApiException {
-				try {
-					return updatePages(DEFAULT_RETRIES, new EsiPagesHandler<MarketOrdersResponse>() {
-						@Override
-						public ApiResponse<List<MarketOrdersResponse>> get(Integer page) throws ApiException {
-							ApiResponse<List<MarketOrdersResponse>> response = getMarketApiOpen().getMarketsRegionIdOrdersWithHttpInfo("all", k, DATASOURCE, null, page, null);
-							String header = getHeader(response.getHeaders(), "last-modified");
-							if (header != null) {
-								Date date = Formatter.parseExpireDate(header);
-								if (lastUpdate == null) {
-									lastUpdate = date;
-								} else if (!modified && !lastUpdate.equals(date)){
-									modified = true;
-								}
+		List<MarketOrdersResponse> responses = new ArrayList<>();
+		for (Integer k : input.getRegionIDs()) {
+			try {
+				List<MarketOrdersResponse> response = updatePages(DEFAULT_RETRIES, new EsiPagesHandler<MarketOrdersResponse>() {
+					@Override
+					public ApiResponse<List<MarketOrdersResponse>> get(Integer page) throws ApiException {
+						ApiResponse<List<MarketOrdersResponse>> response = getMarketApiOpen().getMarketsRegionIdOrdersWithHttpInfo("all", k, DATASOURCE, null, page, null);
+						String header = getHeader(response.getHeaders(), "last-modified");
+						if (header != null) {
+							Date date = Formatter.parseExpireDate(header);
+							if (lastUpdate == null) {
+								lastUpdate = date;
+							} else if (!modified && !lastUpdate.equals(date)){
+								modified = true;
 							}
-							return response;
 						}
-					});
-				} finally {
-					setProgressAll(input.getRegionIDs().size(), count.incrementAndGet(), 0, 40);
-				}
+						return response;
+					}
+				});
+				responses.addAll(response);
+			} finally {
+				setProgressAll(input.getRegionIDs().size(), count.incrementAndGet(), 0, 40);
 			}
-		});
+		}
 		if (modified) {
 			addWarning("last-modified changed while updating", "Cache expired while updating");
 		}
