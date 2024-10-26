@@ -1295,13 +1295,13 @@
 			<!-- http://logback.qos.ch/news.html -->
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
-			<version>1.2.11</version>
+			<version>1.2.13</version>
 		</dependency>
 		 <dependency>
 			 <!-- use logback for logging -->
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-core</artifactId>
-			<version>1.2.11</version>
+			<version>1.2.13</version>
 		</dependency>
 		<dependency>
 			<!-- https://github.com/jfree/jfreechart/releases -->
@@ -1319,7 +1319,7 @@
 			<!-- https://github.com/xerial/sqlite-jdbc/releases -->
 			<groupId>org.xerial</groupId>
 			<artifactId>sqlite-jdbc</artifactId>
-			<version>3.36.0.3</version>
+			<version>3.41.2.2</version>
 		</dependency>
 		<dependency>
 			<!-- https://github.com/remkop/picocli/releases -->
