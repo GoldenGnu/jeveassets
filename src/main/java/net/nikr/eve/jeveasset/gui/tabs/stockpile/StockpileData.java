@@ -164,6 +164,9 @@ public class StockpileData extends TableData {
 						if (contractItem.getContract().isIgnoreContract()) {
 							continue;
 						}
+						if (!contractItem.getContract().isOpen() && !contractItem.getContract().isCompletedSuccessful() ) {
+							continue; //Only include open and successfully completed  contracts
+						}
 						Integer typeID = get(contractItem.getTypeID(), contractItem.isBPC());
 						//Ignore null and wrong typeID
 						if (ignore(typeIDs, typeID)) {
@@ -203,6 +206,9 @@ public class StockpileData extends TableData {
 			//Market Orders
 			if (stockpile.isBuyOrders() || stockpile.isSellOrders()) {
 				for (MyMarketOrder marketOrder : profileData.getMarketOrdersList()) {
+					if (!marketOrder.isActive()) {
+						continue; //Only include active orders
+					}
 					Integer typeID = marketOrder.getTypeID();
 					//Ignore null and wrong typeID
 					if (ignore(typeIDs, typeID)) {
@@ -215,6 +221,9 @@ public class StockpileData extends TableData {
 			//Industry Jobs
 			if (stockpile.isJobs()) {
 				for (MyIndustryJob industryJob : profileData.getIndustryJobsList()) {
+					if (!industryJob.isNotDeliveredToAssets()) {
+						continue; //Only include industry jobs not delivered
+					}
 					//Manufacturing
 					Integer productTypeID = industryJob.getProductTypeID();
 					if (!ignore(typeIDs, productTypeID)) { //Ignore null and wrong typeID
@@ -230,6 +239,9 @@ public class StockpileData extends TableData {
 			//Transactions
 			if (stockpile.isTransactions()) {
 				for (MyTransaction transaction : profileData.getTransactionsList()) {
+					if (!transaction.isAfterAssets()) {
+						continue; //Only include transaction made after the last asset update
+					}
 					Integer typeID = transaction.getTypeID();
 					//Ignore null and wrong typeID
 					if (typeID == null || !typeIDs.contains(typeID)) {
