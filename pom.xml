@@ -718,6 +718,18 @@
 			</properties>
 		</profile>
 		<profile>
+		    <id>skip-all-tests</id>
+		    <activation>
+			<property>
+			    <name>skip-all-tests</name>
+			    <value>true</value>
+			</property>
+		    </activation>
+		    <properties>
+			<maven.test.skip>true</maven.test.skip>
+		    </properties>
+		</profile>
+		<profile>
 			<id>skip-online-price-tests</id>
 			<activation>
 				<property>
