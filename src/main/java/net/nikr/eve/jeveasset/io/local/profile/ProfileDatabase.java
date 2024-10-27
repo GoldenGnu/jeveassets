@@ -64,15 +64,7 @@ public class ProfileDatabase {
 				esiOwners = new ArrayList<>(); //Ensure never null
 			}
 
-			boolean ok = profileTable.insert(connection, esiOwners);
-			if (ok) {
-				//Only commit once, when everything is done - so we can rollback on any errors 
-				profileTable.commit(connection);
-				return true;
-			} else {
-				profileTable.rollback(connection);
-				return false;
-			}
+			return profileTable.insert(connection, esiOwners);
 		}
 		public boolean select(Connection connection, List<EsiOwner> esiOwners) {
 			Map<Long, EsiOwner> owners = new HashMap<>();
@@ -117,6 +109,12 @@ public class ProfileDatabase {
 			for (Table profileTable : Table.values()) {
 				ok = profileTable.create(connection) && ok;
 				ok = profileTable.insert(connection, profile.getEsiOwners()) && ok;
+			}
+			if (ok) {
+				//Only commit once, when everything is done - so we can rollback on any errors 
+				connection.commit();
+			} else {
+				connection.rollback();
 			}
 			connection.setAutoCommit(true);
 			return ok;
