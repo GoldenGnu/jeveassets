@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2024 Contributors (see credits.txt)
+ * Copyright 2009-2023 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -31,6 +31,7 @@ import java.util.Map;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.data.api.my.MySkill;
 import net.nikr.eve.jeveasset.data.api.raw.RawSkill;
+import net.nikr.eve.jeveasset.io.local.profile.ProfileDatabase.InsertReturn;
 import net.nikr.eve.jeveasset.io.shared.DataConverter;
 
 
@@ -40,13 +41,13 @@ public class ProfileSkills extends ProfileTable {
 	private static final String SKILLS_TOTAL_TABLE = "skillstotal";
 
 	@Override
-	protected boolean insert(Connection connection, List<EsiOwner> esiOwners) {
+	protected InsertReturn insert(Connection connection, List<EsiOwner> esiOwners) {
 		if (esiOwners == null || esiOwners.isEmpty()) {
-			return false;
+			return InsertReturn.MISSING_DATA;
 		}
 		//Delete all data
 		if (!tableDelete(connection, SKILLS_TABLE, SKILLS_TOTAL_TABLE)) {
-			return false;
+			return InsertReturn.ROLLBACK;
 		}
 		String skillsSQL = "INSERT INTO " + SKILLS_TABLE + " ("
 				+ "	ownerid,"
@@ -73,10 +74,9 @@ public class ProfileSkills extends ProfileTable {
 					row.addRow(statement);
 				}
 			}
-			row.commit(connection);
 		} catch (SQLException ex) {
 			LOG.error(ex.getMessage(), ex);
-			return false;
+			return InsertReturn.ROLLBACK;
 		}
 		String totalSQL = "INSERT INTO " + SKILLS_TOTAL_TABLE + " ("
 				+ "	ownerid,"
@@ -92,12 +92,11 @@ public class ProfileSkills extends ProfileTable {
 				setAttributeOptional(statement, ++index, owner.getUnallocatedSkillPoints());
 				row.addRow(statement);
 			}
-			row.commit(connection);
+			return InsertReturn.OK;
 		} catch (SQLException ex) {
 			LOG.error(ex.getMessage(), ex);
-			return false;
+			return InsertReturn.ROLLBACK;
 		}
-		return true;
 	}
 
 	@Override
@@ -190,7 +189,4 @@ public class ProfileSkills extends ProfileTable {
 		}
 		return true;
 	}
-
-	@Override
-	protected boolean update(Connection connection) { return true; }
 }

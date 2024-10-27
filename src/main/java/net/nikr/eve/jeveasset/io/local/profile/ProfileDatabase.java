@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2024 Contributors (see credits.txt)
+ * Copyright 2009-2023 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -59,7 +59,20 @@ public class ProfileDatabase {
 		}
 
 		public boolean insert(Connection connection, final List<EsiOwner> esiOwners) {
-			return profileTable.insert(connection, esiOwners);
+			InsertReturn insert = profileTable.insert(connection, esiOwners);
+			switch (insert) {
+				case MISSING_DATA:
+					return false;
+				case ROLLBACK:
+					profileTable.rollback(connection);
+					return false;
+				case OK:
+					//Only commit once, when everything is done - so we can rollback on any errors
+					profileTable.commit(connection);
+					return true;
+				default:
+					return false; //?
+			}
 		}
 		public boolean select(Connection connection, List<EsiOwner> esiOwners) {
 			Map<Long, EsiOwner> owners = new HashMap<>();
@@ -71,10 +84,12 @@ public class ProfileDatabase {
 		public boolean create(Connection connection) {
 			return profileTable.create(connection);
 		}
-		public boolean update(Connection connection) {
-			return profileTable.update(connection);
-		}
 	}
+
+	public static enum InsertReturn {
+		OK, ROLLBACK, MISSING_DATA
+	}
+	
 
 	private static String getConnectionUrl(String filename) {
 		return "jdbc:sqlite:" + filename;
@@ -106,7 +121,6 @@ public class ProfileDatabase {
 			connection.setAutoCommit(false);
 			for (Table profileTable : Table.values()) {
 				ok = profileTable.create(connection) && ok;
-				ok = profileTable.update(connection) && ok;
 				ok = profileTable.insert(connection, profile.getEsiOwners()) && ok;
 			}
 			connection.setAutoCommit(true);

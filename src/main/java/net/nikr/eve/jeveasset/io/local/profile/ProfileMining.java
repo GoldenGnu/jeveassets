@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2024 Contributors (see credits.txt)
+ * Copyright 2009-2023 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -34,6 +34,7 @@ import net.nikr.eve.jeveasset.data.api.my.MyExtraction;
 import net.nikr.eve.jeveasset.data.api.my.MyMining;
 import net.nikr.eve.jeveasset.data.api.raw.RawExtraction;
 import net.nikr.eve.jeveasset.data.api.raw.RawMining;
+import net.nikr.eve.jeveasset.io.local.profile.ProfileDatabase.InsertReturn;
 import net.nikr.eve.jeveasset.io.shared.DataConverter;
 
 
@@ -43,13 +44,13 @@ public class ProfileMining extends ProfileTable {
 	private static final String MINING_EXTRACTION_TABLE = "miningextraction";
 
 	@Override
-	protected boolean insert(Connection connection, List<EsiOwner> esiOwners) {
+	protected InsertReturn insert(Connection connection, List<EsiOwner> esiOwners) {
 		if (esiOwners == null || esiOwners.isEmpty()) {
-			return false;
+			return InsertReturn.MISSING_DATA;
 		}
 		//Delete all data
 		if (!tableDelete(connection, MINING_TABLE, MINING_EXTRACTION_TABLE)) {
-			return false;
+			return InsertReturn.ROLLBACK;
 		}
 		String miningSQL = "INSERT INTO " + MINING_TABLE + " ("
 				+ "	ownerid,"
@@ -84,10 +85,9 @@ public class ProfileMining extends ProfileTable {
 					row.addRow(statement);
 				}
 			}
-			row.commit(connection);
 		} catch (SQLException ex) {
 			LOG.error(ex.getMessage(), ex);
-			return false;
+			return InsertReturn.ROLLBACK;
 		}
 		String extractionSQL = "INSERT INTO " + MINING_EXTRACTION_TABLE + " ("
 				+ "	ownerid,"
@@ -116,12 +116,11 @@ public class ProfileMining extends ProfileTable {
 					row.addRow(statement);
 				}
 			}
-			row.commit(connection);
+			return InsertReturn.OK;
 		} catch (SQLException ex) {
 			LOG.error(ex.getMessage(), ex);
-			return false;
+			return InsertReturn.ROLLBACK;
 		}
-		return true;
 	}
 
 	@Override
@@ -248,7 +247,4 @@ public class ProfileMining extends ProfileTable {
 		}
 		return true;
 	}
-
-	@Override
-	protected boolean update(Connection connection) { return true; }
 }

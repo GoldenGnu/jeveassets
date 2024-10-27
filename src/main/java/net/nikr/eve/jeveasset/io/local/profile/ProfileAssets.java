@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2024 Contributors (see credits.txt)
+ * Copyright 2009-2023 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -31,6 +31,7 @@ import java.util.Map;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.data.api.my.MyAsset;
 import net.nikr.eve.jeveasset.data.api.raw.RawAsset;
+import net.nikr.eve.jeveasset.io.local.profile.ProfileDatabase.InsertReturn;
 import net.nikr.eve.jeveasset.io.shared.DataConverter;
 import net.nikr.eve.jeveasset.io.shared.RawConverter;
 
@@ -40,13 +41,13 @@ public class ProfileAssets extends ProfileTable {
 	private static final String ASSETS_TABLE = "assets";
 
 	@Override
-	protected boolean insert(Connection connection, List<EsiOwner> esiOwners) {
+	protected InsertReturn insert(Connection connection, List<EsiOwner> esiOwners) {
 		if (esiOwners == null || esiOwners.isEmpty()) {
-			return false;
+			return InsertReturn.MISSING_DATA;
 		}
 		//Delete all data
 		if (!tableDelete(connection, ASSETS_TABLE)) {
-			return false;
+			return InsertReturn.ROLLBACK;
 		}
 		//Insert data
 		String sql = "INSERT INTO " + ASSETS_TABLE + " ("
@@ -70,11 +71,10 @@ public class ProfileAssets extends ProfileTable {
 			for (EsiOwner owner : esiOwners) {
 				insertAssets(statement, row, owner.getAssets(), owner.getOwnerID(), null);
 			}
-			row.commit(connection);
-			return true;
+			return InsertReturn.OK;
 		} catch (SQLException ex) {
 			LOG.error(ex.getMessage(), ex);
-			return false;
+			return InsertReturn.ROLLBACK;
 		}
 	}
 
@@ -184,9 +184,5 @@ public class ProfileAssets extends ProfileTable {
 			}
 		}
 		return true;
-	}
-
-	@Override
-	protected boolean update(Connection connection) { return true; }
-	
+	}	
 }

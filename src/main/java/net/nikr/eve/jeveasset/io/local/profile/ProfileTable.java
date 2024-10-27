@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2024 Contributors (see credits.txt)
+ * Copyright 2009-2023 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -38,6 +38,7 @@ import java.util.Set;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.io.local.AbstractXmlWriter;
+import net.nikr.eve.jeveasset.io.local.profile.ProfileDatabase.InsertReturn;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,10 +49,9 @@ public abstract class ProfileTable {
 
 	private static final int BATCH_SIZE = 10000;
 
-	protected abstract boolean insert(Connection connection, final List<EsiOwner> esiOwners);
+	protected abstract InsertReturn insert(Connection connection, final List<EsiOwner> esiOwners);
 	protected abstract boolean select(Connection connection, List<EsiOwner> esiOwners, Map<Long, EsiOwner> owners);
 	protected abstract boolean create(Connection connection);
-	protected abstract boolean update(Connection connection);
 
  	protected boolean tableExist(Connection connection, String tableName) {
 		String sql = "SELECT name FROM sqlite_master WHERE type='table' AND name='" + tableName + "'";
@@ -63,6 +63,22 @@ public abstract class ProfileTable {
 			LOG.error(ex.getMessage(), ex);
 		}
 		return false;
+	}
+
+ 	protected void rollback(Connection connection) {
+		try {
+			connection.rollback();
+		} catch (SQLException ex) {
+			LOG.error(ex.getMessage(), ex);
+		}
+	}
+
+ 	protected void commit(Connection connection) {
+		try {
+			connection.commit();
+		} catch (SQLException ex) {
+			rollback(connection);
+		}
 	}
 
  	protected boolean tableDelete(Connection connection, String ... tableNames) {
@@ -312,10 +328,6 @@ public abstract class ProfileTable {
 
 		public int size() {
 			return size;
-		}
-
-		public void commit(Connection connection) throws SQLException {
-			connection.commit();
 		}
 	}
 }

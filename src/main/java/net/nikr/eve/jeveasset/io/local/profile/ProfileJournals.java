@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2024 Contributors (see credits.txt)
+ * Copyright 2009-2023 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -34,6 +34,7 @@ import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.data.api.my.MyJournal;
 import net.nikr.eve.jeveasset.data.api.raw.RawJournal;
 import net.nikr.eve.jeveasset.data.api.raw.RawJournalRefType;
+import net.nikr.eve.jeveasset.io.local.profile.ProfileDatabase.InsertReturn;
 import net.nikr.eve.jeveasset.io.shared.DataConverter;
 import net.nikr.eve.jeveasset.io.shared.RawConverter;
 
@@ -43,13 +44,13 @@ public class ProfileJournals extends ProfileTable {
 	private static final String JOURNALS_TABLE = "journals";
 
 	@Override
-	protected boolean insert(Connection connection, List<EsiOwner> esiOwners) {
+	protected InsertReturn insert(Connection connection, List<EsiOwner> esiOwners) {
 		if (esiOwners == null || esiOwners.isEmpty()) {
-			return false;
+			return InsertReturn.MISSING_DATA;
 		}
 		//Delete all data
 		if (!tableDelete(connection, JOURNALS_TABLE)) {
-			return false;
+			return InsertReturn.ROLLBACK;
 		}
 		String sql = "INSERT INTO " + JOURNALS_TABLE + " ("
 				+ "	ownerid,"
@@ -105,11 +106,10 @@ public class ProfileJournals extends ProfileTable {
 					row.addRow(statement);
 				}
 			}
-			row.commit(connection);
-			return true;
+			return InsertReturn.OK;
 		} catch (SQLException ex) {
 			LOG.error(ex.getMessage(), ex);
-			return false;
+			return InsertReturn.ROLLBACK;
 		}
 	}
 
@@ -207,8 +207,4 @@ public class ProfileJournals extends ProfileTable {
 		}
 		return true;
 	}
-
-	@Override
-	protected boolean update(Connection connection) { return true; }
-
 }

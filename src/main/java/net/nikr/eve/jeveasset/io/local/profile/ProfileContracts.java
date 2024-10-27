@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2024 Contributors (see credits.txt)
+ * Copyright 2009-2023 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -37,6 +37,7 @@ import net.nikr.eve.jeveasset.data.api.my.MyContract;
 import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
 import net.nikr.eve.jeveasset.data.api.raw.RawContract;
 import net.nikr.eve.jeveasset.data.api.raw.RawContractItem;
+import net.nikr.eve.jeveasset.io.local.profile.ProfileDatabase.InsertReturn;
 import net.nikr.eve.jeveasset.io.shared.DataConverter;
 import net.nikr.eve.jeveasset.io.shared.RawConverter;
 
@@ -48,13 +49,13 @@ public class ProfileContracts extends ProfileTable {
 	private static final String CONTRACT_ITEMS_TABLE = "contractitems";
 
 	@Override
-	protected boolean insert(Connection connection, List<EsiOwner> esiOwners) {
+	protected InsertReturn insert(Connection connection, List<EsiOwner> esiOwners) {
 		if (esiOwners == null || esiOwners.isEmpty()) {
-			return false;
+			return InsertReturn.MISSING_DATA;
 		}
 		//Delete all data
 		if (!tableDelete(connection, CONTRACTS_OWNERS_TABLE, CONTRACTS_TABLE, CONTRACT_ITEMS_TABLE)) {
-			return false;
+			return InsertReturn.ROLLBACK;
 		}
 		//Insert data
 		String sqlOwners = "INSERT INTO " + CONTRACTS_OWNERS_TABLE + " ("
@@ -78,10 +79,9 @@ public class ProfileContracts extends ProfileTable {
 					row.addRow(statement);
 				}
 			}
-			row.commit(connection);
 		} catch (SQLException ex) {
 			LOG.error(ex.getMessage(), ex);
-			return false;
+			return InsertReturn.ROLLBACK;
 		}
 		String sqlContracts = "INSERT OR REPLACE INTO " + CONTRACTS_TABLE + " ("
 				+ "	acceptorid,"
@@ -150,10 +150,9 @@ public class ProfileContracts extends ProfileTable {
 					row.addRow(statement);
 				}
 			}
-			row.commit(connection);
 		} catch (SQLException ex) {
 			LOG.error(ex.getMessage(), ex);
-			return false;
+			return InsertReturn.ROLLBACK;
 		}
 		//Insert data
 		String sqlContractItems = "INSERT INTO " + CONTRACT_ITEMS_TABLE + " ("
@@ -201,12 +200,11 @@ public class ProfileContracts extends ProfileTable {
 				}
 				
 			}
-			row.commit(connection);
+			return InsertReturn.OK;
 		} catch (SQLException ex) {
 			LOG.error(ex.getMessage(), ex);
-			return false;
+			return InsertReturn.ROLLBACK;
 		}
-		return true;
 	}
 
 	@Override
@@ -429,8 +427,4 @@ public class ProfileContracts extends ProfileTable {
 		}
 		return true;
 	}
-
-	@Override
-	protected boolean update(Connection connection) { return true; }
-	
 }

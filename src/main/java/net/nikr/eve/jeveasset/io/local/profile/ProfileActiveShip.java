@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2024 Contributors (see credits.txt)
+ * Copyright 2009-2023 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.data.api.my.MyShip;
+import net.nikr.eve.jeveasset.io.local.profile.ProfileDatabase.InsertReturn;
 
 
 public class ProfileActiveShip extends ProfileTable {
@@ -36,13 +37,13 @@ public class ProfileActiveShip extends ProfileTable {
 	private static final String ACTIVE_SHIP_TABLE = "activeship";
 
 	@Override
-	protected boolean insert(Connection connection, List<EsiOwner> esiOwners) {
+	protected InsertReturn insert(Connection connection, List<EsiOwner> esiOwners) {
 		if (esiOwners == null || esiOwners.isEmpty()) {
-			return false;
+			return InsertReturn.MISSING_DATA;
 		}
 		//Delete all data
 		if (!tableDelete(connection, ACTIVE_SHIP_TABLE)) {
-			return false;
+			return InsertReturn.ROLLBACK;
 		}
 		String sql = "INSERT INTO " + ACTIVE_SHIP_TABLE + " ("
 				+ "	ownerid,"
@@ -69,11 +70,10 @@ public class ProfileActiveShip extends ProfileTable {
 				setAttribute(statement, ++index, activeShip.getLocationID());
 				row.addRow(statement);
 			}
-			row.commit(connection);
-			return true;
+			return InsertReturn.OK;
 		} catch (SQLException ex) {
 			LOG.error(ex.getMessage(), ex);
-			return false;
+			return InsertReturn.ROLLBACK;
 		}
 	}
 
@@ -120,8 +120,4 @@ public class ProfileActiveShip extends ProfileTable {
 		}
 		return true;
 	}
-
-	@Override
-	protected boolean update(Connection connection) { return true; }
-	
 }

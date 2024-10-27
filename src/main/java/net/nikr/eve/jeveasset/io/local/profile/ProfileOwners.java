@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2024 Contributors (see credits.txt)
+ * Copyright 2009-2023 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -34,6 +34,7 @@ import java.util.Map;
 import java.util.Set;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.io.esi.EsiCallbackURL;
+import net.nikr.eve.jeveasset.io.local.profile.ProfileDatabase.InsertReturn;
 import net.troja.eve.esi.model.CharacterRolesResponse;
 
 
@@ -42,13 +43,13 @@ public class ProfileOwners extends ProfileTable {
 	private static final String OWNERS_TABLE = "owners";
 
 	@Override
-	protected boolean insert(Connection connection, List<EsiOwner> esiOwners) {
+	protected InsertReturn insert(Connection connection, List<EsiOwner> esiOwners) {
 		if (esiOwners == null || esiOwners.isEmpty()) {
-			return false;
+			return InsertReturn.MISSING_DATA;
 		}
 		//Delete all data
 		if (!tableDelete(connection, OWNERS_TABLE)) {
-			return false;
+			return InsertReturn.ROLLBACK;
 		}
 		String sql = "INSERT INTO " + OWNERS_TABLE + " ("
 				+ "	ownerid,"
@@ -110,11 +111,10 @@ public class ProfileOwners extends ProfileTable {
 				setAttribute(statement, ++index, owner.getRoles());
 				row.addRow(statement);
 			}
-			row.commit(connection);
-			return true;
+			return InsertReturn.OK;
 		} catch (SQLException ex) {
 			LOG.error(ex.getMessage(), ex);
-			return false;
+			return InsertReturn.ROLLBACK;
 		}
 	}
 

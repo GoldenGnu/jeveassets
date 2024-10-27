@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2024 Contributors (see credits.txt)
+ * Copyright 2009-2023 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -35,6 +35,7 @@ import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder.Change;
+import net.nikr.eve.jeveasset.io.local.profile.ProfileDatabase.InsertReturn;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import net.nikr.eve.jeveasset.io.shared.DataConverter;
 import net.nikr.eve.jeveasset.io.shared.RawConverter;
@@ -46,13 +47,13 @@ public class ProfileMarketOrders extends ProfileTable {
 	private static final String MARKET_ORDER_CHANGES_TABLE = "marketorderchanges";
 
 	@Override
-	protected boolean insert(Connection connection, List<EsiOwner> esiOwners) {
+	protected InsertReturn insert(Connection connection, List<EsiOwner> esiOwners) {
 		if (esiOwners == null || esiOwners.isEmpty()) {
-			return false;
+			return InsertReturn.MISSING_DATA;
 		}
 		//Delete all data
 		if (!tableDelete(connection, MARKET_ORDERS_TABLE, MARKET_ORDER_CHANGES_TABLE)) {
-			return false;
+			return InsertReturn.ROLLBACK;
 		}
 		String ordersSQL = "INSERT INTO " + MARKET_ORDERS_TABLE + " ("
 				+ "	ownerid,"
@@ -110,10 +111,9 @@ public class ProfileMarketOrders extends ProfileTable {
 					row.addRow(statement);
 				}
 			}
-			row.commit(connection);
 		} catch (SQLException ex) {
 			LOG.error(ex.getMessage(), ex);
-			return false;
+			return InsertReturn.ROLLBACK;
 		}
 		String changesSQL = "INSERT INTO " + MARKET_ORDER_CHANGES_TABLE + " ("
 				+ "	orderid,"
@@ -140,12 +140,11 @@ public class ProfileMarketOrders extends ProfileTable {
 					}
 				}
 			}
-			row.commit(connection);
+			return InsertReturn.OK;
 		} catch (SQLException ex) {
 			LOG.error(ex.getMessage(), ex);
-			return false;
+			return InsertReturn.ROLLBACK;
 		}
-		return true;
 	}
 
 	@Override
@@ -290,8 +289,4 @@ public class ProfileMarketOrders extends ProfileTable {
 		}
 		return true;
 	}
-
-	@Override
-	protected boolean update(Connection connection) { return true; }
-	
 }
