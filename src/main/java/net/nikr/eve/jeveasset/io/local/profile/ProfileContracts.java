@@ -81,7 +81,7 @@ public class ProfileContracts extends ProfileTable {
 			return false;
 		}
 
-		String sqlContracts = "INSERT INTO " + CONTRACTS_TABLE + " ("
+		String sqlContracts = "INSERT OR IGNORE INTO " + CONTRACTS_TABLE + " ("
 				+ "	acceptorid,"
 				+ "	assigneeid,"
 				+ "	availability,"
