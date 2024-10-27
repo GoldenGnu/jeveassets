@@ -189,6 +189,7 @@ public class ProfileDatabaseTest extends TestUtil {
 						|| "marketApi".equals(fieldName) //Perm
 						|| "industryApi".equals(fieldName) //Perm
 						|| "characterApi".equals(fieldName) //Perm
+						|| "clonesApi".equals(fieldName) //Perm
 						|| "assetsApi".equals(fieldName) //Perm
 						|| "walletApi".equals(fieldName) //Perm
 						|| "universeApi".equals(fieldName) //Perm
