@@ -510,6 +510,9 @@ public class ConverterTestUtil {
 					|| options.getContractAvailabilityRaw() == RawContract.ContractAvailability.ALLIANCE)) {
 				myContract.setAvailability(options.getContractAvailabilityRaw());
 			}
+			if (myContract.getStatus() != null) {
+				myContract.setStatus(options.getContractStatusRaw());
+			}
 		}
 		if (object instanceof MyContractItem) {
 			MyContractItem myContractItem = (MyContractItem) object;
