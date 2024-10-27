@@ -31,7 +31,6 @@ import java.util.Map;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.data.api.my.MyAccountBalance;
 import net.nikr.eve.jeveasset.data.api.raw.RawAccountBalance;
-import net.nikr.eve.jeveasset.io.local.profile.ProfileDatabase.InsertReturn;
 import net.nikr.eve.jeveasset.io.shared.DataConverter;
 
 
@@ -40,14 +39,13 @@ public class ProfileAccountBalances extends ProfileTable {
 	private static final String ACCOUNT_BALANCES_TABLE = "accountbalances";
 
 	@Override
-	protected InsertReturn insert(Connection connection, List<EsiOwner> esiOwners) {
-		if (esiOwners == null || esiOwners.isEmpty()) {
-			return InsertReturn.MISSING_DATA;
-		}
+	protected boolean insert(Connection connection, List<EsiOwner> esiOwners) {
 		//Delete all data
 		if (!tableDelete(connection, ACCOUNT_BALANCES_TABLE)) {
-			return InsertReturn.ROLLBACK;
+			return false;
 		}
+
+		//Insert Data
 		String sql = "INSERT INTO " + ACCOUNT_BALANCES_TABLE + " ("
 				+ "	ownerid,"
 				+ "	accountkey,"
@@ -69,11 +67,11 @@ public class ProfileAccountBalances extends ProfileTable {
 					row.addRow(statement);
 				}
 			}
-			return InsertReturn.OK;
 		} catch (SQLException ex) {
 			LOG.error(ex.getMessage(), ex);
-			return InsertReturn.ROLLBACK;
+			return false;
 		}
+		return true;
 	}
 
 	@Override

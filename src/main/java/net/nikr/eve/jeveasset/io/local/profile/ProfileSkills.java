@@ -31,7 +31,6 @@ import java.util.Map;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.data.api.my.MySkill;
 import net.nikr.eve.jeveasset.data.api.raw.RawSkill;
-import net.nikr.eve.jeveasset.io.local.profile.ProfileDatabase.InsertReturn;
 import net.nikr.eve.jeveasset.io.shared.DataConverter;
 
 
@@ -41,14 +40,13 @@ public class ProfileSkills extends ProfileTable {
 	private static final String SKILLS_TOTAL_TABLE = "skillstotal";
 
 	@Override
-	protected InsertReturn insert(Connection connection, List<EsiOwner> esiOwners) {
-		if (esiOwners == null || esiOwners.isEmpty()) {
-			return InsertReturn.MISSING_DATA;
-		}
+	protected boolean insert(Connection connection, List<EsiOwner> esiOwners) {
 		//Delete all data
 		if (!tableDelete(connection, SKILLS_TABLE, SKILLS_TOTAL_TABLE)) {
-			return InsertReturn.ROLLBACK;
+			return false;
 		}
+
+		//Insert data
 		String skillsSQL = "INSERT INTO " + SKILLS_TABLE + " ("
 				+ "	ownerid,"
 				+ "	id,"
@@ -76,8 +74,9 @@ public class ProfileSkills extends ProfileTable {
 			}
 		} catch (SQLException ex) {
 			LOG.error(ex.getMessage(), ex);
-			return InsertReturn.ROLLBACK;
+			return false;
 		}
+
 		String totalSQL = "INSERT INTO " + SKILLS_TOTAL_TABLE + " ("
 				+ "	ownerid,"
 				+ "	total,"
@@ -92,11 +91,11 @@ public class ProfileSkills extends ProfileTable {
 				setAttributeOptional(statement, ++index, owner.getUnallocatedSkillPoints());
 				row.addRow(statement);
 			}
-			return InsertReturn.OK;
 		} catch (SQLException ex) {
 			LOG.error(ex.getMessage(), ex);
-			return InsertReturn.ROLLBACK;
+			return false;
 		}
+		return true;
 	}
 
 	@Override

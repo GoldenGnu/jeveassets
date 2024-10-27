@@ -37,7 +37,6 @@ import net.nikr.eve.jeveasset.data.api.my.MyContract;
 import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
 import net.nikr.eve.jeveasset.data.api.raw.RawContract;
 import net.nikr.eve.jeveasset.data.api.raw.RawContractItem;
-import net.nikr.eve.jeveasset.io.local.profile.ProfileDatabase.InsertReturn;
 import net.nikr.eve.jeveasset.io.shared.DataConverter;
 import net.nikr.eve.jeveasset.io.shared.RawConverter;
 
@@ -49,14 +48,12 @@ public class ProfileContracts extends ProfileTable {
 	private static final String CONTRACT_ITEMS_TABLE = "contractitems";
 
 	@Override
-	protected InsertReturn insert(Connection connection, List<EsiOwner> esiOwners) {
-		if (esiOwners == null || esiOwners.isEmpty()) {
-			return InsertReturn.MISSING_DATA;
-		}
+	protected boolean insert(Connection connection, List<EsiOwner> esiOwners) {
 		//Delete all data
 		if (!tableDelete(connection, CONTRACTS_OWNERS_TABLE, CONTRACTS_TABLE, CONTRACT_ITEMS_TABLE)) {
-			return InsertReturn.ROLLBACK;
+			return false;
 		}
+
 		//Insert data
 		String sqlOwners = "INSERT INTO " + CONTRACTS_OWNERS_TABLE + " ("
 				+ "	ownerid,"
@@ -81,9 +78,10 @@ public class ProfileContracts extends ProfileTable {
 			}
 		} catch (SQLException ex) {
 			LOG.error(ex.getMessage(), ex);
-			return InsertReturn.ROLLBACK;
+			return false;
 		}
-		String sqlContracts = "INSERT OR REPLACE INTO " + CONTRACTS_TABLE + " ("
+
+		String sqlContracts = "INSERT INTO " + CONTRACTS_TABLE + " ("
 				+ "	acceptorid,"
 				+ "	assigneeid,"
 				+ "	availability,"
@@ -152,9 +150,9 @@ public class ProfileContracts extends ProfileTable {
 			}
 		} catch (SQLException ex) {
 			LOG.error(ex.getMessage(), ex);
-			return InsertReturn.ROLLBACK;
+			return false;
 		}
-		//Insert data
+
 		String sqlContractItems = "INSERT INTO " + CONTRACT_ITEMS_TABLE + " ("
 				+ "	contractid,"
 				+ "	included,"
@@ -200,11 +198,11 @@ public class ProfileContracts extends ProfileTable {
 				}
 				
 			}
-			return InsertReturn.OK;
 		} catch (SQLException ex) {
 			LOG.error(ex.getMessage(), ex);
-			return InsertReturn.ROLLBACK;
+			return false;
 		}
+		return true;
 	}
 
 	@Override

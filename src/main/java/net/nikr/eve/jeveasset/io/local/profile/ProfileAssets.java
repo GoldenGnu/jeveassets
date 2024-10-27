@@ -31,7 +31,6 @@ import java.util.Map;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.data.api.my.MyAsset;
 import net.nikr.eve.jeveasset.data.api.raw.RawAsset;
-import net.nikr.eve.jeveasset.io.local.profile.ProfileDatabase.InsertReturn;
 import net.nikr.eve.jeveasset.io.shared.DataConverter;
 import net.nikr.eve.jeveasset.io.shared.RawConverter;
 
@@ -41,14 +40,12 @@ public class ProfileAssets extends ProfileTable {
 	private static final String ASSETS_TABLE = "assets";
 
 	@Override
-	protected InsertReturn insert(Connection connection, List<EsiOwner> esiOwners) {
-		if (esiOwners == null || esiOwners.isEmpty()) {
-			return InsertReturn.MISSING_DATA;
-		}
+	protected boolean insert(Connection connection, List<EsiOwner> esiOwners) {
 		//Delete all data
 		if (!tableDelete(connection, ASSETS_TABLE)) {
-			return InsertReturn.ROLLBACK;
+			return false;
 		}
+
 		//Insert data
 		String sql = "INSERT INTO " + ASSETS_TABLE + " ("
 				+ "	ownerid,"
@@ -71,11 +68,11 @@ public class ProfileAssets extends ProfileTable {
 			for (EsiOwner owner : esiOwners) {
 				insertAssets(statement, row, owner.getAssets(), owner.getOwnerID(), null);
 			}
-			return InsertReturn.OK;
 		} catch (SQLException ex) {
 			LOG.error(ex.getMessage(), ex);
-			return InsertReturn.ROLLBACK;
+			return false;
 		}
+		return true;
 	}
 
 	private int getAssetSize(List<MyAsset> assets) {

@@ -23,6 +23,7 @@ package net.nikr.eve.jeveasset.io.local.profile;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -58,20 +59,19 @@ public class ProfileDatabase {
 			this.profileTable = databaseTable;
 		}
 
-		public boolean insert(Connection connection, final List<EsiOwner> esiOwners) {
-			InsertReturn insert = profileTable.insert(connection, esiOwners);
-			switch (insert) {
-				case MISSING_DATA:
-					return false;
-				case ROLLBACK:
-					profileTable.rollback(connection);
-					return false;
-				case OK:
-					//Only commit once, when everything is done - so we can rollback on any errors
-					profileTable.commit(connection);
-					return true;
-				default:
-					return false; //?
+		public boolean insert(Connection connection, List<EsiOwner> esiOwners) {
+			if (esiOwners == null) {
+				esiOwners = new ArrayList<>(); //Ensure never null
+			}
+
+			boolean ok = profileTable.insert(connection, esiOwners);
+			if (ok) {
+				//Only commit once, when everything is done - so we can rollback on any errors 
+				profileTable.commit(connection);
+				return true;
+			} else {
+				profileTable.rollback(connection);
+				return false;
 			}
 		}
 		public boolean select(Connection connection, List<EsiOwner> esiOwners) {
@@ -85,11 +85,6 @@ public class ProfileDatabase {
 			return profileTable.create(connection);
 		}
 	}
-
-	public static enum InsertReturn {
-		OK, ROLLBACK, MISSING_DATA
-	}
-	
 
 	private static String getConnectionUrl(String filename) {
 		return "jdbc:sqlite:" + filename;

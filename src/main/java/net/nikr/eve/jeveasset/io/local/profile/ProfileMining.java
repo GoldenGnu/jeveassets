@@ -34,7 +34,6 @@ import net.nikr.eve.jeveasset.data.api.my.MyExtraction;
 import net.nikr.eve.jeveasset.data.api.my.MyMining;
 import net.nikr.eve.jeveasset.data.api.raw.RawExtraction;
 import net.nikr.eve.jeveasset.data.api.raw.RawMining;
-import net.nikr.eve.jeveasset.io.local.profile.ProfileDatabase.InsertReturn;
 import net.nikr.eve.jeveasset.io.shared.DataConverter;
 
 
@@ -44,14 +43,13 @@ public class ProfileMining extends ProfileTable {
 	private static final String MINING_EXTRACTION_TABLE = "miningextraction";
 
 	@Override
-	protected InsertReturn insert(Connection connection, List<EsiOwner> esiOwners) {
-		if (esiOwners == null || esiOwners.isEmpty()) {
-			return InsertReturn.MISSING_DATA;
-		}
+	protected boolean insert(Connection connection, List<EsiOwner> esiOwners) {
 		//Delete all data
 		if (!tableDelete(connection, MINING_TABLE, MINING_EXTRACTION_TABLE)) {
-			return InsertReturn.ROLLBACK;
+			return false;
 		}
+
+		//Insert data
 		String miningSQL = "INSERT INTO " + MINING_TABLE + " ("
 				+ "	ownerid,"
 				+ "	typeid,"
@@ -87,8 +85,9 @@ public class ProfileMining extends ProfileTable {
 			}
 		} catch (SQLException ex) {
 			LOG.error(ex.getMessage(), ex);
-			return InsertReturn.ROLLBACK;
+			return false;
 		}
+
 		String extractionSQL = "INSERT INTO " + MINING_EXTRACTION_TABLE + " ("
 				+ "	ownerid,"
 				+ "	arrival,"
@@ -116,11 +115,11 @@ public class ProfileMining extends ProfileTable {
 					row.addRow(statement);
 				}
 			}
-			return InsertReturn.OK;
 		} catch (SQLException ex) {
 			LOG.error(ex.getMessage(), ex);
-			return InsertReturn.ROLLBACK;
+			return false;
 		}
+		return true;
 	}
 
 	@Override

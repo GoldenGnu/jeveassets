@@ -38,7 +38,6 @@ import java.util.Set;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.io.local.AbstractXmlWriter;
-import net.nikr.eve.jeveasset.io.local.profile.ProfileDatabase.InsertReturn;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,7 +48,7 @@ public abstract class ProfileTable {
 
 	private static final int BATCH_SIZE = 10000;
 
-	protected abstract InsertReturn insert(Connection connection, final List<EsiOwner> esiOwners);
+	protected abstract boolean insert(Connection connection, final List<EsiOwner> esiOwners);
 	protected abstract boolean select(Connection connection, List<EsiOwner> esiOwners, Map<Long, EsiOwner> owners);
 	protected abstract boolean create(Connection connection);
 

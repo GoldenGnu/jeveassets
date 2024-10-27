@@ -35,7 +35,6 @@ import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder.Change;
-import net.nikr.eve.jeveasset.io.local.profile.ProfileDatabase.InsertReturn;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import net.nikr.eve.jeveasset.io.shared.DataConverter;
 import net.nikr.eve.jeveasset.io.shared.RawConverter;
@@ -47,14 +46,13 @@ public class ProfileMarketOrders extends ProfileTable {
 	private static final String MARKET_ORDER_CHANGES_TABLE = "marketorderchanges";
 
 	@Override
-	protected InsertReturn insert(Connection connection, List<EsiOwner> esiOwners) {
-		if (esiOwners == null || esiOwners.isEmpty()) {
-			return InsertReturn.MISSING_DATA;
-		}
+	protected boolean insert(Connection connection, List<EsiOwner> esiOwners) {
 		//Delete all data
 		if (!tableDelete(connection, MARKET_ORDERS_TABLE, MARKET_ORDER_CHANGES_TABLE)) {
-			return InsertReturn.ROLLBACK;
+			return false;
 		}
+
+		//Insert data
 		String ordersSQL = "INSERT INTO " + MARKET_ORDERS_TABLE + " ("
 				+ "	ownerid,"
 				+ "	orderid,"
@@ -113,8 +111,9 @@ public class ProfileMarketOrders extends ProfileTable {
 			}
 		} catch (SQLException ex) {
 			LOG.error(ex.getMessage(), ex);
-			return InsertReturn.ROLLBACK;
+			return false;
 		}
+
 		String changesSQL = "INSERT INTO " + MARKET_ORDER_CHANGES_TABLE + " ("
 				+ "	orderid,"
 				+ "	date,"
@@ -140,11 +139,11 @@ public class ProfileMarketOrders extends ProfileTable {
 					}
 				}
 			}
-			return InsertReturn.OK;
 		} catch (SQLException ex) {
 			LOG.error(ex.getMessage(), ex);
-			return InsertReturn.ROLLBACK;
+			return false;
 		}
+		return true;
 	}
 
 	@Override
