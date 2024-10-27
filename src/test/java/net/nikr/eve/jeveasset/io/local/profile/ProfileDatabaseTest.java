@@ -20,6 +20,7 @@
  */
 package net.nikr.eve.jeveasset.io.local.profile;
 
+import ch.qos.logback.classic.Level;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.util.Collection;
@@ -38,20 +39,32 @@ import net.nikr.eve.jeveasset.data.api.my.MyJournal;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.profile.Profile;
+import net.nikr.eve.jeveasset.data.profile.ProfileData;
 import net.nikr.eve.jeveasset.data.profile.ProfileManager;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.Security;
+import net.nikr.eve.jeveasset.io.local.ProfileReader;
 import net.nikr.eve.jeveasset.io.local.ProfileWriter;
-import static net.nikr.eve.jeveasset.io.online.EveRefGetterOnlineTest.setUpClass;
+import org.junit.AfterClass;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 
 public class ProfileDatabaseTest extends TestUtil {
-	
-	public ProfileDatabaseTest() {
+
+	private static final int REPS = 100;
+
+	@BeforeClass
+	public static void setUpClass() {
+		setLoggingLevel(Level.WARN);
+	}
+
+	@AfterClass
+	public static void tearDownClass() throws Exception {
+		setLoggingLevel(Level.INFO);
 	}
 	/**
 	 * SQLite test
@@ -74,27 +87,37 @@ public class ProfileDatabaseTest extends TestUtil {
 
 		ProfileManager profileManager = new ProfileManager();
 		profileManager.searchProfile();
-		profileManager.loadActiveProfile(); //Load from XML
+		profileManager.loadActiveProfile(); //Load
 		Profile oldProfile = profileManager.getActiveProfile();
 
 		CliOptions.get().setPortable(true);
 	
+		//Save to XML * REPS
 		long start = System.currentTimeMillis();
-		ProfileWriter.save(oldProfile);
-		System.out.println("Save XML: " +  + (System.currentTimeMillis() - start) + "ms");
-		
-		start = System.currentTimeMillis();
-		profileManager.saveProfile(); //Save to SQLite
-		System.out.println("Save SQLite: " +  + (System.currentTimeMillis() - start) + "ms");
+		for (int i = 0; i < REPS; i++) {
+			ProfileWriter.save(oldProfile);
+		}
+		log("Save XML: " +  + ((System.currentTimeMillis() - start) / REPS) + "ms");
 
+		//Save to SQLite * REPS
 		start = System.currentTimeMillis();
-		profileManager.saveProfile(); //Save to SQLite
-		System.out.println("Save SQLite 2: " +  + (System.currentTimeMillis() - start) + "ms");
+		for (int i = 0; i < REPS; i++) {
+			profileManager.saveProfile();
+		}
+		log("Save SQLite: " +  + ((System.currentTimeMillis() - start) / REPS) + "ms");
 
 		//Cleanup
 		File profile = new File(profileManager.getActiveProfile().getSQLiteFilename());
 		profile.delete();
 		CliOptions.get().setPortable(portable);
+
+		//EventList update * REPS
+		ProfileData profileData = new ProfileData(profileManager);
+		start = System.currentTimeMillis();
+		for (int i = 0; i < REPS; i++) {
+			profileData.updateEventLists();
+		}
+		log("Update data " + ((System.currentTimeMillis() - start) / REPS) + "ms");
 	}
 
 	@Test
@@ -104,20 +127,30 @@ public class ProfileDatabaseTest extends TestUtil {
 
 		ProfileManager profileManager = new ProfileManager();
 		profileManager.searchProfile();
+
+		//Load XML * REPS
 		long start = System.currentTimeMillis();
-		profileManager.loadActiveProfile(); //Load from XML
-		System.out.println("Loading XML " + (System.currentTimeMillis() - start) + "ms");
+		for (int i = 0; i < REPS; i++) {
+			ProfileReader.load(profileManager.getActiveProfile());
+		}
+		log("Loading XML " + ((System.currentTimeMillis() - start) / REPS) + "ms");
 		Profile oldProfile = profileManager.getActiveProfile();
 
 		CliOptions.get().setPortable(true);
 
+		//Save SQLite
 		profileManager.saveProfile(); //Save to SQLite
 
 		profileManager = new ProfileManager();
 		profileManager.searchProfile();
+
+		//Load SQlite * REPS
 		start = System.currentTimeMillis();
-		profileManager.loadActiveProfile(); //Load from SQLite
-		System.out.println("Loading SQLite " + (System.currentTimeMillis() - start) + "ms");
+		for (int i = 0; i < REPS; i++) {
+			profileManager.clear();
+			profileManager.loadActiveProfile(); //Load from SQLite
+		}
+		log("Loading SQLite " + ((System.currentTimeMillis() - start) / REPS) + "ms");
 		Profile newProfile = profileManager.getActiveProfile();
 
 		testClass("", oldProfile, newProfile, false);
@@ -126,6 +159,20 @@ public class ProfileDatabaseTest extends TestUtil {
 		File profile = new File(profileManager.getActiveProfile().getSQLiteFilename());
 		profile.delete();
 		CliOptions.get().setPortable(portable);
+
+		//EventList update
+		ProfileData profileData = new ProfileData(profileManager);
+		start = System.currentTimeMillis();
+		for (int i = 0; i < REPS; i++) {
+			profileData.updateEventLists();
+		}
+		log("Update data " + ((System.currentTimeMillis() - start) / REPS) + "ms");
+	}
+
+	private void log(String s) {
+		setLoggingLevel(Level.INFO);
+		System.out.println(s);
+		setLoggingLevel(Level.WARN);
 	}
 
 	private void testClass(String msg, Object oldValue, Object newValue, boolean collection) {
