@@ -153,9 +153,10 @@ public class Profile implements Comparable<Profile> {
 
 	private String getFilenameExtension(String extension) {
 		String filename = getName();
-		filename = filename.replace(" ", "_");
+		filename = filename.replace(" ", "_"); //Remove spaces
+		filename = filename + "." + extension; //Add extension
 		if (defaultProfile) {
-			filename = "#" + filename + "." + extension;
+			filename = "#" + filename; //Mark active profile
 		}
 		filename = FileUtil.getPathProfile(filename);
 		return filename;
