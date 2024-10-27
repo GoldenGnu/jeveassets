@@ -83,9 +83,9 @@ public class ProfileAssets extends ProfileTable {
 		return size;
 	}
 
-	private boolean insertAssets(PreparedStatement statement, Row row, final List<MyAsset> assets, long ownerID, Long parentID) throws SQLException {
+	private void insertAssets(PreparedStatement statement, Row row, final List<MyAsset> assets, long ownerID, Long parentID) throws SQLException {
 		if (assets == null || assets.isEmpty()) {
-			return false;
+			return;
 		}
 		for (MyAsset asset : assets) {
 			int index = 0;
@@ -115,7 +115,7 @@ public class ProfileAssets extends ProfileTable {
 			row.addRow();
 			insertAssets(statement, row, asset.getAssets(), ownerID, asset.getItemID());
 		}
-		return true;
+		return;
 	}
 
 	@Override
