@@ -65,7 +65,7 @@ public class ProfileTransactions  extends ProfileTable {
 				+ "	accountkey)"
 				+ " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)";
 		try (PreparedStatement statement = connection.prepareStatement(sql)) {
-			Row row = new Row(esiOwners, new RowSize() {
+			Row row = new Row(statement, esiOwners, new RowSize() {
 				@Override
 				public int getSize(EsiOwner owner) {
 					return owner.getTransactions().size();
@@ -89,7 +89,7 @@ public class ProfileTransactions  extends ProfileTable {
 					setAttribute(statement, ++index, transaction.getClientID());
 					//Extra
 					setAttribute(statement, ++index, transaction.getAccountKey());
-					row.addRow(statement);
+					row.addRow();
 				}
 			}
 		} catch (SQLException ex) {

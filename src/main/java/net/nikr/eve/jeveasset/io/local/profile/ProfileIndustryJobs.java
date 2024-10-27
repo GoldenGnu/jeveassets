@@ -77,7 +77,7 @@ public class ProfileIndustryJobs extends ProfileTable {
 				+ "	esi)"
 				+ " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 		try (PreparedStatement statement = connection.prepareStatement(sql)) {
-			Row row = new Row(esiOwners, new RowSize() {
+			Row row = new Row(statement, esiOwners, new RowSize() {
 				@Override
 				public int getSize(EsiOwner owner) {
 					return owner.getIndustryJobs().size();
@@ -111,7 +111,7 @@ public class ProfileIndustryJobs extends ProfileTable {
 					setAttributeOptional(statement, ++index, industryJob.getCompletedCharacterID());
 					setAttributeOptional(statement, ++index, industryJob.getSuccessfulRuns());
 					setAttribute(statement, ++index, industryJob.isESI());
-					row.addRow(statement);
+					row.addRow();
 				}
 			}
 		} catch (SQLException ex) {

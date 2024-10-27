@@ -55,7 +55,7 @@ public class ProfileSkills extends ProfileTable {
 				+ "	trained)"
 				+ " VALUES (?,?,?,?,?)";
 		try (PreparedStatement statement = connection.prepareStatement(skillsSQL)) {
-			Row row = new Row(esiOwners, new RowSize() {
+			Row row = new Row(statement, esiOwners, new RowSize() {
 				@Override
 				public int getSize(EsiOwner esiOwner) {
 					return esiOwner.getSkills().size();
@@ -69,7 +69,7 @@ public class ProfileSkills extends ProfileTable {
 					setAttribute(statement, ++index, skill.getSkillpoints());
 					setAttribute(statement, ++index, skill.getActiveSkillLevel());
 					setAttribute(statement, ++index, skill.getTrainedSkillLevel());
-					row.addRow(statement);
+					row.addRow();
 				}
 			}
 		} catch (SQLException ex) {
@@ -83,13 +83,13 @@ public class ProfileSkills extends ProfileTable {
 				+ "	unallocated)"
 				+ " VALUES (?,?,?)";
 		try (PreparedStatement statement = connection.prepareStatement(totalSQL)) {
-			Row row = new Row(esiOwners.size());
+			Row row = new Row(statement, esiOwners.size());
 			for (EsiOwner owner : esiOwners) {
 				int index = 0;
 				setAttribute(statement, ++index, owner.getOwnerID());
 				setAttributeOptional(statement, ++index, owner.getTotalSkillPoints());
 				setAttributeOptional(statement, ++index, owner.getUnallocatedSkillPoints());
-				row.addRow(statement);
+				row.addRow();
 			}
 		} catch (SQLException ex) {
 			LOG.error(ex.getMessage(), ex);

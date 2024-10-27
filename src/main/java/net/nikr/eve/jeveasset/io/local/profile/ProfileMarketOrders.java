@@ -77,7 +77,7 @@ public class ProfileMarketOrders extends ProfileTable {
 				+ " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
 				;
 		try (PreparedStatement statement = connection.prepareStatement(ordersSQL)) {
-			Row row = new Row(esiOwners, new RowSize() {
+			Row row = new Row(statement, esiOwners, new RowSize() {
 				@Override
 				public int getSize(EsiOwner owner) {
 					return owner.getMarketOrders().size();
@@ -106,7 +106,7 @@ public class ProfileMarketOrders extends ProfileTable {
 					setAttributeOptional(statement, ++index, marketOrder.getIssuedBy());
 					setAttribute(statement, ++index, marketOrder.isCorp());
 					setAttribute(statement, ++index, marketOrder.isESI());
-					row.addRow(statement);
+					row.addRow();
 				}
 			}
 		} catch (SQLException ex) {
@@ -121,7 +121,7 @@ public class ProfileMarketOrders extends ProfileTable {
 				+ "	volremaining)"
 				+ " VALUES (?,?,?,?)";
 		try (PreparedStatement statement = connection.prepareStatement(changesSQL)) {
-			Row row = new Row(esiOwners, new RowSize() {
+			Row row = new Row(statement, esiOwners, new RowSize() {
 				@Override
 				public int getSize(EsiOwner owner) {
 					return owner.getMarketOrders().size();
@@ -135,7 +135,7 @@ public class ProfileMarketOrders extends ProfileTable {
 						setAttribute(statement, ++index, change.getDate());
 						setAttributeOptional(statement, ++index, change.getPrice());
 						setAttributeOptional(statement, ++index, change.getVolumeRemaining());
-						row.addRow(statement);
+						row.addRow();
 					}
 				}
 			}

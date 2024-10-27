@@ -59,7 +59,7 @@ public class ProfileAssets extends ProfileTable {
 				+ "	rawquantity)"
 				+ " VALUES (?,?,?,?,?,?,?,?,?)";
 		try (PreparedStatement statement = connection.prepareStatement(sql)) {
-			Row row = new Row(esiOwners, new RowSize() {
+			Row row = new Row(statement, esiOwners, new RowSize() {
 				@Override
 				public int getSize(EsiOwner owner) {
 					return getAssetSize(owner.getAssets());
@@ -112,7 +112,7 @@ public class ProfileAssets extends ProfileTable {
 			}
 			setAttribute(statement, ++index, asset.isSingleton());
 			setAttributeOptional(statement, ++index, rawQuantity);
-			row.addRow(statement);
+			row.addRow();
 			insertAssets(statement, row, asset.getAssets(), ownerID, asset.getItemID());
 		}
 		return true;

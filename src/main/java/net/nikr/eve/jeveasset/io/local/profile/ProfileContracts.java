@@ -62,7 +62,7 @@ public class ProfileContracts extends ProfileTable {
 				+ " ON CONFLICT(ownerid, contractid) DO NOTHING"
 				;
 		try (PreparedStatement statement = connection.prepareStatement(sqlOwners)) {
-			Row row = new Row(esiOwners, new RowSize() {
+			Row row = new Row(statement, esiOwners, new RowSize() {
 				@Override
 				public int getSize(EsiOwner owner) {
 					return owner.getContracts().size();
@@ -73,7 +73,7 @@ public class ProfileContracts extends ProfileTable {
 					int index = 0;
 					setAttribute(statement, ++index, owner.getOwnerID());
 					setAttribute(statement, ++index, contract.getContractID());
-					row.addRow(statement);
+					row.addRow();
 				}
 			}
 		} catch (SQLException ex) {
@@ -110,7 +110,7 @@ public class ProfileContracts extends ProfileTable {
 				+ "	esi)"
 				+ " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 		try (PreparedStatement statement = connection.prepareStatement(sqlContracts)) {
-			Row row = new Row(esiOwners, new RowSize() {
+			Row row = new Row(statement, esiOwners, new RowSize() {
 				@Override
 				public int getSize(EsiOwner owner) {
 					return owner.getContracts().keySet().size();
@@ -145,7 +145,7 @@ public class ProfileContracts extends ProfileTable {
 					setAttributeOptional(statement, ++index, contract.getVolume());
 					setAttribute(statement, ++index, contract.isForCorp());
 					setAttribute(statement, ++index, contract.isESI());
-					row.addRow(statement);
+					row.addRow();
 				}
 			}
 		} catch (SQLException ex) {
@@ -168,7 +168,7 @@ public class ProfileContracts extends ProfileTable {
 				+ " VALUES (?,?,?,?,?,?,?,?,?,?,?)"
 				+ " ON CONFLICT(recordid) DO NOTHING";
 		try (PreparedStatement statement = connection.prepareStatement(sqlContractItems)) {
-			Row row = new Row(esiOwners, new RowSize() {
+			Row row = new Row(statement, esiOwners, new RowSize() {
 				@Override
 				public int getSize(EsiOwner owner) {
 					int size = 0;
@@ -193,10 +193,9 @@ public class ProfileContracts extends ProfileTable {
 						setAttributeOptional(statement, ++index, contractItem.getLicensedRuns());
 						setAttributeOptional(statement, ++index, contractItem.getME());
 						setAttributeOptional(statement, ++index, contractItem.getTE());
-						row.addRow(statement);
+						row.addRow();
 					}
 				}
-				
 			}
 		} catch (SQLException ex) {
 			LOG.error(ex.getMessage(), ex);
