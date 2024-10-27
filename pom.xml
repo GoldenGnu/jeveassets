@@ -171,6 +171,7 @@
 										<mkdir dir="${project.build.directory}/profiles"/>
 										<copy todir="${project.build.directory}/profiles">
 											<fileset dir="profiles" includes="*.xml"/>
+											<fileset dir="profiles" includes="*.db"/>
 										</copy>
 									</then>
 								</if>
