@@ -70,7 +70,7 @@ public class DataConverterTest extends TestUtil {
 			industryJob.setStationID(options.getLocationTypeEveApi());
 			industryJob.setCompletedDate(new Date(date.getTime() + 1L));
 			List<MyAsset> assets = DataConverter.assetIndustryJob(Collections.singletonList(industryJob), true, true);
-			if (options.getIndustryJobStatusRaw() == IndustryJobStatus.ARCHIVED) {
+			if (industryJob.isDone()) {
 				assertTrue(assets.isEmpty());
 				continue;
 			}

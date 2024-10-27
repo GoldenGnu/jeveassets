@@ -288,18 +288,17 @@ public class MyIndustryJob extends RawIndustryJob implements Comparable<MyIndust
 	}
 
 	public final boolean isNotDeliveredToAssets() {
-		return getStatus() != IndustryJobStatus.ARCHIVED //if ARCHIVED  -> unknown if delivered or not -> false
+		return !isDone() //if not done ->  not delivered to assets -> true
 				&& (owner.getAssetLastUpdate() == null //if null -> never updated -> not delivered to assets -> true
 				|| getCompletedDate() == null //if null -> not completed -> not delivered to assets -> true
-				|| owner.getAssetLastUpdate().before(getCompletedDate() //if assets last updated before completed date -> not delivered to assets -> true
-				));
+				|| owner.getAssetLastUpdate().before(getCompletedDate()) //if assets last updated before completed date -> not delivered to assets -> true
+				);
 	}
 
 	public final boolean isRemovedFromAssets() {
 		return owner.getAssetLastUpdate() != null //if null -> never updated -> not removed from assets -> false
 				&& getStartDate() != null //if null -> not started -> not removed from assets -> false
-				&& owner.getAssetLastUpdate().after(getStartDate() //if assets last updated after started date -> removed from assets -> true
-				);
+				&& owner.getAssetLastUpdate().after(getStartDate()); //if assets last updated after started date -> removed from assets -> true
 	}
 
 	public final boolean isManufacturing() {
