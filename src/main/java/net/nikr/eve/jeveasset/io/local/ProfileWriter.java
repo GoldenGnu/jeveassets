@@ -238,6 +238,7 @@ public final class ProfileWriter extends AbstractXmlWriter {
 
 	private void writeContractItems(Document xmldoc, Element parentNode, Map<MyContract, List<MyContractItem>> contractItems) {
 		Element contractsNode = xmldoc.createElement("contracts");
+		setAttribute(contractsNode, "archived", true);
 		parentNode.appendChild(contractsNode);
 		for (Map.Entry<MyContract, List<MyContractItem>> entry : contractItems.entrySet()) {
 			MyContract contract = entry.getKey();

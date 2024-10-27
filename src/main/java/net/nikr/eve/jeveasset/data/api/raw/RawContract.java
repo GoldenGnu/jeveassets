@@ -54,7 +54,8 @@ public class RawContract {
 		REJECTED("rejected"),
 		FAILED("failed"),
 		DELETED("deleted"),
-		REVERSED("reversed");
+		REVERSED("reversed"),
+		ARCHIVED("archived");
 
 		private final String value;
 
