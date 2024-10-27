@@ -46,7 +46,7 @@ public abstract class ProfileTable {
 
 	protected static final Logger LOG = LoggerFactory.getLogger(ProfileTable.class);
 
-	private static final int BATCH_SIZE = 10000;
+	private static final int BATCH_SIZE = 1000;
 
 	protected abstract boolean insert(Connection connection, final List<EsiOwner> esiOwners);
 	protected abstract boolean select(Connection connection, List<EsiOwner> esiOwners, Map<Long, EsiOwner> owners);
