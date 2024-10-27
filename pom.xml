@@ -211,7 +211,7 @@
 							<goal>copy-dependencies</goal>
 						</goals>
 						<configuration>
-							<excludeArtifactIds>junit,hamcrest-library</excludeArtifactIds>
+							<excludeArtifactIds>junit,hamcrest</excludeArtifactIds>
 							<outputDirectory>${project.build.directory}/lib</outputDirectory>
 							<overWriteReleases>false</overWriteReleases>
 							<overWriteSnapshots>false</overWriteSnapshots>
