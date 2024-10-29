@@ -496,6 +496,16 @@ public class StockpileSeparatorTableCell extends SeparatorTableCell<StockpileIte
 		}
 	}
 
+	@Override
+	protected void expandSeparator(final boolean expand) {
+		super.expandSeparator(expand);
+		StockpileItem currentItem = (StockpileItem) currentSeparator.first();
+		if (currentItem == null) { // handle 'late' rendering calls after this separator is invalid
+			return;
+		}
+		Settings.get().getStockpileGroupSettings().setStockpileExpanded(currentItem.getStockpile(), expand);
+	}
+
 	private class ListenerClass implements HierarchyListener, AdjustmentListener, ActionListener, CellEditorListener, KeyListener {
 
 		private boolean update = true;
