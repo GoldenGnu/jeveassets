@@ -797,4 +797,14 @@ public abstract class FakeSettings extends Settings {
 	public boolean isAssetsContractsOwnerCorporation() {
 		throw new UnsupportedOperationException("not implemented");
 	}
+
+	@Override
+	public void setCellValueCache(boolean cellValueCache) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public boolean isColumnValueCache() {
+		throw new UnsupportedOperationException("not implemented");
+	}
 }
