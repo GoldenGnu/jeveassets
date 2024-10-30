@@ -799,10 +799,15 @@ public abstract class FakeSettings extends Settings {
 	}
 
 	@Override
-	public void setLoadToolsStartup(boolean loadToolsStartup) {
+	public void setCellValueCache(boolean cellValueCache) {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
+	@Override
+	public void setLoadToolsStartup(boolean loadToolsStartup) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+	
 	@Override
 	public boolean isLoadToolsStartup() {
 		throw new UnsupportedOperationException("not implemented");
