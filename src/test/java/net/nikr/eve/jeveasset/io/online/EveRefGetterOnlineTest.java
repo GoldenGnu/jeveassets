@@ -93,23 +93,43 @@ public class EveRefGetterOnlineTest extends TestUtil {
 		} else {
 			typeIDs.addAll(all);
 		}
-		//Wrong data in SDE 2024-10-26
+		//Wrong data in SDE 2024-10-30
+		typeIDs.remove(81144); //PriceBase
 		typeIDs.remove(84271); //Tech: Limited Time
 		typeIDs.remove(84272); //Tech: Limited Time
 		typeIDs.remove(84273); //Tech: Limited Time
 		for (int i = 84297; i <= 84328; i++) {
 			typeIDs.remove(i); //Tech: Limited Time
 		}
+		typeIDs.remove(85062); //Tech: Faction/ReprocessedMaterial
+		typeIDs.remove(85229); //Tech: Faction/ReprocessedMaterial
+		typeIDs.remove(85236); //Tech: Faction/ReprocessedMaterial
 		typeIDs.remove(85279); //Tech: Limited Time
 		typeIDs.remove(85747); //ReprocessedMaterial
 		typeIDs.remove(85748); //BlueprintTypeIDs/ReprocessedMaterial
 		typeIDs.remove(85749); //ProductTypeID
-		typeIDs.remove(85750); //BlueprintTypeIDs/Tech/ReprocessedMaterial
-		typeIDs.remove(85751); //ProductTypeID
+		typeIDs.remove(85750); //ProductTypeID/Faction/ReprocessedMaterial
+		typeIDs.remove(85751); //ProductTypeID/Faction
+		typeIDs.remove(85890); //Tech: Premium
+		typeIDs.remove(85891); //Tech: Premium
+		typeIDs.remove(85892); //Tech: Premium
+		typeIDs.remove(85893); //Tech: Premium
+		typeIDs.remove(85894); //Tech: Premium
+		typeIDs.remove(85895); //Tech: Premium
+		typeIDs.remove(85896); //Tech: Premium
+		typeIDs.remove(85897); //Tech: Premium
 		typeIDs.remove(85929); //Tech: Premium
 		typeIDs.remove(85930); //Tech: Premium
 		typeIDs.remove(85931); //Tech: Premium
 		typeIDs.remove(85932); //Tech: Premium
+		typeIDs.remove(86149); //Tech: Premium
+		typeIDs.remove(86150); //Tech: Premium
+		typeIDs.remove(86151); //Tech: Premium
+		typeIDs.remove(86152); //Tech: Premium
+		typeIDs.remove(86153); //Tech: Premium
+		typeIDs.remove(86154); //Tech: Premium
+		typeIDs.remove(86155); //Tech: Premium
+		typeIDs.remove(86156); //Tech: Premium
 
 		for (int typeID : typeIDs) {
 			updates.add(new Download(typeID));
