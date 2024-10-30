@@ -86,6 +86,7 @@ import net.nikr.eve.jeveasset.gui.shared.Updatable;
 import net.nikr.eve.jeveasset.gui.shared.components.JLockWindow;
 import net.nikr.eve.jeveasset.gui.shared.components.JLockWindow.LockWorkerAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
+import net.nikr.eve.jeveasset.gui.shared.filter.FilterMatcher;
 import net.nikr.eve.jeveasset.gui.sounds.SoundPlayer;
 import net.nikr.eve.jeveasset.gui.tabs.assets.AssetsTab;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractsTab;
@@ -618,6 +619,7 @@ public class Program implements ActionListener {
 
 	private synchronized void updateEventLists(Set<Long> itemIDs, Set<Long> locationIDs, Set<Integer> typeIDs, OutbidProcesserOutput output, Date start) {
 		LOG.info("Updating EventList");
+		FilterMatcher.clearColumnValueCache();
 		for (JMainTab jMainTab : mainWindow.getTabs()) {
 			ensureEDT(new Runnable() {
 				@Override
