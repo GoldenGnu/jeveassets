@@ -107,6 +107,7 @@ public class Settings {
 		FLAG_INDUSTRY_JOBS_HISTORY,
 		FLAG_ASSETS_CONTRACTS_OWNER_CORP,
 		FLAG_ASSETS_CONTRACTS_OWNER_BOTH,
+		FLAG_CELL_VALUE_CACHE,
 		FLAG_LOAD_TOOLS_BACKGROUND,
 		FLAG_LOAD_TOOLS_STARTUP
 	}
@@ -233,7 +234,8 @@ public class Settings {
 	private Boolean highlightSelectedRows = null; //Assets
 	private Boolean reprocessColors = null; //Assets
 	private Boolean stockpileHalfColors = null; //Stockpile
-	private Boolean containersShowItemID = null; //Stockpile
+	private Boolean containersShowItemID = null; //Container ItemID
+	private Boolean cellValueCache = null; //Cell value cache
 //Table settings
 	//Filters					Saved by ExportFilterControl.saveSettings()
 	//Lock OK
@@ -310,6 +312,7 @@ public class Settings {
 		flags.put(SettingFlag.FLAG_INDUSTRY_JOBS_HISTORY, true);
 		flags.put(SettingFlag.FLAG_ASSETS_CONTRACTS_OWNER_CORP, false);
 		flags.put(SettingFlag.FLAG_ASSETS_CONTRACTS_OWNER_BOTH, false);
+		flags.put(SettingFlag.FLAG_CELL_VALUE_CACHE, true);
 		flags.put(SettingFlag.FLAG_LOAD_TOOLS_BACKGROUND, true);
 		flags.put(SettingFlag.FLAG_LOAD_TOOLS_STARTUP, false);
 		cacheFlags();
@@ -495,6 +498,7 @@ public class Settings {
 		reprocessColors = flags.get(SettingFlag.FLAG_REPROCESS_COLORS);
 		stockpileHalfColors = flags.get(SettingFlag.FLAG_STOCKPILE_HALF_COLORS);
 		containersShowItemID = flags.get(SettingFlag.FLAG_CONTAINERS_SHOW_ITEM_ID);
+		cellValueCache = flags.get(SettingFlag.FLAG_CELL_VALUE_CACHE);
 	}
 
 	public ReprocessSettings getReprocessSettings() {
@@ -739,9 +743,6 @@ public class Settings {
 	}
 
 	public boolean isFilterOnEnter() {
-		if (filterOnEnter == null) {
-			filterOnEnter = flags.get(SettingFlag.FLAG_FILTER_ON_ENTER);
-		}
 		return filterOnEnter;
 	}
 
@@ -936,6 +937,15 @@ public class Settings {
 
 	public void setAssetsContractsOwnerBoth(final boolean assetsContractsOwnerBoth) {
 		flags.put(SettingFlag.FLAG_ASSETS_CONTRACTS_OWNER_BOTH, assetsContractsOwnerBoth);
+	}
+
+	public boolean isColumnValueCache() {
+		return cellValueCache;
+	}
+
+	public void setCellValueCache(final boolean cellValueCache) {
+		flags.put(SettingFlag.FLAG_CELL_VALUE_CACHE, cellValueCache);
+		this.cellValueCache = cellValueCache;
 	}
 
 	public boolean isLoadToolsBackground() {
