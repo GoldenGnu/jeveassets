@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2023 Contributors (see credits.txt)
+ * Copyright 2009-2024 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -104,6 +104,7 @@ public abstract class TabsContracts extends Bundle {
 	public abstract String sellingAssets();
 	public abstract String sold();
 	public abstract String status();
+	public abstract String statusArchived();
 	public abstract String statusCancelled();
 	public abstract String statusCompleted();
 	public abstract String statusCompletedByContractor();
@@ -114,7 +115,6 @@ public abstract class TabsContracts extends Bundle {
 	public abstract String statusOutstanding();
 	public abstract String statusRejected();
 	public abstract String statusReversed();
-	public abstract String statusExpired();
 	public abstract String statusUnknown();
 	public abstract String title();
 	public abstract String type();

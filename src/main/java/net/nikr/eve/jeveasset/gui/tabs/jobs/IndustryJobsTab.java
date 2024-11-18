@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2023 Contributors (see credits.txt)
+ * Copyright 2009-2024 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -217,8 +217,13 @@ public class IndustryJobsTab extends JMainTabPrimary {
 						if (industryJob == null || industryJob.isESI() || industryJob.getStatus() == status) {
 							return;
 						}
+						boolean before = industryJob.isNotDeliveredToAssets();
 						industryJob.setStatus(status);
-						tableModel.fireTableDataChanged();
+						if (before != industryJob.isNotDeliveredToAssets()) {
+							program.updateEventListsWithProgress();
+						} else {
+							tableModel.fireTableDataChanged();
+						}
 						program.saveProfile();
 					}
 				});

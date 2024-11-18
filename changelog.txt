@@ -16,6 +16,55 @@
                   #### #  # #  # #  # #### #### #### #### ####
 
 ________________________________________________________________________________
+_7.9.2__________________________________________________________________________
+
+Bug Fixes:
+-Stockpiles collapsing after adding item (Issue #497)
+
+Code:
+-Optimization of FilterMatcher (Optional, on by default)
+
+________________________________________________________________________________
+_7.9.1__________________________________________________________________________
+
+Bug Fixes:
+-Added contract locations to my stockpile locations
+-Stockpile my locations contained delivered industry jobs locations
+-Corporation contract assets owner is now an option: char/corp/both (Issue #476)
+-Changed http to https in multiple places (contributed by Salartarium)
+-Reprocessed grand total should never have a color
+-Reprocessed value and color box was wrong
+-Mining graph/tracker owners list is not sorted (Issue #491)
+-Tracker assets location filter others node didn't work (Issue #485)
+-Tracker add new locations selected is never saved (Issue#488)
+-Remember what screen to open on (Issue #462)
+-noformula and nojumps cli arguments not working (Issue #492)
+-Fixed everef lookup to point to the correct url
+-Stockpile groups behave incorrectly with filters (Issue #484)
+-Ensure stockpile cell is visible after being expanded
+-Industry jobs assets use the wrong location
+-Ensure reprocess settings are valid
+-Flagstring attribute was never saved/loaded for assets and blueprints
+-Expired contracts are not included in tracker/assets (Issue #473)
+-Stockpile industry copy jobs now output both BPCs and Runs (Issue #482)
+-Fixed a typo (Issue #479)
+-Delivered industry jobs was included in assets and stockpiles (Issue #480)
+-Stockpile target column truncation (Issue #467)
+-Price history use tick scale of selected items (Issue #466)
+-Contract/Industry jobs assets was not updated on status change by users
+
+Changed:
+-Reduced throughput for public market orders to 100
+-Removed contract status expired and added archived
+
+Code:
+-Minor optimization of the stockpile tool
+-Updated sqlite to 3.41.2.2
+-Updated logback to 1.2.13
+-Updated prices library to 3.1.1 (Issue #469)
+-Updated eve-esi library to 4.9.0
+
+________________________________________________________________________________
 _7.9.0__________________________________________________________________________
 
 New Features:

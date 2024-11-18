@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2023 Contributors (see credits.txt)
+ * Copyright 2009-2024 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -185,13 +185,13 @@ public class MyContract extends RawContract implements LocationsType, OwnersType
 	}
 
 	public boolean isOpen() {
-		//in ESI (if not in ESI, the status is unknown) and open (Note: expired isn't a contract completion)
-		return esi && getStatus() == ContractStatus.OUTSTANDING;
+		//Note: expired isn't a contract completion
+		return getStatus() == ContractStatus.OUTSTANDING;
 	}
 
 	public boolean isInProgress() {
-		//in ESI (if not in ESI, the status is unknown) and open (Note: expired isn't a contract completion)
-		return esi && getStatus() == ContractStatus.IN_PROGRESS;
+		//Note: expired isn't a contract completion
+		return getStatus() == ContractStatus.IN_PROGRESS;
 	}
 
 	public boolean isDeleted() {
@@ -215,14 +215,10 @@ public class MyContract extends RawContract implements LocationsType, OwnersType
 	}
 
 	public String getStatusFormatted() {
-		return getStatusName(super.getStatus(), isExpired());
+		return getStatusName(super.getStatus());
 	}
 
 	public static String getStatusName(ContractStatus status) {
-		return getStatusName(status, false);
-	}
-
-	public static String getStatusName(ContractStatus status, boolean expired) {
 		switch (status) {
 			case CANCELLED:
 				return TabsContracts.get().statusCancelled();
@@ -237,21 +233,15 @@ public class MyContract extends RawContract implements LocationsType, OwnersType
 			case FAILED:
 				return TabsContracts.get().statusFailed();
 			case IN_PROGRESS:
-				if (expired) {
-					return TabsContracts.get().statusExpired();
-				} else {
-					return TabsContracts.get().statusInProgress();
-				}
+				return TabsContracts.get().statusInProgress();
 			case OUTSTANDING:
-				if (expired) {
-					return TabsContracts.get().statusExpired();
-				} else {
-					return TabsContracts.get().statusOutstanding();
-				}
+				return TabsContracts.get().statusOutstanding();
 			case REJECTED:
 				return TabsContracts.get().statusRejected();
 			case REVERSED:
 				return TabsContracts.get().statusReversed();
+			case ARCHIVED:
+				return TabsContracts.get().statusArchived();
 			default:
 				return TabsContracts.get().statusUnknown();
 		}
@@ -267,6 +257,9 @@ public class MyContract extends RawContract implements LocationsType, OwnersType
 
 	@Override
 	public void archive() {
+		if (esi && (getStatus() == ContractStatus.OUTSTANDING || getStatus() == ContractStatus.IN_PROGRESS)) {
+			setStatus(ContractStatus.ARCHIVED);
+		}
 		this.esi = false;
 	}
 

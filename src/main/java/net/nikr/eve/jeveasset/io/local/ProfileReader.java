@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2023 Contributors (see credits.txt)
+ * Copyright 2009-2024 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -50,6 +50,7 @@ import net.nikr.eve.jeveasset.data.api.raw.RawAccountBalance;
 import net.nikr.eve.jeveasset.data.api.raw.RawAsset;
 import net.nikr.eve.jeveasset.data.api.raw.RawBlueprint;
 import net.nikr.eve.jeveasset.data.api.raw.RawContract;
+import net.nikr.eve.jeveasset.data.api.raw.RawContract.ContractStatus;
 import net.nikr.eve.jeveasset.data.api.raw.RawContractItem;
 import net.nikr.eve.jeveasset.data.api.raw.RawExtraction;
 import net.nikr.eve.jeveasset.data.api.raw.RawIndustryJob;
@@ -352,10 +353,14 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 		Map<MyContract, List<MyContractItem>> contracts = new HashMap<>();
 		for (int a = 0; a < contractsNodes.getLength(); a++) {
 			Element contractsNode = (Element) contractsNodes.item(a);
+			boolean archivedMigrated = getBooleanNotNull(contractsNode, "archived", false);
 			NodeList contractNodes = contractsNode.getElementsByTagName("contract");
 			for (int b = 0; b < contractNodes.getLength(); b++) {
 				Element contractNode = (Element) contractNodes.item(b);
 				MyContract contract = parseContract(contractNode);
+				if (!archivedMigrated && !contract.isESI() && (contract.isOpen() || contract.isInProgress())) {
+					contract.setStatus(ContractStatus.ARCHIVED);
+				}
 				NodeList itemNodes = contractNode.getElementsByTagName("contractitem");
 				List<MyContractItem> contractItems = new ArrayList<>();
 				for (int c = 0; c < itemNodes.getLength(); c++) {

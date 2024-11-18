@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2023 Contributors (see credits.txt)
+ * Copyright 2009-2024 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -54,7 +54,8 @@ public class RawContract {
 		REJECTED("rejected"),
 		FAILED("failed"),
 		DELETED("deleted"),
-		REVERSED("reversed");
+		REVERSED("reversed"),
+		ARCHIVED("archived");
 
 		private final String value;
 

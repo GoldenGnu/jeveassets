@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2023 Contributors (see credits.txt)
+ * Copyright 2009-2024 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -26,7 +26,9 @@ import java.text.NumberFormat;
 import java.text.ParsePosition;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 import java.util.TimeZone;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -46,6 +48,8 @@ public class FilterMatcher<E> implements Matcher<E> {
 	private static final NumberFormat NUMBER_FORMAT = NumberFormat.getInstance(LOCALE);
 	private static final NumberFormat PERCENT_FORMAT = NumberFormat.getPercentInstance(LOCALE);
 	private static final Calendar CALENDAR = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+	private static final Map<Object, String> CELL_VALUE_CACHE = new HashMap<>();
+	private static boolean cellValueCache = false; //Cell value cache
 
 	private final SimpleTableFormat<E> tableFormat;
 	private final ColumnCache<E> columnCache;
@@ -482,7 +486,27 @@ public class FilterMatcher<E> implements Matcher<E> {
 		return format(object, userInput).toLowerCase();
 	}
 
+	public static void clearColumnValueCache() {
+		CELL_VALUE_CACHE.clear();
+		cellValueCache = Settings.get().isColumnValueCache();
+	}
+
 	private static String format(final Object object, final boolean userInput) {
+		if (cellValueCache) {
+			String value = CELL_VALUE_CACHE.get(object);
+			if (value != null) {
+				return value;
+			} else {
+				value = createFormat(object, userInput);
+				CELL_VALUE_CACHE.put(object, value);
+				return value;
+			}
+		} else {
+			return createFormat(object, userInput);
+		}
+	}
+
+	private static String createFormat(final Object object, final boolean userInput) {
 		if (object == null) {
 			return null;
 		}

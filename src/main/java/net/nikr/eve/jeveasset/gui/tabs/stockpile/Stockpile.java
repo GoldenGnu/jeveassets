@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2023 Contributors (see credits.txt)
+ * Copyright 2009-2024 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -877,6 +877,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 					}
 				 //Jobs
 				} else if (industryJob != null) {
+					//Note: Industry jobs are also filtered for isNotDeliveredToAssets() in StockpileData.updateStockpileItems(Stockpile, boolean)
 					if (typeID < 0) { //Copying in progress (not delivered to assets)
 						if (filter.isJobs() && industryJob.isCopying() && industryJob.isNotDeliveredToAssets()) {
 							if (runs) { //BPC Runs
@@ -893,7 +894,8 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 								}
 							}
 						}
-						//Manufacturing in progress (not delivered to assets)
+					//Manufacturing in progress (not delivered to assets)
+					//Note: Industry jobs are also filtered for isNotDeliveredToAssets() in StockpileData.updateStockpileItems(Stockpile, boolean)
 					} else if (filter.isJobs() && industryJob.isManufacturing() && industryJob.isNotDeliveredToAssets()) {
 						if (add) { //Match
 							jobsCountNow = jobsCountNow + ((long)industryJob.getRuns() * (long)industryJob.getProductQuantity());
@@ -908,12 +910,14 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 					if (runs && typeID < 0) {
 						continue; //Ignore BPC runs (Can't sell BPC)
 					}
+					//Note: Market orders are also filtered for isActive() in StockpileData.updateStockpileItems(Stockpile, boolean)
 					if (!marketOrder.isBuyOrder() && marketOrder.isActive() && filter.isSellOrders()) {
 						if (add) { //Open/Active sell order - match
 							sellOrdersCountNow = sellOrdersCountNow + marketOrder.getVolumeRemain();
 						} else {
 							count = count + marketOrder.getVolumeRemain();
 						}
+					//Note: Market orders are also filtered for isActive() in StockpileData.updateStockpileItems(Stockpile, boolean)
 					} else if (marketOrder.isBuyOrder() && marketOrder.isActive() && filter.isBuyOrders()) {
 						if (add) { //Open/Active buy order - match
 							buyOrdersCountNow = buyOrdersCountNow + marketOrder.getVolumeRemain();
@@ -928,12 +932,14 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 					if (runs && typeID < 0) {
 						continue; //Ignore BPC runs (Can't sell BPC)
 					}
+					//Note: Transactions are also filter for isAfterAssets() in StockpileData.updateStockpileItems(Stockpile, boolean)
 					if (transaction.isAfterAssets() && transaction.isBuy() && filter.isBuyTransactions()) {
 						if (add) { //Buy - match
 							buyTransactionsCountNow = buyTransactionsCountNow + transaction.getQuantity();
 						} else {
 							count = count + transaction.getQuantity();
 						}
+					//Note: Transactions are also filter for isAfterAssets() in StockpileData.updateStockpileItems(Stockpile, boolean)
 					} else if (transaction.isAfterAssets() && transaction.isSell() && filter.isSellTransactions()) {
 						if (add) { //Sell - match
 							sellTransactionsCountNow = sellTransactionsCountNow - transaction.getQuantity();
@@ -956,6 +962,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 					boolean isAcceptor = contractItem.getContract().getAcceptorID() > 0 && matchOwner(filter, contractItem.getContract().getAcceptorID());
 					//Sell: Issuer Included or Acceptor Excluded
 					if ((isIssuer && contractItem.isIncluded()) || (isAcceptor && !contractItem.isIncluded())) {
+						//Note: Contract items are also filter for isOpen() in StockpileData.updateStockpileItems(Stockpile, boolean)
 						if (contractItem.getContract().isOpen() && filter.isSellingContracts()) {
 							if (add) { //Selling
 								sellingContractsCountNow = sellingContractsCountNow + contractItem.getQuantity();
@@ -963,6 +970,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 								count = count + contractItem.getQuantity();
 							}
 							found = true;
+						//Note: Contract items are also filter for isCompletedSuccessful() in StockpileData.updateStockpileItems(Stockpile, boolean)
 						} else if (contractItem.getContract().isCompletedSuccessful() && filter.isSoldContracts()) { //Sold
 							if ((isIssuer && contractItem.getContract().isIssuerAfterAssets())
 									|| isAcceptor && contractItem.getContract().isAcceptorAfterAssets()) {
@@ -977,6 +985,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 					}
 					//Buy: Issuer Excluded or Acceptor Included
 					if ((isIssuer && !contractItem.isIncluded()) || (isAcceptor && contractItem.isIncluded())) {
+						//Note: Contract items are also filter for isOpen() in StockpileData.updateStockpileItems(Stockpile, boolean)
 						if (contractItem.getContract().isOpen() && filter.isBuyingContracts()) {
 							if (add) { //Buying
 								buyingContractsCountNow = buyingContractsCountNow + contractItem.getQuantity();
@@ -984,6 +993,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 								count = count + contractItem.getQuantity();
 							}
 							found = true;
+						//Note: Contract items are also filter for isCompletedSuccessful() in StockpileData.updateStockpileItems(Stockpile, boolean)
 						} else if (contractItem.getContract().isCompletedSuccessful() && filter.isBoughtContracts()) { //Bought
 							if ((isIssuer && contractItem.getContract().isIssuerAfterAssets())
 									|| isAcceptor && contractItem.getContract().isAcceptorAfterAssets()) {

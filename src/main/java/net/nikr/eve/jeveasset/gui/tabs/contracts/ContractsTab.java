@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2023 Contributors (see credits.txt)
+ * Copyright 2009-2024 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -287,8 +287,13 @@ public class ContractsTab extends JMainTabPrimary {
 						if (contract == null || contract.isESI() || status == contract.getStatus()) {
 							return;
 						}
+						boolean before = contract.isOpen();
 						contract.setStatus(status);
-						tableModel.fireTableDataChanged();
+						if (before != contract.isOpen()) {
+							program.updateEventListsWithProgress();
+						} else {
+							tableModel.fireTableDataChanged();
+						}
 						program.saveProfile();
 					}
 				});

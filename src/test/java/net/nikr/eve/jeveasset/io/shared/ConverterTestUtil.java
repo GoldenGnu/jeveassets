@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2023 Contributors (see credits.txt)
+ * Copyright 2009-2024 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -488,6 +488,9 @@ public class ConverterTestUtil {
 					&& (options.getContractAvailabilityRaw() == RawContract.ContractAvailability.CORPORATION
 					|| options.getContractAvailabilityRaw() == RawContract.ContractAvailability.ALLIANCE)) {
 				myContract.setAvailability(options.getContractAvailabilityRaw());
+			}
+			if (myContract.getStatus() != null) {
+				myContract.setStatus(options.getContractStatusRaw());
 			}
 		}
 		if (object instanceof MyContractItem) {

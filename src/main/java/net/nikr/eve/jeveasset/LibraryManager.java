@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2023 Contributors (see credits.txt)
+ * Copyright 2009-2024 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -104,8 +104,8 @@ public class LibraryManager {
 			files.add("log4j-over-slf4j-1.7.36.jar");
 			files.add("jcl-over-slf4j-1.7.36.jar");
 			files.add("jul-to-slf4j-1.7.36.jar");
-			files.add("logback-core-1.2.11.jar");
-			files.add("logback-classic-1.2.11.jar");
+			files.add("logback-core-1.2.13.jar");
+			files.add("logback-classic-1.2.13.jar");
 			files.add("super-csv-2.4.0.jar");
 			files.add("translations-3.1.1.jar");
 			files.add("annotations-13.0.jar");
@@ -113,7 +113,7 @@ public class LibraryManager {
 			files.add("okio-jvm-3.0.0.jar");
 			files.add("hamcrest-core-1.3.jar");
 			files.add("jaxb-api-2.3.1.jar");
-			files.add("sqlite-jdbc-3.36.0.3.jar");
+			files.add("sqlite-jdbc-3.41.2.2.jar");
 			files.add("okhttp-4.10.0.jar");
 			files.add("gson-fire-1.8.5.jar");
 			files.add("logging-interceptor-4.10.0.jar");

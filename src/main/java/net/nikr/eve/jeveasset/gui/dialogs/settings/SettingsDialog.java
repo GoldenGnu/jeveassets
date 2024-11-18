@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2023 Contributors (see credits.txt)
+ * Copyright 2009-2024 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -107,6 +107,8 @@ public class SettingsDialog extends JDialogCentered {
 
 		GeneralSettingsPanel generalSettingsPanel = new GeneralSettingsPanel(program, this);
 		add(generalSettingsPanel);
+
+		add(new ExperimentalSettingsPanel(program, this));
 
 		DefaultMutableTreeNode toolNode = addGroup(DialoguesSettings.get().tools(), Images.SETTINGS_TOOLS.getIcon());
 

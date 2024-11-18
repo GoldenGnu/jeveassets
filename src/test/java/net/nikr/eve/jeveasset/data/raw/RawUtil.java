@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2023 Contributors (see credits.txt)
+ * Copyright 2009-2024 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -30,6 +30,7 @@ import java.util.Map;
 import java.util.Set;
 import net.nikr.eve.jeveasset.data.api.raw.RawAsset;
 import net.nikr.eve.jeveasset.data.api.raw.RawBlueprint;
+import net.nikr.eve.jeveasset.data.api.raw.RawContract.ContractStatus;
 import net.nikr.eve.jeveasset.data.api.raw.RawContractItem;
 import net.nikr.eve.jeveasset.data.api.raw.RawIndustryJob;
 import net.nikr.eve.jeveasset.data.api.raw.RawIndustryJob.IndustryJobStatus;
@@ -200,6 +201,9 @@ public class RawUtil {
 					continue;
 				}
 				if (e.equals(IndustryJobStatus.ARCHIVED)) { //jEveAssets value
+					continue;
+				}
+				if (e.equals(ContractStatus.ARCHIVED)) { //jEveAssets value
 					continue;
 				}
 				names.add(e.name());

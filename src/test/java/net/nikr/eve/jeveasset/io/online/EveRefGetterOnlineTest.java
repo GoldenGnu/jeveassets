@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2023 Contributors (see credits.txt)
+ * Copyright 2009-2024 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -25,9 +25,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 import net.nikr.eve.jeveasset.CliOptions;
 import net.nikr.eve.jeveasset.TestUtil;
 import net.nikr.eve.jeveasset.data.sde.IndustryMaterial;
@@ -40,12 +40,14 @@ import net.nikr.eve.jeveasset.io.online.EveRefGetter.EveRefBlueprint;
 import net.nikr.eve.jeveasset.io.online.EveRefGetter.EveRefType;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import net.nikr.eve.jeveasset.io.shared.ThreadWoker;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.Matchers.closeTo;
 import org.junit.AfterClass;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import org.junit.Test;
 import org.junit.BeforeClass;
+import org.junit.ClassRule;
+import org.junit.Test;
+import org.junit.rules.ErrorCollector;
 
 
 public class EveRefGetterOnlineTest extends TestUtil {
@@ -64,6 +66,9 @@ public class EveRefGetterOnlineTest extends TestUtil {
 		setLoggingLevel(Level.INFO);
 	}
 
+	@ClassRule
+    public static ErrorCollector collector = new ErrorCollector();
+
 	/**
 	 * Download test
 	 * @param args
@@ -80,7 +85,7 @@ public class EveRefGetterOnlineTest extends TestUtil {
 	@Test
 	public void testDownloadItemsThreads() throws InterruptedException {
 		List<Download> updates = new ArrayList<>();
-		Set<Integer> typeIDs = new HashSet<>();
+		Set<Integer> typeIDs = new TreeSet<>();
 		List<Integer> all = new ArrayList<>(StaticData.get().getItems().keySet());
 		if (MAX_RUNS > 0) {
 			Collections.shuffle(all); //Randomize
@@ -88,18 +93,44 @@ public class EveRefGetterOnlineTest extends TestUtil {
 		} else {
 			typeIDs.addAll(all);
 		}
-		//Wrong data in SDE 2024-10-06
-		typeIDs.remove(24548); //Manufacturing Wrong
-		typeIDs.remove(57481); //Portion size 1 != 20
-		typeIDs.remove(57482); //Portion size 1 != 20
-		typeIDs.remove(57484); //Portion size 1 != 20
-		typeIDs.remove(57485); //Portion size 1 != 20
-		typeIDs.remove(73431); //Expired
-		typeIDs.remove(73432); //Expired
-		typeIDs.remove(84166); //Pattern name
-		typeIDs.remove(84171); //Pattern name
-		typeIDs.remove(84172); //Pattern name
-		typeIDs.remove(84212); //Pattern name
+		//Wrong data in SDE 2024-10-30
+		typeIDs.remove(81144); //PriceBase
+		typeIDs.remove(84271); //Tech: Limited Time
+		typeIDs.remove(84272); //Tech: Limited Time
+		typeIDs.remove(84273); //Tech: Limited Time
+		for (int i = 84297; i <= 84328; i++) {
+			typeIDs.remove(i); //Tech: Limited Time
+		}
+		typeIDs.remove(85062); //Tech: Faction/ReprocessedMaterial
+		typeIDs.remove(85229); //Tech: Faction/ReprocessedMaterial
+		typeIDs.remove(85236); //Tech: Faction/ReprocessedMaterial
+		typeIDs.remove(85279); //Tech: Limited Time
+		typeIDs.remove(85747); //ReprocessedMaterial
+		typeIDs.remove(85748); //BlueprintTypeIDs/ReprocessedMaterial
+		typeIDs.remove(85749); //ProductTypeID
+		typeIDs.remove(85750); //ProductTypeID/Faction/ReprocessedMaterial
+		typeIDs.remove(85751); //ProductTypeID/Faction
+		typeIDs.remove(85890); //Tech: Premium
+		typeIDs.remove(85891); //Tech: Premium
+		typeIDs.remove(85892); //Tech: Premium
+		typeIDs.remove(85893); //Tech: Premium
+		typeIDs.remove(85894); //Tech: Premium
+		typeIDs.remove(85895); //Tech: Premium
+		typeIDs.remove(85896); //Tech: Premium
+		typeIDs.remove(85897); //Tech: Premium
+		typeIDs.remove(85929); //Tech: Premium
+		typeIDs.remove(85930); //Tech: Premium
+		typeIDs.remove(85931); //Tech: Premium
+		typeIDs.remove(85932); //Tech: Premium
+		typeIDs.remove(86149); //Tech: Premium
+		typeIDs.remove(86150); //Tech: Premium
+		typeIDs.remove(86151); //Tech: Premium
+		typeIDs.remove(86152); //Tech: Premium
+		typeIDs.remove(86153); //Tech: Premium
+		typeIDs.remove(86154); //Tech: Premium
+		typeIDs.remove(86155); //Tech: Premium
+		typeIDs.remove(86156); //Tech: Premium
+
 		for (int typeID : typeIDs) {
 			updates.add(new Download(typeID));
 		}
@@ -151,31 +182,29 @@ public class EveRefGetterOnlineTest extends TestUtil {
 
 	private static void testItem(Item itemSDE, Item itemEveRef) {
 		String msg = "TypeID: " + itemSDE.getTypeID();
-		assertNotNull(msg, itemSDE);
-		assertNotNull(msg, itemEveRef);
-		assertEquals(msg, itemSDE.getTypeID(), itemEveRef.getTypeID());
-		if (itemEveRef.getPriceBase() == 0 || itemEveRef.getPriceBase() == -1) {
-			assertTrue(msg, itemSDE.getPriceBase() == 0 || itemSDE.getPriceBase() == -1);
-		} else {
-			assertEquals(msg, itemSDE.getPriceBase(), itemEveRef.getPriceBase(), DELTA);
+		assertNotNull(msg + " itemSDE is null", itemSDE);
+		assertNotNull(msg + " itemEveRef is null", itemEveRef);
+		assertEquals(msg + " TypeID", itemSDE.getTypeID(), itemEveRef.getTypeID());
+		if (itemEveRef.getPriceBase() != 0 && itemEveRef.getPriceBase() != -1) {
+			assertEquals(msg + " PriceBase", itemSDE.getPriceBase(), itemEveRef.getPriceBase(), DELTA);
 		}
-		assertEquals(msg, itemSDE.getVolume(), itemEveRef.getVolume(), DELTA);
-		assertEquals(msg, itemSDE.getVolumePackaged(), itemEveRef.getVolumePackaged(), DELTA);
-		assertEquals(msg, itemSDE.getCapacity(), itemEveRef.getCapacity(), DELTA);
-		assertEquals(msg, itemSDE.getMeta(), itemEveRef.getMeta());
-		assertEquals(msg, itemSDE.isMarketGroup(), itemEveRef.isMarketGroup());
-		assertEquals(msg, itemSDE.isPiMaterial(), itemEveRef.isPiMaterial());
-		assertEquals(msg, itemSDE.getPortion(), itemEveRef.getPortion());
-		assertEquals(msg, itemSDE.getProductTypeID(), itemEveRef.getProductTypeID());
-		testLists(msg, itemSDE.getBlueprintTypeIDs(), itemEveRef.getBlueprintTypeIDs(), new Tester<Integer>() {
+		assertEquals(msg + " Volume", itemSDE.getVolume(), itemEveRef.getVolume(), DELTA);
+		assertEquals(msg + " VolumePackaged", itemSDE.getVolumePackaged(), itemEveRef.getVolumePackaged(), DELTA);
+		assertEquals(msg + " Capacity", itemSDE.getCapacity(), itemEveRef.getCapacity(), DELTA);
+		assertEquals(msg + " Meta", itemSDE.getMeta(), itemEveRef.getMeta());
+		assertEquals(msg + " MarketGroup", itemSDE.isMarketGroup(), itemEveRef.isMarketGroup());
+		assertEquals(msg + " PiMaterial", itemSDE.isPiMaterial(), itemEveRef.isPiMaterial());
+		assertEquals(msg + " Portion", itemSDE.getPortion(), itemEveRef.getPortion());
+		assertEquals(msg + " ProductTypeID", itemSDE.getProductTypeID(), itemEveRef.getProductTypeID());
+		testLists(msg + " BlueprintTypeIDs size", itemSDE.getBlueprintTypeIDs(), itemEveRef.getBlueprintTypeIDs(), new Tester<Integer>() {
 			@Override
 			public void test(Integer sde, Integer eveRef) {
-				assertEquals(msg, sde, eveRef);
+				assertEquals(msg + " BlueprintTypeIDs", sde, eveRef);
 			}
 		});
-		assertEquals(msg, itemSDE.getProductQuantity(), itemEveRef.getProductQuantity());
-		assertEquals(msg, itemSDE.isBlueprint(), itemEveRef.isBlueprint());
-		assertEquals(msg, itemSDE.isFormula(), itemEveRef.isFormula());
+		assertEquals(msg + " ProductQuantity", itemSDE.getProductQuantity(), itemEveRef.getProductQuantity());
+		assertEquals(msg + " Blueprint", itemSDE.isBlueprint(), itemEveRef.isBlueprint());
+		assertEquals(msg + " Formula", itemSDE.isFormula(), itemEveRef.isFormula());
 		/*
 		//Don't test dynamic values
 		assertEquals(msg, itemSDE.getPriceReprocessed(), itemEveRef.getPriceReprocessed(), DELTA);
@@ -185,16 +214,16 @@ public class EveRefGetterOnlineTest extends TestUtil {
 		if (itemSDE.getTypeName().endsWith(".type")) {
 			System.out.println("Ignorering: " + itemSDE.getTypeName());
 		} else {
-			assertEquals(msg, itemSDE.getTypeName(), itemEveRef.getTypeName());
+			assertEquals(msg + " TypeName", itemSDE.getTypeName(), itemEveRef.getTypeName());
 		}
-		assertEquals(msg, itemSDE.getGroup(), itemEveRef.getGroup());
-		assertEquals(msg, itemSDE.getCategory(), itemEveRef.getCategory());
-		assertEquals(msg, itemSDE.getTech(), itemEveRef.getTech());
-		assertEquals(msg, null, itemSDE.getVersion());
-		assertEquals(msg, itemEveRef.getVersion(), EsiItemsGetter.ESI_ITEM_VERSION);
-		assertEquals(msg, itemSDE.getSlot(), itemEveRef.getSlot());
-		assertEquals(msg, itemSDE.getChargeSize(), itemEveRef.getChargeSize());
-		testLists(msg, itemSDE.getReprocessedMaterial(), itemEveRef.getReprocessedMaterial(), new Comparator<ReprocessedMaterial>() {
+		assertEquals(msg + " Group", itemSDE.getGroup(), itemEveRef.getGroup());
+		assertEquals(msg + " Category", itemSDE.getCategory(), itemEveRef.getCategory());
+		assertEquals(msg + " Tech", itemSDE.getTech(), itemEveRef.getTech());
+		assertEquals(msg + " itemSDE Version", null, itemSDE.getVersion());
+		assertEquals(msg + " itemEveRef Version", itemEveRef.getVersion(), EsiItemsGetter.ESI_ITEM_VERSION);
+		assertEquals(msg + " Slot", itemSDE.getSlot(), itemEveRef.getSlot());
+		assertEquals(msg + " ChargeSize", itemSDE.getChargeSize(), itemEveRef.getChargeSize());
+		testLists(msg + " ReprocessedMaterial", itemSDE.getReprocessedMaterial(), itemEveRef.getReprocessedMaterial(), new Comparator<ReprocessedMaterial>() {
 			@Override
 			public int compare(ReprocessedMaterial o1, ReprocessedMaterial o2) {
 				return Integer.compare(o1.getTypeID(), o2.getTypeID());
@@ -202,9 +231,9 @@ public class EveRefGetterOnlineTest extends TestUtil {
 		} , new Tester<ReprocessedMaterial>() {
 			@Override
 			public void test(ReprocessedMaterial sde, ReprocessedMaterial eveRef) {
-				assertEquals(msg, sde.getTypeID(), eveRef.getTypeID());
-				assertEquals(msg, sde.getQuantity(), eveRef.getQuantity());
-				assertEquals(msg, sde.getPortionSize(), eveRef.getPortionSize());
+				assertEquals(msg + " ReprocessedMaterial TypeID", sde.getTypeID(), eveRef.getTypeID());
+				assertEquals(msg + " ReprocessedMaterial Quantity", sde.getQuantity(), eveRef.getQuantity());
+				assertEquals(msg + " ReprocessedMaterial PortionSize", sde.getPortionSize(), eveRef.getPortionSize());
 			}
 		});
 		testLists(msg, itemSDE.getManufacturingMaterials(), itemEveRef.getManufacturingMaterials(), new Comparator<IndustryMaterial>() {
@@ -215,8 +244,8 @@ public class EveRefGetterOnlineTest extends TestUtil {
 		} , new Tester<IndustryMaterial>() {
 			@Override
 			public void test(IndustryMaterial sde, IndustryMaterial eveRef) {
-				assertEquals(msg, sde.getTypeID(), eveRef.getTypeID());
-				assertEquals(msg, sde.getQuantity(), eveRef.getQuantity());
+				assertEquals(msg + " ManufacturingMaterials TypeID", sde.getTypeID(), eveRef.getTypeID());
+				assertEquals(msg + " ManufacturingMaterials Quantity", sde.getQuantity(), eveRef.getQuantity());
 			}
 		});
 		testLists(msg, itemSDE.getReactionMaterials(), itemEveRef.getReactionMaterials(), new Comparator<IndustryMaterial>() {
@@ -227,11 +256,36 @@ public class EveRefGetterOnlineTest extends TestUtil {
 		} , new Tester<IndustryMaterial>() {
 			@Override
 			public void test(IndustryMaterial sde, IndustryMaterial eveRef) {
-				assertEquals(msg, sde.getTypeID(), eveRef.getTypeID());
-				assertEquals(msg, sde.getQuantity(), eveRef.getQuantity());
+				assertEquals(msg + " ReactionMaterials TypeID", sde.getTypeID(), eveRef.getTypeID());
+				assertEquals(msg + " ReactionMaterials Quantity", sde.getQuantity(), eveRef.getQuantity());
 			}
 		});
 	}
+
+	public static void assertNotNull(String message, Object object) {
+		collector.checkThat(message, object, notNullValue());
+	}
+
+	public static void assertNotNull(Object object) {
+		collector.checkThat(object, notNullValue());
+	}
+
+	public static void assertEquals(String message, Object expected, Object actual) {
+		collector.checkThat(message, expected, equalTo(actual));
+	}
+
+	public static void assertEquals(Object expected, Object actual) {
+		collector.checkThat(expected, equalTo(actual));
+	}
+
+	public static void assertEquals(String message, double expected, double actual, double delta) {
+		collector.checkThat(message, expected, closeTo(actual, delta));
+	}
+
+	public static void assertEquals(double expected, double actual, double delta) {
+		collector.checkThat(expected, closeTo(actual, delta));
+	}
+
 
 	private static <T> void testLists(String msg, List<T> sde, List<T> eveRef, Comparator<T> comparator, Tester<T> tester) {
 		Collections.sort(eveRef, comparator);
@@ -244,7 +298,6 @@ public class EveRefGetterOnlineTest extends TestUtil {
 	}
 
 	private static <T extends Comparable<? super T>> void testLists(String msg, List<T> sde, List<T> eveRef, Tester<T> tester) {
-		assertEquals(sde.size(), eveRef.size());
 		Collections.sort(eveRef);
 		Collections.sort(sde);
 		testSortedLists(msg, sde, eveRef, tester);

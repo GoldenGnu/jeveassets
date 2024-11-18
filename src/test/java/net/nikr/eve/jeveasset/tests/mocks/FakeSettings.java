@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2023 Contributors (see credits.txt)
+ * Copyright 2009-2024 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -795,6 +795,16 @@ public abstract class FakeSettings extends Settings {
 
 	@Override
 	public boolean isAssetsContractsOwnerCorporation() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public void setCellValueCache(boolean cellValueCache) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public boolean isColumnValueCache() {
 		throw new UnsupportedOperationException("not implemented");
 	}
 }

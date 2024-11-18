@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2023 Contributors (see credits.txt)
+ * Copyright 2009-2024 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -61,7 +61,7 @@ public class PriceDataGetterOnlineTest extends TestUtil {
 	private static final long REGION_THE_FORGE = 10000002L;  //The Forge (Jita region)
 	private static final long SYSTEM_JITA = 30000142L;  //Jita
 	private static final long STATION_JITA_4_4 = 60003760L; //Jita 4 - 4
-	private static final long MAX_RUNS = 5000;
+	private static final long MAX_RUNS = 500;
 
 	private final PriceGetter getter = new PriceGetter();
 	private final Set<Integer> typeIDs = new HashSet<>();
@@ -131,33 +131,33 @@ public class PriceDataGetterOnlineTest extends TestUtil {
 
 	private void test(PriceSource source, LocationType locationType, NamedPriceLocation location) {
 		TestPricingOptions options = new TestPricingOptions(locationType, location);
-		System.out.println(source.toString()
+		String msg = source.toString()
 				+ " ("
 				+ options.getLocationType().name().toLowerCase()
 				+ " - " + location.getLocation()
-				+ " - " + typeIDs.size() + " IDs)"
-				);
+				+ " - " + typeIDs.size() + " IDs)";
+		System.out.println(msg);
 		if (source == PriceSource.JANICE && JANICE_KEY != null) {
 			options.addHeader("X-ApiKey", JANICE_KEY);
 		}
 		long start = System.currentTimeMillis();
 		Map<Integer, PriceData> process = getter.process(options, typeIDs, source);
 		long end = System.currentTimeMillis();
-		assertNotNull(process);
+		assertNotNull(msg, process);
 		Set<Integer> failed = new TreeSet<>(typeIDs);
 		failed.removeAll(process.keySet());
 
 		Set<Integer> empty = new TreeSet<>();
 		for (Map.Entry<Integer, PriceData> entry : process.entrySet()) {
-			assertNotNull(entry.getValue());
+			assertNotNull(msg, entry.getValue());
 			if (entry.getValue().isEmpty()) {
 				empty.add(entry.getKey());
 			}
 		}
 
 		System.out.println("    " + process.size() + " of " + typeIDs.size() + " done - " + empty.size() + " empty - " + failed.size() + " failed - completed in: " + Formatter.milliseconds(end - start));
-		assertTrue(failed.isEmpty());
-		assertTrue(process.size() >= typeIDs.size());
+		assertTrue(msg, failed.isEmpty());
+		assertTrue(msg, process.size() >= typeIDs.size());
 	}
 
 	private static class PriceGetter extends PriceDataGetter {
@@ -214,7 +214,7 @@ public class PriceDataGetterOnlineTest extends TestUtil {
 
 		@Override
 		public int getAttemptCount() {
-			return 2;
+			return 1;
 		}
 
 		@Override
@@ -224,7 +224,7 @@ public class PriceDataGetterOnlineTest extends TestUtil {
 
 		@Override
 		public int getTimeout() {
-			return 20000;
+			return 2000;
 		}
 
 		@Override
