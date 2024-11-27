@@ -395,7 +395,15 @@ public class LoadoutsTab extends JMainTabSecondary {
 					count = 0L;
 				}
 				cargo.put(asset.getTypeName(), count + asset.getCount());
-			} else {
+			} else if (asset.getItem().getCategory().equals("Charge")){
+				Long count = cargo.get(asset.getTypeName());
+				if (count == null) {
+					count = 0L;
+				}
+				cargo.put(asset.getTypeName(), count + asset.getCount());
+			} 
+			
+			else {
 				String flag = asset.getFlag().replaceAll("\\d", "");
 				int index;
 				try {
@@ -455,6 +463,7 @@ public class LoadoutsTab extends JMainTabSecondary {
 				builder.append("\r\n");
 			} else {
 				builder.append(entry.getKey());
+				builder.append("\r\n");
 			}
 		}
 	}
