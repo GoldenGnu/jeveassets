@@ -21,6 +21,7 @@
 package net.nikr.eve.jeveasset.data.api.raw;
 
 import java.util.Objects;
+import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
 import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob.IndustryActivity;
@@ -229,10 +230,14 @@ public class RawAsset {
 	 *
 	 * @param implantType
 	 * @param implantLocation
+	 * @param implantOwner
 	 */
-	public RawAsset(Integer implantType, Long implantLocation) {
+	public RawAsset(Integer implantType, Long implantLocation, OwnerType implantOwner) {
 		isSingleton = true; //Unpacked
-		itemId = Long.valueOf(implantType + "" + implantLocation);
+		long ownerId = implantOwner.getOwnerID();
+		String combinedId = implantType + "" + implantLocation + "" + ownerId;
+		long hashedId = (long) combinedId.hashCode();
+		itemId = hashedId;
 		itemFlag = PLUGGED_IMPLANT_FLAG;
 		locationId = implantLocation;
 		quantity = 1; //Plugged in AKA always 1
