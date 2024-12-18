@@ -21,6 +21,7 @@
 
 package net.nikr.eve.jeveasset.gui.tabs.values;
 
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -35,6 +36,8 @@ import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 
 
 public class Value implements Comparable<Value>, LocationType {
+
+	public static final Comparator<Value> DATE_COMPARATOR = new ValueDateComparator();
 	private final static long MINIMUM_SKILL_POINTS = 5000000;
 	private final static double SKILL_EXTRACTOR_SIZE = 500000.0;
 	private final String name;
@@ -446,5 +449,14 @@ public class Value implements Comparable<Value>, LocationType {
 	@Override
 	public int compareTo(Value o) {
 		return this.getName().compareToIgnoreCase(o.getName());
+	}
+
+	private static class ValueDateComparator implements Comparator<Value> {
+
+		@Override
+		public int compare(Value o1, Value o2) {
+			return Formatter.simpleDate(o1.date).compareTo(Formatter.simpleDate(o2.date));
+		}
+
 	}
 }

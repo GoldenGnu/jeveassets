@@ -153,6 +153,35 @@ public class TrackerTab extends JMainTabSecondary {
 		FILTER_SKILL_POINTS
 	}
 
+	public static enum ImportOptions {
+		KEEP() {
+			@Override
+			public String getName() {
+				return TabsTracker.get().importFileOptionsKeep();
+			}
+		},
+		OVERWRITE() {
+			@Override
+			public String getName() {
+				return TabsTracker.get().importFileOptionsOverwrite();
+			}
+		},
+		REPLACE() {
+			@Override
+			public String getName() {
+				return TabsTracker.get().importFileOptionsReplace();
+			}
+		};
+
+		abstract public String getName();
+
+		@Override
+		public String toString() {
+			return getName();
+		}
+
+	}
+
 	private final Shape NO_FILTER = new Rectangle(-3, -3, 6, 6);
 	private final Shape FILTER_AND_DEFAULT = new Ellipse2D.Float(-3.0f, -3.0f, 6.0f, 6.0f);
 	private final int PANEL_WIDTH_MINIMUM = 160;
@@ -1845,12 +1874,12 @@ public class TrackerTab extends JMainTabSecondary {
 		@Override
 		public void hidden() {
 			if (trackerData == null) { //Invalid file
-				JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsTracker.get().importFileInvalidMsg(), TabsTracker.get().importFileInvalidTitle(), JOptionPane.WARNING_MESSAGE);
+				JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsTracker.get().importFileInvalidMsg(), TabsTracker.get().importFileTitle(), JOptionPane.WARNING_MESSAGE);
 				return;
 			}
 			//Overwrite?
-			int value = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), TabsTracker.get().importFileOverwriteMsg(), TabsTracker.get().importFileOverwriteTitle(), JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
-			if (value != JOptionPane.OK_OPTION) {
+			Object value = JOptionPane.showInputDialog(program.getMainWindow().getFrame(), TabsTracker.get().importFileOptionsMsg(), TabsTracker.get().importFileTitle(), JOptionPane.PLAIN_MESSAGE, null, ImportOptions.values(), ImportOptions.KEEP);
+			if (value == null) {
 				return; //Cancel
 			}
 			SwingUtilities.invokeLater(new Runnable() {
@@ -1859,10 +1888,13 @@ public class TrackerTab extends JMainTabSecondary {
 					jLockWindow.show(TabsTracker.get().importFileImport(), new LockWorkerAdaptor() {
 						@Override
 						public void task() {
-							TrackerData.addAll(trackerData);
+							if (value == ImportOptions.REPLACE) {
+								TrackerData.set(trackerData);
+							} else {
+								TrackerData.addAll(trackerData, value == ImportOptions.OVERWRITE);
+							}
 							TrackerData.save("File Import", true);
 						}
-
 						@Override
 						public void gui() {
 							updateData();
