@@ -68,9 +68,11 @@ public abstract class TabsTracker extends Bundle {
 	public abstract String importFile();
 	public abstract String importFileImport();
 	public abstract String importFileInvalidMsg();
-	public abstract String importFileInvalidTitle();
-	public abstract String importFileOverwriteMsg();
-	public abstract String importFileOverwriteTitle();
+	public abstract String importFileOptionsKeep();
+	public abstract String importFileOptionsMsg();
+	public abstract String importFileOptionsOverwrite();
+	public abstract String importFileOptionsReplace();
+	public abstract String importFileTitle();
 	public abstract String includeZero();
 	public abstract String invalid();
 	public abstract String invalidNumberMsg();
