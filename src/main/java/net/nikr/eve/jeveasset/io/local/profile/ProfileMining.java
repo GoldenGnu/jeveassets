@@ -62,7 +62,7 @@ public class ProfileMining extends ProfileTable {
 				+ "	forcorp)"
 				+ " VALUES (?,?,?,?,?,?,?,?,?)";
 		try (PreparedStatement statement = connection.prepareStatement(miningSQL)) {
-			Row row = new Row(statement, esiOwners, new RowSize() {
+			Rows rows = new Rows(statement, esiOwners, new RowSize() {
 				@Override
 				public int getSize(EsiOwner esiOwner) {
 					return esiOwner.getMining().size();
@@ -80,7 +80,7 @@ public class ProfileMining extends ProfileTable {
 					setAttributeOptional(statement, ++index, mining.getCorporationID());
 					setAttributeOptional(statement, ++index, mining.getCorporationName());
 					setAttribute(statement, ++index, mining.isForCorporation());
-					row.addRow();
+					rows.addRow();
 				}
 			}
 		} catch (SQLException ex) {
@@ -97,7 +97,7 @@ public class ProfileMining extends ProfileTable {
 				+ "	structure)"
 				+ " VALUES (?,?,?,?,?,?)";
 		try (PreparedStatement statement = connection.prepareStatement(extractionSQL)) {
-			Row row = new Row(statement, esiOwners, new RowSize() {
+			Rows rows = new Rows(statement, esiOwners, new RowSize() {
 				@Override
 				public int getSize(EsiOwner esiOwner) {
 					return esiOwner.getExtractions().size();
@@ -112,7 +112,7 @@ public class ProfileMining extends ProfileTable {
 					setAttribute(statement, ++index, extraction.getMoonID());
 					setAttribute(statement, ++index, extraction.getNaturalDecayTime());
 					setAttribute(statement, ++index, extraction.getStructureID());
-					row.addRow();
+					rows.addRow();
 				}
 			}
 		} catch (SQLException ex) {

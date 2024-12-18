@@ -49,7 +49,7 @@ public class ProfileAssetDivisions extends ProfileTable {
 				+ "	name)"
 				+ " VALUES (?,?,?)";
 		try (PreparedStatement statement = connection.prepareStatement(sql)) {
-			Row row = new Row(statement, esiOwners, new RowSize() {
+			Rows rows = new Rows(statement, esiOwners, new RowSize() {
 				@Override
 				public int getSize(EsiOwner esiOwner) {
 					return esiOwner.getAssetDivisions().size();
@@ -61,7 +61,7 @@ public class ProfileAssetDivisions extends ProfileTable {
 					setAttribute(statement, ++index, owner.getOwnerID());
 					setAttribute(statement, ++index, entry.getKey());
 					setAttribute(statement, ++index, entry.getValue());
-					row.addRow();
+					rows.addRow();
 				}
 			}
 		} catch (SQLException ex) {

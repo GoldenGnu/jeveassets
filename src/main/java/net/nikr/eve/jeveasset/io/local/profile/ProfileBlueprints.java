@@ -58,7 +58,7 @@ public class ProfileBlueprints extends ProfileTable {
 				+ "	runs)"
 				+ " VALUES (?,?,?,?,?,?,?,?,?,?)";
 		try (PreparedStatement statement = connection.prepareStatement(sql)) {
-			Row row = new Row(statement, esiOwners, new RowSize() {
+			Rows rows = new Rows(statement, esiOwners, new RowSize() {
 				@Override
 				public int getSize(EsiOwner esiOwner) {
 					return esiOwner.getBlueprints().size();
@@ -77,7 +77,7 @@ public class ProfileBlueprints extends ProfileTable {
 					setAttribute(statement, ++index, blueprint.getTimeEfficiency());
 					setAttribute(statement, ++index, blueprint.getMaterialEfficiency());
 					setAttribute(statement, ++index, blueprint.getRuns());
-					row.addRow();
+					rows.addRow();
 				}
 			}
 		} catch (SQLException ex) {

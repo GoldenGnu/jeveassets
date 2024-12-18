@@ -70,7 +70,7 @@ public class ProfileJournals extends ProfileTable {
 				+ "	accountkey)"
 				+ " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 		try (PreparedStatement statement = connection.prepareStatement(sql)) {
-			Row row = new Row(statement, esiOwners, new RowSize() {
+			Rows rows = new Rows(statement, esiOwners, new RowSize() {
 				@Override
 				public int getSize(EsiOwner owner) {
 					return owner.getJournal().size();
@@ -101,7 +101,7 @@ public class ProfileJournals extends ProfileTable {
 					setAttributeOptional(statement, ++index, journal.getTaxReceiverID());
 					//Extra
 					setAttribute(statement, ++index, journal.getAccountKey());
-					row.addRow();
+					rows.addRow();
 				}
 			}
 		} catch (SQLException ex) {

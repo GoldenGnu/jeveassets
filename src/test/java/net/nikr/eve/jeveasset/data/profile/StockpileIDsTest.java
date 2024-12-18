@@ -24,6 +24,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Set;
+import net.nikr.eve.jeveasset.CliOptions;
 import net.nikr.eve.jeveasset.TestUtil;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
 import net.nikr.eve.jeveasset.io.shared.FileUtil;
@@ -41,22 +42,22 @@ public class StockpileIDsTest extends TestUtil {
 	private static final String TABLE_2 = "test_table_2";
 	private static final long VALUE = 1234L;
 	private static final Set<Long> VALUES = Collections.singleton(VALUE);
+	private static boolean portable;
 	//Database file
-	private static final String FILENAME = FileUtil.getLocalFile("testing" + File.separator + "stockpileids_testdb.db", false);
 	private static StockpileIDs stockpileIDs;
 
 	@BeforeClass
-	public static void init() {
-		new File(FILENAME).getParentFile().mkdirs();
-		StockpileIDs.setConnectionUrl("jdbc:sqlite:" + FILENAME);
+	public static void before() {
+		portable = CliOptions.get().isPortable();
+		CliOptions.get().setPortable(true);
 		stockpileIDs = new StockpileIDs(TABLE_1, true);
 	}
 
 	@AfterClass
-	public static void out() {
-		StockpileIDs.setConnectionUrl(StockpileIDs.DEFAULT_CONNECTION_URL);
+	public static void after() {
+		new File(FileUtil.getPathStockpileIDsDatabase()).delete();
 		stockpileIDs.removeTable();
-		new File(FILENAME).delete();
+		CliOptions.get().setPortable(portable);
 	}
 
 	@Test

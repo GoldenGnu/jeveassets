@@ -294,13 +294,13 @@ public abstract class ProfileTable {
 		public int getSize(EsiOwner owner);
 	}
 
-	protected static class Row {
+	public static class Rows {
 
 		private final int size;
 		private final PreparedStatement statement;
 		int row = 0;
 
-		public Row(PreparedStatement statement, List<EsiOwner> esiOwners, RowSize rowSize) {
+		public Rows(PreparedStatement statement, List<EsiOwner> esiOwners, RowSize rowSize) {
 			this.statement = statement;
 			int tempSize = 0;
 			for (EsiOwner esiOwner : esiOwners) {
@@ -309,7 +309,7 @@ public abstract class ProfileTable {
 			this.size = tempSize;
 		}
 
-		public Row(PreparedStatement statement, int size) {
+		public Rows(PreparedStatement statement, int size) {
 			this.statement = statement;
 			this.size = size;
 		}
@@ -317,17 +317,9 @@ public abstract class ProfileTable {
 		public void addRow() throws SQLException {
 			statement.addBatch();
 			row++;
-			
 			if (row % BATCH_SIZE == 0 || row == size) {
 				statement.executeBatch(); // Execute batch for every BATCH_SIZE items.
 			}
-		}
-		public int getRow() {
-			return row;
-		}
-
-		public int size() {
-			return size;
 		}
 	}
 }

@@ -59,14 +59,14 @@ public class ProfileAssets extends ProfileTable {
 				+ "	rawquantity)"
 				+ " VALUES (?,?,?,?,?,?,?,?,?)";
 		try (PreparedStatement statement = connection.prepareStatement(sql)) {
-			Row row = new Row(statement, esiOwners, new RowSize() {
+			Rows rows = new Rows(statement, esiOwners, new RowSize() {
 				@Override
 				public int getSize(EsiOwner owner) {
 					return getAssetSize(owner.getAssets());
 				}
 			});
 			for (EsiOwner owner : esiOwners) {
-				insertAssets(statement, row, owner.getAssets(), owner.getOwnerID(), null);
+				insertAssets(statement, rows, owner.getAssets(), owner.getOwnerID(), null);
 			}
 		} catch (SQLException ex) {
 			LOG.error(ex.getMessage(), ex);
@@ -83,7 +83,7 @@ public class ProfileAssets extends ProfileTable {
 		return size;
 	}
 
-	private void insertAssets(PreparedStatement statement, Row row, final List<MyAsset> assets, long ownerID, Long parentID) throws SQLException {
+	private void insertAssets(PreparedStatement statement, Rows rows, final List<MyAsset> assets, long ownerID, Long parentID) throws SQLException {
 		if (assets == null || assets.isEmpty()) {
 			return;
 		}
@@ -112,10 +112,9 @@ public class ProfileAssets extends ProfileTable {
 			}
 			setAttribute(statement, ++index, asset.isSingleton());
 			setAttributeOptional(statement, ++index, rawQuantity);
-			row.addRow();
-			insertAssets(statement, row, asset.getAssets(), ownerID, asset.getItemID());
+			rows.addRow();
+			insertAssets(statement, rows, asset.getAssets(), ownerID, asset.getItemID());
 		}
-		return;
 	}
 
 	@Override

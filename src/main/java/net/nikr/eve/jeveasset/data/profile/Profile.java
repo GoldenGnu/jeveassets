@@ -127,7 +127,7 @@ public class Profile implements Comparable<Profile> {
 		return getFilenameExtension(XML);
 	}
 
-	private String getBackupXmlFilename() {
+	public String getBackupXmlFilename() {
 		return getFilenameExtension(XML_BACKUP);
 	}
 

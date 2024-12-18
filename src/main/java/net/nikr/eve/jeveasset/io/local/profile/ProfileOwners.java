@@ -78,7 +78,7 @@ public class ProfileOwners extends ProfileTable {
 				+ "	characterroles)"
 				+ " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 		try (PreparedStatement statement = connection.prepareStatement(sql)) {
-			Row row = new Row(statement, esiOwners.size());
+			Rows rows = new Rows(statement, esiOwners.size());
 			for (EsiOwner owner : esiOwners) {
 				int index = 0;
 				setAttribute(statement, ++index, owner.getOwnerID());
@@ -107,7 +107,7 @@ public class ProfileOwners extends ProfileTable {
 				setAttribute(statement, ++index, owner.getAccountNextUpdate());
 				setAttribute(statement, ++index, owner.getCallbackURL());
 				setAttribute(statement, ++index, owner.getRoles());
-				row.addRow();
+				rows.addRow();
 			}
 		} catch (SQLException ex) {
 			LOG.error(ex.getMessage(), ex);
