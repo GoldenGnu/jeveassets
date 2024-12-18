@@ -40,8 +40,6 @@ import net.nikr.eve.jeveasset.gui.shared.table.ColumnManager.IndexColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.NumberValue;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileTotal;
-import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.SubpileItem;
-import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.SubpileStock;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileTableFormat;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 import org.slf4j.Logger;
@@ -419,26 +417,8 @@ public class EnumTableFormatAdaptor<T extends Enum<T> & EnumTableColumn<Q>, Q> i
 				return null;
 			}
 			StockpileTotal totalItem = (StockpileTotal) e;
-			Map<Integer, StockpileItem> map = new HashMap<>();
-			//Items
-			for (StockpileItem item : totalItem.getStockpile().getItems()) {
-				if (item.isTotal()) {
-					continue; //Ignore Total
-				}
-				map.put(item.getItemTypeID(), item);
-			}
-			//SubpileItem (Overwrites StockpileItem items)
-			for (SubpileItem item : totalItem.getStockpile().getSubpileItems()) {
-				if (item instanceof SubpileStock) {
-					continue;
-				}
-				map.put(item.getItemTypeID(), item);
-			}
 			double total = 0.0;
-			for (StockpileItem item : map.values()) {
-				if (item.isTotal()) {
-					continue; //Ignore Total
-				}
+			for (StockpileItem item : totalItem.getStockpile().getClaims()) {
 				setVariables(formula, StockpileTableFormat.values(), item);
 				BigDecimal value = safeEval(expression);
 				if (value != null) {

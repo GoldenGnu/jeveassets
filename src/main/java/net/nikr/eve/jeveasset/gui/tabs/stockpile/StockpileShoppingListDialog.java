@@ -64,6 +64,7 @@ import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
 import net.nikr.eve.jeveasset.gui.shared.components.JIntegerField;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.SubpileStock;
+import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.TypeIdentifier;
 import net.nikr.eve.jeveasset.i18n.TabsStockpile;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import org.slf4j.Logger;
@@ -88,8 +89,8 @@ class StockpileShoppingListDialog extends JDialogCentered {
 	private final JTextField jPercentIgnore;
 	private final JComboBox<ShoppingListType> jFormat;
 	private final JComboBox<String> jOutput;
+	private final Map<ShoppingListType, ShoppingListData> outputData = new EnumMap<>(ShoppingListType.class);
 
-	private Map<ShoppingListType, ShoppingListData> outputData = new EnumMap<>(ShoppingListType.class);
 	private List<Stockpile> stockpiles;
 	private boolean updating = false;
 
@@ -258,18 +259,18 @@ class StockpileShoppingListDialog extends JDialogCentered {
 					
 				}
 			}
+			for (SubpileStock stockpileItem : stockpile.getSubpileStocks()) {
+				String key = stockpileItem.getName().trim();
+				double value = subpiles.getOrDefault(key, 0.0);
+				subpiles.put(key, value + stockpileItem.getSubMultiplier());
+			}
 			for (StockpileItem stockpileItem : stockpile.getClaims()) {
-				if (stockpileItem instanceof SubpileStock) {
-					String key = stockpileItem.getName().trim();
-					double value = subpiles.getOrDefault(key, 0.0);
-					subpiles.put(key, value + ((SubpileStock) stockpileItem).getSubMultiplier());
-				}
-				TypeIdentifier typeID = new TypeIdentifier(stockpileItem);
-				if (!typeID.isEmpty()) { //Ignore Total
-					List<StockClaim> claimList = claims.get(typeID);
+				TypeIdentifier type = stockpileItem.getType();
+				if (!type.isEmpty()) { //Ignore Total
+					List<StockClaim> claimList = claims.get(type);
 					if (claimList == null) {
 						claimList = new ArrayList<>();
-						claims.put(typeID, claimList);
+						claims.put(type, claimList);
 					}
 					claimList.add(new StockClaim(stockpileItem, contractIDs, assetsIDs, percent));
 				}
@@ -678,66 +679,6 @@ class StockpileShoppingListDialog extends JDialogCentered {
 			}
 			final Count other = (Count) obj;
 			if (this.id != other.id) {
-				return false;
-			}
-			return true;
-		}
-	}
-
-	private static class TypeIdentifier {
-		private final int typeID;
-		private final boolean runs;
-
-		public TypeIdentifier(StockpileItem stockpileItem) {
-			this.typeID = stockpileItem.getItemTypeID();
-			this.runs = stockpileItem.isRuns();
-		}
-
-		public TypeIdentifier(int typeID, boolean runs) {
-			this.typeID = typeID;
-			this.runs = runs;
-		}
-
-		public boolean isEmpty() {
-			return typeID == 0;
-		}
-
-		public boolean isBPC() {
-			return typeID < 0;
-		}
-
-		public boolean isRuns() {
-			return runs;
-		}
-
-		public int getTypeID() {
-			return typeID;
-		}
-
-		@Override
-		public int hashCode() {
-			int hash = 7;
-			hash = 59 * hash + this.typeID;
-			hash = 59 * hash + (this.runs ? 1 : 0);
-			return hash;
-		}
-
-		@Override
-		public boolean equals(Object obj) {
-			if (this == obj) {
-				return true;
-			}
-			if (obj == null) {
-				return false;
-			}
-			if (getClass() != obj.getClass()) {
-				return false;
-			}
-			final TypeIdentifier other = (TypeIdentifier) obj;
-			if (this.typeID != other.typeID) {
-				return false;
-			}
-			if (this.runs != other.runs) {
 				return false;
 			}
 			return true;

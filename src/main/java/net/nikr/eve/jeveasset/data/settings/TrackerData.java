@@ -25,6 +25,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import net.nikr.eve.jeveasset.CliOptions;
 import net.nikr.eve.jeveasset.gui.tabs.values.Value;
@@ -37,7 +39,7 @@ import org.slf4j.LoggerFactory;
 public class TrackerData {
 
 	private static final Logger LOG = LoggerFactory.getLogger(TrackerData.class);
-	private static final Map<String, List<Value>> TRACKER_DATA = new HashMap<String, List<Value>>(); //ownerID :: long
+	private static final Map<String, List<Value>> TRACKER_DATA = new HashMap<>(); //ownerID :: long
 	private static final ReentrantReadWriteLock LOCK = new ReentrantReadWriteLock();
 	private static final Object SAVE_QUEUE_SYNC = new Object();
 	private static Integer SAVE_QUEUE = 0;
@@ -116,10 +118,29 @@ public class TrackerData {
 		}
 	}
 
-	public static void addAll(Map<String, List<Value>> trackerData) {
+	public static void addAll(Map<String, List<Value>> trackerData, boolean overwrite) {
 		try {
 			LOCK.writeLock().lock();
-			TRACKER_DATA.putAll(trackerData);
+			for (Map.Entry<String, List<Value>> entry : trackerData.entrySet()) {
+				//For each owner
+				String owner = entry.getKey();
+				List<Value> list = TRACKER_DATA.get(owner);
+				if (list == null) { //Owner doesn't exist
+					list = new ArrayList<>();
+					TRACKER_DATA.put(owner, list);
+				}
+				//Remove duplicates, while staying in order
+				Set<Value> set = new TreeSet<>(Value.DATE_COMPARATOR);
+				if (overwrite) {
+					set.addAll(entry.getValue()); //Add new data (First)
+					set.addAll(list); //Add old data (Second, only add if not already contains)
+				} else {
+					set.addAll(list); //Add old data (First)
+					set.addAll(entry.getValue()); //Add new data (Second, only add if not already contains)
+				}
+				list.clear(); //Clear old data
+				list.addAll(set); //Set new merged data
+			}
 		} finally {
 			LOCK.writeLock().unlock();
 		}
