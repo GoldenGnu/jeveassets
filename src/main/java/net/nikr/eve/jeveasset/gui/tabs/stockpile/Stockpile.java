@@ -449,10 +449,19 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 	}
 
 	public List<StockpileItem> getClaims() {
-		List<StockpileItem> list = new ArrayList<>();
-		list.addAll(items);
-		list.addAll(subpileAll);
-		return list;
+		Map<TypeIdentifier, StockpileItem> map = new HashMap<>();
+		//Items
+		for (StockpileItem item : items) {
+			if (item.isTotal()) {
+				continue;
+			}
+			map.put(item.getType(), item);
+		}
+		//SubpileItem (Overwrites StockpileItem items)
+		for (SubpileItem item : subpileItems) {
+			map.put(item.getType(), item);
+		}
+		return new ArrayList<>(map.values());
 	}
 
 	@Override
@@ -492,20 +501,8 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 	public void updateTotal() {
 		totalItem.reset();
 		percentFull = Double.MAX_VALUE;
-		Map<Integer, StockpileItem> map = new HashMap<>();
-		//Items
-		for (StockpileItem item : items) {
-			if (item.isTotal()) {
-				continue; //Ignore Total
-			}
-			map.put(item.getItemTypeID(), item);
-		}
-		//SubpileItem (Overwrites StockpileItem items)
-		for (SubpileItem item : subpileItems) {
-			map.put(item.getItemTypeID(), item);
-		}
 		//For each item type
-		for (StockpileItem item : map.values()) {
+		for (StockpileItem item : getClaims()) {
 			if (item.isTotal()) {
 				continue; //Ignore Total
 			}
@@ -567,6 +564,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 		private Stockpile stockpile;
 		private Item item;
 		private int typeID;
+		private TypeIdentifier type;
 		private double countMinimum;
 		private boolean runs;
 		private boolean ignoreMultiplier;
@@ -621,6 +619,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 			this.runs = runs;
 			this.ignoreMultiplier = ignoreMultiplier;
 			this.id = id;
+			this.type = new TypeIdentifier(typeID, runs);
 		}
 
 		void update(StockpileItem stockpileItem) {
@@ -630,6 +629,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 			this.countMinimum = stockpileItem.countMinimum;
 			this.runs = stockpileItem.runs;
 			this.ignoreMultiplier = stockpileItem.ignoreMultiplier;
+			this.type = new TypeIdentifier(typeID, runs);
 		}
 
 		@Override
@@ -1316,6 +1316,10 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 
 		public Double getTransactionAveragePrice() {
 			return transactionAveragePrice;
+		}
+
+		public TypeIdentifier getType() {
+			return type;
 		}
 
 		public int getItemTypeID() {
@@ -2139,5 +2143,66 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 		@Override
 		public double getVolumeNeeded() { return 0; };
 
+	}
+
+	public static class TypeIdentifier {
+
+		private final int typeID;
+		private final boolean runs;
+
+		public TypeIdentifier(StockpileItem stockpileItem) {
+			this.typeID = stockpileItem.typeID;
+			this.runs = stockpileItem.isRuns();
+		}
+
+		public TypeIdentifier(int typeID, boolean runs) {
+			this.typeID = typeID;
+			this.runs = runs;
+		}
+
+		public boolean isEmpty() {
+			return typeID == 0;
+		}
+
+		public boolean isBPC() {
+			return typeID < 0;
+		}
+
+		public boolean isRuns() {
+			return runs;
+		}
+
+		public int getTypeID() {
+			return typeID;
+		}
+
+		@Override
+		public int hashCode() {
+			int hash = 7;
+			hash = 59 * hash + this.typeID;
+			hash = 59 * hash + (this.runs ? 1 : 0);
+			return hash;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj) {
+				return true;
+			}
+			if (obj == null) {
+				return false;
+			}
+			if (getClass() != obj.getClass()) {
+				return false;
+			}
+			final TypeIdentifier other = (TypeIdentifier) obj;
+			if (this.typeID != other.typeID) {
+				return false;
+			}
+			if (this.runs != other.runs) {
+				return false;
+			}
+			return true;
+		}
 	}
 }

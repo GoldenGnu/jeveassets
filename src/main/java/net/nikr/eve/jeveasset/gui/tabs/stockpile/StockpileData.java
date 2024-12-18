@@ -272,7 +272,7 @@ public class StockpileData extends TableData {
 		for (MyContract contract : profileData.getContractList()) {
 			foundIDs.put(contract, new HashSet<>());
 			foundItems.put(contract, new ArrayList<>());
-		}
+	}
 		//Update subpile claims
 		if (updateClaims && !stockpile.getSubpiles().isEmpty()) {
 			updateSubpileClaims(stockpile);
@@ -280,9 +280,6 @@ public class StockpileData extends TableData {
 		//StockpileItem map lookup
 		Map<Integer, StockpileItem> stockpileItems =  new HashMap<>();
 		for (StockpileItem stockpileItem : stockpile.getClaims()) {
-			if (stockpileItem.isTotal()) {
-				continue; //Ignore Total
-			}
 			typeIDs.add(stockpileItem.getItemTypeID());
 			stockpileItems.put(stockpileItem.getItemTypeID(), stockpileItem);
 		}
@@ -352,9 +349,6 @@ public class StockpileData extends TableData {
 		//StockpileItem map lookup
 		Map<Integer, StockpileItem> stockpileItems =  new HashMap<>();
 		for (StockpileItem stockpileItem : stockpile.getClaims()) {
-			if (stockpileItem.isTotal()) {
-				continue; //Ignore Total
-			}
 			typeIDs.add(stockpileItem.getItemTypeID());
 			stockpileItems.put(stockpileItem.getItemTypeID(), stockpileItem);
 		}
