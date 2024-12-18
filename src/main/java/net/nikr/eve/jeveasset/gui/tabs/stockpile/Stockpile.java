@@ -449,6 +449,10 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 	}
 
 	public List<StockpileItem> getClaims() {
+		return new ArrayList<>(getClaimsMap().values());
+	}
+
+	public Map<TypeIdentifier, StockpileItem> getClaimsMap() {
 		Map<TypeIdentifier, StockpileItem> map = new HashMap<>();
 		//Items
 		for (StockpileItem item : items) {
@@ -461,7 +465,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 		for (SubpileItem item : subpileItems) {
 			map.put(item.getType(), item);
 		}
-		return new ArrayList<>(map.values());
+		return map;
 	}
 
 	@Override
