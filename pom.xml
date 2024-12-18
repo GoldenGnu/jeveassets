@@ -87,6 +87,9 @@
 					<source>${project.build.sourceVersion}</source>
 					<target>${project.build.sourceVersion}</target>
 					<encoding>${project.build.sourceEncoding}</encoding>
+					<excludes>
+					    <exclude>net/nikr/eve/jeveasset/io/esi/EsiCallbackURL.java</exclude>
+					</excludes>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -96,6 +99,34 @@
 				<configuration>
 					<encoding>${project.build.sourceEncoding}</encoding>
 				</configuration>
+				<executions>
+				    <!-- Copy EsiCallbackURL to inject ESI client id -->
+				    <execution>
+					<id>copy-and-filter-template</id>
+					<phase>generate-sources</phase>
+					<goals>
+					    <goal>copy-resources</goal>
+					</goals>
+					<configuration>
+					    <outputDirectory>${project.build.directory}/generated-sources/java</outputDirectory>
+					    <resources>
+						<resource>
+						    <directory>src/main/java</directory>
+						    <includes>
+							<include>**/EsiCallbackURL.java.template</include>
+						    </includes>
+						    <filtering>true</filtering>
+						</resource>
+					    </resources>
+					    <nonFilteredFileExtensions>
+						<nonFilteredFileExtension>java</nonFilteredFileExtension>
+					    </nonFilteredFileExtensions>
+					    <delimiters>
+						<delimiter>${*}</delimiter>
+					    </delimiters>
+					</configuration>
+				    </execution>
+				</executions>
 			</plugin>
 			<plugin>
 				<artifactId>maven-antrun-plugin</artifactId>
@@ -180,6 +211,19 @@
 							<goal>run</goal>
 						</goals>
 					</execution>
+					<!-- Rename EsiCallbackURL from template -->
+					<execution>
+					    <id>rename-template</id>
+					    <phase>generate-sources</phase>
+					    <configuration>
+						<target>
+						    <move file="${project.build.directory}/generated-sources/java/net/nikr/eve/jeveasset/io/esi/EsiCallbackURL.java.template" tofile="${project.build.directory}/generated-sources/java/net/nikr/eve/jeveasset/io/esi/EsiCallbackURL.java" />
+						</target>
+					    </configuration>
+					    <goals>
+						<goal>run</goal>
+					    </goals>
+					</execution>
 				</executions>
 				<dependencies>
 					<dependency>
@@ -198,6 +242,25 @@
 						<version>1.6.5</version>
 					</dependency>
 				</dependencies>
+			</plugin>
+			<plugin>
+			    <groupId>org.codehaus.mojo</groupId>
+			    <artifactId>build-helper-maven-plugin</artifactId>
+			    <version>1.9.1</version>
+			    <executions>
+				<execution>
+				    <id>add-source</id>
+				    <phase>generate-sources</phase>
+				    <goals>
+					<goal>add-source</goal>
+				    </goals>
+				    <configuration>
+					<sources>
+					    <source>${project.build.directory}/generated-sources/java/</source>
+					</sources>
+				    </configuration>
+				</execution>
+			    </executions>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
