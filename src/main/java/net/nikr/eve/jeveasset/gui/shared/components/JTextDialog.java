@@ -69,7 +69,7 @@ public class JTextDialog extends JDialogCentered {
 	public JTextDialog(Window window) {
 		super(null, "", window, null);
 
-		jFileChooser = JCustomFileChooser.createFileChooser(window, "txt");
+		jFileChooser = new JCustomFileChooser("txt");
 		jFileChooser.setMultiSelectionEnabled(false);
 		jFileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 

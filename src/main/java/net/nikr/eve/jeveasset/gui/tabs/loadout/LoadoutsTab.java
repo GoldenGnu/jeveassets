@@ -131,7 +131,7 @@ public class LoadoutsTab extends JMainTabSecondary {
 
 		ListenerClass listener = new ListenerClass();
 
-		jXmlFileChooser = JCustomFileChooser.createFileChooser(program.getMainWindow().getFrame(), "xml");
+		jXmlFileChooser = new JCustomFileChooser("xml");
 
 		jEftDialog = new JTextDialog(program.getMainWindow().getFrame());
 
@@ -325,7 +325,7 @@ public class LoadoutsTab extends JMainTabSecondary {
 			jXmlFileChooser.setCurrentDirectory(new File(FileUtil.getUserDirectory()));
 		}
 		int bFound = jXmlFileChooser.showSaveDialog(program.getMainWindow().getFrame());
-		if (bFound == JFileChooser.APPROVE_OPTION) {
+		if (bFound == JCustomFileChooser.APPROVE_OPTION) {
 			File file = jXmlFileChooser.getSelectedFile();
 			return file.getAbsolutePath();
 		} else {
