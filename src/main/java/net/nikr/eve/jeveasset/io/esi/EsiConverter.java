@@ -137,7 +137,7 @@ public class EsiConverter extends DataConverter {
 	}
 	
 	public static MyAsset toAssetsImplant(Integer implantType, Long implantLocation, OwnerType owner) {
-		return toMyAsset(new RawAsset(implantType, implantLocation), owner, new ArrayList<>());
+		return toMyAsset(new RawAsset(implantType, implantLocation, owner), owner, new ArrayList<>());
 	}
 
 	public static MyAsset toAssetsPlanetaryInteraction(CharacterPlanetsResponse planet, PlanetPin pin, OwnerType owner) {
