@@ -21,7 +21,6 @@
 
 package net.nikr.eve.jeveasset.gui.tabs.skills;
 
-import ca.odell.glazedlists.GlazedLists;
 import java.util.Comparator;
 import net.nikr.eve.jeveasset.data.api.my.MySkill;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
@@ -29,7 +28,7 @@ import net.nikr.eve.jeveasset.i18n.TabsSkills;
 
 
 public enum SkillsTableFormat implements EnumTableColumn<MySkill> {
-	NAME(String.class, GlazedLists.comparableComparator()) {
+	NAME(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsSkills.get().columnSkill();
@@ -39,7 +38,7 @@ public enum SkillsTableFormat implements EnumTableColumn<MySkill> {
 			return from.getName();
 		}
 	},
-	GROUP(String.class, GlazedLists.comparableComparator()) {
+	GROUP(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsSkills.get().columnGroup();
@@ -49,7 +48,7 @@ public enum SkillsTableFormat implements EnumTableColumn<MySkill> {
 			return from.getItem().getGroup();
 		}
 	},
-	OWNER(String.class, GlazedLists.comparableComparator()) {
+	OWNER(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsSkills.get().columnCharacter();
@@ -59,7 +58,7 @@ public enum SkillsTableFormat implements EnumTableColumn<MySkill> {
 			return from.getOwnerName();
 		}
 	},
-	ACTIVE(Integer.class, GlazedLists.comparableComparator()) {
+	ACTIVE(Integer.class) {
 		@Override
 		public String getColumnName() {
 			return TabsSkills.get().columnActive();
@@ -69,7 +68,7 @@ public enum SkillsTableFormat implements EnumTableColumn<MySkill> {
 			return from.getActiveSkillLevel();
 		}
 	},
-	TRAINED(Integer.class, GlazedLists.comparableComparator()) {
+	TRAINED(Integer.class) {
 		@Override
 		public String getColumnName() {
 			return TabsSkills.get().columnTrained();
@@ -83,9 +82,9 @@ public enum SkillsTableFormat implements EnumTableColumn<MySkill> {
 	private final Class<?> type;
 	private final Comparator<?> comparator;
 
-	private SkillsTableFormat(final Class<?> type, final Comparator<?> comparator) {
+	private SkillsTableFormat(final Class<?> type) {
 		this.type = type;
-		this.comparator = comparator;
+		this.comparator = EnumTableColumn.getComparator(type);
 	}
 	@Override
 	public Class<?> getType() {

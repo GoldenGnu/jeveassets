@@ -21,7 +21,6 @@
 
 package net.nikr.eve.jeveasset.gui.tabs.tree;
 
-import ca.odell.glazedlists.GlazedLists;
 import java.util.Comparator;
 import java.util.Date;
 import net.nikr.eve.jeveasset.data.settings.tag.Tags;
@@ -36,7 +35,7 @@ import net.nikr.eve.jeveasset.i18n.TabsAssets;
 
 
 public enum TreeTableFormat implements EnumTableColumn<TreeAsset> {
-	NAME(HierarchyColumn.class, GlazedLists.comparableComparator()) {
+	NAME(HierarchyColumn.class) {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnName();
@@ -46,7 +45,7 @@ public enum TreeTableFormat implements EnumTableColumn<TreeAsset> {
 			return from.getHierarchyColumn();
 		}
 	},
-	NAME_TYPE(String.class, GlazedLists.comparableComparator()) {
+	NAME_TYPE(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnNameType();
@@ -60,7 +59,7 @@ public enum TreeTableFormat implements EnumTableColumn<TreeAsset> {
 			return false;
 		}
 	},
-	NAME_CUSTOM(String.class, GlazedLists.comparableComparator()) {
+	NAME_CUSTOM(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnNameCustom();
@@ -74,7 +73,7 @@ public enum TreeTableFormat implements EnumTableColumn<TreeAsset> {
 			return false;
 		}
 	},
-	TAGS(Tags.class, GlazedLists.comparableComparator()) {
+	TAGS(Tags.class) {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnTags();
@@ -84,7 +83,7 @@ public enum TreeTableFormat implements EnumTableColumn<TreeAsset> {
 			return from.getTags();
 		}
 	},
-	GROUP(String.class, GlazedLists.comparableComparator()) {
+	GROUP(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnGroup();
@@ -94,7 +93,7 @@ public enum TreeTableFormat implements EnumTableColumn<TreeAsset> {
 			return from.getItem().getGroup();
 		}
 	},
-	CATEGORY(String.class, GlazedLists.comparableComparator()) {
+	CATEGORY(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnCategory();
@@ -104,7 +103,7 @@ public enum TreeTableFormat implements EnumTableColumn<TreeAsset> {
 			return from.getItem().getCategory();
 		}
 	},
-	SLOT(String.class, GlazedLists.comparableComparator()) {
+	SLOT(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnSlot();
@@ -114,7 +113,7 @@ public enum TreeTableFormat implements EnumTableColumn<TreeAsset> {
 			return from.getItem().getSlot();
 		}
 	},
-	CHARGE_SIZE(String.class, GlazedLists.comparableComparator()) {
+	CHARGE_SIZE(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnChargeSize();
@@ -124,7 +123,7 @@ public enum TreeTableFormat implements EnumTableColumn<TreeAsset> {
 			return from.getItem().getChargeSize();
 		}
 	},
-	OWNER(String.class, GlazedLists.comparableComparator()) {
+	OWNER(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnOwner();
@@ -134,7 +133,7 @@ public enum TreeTableFormat implements EnumTableColumn<TreeAsset> {
 			return from.getOwnerName();
 		}
 	},
-	LOCATION(String.class, GlazedLists.comparableComparator()) {
+	LOCATION(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnLocation();
@@ -144,7 +143,7 @@ public enum TreeTableFormat implements EnumTableColumn<TreeAsset> {
 			return from.getLocation().getLocation();
 		}
 	},
-	SECURITY(String.class, GlazedLists.comparableComparator()) {
+	SECURITY(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnSecurity();
@@ -154,7 +153,7 @@ public enum TreeTableFormat implements EnumTableColumn<TreeAsset> {
 			return from.getSecurity();
 		}
 	},
-	SYSTEM(String.class, GlazedLists.comparableComparator()) {
+	SYSTEM(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnSystem();
@@ -164,7 +163,7 @@ public enum TreeTableFormat implements EnumTableColumn<TreeAsset> {
 			return from.getLocation().getSystem();
 		}
 	},
-	CONSTELLATION(String.class, GlazedLists.comparableComparator()) {
+	CONSTELLATION(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnConstellation();
@@ -174,7 +173,7 @@ public enum TreeTableFormat implements EnumTableColumn<TreeAsset> {
 			return from.getLocation().getConstellation();
 		}
 	},
-	REGION(String.class, GlazedLists.comparableComparator()) {
+	REGION(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnRegion();
@@ -184,7 +183,7 @@ public enum TreeTableFormat implements EnumTableColumn<TreeAsset> {
 			return from.getLocation().getRegion();
 		}
 	},
-	FACTION_WARFARE_SYSTEM_OWNER(String.class, GlazedLists.comparableComparator()) {
+	FACTION_WARFARE_SYSTEM_OWNER(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnFactionWarfareSystemOwner();
@@ -198,7 +197,7 @@ public enum TreeTableFormat implements EnumTableColumn<TreeAsset> {
 			return from.getLocation().getFactionWarfareSystemOwner();
 		}
 	},
-	CONTAINER(AssetContainer.class, GlazedLists.comparableComparator()) {
+	CONTAINER(AssetContainer.class) {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnContainer();
@@ -208,7 +207,7 @@ public enum TreeTableFormat implements EnumTableColumn<TreeAsset> {
 			return from.getAssetContainer();
 		}
 	},
-	FLAG(String.class, GlazedLists.comparableComparator()) {
+	FLAG(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnFlag();
@@ -218,7 +217,7 @@ public enum TreeTableFormat implements EnumTableColumn<TreeAsset> {
 			return from.getFlagName();
 		}
 	},
-	PRICE(Double.class, GlazedLists.comparableComparator()) {
+	PRICE(Double.class) {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnPrice();
@@ -232,7 +231,7 @@ public enum TreeTableFormat implements EnumTableColumn<TreeAsset> {
 			return from.getAverage(this);
 		}
 	},
-	PRICE_SELL_MIN(Double.class, GlazedLists.comparableComparator()) {
+	PRICE_SELL_MIN(Double.class) {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnPriceSellMin();
@@ -246,7 +245,7 @@ public enum TreeTableFormat implements EnumTableColumn<TreeAsset> {
 			return from.getAverage(this);
 		}
 	},
-	PRICE_BUY_MAX(Double.class, GlazedLists.comparableComparator()) {
+	PRICE_BUY_MAX(Double.class) {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnPriceBuyMax();
@@ -260,7 +259,7 @@ public enum TreeTableFormat implements EnumTableColumn<TreeAsset> {
 			return from.getAverage(this);
 		}
 	},
-	PRICE_REPROCESSED(Double.class, GlazedLists.comparableComparator()) {
+	PRICE_REPROCESSED(Double.class) {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnPriceReprocessed();
@@ -274,7 +273,7 @@ public enum TreeTableFormat implements EnumTableColumn<TreeAsset> {
 			return from.getAverage(this);
 		}
 	},
-	PRICE_MANUFACTURING(Double.class, GlazedLists.comparableComparator()) {
+	PRICE_MANUFACTURING(Double.class) {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnPriceManufacturing();
@@ -288,7 +287,7 @@ public enum TreeTableFormat implements EnumTableColumn<TreeAsset> {
 			return from.getItem().getPriceManufacturing();
 		}
 	},
-	TRANSACTION_PRICE_LATEST(Double.class, GlazedLists.comparableComparator()) {
+	TRANSACTION_PRICE_LATEST(Double.class) {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnTransactionPriceLatest();
@@ -302,7 +301,7 @@ public enum TreeTableFormat implements EnumTableColumn<TreeAsset> {
 			return from.getAverage(this);
 		}
 	},
-	TRANSACTION_PRICE_AVERAGE(Double.class, GlazedLists.comparableComparator()) {
+	TRANSACTION_PRICE_AVERAGE(Double.class) {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnTransactionPriceAverage();
@@ -316,7 +315,7 @@ public enum TreeTableFormat implements EnumTableColumn<TreeAsset> {
 			return from.getAverage(this);
 		}
 	},
-	TRANSACTION_PRICE_MAXIMUM(Double.class, GlazedLists.comparableComparator()) {
+	TRANSACTION_PRICE_MAXIMUM(Double.class) {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnTransactionPriceMaximum();
@@ -330,7 +329,7 @@ public enum TreeTableFormat implements EnumTableColumn<TreeAsset> {
 			return from.getAverage(this);
 		}
 	},
-	TRANSACTION_PRICE_MINIMUM(Double.class, GlazedLists.comparableComparator()) {
+	TRANSACTION_PRICE_MINIMUM(Double.class) {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnTransactionPriceMinimum();
@@ -344,7 +343,7 @@ public enum TreeTableFormat implements EnumTableColumn<TreeAsset> {
 			return from.getAverage(this);
 		}
 	},
-	PRICE_BASE(Double.class, GlazedLists.comparableComparator()) {
+	PRICE_BASE(Double.class) {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnPriceBase();
@@ -358,7 +357,7 @@ public enum TreeTableFormat implements EnumTableColumn<TreeAsset> {
 			return from.getAverage(this);
 		}
 	},
-	VALUE_REPROCESSED(Double.class, GlazedLists.comparableComparator()) {
+	VALUE_REPROCESSED(Double.class) {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnValueReprocessed();
@@ -372,7 +371,7 @@ public enum TreeTableFormat implements EnumTableColumn<TreeAsset> {
 			return from.getTotal(this);
 		}
 	},
-	VALUE(Double.class, GlazedLists.comparableComparator()) {
+	VALUE(Double.class) {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnValue();
@@ -386,7 +385,7 @@ public enum TreeTableFormat implements EnumTableColumn<TreeAsset> {
 			return from.getTotal(this);
 		}
 	},
-	PRICE_REPROCESSED_DIFFERENCE(Double.class, GlazedLists.comparableComparator()) {
+	PRICE_REPROCESSED_DIFFERENCE(Double.class) {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnPriceReprocessedDifference();
@@ -400,7 +399,7 @@ public enum TreeTableFormat implements EnumTableColumn<TreeAsset> {
 			return from.getTotal(this);
 		}
 	},
-	PRICE_REPROCESSED_PERCENT(Percent.class, GlazedLists.comparableComparator()) {
+	PRICE_REPROCESSED_PERCENT(Percent.class) {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnPriceReprocessedPercent();
@@ -414,7 +413,7 @@ public enum TreeTableFormat implements EnumTableColumn<TreeAsset> {
 			return from.getAverage(this);
 		}
 	},
-	COUNT(Long.class, GlazedLists.comparableComparator()) {
+	COUNT(Long.class) {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnCount();
@@ -424,7 +423,7 @@ public enum TreeTableFormat implements EnumTableColumn<TreeAsset> {
 			return from.getTotal(this);
 		}
 	},
-	COUNT_TYPE(Long.class, GlazedLists.comparableComparator()) {
+	COUNT_TYPE(Long.class) {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnTypeCount();
@@ -438,7 +437,7 @@ public enum TreeTableFormat implements EnumTableColumn<TreeAsset> {
 			return from.getTypeCount();
 		}
 	},
-	META(Integer.class, GlazedLists.comparableComparator()) {
+	META(Integer.class) {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnMeta();
@@ -448,7 +447,7 @@ public enum TreeTableFormat implements EnumTableColumn<TreeAsset> {
 			return from.getMeta();
 		}
 	},
-	TECH(String.class, GlazedLists.comparableComparator()) {
+	TECH(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnTech();
@@ -458,7 +457,7 @@ public enum TreeTableFormat implements EnumTableColumn<TreeAsset> {
 			return from.getItem().getTech();
 		}
 	},
-	VOLUME(Float.class, GlazedLists.comparableComparator()) {
+	VOLUME(Float.class) {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnVolume();
@@ -468,7 +467,7 @@ public enum TreeTableFormat implements EnumTableColumn<TreeAsset> {
 			return from.getAverage(this);
 		}
 	},
-	VOLUME_TOTAL(Double.class, GlazedLists.comparableComparator()) {
+	VOLUME_TOTAL(Double.class) {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnVolumeTotal();
@@ -482,7 +481,7 @@ public enum TreeTableFormat implements EnumTableColumn<TreeAsset> {
 			return from.getTotal(this);
 		}
 	},
-	VOLUME_PACKAGED(Float.class, GlazedLists.comparableComparator()) {
+	VOLUME_PACKAGED(Float.class) {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnVolumePackaged();
@@ -496,7 +495,7 @@ public enum TreeTableFormat implements EnumTableColumn<TreeAsset> {
 			return from.getItem().getVolumePackaged();
 		}
 	},
-	VALUE_PER_VOLUME(Double.class, GlazedLists.comparableComparator()) {
+	VALUE_PER_VOLUME(Double.class) {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnValuePerVolume();
@@ -506,7 +505,7 @@ public enum TreeTableFormat implements EnumTableColumn<TreeAsset> {
 			return from.getAverage(this);
 		}
 	},
-	SINGLETON(String.class, GlazedLists.comparableComparator()) {
+	SINGLETON(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnSingleton();
@@ -516,7 +515,7 @@ public enum TreeTableFormat implements EnumTableColumn<TreeAsset> {
 			return from.getSingleton();
 		}
 	},
-	ADDED(Date.class, GlazedLists.comparableComparator()) {
+	ADDED(Date.class) {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnAdded();
@@ -534,7 +533,7 @@ public enum TreeTableFormat implements EnumTableColumn<TreeAsset> {
 			return false;
 		}
 	},
-	MATERIAL_EFFICIENCY(Integer.class, GlazedLists.comparableComparator()) {
+	MATERIAL_EFFICIENCY(Integer.class) {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnMaterialEfficiency();
@@ -548,7 +547,7 @@ public enum TreeTableFormat implements EnumTableColumn<TreeAsset> {
 			return from.getMaterialEfficiency();
 		}
 	},
-	TIME_EFFICIENCY(Integer.class, GlazedLists.comparableComparator()) {
+	TIME_EFFICIENCY(Integer.class) {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnTimeEfficiency();
@@ -562,7 +561,7 @@ public enum TreeTableFormat implements EnumTableColumn<TreeAsset> {
 			return from.getTimeEfficiency();
 		}
 	},
-	RUNS(Runs.class, GlazedLists.comparableComparator()) {
+	RUNS(Runs.class) {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnRuns();
@@ -576,7 +575,7 @@ public enum TreeTableFormat implements EnumTableColumn<TreeAsset> {
 			return from.getTotal(this);
 		}
 	},
-	CITADEL(YesNo.class, GlazedLists.comparableComparator()) {
+	CITADEL(YesNo.class) {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnStructure();
@@ -594,7 +593,7 @@ public enum TreeTableFormat implements EnumTableColumn<TreeAsset> {
 			return false;
 		}
 	},
-	ITEM_ID(LongInt.class, GlazedLists.comparableComparator()) {
+	ITEM_ID(LongInt.class) {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnItemID();
@@ -608,7 +607,7 @@ public enum TreeTableFormat implements EnumTableColumn<TreeAsset> {
 			return new LongInt(from.getItemID());
 		}
 	},
-	LOCATION_ID(LongInt.class, GlazedLists.comparableComparator()) {
+	LOCATION_ID(LongInt.class) {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnLocationID();
@@ -622,7 +621,7 @@ public enum TreeTableFormat implements EnumTableColumn<TreeAsset> {
 			return new LongInt(from.getLocationID());
 		}
 	},
-	TYPE_ID(Integer.class, GlazedLists.comparableComparator()) {
+	TYPE_ID(Integer.class) {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnTypeID();
@@ -640,9 +639,9 @@ public enum TreeTableFormat implements EnumTableColumn<TreeAsset> {
 	private final Class<?> type;
 	private final Comparator<?> comparator;
 
-	private TreeTableFormat(final Class<?> type, final Comparator<?> comparator) {
+	private TreeTableFormat(final Class<?> type) {
 		this.type = type;
-		this.comparator = comparator;
+		this.comparator = EnumTableColumn.getComparator(type);
 	}
 	@Override
 	public Class<?> getType() {

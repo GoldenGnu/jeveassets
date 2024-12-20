@@ -285,7 +285,7 @@ public class RoutingTab extends JMainTabSecondary {
 		jManageRoutesDialog = new JRouteManageDialog(this, program);
 		jRouteEditDialog = new JRouteEditDialog(program);
 		jRouteSelectionDialog = new JMultiSelectionDialog<>(program, TabsRouting.get().resultSelectRoutes());
-		jFileChooser = JCustomFileChooser.createFileChooser(program.getMainWindow().getFrame(), "xml");
+		jFileChooser = new JCustomFileChooser("xml");
 		jFileChooser.setMultiSelectionEnabled(false);
 		jFileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 		jImportDialog = new JImportDialog(program, new JImportDialog.ImportOptions() {

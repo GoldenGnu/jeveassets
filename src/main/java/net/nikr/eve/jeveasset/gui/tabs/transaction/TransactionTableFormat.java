@@ -21,7 +21,6 @@
 
 package net.nikr.eve.jeveasset.gui.tabs.transaction;
 
-import ca.odell.glazedlists.GlazedLists;
 import java.util.Comparator;
 import java.util.Date;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
@@ -33,7 +32,7 @@ import net.nikr.eve.jeveasset.i18n.TabsTransaction;
 
 
 public enum TransactionTableFormat implements EnumTableColumn<MyTransaction> {
-	DATE(Date.class, GlazedLists.comparableComparator()) {
+	DATE(Date.class) {
 		@Override
 		public String getColumnName() {
 			return TabsTransaction.get().columnTransactionDate();
@@ -43,7 +42,7 @@ public enum TransactionTableFormat implements EnumTableColumn<MyTransaction> {
 			return from.getDate();
 		}
 	},
-	TAGS(Tags.class, GlazedLists.comparableComparator()) {
+	TAGS(Tags.class) {
 		@Override
 		public String getColumnName() {
 			return TabsTransaction.get().columnTags();
@@ -53,7 +52,7 @@ public enum TransactionTableFormat implements EnumTableColumn<MyTransaction> {
 			return from.getTags();
 		}
 	},
-	ADDED(Date.class, GlazedLists.comparableComparator()) {
+	ADDED(Date.class) {
 		@Override
 		public String getColumnName() {
 			return TabsTransaction.get().columnAdded();
@@ -67,7 +66,7 @@ public enum TransactionTableFormat implements EnumTableColumn<MyTransaction> {
 			return from.getAdded();
 		}
 	},
-	NAME(String.class, GlazedLists.comparableComparator()) {
+	NAME(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsTransaction.get().columnName();
@@ -77,7 +76,7 @@ public enum TransactionTableFormat implements EnumTableColumn<MyTransaction> {
 			return from.getItem().getTypeName();
 		}
 	},
-	QUANTITY(Integer.class, GlazedLists.comparableComparator()) {
+	QUANTITY(Integer.class) {
 		@Override
 		public String getColumnName() {
 			return TabsTransaction.get().columnQuantity();
@@ -87,7 +86,7 @@ public enum TransactionTableFormat implements EnumTableColumn<MyTransaction> {
 			return from.getQuantity();
 		}
 	},
-	PRICE(Double.class, GlazedLists.comparableComparator()) {
+	PRICE(Double.class) {
 		@Override
 		public String getColumnName() {
 			return TabsTransaction.get().columnPrice();
@@ -97,7 +96,7 @@ public enum TransactionTableFormat implements EnumTableColumn<MyTransaction> {
 			return from.getPrice();
 		}
 	},
-	TAX(Double.class, GlazedLists.comparableComparator()) {
+	TAX(Double.class) {
 		@Override
 		public String getColumnName() {
 			return TabsTransaction.get().columnTax();
@@ -107,7 +106,7 @@ public enum TransactionTableFormat implements EnumTableColumn<MyTransaction> {
 			return from.getTax();
 		}
 	},
-	VALUE(Double.class, GlazedLists.comparableComparator()) {
+	VALUE(Double.class) {
 		@Override
 		public String getColumnName() {
 			return TabsTransaction.get().columnValue();
@@ -117,7 +116,7 @@ public enum TransactionTableFormat implements EnumTableColumn<MyTransaction> {
 			return from.getValue();
 		}
 	},
-	OWNER(String.class, GlazedLists.comparableComparator()) {
+	OWNER(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsTransaction.get().columnOwner();
@@ -127,7 +126,7 @@ public enum TransactionTableFormat implements EnumTableColumn<MyTransaction> {
 			return from.getOwnerName();
 		}
 	},
-	LOCATION(String.class, GlazedLists.comparableComparator()) {
+	LOCATION(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsTransaction.get().columnStationName();
@@ -137,7 +136,7 @@ public enum TransactionTableFormat implements EnumTableColumn<MyTransaction> {
 			return from.getLocation();
 		}
 	},
-	SYSTEM(String.class, GlazedLists.comparableComparator()) {
+	SYSTEM(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsTransaction.get().columnSystem();
@@ -147,7 +146,7 @@ public enum TransactionTableFormat implements EnumTableColumn<MyTransaction> {
 			return from.getLocation().getSystem();
 		}
 	},
-	CONSTELLATION(String.class, GlazedLists.comparableComparator()) {
+	CONSTELLATION(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsTransaction.get().columnConstellation();
@@ -157,7 +156,7 @@ public enum TransactionTableFormat implements EnumTableColumn<MyTransaction> {
 			return from.getLocation().getConstellation();
 		}
 	},
-	REGION(String.class, GlazedLists.comparableComparator()) {
+	REGION(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsTransaction.get().columnRegion();
@@ -167,7 +166,7 @@ public enum TransactionTableFormat implements EnumTableColumn<MyTransaction> {
 			return from.getLocation().getRegion();
 		}
 	},
-	TRANSACTION_PRICE(Double.class, GlazedLists.comparableComparator()) {
+	TRANSACTION_PRICE(Double.class) {
 		@Override
 		public String getColumnName() {
 			return TabsTransaction.get().columnTransactionPrice();
@@ -181,7 +180,7 @@ public enum TransactionTableFormat implements EnumTableColumn<MyTransaction> {
 			return from.getTransactionPrice();
 		}
 	},
-	TRANSACTION_MARGIN(Double.class, GlazedLists.comparableComparator()) {
+	TRANSACTION_MARGIN(Double.class) {
 		@Override
 		public String getColumnName() {
 			return TabsTransaction.get().columnTransactionMargin();
@@ -195,7 +194,7 @@ public enum TransactionTableFormat implements EnumTableColumn<MyTransaction> {
 			return from.getTransactionMargin();
 		}
 	},
-	TRANSACTION_PROFIT(Double.class, GlazedLists.comparableComparator()) {
+	TRANSACTION_PROFIT(Double.class) {
 		@Override
 		public String getColumnName() {
 			return TabsTransaction.get().columnTransactionProfitDifference();
@@ -209,7 +208,7 @@ public enum TransactionTableFormat implements EnumTableColumn<MyTransaction> {
 			return from.getTransactionProfitDifference();
 		}
 	},
-	TRANSACTION_PROFIT_PERCENT(Percent.class, GlazedLists.comparableComparator()) {
+	TRANSACTION_PROFIT_PERCENT(Percent.class) {
 		@Override
 		public String getColumnName() {
 			return TabsTransaction.get().columnTransactionProfitPercent();
@@ -223,7 +222,7 @@ public enum TransactionTableFormat implements EnumTableColumn<MyTransaction> {
 			return from.getTransactionProfitPercent();
 		}
 	},
-	CLIENT(String.class, GlazedLists.comparableComparator()) {
+	CLIENT(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsTransaction.get().columnClientName();
@@ -233,7 +232,7 @@ public enum TransactionTableFormat implements EnumTableColumn<MyTransaction> {
 			return from.getClientName();
 		}
 	},
-	TYPE(String.class, GlazedLists.comparableComparator()) {
+	TYPE(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsTransaction.get().columnTransactionType();
@@ -243,7 +242,7 @@ public enum TransactionTableFormat implements EnumTableColumn<MyTransaction> {
 			return from.getTransactionTypeFormatted();
 		}
 	},
-	TRANSACTION_FOR(String.class, GlazedLists.comparableComparator()) {
+	TRANSACTION_FOR(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsTransaction.get().columnTransactionFor();
@@ -253,7 +252,7 @@ public enum TransactionTableFormat implements EnumTableColumn<MyTransaction> {
 			return from.getTransactionForFormatted();
 		}
 	},
-	ACCOUNT_KEY(Integer.class, GlazedLists.comparableComparator()) {
+	ACCOUNT_KEY(Integer.class) {
 		@Override
 		public String getColumnName() {
 			return TabsTransaction.get().columnAccountKey();
@@ -263,7 +262,7 @@ public enum TransactionTableFormat implements EnumTableColumn<MyTransaction> {
 			return from.getAccountKeyFormatted();
 		}
 	},
-	VOLUME(Float.class, GlazedLists.comparableComparator()) {
+	VOLUME(Float.class) {
 		@Override
 		public String getColumnName() {
 			return TabsTransaction.get().columnVolume();
@@ -273,7 +272,7 @@ public enum TransactionTableFormat implements EnumTableColumn<MyTransaction> {
 			return from.getItem().getVolumePackaged();
 		}
 	},
-	TRANSACTION_ID(LongInt.class, GlazedLists.comparableComparator()) {
+	TRANSACTION_ID(LongInt.class) {
 		@Override
 		public String getColumnName() {
 			return TabsTransaction.get().columnTransactionID();
@@ -291,9 +290,9 @@ public enum TransactionTableFormat implements EnumTableColumn<MyTransaction> {
 	private final Class<?> type;
 	private final Comparator<?> comparator;
 
-	private TransactionTableFormat(final Class<?> type, final Comparator<?> comparator) {
+	private TransactionTableFormat(final Class<?> type) {
 		this.type = type;
-		this.comparator = comparator;
+		this.comparator = EnumTableColumn.getComparator(type);
 	}
 	@Override
 	public Class<?> getType() {

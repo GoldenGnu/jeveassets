@@ -21,14 +21,13 @@
 
 package net.nikr.eve.jeveasset.gui.tabs.reprocessed;
 
-import ca.odell.glazedlists.GlazedLists;
 import java.util.Comparator;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.i18n.TabsReprocessed;
 
 
 public enum ReprocessedExtendedTableFormat implements EnumTableColumn<ReprocessedInterface> {
-	TOTAL_NAME(String.class, GlazedLists.comparableComparator()) {
+	TOTAL_NAME(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsReprocessed.get().columnTotalName();
@@ -38,7 +37,7 @@ public enum ReprocessedExtendedTableFormat implements EnumTableColumn<Reprocesse
 			return from.getTotal().getTypeName();
 		}
 	},
-	TOTAL_PRICE(Double.class, GlazedLists.comparableComparator()) {
+	TOTAL_PRICE(Double.class) {
 		@Override
 		public String getColumnName() {
 			return TabsReprocessed.get().columnTotalPrice();
@@ -48,7 +47,7 @@ public enum ReprocessedExtendedTableFormat implements EnumTableColumn<Reprocesse
 			return from.getTotal().getSellPrice();
 		}
 	},
-	TOTAL_VALUE(Double.class, GlazedLists.comparableComparator()) {
+	TOTAL_VALUE(Double.class) {
 		@Override
 		public String getColumnName() {
 			return TabsReprocessed.get().columnTotalValue();
@@ -58,7 +57,7 @@ public enum ReprocessedExtendedTableFormat implements EnumTableColumn<Reprocesse
 			return from.getTotal().getValue();
 		}
 	},
-	TOTAL_BATCH(Long.class, GlazedLists.comparableComparator()) {
+	TOTAL_BATCH(Long.class) {
 		@Override
 		public String getColumnName() {
 			return TabsReprocessed.get().columnTotalBatch();
@@ -71,9 +70,9 @@ public enum ReprocessedExtendedTableFormat implements EnumTableColumn<Reprocesse
 
 	private final Class<?> type;
 	private final Comparator<?> comparator;
-	private ReprocessedExtendedTableFormat(final Class<?> type, final Comparator<?> comparator) {
+	private ReprocessedExtendedTableFormat(final Class<?> type) {
 		this.type = type;
-		this.comparator = comparator;
+		this.comparator = EnumTableColumn.getComparator(type);
 	}
 	@Override
 	public Class<?> getType() {
