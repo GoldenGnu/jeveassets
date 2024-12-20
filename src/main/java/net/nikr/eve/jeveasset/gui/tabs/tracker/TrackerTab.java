@@ -279,7 +279,7 @@ public class TrackerTab extends JMainTabSecondary {
 		extensions.add("zip");
 		extensions.add("json");
 		extensions.add("backup");
-		jFileChooser = JCustomFileChooser.createFileChooser(program.getMainWindow().getFrame(), extensions);
+		jFileChooser = new JCustomFileChooser(extensions);
 		jFileChooser.setMultiSelectionEnabled(false);
 		jFileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 
@@ -1696,7 +1696,7 @@ public class TrackerTab extends JMainTabSecondary {
 			} else if (TrackerAction.IMPORT_FILE.name().equals(e.getActionCommand())) {
 				jFileChooser.setCurrentDirectory(new File(FileUtil.getPathDataDirectory()));
 				int value = jFileChooser.showOpenDialog(program.getMainWindow().getFrame());
-				if (value != JFileChooser.APPROVE_OPTION) {
+				if (value != JCustomFileChooser.APPROVE_OPTION) {
 					return; //Cancel
 				}
 				jLockWindow.show(TabsTracker.get().importFileImport(), new ImportFileLockWorker(jFileChooser.getSelectedFile()));

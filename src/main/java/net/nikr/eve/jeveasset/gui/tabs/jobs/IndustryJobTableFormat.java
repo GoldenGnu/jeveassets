@@ -21,7 +21,6 @@
 
 package net.nikr.eve.jeveasset.gui.tabs.jobs;
 
-import ca.odell.glazedlists.GlazedLists;
 import java.util.Comparator;
 import java.util.Date;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
@@ -31,7 +30,7 @@ import net.nikr.eve.jeveasset.i18n.TabsJobs;
 
 
 public enum IndustryJobTableFormat implements EnumTableColumn<MyIndustryJob> {
-	STATE(String.class, GlazedLists.comparableComparator()) {
+	STATE(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsJobs.get().columnState();
@@ -41,7 +40,7 @@ public enum IndustryJobTableFormat implements EnumTableColumn<MyIndustryJob> {
 			return from.getStatusFormatted();
 		}
 	},
-	ACTIVITY(String.class, GlazedLists.comparableComparator()) {
+	ACTIVITY(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsJobs.get().columnActivity();
@@ -51,7 +50,7 @@ public enum IndustryJobTableFormat implements EnumTableColumn<MyIndustryJob> {
 			return from.getActivity();
 		}
 	},
-	NAME(String.class, GlazedLists.comparableComparator()) {
+	NAME(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsJobs.get().columnName();
@@ -61,7 +60,7 @@ public enum IndustryJobTableFormat implements EnumTableColumn<MyIndustryJob> {
 			return from.getName();
 		}
 	},
-	OWNER(String.class, GlazedLists.comparableComparator()) {
+	OWNER(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsJobs.get().columnOwner();
@@ -71,7 +70,7 @@ public enum IndustryJobTableFormat implements EnumTableColumn<MyIndustryJob> {
 			return from.getOwnerName();
 		}
 	},
-	INSTALLER(String.class, GlazedLists.comparableComparator()) {
+	INSTALLER(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsJobs.get().columnInstaller();
@@ -81,7 +80,7 @@ public enum IndustryJobTableFormat implements EnumTableColumn<MyIndustryJob> {
 			return from.getInstaller();
 		}
 	},
-	OWNED(YesNo.class, GlazedLists.comparableComparator()) {
+	OWNED(YesNo.class) {
 		@Override
 		public String getColumnName() {
 			return TabsJobs.get().columnOwned();
@@ -95,7 +94,7 @@ public enum IndustryJobTableFormat implements EnumTableColumn<MyIndustryJob> {
 			return new YesNo(from.isOwned());
 		}
 	},
-	COMPLETED_CHARACTER(String.class, GlazedLists.comparableComparator()) {
+	COMPLETED_CHARACTER(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsJobs.get().columnCompletedCharacter();
@@ -105,7 +104,7 @@ public enum IndustryJobTableFormat implements EnumTableColumn<MyIndustryJob> {
 			return from.getCompletedCharacter();
 		}
 	},
-	LOCATION(String.class, GlazedLists.comparableComparator()) {
+	LOCATION(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsJobs.get().columnLocation();
@@ -115,7 +114,7 @@ public enum IndustryJobTableFormat implements EnumTableColumn<MyIndustryJob> {
 			return from.getLocation().getLocation();
 		}
 	},
-	SYSTEM(String.class, GlazedLists.comparableComparator()) {
+	SYSTEM(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsJobs.get().columnSystem();
@@ -125,7 +124,7 @@ public enum IndustryJobTableFormat implements EnumTableColumn<MyIndustryJob> {
 			return from.getLocation().getSystem();
 		}
 	},
-	CONSTELLATION(String.class, GlazedLists.comparableComparator()) {
+	CONSTELLATION(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsJobs.get().columnConstellation();
@@ -135,7 +134,7 @@ public enum IndustryJobTableFormat implements EnumTableColumn<MyIndustryJob> {
 			return from.getLocation().getConstellation();
 		}
 	},
-	REGION(String.class, GlazedLists.comparableComparator()) {
+	REGION(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsJobs.get().columnRegion();
@@ -145,7 +144,7 @@ public enum IndustryJobTableFormat implements EnumTableColumn<MyIndustryJob> {
 			return from.getLocation().getRegion();
 		}
 	},
-	START_DATE(Date.class, GlazedLists.comparableComparator()) {
+	START_DATE(Date.class) {
 		@Override
 		public String getColumnName() {
 			return TabsJobs.get().columnStartDate();
@@ -155,7 +154,7 @@ public enum IndustryJobTableFormat implements EnumTableColumn<MyIndustryJob> {
 			return from.getStartDate();
 		}
 	},
-	END_DATE(Date.class, GlazedLists.comparableComparator()) {
+	END_DATE(Date.class) {
 		@Override
 		public String getColumnName() {
 			return TabsJobs.get().columnEndDate();
@@ -165,7 +164,7 @@ public enum IndustryJobTableFormat implements EnumTableColumn<MyIndustryJob> {
 			return from.getEndDate();
 		}
 	},
-	COMPLETED_DATE(Date.class, GlazedLists.comparableComparator()) {
+	COMPLETED_DATE(Date.class) {
 		@Override
 		public String getColumnName() {
 			return TabsJobs.get().columnCompletedDate();
@@ -175,7 +174,7 @@ public enum IndustryJobTableFormat implements EnumTableColumn<MyIndustryJob> {
 			return from.getCompletedDate();
 		}
 	},
-	PAUSE_DATE(Date.class, GlazedLists.comparableComparator()) {
+	PAUSE_DATE(Date.class) {
 		@Override
 		public String getColumnName() {
 			return TabsJobs.get().columnPauseDate();
@@ -185,7 +184,7 @@ public enum IndustryJobTableFormat implements EnumTableColumn<MyIndustryJob> {
 			return from.getPauseDate();
 		}
 	},
-	RUNS(Integer.class, GlazedLists.comparableComparator()) {
+	RUNS(Integer.class) {
 		@Override
 		public String getColumnName() {
 			return TabsJobs.get().columnRuns();
@@ -195,7 +194,7 @@ public enum IndustryJobTableFormat implements EnumTableColumn<MyIndustryJob> {
 			return from.getRuns();
 		}
 	},
-	OUTPUT_COUNT(Integer.class, GlazedLists.comparableComparator()) {
+	OUTPUT_COUNT(Integer.class) {
 		@Override
 		public String getColumnName() {
 			return TabsJobs.get().columnOutputCount();
@@ -205,7 +204,7 @@ public enum IndustryJobTableFormat implements EnumTableColumn<MyIndustryJob> {
 			return from.getOutputCount();
 		}
 	},
-	OUTPUT_VALUE(Double.class, GlazedLists.comparableComparator()) {
+	OUTPUT_VALUE(Double.class) {
 		@Override
 		public String getColumnName() {
 			return TabsJobs.get().columnOutputValue();
@@ -215,7 +214,7 @@ public enum IndustryJobTableFormat implements EnumTableColumn<MyIndustryJob> {
 			return from.getOutputValue();
 		}
 	},
-	OUTPUT_VOLUME(Double.class, GlazedLists.comparableComparator()) {
+	OUTPUT_VOLUME(Double.class) {
 		@Override
 		public String getColumnName() {
 			return TabsJobs.get().columnOutputVolume();
@@ -229,7 +228,7 @@ public enum IndustryJobTableFormat implements EnumTableColumn<MyIndustryJob> {
 			return from.getOutputVolume();
 		}
 	},
-	OUTPUT_TYPE(String.class, GlazedLists.comparableComparator()) {
+	OUTPUT_TYPE(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsJobs.get().columnOutputType();
@@ -239,7 +238,7 @@ public enum IndustryJobTableFormat implements EnumTableColumn<MyIndustryJob> {
 			return from.getOutputType();
 		}
 	},
-	BPO(String.class, GlazedLists.comparableComparator()) {
+	BPO(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsJobs.get().columnBPO();
@@ -253,7 +252,7 @@ public enum IndustryJobTableFormat implements EnumTableColumn<MyIndustryJob> {
 			}
 		}
 	},
-	MATERIAL_EFFICIENCY(Integer.class, GlazedLists.comparableComparator()) {
+	MATERIAL_EFFICIENCY(Integer.class) {
 		@Override
 		public String getColumnName() {
 			return TabsJobs.get().columnMaterialEfficiency();
@@ -263,7 +262,7 @@ public enum IndustryJobTableFormat implements EnumTableColumn<MyIndustryJob> {
 			return from.getMaterialEfficiency();
 		}
 	},
-	TIME_EFFICIENCY(Integer.class, GlazedLists.comparableComparator()) {
+	TIME_EFFICIENCY(Integer.class) {
 		@Override
 		public String getColumnName() {
 			return TabsJobs.get().columnTimeEfficiency();
@@ -273,7 +272,7 @@ public enum IndustryJobTableFormat implements EnumTableColumn<MyIndustryJob> {
 			return from.getTimeEfficiency();
 		}
 	},
-	COST(Double.class, GlazedLists.comparableComparator()) {
+	COST(Double.class) {
 		@Override
 		public String getColumnName() {
 			return TabsJobs.get().columnCost();
@@ -283,7 +282,7 @@ public enum IndustryJobTableFormat implements EnumTableColumn<MyIndustryJob> {
 			return from.getCost();
 		}
 	},
-	JOB_ID(Integer.class, GlazedLists.comparableComparator()) {
+	JOB_ID(Integer.class) {
 		@Override
 		public String getColumnName() {
 			return TabsJobs.get().columnJobID();
@@ -300,9 +299,9 @@ public enum IndustryJobTableFormat implements EnumTableColumn<MyIndustryJob> {
 
 	private final Class<?> type;
 	private final Comparator<?> comparator;
-	private IndustryJobTableFormat(final Class<?> type, final Comparator<?> comparator) {
+	private IndustryJobTableFormat(final Class<?> type) {
 		this.type = type;
-		this.comparator = comparator;
+		this.comparator = EnumTableColumn.getComparator(type);
 	}
 	@Override
 	public Class<?> getType() {

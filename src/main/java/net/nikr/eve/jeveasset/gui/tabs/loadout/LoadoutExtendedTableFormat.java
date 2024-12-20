@@ -21,14 +21,13 @@
 
 package net.nikr.eve.jeveasset.gui.tabs.loadout;
 
-import ca.odell.glazedlists.GlazedLists;
 import java.util.Comparator;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.i18n.TabsLoadout;
 
 
 public enum LoadoutExtendedTableFormat implements EnumTableColumn<Loadout> {
-	LOCATION(String.class, GlazedLists.comparableComparator()) {
+	LOCATION(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsLoadout.get().columnLocation();
@@ -38,7 +37,7 @@ public enum LoadoutExtendedTableFormat implements EnumTableColumn<Loadout> {
 			return from.getLocation().getLocation();
 		}
 	},
-	SLOT(String.class, GlazedLists.comparableComparator()) {
+	SLOT(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsLoadout.get().columnSlot();
@@ -48,7 +47,7 @@ public enum LoadoutExtendedTableFormat implements EnumTableColumn<Loadout> {
 			return from.getFlag();
 		}
 	},
-	OWNER(String.class, GlazedLists.comparableComparator()) {
+	OWNER(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsLoadout.get().columnOwner();
@@ -58,7 +57,7 @@ public enum LoadoutExtendedTableFormat implements EnumTableColumn<Loadout> {
 			return from.getOwnerName();
 		}
 	},
-	SHIP(String.class, GlazedLists.comparableComparator()) {
+	SHIP(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsLoadout.get().columnShip();
@@ -71,9 +70,9 @@ public enum LoadoutExtendedTableFormat implements EnumTableColumn<Loadout> {
 
 	private final Class<?> type;
 	private final Comparator<?> comparator;
-	private LoadoutExtendedTableFormat(final Class<?> type, final Comparator<?> comparator) {
+	private LoadoutExtendedTableFormat(final Class<?> type) {
 		this.type = type;
-		this.comparator = comparator;
+		this.comparator = EnumTableColumn.getComparator(type);
 	}
 	@Override
 	public Class<?> getType() {

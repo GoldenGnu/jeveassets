@@ -176,7 +176,7 @@ public class AccountImportDialog extends JDialogCentered {
 
 		this.getDialog().addWindowFocusListener(listener);
 
-		jFileChooser = JCustomFileChooser.createFileChooser(getDialog(), "txt");
+		jFileChooser = new JCustomFileChooser("txt");
 		jFileChooser.setMultiSelectionEnabled(false);
 		jFileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 

@@ -21,7 +21,8 @@
 
 package net.nikr.eve.jeveasset.gui.shared.components;
 
-import java.awt.Window;
+import java.awt.Component;
+import java.awt.HeadlessException;
 import java.io.File;
 import java.util.Collections;
 import java.util.HashSet;
@@ -36,70 +37,87 @@ import net.nikr.eve.jeveasset.i18n.GuiShared;
 import net.nikr.eve.jeveasset.io.shared.FileUtil;
 
 
-public final class JCustomFileChooser extends JFileChooser {
+public final class JCustomFileChooser {
 
-	private final Window window;
+	public static final int APPROVE_OPTION = JFileChooser.APPROVE_OPTION;
+	private static OverwriteFileChooser FILE_CHOOSER = null;
+
 	private List<String> extensions;
+	private File file = null;
+	private boolean multiSelection = false;
+	private int fileSelectionMode = JFileChooser.FILES_ONLY;
+	private File currentDirectory = null;
 
-	public static JCustomFileChooser createFileChooser(final Window window, final String extension) {
-		return createFileChooser(window, Collections.singletonList(extension));
+	public JCustomFileChooser(String extension) {
+		this(Collections.singletonList(extension));
 	}
 
-	public static JCustomFileChooser createFileChooser(final Window window, final List<String> extensions) {
-		//XXX - Workaround for https://bugs.openjdk.java.net/browse/JDK-8179014
-		UIManager.put("FileChooser.useSystemExtensionHiding", false);
-		JCustomFileChooser jCustomFileChooser = new JCustomFileChooser(window, extensions);
-		jCustomFileChooser.setExtensions(extensions);
-		jCustomFileChooser.setAcceptAllFileFilterUsed(false);
-		return jCustomFileChooser;
+	public JCustomFileChooser(List<String> extensions) {
+		this.extensions = extensions;
+		if (FILE_CHOOSER == null) {
+			//XXX - Workaround for https://bugs.openjdk.java.net/browse/JDK-8179014
+			UIManager.put("FileChooser.useSystemExtensionHiding", false);
+			FILE_CHOOSER = new OverwriteFileChooser();
+		}
 	}
 
-	private JCustomFileChooser(final Window window, final List<String> extensions) {
-		this.window = window;
-	}
-
-	@Override
 	public void setSelectedFile(File file) {
-		if (getDialogType() != OPEN_DIALOG && file != null) {
+		if (FILE_CHOOSER.getDialogType() != JFileChooser.OPEN_DIALOG && file != null) {
 			String filename = file.getAbsolutePath();
 			if (filename.matches("(?i).*\\.\\w{0,4}$")) { //Already got a extension - remove it
 				int end = filename.lastIndexOf(".");
 				filename = filename.substring(0, end);
 			}
 			filename = filename + "." + extensions.get(0);
-			super.setSelectedFile(new File(filename));
-		} else {
-			super.setSelectedFile(file);
+			file = new File(filename);
 		}
+		this.file = file;
 	}
 
-	public final void setExtension(final String extension) {
-		setExtensions(Collections.singletonList(extension));
+	private void loadSettings() {
+		FILE_CHOOSER.setSelectedFile(file);
+		FILE_CHOOSER.resetChoosableFileFilters();
+		FILE_CHOOSER.addChoosableFileFilter(new CustomFileFilter(extensions));
+		FILE_CHOOSER.setMultiSelectionEnabled(multiSelection);
+		FILE_CHOOSER.setFileSelectionMode(fileSelectionMode);
+		FILE_CHOOSER.setCurrentDirectory(currentDirectory);
 	}
 
-	public final void setExtensions(final List<String> extensions) {
-		this.extensions = extensions;
-		this.resetChoosableFileFilters();
-		this.addChoosableFileFilter(new CustomFileFilter(extensions));
+	public File getSelectedFile() {
+		file = FILE_CHOOSER.getSelectedFile();
+		return file;
 	}
 
-	@Override
-	public void approveSelection() {
-		File selectedFile = this.getSelectedFile();
-		//Confirm Overwrite file
-		if (getDialogType() != OPEN_DIALOG && selectedFile != null && selectedFile.exists()) {
-			int nReturn = JOptionPane.showConfirmDialog(
-					window,
-					GuiShared.get().overwrite(),
-					GuiShared.get().overwriteFile(),
-					JOptionPane.YES_NO_OPTION,
-					JOptionPane.PLAIN_MESSAGE
-					);
-			if (nReturn == JOptionPane.NO_OPTION) {
-				return;
-			}
-		}
-		super.approveSelection();
+	public int showDialog(Component parent, String approveButtonText) throws HeadlessException {
+		loadSettings();
+		return FILE_CHOOSER.showDialog(parent, approveButtonText);
+	}
+
+	public int showSaveDialog(Component parent) throws HeadlessException {
+		loadSettings();
+		return FILE_CHOOSER.showSaveDialog(parent);
+	}
+
+	public int showOpenDialog(Component parent) throws HeadlessException {
+		loadSettings();
+		return FILE_CHOOSER.showOpenDialog(parent);
+	}
+
+	public void setExtension(String extension) {
+		extensions = Collections.singletonList(extension);
+	}
+
+	public void setMultiSelectionEnabled(boolean b) {
+		this.multiSelection = b;
+	}
+
+	public void setFileSelectionMode(int mode) {
+		this.fileSelectionMode = mode;
+	}
+
+	public void setCurrentDirectory(File dir) {
+		this.currentDirectory = dir;
+		
 	}
 
 	public static class CustomFileFilter extends FileFilter {
@@ -160,6 +178,52 @@ public final class JCustomFileChooser extends JFileChooser {
 				return false;
 			}
 			return true;
+		}
+	}
+
+	private static class OverwriteFileChooser extends JFileChooser {
+
+		private Component parent;
+
+		public OverwriteFileChooser() {
+			setAcceptAllFileFilterUsed(false);
+		}
+
+		@Override
+		public int showDialog(Component parent, String approveButtonText) throws HeadlessException {
+			this.parent = parent;
+			return super.showDialog(parent, approveButtonText);
+		}
+
+		@Override
+		public int showSaveDialog(Component parent) throws HeadlessException {
+			this.parent = parent;
+			return super.showSaveDialog(parent);
+		}
+
+		@Override
+		public int showOpenDialog(Component parent) throws HeadlessException {
+			this.parent = parent;
+			return super.showOpenDialog(parent);
+		}
+
+		@Override
+		public void approveSelection() {
+			File selectedFile = this.getSelectedFile();
+			//Confirm Overwrite file
+			if (getDialogType() != JFileChooser.OPEN_DIALOG && selectedFile != null && selectedFile.exists()) {
+				int nReturn = JOptionPane.showConfirmDialog(
+						parent,
+						GuiShared.get().overwrite(),
+						GuiShared.get().overwriteFile(),
+						JOptionPane.YES_NO_OPTION,
+						JOptionPane.PLAIN_MESSAGE
+				);
+				if (nReturn == JOptionPane.NO_OPTION) {
+					return;
+				}
+			}
+			super.approveSelection();
 		}
 	}
 }

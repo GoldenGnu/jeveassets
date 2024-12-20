@@ -21,7 +21,6 @@
 
 package net.nikr.eve.jeveasset.gui.tabs.assets;
 
-import ca.odell.glazedlists.GlazedLists;
 import java.util.Comparator;
 import java.util.Date;
 import net.nikr.eve.jeveasset.data.api.my.MyAsset;
@@ -37,7 +36,7 @@ import net.nikr.eve.jeveasset.i18n.TabsAssets;
 
 
 public enum AssetTableFormat implements EnumTableColumn<MyAsset> {
-	NAME(String.class, GlazedLists.comparableComparator()) {
+	NAME(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnName();
@@ -47,7 +46,7 @@ public enum AssetTableFormat implements EnumTableColumn<MyAsset> {
 			return from.getName();
 		}
 	},
-	NAME_TYPE(String.class, GlazedLists.comparableComparator()) {
+	NAME_TYPE(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnNameType();
@@ -61,7 +60,7 @@ public enum AssetTableFormat implements EnumTableColumn<MyAsset> {
 			return false;
 		}
 	},
-	NAME_CUSTOM(String.class, GlazedLists.comparableComparator()) {
+	NAME_CUSTOM(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnNameCustom();
@@ -75,7 +74,7 @@ public enum AssetTableFormat implements EnumTableColumn<MyAsset> {
 			return false;
 		}
 	},
-	TAGS(Tags.class, GlazedLists.comparableComparator()) {
+	TAGS(Tags.class) {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnTags();
@@ -85,7 +84,7 @@ public enum AssetTableFormat implements EnumTableColumn<MyAsset> {
 			return from.getTags();
 		}
 	},
-	GROUP(String.class, GlazedLists.comparableComparator()) {
+	GROUP(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnGroup();
@@ -95,7 +94,7 @@ public enum AssetTableFormat implements EnumTableColumn<MyAsset> {
 			return from.getItem().getGroup();
 		}
 	},
-	CATEGORY(String.class, GlazedLists.comparableComparator()) {
+	CATEGORY(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnCategory();
@@ -105,7 +104,7 @@ public enum AssetTableFormat implements EnumTableColumn<MyAsset> {
 			return from.getItem().getCategory();
 		}
 	},
-	SLOT(String.class, GlazedLists.comparableComparator()) {
+	SLOT(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnSlot();
@@ -115,7 +114,7 @@ public enum AssetTableFormat implements EnumTableColumn<MyAsset> {
 			return from.getItem().getSlot();
 		}
 	},
-	CHARGE_SIZE(String.class, GlazedLists.comparableComparator()) {
+	CHARGE_SIZE(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnChargeSize();
@@ -125,7 +124,7 @@ public enum AssetTableFormat implements EnumTableColumn<MyAsset> {
 			return from.getItem().getChargeSize();
 		}
 	},
-	OWNER(String.class, GlazedLists.comparableComparator()) {
+	OWNER(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnOwner();
@@ -135,7 +134,7 @@ public enum AssetTableFormat implements EnumTableColumn<MyAsset> {
 			return from.getOwnerName();
 		}
 	},
-	LOCATION(String.class, GlazedLists.comparableComparator()) {
+	LOCATION(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnLocation();
@@ -145,7 +144,7 @@ public enum AssetTableFormat implements EnumTableColumn<MyAsset> {
 			return from.getLocation().getLocation();
 		}
 	},
-	SECURITY(Security.class, GlazedLists.comparableComparator()) {
+	SECURITY(Security.class) {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnSecurity();
@@ -155,7 +154,7 @@ public enum AssetTableFormat implements EnumTableColumn<MyAsset> {
 			return from.getLocation().getSecurityObject();
 		}
 	},
-	SYSTEM(String.class, GlazedLists.comparableComparator()) {
+	SYSTEM(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnSystem();
@@ -165,7 +164,7 @@ public enum AssetTableFormat implements EnumTableColumn<MyAsset> {
 			return from.getLocation().getSystem();
 		}
 	},
-	CONSTELLATION(String.class, GlazedLists.comparableComparator()) {
+	CONSTELLATION(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnConstellation();
@@ -175,7 +174,7 @@ public enum AssetTableFormat implements EnumTableColumn<MyAsset> {
 			return from.getLocation().getConstellation();
 		}
 	},
-	REGION(String.class, GlazedLists.comparableComparator()) {
+	REGION(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnRegion();
@@ -185,7 +184,7 @@ public enum AssetTableFormat implements EnumTableColumn<MyAsset> {
 			return from.getLocation().getRegion();
 		}
 	},
-	FACTION_WARFARE_SYSTEM_OWNER(String.class, GlazedLists.comparableComparator()) {
+	FACTION_WARFARE_SYSTEM_OWNER(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnFactionWarfareSystemOwner();
@@ -199,7 +198,7 @@ public enum AssetTableFormat implements EnumTableColumn<MyAsset> {
 			return from.getLocation().getFactionWarfareSystemOwner();
 		}
 	},
-	CONTAINER(AssetContainer.class, GlazedLists.comparableComparator()) {
+	CONTAINER(AssetContainer.class) {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnContainer();
@@ -209,7 +208,7 @@ public enum AssetTableFormat implements EnumTableColumn<MyAsset> {
 			return from.getAssetContainer();
 		}
 	},
-	FLAG(String.class, GlazedLists.comparableComparator()) {
+	FLAG(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnFlag();
@@ -219,7 +218,7 @@ public enum AssetTableFormat implements EnumTableColumn<MyAsset> {
 			return from.getFlagName();
 		}
 	},
-	PRICE(Double.class, GlazedLists.comparableComparator()) {
+	PRICE(Double.class) {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnPrice();
@@ -233,7 +232,7 @@ public enum AssetTableFormat implements EnumTableColumn<MyAsset> {
 			return from.getDynamicPrice();
 		}
 	},
-	PRICE_SELL_MIN(Double.class, GlazedLists.comparableComparator()) {
+	PRICE_SELL_MIN(Double.class) {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnPriceSellMin();
@@ -247,7 +246,7 @@ public enum AssetTableFormat implements EnumTableColumn<MyAsset> {
 			return from.getPriceSellMin();
 		}
 	},
-	PRICE_BUY_MAX(Double.class, GlazedLists.comparableComparator()) {
+	PRICE_BUY_MAX(Double.class) {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnPriceBuyMax();
@@ -261,7 +260,7 @@ public enum AssetTableFormat implements EnumTableColumn<MyAsset> {
 			return from.getPriceBuyMax();
 		}
 	},
-	PRICE_REPROCESSED(Double.class, GlazedLists.comparableComparator()) {
+	PRICE_REPROCESSED(Double.class) {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnPriceReprocessed();
@@ -275,7 +274,7 @@ public enum AssetTableFormat implements EnumTableColumn<MyAsset> {
 			return from.getPriceReprocessed();
 		}
 	},
-	PRICE_MANUFACTURING(Double.class, GlazedLists.comparableComparator()) {
+	PRICE_MANUFACTURING(Double.class) {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnPriceManufacturing();
@@ -289,7 +288,7 @@ public enum AssetTableFormat implements EnumTableColumn<MyAsset> {
 			return from.getItem().getPriceManufacturing();
 		}
 	},
-	TRANSACTION_PRICE_LATEST(Double.class, GlazedLists.comparableComparator()) {
+	TRANSACTION_PRICE_LATEST(Double.class) {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnTransactionPriceLatest();
@@ -303,7 +302,7 @@ public enum AssetTableFormat implements EnumTableColumn<MyAsset> {
 			return from.getMarketPriceData().getLatest();
 		}
 	},
-	TRANSACTION_PRICE_AVERAGE(Double.class, GlazedLists.comparableComparator()) {
+	TRANSACTION_PRICE_AVERAGE(Double.class) {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnTransactionPriceAverage();
@@ -317,7 +316,7 @@ public enum AssetTableFormat implements EnumTableColumn<MyAsset> {
 			return from.getMarketPriceData().getAverage();
 		}
 	},
-	TRANSACTION_PRICE_MAXIMUM(Double.class, GlazedLists.comparableComparator()) {
+	TRANSACTION_PRICE_MAXIMUM(Double.class) {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnTransactionPriceMaximum();
@@ -331,7 +330,7 @@ public enum AssetTableFormat implements EnumTableColumn<MyAsset> {
 			return from.getMarketPriceData().getMaximum();
 		}
 	},
-	TRANSACTION_PRICE_MINIMUM(Double.class, GlazedLists.comparableComparator()) {
+	TRANSACTION_PRICE_MINIMUM(Double.class) {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnTransactionPriceMinimum();
@@ -345,7 +344,7 @@ public enum AssetTableFormat implements EnumTableColumn<MyAsset> {
 			return from.getMarketPriceData().getMinimum();
 		}
 	},
-	PRICE_BASE(Double.class, GlazedLists.comparableComparator()) {
+	PRICE_BASE(Double.class) {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnPriceBase();
@@ -359,7 +358,7 @@ public enum AssetTableFormat implements EnumTableColumn<MyAsset> {
 			return from.getItem().getPriceBase();
 		}
 	},
-	VALUE_REPROCESSED(Double.class, GlazedLists.comparableComparator()) {
+	VALUE_REPROCESSED(Double.class) {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnValueReprocessed();
@@ -373,7 +372,7 @@ public enum AssetTableFormat implements EnumTableColumn<MyAsset> {
 			return from.getValueReprocessed();
 		}
 	},
-	VALUE(Double.class, GlazedLists.comparableComparator()) {
+	VALUE(Double.class) {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnValue();
@@ -387,7 +386,7 @@ public enum AssetTableFormat implements EnumTableColumn<MyAsset> {
 			return from.getValue();
 		}
 	},
-	PRICE_REPROCESSED_DIFFERENCE(Double.class, GlazedLists.comparableComparator()) {
+	PRICE_REPROCESSED_DIFFERENCE(Double.class) {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnPriceReprocessedDifference();
@@ -401,7 +400,7 @@ public enum AssetTableFormat implements EnumTableColumn<MyAsset> {
 			return from.getPriceReprocessedDifference();
 		}
 	},
-	PRICE_REPROCESSED_PERCENT(Percent.class, GlazedLists.comparableComparator()) {
+	PRICE_REPROCESSED_PERCENT(Percent.class) {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnPriceReprocessedPercent();
@@ -415,7 +414,7 @@ public enum AssetTableFormat implements EnumTableColumn<MyAsset> {
 			return Percent.create(from.getPriceReprocessedPercent());
 		}
 	},
-	COUNT(Long.class, GlazedLists.comparableComparator()) {
+	COUNT(Long.class) {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnCount();
@@ -425,7 +424,7 @@ public enum AssetTableFormat implements EnumTableColumn<MyAsset> {
 			return from.getCount();
 		}
 	},
-	COUNT_TYPE(Long.class, GlazedLists.comparableComparator()) {
+	COUNT_TYPE(Long.class) {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnTypeCount();
@@ -439,7 +438,7 @@ public enum AssetTableFormat implements EnumTableColumn<MyAsset> {
 			return from.getTypeCount();
 		}
 	},
-	META(Integer.class, GlazedLists.comparableComparator()) {
+	META(Integer.class) {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnMeta();
@@ -449,7 +448,7 @@ public enum AssetTableFormat implements EnumTableColumn<MyAsset> {
 			return from.getItem().getMeta();
 		}
 	},
-	TECH(String.class, GlazedLists.comparableComparator()) {
+	TECH(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnTech();
@@ -459,7 +458,7 @@ public enum AssetTableFormat implements EnumTableColumn<MyAsset> {
 			return from.getItem().getTech();
 		}
 	},
-	VOLUME(Float.class, GlazedLists.comparableComparator()) {
+	VOLUME(Float.class) {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnVolume();
@@ -469,7 +468,7 @@ public enum AssetTableFormat implements EnumTableColumn<MyAsset> {
 			return from.getVolume();
 		}
 	},
-	VOLUME_TOTAL(Float.class, GlazedLists.comparableComparator()) {
+	VOLUME_TOTAL(Float.class) {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnVolumeTotal();
@@ -483,7 +482,7 @@ public enum AssetTableFormat implements EnumTableColumn<MyAsset> {
 			return from.getVolumeTotal();
 		}
 	},
-	VOLUME_PACKAGED(Float.class, GlazedLists.comparableComparator()) {
+	VOLUME_PACKAGED(Float.class) {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnVolumePackaged();
@@ -497,7 +496,7 @@ public enum AssetTableFormat implements EnumTableColumn<MyAsset> {
 			return from.getItem().getVolumePackaged();
 		}
 	},
-	VALUE_PER_VOLUME(Double.class, GlazedLists.comparableComparator()) {
+	VALUE_PER_VOLUME(Double.class) {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnValuePerVolume();
@@ -507,7 +506,7 @@ public enum AssetTableFormat implements EnumTableColumn<MyAsset> {
 			return from.getValuePerVolume();
 		}
 	},
-	SINGLETON(String.class, GlazedLists.comparableComparator()) {
+	SINGLETON(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnSingleton();
@@ -517,7 +516,7 @@ public enum AssetTableFormat implements EnumTableColumn<MyAsset> {
 			return from.getSingleton();
 		}
 	},
-	ADDED(Date.class, GlazedLists.comparableComparator()) {
+	ADDED(Date.class) {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnAdded();
@@ -535,7 +534,7 @@ public enum AssetTableFormat implements EnumTableColumn<MyAsset> {
 			return false;
 		}
 	},
-	MATERIAL_EFFICIENCY(Integer.class, GlazedLists.comparableComparator()) {
+	MATERIAL_EFFICIENCY(Integer.class) {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnMaterialEfficiency();
@@ -549,7 +548,7 @@ public enum AssetTableFormat implements EnumTableColumn<MyAsset> {
 			return from.getMaterialEfficiency();
 		}
 	},
-	TIME_EFFICIENCY(Integer.class, GlazedLists.comparableComparator()) {
+	TIME_EFFICIENCY(Integer.class) {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnTimeEfficiency();
@@ -563,7 +562,7 @@ public enum AssetTableFormat implements EnumTableColumn<MyAsset> {
 			return from.getTimeEfficiency();
 		}
 	},
-	RUNS(Runs.class, GlazedLists.comparableComparator()) {
+	RUNS(Runs.class) {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnRuns();
@@ -577,7 +576,7 @@ public enum AssetTableFormat implements EnumTableColumn<MyAsset> {
 			return new Runs(from.getRuns());
 		}
 	},
-	CITADEL(YesNo.class, GlazedLists.comparableComparator()) {
+	CITADEL(YesNo.class) {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnStructure();
@@ -595,7 +594,7 @@ public enum AssetTableFormat implements EnumTableColumn<MyAsset> {
 			return false;
 		}
 	},
-	ITEM_ID(LongInt.class, GlazedLists.comparableComparator()) {
+	ITEM_ID(LongInt.class) {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnItemID();
@@ -609,7 +608,7 @@ public enum AssetTableFormat implements EnumTableColumn<MyAsset> {
 			return new LongInt(from.getItemID());
 		}
 	},
-	LOCATION_ID(LongInt.class, GlazedLists.comparableComparator()) {
+	LOCATION_ID(LongInt.class) {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnLocationID();
@@ -623,7 +622,7 @@ public enum AssetTableFormat implements EnumTableColumn<MyAsset> {
 			return new LongInt(from.getLocationID());
 		}
 	},
-	TYPE_ID(Integer.class, GlazedLists.comparableComparator()) {
+	TYPE_ID(Integer.class) {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnTypeID();
@@ -641,9 +640,9 @@ public enum AssetTableFormat implements EnumTableColumn<MyAsset> {
 	private final Class<?> type;
 	private final Comparator<?> comparator;
 
-	private AssetTableFormat(final Class<?> type, final Comparator<?> comparator) {
+	private AssetTableFormat(final Class<?> type) {
 		this.type = type;
-		this.comparator = comparator;
+		this.comparator = EnumTableColumn.getComparator(type);
 	}
 	@Override
 	public Class<?> getType() {

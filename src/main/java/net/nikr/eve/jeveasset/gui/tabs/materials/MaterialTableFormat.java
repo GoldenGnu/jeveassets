@@ -21,7 +21,6 @@
 
 package net.nikr.eve.jeveasset.gui.tabs.materials;
 
-import ca.odell.glazedlists.GlazedLists;
 import java.util.Comparator;
 import net.nikr.eve.jeveasset.gui.shared.Formatter;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
@@ -30,7 +29,7 @@ import net.nikr.eve.jeveasset.i18n.TabsMaterials;
 
 
 public enum MaterialTableFormat implements EnumTableColumn<Material> {
-	NAME(String.class, GlazedLists.comparableComparator()) {
+	NAME(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsMaterials.get().columnName();
@@ -40,7 +39,7 @@ public enum MaterialTableFormat implements EnumTableColumn<Material> {
 			return from.getName();
 		}
 	},
-	COUNT(Long.class, GlazedLists.comparableComparator()) {
+	COUNT(Long.class) {
 		@Override
 		public String getColumnName() {
 			return TabsMaterials.get().columnCount();
@@ -50,7 +49,7 @@ public enum MaterialTableFormat implements EnumTableColumn<Material> {
 			return from.getCount();
 		}
 	},
-	PRICE(ISK.class, GlazedLists.comparableComparator()) {
+	PRICE(ISK.class) {
 		@Override
 		public String getColumnName() {
 			return TabsMaterials.get().columnPrice();
@@ -64,7 +63,7 @@ public enum MaterialTableFormat implements EnumTableColumn<Material> {
 			}
 		}
 	},
-	VALUE(ISK.class, GlazedLists.comparableComparator()) {
+	VALUE(ISK.class) {
 		@Override
 		public String getColumnName() {
 			return TabsMaterials.get().columnValue();
@@ -74,7 +73,7 @@ public enum MaterialTableFormat implements EnumTableColumn<Material> {
 			return new ISK(Formatter.iskFormat(from.getValue()), from.getValue());
 		}
 	},
-	TYPE_ID(Integer.class, GlazedLists.comparableComparator()) {
+	TYPE_ID(Integer.class) {
 		@Override
 		public String getColumnName() {
 			return TabsMaterials.get().columnTypeID();
@@ -92,9 +91,9 @@ public enum MaterialTableFormat implements EnumTableColumn<Material> {
 
 	private final Class<?> type;
 	private final Comparator<?> comparator;
-	private MaterialTableFormat(final Class<?> type, final Comparator<?> comparator) {
+	private MaterialTableFormat(final Class<?> type) {
 		this.type = type;
-		this.comparator = comparator;
+		this.comparator = EnumTableColumn.getComparator(type);
 	}
 	@Override
 	public Class<?> getType() {

@@ -21,7 +21,6 @@
 
 package net.nikr.eve.jeveasset.gui.tabs.journal;
 
-import ca.odell.glazedlists.GlazedLists;
 import java.util.Comparator;
 import java.util.Date;
 import net.nikr.eve.jeveasset.data.api.my.MyJournal;
@@ -32,7 +31,7 @@ import net.nikr.eve.jeveasset.i18n.TabsJournal;
 
 
 public enum JournalTableFormat implements EnumTableColumn<MyJournal> {
-	DATE(Date.class, GlazedLists.comparableComparator()) {
+	DATE(Date.class) {
 		@Override
 		public String getColumnName() {
 			return TabsJournal.get().columnDate();
@@ -42,7 +41,7 @@ public enum JournalTableFormat implements EnumTableColumn<MyJournal> {
 			return from.getDate();
 		}
 	},
-	TAGS(Tags.class, GlazedLists.comparableComparator()) {
+	TAGS(Tags.class) {
 		@Override
 		public String getColumnName() {
 			return TabsJournal.get().columnTags();
@@ -52,7 +51,7 @@ public enum JournalTableFormat implements EnumTableColumn<MyJournal> {
 			return from.getTags();
 		}
 	},
-	ADDED(Date.class, GlazedLists.comparableComparator()) {
+	ADDED(Date.class) {
 		@Override
 		public String getColumnName() {
 			return TabsJournal.get().columnAdded();
@@ -66,7 +65,7 @@ public enum JournalTableFormat implements EnumTableColumn<MyJournal> {
 			return from.getAdded();
 		}
 	},
-	REF_TYPE(String.class, GlazedLists.comparableComparator()) {
+	REF_TYPE(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsJournal.get().columnRefType();
@@ -76,7 +75,7 @@ public enum JournalTableFormat implements EnumTableColumn<MyJournal> {
 			return from.getRefTypeFormatted();
 		}
 	},
-	AMOUNT(Double.class, GlazedLists.comparableComparator()) {
+	AMOUNT(Double.class) {
 		@Override
 		public String getColumnName() {
 			return TabsJournal.get().columnAmount();
@@ -86,7 +85,7 @@ public enum JournalTableFormat implements EnumTableColumn<MyJournal> {
 			return from.getAmount();
 		}
 	},
-	BALANCE(Double.class, GlazedLists.comparableComparator()) {
+	BALANCE(Double.class) {
 		@Override
 		public String getColumnName() {
 			return TabsJournal.get().columnBalance();
@@ -96,7 +95,7 @@ public enum JournalTableFormat implements EnumTableColumn<MyJournal> {
 			return from.getBalance();
 		}
 	},
-	OWNER(String.class, GlazedLists.comparableComparator()) {
+	OWNER(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsJournal.get().columnOwner();
@@ -106,7 +105,7 @@ public enum JournalTableFormat implements EnumTableColumn<MyJournal> {
 			return from.getOwnerName();
 		}
 	},
-	OWNER_NAME_1(String.class, GlazedLists.comparableComparator()) {
+	OWNER_NAME_1(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsJournal.get().columnOwnerName1();
@@ -116,7 +115,7 @@ public enum JournalTableFormat implements EnumTableColumn<MyJournal> {
 			return from.getFirstPartyName();
 		}
 	},
-	OWNER_NAME_2(String.class, GlazedLists.comparableComparator()) {
+	OWNER_NAME_2(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsJournal.get().columnOwnerName2();
@@ -126,7 +125,7 @@ public enum JournalTableFormat implements EnumTableColumn<MyJournal> {
 			return from.getSecondPartyName();
 		}
 	},
-	ACCOUNT_KEY(Integer.class, GlazedLists.comparableComparator()) {
+	ACCOUNT_KEY(Integer.class) {
 		@Override
 		public String getColumnName() {
 			return TabsJournal.get().columnAccountKey();
@@ -136,7 +135,7 @@ public enum JournalTableFormat implements EnumTableColumn<MyJournal> {
 			return from.getAccountKeyFormatted();
 		}
 	},
-	TAX_AMOUNT(Double.class, GlazedLists.comparableComparator()) {
+	TAX_AMOUNT(Double.class) {
 		@Override
 		public String getColumnName() {
 			return TabsJournal.get().columnTaxAmount();
@@ -146,7 +145,7 @@ public enum JournalTableFormat implements EnumTableColumn<MyJournal> {
 			return from.getTaxAmount();
 		}
 	},
-	REASON(String.class, GlazedLists.comparableComparator()) {
+	REASON(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsJournal.get().columnReason();
@@ -156,7 +155,7 @@ public enum JournalTableFormat implements EnumTableColumn<MyJournal> {
 			return from.getReason();
 		}
 	},
-	CONTEXT_NAME(String.class, GlazedLists.comparableComparator()) {
+	CONTEXT_NAME(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsJournal.get().columnContextName();
@@ -166,7 +165,7 @@ public enum JournalTableFormat implements EnumTableColumn<MyJournal> {
 			return from.getContext();
 		}
 	},
-	CONTEXT_TYPE(String.class, GlazedLists.comparableComparator()) {
+	CONTEXT_TYPE(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsJournal.get().columnContextType();
@@ -180,7 +179,7 @@ public enum JournalTableFormat implements EnumTableColumn<MyJournal> {
 			return false;
 		}
 	},
-	CONTEXT_ID(LongInt.class, GlazedLists.comparableComparator()) {
+	CONTEXT_ID(LongInt.class) {
 		@Override
 		public String getColumnName() {
 			return TabsJournal.get().columnContextID();
@@ -196,9 +195,9 @@ public enum JournalTableFormat implements EnumTableColumn<MyJournal> {
 	};
 	private final Class<?> type;
 	private final Comparator<?> comparator;
-	private JournalTableFormat(final Class<?> type, final Comparator<?> comparator) {
+	private JournalTableFormat(final Class<?> type) {
 		this.type = type;
-		this.comparator = comparator;
+		this.comparator = EnumTableColumn.getComparator(type);
 	}
 	@Override
 	public Class<?> getType() {
