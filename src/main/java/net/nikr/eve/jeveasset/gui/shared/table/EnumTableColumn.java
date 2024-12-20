@@ -21,7 +21,12 @@
 
 package net.nikr.eve.jeveasset.gui.shared.table;
 
+import ca.odell.glazedlists.GlazedLists;
+import java.awt.Color;
+import java.awt.Component;
 import java.util.Comparator;
+import net.nikr.eve.jeveasset.gui.shared.table.containers.ISK;
+import net.nikr.eve.jeveasset.gui.shared.table.containers.ModulePriceValue;
 
 /**
  *
@@ -45,6 +50,22 @@ public interface EnumTableColumn<Q> {
 	}
 	public default String getColumnToolTip() {
 		return null;
+	}
+
+	public static Comparator<?> getComparator(final Class<?> type) {
+		if (type.equals(String.class)) {
+			return GlazedLists.caseInsensitiveComparator();
+		} else if (Comparable.class.isAssignableFrom(type))  {
+			return GlazedLists.comparableComparator();
+		} else if (Component.class.isAssignableFrom(type)
+				|| ModulePriceValue.class.isAssignableFrom(type)
+				|| ISK.class.isAssignableFrom(type)
+				|| Color.class.isAssignableFrom(type)
+				)  {
+			return null; //Not sortable
+		} else {
+			throw new RuntimeException(type.getName() + " is not comparable");
+		}
 	}
 
 }

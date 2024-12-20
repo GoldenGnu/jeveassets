@@ -21,7 +21,6 @@
 
 package net.nikr.eve.jeveasset.gui.tabs.mining;
 
-import ca.odell.glazedlists.GlazedLists;
 import java.util.Comparator;
 import net.nikr.eve.jeveasset.data.api.my.MyMining;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
@@ -30,7 +29,7 @@ import net.nikr.eve.jeveasset.i18n.TabsMining;
 
 
 public enum MiningTableFormat implements EnumTableColumn<MyMining> {
-	DATE(DateOnly.class, GlazedLists.comparableComparator()) {
+	DATE(DateOnly.class) {
 		@Override
 		public String getColumnName() {
 			return TabsMining.get().columnDate();
@@ -40,7 +39,7 @@ public enum MiningTableFormat implements EnumTableColumn<MyMining> {
 			return from.getDateOnly();
 		}
 	},
-	NAME(String.class, GlazedLists.comparableComparator()) {
+	NAME(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsMining.get().columnName();
@@ -50,7 +49,7 @@ public enum MiningTableFormat implements EnumTableColumn<MyMining> {
 			return from.getItem().getTypeName();
 		}
 	},
-	GROUP(String.class, GlazedLists.comparableComparator()) {
+	GROUP(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsMining.get().columnGroup();
@@ -60,7 +59,7 @@ public enum MiningTableFormat implements EnumTableColumn<MyMining> {
 			return from.getItem().getGroup();
 		}
 	},
-	CATEGORY(String.class, GlazedLists.comparableComparator()) {
+	CATEGORY(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsMining.get().columnCategory();
@@ -70,7 +69,7 @@ public enum MiningTableFormat implements EnumTableColumn<MyMining> {
 			return from.getItem().getCategory();
 		}
 	},
-	OWNER(String.class, GlazedLists.comparableComparator()) {
+	OWNER(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsMining.get().columnOwner();
@@ -80,7 +79,7 @@ public enum MiningTableFormat implements EnumTableColumn<MyMining> {
 			return from.getCharacterName();
 		}
 	},
-	LOCATION(String.class, GlazedLists.comparableComparator()) {
+	LOCATION(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsMining.get().columnLocation();
@@ -90,7 +89,7 @@ public enum MiningTableFormat implements EnumTableColumn<MyMining> {
 			return from.getLocation().getLocation();
 		}
 	},
-	COUNT(Long.class, GlazedLists.comparableComparator()) {
+	COUNT(Long.class) {
 		@Override
 		public String getColumnName() {
 			return TabsMining.get().columnCount();
@@ -100,7 +99,7 @@ public enum MiningTableFormat implements EnumTableColumn<MyMining> {
 			return from.getCount();
 		}
 	},
-	PRICE_ORE(Double.class, GlazedLists.comparableComparator()) {
+	PRICE_ORE(Double.class) {
 		@Override
 		public String getColumnName() {
 			return TabsMining.get().columnPriceOre();
@@ -110,7 +109,7 @@ public enum MiningTableFormat implements EnumTableColumn<MyMining> {
 			return from.getDynamicPrice();
 		}
 	},
-	PRICE_REPROCESSED(Double.class, GlazedLists.comparableComparator()) {
+	PRICE_REPROCESSED(Double.class) {
 		@Override
 		public String getColumnName() {
 			return TabsMining.get().columnPriceReprocessed();
@@ -124,7 +123,7 @@ public enum MiningTableFormat implements EnumTableColumn<MyMining> {
 			return from.getPriceReprocessed();
 		}
 	},
-	PRICE_REPROCESSED_MAX(Double.class, GlazedLists.comparableComparator()) {
+	PRICE_REPROCESSED_MAX(Double.class) {
 		@Override
 		public String getColumnName() {
 			return TabsMining.get().columnPriceReprocessedMax();
@@ -138,7 +137,7 @@ public enum MiningTableFormat implements EnumTableColumn<MyMining> {
 			return from.getPriceReprocessedMax();
 		}
 	},
-	VALUE_ORE(Double.class, GlazedLists.comparableComparator()) {
+	VALUE_ORE(Double.class) {
 		@Override
 		public String getColumnName() {
 			return TabsMining.get().columnValueOre();
@@ -148,7 +147,7 @@ public enum MiningTableFormat implements EnumTableColumn<MyMining> {
 			return from.getValue();
 		}
 	},
-	VALUE_REPROCESSED(Double.class, GlazedLists.comparableComparator()) {
+	VALUE_REPROCESSED(Double.class) {
 		@Override
 		public String getColumnName() {
 			return TabsMining.get().columnValueReprocessed();
@@ -163,7 +162,7 @@ public enum MiningTableFormat implements EnumTableColumn<MyMining> {
 		}
 	},
 
-	VALUE_REPROCESSED_MAX(Double.class, GlazedLists.comparableComparator()) {
+	VALUE_REPROCESSED_MAX(Double.class) {
 		@Override
 		public String getColumnName() {
 			return TabsMining.get().columnValueReprocessedMax();
@@ -177,7 +176,7 @@ public enum MiningTableFormat implements EnumTableColumn<MyMining> {
 			return from.getValueReprocessedMax();
 		}
 	},
-	VOLUME(Double.class, GlazedLists.comparableComparator()) {
+	VOLUME(Double.class) {
 		@Override
 		public String getColumnName() {
 			return TabsMining.get().columnVolume();
@@ -187,7 +186,7 @@ public enum MiningTableFormat implements EnumTableColumn<MyMining> {
 			return from.getVolumeTotal();
 		}
 	},
-	VALUE_PER_VOLUME_ORE(Double.class, GlazedLists.comparableComparator()) {
+	VALUE_PER_VOLUME_ORE(Double.class) {
 		@Override
 		public String getColumnName() {
 			return TabsMining.get().columnValuePerVolumeOre();
@@ -197,7 +196,7 @@ public enum MiningTableFormat implements EnumTableColumn<MyMining> {
 			return from.getValuePerVolumeOre();
 		}
 	},
-	VALUE_PER_VOLUME_REPROCESSED(Double.class, GlazedLists.comparableComparator()) {
+	VALUE_PER_VOLUME_REPROCESSED(Double.class) {
 		@Override
 		public String getColumnName() {
 			return TabsMining.get().columnValuePerVolumeReprocessed();
@@ -211,7 +210,7 @@ public enum MiningTableFormat implements EnumTableColumn<MyMining> {
 			return from.getValuePerVolumeReprocessed();
 		}
 	},
-	VALUE_PER_VOLUME_REPROCESSED_MAX(Double.class, GlazedLists.comparableComparator()) {
+	VALUE_PER_VOLUME_REPROCESSED_MAX(Double.class) {
 		@Override
 		public String getColumnName() {
 			return TabsMining.get().columnValuePerVolumeReprocessedMax();
@@ -225,7 +224,7 @@ public enum MiningTableFormat implements EnumTableColumn<MyMining> {
 			return from.getValuePerVolumeReprocessedMax();
 		}
 	},
-	CORPORATION(String.class, GlazedLists.comparableComparator()) {
+	CORPORATION(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsMining.get().columnCorporation();
@@ -235,7 +234,7 @@ public enum MiningTableFormat implements EnumTableColumn<MyMining> {
 			return from.getCorporationName();
 		}
 	},
-	FOR_CORPORATION(String.class, GlazedLists.comparableComparator()) {
+	FOR_CORPORATION(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsMining.get().columnForCorporation();
@@ -249,9 +248,9 @@ public enum MiningTableFormat implements EnumTableColumn<MyMining> {
 	private final Class<?> type;
 	private final Comparator<?> comparator;
 
-	private MiningTableFormat(final Class<?> type, final Comparator<?> comparator) {
+	private MiningTableFormat(final Class<?> type) {
 		this.type = type;
-		this.comparator = comparator;
+		this.comparator = EnumTableColumn.getComparator(type);
 	}
 	@Override
 	public Class<?> getType() {

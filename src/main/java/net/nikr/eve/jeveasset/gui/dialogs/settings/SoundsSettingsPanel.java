@@ -101,7 +101,7 @@ public class SoundsSettingsPanel extends JSettingsPanel {
 
 		ListenerClass listener = new ListenerClass();
 
-		jFileChooser = JCustomFileChooser.createFileChooser(settingsDialog.getDialog(), "mp3");
+		jFileChooser = new JCustomFileChooser("mp3");
 		jFileChooser.setMultiSelectionEnabled(false);
 		jFileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 

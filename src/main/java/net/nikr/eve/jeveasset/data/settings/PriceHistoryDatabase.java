@@ -460,25 +460,19 @@ public class PriceHistoryDatabase {
 				priceData.setBuyAvg(rs.getDouble("buyavg"));
 				priceData.setBuyMedian(rs.getDouble("buymedian"));
 				priceData.setBuyMin(rs.getDouble("buymin"));
-				try {
-					PriceChange priceChange = data.get(typeID);
-					double price = PriceMode.getDefaultPrice(priceData, priceMode);
-					if (priceChange == null) {
-						Item item = ApiIdConverter.getItem(typeID);
-						priceChange = new PriceChange(typeID, item, typeIDs.getOrDefault(typeID, 0L));
-						data.put(typeID, priceChange);
-					}
-					if (date.equals(fromString)) {
-						priceChange.setPriceFrom(price);
-					} else if (date.equals(toString)) {
-						priceChange.setPriceTo(price);
-					} else {
-						LOG.warn("Date is don't equals to or from???");
-					}
-
-						
-				} catch (ParseException ex) {
-					//Ignore
+				PriceChange priceChange = data.get(typeID);
+				double price = PriceMode.getDefaultPrice(priceData, priceMode);
+				if (priceChange == null) {
+					Item item = ApiIdConverter.getItem(typeID);
+					priceChange = new PriceChange(typeID, item, typeIDs.getOrDefault(typeID, 0L));
+					data.put(typeID, priceChange);
+				}
+				if (date.equals(fromString)) {
+					priceChange.setPriceFrom(price);
+				} else if (date.equals(toString)) {
+					priceChange.setPriceTo(price);
+				} else {
+					LOG.warn("Date is don't equals to or from???");
 				}
 			}
 		} catch (SQLException ex) {

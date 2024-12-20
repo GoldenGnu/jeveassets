@@ -21,14 +21,13 @@
 
 package net.nikr.eve.jeveasset.gui.tabs.materials;
 
-import ca.odell.glazedlists.GlazedLists;
 import java.util.Comparator;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.i18n.TabsMaterials;
 
 
 public enum MaterialExtendedTableFormat implements EnumTableColumn<Material> {
-	LOCATION(String.class, GlazedLists.comparableComparator()) {
+	LOCATION(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsMaterials.get().columnLocation();
@@ -38,7 +37,7 @@ public enum MaterialExtendedTableFormat implements EnumTableColumn<Material> {
 			return from.getHeader();
 		}
 	},
-	GROUP(String.class, GlazedLists.comparableComparator()) {
+	GROUP(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsMaterials.get().columnGroup();
@@ -51,9 +50,9 @@ public enum MaterialExtendedTableFormat implements EnumTableColumn<Material> {
 
 	private final Class<?> type;
 	private final Comparator<?> comparator;
-	private MaterialExtendedTableFormat(final Class<?> type, final Comparator<?> comparator) {
+	private MaterialExtendedTableFormat(final Class<?> type) {
 		this.type = type;
-		this.comparator = comparator;
+		this.comparator = EnumTableColumn.getComparator(type);
 	}
 	@Override
 	public Class<?> getType() {

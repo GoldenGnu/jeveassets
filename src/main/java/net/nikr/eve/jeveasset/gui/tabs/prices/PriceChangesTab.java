@@ -415,7 +415,7 @@ public class PriceChangesTab extends JMainTabSecondary {
 		private double priceTo;
 		
 
-		public PriceChange(int typeID, Item item, Long count) throws ParseException {
+		public PriceChange(int typeID, Item item, Long count) {
 			this.typeID = typeID;
 			this.item = item;
 			this.count = count;

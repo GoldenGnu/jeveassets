@@ -21,7 +21,6 @@
 
 package net.nikr.eve.jeveasset.gui.tabs.mining;
 
-import ca.odell.glazedlists.GlazedLists;
 import java.util.Comparator;
 import java.util.Date;
 import net.nikr.eve.jeveasset.data.api.my.MyExtraction;
@@ -30,7 +29,7 @@ import net.nikr.eve.jeveasset.i18n.TabsMining;
 
 
 public enum ExtractionsTableFormat implements EnumTableColumn<MyExtraction> {
-	LOCATION(String.class, GlazedLists.comparableComparator()) {
+	LOCATION(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsMining.get().columnLocation();
@@ -40,7 +39,7 @@ public enum ExtractionsTableFormat implements EnumTableColumn<MyExtraction> {
 			return from.getLocation().getLocation();
 		}
 	},
-	MOON(String.class, GlazedLists.comparableComparator()) {
+	MOON(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsMining.get().columnMoon();
@@ -50,7 +49,7 @@ public enum ExtractionsTableFormat implements EnumTableColumn<MyExtraction> {
 			return from.getMoon().getLocation();
 		}
 	},
-	START(Date.class, GlazedLists.comparableComparator()) {
+	START(Date.class) {
 		@Override
 		public String getColumnName() {
 			return TabsMining.get().columnExtractionStartTime();
@@ -60,7 +59,7 @@ public enum ExtractionsTableFormat implements EnumTableColumn<MyExtraction> {
 			return from.getExtractionStartTime();
 		}
 	},
-	ARRIVAL(Date.class, GlazedLists.comparableComparator()) {
+	ARRIVAL(Date.class) {
 		@Override
 		public String getColumnName() {
 			return TabsMining.get().columnChunkArrivalTime();
@@ -70,7 +69,7 @@ public enum ExtractionsTableFormat implements EnumTableColumn<MyExtraction> {
 			return from.getChunkArrivalTime();
 		}
 	},
-	DECAY(Date.class, GlazedLists.comparableComparator()) {
+	DECAY(Date.class) {
 		@Override
 		public String getColumnName() {
 			return TabsMining.get().columnNaturalDecayTime();
@@ -84,9 +83,9 @@ public enum ExtractionsTableFormat implements EnumTableColumn<MyExtraction> {
 	private final Class<?> type;
 	private final Comparator<?> comparator;
 
-	private ExtractionsTableFormat(final Class<?> type, final Comparator<?> comparator) {
+	private ExtractionsTableFormat(final Class<?> type) {
 		this.type = type;
-		this.comparator = comparator;
+		this.comparator = EnumTableColumn.getComparator(type);
 	}
 	@Override
 	public Class<?> getType() {
