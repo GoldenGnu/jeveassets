@@ -21,7 +21,6 @@
 
 package net.nikr.eve.jeveasset.gui.tabs.loadout;
 
-import ca.odell.glazedlists.GlazedLists;
 import java.util.Comparator;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.ModulePriceValue;
@@ -32,7 +31,7 @@ import net.nikr.eve.jeveasset.i18n.TabsLoadout;
  * @author Candle
  */
 public enum LoadoutTableFormat implements EnumTableColumn<Loadout> {
-	NAME(String.class, GlazedLists.comparableComparator()) {
+	NAME(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsLoadout.get().columnName();
@@ -42,7 +41,7 @@ public enum LoadoutTableFormat implements EnumTableColumn<Loadout> {
 			return from.getName();
 		}
 	},
-	VALUE(ModulePriceValue.class, GlazedLists.comparableComparator()) {
+	VALUE(ModulePriceValue.class) {
 		@Override
 		public String getColumnName() {
 			return TabsLoadout.get().columnValue();
@@ -55,9 +54,9 @@ public enum LoadoutTableFormat implements EnumTableColumn<Loadout> {
 
 	private final Class<?> type;
 	private final Comparator<?> comparator;
-	private LoadoutTableFormat(final Class<?> type, final Comparator<?> comparator) {
+	private LoadoutTableFormat(final Class<?> type) {
 		this.type = type;
-		this.comparator = comparator;
+		this.comparator = EnumTableColumn.getComparator(type);
 	}
 	@Override
 	public Class<?> getType() {

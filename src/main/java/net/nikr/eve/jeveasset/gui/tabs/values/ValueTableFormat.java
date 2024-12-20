@@ -21,14 +21,13 @@
 
 package net.nikr.eve.jeveasset.gui.tabs.values;
 
-import ca.odell.glazedlists.GlazedLists;
 import java.util.Comparator;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.i18n.TabsValues;
 
 
 public enum ValueTableFormat implements EnumTableColumn<Value> {
-	NAME(String.class, GlazedLists.comparableComparator()) {
+	NAME(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsValues.get().columnOwner();
@@ -38,7 +37,7 @@ public enum ValueTableFormat implements EnumTableColumn<Value> {
 			return from.getName();
 		}
 	},
-	TOTAL(Double.class, GlazedLists.comparableComparator()) {
+	TOTAL(Double.class) {
 		@Override
 		public String getColumnName() {
 			return TabsValues.get().columnTotal();
@@ -48,7 +47,7 @@ public enum ValueTableFormat implements EnumTableColumn<Value> {
 			return from.getTotal();
 		}
 	},
-	BALANCE(Double.class, GlazedLists.comparableComparator()) {
+	BALANCE(Double.class) {
 		@Override
 		public String getColumnName() {
 			return TabsValues.get().columnWalletBalance();
@@ -58,7 +57,7 @@ public enum ValueTableFormat implements EnumTableColumn<Value> {
 			return from.getBalanceTotal();
 		}
 	},
-	DIVISION_1(Double.class, GlazedLists.comparableComparator()) {
+	DIVISION_1(Double.class) {
 		@Override
 		public String getColumnName() {
 			return TabsValues.get().columnWalletDivision1();
@@ -68,7 +67,7 @@ public enum ValueTableFormat implements EnumTableColumn<Value> {
 			return from.getBalanceFilter().get("1");
 		}
 	},
-	DIVISION_2(Double.class, GlazedLists.comparableComparator()) {
+	DIVISION_2(Double.class) {
 		@Override
 		public String getColumnName() {
 			return TabsValues.get().columnWalletDivision2();
@@ -78,7 +77,7 @@ public enum ValueTableFormat implements EnumTableColumn<Value> {
 			return from.getBalanceFilter().get("2");
 		}
 	},
-	DIVISION_3(Double.class, GlazedLists.comparableComparator()) {
+	DIVISION_3(Double.class) {
 		@Override
 		public String getColumnName() {
 			return TabsValues.get().columnWalletDivision3();
@@ -88,7 +87,7 @@ public enum ValueTableFormat implements EnumTableColumn<Value> {
 			return from.getBalanceFilter().get("3");
 		}
 	},
-	DIVISION_4(Double.class, GlazedLists.comparableComparator()) {
+	DIVISION_4(Double.class) {
 		@Override
 		public String getColumnName() {
 			return TabsValues.get().columnWalletDivision4();
@@ -98,7 +97,7 @@ public enum ValueTableFormat implements EnumTableColumn<Value> {
 			return from.getBalanceFilter().get("4");
 		}
 	},
-	DIVISION_5(Double.class, GlazedLists.comparableComparator()) {
+	DIVISION_5(Double.class) {
 		@Override
 		public String getColumnName() {
 			return TabsValues.get().columnWalletDivision5();
@@ -108,7 +107,7 @@ public enum ValueTableFormat implements EnumTableColumn<Value> {
 			return from.getBalanceFilter().get("5");
 		}
 	},
-	DIVISION_6(Double.class, GlazedLists.comparableComparator()) {
+	DIVISION_6(Double.class) {
 		@Override
 		public String getColumnName() {
 			return TabsValues.get().columnWalletDivision6();
@@ -118,7 +117,7 @@ public enum ValueTableFormat implements EnumTableColumn<Value> {
 			return from.getBalanceFilter().get("6");
 		}
 	},
-	DIVISION_7(Double.class, GlazedLists.comparableComparator()) {
+	DIVISION_7(Double.class) {
 		@Override
 		public String getColumnName() {
 			return TabsValues.get().columnWalletDivision7();
@@ -128,7 +127,7 @@ public enum ValueTableFormat implements EnumTableColumn<Value> {
 			return from.getBalanceFilter().get("7");
 		}
 	},
-	ASSETS(Double.class, GlazedLists.comparableComparator()) {
+	ASSETS(Double.class) {
 		@Override
 		public String getColumnName() {
 			return TabsValues.get().columnAssets();
@@ -138,7 +137,7 @@ public enum ValueTableFormat implements EnumTableColumn<Value> {
 			return from.getAssetsTotal();
 		}
 	},
-	SELL_ORDERS(Double.class, GlazedLists.comparableComparator()) {
+	SELL_ORDERS(Double.class) {
 		@Override
 		public String getColumnName() {
 			return TabsValues.get().columnSellOrders();
@@ -148,7 +147,7 @@ public enum ValueTableFormat implements EnumTableColumn<Value> {
 			return from.getSellOrders();
 		}
 	},
-	ESCROWS(Double.class, GlazedLists.comparableComparator()) {
+	ESCROWS(Double.class) {
 		@Override
 		public String getColumnName() {
 			return TabsValues.get().columnEscrows();
@@ -158,7 +157,7 @@ public enum ValueTableFormat implements EnumTableColumn<Value> {
 			return from.getEscrows();
 		}
 	},
-	ESCROWS_TO_COVER(Double.class, GlazedLists.comparableComparator()) {
+	ESCROWS_TO_COVER(Double.class) {
 		@Override
 		public String getColumnName() {
 			return TabsValues.get().columnEscrowsToCover();
@@ -168,7 +167,7 @@ public enum ValueTableFormat implements EnumTableColumn<Value> {
 			return from.getEscrowsToCover();
 		}
 	},
-	MANUFACTURING(Double.class, GlazedLists.comparableComparator()) {
+	MANUFACTURING(Double.class) {
 		@Override
 		public String getColumnName() {
 			return TabsValues.get().columnManufacturing();
@@ -178,7 +177,7 @@ public enum ValueTableFormat implements EnumTableColumn<Value> {
 			return from.getManufacturing();
 		}
 	},
-	CONTRACT_COLLATERAL(Double.class, GlazedLists.comparableComparator()) {
+	CONTRACT_COLLATERAL(Double.class) {
 		@Override
 		public String getColumnName() {
 			return TabsValues.get().columnContractCollateral();
@@ -188,7 +187,7 @@ public enum ValueTableFormat implements EnumTableColumn<Value> {
 			return from.getContractCollateral();
 		}
 	},
-	CONTRACT_VALUE(Double.class, GlazedLists.comparableComparator()) {
+	CONTRACT_VALUE(Double.class) {
 		@Override
 		public String getColumnName() {
 			return TabsValues.get().columnContractValue();
@@ -198,7 +197,7 @@ public enum ValueTableFormat implements EnumTableColumn<Value> {
 			return from.getContractValue();
 		}
 	},
-	SKILL_POINT_VALUE(Double.class, GlazedLists.comparableComparator()) {
+	SKILL_POINT_VALUE(Double.class) {
 		@Override
 		public String getColumnName() {
 			return TabsValues.get().columnSkillPointValue();
@@ -208,7 +207,7 @@ public enum ValueTableFormat implements EnumTableColumn<Value> {
 			return from.getSkillPointValue();
 		}
 	},
-	BEST_ASSET_NAME(String.class, GlazedLists.comparableComparator()) {
+	BEST_ASSET_NAME(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsValues.get().columnBestAsset();
@@ -218,7 +217,7 @@ public enum ValueTableFormat implements EnumTableColumn<Value> {
 			return from.getBestAssetName();
 		}
 	},
-	BEST_ASSET_VALUE(Double.class, GlazedLists.comparableComparator()) {
+	BEST_ASSET_VALUE(Double.class) {
 		@Override
 		public String getColumnName() {
 			return TabsValues.get().columnBestAsset();
@@ -228,7 +227,7 @@ public enum ValueTableFormat implements EnumTableColumn<Value> {
 			return from.getBestAssetValue();
 		}
 	},
-	BEST_SHIP_FITTED_NAME(String.class, GlazedLists.comparableComparator()) {
+	BEST_SHIP_FITTED_NAME(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsValues.get().columnBestShipFitted();
@@ -238,7 +237,7 @@ public enum ValueTableFormat implements EnumTableColumn<Value> {
 			return from.getBestShipFittedName();
 		}
 	},
-	BEST_SHIP_FITTED_VALUE(Double.class, GlazedLists.comparableComparator()) {
+	BEST_SHIP_FITTED_VALUE(Double.class) {
 		@Override
 		public String getColumnName() {
 			return TabsValues.get().columnBestShipFitted();
@@ -248,7 +247,7 @@ public enum ValueTableFormat implements EnumTableColumn<Value> {
 			return from.getBestShipFittedValue();
 		}
 	},
-	BEST_SHIP_NAME(String.class, GlazedLists.comparableComparator()) {
+	BEST_SHIP_NAME(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsValues.get().columnBestShip();
@@ -258,7 +257,7 @@ public enum ValueTableFormat implements EnumTableColumn<Value> {
 			return from.getBestShipName();
 		}
 	},
-	BEST_SHIP_VALUE(Double.class, GlazedLists.comparableComparator()) {
+	BEST_SHIP_VALUE(Double.class) {
 		@Override
 		public String getColumnName() {
 			return TabsValues.get().columnBestShip();
@@ -268,7 +267,7 @@ public enum ValueTableFormat implements EnumTableColumn<Value> {
 			return from.getBestShipValue();
 		}
 	},
-	BEST_MODULE_NAME(String.class, GlazedLists.comparableComparator()) {
+	BEST_MODULE_NAME(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsValues.get().columnBestModule();
@@ -278,7 +277,7 @@ public enum ValueTableFormat implements EnumTableColumn<Value> {
 			return from.getBestModuleName();
 		}
 	},
-	BEST_MODULE_VALUE(Double.class, GlazedLists.comparableComparator()) {
+	BEST_MODULE_VALUE(Double.class) {
 		@Override
 		public String getColumnName() {
 			return TabsValues.get().columnBestModule();
@@ -288,7 +287,7 @@ public enum ValueTableFormat implements EnumTableColumn<Value> {
 			return from.getBestModuleValue();
 		}
 	},
-	CURRENT_SHIP(String.class, GlazedLists.comparableComparator()) {
+	CURRENT_SHIP(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsValues.get().columnCurrentShip();
@@ -298,7 +297,7 @@ public enum ValueTableFormat implements EnumTableColumn<Value> {
 			return from.getActiveShip();
 		}
 	},
-	CURRENT_STATION(String.class, GlazedLists.comparableComparator()) {
+	CURRENT_STATION(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsValues.get().columnCurrentStation();
@@ -308,7 +307,7 @@ public enum ValueTableFormat implements EnumTableColumn<Value> {
 			return from.getCurrentStation();
 		}
 	},
-	CURRENT_SYSTEM(String.class, GlazedLists.comparableComparator()) {
+	CURRENT_SYSTEM(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsValues.get().columnCurrentSystem();
@@ -318,7 +317,7 @@ public enum ValueTableFormat implements EnumTableColumn<Value> {
 			return from.getCurrentSystem();
 		}
 	},
-	CURRENT_CONSTELLATION(String.class, GlazedLists.comparableComparator()) {
+	CURRENT_CONSTELLATION(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsValues.get().columnCurrentConstellation();
@@ -328,7 +327,7 @@ public enum ValueTableFormat implements EnumTableColumn<Value> {
 			return from.getCurrentConstellation();
 		}
 	},
-	CURRENT_REGION(String.class, GlazedLists.comparableComparator()) {
+	CURRENT_REGION(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsValues.get().columnCurrentRegion();
@@ -342,9 +341,9 @@ public enum ValueTableFormat implements EnumTableColumn<Value> {
 	private final Class<?> type;
 	private final Comparator<?> comparator;
 
-	private ValueTableFormat(final Class<?> type, final Comparator<?> comparator) {
+	private ValueTableFormat(final Class<?> type) {
 		this.type = type;
-		this.comparator = comparator;
+		this.comparator = EnumTableColumn.getComparator(type);
 	}
 	@Override
 	public Class<?> getType() {

@@ -21,7 +21,6 @@
 
 package net.nikr.eve.jeveasset.gui.tabs.stockpile;
 
-import ca.odell.glazedlists.GlazedLists;
 import java.util.Comparator;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
@@ -29,7 +28,7 @@ import net.nikr.eve.jeveasset.i18n.TabsStockpile;
 
 
 public enum StockpileExtendedTableFormat implements EnumTableColumn<StockpileItem> {
-	STOCKPILE_NAME(String.class, GlazedLists.comparableComparator()) {
+	STOCKPILE_NAME(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsStockpile.get().getFilterStockpileName();
@@ -39,7 +38,7 @@ public enum StockpileExtendedTableFormat implements EnumTableColumn<StockpileIte
 			return from.getStockpile().getName();
 		}
 	},
-	STOCKPILE_OWNER(String.class, GlazedLists.comparableComparator()) {
+	STOCKPILE_OWNER(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsStockpile.get().getFilterStockpileOwner();
@@ -49,7 +48,7 @@ public enum StockpileExtendedTableFormat implements EnumTableColumn<StockpileIte
 			return from.getStockpile().getOwnerName();
 		}
 	},
-	STOCKPILE_LOCATION(String.class, GlazedLists.comparableComparator()) {
+	STOCKPILE_LOCATION(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsStockpile.get().getFilterStockpileLocation();
@@ -59,7 +58,7 @@ public enum StockpileExtendedTableFormat implements EnumTableColumn<StockpileIte
 			return from.getStockpile().getLocationName();
 		}
 	},
-	STOCKPILE_FLAG(String.class, GlazedLists.comparableComparator()) {
+	STOCKPILE_FLAG(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsStockpile.get().getFilterStockpileFlag();
@@ -69,7 +68,7 @@ public enum StockpileExtendedTableFormat implements EnumTableColumn<StockpileIte
 			return from.getStockpile().getFlagName();
 		}
 	},
-	STOCKPILE_CONTAINER(String.class, GlazedLists.comparableComparator()) {
+	STOCKPILE_CONTAINER(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsStockpile.get().getFilterStockpileContainer();
@@ -82,9 +81,9 @@ public enum StockpileExtendedTableFormat implements EnumTableColumn<StockpileIte
 
 	private final Class<?> type;
 	private final Comparator<?> comparator;
-	private StockpileExtendedTableFormat(final Class<?> type, final Comparator<?> comparator) {
+	private StockpileExtendedTableFormat(final Class<?> type) {
 		this.type = type;
-		this.comparator = comparator;
+		this.comparator = EnumTableColumn.getComparator(type);
 	}
 	@Override
 	public Class<?> getType() {

@@ -20,7 +20,6 @@
  */
 package net.nikr.eve.jeveasset.gui.tabs.stockpile;
 
-import ca.odell.glazedlists.GlazedLists;
 import java.awt.Component;
 import java.util.Comparator;
 import net.nikr.eve.jeveasset.data.settings.tag.Tags;
@@ -33,7 +32,7 @@ import net.nikr.eve.jeveasset.i18n.TabsStockpile;
 
 
 public enum StockpileTableFormat implements EnumTableColumn<StockpileItem> {
-	NAME(String.class, GlazedLists.comparableComparator()) {
+	NAME(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsStockpile.get().columnName();
@@ -43,7 +42,7 @@ public enum StockpileTableFormat implements EnumTableColumn<StockpileItem> {
 			return from.getName();
 		}
 	},
-	TAGS(Tags.class, GlazedLists.comparableComparator()) {
+	TAGS(Tags.class) {
 		@Override
 		public String getColumnName() {
 			return TabsStockpile.get().columnTags();
@@ -53,7 +52,7 @@ public enum StockpileTableFormat implements EnumTableColumn<StockpileItem> {
 			return from.getTags();
 		}
 	},
-	GROUP(String.class, GlazedLists.comparableComparator()) {
+	GROUP(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsStockpile.get().columnGroup();
@@ -63,7 +62,7 @@ public enum StockpileTableFormat implements EnumTableColumn<StockpileItem> {
 			return from.getItem().getGroup();
 		}
 	},
-	CATEGORY(String.class, GlazedLists.comparableComparator()) {
+	CATEGORY(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsStockpile.get().columnCategory();
@@ -73,7 +72,7 @@ public enum StockpileTableFormat implements EnumTableColumn<StockpileItem> {
 			return from.getItem().getCategory();
 		}
 	},
-	SLOT(String.class, GlazedLists.comparableComparator()) {
+	SLOT(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsStockpile.get().columnSlot();
@@ -83,7 +82,7 @@ public enum StockpileTableFormat implements EnumTableColumn<StockpileItem> {
 			return from.getItem().getSlot();
 		}
 	},
-	CHARGE_SIZE(String.class, GlazedLists.comparableComparator()) {
+	CHARGE_SIZE(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsStockpile.get().columnChargeSize();
@@ -93,7 +92,7 @@ public enum StockpileTableFormat implements EnumTableColumn<StockpileItem> {
 			return from.getItem().getChargeSize();
 		}
 	},
-	META(Integer.class, GlazedLists.comparableComparator()) {
+	META(Integer.class) {
 		@Override
 		public String getColumnName() {
 			return TabsStockpile.get().columnMeta();
@@ -103,7 +102,7 @@ public enum StockpileTableFormat implements EnumTableColumn<StockpileItem> {
 			return from.getMeta();
 		}
 	},
-	COUNT_MINIMUM(Double.class, GlazedLists.comparableComparator()) {
+	COUNT_MINIMUM(Double.class) {
 		@Override
 		public String getColumnName() {
 			return TabsStockpile.get().columnCountMinimum();
@@ -131,7 +130,7 @@ public enum StockpileTableFormat implements EnumTableColumn<StockpileItem> {
 			return false;
 		}
 	},
-	COUNT_MINIMUM_MULTIPLIED(Long.class, GlazedLists.comparableComparator()) {
+	COUNT_MINIMUM_MULTIPLIED(Long.class) {
 		@Override
 		public String getColumnName() {
 			return TabsStockpile.get().columnCountMinimumMultiplied();
@@ -141,7 +140,7 @@ public enum StockpileTableFormat implements EnumTableColumn<StockpileItem> {
 			return from.getCountMinimumMultiplied();
 		}
 	},
-	COUNT_NOW(Long.class, GlazedLists.comparableComparator()) {
+	COUNT_NOW(Long.class) {
 		@Override
 		public String getColumnName() {
 			return TabsStockpile.get().columnCountNow();
@@ -151,7 +150,7 @@ public enum StockpileTableFormat implements EnumTableColumn<StockpileItem> {
 			return from.getCountNow();
 		}
 	},
-	COUNT_NEEDED(Long.class, GlazedLists.comparableComparator()) {
+	COUNT_NEEDED(Long.class) {
 		@Override
 		public String getColumnName() {
 			return TabsStockpile.get().columnCountNeeded();
@@ -161,7 +160,7 @@ public enum StockpileTableFormat implements EnumTableColumn<StockpileItem> {
 			return from.getCountNeeded();
 		}
 	},
-	PERCENT_NEEDED(Percent.class, GlazedLists.comparableComparator()) {
+	PERCENT_NEEDED(Percent.class) {
 		@Override
 		public String getColumnName() {
 			return TabsStockpile.get().columnPercentNeeded();
@@ -171,7 +170,7 @@ public enum StockpileTableFormat implements EnumTableColumn<StockpileItem> {
 			return Percent.create(from.getPercentNeeded());
 		}
 	},
-	COUNT_NOW_INVENTORY(Long.class, GlazedLists.comparableComparator()) {
+	COUNT_NOW_INVENTORY(Long.class) {
 		@Override
 		public String getColumnName() {
 			return TabsStockpile.get().columnCountNowInventory();
@@ -181,7 +180,7 @@ public enum StockpileTableFormat implements EnumTableColumn<StockpileItem> {
 			return from.getInventoryCountNow();
 		}
 	},
-	COUNT_NOW_BUY_ORDERS(Long.class, GlazedLists.comparableComparator()) {
+	COUNT_NOW_BUY_ORDERS(Long.class) {
 		@Override
 		public String getColumnName() {
 			return TabsStockpile.get().columnCountNowBuyOrders();
@@ -191,7 +190,7 @@ public enum StockpileTableFormat implements EnumTableColumn<StockpileItem> {
 			return from.getBuyOrdersCountNow();
 		}
 	},
-	COUNT_NOW_SELL_ORDERS(Long.class, GlazedLists.comparableComparator()) {
+	COUNT_NOW_SELL_ORDERS(Long.class) {
 		@Override
 		public String getColumnName() {
 			return TabsStockpile.get().columnCountNowSellOrders();
@@ -201,7 +200,7 @@ public enum StockpileTableFormat implements EnumTableColumn<StockpileItem> {
 			return from.getSellOrdersCountNow();
 		}
 	},
-	COUNT_NOW_BUY_TRANSACTIONS(Long.class, GlazedLists.comparableComparator()) {
+	COUNT_NOW_BUY_TRANSACTIONS(Long.class) {
 		@Override
 		public String getColumnName() {
 			return TabsStockpile.get().columnCountNowBuyTransactions();
@@ -211,7 +210,7 @@ public enum StockpileTableFormat implements EnumTableColumn<StockpileItem> {
 			return from.getBuyTransactionsCountNow();
 		}
 	},
-	COUNT_NOW_SELL_TRANSACTIONS(Long.class, GlazedLists.comparableComparator()) {
+	COUNT_NOW_SELL_TRANSACTIONS(Long.class) {
 		@Override
 		public String getColumnName() {
 			return TabsStockpile.get().columnCountNowSellTransactions();
@@ -221,7 +220,7 @@ public enum StockpileTableFormat implements EnumTableColumn<StockpileItem> {
 			return from.getSellTransactionsCountNow();
 		}
 	},
-	COUNT_NOW_JOBS(Long.class, GlazedLists.comparableComparator()) {
+	COUNT_NOW_JOBS(Long.class) {
 		@Override
 		public String getColumnName() {
 			return TabsStockpile.get().columnCountNowJobs();
@@ -231,7 +230,7 @@ public enum StockpileTableFormat implements EnumTableColumn<StockpileItem> {
 			return from.getJobsCountNow();
 		}
 	},
-	COUNT_NOW_BUYING_CONTRACTS(Long.class, GlazedLists.comparableComparator()) {
+	COUNT_NOW_BUYING_CONTRACTS(Long.class) {
 		@Override
 		public String getColumnName() {
 			return TabsStockpile.get().columnCountNowBuyingContracts();
@@ -241,7 +240,7 @@ public enum StockpileTableFormat implements EnumTableColumn<StockpileItem> {
 			return from.getBuyingContractsCountNow();
 		}
 	},
-	COUNT_NOW_BOUGHT_CONTRACTS(Long.class, GlazedLists.comparableComparator()) {
+	COUNT_NOW_BOUGHT_CONTRACTS(Long.class) {
 		@Override
 		public String getColumnName() {
 			return TabsStockpile.get().columnCountNowBoughtContracts();
@@ -251,7 +250,7 @@ public enum StockpileTableFormat implements EnumTableColumn<StockpileItem> {
 			return from.getBoughtContractsCountNow();
 		}
 	},
-	COUNT_NOW_SELLING_CONTRACTS(Long.class, GlazedLists.comparableComparator()) {
+	COUNT_NOW_SELLING_CONTRACTS(Long.class) {
 		@Override
 		public String getColumnName() {
 			return TabsStockpile.get().columnCountNowSellingContracts();
@@ -261,7 +260,7 @@ public enum StockpileTableFormat implements EnumTableColumn<StockpileItem> {
 			return from.getSellingContractsCountNow();
 		}
 	},
-	COUNT_NOW_SOLD_CONTRACTS(Long.class, GlazedLists.comparableComparator()) {
+	COUNT_NOW_SOLD_CONTRACTS(Long.class) {
 		@Override
 		public String getColumnName() {
 			return TabsStockpile.get().columnCountNowSoldContracts();
@@ -271,7 +270,7 @@ public enum StockpileTableFormat implements EnumTableColumn<StockpileItem> {
 			return from.getSoldContractsCountNow();
 		}
 	},
-	PRICE(Double.class, GlazedLists.comparableComparator()) {
+	PRICE(Double.class) {
 		@Override
 		public String getColumnName() {
 			return TabsStockpile.get().columnPrice();
@@ -285,7 +284,7 @@ public enum StockpileTableFormat implements EnumTableColumn<StockpileItem> {
 			return from.getDynamicPrice();
 		}
 	},
-	PRICE_SELL_MIN(Double.class, GlazedLists.comparableComparator()) {
+	PRICE_SELL_MIN(Double.class) {
 		@Override
 		public String getColumnName() {
 			return TabsStockpile.get().columnPriceSellMin();
@@ -299,7 +298,7 @@ public enum StockpileTableFormat implements EnumTableColumn<StockpileItem> {
 			return from.getPriceSellMin();
 		}
 	},
-	PRICE_BUY_MAX(Double.class, GlazedLists.comparableComparator()) {
+	PRICE_BUY_MAX(Double.class) {
 		@Override
 		public String getColumnName() {
 			return TabsStockpile.get().columnPriceBuyMax();
@@ -313,7 +312,7 @@ public enum StockpileTableFormat implements EnumTableColumn<StockpileItem> {
 			return from.getPriceBuyMax();
 		}
 	},
-	PRICE_TRANSACTION_AVERAGE(Double.class, GlazedLists.comparableComparator()) {
+	PRICE_TRANSACTION_AVERAGE(Double.class) {
 		@Override
 		public String getColumnName() {
 			return TabsStockpile.get().columnPriceTransactionAverage();
@@ -328,7 +327,7 @@ public enum StockpileTableFormat implements EnumTableColumn<StockpileItem> {
 			return from.getTransactionAveragePrice();
 		}
 	},
-	EVE_UI(Component.class, GlazedLists.comparableComparator()) {
+	EVE_UI(Component.class) {
 		@Override
 		public String getColumnName() {
 			return TabsStockpile.get().columnEveUi();
@@ -349,7 +348,7 @@ public enum StockpileTableFormat implements EnumTableColumn<StockpileItem> {
 			return from.getButton();
 		}
 	},
-	VALUE_NOW(Double.class, GlazedLists.comparableComparator()) {
+	VALUE_NOW(Double.class) {
 		@Override
 		public String getColumnName() {
 			return TabsStockpile.get().columnValueNow();
@@ -359,7 +358,7 @@ public enum StockpileTableFormat implements EnumTableColumn<StockpileItem> {
 			return from.getValueNow();
 		}
 	},
-	VALUE_NEEDED(Double.class, GlazedLists.comparableComparator()) {
+	VALUE_NEEDED(Double.class) {
 		@Override
 		public String getColumnName() {
 			return TabsStockpile.get().columnValueNeeded();
@@ -369,7 +368,7 @@ public enum StockpileTableFormat implements EnumTableColumn<StockpileItem> {
 			return from.getValueNeeded();
 		}
 	},
-	VOLUME_NOW(Double.class, GlazedLists.comparableComparator()) {
+	VOLUME_NOW(Double.class) {
 		@Override
 		public String getColumnName() {
 			return TabsStockpile.get().columnVolumeNow();
@@ -379,7 +378,7 @@ public enum StockpileTableFormat implements EnumTableColumn<StockpileItem> {
 			return from.getVolumeNow();
 		}
 	},
-	VOLUME_NEEDED(Double.class, GlazedLists.comparableComparator()) {
+	VOLUME_NEEDED(Double.class) {
 		@Override
 		public String getColumnName() {
 			return TabsStockpile.get().columnVolumeNeeded();
@@ -393,9 +392,9 @@ public enum StockpileTableFormat implements EnumTableColumn<StockpileItem> {
 	private final Class<?> type;
 	private final Comparator<?> comparator;
 
-	private StockpileTableFormat(final Class<?> type, final Comparator<?> comparator) {
+	private StockpileTableFormat(final Class<?> type) {
 		this.type = type;
-		this.comparator = comparator;
+		this.comparator = EnumTableColumn.getComparator(type);
 	}
 	@Override
 	public Class<?> getType() {
