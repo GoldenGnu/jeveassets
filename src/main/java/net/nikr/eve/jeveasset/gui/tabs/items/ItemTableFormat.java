@@ -21,7 +21,6 @@
 
 package net.nikr.eve.jeveasset.gui.tabs.items;
 
-import ca.odell.glazedlists.GlazedLists;
 import java.util.Comparator;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
@@ -29,7 +28,7 @@ import net.nikr.eve.jeveasset.i18n.TabsItems;
 
 
 public enum ItemTableFormat implements EnumTableColumn<Item> {
-	NAME(String.class, GlazedLists.comparableComparator()) {
+	NAME(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsItems.get().columnName();
@@ -39,7 +38,7 @@ public enum ItemTableFormat implements EnumTableColumn<Item> {
 			return from.getTypeName();
 		}
 	},
-	GROUP(String.class, GlazedLists.comparableComparator()) {
+	GROUP(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsItems.get().columnGroup();
@@ -49,7 +48,7 @@ public enum ItemTableFormat implements EnumTableColumn<Item> {
 			return from.getGroup();
 		}
 	},
-	CATEGORY(String.class, GlazedLists.comparableComparator()) {
+	CATEGORY(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsItems.get().columnCategory();
@@ -59,7 +58,7 @@ public enum ItemTableFormat implements EnumTableColumn<Item> {
 			return from.getCategory();
 		}
 	},
-	SLOT(String.class, GlazedLists.comparableComparator()) {
+	SLOT(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsItems.get().columnSlot();
@@ -69,7 +68,7 @@ public enum ItemTableFormat implements EnumTableColumn<Item> {
 			return from.getSlot();
 		}
 	},
-	CHARGE_SIZE(String.class, GlazedLists.comparableComparator()) {
+	CHARGE_SIZE(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsItems.get().columnChargeSize();
@@ -79,7 +78,7 @@ public enum ItemTableFormat implements EnumTableColumn<Item> {
 			return from.getChargeSize();
 		}
 	},
-	PRICE_BASE(Double.class, GlazedLists.comparableComparator()) {
+	PRICE_BASE(Double.class) {
 		@Override
 		public String getColumnName() {
 			return TabsItems.get().columnPriceBase();
@@ -89,7 +88,7 @@ public enum ItemTableFormat implements EnumTableColumn<Item> {
 			return from.getPriceBase();
 		}
 	},
-	PRICE_REPROCESSED(Double.class, GlazedLists.comparableComparator()) {
+	PRICE_REPROCESSED(Double.class) {
 		@Override
 		public String getColumnName() {
 			return TabsItems.get().columnPriceReprocessed();
@@ -99,7 +98,7 @@ public enum ItemTableFormat implements EnumTableColumn<Item> {
 			return from.getPriceReprocessed();
 		}
 	},
-	PRICE_MANUFACTURING(Double.class, GlazedLists.comparableComparator()) {
+	PRICE_MANUFACTURING(Double.class) {
 		@Override
 		public String getColumnName() {
 			return TabsItems.get().columnPriceManufacturing();
@@ -113,7 +112,7 @@ public enum ItemTableFormat implements EnumTableColumn<Item> {
 			return from.getItem().getPriceManufacturing();
 		}
 	},
-	META(Integer.class, GlazedLists.comparableComparator()) {
+	META(Integer.class) {
 		@Override
 		public String getColumnName() {
 			return TabsItems.get().columnMeta();
@@ -123,7 +122,7 @@ public enum ItemTableFormat implements EnumTableColumn<Item> {
 			return from.getMeta();
 		}
 	},
-	TECH(String.class, GlazedLists.comparableComparator()) {
+	TECH(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsItems.get().columnTech();
@@ -133,7 +132,7 @@ public enum ItemTableFormat implements EnumTableColumn<Item> {
 			return from.getTech();
 		}
 	},
-	VOLUME(Float.class, GlazedLists.comparableComparator()) {
+	VOLUME(Float.class) {
 		@Override
 		public String getColumnName() {
 			return TabsItems.get().columnVolume();
@@ -143,7 +142,7 @@ public enum ItemTableFormat implements EnumTableColumn<Item> {
 			return from.getVolume();
 		}
 	},
-	VOLUME_PACKAGED(Float.class, GlazedLists.comparableComparator()) {
+	VOLUME_PACKAGED(Float.class) {
 		@Override
 		public String getColumnName() {
 			return TabsItems.get().columnVolumePackaged();
@@ -153,7 +152,7 @@ public enum ItemTableFormat implements EnumTableColumn<Item> {
 			return from.getVolumePackaged();
 		}
 	},
-	TYPE_ID(Integer.class, GlazedLists.comparableComparator()) {
+	TYPE_ID(Integer.class) {
 		@Override
 		public String getColumnName() {
 			return TabsItems.get().columnTypeID();
@@ -165,9 +164,9 @@ public enum ItemTableFormat implements EnumTableColumn<Item> {
 	};
 	private final Class<?> type;
 	private final Comparator<?> comparator;
-	private ItemTableFormat(final Class<?> type, final Comparator<?> comparator) {
+	private ItemTableFormat(final Class<?> type) {
 		this.type = type;
-		this.comparator = comparator;
+		this.comparator = EnumTableColumn.getComparator(type);
 	}
 	@Override
 	public Class<?> getType() {

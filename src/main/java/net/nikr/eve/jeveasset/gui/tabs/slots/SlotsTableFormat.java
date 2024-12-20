@@ -21,14 +21,13 @@
 
 package net.nikr.eve.jeveasset.gui.tabs.slots;
 
-import ca.odell.glazedlists.GlazedLists;
 import java.util.Comparator;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.i18n.TabsSlots;
 
 
 public enum SlotsTableFormat implements EnumTableColumn<Slots> {
-	NAME(String.class, GlazedLists.comparableComparator()) {
+	NAME(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsSlots.get().columnOwner();
@@ -38,7 +37,7 @@ public enum SlotsTableFormat implements EnumTableColumn<Slots> {
 			return from.getName();
 		}
 	},
-	MANUFACTURING_DONE(Integer.class, GlazedLists.comparableComparator()) {
+	MANUFACTURING_DONE(Integer.class) {
 		@Override
 		public String getColumnName() {
 			return TabsSlots.get().columnManufacturingDone();
@@ -52,7 +51,7 @@ public enum SlotsTableFormat implements EnumTableColumn<Slots> {
 			return from.getManufacturingDone();
 		}
 	},
-	MANUFACTURING_FREE(Integer.class, GlazedLists.comparableComparator()) {
+	MANUFACTURING_FREE(Integer.class) {
 		@Override
 		public String getColumnName() {
 			return TabsSlots.get().columnManufacturingFree();
@@ -66,7 +65,7 @@ public enum SlotsTableFormat implements EnumTableColumn<Slots> {
 			return from.getManufacturingFree();
 		}
 	},
-	MANUFACTURING_ACTIVE(Integer.class, GlazedLists.comparableComparator()) {
+	MANUFACTURING_ACTIVE(Integer.class) {
 		@Override
 		public String getColumnName() {
 			return TabsSlots.get().columnManufacturingActive();
@@ -80,7 +79,7 @@ public enum SlotsTableFormat implements EnumTableColumn<Slots> {
 			return from.getManufacturingActive();
 		}
 	},
-	MANUFACTURING_MAX(Integer.class, GlazedLists.comparableComparator()) {
+	MANUFACTURING_MAX(Integer.class) {
 		@Override
 		public String getColumnName() {
 			return TabsSlots.get().columnManufacturingMax();
@@ -94,7 +93,7 @@ public enum SlotsTableFormat implements EnumTableColumn<Slots> {
 			return from.getManufacturingMax();
 		}
 	},
-	RESEARCH_DONE(Integer.class, GlazedLists.comparableComparator()) {
+	RESEARCH_DONE(Integer.class) {
 		@Override
 		public String getColumnName() {
 			return TabsSlots.get().columnResearchDone();
@@ -108,7 +107,7 @@ public enum SlotsTableFormat implements EnumTableColumn<Slots> {
 			return from.getResearchDone();
 		}
 	},
-	RESEARCH_FREE(Integer.class, GlazedLists.comparableComparator()) {
+	RESEARCH_FREE(Integer.class) {
 		@Override
 		public String getColumnName() {
 			return TabsSlots.get().columnResearchFree();
@@ -122,7 +121,7 @@ public enum SlotsTableFormat implements EnumTableColumn<Slots> {
 			return from.getResearchFree();
 		}
 	},
-	RESEARCH_ACTIVE(Integer.class, GlazedLists.comparableComparator()) {
+	RESEARCH_ACTIVE(Integer.class) {
 		@Override
 		public String getColumnName() {
 			return TabsSlots.get().columnResearchActive();
@@ -136,7 +135,7 @@ public enum SlotsTableFormat implements EnumTableColumn<Slots> {
 			return from.getResearchActive();
 		}
 	},
-	RESEARCH_MAX(Integer.class, GlazedLists.comparableComparator()) {
+	RESEARCH_MAX(Integer.class) {
 		@Override
 		public String getColumnName() {
 			return TabsSlots.get().columnResearchMax();
@@ -150,7 +149,7 @@ public enum SlotsTableFormat implements EnumTableColumn<Slots> {
 			return from.getResearchMax();
 		}
 	},
-	REACTIONS_DONE(Integer.class, GlazedLists.comparableComparator()) {
+	REACTIONS_DONE(Integer.class) {
 		@Override
 		public String getColumnName() {
 			return TabsSlots.get().columnReactionsDone();
@@ -164,7 +163,7 @@ public enum SlotsTableFormat implements EnumTableColumn<Slots> {
 			return from.getReactionsDone();
 		}
 	},
-	REACTIONS_FREE(Integer.class, GlazedLists.comparableComparator()) {
+	REACTIONS_FREE(Integer.class) {
 		@Override
 		public String getColumnName() {
 			return TabsSlots.get().columnReactionsFree();
@@ -178,7 +177,7 @@ public enum SlotsTableFormat implements EnumTableColumn<Slots> {
 			return from.getReactionsFree();
 		}
 	},
-	REACTIONS_ACTIVE(Integer.class, GlazedLists.comparableComparator()) {
+	REACTIONS_ACTIVE(Integer.class) {
 		@Override
 		public String getColumnName() {
 			return TabsSlots.get().columnReactionsActive();
@@ -192,7 +191,7 @@ public enum SlotsTableFormat implements EnumTableColumn<Slots> {
 			return from.getReactionsActive();
 		}
 	},
-	REACTIONS_MAX(Integer.class, GlazedLists.comparableComparator()) {
+	REACTIONS_MAX(Integer.class) {
 		@Override
 		public String getColumnName() {
 			return TabsSlots.get().columnReactionsMax();
@@ -206,7 +205,7 @@ public enum SlotsTableFormat implements EnumTableColumn<Slots> {
 			return from.getReactionsMax();
 		}
 	},
-	MARKET_ORDERS_FREE(Integer.class, GlazedLists.comparableComparator()) {
+	MARKET_ORDERS_FREE(Integer.class) {
 		@Override
 		public String getColumnName() {
 			return TabsSlots.get().columnMarketOrdersFree();
@@ -220,7 +219,7 @@ public enum SlotsTableFormat implements EnumTableColumn<Slots> {
 			return from.getMarketOrdersFree();
 		}
 	},
-	MARKET_ORDERS_ACTIVE(Integer.class, GlazedLists.comparableComparator()) {
+	MARKET_ORDERS_ACTIVE(Integer.class) {
 		@Override
 		public String getColumnName() {
 			return TabsSlots.get().columnMarketOrdersActive();
@@ -234,7 +233,7 @@ public enum SlotsTableFormat implements EnumTableColumn<Slots> {
 			return from.getMarketOrdersActive();
 		}
 	},
-	MARKET_ORDERS_MAX(Integer.class, GlazedLists.comparableComparator()) {
+	MARKET_ORDERS_MAX(Integer.class) {
 		@Override
 		public String getColumnName() {
 			return TabsSlots.get().columnMarketOrdersMax();
@@ -248,7 +247,7 @@ public enum SlotsTableFormat implements EnumTableColumn<Slots> {
 			return from.getMarketOrdersMax();
 		}
 	},
-	CONTRACT_CHARACTER_FREE(Integer.class, GlazedLists.comparableComparator()) {
+	CONTRACT_CHARACTER_FREE(Integer.class) {
 		@Override
 		public String getColumnName() {
 			return TabsSlots.get().columnContractCharacterFree();
@@ -262,7 +261,7 @@ public enum SlotsTableFormat implements EnumTableColumn<Slots> {
 			return from.getContractCharacterFree();
 		}
 	},
-	CONTRACT_CHARACTER_ACTIVE(Integer.class, GlazedLists.comparableComparator()) {
+	CONTRACT_CHARACTER_ACTIVE(Integer.class) {
 		@Override
 		public String getColumnName() {
 			return TabsSlots.get().columnContractCharacterActive();
@@ -276,7 +275,7 @@ public enum SlotsTableFormat implements EnumTableColumn<Slots> {
 			return from.getContractCharacterActive();
 		}
 	},
-	CONTRACT_CHARACTER_MAX(Integer.class, GlazedLists.comparableComparator()) {
+	CONTRACT_CHARACTER_MAX(Integer.class) {
 		@Override
 		public String getColumnName() {
 			return TabsSlots.get().columnContractCharacterMax();
@@ -290,7 +289,7 @@ public enum SlotsTableFormat implements EnumTableColumn<Slots> {
 			return from.getContractCharacterMax();
 		}
 	},
-	CONTRACT_CORPORATION_FREE(Integer.class, GlazedLists.comparableComparator()) {
+	CONTRACT_CORPORATION_FREE(Integer.class) {
 		@Override
 		public String getColumnName() {
 			return TabsSlots.get().columnContractCorporationFree();
@@ -304,7 +303,7 @@ public enum SlotsTableFormat implements EnumTableColumn<Slots> {
 			return from.getContractCorporationFree();
 		}
 	},
-	CONTRACT_CORPORATION_ACTIVE(Integer.class, GlazedLists.comparableComparator()) {
+	CONTRACT_CORPORATION_ACTIVE(Integer.class) {
 		@Override
 		public String getColumnName() {
 			return TabsSlots.get().columnContractCorporationActive();
@@ -318,7 +317,7 @@ public enum SlotsTableFormat implements EnumTableColumn<Slots> {
 			return from.getContractCorporationActive();
 		}
 	},
-	CONTRACT_CORPORATION_MAX(Integer.class, GlazedLists.comparableComparator()) {
+	CONTRACT_CORPORATION_MAX(Integer.class) {
 		@Override
 		public String getColumnName() {
 			return TabsSlots.get().columnContractCorporationMax();
@@ -332,7 +331,7 @@ public enum SlotsTableFormat implements EnumTableColumn<Slots> {
 			return from.getContractCorporationMax();
 		}
 	},
-	CURRENT_SHIP(String.class, GlazedLists.comparableComparator()) {
+	CURRENT_SHIP(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsSlots.get().columnCurrentShip();
@@ -342,7 +341,7 @@ public enum SlotsTableFormat implements EnumTableColumn<Slots> {
 			return from.getActiveShip();
 		}
 	},
-	CURRENT_STATION(String.class, GlazedLists.comparableComparator()) {
+	CURRENT_STATION(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsSlots.get().columnCurrentStation();
@@ -352,7 +351,7 @@ public enum SlotsTableFormat implements EnumTableColumn<Slots> {
 			return from.getCurrentStation();
 		}
 	},
-	CURRENT_SYSTEM(String.class, GlazedLists.comparableComparator()) {
+	CURRENT_SYSTEM(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsSlots.get().columnCurrentSystem();
@@ -362,7 +361,7 @@ public enum SlotsTableFormat implements EnumTableColumn<Slots> {
 			return from.getCurrentSystem();
 		}
 	},
-	CURRENT_CONSTELLATION(String.class, GlazedLists.comparableComparator()) {
+	CURRENT_CONSTELLATION(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsSlots.get().columnCurrentConstellation();
@@ -372,7 +371,7 @@ public enum SlotsTableFormat implements EnumTableColumn<Slots> {
 			return from.getCurrentConstellation();
 		}
 	},
-	CURRENT_REGION(String.class, GlazedLists.comparableComparator()) {
+	CURRENT_REGION(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsSlots.get().columnCurrentRegion();
@@ -386,9 +385,9 @@ public enum SlotsTableFormat implements EnumTableColumn<Slots> {
 	private final Class<?> type;
 	private final Comparator<?> comparator;
 
-	private SlotsTableFormat(final Class<?> type, final Comparator<?> comparator) {
+	private SlotsTableFormat(final Class<?> type) {
 		this.type = type;
-		this.comparator = comparator;
+		this.comparator = EnumTableColumn.getComparator(type);
 	}
 	@Override
 	public Class<?> getType() {

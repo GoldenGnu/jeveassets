@@ -22,7 +22,6 @@
 package net.nikr.eve.jeveasset.gui.tabs.overview;
 
 
-import ca.odell.glazedlists.GlazedLists;
 import java.util.Comparator;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.Security;
@@ -30,7 +29,7 @@ import net.nikr.eve.jeveasset.i18n.TabsOverview;
 
 
 public enum OverviewTableFormat implements EnumTableColumn<Overview> {
-	NAME(String.class, GlazedLists.comparableComparator()) {
+	NAME(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsOverview.get().columnName();
@@ -40,7 +39,7 @@ public enum OverviewTableFormat implements EnumTableColumn<Overview> {
 			return from.getName();
 		}
 	},
-	SYSTEM(String.class, GlazedLists.comparableComparator()) {
+	SYSTEM(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsOverview.get().columnSystem();
@@ -50,7 +49,7 @@ public enum OverviewTableFormat implements EnumTableColumn<Overview> {
 			return from.getLocation().getSystem();
 		}
 	},
-	CONSTELLATION(String.class, GlazedLists.comparableComparator()) {
+	CONSTELLATION(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsOverview.get().columnConstellation();
@@ -60,7 +59,7 @@ public enum OverviewTableFormat implements EnumTableColumn<Overview> {
 			return from.getLocation().getConstellation();
 		}
 	},
-	REGION(String.class, GlazedLists.comparableComparator()) {
+	REGION(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsOverview.get().columnRegion();
@@ -70,7 +69,7 @@ public enum OverviewTableFormat implements EnumTableColumn<Overview> {
 			return from.getLocation().getRegion();
 		}
 	},
-	SECURITY(Security.class, GlazedLists.comparableComparator()) {
+	SECURITY(Security.class) {
 		@Override
 		public String getColumnName() {
 			return TabsOverview.get().columnSecurity();
@@ -80,7 +79,7 @@ public enum OverviewTableFormat implements EnumTableColumn<Overview> {
 			return from.getLocation().getSecurityObject();
 		}
 	},
-	VOLUME(Double.class, GlazedLists.comparableComparator()) {
+	VOLUME(Double.class) {
 		@Override
 		public String getColumnName() {
 			return TabsOverview.get().columnVolume();
@@ -90,7 +89,7 @@ public enum OverviewTableFormat implements EnumTableColumn<Overview> {
 			return from.getVolumeTotal();
 		}
 	},
-	VALUE(Double.class, GlazedLists.comparableComparator()) {
+	VALUE(Double.class) {
 		@Override
 		public String getColumnName() {
 			return TabsOverview.get().columnValue();
@@ -100,7 +99,7 @@ public enum OverviewTableFormat implements EnumTableColumn<Overview> {
 			return from.getValue();
 		}
 	},
-	VALUE_PER_VOLUME(Double.class, GlazedLists.comparableComparator()) {
+	VALUE_PER_VOLUME(Double.class) {
 		@Override
 		public String getColumnName() {
 			return TabsOverview.get().columnValuePerVolume();
@@ -110,7 +109,7 @@ public enum OverviewTableFormat implements EnumTableColumn<Overview> {
 			return from.getValuePerVolume();
 		}
 	},
-	COUNT(Long.class, GlazedLists.comparableComparator()) {
+	COUNT(Long.class) {
 		@Override
 		public String getColumnName() {
 			return TabsOverview.get().columnCount();
@@ -120,7 +119,7 @@ public enum OverviewTableFormat implements EnumTableColumn<Overview> {
 			return from.getCount();
 		}
 	},
-	AVERAGE_VALUE(Double.class, GlazedLists.comparableComparator()) {
+	AVERAGE_VALUE(Double.class) {
 		@Override
 		public String getColumnName() {
 			return TabsOverview.get().columnAverageValue();
@@ -130,7 +129,7 @@ public enum OverviewTableFormat implements EnumTableColumn<Overview> {
 			return from.getAverageValue();
 		}
 	},
-	REPROCESSED_VALUE(Double.class, GlazedLists.comparableComparator()) {
+	REPROCESSED_VALUE(Double.class) {
 		@Override
 		public String getColumnName() {
 			return TabsOverview.get().columnReprocessedValue();
@@ -142,9 +141,9 @@ public enum OverviewTableFormat implements EnumTableColumn<Overview> {
 	};
 	private final Class<?> type;
 	private final Comparator<?> comparator;
-	private OverviewTableFormat(final Class<?> type, final Comparator<?> comparator) {
+	private OverviewTableFormat(final Class<?> type) {
 		this.type = type;
-		this.comparator = comparator;
+		this.comparator = EnumTableColumn.getComparator(type);
 	}
 	@Override
 	public Class<?> getType() {

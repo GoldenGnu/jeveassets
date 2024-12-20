@@ -136,7 +136,7 @@ public class ExportDialog<E> extends JDialogCentered {
 		ListenerClass listener = new ListenerClass();
 		layout.setAutoCreateContainerGaps(false);
 
-		jFileChooser = JCustomFileChooser.createFileChooser(jFrame, Settings.get().getExportSettings(toolName).getExportFormat().getExtension());
+		jFileChooser = new JCustomFileChooser(Settings.get().getExportSettings(toolName).getExportFormat().getExtension());
 	//Format
 		JPanel jFormatPanel = new JPanel();
 		jFormatPanel.setBorder(BorderFactory.createTitledBorder(DialoguesExport.get().format()));
@@ -463,7 +463,7 @@ public class ExportDialog<E> extends JDialogCentered {
 			jFileChooser.setSelectedFile(new File(Settings.get().getExportSettings(toolName).getDefaultFilename()));
 		}
 		int bFound = jFileChooser.showDialog(getDialog(), DialoguesExport.get().ok());
-		if (bFound == JFileChooser.APPROVE_OPTION) {
+		if (bFound == JCustomFileChooser.APPROVE_OPTION) {
 			file = jFileChooser.getSelectedFile();
 			Settings.get().getExportSettings(toolName).setFilename(file.getAbsolutePath());
 			return true;

@@ -20,7 +20,6 @@
  */
 package net.nikr.eve.jeveasset.gui.dialogs.settings;
 
-import ca.odell.glazedlists.GlazedLists;
 import java.awt.Color;
 import java.util.Comparator;
 import net.nikr.eve.jeveasset.data.settings.ColorSettings.ColorRow;
@@ -28,7 +27,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 
 public enum ColorsTableFormat implements EnumTableColumn<ColorRow> {
-	NAME(String.class, GlazedLists.comparableComparator()) {
+	NAME(String.class) {
 		@Override
 		public String getColumnName() {
 			return DialoguesSettings.get().columnName();
@@ -38,7 +37,7 @@ public enum ColorsTableFormat implements EnumTableColumn<ColorRow> {
 			return from.getColorEntry().getDescription();
 		}
 	},
-	BACKGROUND(Color.class, GlazedLists.comparableComparator()) {
+	BACKGROUND(Color.class) {
 		@Override
 		public String getColumnName() {
 			return DialoguesSettings.get().columnBackground();
@@ -48,7 +47,7 @@ public enum ColorsTableFormat implements EnumTableColumn<ColorRow> {
 			return from.getBackground();
 		}
 	},
-	FOREGROUND(Color.class, GlazedLists.comparableComparator()) {
+	FOREGROUND(Color.class) {
 		@Override
 		public String getColumnName() {
 			return DialoguesSettings.get().columnForeground();
@@ -58,7 +57,7 @@ public enum ColorsTableFormat implements EnumTableColumn<ColorRow> {
 			return from.getForeground();
 		}
 	},
-	PREVIEW(String.class, GlazedLists.comparableComparator()) {
+	PREVIEW(String.class) {
 		@Override
 		public String getColumnName() {
 			return DialoguesSettings.get().columnPreview();
@@ -68,7 +67,7 @@ public enum ColorsTableFormat implements EnumTableColumn<ColorRow> {
 			return DialoguesSettings.get().testText();
 		}
 	},
-	SELECTED(String.class, GlazedLists.comparableComparator()) {
+	SELECTED(String.class) {
 		@Override
 		public String getColumnName() {
 			return DialoguesSettings.get().columnSelected();
@@ -82,9 +81,9 @@ public enum ColorsTableFormat implements EnumTableColumn<ColorRow> {
 	private final Class<?> type;
 	private final Comparator<?> comparator;
 
-	private ColorsTableFormat(final Class<?> type, final Comparator<?> comparator) {
+	private ColorsTableFormat(final Class<?> type) {
 		this.type = type;
-		this.comparator = comparator;
+		this.comparator = EnumTableColumn.getComparator(type);
 	}
 	@Override
 	public Class<?> getType() {

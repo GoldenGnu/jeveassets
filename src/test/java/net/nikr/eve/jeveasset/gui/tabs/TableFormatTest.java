@@ -20,9 +20,13 @@
  */
 package net.nikr.eve.jeveasset.gui.tabs;
 
+import ca.odell.glazedlists.GlazedLists;
+import java.awt.Color;
+import java.awt.Component;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import javax.swing.JComponent;
 import net.nikr.eve.jeveasset.TestUtil;
@@ -47,6 +51,8 @@ import net.nikr.eve.jeveasset.gui.shared.menu.JFormulaDialog;
 import net.nikr.eve.jeveasset.gui.shared.table.ColumnManager.FormulaColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.ColumnManager.JumpColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
+import net.nikr.eve.jeveasset.gui.shared.table.containers.ISK;
+import net.nikr.eve.jeveasset.gui.shared.table.containers.ModulePriceValue;
 import net.nikr.eve.jeveasset.gui.tabs.assets.AssetTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractsTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.items.ItemTableFormat;
@@ -63,6 +69,8 @@ import net.nikr.eve.jeveasset.gui.tabs.mining.MiningTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.orders.MarketTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.overview.Overview;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewTableFormat;
+import net.nikr.eve.jeveasset.gui.tabs.prices.PriceChangesTab.PriceChange;
+import net.nikr.eve.jeveasset.gui.tabs.prices.PriceChangesTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.reprocessed.ReprocessedExtendedTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.reprocessed.ReprocessedInterface;
 import net.nikr.eve.jeveasset.gui.tabs.reprocessed.ReprocessedItem;
@@ -83,6 +91,7 @@ import net.nikr.eve.jeveasset.gui.tabs.values.ValueTableFormat;
 import net.nikr.eve.jeveasset.io.shared.ConverterTestOptions;
 import net.nikr.eve.jeveasset.io.shared.ConverterTestOptionsGetter;
 import net.nikr.eve.jeveasset.io.shared.ConverterTestUtil;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -185,6 +194,12 @@ public class TableFormatTest extends TestUtil {
 			for (OverviewTableFormat tableFormat : OverviewTableFormat.values()) {
 				test(tableFormat, tableFormat.getType(), tableFormat.getColumnValue(overview));
 			}
+			//Price Change
+			test(PriceChangesTableFormat.class);
+			PriceChange priceChange = new PriceChange(INTEGER_VALUE, item, LONG_VALUE);
+			for (PriceChangesTableFormat tableFormat : PriceChangesTableFormat.values()) {
+				test(tableFormat, tableFormat.getType(), tableFormat.getColumnValue(priceChange));
+			}
 			//Reprocessed
 			test(ReprocessedTableFormat.class);
 			ReprocessedMaterial reprocessedMaterial = new ReprocessedMaterial(INTEGER_VALUE, INTEGER_VALUE, INTEGER_VALUE);
@@ -244,17 +259,44 @@ public class TableFormatTest extends TestUtil {
 				test(tableFormat, tableFormat.getType(), tableFormat.getColumnValue(sub));
 			}
 		//Tables
-			test(FormulaColumn.class);
-			test(JumpColumn.class);
-			test(AllColumn.class);
+			testClass(FormulaColumn.class);
+			testClass(JumpColumn.class);
+			testClass(AllColumn.class);
 		//Tests
-			test(TestEnum.class);
+			testClass(TestEnum.class);
 		}
 	}
 
-	private void test(Class<?> tableFormat) {
+	private void testClass(Class<?> tableFormat) {
 		try {
 			assertTrue(tableFormat + " does not implement toString", tableFormat.getMethod("toString").getDeclaringClass() == tableFormat);
+		} catch (NoSuchMethodException | SecurityException ex) {
+			fail(ex.getMessage());
+		}
+	}
+
+	private <T extends Enum<T> & EnumTableColumn<Q>, Q> void test(Class<T> tableFormat) {
+		try {
+			assertTrue(tableFormat + " does not implement toString", tableFormat.getMethod("toString").getDeclaringClass() == tableFormat);
+			//Test Comparator
+			for (EnumTableColumn<Q> enumColumn : tableFormat.getEnumConstants()) {
+				Comparator<?> comparator = enumColumn.getComparator();
+				Class<?> type = enumColumn.getType();
+				assertNotNull(enumColumn.getClass().getName() + "." + enumColumn.name() + " -> is null", type);
+				if (String.class.isAssignableFrom(type)) {
+					assertEquals(GlazedLists.caseInsensitiveComparator(), comparator);
+				} else if (Comparable.class.isAssignableFrom(type)) {
+					assertEquals(GlazedLists.comparableComparator(), comparator);
+				} else if (Component.class.isAssignableFrom(type)
+						|| ModulePriceValue.class.isAssignableFrom(type)
+						|| ISK.class.isAssignableFrom(type)
+						|| Color.class.isAssignableFrom(type)
+						) {
+					assertEquals(null, comparator);
+				} else {
+					fail(enumColumn.getClass().getName() + "." + enumColumn.name() + " -> " + type.getName() +  " is not comparable");
+				}
+			}
 		} catch (NoSuchMethodException | SecurityException ex) {
 			fail(ex.getMessage());
 		}
