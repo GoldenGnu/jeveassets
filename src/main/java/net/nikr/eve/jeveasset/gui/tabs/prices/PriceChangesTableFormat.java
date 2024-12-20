@@ -21,7 +21,6 @@
 
 package net.nikr.eve.jeveasset.gui.tabs.prices;
 
-import ca.odell.glazedlists.GlazedLists;
 import java.util.Comparator;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.Percent;
@@ -30,7 +29,7 @@ import net.nikr.eve.jeveasset.i18n.TabsPriceChanges;
 
 
 public enum PriceChangesTableFormat implements EnumTableColumn<PriceChange> {
-	NAME(String.class, GlazedLists.comparableComparator()) {
+	NAME(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsPriceChanges.get().columnName();
@@ -40,7 +39,7 @@ public enum PriceChangesTableFormat implements EnumTableColumn<PriceChange> {
 			return from.getItem().getTypeName();
 		}
 	},
-	GROUP(String.class, GlazedLists.comparableComparator()) {
+	GROUP(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsPriceChanges.get().columnGroup();
@@ -50,7 +49,7 @@ public enum PriceChangesTableFormat implements EnumTableColumn<PriceChange> {
 			return from.getItem().getGroup();
 		}
 	},
-	CATEGORY(String.class, GlazedLists.comparableComparator()) {
+	CATEGORY(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsPriceChanges.get().columnCategory();
@@ -60,7 +59,7 @@ public enum PriceChangesTableFormat implements EnumTableColumn<PriceChange> {
 			return from.getItem().getCategory();
 		}
 	},
-	COUNT(Long.class, GlazedLists.comparableComparator()) {
+	COUNT(Long.class) {
 		@Override
 		public String getColumnName() {
 			return TabsPriceChanges.get().columnCount();
@@ -74,7 +73,7 @@ public enum PriceChangesTableFormat implements EnumTableColumn<PriceChange> {
 			return from.getItemCount();
 		}
 	},
-	PRICE_FROM(Double.class, GlazedLists.comparableComparator()) {
+	PRICE_FROM(Double.class) {
 		@Override
 		public String getColumnName() {
 			return TabsPriceChanges.get().columnPriceFrom();
@@ -84,7 +83,7 @@ public enum PriceChangesTableFormat implements EnumTableColumn<PriceChange> {
 			return from.getPriceFrom();
 		}
 	},
-	PRICE_TO(Double.class, GlazedLists.comparableComparator()) {
+	PRICE_TO(Double.class) {
 		@Override
 		public String getColumnName() {
 			return TabsPriceChanges.get().columnPriceTo();
@@ -94,7 +93,7 @@ public enum PriceChangesTableFormat implements EnumTableColumn<PriceChange> {
 			return from.getPriceTo();
 		}
 	},
-	PRICE_CHANGE_PERCENT(Percent.class, GlazedLists.comparableComparator()) {
+	PRICE_CHANGE_PERCENT(Percent.class) {
 		@Override
 		public String getColumnName() {
 			return TabsPriceChanges.get().columnChangePercent();
@@ -108,7 +107,7 @@ public enum PriceChangesTableFormat implements EnumTableColumn<PriceChange> {
 			return from.getChangePercent();
 		}
 	},
-	PRICE_CHANGE(Double.class, GlazedLists.comparableComparator()) {
+	PRICE_CHANGE(Double.class) {
 		@Override
 		public String getColumnName() {
 			return TabsPriceChanges.get().columnChange();
@@ -122,7 +121,7 @@ public enum PriceChangesTableFormat implements EnumTableColumn<PriceChange> {
 			return from.getChange();
 		}
 	},
-	PRICE_TOTAL(Double.class, GlazedLists.comparableComparator()) {
+	PRICE_TOTAL(Double.class) {
 		@Override
 		public String getColumnName() {
 			return TabsPriceChanges.get().columnTotal();
@@ -142,9 +141,9 @@ public enum PriceChangesTableFormat implements EnumTableColumn<PriceChange> {
 	private final Class<?> type;
 	private final Comparator<?> comparator;
 
-	private PriceChangesTableFormat(final Class<?> type, final Comparator<?> comparator) {
+	private PriceChangesTableFormat(final Class<?> type) {
 		this.type = type;
-		this.comparator = comparator;
+		this.comparator = EnumTableColumn.getComparator(type);
 	}
 	@Override
 	public Class<?> getType() {
