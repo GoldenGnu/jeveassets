@@ -131,7 +131,7 @@ public class LoadoutsTab extends JMainTabSecondary {
 
 		ListenerClass listener = new ListenerClass();
 
-		jXmlFileChooser = JCustomFileChooser.createFileChooser(program.getMainWindow().getFrame(), "xml");
+		jXmlFileChooser = new JCustomFileChooser("xml");
 
 		jEftDialog = new JTextDialog(program.getMainWindow().getFrame());
 
@@ -325,7 +325,7 @@ public class LoadoutsTab extends JMainTabSecondary {
 			jXmlFileChooser.setCurrentDirectory(new File(FileUtil.getUserDirectory()));
 		}
 		int bFound = jXmlFileChooser.showSaveDialog(program.getMainWindow().getFrame());
-		if (bFound == JFileChooser.APPROVE_OPTION) {
+		if (bFound == JCustomFileChooser.APPROVE_OPTION) {
 			File file = jXmlFileChooser.getSelectedFile();
 			return file.getAbsolutePath();
 		} else {
@@ -395,7 +395,15 @@ public class LoadoutsTab extends JMainTabSecondary {
 					count = 0L;
 				}
 				cargo.put(asset.getTypeName(), count + asset.getCount());
-			} else {
+			} else if (asset.getItem().getCategory().equals("Charge")){
+				Long count = cargo.get(asset.getTypeName());
+				if (count == null) {
+					count = 0L;
+				}
+				cargo.put(asset.getTypeName(), count + asset.getCount());
+			} 
+			
+			else {
 				String flag = asset.getFlag().replaceAll("\\d", "");
 				int index;
 				try {
@@ -455,6 +463,7 @@ public class LoadoutsTab extends JMainTabSecondary {
 				builder.append("\r\n");
 			} else {
 				builder.append(entry.getKey());
+				builder.append("\r\n");
 			}
 		}
 	}
