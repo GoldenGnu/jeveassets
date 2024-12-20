@@ -321,7 +321,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 			}
 		};
 
-		jFileChooser = JCustomFileChooser.createFileChooser(program.getMainWindow().getFrame(), "xml");
+		jFileChooser = new JCustomFileChooser("xml");
 		jFileChooser.setMultiSelectionEnabled(false);
 		jFileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 
@@ -1195,7 +1195,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 	private void importEveXml() {
 		jFileChooser.setSelectedFile(new File(""));
 		int value = jFileChooser.showOpenDialog(program.getMainWindow().getFrame());
-		if (value != JFileChooser.APPROVE_OPTION) {
+		if (value != JCustomFileChooser.APPROVE_OPTION) {
 			return; //Cancel
 		}
 		Map<String, Map<Integer, Double>> fits = EveFittingReader.load(jFileChooser.getSelectedFile().getAbsolutePath());
@@ -1349,7 +1349,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 	private void importXml() {
 		jFileChooser.setSelectedFile(new File(""));
 		int value = jFileChooser.showOpenDialog(program.getMainWindow().getFrame());
-		if (value == JFileChooser.APPROVE_OPTION) {
+		if (value == JCustomFileChooser.APPROVE_OPTION) {
 			List<Stockpile> stockpiles = SettingsReader.loadStockpile(jFileChooser.getSelectedFile().getAbsolutePath());
 			if (stockpiles != null) {
 				importStockpiles(stockpiles);
@@ -1512,7 +1512,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		if (stockpiles != null) {
 			jFileChooser.setSelectedFile(new File(""));
 			int value = jFileChooser.showSaveDialog(program.getMainWindow().getFrame());
-			if (value == JFileChooser.APPROVE_OPTION) {
+			if (value == JCustomFileChooser.APPROVE_OPTION) {
 				SettingsWriter.saveStockpiles(stockpiles, jFileChooser.getSelectedFile().getAbsolutePath());
 			}
 		}

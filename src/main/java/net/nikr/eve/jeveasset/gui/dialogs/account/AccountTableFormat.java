@@ -21,7 +21,6 @@
 
 package net.nikr.eve.jeveasset.gui.dialogs.account;
 
-import ca.odell.glazedlists.GlazedLists;
 import java.util.Comparator;
 import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
@@ -31,7 +30,7 @@ import net.nikr.eve.jeveasset.i18n.DialoguesAccount;
 
 
 public enum AccountTableFormat implements EnumTableColumn<OwnerType> {
-	SHOW_ASSETS(Boolean.class, GlazedLists.comparableComparator()) {
+	SHOW_ASSETS(Boolean.class) {
 		@Override
 		public String getColumnName() {
 			return "";
@@ -60,7 +59,7 @@ public enum AccountTableFormat implements EnumTableColumn<OwnerType> {
 			return false;
 		}
 	},
-	NAME(String.class, GlazedLists.comparableComparator()) {
+	NAME(String.class) {
 		@Override
 		public String getColumnName() {
 			return DialoguesAccount.get().tableFormatName();
@@ -70,7 +69,7 @@ public enum AccountTableFormat implements EnumTableColumn<OwnerType> {
 			return from.getOwnerName();
 		}
 	},
-	CORPORATION(YesNo.class, GlazedLists.comparableComparator()) {
+	CORPORATION(YesNo.class) {
 		@Override
 		public String getColumnName() {
 			return DialoguesAccount.get().tableFormatCorporation();
@@ -80,7 +79,7 @@ public enum AccountTableFormat implements EnumTableColumn<OwnerType> {
 			return new YesNo(from.isCorporation());
 		}
 	},
-	CLONES(YesNo.class, GlazedLists.comparableComparator()) {
+	CLONES(YesNo.class) {
 		@Override
 		public String getColumnName() {
 			return DialoguesAccount.get().tableFormatClones();
@@ -90,7 +89,7 @@ public enum AccountTableFormat implements EnumTableColumn<OwnerType> {
 			return new YesNo(from.isClones());
 		}
 	},
-	IMPLANTS(YesNo.class, GlazedLists.comparableComparator()) {
+	IMPLANTS(YesNo.class) {
 		@Override
 		public String getColumnName() {
 			return DialoguesAccount.get().tableFormatImplants();
@@ -100,7 +99,7 @@ public enum AccountTableFormat implements EnumTableColumn<OwnerType> {
 			return new YesNo(from.isImplants());
 		}
 	},
-	ASSET_LIST(YesNo.class, GlazedLists.comparableComparator()) {
+	ASSET_LIST(YesNo.class) {
 		@Override
 		public String getColumnName() {
 			return DialoguesAccount.get().tableFormatAssetList();
@@ -110,7 +109,7 @@ public enum AccountTableFormat implements EnumTableColumn<OwnerType> {
 			return new YesNo(from.isAssetList());
 		}
 	},
-	ACCOUNT_BALANCE(YesNo.class, GlazedLists.comparableComparator()) {
+	ACCOUNT_BALANCE(YesNo.class) {
 		@Override
 		public String getColumnName() {
 			return DialoguesAccount.get().tableFormatAccountBalance();
@@ -120,7 +119,7 @@ public enum AccountTableFormat implements EnumTableColumn<OwnerType> {
 			return new YesNo(from.isAccountBalance());
 		}
 	},
-	INDUSTRY_JOBS(YesNo.class, GlazedLists.comparableComparator()) {
+	INDUSTRY_JOBS(YesNo.class) {
 		@Override
 		public String getColumnName() {
 			return DialoguesAccount.get().tableFormatIndustryJobs();
@@ -130,7 +129,7 @@ public enum AccountTableFormat implements EnumTableColumn<OwnerType> {
 			return new YesNo(from.isIndustryJobs());
 		}
 	},
-	MARKET_ORDERS(YesNo.class, GlazedLists.comparableComparator()) {
+	MARKET_ORDERS(YesNo.class) {
 		@Override
 		public String getColumnName() {
 			return DialoguesAccount.get().tableFormatMarketOrders();
@@ -140,7 +139,7 @@ public enum AccountTableFormat implements EnumTableColumn<OwnerType> {
 			return new YesNo(from.isMarketOrders());
 		}
 	},
-	TRANSACTIONS(YesNo.class, GlazedLists.comparableComparator()) {
+	TRANSACTIONS(YesNo.class) {
 		@Override
 		public String getColumnName() {
 			return DialoguesAccount.get().tableFormatTransactions();
@@ -150,7 +149,7 @@ public enum AccountTableFormat implements EnumTableColumn<OwnerType> {
 			return new YesNo(from.isTransactions());
 		}
 	},
-	JOURNAL(YesNo.class, GlazedLists.comparableComparator()) {
+	JOURNAL(YesNo.class) {
 		@Override
 		public String getColumnName() {
 			return DialoguesAccount.get().tableFormatJournal();
@@ -160,7 +159,7 @@ public enum AccountTableFormat implements EnumTableColumn<OwnerType> {
 			return new YesNo(from.isJournal());
 		}
 	},
-	CONTRACTS(YesNo.class, GlazedLists.comparableComparator()) {
+	CONTRACTS(YesNo.class) {
 		@Override
 		public String getColumnName() {
 			return DialoguesAccount.get().tableFormatContracts();
@@ -170,7 +169,7 @@ public enum AccountTableFormat implements EnumTableColumn<OwnerType> {
 			return new YesNo(from.isContracts());
 		}
 	},
-	LOCATIONS(YesNo.class, GlazedLists.comparableComparator()) {
+	LOCATIONS(YesNo.class) {
 		@Override
 		public String getColumnName() {
 			return DialoguesAccount.get().tableFormatLocations();
@@ -180,7 +179,7 @@ public enum AccountTableFormat implements EnumTableColumn<OwnerType> {
 			return new YesNo(from.isLocations());
 		}
 	},
-	STRUCTURES(YesNo.class, GlazedLists.comparableComparator()) {
+	STRUCTURES(YesNo.class) {
 		@Override
 		public String getColumnName() {
 			return DialoguesAccount.get().tableFormatStructures();
@@ -190,7 +189,7 @@ public enum AccountTableFormat implements EnumTableColumn<OwnerType> {
 			return new YesNo(from.isStructures());
 		}
 	},
-	MARKET_STRUCTURES(YesNo.class, GlazedLists.comparableComparator()) {
+	MARKET_STRUCTURES(YesNo.class) {
 		@Override
 		public String getColumnName() {
 			return DialoguesAccount.get().tableFormatMarketStructures();
@@ -200,7 +199,7 @@ public enum AccountTableFormat implements EnumTableColumn<OwnerType> {
 			return new YesNo(from.isMarketStructures());
 		}
 	},
-	BOOKMARKS(YesNo.class, GlazedLists.comparableComparator()) {
+	BOOKMARKS(YesNo.class) {
 		@Override
 		public String getColumnName() {
 			return DialoguesAccount.get().tableFormatBookmarks();
@@ -210,7 +209,7 @@ public enum AccountTableFormat implements EnumTableColumn<OwnerType> {
 			return new YesNo(from.isBookmarks());
 		}
 	},
-	BLUEPRINTS(YesNo.class, GlazedLists.comparableComparator()) {
+	BLUEPRINTS(YesNo.class) {
 		@Override
 		public String getColumnName() {
 			return DialoguesAccount.get().tableFormatBlueprints();
@@ -220,7 +219,7 @@ public enum AccountTableFormat implements EnumTableColumn<OwnerType> {
 			return new YesNo(from.isBlueprints());
 		}
 	},
-	DIVISIONS(YesNo.class, GlazedLists.comparableComparator()) {
+	DIVISIONS(YesNo.class) {
 		@Override
 		public String getColumnName() {
 			return DialoguesAccount.get().tableFormatDivisions();
@@ -230,7 +229,7 @@ public enum AccountTableFormat implements EnumTableColumn<OwnerType> {
 			return new YesNo(from.isDivisions());
 		}
 	},
-	SHIP(YesNo.class, GlazedLists.comparableComparator()) {
+	SHIP(YesNo.class) {
 		@Override
 		public String getColumnName() {
 			return DialoguesAccount.get().tableFormatShip();
@@ -240,7 +239,7 @@ public enum AccountTableFormat implements EnumTableColumn<OwnerType> {
 			return new YesNo(from.isShip());
 		}
 	},
-	PLANETARY_INTERACTION(YesNo.class, GlazedLists.comparableComparator()) {
+	PLANETARY_INTERACTION(YesNo.class) {
 		@Override
 		public String getColumnName() {
 			return DialoguesAccount.get().tableFormatPlanetaryInteraction();
@@ -250,7 +249,7 @@ public enum AccountTableFormat implements EnumTableColumn<OwnerType> {
 			return new YesNo(from.isPlanetaryInteraction());
 		}
 	},
-	OPEN_WINDOWS(YesNo.class, GlazedLists.comparableComparator()) {
+	OPEN_WINDOWS(YesNo.class) {
 		@Override
 		public String getColumnName() {
 			return DialoguesAccount.get().tableFormatOpenWindows();
@@ -260,7 +259,7 @@ public enum AccountTableFormat implements EnumTableColumn<OwnerType> {
 			return new YesNo(from.isOpenWindows());
 		}
 	},
-	AUTOPILOT(YesNo.class, GlazedLists.comparableComparator()) {
+	AUTOPILOT(YesNo.class) {
 		@Override
 		public String getColumnName() {
 			return DialoguesAccount.get().tableFormatAutopilot();
@@ -270,7 +269,7 @@ public enum AccountTableFormat implements EnumTableColumn<OwnerType> {
 			return new YesNo(from.isAutopilot());
 		}
 	},
-	CONTAINER_LOGS(YesNo.class, GlazedLists.comparableComparator()) {
+	CONTAINER_LOGS(YesNo.class) {
 		@Override
 		public String getColumnName() {
 			return DialoguesAccount.get().tableFormatContainerLogs();
@@ -280,7 +279,7 @@ public enum AccountTableFormat implements EnumTableColumn<OwnerType> {
 			return new YesNo(from.isContainerLogs());
 		}
 	},
-	SKILLS(YesNo.class, GlazedLists.comparableComparator()) {
+	SKILLS(YesNo.class) {
 		@Override
 		public String getColumnName() {
 			return DialoguesAccount.get().tableFormatSkills();
@@ -290,7 +289,7 @@ public enum AccountTableFormat implements EnumTableColumn<OwnerType> {
 			return new YesNo(from.isSkills());
 		}
 	},
-	MINING(YesNo.class, GlazedLists.comparableComparator()) {
+	MINING(YesNo.class) {
 		@Override
 		public String getColumnName() {
 			return DialoguesAccount.get().tableFormatMining();
@@ -300,7 +299,7 @@ public enum AccountTableFormat implements EnumTableColumn<OwnerType> {
 			return new YesNo(from.isMining());
 		}
 	},
-	EXPIRES(ExpirerDate.class, GlazedLists.comparableComparator()) {
+	EXPIRES(ExpirerDate.class) {
 		@Override
 		public String getColumnName() {
 			return DialoguesAccount.get().tableFormatExpires();
@@ -313,9 +312,9 @@ public enum AccountTableFormat implements EnumTableColumn<OwnerType> {
 
 	private final Class<?> type;
 	private final Comparator<?> comparator;
-	private AccountTableFormat(final Class<?> type, final Comparator<?> comparator) {
+	private AccountTableFormat(final Class<?> type) {
 		this.type = type;
-		this.comparator = comparator;
+		this.comparator = EnumTableColumn.getComparator(type);
 	}
 	@Override
 	public Class<?> getType() {

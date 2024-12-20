@@ -21,14 +21,13 @@
 
 package net.nikr.eve.jeveasset.gui.tabs.tracker;
 
-import ca.odell.glazedlists.GlazedLists;
 import java.util.Comparator;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.i18n.TabsTracker;
 
 
 public enum TrackerSkillPointsFilterTableFormat implements EnumTableColumn<TrackerSkillPointFilter> {
-	ENABLED(Boolean.class, GlazedLists.comparableComparator()) {
+	ENABLED(Boolean.class) {
 		@Override
 		public String getColumnName() {
 			return TabsTracker.get().columnShow();
@@ -53,7 +52,7 @@ public enum TrackerSkillPointsFilterTableFormat implements EnumTableColumn<Track
 			return false;
 		}
 	},
-	NAME(String.class, GlazedLists.comparableComparator()) {
+	NAME(String.class) {
 		@Override
 		public String getColumnName() {
 			return TabsTracker.get().columnName();
@@ -63,7 +62,7 @@ public enum TrackerSkillPointsFilterTableFormat implements EnumTableColumn<Track
 			return from.getName();
 		}
 	},
-	MINIMUM(Long.class, GlazedLists.comparableComparator()) {
+	MINIMUM(Long.class) {
 		@Override
 		public String getColumnName() {
 			return TabsTracker.get().columnMinimum();
@@ -94,9 +93,9 @@ public enum TrackerSkillPointsFilterTableFormat implements EnumTableColumn<Track
 
 	private final Class<?> type;
 	private final Comparator<?> comparator;
-	private TrackerSkillPointsFilterTableFormat(final Class<?> type, final Comparator<?> comparator) {
+	private TrackerSkillPointsFilterTableFormat(final Class<?> type) {
 		this.type = type;
-		this.comparator = comparator;
+		this.comparator = EnumTableColumn.getComparator(type);
 	}
 	@Override
 	public Class<?> getType() {
