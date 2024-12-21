@@ -100,12 +100,6 @@ public class LibraryManager {
 			files.add("jfreechart-1.5.3.jar");
 			files.add("pricing-3.1.1.jar");
 			files.add("routing-2.0.0.jar");
-			files.add("slf4j-api-1.7.36.jar");
-			files.add("log4j-over-slf4j-1.7.36.jar");
-			files.add("jcl-over-slf4j-1.7.36.jar");
-			files.add("jul-to-slf4j-1.7.36.jar");
-			files.add("logback-core-1.2.13.jar");
-			files.add("logback-classic-1.2.13.jar");
 			files.add("super-csv-2.4.0.jar");
 			files.add("translations-3.1.1.jar");
 			files.add("annotations-13.0.jar");
@@ -127,6 +121,13 @@ public class LibraryManager {
 			files.add("kotlin-stdlib-jdk8-1.6.10.jar");
 			files.add("EvalEx-2.7.jar");
 			files.add("picocli-4.6.2.jar");
+			//Logging
+			files.add("slf4j-api-2.0.16.jar");
+			files.add("jul-to-slf4j-2.0.16.jar");
+			files.add("jcl-over-slf4j-2.0.16.jar");
+			files.add("logback-core-1.3.14.jar");
+			files.add("log4j-over-slf4j-2.0.16.jar");
+			files.add("logback-classic-1.3.14.jar");
 			//Native Mac GUI integration
 			files.add("jsvg-1.4.0.jar");
 			files.add("flatlaf-extras-3.4.1.jar");
