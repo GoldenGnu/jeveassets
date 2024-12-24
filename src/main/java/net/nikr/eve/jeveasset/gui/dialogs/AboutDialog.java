@@ -93,6 +93,7 @@ public class AboutDialog extends JDialogCentered {
 				+ "<b>Developers</b><br>"
 				+ "&nbsp;Niklas Kyster Rasmussen (Golden Gnu)<br>"
 				+ "&nbsp;Dultas<br>"
+				+ "&nbsp;Tsuro Tsero<br>"
 				+ "<br>"
 				+ "<b>Testers</b><br>"
 				+ "&nbsp;Huzid<br>"	
