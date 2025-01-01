@@ -21,6 +21,7 @@ _CONTRIBUTORS___________________________________________________________________
 Developers:
   Niklas Kyster Rasmussen (Golden Gnu)
   Dultas
+  Tsuro Tsero
 
 Tester:
   Huzid
@@ -40,7 +41,6 @@ Contributors:
   Lazaren
   Boran Lordsworth
   Ed Thelleres
-  Tsuro Tsero
   Salartarium
 
 Retired Testers:
