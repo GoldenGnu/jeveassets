@@ -125,9 +125,9 @@ public class LibraryManager {
 			files.add("slf4j-api-2.0.16.jar");
 			files.add("jul-to-slf4j-2.0.16.jar");
 			files.add("jcl-over-slf4j-2.0.16.jar");
-			files.add("logback-core-1.3.14.jar");
+			files.add("logback-core-1.3.15.jar");
 			files.add("log4j-over-slf4j-2.0.16.jar");
-			files.add("logback-classic-1.3.14.jar");
+			files.add("logback-classic-1.3.15.jar");
 			//Native Mac GUI integration
 			files.add("jsvg-1.4.0.jar");
 			files.add("flatlaf-extras-3.4.1.jar");
