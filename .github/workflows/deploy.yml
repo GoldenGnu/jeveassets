@@ -21,19 +21,19 @@ jobs:
             java: 17
             profile: jpackager-deploy
             name: Linux
-            distribution: 'oracle'
+            distribution: oracle
           #Windows
           - os: windows-latest
             java: 17
             profile: jpackager-deploy
             name: Windows
-            distribution: 'oracle'
+            distribution: oracle
           #MacOS
           - os: macos-latest
             java: 17
             profile: jpackager-deploy
             name: MacOS
-            distribution: 'oracle'
+            distribution: oracle
     name: ${{ matrix.name }}
     steps:
     - name: Checkout
@@ -48,7 +48,7 @@ jobs:
     - name: JDK
       uses: actions/setup-java@v2
       with:
-        distribution: ${{ matrix.distribution }}
+        distribution: '${{ matrix.distribution }}'
         java-version: ${{ matrix.java }}
     - name: Build with Maven
       run: mvn -s settings.xml clean deploy -DskipTests -P ${{ matrix.profile }} "-Dftp.user=${{secrets.ftpuser}}" "-Dftp.pass=${{secrets.ftppass}}" "-Dftp.host=${{secrets.ftphost}}" "-Dftp.file=${{secrets.ftpfile}}"  "-Dftp.delete=${{secrets.ftpdelete}}"
