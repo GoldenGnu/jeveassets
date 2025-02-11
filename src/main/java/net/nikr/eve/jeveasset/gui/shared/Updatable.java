@@ -69,9 +69,6 @@ public class Updatable {
 			if (owner.isBlueprints() && isUpdatable(owner.getBlueprintsNextUpdate())) {
 				return true;
 			}
-			if (owner.isBookmarks() && isUpdatable(owner.getBookmarksNextUpdate())) {
-				return true;
-			}
 			if (owner.isContainerLogs() && isUpdatable(owner.getContainerLogsNextUpdate())) {
 				return true;
 			}

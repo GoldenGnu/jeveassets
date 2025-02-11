@@ -81,7 +81,6 @@ public abstract class AbstractOwner implements OwnerType {
 	private Date contractsNextUpdate = Settings.getNow();
 	private Date locationsNextUpdate = Settings.getNow();
 	private Date blueprintsNextUpdate = Settings.getNow();
-	private Date bookmarksNextUpdate = Settings.getNow();
 	private Date skillsNextUpdate = Settings.getNow();
 	private Date miningNextUpdate = Settings.getNow();
 	private Date containerLogsNextUpdate = Settings.getNow();
@@ -126,7 +125,6 @@ public abstract class AbstractOwner implements OwnerType {
 		this.contractsNextUpdate = abstractOwner.contractsNextUpdate;
 		this.locationsNextUpdate = abstractOwner.locationsNextUpdate;
 		this.blueprintsNextUpdate = abstractOwner.blueprintsNextUpdate;
-		this.bookmarksNextUpdate = abstractOwner.bookmarksNextUpdate;
 		this.skillsNextUpdate = abstractOwner.skillsNextUpdate;
 		this.miningNextUpdate = abstractOwner.miningNextUpdate;
 		this.containerLogsNextUpdate = abstractOwner.containerLogsNextUpdate;
@@ -145,11 +143,6 @@ public abstract class AbstractOwner implements OwnerType {
 	@Override
 	public synchronized void setBlueprintsNextUpdate(final Date blueprintsNextUpdate) {
 		this.blueprintsNextUpdate = blueprintsNextUpdate;
-	}
-
-	@Override
-	public synchronized void setBookmarksNextUpdate(Date bookmarksNextUpdate) {
-		this.bookmarksNextUpdate = bookmarksNextUpdate;
 	}
 
 	@Override
@@ -205,11 +198,6 @@ public abstract class AbstractOwner implements OwnerType {
 	@Override
 	public synchronized Date getBlueprintsNextUpdate() {
 		return blueprintsNextUpdate;
-	}
-
-	@Override
-	public synchronized Date getBookmarksNextUpdate() {
-		return bookmarksNextUpdate;
 	}
 
 	@Override

@@ -53,7 +53,6 @@ public abstract class AbstractGetter<O extends OwnerType> implements Runnable {
 		ACCOUNT_BALANCE("Account Balance"),
 		ASSETS("Assets"),
 		BLUEPRINTS("Blueprints"),
-		BOOKMARKS("Bookmarks"),
 		CONTAINER_LOGS("Container Logs"),
 		CONTRACTS("Contracts"),
 		CLONES("Clones"),

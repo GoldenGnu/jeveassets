@@ -160,11 +160,6 @@ public class EveKitOwner extends DeprecatedOwner implements OwnerType {
 	}
 
 	@Override
-	public boolean isBookmarks() {
-		return EveKitAccessMask.BOOKMARKS.isInMask(getAccessMask());
-	}
-
-	@Override
 	public boolean isMarketOrders() {
 		return EveKitAccessMask.MARKET_ORDERS.isInMask(getAccessMask());
 	}

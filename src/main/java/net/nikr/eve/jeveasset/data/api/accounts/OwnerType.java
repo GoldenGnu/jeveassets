@@ -106,7 +106,6 @@ public interface OwnerType extends SimpleOwner {
 	public boolean isStructures();
 	public boolean isMarketStructures();
 	public boolean isBlueprints();
-	public boolean isBookmarks();
 	public boolean isShip();
 	public boolean isOpenWindows();
 	public boolean isPlanetaryInteraction();
@@ -126,7 +125,6 @@ public interface OwnerType extends SimpleOwner {
 	public void setAssetNextUpdate(final Date nextUpdate);
 	public void setBalanceNextUpdate(final Date balanceNextUpdate);
 	public void setBlueprintsNextUpdate(Date blueprintsNextUpdate);
-	public void setBookmarksNextUpdate(Date bookmarksNextUpdate);
 	public void setContractsNextUpdate(final Date contractsNextUpdate);
 	public void setIndustryJobsNextUpdate(final Date industryJobsNextUpdate);
 	public void setLocationsNextUpdate(final Date locationsNextUpdate);
@@ -140,7 +138,6 @@ public interface OwnerType extends SimpleOwner {
 	public Date getAssetNextUpdate();
 	public Date getBalanceNextUpdate();
 	public Date getBlueprintsNextUpdate();
-	public Date getBookmarksNextUpdate();
 	public Date getContractsNextUpdate();
 	public Date getIndustryJobsNextUpdate();
 	public Date getLocationsNextUpdate();

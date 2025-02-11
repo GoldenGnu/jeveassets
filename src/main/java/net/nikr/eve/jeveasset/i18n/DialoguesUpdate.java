@@ -66,7 +66,6 @@ public abstract class DialoguesUpdate extends Bundle {
 	public abstract String transactions();
 	public abstract String names();
 	public abstract String blueprints();
-	public abstract String bookmarks();
 	public abstract String skills();
 	public abstract String mining();
 	public abstract String containerLogs();

@@ -33,7 +33,6 @@ import net.nikr.eve.jeveasset.io.esi.EsiScopes;
 import net.troja.eve.esi.ApiClient;
 import net.troja.eve.esi.ApiClientBuilder;
 import net.troja.eve.esi.api.AssetsApi;
-import net.troja.eve.esi.api.BookmarksApi;
 import net.troja.eve.esi.api.CharacterApi;
 import net.troja.eve.esi.api.ClonesApi;
 import net.troja.eve.esi.api.ContractsApi;
@@ -63,7 +62,6 @@ public class EsiOwner extends AbstractOwner implements OwnerType {
 	private final ContractsApi contractsApi = new ContractsApi(apiClient);
 	private final CorporationApi corporationApi = new CorporationApi(apiClient);
 	private final LocationApi locationApi = new LocationApi(apiClient);
-	private final BookmarksApi bookmarksApi = new BookmarksApi(apiClient);
 	private final PlanetaryInteractionApi planetaryInteractionApi = new PlanetaryInteractionApi(apiClient);
 	private final UserInterfaceApi userInterfaceApi = new UserInterfaceApi(apiClient);
 	private final SkillsApi skillsApi = new SkillsApi(apiClient);
@@ -217,15 +215,6 @@ public class EsiOwner extends AbstractOwner implements OwnerType {
 			return EsiScopes.CORPORATION_BLUEPRINTS.isInScope(scopes) && roles.contains(RolesEnum.DIRECTOR);
 		} else {
 			return EsiScopes.CHARACTER_BLUEPRINTS.isInScope(scopes);
-		}
-	}
-
-	@Override
-	public boolean isBookmarks() {
-		if (isCorporation()) {
-			return EsiScopes.CORPORATION_BOOKMARKS.isInScope(scopes);
-		} else {
-			return EsiScopes.CHARACTER_BOOKMARKS.isInScope(scopes);
 		}
 	}
 
@@ -445,10 +434,6 @@ public class EsiOwner extends AbstractOwner implements OwnerType {
 
 	public UserInterfaceApi getUserInterfaceApiAuth() {
 		return userInterfaceApi;
-	}
-
-	public BookmarksApi getBookmarksApiAuth() {
-		return bookmarksApi;
 	}
 
 	public PlanetaryInteractionApi getPlanetaryInteractionApiAuth() {

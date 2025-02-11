@@ -71,7 +71,7 @@ public class CliUpdate {
 			profileData.updateEventLists();
 			List<UpdateTask> updateTasks = new ArrayList<>();
 			updateTasks.add(new Step1Task(profileManager));
-			updateTasks.add(new Step2Task(profileManager, true, true, true, true, true, true, true, true, true, true, true, true));
+			updateTasks.add(new Step2Task(profileManager, true, true, true, true, true, true, true, true, true, true, true));
 			updateTasks.add(new Step3Task(profileManager, true));
 			updateTasks.add(new Step4Task(profileManager));
 			updateTasks.add(new PriceDataTask(priceDataGetter, profileData, false));
