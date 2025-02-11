@@ -179,7 +179,6 @@ public final class ProfileWriter extends AbstractXmlWriter {
 		setAttribute(node, "contractsnextupdate", owner.getContractsNextUpdate());
 		setAttribute(node, "locationsnextupdate", owner.getLocationsNextUpdate());
 		setAttribute(node, "blueprintsnextupdate", owner.getBlueprintsNextUpdate());
-		setAttribute(node, "bookmarksnextupdate", owner.getBookmarksNextUpdate());
 		setAttribute(node, "skillsnextupdate", owner.getSkillsNextUpdate());
 		setAttribute(node, "miningnextupdate", owner.getMiningNextUpdate());
 
