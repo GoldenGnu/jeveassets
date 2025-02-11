@@ -79,7 +79,6 @@ public abstract class DialoguesAccount extends Bundle {
 	public abstract String scopeAssets();
 	public abstract String scopeWallet();
 	public abstract String scopeBlueprints();
-	public abstract String scopeBookmarks();
 	public abstract String scopeIndustryJobs();
 	public abstract String scopeMarketOrders();
 	public abstract String scopeMarketStructures();
@@ -157,7 +156,6 @@ public abstract class DialoguesAccount extends Bundle {
 	public abstract String tableFormatStructures();
 	public abstract String tableFormatMarketStructures();
 	public abstract String tableFormatBlueprints();
-	public abstract String tableFormatBookmarks();
 	public abstract String tableFormatDivisions();
 	public abstract String tableFormatShip();
 	public abstract String tableFormatPlanetaryInteraction();

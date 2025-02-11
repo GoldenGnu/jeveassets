@@ -75,7 +75,6 @@ import net.nikr.eve.jeveasset.gui.tabs.orders.Outbid;
 import net.nikr.eve.jeveasset.io.esi.EsiCallbackURL;
 import net.troja.eve.esi.ApiClient;
 import net.troja.eve.esi.api.AssetsApi;
-import net.troja.eve.esi.api.BookmarksApi;
 import net.troja.eve.esi.api.CharacterApi;
 import net.troja.eve.esi.api.ContractsApi;
 import net.troja.eve.esi.api.CorporationApi;
@@ -593,9 +592,6 @@ public class ConverterTestUtil {
 			return true;
 		}
 		if (type.equals(UserInterfaceApi.class)) {
-			return true;
-		}
-		if (type.equals(BookmarksApi.class)) {
 			return true;
 		}
 		if (type.equals(PlanetaryInteractionApi.class)) {
