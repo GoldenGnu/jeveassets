@@ -15,13 +15,13 @@ jobs:
             java: 8
             profile: jpackager-java8
             name: Java 8 
-            distribution: 'temurin'
+            distribution: temurin
           #Linux
           - os: ubuntu-latest
             java: 17
             profile: jpackager-deploy
             name: Linux
-            distribution: oracle
+            distribution: temurin
           #Windows
           - os: windows-latest
             java: 17
