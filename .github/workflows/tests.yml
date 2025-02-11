@@ -12,16 +12,16 @@ jobs:
     name: ${{ matrix.os }} (Java ${{ matrix.java }})
     steps:
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
     - name: Cache
-      uses: actions/cache@v2
+      uses: actions/cache@v4
       with:
         path: ~/.m2/repository
         key: ${{ matrix.os }}-maven-${{ hashFiles('**/pom.xml') }}
         restore-keys: |
           ${{ matrix.os }}-maven-
     - name: JDK
-      uses: actions/setup-java@v2
+      uses: actions/setup-java@v4
       with:
         distribution: 'temurin'
         java-version: ${{ matrix.java }}
