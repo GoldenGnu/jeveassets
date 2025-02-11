@@ -64,10 +64,6 @@ import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.io.esi.EsiItemsGetter;
 import net.nikr.eve.jeveasset.io.local.ItemsWriter;
 import net.nikr.eve.jeveasset.io.online.CitadelGetter;
-import net.troja.eve.esi.model.CharacterBookmarkItem;
-import net.troja.eve.esi.model.CharacterBookmarksResponse;
-import net.troja.eve.esi.model.CorporationBookmarkItem;
-import net.troja.eve.esi.model.CorporationBookmarksResponse;
 import net.troja.eve.esi.model.MoonResponse;
 import net.troja.eve.esi.model.PlanetResponse;
 import net.troja.eve.esi.model.StructureResponse;
@@ -641,29 +637,6 @@ public final class ApiIdConverter {
 
 	public static Citadel getCitadel(final StructureResponse response, final long locationID) {
 		return new Citadel(locationID, response.getName(), response.getSolarSystemId(), false, true, CitadelSource.ESI_STRUCTURES);
-	}
-
-	public static Citadel getCitadel(final CorporationBookmarksResponse response) {
-		CorporationBookmarkItem item = response.getItem(); //Can be null
-		if (item != null && item.getItemId() > 1000000000000L) {
-			return getCitadel(response.getLocationId(), item.getItemId(), response.getLabel(), CitadelSource.ESI_BOOKMARKS);
-		} else {
-			return null;
-		}
-	}
-
-	public static Citadel getCitadel(final CharacterBookmarksResponse response) {
-		CharacterBookmarkItem item = response.getItem(); //Can be null
-		if (item != null && item.getItemId() > 1000000000000L) {
-			return getCitadel(response.getLocationId(), item.getItemId(), response.getLabel(), CitadelSource.ESI_BOOKMARKS);
-		} else {
-			return null;
-		}
-	}
-
-	private static Citadel getCitadel(Integer systemID, Long locationID, String label, CitadelSource source) {
-		MyLocation system = getLocation(systemID);
-		return new Citadel(locationID, General.get().bookmarkLocation(system.getSystem(), label.trim(), String.valueOf(locationID)), systemID, false, true, source);
 	}
 
 	public static Citadel getCitadel(PlanetResponse planet) {

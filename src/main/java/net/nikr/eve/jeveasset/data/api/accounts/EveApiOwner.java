@@ -132,11 +132,6 @@ public class EveApiOwner extends DeprecatedOwner implements OwnerType {
 	}
 
 	@Override
-	public boolean isBookmarks() {
-		return false; //Not supported by the XML API
-	}
-
-	@Override
 	public boolean isPlanetaryInteraction() {
 		return false; //Not supported by the XML API
 	}
