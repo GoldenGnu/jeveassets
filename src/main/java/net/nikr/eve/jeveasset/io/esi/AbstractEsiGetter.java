@@ -42,7 +42,6 @@ import net.troja.eve.esi.ApiClientBuilder;
 import net.troja.eve.esi.ApiException;
 import net.troja.eve.esi.ApiResponse;
 import net.troja.eve.esi.api.AssetsApi;
-import net.troja.eve.esi.api.BookmarksApi;
 import net.troja.eve.esi.api.CharacterApi;
 import net.troja.eve.esi.api.ClonesApi;
 import net.troja.eve.esi.api.ContractsApi;
@@ -293,10 +292,6 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner> {
 
 	public LocationApi getLocationApiAuth() {
 		return owner.getLocationApiAuth();
- 	}
-
-	public BookmarksApi getBookmarksApiAuth() {
-		return owner.getBookmarksApiAuth();
  	}
 
 	public PlanetaryInteractionApi getPlanetaryInteractionApiAuth() {
