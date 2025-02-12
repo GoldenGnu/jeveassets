@@ -66,7 +66,6 @@ public class ProfileOwners extends ProfileTable {
 				+ "	contractsnextupdate,"
 				+ "	locationsnextupdate,"
 				+ "	blueprintsnextupdate,"
-				+ "	bookmarksnextupdate,"
 				+ "	skillsnextupdate,"
 				+ "	miningnextupdate,"
 				+ "	accountname,"
@@ -76,7 +75,7 @@ public class ProfileOwners extends ProfileTable {
 				+ "	accountnextupdate,"
 				+ "	callbackurl,"
 				+ "	characterroles)"
-				+ " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+				+ " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 		try (PreparedStatement statement = connection.prepareStatement(sql)) {
 			Rows rows = new Rows(statement, esiOwners.size());
 			for (EsiOwner owner : esiOwners) {
@@ -97,7 +96,6 @@ public class ProfileOwners extends ProfileTable {
 				setAttribute(statement, ++index, owner.getContractsNextUpdate());
 				setAttribute(statement, ++index, owner.getLocationsNextUpdate());
 				setAttribute(statement, ++index, owner.getBlueprintsNextUpdate());
-				setAttribute(statement, ++index, owner.getBookmarksNextUpdate());
 				setAttribute(statement, ++index, owner.getSkillsNextUpdate());
 				setAttribute(statement, ++index, owner.getMiningNextUpdate());
 				setAttribute(statement, ++index, owner.getAccountName());
@@ -138,7 +136,6 @@ public class ProfileOwners extends ProfileTable {
 				Date contractsNextUpdate = getDateNotNull(rs, "contractsnextupdate");
 				Date locationsNextUpdate = getDateNotNull(rs, "locationsnextupdate");
 				Date blueprintsNextUpdate = getDateNotNull(rs, "blueprintsnextupdate");
-				Date bookmarksNextUpdate = getDateNotNull(rs, "bookmarksnextupdate");
 				Date skillsNextUpdate = getDateNotNull(rs, "skillsnextupdate");
 				Date miningNextUpdate = getDateNotNull(rs, "miningnextupdate");
 				String accountName = getString(rs, "accountname");
@@ -183,7 +180,6 @@ public class ProfileOwners extends ProfileTable {
 				owner.setContractsNextUpdate(contractsNextUpdate);
 				owner.setLocationsNextUpdate(locationsNextUpdate);
 				owner.setBlueprintsNextUpdate(blueprintsNextUpdate);
-				owner.setBookmarksNextUpdate(bookmarksNextUpdate);
 				owner.setSkillsNextUpdate(skillsNextUpdate);
 				owner.setMiningNextUpdate(miningNextUpdate);
 				esiOwners.add(owner);
@@ -215,7 +211,6 @@ public class ProfileOwners extends ProfileTable {
 					+ "	contractsnextupdate INTEGER,\n"
 					+ "	locationsnextupdate INTEGER,\n"
 					+ "	blueprintsnextupdate INTEGER,\n"
-					+ "	bookmarksnextupdate INTEGER,\n"
 					+ "	skillsnextupdate INTEGER,\n"
 					+ "	miningnextupdate INTEGER,\n"
 					+ "	accountname TEXT,\n"
