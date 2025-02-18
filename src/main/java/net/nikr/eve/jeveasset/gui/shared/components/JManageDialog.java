@@ -41,7 +41,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.gui.images.Images;
-import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
+import net.nikr.eve.jeveasset.gui.shared.StringComparators;
 import net.nikr.eve.jeveasset.gui.shared.JOptionInput;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 
@@ -167,7 +167,7 @@ public abstract class JManageDialog extends JDialogCentered {
 
 	protected final void update(List<String> list) {
 		listModel.clear();
-		Collections.sort(list, new CaseInsensitiveComparator());
+		Collections.sort(list, StringComparators.CASE_INSENSITIVE);
 		for (String filter: list) {
 			listModel.addElement(filter);
 		}

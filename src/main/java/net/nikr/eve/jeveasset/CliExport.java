@@ -38,6 +38,7 @@ import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.StaticData;
 import net.nikr.eve.jeveasset.data.settings.ExportSettings;
 import net.nikr.eve.jeveasset.data.settings.Settings;
+import net.nikr.eve.jeveasset.gui.shared.StringComparators;
 import net.nikr.eve.jeveasset.gui.shared.filter.ExportTableData;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterLogicalMatcher;
@@ -298,7 +299,7 @@ public class CliExport {
 		if (typeNames != null && !typeNames.isEmpty()) {
 			if (typeNames.size() > 1) {
 				//Build {name, item} Cache
-				Map<String, Item> itemsNyName = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+				Map<String, Item> itemsNyName = new TreeMap<>(StringComparators.CASE_INSENSITIVE);
 				for (Item item : StaticData.get().getItems().values()) {
 					itemsNyName.put(item.getTypeName(), item);
 				}
@@ -351,7 +352,7 @@ public class CliExport {
 	}
 
 	private static class LoadoutMatcher implements Matcher<Loadout> {
-		private final Set<String> loadoutsNames = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
+		private final Set<String> loadoutsNames = new TreeSet<>(StringComparators.CASE_INSENSITIVE);
 		private final Set<Integer> loadoutsIDs;
 
 		public LoadoutMatcher(Set<String> loadoutsNames, Set<Integer> loadoutsIDs) {

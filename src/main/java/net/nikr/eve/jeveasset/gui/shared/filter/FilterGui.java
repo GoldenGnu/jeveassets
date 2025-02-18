@@ -42,7 +42,7 @@ import javax.swing.JPanel;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.SettingsUpdateListener;
 import net.nikr.eve.jeveasset.gui.images.Images;
-import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
+import net.nikr.eve.jeveasset.gui.shared.StringComparators;
 import net.nikr.eve.jeveasset.gui.shared.components.JDropDownButton;
 import net.nikr.eve.jeveasset.gui.shared.components.JFixedToolBar;
 import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
@@ -477,10 +477,10 @@ class FilterGui<E> {
 		jLoadFilter.add(jMenuItem);
 
 		List<String> filters = new ArrayList<>(filterControl.getFilters().keySet());
-		Collections.sort(filters, new CaseInsensitiveComparator());
+		Collections.sort(filters, StringComparators.CASE_INSENSITIVE);
 
 		List<String> defaultFilters = new ArrayList<>(filterControl.getDefaultFilters().keySet());
-		Collections.sort(defaultFilters, new CaseInsensitiveComparator());
+		Collections.sort(defaultFilters, StringComparators.CASE_INSENSITIVE);
 
 		if (!filters.isEmpty() || !defaultFilters.isEmpty()) {
 			jLoadFilter.addSeparator();

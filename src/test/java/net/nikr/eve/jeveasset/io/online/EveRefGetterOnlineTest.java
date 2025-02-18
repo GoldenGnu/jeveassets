@@ -67,7 +67,7 @@ public class EveRefGetterOnlineTest extends TestUtil {
 	}
 
 	@ClassRule
-    public static ErrorCollector collector = new ErrorCollector();
+	public static ErrorCollector collector = new ErrorCollector();
 
 	/**
 	 * Download test

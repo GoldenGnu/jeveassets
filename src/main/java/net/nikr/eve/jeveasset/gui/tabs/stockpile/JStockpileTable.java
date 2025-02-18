@@ -75,6 +75,9 @@ public class JStockpileTable extends JSeparatorTable {
 				if (column < 0 || column >= getColumnCount()) {
 					return; //Out of bounce
 				}
+				if (row < 0 || row >= getRowCount()) {
+					return; //Out of bounce
+				}
 				lastColumn = column;
 				lastRow = row;
 
