@@ -823,4 +823,8 @@ public abstract class FakeSettings extends Settings {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
+	@Override
+	public boolean isColumnValueCache() {
+		throw new UnsupportedOperationException("not implemented");
+	}
 }
