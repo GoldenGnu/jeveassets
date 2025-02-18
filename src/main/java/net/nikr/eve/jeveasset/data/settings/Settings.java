@@ -41,7 +41,7 @@ import net.nikr.eve.jeveasset.data.settings.tag.Tag;
 import net.nikr.eve.jeveasset.data.settings.tag.TagID;
 import net.nikr.eve.jeveasset.data.settings.tag.Tags;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.SoundsSettingsPanel.SoundOption;
-import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
+import net.nikr.eve.jeveasset.gui.shared.StringComparators;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.menu.JFormulaDialog.Formula;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuJumps.Jump;
@@ -634,7 +634,7 @@ public class Settings {
 	public Map<String, View> getTableViews(String name) {
 		Map<String, View> views = tableViews.get(name);
 		if (views == null) {
-			views = new TreeMap<>(new CaseInsensitiveComparator());
+			views = new TreeMap<>(StringComparators.CASE_INSENSITIVE);
 			tableViews.put(name, views);
 		}
 		return views;
