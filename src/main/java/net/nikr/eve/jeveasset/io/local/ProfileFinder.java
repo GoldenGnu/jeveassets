@@ -30,6 +30,7 @@ import java.util.TreeSet;
 import net.nikr.eve.jeveasset.data.profile.Profile;
 import net.nikr.eve.jeveasset.data.profile.Profile.ProfileType;
 import net.nikr.eve.jeveasset.data.profile.ProfileManager;
+import net.nikr.eve.jeveasset.gui.shared.StringComparators;
 import net.nikr.eve.jeveasset.io.shared.FileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,7 +56,7 @@ public final class ProfileFinder {
 		File[] files = profilesDirectory.listFiles(profileFilter);
 		if (files != null) {
 			boolean defaultProfileFound = false;
-			Set<String> unique = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
+			Set<String> unique = new TreeSet<>(StringComparators.CASE_INSENSITIVE);
 			for (File file : files) {
 				String filename = file.getName();
 				String profileName = formatName(filename);

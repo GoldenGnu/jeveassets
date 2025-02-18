@@ -76,7 +76,7 @@ import net.nikr.eve.jeveasset.data.settings.ColorEntry;
 import net.nikr.eve.jeveasset.data.settings.ColorSettings;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
-import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
+import net.nikr.eve.jeveasset.gui.shared.StringComparators;
 import net.nikr.eve.jeveasset.gui.shared.DocumentFactory;
 import net.nikr.eve.jeveasset.gui.shared.DocumentFactory.ValueFlag;
 import net.nikr.eve.jeveasset.gui.shared.Formatter;
@@ -588,7 +588,7 @@ public class StockpileDialog extends JDialogCentered {
 		//Containers
 		containers.clear();
 		containers.addAll(containerSet);
-		Collections.sort(containers, new CaseInsensitiveComparator());
+		Collections.sort(containers, StringComparators.CASE_INSENSITIVE);
 	}
 
 	@Override

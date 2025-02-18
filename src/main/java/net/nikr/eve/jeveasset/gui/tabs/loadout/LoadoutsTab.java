@@ -40,7 +40,6 @@ import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
-import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
@@ -51,7 +50,7 @@ import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.my.MyAsset;
 import net.nikr.eve.jeveasset.data.settings.types.LocationType;
 import net.nikr.eve.jeveasset.gui.images.Images;
-import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
+import net.nikr.eve.jeveasset.gui.shared.StringComparators;
 import net.nikr.eve.jeveasset.gui.shared.JOptionInput;
 import net.nikr.eve.jeveasset.gui.shared.components.JCustomFileChooser;
 import net.nikr.eve.jeveasset.gui.shared.components.JDropDownButton;
@@ -535,7 +534,7 @@ public class LoadoutsTab extends JMainTabSecondary {
 					charShips.add(key);
 				}
 				if (!charShips.isEmpty()) {
-					Collections.sort(charShips, new CaseInsensitiveComparator());
+					Collections.sort(charShips, StringComparators.CASE_INSENSITIVE);
 					jExpand.setEnabled(true);
 					jCollapse.setEnabled(true);
 					jExport.setEnabled(true);

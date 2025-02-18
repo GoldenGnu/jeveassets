@@ -45,6 +45,7 @@ import net.nikr.eve.jeveasset.data.settings.PriceData;
 import net.nikr.eve.jeveasset.data.settings.tag.Tags;
 import net.nikr.eve.jeveasset.gui.dialogs.account.AccountTableFormat;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.ColorsTableFormat;
+import net.nikr.eve.jeveasset.gui.shared.StringComparators;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.AllColumn;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterMatcherTest.TestEnum;
 import net.nikr.eve.jeveasset.gui.shared.menu.JFormulaDialog;
@@ -284,7 +285,7 @@ public class TableFormatTest extends TestUtil {
 				Class<?> type = enumColumn.getType();
 				assertNotNull(enumColumn.getClass().getName() + "." + enumColumn.name() + " -> is null", type);
 				if (String.class.isAssignableFrom(type)) {
-					assertEquals(GlazedLists.caseInsensitiveComparator(), comparator);
+					assertEquals(StringComparators.TO_STRING, comparator);
 				} else if (Comparable.class.isAssignableFrom(type)) {
 					assertEquals(GlazedLists.comparableComparator(), comparator);
 				} else if (Component.class.isAssignableFrom(type)
@@ -310,7 +311,7 @@ public class TableFormatTest extends TestUtil {
 		} else if ((actual.isAssignableFrom(Long.class) || actual.isAssignableFrom(Integer.class)) && (expecteds.isAssignableFrom(Long.class) || expecteds.isAssignableFrom(Integer.class))) {
 			//No problem
 		} else if (Number.class.isAssignableFrom(actual)) {
-			fail("Unsupported number type used");
+			fail("Column: " + enumColumn.name() + " Class: " + actual + " is an unsupported number type");
 		} else if (JComponent.class.isAssignableFrom(actual)) {
 			//No problem
 		} else if (String.class.isAssignableFrom(actual)) {
@@ -321,12 +322,14 @@ public class TableFormatTest extends TestUtil {
 					actual = actual.getSuperclass();
 				}
 				Method method = actual.getMethod("toString");
-				assertTrue(actual + " does not implement toString: " + method.getDeclaringClass() , method.getDeclaringClass().equals(actual));
+				assertTrue("Column: " + enumColumn.name() + " Class: " + actual + " does not implement toString: " + method.getDeclaringClass() , method.getDeclaringClass().equals(actual));
 			} catch (NoSuchMethodException ex) {
-				fail("no toString method");
+				fail("Column: " + enumColumn.name() + " Class: " + actual +  " has no toString method");
 			} catch (SecurityException ex) {
-				fail("no toString method");
+				fail("Column: " + enumColumn.name() + " Class: " + actual +  " has no toString method");
 			}
+		} else if (!actual.isAssignableFrom(expecteds)) {
+			fail(enumColumn.name() + "is not the right type");
 		} else {
 			assertTrue(enumColumn.getClass().getSuperclass().getSimpleName() + "->" + enumColumn.name() + " expected: " + expecteds.getSimpleName() + " was: " + actual.getSimpleName(), expecteds.isAssignableFrom(actual));
 			try {
