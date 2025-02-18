@@ -64,6 +64,7 @@ public class EveRefGetterOnlineTest extends TestUtil {
 	@AfterClass
 	public static void tearDownClass() {
 		setLoggingLevel(Level.INFO);
+		CliOptions.get().setPortable(false);
 	}
 
 	@ClassRule
