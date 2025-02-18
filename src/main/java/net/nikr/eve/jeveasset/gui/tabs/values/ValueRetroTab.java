@@ -43,7 +43,7 @@ import net.nikr.eve.jeveasset.data.settings.Colors;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.types.LocationType;
 import net.nikr.eve.jeveasset.gui.images.Images;
-import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
+import net.nikr.eve.jeveasset.gui.shared.StringComparators;
 import net.nikr.eve.jeveasset.gui.shared.Formatter;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTabSecondary;
 import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
@@ -174,7 +174,7 @@ public class ValueRetroTab extends JMainTabSecondary {
 		calcTotal();
 		jCharacters.removeAllItems();
 		List<String> characterNames = new ArrayList<>(characters.keySet());
-		Collections.sort(characterNames, new CaseInsensitiveComparator());
+		Collections.sort(characterNames, StringComparators.CASE_INSENSITIVE);
 		for (String owner : characterNames) {
 			jCharacters.addItem(owner);
 		}
@@ -188,7 +188,7 @@ public class ValueRetroTab extends JMainTabSecondary {
 
 		jCorporations.removeAllItems();
 		List<String> corporationNames = new ArrayList<>(corporations.keySet());
-		Collections.sort(corporationNames, new CaseInsensitiveComparator());
+		Collections.sort(corporationNames, StringComparators.CASE_INSENSITIVE);
 		for (String corp : corporationNames) {
 			jCorporations.addItem(corp);
 		}

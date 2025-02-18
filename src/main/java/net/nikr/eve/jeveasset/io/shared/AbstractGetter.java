@@ -36,6 +36,7 @@ import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
 import net.nikr.eve.jeveasset.data.api.my.MyAsset;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
+import net.nikr.eve.jeveasset.gui.shared.StringComparators;
 import net.nikr.eve.jeveasset.gui.shared.Formatter;
 import net.nikr.eve.jeveasset.gui.shared.Updatable;
 import net.nikr.eve.jeveasset.io.shared.ThreadWoker.TaskCancelledException;
@@ -402,7 +403,7 @@ public abstract class AbstractGetter<O extends OwnerType> implements Runnable {
 
 	protected static final String getHeader(Map<String, List<String>> responseHeaders, String headerName) {
 		if (responseHeaders != null) {
-			Map<String, List<String>> caseInsensitiveHeaders = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+			Map<String, List<String>> caseInsensitiveHeaders = new TreeMap<>(StringComparators.CASE_INSENSITIVE);
 			caseInsensitiveHeaders.putAll(responseHeaders);
 			List<String> headers = caseInsensitiveHeaders.get(headerName.toLowerCase());
 			if (headers != null && !headers.isEmpty()) {
