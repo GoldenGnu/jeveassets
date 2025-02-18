@@ -40,7 +40,7 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
+import net.nikr.eve.jeveasset.gui.shared.StringComparators;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
 import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
@@ -104,7 +104,7 @@ public class FilterSave extends JDialogCentered {
 
 	String show(final List<String> filters, final List<String> defaultFilters) {
 		returnString = null;
-		Collections.sort(filters, new CaseInsensitiveComparator());
+		Collections.sort(filters, StringComparators.CASE_INSENSITIVE);
 		try {
 			this.filters.getReadWriteLock().writeLock().lock();
 			this.filters.clear();
