@@ -45,6 +45,7 @@ import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder.MarketOrderState;
 import net.nikr.eve.jeveasset.data.api.raw.RawTransaction;
 import net.nikr.eve.jeveasset.i18n.General;
+import net.nikr.eve.jeveasset.io.local.profile.ProfileDatabase;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
@@ -52,11 +53,17 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 
 public class DataConverterTest extends TestUtil {
 
+	@BeforeClass
+	public static void setUpClass() {
+		ProfileDatabase.setUpdateConnectionUrl(null);
+	}
+	
 	@Test
 	public void testAssetIndustryJob() {
 		Date date = new Date();
