@@ -73,6 +73,13 @@ public class ProfileMining extends ProfileTable {
 		setAttribute(statement, ++index, mining.isForCorporation());
 	}
 
+	/**
+	 * Not sure if immutable or mutable (REPLACE)
+	 * @param connection
+	 * @param ownerID
+	 * @param minings
+	 * @return 
+	 */
 	public static boolean updateMinings(Connection connection, long ownerID, Collection<MyMining> minings) {
 		//Insert data
 		String miningSQL = "INSERT OR REPLACE INTO " + MINING_TABLE + " ("
@@ -99,8 +106,15 @@ public class ProfileMining extends ProfileTable {
 		return true;
 	}
 
+	/**
+	 * Not sure if immutable or mutable (REPLACE)
+	 * @param connection
+	 * @param ownerID
+	 * @param extractions
+	 * @return 
+	 */
 	public static boolean updateExtractions(Connection connection, long ownerID, Collection<MyExtraction> extractions) {
-		String extractionSQL = "INSERT INTO " + MINING_EXTRACTION_TABLE + " ("
+		String extractionSQL = "INSERT OR REPLACE INTO " + MINING_EXTRACTION_TABLE + " ("
 				+ "	ownerid,"
 				+ "	arrival,"
 				+ "	start,"
