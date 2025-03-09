@@ -32,6 +32,11 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.data.profile.Profile;
 import org.slf4j.Logger;
@@ -41,7 +46,9 @@ import org.slf4j.LoggerFactory;
 public class ProfileDatabase {
 	private static final Logger LOG = LoggerFactory.getLogger(ProfileDatabase.class);
 
-	private static final Collection<Update> UPDATES = Collections.synchronizedCollection(new ArrayList<>());
+	private static final Collection<Future<Boolean>> UPDATES = Collections.synchronizedCollection(new ArrayList<>());
+
+	private static final ExecutorService UPDATES_THREAD_POOL = Executors.newSingleThreadExecutor();
 
 	public static enum Table {
 		OWNERS(new ProfileOwners()),
@@ -89,13 +96,18 @@ public class ProfileDatabase {
 		}
 	}
 
-	private static String updateConnectionUrl = null;
+	private static Connection updateConnection = null;
 
 	public static void setUpdateConnectionUrl(Profile profile) {
 		if (profile == null) {
-			ProfileDatabase.updateConnectionUrl = null;
+			updateConnection = null;
 		} else {
-			ProfileDatabase.updateConnectionUrl = getConnectionUrl(profile.getSQLiteFilename());
+			try {
+				updateConnection = DriverManager.getConnection(getConnectionUrl(profile.getSQLiteFilename()));
+				updateConnection.setAutoCommit(false);
+			} catch (SQLException ex) {
+				LOG.error(ex.getMessage(), ex);
+			}
 		}
 	}
 
@@ -119,9 +131,7 @@ public class ProfileDatabase {
 	}
 
 	public static void update(ProfileConnection profileConnection) {
-		Update update = new Update(profileConnection);
-		UPDATES.add(update);
-		update.start();
+		UPDATES.add(UPDATES_THREAD_POOL.submit(new Update(profileConnection)));
 	}
 
 	public static boolean save(Profile profile, boolean full) {
@@ -140,17 +150,24 @@ public class ProfileDatabase {
 		boolean ok = true;
 		String connectionUrl = getConnectionUrl(profile.getSQLiteFilename());
 		if (!full) {
-			synchronized (UPDATES) {
-				for (Update update : UPDATES) {
-					try {
-						update.join();
-						ok = update.ok && ok;
-					} catch (InterruptedException ex) {
-						//No problem
+			try {
+				synchronized (UPDATES) {
+					for (Future<Boolean> update : UPDATES) {
+						try {
+							ok = update.get() && ok;
+						} catch (InterruptedException ex) {
+							//No problem
+						} catch (ExecutionException ex) {
+							//No problem
+						}
 					}
 				}
+				UPDATES.clear();
+				updateConnection.setAutoCommit(false);
+				updateConnection.close();
+			} catch (SQLException ex) {
+				LOG.error(ex.getMessage(), ex);
 			}
-			UPDATES.clear();
 		}
 		try (Connection connection = DriverManager.getConnection(connectionUrl)) {
 			connection.setAutoCommit(false);
@@ -196,9 +213,7 @@ public class ProfileDatabase {
 		return backup.exists();
     }
 
-	private static class Update extends Thread {
-
-		boolean ok = false;
+	private static class Update implements Callable<Boolean> {
 
 		private final ProfileConnection profileConnection;
 
@@ -207,25 +222,23 @@ public class ProfileDatabase {
 		}
 
 		@Override
-		public void run() {
-			boolean ok = false;
-			if (updateConnectionUrl == null) {
-				return;
+		public Boolean call() throws Exception {
+			if (updateConnection == null) {
+				return false;
 			}
-			try (Connection connection = DriverManager.getConnection(updateConnectionUrl)) {
-				connection.setAutoCommit(false);
-				ok = profileConnection.update(connection);
+			try {
+				boolean ok = profileConnection.update(updateConnection);
 				if (ok) {
 					//Only commit once, when everything is done - so we can rollback on any errors 
-					connection.commit();
+					updateConnection.commit();
 				} else {
-					connection.rollback();
+					updateConnection.rollback();
 				}
-				connection.setAutoCommit(true);
+				return ok;
 			} catch (SQLException ex) {
 				LOG.error(ex.getMessage(), ex);
+				return false;
 			}
-			this.ok = ok;
 		}
 		
 	}

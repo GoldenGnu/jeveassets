@@ -83,22 +83,6 @@ public abstract class ProfileTable {
 		return true;
 	}
 
-	protected void rollback(Connection connection) {
-		try {
-			connection.rollback();
-		} catch (SQLException ex) {
-			LOG.error(ex.getMessage(), ex);
-		}
-	}
-
- 	protected void commit(Connection connection) {
-		try {
-			connection.commit();
-		} catch (SQLException ex) {
-			rollback(connection);
-		}
-	}
-
 	protected static void setAttributeNull(final PreparedStatement statement, final int index) throws SQLException {
 		statement.setNull(index, Types.NULL);
 	}
