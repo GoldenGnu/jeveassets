@@ -75,6 +75,11 @@ public class ProfileTransactions  extends ProfileTable {
 	 * @return 
 	 */
 	public static boolean updateTransactions(Connection connection, long ownerID, Collection<MyTransaction> transactions) {
+		//Tables exist
+		if (!tableExist(connection, TRANSACTIONS_TABLE)) {
+			return false;
+		}
+
 		//Insert data
 		String sql = "INSERT OR IGNORE INTO " + TRANSACTIONS_TABLE + " ("
 				+ "	ownerid,"

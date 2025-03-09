@@ -759,7 +759,7 @@ public class Program implements ActionListener {
 	}
 
 	public synchronized void saveTable(Table table) {
-		LOG.info("Saving Profile");
+		LOG.info("Saving Profile Table");
 		profileManager.saveProfileTable(table);
 	}
 

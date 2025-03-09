@@ -81,6 +81,11 @@ public class ProfileMining extends ProfileTable {
 	 * @return 
 	 */
 	public static boolean updateMinings(Connection connection, long ownerID, Collection<MyMining> minings) {
+		//Tables exist
+		if (!tableExist(connection, MINING_TABLE)) {
+			return false;
+		}
+
 		//Insert data
 		String miningSQL = "INSERT OR REPLACE INTO " + MINING_TABLE + " ("
 				+ "	ownerid,"
@@ -114,6 +119,10 @@ public class ProfileMining extends ProfileTable {
 	 * @return 
 	 */
 	public static boolean updateExtractions(Connection connection, long ownerID, Collection<MyExtraction> extractions) {
+		//Tables exist
+		if (!tableExist(connection, MINING_EXTRACTION_TABLE)) {
+			return false;
+		}
 		String extractionSQL = "INSERT OR REPLACE INTO " + MINING_EXTRACTION_TABLE + " ("
 				+ "	ownerid,"
 				+ "	arrival,"

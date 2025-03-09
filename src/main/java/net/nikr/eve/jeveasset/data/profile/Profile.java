@@ -86,17 +86,19 @@ public class Profile implements Comparable<Profile> {
 		save(true);
 	}
 
-	
-
 	public void saveSoft() {
-		save(false);
+		if (type == ProfileType.XML) {
+			save(true); //Full save
+		} else {
+			save(false);
+		}
 	}
 
 	public void saveTable(Table table) {
 		if (type == ProfileType.XML) {
-			save(true);
+			save(true); //Full save
 		} else {
-			ProfileDatabase.save(this, table, defaultProfile);
+			ProfileDatabase.save(this, table, true);
 		}
 	}
 

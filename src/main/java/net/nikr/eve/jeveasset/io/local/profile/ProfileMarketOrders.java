@@ -92,6 +92,11 @@ public class ProfileMarketOrders extends ProfileTable {
 	 * @return 
 	 */
 	public static boolean updateMarketOrders(Connection connection, long ownerID, Collection<MyMarketOrder> marketOrders) {
+		//Tables exist
+		if (!tableExist(connection, MARKET_ORDERS_TABLE, MARKET_ORDER_CHANGES_TABLE)) {
+			return false;
+		}
+
 		//Insert data
 		String ordersSQL = "INSERT OR REPLACE INTO " + MARKET_ORDERS_TABLE + " ("
 				+ "	ownerid,"

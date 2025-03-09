@@ -85,6 +85,11 @@ public class ProfileIndustryJobs extends ProfileTable {
 	 * @return 
 	 */
 	public static boolean updateIndustryJobs(Connection connection, long ownerID, Collection<MyIndustryJob> industryJobs) {
+		//Tables exist
+		if (!tableExist(connection, INDUSTRY_JOBS_TABLE)) {
+			return false;
+		}
+
 		//Insert data
 		String sql = "INSERT OR REPLACE INTO " + INDUSTRY_JOBS_TABLE + " ("
 				+ "	ownerid,"

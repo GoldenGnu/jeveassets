@@ -83,6 +83,11 @@ public class ProfileJournals extends ProfileTable {
 	 * @return 
 	 */
 	public static boolean updateJournals(Connection connection, long ownerID, Collection<MyJournal> journals) {
+		//Tables exist
+		if (!tableExist(connection, JOURNALS_TABLE)) {
+			return false;
+		}
+
 		//Insert data
 		String sql = "INSERT OR IGNORE INTO " + JOURNALS_TABLE + " ("
 				+ "	ownerid,"

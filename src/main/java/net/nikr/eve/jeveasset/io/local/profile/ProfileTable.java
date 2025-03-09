@@ -56,32 +56,18 @@ public abstract class ProfileTable {
 		return false;
 	}
 
- 	protected boolean tableExist(Connection connection, String tableName) {
-		String sql = "SELECT name FROM sqlite_master WHERE type='table' AND name='" + tableName + "'";
-		try (Statement statement = connection.createStatement(); ResultSet rs = statement.executeQuery(sql)) {
-			while (rs.next()) {
-				return true;
+ 	protected static boolean tableExist(Connection connection, String ... tableNames) {
+		boolean ok = true;
+		for (String tableName : tableNames) {
+			String sql = "SELECT name FROM sqlite_master WHERE type='table' AND name='" + tableName + "'";
+			try (Statement statement = connection.createStatement(); ResultSet rs = statement.executeQuery(sql)) {
+				ok = rs.next() && ok;
+			} catch (SQLException ex) {
+				LOG.error(ex.getMessage(), ex);
+				return false;
 			}
-		} catch (SQLException ex) {
-			LOG.error(ex.getMessage(), ex);
 		}
-		return false;
-	}
-
- 	protected void rollback(Connection connection) {
-		try {
-			connection.rollback();
-		} catch (SQLException ex) {
-			LOG.error(ex.getMessage(), ex);
-		}
-	}
-
- 	protected void commit(Connection connection) {
-		try {
-			connection.commit();
-		} catch (SQLException ex) {
-			rollback(connection);
-		}
+		return ok;
 	}
 
  	protected static boolean tableDelete(Connection connection, String ... tableNames) {
@@ -95,6 +81,22 @@ public abstract class ProfileTable {
 			}
 		}
 		return true;
+	}
+
+	protected void rollback(Connection connection) {
+		try {
+			connection.rollback();
+		} catch (SQLException ex) {
+			LOG.error(ex.getMessage(), ex);
+		}
+	}
+
+ 	protected void commit(Connection connection) {
+		try {
+			connection.commit();
+		} catch (SQLException ex) {
+			rollback(connection);
+		}
 	}
 
 	protected static void setAttributeNull(final PreparedStatement statement, final int index) throws SQLException {

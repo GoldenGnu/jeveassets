@@ -104,12 +104,9 @@ public class ProfileDatabase {
 	}
 
 	public static boolean load(Profile profile) {
+		backup(profile);
 		boolean ok = true;
-		String filename = profile.getSQLiteFilename();
-		if (exists(filename)) {
-			backup(profile);
-		}
-		String connectionUrl = getConnectionUrl(filename);
+		String connectionUrl = getConnectionUrl(profile.getSQLiteFilename());
 		try (Connection connection = DriverManager.getConnection(connectionUrl)) {
 			for (Table table : Table.values()) {
 				ok = table.select(connection, profile.getEsiOwners()) && ok;
@@ -140,9 +137,8 @@ public class ProfileDatabase {
 	}
 
 	private static boolean save(Profile profile, Collection<Table> tables, boolean full) {
-		String filename = profile.getSQLiteFilename();
 		boolean ok = true;
-		String connectionUrl = getConnectionUrl(filename);
+		String connectionUrl = getConnectionUrl(profile.getSQLiteFilename());
 		if (!full) {
 			synchronized (UPDATES) {
 				for (Update update : UPDATES) {
@@ -154,6 +150,7 @@ public class ProfileDatabase {
 					}
 				}
 			}
+			UPDATES.clear();
 		}
 		try (Connection connection = DriverManager.getConnection(connectionUrl)) {
 			connection.setAutoCommit(false);
@@ -176,10 +173,13 @@ public class ProfileDatabase {
 	}
 
 	private static void backup(final Profile profile) {
+		String filename = profile.getSQLiteFilename();
+		if (!exists(filename)) {
+			return;
+		}
 		if (exists(profile.getSQLiteBackupFilename())) {
 			return;
 		}
-		String filename = profile.getSQLiteFilename();
 		String connectionUrl = getConnectionUrl(filename);
 		try (Connection connection = DriverManager.getConnection(connectionUrl);
 				final Statement statement = connection.createStatement()

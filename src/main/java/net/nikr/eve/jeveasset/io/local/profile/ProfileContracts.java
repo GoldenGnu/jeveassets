@@ -106,6 +106,12 @@ public class ProfileContracts extends ProfileTable {
 	 * @return 
 	 */
 	public static boolean updateContractItems(Connection connection, Collection<List<MyContractItem>> contractItemsLists) {
+		//Tables exist
+		if (!tableExist(connection, CONTRACT_ITEMS_TABLE)) {
+			return false;
+		}
+
+		//Insert data
 		String sqlContractItems = "INSERT OR IGNORE INTO " + CONTRACT_ITEMS_TABLE + " ("
 				+ "	contractid,"
 				+ "	included,"
@@ -147,6 +153,11 @@ public class ProfileContracts extends ProfileTable {
 	 * @return 
 	 */
 	public static boolean updateContracts(Connection connection, long ownerID, Collection<MyContract> contracts) {
+		//Tables exist
+		if (!tableExist(connection, CONTRACTS_OWNERS_TABLE, CONTRACTS_TABLE)) {
+			return false;
+		}
+
 		//Insert data
 		String sqlOwners = "INSERT OR IGNORE INTO " + CONTRACTS_OWNERS_TABLE + " ("
 				+ "	ownerid,"
