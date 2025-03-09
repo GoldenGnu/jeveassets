@@ -24,6 +24,7 @@ package net.nikr.eve.jeveasset.data.profile;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.data.api.accounts.EveApiAccount;
 import net.nikr.eve.jeveasset.data.api.accounts.EveKitOwner;
@@ -42,6 +43,7 @@ public class Profile implements Comparable<Profile> {
 	private static final String XML_BAC = "bac";
 	private static final String XML_BACKUP = "xmlbackup";
 	private static final String SQLITE = "db";
+	private static final String SQLITE_BACKUP = "dbbackup";
 
 	public static enum ProfileType {
 		XML, SQLITE
@@ -106,6 +108,18 @@ public class Profile implements Comparable<Profile> {
 			File backup = new File(getBackupXmlFilename());
 			file.renameTo(backup);
 		}
+	}
+
+	public String getSQLiteBackupFilename() {
+		String filename = getName() + "_" + Program.PROGRAM_VERSION + "_backup";
+		filename = filename.replace(" ", "_"); //Remove spaces
+		filename = filename + "." + SQLITE_BACKUP; //Add extension
+		if (defaultProfile) {
+			filename = "#" + filename; //Mark active profile
+		}
+		
+		filename = FileUtil.getPathProfile(filename);
+		return filename;
 	}
 
 	public boolean isDefaultProfile() {

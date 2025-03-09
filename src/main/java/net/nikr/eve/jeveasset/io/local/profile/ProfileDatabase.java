@@ -20,9 +20,11 @@
  */
 package net.nikr.eve.jeveasset.io.local.profile;
 
+import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -103,8 +105,11 @@ public class ProfileDatabase {
 
 	public static boolean load(Profile profile) {
 		boolean ok = true;
-		String connectionUrl = getConnectionUrl(profile.getSQLiteFilename());
-
+		String filename = profile.getSQLiteFilename();
+		if (exists(filename)) {
+			backup(profile);
+		}
+		String connectionUrl = getConnectionUrl(filename);
 		try (Connection connection = DriverManager.getConnection(connectionUrl)) {
 			for (Table table : Table.values()) {
 				ok = table.select(connection, profile.getEsiOwners()) && ok;
@@ -170,7 +175,28 @@ public class ProfileDatabase {
 		}
 	}
 
-	public static class Update extends Thread {
+	private static void backup(final Profile profile) {
+		if (exists(profile.getSQLiteBackupFilename())) {
+			return;
+		}
+		String filename = profile.getSQLiteFilename();
+		String connectionUrl = getConnectionUrl(filename);
+		try (Connection connection = DriverManager.getConnection(connectionUrl);
+				final Statement statement = connection.createStatement()
+				) {
+			statement.executeUpdate("BACKUP TO " + profile.getSQLiteBackupFilename()) ;
+		} catch (SQLException ex) {
+			LOG.error(ex.getMessage(), ex);
+			
+		}
+    }
+
+	private static boolean exists(final String filename) {
+		File backup = new File(filename);
+		return backup.exists();
+    }
+
+	private static class Update extends Thread {
 
 		boolean ok = false;
 
