@@ -32,6 +32,8 @@ import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.data.profile.Profile.DefaultProfile;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 import net.nikr.eve.jeveasset.io.local.ProfileFinder;
+import net.nikr.eve.jeveasset.io.local.profile.ProfileDatabase;
+import net.nikr.eve.jeveasset.io.local.profile.ProfileDatabase.Table;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -76,6 +78,7 @@ public class ProfileManager {
 
 	public void setActiveProfile(final Profile activeProfile) {
 		this.activeProfile = activeProfile;
+		ProfileDatabase.setUpdateConnectionUrl(activeProfile);
 	}
 
 	public StockpileIDs getStockpileIDs() {
@@ -88,6 +91,14 @@ public class ProfileManager {
 
 	public void saveProfile() {
 		activeProfile.save();
+	}
+
+	public void saveProfileSoft() {
+		activeProfile.saveSoft();
+	}
+
+	public void saveProfileTable(Table table) {
+		activeProfile.saveTable(table);
 	}
 
 	public List<OwnerType> getOwnerTypes() {

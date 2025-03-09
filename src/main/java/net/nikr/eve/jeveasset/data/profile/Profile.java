@@ -29,6 +29,7 @@ import net.nikr.eve.jeveasset.data.api.accounts.EveApiAccount;
 import net.nikr.eve.jeveasset.data.api.accounts.EveKitOwner;
 import net.nikr.eve.jeveasset.io.local.profile.ProfileDatabase;
 import net.nikr.eve.jeveasset.io.local.ProfileReader;
+import net.nikr.eve.jeveasset.io.local.profile.ProfileDatabase.Table;
 import net.nikr.eve.jeveasset.io.shared.FileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -80,7 +81,25 @@ public class Profile implements Comparable<Profile> {
 	}
 
 	public void save() {
-		boolean save = ProfileDatabase.save(this);
+		save(true);
+	}
+
+	
+
+	public void saveSoft() {
+		save(false);
+	}
+
+	public void saveTable(Table table) {
+		if (type == ProfileType.XML) {
+			save(true);
+		} else {
+			ProfileDatabase.save(this, table, defaultProfile);
+		}
+	}
+
+	private void save(boolean full) {
+		boolean save = ProfileDatabase.save(this, full);
 		if (save && type == ProfileType.XML) {
 			type = ProfileType.SQLITE; //Migrated to SQLite
 			File file = new File(getXmlFilename());

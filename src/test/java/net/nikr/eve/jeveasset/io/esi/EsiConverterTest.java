@@ -69,6 +69,8 @@ import org.junit.Test;
 
 public class EsiConverterTest extends TestUtil {
 
+	private static final boolean SAVE_HISTORY = false;
+
 	@Test
 	public void testToAccountBalance() {
 		testToAccountBalance(null);
@@ -234,7 +236,7 @@ public class EsiConverterTest extends TestUtil {
 		for (ConverterTestOptions options : ConverterTestOptionsGetter.getConverterOptions()) {
 			CharacterIndustryJobsResponse industryJobsResponse = new CharacterIndustryJobsResponse();
 			ConverterTestUtil.setValues(industryJobsResponse, options, esi);
-			Set<MyIndustryJob> industryJobs = EsiConverter.toIndustryJobs(Collections.singletonList(industryJobsResponse), ConverterTestUtil.getEsiOwner(options), false);
+			Set<MyIndustryJob> industryJobs = EsiConverter.toIndustryJobs(Collections.singletonList(industryJobsResponse), ConverterTestUtil.getEsiOwner(options), SAVE_HISTORY);
 			ConverterTestUtil.testValues(industryJobs.iterator().next(), options, esi);
 		}
 	}
@@ -252,7 +254,7 @@ public class EsiConverterTest extends TestUtil {
 		for (ConverterTestOptions options : ConverterTestOptionsGetter.getConverterOptions()) {
 			CorporationIndustryJobsResponse industryJobsResponse = new CorporationIndustryJobsResponse();
 			ConverterTestUtil.setValues(industryJobsResponse, options, esi);
-			Set<MyIndustryJob> industryJobs = EsiConverter.toIndustryJobsCorporation(Collections.singletonList(industryJobsResponse), ConverterTestUtil.getEsiOwner(options), false);
+			Set<MyIndustryJob> industryJobs = EsiConverter.toIndustryJobsCorporation(Collections.singletonList(industryJobsResponse), ConverterTestUtil.getEsiOwner(options), SAVE_HISTORY);
 			ConverterTestUtil.testValues(industryJobs.iterator().next(), options, esi);
 		}
 	}
@@ -271,7 +273,7 @@ public class EsiConverterTest extends TestUtil {
 		for (ConverterTestOptions options : ConverterTestOptionsGetter.getConverterOptions()) {
 			CharacterWalletJournalResponse journalResponse = new CharacterWalletJournalResponse();
 			ConverterTestUtil.setValues(journalResponse, options, esi);
-			Set<MyJournal> journals = EsiConverter.toJournals(Collections.singletonList(journalResponse), ConverterTestUtil.getEsiOwner(options), options.getInteger(), false);
+			Set<MyJournal> journals = EsiConverter.toJournals(Collections.singletonList(journalResponse), ConverterTestUtil.getEsiOwner(options), options.getInteger(), SAVE_HISTORY);
 			ConverterTestUtil.testValues(journals.iterator().next(), options, esi);
 		}
 	}
@@ -290,7 +292,7 @@ public class EsiConverterTest extends TestUtil {
 		for (ConverterTestOptions options : ConverterTestOptionsGetter.getConverterOptions()) {
 			CorporationWalletJournalResponse journalResponse = new CorporationWalletJournalResponse();
 			ConverterTestUtil.setValues(journalResponse, options, esi);
-			Set<MyJournal> journals = EsiConverter.toJournalsCorporation(Collections.singletonList(journalResponse), ConverterTestUtil.getEsiOwner(options), options.getInteger(), false);
+			Set<MyJournal> journals = EsiConverter.toJournalsCorporation(Collections.singletonList(journalResponse), ConverterTestUtil.getEsiOwner(options), options.getInteger(), SAVE_HISTORY);
 			ConverterTestUtil.testValues(journals.iterator().next(), options, esi);
 		}
 	}
@@ -309,7 +311,7 @@ public class EsiConverterTest extends TestUtil {
 		for (ConverterTestOptions options : ConverterTestOptionsGetter.getConverterOptions()) {
 			CharacterContractsResponse contractsResponse = new CharacterContractsResponse();
 			ConverterTestUtil.setValues(contractsResponse, options, esi);
-			Map<MyContract, List<MyContractItem>> contracts = EsiConverter.toContracts(Collections.singletonList(contractsResponse), ConverterTestUtil.getEsiOwner(options), false);
+			Map<MyContract, List<MyContractItem>> contracts = EsiConverter.toContracts(Collections.singletonList(contractsResponse), ConverterTestUtil.getEsiOwner(options), SAVE_HISTORY);
 			ConverterTestUtil.testValues(contracts.keySet().iterator().next(), options, esi);
 		}
 	}
@@ -328,7 +330,7 @@ public class EsiConverterTest extends TestUtil {
 		for (ConverterTestOptions options : ConverterTestOptionsGetter.getConverterOptions()) {
 			CorporationContractsResponse contractsResponse = new CorporationContractsResponse();
 			ConverterTestUtil.setValues(contractsResponse, options, esi);
-			Map<MyContract, List<MyContractItem>> contracts = EsiConverter.toContractsCorporation(Collections.singletonList(contractsResponse), ConverterTestUtil.getEsiOwner(options), false);
+			Map<MyContract, List<MyContractItem>> contracts = EsiConverter.toContractsCorporation(Collections.singletonList(contractsResponse), ConverterTestUtil.getEsiOwner(options), SAVE_HISTORY);
 			ConverterTestUtil.testValues(contracts.keySet().iterator().next(), options, esi);
 		}
 	}
@@ -347,7 +349,7 @@ public class EsiConverterTest extends TestUtil {
 		for (ConverterTestOptions options : ConverterTestOptionsGetter.getConverterOptions()) {
 			CharacterContractsItemsResponse contractsItemsResponse = new CharacterContractsItemsResponse();
 			ConverterTestUtil.setValues(contractsItemsResponse, options, esi);
-			Map<MyContract, List<MyContractItem>> contractItems = EsiConverter.toContractItems(ConverterTestUtil.getMyContract(false, true, options), Collections.singletonList(contractsItemsResponse), ConverterTestUtil.getEsiOwner(options));
+			Map<MyContract, List<MyContractItem>> contractItems = EsiConverter.toContractItems(Collections.singletonMap(ConverterTestUtil.getMyContract(false, true, options), Collections.singletonList(contractsItemsResponse)), ConverterTestUtil.getEsiOwner(options), SAVE_HISTORY);
 			ConverterTestUtil.testValues(contractItems.values().iterator().next().get(0), options, esi);
 		}
 	}
@@ -366,7 +368,7 @@ public class EsiConverterTest extends TestUtil {
 		for (ConverterTestOptions options : ConverterTestOptionsGetter.getConverterOptions()) {
 			CorporationContractsItemsResponse contractsItemsResponse = new CorporationContractsItemsResponse();
 			ConverterTestUtil.setValues(contractsItemsResponse, options, esi);
-			Map<MyContract, List<MyContractItem>> contractItems = EsiConverter.toContractItemsCorporation(ConverterTestUtil.getMyContract(false, true, options), Collections.singletonList(contractsItemsResponse), ConverterTestUtil.getEsiOwner(options));
+			Map<MyContract, List<MyContractItem>> contractItems = EsiConverter.toContractItemsCorporation(Collections.singletonMap(ConverterTestUtil.getMyContract(false, true, options), Collections.singletonList(contractsItemsResponse)), ConverterTestUtil.getEsiOwner(options), SAVE_HISTORY);
 			ConverterTestUtil.testValues(contractItems.values().iterator().next().get(0), options, esi);
 		}
 	}
@@ -385,7 +387,7 @@ public class EsiConverterTest extends TestUtil {
 		for (ConverterTestOptions options : ConverterTestOptionsGetter.getConverterOptions()) {
 			CharacterOrdersResponse ordersResponse = new CharacterOrdersResponse();
 			ConverterTestUtil.setValues(ordersResponse, options, esi);
-			Set<MyMarketOrder> marketOrders = EsiConverter.toMarketOrders(Collections.singletonList(ordersResponse), new ArrayList<>(), ConverterTestUtil.getEsiOwner(options), false);
+			Set<MyMarketOrder> marketOrders = EsiConverter.toMarketOrders(Collections.singletonList(ordersResponse), new ArrayList<>(), ConverterTestUtil.getEsiOwner(options), SAVE_HISTORY);
 			ConverterTestUtil.testValues(marketOrders.iterator().next(), options, esi);
 		}
 	}
@@ -404,7 +406,7 @@ public class EsiConverterTest extends TestUtil {
 		for (ConverterTestOptions options : ConverterTestOptionsGetter.getConverterOptions()) {
 			CharacterOrdersHistoryResponse ordersHistoryResponse = new CharacterOrdersHistoryResponse();
 			ConverterTestUtil.setValues(ordersHistoryResponse, options, esi);
-			Set<MyMarketOrder> marketOrders = EsiConverter.toMarketOrders(new ArrayList<>(), Collections.singletonList(ordersHistoryResponse), ConverterTestUtil.getEsiOwner(options), false);
+			Set<MyMarketOrder> marketOrders = EsiConverter.toMarketOrders(new ArrayList<>(), Collections.singletonList(ordersHistoryResponse), ConverterTestUtil.getEsiOwner(options), SAVE_HISTORY);
 			ConverterTestUtil.testValues(marketOrders.iterator().next(), options, esi);
 		}
 	}
@@ -423,7 +425,7 @@ public class EsiConverterTest extends TestUtil {
 		for (ConverterTestOptions options : ConverterTestOptionsGetter.getConverterOptions()) {
 			CorporationOrdersResponse ordersResponse = new CorporationOrdersResponse();
 			ConverterTestUtil.setValues(ordersResponse, options, esi);
-			Set<MyMarketOrder> marketOrders = EsiConverter.toMarketOrdersCorporation(Collections.singletonList(ordersResponse), new ArrayList<>(), ConverterTestUtil.getEsiOwner(options), false);
+			Set<MyMarketOrder> marketOrders = EsiConverter.toMarketOrdersCorporation(Collections.singletonList(ordersResponse), new ArrayList<>(), ConverterTestUtil.getEsiOwner(options), SAVE_HISTORY);
 			ConverterTestUtil.testValues(marketOrders.iterator().next(), options, esi);
 		}
 	}
@@ -442,7 +444,7 @@ public class EsiConverterTest extends TestUtil {
 		for (ConverterTestOptions options : ConverterTestOptionsGetter.getConverterOptions()) {
 			CorporationOrdersHistoryResponse ordersHistoryResponse = new CorporationOrdersHistoryResponse();
 			ConverterTestUtil.setValues(ordersHistoryResponse, options, esi);
-			Set<MyMarketOrder> marketOrders = EsiConverter.toMarketOrdersCorporation(new ArrayList<>(), Collections.singletonList(ordersHistoryResponse), ConverterTestUtil.getEsiOwner(options), false);
+			Set<MyMarketOrder> marketOrders = EsiConverter.toMarketOrdersCorporation(new ArrayList<>(), Collections.singletonList(ordersHistoryResponse), ConverterTestUtil.getEsiOwner(options), SAVE_HISTORY);
 			ConverterTestUtil.testValues(marketOrders.iterator().next(), options, esi);
 		}
 	}
@@ -461,7 +463,7 @@ public class EsiConverterTest extends TestUtil {
 		for (ConverterTestOptions options : ConverterTestOptionsGetter.getConverterOptions()) {
 			CharacterWalletTransactionsResponse transactionsResponse = new CharacterWalletTransactionsResponse();
 			ConverterTestUtil.setValues(transactionsResponse, options, esi);
-			Set<MyTransaction> transactions = EsiConverter.toTransaction(Collections.singletonList(transactionsResponse), ConverterTestUtil.getEsiOwner(options), options.getInteger(), false);
+			Set<MyTransaction> transactions = EsiConverter.toTransaction(Collections.singletonList(transactionsResponse), ConverterTestUtil.getEsiOwner(options), options.getInteger(), SAVE_HISTORY);
 			ConverterTestUtil.testValues(transactions.iterator().next(), options, esi);
 		}
 	}
@@ -480,7 +482,7 @@ public class EsiConverterTest extends TestUtil {
 		for (ConverterTestOptions options : ConverterTestOptionsGetter.getConverterOptions()) {
 			CorporationWalletTransactionsResponse transactionsResponse = new CorporationWalletTransactionsResponse();
 			ConverterTestUtil.setValues(transactionsResponse, options, esi);
-			Set<MyTransaction> transactions = EsiConverter.toTransactionCorporation(Collections.singletonList(transactionsResponse), ConverterTestUtil.getEsiOwner(options), options.getInteger(), false);
+			Set<MyTransaction> transactions = EsiConverter.toTransactionCorporation(Collections.singletonList(transactionsResponse), ConverterTestUtil.getEsiOwner(options), options.getInteger(), SAVE_HISTORY);
 			MyTransaction myTransaction = transactions.iterator().next();
 			myTransaction.setPersonal(true);
 			ConverterTestUtil.testValues(transactions.iterator().next(), options, esi);

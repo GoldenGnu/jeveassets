@@ -50,7 +50,7 @@ public class ProfileWalletDivisions extends ProfileTable {
 				+ "	name)"
 				+ " VALUES (?,?,?)";
 		try (PreparedStatement statement = connection.prepareStatement(sql)) {
-			Rows rows = new Rows(statement, esiOwners, new RowSize() {
+			Rows rows = new Rows(statement, esiOwners, new RowSize<EsiOwner>() {
 				@Override
 				public int getSize(EsiOwner esiOwner) {
 					return esiOwner.getWalletDivisions().size();
@@ -105,8 +105,8 @@ public class ProfileWalletDivisions extends ProfileTable {
 		if (!tableExist(connection, WALLET_DIVISIONS_TABLE)) {
 			String sql = "CREATE TABLE IF NOT EXISTS " + WALLET_DIVISIONS_TABLE + " (\n"
 					+ "	ownerid INTEGER,\n"
-						+ "	id INTEGER,"
-						+ "	name TEXT,"
+					+ "	id INTEGER,"
+					+ "	name TEXT,"
 					+ "	UNIQUE(ownerid, id)\n"
 					+ ");";
 			try (Statement statement = connection.createStatement()) {

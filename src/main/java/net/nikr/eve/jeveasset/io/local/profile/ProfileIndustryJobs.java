@@ -25,6 +25,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -33,6 +34,7 @@ import java.util.Set;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
 import net.nikr.eve.jeveasset.data.api.raw.RawIndustryJob;
+import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.io.shared.DataConverter;
 import net.nikr.eve.jeveasset.io.shared.RawConverter;
 
@@ -40,6 +42,89 @@ import net.nikr.eve.jeveasset.io.shared.RawConverter;
 public class ProfileIndustryJobs extends ProfileTable {
 
 	private static final String INDUSTRY_JOBS_TABLE = "industryjobs";
+
+	@Override
+	protected boolean isUpdated() {
+		return Settings.get().isIndustryJobsHistory();
+	}
+
+	private static void set(PreparedStatement statement, MyIndustryJob industryJob, long ownerID) throws SQLException {
+		int index = 0;
+		setAttribute(statement, ++index, ownerID);
+		setAttribute(statement, ++index, industryJob.getJobID());
+		setAttribute(statement, ++index, industryJob.getInstallerID());
+		setAttribute(statement, ++index, industryJob.getFacilityID());
+		setAttribute(statement, ++index, industryJob.getStationID());
+		setAttribute(statement, ++index, industryJob.getActivityID());
+		setAttribute(statement, ++index, industryJob.getBlueprintID());
+		setAttribute(statement, ++index, industryJob.getBlueprintTypeID());
+		setAttribute(statement, ++index, industryJob.getBlueprintLocationID());
+		setAttribute(statement, ++index, industryJob.getOutputLocationID());
+		setAttribute(statement, ++index, industryJob.getRuns());
+		setAttributeOptional(statement, ++index, industryJob.getCost());
+		setAttributeOptional(statement, ++index, industryJob.getLicensedRuns());
+		setAttributeOptional(statement, ++index, industryJob.getProbability());
+		setAttributeOptional(statement, ++index, industryJob.getProductTypeID());
+		setAttributeOptional(statement, ++index, industryJob.getStatus());
+		setAttributeOptional(statement, ++index, industryJob.getStatusString());
+		setAttribute(statement, ++index, industryJob.getDuration());
+		setAttribute(statement, ++index, industryJob.getStartDate());
+		setAttribute(statement, ++index, industryJob.getEndDate());
+		setAttributeOptional(statement, ++index, industryJob.getPauseDate());
+		setAttributeOptional(statement, ++index, industryJob.getCompletedDate());
+		setAttributeOptional(statement, ++index, industryJob.getCompletedCharacterID());
+		setAttributeOptional(statement, ++index, industryJob.getSuccessfulRuns());
+		setAttribute(statement, ++index, industryJob.isESI());
+	}
+
+	/**
+	 * Industry jobs are mutable (REPLACE)
+	 * @param connection
+	 * @param ownerID
+	 * @param industryJobs
+	 * @return 
+	 */
+	public static boolean updateIndustryJobs(Connection connection, long ownerID, Collection<MyIndustryJob> industryJobs) {
+		//Insert data
+		String sql = "INSERT OR REPLACE INTO " + INDUSTRY_JOBS_TABLE + " ("
+				+ "	ownerid,"
+				+ "	jobid,"
+				+ "	installerid,"
+				+ "	facilityid,"
+				+ "	stationid,"
+				+ "	activityid,"
+				+ "	blueprintid,"
+				+ "	blueprinttypeid,"
+				+ "	blueprintlocationid,"
+				+ "	outputlocationid,"
+				+ "	runs,"
+				+ "	cost,"
+				+ "	licensedruns,"
+				+ "	probability,"
+				+ "	producttypeid,"
+				+ "	statusenum,"
+				+ "	statusstring,"
+				+ "	timeinseconds,"
+				+ "	startdate,"
+				+ "	enddate,"
+				+ "	pausedate,"
+				+ "	completeddate,"
+				+ "	completedcharacterid,"
+				+ "	successfulruns,"
+				+ "	esi)"
+				+ " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+		try (PreparedStatement statement = connection.prepareStatement(sql)) {
+			Rows rows = new Rows(statement, industryJobs.size());
+			for (MyIndustryJob industryJob : industryJobs) {
+				set(statement, industryJob, ownerID);
+				rows.addRow();
+			}
+		} catch (SQLException ex) {
+			LOG.error(ex.getMessage(), ex);
+			return false;
+		}
+		return true;
+	}
 
 	@Override
 	protected boolean insert(Connection connection, List<EsiOwner> esiOwners) {
@@ -77,7 +162,7 @@ public class ProfileIndustryJobs extends ProfileTable {
 				+ "	esi)"
 				+ " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 		try (PreparedStatement statement = connection.prepareStatement(sql)) {
-			Rows rows = new Rows(statement, esiOwners, new RowSize() {
+			Rows rows = new Rows(statement, esiOwners, new RowSize<EsiOwner>() {
 				@Override
 				public int getSize(EsiOwner owner) {
 					return owner.getIndustryJobs().size();
@@ -85,32 +170,7 @@ public class ProfileIndustryJobs extends ProfileTable {
 			});
 			for (EsiOwner owner : esiOwners) {
 				for (MyIndustryJob industryJob : owner.getIndustryJobs()) {
-					int index = 0;
-					setAttribute(statement, ++index, owner.getOwnerID());
-					setAttribute(statement, ++index, industryJob.getJobID());
-					setAttribute(statement, ++index, industryJob.getInstallerID());
-					setAttribute(statement, ++index, industryJob.getFacilityID());
-					setAttribute(statement, ++index, industryJob.getStationID());
-					setAttribute(statement, ++index, industryJob.getActivityID());
-					setAttribute(statement, ++index, industryJob.getBlueprintID());
-					setAttribute(statement, ++index, industryJob.getBlueprintTypeID());
-					setAttribute(statement, ++index, industryJob.getBlueprintLocationID());
-					setAttribute(statement, ++index, industryJob.getOutputLocationID());
-					setAttribute(statement, ++index, industryJob.getRuns());
-					setAttributeOptional(statement, ++index, industryJob.getCost());
-					setAttributeOptional(statement, ++index, industryJob.getLicensedRuns());
-					setAttributeOptional(statement, ++index, industryJob.getProbability());
-					setAttributeOptional(statement, ++index, industryJob.getProductTypeID());
-					setAttributeOptional(statement, ++index, industryJob.getStatus());
-					setAttributeOptional(statement, ++index, industryJob.getStatusString());
-					setAttribute(statement, ++index, industryJob.getDuration());
-					setAttribute(statement, ++index, industryJob.getStartDate());
-					setAttribute(statement, ++index, industryJob.getEndDate());
-					setAttributeOptional(statement, ++index, industryJob.getPauseDate());
-					setAttributeOptional(statement, ++index, industryJob.getCompletedDate());
-					setAttributeOptional(statement, ++index, industryJob.getCompletedCharacterID());
-					setAttributeOptional(statement, ++index, industryJob.getSuccessfulRuns());
-					setAttribute(statement, ++index, industryJob.isESI());
+					set(statement, industryJob, owner.getOwnerID());
 					rows.addRow();
 				}
 			}

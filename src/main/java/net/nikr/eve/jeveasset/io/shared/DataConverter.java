@@ -20,6 +20,7 @@
  */
 package net.nikr.eve.jeveasset.io.shared;
 
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -56,6 +57,14 @@ import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
+import net.nikr.eve.jeveasset.io.local.profile.ProfileConnection;
+import net.nikr.eve.jeveasset.io.local.profile.ProfileContracts;
+import net.nikr.eve.jeveasset.io.local.profile.ProfileDatabase;
+import net.nikr.eve.jeveasset.io.local.profile.ProfileIndustryJobs;
+import net.nikr.eve.jeveasset.io.local.profile.ProfileJournals;
+import net.nikr.eve.jeveasset.io.local.profile.ProfileMarketOrders;
+import net.nikr.eve.jeveasset.io.local.profile.ProfileMining;
+import net.nikr.eve.jeveasset.io.local.profile.ProfileTransactions;
 
 public abstract class DataConverter {
 
@@ -150,7 +159,7 @@ public abstract class DataConverter {
 		return list;
 	}
 
-	public static List<MyAccountBalance> convertRawAccountBalance(List<RawAccountBalance> rawAccountBalances, OwnerType owner) {
+	protected static List<MyAccountBalance> convertRawAccountBalance(List<RawAccountBalance> rawAccountBalances, OwnerType owner) {
 		List<MyAccountBalance> accountBalances = new ArrayList<>();
 		for (RawAccountBalance rawAccountBalance : rawAccountBalances) { //Lookup by ItemID
 			accountBalances.add(toMyAccountBalance(rawAccountBalance, owner));
@@ -162,7 +171,11 @@ public abstract class DataConverter {
 		return new MyAccountBalance(rawAccountBalance, owner);
 	}
 
-	public static List<MyAsset> convertRawAssets(List<RawAsset> rawAssets, OwnerType owner) {
+	public static List<MyAsset> toRawAssets(List<RawAsset> rawAssets, OwnerType owner) {
+		return convertRawAssets(rawAssets, owner);
+	}
+
+	protected static List<MyAsset> convertRawAssets(List<RawAsset> rawAssets, OwnerType owner) {
 		List<MyAsset> assets = new ArrayList<>();
 
 		Map<Long, RawAsset> lookup = new HashMap<>();
@@ -228,38 +241,55 @@ public abstract class DataConverter {
 				|| rawAsset.getLocationID() == owner.getOwnerID(); //Other stuff
 	}
 
-	public static Map<MyContract, List<MyContractItem>> convertRawContracts(List<RawContract> rawContracts, OwnerType owner, boolean saveHistory) {
+	protected static Map<MyContract, List<MyContractItem>> convertRawContracts(List<RawContract> rawContracts, OwnerType owner, boolean saveHistory) {
 		Map<MyContract, List<MyContractItem>> contracts = new HashMap<>();
-		if (saveHistory) { //Will be overwritten by new contracts
-			contracts.putAll(owner.getContracts());
-			for (MyContract contract : owner.getContracts().keySet()) {
-				contract.archive();
-			}
-		}
 		for (RawContract rawContract : rawContracts) {
-			MyContract myContract = toMyContract(rawContract);
-			List<MyContractItem> contractItems = owner.getContracts().get(myContract); //Load ContractItems
+			MyContract contract = toMyContract(rawContract);
+			List<MyContractItem> contractItems = owner.getContracts().get(contract); //Load ContractItems
 			if (contractItems == null) { //New
 				contractItems = new ArrayList<>();
 			} else { //Old, update contract items
 				for (MyContractItem contractItem : contractItems) {
-					contractItem.setContract(myContract);
+					contractItem.setContract(contract);
 				}
 			}
-			contracts.remove(myContract); //Remove old value (if present)
-			contracts.put(myContract, contractItems);
+			contracts.put(contract, contractItems);
+		}
+		if (saveHistory) {
+			ProfileDatabase.update(new ProfileConnection() {
+				@Override
+				public boolean update(Connection connection) {
+					return ProfileContracts.updateContracts(connection, owner.getOwnerID(), contracts.keySet());
+				}
+			});
+			for (Map.Entry<MyContract, List<MyContractItem>> entry : owner.getContracts().entrySet()) {
+				MyContract contract = entry.getKey();
+				if (!contracts.containsKey(contract)) {
+					contract.archive();
+					contracts.put(contract, entry.getValue());
+				}
+			}
 		}
 		return contracts;
 	}
 
-	public static Map<MyContract, List<MyContractItem>> convertRawContractItems(MyContract contract, List<RawContractItem> rawContractItems, OwnerType owner) {
-		Map<MyContract, List<MyContractItem>> contracts = new HashMap<>(owner.getContracts()); //Copy list
-		List<MyContractItem> contractItems = new ArrayList<>();
-		for (RawContractItem rawContract : rawContractItems) {
-			contractItems.add(toMyContractItem(rawContract, contract));
+	protected static Map<MyContract, List<MyContractItem>> convertRawContractItems(Map<MyContract, List<RawContractItem>> rawContractItems, OwnerType owner, boolean saveHistory) {
+		Map<MyContract, List<MyContractItem>> contracts = new HashMap<>();
+		for (Map.Entry<MyContract, List<RawContractItem>> entry : rawContractItems.entrySet()) {
+			List<MyContractItem> contractItems = new ArrayList<>();
+			for (RawContractItem response : entry.getValue()) {
+				contractItems.add(toMyContractItem(response, entry.getKey()));
+			}
+			contracts.put(entry.getKey(), contractItems);
 		}
-		contracts.remove(contract);
-		contracts.put(contract, contractItems);
+		if (saveHistory) {
+			ProfileDatabase.update(new ProfileConnection() {
+				@Override
+				public boolean update(Connection connection) {
+					return ProfileContracts.updateContractItems(connection, contracts.values());
+				}
+			});
+		}
 		return contracts;
 	}
 
@@ -272,12 +302,18 @@ public abstract class DataConverter {
 		return new MyContractItem(rawContractItem, contract, item);
 	}
 
-	public static Set<MyIndustryJob> convertRawIndustryJobs(List<RawIndustryJob> rawIndustryJobs, OwnerType owner, boolean saveHistory) {
+	protected static Set<MyIndustryJob> convertRawIndustryJobs(List<RawIndustryJob> rawIndustryJobs, OwnerType owner, boolean saveHistory) {
 		Set<MyIndustryJob> industryJobs = new HashSet<>();
 		for (RawIndustryJob rawIndustryJob : rawIndustryJobs) {
 			industryJobs.add(toMyIndustryJob(rawIndustryJob, owner));
 		}
 		if (saveHistory) {
+			ProfileDatabase.update(new ProfileConnection() {
+				@Override
+				public boolean update(Connection connection) {
+					return ProfileIndustryJobs.updateIndustryJobs(connection, owner.getOwnerID(), industryJobs);
+				}
+			});
 			for (MyIndustryJob industryJob : owner.getIndustryJobs()) {
 				industryJob.archive();
 				industryJobs.add(industryJob);
@@ -292,12 +328,18 @@ public abstract class DataConverter {
 		return new MyIndustryJob(rawIndustryJob, item, output, owner);
 	}
 
-	public static Set<MyJournal> convertRawJournals(List<RawJournal> rawJournals, OwnerType owner, boolean saveHistory) {
+	protected static Set<MyJournal> convertRawJournals(List<RawJournal> rawJournals, OwnerType owner, boolean saveHistory) {
 		Set<MyJournal> journals = new HashSet<>();
 		for (RawJournal rawJournal : rawJournals) {
 			journals.add(toMyJournal(rawJournal, owner));
 		}
 		if (saveHistory) {
+			ProfileDatabase.update(new ProfileConnection() {
+				@Override
+				public boolean update(Connection connection) {
+					return ProfileJournals.updateJournals(connection, owner.getOwnerID(), journals);
+				}
+			});
 			journals.addAll(owner.getJournal());
 		}
 		return journals;
@@ -307,7 +349,7 @@ public abstract class DataConverter {
 		return new MyJournal(rawJournal, owner);
 	}
 
-	public static Set<MyMarketOrder> convertRawMarketOrders(List<RawMarketOrder> rawMarketOrders, OwnerType owner, boolean saveHistory) {
+	protected static Set<MyMarketOrder> convertRawMarketOrders(List<RawMarketOrder> rawMarketOrders, OwnerType owner, boolean saveHistory) {
 		Set<MyMarketOrder> marketOrders = new HashSet<>();
 		Map<Long, Set<Change>> changed = new HashMap<>();
 		for (MyMarketOrder marketOrder : owner.getMarketOrders()) {
@@ -319,6 +361,12 @@ public abstract class DataConverter {
 			marketOrder.addChanges(changed.get(marketOrder.getOrderID()));
 		}
 		if (saveHistory) {
+			ProfileDatabase.update(new ProfileConnection() {
+				@Override
+				public boolean update(Connection connection) {
+					return ProfileMarketOrders.updateMarketOrders(connection, owner.getOwnerID(), marketOrders);
+				}
+			});
 			for (MyMarketOrder marketOrder : owner.getMarketOrders()) {
 				marketOrder.archive();
 				marketOrders.add(marketOrder);
@@ -332,15 +380,21 @@ public abstract class DataConverter {
 		return new MyMarketOrder(rawMarketOrder, item, owner);
 	}
 
-	public static Set<MyTransaction> convertRawTransactions(List<RawTransaction> rawTransactions, OwnerType owner, boolean saveHistory) {
-		Set<MyTransaction> myTransactions = new HashSet<>();
+	protected static Set<MyTransaction> convertRawTransactions(List<RawTransaction> rawTransactions, OwnerType owner, boolean saveHistory) {
+		Set<MyTransaction> transactions = new HashSet<>();
 		for (RawTransaction rawTransaction : rawTransactions) {
-			myTransactions.add(toMyTransaction(rawTransaction, owner));
+			transactions.add(toMyTransaction(rawTransaction, owner));
 		}
 		if (saveHistory) {
-			myTransactions.addAll(owner.getTransactions());
+			ProfileDatabase.update(new ProfileConnection() {
+				@Override
+				public boolean update(Connection connection) {
+					return ProfileTransactions.updateTransactions(connection, owner.getOwnerID(), transactions);
+				}
+			});
+			transactions.addAll(owner.getTransactions());
 		}
-		return myTransactions;
+		return transactions;
 	}
 
 	public static MyTransaction toMyTransaction(RawTransaction rawTransaction, OwnerType owner) {
@@ -348,12 +402,12 @@ public abstract class DataConverter {
 		return new MyTransaction(rawTransaction, item, owner);
 	}
 
-	public static List<MySkill> converRawSkills(List<RawSkill> rawSkills, OwnerType owner) {
-		List<MySkill> mySkills = new ArrayList<>();
+	protected static List<MySkill> converRawSkills(List<RawSkill> rawSkills, OwnerType owner) {
+		List<MySkill> skills = new ArrayList<>();
 		for (RawSkill rawSkill : rawSkills) {
-			mySkills.add(toMySkill(rawSkill, owner));
+			skills.add(toMySkill(rawSkill, owner));
 		}
-		return mySkills;
+		return skills;
 	}
 
 	public static MySkill toMySkill(RawSkill rawSkill, OwnerType owner) {
@@ -361,15 +415,21 @@ public abstract class DataConverter {
 		return new MySkill(rawSkill, item, owner.getOwnerName());
 	}
 
-	public static List<MyMining> converRawMining(List<RawMining> rawMinings, OwnerType owner, boolean saveHistory) {
-		List<MyMining> myMinings = new ArrayList<>();
+	protected static List<MyMining> converRawMining(List<RawMining> rawMinings, OwnerType owner, boolean saveHistory) {
+		List<MyMining> minings = new ArrayList<>();
 		for (RawMining rawMining : rawMinings) {
-			myMinings.add(toMyMining(rawMining));
+			minings.add(toMyMining(rawMining));
 		}
+		ProfileDatabase.update(new ProfileConnection() {
+			@Override
+			public boolean update(Connection connection) {
+				return ProfileMining.updateMinings(connection, owner.getOwnerID(), minings);
+			}
+		});
 		if (saveHistory) {
-			myMinings.addAll(owner.getMining());
+			minings.addAll(owner.getMining());
 		}
-		return myMinings;
+		return minings;
 	}
 
 	public static MyMining toMyMining(RawMining rawMining) {
@@ -378,15 +438,21 @@ public abstract class DataConverter {
 		return new MyMining(rawMining, item, location);
 	}
 
-	public static List<MyExtraction> converRawExtraction(List<RawExtraction> rawExtractions, OwnerType owner, boolean saveHistory) {
-		List<MyExtraction> myExtractions = new ArrayList<>();
+	protected static List<MyExtraction> converRawExtraction(List<RawExtraction> rawExtractions, OwnerType owner, boolean saveHistory) {
+		List<MyExtraction> extractions = new ArrayList<>();
 		for (RawExtraction rawMining : rawExtractions) {
-			myExtractions.add(toMyExtraction(rawMining));
+			extractions.add(toMyExtraction(rawMining));
 		}
+		ProfileDatabase.update(new ProfileConnection() {
+			@Override
+			public boolean update(Connection connection) {
+				return ProfileMining.updateExtractions(connection, owner.getOwnerID(), extractions);
+			}
+		});
 		if (saveHistory) {
-			myExtractions.addAll(owner.getExtractions());
+			extractions.addAll(owner.getExtractions());
 		}
-		return myExtractions;
+		return extractions;
 	}
 
 	public static MyExtraction toMyExtraction(RawExtraction rawExtraction) {

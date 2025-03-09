@@ -24,6 +24,9 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,7 +39,9 @@ import org.slf4j.LoggerFactory;
 public class ProfileDatabase {
 	private static final Logger LOG = LoggerFactory.getLogger(ProfileDatabase.class);
 
-	private static enum Table {
+	private static final Collection<Update> UPDATES = Collections.synchronizedCollection(new ArrayList<>());
+
+	public static enum Table {
 		OWNERS(new ProfileOwners()),
 		ASSETS(new ProfileAssets()),
 		CONTRACTS(new ProfileContracts()),
@@ -59,13 +64,16 @@ public class ProfileDatabase {
 			this.profileTable = databaseTable;
 		}
 
-		public boolean insert(Connection connection, List<EsiOwner> esiOwners) {
+		public boolean insert(Connection connection, List<EsiOwner> esiOwners, boolean full) {
 			if (esiOwners == null) {
 				esiOwners = new ArrayList<>(); //Ensure never null
 			}
-
+			if (!full && profileTable.isUpdated()) {
+				return true; //Ignore updated
+			}
 			return profileTable.insert(connection, esiOwners);
 		}
+
 		public boolean select(Connection connection, List<EsiOwner> esiOwners) {
 			Map<Long, EsiOwner> owners = new HashMap<>();
 			for (EsiOwner esiOwner : esiOwners) {
@@ -73,8 +81,19 @@ public class ProfileDatabase {
 			}
 			return profileTable.select(connection, esiOwners, owners);
 		}
+
 		public boolean create(Connection connection) {
 			return profileTable.create(connection);
+		}
+	}
+
+	private static String updateConnectionUrl = null;
+
+	public static void setUpdateConnectionUrl(Profile profile) {
+		if (profile == null) {
+			ProfileDatabase.updateConnectionUrl = null;
+		} else {
+			ProfileDatabase.updateConnectionUrl = getConnectionUrl(profile.getSQLiteFilename());
 		}
 	}
 
@@ -85,7 +104,7 @@ public class ProfileDatabase {
 	public static boolean load(Profile profile) {
 		boolean ok = true;
 		String connectionUrl = getConnectionUrl(profile.getSQLiteFilename());
-		
+
 		try (Connection connection = DriverManager.getConnection(connectionUrl)) {
 			for (Table table : Table.values()) {
 				ok = table.select(connection, profile.getEsiOwners()) && ok;
@@ -97,18 +116,45 @@ public class ProfileDatabase {
 		}
 	}
 
-	public static boolean save(Profile profile) {
-		return save(profile, profile.getSQLiteFilename());
+	public static void update(ProfileConnection profileConnection) {
+		Update update = new Update(profileConnection);
+		UPDATES.add(update);
+		update.start();
 	}
 
-	public static boolean save(Profile profile, String filename) {
+	public static boolean save(Profile profile, boolean full) {
+		return save(profile, Table.values(), full);
+	}
+
+	public static boolean save(Profile profile, Table table, boolean full) {
+		return save(profile, Collections.singleton(table), full);
+	}
+
+	private static boolean save(Profile profile, Table[] tables, boolean full) {
+		return save(profile, Arrays.asList(tables), full);
+	}
+
+	private static boolean save(Profile profile, Collection<Table> tables, boolean full) {
+		String filename = profile.getSQLiteFilename();
 		boolean ok = true;
 		String connectionUrl = getConnectionUrl(filename);
+		if (!full) {
+			synchronized (UPDATES) {
+				for (Update update : UPDATES) {
+					try {
+						update.join();
+						ok = update.ok && ok;
+					} catch (InterruptedException ex) {
+						//No problem
+					}
+				}
+			}
+		}
 		try (Connection connection = DriverManager.getConnection(connectionUrl)) {
 			connection.setAutoCommit(false);
-			for (Table profileTable : Table.values()) {
+			for (Table profileTable : tables) {
 				ok = profileTable.create(connection) && ok;
-				ok = profileTable.insert(connection, profile.getEsiOwners()) && ok;
+				ok = profileTable.insert(connection, profile.getEsiOwners(), full) && ok;
 			}
 			if (ok) {
 				//Only commit once, when everything is done - so we can rollback on any errors 
@@ -122,5 +168,39 @@ public class ProfileDatabase {
 			LOG.error(ex.getMessage(), ex);
 			return false;
 		}
+	}
+
+	public static class Update extends Thread {
+
+		boolean ok = false;
+
+		private final ProfileConnection profileConnection;
+
+		public Update(ProfileConnection profileConnection) {
+			this.profileConnection = profileConnection;
+		}
+
+		@Override
+		public void run() {
+			boolean ok = false;
+			if (updateConnectionUrl == null) {
+				return;
+			}
+			try (Connection connection = DriverManager.getConnection(updateConnectionUrl)) {
+				connection.setAutoCommit(false);
+				ok = profileConnection.update(connection);
+				if (ok) {
+					//Only commit once, when everything is done - so we can rollback on any errors 
+					connection.commit();
+				} else {
+					connection.rollback();
+				}
+				connection.setAutoCommit(true);
+			} catch (SQLException ex) {
+				LOG.error(ex.getMessage(), ex);
+			}
+			this.ok = ok;
+		}
+		
 	}
 }

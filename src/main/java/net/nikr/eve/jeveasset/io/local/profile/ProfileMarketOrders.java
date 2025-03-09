@@ -25,6 +25,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -35,6 +36,7 @@ import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder.Change;
+import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import net.nikr.eve.jeveasset.io.shared.DataConverter;
 import net.nikr.eve.jeveasset.io.shared.RawConverter;
@@ -44,6 +46,107 @@ public class ProfileMarketOrders extends ProfileTable {
 
 	private static final String MARKET_ORDERS_TABLE = "marketorders";
 	private static final String MARKET_ORDER_CHANGES_TABLE = "marketorderchanges";
+
+	@Override
+	protected boolean isUpdated() {
+		return Settings.get().isMarketOrderHistory();
+	}
+
+	private static void set(PreparedStatement statement, MyMarketOrder marketOrder, RawMarketOrder.Change change) throws SQLException {
+		int index = 0;
+		setAttribute(statement, ++index, marketOrder.getOrderID());
+		setAttribute(statement, ++index, change.getDate());
+		setAttributeOptional(statement, ++index, change.getPrice());
+		setAttributeOptional(statement, ++index, change.getVolumeRemaining());
+	}
+
+	private static void set(PreparedStatement statement, MyMarketOrder marketOrder, long ownerID) throws SQLException {
+		int index = 0;
+		setAttribute(statement, ++index, ownerID);
+		setAttribute(statement, ++index, marketOrder.getOrderID());
+		setAttribute(statement, ++index, marketOrder.getLocationID());
+		setAttribute(statement, ++index, marketOrder.getVolumeTotal());
+		setAttribute(statement, ++index, marketOrder.getVolumeRemain());
+		setAttribute(statement, ++index, marketOrder.getMinVolume());
+		setAttributeOptional(statement, ++index, marketOrder.getState());
+		setAttributeOptional(statement, ++index, marketOrder.getStateString());
+		setAttribute(statement, ++index, marketOrder.getTypeID());
+		setAttributeOptional(statement, ++index, marketOrder.getRange());
+		setAttributeOptional(statement, ++index, marketOrder.getRangeString());
+		setAttribute(statement, ++index, marketOrder.getWalletDivision());
+		setAttribute(statement, ++index, marketOrder.getDuration());
+		setAttribute(statement, ++index, marketOrder.getEscrow());
+		setAttribute(statement, ++index, marketOrder.getPrice());
+		setAttribute(statement, ++index, RawConverter.fromMarketOrderIsBuyOrder(marketOrder.isBuyOrder()));
+		setAttribute(statement, ++index, marketOrder.getIssued());
+		setAttributeOptional(statement, ++index, marketOrder.getIssuedBy());
+		setAttribute(statement, ++index, marketOrder.isCorp());
+		setAttribute(statement, ++index, marketOrder.isESI());
+	}
+
+	/**
+	 * Market orders are mutable (REPLACE). Market order changes are immutable (IGNORE)
+	 * @param connection
+	 * @param ownerID
+	 * @param marketOrders
+	 * @return 
+	 */
+	public static boolean updateMarketOrders(Connection connection, long ownerID, Collection<MyMarketOrder> marketOrders) {
+		//Insert data
+		String ordersSQL = "INSERT OR REPLACE INTO " + MARKET_ORDERS_TABLE + " ("
+				+ "	ownerid,"
+				+ "	orderid,"
+				+ "	stationid,"
+				+ "	volentered,"
+				+ "	volremaining,"
+				+ "	minvolume,"
+				+ "	orderstateenum,"
+				+ "	orderstatestring,"
+				+ "	typeid,"
+				+ "	rangeenum,"
+				+ "	rangestring,"
+				+ "	accountkey,"
+				+ "	duration,"
+				+ "	escrow,"
+				+ "	price,"
+				+ "	bid,"
+				+ "	issued,"
+				+ "	issuedby,"
+				+ "	corp,"
+				+ "	esi)"
+				+ " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
+				;
+		try (PreparedStatement statement = connection.prepareStatement(ordersSQL)) {
+			Rows rows = new Rows(statement, marketOrders.size());
+			for (MyMarketOrder marketOrder : marketOrders) {
+				set(statement, marketOrder, ownerID);
+				rows.addRow();
+			}
+		} catch (SQLException ex) {
+			LOG.error(ex.getMessage(), ex);
+			return false;
+		}
+
+		String changesSQL = "INSERT OR IGNORE INTO " + MARKET_ORDER_CHANGES_TABLE + " ("
+				+ "	orderid,"
+				+ "	date,"
+				+ "	price,"
+				+ "	volremaining)"
+				+ " VALUES (?,?,?,?)";
+		try (PreparedStatement statement = connection.prepareStatement(changesSQL)) {
+			Rows rows = new Rows(statement, marketOrders.size());
+			for (MyMarketOrder marketOrder : marketOrders) {
+				for (RawMarketOrder.Change change : marketOrder.getChanges()) {
+					set(statement, marketOrder, change);
+					rows.addRow();
+				}
+			}
+		} catch (SQLException ex) {
+			LOG.error(ex.getMessage(), ex);
+			return false;
+		}
+		return true;
+	}
 
 	@Override
 	protected boolean insert(Connection connection, List<EsiOwner> esiOwners) {
@@ -77,7 +180,7 @@ public class ProfileMarketOrders extends ProfileTable {
 				+ " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
 				;
 		try (PreparedStatement statement = connection.prepareStatement(ordersSQL)) {
-			Rows rows = new Rows(statement, esiOwners, new RowSize() {
+			Rows rows = new Rows(statement, esiOwners, new RowSize<EsiOwner>() {
 				@Override
 				public int getSize(EsiOwner owner) {
 					return owner.getMarketOrders().size();
@@ -85,27 +188,7 @@ public class ProfileMarketOrders extends ProfileTable {
 			});
 			for (EsiOwner owner : esiOwners) {
 				for (MyMarketOrder marketOrder : owner.getMarketOrders()) {
-					int index = 0;
-					setAttribute(statement, ++index, owner.getOwnerID());
-					setAttribute(statement, ++index, marketOrder.getOrderID());
-					setAttribute(statement, ++index, marketOrder.getLocationID());
-					setAttribute(statement, ++index, marketOrder.getVolumeTotal());
-					setAttribute(statement, ++index, marketOrder.getVolumeRemain());
-					setAttribute(statement, ++index, marketOrder.getMinVolume());
-					setAttributeOptional(statement, ++index, marketOrder.getState());
-					setAttributeOptional(statement, ++index, marketOrder.getStateString());
-					setAttribute(statement, ++index, marketOrder.getTypeID());
-					setAttributeOptional(statement, ++index, marketOrder.getRange());
-					setAttributeOptional(statement, ++index, marketOrder.getRangeString());
-					setAttribute(statement, ++index, marketOrder.getWalletDivision());
-					setAttribute(statement, ++index, marketOrder.getDuration());
-					setAttribute(statement, ++index, marketOrder.getEscrow());
-					setAttribute(statement, ++index, marketOrder.getPrice());
-					setAttribute(statement, ++index, RawConverter.fromMarketOrderIsBuyOrder(marketOrder.isBuyOrder()));
-					setAttribute(statement, ++index, marketOrder.getIssued());
-					setAttributeOptional(statement, ++index, marketOrder.getIssuedBy());
-					setAttribute(statement, ++index, marketOrder.isCorp());
-					setAttribute(statement, ++index, marketOrder.isESI());
+					set(statement, marketOrder, owner.getOwnerID());
 					rows.addRow();
 				}
 			}
@@ -114,14 +197,14 @@ public class ProfileMarketOrders extends ProfileTable {
 			return false;
 		}
 
-		String changesSQL = "INSERT INTO " + MARKET_ORDER_CHANGES_TABLE + " ("
+		String changesSQL = "INSERT OR IGNORE INTO " + MARKET_ORDER_CHANGES_TABLE + " ("
 				+ "	orderid,"
 				+ "	date,"
 				+ "	price,"
 				+ "	volremaining)"
 				+ " VALUES (?,?,?,?)";
 		try (PreparedStatement statement = connection.prepareStatement(changesSQL)) {
-			Rows rows = new Rows(statement, esiOwners, new RowSize() {
+			Rows rows = new Rows(statement, esiOwners, new RowSize<EsiOwner>() {
 				@Override
 				public int getSize(EsiOwner owner) {
 					return owner.getMarketOrders().size();
@@ -130,11 +213,7 @@ public class ProfileMarketOrders extends ProfileTable {
 			for (EsiOwner owner : esiOwners) {
 				for (MyMarketOrder marketOrder : owner.getMarketOrders()) {
 					for (RawMarketOrder.Change change : marketOrder.getChanges()) {
-						int index = 0;
-						setAttribute(statement, ++index, marketOrder.getOrderID());
-						setAttribute(statement, ++index, change.getDate());
-						setAttributeOptional(statement, ++index, change.getPrice());
-						setAttributeOptional(statement, ++index, change.getVolumeRemaining());
+						set(statement, marketOrder, change);
 						rows.addRow();
 					}
 				}
@@ -277,7 +356,8 @@ public class ProfileMarketOrders extends ProfileTable {
 					+ "	orderid INTEGER,"
 					+ "	date INTEGER,"
 					+ "	price REAL,"
-					+ "	volremaining INTEGER"
+					+ "	volremaining INTEGER, "
+					+ " UNIQUE(orderid, date)"
 					+ ");";
 			try (Statement statement = connection.createStatement()) {
 				statement.execute(sql);

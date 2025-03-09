@@ -841,7 +841,7 @@ public class UpdateDialog extends JDialogCentered {
 			List<Runnable> updates = new ArrayList<>();
 			EsiContractItemsGetter.reset();
 			for (EsiOwner esiOwner : profileManager.getEsiOwners()) {
-				updates.add(new EsiContractItemsGetter(this, esiOwner, profileManager.getEsiOwners()));
+				updates.add(new EsiContractItemsGetter(this, esiOwner, profileManager.getEsiOwners(), Settings.get().isContractHistory()));
 			}
 			ThreadWoker.start(this, updates, false);
 		}

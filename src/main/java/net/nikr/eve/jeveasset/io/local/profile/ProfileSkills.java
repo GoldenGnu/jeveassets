@@ -55,7 +55,7 @@ public class ProfileSkills extends ProfileTable {
 				+ "	trained)"
 				+ " VALUES (?,?,?,?,?)";
 		try (PreparedStatement statement = connection.prepareStatement(skillsSQL)) {
-			Rows rows = new Rows(statement, esiOwners, new RowSize() {
+			Rows rows = new Rows(statement, esiOwners, new RowSize<EsiOwner>() {
 				@Override
 				public int getSize(EsiOwner esiOwner) {
 					return esiOwner.getSkills().size();

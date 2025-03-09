@@ -58,7 +58,7 @@ public class ProfileBlueprints extends ProfileTable {
 				+ "	runs)"
 				+ " VALUES (?,?,?,?,?,?,?,?,?,?)";
 		try (PreparedStatement statement = connection.prepareStatement(sql)) {
-			Rows rows = new Rows(statement, esiOwners, new RowSize() {
+			Rows rows = new Rows(statement, esiOwners, new RowSize<EsiOwner>() {
 				@Override
 				public int getSize(EsiOwner esiOwner) {
 					return esiOwner.getBlueprints().size();

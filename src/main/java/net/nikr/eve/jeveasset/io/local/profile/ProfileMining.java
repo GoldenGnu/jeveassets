@@ -25,6 +25,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -34,6 +35,7 @@ import net.nikr.eve.jeveasset.data.api.my.MyExtraction;
 import net.nikr.eve.jeveasset.data.api.my.MyMining;
 import net.nikr.eve.jeveasset.data.api.raw.RawExtraction;
 import net.nikr.eve.jeveasset.data.api.raw.RawMining;
+import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.io.shared.DataConverter;
 
 
@@ -43,14 +45,37 @@ public class ProfileMining extends ProfileTable {
 	private static final String MINING_EXTRACTION_TABLE = "miningextraction";
 
 	@Override
-	protected boolean insert(Connection connection, List<EsiOwner> esiOwners) {
-		//Delete all data
-		if (!tableDelete(connection, MINING_TABLE, MINING_EXTRACTION_TABLE)) {
-			return false;
-		}
+	protected boolean isUpdated() {
+		return Settings.get().isMiningHistory();
+	}
 
+
+	private static void set(PreparedStatement statement, MyExtraction extraction, long ownerID) throws SQLException {
+		int index = 0;
+		setAttribute(statement, ++index, ownerID);
+		setAttribute(statement, ++index, extraction.getChunkArrivalTime());
+		setAttribute(statement, ++index, extraction.getExtractionStartTime());
+		setAttribute(statement, ++index, extraction.getMoonID());
+		setAttribute(statement, ++index, extraction.getNaturalDecayTime());
+		setAttribute(statement, ++index, extraction.getStructureID());
+	}
+
+	private static void set(PreparedStatement statement, MyMining mining, long ownerID) throws SQLException {
+		int index = 0;
+		setAttribute(statement, ++index, ownerID);
+		setAttribute(statement, ++index, mining.getTypeID());
+		setAttribute(statement, ++index, mining.getDate());
+		setAttribute(statement, ++index, mining.getCount());
+		setAttribute(statement, ++index, mining.getLocationID());
+		setAttribute(statement, ++index, mining.getCharacterID());
+		setAttributeOptional(statement, ++index, mining.getCorporationID());
+		setAttributeOptional(statement, ++index, mining.getCorporationName());
+		setAttribute(statement, ++index, mining.isForCorporation());
+	}
+
+	public static boolean updateMinings(Connection connection, long ownerID, Collection<MyMining> minings) {
 		//Insert data
-		String miningSQL = "INSERT INTO " + MINING_TABLE + " ("
+		String miningSQL = "INSERT OR REPLACE INTO " + MINING_TABLE + " ("
 				+ "	ownerid,"
 				+ "	typeid,"
 				+ "	date,"
@@ -62,7 +87,61 @@ public class ProfileMining extends ProfileTable {
 				+ "	forcorp)"
 				+ " VALUES (?,?,?,?,?,?,?,?,?)";
 		try (PreparedStatement statement = connection.prepareStatement(miningSQL)) {
-			Rows rows = new Rows(statement, esiOwners, new RowSize() {
+			Rows rows = new Rows(statement, minings.size());
+			for (MyMining mining : minings) {
+				set(statement, mining, ownerID);
+				rows.addRow();
+			}
+		} catch (SQLException ex) {
+			LOG.error(ex.getMessage(), ex);
+			return false;
+		}
+		return true;
+	}
+
+	public static boolean updateExtractions(Connection connection, long ownerID, Collection<MyExtraction> extractions) {
+		String extractionSQL = "INSERT INTO " + MINING_EXTRACTION_TABLE + " ("
+				+ "	ownerid,"
+				+ "	arrival,"
+				+ "	start,"
+				+ "	moon,"
+				+ "	decay,"
+				+ "	structure)"
+				+ " VALUES (?,?,?,?,?,?)";
+		try (PreparedStatement statement = connection.prepareStatement(extractionSQL)) {
+			Rows rows = new Rows(statement, extractions.size());
+			for (MyExtraction extraction : extractions) {
+				set(statement, extraction, ownerID);
+				rows.addRow();
+			}
+		} catch (SQLException ex) {
+			LOG.error(ex.getMessage(), ex);
+			return false;
+		}
+		return true;
+	}
+
+	@Override
+	protected boolean insert(Connection connection, List<EsiOwner> esiOwners) {
+		//Delete all data
+		if (!tableDelete(connection, MINING_TABLE, MINING_EXTRACTION_TABLE)) {
+			return false;
+		}
+
+		//Insert data
+		String miningSQL = "INSERT OR REPLACE INTO " + MINING_TABLE + " ("
+				+ "	ownerid,"
+				+ "	typeid,"
+				+ "	date,"
+				+ "	count,"
+				+ "	locationid,"
+				+ "	characterid,"
+				+ "	corporationid,"
+				+ "	corporation,"
+				+ "	forcorp)"
+				+ " VALUES (?,?,?,?,?,?,?,?,?)";
+		try (PreparedStatement statement = connection.prepareStatement(miningSQL)) {
+			Rows rows = new Rows(statement, esiOwners, new RowSize<EsiOwner>() {
 				@Override
 				public int getSize(EsiOwner esiOwner) {
 					return esiOwner.getMining().size();
@@ -70,16 +149,7 @@ public class ProfileMining extends ProfileTable {
 			});
 			for (EsiOwner owner : esiOwners) {
 				for (MyMining mining : owner.getMining()) {
-					int index = 0;
-					setAttribute(statement, ++index, owner.getOwnerID());
-					setAttribute(statement, ++index, mining.getTypeID());
-					setAttribute(statement, ++index, mining.getDate());
-					setAttribute(statement, ++index, mining.getCount());
-					setAttribute(statement, ++index, mining.getLocationID());
-					setAttribute(statement, ++index, mining.getCharacterID());
-					setAttributeOptional(statement, ++index, mining.getCorporationID());
-					setAttributeOptional(statement, ++index, mining.getCorporationName());
-					setAttribute(statement, ++index, mining.isForCorporation());
+					set(statement, mining, owner.getOwnerID());
 					rows.addRow();
 				}
 			}
@@ -97,7 +167,7 @@ public class ProfileMining extends ProfileTable {
 				+ "	structure)"
 				+ " VALUES (?,?,?,?,?,?)";
 		try (PreparedStatement statement = connection.prepareStatement(extractionSQL)) {
-			Rows rows = new Rows(statement, esiOwners, new RowSize() {
+			Rows rows = new Rows(statement, esiOwners, new RowSize<EsiOwner>() {
 				@Override
 				public int getSize(EsiOwner esiOwner) {
 					return esiOwner.getExtractions().size();
@@ -105,13 +175,7 @@ public class ProfileMining extends ProfileTable {
 			});
 			for (EsiOwner owner : esiOwners) {
 				for (MyExtraction extraction : owner.getExtractions()) {
-					int index = 0;
-					setAttribute(statement, ++index, owner.getOwnerID());
-					setAttribute(statement, ++index, extraction.getChunkArrivalTime());
-					setAttribute(statement, ++index, extraction.getExtractionStartTime());
-					setAttribute(statement, ++index, extraction.getMoonID());
-					setAttribute(statement, ++index, extraction.getNaturalDecayTime());
-					setAttribute(statement, ++index, extraction.getStructureID());
+					set(statement, extraction, owner.getOwnerID());
 					rows.addRow();
 				}
 			}
@@ -216,9 +280,8 @@ public class ProfileMining extends ProfileTable {
 					+ "	characterid INTEGER,"
 					+ "	corporationid INTEGER,"
 					+ "	corporation TEXT,"
-					+ "	forcorp NUMERIC"
-					//+ "	forcorp NUMERIC,"
-					//+ "	UNIQUE(ownerid, typeid, date)\n"
+					+ "	forcorp NUMERIC,"
+					+ "	UNIQUE(ownerid, typeid, date)\n"
 					+ ");";
 			try (Statement statement = connection.createStatement()) {
 				statement.execute(sql);

@@ -25,6 +25,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -33,6 +34,7 @@ import java.util.Set;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.api.raw.RawTransaction;
+import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.io.shared.DataConverter;
 import net.nikr.eve.jeveasset.io.shared.RawConverter;
 
@@ -40,6 +42,67 @@ import net.nikr.eve.jeveasset.io.shared.RawConverter;
 public class ProfileTransactions  extends ProfileTable {
 
 	private static final String TRANSACTIONS_TABLE = "transactions";
+
+	@Override
+	protected boolean isUpdated() {
+		return Settings.get().isTransactionHistory();
+	}
+
+	private static void set(PreparedStatement statement, MyTransaction transaction, long ownerID) throws SQLException {
+		int index = 0;
+		setAttribute(statement, ++index, ownerID);
+		setAttribute(statement, ++index, transaction.getDate());
+		setAttribute(statement, ++index, transaction.getTransactionID());
+		setAttribute(statement, ++index, transaction.getQuantity());
+		setAttribute(statement, ++index, transaction.getTypeID());
+		setAttribute(statement, ++index, transaction.getPrice());
+		setAttribute(statement, ++index, transaction.getClientID());
+		setAttribute(statement, ++index, transaction.getLocationID());
+		setAttribute(statement, ++index, RawConverter.fromTransactionIsBuy(transaction.isBuy()));
+		setAttribute(statement, ++index, RawConverter.fromTransactionIsPersonal(transaction.isPersonal()));
+		//New
+		setAttribute(statement, ++index, transaction.getTransactionID());
+		setAttribute(statement, ++index, transaction.getClientID());
+		//Extra
+		setAttribute(statement, ++index, transaction.getAccountKey());
+	}
+
+	/**
+	 * Transactions are immutable (IGNORE)
+	 * @param connection
+	 * @param ownerID
+	 * @param transactions
+	 * @return 
+	 */
+	public static boolean updateTransactions(Connection connection, long ownerID, Collection<MyTransaction> transactions) {
+		//Insert data
+		String sql = "INSERT OR IGNORE INTO " + TRANSACTIONS_TABLE + " ("
+				+ "	ownerid,"
+				+ "	transactiondatetime,"
+				+ "	transactionid,"
+				+ "	quantity,"
+				+ "	typeid,"
+				+ "	price,"
+				+ "	clientid,"
+				+ "	stationid,"
+				+ "	transactiontype,"
+				+ "	transactionfor,"
+				+ "	journaltransactionid,"
+				+ "	clienttypeid,"
+				+ "	accountkey)"
+				+ " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)";
+		try (PreparedStatement statement = connection.prepareStatement(sql)) {
+			Rows rows = new Rows(statement, transactions.size());
+			for (MyTransaction transaction : transactions) {
+				set(statement, transaction, ownerID);
+				rows.addRow();
+			}
+		} catch (SQLException ex) {
+			LOG.error(ex.getMessage(), ex);
+			return false;
+		}
+		return true;
+	}
 
 	@Override
 	protected boolean insert(Connection connection, List<EsiOwner> esiOwners) {
@@ -65,7 +128,7 @@ public class ProfileTransactions  extends ProfileTable {
 				+ "	accountkey)"
 				+ " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)";
 		try (PreparedStatement statement = connection.prepareStatement(sql)) {
-			Rows rows = new Rows(statement, esiOwners, new RowSize() {
+			Rows rows = new Rows(statement, esiOwners, new RowSize<EsiOwner>() {
 				@Override
 				public int getSize(EsiOwner owner) {
 					return owner.getTransactions().size();
@@ -73,22 +136,7 @@ public class ProfileTransactions  extends ProfileTable {
 			});
 			for (EsiOwner owner : esiOwners) {
 				for (MyTransaction transaction : owner.getTransactions()) {
-					int index = 0;
-					setAttribute(statement, ++index, owner.getOwnerID());
-					setAttribute(statement, ++index, transaction.getDate());
-					setAttribute(statement, ++index, transaction.getTransactionID());
-					setAttribute(statement, ++index, transaction.getQuantity());
-					setAttribute(statement, ++index, transaction.getTypeID());
-					setAttribute(statement, ++index, transaction.getPrice());
-					setAttribute(statement, ++index, transaction.getClientID());
-					setAttribute(statement, ++index, transaction.getLocationID());
-					setAttribute(statement, ++index, RawConverter.fromTransactionIsBuy(transaction.isBuy()));
-					setAttribute(statement, ++index, RawConverter.fromTransactionIsPersonal(transaction.isPersonal()));
-					//New
-					setAttribute(statement, ++index, transaction.getTransactionID());
-					setAttribute(statement, ++index, transaction.getClientID());
-					//Extra
-					setAttribute(statement, ++index, transaction.getAccountKey());
+					set(statement, transaction, owner.getOwnerID());
 					rows.addRow();
 				}
 			}

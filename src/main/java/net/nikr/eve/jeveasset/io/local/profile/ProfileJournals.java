@@ -25,6 +25,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -34,6 +35,7 @@ import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.data.api.my.MyJournal;
 import net.nikr.eve.jeveasset.data.api.raw.RawJournal;
 import net.nikr.eve.jeveasset.data.api.raw.RawJournalRefType;
+import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.io.shared.DataConverter;
 import net.nikr.eve.jeveasset.io.shared.RawConverter;
 
@@ -41,6 +43,78 @@ import net.nikr.eve.jeveasset.io.shared.RawConverter;
 public class ProfileJournals extends ProfileTable {
 
 	private static final String JOURNALS_TABLE = "journals";
+
+	@Override
+	protected boolean isUpdated() {
+		return Settings.get().isJournalHistory();
+	}
+
+	private static void set(PreparedStatement statement, MyJournal journal, long ownerID) throws SQLException {
+		int index = 0;
+		setAttributeOptional(statement, ++index, ownerID);
+		setAttributeOptional(statement, ++index, journal.getAmount());
+		setAttributeOptional(statement, ++index, journal.getBalance());
+		setAttributeOptional(statement, ++index, journal.getContextID());
+		setAttributeOptional(statement, ++index, journal.getContextType());
+		setAttributeOptional(statement, ++index, journal.getContextTypeString());
+		setAttribute(statement, ++index, journal.getDate());
+		setAttribute(statement, ++index, journal.getDescription());
+		setAttributeOptional(statement, ++index, journal.getFirstPartyID());
+		setAttributeOptional(statement, ++index, journal.getSecondPartyID());
+		setAttributeOptional(statement, ++index, journal.getReason());
+		setAttribute(statement, ++index, journal.getRefID());
+		if (journal.getRefType() != null) {
+			setAttributeOptional(statement, ++index, journal.getRefType().getID());
+		} else {
+			setAttributeNull(statement, ++index);
+		}
+		setAttribute(statement, ++index, journal.getRefTypeString());
+		setAttributeOptional(statement, ++index, journal.getTaxAmount());
+		setAttributeOptional(statement, ++index, journal.getTaxReceiverID());
+		//Extra
+		setAttribute(statement, ++index, journal.getAccountKey());
+	}
+
+	/**
+	 * Journal entries are immutable (IGNORE)
+	 * @param connection
+	 * @param ownerID
+	 * @param journals
+	 * @return 
+	 */
+	public static boolean updateJournals(Connection connection, long ownerID, Collection<MyJournal> journals) {
+		//Insert data
+		String sql = "INSERT OR IGNORE INTO " + JOURNALS_TABLE + " ("
+				+ "	ownerid,"
+				+ "	amount,"
+				+ "	balance,"
+				+ "	contextid,"
+				+ "	contexttype,"
+				+ "	contexttypestring,"
+				+ "	date,"
+				+ "	description,"
+				+ "	ownerid1,"
+				+ "	ownerid2,"
+				+ "	reason,"
+				+ "	refid,"
+				+ "	reftypeid,"
+				+ "	reftypestring,"
+				+ "	taxamount,"
+				+ "	taxreceiverid,"
+				+ "	accountkey)"
+				+ " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+		try (PreparedStatement statement = connection.prepareStatement(sql)) {
+			Rows rows = new Rows(statement, journals.size());
+				for (MyJournal journal : journals) {
+					set(statement, journal, ownerID);
+					rows.addRow();
+				}
+		} catch (SQLException ex) {
+			LOG.error(ex.getMessage(), ex);
+			return false;
+		}
+		return true;
+	}
 
 	@Override
 	protected boolean insert(Connection connection, List<EsiOwner> esiOwners) {
@@ -70,7 +144,7 @@ public class ProfileJournals extends ProfileTable {
 				+ "	accountkey)"
 				+ " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 		try (PreparedStatement statement = connection.prepareStatement(sql)) {
-			Rows rows = new Rows(statement, esiOwners, new RowSize() {
+			Rows rows = new Rows(statement, esiOwners, new RowSize<EsiOwner>() {
 				@Override
 				public int getSize(EsiOwner owner) {
 					return owner.getJournal().size();
@@ -78,29 +152,7 @@ public class ProfileJournals extends ProfileTable {
 			});
 			for (EsiOwner owner : esiOwners) {
 				for (MyJournal journal : owner.getJournal()) {
-					int index = 0;
-					setAttributeOptional(statement, ++index, owner.getOwnerID());
-					setAttributeOptional(statement, ++index, journal.getAmount());
-					setAttributeOptional(statement, ++index, journal.getBalance());
-					setAttributeOptional(statement, ++index, journal.getContextID());
-					setAttributeOptional(statement, ++index, journal.getContextType());
-					setAttributeOptional(statement, ++index, journal.getContextTypeString());
-					setAttribute(statement, ++index, journal.getDate());
-					setAttribute(statement, ++index, journal.getDescription());
-					setAttributeOptional(statement, ++index, journal.getFirstPartyID());
-					setAttributeOptional(statement, ++index, journal.getSecondPartyID());
-					setAttributeOptional(statement, ++index, journal.getReason());
-					setAttribute(statement, ++index, journal.getRefID());
-					if (journal.getRefType() != null) {
-						setAttributeOptional(statement, ++index, journal.getRefType().getID());
-					} else {
-						setAttributeNull(statement, ++index);
-					}
-					setAttribute(statement, ++index, journal.getRefTypeString());
-					setAttributeOptional(statement, ++index, journal.getTaxAmount());
-					setAttributeOptional(statement, ++index, journal.getTaxReceiverID());
-					//Extra
-					setAttribute(statement, ++index, journal.getAccountKey());
+					set(statement, journal, owner.getOwnerID());
 					rows.addRow();
 				}
 			}

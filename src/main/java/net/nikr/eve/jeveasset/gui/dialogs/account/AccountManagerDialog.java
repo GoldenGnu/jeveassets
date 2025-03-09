@@ -58,6 +58,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.JSeparatorTable;
 import net.nikr.eve.jeveasset.gui.shared.table.TableFormatFactory;
 import net.nikr.eve.jeveasset.i18n.DialoguesAccount;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
+import net.nikr.eve.jeveasset.io.local.profile.ProfileDatabase;
 import net.troja.eve.esi.auth.OAuth;
 
 
@@ -327,7 +328,7 @@ public class AccountManagerDialog extends JDialogCentered {
 			jLockWindow.show(GuiShared.get().updating(), new LockWorkerAdaptor() {
 				@Override
 				public void task() {
-					program.saveProfile();
+					program.saveTable(ProfileDatabase.Table.OWNERS);
 					program.updateEventLists();
 				}
 			});

@@ -40,7 +40,6 @@ import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.api.raw.RawAsset;
 import net.nikr.eve.jeveasset.data.api.raw.RawContract;
-import net.nikr.eve.jeveasset.data.api.raw.RawIndustryJob.IndustryJobStatus;
 import net.nikr.eve.jeveasset.data.api.raw.RawJournal;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder.MarketOrderState;
@@ -245,7 +244,7 @@ public class DataConverterTest extends TestUtil {
 	@Test
 	public void testConvertRawContractItems() {
 		for (ConverterTestOptions options : ConverterTestOptionsGetter.getConverterOptions()) {
-			Map<MyContract, List<MyContractItem>> contractItems = DataConverter.convertRawContractItems(ConverterTestUtil.getMyContract(false, true, options), Collections.singletonList(ConverterTestUtil.getRawContractItem(false, options)), ConverterTestUtil.getEsiOwner(options));
+			Map<MyContract, List<MyContractItem>> contractItems = DataConverter.convertRawContractItems(Collections.singletonMap(ConverterTestUtil.getMyContract(false, true, options), Collections.singletonList(ConverterTestUtil.getRawContractItem(false, options))), ConverterTestUtil.getEsiOwner(options), false);
 			ConverterTestUtil.testValues(contractItems.values().iterator().next().get(0), options);
 		}
 	}

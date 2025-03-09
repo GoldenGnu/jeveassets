@@ -52,6 +52,10 @@ public abstract class ProfileTable {
 	protected abstract boolean select(Connection connection, List<EsiOwner> esiOwners, Map<Long, EsiOwner> owners);
 	protected abstract boolean create(Connection connection);
 
+	protected boolean isUpdated() {
+		return false;
+	}
+
  	protected boolean tableExist(Connection connection, String tableName) {
 		String sql = "SELECT name FROM sqlite_master WHERE type='table' AND name='" + tableName + "'";
 		try (Statement statement = connection.createStatement(); ResultSet rs = statement.executeQuery(sql)) {
@@ -80,7 +84,7 @@ public abstract class ProfileTable {
 		}
 	}
 
- 	protected boolean tableDelete(Connection connection, String ... tableNames) {
+ 	protected static boolean tableDelete(Connection connection, String ... tableNames) {
 		for (String tableName : tableNames) {
 			String deleteSQL = "DELETE FROM " + tableName;
 			try (PreparedStatement statement = connection.prepareStatement(deleteSQL)) {
@@ -93,11 +97,11 @@ public abstract class ProfileTable {
 		return true;
 	}
 
-	protected void setAttributeNull(final PreparedStatement statement, final int index) throws SQLException {
+	protected static void setAttributeNull(final PreparedStatement statement, final int index) throws SQLException {
 		statement.setNull(index, Types.NULL);
 	}
 
-	protected void setAttributeOptional(final PreparedStatement statement, final int index, final Object value) throws SQLException {
+	protected static void setAttributeOptional(final PreparedStatement statement, final int index, final Object value) throws SQLException {
 		if (value != null) {
 			setAttribute(statement, index, value);
 		} else {
@@ -105,7 +109,7 @@ public abstract class ProfileTable {
 		}
 	}
 
-	protected void setAttribute(final PreparedStatement statement, final int index, final Object object) throws SQLException {
+	protected static void setAttribute(final PreparedStatement statement, final int index, final Object object) throws SQLException {
 		if (object == null) {
 			throw new RuntimeException("Can't save null");
 		} else if (object instanceof String) {
@@ -290,8 +294,8 @@ public abstract class ProfileTable {
 		hmm.put(key, value);
 	}
 
-	protected static interface RowSize {
-		public int getSize(EsiOwner owner);
+	protected static interface RowSize<E> {
+		public int getSize(E owner);
 	}
 
 	public static class Rows {
@@ -300,10 +304,10 @@ public abstract class ProfileTable {
 		private final PreparedStatement statement;
 		int row = 0;
 
-		public Rows(PreparedStatement statement, List<EsiOwner> esiOwners, RowSize rowSize) {
+		public <E> Rows(PreparedStatement statement, Collection<E> esiOwners, RowSize<E> rowSize) {
 			this.statement = statement;
 			int tempSize = 0;
-			for (EsiOwner esiOwner : esiOwners) {
+			for (E esiOwner : esiOwners) {
 				tempSize += rowSize.getSize(esiOwner);
 			}
 			this.size = tempSize;

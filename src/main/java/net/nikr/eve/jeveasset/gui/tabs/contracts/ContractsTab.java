@@ -72,6 +72,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.JSeparatorTable;
 import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
 import net.nikr.eve.jeveasset.gui.shared.table.TableFormatFactory;
 import net.nikr.eve.jeveasset.i18n.TabsContracts;
+import net.nikr.eve.jeveasset.io.local.profile.ProfileDatabase;
 
 
 public class ContractsTab extends JMainTabPrimary {
@@ -294,7 +295,7 @@ public class ContractsTab extends JMainTabPrimary {
 						} else {
 							tableModel.fireTableDataChanged();
 						}
-						program.saveProfile();
+						program.saveTable(ProfileDatabase.Table.CONTRACTS);
 					}
 				});
 				jStatus.add(jMenuItem);

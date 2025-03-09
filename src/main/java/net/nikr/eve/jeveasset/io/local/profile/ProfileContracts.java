@@ -26,6 +26,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -37,6 +38,7 @@ import net.nikr.eve.jeveasset.data.api.my.MyContract;
 import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
 import net.nikr.eve.jeveasset.data.api.raw.RawContract;
 import net.nikr.eve.jeveasset.data.api.raw.RawContractItem;
+import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.io.shared.DataConverter;
 import net.nikr.eve.jeveasset.io.shared.RawConverter;
 
@@ -48,31 +50,85 @@ public class ProfileContracts extends ProfileTable {
 	private static final String CONTRACT_ITEMS_TABLE = "contractitems";
 
 	@Override
-	protected boolean insert(Connection connection, List<EsiOwner> esiOwners) {
-		//Delete all data
-		if (!tableDelete(connection, CONTRACTS_OWNERS_TABLE, CONTRACTS_TABLE, CONTRACT_ITEMS_TABLE)) {
-			return false;
-		}
+	protected boolean isUpdated() {
+		return Settings.get().isContractHistory();
+	}
 
-		//Insert data
-		String sqlOwners = "INSERT INTO " + CONTRACTS_OWNERS_TABLE + " ("
-				+ "	ownerid,"
-				+ "	contractid)"
-				+ " VALUES (?,?)"
-				+ " ON CONFLICT(ownerid, contractid) DO NOTHING"
-				;
-		try (PreparedStatement statement = connection.prepareStatement(sqlOwners)) {
-			Rows rows = new Rows(statement, esiOwners, new RowSize() {
+	private static void set(PreparedStatement statement, MyContract contract) throws SQLException {
+		int index = 0;
+		setAttribute(statement, ++index, contract.getAcceptorID());
+		setAttribute(statement, ++index, contract.getAssigneeID());
+		setAttributeOptional(statement, ++index, contract.getAvailability());
+		setAttributeOptional(statement, ++index, contract.getAvailabilityString());
+		setAttributeOptional(statement, ++index, contract.getBuyout());
+		setAttributeOptional(statement, ++index, contract.getCollateral());
+		setAttribute(statement, ++index, contract.getContractID());
+		setAttributeOptional(statement, ++index, contract.getDateAccepted());
+		setAttributeOptional(statement, ++index, contract.getDateCompleted());
+		setAttribute(statement, ++index, contract.getDateExpired());
+		setAttribute(statement, ++index, contract.getDateIssued());
+		setAttributeOptional(statement, ++index, contract.getEndLocationID());
+		setAttribute(statement, ++index, contract.getIssuerCorpID());
+		setAttribute(statement, ++index, contract.getIssuerID());
+		setAttributeOptional(statement, ++index, contract.getDaysToComplete());
+		setAttributeOptional(statement, ++index, contract.getPrice());
+		setAttributeOptional(statement, ++index, contract.getReward());
+		setAttributeOptional(statement, ++index, contract.getStartLocationID());
+		setAttributeOptional(statement, ++index, contract.getStatus());
+		setAttributeOptional(statement, ++index, contract.getStatusString());
+		setAttributeOptional(statement, ++index, contract.getTitle());
+		setAttributeOptional(statement, ++index, contract.getTypeString());
+		setAttributeOptional(statement, ++index, contract.getType());
+		setAttributeOptional(statement, ++index, contract.getVolume());
+		setAttribute(statement, ++index, contract.isForCorp());
+		setAttribute(statement, ++index, contract.isESI());
+	}
+
+	private static void set(PreparedStatement statement, MyContractItem contractItem) throws SQLException {
+		int index = 0;
+		setAttribute(statement, ++index, contractItem.getContract().getContractID());
+		setAttribute(statement, ++index, contractItem.isIncluded());
+		setAttribute(statement, ++index, contractItem.getQuantity());
+		setAttribute(statement, ++index, contractItem.getRecordID());
+		setAttribute(statement, ++index, contractItem.isSingleton());
+		setAttribute(statement, ++index, contractItem.getTypeID());
+		setAttributeOptional(statement, ++index, contractItem.getRawQuantity());
+		setAttributeOptional(statement, ++index, contractItem.getItemID());
+		setAttributeOptional(statement, ++index, contractItem.getLicensedRuns());
+		setAttributeOptional(statement, ++index, contractItem.getME());
+		setAttributeOptional(statement, ++index, contractItem.getTE());
+	}
+
+	/**
+	 * Contract items are immutable (IGNORE)
+	 * @param connection
+	 * @param contractItemsLists
+	 * @return 
+	 */
+	public static boolean updateContractItems(Connection connection, Collection<List<MyContractItem>> contractItemsLists) {
+		String sqlContractItems = "INSERT OR IGNORE INTO " + CONTRACT_ITEMS_TABLE + " ("
+				+ "	contractid,"
+				+ "	included,"
+				+ "	quantity,"
+				+ "	recordid,"
+				+ "	singleton,"
+				+ "	typeid,"
+				+ "	rawquantity,"
+				+ "	itemid,"
+				+ "	runs,"
+				+ "	me,"
+				+ "	te)"
+				+ " VALUES (?,?,?,?,?,?,?,?,?,?,?)";
+		try (PreparedStatement statement = connection.prepareStatement(sqlContractItems)) {
+			Rows rows = new Rows(statement, contractItemsLists, new RowSize<List<MyContractItem>>() {
 				@Override
-				public int getSize(EsiOwner owner) {
-					return owner.getContracts().size();
+				public int getSize(List<MyContractItem> contractItems) {
+					return contractItems.size();
 				}
 			});
-			for (EsiOwner owner : esiOwners) {
-				for (MyContract contract : owner.getContracts().keySet()) {
-					int index = 0;
-					setAttribute(statement, ++index, owner.getOwnerID());
-					setAttribute(statement, ++index, contract.getContractID());
+			for (Collection<MyContractItem> contractItems : contractItemsLists) {
+				for (MyContractItem contractItem : contractItems) {
+					set(statement, contractItem);
 					rows.addRow();
 				}
 			}
@@ -80,8 +136,37 @@ public class ProfileContracts extends ProfileTable {
 			LOG.error(ex.getMessage(), ex);
 			return false;
 		}
+		return true;
+	}
 
-		String sqlContracts = "INSERT OR IGNORE INTO " + CONTRACTS_TABLE + " ("
+	/**
+	 * Contracts are mutable (REPLACE). Owners are immutable (IGNORE)
+	 * @param connection
+	 * @param ownerID
+	 * @param contracts
+	 * @return 
+	 */
+	public static boolean updateContracts(Connection connection, long ownerID, Collection<MyContract> contracts) {
+		//Insert data
+		String sqlOwners = "INSERT OR IGNORE INTO " + CONTRACTS_OWNERS_TABLE + " ("
+				+ "	ownerid,"
+				+ "	contractid)"
+				+ " VALUES (?,?)"
+				;
+		try (PreparedStatement statement = connection.prepareStatement(sqlOwners)) {
+			Rows rows = new Rows(statement, contracts.size());
+			for (MyContract contract : contracts) {
+				int index = 0;
+				setAttribute(statement, ++index, ownerID);
+				setAttribute(statement, ++index, contract.getContractID());
+				rows.addRow();
+			}
+		} catch (SQLException ex) {
+			LOG.error(ex.getMessage(), ex);
+			return false;
+		}
+
+		String sqlContracts = "INSERT OR REPLACE INTO " + CONTRACTS_TABLE + " ("
 				+ "	acceptorid,"
 				+ "	assigneeid,"
 				+ "	availability,"
@@ -110,41 +195,43 @@ public class ProfileContracts extends ProfileTable {
 				+ "	esi)"
 				+ " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 		try (PreparedStatement statement = connection.prepareStatement(sqlContracts)) {
-			Rows rows = new Rows(statement, esiOwners, new RowSize() {
+			Rows rows = new Rows(statement, contracts.size());
+			for (MyContract contract : contracts) {
+				set(statement, contract);
+				rows.addRow();
+			}
+		} catch (SQLException ex) {
+			LOG.error(ex.getMessage(), ex);
+			return false;
+		}
+		return true;
+	}
+
+	@Override
+	protected boolean insert(Connection connection, List<EsiOwner> esiOwners) {
+		//Delete all data
+		if (!tableDelete(connection, CONTRACTS_OWNERS_TABLE, CONTRACTS_TABLE, CONTRACT_ITEMS_TABLE)) {
+			return false;
+		}
+
+		//Insert data
+		String sqlOwners = "INSERT OR IGNORE INTO " + CONTRACTS_OWNERS_TABLE + " ("
+				+ "	ownerid,"
+				+ "	contractid)"
+				+ " VALUES (?,?)"
+				;
+		try (PreparedStatement statement = connection.prepareStatement(sqlOwners)) {
+			Rows rows = new Rows(statement, esiOwners, new RowSize<EsiOwner>() {
 				@Override
 				public int getSize(EsiOwner owner) {
-					return owner.getContracts().keySet().size();
+					return owner.getContracts().size();
 				}
 			});
 			for (EsiOwner owner : esiOwners) {
 				for (MyContract contract : owner.getContracts().keySet()) {
 					int index = 0;
-					setAttribute(statement, ++index, contract.getAcceptorID());
-					setAttribute(statement, ++index, contract.getAssigneeID());
-					setAttributeOptional(statement, ++index, contract.getAvailability());
-					setAttributeOptional(statement, ++index, contract.getAvailabilityString());
-					setAttributeOptional(statement, ++index, contract.getBuyout());
-					setAttributeOptional(statement, ++index, contract.getCollateral());
+					setAttribute(statement, ++index, owner.getOwnerID());
 					setAttribute(statement, ++index, contract.getContractID());
-					setAttributeOptional(statement, ++index, contract.getDateAccepted());
-					setAttributeOptional(statement, ++index, contract.getDateCompleted());
-					setAttribute(statement, ++index, contract.getDateExpired());
-					setAttribute(statement, ++index, contract.getDateIssued());
-					setAttributeOptional(statement, ++index, contract.getEndLocationID());
-					setAttribute(statement, ++index, contract.getIssuerCorpID());
-					setAttribute(statement, ++index, contract.getIssuerID());
-					setAttributeOptional(statement, ++index, contract.getDaysToComplete());
-					setAttributeOptional(statement, ++index, contract.getPrice());
-					setAttributeOptional(statement, ++index, contract.getReward());
-					setAttributeOptional(statement, ++index, contract.getStartLocationID());
-					setAttributeOptional(statement, ++index, contract.getStatus());
-					setAttributeOptional(statement, ++index, contract.getStatusString());
-					setAttributeOptional(statement, ++index, contract.getTitle());
-					setAttributeOptional(statement, ++index, contract.getTypeString());
-					setAttributeOptional(statement, ++index, contract.getType());
-					setAttributeOptional(statement, ++index, contract.getVolume());
-					setAttribute(statement, ++index, contract.isForCorp());
-					setAttribute(statement, ++index, contract.isESI());
 					rows.addRow();
 				}
 			}
@@ -153,7 +240,53 @@ public class ProfileContracts extends ProfileTable {
 			return false;
 		}
 
-		String sqlContractItems = "INSERT INTO " + CONTRACT_ITEMS_TABLE + " ("
+		String sqlContracts = "INSERT OR REPLACE INTO " + CONTRACTS_TABLE + " ("
+				+ "	acceptorid,"
+				+ "	assigneeid,"
+				+ "	availability,"
+				+ "	availabilitystring,"
+				+ "	buyout,"
+				+ "	collateral,"
+				+ "	contractid,"
+				+ "	dateaccepted,"
+				+ "	datecompleted,"
+				+ "	dateexpired,"
+				+ "	dateissued,"
+				+ "	endstationid,"
+				+ "	issuercorpid,"
+				+ "	issuerid,"
+				+ "	numdays,"
+				+ "	price,"
+				+ "	reward,"
+				+ "	startstationid,"
+				+ "	status,"
+				+ "	statusstring,"
+				+ "	title,"
+				+ "	typestring,"
+				+ "	type,"
+				+ "	volume,"
+				+ "	forcorp,"
+				+ "	esi)"
+				+ " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+		try (PreparedStatement statement = connection.prepareStatement(sqlContracts)) {
+			Rows rows = new Rows(statement, esiOwners, new RowSize<EsiOwner>() {
+				@Override
+				public int getSize(EsiOwner owner) {
+					return owner.getContracts().keySet().size();
+				}
+			});
+			for (EsiOwner owner : esiOwners) {
+				for (MyContract contract : owner.getContracts().keySet()) {
+					set(statement, contract);
+					rows.addRow();
+				}
+			}
+		} catch (SQLException ex) {
+			LOG.error(ex.getMessage(), ex);
+			return false;
+		}
+
+		String sqlContractItems = "INSERT OR IGNORE INTO " + CONTRACT_ITEMS_TABLE + " ("
 				+ "	contractid,"
 				+ "	included,"
 				+ "	quantity,"
@@ -165,34 +298,22 @@ public class ProfileContracts extends ProfileTable {
 				+ "	runs,"
 				+ "	me,"
 				+ "	te)"
-				+ " VALUES (?,?,?,?,?,?,?,?,?,?,?)"
-				+ " ON CONFLICT(recordid) DO NOTHING";
+				+ " VALUES (?,?,?,?,?,?,?,?,?,?,?)";
 		try (PreparedStatement statement = connection.prepareStatement(sqlContractItems)) {
-			Rows rows = new Rows(statement, esiOwners, new RowSize() {
+			Rows rows = new Rows(statement, esiOwners, new RowSize<EsiOwner>() {
 				@Override
 				public int getSize(EsiOwner owner) {
 					int size = 0;
 					for (List<MyContractItem> contractItems : owner.getContracts().values()) {
 						size += contractItems.size();
-					}
+				}
 					return size;
 				}
 			});
 			for (EsiOwner owner : esiOwners) {
 				for (List<MyContractItem> contractItems : owner.getContracts().values()) {
 					for (MyContractItem contractItem : contractItems) {
-						int index = 0;
-						setAttribute(statement, ++index, contractItem.getContract().getContractID());
-						setAttribute(statement, ++index, contractItem.isIncluded());
-						setAttribute(statement, ++index, contractItem.getQuantity());
-						setAttribute(statement, ++index, contractItem.getRecordID());
-						setAttribute(statement, ++index, contractItem.isSingleton());
-						setAttribute(statement, ++index, contractItem.getTypeID());
-						setAttributeOptional(statement, ++index, contractItem.getRawQuantity());
-						setAttributeOptional(statement, ++index, contractItem.getItemID());
-						setAttributeOptional(statement, ++index, contractItem.getLicensedRuns());
-						setAttributeOptional(statement, ++index, contractItem.getME());
-						setAttributeOptional(statement, ++index, contractItem.getTE());
+						set(statement, contractItem);
 						rows.addRow();
 					}
 				}
@@ -208,6 +329,7 @@ public class ProfileContracts extends ProfileTable {
 	protected boolean select(Connection connection, List<EsiOwner> esiOwners, Map<Long, EsiOwner> owners) {
 		String ownerSQL = "SELECT * FROM " + CONTRACTS_OWNERS_TABLE;
 		Map<Integer, Set<EsiOwner>> contractOwners = new HashMap<>();
+		Map<EsiOwner, Map<MyContract, List<MyContractItem>>> contracts = new HashMap<>();
 		try (PreparedStatement statement = connection.prepareStatement(ownerSQL);
 				ResultSet rs = statement.executeQuery();) {
 			while (rs.next()) {
@@ -221,6 +343,7 @@ public class ProfileContracts extends ProfileTable {
 				EsiOwner owner = owners.get(ownerID);
 				if (owner != null) {
 					set.add(owner);
+					contracts.put(owner, new HashMap<>());
 				}
 			}
 		} catch (SQLException ex) {
@@ -228,7 +351,7 @@ public class ProfileContracts extends ProfileTable {
 			return false;
 		}
 		String contractsSQL = "SELECT * FROM " + CONTRACTS_TABLE;
-		List<MyContract> contracts = new ArrayList<>();
+		Map<Integer, MyContract> contractIDs = new HashMap<>();
 		try (PreparedStatement statement = connection.prepareStatement(contractsSQL);
 				ResultSet rs = statement.executeQuery();) {
 			while (rs.next()) {
@@ -288,14 +411,21 @@ public class ProfileContracts extends ProfileTable {
 				MyContract contract = DataConverter.toMyContract(rawContract);
 				contract.setESI(esi);
 
-				contracts.add(contract);
+				contractIDs.put(contractID, contract);
+
+				Set<EsiOwner> set = contractOwners.get(contractID);
+				if (set != null) {
+					for (EsiOwner esiOwner : set) {
+						Map<MyContract, List<MyContractItem>> map = contracts.get(esiOwner);
+						map.put(contract, new ArrayList<>());
+					}
+				}
 			}
 		} catch (SQLException ex) {
 			LOG.error(ex.getMessage(), ex);
 			return false;
 		}
 		String contractItemsSQL = "SELECT * FROM " + CONTRACT_ITEMS_TABLE;
-		Map<Integer, List<RawContractItem>> contractItems = new HashMap<>();
 		try (PreparedStatement statement = connection.prepareStatement(contractItemsSQL);
 				ResultSet rs = statement.executeQuery();) {
 			while (rs.next()) {
@@ -321,29 +451,29 @@ public class ProfileContracts extends ProfileTable {
 				contractItem.setLicensedRuns(runs);
 				contractItem.setME(materialEfficiency);
 				contractItem.setTE(timeEfficiency);
-				List<RawContractItem> list = contractItems.get(contractID);
-				if (list == null) {
-					list = new ArrayList<>();
-					contractItems.put(contractID, list);
+				MyContract contract = contractIDs.get(contractID);
+				if (contract == null) {
+					continue;
 				}
-				list.add(contractItem);
+				Set<EsiOwner> set = contractOwners.get(contractID);
+				if (set != null) {
+					for (EsiOwner esiOwner : set) {
+						Map<MyContract, List<MyContractItem>> map = contracts.get(esiOwner);
+						List<MyContractItem> contractItems = map.get(contract);
+						if (contractItems == null) {
+							continue;
+						}
+						contractItems.add(DataConverter.toMyContractItem(contractItem, contract));
+					}
+				}
 			}
 		} catch (SQLException ex) {
 			LOG.error(ex.getMessage(), ex);
 			return false;
 		}
-		for (MyContract contract : contracts) {
-			Integer contractID = contract.getContractID();
-			List<RawContractItem> items = contractItems.get(contractID);
-			Set<EsiOwner> set = contractOwners.get(contractID);
-			if (items == null) {
-				items = new ArrayList<>();
-			}
-			if (set != null) {
-				for (EsiOwner esiOwner : set) {
-					esiOwner.setContracts(DataConverter.convertRawContractItems(contract, items, esiOwner));
-				}
-			}
+		for (Map.Entry<EsiOwner, Map<MyContract, List<MyContractItem>>> entry : contracts.entrySet()) {
+			EsiOwner owner = entry.getKey();
+			owner.setContracts(entry.getValue());
 		}
 		return true;
 	}

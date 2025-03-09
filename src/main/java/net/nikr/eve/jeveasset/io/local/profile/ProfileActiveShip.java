@@ -50,7 +50,7 @@ public class ProfileActiveShip extends ProfileTable {
 				+ "	locationid)"
 				+ " VALUES (?,?,?,?)";
 		try (PreparedStatement statement = connection.prepareStatement(sql)) {
-			Rows rows = new Rows(statement, esiOwners, new RowSize() {
+			Rows rows = new Rows(statement, esiOwners, new RowSize<EsiOwner>() {
 				@Override
 				public int getSize(EsiOwner owner) {
 					return owner.getActiveShip() != null ? 1 : 0;
