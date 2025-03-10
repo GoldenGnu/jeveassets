@@ -34,9 +34,11 @@ import net.nikr.eve.jeveasset.data.api.my.MyAccountBalance;
 import net.nikr.eve.jeveasset.data.api.my.MyAsset;
 import net.nikr.eve.jeveasset.data.api.my.MyContract;
 import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
+import net.nikr.eve.jeveasset.data.api.my.MyExtraction;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
 import net.nikr.eve.jeveasset.data.api.my.MyJournal;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
+import net.nikr.eve.jeveasset.data.api.my.MyMining;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.api.raw.RawAsset;
 import net.nikr.eve.jeveasset.data.api.raw.RawContract;
@@ -436,6 +438,38 @@ public class DataConverterTest extends TestUtil {
 		for (ConverterTestOptions options : ConverterTestOptionsGetter.getConverterOptions()) {
 			MyTransaction transaction = DataConverter.toMyTransaction(ConverterTestUtil.getRawTransaction(false, options), ConverterTestUtil.getEsiOwner(options));
 			ConverterTestUtil.testValues(transaction, options);
+		}
+	}
+
+	@Test
+	public void testConvertRawMining() {
+		for (ConverterTestOptions options : ConverterTestOptionsGetter.getConverterOptions()) {
+			List<MyMining> minings = DataConverter.convertRawMining(Collections.singletonList(ConverterTestUtil.getRawMining(false, options)), ConverterTestUtil.getEsiOwner(options), false);
+			ConverterTestUtil.testValues(minings.iterator().next(), options);
+		}
+	}
+
+	@Test
+	public void testToMyMining() {
+		for (ConverterTestOptions options : ConverterTestOptionsGetter.getConverterOptions()) {
+			MyMining mining = DataConverter.toMyMining(ConverterTestUtil.getRawMining(false, options));
+			ConverterTestUtil.testValues(mining, options);
+		}
+	}
+
+	@Test
+	public void testConvertRawExtraction() {
+		for (ConverterTestOptions options : ConverterTestOptionsGetter.getConverterOptions()) {
+			List<MyExtraction> extractions = DataConverter.convertRawExtraction(Collections.singletonList(ConverterTestUtil.getRawExtraction(false, options)), ConverterTestUtil.getEsiOwner(options), false);
+			ConverterTestUtil.testValues(extractions.iterator().next(), options);
+		}
+	}
+
+	@Test
+	public void testToMyExtraction() {
+		for (ConverterTestOptions options : ConverterTestOptionsGetter.getConverterOptions()) {
+			MyExtraction extraction = DataConverter.toMyExtraction(ConverterTestUtil.getRawExtraction(false, options));
+			ConverterTestUtil.testValues(extraction, options);
 		}
 	}
 
