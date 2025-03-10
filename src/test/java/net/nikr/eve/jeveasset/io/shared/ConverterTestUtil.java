@@ -47,9 +47,11 @@ import net.nikr.eve.jeveasset.data.api.my.MyBlueprint;
 import net.nikr.eve.jeveasset.data.api.my.MyContainerLog;
 import net.nikr.eve.jeveasset.data.api.my.MyContract;
 import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
+import net.nikr.eve.jeveasset.data.api.my.MyExtraction;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
 import net.nikr.eve.jeveasset.data.api.my.MyJournal;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
+import net.nikr.eve.jeveasset.data.api.my.MyMining;
 import net.nikr.eve.jeveasset.data.api.my.MyShip;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.api.raw.RawAccountBalance;
@@ -58,12 +60,14 @@ import net.nikr.eve.jeveasset.data.api.raw.RawBlueprint;
 import net.nikr.eve.jeveasset.data.api.raw.RawContainerLog;
 import net.nikr.eve.jeveasset.data.api.raw.RawContract;
 import net.nikr.eve.jeveasset.data.api.raw.RawContractItem;
+import net.nikr.eve.jeveasset.data.api.raw.RawExtraction;
 import net.nikr.eve.jeveasset.data.api.raw.RawIndustryJob;
 import net.nikr.eve.jeveasset.data.api.raw.RawJournal;
 import net.nikr.eve.jeveasset.data.api.raw.RawJournal.ContextType;
 import net.nikr.eve.jeveasset.data.api.raw.RawJournalRefType;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder.Change;
+import net.nikr.eve.jeveasset.data.api.raw.RawMining;
 import net.nikr.eve.jeveasset.data.api.raw.RawTransaction;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.ItemFlag;
@@ -96,6 +100,7 @@ import net.troja.eve.esi.model.CharacterContractsItemsResponse;
 import net.troja.eve.esi.model.CharacterContractsResponse;
 import net.troja.eve.esi.model.CharacterIndustryJobsResponse;
 import net.troja.eve.esi.model.CharacterLocationResponse;
+import net.troja.eve.esi.model.CharacterMiningResponse;
 import net.troja.eve.esi.model.CharacterOrdersHistoryResponse;
 import net.troja.eve.esi.model.CharacterOrdersResponse;
 import net.troja.eve.esi.model.CharacterRolesResponse.RolesEnum;
@@ -107,6 +112,7 @@ import net.troja.eve.esi.model.CorporationBlueprintsResponse;
 import net.troja.eve.esi.model.CorporationContainersLogsResponse;
 import net.troja.eve.esi.model.CorporationContractsResponse;
 import net.troja.eve.esi.model.CorporationIndustryJobsResponse;
+import net.troja.eve.esi.model.CorporationMiningExtractionsResponse;
 import net.troja.eve.esi.model.CorporationOrdersHistoryResponse;
 import net.troja.eve.esi.model.CorporationOrdersResponse;
 import net.troja.eve.esi.model.CorporationWalletJournalResponse;
@@ -346,6 +352,34 @@ public class ConverterTestUtil {
 			setValues(containerLog, options, null, false);
 		}
 		return containerLog;
+	}
+
+	public static RawMining getRawMining(boolean setNull, ConverterTestOptions options) {
+		RawMining rawMining = RawMining.create();
+		setValues(rawMining, options, setNull ? CharacterMiningResponse.class : null);
+		return rawMining;
+	}
+
+	public static MyMining getMyMining(OwnerType owner, boolean setNull, boolean setValues, ConverterTestOptions options) {
+		MyMining mining = new MyMining(getRawMining(setNull, options), getItem(options), options.getMyLocation());
+		if (setValues) {
+			setValues(mining, options, null, false);
+		}
+		return mining;
+	}
+
+	public static RawExtraction getRawExtraction(boolean setNull, ConverterTestOptions options) {
+		RawExtraction rawExtraction = RawExtraction.create();
+		setValues(rawExtraction, options, setNull ? CorporationMiningExtractionsResponse.class : null);
+		return rawExtraction;
+	}
+
+	public static MyExtraction getMyExtraction(OwnerType owner, boolean setNull, boolean setValues, ConverterTestOptions options) {
+		MyExtraction mining = new MyExtraction(getRawExtraction(setNull, options), options.getMyLocation());
+		if (setValues) {
+			setValues(mining, options, null, false);
+		}
+		return mining;
 	}
 
 	static EveApiAccount getEveApiAccount(ConverterTestOptions options) {
