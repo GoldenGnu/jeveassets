@@ -402,7 +402,7 @@ public abstract class DataConverter {
 		return new MyTransaction(rawTransaction, item, owner);
 	}
 
-	protected static List<MySkill> converRawSkills(List<RawSkill> rawSkills, OwnerType owner) {
+	protected static List<MySkill> convertRawSkills(List<RawSkill> rawSkills, OwnerType owner) {
 		List<MySkill> skills = new ArrayList<>();
 		for (RawSkill rawSkill : rawSkills) {
 			skills.add(toMySkill(rawSkill, owner));
@@ -415,7 +415,7 @@ public abstract class DataConverter {
 		return new MySkill(rawSkill, item, owner.getOwnerName());
 	}
 
-	protected static List<MyMining> converRawMining(List<RawMining> rawMinings, OwnerType owner, boolean saveHistory) {
+	protected static List<MyMining> convertRawMining(List<RawMining> rawMinings, OwnerType owner, boolean saveHistory) {
 		List<MyMining> minings = new ArrayList<>();
 		for (RawMining rawMining : rawMinings) {
 			minings.add(toMyMining(rawMining));
@@ -438,7 +438,7 @@ public abstract class DataConverter {
 		return new MyMining(rawMining, item, location);
 	}
 
-	protected static List<MyExtraction> converRawExtraction(List<RawExtraction> rawExtractions, OwnerType owner, boolean saveHistory) {
+	protected static List<MyExtraction> convertRawExtraction(List<RawExtraction> rawExtractions, OwnerType owner, boolean saveHistory) {
 		List<MyExtraction> extractions = new ArrayList<>();
 		for (RawExtraction rawMining : rawExtractions) {
 			extractions.add(toMyExtraction(rawMining));

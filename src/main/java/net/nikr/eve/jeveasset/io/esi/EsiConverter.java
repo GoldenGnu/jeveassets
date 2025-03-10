@@ -342,7 +342,7 @@ public class EsiConverter extends DataConverter {
 			skills.add(new RawSkill(response));
 			ApiIdConverter.updateItem(response.getSkillId());
 		}
-		return converRawSkills(skills, owner);
+		return convertRawSkills(skills, owner);
 	}
 
 	public static List<MyMining> toMining(List<CharacterMiningResponse> responses, OwnerType owner, boolean saveHistory) {
@@ -351,7 +351,7 @@ public class EsiConverter extends DataConverter {
 			mining.add(new RawMining(response, owner));
 			ApiIdConverter.updateItem(response.getTypeId());
 		}
-		return converRawMining(mining, owner, saveHistory);
+		return convertRawMining(mining, owner, saveHistory);
 	}
 
 	public static List<MyMining> toMining(Map<CorporationMiningObserversResponse, List<CorporationMiningObserverResponse>> responses, OwnerType owner, boolean saveHistory) {
@@ -361,7 +361,7 @@ public class EsiConverter extends DataConverter {
 				mining.add(new RawMining(response.getKey(), miningObserver, owner));
 			}
 		}
-		return converRawMining(mining, owner, saveHistory);
+		return convertRawMining(mining, owner, saveHistory);
 	}
 
 	public static List<MyExtraction> toExtraction(List<CorporationMiningExtractionsResponse> responses, OwnerType owner, boolean saveHistory) {
@@ -369,6 +369,6 @@ public class EsiConverter extends DataConverter {
 		for (CorporationMiningExtractionsResponse response : responses) {
 			extractions.add(new RawExtraction(response));
 		}
-		return converRawExtraction(extractions, owner, saveHistory);
+		return convertRawExtraction(extractions, owner, saveHistory);
 	}
 }
