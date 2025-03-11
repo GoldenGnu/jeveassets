@@ -30,6 +30,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.data.api.my.MyExtraction;
 import net.nikr.eve.jeveasset.data.api.my.MyMining;
@@ -74,7 +75,7 @@ public class ProfileMining extends ProfileTable {
 	}
 
 	/**
-	 * Not sure if immutable or mutable (REPLACE)
+	 * Minings are mutable (REPLACE)
 	 * @param connection
 	 * @param ownerID
 	 * @param minings
@@ -112,7 +113,7 @@ public class ProfileMining extends ProfileTable {
 	}
 
 	/**
-	 * Not sure if immutable or mutable (REPLACE)
+	 * Not sure if extractions are immutable or mutable (REPLACE)
 	 * @param connection
 	 * @param ownerID
 	 * @param extractions
@@ -211,7 +212,7 @@ public class ProfileMining extends ProfileTable {
 
 	@Override
 	protected boolean select(Connection connection, List<EsiOwner> esiOwners, Map<Long, EsiOwner> owners) {
-		Map<EsiOwner, List<MyMining>> minings = new HashMap<>();
+		Map<EsiOwner, Set<MyMining>> minings = new HashMap<>();
 		Map<EsiOwner, List<MyExtraction>> extractions = new HashMap<>();
 		String miningSQL = "SELECT * FROM " + MINING_TABLE;
 		try (PreparedStatement statement = connection.prepareStatement(miningSQL);
@@ -247,9 +248,9 @@ public class ProfileMining extends ProfileTable {
 				mining.setForCorporation(forCorporation);
 
 				
-				list(owner, minings, DataConverter.toMyMining(mining));
+				set(owner, minings, DataConverter.toMyMining(mining));
 			}
-			for (Map.Entry<EsiOwner, List<MyMining>> entry : minings.entrySet()) {
+			for (Map.Entry<EsiOwner, Set<MyMining>> entry : minings.entrySet()) {
 				entry.getKey().setMining(entry.getValue());
 			}
 		} catch (SQLException ex) {
@@ -304,7 +305,7 @@ public class ProfileMining extends ProfileTable {
 					+ "	corporationid INTEGER,"
 					+ "	corporation TEXT,"
 					+ "	forcorp NUMERIC,"
-					+ "	UNIQUE(ownerid, typeid, date)\n"
+					+ "	UNIQUE(date, locationid, typeid, characterid, forcorp)\n"
 					+ ");";
 			try (Statement statement = connection.createStatement()) {
 				statement.execute(sql);

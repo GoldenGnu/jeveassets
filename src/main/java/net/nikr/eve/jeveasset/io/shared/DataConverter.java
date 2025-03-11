@@ -415,18 +415,18 @@ public abstract class DataConverter {
 		return new MySkill(rawSkill, item, owner.getOwnerName());
 	}
 
-	protected static List<MyMining> convertRawMining(List<RawMining> rawMinings, OwnerType owner, boolean saveHistory) {
-		List<MyMining> minings = new ArrayList<>();
+	protected static Set<MyMining> convertRawMining(List<RawMining> rawMinings, OwnerType owner, boolean saveHistory) {
+		Set<MyMining> minings = new HashSet<>();
 		for (RawMining rawMining : rawMinings) {
 			minings.add(toMyMining(rawMining));
 		}
-		ProfileDatabase.update(new ProfileConnection() {
-			@Override
-			public boolean update(Connection connection) {
-				return ProfileMining.updateMinings(connection, owner.getOwnerID(), minings);
-			}
-		});
 		if (saveHistory) {
+			ProfileDatabase.update(new ProfileConnection() {
+				@Override
+				public boolean update(Connection connection) {
+					return ProfileMining.updateMinings(connection, owner.getOwnerID(), minings);
+				}
+			});
 			minings.addAll(owner.getMining());
 		}
 		return minings;
@@ -443,13 +443,13 @@ public abstract class DataConverter {
 		for (RawExtraction rawMining : rawExtractions) {
 			extractions.add(toMyExtraction(rawMining));
 		}
-		ProfileDatabase.update(new ProfileConnection() {
-			@Override
-			public boolean update(Connection connection) {
-				return ProfileMining.updateExtractions(connection, owner.getOwnerID(), extractions);
-			}
-		});
 		if (saveHistory) {
+			ProfileDatabase.update(new ProfileConnection() {
+				@Override
+				public boolean update(Connection connection) {
+					return ProfileMining.updateExtractions(connection, owner.getOwnerID(), extractions);
+				}
+			});
 			extractions.addAll(owner.getExtractions());
 		}
 		return extractions;

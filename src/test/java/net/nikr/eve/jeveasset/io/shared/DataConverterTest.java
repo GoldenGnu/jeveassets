@@ -444,7 +444,7 @@ public class DataConverterTest extends TestUtil {
 	@Test
 	public void testConvertRawMining() {
 		for (ConverterTestOptions options : ConverterTestOptionsGetter.getConverterOptions()) {
-			List<MyMining> minings = DataConverter.convertRawMining(Collections.singletonList(ConverterTestUtil.getRawMining(false, options)), ConverterTestUtil.getEsiOwner(options), false);
+			Set<MyMining> minings = DataConverter.convertRawMining(Collections.singletonList(ConverterTestUtil.getRawMining(false, options)), ConverterTestUtil.getEsiOwner(options), false);
 			ConverterTestUtil.testValues(minings.iterator().next(), options);
 		}
 	}

@@ -959,19 +959,29 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 				Long corporationID = getLongOptional(currentNode, "corporationid");
 				boolean forCorporation = getBoolean(currentNode, "forcorp");
 
-				RawMining mining = RawMining.create();
-				mining.setTypeID(typeID);
-				mining.setDate(date);
-				mining.setCount(count);
-				mining.setLocationID(locationID);
-				mining.setCharacterID(characterID);
-				mining.setCorporationID(corporationID);
-				mining.setCorporationName(corporationName);
-				mining.setForCorporation(forCorporation);
+				RawMining rawMining = RawMining.create();
+				rawMining.setTypeID(typeID);
+				rawMining.setDate(date);
+				rawMining.setCount(count);
+				rawMining.setLocationID(locationID);
+				rawMining.setCharacterID(characterID);
+				rawMining.setCorporationID(corporationID);
+				rawMining.setCorporationName(corporationName);
+				rawMining.setForCorporation(forCorporation);
 
-				minings.add(DataConverter.toMyMining(mining));
+				MyMining mining = DataConverter.toMyMining(rawMining);
+				int index = minings.indexOf(mining);
+				if (index >= 0) { //Duplicate
+					MyMining oldMining = minings.get(index); //Current value
+					if (mining.getCount() > oldMining.getCount()) { //New value higher - Replace
+						minings.remove(index);
+						minings.add(mining);
+					}
+				} else {
+					minings.add(mining);
+				}
 			}
-			owners.setMining(minings);
+			owners.setMining(new HashSet<>(minings));
 
 			List<MyExtraction> extractions = new ArrayList<>();
 			NodeList extractionNodes = currentMiningsNode.getElementsByTagName("extraction");

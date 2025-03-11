@@ -493,7 +493,7 @@ public final class ProfileWriter extends AbstractXmlWriter {
 		}
 	}
 
-	private void writeMining(final Document xmldoc, final Element parentNode, final List<MyMining> minings, List<MyExtraction> extractions) {
+	private void writeMining(final Document xmldoc, final Element parentNode, final Set<MyMining> minings, List<MyExtraction> extractions) {
 		Element node = xmldoc.createElement("minings");
 		parentNode.appendChild(node);
 		for (MyMining mining : minings) {

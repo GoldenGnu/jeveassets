@@ -71,7 +71,7 @@ public interface OwnerType extends SimpleOwner {
 	public List<MySkill> getSkills();
 	public Long getTotalSkillPoints();
 	public Integer getUnallocatedSkillPoints();
-	public List<MyMining> getMining();
+	public Set<MyMining> getMining();
 	public List<MyExtraction> getExtractions();
 	public void setBlueprints(final Map<Long, RawBlueprint> blueprints);
 	public void setIndustryJobs(final Set<MyIndustryJob> industryJobs);
@@ -86,7 +86,7 @@ public interface OwnerType extends SimpleOwner {
 	public void setSkills(final List<MySkill> skills);
 	public void setTotalSkillPoints(final Long totalSkillPoints);
 	public void setUnallocatedSkillPoints(final Integer unallocatedSkillPoints);
-	public void setMining(List<MyMining> mining);
+	public void setMining(Set<MyMining> mining);
 	public void setExtractions(List<MyExtraction> extractions);
 	//Account Mask
 	public boolean isCharacter();
