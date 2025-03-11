@@ -112,18 +112,6 @@ public class Profile implements Comparable<Profile> {
 		}
 	}
 
-	public String getSQLiteBackupFilename() {
-		String filename = getName() + "_" + Program.PROGRAM_VERSION + "_backup";
-		filename = filename.replace(" ", "_"); //Remove spaces
-		filename = filename + "." + SQLITE_BACKUP; //Add extension
-		if (defaultProfile) {
-			filename = "#" + filename; //Mark active profile
-		}
-		
-		filename = FileUtil.getPathProfile(filename);
-		return filename;
-	}
-
 	public boolean isDefaultProfile() {
 		return defaultProfile;
 	}
@@ -168,6 +156,18 @@ public class Profile implements Comparable<Profile> {
 
 	public String getSQLiteFilename() {
 		return getFilenameExtension(SQLITE);
+	}
+
+	public String getBackupSQLiteFilename() {
+		String filename = getName() + "_" + Program.PROGRAM_VERSION + "_backup";
+		filename = filename.replace(" ", "_"); //Remove spaces
+		filename = filename + "." + SQLITE_BACKUP; //Add extension
+		if (defaultProfile) {
+			filename = "#" + filename; //Mark active profile
+		}
+		
+		filename = FileUtil.getPathProfile(filename);
+		return filename;
 	}
 
 	private File getBackupFile() {

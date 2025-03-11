@@ -230,6 +230,7 @@ public class ConverterTestUtil {
 
 	public static List<MyAsset> getMyAssets(OwnerType owner, boolean setNull, boolean setValues, ConverterTestOptions options) {
 		MyAsset rootAsset = getMyAsset(owner, setNull, setValues, options);
+		rootAsset.setItemID(rootAsset.getItemID() + 1);
 		if (setValues) {
 			setValues(rootAsset, options, null, false);
 		}
@@ -510,7 +511,11 @@ public class ConverterTestUtil {
 	public static void testValues(Object object, ConverterTestOptions options, Class<?> esi, boolean superClassOnly) {
 		if (object instanceof MyAsset) {
 			MyAsset myAsset = (MyAsset) object;
-			myAsset.setItemID(myAsset.getItemID() - 1); //Workaround for itemID == locationID
+			if (myAsset.getAssets().isEmpty()) {
+				myAsset.setItemID(myAsset.getItemID() - 1); //Workaround for itemID == locationID
+			} else {
+				myAsset.setItemID(myAsset.getItemID() - 2); //Workaround for itemID == locationID
+			}
 			myAsset.setLocationID(options.getLong());
 			myAsset.setLocationFlagString(options.getString());
 			myAsset.setItemFlag(options.getItemFlag());

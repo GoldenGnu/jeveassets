@@ -119,11 +119,11 @@ public class EsiConverterTest extends TestUtil {
 			CharacterAssetsResponse rootAssetsResponse = new CharacterAssetsResponse();
 			assetsResponses.add(rootAssetsResponse);
 			ConverterTestUtil.setValues(rootAssetsResponse, options, esi);
+			rootAssetsResponse.setItemId(rootAssetsResponse.getItemId() + 1);
 
 			CharacterAssetsResponse childAssetsResponse = new CharacterAssetsResponse();
 			assetsResponses.add(childAssetsResponse);
 			ConverterTestUtil.setValues(childAssetsResponse, options, esi);
-			childAssetsResponse.setItemId(childAssetsResponse.getItemId() + 1);
 			childAssetsResponse.setLocationId(rootAssetsResponse.getItemId());
 
 			EsiOwner owner = ConverterTestUtil.getEsiOwner(options);
@@ -134,7 +134,6 @@ public class EsiConverterTest extends TestUtil {
 
 				assertEquals("List empty @" + options.getIndex(), 1, assets.get(0).getAssets().size());
 				MyAsset childAsset = assets.get(0).getAssets().get(0);
-				childAsset.setItemID(childAsset.getItemID() - 1);
 				ConverterTestUtil.testValues(childAsset, options, esi);
 			} else {
 				assertEquals(assets.size(), 0);
@@ -160,11 +159,11 @@ public class EsiConverterTest extends TestUtil {
 			CorporationAssetsResponse rootAssetsResponse = new CorporationAssetsResponse();
 			assetsResponses.add(rootAssetsResponse);
 			ConverterTestUtil.setValues(rootAssetsResponse, options, esi);
+			rootAssetsResponse.setItemId(rootAssetsResponse.getItemId() + 1);
 
 			CorporationAssetsResponse childAssetsResponse = new CorporationAssetsResponse();
 			assetsResponses.add(childAssetsResponse);
 			ConverterTestUtil.setValues(childAssetsResponse, options, esi);
-			childAssetsResponse.setItemId(childAssetsResponse.getItemId() + 1);
 			childAssetsResponse.setLocationId(rootAssetsResponse.getItemId());
 
 			EsiOwner owner = ConverterTestUtil.getEsiOwner(options);
@@ -175,7 +174,6 @@ public class EsiConverterTest extends TestUtil {
 
 				assertEquals("List empty @" + options.getIndex(), 1, assets.get(0).getAssets().size());
 				MyAsset childAsset = assets.get(0).getAssets().get(0);
-				childAsset.setItemID(childAsset.getItemID() - 1);
 				ConverterTestUtil.testValues(childAsset, options, esi);
 			} else {
 				assertEquals(assets.size(), 0);

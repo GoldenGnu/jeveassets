@@ -97,18 +97,40 @@ public class ProfileDatabase {
 	}
 
 	private static Connection updateConnection = null;
+	private static String updateConnectionUrl = null;
 
-	public static void setUpdateConnectionUrl(Profile profile) {
+	public static synchronized void setUpdateConnectionUrl(Profile profile) {
 		if (profile == null) {
-			updateConnection = null;
+			updateConnectionUrl = null;
 		} else {
+			updateConnectionUrl = getConnectionUrl(profile.getSQLiteFilename());;
+		}
+		updateConnection = null;
+	}
+
+	private static synchronized Connection getUpdateConnection() {
+		if (updateConnectionUrl == null) {
+			return null;
+		}
+		if (updateConnection == null) {
 			try {
-				updateConnection = DriverManager.getConnection(getConnectionUrl(profile.getSQLiteFilename()));
+				updateConnection = DriverManager.getConnection(updateConnectionUrl);
 				updateConnection.setAutoCommit(false);
 			} catch (SQLException ex) {
 				LOG.error(ex.getMessage(), ex);
 			}
 		}
+		return updateConnection;
+	}
+
+	private static synchronized void closeUpdateConnection() {
+		try {
+			updateConnection.setAutoCommit(false);
+			updateConnection.close();
+		} catch (SQLException ex) {
+			LOG.error(ex.getMessage(), ex);
+		}
+		updateConnection = null;
 	}
 
 	private static String getConnectionUrl(String filename) {
@@ -134,6 +156,26 @@ public class ProfileDatabase {
 		UPDATES.add(UPDATES_THREAD_POOL.submit(new Update(profileConnection)));
 	}
 
+	public static boolean waitForUpdates() {
+		boolean ok = true;
+		synchronized (UPDATES) {
+			for (Future<Boolean> update : UPDATES) {
+				try {
+					ok = update.get() && ok;
+				} catch (InterruptedException ex) {
+					LOG.error(ex.getMessage(), ex);
+					ok = false;
+				} catch (ExecutionException ex) {
+					LOG.error(ex.getMessage(), ex);
+					ok = false;
+				}
+			}
+		}
+		UPDATES.clear();
+		closeUpdateConnection();
+		return ok;
+	}
+
 	public static boolean save(Profile profile, boolean full) {
 		return save(profile, Table.values(), full);
 	}
@@ -150,24 +192,7 @@ public class ProfileDatabase {
 		boolean ok = true;
 		String connectionUrl = getConnectionUrl(profile.getSQLiteFilename());
 		if (!full) {
-			try {
-				synchronized (UPDATES) {
-					for (Future<Boolean> update : UPDATES) {
-						try {
-							ok = update.get() && ok;
-						} catch (InterruptedException ex) {
-							//No problem
-						} catch (ExecutionException ex) {
-							//No problem
-						}
-					}
-				}
-				UPDATES.clear();
-				updateConnection.setAutoCommit(false);
-				updateConnection.close();
-			} catch (SQLException ex) {
-				LOG.error(ex.getMessage(), ex);
-			}
+			ok = waitForUpdates();
 		}
 		try (Connection connection = DriverManager.getConnection(connectionUrl)) {
 			connection.setAutoCommit(false);
@@ -194,14 +219,14 @@ public class ProfileDatabase {
 		if (!exists(filename)) {
 			return;
 		}
-		if (exists(profile.getSQLiteBackupFilename())) {
+		if (exists(profile.getBackupSQLiteFilename())) {
 			return;
 		}
 		String connectionUrl = getConnectionUrl(filename);
 		try (Connection connection = DriverManager.getConnection(connectionUrl);
 				final Statement statement = connection.createStatement()
 				) {
-			statement.executeUpdate("BACKUP TO " + profile.getSQLiteBackupFilename()) ;
+			statement.executeUpdate("BACKUP TO " + profile.getBackupSQLiteFilename()) ;
 		} catch (SQLException ex) {
 			LOG.error(ex.getMessage(), ex);
 			
@@ -223,16 +248,17 @@ public class ProfileDatabase {
 
 		@Override
 		public Boolean call() throws Exception {
-			if (updateConnection == null) {
+			Connection connection = getUpdateConnection();
+			if (connection == null) {
 				return false;
 			}
 			try {
-				boolean ok = profileConnection.update(updateConnection);
+				boolean ok = profileConnection.update(connection);
 				if (ok) {
 					//Only commit once, when everything is done - so we can rollback on any errors 
-					updateConnection.commit();
+					connection.commit();
 				} else {
-					updateConnection.rollback();
+					connection.rollback();
 				}
 				return ok;
 			} catch (SQLException ex) {

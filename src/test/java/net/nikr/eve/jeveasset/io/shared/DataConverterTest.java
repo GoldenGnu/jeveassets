@@ -164,11 +164,11 @@ public class DataConverterTest extends TestUtil {
 		for (ConverterTestOptions options : ConverterTestOptionsGetter.getConverterOptions()) {
 			List<RawAsset> rawAssets = new ArrayList<>();
 			RawAsset rootRawAsset = ConverterTestUtil.getRawAsset(false, options);
+			rootRawAsset.setItemID(rootRawAsset.getItemID() + 1);
 			rawAssets.add(rootRawAsset);
 
 			RawAsset childRawAsset = ConverterTestUtil.getRawAsset(false, options);
 			rawAssets.add(childRawAsset);
-			childRawAsset.setItemID(childRawAsset.getItemID() + 1);
 			childRawAsset.setLocationID(rootRawAsset.getItemID());
 
 			EsiOwner owner = ConverterTestUtil.getEsiOwner(options);
@@ -179,7 +179,6 @@ public class DataConverterTest extends TestUtil {
 
 				assertEquals("List empty @" + options.getIndex(), 1, assets.get(0).getAssets().size());
 				MyAsset childMyAsset = assets.get(0).getAssets().get(0);
-				childMyAsset.setItemID(childMyAsset.getItemID() - 1);
 				ConverterTestUtil.testValues(childMyAsset, options);
 			} else {
 				assertEquals(assets.size(), 0);
