@@ -25,8 +25,6 @@ import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.Date;
 import javax.swing.JButton;
-import net.nikr.eve.jeveasset.data.api.accounts.EveApiAccount;
-import net.nikr.eve.jeveasset.data.api.accounts.EveApiAccount.KeyType;
 import net.nikr.eve.jeveasset.data.api.my.MyBlueprint;
 import net.nikr.eve.jeveasset.data.api.my.MyShip;
 import net.nikr.eve.jeveasset.data.api.raw.RawBlueprint;
@@ -197,10 +195,6 @@ public interface ConverterTestOptions {
 
 	//Owner
 	public EsiCallbackURL getEsiCallbackURL();
-
-	public KeyType getKeyType();
-
-	public EveApiAccount getEveApiAccount();
 
 	default OffsetDateTime getOffsetDateTime() {
 		return getDate().toInstant().atOffset(ZoneOffset.UTC);

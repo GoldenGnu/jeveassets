@@ -26,8 +26,6 @@ import java.util.ArrayList;
 import java.util.List;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
-import net.nikr.eve.jeveasset.data.api.accounts.EveApiAccount;
-import net.nikr.eve.jeveasset.data.api.accounts.EveKitOwner;
 import net.nikr.eve.jeveasset.io.local.profile.ProfileDatabase;
 import net.nikr.eve.jeveasset.io.local.ProfileReader;
 import net.nikr.eve.jeveasset.io.local.profile.ProfileDatabase.Table;
@@ -54,8 +52,6 @@ public class Profile implements Comparable<Profile> {
 	private boolean activeProfile;
 	private ProfileType type;
 	private final StockpileIDs stockpileIDs;
-	private final List<EveApiAccount> accounts = new ArrayList<>();
-	private final List<EveKitOwner> eveKitOwners = new ArrayList<>();
 	private final List<EsiOwner> esiOwners = new ArrayList<>();
 
 	private Profile() {
@@ -128,21 +124,11 @@ public class Profile implements Comparable<Profile> {
 		return stockpileIDs;
 	}
 
-	public List<EveApiAccount> getAccounts() {
-		return accounts;
-	}
-
-	public List<EveKitOwner> getEveKitOwners() {
-		return eveKitOwners;
-	}
-
 	public List<EsiOwner> getEsiOwners() {
 		return esiOwners;
 	}
 
 	public void clear() {
-		accounts.clear();
-		eveKitOwners.clear();
 		esiOwners.clear();
 	}
 

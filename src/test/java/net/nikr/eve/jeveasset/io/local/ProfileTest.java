@@ -26,8 +26,6 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.TestUtil;
-import net.nikr.eve.jeveasset.data.api.accounts.EveApiAccount;
-import net.nikr.eve.jeveasset.data.api.accounts.EveApiOwner;
 import net.nikr.eve.jeveasset.data.profile.Profile;
 import net.nikr.eve.jeveasset.data.profile.Profile.DefaultProfile;
 import static org.hamcrest.CoreMatchers.is;
@@ -77,29 +75,11 @@ public class ProfileTest extends TestUtil {
 		String filename = getFilename(name);
 		boolean load = ProfileReader.load(profile, filename);
 		assertEquals(name+" fail to load", load, true);
-		assertEquals(name+" had no accounts", profile.getAccounts().isEmpty(), false);
 		boolean marketOrders = false;
 		//boolean industryJobs = false;
 		boolean contracts = false;
 		boolean transactions = false;
 		boolean journal = false;
-		for (EveApiAccount account : profile.getAccounts()) {
-			if (!account.getName().equals("") && !account.getName().equals("-1")) {
-				fail(name+" Name is not safe expected:<[]> but was:<[" + account.getName() + "]>");
-			}
-			assertEquals(name+" KeyID is not safe", -1, account.getKeyID());
-			assertEquals(name+" VCode is not safe", "", account.getVCode());
-			assertEquals(name+" had no owners", account.getOwners().isEmpty(), false);
-			for (EveApiOwner owner : account.getOwners()) {
-				marketOrders = marketOrders || !owner.getMarketOrders().isEmpty();
-				//industryJobs = industryJobs || !owner.getIndustryJobs().isEmpty();
-				transactions = transactions || !owner.getTransactions().isEmpty();
-				contracts = contracts || !owner.getContracts().isEmpty();
-				journal = journal || !owner.getJournal().isEmpty();
-				assertEquals(name+" had no assets", true, !owner.getAssets().isEmpty());
-				assertEquals(name+" had no account balances", true, !owner.getAccountBalances().isEmpty());
-			}
-		}
 		assertEquals(name+" had no market orders", true, marketOrders);
 		//assertEquals(name+" had no industry jobs", true, industryJobs);
 		if (supportContracts) {
@@ -159,7 +139,5 @@ public class ProfileTest extends TestUtil {
 		boolean load = ProfileReader.load(profile, filename);
 		assertThat(load, is(false));
 		assertThat(profile.getEsiOwners().isEmpty(), is(true));
-		assertThat(profile.getEveKitOwners().isEmpty(), is(true));
-		assertThat(profile.getAccounts().isEmpty(), is(true));
 	}
 }

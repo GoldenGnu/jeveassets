@@ -21,12 +21,10 @@
 package net.nikr.eve.jeveasset.data.profile;
 
 import java.awt.Component;
-import net.nikr.eve.jeveasset.data.api.accounts.EveApiAccount;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JOptionPane;
 import net.nikr.eve.jeveasset.SplashUpdater;
-import net.nikr.eve.jeveasset.data.api.accounts.EveKitOwner;
 import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.data.profile.Profile.DefaultProfile;
@@ -104,24 +102,12 @@ public class ProfileManager {
 
 	public List<OwnerType> getOwnerTypes() {
 		List<OwnerType> owners = new ArrayList<>();
-		for (EveApiAccount account : getAccounts()) {
-			owners.addAll(account.getOwners());
-		}
-		owners.addAll(getEveKitOwners());
 		owners.addAll(getEsiOwners());
 		return owners;
 	}
 
-	public List<EveKitOwner> getEveKitOwners() {
-		return activeProfile.getEveKitOwners();
-	}
-
 	public List<EsiOwner> getEsiOwners() {
 		return activeProfile.getEsiOwners();
-	}
-
-	public List<EveApiAccount> getAccounts() {
-		return activeProfile.getAccounts();
 	}
 
 	public void clear() {

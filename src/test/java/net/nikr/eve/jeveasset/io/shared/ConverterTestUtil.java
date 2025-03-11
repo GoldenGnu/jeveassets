@@ -36,10 +36,6 @@ import java.util.Map;
 import java.util.Set;
 import javax.swing.JButton;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
-import net.nikr.eve.jeveasset.data.api.accounts.EveApiAccount;
-import net.nikr.eve.jeveasset.data.api.accounts.EveApiAccount.KeyType;
-import net.nikr.eve.jeveasset.data.api.accounts.EveApiOwner;
-import net.nikr.eve.jeveasset.data.api.accounts.EveKitOwner;
 import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
 import net.nikr.eve.jeveasset.data.api.my.MyAccountBalance;
 import net.nikr.eve.jeveasset.data.api.my.MyAsset;
@@ -120,32 +116,6 @@ import static org.junit.Assert.fail;
 
 
 public class ConverterTestUtil {
-
-	public static EveApiOwner getEveApiOwner(ConverterTestOptions options) {
-		return getEveApiOwner(false, false, false, options);
-	}
-
-	public static EveApiOwner getEveApiOwner(boolean data, boolean setNull, boolean setValues, ConverterTestOptions options) {
-		EveApiOwner owner = new EveApiOwner(null, false);
-		setValues(owner, options);
-		if (data) {
-			setData(owner, setNull, setValues, options);
-		}
-		return owner;
-	}
-
-	public static EveKitOwner getEveKitOwner(ConverterTestOptions options) {
-		return getEveKitOwner(false, false, false, options);
-	}
-
-	public static EveKitOwner getEveKitOwner(boolean data, boolean setNull, boolean setValues, ConverterTestOptions options) {
-		EveKitOwner owner = new EveKitOwner(false);
-		setValues(owner, options);
-		if (data) {
-			setData(owner, setNull, setValues, options);
-		}
-		return owner;
-	}
 
 	public static EsiOwner getEsiOwner(ConverterTestOptions options) {
 		return getEsiOwner(false, false, false, options);
@@ -360,12 +330,6 @@ public class ConverterTestUtil {
 			setValues(mining, options, null, false);
 		}
 		return mining;
-	}
-
-	static EveApiAccount getEveApiAccount(ConverterTestOptions options) {
-		EveApiAccount account = new EveApiAccount(0, null);
-		setValues(account, options);
-		return account;
 	}
 
 	public static void testOwner(OwnerType esiOwner, boolean setNull, ConverterTestOptions options) {
@@ -748,10 +712,6 @@ public class ConverterTestUtil {
 			return options.getBigDecimal();
 		} else if (type.equals(EsiCallbackURL.class)) {
 			return options.getEsiCallbackURL();
-		} else if (type.equals(KeyType.class)) {
-			return options.getKeyType();
-		} else if (type.equals(EveApiAccount.class)) {
-			return options.getEveApiAccount();
 		} else if (type.equals(ApiClient.class)) {
 			return new ApiClient();
 		} else if (type.equals(CorporationOrdersHistoryResponse.RangeEnum.class)) {

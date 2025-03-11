@@ -42,9 +42,6 @@ import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.accounts.DeprecatedOwner;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
-import net.nikr.eve.jeveasset.data.api.accounts.EveApiAccount;
-import net.nikr.eve.jeveasset.data.api.accounts.EveApiOwner;
-import net.nikr.eve.jeveasset.data.api.accounts.EveKitOwner;
 import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
 import net.nikr.eve.jeveasset.gui.dialogs.account.AccountSeparatorTableCell.AccountCellAction;
 import net.nikr.eve.jeveasset.gui.images.Images;
@@ -231,16 +228,6 @@ public class AccountManagerDialog extends JDialogCentered {
 	public void updateTable() {
 		//Collect owners
 		List<OwnerType> ownerTypes = new ArrayList<>();
-		//Eve Online API
-		for (EveApiAccount account : program.getProfileManager().getAccounts()) {
-			if (account.getOwners().isEmpty()) {
-				ownerTypes.add(new EveApiOwner(account, DialoguesAccount.get().noOwners(), 0));
-			} else {
-				ownerTypes.addAll(account.getOwners());
-			}
-		}
-		//EveKit API
-		ownerTypes.addAll(program.getProfileManager().getEveKitOwners());
 		//ESI
 		ownerTypes.addAll(program.getProfileManager().getEsiOwners());
 		//Update rows (Add all rows)
@@ -388,19 +375,6 @@ public class AccountManagerDialog extends JDialogCentered {
 					if (nReturn == JOptionPane.YES_OPTION) {
 						SeparatorList.Separator<?> separator = (SeparatorList.Separator<?>) o;
 						Object object = separator.first();
-						if (object instanceof EveApiOwner) { //Eve Api
-							EveApiOwner owner = (EveApiOwner) object;
-							EveApiAccount account = owner.getParentAccount();
-							program.getProfileManager().getAccounts().remove(account);
-							forceUpdate();
-							updateTable();
-						}
-						if (object instanceof EveKitOwner) {
-							EveKitOwner eveKitOwner = (EveKitOwner) object;
-							program.getProfileManager().getEveKitOwners().remove(eveKitOwner);
-							forceUpdate();
-							updateTable();
-						}
 						if (object instanceof EsiOwner) {
 							EsiOwner esiOwner = (EsiOwner) object;
 							program.getProfileManager().getEsiOwners().remove(esiOwner);

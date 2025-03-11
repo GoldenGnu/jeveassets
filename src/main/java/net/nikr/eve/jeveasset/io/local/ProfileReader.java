@@ -29,10 +29,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
-import net.nikr.eve.jeveasset.data.api.accounts.EveApiAccount;
-import net.nikr.eve.jeveasset.data.api.accounts.EveApiAccount.KeyType;
-import net.nikr.eve.jeveasset.data.api.accounts.EveApiOwner;
-import net.nikr.eve.jeveasset.data.api.accounts.EveKitOwner;
 import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
 import net.nikr.eve.jeveasset.data.api.my.MyAccountBalance;
 import net.nikr.eve.jeveasset.data.api.my.MyAsset;
@@ -122,18 +118,6 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 			Element stockpilesElement = (Element) stockpilesNodes.item(0);
 			parseStockpiles(stockpilesElement, profile);
 		}
-		//Eve XML Api
-		NodeList accountNodes = element.getElementsByTagName("accounts");
-		if (accountNodes.getLength() == 1) {
-			Element accountsElement = (Element) accountNodes.item(0);
-			parseAccounts(accountsElement, profile.getAccounts());
-		}
-		//EveKit
-		NodeList eveKitOwnersNodes = element.getElementsByTagName("evekitowners");
-		if (eveKitOwnersNodes.getLength() == 1) {
-			Element eveKitOwnersElement = (Element) eveKitOwnersNodes.item(0);
-			parseEveKitOwners(eveKitOwnersElement, profile.getEveKitOwners());
-		}
 		//Esi
 		NodeList esiOwnersNodes = element.getElementsByTagName("esiowners");
 		if (esiOwnersNodes.getLength() == 1) {
@@ -203,92 +187,6 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 
 			parseOwnerType(currentNode, owner);
 			esiOwners.add(owner);
-		}
-	}
-
-	private void parseEveKitOwners(final Element element, final List<EveKitOwner> eveKitOwners) throws XmlException {
-		NodeList ownerNodes = element.getElementsByTagName("evekitowner");
-		for (int i = 0; i < ownerNodes.getLength(); i++) {
-			Element currentNode = (Element) ownerNodes.item(i);
-			int accessKey = getInt(currentNode, "accesskey");
-			String accessCred = getString(currentNode, "accesscred");
-			Date expire = getDateOptional(currentNode, "expire");
-			long accessmask = getLong(currentNode, "accessmask");
-			boolean corporation = getBoolean(currentNode, "corporation");
-			Date limit = getDateOptional(currentNode, "limit");
-			String accountName = getString(currentNode, "accountname");
-			//ContID
-			Long journalCID = getLongOptional(currentNode, "journalcid");
-			Long transactionsCID = getLongOptional(currentNode, "transactionscid");
-			Long contractsCID = getLongOptional(currentNode, "contractscid");
-			Long industryJobsCID = getLongOptional(currentNode, "industryjobscid");
-			Long marketOrdersCID = getLongOptional(currentNode, "marketorderscid");
-			Date accountNextUpdate = getDateOptional(currentNode, "accountnextupdate");
-			boolean migrated = getBooleanNotNull(currentNode, "migrated", false);
-			EveKitOwner owner = new EveKitOwner(accessKey, accessCred, expire, accessmask, corporation, limit, accountName, migrated);
-			owner.setJournalCID(journalCID);
-			owner.setTransactionsCID(transactionsCID);
-			owner.setContractsCID(contractsCID);
-			owner.setIndustryJobsCID(industryJobsCID);
-			owner.setMarketOrdersCID(marketOrdersCID);
-			owner.setAccountNextUpdate(accountNextUpdate);
-			parseOwnerType(currentNode, owner);
-			eveKitOwners.add(owner);
-		}
-	}
-
-	private void parseAccounts(final Element element, final List<EveApiAccount> accounts) throws XmlException {
-		NodeList accountNodes = element.getElementsByTagName("account");
-		for (int i = 0; i < accountNodes.getLength(); i++) {
-			Element currentNode = (Element) accountNodes.item(i);
-			EveApiAccount account = parseAccount(currentNode);
-			parseOwners(currentNode, account);
-			accounts.add(account);
-		}
-	}
-
-	private EveApiAccount parseAccount(final Node node) throws XmlException {
-		int keyID;
-		if (haveAttribute(node, "keyid")) {
-			keyID = getInt(node, "keyid");
-		} else {
-			keyID = getInt(node, "userid");
-		}
-		String vCode;
-		if (haveAttribute(node, "vcode")) {
-			vCode = getString(node, "vcode");
-		} else {
-			vCode = getString(node, "apikey");
-		}
-		Date nextUpdate = getDate(node, "charactersnextupdate");
-		String name = Integer.toString(keyID);
-		if (haveAttribute(node, "name")) {
-			name = getString(node, "name");
-		}
-		long accessMask = getLongNotNull(node, "accessmask", 0);
-		KeyType type = null;
-		if (haveAttribute(node, "type")) {
-			type = KeyType.valueOf(getString(node, "type").toUpperCase());
-		}
-		Date expires = null;
-		if (haveAttribute(node, "expires")) {
-			long i = getLong(node, "expires");
-			if (i != 0) {
-				expires = new Date(i);
-			}
-		}
-		boolean invalid = getBooleanNotNull(node, "invalid", false);
-		return new EveApiAccount(keyID, vCode, name, nextUpdate, accessMask, type, expires, invalid);
-	}
-
-	private void parseOwners(final Element element, final EveApiAccount account) throws XmlException {
-		NodeList ownerNodes = element.getElementsByTagName("human");
-		for (int i = 0; i < ownerNodes.getLength(); i++) {
-			Element currentNode = (Element) ownerNodes.item(i);
-			boolean migrated = getBooleanNotNull(currentNode, "migrated", false) ;
-			EveApiOwner owner = new EveApiOwner(account, migrated);
-			parseOwnerType(currentNode, owner);
-			account.getOwners().add(owner);
 		}
 	}
 

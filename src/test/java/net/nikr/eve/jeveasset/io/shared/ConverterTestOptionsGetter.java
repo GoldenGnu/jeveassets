@@ -28,8 +28,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.swing.JButton;
-import net.nikr.eve.jeveasset.data.api.accounts.EveApiAccount;
-import net.nikr.eve.jeveasset.data.api.accounts.EveApiAccount.KeyType;
 import net.nikr.eve.jeveasset.data.api.my.MyBlueprint;
 import net.nikr.eve.jeveasset.data.api.my.MyShip;
 import net.nikr.eve.jeveasset.data.api.raw.RawBlueprint;
@@ -184,7 +182,6 @@ public class ConverterTestOptionsGetter {
 		private static final Integer[] EVE_API_MARKET_ORDER_STATE = {3, 5, 1, 2, 0, 4};
 		//Owners
 		private static final EsiCallbackURL[] ESI_CALLBACK_URL = EsiCallbackURL.values();
-		private static final KeyType[] KEY_TYPE = {KeyType.CORPORATION};
 		//Control
 		private static final int MAX = createMax();
 
@@ -351,7 +348,6 @@ public class ConverterTestOptionsGetter {
 			tempMax = Math.max(tempMax, EVE_API_MARKET_ORDER_STATE.length);
 			//Owners
 			tempMax = Math.max(tempMax, ESI_CALLBACK_URL.length);
-			tempMax = Math.max(tempMax, KEY_TYPE.length);
 			return tempMax;
 		}
 
@@ -697,16 +693,6 @@ public class ConverterTestOptionsGetter {
 		@Override
 		public EsiCallbackURL getEsiCallbackURL() {
 			return get(ESI_CALLBACK_URL, index);
-		}
-
-		@Override
-		public KeyType getKeyType() {
-			return get(KEY_TYPE, index);
-		}
-
-		@Override
-		public EveApiAccount getEveApiAccount() {
-			return ConverterTestUtil.getEveApiAccount(this);
 		}
 	}
 
