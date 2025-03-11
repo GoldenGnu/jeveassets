@@ -48,6 +48,7 @@ public class ProfileManager {
 
 	public ProfileManager() {
 		activeProfile = new DefaultProfile();
+		ProfileDatabase.setUpdateConnectionUrl(activeProfile);
 		profiles.add(activeProfile);
 	}
 
