@@ -109,7 +109,7 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 			public Set<String> getLinks(MenuData<?> menuData) {
 				Set<String> urls = new HashSet<>();
 				for (MyLocation constellation : menuData.getConstellationLocations()) {
-					urls.add("https://evemaps.dotlan.net/map/" + constellation.getRegion().replace(" ", "_") + "/" + constellation.getConstellation());
+					urls.add("https://evemaps.dotlan.net/map/" + constellation.getRegion().replace(" ", "_") + "/" + constellation.getConstellation().replace(" ", "_"));
 				}
 				return urls;
 			}
