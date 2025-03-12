@@ -425,13 +425,13 @@ public class ConverterTestUtil {
 		if (object instanceof CharacterAssetsResponse) {
 			CharacterAssetsResponse asset = (CharacterAssetsResponse) object;
 			asset.setItemId(asset.getItemId() + 1); //Workaround for itemID == locationID
-			asset.setLocationId(options.getLocationTypeEveApi());
+			asset.setLocationId(options.getLocationID());
 		}
 		//ESI Corporation
 		if (object instanceof CorporationAssetsResponse) {
 			CorporationAssetsResponse asset = (CorporationAssetsResponse) object;
 			asset.setItemId(asset.getItemId() + 1); //Workaround for itemID == locationID
-			asset.setLocationId(options.getLocationTypeEveApi());
+			asset.setLocationId(options.getLocationID());
 		}
 		//ESI Ship
 		if (object instanceof CharacterShipResponse) {
@@ -441,7 +441,7 @@ public class ConverterTestUtil {
 		//ESI Location
 		if (object instanceof CharacterLocationResponse) {
 			CharacterLocationResponse asset = (CharacterLocationResponse) object;
-			long locationID = options.getLocationTypeEveApi();
+			long locationID = options.getLocationID();
 			if (locationID >= 30000000 && locationID <= 32000000) { //System
 				asset.setSolarSystemId((int)locationID);
 				asset.setStationId(null);
@@ -460,7 +460,7 @@ public class ConverterTestUtil {
 		if (object instanceof RawAsset) {
 			RawAsset asset = (RawAsset) object;
 			asset.setItemID(asset.getItemID() + 1); //Workaround for itemID == locationID
-			asset.setLocationID(options.getLocationTypeEveApi());
+			asset.setLocationID(options.getLocationID());
 		}
 	}
 

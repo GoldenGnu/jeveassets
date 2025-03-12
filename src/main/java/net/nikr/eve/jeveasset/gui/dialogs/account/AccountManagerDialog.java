@@ -40,7 +40,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.api.accounts.DeprecatedOwner;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
 import net.nikr.eve.jeveasset.gui.dialogs.account.AccountSeparatorTableCell.AccountCellAction;
@@ -88,7 +87,6 @@ public class AccountManagerDialog extends JDialogCentered {
 	private final DefaultEventTableModel<OwnerType> tableModel;
 	private final SeparatorList<OwnerType> separatorList;
 	private final DefaultEventSelectionModel<OwnerType> selectionModel;
-	private final JMigrateDialog jMigrateDialog;
 	private final JLockWindow jLockWindow;
 	private final JLockWindow jRevalidateLock;
 	private final Map<OwnerType, Boolean> ownersShownCache = new HashMap<>();
@@ -99,8 +97,6 @@ public class AccountManagerDialog extends JDialogCentered {
 		super(program, DialoguesAccount.get().dialogueNameAccountManagement(), Images.DIALOG_ACCOUNTS.getImage());
 
 		accountImportDialog = new AccountImportDialog(this, program);
-
-		jMigrateDialog = new JMigrateDialog(program, this);
 
 		jLockWindow = new JLockWindow(program.getMainWindow().getFrame());
 		jRevalidateLock = new JLockWindow(getDialog());
@@ -381,38 +377,6 @@ public class AccountManagerDialog extends JDialogCentered {
 							forceUpdate();
 							updateTable();
 						}
-					}
-				}
-			} else if (AccountCellAction.MIGRATE.name().equals(e.getActionCommand())) {
-				int index = jTable.getSelectedRow();
-				Object o = tableModel.getElementAt(index);
-				if (o instanceof SeparatorList.Separator<?>) {
-					SeparatorList.Separator<?> separator = (SeparatorList.Separator<?>) o;
-					List<DeprecatedOwner> owners = new ArrayList<>();
-					try {
-						separatorList.getReadWriteLock().readLock().lock();
-						for (Object object : separator.getGroup()) {
-							if (object instanceof DeprecatedOwner) { //Eve Api
-								owners.add((DeprecatedOwner) object);
-							}
-						}
-					} finally {
-						separatorList.getReadWriteLock().readLock().unlock();
-					}
-					boolean updated = jMigrateDialog.show(owners);
-					if (updated) {
-						boolean allMigrated = true;
-						for (DeprecatedOwner owner : owners) {
-							if (!owner.isMigrated()) {
-								allMigrated = false;
-								break;
-							}
-						}
-						if (allMigrated) {
-							JOptionPane.showMessageDialog(getDialog(), DialoguesAccount.get().accountMigratedDoneMsg(), DialoguesAccount.get().accountMigratedDoneTitle(), JOptionPane.PLAIN_MESSAGE);
-						}
-						forceUpdate();
-						updateTable();
 					}
 				}
 			} else if (AccountManagerAction.REVALIDATE.name().equals(e.getActionCommand())) {
