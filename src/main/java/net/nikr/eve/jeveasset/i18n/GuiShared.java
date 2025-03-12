@@ -270,6 +270,7 @@ public abstract class GuiShared extends Bundle {
 	public abstract String station();
 	public abstract String stockpile();
 	public abstract String system();
+	public abstract String systemRegion();
 	public abstract String tableColumns();
 	public abstract String tableColumnsReset();
 	public abstract String tableColumnsTip();
