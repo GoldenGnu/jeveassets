@@ -57,7 +57,6 @@ import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
-import net.nikr.eve.jeveasset.io.local.profile.ProfileConnection;
 import net.nikr.eve.jeveasset.io.local.profile.ProfileContracts;
 import net.nikr.eve.jeveasset.io.local.profile.ProfileDatabase;
 import net.nikr.eve.jeveasset.io.local.profile.ProfileIndustryJobs;
@@ -65,6 +64,7 @@ import net.nikr.eve.jeveasset.io.local.profile.ProfileJournals;
 import net.nikr.eve.jeveasset.io.local.profile.ProfileMarketOrders;
 import net.nikr.eve.jeveasset.io.local.profile.ProfileMining;
 import net.nikr.eve.jeveasset.io.local.profile.ProfileTransactions;
+import net.nikr.eve.jeveasset.io.local.profile.ProfileConnectionData;
 
 public abstract class DataConverter {
 
@@ -256,10 +256,10 @@ public abstract class DataConverter {
 			contracts.put(contract, contractItems);
 		}
 		if (saveHistory) {
-			ProfileDatabase.update(new ProfileConnection() {
+			ProfileDatabase.update(new ProfileConnectionData<MyContract>(new HashSet<>(contracts.keySet())) {
 				@Override
-				public boolean update(Connection connection) {
-					return ProfileContracts.updateContracts(connection, owner.getOwnerID(), contracts.keySet());
+				public boolean update(Connection connection, Collection<MyContract> data) {
+					return ProfileContracts.updateContracts(connection, owner.getOwnerID(), data);
 				}
 			});
 			for (Map.Entry<MyContract, List<MyContractItem>> entry : owner.getContracts().entrySet()) {
@@ -283,10 +283,10 @@ public abstract class DataConverter {
 			contracts.put(entry.getKey(), contractItems);
 		}
 		if (saveHistory) {
-			ProfileDatabase.update(new ProfileConnection() {
+			ProfileDatabase.update(new ProfileConnectionData<List<MyContractItem>>(contracts.values()) {
 				@Override
-				public boolean update(Connection connection) {
-					return ProfileContracts.updateContractItems(connection, contracts.values());
+				public boolean update(Connection connection, Collection<List<MyContractItem>> data) {
+					return ProfileContracts.updateContractItems(connection, data);
 				}
 			});
 		}
@@ -308,10 +308,10 @@ public abstract class DataConverter {
 			industryJobs.add(toMyIndustryJob(rawIndustryJob, owner));
 		}
 		if (saveHistory) {
-			ProfileDatabase.update(new ProfileConnection() {
+			ProfileDatabase.update(new ProfileConnectionData<MyIndustryJob>(industryJobs) {
 				@Override
-				public boolean update(Connection connection) {
-					return ProfileIndustryJobs.updateIndustryJobs(connection, owner.getOwnerID(), industryJobs);
+				public boolean update(Connection connection, Collection<MyIndustryJob> data) {
+					return ProfileIndustryJobs.updateIndustryJobs(connection, owner.getOwnerID(), data);
 				}
 			});
 			for (MyIndustryJob industryJob : owner.getIndustryJobs()) {
@@ -334,10 +334,10 @@ public abstract class DataConverter {
 			journals.add(toMyJournal(rawJournal, owner));
 		}
 		if (saveHistory) {
-			ProfileDatabase.update(new ProfileConnection() {
+			ProfileDatabase.update(new ProfileConnectionData<MyJournal>(journals) {
 				@Override
-				public boolean update(Connection connection) {
-					return ProfileJournals.updateJournals(connection, owner.getOwnerID(), journals);
+				public boolean update(Connection connection, Collection<MyJournal> data) {
+					return ProfileJournals.updateJournals(connection, owner.getOwnerID(), data);
 				}
 			});
 			journals.addAll(owner.getJournal());
@@ -361,10 +361,10 @@ public abstract class DataConverter {
 			marketOrder.addChanges(changed.get(marketOrder.getOrderID()));
 		}
 		if (saveHistory) {
-			ProfileDatabase.update(new ProfileConnection() {
+			ProfileDatabase.update(new ProfileConnectionData<MyMarketOrder>(marketOrders) {
 				@Override
-				public boolean update(Connection connection) {
-					return ProfileMarketOrders.updateMarketOrders(connection, owner.getOwnerID(), marketOrders);
+				public boolean update(Connection connection, Collection<MyMarketOrder> data) {
+					return ProfileMarketOrders.updateMarketOrders(connection, owner.getOwnerID(), data);
 				}
 			});
 			for (MyMarketOrder marketOrder : owner.getMarketOrders()) {
@@ -386,10 +386,10 @@ public abstract class DataConverter {
 			transactions.add(toMyTransaction(rawTransaction, owner));
 		}
 		if (saveHistory) {
-			ProfileDatabase.update(new ProfileConnection() {
+			ProfileDatabase.update(new ProfileConnectionData<MyTransaction>(transactions) {
 				@Override
-				public boolean update(Connection connection) {
-					return ProfileTransactions.updateTransactions(connection, owner.getOwnerID(), transactions);
+				public boolean update(Connection connection, Collection<MyTransaction> data) {
+					return ProfileTransactions.updateTransactions(connection, owner.getOwnerID(), data);
 				}
 			});
 			transactions.addAll(owner.getTransactions());
@@ -421,10 +421,10 @@ public abstract class DataConverter {
 			minings.add(toMyMining(rawMining));
 		}
 		if (saveHistory) {
-			ProfileDatabase.update(new ProfileConnection() {
+			ProfileDatabase.update(new ProfileConnectionData<MyMining>(minings) {
 				@Override
-				public boolean update(Connection connection) {
-					return ProfileMining.updateMinings(connection, owner.getOwnerID(), minings);
+				public boolean update(Connection connection, Collection<MyMining> data) {
+					return ProfileMining.updateMinings(connection, owner.getOwnerID(), data);
 				}
 			});
 			minings.addAll(owner.getMining());
@@ -438,16 +438,16 @@ public abstract class DataConverter {
 		return new MyMining(rawMining, item, location);
 	}
 
-	protected static List<MyExtraction> convertRawExtraction(List<RawExtraction> rawExtractions, OwnerType owner, boolean saveHistory) {
-		List<MyExtraction> extractions = new ArrayList<>();
+	protected static Set<MyExtraction> convertRawExtraction(List<RawExtraction> rawExtractions, OwnerType owner, boolean saveHistory) {
+		Set<MyExtraction> extractions = new HashSet<>();
 		for (RawExtraction rawMining : rawExtractions) {
 			extractions.add(toMyExtraction(rawMining));
 		}
 		if (saveHistory) {
-			ProfileDatabase.update(new ProfileConnection() {
+			ProfileDatabase.update(new ProfileConnectionData<MyExtraction>(new ArrayList<>(extractions)) {
 				@Override
-				public boolean update(Connection connection) {
-					return ProfileMining.updateExtractions(connection, owner.getOwnerID(), extractions);
+				public boolean update(Connection connection, Collection<MyExtraction> data) {
+					return ProfileMining.updateExtractions(connection, owner.getOwnerID(), data);
 				}
 			});
 			extractions.addAll(owner.getExtractions());

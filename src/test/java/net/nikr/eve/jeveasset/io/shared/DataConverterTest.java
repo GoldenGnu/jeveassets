@@ -459,7 +459,7 @@ public class DataConverterTest extends TestUtil {
 	@Test
 	public void testConvertRawExtraction() {
 		for (ConverterTestOptions options : ConverterTestOptionsGetter.getConverterOptions()) {
-			List<MyExtraction> extractions = DataConverter.convertRawExtraction(Collections.singletonList(ConverterTestUtil.getRawExtraction(false, options)), ConverterTestUtil.getEsiOwner(options), false);
+			Set<MyExtraction> extractions = DataConverter.convertRawExtraction(Collections.singletonList(ConverterTestUtil.getRawExtraction(false, options)), ConverterTestUtil.getEsiOwner(options), false);
 			ConverterTestUtil.testValues(extractions.iterator().next(), options);
 		}
 	}

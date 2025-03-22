@@ -21,11 +21,9 @@
 package net.nikr.eve.jeveasset.io.local.profile;
 
 import ch.qos.logback.classic.Level;
-import java.io.File;
 import net.nikr.eve.jeveasset.CliOptions;
 import net.nikr.eve.jeveasset.TestUtil;
 import static net.nikr.eve.jeveasset.TestUtil.initLog;
-import net.nikr.eve.jeveasset.data.profile.Profile;
 import net.nikr.eve.jeveasset.data.profile.ProfileData;
 import net.nikr.eve.jeveasset.data.profile.ProfileManager;
 import net.nikr.eve.jeveasset.data.settings.AddedData;

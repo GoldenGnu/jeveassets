@@ -881,7 +881,7 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 			}
 			owners.setMining(new HashSet<>(minings));
 
-			List<MyExtraction> extractions = new ArrayList<>();
+			Set<MyExtraction> extractions = new HashSet<>();
 			NodeList extractionNodes = currentMiningsNode.getElementsByTagName("extraction");
 			for (int b = 0; b < extractionNodes.getLength(); b++) {
 				Element currentNode = (Element) extractionNodes.item(b);
@@ -890,7 +890,7 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 				Date decay = getDate(currentNode, "decay");
 				int moon = getInt(currentNode, "moon");
 				long structure = getLong(currentNode, "structure");
-				
+
 				RawExtraction mining = RawExtraction.create();
 				mining.setChunkArrivalTime(arrival);
 				mining.setExtractionStartTime(start);

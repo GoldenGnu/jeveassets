@@ -42,6 +42,7 @@ import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder;
 import net.nikr.eve.jeveasset.data.profile.Profile;
 import net.nikr.eve.jeveasset.data.profile.Profile.DefaultProfile;
+import net.nikr.eve.jeveasset.data.profile.Profile.ProfileType;
 import net.nikr.eve.jeveasset.data.profile.ProfileManager;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.Security;
@@ -75,6 +76,7 @@ public class ProfileDatabaseConverterTest extends TestUtil {
 	public void loadSQL() {
 		CliOptions.get().setPortable(false);
 
+		CliOptions.get().setPortable(true);
 		//Exiting data
 
 		ProfileManager profileManager = new ProfileManager();
@@ -97,6 +99,19 @@ public class ProfileDatabaseConverterTest extends TestUtil {
 
 	@Test
 	public void updateSQL() {
+		CliOptions.get().setPortable(true);
+		//Exiting data
+
+		ProfileManager profileManager = new ProfileManager();
+		profileManager.searchProfile();
+		profileManager.loadActiveProfile(); //Load
+		Profile oldProfile = profileManager.getActiveProfile();
+
+		updateSQL(oldProfile);
+		updateSQL(new DefaultProfile());
+	}
+
+	public void updateSQL(Profile profile) {
 		CliOptions.get().setPortable(true);
 		boolean setNull = false;
 		boolean setValues = true;
@@ -135,12 +150,62 @@ public class ProfileDatabaseConverterTest extends TestUtil {
 
 			ProfileDatabase.waitForUpdates();
 
-			Profile newProfile = new DefaultProfile();
+			Profile newProfile = new Profile(profile.getName(), profile.isDefaultProfile(), profile.isActiveProfile(), ProfileType.SQLITE);
 			ProfileDatabase.setUpdateConnectionUrl(newProfile);
 			newProfile.load();
 
 			testClass("", oldProfile, newProfile, false);
-			cleanupPortableProfile();
+			cleanupPortableProfile(profile);
+		}
+	}
+
+	@Test
+	public void updateSQLLocal() {
+		CliOptions.get().setPortable(true);
+		boolean setNull = false;
+		for (ConverterTestOptions options : ConverterTestOptionsGetter.getConverterOptions()) {
+			CliOptions.get().setPortable(true);
+			//Exiting data
+
+			ProfileManager profileManager = new ProfileManager();
+			profileManager.searchProfile();
+			profileManager.loadActiveProfile(); //Load
+			profileManager.saveProfile();
+			Profile oldProfile = profileManager.getActiveProfile();
+			EsiOwner owner = profileManager.getEsiOwners().get(0);
+
+			//Contract
+			Map<MyContract, List<MyContractItem>> contracts = DataConverter.convertRawContracts(Collections.singletonList(ConverterTestUtil.getRawContract(setNull, options)), owner, true);
+			MyContract contract = contracts.entrySet().iterator().next().getKey();
+			owner.setContracts(DataConverter.convertRawContractItems(Collections.singletonMap(contract, Collections.singletonList(ConverterTestUtil.getRawContractItem(setNull, options))), owner, true));
+
+			//Industry Job
+			owner.setIndustryJobs(DataConverter.convertRawIndustryJobs(Collections.singletonList(ConverterTestUtil.getRawIndustryJob(setNull, options)), owner, true));
+
+			//Journal
+			owner.setJournal(DataConverter.convertRawJournals(Collections.singletonList(ConverterTestUtil.getRawJournal(setNull, options)), owner, true));
+
+			//Market Order
+			owner.setMarketOrders(DataConverter.convertRawMarketOrders(Collections.singletonList(ConverterTestUtil.getRawMarketOrder(setNull, options)), owner, true));
+
+			//Transaction
+			owner.setTransactions(DataConverter.convertRawTransactions(Collections.singletonList(ConverterTestUtil.getRawTransaction(setNull, options)), owner, true));
+
+			//Mining
+			owner.setMining(DataConverter.convertRawMining(Collections.singletonList(ConverterTestUtil.getRawMining(setNull, options)), owner, true));
+
+			//Extractions
+			owner.setExtractions(DataConverter.convertRawExtraction(Collections.singletonList(ConverterTestUtil.getRawExtraction(setNull, options)), owner, true));
+
+			ProfileDatabase.waitForUpdates();
+
+			ProfileManager newProfileManager = new ProfileManager();
+			newProfileManager.searchProfile();
+			newProfileManager.loadActiveProfile(); //Load
+			Profile newProfile = newProfileManager.getActiveProfile();
+
+			testClass("", oldProfile, newProfile, false);
+			cleanupPortableProfile(oldProfile);
 		}
 	}
 

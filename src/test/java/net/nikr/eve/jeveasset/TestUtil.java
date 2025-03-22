@@ -25,6 +25,7 @@ import java.io.File;
 import net.nikr.eve.jeveasset.data.profile.Profile;
 import net.nikr.eve.jeveasset.data.profile.Profile.DefaultProfile;
 import net.nikr.eve.jeveasset.data.settings.Settings;
+import static org.junit.Assume.assumeTrue;
 import org.junit.BeforeClass;
 
 
@@ -44,7 +45,19 @@ public class TestUtil {
 		root.setLevel(level);
 	}
 
+	protected static void cleanupPortableProfile(Profile profile) {
+		assumeTrue(false);
+		boolean portable = CliOptions.get().isPortable();
+		CliOptions.get().setPortable(true);
+		
+		deleteProfileFilename(profile.getSQLiteFilename());
+		deleteProfileFilename(profile.getBackupSQLiteFilename());
+
+		CliOptions.get().setPortable(portable);
+	}
+
 	protected static void cleanupPortableProfile() {
+		assumeTrue(false);
 		boolean portable = CliOptions.get().isPortable();
 		CliOptions.get().setPortable(true);
 		

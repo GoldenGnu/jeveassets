@@ -364,7 +364,7 @@ public class EsiConverter extends DataConverter {
 		return convertRawMining(mining, owner, saveHistory);
 	}
 
-	public static List<MyExtraction> toExtraction(List<CorporationMiningExtractionsResponse> responses, OwnerType owner, boolean saveHistory) {
+	public static Set<MyExtraction> toExtraction(List<CorporationMiningExtractionsResponse> responses, OwnerType owner, boolean saveHistory) {
 		List<RawExtraction> extractions = new ArrayList<>();
 		for (CorporationMiningExtractionsResponse response : responses) {
 			extractions.add(new RawExtraction(response));

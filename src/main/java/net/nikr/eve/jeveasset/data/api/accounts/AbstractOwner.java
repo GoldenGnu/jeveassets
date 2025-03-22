@@ -57,7 +57,7 @@ public abstract class AbstractOwner implements OwnerType {
 	private Map<Integer, String> assetDivisions = new HashMap<>();
 	private List<MySkill> skills = new ArrayList<>();
 	private Set<MyMining> mining = new HashSet<>();
-	private List<MyExtraction> extractions = new ArrayList<>();
+	private Set<MyExtraction> extractions = new HashSet<>();
 	private Long totalSkillPoints = null;
 	private Integer unallocatedSkillPoints = null;
 
@@ -383,7 +383,7 @@ public abstract class AbstractOwner implements OwnerType {
 	}
 
 	@Override
-	public List<MyExtraction> getExtractions() {
+	public Set<MyExtraction> getExtractions() {
 		return extractions;
 	}
 
@@ -483,7 +483,7 @@ public abstract class AbstractOwner implements OwnerType {
 	}
 
 	@Override
-	public void setExtractions(List<MyExtraction> extractions) {
+	public void setExtractions(Set<MyExtraction> extractions) {
 		this.extractions = extractions;
 	}
 

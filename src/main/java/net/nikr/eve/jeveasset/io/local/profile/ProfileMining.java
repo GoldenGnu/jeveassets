@@ -153,7 +153,7 @@ public class ProfileMining extends ProfileTable {
 		}
 
 		//Insert data
-		String miningSQL = "INSERT OR REPLACE INTO " + MINING_TABLE + " ("
+		String miningSQL = "INSERT INTO " + MINING_TABLE + " ("
 				+ "	ownerid,"
 				+ "	typeid,"
 				+ "	date,"
@@ -213,7 +213,7 @@ public class ProfileMining extends ProfileTable {
 	@Override
 	protected boolean select(Connection connection, List<EsiOwner> esiOwners, Map<Long, EsiOwner> owners) {
 		Map<EsiOwner, Set<MyMining>> minings = new HashMap<>();
-		Map<EsiOwner, List<MyExtraction>> extractions = new HashMap<>();
+		Map<EsiOwner, Set<MyExtraction>> extractions = new HashMap<>();
 		String miningSQL = "SELECT * FROM " + MINING_TABLE;
 		try (PreparedStatement statement = connection.prepareStatement(miningSQL);
 				ResultSet rs = statement.executeQuery();) {
@@ -280,9 +280,9 @@ public class ProfileMining extends ProfileTable {
 				if (owner == null) {
 					continue;
 				}
-				list(owner, extractions, DataConverter.toMyExtraction(mining));
+				set(owner, extractions, DataConverter.toMyExtraction(mining));
 			}
-			for (Map.Entry<EsiOwner, List<MyExtraction>> entry : extractions.entrySet()) {
+			for (Map.Entry<EsiOwner, Set<MyExtraction>> entry : extractions.entrySet()) {
 				entry.getKey().setExtractions(entry.getValue());
 			}
 		} catch (SQLException ex) {
@@ -322,7 +322,7 @@ public class ProfileMining extends ProfileTable {
 					+ "	moon INTEGER,"
 					+ "	decay INTEGER,"
 					+ "	structure INTEGER,"
-					+ "	UNIQUE(ownerid, structure)\n"
+					+ "	UNIQUE(ownerid, start, moon)\n"
 					+ ");";
 			try (Statement statement = connection.createStatement()) {
 				statement.execute(sql);
