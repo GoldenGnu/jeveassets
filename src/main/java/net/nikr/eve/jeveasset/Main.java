@@ -103,7 +103,7 @@ public final class Main {
 		}
 		log = Logger.getLogger(Main.class.getName());
 		//Add user agent to online requests
-		System.setProperty("http.agent", Program.PROGRAM_NAME + "/" + Program.PROGRAM_VERSION.replace(" ", "_"));
+		System.setProperty("http.agent", Program.PROGRAM_NAME + "/" + Program.PROGRAM_VERSION.replace(" ", "_") + " (nkr@niklaskr.dk)");
 
 		//XXX - Workaround for IPv6 fail (force IPv4)
 		//eveonline.com is not IPv6 ready...
