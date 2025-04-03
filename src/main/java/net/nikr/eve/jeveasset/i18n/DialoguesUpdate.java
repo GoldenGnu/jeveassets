@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2024 Contributors (see credits.txt)
+ * Copyright 2009-2025 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -66,7 +66,6 @@ public abstract class DialoguesUpdate extends Bundle {
 	public abstract String transactions();
 	public abstract String names();
 	public abstract String blueprints();
-	public abstract String bookmarks();
 	public abstract String skills();
 	public abstract String mining();
 	public abstract String structures();

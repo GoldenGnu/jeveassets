@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2024 Contributors (see credits.txt)
+ * Copyright 2009-2025 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -128,11 +128,6 @@ public class EveApiOwner extends DeprecatedOwner implements OwnerType {
 
 	@Override
 	public boolean isDivisions() {
-		return false; //Not supported by the XML API
-	}
-
-	@Override
-	public boolean isBookmarks() {
 		return false; //Not supported by the XML API
 	}
 

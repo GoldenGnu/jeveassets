@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2024 Contributors (see credits.txt)
+ * Copyright 2009-2025 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -230,14 +230,12 @@ public class RawAsset {
 	 *
 	 * @param implantType
 	 * @param implantLocation
-	 * @param implantOwner
+	 * @param cloneId
 	 */
-	public RawAsset(Integer implantType, Long implantLocation, OwnerType implantOwner) {
+	public RawAsset(Integer implantType, Long implantLocation, Long cloneId) {
 		isSingleton = true; //Unpacked
-		long ownerId = implantOwner.getOwnerID();
-		String combinedId = implantType + "" + implantLocation + "" + ownerId;
-		long hashedId = (long) combinedId.hashCode();
-		itemId = hashedId;
+		long combinedId = Long.parseLong(cloneId + "" + implantType);
+		itemId = combinedId;
 		itemFlag = PLUGGED_IMPLANT_FLAG;
 		locationId = implantLocation;
 		quantity = 1; //Plugged in AKA always 1

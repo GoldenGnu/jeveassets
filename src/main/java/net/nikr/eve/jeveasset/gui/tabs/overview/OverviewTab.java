@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2024 Contributors (see credits.txt)
+ * Copyright 2009-2025 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -50,7 +50,7 @@ import net.nikr.eve.jeveasset.data.settings.types.LocationType;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel.JStatusLabel;
 import net.nikr.eve.jeveasset.gui.images.Images;
-import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
+import net.nikr.eve.jeveasset.gui.shared.StringComparators;
 import net.nikr.eve.jeveasset.gui.shared.components.JDropDownButton;
 import net.nikr.eve.jeveasset.gui.shared.components.JFixedToolBar;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTabSecondary;
@@ -370,7 +370,7 @@ public class OverviewTab extends JMainTabSecondary {
 		jLoadFilter.add(jMenuItem);
 
 		List<String> filterNames = new ArrayList<>(Settings.get().getTableFilters(AssetsTab.NAME).keySet());
-		Collections.sort(filterNames, new CaseInsensitiveComparator());
+		Collections.sort(filterNames, StringComparators.CASE_INSENSITIVE);
 
 		if (!filterNames.isEmpty()) {
 			jLoadFilter.addSeparator();

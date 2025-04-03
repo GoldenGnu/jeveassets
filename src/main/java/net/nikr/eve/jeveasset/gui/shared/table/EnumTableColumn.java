@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2024 Contributors (see credits.txt)
+ * Copyright 2009-2025 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -25,6 +25,7 @@ import ca.odell.glazedlists.GlazedLists;
 import java.awt.Color;
 import java.awt.Component;
 import java.util.Comparator;
+import net.nikr.eve.jeveasset.gui.shared.StringComparators;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.ISK;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.ModulePriceValue;
 
@@ -54,7 +55,7 @@ public interface EnumTableColumn<Q> {
 
 	public static Comparator<?> getComparator(final Class<?> type) {
 		if (type.equals(String.class)) {
-			return GlazedLists.caseInsensitiveComparator();
+			return StringComparators.TO_STRING;
 		} else if (Comparable.class.isAssignableFrom(type))  {
 			return GlazedLists.comparableComparator();
 		} else if (Component.class.isAssignableFrom(type)

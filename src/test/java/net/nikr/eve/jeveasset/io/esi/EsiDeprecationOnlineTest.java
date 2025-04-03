@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2024 Contributors (see credits.txt)
+ * Copyright 2009-2025 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -37,7 +37,6 @@ import net.troja.eve.esi.ApiClientBuilder;
 import net.troja.eve.esi.ApiException;
 import net.troja.eve.esi.ApiResponse;
 import net.troja.eve.esi.api.AssetsApi;
-import net.troja.eve.esi.api.BookmarksApi;
 import net.troja.eve.esi.api.CharacterApi;
 import net.troja.eve.esi.api.ContractsApi;
 import net.troja.eve.esi.api.CorporationApi;
@@ -60,7 +59,6 @@ import net.troja.eve.esi.model.CharacterAffiliationResponse;
 import net.troja.eve.esi.model.CharacterAssetsNamesResponse;
 import net.troja.eve.esi.model.CharacterAssetsResponse;
 import net.troja.eve.esi.model.CharacterBlueprintsResponse;
-import net.troja.eve.esi.model.CharacterBookmarksResponse;
 import net.troja.eve.esi.model.CharacterContractsItemsResponse;
 import net.troja.eve.esi.model.CharacterContractsResponse;
 import net.troja.eve.esi.model.CharacterIndustryJobsResponse;
@@ -78,7 +76,6 @@ import net.troja.eve.esi.model.CharacterWalletTransactionsResponse;
 import net.troja.eve.esi.model.CorporationAssetsNamesResponse;
 import net.troja.eve.esi.model.CorporationAssetsResponse;
 import net.troja.eve.esi.model.CorporationBlueprintsResponse;
-import net.troja.eve.esi.model.CorporationBookmarksResponse;
 import net.troja.eve.esi.model.CorporationContractsItemsResponse;
 import net.troja.eve.esi.model.CorporationContractsResponse;
 import net.troja.eve.esi.model.CorporationDivisionsResponse;
@@ -124,7 +121,6 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 	private final static AssetsApi ASSETS_API = new AssetsApi(API_CLIENT);
 	private final static CharacterApi CHARACTER_API = new CharacterApi(API_CLIENT);
 	private final static CorporationApi CORPORATION_API = new CorporationApi(API_CLIENT);
-	private final static BookmarksApi BOOKMARKS_API = new BookmarksApi(API_CLIENT);
 	private final static SovereigntyApi SOVEREIGNTY_API = new SovereigntyApi();
 	private final static ContractsApi CONTRACTS_API = new ContractsApi(API_CLIENT);
 	private final static IndustryApi INDUSTRY_API = new IndustryApi(API_CLIENT);
@@ -249,26 +245,6 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 	public void esiBlueprintsGetterCorporation() {
 		try {
 			ApiResponse<List<CorporationBlueprintsResponse>> apiResponse = CORPORATION_API.getCorporationsCorporationIdBlueprintsWithHttpInfo(1, DATASOURCE, null, null, null);
-			validate(apiResponse.getHeaders());
-		} catch (ApiException ex) {
-			validate(ex.getResponseHeaders());
-		}
-	}
-
-	@Test
-	public void esiBookmarksGetterCharacters() {
-		try {
-			ApiResponse<List<CharacterBookmarksResponse>> apiResponse = BOOKMARKS_API.getCharactersCharacterIdBookmarksWithHttpInfo(1, DATASOURCE, null, null, null);
-			validate(apiResponse.getHeaders());
-		} catch (ApiException ex) {
-			validate(ex.getResponseHeaders());
-		}
-	}
-
-	@Test
-	public void esiBookmarksGetterCorporation() {
-		try {
-			ApiResponse<List<CorporationBookmarksResponse>> apiResponse = BOOKMARKS_API.getCorporationsCorporationIdBookmarksWithHttpInfo(1, DATASOURCE, null, null, null);
 			validate(apiResponse.getHeaders());
 		} catch (ApiException ex) {
 			validate(ex.getResponseHeaders());

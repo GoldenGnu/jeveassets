@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2024 Contributors (see credits.txt)
+ * Copyright 2009-2025 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -29,6 +29,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import net.nikr.eve.jeveasset.data.profile.Profile;
 import net.nikr.eve.jeveasset.data.profile.ProfileManager;
+import net.nikr.eve.jeveasset.gui.shared.StringComparators;
 import net.nikr.eve.jeveasset.io.shared.FileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,7 +55,7 @@ public final class ProfileFinder {
 		File[] files = profilesDirectory.listFiles(fileFilter);
 		if (files != null) {
 			boolean defaultProfileFound = false;
-			Set<String> unique = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
+			Set<String> unique = new TreeSet<>(StringComparators.CASE_INSENSITIVE);
 			for (File file : files) {
 				String name = file.getName();
 				String profileName = formatName(name);

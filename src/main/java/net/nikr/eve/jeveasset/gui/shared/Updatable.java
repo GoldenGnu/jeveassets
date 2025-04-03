@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2024 Contributors (see credits.txt)
+ * Copyright 2009-2025 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -67,9 +67,6 @@ public class Updatable {
 				return true;
 			}
 			if (owner.isBlueprints() && isUpdatable(owner.getBlueprintsNextUpdate())) {
-				return true;
-			}
-			if (owner.isBookmarks() && isUpdatable(owner.getBookmarksNextUpdate())) {
 				return true;
 			}
 			if (owner.isSkills() && isUpdatable(owner.getSkillsNextUpdate())) {
