@@ -21,7 +21,6 @@
 package net.nikr.eve.jeveasset.data.api.raw;
 
 import java.util.Objects;
-import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
 import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob.IndustryActivity;
@@ -48,7 +47,6 @@ public class RawAsset {
 	private static final ItemFlag MARKET_ORDER_SELL_FLAG = new ItemFlag(0, General.get().marketOrderSellFlag(), General.get().marketOrderSellFlag());
 	private static final ItemFlag CONTRACT_INCLUDED_FLAG = new ItemFlag(0, General.get().contractIncluded(), General.get().contractIncluded());
 	private static final ItemFlag CONTRACT_EXCLUDED_FLAG = new ItemFlag(0, General.get().contractExcluded(), General.get().contractExcluded());
-	private static final ItemFlag PLUGGED_IMPLANT_FLAG = new ItemFlag(0, General.get().pluggedImplant(), General.get().pluggedImplant());
 
 	private Boolean isSingleton = null;
 	private Long itemId = null;
@@ -236,7 +234,7 @@ public class RawAsset {
 		isSingleton = true; //Unpacked
 		long combinedId = Long.parseLong(cloneId + "" + implantType);
 		itemId = combinedId;
-		itemFlag = PLUGGED_IMPLANT_FLAG;
+		itemFlag = ApiIdConverter.getFlag(89); //Implant
 		locationId = implantLocation;
 		quantity = 1; //Plugged in AKA always 1
 		typeId = implantType;

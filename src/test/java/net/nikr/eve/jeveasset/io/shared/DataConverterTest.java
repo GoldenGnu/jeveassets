@@ -42,7 +42,6 @@ import net.nikr.eve.jeveasset.data.api.my.MyMining;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.api.raw.RawAsset;
 import net.nikr.eve.jeveasset.data.api.raw.RawContract;
-import net.nikr.eve.jeveasset.data.api.raw.RawIndustryJob.IndustryJobStatus;
 import net.nikr.eve.jeveasset.data.api.raw.RawJournal;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder.MarketOrderState;
@@ -177,7 +176,6 @@ public class DataConverterTest extends TestUtil {
 				ConverterTestUtil.testValues(childMyAsset, options);
 			} else {
 				assertEquals(assets.size(), 0);
-				assertTrue(DataConverter.ignoreAsset(rootRawAsset, owner));
 			}
 		}
 	}
@@ -193,7 +191,6 @@ public class DataConverterTest extends TestUtil {
 				ConverterTestUtil.testValues(asset, options);
 			} else {
 				assertNull(asset);
-				assertTrue(DataConverter.ignoreAsset(rawAsset, owner));
 			}
 		}
 	}
