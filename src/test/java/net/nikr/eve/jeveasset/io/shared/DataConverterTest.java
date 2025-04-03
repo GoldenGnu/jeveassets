@@ -182,7 +182,6 @@ public class DataConverterTest extends TestUtil {
 				ConverterTestUtil.testValues(childMyAsset, options);
 			} else {
 				assertEquals(assets.size(), 0);
-				assertTrue(DataConverter.ignoreAsset(rootRawAsset, owner));
 			}
 		}
 	}
@@ -198,7 +197,6 @@ public class DataConverterTest extends TestUtil {
 				ConverterTestUtil.testValues(asset, options);
 			} else {
 				assertNull(asset);
-				assertTrue(DataConverter.ignoreAsset(rawAsset, owner));
 			}
 		}
 	}

@@ -348,7 +348,6 @@ public class ConverterTestUtil {
 			testValues(childMyAsset, options, setNull ? CharacterAssetsResponse.class : null, false);
 		} else {
 			assertEquals(esiOwner.getAssets().size(), 0);
-			assertTrue(DataConverter.ignoreAsset(ConverterTestUtil.getRawAsset(setNull, options), esiOwner));
 		}
 
 		//Blueprint

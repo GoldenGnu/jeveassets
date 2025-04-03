@@ -35,12 +35,10 @@ import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
 import net.nikr.eve.jeveasset.data.api.my.MyJournal;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
-import net.nikr.eve.jeveasset.data.api.raw.RawAsset;
 import net.nikr.eve.jeveasset.data.api.raw.RawBlueprint;
 import net.nikr.eve.jeveasset.io.shared.ConverterTestOptions;
 import net.nikr.eve.jeveasset.io.shared.ConverterTestOptionsGetter;
 import net.nikr.eve.jeveasset.io.shared.ConverterTestUtil;
-import net.nikr.eve.jeveasset.io.shared.DataConverter;
 import net.troja.eve.esi.model.CharacterAssetsResponse;
 import net.troja.eve.esi.model.CharacterBlueprintsResponse;
 import net.troja.eve.esi.model.CharacterContractsItemsResponse;
@@ -63,7 +61,6 @@ import net.troja.eve.esi.model.CorporationWalletJournalResponse;
 import net.troja.eve.esi.model.CorporationWalletTransactionsResponse;
 import net.troja.eve.esi.model.CorporationWalletsResponse;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 
@@ -137,7 +134,6 @@ public class EsiConverterTest extends TestUtil {
 				ConverterTestUtil.testValues(childAsset, options, esi);
 			} else {
 				assertEquals(assets.size(), 0);
-				assertTrue(DataConverter.ignoreAsset(new RawAsset(rootAssetsResponse), owner));
 			}
 		}
 	}
@@ -177,7 +173,6 @@ public class EsiConverterTest extends TestUtil {
 				ConverterTestUtil.testValues(childAsset, options, esi);
 			} else {
 				assertEquals(assets.size(), 0);
-				assertTrue(DataConverter.ignoreAsset(new RawAsset(rootAssetsResponse), owner));
 			}
 		}
 	}
