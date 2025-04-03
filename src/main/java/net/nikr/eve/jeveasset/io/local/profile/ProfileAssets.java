@@ -170,7 +170,7 @@ public class ProfileAssets extends ProfileTable {
 					+ "	locationid INTEGER,\n"
 					+ "	singleton NUMERIC,\n"
 					+ "	rawquantity INTEGER,\n"
-					+ "	UNIQUE(itemid)\n"
+					+ "	UNIQUE(ownerid, itemid)\n"
 					+ ");";
 			try (Statement statement = connection.createStatement()) {
 				statement.execute(sql);
