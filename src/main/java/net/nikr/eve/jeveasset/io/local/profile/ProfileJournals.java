@@ -251,7 +251,7 @@ public class ProfileJournals extends ProfileTable {
 					+ "	taxamount REAL,"
 					+ "	taxreceiverid INTEGER,"
 					+ "	accountkey INTEGER,"
-					+ "	UNIQUE(refid, amount)\n"
+					+ "	UNIQUE(ownerid, refid, amount)\n"
 					+ ");";
 			try (Statement statement = connection.createStatement()) {
 				statement.execute(sql);
