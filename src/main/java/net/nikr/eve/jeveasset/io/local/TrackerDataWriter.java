@@ -112,6 +112,7 @@ public class TrackerDataWriter extends AbstractBackup {
 					balanceObject.add(itemObject);
 				}
 			}
+			valueObject.addProperty("assetscontainersfixed", value.isAssetsContainersFixed());
 			if (!value.getAssetsFilter().isEmpty()) {
 				JsonArray assetObject = new JsonArray();
 				valueObject.add("asset", assetObject);

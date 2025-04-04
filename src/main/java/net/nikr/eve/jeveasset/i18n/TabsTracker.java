@@ -63,8 +63,12 @@ public abstract class TabsTracker extends Bundle {
 	public abstract String from();
 	public abstract String grandTotal();
 	public abstract String help();
+	public abstract String helpBugData();
+	public abstract String helpBugDataToolTip();
 	public abstract String helpLegacyData();
+	public abstract String helpLegacyDataToolTip();
 	public abstract String helpNewData();
+	public abstract String helpNewDataToolTip();
 	public abstract String importFile();
 	public abstract String importFileImport();
 	public abstract String importFileInvalidMsg();

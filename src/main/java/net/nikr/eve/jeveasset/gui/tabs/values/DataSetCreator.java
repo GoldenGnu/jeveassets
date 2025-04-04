@@ -402,18 +402,26 @@ public class DataSetCreator {
 
 	private AssetValue createAssetID(MyAsset asset) {
 		String flagID = null;
-		String[] flags = asset.getFlag().split(" > ");
-		for (String flag : flags) {
-			if (flag.contains("CorpSAG")) {
-				flagID = flag;
-				break;
-			}
-			if (flag.contains("Hangar") && asset.getFlag().contains("Office")) {
-				flagID = "CorpSAG1";
-				break;
+		if (asset.isCorporation()) {
+			for (MyAsset parent : asset.getParents()) { //check if in office
+				if (parent.getTypeID() == 27) { //Office
+					flagID = getAssetFlag(asset);
+					break;
+				}
 			}
 		}
 		return AssetValue.create(asset.getLocation().getLocation(), flagID, asset.getLocation().getLocationID());
+	}
+
+	private String getAssetFlag(MyAsset asset) {
+		if (asset == null) {
+			return null;
+		}
+		if (asset.getFlag().contains("CorpSAG")) {
+			return asset.getFlag();
+		} else {
+			return getAssetFlag(asset.getParent());
+		}
 	}
 
 	private Value getValueInner(Map<String, Value> values, String owner, Date date) {
