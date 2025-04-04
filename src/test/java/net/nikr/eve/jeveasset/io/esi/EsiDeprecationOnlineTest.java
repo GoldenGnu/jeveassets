@@ -31,6 +31,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.TestUtil;
 import net.troja.eve.esi.ApiClient;
 import net.troja.eve.esi.ApiClientBuilder;
@@ -756,7 +757,7 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 		MetaApi api = new MetaApi();
 		try {
 			Map<String, String> headers = api.getHeaders();
-			assertThat(headers.get("User-Agent"), equalTo(USER_AGENT));
+			assertThat(headers.get("User-Agent"), equalTo(Program.PROGRAM_USER_AGENT));
 		} catch (ApiException ex) {
 			fail();
 		}
