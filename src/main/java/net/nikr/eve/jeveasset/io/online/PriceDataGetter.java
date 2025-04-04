@@ -34,6 +34,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.SplashUpdater;
 import net.nikr.eve.jeveasset.data.profile.ProfileData;
 import net.nikr.eve.jeveasset.data.sde.Item;
@@ -453,7 +454,7 @@ public class PriceDataGetter implements PricingListener {
 
 		@Override
 		public String getUserAgent() {
-			return System.getProperty("http.agent");
+			return Program.PROGRAM_USER_AGENT;
 		}
 	}
 }
