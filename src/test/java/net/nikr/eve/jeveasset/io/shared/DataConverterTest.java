@@ -75,7 +75,6 @@ public class DataConverterTest extends TestUtil {
 			MyIndustryJob industryJob = ConverterTestUtil.getMyIndustryJob(esiOwner, false, true, options);
 			industryJob.setJobID(industryJob.getJobID() + 1);
 			industryJob.setBlueprintID(industryJob.getBlueprintID() + 1);
-			industryJob.setStationID(options.getLocationID());
 			industryJob.setCompletedDate(new Date(date.getTime() + 1L));
 			List<MyAsset> assets = DataConverter.assetIndustryJob(Collections.singletonList(industryJob), true, true);
 			if (industryJob.isDone()) {
@@ -101,7 +100,6 @@ public class DataConverterTest extends TestUtil {
 		for (ConverterTestOptions options : ConverterTestOptionsGetter.getConverterOptions()) {
 			MyMarketOrder marketOrder = ConverterTestUtil.getMyMarketOrder(ConverterTestUtil.getEsiOwner(options), false, true, options);
 			marketOrder.setOrderID(marketOrder.getOrderID() + 1);
-			marketOrder.setLocationID(options.getLocationID());
 			List<MyAsset> assets = DataConverter.assetMarketOrder(Collections.singletonList(marketOrder), true, true);
 			if (assets.isEmpty()) {
 				assertFalse(marketOrder.isActive());
@@ -125,8 +123,6 @@ public class DataConverterTest extends TestUtil {
 			MyContractItem contractItem = ConverterTestUtil.getMyContractItem(ConverterTestUtil.getMyContract(false, true, options), false, true, options);
 			contractItem.setRecordID(contractItem.getRecordID() + 1);
 			contractItem.setItemID(contractItem.getItemID()+ 1);
-			contractItem.getContract().setStartLocationID(options.getLocationID());
-			contractItem.getContract().setEndLocationID(options.getLocationID());
 			final Map<Long, OwnerType> owners = new HashMap<>();
 			EsiOwner owner = ConverterTestUtil.getEsiOwner(options);
 			owners.put(owner.getOwnerID(), owner);

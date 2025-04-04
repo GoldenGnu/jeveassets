@@ -31,6 +31,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -111,7 +112,6 @@ import net.troja.eve.esi.model.CorporationOrdersResponse;
 import net.troja.eve.esi.model.CorporationWalletJournalResponse;
 import net.troja.eve.esi.model.CorporationWalletsResponse;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 
@@ -126,7 +126,7 @@ public class ConverterTestUtil {
 		setValues(esiOwner, options);
 		if (data) {
 			setData(esiOwner, setNull, setValues, options);
-			esiOwner.setRoles(Collections.singleton(RolesEnum.DIRECTOR));
+			esiOwner.setRoles(set(RolesEnum.DIRECTOR));
 			esiOwner.setScopes(SsoScopes.ESI_CHARACTERS_READ_CORPORATION_ROLES_V1);
 		}
 		return esiOwner;
@@ -134,40 +134,46 @@ public class ConverterTestUtil {
 
 	private static void setData(OwnerType owner, boolean setNull, boolean setValues, ConverterTestOptions options) {
 		//Account Balance
-		MyAccountBalance myAccountBalance = getMyAccountBalance(owner, setValues, options);
-		owner.setAccountBalances(Collections.singletonList(myAccountBalance));
+		owner.setAccountBalances(list(getMyAccountBalance(owner, setValues, options)));
 
 		//Asset
 		owner.setAssets(getMyAssets(owner, setNull, setValues, options));
 
 		//Blueprint
 		RawBlueprint rawBlueprint = getRawBlueprint(options);
-		owner.setBlueprints(Collections.singletonMap(rawBlueprint.getItemID(), rawBlueprint));
+		owner.setBlueprints(map(rawBlueprint.getItemID(), rawBlueprint));
 
 		//Contract
 		MyContract saveMyContract = getMyContract(setNull, setValues, options);
-		MyContractItem saveMyContractItem = getMyContractItem(saveMyContract, setNull, setValues, options);
-		owner.setContracts(Collections.singletonMap(saveMyContract, Collections.singletonList(saveMyContractItem)));
+		owner.setContracts(map(saveMyContract, list(getMyContractItem(saveMyContract, setNull, setValues, options))));
 
 		//IndustryJob
-		MyIndustryJob saveMyIndustryJob = getMyIndustryJob(owner, setNull, setValues, options);
-		owner.setIndustryJobs(Collections.singleton(saveMyIndustryJob));
+		owner.setIndustryJobs(set(getMyIndustryJob(owner, setNull, setValues, options)));
 
 		//Journal
-		MyJournal saveMyJournal = getMyJournal(owner, setNull, setValues, options);
-		owner.setJournal(Collections.singleton(saveMyJournal));
+		owner.setJournal(set(getMyJournal(owner, setNull, setValues, options)));
 
 		//MarketOrder
-		MyMarketOrder saveMyMarketOrder = getMyMarketOrder(owner, setNull, setValues, options);
-		owner.setMarketOrders(Collections.singleton(saveMyMarketOrder));
+		owner.setMarketOrders(set(getMyMarketOrder(owner, setNull, setValues, options)));
 
 		//Transaction
-		MyTransaction saveMyTransaction = getMyTransaction(owner, setNull, setValues, options);
-		owner.setTransactions(Collections.singleton(saveMyTransaction));
+		owner.setTransactions(set(getMyTransaction(owner, setNull, setValues, options)));
 	}
 
+	public static <T> Set<T> set(T o) {
+        return new HashSet<>(Collections.singleton(o));
+    }
+
+	public static <K,V> Map<K,V> map(K key, V value) {
+        return new HashMap<>(Collections.singletonMap(key, value));
+    }
+
+	public static <T> List<T> list(T o) {
+        return new ArrayList<>(Collections.singletonList(o));
+    }
+
 	private static Item getItem(ConverterTestOptions options) {
-		return new Item(options.getInteger());
+		return ApiIdConverter.getItem(options.getInteger());
 	}
 
 	public static RawAccountBalance getRawAccountBalance(ConverterTestOptions options) {
@@ -200,17 +206,17 @@ public class ConverterTestUtil {
 
 	public static List<MyAsset> getMyAssets(OwnerType owner, boolean setNull, boolean setValues, ConverterTestOptions options) {
 		MyAsset rootAsset = getMyAsset(owner, setNull, setValues, options);
-		rootAsset.setItemID(rootAsset.getItemID() + 1);
 		if (setValues) {
 			setValues(rootAsset, options, null, false);
 		}
+		rootAsset.setItemID(rootAsset.getItemID() + 1);
 		MyAsset childAsset = getMyAsset(owner, setNull, setValues, options);
 		if (setValues) {
 			setValues(childAsset, options, null, false);
 		}
 		rootAsset.getAssets().add(childAsset);
 
-		return Collections.singletonList(rootAsset);
+		return list(rootAsset);
 	}
 
 	public static RawBlueprint getRawBlueprint(ConverterTestOptions options) {
@@ -254,8 +260,10 @@ public class ConverterTestUtil {
 	}
 
 	public static MyIndustryJob getMyIndustryJob(OwnerType owner, boolean setNull, boolean setValues, ConverterTestOptions options) {
+		RawIndustryJob rawIndustryJob = getRawIndustryJob(setNull, options);
 		Item item = getItem(options);
-		MyIndustryJob industryJob = new MyIndustryJob(getRawIndustryJob(setNull, options), item, item, owner);
+		Item output = ApiIdConverter.getItem(rawIndustryJob.getProductTypeID());
+		MyIndustryJob industryJob = new MyIndustryJob(rawIndustryJob, item, output, owner);
 		if (setValues) {
 			setValues(industryJob, options, null, false);
 		}
@@ -400,6 +408,7 @@ public class ConverterTestUtil {
 		Map<String, Boolean> optional = getOptional(esi);
 		for (Field field : fields) {
 			Class<?> type = field.getType();
+			String name = field.getName();
 			if (ignore(object, field, type)) {
 				continue;
 			}
@@ -407,6 +416,22 @@ public class ConverterTestUtil {
 				field.setAccessible(true);
 				if (!overwrite && field.get(object) != null) {
 					continue;
+				}
+				if ((Long.class.equals(type) || long.class.equals(type))
+						&& ("locationID".equals(name)
+						|| "locationId".equals(name)
+						|| "stationId".equals(name)
+						|| "startLocationId".equals(name)
+						|| "endLocationId".equals(name))) {
+					if (isOptional(optional, field)) {
+						if (type.equals(Boolean.class) || type.equals(boolean.class)) {
+							field.set(object, false);
+						} else {
+							field.set(object, options.getNull());
+						}
+					} else {
+						field.set(object, options.getLocationID());
+					}
 				}
 				field.set(object, getValue(type, isOptional(optional, field), options));
 			} catch (IllegalArgumentException | IllegalAccessException ex) {
@@ -424,13 +449,11 @@ public class ConverterTestUtil {
 		if (object instanceof CharacterAssetsResponse) {
 			CharacterAssetsResponse asset = (CharacterAssetsResponse) object;
 			asset.setItemId(asset.getItemId() + 1); //Workaround for itemID == locationID
-			asset.setLocationId(options.getLocationID());
 		}
 		//ESI Corporation
 		if (object instanceof CorporationAssetsResponse) {
 			CorporationAssetsResponse asset = (CorporationAssetsResponse) object;
 			asset.setItemId(asset.getItemId() + 1); //Workaround for itemID == locationID
-			asset.setLocationId(options.getLocationID());
 		}
 		//ESI Ship
 		if (object instanceof CharacterShipResponse) {
@@ -459,7 +482,11 @@ public class ConverterTestUtil {
 		if (object instanceof RawAsset) {
 			RawAsset asset = (RawAsset) object;
 			asset.setItemID(asset.getItemID() + 1); //Workaround for itemID == locationID
-			asset.setLocationID(options.getLocationID());
+		}
+		//EsiOwner
+		if (object instanceof EsiOwner) {
+			EsiOwner esiOwner = (EsiOwner) object;
+			esiOwner.setAuth(EsiCallbackURL.LOCALHOST, options.getString(), options.getString());
 		}
 	}
 
@@ -516,7 +543,7 @@ public class ConverterTestUtil {
 			marketOrder.setStateString(options.getString());
 			marketOrder.setIssuedBy(options.getInteger());
 			marketOrder.setChanged(options.getDate());
-			marketOrder.addChanges(Collections.singleton(new Change(new Date(), 0.0, 0)));
+			marketOrder.addChanges(set(new Change(new Date(), 0.0, 0)));
 		}
 		if (object instanceof MyJournal) {
 			MyJournal journal = (MyJournal) object;

@@ -27,7 +27,6 @@ import javax.swing.JOptionPane;
 import net.nikr.eve.jeveasset.SplashUpdater;
 import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
-import net.nikr.eve.jeveasset.data.profile.Profile.DefaultProfile;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 import net.nikr.eve.jeveasset.io.local.ProfileFinder;
 import net.nikr.eve.jeveasset.io.local.profile.ProfileDatabase;
@@ -45,7 +44,7 @@ public class ProfileManager {
 	private List<Profile> profiles = new ArrayList<>();
 
 	public ProfileManager() {
-		activeProfile = new DefaultProfile();
+		activeProfile = new Profile();
 		ProfileDatabase.setUpdateConnectionUrl(activeProfile);
 		profiles.add(activeProfile);
 	}

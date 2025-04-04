@@ -23,9 +23,9 @@ package net.nikr.eve.jeveasset;
 import ch.qos.logback.classic.Level;
 import java.io.File;
 import net.nikr.eve.jeveasset.data.profile.Profile;
-import net.nikr.eve.jeveasset.data.profile.Profile.DefaultProfile;
 import net.nikr.eve.jeveasset.data.settings.Settings;
-import static org.junit.Assume.assumeTrue;
+import net.nikr.eve.jeveasset.io.shared.FileUtil;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 
 
@@ -38,34 +38,22 @@ public class TestUtil {
 		System.setProperty("http.agent", USER_AGENT);
 		System.setProperty("log.home", "");
 		Settings.setTestMode(true);
+		CliOptions.get().setPortable(true);
+	}
+
+	@AfterClass
+	public static void cleanup() {
+		Profile profile = new Profile();
+		deleteProfileFilename(profile.getSQLiteFilename());
+		deleteProfileFilename(profile.getBackupSQLiteFilename());
+		deleteProfileFilename(FileUtil.getPathAssetAdded());
+		deleteProfileFilename(FileUtil.getPathStockpileIDsDatabase());
+		deleteProfileFilename(FileUtil.getPathTrackerData());
 	}
 
 	protected static void setLoggingLevel(Level level) {
 		ch.qos.logback.classic.Logger root = (ch.qos.logback.classic.Logger) org.slf4j.LoggerFactory.getLogger(ch.qos.logback.classic.Logger.ROOT_LOGGER_NAME);
 		root.setLevel(level);
-	}
-
-	protected static void cleanupPortableProfile(Profile profile) {
-		assumeTrue(false);
-		boolean portable = CliOptions.get().isPortable();
-		CliOptions.get().setPortable(true);
-		
-		deleteProfileFilename(profile.getSQLiteFilename());
-		deleteProfileFilename(profile.getBackupSQLiteFilename());
-
-		CliOptions.get().setPortable(portable);
-	}
-
-	protected static void cleanupPortableProfile() {
-		assumeTrue(false);
-		boolean portable = CliOptions.get().isPortable();
-		CliOptions.get().setPortable(true);
-		
-		Profile profile = new DefaultProfile();
-		deleteProfileFilename(profile.getSQLiteFilename());
-		deleteProfileFilename(profile.getBackupSQLiteFilename());
-
-		CliOptions.get().setPortable(portable);
 	}
 
 	private static void deleteProfileFilename(String filename) {

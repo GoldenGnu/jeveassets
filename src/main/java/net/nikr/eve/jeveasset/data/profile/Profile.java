@@ -54,7 +54,7 @@ public class Profile implements Comparable<Profile> {
 	private final StockpileIDs stockpileIDs;
 	private final List<EsiOwner> esiOwners = new ArrayList<>();
 
-	private Profile() {
+	public Profile() {
 		this("Default", true, true, ProfileType.SQLITE);
 	}
 
@@ -271,12 +271,5 @@ public class Profile implements Comparable<Profile> {
 	@Override
 	public int compareTo(final Profile o) {
 		return this.getName().compareToIgnoreCase(o.getName());
-	}
-
-	public static class DefaultProfile extends Profile {
-
-		public DefaultProfile() {
-			super();
-		}
 	}
 }

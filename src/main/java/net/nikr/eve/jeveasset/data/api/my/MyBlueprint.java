@@ -79,4 +79,34 @@ public class MyBlueprint {
 	public int getTimeEfficiency() {
 		return timeEfficiency;
 	}
+
+	@Override
+	public int hashCode() {
+		int hash = 5;
+		hash = 23 * hash + this.runs;
+		hash = 23 * hash + this.materialEfficiency;
+		hash = 23 * hash + this.timeEfficiency;
+		return hash;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		final MyBlueprint other = (MyBlueprint) obj;
+		if (this.runs != other.runs) {
+			return false;
+		}
+		if (this.materialEfficiency != other.materialEfficiency) {
+			return false;
+		}
+		return this.timeEfficiency == other.timeEfficiency;
+	}
 }

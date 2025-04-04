@@ -21,11 +21,9 @@
 package net.nikr.eve.jeveasset.io.local;
 
 import ch.qos.logback.classic.Level;
-import net.nikr.eve.jeveasset.CliOptions;
 import net.nikr.eve.jeveasset.TestUtil;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.data.profile.Profile;
-import net.nikr.eve.jeveasset.data.profile.Profile.DefaultProfile;
 import net.nikr.eve.jeveasset.data.profile.ProfileData;
 import net.nikr.eve.jeveasset.data.profile.ProfileManager;
 import net.nikr.eve.jeveasset.data.settings.AddedData;
@@ -40,19 +38,14 @@ import org.junit.Test;
 
 public class ProfileReadWriteTest extends TestUtil {
 
-	private static boolean portable;
-
 	@BeforeClass
 	public static void setUpClass() {
 		setLoggingLevel(Level.WARN);
-		portable = CliOptions.get().isPortable();
-		CliOptions.get().setPortable(true);
 	}
 
 	@AfterClass
 	public static void tearDownClass() {
 		setLoggingLevel(Level.INFO);
-		CliOptions.get().setPortable(portable);
 	}
 
 	@Test
@@ -69,7 +62,7 @@ public class ProfileReadWriteTest extends TestUtil {
 		AddedData.load();
 		
 		for (ConverterTestOptions options : ConverterTestOptionsGetter.getConverterOptions()) {
-			Profile saveProfile = new DefaultProfile();
+			Profile saveProfile = new Profile();
 			//ESI
 			saveProfile.getEsiOwners().add(ConverterTestUtil.getEsiOwner(true, setNull, false, options));
 
@@ -79,7 +72,7 @@ public class ProfileReadWriteTest extends TestUtil {
 			//Read
 			ProfileManager loadProfileManager = new ProfileManager();
 
-			Profile loadProfile = new DefaultProfile();
+			Profile loadProfile = new Profile();
 			loadProfile.load();
 			loadProfileManager.setActiveProfile(loadProfile);
 
