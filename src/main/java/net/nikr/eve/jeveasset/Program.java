@@ -133,6 +133,7 @@ public class Program implements ActionListener {
 	public static final String PROGRAM_VERSION = "8.0.0 DEV BUILD 1";
 	public static final String PROGRAM_NAME = "jEveAssets";
 	public static final String PROGRAM_HOMEPAGE = "https://eve.nikr.net/jeveasset";
+	public static final String PROGRAM_USER_AGENT = PROGRAM_NAME + "/" + PROGRAM_VERSION.replace(" ", "_") + " (nkr@niklaskr.dk)";
 	private static final boolean PROGRAM_DEV_BUILD = false;
 
 	//Height
