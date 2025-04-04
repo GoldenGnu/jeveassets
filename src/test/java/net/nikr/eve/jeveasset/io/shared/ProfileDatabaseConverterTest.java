@@ -77,7 +77,7 @@ public class ProfileDatabaseConverterTest extends TestUtil {
 		cleanup();
 	}
 
-	@Test @Ignore
+	@Test
 	public void testLocal() {
 		//Exiting data
 		CliOptions.get().setPortable(false);
