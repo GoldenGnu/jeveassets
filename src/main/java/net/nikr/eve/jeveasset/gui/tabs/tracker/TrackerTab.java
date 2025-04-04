@@ -93,6 +93,7 @@ import net.nikr.eve.jeveasset.gui.shared.JFreeChartUtil.SimpleRenderer;
 import net.nikr.eve.jeveasset.gui.shared.ColorIcon;
 import net.nikr.eve.jeveasset.gui.shared.ColorUtil;
 import net.nikr.eve.jeveasset.gui.shared.Formatter;
+import net.nikr.eve.jeveasset.gui.shared.InstantToolTip;
 import net.nikr.eve.jeveasset.gui.shared.JOptionInput;
 import net.nikr.eve.jeveasset.gui.shared.components.CheckBoxNode;
 import net.nikr.eve.jeveasset.gui.shared.components.JCustomFileChooser;
@@ -183,6 +184,7 @@ public class TrackerTab extends JMainTabSecondary {
 	}
 
 	private final Shape NO_FILTER = new Rectangle(-3, -3, 6, 6);
+	private final Shape BUG_CORP_CONTAINERS_FILTER = new Ellipse2D.Float(-3.0f, -2.0f, 6.0f, 4.0f);
 	private final Shape FILTER_AND_DEFAULT = new Ellipse2D.Float(-3.0f, -3.0f, 6.0f, 6.0f);
 	private final int PANEL_WIDTH_MINIMUM = 160;
 
@@ -260,7 +262,8 @@ public class TrackerTab extends JMainTabSecondary {
 	private Map<SimpleTimePeriod, Value> cache;
 	private final Map<String, CheckBoxNode> accountNodes = new TreeMap<>();
 	private final Map<String, CheckBoxNode> assetNodes = new TreeMap<>();
-	private Integer assetColumn = null;
+	private Integer assetNoFilterColumn = null;
+	private Integer assetBuggedFilterColumn = null;
 	private Integer walletColumn = null;
 	private boolean updateLock = false;
 
@@ -485,10 +488,19 @@ public class TrackerTab extends JMainTabSecondary {
 		jHelp.setIcon(Images.MISC_HELP.getIcon());
 
 		JLabel jNoFilter = new JLabel(TabsTracker.get().helpLegacyData());
+		jNoFilter.setToolTipText(TabsTracker.get().helpLegacyDataToolTip());
 		jNoFilter.setIcon(new ShapeIcon(NO_FILTER));
+		InstantToolTip.install(jNoFilter);
+
+		JLabel jBuggedFilter = new JLabel(TabsTracker.get().helpBugData());
+		jBuggedFilter.setToolTipText(TabsTracker.get().helpBugDataToolTip());
+		jBuggedFilter.setIcon(new ShapeIcon(BUG_CORP_CONTAINERS_FILTER));
+		InstantToolTip.install(jBuggedFilter);
 
 		JLabel jFilter = new JLabel(TabsTracker.get().helpNewData());
+		jFilter.setToolTipText(TabsTracker.get().helpNewDataToolTip());
 		jFilter.setIcon(new ShapeIcon(FILTER_AND_DEFAULT));
+		InstantToolTip.install(jFilter);
 
 		JDropDownButton jSettings = new JDropDownButton(Images.DIALOG_SETTINGS.getIcon(), JDropDownButton.RIGHT);
 
@@ -582,6 +594,8 @@ public class TrackerTab extends JMainTabSecondary {
 						.addGap(20)
 						.addComponent(jNoFilter)
 						.addGap(20)
+						.addComponent(jBuggedFilter)
+						.addGap(20)
 						.addComponent(jFilter)
 						.addGap(20, 20, Integer.MAX_VALUE)
 						.addComponent(jSettings, Program.getIconButtonsWidth(), Program.getIconButtonsWidth(), Program.getIconButtonsWidth())
@@ -619,6 +633,7 @@ public class TrackerTab extends JMainTabSecondary {
 					.addGroup(layout.createParallelGroup()
 							.addComponent(jHelp, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 							.addComponent(jNoFilter, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+							.addComponent(jBuggedFilter, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 							.addComponent(jFilter, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 							.addComponent(jSettings, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					)
@@ -934,7 +949,8 @@ public class TrackerTab extends JMainTabSecondary {
 		cache = new TreeMap<>();
 		Map<String, CheckBoxNode> accountNodesMap = new HashMap<>(accountNodes);
 		Map<String, CheckBoxNode> assetNodesMap = new HashMap<>(assetNodes);
-		Map<Date, Boolean> assetColumns = new TreeMap<>();
+		Map<Date, Boolean> assetNoFilterColumns = new TreeMap<>();
+		Map<Date, Boolean> assetBuggedFilterColumns = new TreeMap<>();
 		Map<Date, Boolean> walletColumns = new TreeMap<>();
 		if (owners != null) { //No data set...
 			try {
@@ -963,15 +979,18 @@ public class TrackerTab extends JMainTabSecondary {
 						} else {
 							lastMap.put(ownerEntry.getKey(), data);
 						}
+						//Assets containers fixed
+						assetBuggedFilterColumns.put(date, data.isAssetsContainersFixed());
+						//Assets Filters
 						if (data.getAssetsFilter().isEmpty()) {
 							value.addAssets(data.getAssetsTotal());
 							//Default
-							Boolean assetBoolean = assetColumns.get(date);
+							Boolean assetBoolean = assetNoFilterColumns.get(date);
 							if (assetBoolean == null) {
-								assetColumns.put(date, false);
+								assetNoFilterColumns.put(date, false);
 							}
 						} else {
-							assetColumns.put(date, true);
+							assetNoFilterColumns.put(date, true);
 							for (Map.Entry<AssetValue, Double> entry : data.getAssetsFilter().entrySet()) {
 								if (assetNodesMap.get(entry.getKey().getID()).isSelected()) {
 									value.addAssets(entry.getValue());
@@ -1026,10 +1045,20 @@ public class TrackerTab extends JMainTabSecondary {
 		}
 		int count;
 		count = 0;
-		assetColumn = assetColumns.size(); //Default
-		for (Map.Entry<Date, Boolean> entry : assetColumns.entrySet()) {
+		assetNoFilterColumn = assetNoFilterColumns.size(); //Default
+		for (Map.Entry<Date, Boolean> entry : assetNoFilterColumns.entrySet()) {
 			if (entry.getValue()) {
-				assetColumn = count;
+				assetNoFilterColumn = count;
+				break;
+			}
+			count++;
+		}
+		count = 0;
+		assetBuggedFilterColumn = assetBuggedFilterColumns.size(); //Default
+		for (Map.Entry<Date, Boolean> entry : assetBuggedFilterColumns.entrySet()) {
+			if (entry.getValue()) {
+				assetBuggedFilterColumn = count;
+				System.out.println("Found at: " + count + " " + entry.getKey());
 				break;
 			}
 			count++;
@@ -1235,29 +1264,41 @@ public class TrackerTab extends JMainTabSecondary {
 		boolean bright = ColorUtil.isBrightColor(jPanel.getBackground());
 		if (jTotal.isSelected()) { //Update total
 			dataset.addSeries(total);
-			Integer minColumn = null;
+			Integer minNoFilterColumn = null;
+			Integer minBuggedFilterColumn = null;
 			if (jWalletBalance.isSelected() && walletColumn != null) {
-				minColumn = walletColumn;
+				minNoFilterColumn = walletColumn;
 			}
-			if (jAssets.isSelected() && assetColumn != null) {
-				if (minColumn != null) {
-					minColumn = Math.min(minColumn, assetColumn);
-				} else {
-					minColumn = assetColumn;
+			if (jAssets.isSelected()) {
+				if (assetNoFilterColumn != null) {
+					if (minNoFilterColumn != null) {
+						minNoFilterColumn = Math.min(minNoFilterColumn, assetNoFilterColumn);
+					} else {
+						minNoFilterColumn = assetNoFilterColumn;
+					}
+				}
+				if (assetBuggedFilterColumn != null) {
+					if (minBuggedFilterColumn != null) {
+						minBuggedFilterColumn = Math.min(minBuggedFilterColumn, assetBuggedFilterColumn);
+					} else {
+						minBuggedFilterColumn = assetBuggedFilterColumn;
+					}
 				}
 			}
-			renderer.add(dataset.getSeriesCount() - 1, minColumn);
+			renderer.addNoFilter(dataset.getSeriesCount() - 1, minNoFilterColumn);
+			renderer.addBuggedFilter(dataset.getSeriesCount() - 1, minBuggedFilterColumn);
 			updateRender(bright, dataset.getSeriesCount() - 1, Color.RED.darker());
 		}
 		if (jWalletBalance.isSelected() && walletBalance != null) {
 			dataset.addSeries(walletBalance);
-			renderer.add(dataset.getSeriesCount() - 1, walletColumn);
+			renderer.addNoFilter(dataset.getSeriesCount() - 1, walletColumn);
 			updateRender(bright, dataset.getSeriesCount() - 1, Color.BLUE.darker());
 
 		}
 		if (jAssets.isSelected() && assets != null) {
 			dataset.addSeries(assets);
-			renderer.add(dataset.getSeriesCount() - 1, assetColumn);
+			renderer.addNoFilter(dataset.getSeriesCount() - 1, assetNoFilterColumn);
+			renderer.addBuggedFilter(dataset.getSeriesCount() - 1, assetBuggedFilterColumn);
 			updateRender(bright, dataset.getSeriesCount() - 1, Color.GREEN.darker().darker());
 		}
 		if (jSellOrders.isSelected() && sellOrders != null) {
@@ -1406,7 +1447,8 @@ public class TrackerTab extends JMainTabSecondary {
 
 	private class MyRenderer extends SimpleRenderer {
 
-		private final Map<Integer, Integer> renders = new HashMap<>();
+		private final Map<Integer, Integer> noFilters = new HashMap<>();
+		private final Map<Integer, Integer> buggedFilters = new HashMap<>();
 
 		public MyRenderer() {
 			super(true, true);
@@ -1414,21 +1456,30 @@ public class TrackerTab extends JMainTabSecondary {
 
 		@Override
 		public Shape getItemShape(int row, int column) {
-			Integer findColumn = renders.get(row);
-			if (findColumn != null && findColumn > column) {
+			Integer noFiltersColumn = noFilters.get(row);
+			Integer buggedFiltersColumn = buggedFilters.get(row);
+			if (noFiltersColumn != null && noFiltersColumn > column) {
 				return NO_FILTER;
+			} else if (buggedFiltersColumn != null && buggedFiltersColumn > column) {
+				return BUG_CORP_CONTAINERS_FILTER;
 			} else {
 				return FILTER_AND_DEFAULT;
 			}
 		}
 
 		public void clear() {
-			renders.clear();
+			noFilters.clear();
+			buggedFilters.clear();
 		}
 
-		public void add(int row, Integer column) {
+		public void addNoFilter(int row, Integer column) {
 			if (column != null) {
-				renders.put(row, column);
+				noFilters.put(row, column);
+			}
+		}
+		public void addBuggedFilter(int row, Integer column) {
+			if (column != null) {
+				buggedFilters.put(row, column);
 			}
 		}
 	}
