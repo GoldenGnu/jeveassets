@@ -45,6 +45,7 @@ public class Value implements Comparable<Value>, LocationType {
 	private final String compare;
 	private double assets = 0;
 	private final Map<AssetValue, Double> assetsFilter = new HashMap<>();
+	private boolean assetsContainersFixed = true; //New data is fixed
 	private double sellOrders = 0;
 	private double escrows = 0;
 	private double escrowsToCover = 0;
@@ -157,6 +158,10 @@ public class Value implements Comparable<Value>, LocationType {
 
 	public Map<AssetValue, Double> getAssetsFilter() {
 		return assetsFilter;
+	}
+
+	public boolean isAssetsContainersFixed() {
+		return assetsContainersFixed;
 	}
 
 	public double getAssetsTotal() {
@@ -323,6 +328,10 @@ public class Value implements Comparable<Value>, LocationType {
 
 	public void setAssetsTotal(double assets) {
 		this.assets = assets;
+	}
+
+	public void setAssetsContainersFixed(boolean assetsContainersFixed) {
+		this.assetsContainersFixed = assetsContainersFixed;
 	}
 
 	public void setSellOrders(double sellOrders) {
