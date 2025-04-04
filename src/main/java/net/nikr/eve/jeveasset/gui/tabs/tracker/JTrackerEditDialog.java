@@ -465,6 +465,10 @@ public class JTrackerEditDialog extends JDialogCentered {
 					if (returnFlag == null) {
 						return; //Cancel
 					}
+				} else if (flags.size() == 1) { //Size is always 1 (one) or 0 (zero)
+					for (String s : flags) {
+						returnFlag = s; //Only done if size is 1 (one) AKA only done once
+					}
 				}
 				AssetValue assetValue;
 				if (returnFlag.equals(TabsTracker.get().other())) {
