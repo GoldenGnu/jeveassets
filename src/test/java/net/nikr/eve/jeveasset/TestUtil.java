@@ -27,11 +27,9 @@ import org.junit.BeforeClass;
 
 public class TestUtil {
 
-	public static final String USER_AGENT = Program.PROGRAM_NAME + "/" + Program.PROGRAM_VERSION.replace(" ", "_");
-
 	@BeforeClass
 	public static void initLog() {
-		System.setProperty("http.agent", USER_AGENT);
+		System.setProperty("http.agent", Program.PROGRAM_USER_AGENT);
 		System.setProperty("log.home", "");
 		Settings.setTestMode(true);
 	}

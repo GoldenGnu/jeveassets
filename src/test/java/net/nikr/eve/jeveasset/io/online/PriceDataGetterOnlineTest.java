@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.TestUtil;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.StaticData;
@@ -229,7 +230,7 @@ public class PriceDataGetterOnlineTest extends TestUtil {
 
 		@Override
 		public String getUserAgent() {
-			return System.getProperty("http.agent");
+			return Program.PROGRAM_USER_AGENT;
 		}
 	}
 }
