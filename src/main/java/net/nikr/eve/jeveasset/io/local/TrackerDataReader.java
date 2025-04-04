@@ -131,6 +131,13 @@ public class TrackerDataReader extends AbstractBackup {
 			} else {
 				value.setBalanceTotal(balanceTotal);
 			}
+			//Assets containers fixed
+			JsonElement assetsContainersFixedElement = node.get("assetscontainersfixed");
+			boolean assetsContainersFixed = false;
+			if (assetsContainersFixedElement != null) {
+				assetsContainersFixed = assetsContainersFixedElement.getAsBoolean();
+			}
+			value.setAssetsContainersFixed(assetsContainersFixed);
 			//Assets
 			JsonElement assetElement = node.get("asset");
 			if (assetElement != null && assetElement.isJsonArray()) {
