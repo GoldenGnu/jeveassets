@@ -87,44 +87,161 @@ public abstract class ProfileTable {
 		statement.setNull(index, Types.NULL);
 	}
 
-	protected static void setAttributeOptional(final PreparedStatement statement, final int index, final Object value) throws SQLException {
-		if (value != null) {
-			setAttribute(statement, index, value);
-		} else {
+	protected static void setAttributeOptional(final PreparedStatement statement, final int index, final Color object) throws SQLException {
+		if (object == null) {
 			statement.setNull(index, Types.NULL);
+		} else {
+			statement.setInt(index, object.getRGB());
 		}
 	}
 
-	protected static void setAttribute(final PreparedStatement statement, final int index, final Object object) throws SQLException {
+	protected static void setAttributeOptional(final PreparedStatement statement, final int index, final String object) throws SQLException {
 		if (object == null) {
-			throw new RuntimeException("Can't save null");
-		} else if (object instanceof String) {
-			statement.setString(index, (String) object);
-		} else if (object instanceof Collection) {
-			Collection<?> collection = (Collection) object;
+			statement.setNull(index, Types.NULL);
+		} else {
+			statement.setString(index, object);
+		}
+	}
+
+	protected static void setAttributeOptional(final PreparedStatement statement, final int index, final Collection<?> object) throws SQLException {
+		if (object == null) {
+			statement.setNull(index, Types.NULL);
+		} else {
 			List<String> list = new ArrayList<>();
-			for (Object t : collection) {
+			for (Object t : object) {
 				list.add(AbstractXmlWriter.valueOf(t));
 			}
 			statement.setString(index, String.join(",", list));
-		} else if (object instanceof Color) {
-			statement.setInt(index, ((Color) object).getRGB());
-		} else if (object instanceof Date) {
-			statement.setLong(index, ((Date) object).getTime());
-		} else if (object instanceof Enum) {
-			statement.setString(index, ((Enum) object).name());
-		} else if (object instanceof Boolean) {
-			statement.setBoolean(index, (Boolean) object);
-		} else if (Integer.class.isAssignableFrom(object.getClass())) {
-			statement.setInt(index, (Integer) object);
-		} else if (Long.class.isAssignableFrom(object.getClass())) {
-			statement.setLong(index, (Long) object);
-		} else if (Float.class.isAssignableFrom(object.getClass())) {
-			statement.setFloat(index, (Float) object);
-		} else if (Double.class.isAssignableFrom(object.getClass())) {
-			statement.setDouble(index, (Double) object);
+		}
+		
+	}
+
+	protected static void setAttributeOptional(final PreparedStatement statement, final int index, final Date object) throws SQLException {
+		if (object == null) {
+			statement.setNull(index, Types.NULL);
+		} else {
+			statement.setLong(index, object.getTime());
+		}
+	}
+
+	protected static void setAttributeOptional(final PreparedStatement statement, final int index, final Enum<?> object) throws SQLException {
+		if (object == null) {
+			statement.setNull(index, Types.NULL);
+		} else {
+			statement.setString(index, object.name());
+		}
+	}
+
+	protected static void setAttributeOptional(final PreparedStatement statement, final int index, final Boolean object) throws SQLException {
+		if (object == null) {
+			statement.setNull(index, Types.NULL);
+		} else {
+			statement.setBoolean(index, object);
+		}
+	}
+
+	protected static void setAttributeOptional(final PreparedStatement statement, final int index, final Integer object) throws SQLException {
+		if (object == null) {
+			statement.setNull(index, Types.NULL);
+		} else {
+			statement.setInt(index, object);
+		}
+	}
+
+	protected static void setAttributeOptional(final PreparedStatement statement, final int index, final Long object) throws SQLException {
+		if (object == null) {
+			statement.setNull(index, Types.NULL);
+		} else {
+			statement.setLong(index, object);
+		}
+	}
+
+	protected static void setAttributeOptional(final PreparedStatement statement, final int index, final Float object) throws SQLException {
+		if (object == null) {
+			statement.setNull(index, Types.NULL);
+		} else {
+			statement.setFloat(index, object);
+		}
+	}
+
+	protected static void setAttributeOptional(final PreparedStatement statement, final int index, final Double object) throws SQLException {
+		if (object == null) {
+			statement.setNull(index, Types.NULL);
+		} else {
+			statement.setDouble(index, object);
+		}
+	}
+
+	protected static void setAttributeOptional(final PreparedStatement statement, final int index, final Object object) throws SQLException {
+		if (object == null) {
+			statement.setNull(index, Types.NULL);
 		} else {
 			statement.setString(index, String.valueOf(object));
+		}
+	}
+
+	protected static void setAttribute(final PreparedStatement statement, final int index, final Color object) throws SQLException {
+		notNull(object);
+		statement.setInt(index, object.getRGB());
+	}
+
+	protected static void setAttribute(final PreparedStatement statement, final int index, final String object) throws SQLException {
+		notNull(object);
+		statement.setString(index, object);
+	}
+
+	protected static void setAttribute(final PreparedStatement statement, final int index, final Collection<?> object) throws SQLException {
+		notNull(object);
+		List<String> list = new ArrayList<>();
+		for (Object t : object) {
+			list.add(AbstractXmlWriter.valueOf(t));
+		}
+		statement.setString(index, String.join(",", list));
+	}
+
+	protected static void setAttribute(final PreparedStatement statement, final int index, final Date object) throws SQLException {
+		notNull(object);
+		statement.setLong(index, object.getTime());
+	}
+
+	protected static void setAttribute(final PreparedStatement statement, final int index, final Enum<?> object) throws SQLException {
+		notNull(object);
+		statement.setString(index, object.name());
+	}
+
+	protected static void setAttribute(final PreparedStatement statement, final int index, final Boolean object) throws SQLException {
+		notNull(object);
+		statement.setBoolean(index, object);
+	}
+
+	protected static void setAttribute(final PreparedStatement statement, final int index, final Integer object) throws SQLException {
+		notNull(object);
+		statement.setInt(index, object);
+	}
+
+	protected static void setAttribute(final PreparedStatement statement, final int index, final Long object) throws SQLException {
+		notNull(object);
+		statement.setLong(index, object);
+	}
+
+	protected static void setAttribute(final PreparedStatement statement, final int index, final Float object) throws SQLException {
+		notNull(object);
+		statement.setFloat(index, object);
+	}
+
+	protected static void setAttribute(final PreparedStatement statement, final int index, final Double object) throws SQLException {
+		notNull(object);
+		statement.setDouble(index, object);
+	}
+
+	protected static void setAttribute(final PreparedStatement statement, final int index, final Object object) throws SQLException {
+		notNull(object);
+		statement.setString(index, String.valueOf(object));
+	}
+
+	private static void notNull(final Object object) {
+		if (object == null) {
+			throw new RuntimeException("Can't save null");
 		}
 	}
 
