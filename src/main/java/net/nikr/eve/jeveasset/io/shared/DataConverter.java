@@ -244,19 +244,22 @@ public abstract class DataConverter {
 			contracts.put(contract, contractItems);
 		}
 		if (saveHistory) {
-			ProfileDatabase.update(new ProfileConnectionData<MyContract>(new HashSet<>(contracts.keySet())) {
+			Set<MyContract> update = new HashSet<>(contracts.keySet()); //Contracts in esi needs to be update
+			for (Map.Entry<MyContract, List<MyContractItem>> entry : owner.getContracts().entrySet()) {
+				MyContract contract = entry.getKey();
+				if (!contracts.containsKey(contract)) {
+					if(contract.archive()) {
+						update.add(contract); //Archived contracts needs to be update
+					}
+					contracts.put(contract, entry.getValue());
+				}
+			}
+			ProfileDatabase.update(new ProfileConnectionData<MyContract>(new HashSet<>(update)) {
 				@Override
 				public boolean update(Connection connection, Collection<MyContract> data) {
 					return ProfileContracts.updateContracts(connection, owner.getOwnerID(), data);
 				}
 			});
-			for (Map.Entry<MyContract, List<MyContractItem>> entry : owner.getContracts().entrySet()) {
-				MyContract contract = entry.getKey();
-				if (!contracts.containsKey(contract)) {
-					contract.archive();
-					contracts.put(contract, entry.getValue());
-				}
-			}
 		}
 		return contracts;
 	}
@@ -277,6 +280,9 @@ public abstract class DataConverter {
 					return ProfileContracts.updateContractItems(connection, data);
 				}
 			});
+			for (Map.Entry<MyContract, List<MyContractItem>> entry : owner.getContracts().entrySet()) {
+				contracts.putIfAbsent(entry.getKey(), entry.getValue());
+			}
 		}
 		return contracts;
 	}
@@ -296,16 +302,19 @@ public abstract class DataConverter {
 			industryJobs.add(toMyIndustryJob(rawIndustryJob, owner));
 		}
 		if (saveHistory) {
-			ProfileDatabase.update(new ProfileConnectionData<MyIndustryJob>(industryJobs) {
+			Set<MyIndustryJob> update = new HashSet<>(industryJobs); //Industry jobs in esi needs to be update
+			for (MyIndustryJob industryJob : owner.getIndustryJobs()) {
+				if (industryJob.archive()) {
+					update.add(industryJob); //Archived industry jobs needs to be update
+				}
+				industryJobs.add(industryJob);
+			}
+			ProfileDatabase.update(new ProfileConnectionData<MyIndustryJob>(update) {
 				@Override
 				public boolean update(Connection connection, Collection<MyIndustryJob> data) {
 					return ProfileIndustryJobs.updateIndustryJobs(connection, owner.getOwnerID(), data);
 				}
 			});
-			for (MyIndustryJob industryJob : owner.getIndustryJobs()) {
-				industryJob.archive();
-				industryJobs.add(industryJob);
-			}
 		}
 		return industryJobs;
 	}
@@ -349,16 +358,19 @@ public abstract class DataConverter {
 			marketOrder.addChanges(changed.get(marketOrder.getOrderID()));
 		}
 		if (saveHistory) {
-			ProfileDatabase.update(new ProfileConnectionData<MyMarketOrder>(marketOrders) {
+			Set<MyMarketOrder> update = new HashSet<>(marketOrders); //Market orders in esi needs to be update
+			for (MyMarketOrder marketOrder : owner.getMarketOrders()) {
+				if (marketOrder.archive()) {
+					update.add(marketOrder); //Archived market orders needs to be update
+				}
+				marketOrders.add(marketOrder);
+			}
+			ProfileDatabase.update(new ProfileConnectionData<MyMarketOrder>(update) {
 				@Override
 				public boolean update(Connection connection, Collection<MyMarketOrder> data) {
 					return ProfileMarketOrders.updateMarketOrders(connection, owner.getOwnerID(), data);
 				}
 			});
-			for (MyMarketOrder marketOrder : owner.getMarketOrders()) {
-				marketOrder.archive();
-				marketOrders.add(marketOrder);
-			}
 		}
 		return marketOrders;
 	}

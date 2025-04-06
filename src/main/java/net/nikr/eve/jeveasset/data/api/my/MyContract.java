@@ -256,11 +256,13 @@ public class MyContract extends RawContract implements Comparable<MyContract>, L
 	}
 
 	@Override
-	public void archive() {
+	public boolean archive() {
+		boolean update = esi; //Update if in esi
 		if (esi && (getStatus() == ContractStatus.OUTSTANDING || getStatus() == ContractStatus.IN_PROGRESS)) {
 			setStatus(ContractStatus.ARCHIVED);
 		}
 		this.esi = false;
+		return update;
 	}
 
 	@Override
