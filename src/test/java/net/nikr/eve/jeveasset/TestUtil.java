@@ -33,10 +33,10 @@ public class TestUtil {
 
 	@BeforeClass
 	public static void initLog() {
-		System.setProperty("http.agent", Program.PROGRAM_USER_AGENT);
-		System.setProperty("log.home", "");
-		Settings.setTestMode(true);
+		Main.setLogLocation(true);
 		CliOptions.get().setPortable(true);
+		System.setProperty("http.agent", Program.PROGRAM_USER_AGENT);
+		Settings.setTestMode(true);
 	}
 
 	@AfterClass
