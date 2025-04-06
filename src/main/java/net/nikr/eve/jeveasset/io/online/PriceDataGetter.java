@@ -193,9 +193,9 @@ public class PriceDataGetter implements PricingListener {
 
 		if (priceSource == PriceSource.JANICE) {
 			String janiceKey = Settings.get().getPriceDataSettings().getJaniceKey();
-			if (!janiceKey.isEmpty()) {
+			if (janiceKey != null && !janiceKey.isEmpty()) {
 				pricingOptions.addHeader("X-ApiKey", janiceKey);
-			} else if (!JANICE.isEmpty()) {
+			} else if (JANICE != null && !JANICE.isEmpty()) {
 				pricingOptions.addHeader("X-ApiKey", JANICE);
 			} else if (updateTask != null) {
 				updateTask.addError("Price data", "No Janice API Key");
