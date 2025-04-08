@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2024 Contributors (see credits.txt)
+ * Copyright 2009-2025 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -92,7 +92,7 @@ public class ApiIdConverterTest extends TestUtil {
 	}
 
 	/**
-	 * Tested against Isk Per Hour and Fuzzwork 2024-10-06
+	 * Tested against Isk Per Hour and Fuzzwork 2025-04-03
 	 */
 	@Test
 	public void testManufacturingQuantity() {
@@ -103,15 +103,15 @@ public class ApiIdConverterTest extends TestUtil {
 		ManufacturingSecurity security = ManufacturingSecurity.LOWSEC;
 		double runs = 1;
 		Map<Integer, Double> expected = new HashMap<>();
-		expected.put(34, 7_920_000.0); //Tritanium
-		expected.put(35, 3_960_000.0); //Pyerite
-		expected.put(36,   594_000.0); //Mexallon
-		expected.put(37,   198_000.0); //Isogen
-		expected.put(38,    23_760.0); //Nocxium
-		expected.put(39,     5_940.0); //Zydrine
-		expected.put(40,     2_970.0); //Megacyte
-		expected.put(57478,    198.0); //Auto-Integrity Preservation Seal
-		expected.put(57486,     99.0); //Life Support Backup Unit
+		expected.put(34, 5_148_000.0); //Tritanium
+		expected.put(35, 2_574_000.0); //Pyerite
+		expected.put(36,   386_100.0); //Mexallon
+		expected.put(37,   128_700.0); //Isogen
+		expected.put(38,    15_444.0); //Nocxium
+		expected.put(39,     3_861.0); //Zydrine
+		expected.put(40,     1_931.0); //Megacyte
+		expected.put(57478,    149.0); //Auto-Integrity Preservation Seal
+		expected.put(57486,     75.0); //Life Support Backup Unit
 		expected.put(57479,      1.0); //Core Temperature Regulator
 		testManufacturingQuantity(expected, me, facility, rigs, security, runs);
 	}
@@ -128,41 +128,66 @@ public class ApiIdConverterTest extends TestUtil {
 		ManufacturingSecurity security = ManufacturingSecurity.HIGHSEC;
 		double runs = 1;
 		Map<Integer, Double> expected = new HashMap<>();
-		expected.put(34, 7_128_000.0); //Tritanium
-		expected.put(35, 3_564_000.0); //Pyerite
-		expected.put(36,   534_600.0); //Mexallon
-		expected.put(37,   178_200.0); //Isogen
-		expected.put(38,    21_384.0); //Nocxium
-		expected.put(39,     5_346.0); //Zydrine
-		expected.put(40,     2_673.0); //Megacyte
-		expected.put(57478,    179.0); //Auto-Integrity Preservation Seal
-		expected.put(57486,     90.0); //Life Support Backup Unit
+		expected.put(34, 4_633_200.0); //Tritanium
+		expected.put(35, 2_316_600.0); //Pyerite
+		expected.put(36,   347_490.0); //Mexallon
+		expected.put(37,   115_830.0); //Isogen
+		expected.put(38,    13_900.0); //Nocxium
+		expected.put(39,     3_475.0); //Zydrine
+		expected.put(40,     1_738.0); //Megacyte
+		expected.put(57478,    134.0); //Auto-Integrity Preservation Seal
+		expected.put(57486,     67.0); //Life Support Backup Unit
 		expected.put(57479,      1.0); //Core Temperature Regulator
 		testManufacturingQuantity(expected, me, facility, rigs, security, runs);
 	}
 
 	/**
-	 * Tested against Isk Per Hour and Fuzzwork 2024-10-06
+	 * Tested against Isk Per Hour and Fuzzwork 2025-04-03
 	 */
 	@Test
 	public void testManufacturingQuantityRuns() {
-		System.out.println("	--- Runs ---");
+		System.out.println("	--- Runs Eng---");
 		int me = 10;
 		ManufacturingFacility facility = ManufacturingFacility.ENGINEERING_COMPLEX_XLARGE;
 		ManufacturingRigs rigs = ManufacturingRigs.NONE;
 		ManufacturingSecurity security = ManufacturingSecurity.HIGHSEC;
 		double runs = 200;
 		Map<Integer, Double> expected = new HashMap<>();
-		expected.put(34, 1_425_600_000.0); //Tritanium
-		expected.put(35,   712_800_000.0); //Pyerite
-		expected.put(36,   106_920_000.0); //Mexallon
-		expected.put(37,    35_640_000.0); //Isogen
-		expected.put(38,     4_276_800.0); //Nocxium
-		expected.put(39,     1_069_200.0); //Zydrine
-		expected.put(40,       534_600.0); //Megacyte
-		expected.put(57478,     35_640.0); //Auto-Integrity Preservation Seal
-		expected.put(57486,     17_820.0); //Life Support Backup Unit
-		expected.put(57479,        200.0); //Core Temperature Regulator
+		expected.put(34, 926_640_000.0); //Tritanium
+		expected.put(35, 463_320_000.0); //Pyerite
+		expected.put(36,  69_498_000.0); //Mexallon
+		expected.put(37,  23_166_000.0); //Isogen
+		expected.put(38,   2_779_920.0); //Nocxium
+		expected.put(39,     694_980.0); //Zydrine
+		expected.put(40,     347_490.0); //Megacyte
+		expected.put(57478,   26_730.0); //Auto-Integrity Preservation Seal
+		expected.put(57486,   13_365.0); //Life Support Backup Unit
+		expected.put(57479,      200.0); //Core Temperature Regulator
+		testManufacturingQuantity(expected, me, facility, rigs, security, runs);
+	}
+
+	/**
+	 * Tested against in-game values 2025-04-03
+	 */
+	@Test
+	public void testManufacturingQuantityRunsStation() {
+		System.out.println("	--- Runs Station ---");
+		int me = 10;
+		ManufacturingFacility facility = ManufacturingFacility.STATION;
+		ManufacturingRigs rigs = ManufacturingRigs.NONE;
+		ManufacturingSecurity security = ManufacturingSecurity.HIGHSEC;
+		double runs = 200;
+		Map<Integer, Double> expected = new HashMap<>();
+		expected.put(34, 936_000_000.0); //Tritanium
+		expected.put(35, 468_000_000.0); //Pyerite
+		expected.put(36,  70_200_000.0); //Mexallon
+		expected.put(37,  23_400_000.0); //Isogen
+		expected.put(38,   2_808_000.0); //Nocxium
+		expected.put(39,     702_000.0); //Zydrine
+		expected.put(40,     351_000.0); //Megacyte
+		expected.put(57478,   27_000.0); //Auto-Integrity Preservation Seal
+		expected.put(57486,   13_500.0); //Life Support Backup Unit
+		expected.put(57479,      200.0); //Core Temperature Regulator
 		testManufacturingQuantity(expected, me, facility, rigs, security, runs);
 	}
 

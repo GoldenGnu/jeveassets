@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2024 Contributors (see credits.txt)
+ * Copyright 2009-2025 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -66,7 +66,7 @@ import net.nikr.eve.jeveasset.data.settings.types.ItemType;
 import net.nikr.eve.jeveasset.data.settings.types.LastTransactionType;
 import net.nikr.eve.jeveasset.data.settings.types.LocationsType;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.SoundsSettingsPanel.SoundOption;
-import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
+import net.nikr.eve.jeveasset.gui.shared.StringComparators;
 import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.Percent;
 import net.nikr.eve.jeveasset.gui.sounds.SoundPlayer;
@@ -742,7 +742,7 @@ public class ProfileData {
 			ownerNames.clear();
 			ownerNames.addAll(uniqueOwnerNames);
 		}
-		Collections.sort(ownerNames, new CaseInsensitiveComparator());
+		Collections.sort(ownerNames, StringComparators.CASE_INSENSITIVE);
 		synchronized (owners) { //synchronized as owners are modified (here) by updateEventLists
 			owners.clear();
 			owners.putAll(uniqueOwners);

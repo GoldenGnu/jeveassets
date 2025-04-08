@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2024 Contributors (see credits.txt)
+ * Copyright 2009-2025 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -197,16 +197,6 @@ public enum AccountTableFormat implements EnumTableColumn<OwnerType> {
 		@Override
 		public Object getColumnValue(final OwnerType from) {
 			return new YesNo(from.isMarketStructures());
-		}
-	},
-	BOOKMARKS(YesNo.class) {
-		@Override
-		public String getColumnName() {
-			return DialoguesAccount.get().tableFormatBookmarks();
-		}
-		@Override
-		public Object getColumnValue(final OwnerType from) {
-			return new YesNo(from.isBookmarks());
 		}
 	},
 	BLUEPRINTS(YesNo.class) {

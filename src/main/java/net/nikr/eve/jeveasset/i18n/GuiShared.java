@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2024 Contributors (see credits.txt)
+ * Copyright 2009-2025 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -270,6 +270,7 @@ public abstract class GuiShared extends Bundle {
 	public abstract String station();
 	public abstract String stockpile();
 	public abstract String system();
+	public abstract String systemRegion();
 	public abstract String tableColumns();
 	public abstract String tableColumnsReset();
 	public abstract String tableColumnsTip();

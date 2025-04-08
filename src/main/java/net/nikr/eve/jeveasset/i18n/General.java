@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2024 Contributors (see credits.txt)
+ * Copyright 2009-2025 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -41,7 +41,6 @@ public abstract class General extends Bundle {
 	public abstract String uncaughtErrorMessage();
 	public abstract String error();
 	public abstract String contractIncluded();
-	public abstract String pluggedImplant();
 	public abstract String contractExcluded();
 	public abstract String industryJobFlag();
 	public abstract String marketOrderSellFlag();
@@ -53,7 +52,6 @@ public abstract class General extends Bundle {
 	public abstract String singleInstanceTitle();
 	public abstract String singleInstanceMsg();
 	public abstract String emptyLocation(String locationID);
-	public abstract String bookmarkLocation(String system, String label, String locationID);
 	public abstract String assetSafety();
 	public abstract String journalContract();
 	public abstract String journalIndustryJob();

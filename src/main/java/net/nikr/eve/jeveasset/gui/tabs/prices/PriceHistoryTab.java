@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2024 Contributors (see credits.txt)
+ * Copyright 2009-2025 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -74,7 +74,7 @@ import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel.Progress;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel.UpdateType;
 import net.nikr.eve.jeveasset.gui.images.Images;
-import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
+import net.nikr.eve.jeveasset.gui.shared.StringComparators;
 import net.nikr.eve.jeveasset.gui.shared.ColorUtil;
 import net.nikr.eve.jeveasset.gui.shared.Formatter;
 import net.nikr.eve.jeveasset.gui.shared.JFreeChartUtil;
@@ -738,7 +738,7 @@ public class PriceHistoryTab extends JMainTabSecondary {
 
 		jLoad.addSeparator();
 
-		Collections.sort(sets, new CaseInsensitiveComparator());
+		Collections.sort(sets, StringComparators.CASE_INSENSITIVE);
 		for (String name : sets) {
 			JMenuItem jMenuItem = new JMenuItem(name, Images.FILTER_LOAD.getIcon());
 			jMenuItem.addActionListener(new ActionListener() {

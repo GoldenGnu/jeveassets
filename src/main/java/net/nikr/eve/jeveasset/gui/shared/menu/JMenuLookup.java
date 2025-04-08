@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2024 Contributors (see credits.txt)
+ * Copyright 2009-2025 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -62,6 +62,7 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 		EVEMAPS_DOTLAN_STATION,
 		EVEMAPS_DOTLAN_PLANET,
 		EVEMAPS_DOTLAN_SYSTEM,
+		EVEMAPS_DOTLAN_SYSTEM_REGION,
 		EVEMAPS_DOTLAN_CONSTELLATION,
 		EVEMAPS_DOTLAN_REGION,
 		EVEMAPS_DOTLAN_OVERVIEW_GROUP,
@@ -104,12 +105,22 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 				return urls;
 			}
 		},
+		EVEMAPS_DOTLAN_SYSTEM_REGION() {
+			@Override
+			public Set<String> getLinks(MenuData<?> menuData) {
+				Set<String> urls = new HashSet<>();
+				for (MyLocation system : menuData.getSystemLocations()) {
+					urls.add("https://evemaps.dotlan.net/map/" + system.getRegion().replace(" ", "_")+ "/" + system.getSystem().replace(" ", "_"));
+				}
+				return urls;
+			}
+		},
 		EVEMAPS_DOTLAN_CONSTELLATION() {
 			@Override
 			public Set<String> getLinks(MenuData<?> menuData) {
 				Set<String> urls = new HashSet<>();
 				for (MyLocation constellation : menuData.getConstellationLocations()) {
-					urls.add("https://evemaps.dotlan.net/map/" + constellation.getRegion().replace(" ", "_") + "/" + constellation.getConstellation());
+					urls.add("https://evemaps.dotlan.net/map/" + constellation.getRegion().replace(" ", "_") + "/" + constellation.getConstellation().replace(" ", "_"));
 				}
 				return urls;
 			}
@@ -327,6 +338,7 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 	private final JMenuItem jDotlanStation;
 	private final JMenuItem jDotlanPlanet;
 	private final JMenuItem jDotlanSystem;
+	private final JMenuItem jDotlanSystemRegion;
 	private final JMenuItem jDotlanConstellation;
 	private final JMenuItem jDotlanRegion;
 	private final JMenuItem jDotlanLocations;
@@ -415,6 +427,12 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 		jDotlanSystem.setActionCommand(MenuLookupAction.EVEMAPS_DOTLAN_SYSTEM.name());
 		jDotlanSystem.addActionListener(listener);
 		jDotlan.add(jDotlanSystem);
+
+		jDotlanSystemRegion = new JMenuItem(GuiShared.get().systemRegion());
+		jDotlanSystemRegion.setIcon(Images.LOC_SYSTEM.getIcon());
+		jDotlanSystemRegion.setActionCommand(MenuLookupAction.EVEMAPS_DOTLAN_SYSTEM_REGION.name());
+		jDotlanSystemRegion.addActionListener(listener);
+		jDotlan.add(jDotlanSystemRegion);
 
 		jDotlanConstellation = new JMenuItem(GuiShared.get().constellation());
 		jDotlanConstellation.setIcon(Images.LOC_CONSTELLATION.getIcon());
@@ -651,6 +669,8 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 				DesktopUtil.browse(LookupLinks.EVEMAPS_DOTLAN_PLANET.getLinks(menuData), program);
 			} else if (MenuLookupAction.EVEMAPS_DOTLAN_SYSTEM.name().equals(e.getActionCommand())) {
 				DesktopUtil.browse(LookupLinks.EVEMAPS_DOTLAN_SYSTEM.getLinks(menuData), program);
+			} else if (MenuLookupAction.EVEMAPS_DOTLAN_SYSTEM_REGION.name().equals(e.getActionCommand())) {
+				DesktopUtil.browse(LookupLinks.EVEMAPS_DOTLAN_SYSTEM_REGION.getLinks(menuData), program);
 			} else if (MenuLookupAction.EVEMAPS_DOTLAN_CONSTELLATION.name().equals(e.getActionCommand())) {
 				DesktopUtil.browse(LookupLinks.EVEMAPS_DOTLAN_CONSTELLATION.getLinks(menuData), program);
 			} else if (MenuLookupAction.EVEMAPS_DOTLAN_REGION.name().equals(e.getActionCommand())) {

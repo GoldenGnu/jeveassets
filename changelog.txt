@@ -16,6 +16,29 @@
                   #### #  # #  # #  # #### #### #### #### ####
 
 ________________________________________________________________________________
+_7.9.4__________________________________________________________________________
+
+Bug Fixes:
+-CtD in the stockpile tool (NPE)
+-CtD when sorting columns (NPE/ISE)
+
+________________________________________________________________________________
+_7.9.3__________________________________________________________________________
+
+Bug Fixes:
+-Loadout eft export doesn't handle charges (Issue #498) [Tsuro Tsero]
+-Made string columns sorting case insensitive (Issue  #506)
+-Importing tracker data replaced existing data
+-Made stockpile match all differentiate between bpc and runs
+-Stockpile shopping list counted own items double if also in subpile
+
+Code:
+-Optimized JCustomFileChooser (reduced startup time)
+-Update eve-esi to 5.0.0 (removed esi bookmarks)
+-Updated logback to 1.3.15
+-Updated slf4j to 2.0.16
+
+________________________________________________________________________________
 _7.9.2__________________________________________________________________________
 
 Bug Fixes:

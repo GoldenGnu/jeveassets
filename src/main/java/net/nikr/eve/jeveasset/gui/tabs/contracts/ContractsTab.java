@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2024 Contributors (see credits.txt)
+ * Copyright 2009-2025 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -82,6 +82,7 @@ public class ContractsTab extends JMainTabPrimary {
 
 	//GUI
 	private final JSeparatorTable jTable;
+	private final JStatusLabel jContractCount;
 	private final JStatusLabel jSellingPrice;
 	private final JStatusLabel jSellingAssets;
 	private final JStatusLabel jBuying;
@@ -170,7 +171,10 @@ public class ContractsTab extends JMainTabPrimary {
 		filterControl = new ContractsFilterControl(sortedListSeparator);
 		//Menu
 		installTableTool(new ContractsTableMenu(), tableFormat, tableModel, jTable, filterControl, MyContractItem.class);
-
+		
+		jContractCount = StatusPanel.createLabel(TabsContracts.get().contractCount(), Images.INCLUDE_CONTRACTS.getIcon(), AutoNumberFormat.LONG);
+		addStatusbarLabel(jContractCount);
+		
 		jSellingPrice = StatusPanel.createLabel(TabsContracts.get().sellingPrice(), Images.ORDERS_SELL.getIcon(), AutoNumberFormat.ISK);
 		addStatusbarLabel(jSellingPrice);
 
@@ -317,6 +321,7 @@ public class ContractsTab extends JMainTabPrimary {
 
 		@Override
 		public void listChanged(final ListEvent<MyContractItem> listChanges) {
+			double contractCount = 0;
 			double sellingPrice = 0;
 			double sellingAssets = 0;
 			double buying = 0;
@@ -340,6 +345,7 @@ public class ContractsTab extends JMainTabPrimary {
 						sellingAssets = sellingAssets + contractItem.getDynamicPrice() * contractItem.getQuantity();
 					}
 				}
+				contractCount = contracts.size();
 				for (MyContract contract : contracts) {
 					boolean isIssuer = contract.isForCorp() ? program.getOwners().keySet().contains(contract.getIssuerCorpID()) : program.getOwners().keySet().contains(contract.getIssuerID());
 					boolean isAcceptor = contract.getAcceptorID() > 0 && program.getOwners().keySet().contains(contract.getAcceptorID());
@@ -373,6 +379,7 @@ public class ContractsTab extends JMainTabPrimary {
 			} finally {
 				filterList.getReadWriteLock().readLock().unlock();
 			}
+			jContractCount.setNumber(contractCount);
 			jSellingPrice.setNumber(sellingPrice);
 			jSellingAssets.setNumber(sellingAssets);
 			jSold.setNumber(sold);

@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2024 Contributors (see credits.txt)
+ * Copyright 2009-2025 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -63,7 +63,10 @@ public abstract class TabsTracker extends Bundle {
 	public abstract String from();
 	public abstract String grandTotal();
 	public abstract String help();
+	public abstract String helpBugData();
+	public abstract String helpBugDataToolTip();
 	public abstract String helpLegacyData();
+	public abstract String helpLegacyDataToolTip();
 	public abstract String helpNewData();
 	public abstract String helpNewDataToolTip();
 	public abstract String implants();

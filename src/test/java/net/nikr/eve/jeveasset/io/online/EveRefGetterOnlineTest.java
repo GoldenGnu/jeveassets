@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2024 Contributors (see credits.txt)
+ * Copyright 2009-2025 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -64,10 +64,11 @@ public class EveRefGetterOnlineTest extends TestUtil {
 	@AfterClass
 	public static void tearDownClass() {
 		setLoggingLevel(Level.INFO);
+		CliOptions.get().setPortable(false);
 	}
 
 	@ClassRule
-    public static ErrorCollector collector = new ErrorCollector();
+	public static ErrorCollector collector = new ErrorCollector();
 
 	/**
 	 * Download test

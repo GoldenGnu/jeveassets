@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2024 Contributors (see credits.txt)
+ * Copyright 2009-2025 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -46,6 +46,7 @@ public class Value implements Comparable<Value>, LocationType {
 	private double assets = 0;
 	private double implants = 0;
 	private final Map<AssetValue, Double> assetsFilter = new HashMap<>();
+	private boolean assetsContainersFixed = true; //New data is fixed
 	private double sellOrders = 0;
 	private double escrows = 0;
 	private double escrowsToCover = 0;
@@ -169,6 +170,10 @@ public class Value implements Comparable<Value>, LocationType {
 
 	public Map<AssetValue, Double> getAssetsFilter() {
 		return assetsFilter;
+	}
+
+	public boolean isAssetsContainersFixed() {
+		return assetsContainersFixed;
 	}
 
 	public double getAssetsTotal() {
@@ -343,6 +348,10 @@ public class Value implements Comparable<Value>, LocationType {
 	
 	public void setImplantsTotal(double implants) {
 		this.implants = implants;
+	}
+
+	public void setAssetsContainersFixed(boolean assetsContainersFixed) {
+		this.assetsContainersFixed = assetsContainersFixed;
 	}
 
 	public void setSellOrders(double sellOrders) {

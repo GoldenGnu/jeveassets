@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2024 Contributors (see credits.txt)
+ * Copyright 2009-2025 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -34,6 +34,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.SplashUpdater;
 import net.nikr.eve.jeveasset.data.profile.ProfileData;
 import net.nikr.eve.jeveasset.data.sde.Item;
@@ -192,9 +193,9 @@ public class PriceDataGetter implements PricingListener {
 
 		if (priceSource == PriceSource.JANICE) {
 			String janiceKey = Settings.get().getPriceDataSettings().getJaniceKey();
-			if (!janiceKey.isEmpty()) {
+			if (janiceKey != null && !janiceKey.isEmpty()) {
 				pricingOptions.addHeader("X-ApiKey", janiceKey);
-			} else if (!JANICE.isEmpty()) {
+			} else if (JANICE != null && !JANICE.isEmpty()) {
 				pricingOptions.addHeader("X-ApiKey", JANICE);
 			} else if (updateTask != null) {
 				updateTask.addError("Price data", "No Janice API Key");
@@ -453,7 +454,7 @@ public class PriceDataGetter implements PricingListener {
 
 		@Override
 		public String getUserAgent() {
-			return System.getProperty("http.agent");
+			return Program.PROGRAM_USER_AGENT;
 		}
 	}
 }

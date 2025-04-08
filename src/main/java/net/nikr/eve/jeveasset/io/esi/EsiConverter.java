@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2024 Contributors (see credits.txt)
+ * Copyright 2009-2025 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -57,7 +57,6 @@ import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import net.nikr.eve.jeveasset.io.shared.DataConverter;
 import net.troja.eve.esi.model.CharacterAssetsResponse;
 import net.troja.eve.esi.model.CharacterBlueprintsResponse;
-import net.troja.eve.esi.model.CharacterClonesResponse;
 import net.troja.eve.esi.model.CharacterContractsItemsResponse;
 import net.troja.eve.esi.model.CharacterContractsResponse;
 import net.troja.eve.esi.model.CharacterIndustryJobsResponse;
@@ -133,8 +132,8 @@ public class EsiConverter extends DataConverter {
 		return toMyAsset(new RawAsset(shipType, shipLocation), owner, new ArrayList<>());
 	}
 	
-	public static MyAsset toAssetsImplant(Integer implantType, Long implantLocation, OwnerType owner) {
-		return toMyAsset(new RawAsset(implantType, implantLocation, owner), owner, new ArrayList<>());
+	public static MyAsset toAssetsImplant(Integer implantType, Long implantLocation, Long cloneId, OwnerType owner) {
+		return toMyAsset(new RawAsset(implantType, implantLocation, cloneId), owner, new ArrayList<>());
 	}
 
 	public static MyAsset toAssetsPlanetaryInteraction(CharacterPlanetsResponse planet, PlanetPin pin, OwnerType owner) {
@@ -322,7 +321,7 @@ public class EsiConverter extends DataConverter {
 			skills.add(new RawSkill(response));
 			ApiIdConverter.updateItem(response.getSkillId());
 		}
-		return converRawSkills(skills, owner);
+		return convertRawSkills(skills, owner);
 	}
 
 	public static List<MyMining> toMining(List<CharacterMiningResponse> responses, OwnerType owner, boolean saveHistory) {
@@ -331,7 +330,7 @@ public class EsiConverter extends DataConverter {
 			mining.add(new RawMining(response, owner));
 			ApiIdConverter.updateItem(response.getTypeId());
 		}
-		return converRawMining(mining, owner, saveHistory);
+		return convertRawMining(mining, owner, saveHistory);
 	}
 
 	public static List<MyMining> toMining(Map<CorporationMiningObserversResponse, List<CorporationMiningObserverResponse>> responses, OwnerType owner, boolean saveHistory) {
@@ -341,7 +340,7 @@ public class EsiConverter extends DataConverter {
 				mining.add(new RawMining(response.getKey(), miningObserver, owner));
 			}
 		}
-		return converRawMining(mining, owner, saveHistory);
+		return convertRawMining(mining, owner, saveHistory);
 	}
 
 	public static List<MyExtraction> toExtraction(List<CorporationMiningExtractionsResponse> responses, OwnerType owner, boolean saveHistory) {
@@ -349,6 +348,6 @@ public class EsiConverter extends DataConverter {
 		for (CorporationMiningExtractionsResponse response : responses) {
 			extractions.add(new RawExtraction(response));
 		}
-		return converRawExtraction(extractions, owner, saveHistory);
+		return convertRawExtraction(extractions, owner, saveHistory);
 	}
 }

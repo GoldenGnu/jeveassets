@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2024 Contributors (see credits.txt)
+ * Copyright 2009-2025 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -79,14 +79,16 @@ public class EsiClonesGetter extends AbstractEsiGetter {
 		for (Clone clone : jumpClones){
 			List<Integer> cloneImplants = clone.getImplants();
 			Long cloneLocation = clone.getLocationId();
+			Long cloneId = (long)clone.getJumpCloneId();
 			for (Integer implant : cloneImplants){
-				MyAsset implantAsset = EsiConverter.toAssetsImplant(implant, cloneLocation, owner);
+				MyAsset implantAsset = EsiConverter.toAssetsImplant(implant, cloneLocation, cloneId, owner);
 				implants.add(implantAsset);
 			}
 		}
 
 		for (Integer implant : activeClone){
-			MyAsset activeCloneImplant = EsiConverter.toAssetsImplant(implant, activeCloneLocation, owner);
+			Long cloneId = owner.getOwnerID();
+			MyAsset activeCloneImplant = EsiConverter.toAssetsImplant(implant, activeCloneLocation, cloneId, owner);
 			implants.add(activeCloneImplant);
 		}
 		

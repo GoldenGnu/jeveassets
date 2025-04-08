@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2024 Contributors (see credits.txt)
+ * Copyright 2009-2025 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -213,19 +213,7 @@ public abstract class DataConverter {
 			MyAsset rootAsset = parents.get(0);
 			rawAsset.setLocationID(rootAsset.getLocationID());
 		}
-		//Ignore some stuff
-		if (ignoreAsset(rawAsset, owner)) {
-			return null;
-		}
 		return new MyAsset(rawAsset, item, owner, parents);
-	}
-
-	public static boolean ignoreAsset(RawAsset rawAsset, OwnerType owner) {
-		return rawAsset.getItemFlag().getFlagID() == 7 //Skill
-				|| rawAsset.getItemFlag().getFlagID() == 61 //Skill In Training
-				|| rawAsset.getItemFlag().getFlagID() == 88 //Booster
-				|| rawAsset.getItemFlag().getFlagID() == 89 //Implant
-				|| rawAsset.getLocationID() == owner.getOwnerID(); //Other stuff
 	}
 
 	public static Map<MyContract, List<MyContractItem>> convertRawContracts(List<RawContract> rawContracts, OwnerType owner, boolean saveHistory) {
@@ -348,7 +336,7 @@ public abstract class DataConverter {
 		return new MyTransaction(rawTransaction, item, owner);
 	}
 
-	public static List<MySkill> converRawSkills(List<RawSkill> rawSkills, OwnerType owner) {
+	public static List<MySkill> convertRawSkills(List<RawSkill> rawSkills, OwnerType owner) {
 		List<MySkill> mySkills = new ArrayList<>();
 		for (RawSkill rawSkill : rawSkills) {
 			mySkills.add(toMySkill(rawSkill, owner));
@@ -361,7 +349,7 @@ public abstract class DataConverter {
 		return new MySkill(rawSkill, item, owner.getOwnerName());
 	}
 
-	public static List<MyMining> converRawMining(List<RawMining> rawMinings, OwnerType owner, boolean saveHistory) {
+	public static List<MyMining> convertRawMining(List<RawMining> rawMinings, OwnerType owner, boolean saveHistory) {
 		List<MyMining> myMinings = new ArrayList<>();
 		for (RawMining rawMining : rawMinings) {
 			myMinings.add(toMyMining(rawMining));
@@ -378,7 +366,7 @@ public abstract class DataConverter {
 		return new MyMining(rawMining, item, location);
 	}
 
-	public static List<MyExtraction> converRawExtraction(List<RawExtraction> rawExtractions, OwnerType owner, boolean saveHistory) {
+	public static List<MyExtraction> convertRawExtraction(List<RawExtraction> rawExtractions, OwnerType owner, boolean saveHistory) {
 		List<MyExtraction> myExtractions = new ArrayList<>();
 		for (RawExtraction rawMining : rawExtractions) {
 			myExtractions.add(toMyExtraction(rawMining));

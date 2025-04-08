@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2024 Contributors (see credits.txt)
+ * Copyright 2009-2025 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
+import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.sde.IndustryMaterial;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.ReprocessedMaterial;
@@ -200,7 +201,7 @@ public class EveRefGetter {
 			public Call getCall() {
 				Request.Builder request = new Request.Builder()
 					.url("https://ref-data.everef.net/blueprints/" + typeID)
-					.addHeader("User-Agent", System.getProperty("http.agent"));
+					.addHeader("User-Agent", Program.PROGRAM_USER_AGENT);
 				return client.newCall(request.build());
 			}
 
@@ -219,7 +220,7 @@ public class EveRefGetter {
 			public Call getCall() {
 				Request.Builder request = new Request.Builder()
 					.url("https://ref-data.everef.net/types/" + typeID)
-					.addHeader("User-Agent", System.getProperty("http.agent"));
+					.addHeader("User-Agent", Program.PROGRAM_USER_AGENT);
 				return client.newCall(request.build());
 			}
 

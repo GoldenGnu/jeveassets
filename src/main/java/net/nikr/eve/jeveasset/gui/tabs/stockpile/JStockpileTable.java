@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2024 Contributors (see credits.txt)
+ * Copyright 2009-2025 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -73,6 +73,9 @@ public class JStockpileTable extends JSeparatorTable {
 					return;
 				}
 				if (column < 0 || column >= getColumnCount()) {
+					return; //Out of bounce
+				}
+				if (row < 0 || row >= getRowCount()) {
 					return; //Out of bounce
 				}
 				lastColumn = column;

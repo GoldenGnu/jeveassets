@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2024 Contributors (see credits.txt)
+ * Copyright 2009-2025 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -294,7 +294,6 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 		Date contractsNextUpdate = getDateNotNull(node, "contractsnextupdate");
 		Date locationsNextUpdate = getDateNotNull(node, "locationsnextupdate");
 		Date blueprintsNextUpdate = getDateNotNull(node, "blueprintsnextupdate");
-		Date bookmarksNextUpdate = getDateNotNull(node, "bookmarksnextupdate");
 		Date skillsNextUpdate = getDateNotNull(node, "skillsnextupdate");
 		Date miningNextUpdate = getDateNotNull(node, "miningnextupdate");
 		owner.setOwnerName(ownerName);
@@ -313,7 +312,6 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 		owner.setContractsNextUpdate(contractsNextUpdate);
 		owner.setLocationsNextUpdate(locationsNextUpdate);
 		owner.setBlueprintsNextUpdate(blueprintsNextUpdate);
-		owner.setBookmarksNextUpdate(bookmarksNextUpdate);
 		owner.setSkillsNextUpdate(skillsNextUpdate);
 		owner.setMiningNextUpdate(miningNextUpdate);
 

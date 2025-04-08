@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2024 Contributors (see credits.txt)
+ * Copyright 2009-2025 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -157,11 +157,6 @@ public class EveKitOwner extends DeprecatedOwner implements OwnerType {
 	@Override
 	public boolean isBlueprints() {
 		return isAssetList();
-	}
-
-	@Override
-	public boolean isBookmarks() {
-		return EveKitAccessMask.BOOKMARKS.isInMask(getAccessMask());
 	}
 
 	@Override

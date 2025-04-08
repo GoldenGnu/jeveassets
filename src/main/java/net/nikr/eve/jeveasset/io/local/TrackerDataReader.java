@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2024 Contributors (see credits.txt)
+ * Copyright 2009-2025 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -131,6 +131,13 @@ public class TrackerDataReader extends AbstractBackup {
 			} else {
 				value.setBalanceTotal(balanceTotal);
 			}
+			//Assets containers fixed
+			JsonElement assetsContainersFixedElement = node.get("assetscontainersfixed");
+			boolean assetsContainersFixed = false;
+			if (assetsContainersFixedElement != null) {
+				assetsContainersFixed = assetsContainersFixedElement.getAsBoolean();
+			}
+			value.setAssetsContainersFixed(assetsContainersFixed);
 			//Assets
 			JsonElement assetElement = node.get("asset");
 			if (assetElement != null && assetElement.isJsonArray()) {

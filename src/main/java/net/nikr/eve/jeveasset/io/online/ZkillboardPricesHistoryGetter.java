@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2024 Contributors (see credits.txt)
+ * Copyright 2009-2025 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -31,6 +31,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import net.nikr.eve.jeveasset.Program;
 import okhttp3.Call;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -136,7 +137,7 @@ public class ZkillboardPricesHistoryGetter {
 		public Call getCall(Integer typeID) {
 			Request.Builder request = new Request.Builder()
 					.url("https://zkillboard.com/api/prices/" + typeID+ "/")
-					.addHeader("User-Agent", System.getProperty("http.agent"));
+					.addHeader("User-Agent", Program.PROGRAM_USER_AGENT);
 			return client.newCall(request.build());
 		}
 	}

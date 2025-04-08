@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2024 Contributors (see credits.txt)
+ * Copyright 2009-2025 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -464,6 +464,10 @@ public class JTrackerEditDialog extends JDialogCentered {
 					returnFlag = jSelectionDialog.show(TabsTracker.get().selectFlag(), flags);
 					if (returnFlag == null) {
 						return; //Cancel
+					}
+				} else if (flags.size() == 1) { //Size is always 1 (one) or 0 (zero)
+					for (String s : flags) {
+						returnFlag = s; //Only done if size is 1 (one) AKA only done once
 					}
 				}
 				AssetValue assetValue;

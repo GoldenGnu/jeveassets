@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2024 Contributors (see credits.txt)
+ * Copyright 2009-2025 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -113,6 +113,7 @@ public class TrackerDataWriter extends AbstractBackup {
 					balanceObject.add(itemObject);
 				}
 			}
+			valueObject.addProperty("assetscontainersfixed", value.isAssetsContainersFixed());
 			if (!value.getAssetsFilter().isEmpty()) {
 				JsonArray assetObject = new JsonArray();
 				valueObject.add("asset", assetObject);

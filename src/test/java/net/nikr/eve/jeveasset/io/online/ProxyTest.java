@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2024 Contributors (see credits.txt)
+ * Copyright 2009-2025 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -26,6 +26,7 @@ import java.io.OutputStream;
 import java.net.Proxy;
 import java.util.HashSet;
 import java.util.Set;
+import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.TestUtil;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.data.sde.Item;
@@ -167,7 +168,7 @@ public class ProxyTest extends TestUtil {
 
 		@Override
 		public String getUserAgent() {
-			return System.getProperty("http.agent");
+			return Program.PROGRAM_USER_AGENT;
 		}
 	}
 }

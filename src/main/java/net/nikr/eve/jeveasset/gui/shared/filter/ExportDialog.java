@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2024 Contributors (see credits.txt)
+ * Copyright 2009-2025 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -39,7 +39,6 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -58,7 +57,7 @@ import net.nikr.eve.jeveasset.data.settings.ExportSettings.FilterSelection;
 import net.nikr.eve.jeveasset.data.settings.ExportSettings.LineDelimiter;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
-import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
+import net.nikr.eve.jeveasset.gui.shared.StringComparators;
 import net.nikr.eve.jeveasset.gui.shared.DocumentFactory;
 import net.nikr.eve.jeveasset.gui.shared.components.JCustomFileChooser;
 import net.nikr.eve.jeveasset.gui.shared.components.JDefaultField;
@@ -586,7 +585,7 @@ public class ExportDialog<E> extends JDialogCentered {
 		String filterName = Settings.get().getExportSettings(toolName).getFilterName();
 		List<String> filterNames = new ArrayList<>(filterControl.getAllFilters().keySet());
 		if (!filterNames.isEmpty()) {
-			Collections.sort(filterNames, new CaseInsensitiveComparator());
+			Collections.sort(filterNames, StringComparators.CASE_INSENSITIVE);
 			jFilters.setModel(new ListComboBoxModel<>(filterNames));
 			if(hasItem(jFilters, filterName)) {
 				jFilters.setSelectedItem(filterName);
@@ -598,7 +597,7 @@ public class ExportDialog<E> extends JDialogCentered {
 		String viewName = Settings.get().getExportSettings(toolName).getViewName();
 		List<String> viewNames = new ArrayList<>(Settings.get().getTableViews(toolName).keySet());
 		if (!viewNames.isEmpty()) {
-			Collections.sort(viewNames, new CaseInsensitiveComparator());
+			Collections.sort(viewNames, StringComparators.CASE_INSENSITIVE);
 			jViews.setModel(new ListComboBoxModel<>(viewNames));
 			if (hasItem(jViews, viewName)) {
 				jViews.setSelectedItem(viewName);
