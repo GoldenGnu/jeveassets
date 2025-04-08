@@ -196,6 +196,7 @@ public class TrackerTab extends JMainTabSecondary {
 	private final JCheckBoxMenuItem jWalletBalance;
 	private final JButton jWalletBalanceFilters;
 	private final JCheckBoxMenuItem jAssets;
+	private final JCheckBoxMenuItem jImplants;
 	private final JButton jAssetsFilters;
 	private final JCheckBoxMenuItem jSellOrders;
 	private final JCheckBoxMenuItem jEscrows;
@@ -217,6 +218,7 @@ public class TrackerTab extends JMainTabSecondary {
 	private final JStatusLabel jTotalStatus;
 	private final JStatusLabel jWalletBalanceStatus;
 	private final JStatusLabel jAssetsStatus;
+	private final JStatusLabel jImplantsStatus;
 	private final JStatusLabel jSellOrdersStatus;
 	private final JStatusLabel jEscrowsStatus;
 	private final JStatusLabel jEscrowsToCoverStatus;
@@ -235,6 +237,7 @@ public class TrackerTab extends JMainTabSecondary {
 	private final NumberAxis rangeLinearAxis;
 	private TimePeriodValues walletBalance;
 	private TimePeriodValues assets;
+	private TimePeriodValues implants;
 	private TimePeriodValues sellOrders;
 	private TimePeriodValues escrows;
 	private TimePeriodValues escrowsToCover;
@@ -379,6 +382,12 @@ public class TrackerTab extends JMainTabSecondary {
 		jAssets.setActionCommand(TrackerAction.UPDATE_SHOWN.name());
 		jAssets.addActionListener(listener);
 		jShow.add(jAssets, true);
+		
+		jImplants = new JCheckBoxMenuItem(TabsTracker.get().implants());
+		jImplants.setSelected(trackerSettings.hasShowOption(ShowOption.ALL) || trackerSettings.hasShowOption(ShowOption.ASSET));
+		jImplants.setActionCommand(TrackerAction.UPDATE_SHOWN.name());
+		jImplants.addActionListener(listener);
+		jShow.add(jImplants, true);
 
 		jAssetsFilters = new JButton(TabsTracker.get().assetsFilters());
 		jAssetsFilters.setIcon(Images.LOC_INCLUDE.getIcon());
@@ -458,6 +467,9 @@ public class TrackerTab extends JMainTabSecondary {
 
 		jAssetsStatus = StatusPanel.createLabel(TabsTracker.get().statusAssets(), new ColorIcon(Color.GREEN.darker().darker()), AutoNumberFormat.ISK);
 		this.addStatusbarLabel(jAssetsStatus);
+		
+		jImplantsStatus = StatusPanel.createLabel(TabsTracker.get().statusImplants(), new ColorIcon(Color.MAGENTA.darker()), AutoNumberFormat.ISK);
+		this.addStatusbarLabel(jImplantsStatus);
 
 		jSellOrdersStatus = StatusPanel.createLabel(TabsTracker.get().statusSellOrders(), new ColorIcon(Color.CYAN.darker()), AutoNumberFormat.ISK);
 		this.addStatusbarLabel(jSellOrdersStatus);
@@ -920,6 +932,7 @@ public class TrackerTab extends JMainTabSecondary {
 		List<String> owners = jOwners.getSelectedValuesList();
 		walletBalance = new TimePeriodValues(TabsTracker.get().walletBalance());
 		assets = new TimePeriodValues(TabsTracker.get().assets());
+		implants = new TimePeriodValues(TabsTracker.get().implants());
 		sellOrders = new TimePeriodValues(TabsTracker.get().sellOrders());
 		escrows = new TimePeriodValues(TabsTracker.get().escrows());
 		escrowsToCover = new TimePeriodValues(TabsTracker.get().escrowsToCover());
@@ -989,6 +1002,7 @@ public class TrackerTab extends JMainTabSecondary {
 						} else {
 							value.addSkillPointValue(data.getSkillPoints(), 0);
 						}
+						value.addImplants(data.getImplantsTotal());
 						value.addSellOrders(data.getSellOrders());
 						if (data.getBalanceFilter().isEmpty()) {
 							value.addBalance(data.getBalanceTotal());
@@ -1013,6 +1027,7 @@ public class TrackerTab extends JMainTabSecondary {
 			for (Map.Entry<SimpleTimePeriod, Value> entry : cache.entrySet()) {
 				walletBalance.add(entry.getKey(), entry.getValue().getBalanceTotal());
 				assets.add(entry.getKey(), entry.getValue().getAssetsTotal());
+				implants.add(entry.getKey(), entry.getValue().getImplantsTotal());
 				sellOrders.add(entry.getKey(), entry.getValue().getSellOrders());
 				escrows.add(entry.getKey(), entry.getValue().getEscrows());
 				escrowsToCover.add(entry.getKey(), entry.getValue().getEscrowsToCover());
@@ -1136,6 +1151,9 @@ public class TrackerTab extends JMainTabSecondary {
 			if (jAssets.isSelected() && assets != null) {
 				t += entry.getValue().getAssetsTotal();
 			}
+			if (jImplants.isSelected() && implants != null) {
+				t += entry.getValue().getImplantsTotal();
+			}
 			if (jSellOrders.isSelected() && sellOrders != null) {
 				t += entry.getValue().getSellOrders();
 			}
@@ -1186,6 +1204,12 @@ public class TrackerTab extends JMainTabSecondary {
 			jAssetsStatus.setNumber(last.getAssetsTotal() - first.getAssetsTotal());
 		} else {
 			jAssetsStatus.setNumber(0.0);
+		}
+		jImplantsStatus.setVisible(jImplants.isSelected());
+		if (first != null && last != null) {
+			jImplantsStatus.setNumber(last.getImplantsTotal() - first.getImplantsTotal());
+		} else {
+			jImplantsStatus.setNumber(0.0);
 		}
 		jSellOrdersStatus.setVisible(jSellOrders.isSelected());
 		if (first != null && last != null) {
@@ -1257,6 +1281,10 @@ public class TrackerTab extends JMainTabSecondary {
 			dataset.addSeries(assets);
 			renderer.add(dataset.getSeriesCount() - 1, assetColumn);
 			updateRender(bright, dataset.getSeriesCount() - 1, Color.GREEN.darker().darker());
+		}
+		if (jImplants.isSelected() && implants != null) {
+			dataset.addSeries(implants);
+			updateRender(bright, dataset.getSeriesCount() - 1, Color.MAGENTA.darker());
 		}
 		if (jSellOrders.isSelected() && sellOrders != null) {
 			dataset.addSeries(sellOrders);
@@ -1549,6 +1577,7 @@ public class TrackerTab extends JMainTabSecondary {
 				jAll.setSelected(jTotal.isSelected()
 						&& jWalletBalance.isSelected()
 						&& jAssets.isSelected()
+						&& jImplants.isSelected()
 						&& jSellOrders.isSelected()
 						&& jEscrows.isSelected()
 						&& jEscrowsToCover.isSelected()
@@ -1571,6 +1600,9 @@ public class TrackerTab extends JMainTabSecondary {
 					}
 					if (jAssets.isSelected()) {
 						trackerSettings.getShowOptions().add(ShowOption.ASSET);
+					}
+					if (jImplants.isSelected()) {
+						trackerSettings.getShowOptions().add(ShowOption.IMPLANT);
 					}
 					if (jSellOrders.isSelected()) {
 						trackerSettings.getShowOptions().add(ShowOption.SELL_ORDER);
@@ -1599,6 +1631,7 @@ public class TrackerTab extends JMainTabSecondary {
 				jTotal.setSelected(jAll.isSelected());
 				jWalletBalance.setSelected(jAll.isSelected());
 				jAssets.setSelected(jAll.isSelected());
+				jImplants.setSelected(jAll.isSelected());
 				jSellOrders.setSelected(jAll.isSelected());
 				jEscrows.setSelected(jAll.isSelected());
 				jEscrowsToCover.setSelected(jAll.isSelected());

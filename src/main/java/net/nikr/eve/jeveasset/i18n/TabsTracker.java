@@ -65,6 +65,8 @@ public abstract class TabsTracker extends Bundle {
 	public abstract String help();
 	public abstract String helpLegacyData();
 	public abstract String helpNewData();
+	public abstract String helpNewDataToolTip();
+	public abstract String implants();
 	public abstract String importFile();
 	public abstract String importFileImport();
 	public abstract String importFileInvalidMsg();
@@ -118,6 +120,7 @@ public abstract class TabsTracker extends Bundle {
 	public abstract String statusContractValue();
 	public abstract String statusEscrows();
 	public abstract String statusEscrowsToCover();
+	public abstract String statusImplants();
 	public abstract String statusManufacturing();
 	public abstract String statusSellOrders();
 	public abstract String statusSkillPointValue();

@@ -59,7 +59,7 @@ public class TrackerDataTest extends TestUtil {
 		value.setEscrowsToCover(6);
 		value.setManufacturing(7);
 		value.setSellOrders(8);
-		value.addAssets(AssetValue.create("location", "flag", 1000L), 9.0);
+		value.addAssets(AssetValue.create("location", "flag", 1000L), 9.0, "Not an Implant");
 		value.addBalance("balence-id", 10);
 		value.setSkillPoints(11);
 		values.add(value);

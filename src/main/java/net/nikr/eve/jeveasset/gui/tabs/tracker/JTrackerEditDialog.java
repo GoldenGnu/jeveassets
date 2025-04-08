@@ -342,13 +342,13 @@ public class JTrackerEditDialog extends JDialogCentered {
 					for (Map.Entry<AssetValue, Double> entry : value.getAssetsFilter().entrySet()) {
 						//Just done once...
 						value.removeAssets(entry.getKey()); //Remove old value
-						value.addAssets(entry.getKey(), assets); //Add new value
+						value.addAssets(entry.getKey(), assets, "Deault"); //Add new value
 					}
 				} else {
 					for (FilterUpdate filterUpdate : assetUpdates) {
 						AssetValue assetValue = AssetValue.create(filterUpdate.getKey());
 						value.removeAssets(assetValue);
-						value.addAssets(assetValue, filterUpdate.getValue());
+						value.addAssets(assetValue, filterUpdate.getValue(), "Default");
 					}
 				}
 				value.setSellOrders(sellOrders);
