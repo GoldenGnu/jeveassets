@@ -94,7 +94,7 @@ public class TrackerDataWriter extends AbstractBackup {
 			JsonObject valueObject = new JsonObject();
 			valueObject.addProperty("date", value.getDate().getTime());
 			valueObject.addProperty("assets", value.getAssetsTotal());
-			valueObject.addProperty("implants", value.getImplantsTotal());
+			valueObject.addProperty("implants", value.getImplants());
 			valueObject.addProperty("escrows", value.getEscrows());
 			valueObject.addProperty("escrowstocover", value.getEscrowsToCover());
 			valueObject.addProperty("sellorders", value.getSellOrders());

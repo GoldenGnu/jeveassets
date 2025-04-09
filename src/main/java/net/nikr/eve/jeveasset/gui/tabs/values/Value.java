@@ -76,27 +76,25 @@ public class Value implements Comparable<Value>, LocationType {
 	public void addAssets(double assets) {
 		this.assets = this.assets + assets;
 	}
-	
-	public void addAssets(AssetValue id, Double assets, String flag) {
-		if(flag != null && flag.equals("Implant")){
-		    this.implants = this.implants + assets;
+
+	public void addAssets(AssetValue id, Double assets) {
+		this.assets = this.assets + assets;
+		Double now = this.assetsFilter.get(id);
+		if (now == null) {
+			now = 0.0;
 		}
-		else{
-		  this.assets = this.assets + assets;
-		    Double now = this.assetsFilter.get(id);
-		    if (now == null) {
-			    now = 0.0;
-		    }
-		    this.assetsFilter.put(id, now + assets);  
-		}	
+		this.assetsFilter.put(id, now + assets);
 	}
 
 	public void addAssets(AssetValue id, MyAsset asset) {
 		String flag = asset.getFlag();
 		double total = asset.getDynamicPrice() * asset.getCount();
-		
-		addAssets(id, total, flag);
-		setBestAsset(asset);    
+		if (flag != null && flag.equals("Implant")) {
+			addImplants(total);
+		} else {
+			addAssets(id, total);
+		}
+		setBestAsset(asset);
 		setBestShip(asset);
 		setBestShipFitted(asset);
 		setBestModule(asset);
@@ -112,7 +110,7 @@ public class Value implements Comparable<Value>, LocationType {
 	public void addSellOrders(double sellOrders) {
 		this.sellOrders = this.sellOrders + sellOrders;
 	}
-	
+
 	public void addImplants(double implants) {
 		this.implants = this.implants + implants;
 	}
@@ -179,8 +177,8 @@ public class Value implements Comparable<Value>, LocationType {
 	public double getAssetsTotal() {
 		return assets;
 	}
-	
-	public double getImplantsTotal() {
+
+	public double getImplants() {
 		return implants;
 	}
 
@@ -339,14 +337,14 @@ public class Value implements Comparable<Value>, LocationType {
 	}
 
 	public double getTotal() {
-		return getAssetsTotal() + getImplantsTotal() + getBalanceTotal() + getEscrows() + getSellOrders() + getManufacturing() + getContractCollateral() + getContractValue() + getSkillPointValue();
+		return getAssetsTotal() + getImplants() + getBalanceTotal() + getEscrows() + getSellOrders() + getManufacturing() + getContractCollateral() + getContractValue() + getSkillPointValue();
 	}
 
 	public void setAssetsTotal(double assets) {
 		this.assets = assets;
 	}
-	
-	public void setImplantsTotal(double implants) {
+
+	public void setImplants(double implants) {
 		this.implants = implants;
 	}
 

@@ -590,7 +590,6 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 				Element dataNode = (Element) dataNodeList.item(b);
 				Date date = getDate(dataNode, "date");
 				double assetsTotal = getDouble(dataNode, "assets");
-				double implantsTotal = getDouble(dataNode, "implants");
 				double escrows = getDouble(dataNode, "escrows");
 				double escrowstocover = getDouble(dataNode, "escrowstocover");
 				double sellorders = getDouble(dataNode, "sellorders");
@@ -616,14 +615,12 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 				for (int c = 0; c < assetNodeList.getLength(); c++) { //New data
 					Element assetNode = (Element) assetNodeList.item(c);
 					AssetValue assetValue = parseAssetValue(assetNode);
-					String flag = getStringOptional(assetNode, "flag");
 					double assets = getDouble(assetNode, "value");
-					value.addAssets(assetValue, assets, flag);
+					value.addAssets(assetValue, assets);
 				}
 				if (assetNodeList.getLength() == 0) { //Old data
 					value.setAssetsTotal(assetsTotal);
 				}
-				value.setImplantsTotal(implantsTotal);
 				value.setEscrows(escrows);
 				value.setEscrowsToCover(escrowstocover);
 				value.setSellOrders(sellorders);

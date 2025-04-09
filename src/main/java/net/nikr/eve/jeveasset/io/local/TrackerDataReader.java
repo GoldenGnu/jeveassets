@@ -154,18 +154,18 @@ public class TrackerDataReader extends AbstractBackup {
 					}
 					Double assets = itemObject.get("value").getAsDouble();
 					AssetValue assetValue = AssetValue.create(location, flag, locationID);
-					value.addAssets(assetValue, assets, flag);
+					value.addAssets(assetValue, assets);
 				}
 			} else {
 				value.setAssetsTotal(assetsTotal);
 			}
 			//Implants
 			JsonElement implantNode = node.get("implants");
-			double implantsTotal = 0;
-			if(implantNode != null){
-			    implantsTotal = implantNode.getAsDouble();
+			double implants = 0;
+			if (implantNode != null) {
+				implants = implantNode.getAsDouble();
 			}
-			value.setImplantsTotal(implantsTotal);
+			value.setImplants(implants);
 			//Others
 			value.setEscrows(escrows);
 			value.setEscrowsToCover(escrowstocover);

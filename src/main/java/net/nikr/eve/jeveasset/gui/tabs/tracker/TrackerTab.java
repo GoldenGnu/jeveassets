@@ -385,7 +385,7 @@ public class TrackerTab extends JMainTabSecondary {
 		jAssets.setActionCommand(TrackerAction.UPDATE_SHOWN.name());
 		jAssets.addActionListener(listener);
 		jShow.add(jAssets, true);
-		
+
 		jImplants = new JCheckBoxMenuItem(TabsTracker.get().implants());
 		jImplants.setSelected(trackerSettings.hasShowOption(ShowOption.ALL) || trackerSettings.hasShowOption(ShowOption.ASSET));
 		jImplants.setActionCommand(TrackerAction.UPDATE_SHOWN.name());
@@ -470,7 +470,7 @@ public class TrackerTab extends JMainTabSecondary {
 
 		jAssetsStatus = StatusPanel.createLabel(TabsTracker.get().statusAssets(), new ColorIcon(Color.GREEN.darker().darker()), AutoNumberFormat.ISK);
 		this.addStatusbarLabel(jAssetsStatus);
-		
+
 		jImplantsStatus = StatusPanel.createLabel(TabsTracker.get().statusImplants(), new ColorIcon(Color.MAGENTA.darker()), AutoNumberFormat.ISK);
 		this.addStatusbarLabel(jImplantsStatus);
 
@@ -1021,7 +1021,7 @@ public class TrackerTab extends JMainTabSecondary {
 						} else {
 							value.addSkillPointValue(data.getSkillPoints(), 0);
 						}
-						value.addImplants(data.getImplantsTotal());
+						value.addImplants(data.getImplants());
 						value.addSellOrders(data.getSellOrders());
 						if (data.getBalanceFilter().isEmpty()) {
 							value.addBalance(data.getBalanceTotal());
@@ -1046,7 +1046,7 @@ public class TrackerTab extends JMainTabSecondary {
 			for (Map.Entry<SimpleTimePeriod, Value> entry : cache.entrySet()) {
 				walletBalance.add(entry.getKey(), entry.getValue().getBalanceTotal());
 				assets.add(entry.getKey(), entry.getValue().getAssetsTotal());
-				implants.add(entry.getKey(), entry.getValue().getImplantsTotal());
+				implants.add(entry.getKey(), entry.getValue().getImplants());
 				sellOrders.add(entry.getKey(), entry.getValue().getSellOrders());
 				escrows.add(entry.getKey(), entry.getValue().getEscrows());
 				escrowsToCover.add(entry.getKey(), entry.getValue().getEscrowsToCover());
@@ -1181,7 +1181,7 @@ public class TrackerTab extends JMainTabSecondary {
 				t += entry.getValue().getAssetsTotal();
 			}
 			if (jImplants.isSelected() && implants != null) {
-				t += entry.getValue().getImplantsTotal();
+				t += entry.getValue().getImplants();
 			}
 			if (jSellOrders.isSelected() && sellOrders != null) {
 				t += entry.getValue().getSellOrders();
@@ -1236,7 +1236,7 @@ public class TrackerTab extends JMainTabSecondary {
 		}
 		jImplantsStatus.setVisible(jImplants.isSelected());
 		if (first != null && last != null) {
-			jImplantsStatus.setNumber(last.getImplantsTotal() - first.getImplantsTotal());
+			jImplantsStatus.setNumber(last.getImplants() - first.getImplants());
 		} else {
 			jImplantsStatus.setNumber(0.0);
 		}
