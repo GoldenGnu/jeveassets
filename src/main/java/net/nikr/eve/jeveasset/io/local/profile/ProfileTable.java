@@ -370,8 +370,6 @@ public abstract class ProfileTable {
 		set.add(value);
 	}
 
-	
-
 	protected <T> void list(EsiOwner owner, Map<EsiOwner, List<T>> map, T value) {
 		List<T> list = map.get(owner);
 		if (list == null) {
