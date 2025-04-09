@@ -44,6 +44,7 @@ public class Value implements Comparable<Value>, LocationType {
 	private final Date date;
 	private final String compare;
 	private double assets = 0;
+	private double implants = 0;
 	private final Map<AssetValue, Double> assetsFilter = new HashMap<>();
 	private boolean assetsContainersFixed = true; //New data is fixed
 	private double sellOrders = 0;
@@ -86,8 +87,13 @@ public class Value implements Comparable<Value>, LocationType {
 	}
 
 	public void addAssets(AssetValue id, MyAsset asset) {
+		String flag = asset.getFlag();
 		double total = asset.getDynamicPrice() * asset.getCount();
-		addAssets(id, total);
+		if (flag != null && flag.equals("Implant")) {
+			addImplants(total);
+		} else {
+			addAssets(id, total);
+		}
 		setBestAsset(asset);
 		setBestShip(asset);
 		setBestShipFitted(asset);
@@ -103,6 +109,10 @@ public class Value implements Comparable<Value>, LocationType {
 
 	public void addSellOrders(double sellOrders) {
 		this.sellOrders = this.sellOrders + sellOrders;
+	}
+
+	public void addImplants(double implants) {
+		this.implants = this.implants + implants;
 	}
 
 	public void addEscrows(double escrows) {
@@ -166,6 +176,10 @@ public class Value implements Comparable<Value>, LocationType {
 
 	public double getAssetsTotal() {
 		return assets;
+	}
+
+	public double getImplants() {
+		return implants;
 	}
 
 	public double getSellOrders() {
@@ -323,11 +337,15 @@ public class Value implements Comparable<Value>, LocationType {
 	}
 
 	public double getTotal() {
-		return getAssetsTotal() + getBalanceTotal() + getEscrows() + getSellOrders() + getManufacturing() + getContractCollateral() + getContractValue() + getSkillPointValue();
+		return getAssetsTotal() + getImplants() + getBalanceTotal() + getEscrows() + getSellOrders() + getManufacturing() + getContractCollateral() + getContractValue() + getSkillPointValue();
 	}
 
 	public void setAssetsTotal(double assets) {
 		this.assets = assets;
+	}
+
+	public void setImplants(double implants) {
+		this.implants = implants;
 	}
 
 	public void setAssetsContainersFixed(boolean assetsContainersFixed) {
