@@ -48,39 +48,32 @@ public abstract class ProfileTable {
 
 	private static final int BATCH_SIZE = 1000;
 
-	protected abstract boolean insert(Connection connection, final List<EsiOwner> esiOwners);
-	protected abstract boolean select(Connection connection, List<EsiOwner> esiOwners, Map<Long, EsiOwner> owners);
-	protected abstract boolean create(Connection connection);
+	protected abstract void insert(Connection connection, final List<EsiOwner> esiOwners) throws SQLException;
+	protected abstract void select(Connection connection, List<EsiOwner> esiOwners, Map<Long, EsiOwner> owners) throws SQLException;
+	protected abstract void create(Connection connection) throws SQLException;
 
 	protected boolean isUpdated() {
 		return false;
 	}
 
- 	protected static boolean tableExist(Connection connection, String ... tableNames) {
+ 	protected static boolean tableExist(Connection connection, String ... tableNames) throws SQLException {
 		boolean ok = true;
 		for (String tableName : tableNames) {
 			String sql = "SELECT name FROM sqlite_master WHERE type='table' AND name='" + tableName + "'";
 			try (Statement statement = connection.createStatement(); ResultSet rs = statement.executeQuery(sql)) {
 				ok = rs.next() && ok;
-			} catch (SQLException ex) {
-				LOG.error(ex.getMessage(), ex);
-				return false;
 			}
 		}
 		return ok;
 	}
 
- 	protected static boolean tableDelete(Connection connection, String ... tableNames) {
+ 	protected static void tableDelete(Connection connection, String ... tableNames) throws SQLException {
 		for (String tableName : tableNames) {
 			String deleteSQL = "DELETE FROM " + tableName;
 			try (PreparedStatement statement = connection.prepareStatement(deleteSQL)) {
 				statement.execute();
-			} catch (SQLException ex) {
-				LOG.error(ex.getMessage(), ex);
-				return false;
 			}
 		}
-		return true;
 	}
 
 	protected static void setAttributeNull(final PreparedStatement statement, final int index) throws SQLException {

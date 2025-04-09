@@ -37,11 +37,9 @@ public class ProfileWalletDivisions extends ProfileTable {
 	private static final String WALLET_DIVISIONS_TABLE = "walletdivisions";
 
 	@Override
-	protected boolean insert(Connection connection, List<EsiOwner> esiOwners) {
+	protected void insert(Connection connection, List<EsiOwner> esiOwners) throws SQLException {
 		//Delete all data
-		if (!tableDelete(connection, WALLET_DIVISIONS_TABLE)) {
-			return false;
-		}
+		tableDelete(connection, WALLET_DIVISIONS_TABLE);
 
 		//Insert data
 		String sql = "INSERT INTO " + WALLET_DIVISIONS_TABLE + " ("
@@ -65,15 +63,11 @@ public class ProfileWalletDivisions extends ProfileTable {
 					rows.addRow();
 				}
 			}
-		} catch (SQLException ex) {
-			LOG.error(ex.getMessage(), ex);
-			return false;
 		}
-		return true;
 	}
 
 	@Override
-	protected boolean select(Connection connection, List<EsiOwner> esiOwners, Map<Long, EsiOwner> owners) {
+	protected void select(Connection connection, List<EsiOwner> esiOwners, Map<Long, EsiOwner> owners) throws SQLException {
 		Map<EsiOwner, Map<Integer, String>> divisions = new HashMap<>();
 		String sql = "SELECT * FROM " + WALLET_DIVISIONS_TABLE;
 		try (PreparedStatement statement = connection.prepareStatement(sql);
@@ -93,15 +87,11 @@ public class ProfileWalletDivisions extends ProfileTable {
 			for (Map.Entry<EsiOwner, Map<Integer, String>> entry : divisions.entrySet()) {
 				entry.getKey().setWalletDivisions(entry.getValue());
 			}
-			return true;
-		} catch (SQLException ex) {
-			LOG.error(ex.getMessage(), ex);
-			return false;
 		}
 	}
 
 	@Override
-	protected boolean create(Connection connection) {
+	protected void create(Connection connection) throws SQLException {
 		if (!tableExist(connection, WALLET_DIVISIONS_TABLE)) {
 			String sql = "CREATE TABLE IF NOT EXISTS " + WALLET_DIVISIONS_TABLE + " (\n"
 					+ "	ownerid INTEGER,\n"
@@ -111,12 +101,8 @@ public class ProfileWalletDivisions extends ProfileTable {
 					+ ");";
 			try (Statement statement = connection.createStatement()) {
 				statement.execute(sql);
-			} catch (SQLException ex) {
-				LOG.error(ex.getMessage(), ex);
-				return false;
 			}
 		}
-		return true;
 	}
 }
 

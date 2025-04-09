@@ -21,6 +21,7 @@
 package net.nikr.eve.jeveasset.io.shared;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -256,8 +257,8 @@ public abstract class DataConverter {
 			}
 			ProfileDatabase.update(new ProfileConnectionData<MyContract>(new HashSet<>(update)) {
 				@Override
-				public boolean update(Connection connection, Collection<MyContract> data) {
-					return ProfileContracts.updateContracts(connection, owner.getOwnerID(), data);
+				public void update(Connection connection, Collection<MyContract> data) throws SQLException {
+					ProfileContracts.updateContracts(connection, owner.getOwnerID(), data);
 				}
 			});
 		}
@@ -276,8 +277,8 @@ public abstract class DataConverter {
 		if (saveHistory) {
 			ProfileDatabase.update(new ProfileConnectionData<List<MyContractItem>>(contracts.values()) {
 				@Override
-				public boolean update(Connection connection, Collection<List<MyContractItem>> data) {
-					return ProfileContracts.updateContractItems(connection, data);
+				public void update(Connection connection, Collection<List<MyContractItem>> data) throws SQLException {
+					ProfileContracts.updateContractItems(connection, data);
 				}
 			});
 			for (Map.Entry<MyContract, List<MyContractItem>> entry : owner.getContracts().entrySet()) {
@@ -311,8 +312,8 @@ public abstract class DataConverter {
 			}
 			ProfileDatabase.update(new ProfileConnectionData<MyIndustryJob>(update) {
 				@Override
-				public boolean update(Connection connection, Collection<MyIndustryJob> data) {
-					return ProfileIndustryJobs.updateIndustryJobs(connection, owner.getOwnerID(), data);
+				public void update(Connection connection, Collection<MyIndustryJob> data) throws SQLException {
+					ProfileIndustryJobs.updateIndustryJobs(connection, owner.getOwnerID(), data);
 				}
 			});
 		}
@@ -333,8 +334,8 @@ public abstract class DataConverter {
 		if (saveHistory) {
 			ProfileDatabase.update(new ProfileConnectionData<MyJournal>(journals) {
 				@Override
-				public boolean update(Connection connection, Collection<MyJournal> data) {
-					return ProfileJournals.updateJournals(connection, owner.getOwnerID(), data);
+				public void update(Connection connection, Collection<MyJournal> data) throws SQLException {
+					ProfileJournals.updateJournals(connection, owner.getOwnerID(), data);
 				}
 			});
 			journals.addAll(owner.getJournal());
@@ -367,8 +368,8 @@ public abstract class DataConverter {
 			}
 			ProfileDatabase.update(new ProfileConnectionData<MyMarketOrder>(update) {
 				@Override
-				public boolean update(Connection connection, Collection<MyMarketOrder> data) {
-					return ProfileMarketOrders.updateMarketOrders(connection, owner.getOwnerID(), data);
+				public void update(Connection connection, Collection<MyMarketOrder> data) throws SQLException {
+					ProfileMarketOrders.updateMarketOrders(connection, owner.getOwnerID(), data);
 				}
 			});
 		}
@@ -388,8 +389,8 @@ public abstract class DataConverter {
 		if (saveHistory) {
 			ProfileDatabase.update(new ProfileConnectionData<MyTransaction>(transactions) {
 				@Override
-				public boolean update(Connection connection, Collection<MyTransaction> data) {
-					return ProfileTransactions.updateTransactions(connection, owner.getOwnerID(), data);
+				public void update(Connection connection, Collection<MyTransaction> data) throws SQLException {
+					ProfileTransactions.updateTransactions(connection, owner.getOwnerID(), data);
 				}
 			});
 			transactions.addAll(owner.getTransactions());
@@ -423,8 +424,8 @@ public abstract class DataConverter {
 		if (saveHistory) {
 			ProfileDatabase.update(new ProfileConnectionData<MyMining>(minings) {
 				@Override
-				public boolean update(Connection connection, Collection<MyMining> data) {
-					return ProfileMining.updateMinings(connection, owner.getOwnerID(), data);
+				public void update(Connection connection, Collection<MyMining> data) throws SQLException {
+					ProfileMining.updateMinings(connection, owner.getOwnerID(), data);
 				}
 			});
 			minings.addAll(owner.getMining());
@@ -446,8 +447,8 @@ public abstract class DataConverter {
 		if (saveHistory) {
 			ProfileDatabase.update(new ProfileConnectionData<MyExtraction>(new ArrayList<>(extractions)) {
 				@Override
-				public boolean update(Connection connection, Collection<MyExtraction> data) {
-					return ProfileMining.updateExtractions(connection, owner.getOwnerID(), data);
+				public void update(Connection connection, Collection<MyExtraction> data) throws SQLException {
+					ProfileMining.updateExtractions(connection, owner.getOwnerID(), data);
 				}
 			});
 			extractions.addAll(owner.getExtractions());

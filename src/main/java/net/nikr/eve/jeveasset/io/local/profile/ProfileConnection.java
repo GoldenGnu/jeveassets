@@ -21,8 +21,9 @@
 package net.nikr.eve.jeveasset.io.local.profile;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 
 
 public interface ProfileConnection {
-	public boolean update(Connection connection);
+	public void update(Connection connection) throws SQLException;
 }

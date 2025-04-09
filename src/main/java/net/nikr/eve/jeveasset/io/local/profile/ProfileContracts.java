@@ -102,13 +102,12 @@ public class ProfileContracts extends ProfileTable {
 	/**
 	 * Contract items are immutable (IGNORE)
 	 * @param connection
-	 * @param contractItemsLists
-	 * @return 
+	 * @param contractItemsLists 
 	 */
-	public static boolean updateContractItems(Connection connection, Collection<List<MyContractItem>> contractItemsLists) {
+	public static void updateContractItems(Connection connection, Collection<List<MyContractItem>> contractItemsLists) throws SQLException {
 		//Tables exist
 		if (!tableExist(connection, CONTRACT_ITEMS_TABLE)) {
-			return false;
+			return;
 		}
 
 		//Insert data
@@ -138,11 +137,7 @@ public class ProfileContracts extends ProfileTable {
 					rows.addRow();
 				}
 			}
-		} catch (SQLException ex) {
-			LOG.error(ex.getMessage(), ex);
-			return false;
 		}
-		return true;
 	}
 
 	/**
@@ -152,10 +147,10 @@ public class ProfileContracts extends ProfileTable {
 	 * @param contracts
 	 * @return 
 	 */
-	public static boolean updateContracts(Connection connection, long ownerID, Collection<MyContract> contracts) {
+	public static void updateContracts(Connection connection, long ownerID, Collection<MyContract> contracts) throws SQLException {
 		//Tables exist
 		if (!tableExist(connection, CONTRACTS_OWNERS_TABLE, CONTRACTS_TABLE)) {
-			return false;
+			return;
 		}
 
 		//Insert data
@@ -172,9 +167,6 @@ public class ProfileContracts extends ProfileTable {
 				setAttribute(statement, ++index, contract.getContractID());
 				rows.addRow();
 			}
-		} catch (SQLException ex) {
-			LOG.error(ex.getMessage(), ex);
-			return false;
 		}
 
 		String sqlContracts = "INSERT OR REPLACE INTO " + CONTRACTS_TABLE + " ("
@@ -211,19 +203,13 @@ public class ProfileContracts extends ProfileTable {
 				set(statement, contract);
 				rows.addRow();
 			}
-		} catch (SQLException ex) {
-			LOG.error(ex.getMessage(), ex);
-			return false;
 		}
-		return true;
 	}
 
 	@Override
-	protected boolean insert(Connection connection, List<EsiOwner> esiOwners) {
+	protected void insert(Connection connection, List<EsiOwner> esiOwners) throws SQLException {
 		//Delete all data
-		if (!tableDelete(connection, CONTRACTS_OWNERS_TABLE, CONTRACTS_TABLE, CONTRACT_ITEMS_TABLE)) {
-			return false;
-		}
+		tableDelete(connection, CONTRACTS_OWNERS_TABLE, CONTRACTS_TABLE, CONTRACT_ITEMS_TABLE);
 
 		//Insert data
 		String sqlOwners = "INSERT OR IGNORE INTO " + CONTRACTS_OWNERS_TABLE + " ("
@@ -246,9 +232,6 @@ public class ProfileContracts extends ProfileTable {
 					rows.addRow();
 				}
 			}
-		} catch (SQLException ex) {
-			LOG.error(ex.getMessage(), ex);
-			return false;
 		}
 
 		String sqlContracts = "INSERT OR REPLACE INTO " + CONTRACTS_TABLE + " ("
@@ -292,9 +275,6 @@ public class ProfileContracts extends ProfileTable {
 					rows.addRow();
 				}
 			}
-		} catch (SQLException ex) {
-			LOG.error(ex.getMessage(), ex);
-			return false;
 		}
 
 		String sqlContractItems = "INSERT OR IGNORE INTO " + CONTRACT_ITEMS_TABLE + " ("
@@ -329,15 +309,11 @@ public class ProfileContracts extends ProfileTable {
 					}
 				}
 			}
-		} catch (SQLException ex) {
-			LOG.error(ex.getMessage(), ex);
-			return false;
 		}
-		return true;
 	}
 
 	@Override
-	protected boolean select(Connection connection, List<EsiOwner> esiOwners, Map<Long, EsiOwner> owners) {
+	protected void select(Connection connection, List<EsiOwner> esiOwners, Map<Long, EsiOwner> owners) throws SQLException {
 		String ownerSQL = "SELECT * FROM " + CONTRACTS_OWNERS_TABLE;
 		Map<Integer, Set<EsiOwner>> contractOwners = new HashMap<>();
 		Map<EsiOwner, Map<MyContract, List<MyContractItem>>> contracts = new HashMap<>();
@@ -357,9 +333,6 @@ public class ProfileContracts extends ProfileTable {
 					contracts.put(owner, new HashMap<>());
 				}
 			}
-		} catch (SQLException ex) {
-			LOG.error(ex.getMessage(), ex);
-			return false;
 		}
 		String contractsSQL = "SELECT * FROM " + CONTRACTS_TABLE;
 		Map<Integer, MyContract> contractIDs = new HashMap<>();
@@ -432,9 +405,6 @@ public class ProfileContracts extends ProfileTable {
 					}
 				}
 			}
-		} catch (SQLException ex) {
-			LOG.error(ex.getMessage(), ex);
-			return false;
 		}
 		String contractItemsSQL = "SELECT * FROM " + CONTRACT_ITEMS_TABLE;
 		try (PreparedStatement statement = connection.prepareStatement(contractItemsSQL);
@@ -478,19 +448,15 @@ public class ProfileContracts extends ProfileTable {
 					}
 				}
 			}
-		} catch (SQLException ex) {
-			LOG.error(ex.getMessage(), ex);
-			return false;
 		}
 		for (Map.Entry<EsiOwner, Map<MyContract, List<MyContractItem>>> entry : contracts.entrySet()) {
 			EsiOwner owner = entry.getKey();
 			owner.setContracts(entry.getValue());
 		}
-		return true;
 	}
 
 	@Override
-	protected boolean create(Connection connection) {
+	protected void create(Connection connection) throws SQLException {
 		if (!tableExist(connection, CONTRACTS_OWNERS_TABLE)) {
 			String sql = "CREATE TABLE IF NOT EXISTS " + CONTRACTS_OWNERS_TABLE + " ("
 					+ "	ownerid INTEGER,\n"
@@ -499,9 +465,6 @@ public class ProfileContracts extends ProfileTable {
 					+ ");";
 			try (Statement statement = connection.createStatement()) {
 				statement.execute(sql);
-			} catch (SQLException ex) {
-				LOG.error(ex.getMessage(), ex);
-				return false;
 			}
 		}
 		if (!tableExist(connection, CONTRACTS_TABLE)) {
@@ -536,9 +499,6 @@ public class ProfileContracts extends ProfileTable {
 					+ ");";
 			try (Statement statement = connection.createStatement()) {
 				statement.execute(sql);
-			} catch (SQLException ex) {
-				LOG.error(ex.getMessage(), ex);
-				return false;
 			}
 		}
 		if (!tableExist(connection, CONTRACT_ITEMS_TABLE)) {
@@ -558,11 +518,7 @@ public class ProfileContracts extends ProfileTable {
 					+ ");";
 			try (Statement statement = connection.createStatement()) {
 				statement.execute(sql);
-			} catch (SQLException ex) {
-				LOG.error(ex.getMessage(), ex);
-				return false;
 			}
 		}
-		return true;
 	}
 }

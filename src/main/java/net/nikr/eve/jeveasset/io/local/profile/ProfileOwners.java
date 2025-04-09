@@ -42,11 +42,9 @@ public class ProfileOwners extends ProfileTable {
 	private static final String OWNERS_TABLE = "owners";
 
 	@Override
-	protected boolean insert(Connection connection, List<EsiOwner> esiOwners) {
+	protected void insert(Connection connection, List<EsiOwner> esiOwners) throws SQLException {
 		//Delete all data
-		if (!tableDelete(connection, OWNERS_TABLE)) {
-			return false;
-		}
+		tableDelete(connection, OWNERS_TABLE);
 
 		//Insert data
 		String sql = "INSERT INTO " + OWNERS_TABLE + " ("
@@ -107,15 +105,11 @@ public class ProfileOwners extends ProfileTable {
 				setAttribute(statement, ++index, owner.getRoles());
 				rows.addRow();
 			}
-		} catch (SQLException ex) {
-			LOG.error(ex.getMessage(), ex);
-			return false;
 		}
-		return true;
 	}
 
 	@Override
-	protected boolean select(Connection connection, List<EsiOwner> esiOwners, Map<Long, EsiOwner> owners) {
+	protected void select(Connection connection, List<EsiOwner> esiOwners, Map<Long, EsiOwner> owners) throws SQLException {
 		String sql = "SELECT * FROM " + OWNERS_TABLE;
 		try (PreparedStatement statement = connection.prepareStatement(sql);
 				ResultSet rs = statement.executeQuery();) {
@@ -184,15 +178,11 @@ public class ProfileOwners extends ProfileTable {
 				owner.setMiningNextUpdate(miningNextUpdate);
 				esiOwners.add(owner);
 			}
-			return true;
-		} catch (SQLException ex) {
-			LOG.error(ex.getMessage(), ex);
-			return false;
 		}
 	}
 
 	@Override
-	protected boolean create(Connection connection) {
+	protected void create(Connection connection) throws SQLException {
 		if (!tableExist(connection, OWNERS_TABLE)) {
 			String sql = "CREATE TABLE IF NOT EXISTS " + OWNERS_TABLE + " (\n"
 					+ "	ownerid INTEGER,\n"
@@ -224,12 +214,8 @@ public class ProfileOwners extends ProfileTable {
 					+ ");";
 			try (Statement statement = connection.createStatement()) {
 				statement.execute(sql);
-			} catch (SQLException ex) {
-				LOG.error(ex.getMessage(), ex);
-				return false;
 			}
 		}
-		return true;
 	}
 
 	protected boolean update(Connection connection) { return true; }

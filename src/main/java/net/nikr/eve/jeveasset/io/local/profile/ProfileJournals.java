@@ -79,13 +79,12 @@ public class ProfileJournals extends ProfileTable {
 	 * Journal entries are immutable (IGNORE)
 	 * @param connection
 	 * @param ownerID
-	 * @param journals
-	 * @return 
+	 * @param journals 
 	 */
-	public static boolean updateJournals(Connection connection, long ownerID, Collection<MyJournal> journals) {
+	public static void  updateJournals(Connection connection, long ownerID, Collection<MyJournal> journals) throws SQLException {
 		//Tables exist
 		if (!tableExist(connection, JOURNALS_TABLE)) {
-			return false;
+			return;
 		}
 
 		//Insert data
@@ -114,19 +113,13 @@ public class ProfileJournals extends ProfileTable {
 					set(statement, journal, ownerID);
 					rows.addRow();
 				}
-		} catch (SQLException ex) {
-			LOG.error(ex.getMessage(), ex);
-			return false;
 		}
-		return true;
 	}
 
 	@Override
-	protected boolean insert(Connection connection, List<EsiOwner> esiOwners) {
+	protected void insert(Connection connection, List<EsiOwner> esiOwners) throws SQLException {
 		//Delete all data
-		if (!tableDelete(connection, JOURNALS_TABLE)) {
-			return true;
-		}
+		tableDelete(connection, JOURNALS_TABLE);
 
 		//Insert data
 		String sql = "INSERT INTO " + JOURNALS_TABLE + " ("
@@ -161,15 +154,11 @@ public class ProfileJournals extends ProfileTable {
 					rows.addRow();
 				}
 			}
-		} catch (SQLException ex) {
-			LOG.error(ex.getMessage(), ex);
-			return false;
 		}
-		return true;
 	}
 
 	@Override
-	protected boolean select(Connection connection, List<EsiOwner> esiOwners, Map<Long, EsiOwner> owners) {
+	protected void select(Connection connection, List<EsiOwner> esiOwners, Map<Long, EsiOwner> owners) throws SQLException {
 		Map<EsiOwner, Set<MyJournal>> journals = new HashMap<>();
 		String sql = "SELECT * FROM " + JOURNALS_TABLE;
 		try (PreparedStatement statement = connection.prepareStatement(sql);
@@ -223,15 +212,11 @@ public class ProfileJournals extends ProfileTable {
 			for (Map.Entry<EsiOwner, Set<MyJournal>> entry : journals.entrySet()) {
 				entry.getKey().setJournal(entry.getValue());
 			}
-			return true;
-		} catch (SQLException ex) {
-			LOG.error(ex.getMessage(), ex);
-			return false;
 		}
 	}
 
 	@Override
-	protected boolean create(Connection connection) {
+	protected void create(Connection connection) throws SQLException {
 		if (!tableExist(connection, JOURNALS_TABLE)) {
 			String sql = "CREATE TABLE IF NOT EXISTS " + JOURNALS_TABLE + " (\n"
 					+ "	ownerid INTEGER,"
@@ -255,11 +240,7 @@ public class ProfileJournals extends ProfileTable {
 					+ ");";
 			try (Statement statement = connection.createStatement()) {
 				statement.execute(sql);
-			} catch (SQLException ex) {
-				LOG.error(ex.getMessage(), ex);
-				return false;
 			}
 		}
-		return true;
 	}
 }

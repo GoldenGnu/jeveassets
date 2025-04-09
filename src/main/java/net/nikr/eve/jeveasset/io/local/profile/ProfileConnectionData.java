@@ -21,6 +21,7 @@
 package net.nikr.eve.jeveasset.io.local.profile;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -34,9 +35,9 @@ public abstract class ProfileConnectionData<T> implements ProfileConnection {
 	}
 	
 	@Override
-	public boolean update(Connection connection) {
-		return update(connection, t);
+	public void update(Connection connection) throws SQLException {
+		update(connection, t);
 	}
 	
-	public abstract boolean update(Connection connection, Collection<T> data);
+	public abstract void update(Connection connection, Collection<T> data) throws SQLException;
 }

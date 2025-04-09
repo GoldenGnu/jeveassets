@@ -72,12 +72,11 @@ public class ProfileTransactions  extends ProfileTable {
 	 * @param connection
 	 * @param ownerID
 	 * @param transactions
-	 * @return 
 	 */
-	public static boolean updateTransactions(Connection connection, long ownerID, Collection<MyTransaction> transactions) {
+	public static void updateTransactions(Connection connection, long ownerID, Collection<MyTransaction> transactions) throws SQLException {
 		//Tables exist
 		if (!tableExist(connection, TRANSACTIONS_TABLE)) {
-			return false;
+			return;
 		}
 
 		//Insert data
@@ -102,19 +101,13 @@ public class ProfileTransactions  extends ProfileTable {
 				set(statement, transaction, ownerID);
 				rows.addRow();
 			}
-		} catch (SQLException ex) {
-			LOG.error(ex.getMessage(), ex);
-			return false;
 		}
-		return true;
 	}
 
 	@Override
-	protected boolean insert(Connection connection, List<EsiOwner> esiOwners) {
+	protected void insert(Connection connection, List<EsiOwner> esiOwners) throws SQLException {
 		//Delete all data
-		if (!tableDelete(connection, TRANSACTIONS_TABLE)) {
-			return false;
-		}
+		tableDelete(connection, TRANSACTIONS_TABLE);
 
 		//Insert data
 		String sql = "INSERT INTO " + TRANSACTIONS_TABLE + " ("
@@ -145,15 +138,11 @@ public class ProfileTransactions  extends ProfileTable {
 					rows.addRow();
 				}
 			}
-		} catch (SQLException ex) {
-			LOG.error(ex.getMessage(), ex);
-			return false;
 		}
-		return true;
 	}
 
 	@Override
-	protected boolean select(Connection connection, List<EsiOwner> esiOwners, Map<Long, EsiOwner> owners) {
+	protected void select(Connection connection, List<EsiOwner> esiOwners, Map<Long, EsiOwner> owners) throws SQLException {
 		Map<EsiOwner, Set<MyTransaction>> transactions = new HashMap<>();
 		String sql = "SELECT * FROM " + TRANSACTIONS_TABLE;
 		try (PreparedStatement statement = connection.prepareStatement(sql);
@@ -199,15 +188,11 @@ public class ProfileTransactions  extends ProfileTable {
 			for (Map.Entry<EsiOwner, Set<MyTransaction>> entry : transactions.entrySet()) {
 				entry.getKey().setTransactions(entry.getValue());
 			}
-			return true;
-		} catch (SQLException ex) {
-			LOG.error(ex.getMessage(), ex);
-			return false;
 		}
 	}
 
 	@Override
-	protected boolean create(Connection connection) {
+	protected void create(Connection connection) throws SQLException {
 		if (!tableExist(connection, TRANSACTIONS_TABLE)) {
 			String sql = "CREATE TABLE IF NOT EXISTS " + TRANSACTIONS_TABLE + " (\n"
 					+ "	ownerid INTEGER,\n"
@@ -227,11 +212,7 @@ public class ProfileTransactions  extends ProfileTable {
 					+ ");";
 			try (Statement statement = connection.createStatement()) {
 				statement.execute(sql);
-			} catch (SQLException ex) {
-				LOG.error(ex.getMessage(), ex);
-				return false;
 			}
 		}
-		return true;
 	}
 }

@@ -38,11 +38,9 @@ public class ProfileBlueprints extends ProfileTable {
 	private static final String BLUEPRINTS_TABLE = "blueprints";
 
 	@Override
-	protected boolean insert(Connection connection, List<EsiOwner> esiOwners) {
+	protected void insert(Connection connection, List<EsiOwner> esiOwners) throws SQLException {
 		//Delete all data
-		if (!tableDelete(connection, BLUEPRINTS_TABLE)) {
-			return false;
-		}
+		tableDelete(connection, BLUEPRINTS_TABLE);
 
 		//Insert data
 		String sql = "INSERT INTO " + BLUEPRINTS_TABLE + " ("
@@ -80,15 +78,11 @@ public class ProfileBlueprints extends ProfileTable {
 					rows.addRow();
 				}
 			}
-		} catch (SQLException ex) {
-			LOG.error(ex.getMessage(), ex);
-			return false;
 		}
-		return true;
 	}
 
 	@Override
-	protected boolean select(Connection connection, List<EsiOwner> esiOwners, Map<Long, EsiOwner> owners) {
+	protected void select(Connection connection, List<EsiOwner> esiOwners, Map<Long, EsiOwner> owners) throws SQLException {
 		Map<EsiOwner, Map<Long, RawBlueprint>> blueprints = new HashMap<>();
 		String sql = "SELECT * FROM " + BLUEPRINTS_TABLE;
 		try (PreparedStatement statement = connection.prepareStatement(sql);
@@ -126,15 +120,11 @@ public class ProfileBlueprints extends ProfileTable {
 			for (Map.Entry<EsiOwner, Map<Long, RawBlueprint>> entry : blueprints.entrySet()) {
 				entry.getKey().setBlueprints(entry.getValue());
 			}
-			return true;
-		} catch (SQLException ex) {
-			LOG.error(ex.getMessage(), ex);
-			return false;
 		}
 	}
 
 	@Override
-	protected boolean create(Connection connection) {
+	protected void create(Connection connection) throws SQLException {
 		if (!tableExist(connection, BLUEPRINTS_TABLE)) {
 			String sql = "CREATE TABLE IF NOT EXISTS " + BLUEPRINTS_TABLE + " (\n"
 					+ "	ownerid INTEGER,\n"
@@ -151,11 +141,7 @@ public class ProfileBlueprints extends ProfileTable {
 					+ ");";
 			try (Statement statement = connection.createStatement()) {
 				statement.execute(sql);
-			} catch (SQLException ex) {
-				LOG.error(ex.getMessage(), ex);
-				return false;
 			}
 		}
-		return true;
 	}
 }

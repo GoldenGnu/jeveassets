@@ -78,13 +78,12 @@ public class ProfileMining extends ProfileTable {
 	 * Minings are mutable (REPLACE)
 	 * @param connection
 	 * @param ownerID
-	 * @param minings
-	 * @return 
+	 * @param minings 
 	 */
-	public static boolean updateMinings(Connection connection, long ownerID, Collection<MyMining> minings) {
+	public static void updateMinings(Connection connection, long ownerID, Collection<MyMining> minings) throws SQLException {
 		//Tables exist
 		if (!tableExist(connection, MINING_TABLE)) {
-			return false;
+			return;
 		}
 
 		//Insert data
@@ -105,11 +104,7 @@ public class ProfileMining extends ProfileTable {
 				set(statement, mining, ownerID);
 				rows.addRow();
 			}
-		} catch (SQLException ex) {
-			LOG.error(ex.getMessage(), ex);
-			return false;
 		}
-		return true;
 	}
 
 	/**
@@ -117,12 +112,11 @@ public class ProfileMining extends ProfileTable {
 	 * @param connection
 	 * @param ownerID
 	 * @param extractions
-	 * @return 
 	 */
-	public static boolean updateExtractions(Connection connection, long ownerID, Collection<MyExtraction> extractions) {
+	public static void updateExtractions(Connection connection, long ownerID, Collection<MyExtraction> extractions) throws SQLException {
 		//Tables exist
 		if (!tableExist(connection, MINING_EXTRACTION_TABLE)) {
-			return false;
+			return;
 		}
 		String extractionSQL = "INSERT OR REPLACE INTO " + MINING_EXTRACTION_TABLE + " ("
 				+ "	ownerid,"
@@ -138,19 +132,13 @@ public class ProfileMining extends ProfileTable {
 				set(statement, extraction, ownerID);
 				rows.addRow();
 			}
-		} catch (SQLException ex) {
-			LOG.error(ex.getMessage(), ex);
-			return false;
 		}
-		return true;
 	}
 
 	@Override
-	protected boolean insert(Connection connection, List<EsiOwner> esiOwners) {
+	protected void insert(Connection connection, List<EsiOwner> esiOwners) throws SQLException {
 		//Delete all data
-		if (!tableDelete(connection, MINING_TABLE, MINING_EXTRACTION_TABLE)) {
-			return false;
-		}
+		tableDelete(connection, MINING_TABLE, MINING_EXTRACTION_TABLE);
 
 		//Insert data
 		String miningSQL = "INSERT INTO " + MINING_TABLE + " ("
@@ -177,9 +165,6 @@ public class ProfileMining extends ProfileTable {
 					rows.addRow();
 				}
 			}
-		} catch (SQLException ex) {
-			LOG.error(ex.getMessage(), ex);
-			return false;
 		}
 
 		String extractionSQL = "INSERT INTO " + MINING_EXTRACTION_TABLE + " ("
@@ -203,15 +188,11 @@ public class ProfileMining extends ProfileTable {
 					rows.addRow();
 				}
 			}
-		} catch (SQLException ex) {
-			LOG.error(ex.getMessage(), ex);
-			return false;
 		}
-		return true;
 	}
 
 	@Override
-	protected boolean select(Connection connection, List<EsiOwner> esiOwners, Map<Long, EsiOwner> owners) {
+	protected void select(Connection connection, List<EsiOwner> esiOwners, Map<Long, EsiOwner> owners) throws SQLException {
 		Map<EsiOwner, Set<MyMining>> minings = new HashMap<>();
 		Map<EsiOwner, Set<MyExtraction>> extractions = new HashMap<>();
 		String miningSQL = "SELECT * FROM " + MINING_TABLE;
@@ -253,9 +234,6 @@ public class ProfileMining extends ProfileTable {
 			for (Map.Entry<EsiOwner, Set<MyMining>> entry : minings.entrySet()) {
 				entry.getKey().setMining(entry.getValue());
 			}
-		} catch (SQLException ex) {
-			LOG.error(ex.getMessage(), ex);
-			return false;
 		}
 		String extractionSQL = "SELECT * FROM " + MINING_EXTRACTION_TABLE;
 		try (PreparedStatement statement = connection.prepareStatement(extractionSQL);
@@ -285,15 +263,11 @@ public class ProfileMining extends ProfileTable {
 			for (Map.Entry<EsiOwner, Set<MyExtraction>> entry : extractions.entrySet()) {
 				entry.getKey().setExtractions(entry.getValue());
 			}
-		} catch (SQLException ex) {
-			LOG.error(ex.getMessage(), ex);
-			return false;
 		}
-		return true;
 	}
 
 	@Override
-	protected boolean create(Connection connection) {
+	protected void create(Connection connection) throws SQLException {
 		if (!tableExist(connection, MINING_TABLE)) {
 			String sql = "CREATE TABLE IF NOT EXISTS " + MINING_TABLE + " (\n"
 					+ "	ownerid INTEGER,\n"
@@ -309,9 +283,6 @@ public class ProfileMining extends ProfileTable {
 					+ ");";
 			try (Statement statement = connection.createStatement()) {
 				statement.execute(sql);
-			} catch (SQLException ex) {
-				LOG.error(ex.getMessage(), ex);
-				return false;
 			}
 		}
 		if (!tableExist(connection, MINING_EXTRACTION_TABLE)) {
@@ -326,11 +297,7 @@ public class ProfileMining extends ProfileTable {
 					+ ");";
 			try (Statement statement = connection.createStatement()) {
 				statement.execute(sql);
-			} catch (SQLException ex) {
-				LOG.error(ex.getMessage(), ex);
-				return false;
 			}
 		}
-		return true;
 	}
 }

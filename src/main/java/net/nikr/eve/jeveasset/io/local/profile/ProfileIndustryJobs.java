@@ -84,10 +84,10 @@ public class ProfileIndustryJobs extends ProfileTable {
 	 * @param industryJobs
 	 * @return 
 	 */
-	public static boolean updateIndustryJobs(Connection connection, long ownerID, Collection<MyIndustryJob> industryJobs) {
+	public static void updateIndustryJobs(Connection connection, long ownerID, Collection<MyIndustryJob> industryJobs) throws SQLException {
 		//Tables exist
 		if (!tableExist(connection, INDUSTRY_JOBS_TABLE)) {
-			return false;
+			return;
 		}
 
 		//Insert data
@@ -124,19 +124,13 @@ public class ProfileIndustryJobs extends ProfileTable {
 				set(statement, industryJob, ownerID);
 				rows.addRow();
 			}
-		} catch (SQLException ex) {
-			LOG.error(ex.getMessage(), ex);
-			return false;
 		}
-		return true;
 	}
 
 	@Override
-	protected boolean insert(Connection connection, List<EsiOwner> esiOwners) {
+	protected void insert(Connection connection, List<EsiOwner> esiOwners) throws SQLException {
 		//Delete all data
-		if (!tableDelete(connection, INDUSTRY_JOBS_TABLE)) {
-			return false;
-		}
+		tableDelete(connection, INDUSTRY_JOBS_TABLE);
 
 		//Insert data
 		String sql = "INSERT INTO " + INDUSTRY_JOBS_TABLE + " ("
@@ -179,15 +173,11 @@ public class ProfileIndustryJobs extends ProfileTable {
 					rows.addRow();
 				}
 			}
-		} catch (SQLException ex) {
-			LOG.error(ex.getMessage(), ex);
-			return false;
 		}
-		return true;
 	}
 
 	@Override
-	protected boolean select(Connection connection, List<EsiOwner> esiOwners, Map<Long, EsiOwner> owners) {
+	protected void select(Connection connection, List<EsiOwner> esiOwners, Map<Long, EsiOwner> owners) throws SQLException {
 		Map<EsiOwner, Set<MyIndustryJob>> industryJobs = new HashMap<>();
 		String sql = "SELECT * FROM " + INDUSTRY_JOBS_TABLE;
 		try (PreparedStatement statement = connection.prepareStatement(sql);
@@ -256,15 +246,11 @@ public class ProfileIndustryJobs extends ProfileTable {
 			for (Map.Entry<EsiOwner, Set<MyIndustryJob>> entry : industryJobs.entrySet()) {
 				entry.getKey().setIndustryJobs(entry.getValue());
 			}
-			return true;
-		} catch (SQLException ex) {
-			LOG.error(ex.getMessage(), ex);
-			return false;
 		}
 	}
 
 	@Override
-	protected boolean create(Connection connection) {
+	protected void create(Connection connection) throws SQLException {
 		if (!tableExist(connection, INDUSTRY_JOBS_TABLE)) {
 			String sql = "CREATE TABLE IF NOT EXISTS " + INDUSTRY_JOBS_TABLE + " (\n"
 					+ "	ownerid INTEGER,\n"
@@ -296,11 +282,7 @@ public class ProfileIndustryJobs extends ProfileTable {
 					+ ");";
 			try (Statement statement = connection.createStatement()) {
 				statement.execute(sql);
-			} catch (SQLException ex) {
-				LOG.error(ex.getMessage(), ex);
-				return false;
 			}
 		}
-		return true;
 	}
 }

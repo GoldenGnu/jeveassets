@@ -40,11 +40,9 @@ public class ProfileAssets extends ProfileTable {
 	private static final String ASSETS_TABLE = "assets";
 
 	@Override
-	protected boolean insert(Connection connection, List<EsiOwner> esiOwners) {
+	protected void insert(Connection connection, List<EsiOwner> esiOwners) throws SQLException {
 		//Delete all data
-		if (!tableDelete(connection, ASSETS_TABLE)) {
-			return false;
-		}
+		tableDelete(connection, ASSETS_TABLE);
 
 		//Insert data
 		String sql = "INSERT INTO " + ASSETS_TABLE + " ("
@@ -68,11 +66,7 @@ public class ProfileAssets extends ProfileTable {
 			for (EsiOwner owner : esiOwners) {
 				insertAssets(statement, rows, owner.getAssets(), owner.getOwnerID(), null);
 			}
-		} catch (SQLException ex) {
-			LOG.error(ex.getMessage(), ex);
-			return false;
 		}
-		return true;
 	}
 
 	private int getAssetSize(List<MyAsset> assets) {
@@ -118,7 +112,7 @@ public class ProfileAssets extends ProfileTable {
 	}
 
 	@Override
-	protected boolean select(Connection connection, List<EsiOwner> esiOwners, Map<Long, EsiOwner> owners) {
+	protected void select(Connection connection, List<EsiOwner> esiOwners, Map<Long, EsiOwner> owners) throws SQLException {
 		Map<EsiOwner, List<RawAsset>> assets = new HashMap<>();
 		String sql = "SELECT * FROM " + ASSETS_TABLE;
 		try (PreparedStatement statement = connection.prepareStatement(sql);
@@ -147,18 +141,14 @@ public class ProfileAssets extends ProfileTable {
 				}
 				list(owner, assets, rawAsset);
 			}
-		} catch (SQLException ex) {
-			LOG.error(ex.getMessage(), ex);
-			return false;
 		}
 		for (Map.Entry<EsiOwner, List<RawAsset>> entry : assets.entrySet()) {
 			entry.getKey().setAssets(DataConverter.toRawAssets(entry.getValue(), entry.getKey()));
 		}
-		return true;
 	}
 
 	@Override
-	protected boolean create(Connection connection) {
+	protected void create(Connection connection) throws SQLException {
 		if (!tableExist(connection, ASSETS_TABLE)) {
 			String sql = "CREATE TABLE IF NOT EXISTS " + ASSETS_TABLE + " (\n"
 					+ "	ownerid INTEGER,\n"
@@ -174,11 +164,7 @@ public class ProfileAssets extends ProfileTable {
 					+ ");";
 			try (Statement statement = connection.createStatement()) {
 				statement.execute(sql);
-			} catch (SQLException ex) {
-				LOG.error(ex.getMessage(), ex);
-				return false;
 			}
 		}
-		return true;
 	}	
 }

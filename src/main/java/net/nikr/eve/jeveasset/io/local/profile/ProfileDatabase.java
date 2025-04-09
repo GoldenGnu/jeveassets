@@ -73,26 +73,26 @@ public class ProfileDatabase {
 			this.profileTable = databaseTable;
 		}
 
-		public boolean insert(Connection connection, List<EsiOwner> esiOwners, boolean full) {
+		public void insert(Connection connection, List<EsiOwner> esiOwners, boolean full) throws SQLException {
 			if (esiOwners == null) {
 				esiOwners = new ArrayList<>(); //Ensure never null
 			}
 			if (!full && profileTable.isUpdated()) {
-				return true; //Ignore updated
+				return; //Ignore updated
 			}
-			return profileTable.insert(connection, esiOwners);
+			profileTable.insert(connection, esiOwners);
 		}
 
-		public boolean select(Connection connection, List<EsiOwner> esiOwners) {
+		public void select(Connection connection, List<EsiOwner> esiOwners) throws SQLException {
 			Map<Long, EsiOwner> owners = new HashMap<>();
 			for (EsiOwner esiOwner : esiOwners) {
 				owners.put(esiOwner.getOwnerID(), esiOwner);
 			}
-			return profileTable.select(connection, esiOwners, owners);
+			profileTable.select(connection, esiOwners, owners);
 		}
 
-		public boolean create(Connection connection) {
-			return profileTable.create(connection);
+		public void create(Connection connection) throws SQLException {
+			profileTable.create(connection);
 		}
 	}
 
@@ -105,32 +105,28 @@ public class ProfileDatabase {
 		} else {
 			updateConnectionUrl = getConnectionUrl(profile.getSQLiteFilename());;
 		}
-		updateConnection = null;
+		closeUpdateConnection();
 	}
 
-	private static synchronized Connection getUpdateConnection() {
+	private static synchronized Connection getUpdateConnection() throws SQLException {
 		if (updateConnectionUrl == null) {
 			return null;
 		}
 		if (updateConnection == null) {
-			try {
-				updateConnection = DriverManager.getConnection(updateConnectionUrl);
-				updateConnection.setAutoCommit(false);
-			} catch (SQLException ex) {
-				LOG.error(ex.getMessage(), ex);
-			}
+			updateConnection = DriverManager.getConnection(updateConnectionUrl);
 		}
 		return updateConnection;
 	}
 
 	private static synchronized void closeUpdateConnection() {
-		try {
-			updateConnection.setAutoCommit(false);
-			updateConnection.close();
-		} catch (SQLException ex) {
-			LOG.error(ex.getMessage(), ex);
+		if (updateConnection != null) {
+			try {
+				updateConnection.close();
+			} catch (SQLException ex) {
+				logError(ex);
+			}
+			updateConnection = null;
 		}
-		updateConnection = null;
 	}
 
 	private static String getConnectionUrl(String filename) {
@@ -139,15 +135,14 @@ public class ProfileDatabase {
 
 	public static boolean load(Profile profile) {
 		backup(profile);
-		boolean ok = true;
 		String connectionUrl = getConnectionUrl(profile.getSQLiteFilename());
 		try (Connection connection = DriverManager.getConnection(connectionUrl)) {
 			for (Table table : Table.values()) {
-				ok = table.select(connection, profile.getEsiOwners()) && ok;
+				table.select(connection, profile.getEsiOwners());
 			}
-			return ok;
+			return true;
 		} catch (SQLException ex) {
-			LOG.error(ex.getMessage(), ex);
+			logError(ex);
 			return false;
 		}
 	}
@@ -163,10 +158,10 @@ public class ProfileDatabase {
 				try {
 					ok = update.get() && ok;
 				} catch (InterruptedException ex) {
-					LOG.error(ex.getMessage(), ex);
+					logError(ex);
 					ok = false;
 				} catch (ExecutionException ex) {
-					LOG.error(ex.getMessage(), ex);
+					logError(ex);
 					ok = false;
 				}
 			}
@@ -189,27 +184,26 @@ public class ProfileDatabase {
 	}
 
 	private static boolean save(Profile profile, Collection<Table> tables, boolean full) {
-		boolean ok = true;
 		String connectionUrl = getConnectionUrl(profile.getSQLiteFilename());
 		if (!full) {
-			ok = waitForUpdates();
+			waitForUpdates();
 		}
-		try (Connection connection = DriverManager.getConnection(connectionUrl)) {
-			connection.setAutoCommit(false);
-			for (Table profileTable : tables) {
-				ok = profileTable.create(connection) && ok;
-				ok = profileTable.insert(connection, profile.getEsiOwners(), full) && ok;
-			}
-			if (ok) {
-				//Only commit once, when everything is done - so we can rollback on any errors 
+		try (Connection connection = DriverManager.getConnection(connectionUrl);) {
+			try {
+				connection.setAutoCommit(false);
+				for (Table profileTable : tables) {
+					profileTable.create(connection);
+					profileTable.insert(connection, profile.getEsiOwners(), full);
+				}
 				connection.commit();
-			} else {
+				connection.setAutoCommit(true);
+			} catch (SQLException ex) {
 				connection.rollback();
+				throw ex;
 			}
-			connection.setAutoCommit(true);
-			return ok;
+			return true;
 		} catch (SQLException ex) {
-			LOG.error(ex.getMessage(), ex);
+			logError(ex);
 			return false;
 		}
 	}
@@ -228,8 +222,7 @@ public class ProfileDatabase {
 				) {
 			statement.executeUpdate("BACKUP TO " + profile.getBackupSQLiteFilename()) ;
 		} catch (SQLException ex) {
-			LOG.error(ex.getMessage(), ex);
-			
+			logError(ex);
 		}
     }
 
@@ -253,19 +246,22 @@ public class ProfileDatabase {
 				return false;
 			}
 			try {
-				boolean ok = profileConnection.update(connection);
-				if (ok) {
-					//Only commit once, when everything is done - so we can rollback on any errors 
-					connection.commit();
-				} else {
-					connection.rollback();
-				}
-				return ok;
+				updateConnection.setAutoCommit(false);
+				profileConnection.update(connection);
+				updateConnection.setAutoCommit(true);
+				//Only commit once, when everything is done - so we can rollback on any errors 
+				connection.commit();
+				return true;
 			} catch (SQLException ex) {
-				LOG.error(ex.getMessage(), ex);
+				connection.rollback();
+				logError(ex);
 				return false;
 			}
 		}
-		
+	}
+
+	private static void logError(Exception ex) {
+		LOG.error(ex.getMessage(), ex);
+		throw new RuntimeException(ex);
 	}
 }

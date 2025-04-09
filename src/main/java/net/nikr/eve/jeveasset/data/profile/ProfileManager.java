@@ -44,8 +44,7 @@ public class ProfileManager {
 	private List<Profile> profiles = new ArrayList<>();
 
 	public ProfileManager() {
-		activeProfile = new Profile();
-		ProfileDatabase.setUpdateConnectionUrl(activeProfile);
+		setActiveProfile(new Profile());
 		profiles.add(activeProfile);
 	}
 
@@ -74,7 +73,7 @@ public class ProfileManager {
 		this.profiles = profiles;
 	}
 
-	public void setActiveProfile(final Profile activeProfile) {
+	public final void setActiveProfile(final Profile activeProfile) {
 		this.activeProfile = activeProfile;
 		ProfileDatabase.setUpdateConnectionUrl(activeProfile);
 	}

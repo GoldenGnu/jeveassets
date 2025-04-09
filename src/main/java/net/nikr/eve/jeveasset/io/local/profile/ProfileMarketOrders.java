@@ -85,16 +85,15 @@ public class ProfileMarketOrders extends ProfileTable {
 	}
 
 	/**
-	 * Market orders are mutable (REPLACE). Market order changes are immutable (IGNORE)
+	 * Market orders are mutable (REPLACE).Market order changes are immutable (IGNORE)
 	 * @param connection
 	 * @param ownerID
-	 * @param marketOrders
-	 * @return 
+	 * @param marketOrders 
 	 */
-	public static boolean updateMarketOrders(Connection connection, long ownerID, Collection<MyMarketOrder> marketOrders) {
+	public static void updateMarketOrders(Connection connection, long ownerID, Collection<MyMarketOrder> marketOrders) throws SQLException {
 		//Tables exist
 		if (!tableExist(connection, MARKET_ORDERS_TABLE, MARKET_ORDER_CHANGES_TABLE)) {
-			return false;
+			return;
 		}
 
 		//Insert data
@@ -127,9 +126,6 @@ public class ProfileMarketOrders extends ProfileTable {
 				set(statement, marketOrder, ownerID);
 				rows.addRow();
 			}
-		} catch (SQLException ex) {
-			LOG.error(ex.getMessage(), ex);
-			return false;
 		}
 
 		String changesSQL = "INSERT OR IGNORE INTO " + MARKET_ORDER_CHANGES_TABLE + " ("
@@ -146,19 +142,13 @@ public class ProfileMarketOrders extends ProfileTable {
 					rows.addRow();
 				}
 			}
-		} catch (SQLException ex) {
-			LOG.error(ex.getMessage(), ex);
-			return false;
 		}
-		return true;
 	}
 
 	@Override
-	protected boolean insert(Connection connection, List<EsiOwner> esiOwners) {
+	protected void insert(Connection connection, List<EsiOwner> esiOwners) throws SQLException {
 		//Delete all data
-		if (!tableDelete(connection, MARKET_ORDERS_TABLE, MARKET_ORDER_CHANGES_TABLE)) {
-			return false;
-		}
+		tableDelete(connection, MARKET_ORDERS_TABLE, MARKET_ORDER_CHANGES_TABLE);
 
 		//Insert data
 		String ordersSQL = "INSERT INTO " + MARKET_ORDERS_TABLE + " ("
@@ -197,9 +187,6 @@ public class ProfileMarketOrders extends ProfileTable {
 					rows.addRow();
 				}
 			}
-		} catch (SQLException ex) {
-			LOG.error(ex.getMessage(), ex);
-			return false;
 		}
 
 		String changesSQL = "INSERT OR IGNORE INTO " + MARKET_ORDER_CHANGES_TABLE + " ("
@@ -223,15 +210,11 @@ public class ProfileMarketOrders extends ProfileTable {
 					}
 				}
 			}
-		} catch (SQLException ex) {
-			LOG.error(ex.getMessage(), ex);
-			return false;
 		}
-		return true;
 	}
 
 	@Override
-	protected boolean select(Connection connection, List<EsiOwner> esiOwners, Map<Long, EsiOwner> owners) {
+	protected void select(Connection connection, List<EsiOwner> esiOwners, Map<Long, EsiOwner> owners) throws SQLException {
 		Map<EsiOwner, Set<MyMarketOrder>> marketOrders = new HashMap<>();
 		Map<Long, Set<Change>> changes = new HashMap<>();
 		String changesSQL = "SELECT * FROM " + MARKET_ORDER_CHANGES_TABLE;
@@ -252,9 +235,6 @@ public class ProfileMarketOrders extends ProfileTable {
 			for (Map.Entry<EsiOwner, Set<MyMarketOrder>> entry : marketOrders.entrySet()) {
 				entry.getKey().setMarketOrders(entry.getValue());
 			}
-		} catch (SQLException ex) {
-			LOG.error(ex.getMessage(), ex);
-			return false;
 		}
 		String ordersSQL = "SELECT * FROM " + MARKET_ORDERS_TABLE;
 		try (PreparedStatement statement = connection.prepareStatement(ordersSQL);
@@ -316,15 +296,11 @@ public class ProfileMarketOrders extends ProfileTable {
 			for (Map.Entry<EsiOwner, Set<MyMarketOrder>> entry : marketOrders.entrySet()) {
 				entry.getKey().setMarketOrders(entry.getValue());
 			}
-			return true;
-		} catch (SQLException ex) {
-			LOG.error(ex.getMessage(), ex);
-			return false;
 		}
 	}
 
 	@Override
-	protected boolean create(Connection connection) {
+	protected void create(Connection connection) throws SQLException {
 		if (!tableExist(connection, MARKET_ORDERS_TABLE)) {
 			String sql = "CREATE TABLE IF NOT EXISTS " + MARKET_ORDERS_TABLE + " (\n"
 					+ "	ownerid INTEGER,"
@@ -351,9 +327,6 @@ public class ProfileMarketOrders extends ProfileTable {
 					+ ");";
 			try (Statement statement = connection.createStatement()) {
 				statement.execute(sql);
-			} catch (SQLException ex) {
-				LOG.error(ex.getMessage(), ex);
-				return false;
 			}
 		}
 		if (!tableExist(connection, MARKET_ORDER_CHANGES_TABLE)) {
@@ -366,11 +339,7 @@ public class ProfileMarketOrders extends ProfileTable {
 					+ ");";
 			try (Statement statement = connection.createStatement()) {
 				statement.execute(sql);
-			} catch (SQLException ex) {
-				LOG.error(ex.getMessage(), ex);
-				return false;
 			}
 		}
-		return true;
 	}
 }

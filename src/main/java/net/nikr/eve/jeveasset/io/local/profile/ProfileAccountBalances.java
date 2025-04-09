@@ -39,11 +39,9 @@ public class ProfileAccountBalances extends ProfileTable {
 	private static final String ACCOUNT_BALANCES_TABLE = "accountbalances";
 
 	@Override
-	protected boolean insert(Connection connection, List<EsiOwner> esiOwners) {
+	protected void insert(Connection connection, List<EsiOwner> esiOwners) throws SQLException {
 		//Delete all data
-		if (!tableDelete(connection, ACCOUNT_BALANCES_TABLE)) {
-			return false;
-		}
+		tableDelete(connection, ACCOUNT_BALANCES_TABLE);
 
 		//Insert Data
 		String sql = "INSERT INTO " + ACCOUNT_BALANCES_TABLE + " ("
@@ -67,15 +65,11 @@ public class ProfileAccountBalances extends ProfileTable {
 					rows.addRow();
 				}
 			}
-		} catch (SQLException ex) {
-			LOG.error(ex.getMessage(), ex);
-			return false;
 		}
-		return true;
 	}
 
 	@Override
-	protected boolean select(Connection connection, List<EsiOwner> esiOwners, Map<Long, EsiOwner> owners) {
+	protected void select(Connection connection, List<EsiOwner> esiOwners, Map<Long, EsiOwner> owners)  throws SQLException {
 		Map<EsiOwner, List<MyAccountBalance>> accountBalances = new HashMap<>();
 		String sql = "SELECT * FROM " + ACCOUNT_BALANCES_TABLE;
 		try (PreparedStatement statement = connection.prepareStatement(sql);
@@ -98,15 +92,11 @@ public class ProfileAccountBalances extends ProfileTable {
 			for (Map.Entry<EsiOwner, List<MyAccountBalance>> entry : accountBalances.entrySet()) {
 				entry.getKey().setAccountBalances(entry.getValue());
 			}
-			return true;
-		} catch (SQLException ex) {
-			LOG.error(ex.getMessage(), ex);
-			return false;
 		}
 	}
 
 	@Override
-	protected boolean create(Connection connection) {
+	protected void create(Connection connection)  throws SQLException {
 		if (!tableExist(connection, ACCOUNT_BALANCES_TABLE)) {
 			String sql = "CREATE TABLE IF NOT EXISTS " + ACCOUNT_BALANCES_TABLE + " (\n"
 					+ "	ownerid INTEGER,\n"
@@ -116,11 +106,7 @@ public class ProfileAccountBalances extends ProfileTable {
 					+ ");";
 			try (Statement statement = connection.createStatement()) {
 				statement.execute(sql);
-			} catch (SQLException ex) {
-				LOG.error(ex.getMessage(), ex);
-				return false;
 			}
 		}
-		return true;
 	}
 }

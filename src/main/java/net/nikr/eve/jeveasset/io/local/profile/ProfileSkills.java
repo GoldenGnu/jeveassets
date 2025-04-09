@@ -40,11 +40,9 @@ public class ProfileSkills extends ProfileTable {
 	private static final String SKILLS_TOTAL_TABLE = "skillstotal";
 
 	@Override
-	protected boolean insert(Connection connection, List<EsiOwner> esiOwners) {
+	protected void insert(Connection connection, List<EsiOwner> esiOwners) throws SQLException {
 		//Delete all data
-		if (!tableDelete(connection, SKILLS_TABLE, SKILLS_TOTAL_TABLE)) {
-			return false;
-		}
+		tableDelete(connection, SKILLS_TABLE, SKILLS_TOTAL_TABLE);
 
 		//Insert data
 		String skillsSQL = "INSERT INTO " + SKILLS_TABLE + " ("
@@ -72,9 +70,6 @@ public class ProfileSkills extends ProfileTable {
 					rows.addRow();
 				}
 			}
-		} catch (SQLException ex) {
-			LOG.error(ex.getMessage(), ex);
-			return false;
 		}
 
 		String totalSQL = "INSERT INTO " + SKILLS_TOTAL_TABLE + " ("
@@ -91,15 +86,11 @@ public class ProfileSkills extends ProfileTable {
 				setAttributeOptional(statement, ++index, owner.getUnallocatedSkillPoints());
 				rows.addRow();
 			}
-		} catch (SQLException ex) {
-			LOG.error(ex.getMessage(), ex);
-			return false;
 		}
-		return true;
 	}
 
 	@Override
-	protected boolean select(Connection connection, List<EsiOwner> esiOwners, Map<Long, EsiOwner> owners) {
+	protected void select(Connection connection, List<EsiOwner> esiOwners, Map<Long, EsiOwner> owners) throws SQLException {
 		Map<EsiOwner, List<MySkill>> accountBalances = new HashMap<>();
 		String skillsSQL = "SELECT * FROM " + SKILLS_TABLE;
 		try (PreparedStatement statement = connection.prepareStatement(skillsSQL);
@@ -127,9 +118,6 @@ public class ProfileSkills extends ProfileTable {
 			for (Map.Entry<EsiOwner, List<MySkill>> entry : accountBalances.entrySet()) {
 				entry.getKey().setSkills(entry.getValue());
 			}
-		} catch (SQLException ex) {
-			LOG.error(ex.getMessage(), ex);
-			return false;
 		}
 		String totalSQL = "SELECT * FROM " + SKILLS_TOTAL_TABLE;
 		try (PreparedStatement statement = connection.prepareStatement(totalSQL);
@@ -147,15 +135,11 @@ public class ProfileSkills extends ProfileTable {
 				owner.setTotalSkillPoints(totalSkillPoints);
 				owner.setUnallocatedSkillPoints(unallocatedSkillPoints);
 			}
-		} catch (SQLException ex) {
-			LOG.error(ex.getMessage(), ex);
-			return false;
 		}
-		return true;
 	}
 
 	@Override
-	protected boolean create(Connection connection) {
+	protected void create(Connection connection) throws SQLException {
 		if (!tableExist(connection, SKILLS_TABLE)) {
 			String sql = "CREATE TABLE IF NOT EXISTS " + SKILLS_TABLE + " (\n"
 					+ "	ownerid INTEGER,\n"
@@ -167,9 +151,6 @@ public class ProfileSkills extends ProfileTable {
 					+ ");";
 			try (Statement statement = connection.createStatement()) {
 				statement.execute(sql);
-			} catch (SQLException ex) {
-				LOG.error(ex.getMessage(), ex);
-				return false;
 			}
 		}
 		if (!tableExist(connection, SKILLS_TOTAL_TABLE)) {
@@ -181,11 +162,7 @@ public class ProfileSkills extends ProfileTable {
 					+ ");";
 			try (Statement statement = connection.createStatement()) {
 				statement.execute(sql);
-			} catch (SQLException ex) {
-				LOG.error(ex.getMessage(), ex);
-				return false;
 			}
 		}
-		return true;
 	}
 }
