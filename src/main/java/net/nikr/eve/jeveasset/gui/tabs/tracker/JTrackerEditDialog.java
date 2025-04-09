@@ -67,6 +67,7 @@ public class JTrackerEditDialog extends JDialogCentered {
 	//GUI
 	private final JTextField jDate;
 	private final JTextField jWalletBalance;
+	private final JTextField jImplants;
 	private final JButton jWalletBalanceFilterable;
 	private final JTextField jAssets;
 	private final JButton jAssetsFilterable;
@@ -104,6 +105,11 @@ public class JTrackerEditDialog extends JDialogCentered {
 		jWalletBalance = new JTextField();
 		jWalletBalance.setHorizontalAlignment(JTextField.RIGHT);
 		jWalletBalance.addFocusListener(listener);
+
+		JLabel jImplantsLabel = new JLabel(TabsTracker.get().implants());
+		jImplants = new JTextField();
+		jImplants.setHorizontalAlignment(JTextField.RIGHT);
+		jImplants.addFocusListener(listener);
 
 		jWalletBalanceFilterable = new JButton(Images.EDIT_EDIT.getIcon());
 		jWalletBalanceFilterable.setActionCommand(TrackerEditAction.EDIT_WALLET.name());
@@ -168,6 +174,7 @@ public class JTrackerEditDialog extends JDialogCentered {
 						.addComponent(jDateLabel)
 						.addComponent(jWalletBalanceLabel)
 						.addComponent(jAssetsLabel)
+						.addComponent(jImplantsLabel)
 						.addComponent(jSellOrdersLabel)
 						.addComponent(jEscrowsLabel)
 						.addComponent(jEscrowsToCoverLabel)
@@ -180,6 +187,7 @@ public class JTrackerEditDialog extends JDialogCentered {
 						.addComponent(jDate, FIELD_WIDTH, FIELD_WIDTH, FIELD_WIDTH)
 						.addComponent(jWalletBalance, FIELD_WIDTH, FIELD_WIDTH, FIELD_WIDTH)
 						.addComponent(jAssets, FIELD_WIDTH, FIELD_WIDTH, FIELD_WIDTH)
+						.addComponent(jImplants, FIELD_WIDTH, FIELD_WIDTH, FIELD_WIDTH)
 						.addComponent(jSellOrders, FIELD_WIDTH, FIELD_WIDTH, FIELD_WIDTH)
 						.addComponent(jEscrows, FIELD_WIDTH, FIELD_WIDTH, FIELD_WIDTH)
 						.addComponent(jEscrowsToCover, FIELD_WIDTH, FIELD_WIDTH, FIELD_WIDTH)
@@ -214,6 +222,10 @@ public class JTrackerEditDialog extends JDialogCentered {
 					.addComponent(jAssetsLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jAssets, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jAssetsFilterable, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+				)
+				.addGroup(layout.createParallelGroup()
+					.addComponent(jImplantsLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jImplants, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				)
 				.addGroup(layout.createParallelGroup()
 					.addComponent(jSellOrdersLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
@@ -271,6 +283,7 @@ public class JTrackerEditDialog extends JDialogCentered {
 		}
 		jWalletBalance.setText(format(value.getBalanceTotal()));
 		jAssets.setText(format(value.getAssetsTotal()));
+		jImplants.setText(format(value.getImplants()));
 		jSellOrders.setText(format(value.getSellOrders()));
 		jEscrows.setText(format(value.getEscrows()));
 		jEscrowsToCover.setText(format(value.getEscrowsToCover()));
@@ -313,6 +326,7 @@ public class JTrackerEditDialog extends JDialogCentered {
 		try {
 			double walletBalanc = parse(jWalletBalance.getText());
 			double assets = parse(jAssets.getText());
+			double implants = parse(jImplants.getText());
 			double sellOrders = parse(jSellOrders.getText());
 			double escrows = parse(jEscrows.getText());
 			double escrowsToCover = parse(jEscrowsToCover.getText());
@@ -351,6 +365,7 @@ public class JTrackerEditDialog extends JDialogCentered {
 						value.addAssets(assetValue, filterUpdate.getValue());
 					}
 				}
+				value.setImplants(implants);
 				value.setSellOrders(sellOrders);
 				value.setEscrows(escrows);
 				value.setEscrowsToCover(escrowsToCover);
