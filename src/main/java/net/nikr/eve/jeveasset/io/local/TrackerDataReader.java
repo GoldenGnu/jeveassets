@@ -159,6 +159,14 @@ public class TrackerDataReader extends AbstractBackup {
 			} else {
 				value.setAssetsTotal(assetsTotal);
 			}
+			//Implants
+			JsonElement implantNode = node.get("implants");
+			double implants = 0;
+			if (implantNode != null) {
+				implants = implantNode.getAsDouble();
+			}
+			value.setImplants(implants);
+			//Others
 			value.setEscrows(escrows);
 			value.setEscrowsToCover(escrowstocover);
 			value.setSellOrders(sellorders);
