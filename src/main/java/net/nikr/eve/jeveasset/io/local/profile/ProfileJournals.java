@@ -80,6 +80,7 @@ public class ProfileJournals extends ProfileTable {
 	 * @param connection
 	 * @param ownerID
 	 * @param journals 
+	 * @throws java.sql.SQLException 
 	 */
 	public static void  updateJournals(Connection connection, long ownerID, Collection<MyJournal> journals) throws SQLException {
 		//Tables exist

@@ -79,6 +79,7 @@ public class ProfileMining extends ProfileTable {
 	 * @param connection
 	 * @param ownerID
 	 * @param minings 
+	 * @throws java.sql.SQLException 
 	 */
 	public static void updateMinings(Connection connection, long ownerID, Collection<MyMining> minings) throws SQLException {
 		//Tables exist
@@ -112,6 +113,7 @@ public class ProfileMining extends ProfileTable {
 	 * @param connection
 	 * @param ownerID
 	 * @param extractions
+	 * @throws java.sql.SQLException
 	 */
 	public static void updateExtractions(Connection connection, long ownerID, Collection<MyExtraction> extractions) throws SQLException {
 		//Tables exist

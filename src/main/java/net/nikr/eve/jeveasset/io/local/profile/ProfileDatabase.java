@@ -103,7 +103,7 @@ public class ProfileDatabase {
 		if (profile == null) {
 			updateConnectionUrl = null;
 		} else {
-			updateConnectionUrl = getConnectionUrl(profile.getSQLiteFilename());;
+			updateConnectionUrl = getConnectionUrl(profile.getSQLiteFilename());
 		}
 		closeUpdateConnection();
 	}

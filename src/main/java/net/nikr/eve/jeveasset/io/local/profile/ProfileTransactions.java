@@ -72,6 +72,7 @@ public class ProfileTransactions  extends ProfileTable {
 	 * @param connection
 	 * @param ownerID
 	 * @param transactions
+	 * @throws java.sql.SQLException
 	 */
 	public static void updateTransactions(Connection connection, long ownerID, Collection<MyTransaction> transactions) throws SQLException {
 		//Tables exist

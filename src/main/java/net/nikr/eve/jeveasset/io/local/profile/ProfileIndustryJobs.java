@@ -81,8 +81,8 @@ public class ProfileIndustryJobs extends ProfileTable {
 	 * Industry jobs are mutable (REPLACE)
 	 * @param connection
 	 * @param ownerID
-	 * @param industryJobs
-	 * @return 
+	 * @param industryJobs 
+	 * @throws java.sql.SQLException 
 	 */
 	public static void updateIndustryJobs(Connection connection, long ownerID, Collection<MyIndustryJob> industryJobs) throws SQLException {
 		//Tables exist

@@ -89,6 +89,7 @@ public class ProfileMarketOrders extends ProfileTable {
 	 * @param connection
 	 * @param ownerID
 	 * @param marketOrders 
+	 * @throws java.sql.SQLException 
 	 */
 	public static void updateMarketOrders(Connection connection, long ownerID, Collection<MyMarketOrder> marketOrders) throws SQLException {
 		//Tables exist

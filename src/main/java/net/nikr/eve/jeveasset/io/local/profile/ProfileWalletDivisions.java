@@ -29,7 +29,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
-import static net.nikr.eve.jeveasset.io.local.profile.ProfileTable.LOG;
 
 
 public class ProfileWalletDivisions extends ProfileTable {

@@ -103,6 +103,7 @@ public class ProfileContracts extends ProfileTable {
 	 * Contract items are immutable (IGNORE)
 	 * @param connection
 	 * @param contractItemsLists 
+	 * @throws java.sql.SQLException 
 	 */
 	public static void updateContractItems(Connection connection, Collection<List<MyContractItem>> contractItemsLists) throws SQLException {
 		//Tables exist
@@ -141,11 +142,11 @@ public class ProfileContracts extends ProfileTable {
 	}
 
 	/**
-	 * Contracts are mutable (REPLACE). Owners are immutable (IGNORE)
+	 * Contracts are mutable (REPLACE).Owners are immutable (IGNORE)
 	 * @param connection
 	 * @param ownerID
-	 * @param contracts
-	 * @return 
+	 * @param contracts 
+	 * @throws java.sql.SQLException 
 	 */
 	public static void updateContracts(Connection connection, long ownerID, Collection<MyContract> contracts) throws SQLException {
 		//Tables exist
