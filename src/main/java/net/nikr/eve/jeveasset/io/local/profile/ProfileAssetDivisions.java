@@ -58,7 +58,7 @@ public class ProfileAssetDivisions extends ProfileTable {
 					int index = 0;
 					setAttribute(statement, ++index, owner.getOwnerID());
 					setAttribute(statement, ++index, entry.getKey());
-					setAttribute(statement, ++index, entry.getValue());
+					setAttributeOptional(statement, ++index, entry.getValue());
 					rows.addRow();
 				}
 			}
