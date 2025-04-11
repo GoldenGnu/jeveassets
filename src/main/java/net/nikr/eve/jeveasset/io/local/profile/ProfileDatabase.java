@@ -114,6 +114,7 @@ public class ProfileDatabase {
 		}
 		if (updateConnection == null) {
 			updateConnection = DriverManager.getConnection(updateConnectionUrl);
+			updateConnection.setAutoCommit(false);
 		}
 		return updateConnection;
 	}
@@ -121,6 +122,7 @@ public class ProfileDatabase {
 	private static synchronized void closeUpdateConnection() {
 		if (updateConnection != null) {
 			try {
+				updateConnection.setAutoCommit(true);
 				updateConnection.close();
 			} catch (SQLException ex) {
 				logError(ex);
@@ -246,9 +248,7 @@ public class ProfileDatabase {
 				return false;
 			}
 			try {
-				updateConnection.setAutoCommit(false);
 				profileConnection.update(connection);
-				updateConnection.setAutoCommit(true);
 				//Only commit once, when everything is done - so we can rollback on any errors 
 				connection.commit();
 				return true;
