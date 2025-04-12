@@ -42,6 +42,7 @@ import net.nikr.eve.jeveasset.data.api.raw.RawBlueprint;
 public interface OwnerType extends SimpleOwner {
 
 	//Info
+	public String getAccountID();
 	public String getCorporationName();
 	public void setOwnerName(final String ownerName);
 	public void setCorporationName(String corporationName);

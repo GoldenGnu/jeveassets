@@ -61,6 +61,7 @@ public abstract class AbstractOwner implements OwnerType {
 	private Long totalSkillPoints = null;
 	private Integer unallocatedSkillPoints = null;
 
+	private final String accountID;
 	private String ownerName;
 	private String corporationName = null;
 	private long ownerID;
@@ -82,14 +83,12 @@ public abstract class AbstractOwner implements OwnerType {
 	private Date skillsNextUpdate = Settings.getNow();
 	private Date miningNextUpdate = Settings.getNow();
 
-	public AbstractOwner() { }
-
-	public AbstractOwner(String ownerName, long ownerID) {
-		this.ownerName = ownerName;
-		this.ownerID = ownerID;
+	public AbstractOwner(String uniqueID) {
+		this.accountID = uniqueID;
 	}
 
 	public AbstractOwner(AbstractOwner abstractOwner) {
+		accountID = abstractOwner.accountID;
 		accountBalances.addAll(abstractOwner.accountBalances);
 		marketOrders.addAll(abstractOwner.marketOrders);
 		transactions.addAll(abstractOwner.transactions);
@@ -123,6 +122,11 @@ public abstract class AbstractOwner implements OwnerType {
 		this.blueprintsNextUpdate = abstractOwner.blueprintsNextUpdate;
 		this.skillsNextUpdate = abstractOwner.skillsNextUpdate;
 		this.miningNextUpdate = abstractOwner.miningNextUpdate;
+	}
+
+	@Override
+	public String getAccountID() {
+		return accountID;
 	}
 
 	@Override

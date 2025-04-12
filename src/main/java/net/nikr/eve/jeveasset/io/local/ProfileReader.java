@@ -177,7 +177,7 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 					}
 				}
 			}
-			EsiOwner owner = new EsiOwner();
+			EsiOwner owner = EsiOwner.create();
 			owner.setRoles(roles);
 			owner.setAccountName(accountName);
 			owner.setScopes(scopes);

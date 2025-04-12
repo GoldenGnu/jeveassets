@@ -46,7 +46,7 @@ public class ProfileSkills extends ProfileTable {
 
 		//Insert data
 		String skillsSQL = "INSERT INTO " + SKILLS_TABLE + " ("
-				+ "	ownerid,"
+				+ "	accountid,"
 				+ "	id,"
 				+ "	sp,"
 				+ "	active,"
@@ -62,7 +62,7 @@ public class ProfileSkills extends ProfileTable {
 			for (EsiOwner owner : esiOwners) {
 				for (MySkill skill : owner.getSkills()) {
 					int index = 0;
-					setAttribute(statement, ++index, owner.getOwnerID());
+					setAttribute(statement, ++index, owner.getAccountID());
 					setAttribute(statement, ++index, skill.getTypeID());
 					setAttribute(statement, ++index, skill.getSkillpoints());
 					setAttribute(statement, ++index, skill.getActiveSkillLevel());
@@ -73,7 +73,7 @@ public class ProfileSkills extends ProfileTable {
 		}
 
 		String totalSQL = "INSERT INTO " + SKILLS_TOTAL_TABLE + " ("
-				+ "	ownerid,"
+				+ "	accountid,"
 				+ "	total,"
 				+ "	unallocated)"
 				+ " VALUES (?,?,?)";
@@ -81,7 +81,7 @@ public class ProfileSkills extends ProfileTable {
 			Rows rows = new Rows(statement, esiOwners.size());
 			for (EsiOwner owner : esiOwners) {
 				int index = 0;
-				setAttribute(statement, ++index, owner.getOwnerID());
+				setAttribute(statement, ++index, owner.getAccountID());
 				setAttributeOptional(statement, ++index, owner.getTotalSkillPoints());
 				setAttributeOptional(statement, ++index, owner.getUnallocatedSkillPoints());
 				rows.addRow();
@@ -90,13 +90,13 @@ public class ProfileSkills extends ProfileTable {
 	}
 
 	@Override
-	protected void select(Connection connection, List<EsiOwner> esiOwners, Map<Long, EsiOwner> owners) throws SQLException {
+	protected void select(Connection connection, List<EsiOwner> esiOwners, Map<String, EsiOwner> owners) throws SQLException {
 		Map<EsiOwner, List<MySkill>> accountBalances = new HashMap<>();
 		String skillsSQL = "SELECT * FROM " + SKILLS_TABLE;
 		try (PreparedStatement statement = connection.prepareStatement(skillsSQL);
 				ResultSet rs = statement.executeQuery();) {
 			while (rs.next()) {
-				long ownerID = getLong(rs, "ownerid");
+				String accountID = getString(rs, "accountid");
 
 				int typeID = getInt(rs, "id");
 				long skillpoints = getLong(rs, "sp");
@@ -109,7 +109,7 @@ public class ProfileSkills extends ProfileTable {
 				skill.setActiveSkillLevel(activeSkillLevel);
 				skill.setTrainedSkillLevel(trainedSkillLevel);
 
-				EsiOwner owner = owners.get(ownerID);
+				EsiOwner owner = owners.get(accountID);
 				if (owner == null) {
 					continue;
 				}
@@ -123,12 +123,12 @@ public class ProfileSkills extends ProfileTable {
 		try (PreparedStatement statement = connection.prepareStatement(totalSQL);
 				ResultSet rs = statement.executeQuery();) {
 			while (rs.next()) {
-				long ownerID = getLong(rs, "ownerid");
+				String accountID = getString(rs, "accountid");
 
 				Integer unallocatedSkillPoints = getIntOptional(rs, "unallocated");
 				Long totalSkillPoints = getLongOptional(rs, "total");
 
-				EsiOwner owner = owners.get(ownerID);
+				EsiOwner owner = owners.get(accountID);
 				if (owner == null) {
 					continue;
 				}
@@ -142,12 +142,12 @@ public class ProfileSkills extends ProfileTable {
 	protected void create(Connection connection) throws SQLException {
 		if (!tableExist(connection, SKILLS_TABLE)) {
 			String sql = "CREATE TABLE IF NOT EXISTS " + SKILLS_TABLE + " (\n"
-					+ "	ownerid INTEGER,\n"
+					+ "	accountid TEXT,\n"
 					+ "	id INTEGER,"
 					+ "	sp INTEGER,"
 					+ "	active INTEGER,"
 					+ "	trained INTEGER,"
-					+ "	UNIQUE(ownerid, id)\n"
+					+ "	UNIQUE(accountid, id)\n"
 					+ ");";
 			try (Statement statement = connection.createStatement()) {
 				statement.execute(sql);
@@ -155,10 +155,10 @@ public class ProfileSkills extends ProfileTable {
 		}
 		if (!tableExist(connection, SKILLS_TOTAL_TABLE)) {
 			String sql = "CREATE TABLE IF NOT EXISTS " + SKILLS_TOTAL_TABLE + " (\n"
-					+ "	ownerid INTEGER,\n"
+					+ "	accountid TEXT,\n"
 					+ "	total INTEGER,"
 					+ "	unallocated INTEGER,"
-					+ "	UNIQUE(ownerid)\n"
+					+ "	UNIQUE(accountid)\n"
 					+ ");";
 			try (Statement statement = connection.createStatement()) {
 				statement.execute(sql);

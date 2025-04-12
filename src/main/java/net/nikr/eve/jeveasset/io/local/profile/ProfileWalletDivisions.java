@@ -42,7 +42,7 @@ public class ProfileWalletDivisions extends ProfileTable {
 
 		//Insert data
 		String sql = "INSERT INTO " + WALLET_DIVISIONS_TABLE + " ("
-				+ "	ownerid,"
+				+ "	accountid,"
 				+ "	id,"
 				+ "	name)"
 				+ " VALUES (?,?,?)";
@@ -56,7 +56,7 @@ public class ProfileWalletDivisions extends ProfileTable {
 			for (EsiOwner owner : esiOwners) {
 				for (Map.Entry<Integer, String> entry : owner.getWalletDivisions().entrySet()) {
 					int index = 0;
-					setAttribute(statement, ++index, owner.getOwnerID());
+					setAttribute(statement, ++index, owner.getAccountID());
 					setAttribute(statement, ++index, entry.getKey());
 					setAttributeOptional(statement, ++index, entry.getValue());
 					rows.addRow();
@@ -66,18 +66,18 @@ public class ProfileWalletDivisions extends ProfileTable {
 	}
 
 	@Override
-	protected void select(Connection connection, List<EsiOwner> esiOwners, Map<Long, EsiOwner> owners) throws SQLException {
+	protected void select(Connection connection, List<EsiOwner> esiOwners, Map<String, EsiOwner> owners) throws SQLException {
 		Map<EsiOwner, Map<Integer, String>> divisions = new HashMap<>();
 		String sql = "SELECT * FROM " + WALLET_DIVISIONS_TABLE;
 		try (PreparedStatement statement = connection.prepareStatement(sql);
 				ResultSet rs = statement.executeQuery();) {
 			while (rs.next()) {
-				long ownerID = getLong(rs, "ownerid");
+				String accountID = getString(rs, "accountid");
 			
 				int id = getInt(rs, "id");
 				String name = getStringOptional(rs, "name");
 				
-				EsiOwner owner = owners.get(ownerID);
+				EsiOwner owner = owners.get(accountID);
 				if (owner == null) {
 					continue;
 				}
@@ -93,10 +93,10 @@ public class ProfileWalletDivisions extends ProfileTable {
 	protected void create(Connection connection) throws SQLException {
 		if (!tableExist(connection, WALLET_DIVISIONS_TABLE)) {
 			String sql = "CREATE TABLE IF NOT EXISTS " + WALLET_DIVISIONS_TABLE + " (\n"
-					+ "	ownerid INTEGER,\n"
+					+ "	accountid TEXT,\n"
 					+ "	id INTEGER,"
 					+ "	name TEXT,"
-					+ "	UNIQUE(ownerid, id)\n"
+					+ "	UNIQUE(accountid, id)\n"
 					+ ");";
 			try (Statement statement = connection.createStatement()) {
 				statement.execute(sql);

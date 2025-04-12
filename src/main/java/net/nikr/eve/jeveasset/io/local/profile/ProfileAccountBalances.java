@@ -45,7 +45,7 @@ public class ProfileAccountBalances extends ProfileTable {
 
 		//Insert Data
 		String sql = "INSERT INTO " + ACCOUNT_BALANCES_TABLE + " ("
-				+ "	ownerid,"
+				+ "	accountid,"
 				+ "	accountkey,"
 				+ "	balance)"
 				+ " VALUES (?,?,?)";
@@ -59,7 +59,7 @@ public class ProfileAccountBalances extends ProfileTable {
 			for (EsiOwner owner : esiOwners) {
 				for (MyAccountBalance accountBalance : owner.getAccountBalances()) {
 					int index = 0;
-					setAttribute(statement, ++index, owner.getOwnerID());
+					setAttribute(statement, ++index, owner.getAccountID());
 					setAttribute(statement, ++index, accountBalance.getAccountKey());
 					setAttribute(statement, ++index, accountBalance.getBalance());
 					rows.addRow();
@@ -69,21 +69,20 @@ public class ProfileAccountBalances extends ProfileTable {
 	}
 
 	@Override
-	protected void select(Connection connection, List<EsiOwner> esiOwners, Map<Long, EsiOwner> owners)  throws SQLException {
+	protected void select(Connection connection, List<EsiOwner> esiOwners, Map<String, EsiOwner> owners)  throws SQLException {
 		Map<EsiOwner, List<MyAccountBalance>> accountBalances = new HashMap<>();
 		String sql = "SELECT * FROM " + ACCOUNT_BALANCES_TABLE;
 		try (PreparedStatement statement = connection.prepareStatement(sql);
 				ResultSet rs = statement.executeQuery();) {
 			while (rs.next()) {
-				long ownerID = getLong(rs, "ownerid");
-
 				RawAccountBalance accountBalance = RawAccountBalance.create();
+				String accountID = getString(rs, "accountid");
 				int accountKey = getInt(rs, "accountkey");
 				double balance = getDouble(rs, "balance");
 				accountBalance.setAccountKey(accountKey);
 				accountBalance.setBalance(balance);
 
-				EsiOwner owner = owners.get(ownerID);
+				EsiOwner owner = owners.get(accountID);
 				if (owner == null) {
 					continue;
 				}
@@ -99,10 +98,10 @@ public class ProfileAccountBalances extends ProfileTable {
 	protected void create(Connection connection)  throws SQLException {
 		if (!tableExist(connection, ACCOUNT_BALANCES_TABLE)) {
 			String sql = "CREATE TABLE IF NOT EXISTS " + ACCOUNT_BALANCES_TABLE + " (\n"
-					+ "	ownerid INTEGER,\n"
+					+ "	accountid TEXT,\n"
 					+ "	accountkey INTEGER,\n"
 					+ "	balance REAL,\n"
-					+ "	UNIQUE(ownerid, accountkey)\n"
+					+ "	UNIQUE(accountid, accountkey)\n"
 					+ ");";
 			try (Statement statement = connection.createStatement()) {
 				statement.execute(sql);

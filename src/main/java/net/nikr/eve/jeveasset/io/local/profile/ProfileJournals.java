@@ -49,9 +49,9 @@ public class ProfileJournals extends ProfileTable {
 		return Settings.get().isJournalHistory();
 	}
 
-	private static void set(PreparedStatement statement, MyJournal journal, long ownerID) throws SQLException {
+	private static void set(PreparedStatement statement, MyJournal journal, String accountID) throws SQLException {
 		int index = 0;
-		setAttributeOptional(statement, ++index, ownerID);
+		setAttributeOptional(statement, ++index, accountID);
 		setAttributeOptional(statement, ++index, journal.getAmount());
 		setAttributeOptional(statement, ++index, journal.getBalance());
 		setAttributeOptional(statement, ++index, journal.getContextID());
@@ -78,11 +78,11 @@ public class ProfileJournals extends ProfileTable {
 	/**
 	 * Journal entries are immutable (IGNORE)
 	 * @param connection
-	 * @param ownerID
+	 * @param accountID
 	 * @param journals 
 	 * @throws java.sql.SQLException 
 	 */
-	public static void  updateJournals(Connection connection, long ownerID, Collection<MyJournal> journals) throws SQLException {
+	public static void  updateJournals(Connection connection, String accountID, Collection<MyJournal> journals) throws SQLException {
 		//Tables exist
 		if (!tableExist(connection, JOURNALS_TABLE)) {
 			return;
@@ -90,7 +90,7 @@ public class ProfileJournals extends ProfileTable {
 
 		//Insert data
 		String sql = "INSERT OR IGNORE INTO " + JOURNALS_TABLE + " ("
-				+ "	ownerid,"
+				+ "	accountid,"
 				+ "	amount,"
 				+ "	balance,"
 				+ "	contextid,"
@@ -111,7 +111,7 @@ public class ProfileJournals extends ProfileTable {
 		try (PreparedStatement statement = connection.prepareStatement(sql)) {
 			Rows rows = new Rows(statement, journals.size());
 				for (MyJournal journal : journals) {
-					set(statement, journal, ownerID);
+					set(statement, journal, accountID);
 					rows.addRow();
 				}
 		}
@@ -124,7 +124,7 @@ public class ProfileJournals extends ProfileTable {
 
 		//Insert data
 		String sql = "INSERT INTO " + JOURNALS_TABLE + " ("
-				+ "	ownerid,"
+				+ "	accountid,"
 				+ "	amount,"
 				+ "	balance,"
 				+ "	contextid,"
@@ -151,7 +151,7 @@ public class ProfileJournals extends ProfileTable {
 			});
 			for (EsiOwner owner : esiOwners) {
 				for (MyJournal journal : owner.getJournal()) {
-					set(statement, journal, owner.getOwnerID());
+					set(statement, journal, owner.getAccountID());
 					rows.addRow();
 				}
 			}
@@ -159,13 +159,13 @@ public class ProfileJournals extends ProfileTable {
 	}
 
 	@Override
-	protected void select(Connection connection, List<EsiOwner> esiOwners, Map<Long, EsiOwner> owners) throws SQLException {
+	protected void select(Connection connection, List<EsiOwner> esiOwners, Map<String, EsiOwner> owners) throws SQLException {
 		Map<EsiOwner, Set<MyJournal>> journals = new HashMap<>();
 		String sql = "SELECT * FROM " + JOURNALS_TABLE;
 		try (PreparedStatement statement = connection.prepareStatement(sql);
 				ResultSet rs = statement.executeQuery();) {
 			while (rs.next()) {
-				long ownerID = getLong(rs, "ownerid");
+				String accountID = getString(rs, "accountid");
 				RawJournal rawJournal = RawJournal.create();
 				Double amount = getDoubleOptional(rs, "amount");
 				Double balance = getDoubleOptional(rs, "balance");
@@ -204,7 +204,7 @@ public class ProfileJournals extends ProfileTable {
 				rawJournal.setAccountKey(accountKey);
 
 
-				EsiOwner owner = owners.get(ownerID);
+				EsiOwner owner = owners.get(accountID);
 				if (owner == null) {
 					continue;
 				}
@@ -220,7 +220,7 @@ public class ProfileJournals extends ProfileTable {
 	protected void create(Connection connection) throws SQLException {
 		if (!tableExist(connection, JOURNALS_TABLE)) {
 			String sql = "CREATE TABLE IF NOT EXISTS " + JOURNALS_TABLE + " (\n"
-					+ "	ownerid INTEGER,"
+					+ "	accountid TEXT,"
 					+ "	amount REAL,"
 					+ "	balance REAL,"
 					+ "	contextid INTEGER,"
@@ -237,7 +237,7 @@ public class ProfileJournals extends ProfileTable {
 					+ "	taxamount REAL,"
 					+ "	taxreceiverid INTEGER,"
 					+ "	accountkey INTEGER,"
-					+ "	UNIQUE(ownerid, refid, amount)\n"
+					+ "	UNIQUE(accountid, refid, amount)\n"
 					+ ");";
 			try (Statement statement = connection.createStatement()) {
 				statement.execute(sql);

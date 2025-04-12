@@ -44,7 +44,7 @@ public class ProfileBlueprints extends ProfileTable {
 
 		//Insert data
 		String sql = "INSERT INTO " + BLUEPRINTS_TABLE + " ("
-				+ "	ownerid,"
+				+ "	accountid,"
 				+ "	itemid,"
 				+ "	locationid,"
 				+ "	typeid,"
@@ -65,7 +65,7 @@ public class ProfileBlueprints extends ProfileTable {
 			for (EsiOwner owner : esiOwners) {
 				for (RawBlueprint blueprint : owner.getBlueprints().values()) {
 					int index = 0;
-					setAttribute(statement, ++index, owner.getOwnerID());
+					setAttribute(statement, ++index, owner.getAccountID());
 					setAttribute(statement, ++index, blueprint.getItemID());
 					setAttribute(statement, ++index, blueprint.getLocationID());
 					setAttribute(statement, ++index, blueprint.getTypeID());
@@ -82,13 +82,13 @@ public class ProfileBlueprints extends ProfileTable {
 	}
 
 	@Override
-	protected void select(Connection connection, List<EsiOwner> esiOwners, Map<Long, EsiOwner> owners) throws SQLException {
+	protected void select(Connection connection, List<EsiOwner> esiOwners, Map<String, EsiOwner> owners) throws SQLException {
 		Map<EsiOwner, Map<Long, RawBlueprint>> blueprints = new HashMap<>();
 		String sql = "SELECT * FROM " + BLUEPRINTS_TABLE;
 		try (PreparedStatement statement = connection.prepareStatement(sql);
 				ResultSet rs = statement.executeQuery();) {
 			while (rs.next()) {
-				long ownerID = getLong(rs, "ownerid");
+				String accountID = getString(rs, "accountid");
 				
 				RawBlueprint blueprint = RawBlueprint.create();
 				long itemID = getLong(rs, "itemid");
@@ -111,7 +111,7 @@ public class ProfileBlueprints extends ProfileTable {
 				blueprint.setTimeEfficiency(timeEfficiency);
 				blueprint.setTypeID(typeID);
 				
-				EsiOwner owner = owners.get(ownerID);
+				EsiOwner owner = owners.get(accountID);
 				if (owner == null) {
 					continue;
 				}
@@ -127,7 +127,7 @@ public class ProfileBlueprints extends ProfileTable {
 	protected void create(Connection connection) throws SQLException {
 		if (!tableExist(connection, BLUEPRINTS_TABLE)) {
 			String sql = "CREATE TABLE IF NOT EXISTS " + BLUEPRINTS_TABLE + " (\n"
-					+ "	ownerid INTEGER,\n"
+					+ "	accountid TEXT,\n"
 					+ "	itemid INTEGER,"
 					+ "	locationid INTEGER,"
 					+ "	typeid INTEGER,"
@@ -137,7 +137,7 @@ public class ProfileBlueprints extends ProfileTable {
 					+ "	timeefficiency INTEGER,"
 					+ "	materialefficiency INTEGER,"
 					+ "	runs NUMERIC,"
-					+ "	UNIQUE(ownerid, itemid)\n"
+					+ "	UNIQUE(accountid, itemid)\n"
 					+ ");";
 			try (Statement statement = connection.createStatement()) {
 				statement.execute(sql);

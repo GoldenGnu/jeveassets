@@ -48,9 +48,9 @@ public class ProfileTransactions  extends ProfileTable {
 		return Settings.get().isTransactionHistory();
 	}
 
-	private static void set(PreparedStatement statement, MyTransaction transaction, long ownerID) throws SQLException {
+	private static void set(PreparedStatement statement, MyTransaction transaction, String accountID) throws SQLException {
 		int index = 0;
-		setAttribute(statement, ++index, ownerID);
+		setAttribute(statement, ++index, accountID);
 		setAttribute(statement, ++index, transaction.getDate());
 		setAttribute(statement, ++index, transaction.getTransactionID());
 		setAttribute(statement, ++index, transaction.getQuantity());
@@ -70,11 +70,11 @@ public class ProfileTransactions  extends ProfileTable {
 	/**
 	 * Transactions are immutable (IGNORE)
 	 * @param connection
-	 * @param ownerID
+	 * @param accountID
 	 * @param transactions
 	 * @throws java.sql.SQLException
 	 */
-	public static void updateTransactions(Connection connection, long ownerID, Collection<MyTransaction> transactions) throws SQLException {
+	public static void updateTransactions(Connection connection, String accountID, Collection<MyTransaction> transactions) throws SQLException {
 		//Tables exist
 		if (!tableExist(connection, TRANSACTIONS_TABLE)) {
 			return;
@@ -82,7 +82,7 @@ public class ProfileTransactions  extends ProfileTable {
 
 		//Insert data
 		String sql = "INSERT OR IGNORE INTO " + TRANSACTIONS_TABLE + " ("
-				+ "	ownerid,"
+				+ "	accountid,"
 				+ "	transactiondatetime,"
 				+ "	transactionid,"
 				+ "	quantity,"
@@ -99,7 +99,7 @@ public class ProfileTransactions  extends ProfileTable {
 		try (PreparedStatement statement = connection.prepareStatement(sql)) {
 			Rows rows = new Rows(statement, transactions.size());
 			for (MyTransaction transaction : transactions) {
-				set(statement, transaction, ownerID);
+				set(statement, transaction, accountID);
 				rows.addRow();
 			}
 		}
@@ -112,7 +112,7 @@ public class ProfileTransactions  extends ProfileTable {
 
 		//Insert data
 		String sql = "INSERT INTO " + TRANSACTIONS_TABLE + " ("
-				+ "	ownerid,"
+				+ "	accountid,"
 				+ "	transactiondatetime,"
 				+ "	transactionid,"
 				+ "	quantity,"
@@ -135,7 +135,7 @@ public class ProfileTransactions  extends ProfileTable {
 			});
 			for (EsiOwner owner : esiOwners) {
 				for (MyTransaction transaction : owner.getTransactions()) {
-					set(statement, transaction, owner.getOwnerID());
+					set(statement, transaction, owner.getAccountID());
 					rows.addRow();
 				}
 			}
@@ -143,13 +143,13 @@ public class ProfileTransactions  extends ProfileTable {
 	}
 
 	@Override
-	protected void select(Connection connection, List<EsiOwner> esiOwners, Map<Long, EsiOwner> owners) throws SQLException {
+	protected void select(Connection connection, List<EsiOwner> esiOwners, Map<String, EsiOwner> owners) throws SQLException {
 		Map<EsiOwner, Set<MyTransaction>> transactions = new HashMap<>();
 		String sql = "SELECT * FROM " + TRANSACTIONS_TABLE;
 		try (PreparedStatement statement = connection.prepareStatement(sql);
 				ResultSet rs = statement.executeQuery();) {
 			while (rs.next()) {
-				long ownerID = getLong(rs, "ownerid");
+				String accountID = getString(rs, "accountid");
 				RawTransaction rawTransaction = RawTransaction.create();
 				Date date = getDate(rs, "transactiondatetime");
 				long transactionID = getLong(rs, "transactionid");
@@ -179,7 +179,7 @@ public class ProfileTransactions  extends ProfileTable {
 				rawTransaction.setAccountKey(accountKey);
 
 				
-				EsiOwner owner = owners.get(ownerID);
+				EsiOwner owner = owners.get(accountID);
 				if (owner == null) {
 					continue;
 				}
@@ -196,7 +196,7 @@ public class ProfileTransactions  extends ProfileTable {
 	protected void create(Connection connection) throws SQLException {
 		if (!tableExist(connection, TRANSACTIONS_TABLE)) {
 			String sql = "CREATE TABLE IF NOT EXISTS " + TRANSACTIONS_TABLE + " (\n"
-					+ "	ownerid INTEGER,\n"
+					+ "	accountid TEXT,\n"
 					+ "	transactiondatetime INTEGER,"
 					+ "	transactionid INTEGER,"
 					+ "	quantity INTEGER,"
@@ -209,7 +209,7 @@ public class ProfileTransactions  extends ProfileTable {
 					+ "	journaltransactionid INTEGER,"
 					+ "	clienttypeid INTEGER,"
 					+ "	accountkey INTEGER,"
-					+ "	UNIQUE(ownerid, transactionid, price)\n"
+					+ "	UNIQUE(accountid, transactionid, price)\n"
 					+ ");";
 			try (Statement statement = connection.createStatement()) {
 				statement.execute(sql);

@@ -48,9 +48,9 @@ public class ProfileIndustryJobs extends ProfileTable {
 		return Settings.get().isIndustryJobsHistory();
 	}
 
-	private static void set(PreparedStatement statement, MyIndustryJob industryJob, long ownerID) throws SQLException {
+	private static void set(PreparedStatement statement, MyIndustryJob industryJob, String accountID) throws SQLException {
 		int index = 0;
-		setAttribute(statement, ++index, ownerID);
+		setAttribute(statement, ++index, accountID);
 		setAttribute(statement, ++index, industryJob.getJobID());
 		setAttribute(statement, ++index, industryJob.getInstallerID());
 		setAttribute(statement, ++index, industryJob.getFacilityID());
@@ -80,11 +80,11 @@ public class ProfileIndustryJobs extends ProfileTable {
 	/**
 	 * Industry jobs are mutable (REPLACE)
 	 * @param connection
-	 * @param ownerID
+	 * @param accountID
 	 * @param industryJobs 
 	 * @throws java.sql.SQLException 
 	 */
-	public static void updateIndustryJobs(Connection connection, long ownerID, Collection<MyIndustryJob> industryJobs) throws SQLException {
+	public static void updateIndustryJobs(Connection connection, String accountID, Collection<MyIndustryJob> industryJobs) throws SQLException {
 		//Tables exist
 		if (!tableExist(connection, INDUSTRY_JOBS_TABLE)) {
 			return;
@@ -92,7 +92,7 @@ public class ProfileIndustryJobs extends ProfileTable {
 
 		//Insert data
 		String sql = "INSERT OR REPLACE INTO " + INDUSTRY_JOBS_TABLE + " ("
-				+ "	ownerid,"
+				+ "	accountid,"
 				+ "	jobid,"
 				+ "	installerid,"
 				+ "	facilityid,"
@@ -121,7 +121,7 @@ public class ProfileIndustryJobs extends ProfileTable {
 		try (PreparedStatement statement = connection.prepareStatement(sql)) {
 			Rows rows = new Rows(statement, industryJobs.size());
 			for (MyIndustryJob industryJob : industryJobs) {
-				set(statement, industryJob, ownerID);
+				set(statement, industryJob, accountID);
 				rows.addRow();
 			}
 		}
@@ -134,7 +134,7 @@ public class ProfileIndustryJobs extends ProfileTable {
 
 		//Insert data
 		String sql = "INSERT INTO " + INDUSTRY_JOBS_TABLE + " ("
-				+ "	ownerid,"
+				+ "	accountid,"
 				+ "	jobid,"
 				+ "	installerid,"
 				+ "	facilityid,"
@@ -169,7 +169,7 @@ public class ProfileIndustryJobs extends ProfileTable {
 			});
 			for (EsiOwner owner : esiOwners) {
 				for (MyIndustryJob industryJob : owner.getIndustryJobs()) {
-					set(statement, industryJob, owner.getOwnerID());
+					set(statement, industryJob, owner.getAccountID());
 					rows.addRow();
 				}
 			}
@@ -177,13 +177,13 @@ public class ProfileIndustryJobs extends ProfileTable {
 	}
 
 	@Override
-	protected void select(Connection connection, List<EsiOwner> esiOwners, Map<Long, EsiOwner> owners) throws SQLException {
+	protected void select(Connection connection, List<EsiOwner> esiOwners, Map<String, EsiOwner> owners) throws SQLException {
 		Map<EsiOwner, Set<MyIndustryJob>> industryJobs = new HashMap<>();
 		String sql = "SELECT * FROM " + INDUSTRY_JOBS_TABLE;
 		try (PreparedStatement statement = connection.prepareStatement(sql);
 				ResultSet rs = statement.executeQuery();) {
 			while (rs.next()) {
-				long ownerID = getLong(rs, "ownerid");
+				String accountID = getString(rs, "accountid");
 				RawIndustryJob rawIndustryJob = RawIndustryJob.create();
 				int jobID = getInt(rs, "jobid");
 				int installerID = getInt(rs, "installerid");
@@ -235,7 +235,7 @@ public class ProfileIndustryJobs extends ProfileTable {
 				rawIndustryJob.setStatusString(statusString);
 				rawIndustryJob.setSuccessfulRuns(successfulRuns);
 
-				EsiOwner owner = owners.get(ownerID);
+				EsiOwner owner = owners.get(accountID);
 				if (owner == null) {
 					continue;
 				}
@@ -253,7 +253,7 @@ public class ProfileIndustryJobs extends ProfileTable {
 	protected void create(Connection connection) throws SQLException {
 		if (!tableExist(connection, INDUSTRY_JOBS_TABLE)) {
 			String sql = "CREATE TABLE IF NOT EXISTS " + INDUSTRY_JOBS_TABLE + " (\n"
-					+ "	ownerid INTEGER,\n"
+					+ "	accountid TEXT,\n"
 					+ "	jobid INTEGER,"
 					+ "	installerid INTEGER,"
 					+ "	facilityid INTEGER,"
@@ -278,7 +278,7 @@ public class ProfileIndustryJobs extends ProfileTable {
 					+ "	completedcharacterid INTEGER,"
 					+ "	successfulruns INTEGER,"
 					+ "	esi NUMERIC,"
-					+ "	UNIQUE(ownerid, jobid)\n"
+					+ "	UNIQUE(accountid, jobid)\n"
 					+ ");";
 			try (Statement statement = connection.createStatement()) {
 				statement.execute(sql);

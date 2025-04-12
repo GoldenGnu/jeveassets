@@ -42,7 +42,7 @@ public class ProfileActiveShip extends ProfileTable {
 
 		//Insert Data
 		String sql = "INSERT INTO " + ACTIVE_SHIP_TABLE + " ("
-				+ "	ownerid,"
+				+ "	accountid,"
 				+ "	itemid,"
 				+ "	typeid,"
 				+ "	locationid)"
@@ -60,7 +60,7 @@ public class ProfileActiveShip extends ProfileTable {
 				if (activeShip == null) {
 					continue;
 				}
-				setAttribute(statement, ++index, owner.getOwnerID());
+				setAttribute(statement, ++index, owner.getAccountID());
 				setAttribute(statement, ++index, activeShip.getItemID());
 				setAttribute(statement, ++index, activeShip.getTypeID());
 				setAttribute(statement, ++index, activeShip.getLocationID());
@@ -70,18 +70,18 @@ public class ProfileActiveShip extends ProfileTable {
 	}
 
 	@Override
-	protected void select(Connection connection, List<EsiOwner> esiOwners, Map<Long, EsiOwner> owners) throws SQLException {
+	protected void select(Connection connection, List<EsiOwner> esiOwners, Map<String, EsiOwner> owners) throws SQLException {
 		String sql = "SELECT * FROM " + ACTIVE_SHIP_TABLE;
 		try (PreparedStatement statement = connection.prepareStatement(sql);
 				ResultSet rs = statement.executeQuery();) {
 			while (rs.next()) {
-				long ownerID = getLong(rs, "ownerid");
+				String accountID = getString(rs, "accountid");
 				long itemID = getLong(rs, "itemid");
 				int typeID = getInt(rs, "typeid");
 				long locationID = getLong(rs, "locationid");
 
 				MyShip activeShip = new MyShip(itemID, typeID, locationID);
-				EsiOwner owner = owners.get(ownerID);
+				EsiOwner owner = owners.get(accountID);
 				if (owner != null) {
 					owner.setActiveShip(activeShip);
 				}
@@ -93,11 +93,11 @@ public class ProfileActiveShip extends ProfileTable {
 	protected void create(Connection connection) throws SQLException {
 		if (!tableExist(connection, ACTIVE_SHIP_TABLE)) {
 			String sql = "CREATE TABLE IF NOT EXISTS " + ACTIVE_SHIP_TABLE + " (\n"
-					+ "	ownerid INTEGER,\n"
+					+ "	accountid TEXT,\n"
 					+ "	itemid INTEGER,\n"
 					+ "	typeid INTEGER,\n"
 					+ "	locationid INTEGER,\n"
-					+ "	UNIQUE(ownerid)\n"
+					+ "	UNIQUE(accountid)\n"
 					+ ");";
 			try (Statement statement = connection.createStatement()) {
 				statement.execute(sql);

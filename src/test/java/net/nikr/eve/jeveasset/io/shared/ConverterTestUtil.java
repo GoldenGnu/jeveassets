@@ -122,7 +122,7 @@ public class ConverterTestUtil {
 	}
 
 	public static EsiOwner getEsiOwner(boolean data, boolean setNull, boolean setValues, ConverterTestOptions options) {
-		EsiOwner esiOwner = new EsiOwner();
+		EsiOwner esiOwner = EsiOwner.create();
 		setValues(esiOwner, options);
 		if (data) {
 			setData(esiOwner, setNull, setValues, options);

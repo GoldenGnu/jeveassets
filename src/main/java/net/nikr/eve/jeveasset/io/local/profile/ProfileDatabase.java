@@ -84,9 +84,9 @@ public class ProfileDatabase {
 		}
 
 		public void select(Connection connection, List<EsiOwner> esiOwners) throws SQLException {
-			Map<Long, EsiOwner> owners = new HashMap<>();
+			Map<String, EsiOwner> owners = new HashMap<>();
 			for (EsiOwner esiOwner : esiOwners) {
-				owners.put(esiOwner.getOwnerID(), esiOwner);
+				owners.put(esiOwner.getAccountID(), esiOwner);
 			}
 			profileTable.select(connection, esiOwners, owners);
 		}

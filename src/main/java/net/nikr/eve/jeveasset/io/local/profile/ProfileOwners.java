@@ -48,6 +48,7 @@ public class ProfileOwners extends ProfileTable {
 
 		//Insert data
 		String sql = "INSERT INTO " + OWNERS_TABLE + " ("
+				+ "	accountid,"
 				+ "	ownerid,"
 				+ "	name,"
 				+ "	corp,"
@@ -73,11 +74,12 @@ public class ProfileOwners extends ProfileTable {
 				+ "	accountnextupdate,"
 				+ "	callbackurl,"
 				+ "	characterroles)"
-				+ " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+				+ " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 		try (PreparedStatement statement = connection.prepareStatement(sql)) {
 			Rows rows = new Rows(statement, esiOwners.size());
 			for (EsiOwner owner : esiOwners) {
 				int index = 0;
+				setAttribute(statement, ++index, owner.getAccountID());
 				setAttribute(statement, ++index, owner.getOwnerID());
 				setAttribute(statement, ++index, owner.getOwnerName());
 				setAttributeOptional(statement, ++index, owner.getCorporationName());
@@ -109,11 +111,12 @@ public class ProfileOwners extends ProfileTable {
 	}
 
 	@Override
-	protected void select(Connection connection, List<EsiOwner> esiOwners, Map<Long, EsiOwner> owners) throws SQLException {
+	protected void select(Connection connection, List<EsiOwner> esiOwners, Map<String, EsiOwner> owners) throws SQLException {
 		String sql = "SELECT * FROM " + OWNERS_TABLE;
 		try (PreparedStatement statement = connection.prepareStatement(sql);
 				ResultSet rs = statement.executeQuery();) {
 			while (rs.next()) {
+				String accountID = getString(rs, "accountid");
 				String ownerName = getString(rs, "name");
 				String corporationName = getStringOptional(rs, "corp");
 				long ownerID = getLong(rs, "ownerid");
@@ -151,7 +154,7 @@ public class ProfileOwners extends ProfileTable {
 
 					}
 				}
-				EsiOwner owner = new EsiOwner();
+				EsiOwner owner = new EsiOwner(accountID);
 				owner.setRoles(roles);
 				owner.setAccountName(accountName);
 				owner.setScopes(new HashSet<>(Arrays.asList(scopes.split(","))));
@@ -185,6 +188,7 @@ public class ProfileOwners extends ProfileTable {
 	protected void create(Connection connection) throws SQLException {
 		if (!tableExist(connection, OWNERS_TABLE)) {
 			String sql = "CREATE TABLE IF NOT EXISTS " + OWNERS_TABLE + " (\n"
+					+ "	accountid TEXT,\n"
 					+ "	ownerid INTEGER,\n"
 					+ "	name TEXT,\n"
 					+ "	corp TEXT,\n"
@@ -209,8 +213,9 @@ public class ProfileOwners extends ProfileTable {
 					+ "	structuresnextupdate INTEGER,\n"
 					+ "	accountnextupdate INTEGER,\n"
 					+ "	callbackurl TEXT,\n"
-					+ "	characterroles TEXT\n"
-					+ ");"; //Note: ownerid is not guaranteed unique (duplicate characters is possible)
+					+ "	characterroles TEXT,\n"
+					+ "	UNIQUE(accountid)\n"
+					+ ");";
 			try (Statement statement = connection.createStatement()) {
 				statement.execute(sql);
 			}

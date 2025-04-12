@@ -144,11 +144,11 @@ public class ProfileContracts extends ProfileTable {
 	/**
 	 * Contracts are mutable (REPLACE).Owners are immutable (IGNORE)
 	 * @param connection
-	 * @param ownerID
+	 * @param accountID
 	 * @param contracts 
 	 * @throws java.sql.SQLException 
 	 */
-	public static void updateContracts(Connection connection, long ownerID, Collection<MyContract> contracts) throws SQLException {
+	public static void updateContracts(Connection connection, String accountID, Collection<MyContract> contracts) throws SQLException {
 		//Tables exist
 		if (!tableExist(connection, CONTRACTS_OWNERS_TABLE, CONTRACTS_TABLE)) {
 			return;
@@ -156,7 +156,7 @@ public class ProfileContracts extends ProfileTable {
 
 		//Insert data
 		String sqlOwners = "INSERT OR IGNORE INTO " + CONTRACTS_OWNERS_TABLE + " ("
-				+ "	ownerid,"
+				+ "	accountid,"
 				+ "	contractid)"
 				+ " VALUES (?,?)"
 				;
@@ -164,7 +164,7 @@ public class ProfileContracts extends ProfileTable {
 			Rows rows = new Rows(statement, contracts.size());
 			for (MyContract contract : contracts) {
 				int index = 0;
-				setAttribute(statement, ++index, ownerID);
+				setAttribute(statement, ++index, accountID);
 				setAttribute(statement, ++index, contract.getContractID());
 				rows.addRow();
 			}
@@ -214,7 +214,7 @@ public class ProfileContracts extends ProfileTable {
 
 		//Insert data
 		String sqlOwners = "INSERT OR IGNORE INTO " + CONTRACTS_OWNERS_TABLE + " ("
-				+ "	ownerid,"
+				+ "	accountid,"
 				+ "	contractid)"
 				+ " VALUES (?,?)"
 				;
@@ -228,7 +228,7 @@ public class ProfileContracts extends ProfileTable {
 			for (EsiOwner owner : esiOwners) {
 				for (MyContract contract : owner.getContracts().keySet()) {
 					int index = 0;
-					setAttribute(statement, ++index, owner.getOwnerID());
+					setAttribute(statement, ++index, owner.getAccountID());
 					setAttribute(statement, ++index, contract.getContractID());
 					rows.addRow();
 				}
@@ -314,21 +314,21 @@ public class ProfileContracts extends ProfileTable {
 	}
 
 	@Override
-	protected void select(Connection connection, List<EsiOwner> esiOwners, Map<Long, EsiOwner> owners) throws SQLException {
+	protected void select(Connection connection, List<EsiOwner> esiOwners, Map<String, EsiOwner> owners) throws SQLException {
 		String ownerSQL = "SELECT * FROM " + CONTRACTS_OWNERS_TABLE;
 		Map<Integer, Set<EsiOwner>> contractOwners = new HashMap<>();
 		Map<EsiOwner, Map<MyContract, List<MyContractItem>>> contracts = new HashMap<>();
 		try (PreparedStatement statement = connection.prepareStatement(ownerSQL);
 				ResultSet rs = statement.executeQuery();) {
 			while (rs.next()) {
-				long ownerID = getLong(rs, "ownerid");
+				String accountID = getString(rs, "accountid");
 				int contractID = getInt(rs, "contractid");
 				Set<EsiOwner> set = contractOwners.get(contractID);
 				if (set == null) {
 					set = new HashSet<>();
 					contractOwners.put(contractID, set);
 				}
-				EsiOwner owner = owners.get(ownerID);
+				EsiOwner owner = owners.get(accountID);
 				if (owner != null) {
 					set.add(owner);
 					contracts.put(owner, new HashMap<>());
@@ -460,9 +460,9 @@ public class ProfileContracts extends ProfileTable {
 	protected void create(Connection connection) throws SQLException {
 		if (!tableExist(connection, CONTRACTS_OWNERS_TABLE)) {
 			String sql = "CREATE TABLE IF NOT EXISTS " + CONTRACTS_OWNERS_TABLE + " ("
-					+ "	ownerid INTEGER,\n"
+					+ "	accountid TEXT,\n"
 					+ "	contractid INTEGER,"
-					+ "	UNIQUE(ownerid, contractid)\n"
+					+ "	UNIQUE(accountid, contractid)\n"
 					+ ");";
 			try (Statement statement = connection.createStatement()) {
 				statement.execute(sql);

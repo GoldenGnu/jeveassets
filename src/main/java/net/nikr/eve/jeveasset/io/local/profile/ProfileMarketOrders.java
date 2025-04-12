@@ -60,9 +60,9 @@ public class ProfileMarketOrders extends ProfileTable {
 		setAttributeOptional(statement, ++index, change.getVolumeRemaining());
 	}
 
-	private static void set(PreparedStatement statement, MyMarketOrder marketOrder, long ownerID) throws SQLException {
+	private static void set(PreparedStatement statement, MyMarketOrder marketOrder, String accountID) throws SQLException {
 		int index = 0;
-		setAttribute(statement, ++index, ownerID);
+		setAttribute(statement, ++index, accountID);
 		setAttribute(statement, ++index, marketOrder.getOrderID());
 		setAttribute(statement, ++index, marketOrder.getLocationID());
 		setAttribute(statement, ++index, marketOrder.getVolumeTotal());
@@ -87,11 +87,11 @@ public class ProfileMarketOrders extends ProfileTable {
 	/**
 	 * Market orders are mutable (REPLACE).Market order changes are immutable (IGNORE)
 	 * @param connection
-	 * @param ownerID
+	 * @param accountID
 	 * @param marketOrders 
 	 * @throws java.sql.SQLException 
 	 */
-	public static void updateMarketOrders(Connection connection, long ownerID, Collection<MyMarketOrder> marketOrders) throws SQLException {
+	public static void updateMarketOrders(Connection connection, String accountID, Collection<MyMarketOrder> marketOrders) throws SQLException {
 		//Tables exist
 		if (!tableExist(connection, MARKET_ORDERS_TABLE, MARKET_ORDER_CHANGES_TABLE)) {
 			return;
@@ -99,7 +99,7 @@ public class ProfileMarketOrders extends ProfileTable {
 
 		//Insert data
 		String ordersSQL = "INSERT OR REPLACE INTO " + MARKET_ORDERS_TABLE + " ("
-				+ "	ownerid,"
+				+ "	accountid,"
 				+ "	orderid,"
 				+ "	stationid,"
 				+ "	volentered,"
@@ -124,7 +124,7 @@ public class ProfileMarketOrders extends ProfileTable {
 		try (PreparedStatement statement = connection.prepareStatement(ordersSQL)) {
 			Rows rows = new Rows(statement, marketOrders.size());
 			for (MyMarketOrder marketOrder : marketOrders) {
-				set(statement, marketOrder, ownerID);
+				set(statement, marketOrder, accountID);
 				rows.addRow();
 			}
 		}
@@ -153,7 +153,7 @@ public class ProfileMarketOrders extends ProfileTable {
 
 		//Insert data
 		String ordersSQL = "INSERT INTO " + MARKET_ORDERS_TABLE + " ("
-				+ "	ownerid,"
+				+ "	accountid,"
 				+ "	orderid,"
 				+ "	stationid,"
 				+ "	volentered,"
@@ -184,7 +184,7 @@ public class ProfileMarketOrders extends ProfileTable {
 			});
 			for (EsiOwner owner : esiOwners) {
 				for (MyMarketOrder marketOrder : owner.getMarketOrders()) {
-					set(statement, marketOrder, owner.getOwnerID());
+					set(statement, marketOrder, owner.getAccountID());
 					rows.addRow();
 				}
 			}
@@ -215,7 +215,7 @@ public class ProfileMarketOrders extends ProfileTable {
 	}
 
 	@Override
-	protected void select(Connection connection, List<EsiOwner> esiOwners, Map<Long, EsiOwner> owners) throws SQLException {
+	protected void select(Connection connection, List<EsiOwner> esiOwners, Map<String, EsiOwner> owners) throws SQLException {
 		Map<EsiOwner, Set<MyMarketOrder>> marketOrders = new HashMap<>();
 		Map<Long, Set<Change>> changes = new HashMap<>();
 		String changesSQL = "SELECT * FROM " + MARKET_ORDER_CHANGES_TABLE;
@@ -241,8 +241,8 @@ public class ProfileMarketOrders extends ProfileTable {
 		try (PreparedStatement statement = connection.prepareStatement(ordersSQL);
 				ResultSet rs = statement.executeQuery();) {
 			while (rs.next()) {
-				long ownerID = getLong(rs, "ownerid");
-				EsiOwner owner = owners.get(ownerID);
+				String accountID = getString(rs, "accountid");
+				EsiOwner owner = owners.get(accountID);
 				if (owner == null) {
 					continue;
 				}
@@ -257,7 +257,7 @@ public class ProfileMarketOrders extends ProfileTable {
 				int typeID = getInt(rs, "typeid");
 				String rangeEnum = getStringOptional(rs, "rangeenum");
 				String rangeString = getStringOptional(rs, "rangestring");
-				int accountID = getInt(rs, "accountkey");
+				int accountkey = getInt(rs, "accountkey");
 				int duration = getInt(rs, "duration");
 				double escrow = getDouble(rs, "escrow");
 				double price = getDouble(rs, "price");
@@ -268,7 +268,7 @@ public class ProfileMarketOrders extends ProfileTable {
 				boolean esi = getBooleanNotNull(rs, "esi", true);
 
 
-				rawMarketOrder.setWalletDivision(accountID);
+				rawMarketOrder.setWalletDivision(accountkey);
 				rawMarketOrder.setDuration(duration);
 				rawMarketOrder.setEscrow(escrow);
 				rawMarketOrder.setBuyOrder(bid > 0);
@@ -304,7 +304,7 @@ public class ProfileMarketOrders extends ProfileTable {
 	protected void create(Connection connection) throws SQLException {
 		if (!tableExist(connection, MARKET_ORDERS_TABLE)) {
 			String sql = "CREATE TABLE IF NOT EXISTS " + MARKET_ORDERS_TABLE + " (\n"
-					+ "	ownerid INTEGER,"
+					+ "	accountid TEXT,"
 					+ "	orderid INTEGER,"
 					+ "	stationid INTEGER,"
 					+ "	volentered INTEGER,"
@@ -324,7 +324,7 @@ public class ProfileMarketOrders extends ProfileTable {
 					+ "	issuedby INTEGER,"
 					+ "	corp NUMERIC,"
 					+ "	esi NUMERIC,"
-					+ "	UNIQUE(ownerid, orderid)\n"
+					+ "	UNIQUE(accountid, orderid)\n"
 					+ ");";
 			try (Statement statement = connection.createStatement()) {
 				statement.execute(sql);

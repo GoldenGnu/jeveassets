@@ -46,7 +46,7 @@ public class ProfileAssets extends ProfileTable {
 
 		//Insert data
 		String sql = "INSERT INTO " + ASSETS_TABLE + " ("
-				+ "	ownerid,"
+				+ "	accountid,"
 				+ "	count,"
 				+ "	flagid,"
 				+ "	flagstring,"
@@ -64,7 +64,7 @@ public class ProfileAssets extends ProfileTable {
 				}
 			});
 			for (EsiOwner owner : esiOwners) {
-				insertAssets(statement, rows, owner.getAssets(), owner.getOwnerID(), null);
+				insertAssets(statement, rows, owner.getAssets(), owner.getAccountID(), null);
 			}
 		}
 	}
@@ -77,7 +77,7 @@ public class ProfileAssets extends ProfileTable {
 		return size;
 	}
 
-	private void insertAssets(PreparedStatement statement, Rows rows, final List<MyAsset> assets, long ownerID, Long parentID) throws SQLException {
+	private void insertAssets(PreparedStatement statement, Rows rows, final List<MyAsset> assets, String accountID, Long parentID) throws SQLException {
 		if (assets == null || assets.isEmpty()) {
 			return;
 		}
@@ -93,7 +93,7 @@ public class ProfileAssets extends ProfileTable {
 				count = quantity;
 				rawQuantity = null;
 			}
-			setAttribute(statement, ++index, ownerID);
+			setAttribute(statement, ++index, accountID);
 			setAttribute(statement, ++index, count);
 			setAttributeOptional(statement, ++index, asset.getFlagID());
 			setAttributeOptional(statement, ++index, asset.getLocationFlagString());
@@ -107,19 +107,19 @@ public class ProfileAssets extends ProfileTable {
 			setAttribute(statement, ++index, asset.isSingleton());
 			setAttributeOptional(statement, ++index, rawQuantity);
 			rows.addRow();
-			insertAssets(statement, rows, asset.getAssets(), ownerID, asset.getItemID());
+			insertAssets(statement, rows, asset.getAssets(), accountID, asset.getItemID());
 		}
 	}
 
 	@Override
-	protected void select(Connection connection, List<EsiOwner> esiOwners, Map<Long, EsiOwner> owners) throws SQLException {
+	protected void select(Connection connection, List<EsiOwner> esiOwners, Map<String, EsiOwner> owners) throws SQLException {
 		Map<EsiOwner, List<RawAsset>> assets = new HashMap<>();
 		String sql = "SELECT * FROM " + ASSETS_TABLE;
 		try (PreparedStatement statement = connection.prepareStatement(sql);
 				ResultSet rs = statement.executeQuery();) {
 			while (rs.next()) {
 				int count = getInt(rs, "count");
-				long ownerID = getLong(rs, "ownerid");
+				String accountID = getString(rs, "accountid");
 				long itemId = getLong(rs, "itemid");
 				int typeID = getInt(rs, "typeid");
 				long locationID = getLong(rs, "locationid");
@@ -135,7 +135,7 @@ public class ProfileAssets extends ProfileTable {
 				rawAsset.setQuantity(RawConverter.toAssetQuantity(count, rawQuantity));
 				rawAsset.setSingleton(singleton);
 				rawAsset.setTypeID(typeID);
-				EsiOwner owner = owners.get(ownerID);
+				EsiOwner owner = owners.get(accountID);
 				if (owner == null) {
 					continue;
 				}
@@ -151,7 +151,7 @@ public class ProfileAssets extends ProfileTable {
 	protected void create(Connection connection) throws SQLException {
 		if (!tableExist(connection, ASSETS_TABLE)) {
 			String sql = "CREATE TABLE IF NOT EXISTS " + ASSETS_TABLE + " (\n"
-					+ "	ownerid INTEGER,\n"
+					+ "	accountid TEXT,\n"
 					+ "	count INTEGER,\n"
 					+ "	flagid INTEGER,\n"
 					+ "	flagstring TEXT,\n"
@@ -160,7 +160,7 @@ public class ProfileAssets extends ProfileTable {
 					+ "	locationid INTEGER,\n"
 					+ "	singleton NUMERIC,\n"
 					+ "	rawquantity INTEGER,\n"
-					+ "	UNIQUE(ownerid, itemid)\n"
+					+ "	UNIQUE(accountid, itemid)\n"
 					+ ");";
 			try (Statement statement = connection.createStatement()) {
 				statement.execute(sql);

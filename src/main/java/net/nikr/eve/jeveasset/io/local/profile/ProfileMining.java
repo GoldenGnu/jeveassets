@@ -51,9 +51,9 @@ public class ProfileMining extends ProfileTable {
 	}
 
 
-	private static void set(PreparedStatement statement, MyExtraction extraction, long ownerID) throws SQLException {
+	private static void set(PreparedStatement statement, MyExtraction extraction, String accountID) throws SQLException {
 		int index = 0;
-		setAttribute(statement, ++index, ownerID);
+		setAttribute(statement, ++index, accountID);
 		setAttribute(statement, ++index, extraction.getChunkArrivalTime());
 		setAttribute(statement, ++index, extraction.getExtractionStartTime());
 		setAttribute(statement, ++index, extraction.getMoonID());
@@ -61,9 +61,9 @@ public class ProfileMining extends ProfileTable {
 		setAttribute(statement, ++index, extraction.getStructureID());
 	}
 
-	private static void set(PreparedStatement statement, MyMining mining, long ownerID) throws SQLException {
+	private static void set(PreparedStatement statement, MyMining mining, String accountID) throws SQLException {
 		int index = 0;
-		setAttribute(statement, ++index, ownerID);
+		setAttribute(statement, ++index, accountID);
 		setAttribute(statement, ++index, mining.getTypeID());
 		setAttribute(statement, ++index, mining.getDate());
 		setAttribute(statement, ++index, mining.getCount());
@@ -77,11 +77,11 @@ public class ProfileMining extends ProfileTable {
 	/**
 	 * Minings are mutable (REPLACE)
 	 * @param connection
-	 * @param ownerID
+	 * @param accountID
 	 * @param minings 
 	 * @throws java.sql.SQLException 
 	 */
-	public static void updateMinings(Connection connection, long ownerID, Collection<MyMining> minings) throws SQLException {
+	public static void updateMinings(Connection connection, String accountID, Collection<MyMining> minings) throws SQLException {
 		//Tables exist
 		if (!tableExist(connection, MINING_TABLE)) {
 			return;
@@ -89,7 +89,7 @@ public class ProfileMining extends ProfileTable {
 
 		//Insert data
 		String miningSQL = "INSERT OR REPLACE INTO " + MINING_TABLE + " ("
-				+ "	ownerid,"
+				+ "	accountid,"
 				+ "	typeid,"
 				+ "	date,"
 				+ "	count,"
@@ -102,7 +102,7 @@ public class ProfileMining extends ProfileTable {
 		try (PreparedStatement statement = connection.prepareStatement(miningSQL)) {
 			Rows rows = new Rows(statement, minings.size());
 			for (MyMining mining : minings) {
-				set(statement, mining, ownerID);
+				set(statement, mining, accountID);
 				rows.addRow();
 			}
 		}
@@ -111,17 +111,17 @@ public class ProfileMining extends ProfileTable {
 	/**
 	 * Not sure if extractions are immutable or mutable (REPLACE)
 	 * @param connection
-	 * @param ownerID
+	 * @param accountID
 	 * @param extractions
 	 * @throws java.sql.SQLException
 	 */
-	public static void updateExtractions(Connection connection, long ownerID, Collection<MyExtraction> extractions) throws SQLException {
+	public static void updateExtractions(Connection connection, String accountID, Collection<MyExtraction> extractions) throws SQLException {
 		//Tables exist
 		if (!tableExist(connection, MINING_EXTRACTION_TABLE)) {
 			return;
 		}
 		String extractionSQL = "INSERT OR REPLACE INTO " + MINING_EXTRACTION_TABLE + " ("
-				+ "	ownerid,"
+				+ "	accountid,"
 				+ "	arrival,"
 				+ "	start,"
 				+ "	moon,"
@@ -131,7 +131,7 @@ public class ProfileMining extends ProfileTable {
 		try (PreparedStatement statement = connection.prepareStatement(extractionSQL)) {
 			Rows rows = new Rows(statement, extractions.size());
 			for (MyExtraction extraction : extractions) {
-				set(statement, extraction, ownerID);
+				set(statement, extraction, accountID);
 				rows.addRow();
 			}
 		}
@@ -144,7 +144,7 @@ public class ProfileMining extends ProfileTable {
 
 		//Insert data
 		String miningSQL = "INSERT INTO " + MINING_TABLE + " ("
-				+ "	ownerid,"
+				+ "	accountid,"
 				+ "	typeid,"
 				+ "	date,"
 				+ "	count,"
@@ -163,14 +163,14 @@ public class ProfileMining extends ProfileTable {
 			});
 			for (EsiOwner owner : esiOwners) {
 				for (MyMining mining : owner.getMining()) {
-					set(statement, mining, owner.getOwnerID());
+					set(statement, mining, owner.getAccountID());
 					rows.addRow();
 				}
 			}
 		}
 
 		String extractionSQL = "INSERT INTO " + MINING_EXTRACTION_TABLE + " ("
-				+ "	ownerid,"
+				+ "	accountid,"
 				+ "	arrival,"
 				+ "	start,"
 				+ "	moon,"
@@ -186,7 +186,7 @@ public class ProfileMining extends ProfileTable {
 			});
 			for (EsiOwner owner : esiOwners) {
 				for (MyExtraction extraction : owner.getExtractions()) {
-					set(statement, extraction, owner.getOwnerID());
+					set(statement, extraction, owner.getAccountID());
 					rows.addRow();
 				}
 			}
@@ -194,16 +194,16 @@ public class ProfileMining extends ProfileTable {
 	}
 
 	@Override
-	protected void select(Connection connection, List<EsiOwner> esiOwners, Map<Long, EsiOwner> owners) throws SQLException {
+	protected void select(Connection connection, List<EsiOwner> esiOwners, Map<String, EsiOwner> owners) throws SQLException {
 		Map<EsiOwner, Set<MyMining>> minings = new HashMap<>();
 		Map<EsiOwner, Set<MyExtraction>> extractions = new HashMap<>();
 		String miningSQL = "SELECT * FROM " + MINING_TABLE;
 		try (PreparedStatement statement = connection.prepareStatement(miningSQL);
 				ResultSet rs = statement.executeQuery();) {
 			while (rs.next()) {
-				long ownerID = getLong(rs, "ownerid");
+				String accountID = getString(rs, "accountid");
 
-				EsiOwner owner = owners.get(ownerID);
+				EsiOwner owner = owners.get(accountID);
 				if (owner == null) {
 					continue;
 				}
@@ -241,7 +241,7 @@ public class ProfileMining extends ProfileTable {
 		try (PreparedStatement statement = connection.prepareStatement(extractionSQL);
 				ResultSet rs = statement.executeQuery();) {
 			while (rs.next()) {
-				long ownerID = getLong(rs, "ownerid");
+				String accountID = getString(rs, "accountid");
 
 				Date arrival = getDate(rs, "arrival");
 				Date start = getDate(rs, "start");
@@ -256,7 +256,7 @@ public class ProfileMining extends ProfileTable {
 				mining.setNaturalDecayTime(decay);
 				mining.setStructureID(structure);
 
-				EsiOwner owner = owners.get(ownerID);
+				EsiOwner owner = owners.get(accountID);
 				if (owner == null) {
 					continue;
 				}
@@ -272,7 +272,7 @@ public class ProfileMining extends ProfileTable {
 	protected void create(Connection connection) throws SQLException {
 		if (!tableExist(connection, MINING_TABLE)) {
 			String sql = "CREATE TABLE IF NOT EXISTS " + MINING_TABLE + " (\n"
-					+ "	ownerid INTEGER,\n"
+					+ "	accountid TEXT,\n"
 					+ "	typeid INTEGER,"
 					+ "	date INTEGER,"
 					+ "	count INTEGER,"
@@ -289,13 +289,13 @@ public class ProfileMining extends ProfileTable {
 		}
 		if (!tableExist(connection, MINING_EXTRACTION_TABLE)) {
 			String sql = "CREATE TABLE IF NOT EXISTS " + MINING_EXTRACTION_TABLE + " (\n"
-					+ "	ownerid INTEGER,\n"
+					+ "	accountid TEXT,\n"
 					+ "	arrival INTEGER,"
 					+ "	start INTEGER,"
 					+ "	moon INTEGER,"
 					+ "	decay INTEGER,"
 					+ "	structure INTEGER,"
-					+ "	UNIQUE(ownerid, start, moon)\n"
+					+ "	UNIQUE(accountid, start, moon)\n"
 					+ ");";
 			try (Statement statement = connection.createStatement()) {
 				statement.execute(sql);

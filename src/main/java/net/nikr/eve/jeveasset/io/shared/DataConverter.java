@@ -258,7 +258,7 @@ public abstract class DataConverter {
 			ProfileDatabase.update(new ProfileConnectionData<MyContract>(new HashSet<>(update)) {
 				@Override
 				public void update(Connection connection, Collection<MyContract> data) throws SQLException {
-					ProfileContracts.updateContracts(connection, owner.getOwnerID(), data);
+					ProfileContracts.updateContracts(connection, owner.getAccountID(), data);
 				}
 			});
 		}
@@ -313,7 +313,7 @@ public abstract class DataConverter {
 			ProfileDatabase.update(new ProfileConnectionData<MyIndustryJob>(update) {
 				@Override
 				public void update(Connection connection, Collection<MyIndustryJob> data) throws SQLException {
-					ProfileIndustryJobs.updateIndustryJobs(connection, owner.getOwnerID(), data);
+					ProfileIndustryJobs.updateIndustryJobs(connection, owner.getAccountID(), data);
 				}
 			});
 		}
@@ -335,7 +335,7 @@ public abstract class DataConverter {
 			ProfileDatabase.update(new ProfileConnectionData<MyJournal>(journals) {
 				@Override
 				public void update(Connection connection, Collection<MyJournal> data) throws SQLException {
-					ProfileJournals.updateJournals(connection, owner.getOwnerID(), data);
+					ProfileJournals.updateJournals(connection, owner.getAccountID(), data);
 				}
 			});
 			journals.addAll(owner.getJournal());
@@ -369,7 +369,7 @@ public abstract class DataConverter {
 			ProfileDatabase.update(new ProfileConnectionData<MyMarketOrder>(update) {
 				@Override
 				public void update(Connection connection, Collection<MyMarketOrder> data) throws SQLException {
-					ProfileMarketOrders.updateMarketOrders(connection, owner.getOwnerID(), data);
+					ProfileMarketOrders.updateMarketOrders(connection, owner.getAccountID(), data);
 				}
 			});
 		}
@@ -390,7 +390,7 @@ public abstract class DataConverter {
 			ProfileDatabase.update(new ProfileConnectionData<MyTransaction>(transactions) {
 				@Override
 				public void update(Connection connection, Collection<MyTransaction> data) throws SQLException {
-					ProfileTransactions.updateTransactions(connection, owner.getOwnerID(), data);
+					ProfileTransactions.updateTransactions(connection, owner.getAccountID(), data);
 				}
 			});
 			transactions.addAll(owner.getTransactions());
@@ -425,7 +425,7 @@ public abstract class DataConverter {
 			ProfileDatabase.update(new ProfileConnectionData<MyMining>(minings) {
 				@Override
 				public void update(Connection connection, Collection<MyMining> data) throws SQLException {
-					ProfileMining.updateMinings(connection, owner.getOwnerID(), data);
+					ProfileMining.updateMinings(connection, owner.getAccountID(), data);
 				}
 			});
 			minings.addAll(owner.getMining());
@@ -448,7 +448,7 @@ public abstract class DataConverter {
 			ProfileDatabase.update(new ProfileConnectionData<MyExtraction>(new ArrayList<>(extractions)) {
 				@Override
 				public void update(Connection connection, Collection<MyExtraction> data) throws SQLException {
-					ProfileMining.updateExtractions(connection, owner.getOwnerID(), data);
+					ProfileMining.updateExtractions(connection, owner.getAccountID(), data);
 				}
 			});
 			extractions.addAll(owner.getExtractions());
