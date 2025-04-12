@@ -41,7 +41,7 @@ public class Profile implements Comparable<Profile> {
 	private static final String XML_BAC = "bac";
 	private static final String XML_BACKUP = "xmlbackup";
 	private static final String SQLITE = "db";
-	private static final String SQLITE_BACKUP = "dbbackup";
+	private static final String SQLITE_BACKUP = "zip";
 
 	public static enum ProfileType {
 		XML, SQLITE
@@ -145,7 +145,7 @@ public class Profile implements Comparable<Profile> {
 	}
 
 	public String getBackupSQLiteFilename() {
-		String filename = getName() + "_" + Program.PROGRAM_VERSION + "_backup";
+		String filename = getName() + "_" + Program.PROGRAM_VERSION + "_dbbackup";
 		filename = filename.replace(" ", "_"); //Remove spaces
 		filename = filename + "." + SQLITE_BACKUP; //Add extension
 		if (defaultProfile) {

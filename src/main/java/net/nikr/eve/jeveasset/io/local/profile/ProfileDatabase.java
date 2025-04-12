@@ -21,10 +21,13 @@
 package net.nikr.eve.jeveasset.io.local.profile;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -37,6 +40,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.data.profile.Profile;
 import org.slf4j.Logger;
@@ -211,27 +216,29 @@ public class ProfileDatabase {
 	}
 
 	private static void backup(final Profile profile) {
-		String filename = profile.getSQLiteFilename();
-		if (!exists(filename)) {
-			return;
-		}
-		if (exists(profile.getBackupSQLiteFilename())) {
-			return;
-		}
-		String connectionUrl = getConnectionUrl(filename);
-		try (Connection connection = DriverManager.getConnection(connectionUrl);
-				final Statement statement = connection.createStatement()
-				) {
-			statement.executeUpdate("BACKUP TO " + profile.getBackupSQLiteFilename()) ;
-		} catch (SQLException ex) {
-			logError(ex);
-		}
-    }
+		backup(profile.getSQLiteFilename(), profile.getBackupSQLiteFilename());
+	}
 
-	private static boolean exists(final String filename) {
-		File backup = new File(filename);
-		return backup.exists();
-    }
+	private static void backup(final String source, String backup) {
+		File backupFile = new File(backup);
+		File sourceFile = new File(source);
+		if (sourceFile.exists() && !backupFile.exists()) {
+			try (ZipOutputStream out = new ZipOutputStream(new FileOutputStream(backupFile));
+					InputStream in = new FileInputStream(sourceFile)) {
+				ZipEntry e = new ZipEntry(sourceFile.getName());
+				out.putNextEntry(e);
+				byte[] buffer = new byte[8192];
+				int len;
+				while ((len = in.read(buffer)) != -1) {
+					out.write(buffer, 0, len);
+				}
+				out.closeEntry();
+				LOG.info("Backup Created: " + backupFile.getName());
+			} catch (IOException ex) {
+				LOG.error("Failed to create backup for new program version", ex);
+			}
+		}
+	}
 
 	private static class Update implements Callable<Boolean> {
 
