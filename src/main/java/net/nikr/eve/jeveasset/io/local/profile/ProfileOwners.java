@@ -209,9 +209,8 @@ public class ProfileOwners extends ProfileTable {
 					+ "	structuresnextupdate INTEGER,\n"
 					+ "	accountnextupdate INTEGER,\n"
 					+ "	callbackurl TEXT,\n"
-					+ "	characterroles TEXT,\n"
-					+ "	UNIQUE(ownerid)\n"
-					+ ");";
+					+ "	characterroles TEXT\n"
+					+ ");"; //Note: ownerid is not guaranteed unique (duplicate characters is possible)
 			try (Statement statement = connection.createStatement()) {
 				statement.execute(sql);
 			}
