@@ -64,7 +64,7 @@ public class JTextDialog extends JDialogCentered {
 	}
 
 	private final JTextAreaPlaceholder jText;
-	private final JComboBox<TextImport> jImportTypes;
+	private final JComboBox<SimpleTextImport> jImportTypes;
 	private final JButton jToClipboard;
 	private final JButton jFromClipboard;
 	private final JButton jToFile;
@@ -189,23 +189,23 @@ public class JTextDialog extends JDialogCentered {
 		return importText(text, example, null, null).getText();
 	}
 
-	public <E extends TextImport> TextReturn<E> importText(E[] imports) {
+	public <E extends SimpleTextImport> TextReturn<E> importText(E[] imports) {
 		return importText("", "", imports, null);
 	}
 
-	public <E extends TextImport> TextReturn<E> importText(E[] imports, E selected) {
+	public <E extends SimpleTextImport> TextReturn<E> importText(E[] imports, E selected) {
 		return importText("", "", imports, selected);
 	}
 
-	public <E extends TextImport> TextReturn<E> importText(String text, E[] imports) {
+	public <E extends SimpleTextImport> TextReturn<E> importText(String text, E[] imports) {
 		return importText(text, "", imports, null);
 	}
 
-	public <E extends TextImport> TextReturn<E> importText(String text, E[] imports, E selected) {
+	public <E extends SimpleTextImport> TextReturn<E> importText(String text, E[] imports, E selected) {
 		return importText(text, "", imports, selected);
 	}
 
-	public <E extends TextImport> TextReturn<E> importText(String text, String example, E[] imports, E selected) {
+	public <E extends SimpleTextImport> TextReturn<E> importText(String text, String example, E[] imports, E selected) {
 		getDialog().setTitle(GuiShared.get().textImport());
 		if (imports == null || imports.length < 1) {
 			jImportTypes.removeAllItems();
@@ -308,13 +308,13 @@ public class JTextDialog extends JDialogCentered {
 		}
 	}
 
-	public static interface TextImport {
+	public static interface SimpleTextImport {
 		public String getExample();
 		public Icon getIcon();
 		public String getType();
 	}
 
-	public static class TextReturn<E extends TextImport> {
+	public static class TextReturn<E extends SimpleTextImport> {
 		private final String text;
 		private final E type;
 
@@ -350,13 +350,13 @@ public class JTextDialog extends JDialogCentered {
 				returnValue = null;
 				setVisible(false);
 			} else if (TextDialogAction.IMPORT_TYPE.name().equals(e.getActionCommand())) {
-				TextImport textImport = jImportTypes.getItemAt(jImportTypes.getSelectedIndex());
+				SimpleTextImport textImport = jImportTypes.getItemAt(jImportTypes.getSelectedIndex());
 				jText.setPlaceholderText(textImport.getExample());
 			}
 		}
 	}
 
-	class TextImportListRenderer implements ListCellRenderer<TextImport> {
+	class TextImportListRenderer implements ListCellRenderer<SimpleTextImport> {
 
 		private final DefaultListCellRenderer renderer;
 
@@ -365,7 +365,7 @@ public class JTextDialog extends JDialogCentered {
 		}
 
 		@Override
-		public Component getListCellRendererComponent(JList<? extends TextImport> list, TextImport value, int index, boolean isSelected, boolean cellHasFocus) {
+		public Component getListCellRendererComponent(JList<? extends SimpleTextImport> list, SimpleTextImport value, int index, boolean isSelected, boolean cellHasFocus) {
 			JLabel label = (JLabel) renderer.getListCellRendererComponent(list, value.getType(), index, isSelected, cellHasFocus);
 			// Set icon to display for value 
 			label.setIcon(value.getIcon());
