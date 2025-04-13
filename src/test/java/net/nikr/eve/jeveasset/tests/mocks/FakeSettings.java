@@ -827,4 +827,19 @@ public abstract class FakeSettings extends Settings {
 	public boolean isColumnValueCache() {
 		throw new UnsupportedOperationException("not implemented");
 	}
+
+	@Override
+	public void putImportSettings(String toolName, Enum<?> type) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public String getImportSettings(String toolName, Enum<?> defaultValue) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public Map<String, String> getImportSettings() {
+		throw new UnsupportedOperationException("not implemented");
+	}
 }
