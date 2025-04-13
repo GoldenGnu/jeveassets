@@ -42,18 +42,21 @@ import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JMenu;
+import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.StaticData;
+import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.types.LocationType;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.TextImport;
 import net.nikr.eve.jeveasset.gui.shared.TextImport.TextImportHandler;
 import net.nikr.eve.jeveasset.gui.shared.components.JFixedToolBar;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTabSecondary;
+import net.nikr.eve.jeveasset.gui.shared.components.JTextDialog;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuColumns;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
@@ -65,6 +68,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.JSeparatorTable;
 import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
 import net.nikr.eve.jeveasset.gui.shared.table.TableFormatFactory;
 import net.nikr.eve.jeveasset.gui.tabs.reprocessed.ReprocessedSeparatorTableCell.ReprocessedCellAction;
+import net.nikr.eve.jeveasset.i18n.GuiShared;
 import net.nikr.eve.jeveasset.i18n.TabsReprocessed;
 import net.nikr.eve.jeveasset.io.local.text.TextImportType;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
@@ -85,7 +89,7 @@ public class ReprocessedTab extends JMainTabSecondary {
 
 	//Dialogs
 	private final JReprocessedAddItemDialog jAddItemDialog;
-	private final TextImport textImport;
+	private final TextImport<TextImportType> textImport;
 
 	//Table
 	private final ReprocessedFilterControl filterControl;
@@ -120,7 +124,7 @@ public class ReprocessedTab extends JMainTabSecondary {
 		jAddItemDialog = new JReprocessedAddItemDialog(program);
 		jAddItemDialog.updateData(reprocessableItems);
 
-		textImport = new TextImport(program);
+		textImport = new TextImport<>(program, NAME);
 
 		JFixedToolBar jToolBar = new JFixedToolBar();
 
@@ -293,9 +297,29 @@ public class ReprocessedTab extends JMainTabSecondary {
 	}
 
 	private void importText() {
-		textImport.importText(TextImportType.values(), new TextImportHandler() {
+		TextImportType systemType = TextImportType.EVE_MULTIBUY;
+		try {
+			systemType = TextImportType.valueOf(Settings.get().getImportSettings(NAME, systemType));
+		} catch (IllegalArgumentException ex) {
+			//No problem, use default
+		}
+		importText("", systemType);
+	}
+
+	private void importText(String text, TextImportType selected) {
+		textImport.importText(text, TextImportType.values(), selected, new TextImportHandler<TextImportType>() {
 			@Override
-			public void addItems(Map<Integer, Double> data, TextImportType type) {
+			public void addItems(JTextDialog.TextReturn<TextImportType> textReturn) {
+				TextImportType importType = textReturn.getType();
+				String importText = textReturn.getText();
+				Map<Integer, Double> data = importType.importText(importText);
+				//Validate Output
+				if (data == null || data.isEmpty()) {
+					JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), GuiShared.get().textInvalid(), GuiShared.get().textImport(), JOptionPane.PLAIN_MESSAGE);
+					importText(importText, importType); //Again!
+					return;
+				}
+				//Add items
 				Map<Item, Long> newItems = new HashMap<>();
 				for (Map.Entry<Integer, Double> entry : data.entrySet()) {
 					Item item = ApiIdConverter.getItemUpdate(entry.getKey());

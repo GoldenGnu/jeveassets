@@ -25,7 +25,6 @@ import java.util.Map;
 import javax.swing.Icon;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.StaticData;
-import net.nikr.eve.jeveasset.gui.shared.components.JTextDialog.TextImport;
 
 
 public abstract class AbstractTextImport {

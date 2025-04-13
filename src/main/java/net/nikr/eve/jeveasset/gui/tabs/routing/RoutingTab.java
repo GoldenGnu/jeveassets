@@ -77,6 +77,8 @@ import net.nikr.eve.jeveasset.data.settings.RouteResult;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formatter;
+import net.nikr.eve.jeveasset.gui.shared.TextImport;
+import net.nikr.eve.jeveasset.gui.shared.TextImport.TextImportHandler;
 import net.nikr.eve.jeveasset.gui.shared.components.JCustomFileChooser;
 import net.nikr.eve.jeveasset.gui.shared.components.JDropDownButton;
 import net.nikr.eve.jeveasset.gui.shared.components.JFixedToolBar;
@@ -85,7 +87,6 @@ import net.nikr.eve.jeveasset.gui.shared.components.JImportDialog.ImportReturn;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTabSecondary;
 import net.nikr.eve.jeveasset.gui.shared.components.JMultiSelectionDialog;
 import net.nikr.eve.jeveasset.gui.shared.components.JTextDialog;
-import net.nikr.eve.jeveasset.gui.shared.components.JTextDialog.TextImport;
 import net.nikr.eve.jeveasset.gui.shared.components.JTextDialog.TextReturn;
 import net.nikr.eve.jeveasset.gui.shared.components.ListComboBoxModel;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuUI;
@@ -116,6 +117,7 @@ import uk.me.candle.eve.routing.Progress;
 import uk.me.candle.eve.routing.RoutingAlgorithm;
 import uk.me.candle.eve.routing.SimpleUnisexMutatorHibrid2Opt;
 import uk.me.candle.eve.routing.cancel.CancelService;
+import net.nikr.eve.jeveasset.gui.shared.components.JTextDialog.SimpleTextImport;
 
 /**
  *
@@ -125,7 +127,7 @@ public class RoutingTab extends JMainTabSecondary {
 
 	private static final Logger LOG = LoggerFactory.getLogger(RoutingTab.class);
 
-	enum ImportSystemType implements TextImport {
+	enum ImportSystemType implements SimpleTextImport {
 		SYSTEM_NAMES(TabsRouting.get().resultImportNames(), SYSTEM_NAMES_EXAMPLE, Images.STOCKPILE_SHOPPING_LIST.getIcon()),
 		SYSTEM_IDS(TabsRouting.get().resultImportIDs(), SYSTEM_IDS_EXAMPLE, Images.LOC_SYSTEM.getIcon());
 		private final String type;
@@ -237,6 +239,7 @@ public class RoutingTab extends JMainTabSecondary {
 	private JTextArea jInfo;
 	private List<ResultToolbar> resultToolbars = new ArrayList<>();
 	//Dialogs
+	private TextImport<ImportSystemType> textImport;
 	private JTextDialog jImportSystemsDialog;
 	private JStationDialog jStationDialog;
 	private JSystemDialog jSystemDialog;
@@ -276,6 +279,7 @@ public class RoutingTab extends JMainTabSecondary {
 
 		listener = new ListenerClass();
 
+		textImport = new TextImport<>(program, NAME);
 		jImportSystemsDialog = new JTextDialog(program.getMainWindow().getFrame());
 		jStationDialog = new JStationDialog(program);
 		jSystemDialog = new JSystemDialog(program);
@@ -1489,52 +1493,61 @@ public class RoutingTab extends JMainTabSecondary {
 		return true;
 	}
 
-	private void importTextRoute(String text, ImportSystemType selected) {
-		TextReturn<ImportSystemType> textReturn = jImportSystemsDialog.importText(text, ImportSystemType.values(), selected);
-		String importText = textReturn.getText();
-		ImportSystemType importSystemType = textReturn.getType();
-		if (importText == null || importSystemType == null) {
-			return; //Cancel
+	private void importText() {
+		ImportSystemType systemType = ImportSystemType.SYSTEM_NAMES;
+		try {
+			systemType = ImportSystemType.valueOf(Settings.get().getImportSettings(NAME, systemType));
+		} catch (IllegalArgumentException ex) {
+			//No problem, use default
 		}
-		if (importText.isEmpty()) {
-			JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsRouting.get().resultImportRouteEmpty(), TabsRouting.get().resultImportRoute(), JOptionPane.PLAIN_MESSAGE);
-			importTextRoute(importText, importSystemType);
-			return;
-		}
-		List<Route> list = new ArrayList<>();
-		if (importSystemType == ImportSystemType.SYSTEM_NAMES) {
-			//Build lookup map
-			Map<String, SolarSystem> systems = new HashMap<>();
-			for (SolarSystem node : systemCache.values()) {
-				systems.put(node.getSystem().toLowerCase(), node);
-			}
-			//For each line, check if the line matches a system name
+		importText("", systemType);
+	}
 
-			for (String line : importText.split("[\r\n]+")) {
-				SolarSystem system = systems.get(line.toLowerCase().trim());
-				if (system != null) {
-					list.add(new Route(system.getSystemID(), system.getName()));
+	private void importText(String text, ImportSystemType selected) {
+		textImport.importText(text, ImportSystemType.values(), selected, new TextImportHandler<ImportSystemType>() {
+			@Override
+			public void addItems(TextReturn<ImportSystemType> textReturn) {
+				String importText = textReturn.getText();
+				ImportSystemType importType = textReturn.getType();
+				if (importText == null || importType == null) {
+					return; //Cancel
 				}
-			}
-		} else if (importSystemType == ImportSystemType.SYSTEM_IDS) {
-			//For each line, check if the line matches a system name
-			for (String line : importText.split("\\s+")) {
-				try {
-					long systemID = Long.parseLong(line.toLowerCase().trim());
-					SolarSystem system = systemCache.get(systemID);
-					if (system != null) {
-						list.add(new Route(system.getSystemID(), system.getName()));
+				List<Route> list = new ArrayList<>();
+				if (importType == ImportSystemType.SYSTEM_NAMES) {
+					//Build lookup map
+					Map<String, SolarSystem> systems = new HashMap<>();
+					for (SolarSystem node : systemCache.values()) {
+						systems.put(node.getSystem().toLowerCase(), node);
 					}
-				} catch (NumberFormatException ex) {
-					//Try next line...
+					//For each line, check if the line matches a system name
+
+					for (String line : importText.split("[\r\n]+")) {
+						SolarSystem system = systems.get(line.toLowerCase().trim());
+						if (system != null) {
+							list.add(new Route(system.getSystemID(), system.getName()));
+						}
+					}
+				} else if (importType == ImportSystemType.SYSTEM_IDS) {
+					//For each line, check if the line matches a system name
+					for (String line : importText.split("\\s+")) {
+						try {
+							long systemID = Long.parseLong(line.toLowerCase().trim());
+							SolarSystem system = systemCache.get(systemID);
+							if (system != null) {
+								list.add(new Route(system.getSystemID(), system.getName()));
+							}
+						} catch (NumberFormatException ex) {
+							//Try next line...
+						}
+					}
+				}
+
+				boolean update = makeRoute(list);
+				if (!update) {
+					importText(importText, importType);
 				}
 			}
-		}
-		
-		boolean update = makeRoute(list);
-		if (!update) {
-			importTextRoute(importText, importSystemType);
-		}
+		});
 	}
 
 	private class ListenerClass extends MouseAdapter implements ActionListener, ListSelectionListener {
@@ -1764,7 +1777,7 @@ public class RoutingTab extends JMainTabSecondary {
 				Settings.unlock("Routing (Import Route)");
 				program.saveSettings("Routing (Import Route)");
 			} else if (RoutingAction.IMPORT_ROUTE.name().equals(e.getActionCommand())) {
-				importTextRoute("", null);
+				importText();
 			} else if (RoutingAction.ROUTE_EXPORT.name().equals(e.getActionCommand())) {
 				List<String> selected = jRouteSelectionDialog.show(Settings.get().getRoutingSettings().getRoutes().keySet(), false);
 				if (selected == null) {

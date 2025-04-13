@@ -88,6 +88,7 @@ import net.nikr.eve.jeveasset.gui.shared.components.JMultiSelectionDialog;
 import net.nikr.eve.jeveasset.gui.shared.components.JOptionsDialog;
 import net.nikr.eve.jeveasset.gui.shared.components.JOptionsDialog.OptionEnum;
 import net.nikr.eve.jeveasset.gui.shared.components.JTextDialog;
+import net.nikr.eve.jeveasset.gui.shared.components.JTextDialog.TextReturn;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuColumns;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
@@ -254,7 +255,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 	private final JMultiSelectionDialog<String> fitsSelectionDialog;
 	private final JOptionsDialog stockpileImportDialog;
 	private final JTextDialog jTextDialog;
-	private final TextImport textImport;
+	private final TextImport<TextImportType> textImport;
 
 	//Table
 	private final JSeparatorTable jTable;
@@ -333,7 +334,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		stockpileImportDialog = new JOptionsDialog(program);
 
 		jTextDialog = new JTextDialog(program.getMainWindow().getFrame());
-		textImport = new TextImport(program);
+		textImport = new TextImport<>(program, NAME);
 
 		jToolBar = new JFixedToolBar();
 		program.getMainWindow().getFrame().addComponentListener(new ComponentListener() {
@@ -1242,10 +1243,30 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 	}
 
 	private void importText() {
-		textImport.importText(TextImportType.values(), new TextImportHandler() {
+		TextImportType systemType = TextImportType.EVE_MULTIBUY;
+		try {
+			systemType = TextImportType.valueOf(Settings.get().getImportSettings(NAME, systemType));
+		} catch (IllegalArgumentException ex) {
+			//No problem, use default
+		}
+		importText("", systemType);
+	}
+
+	private void importText(String text, TextImportType selected) {
+		textImport.importText(text, TextImportType.values(), selected, new TextImportHandler<TextImportType>() {
 			@Override
-			public void addItems(Map<Integer, Double> data, TextImportType type) {
-				importStockpileItems(data, type.getName());
+			public void addItems(TextReturn<TextImportType> textReturn) {
+				TextImportType importType = textReturn.getType();
+				String importText = textReturn.getText();
+				Map<Integer, Double> data = importType.importText(importText);
+				//Validate Output
+				if (data == null || data.isEmpty()) {
+					JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), GuiShared.get().textInvalid(), GuiShared.get().textImport(), JOptionPane.PLAIN_MESSAGE);
+					importText(importText, importType); //Again!
+					return;
+				}
+				//Add items
+				importStockpileItems(data, importType.getName());
 			}
 		});
 	}

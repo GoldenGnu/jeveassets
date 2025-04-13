@@ -136,6 +136,7 @@ import net.nikr.eve.jeveasset.gui.tabs.values.Value;
 import net.nikr.eve.jeveasset.gui.tabs.values.ValueTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.values.ValueTableTab;
 import net.nikr.eve.jeveasset.i18n.General;
+import net.nikr.eve.jeveasset.io.local.text.TextImportType;
 import net.nikr.eve.jeveasset.io.local.update.Update;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import net.nikr.eve.jeveasset.io.shared.FileUtil;
@@ -426,6 +427,12 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		Element exportElement = getNodeOptional(element, "exports");
 		if (exportElement != null) {
 			parseExportSettings(exportElement, settings);
+		}
+
+		//Import Settings
+		Element importElement = getNodeOptional(element, "imports");
+		if (importElement != null) {
+			parseImportSettings(importElement, settings);
 		}
 
 		//Overview
@@ -2037,6 +2044,22 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		}
 
 		return exportSetting;
+	}
+
+	/***
+	 *
+	 * @param element
+	 * @param settings
+	 * @throws XmlException
+	 */
+	private void parseImportSettings(final Element element, final Settings settings) throws XmlException {
+		NodeList tableNodeList = element.getElementsByTagName("import");
+		for (int a = 0; a < tableNodeList.getLength(); a++) {
+			Element exportNode = (Element) tableNodeList.item(a);
+			String toolName = getString(exportNode, "name");
+			String type = getString(exportNode, "type");
+			settings.getImportSettings().put(toolName, type);
+		}
 	}
 
 	private void parseAssetAdded(final Element element) throws XmlException {

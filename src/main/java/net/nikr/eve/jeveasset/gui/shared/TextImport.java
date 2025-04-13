@@ -21,34 +21,38 @@
 
 package net.nikr.eve.jeveasset.gui.shared;
 
-import java.util.Map;
 import javax.swing.JOptionPane;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.shared.components.JTextDialog;
+import net.nikr.eve.jeveasset.gui.shared.components.JTextDialog.SimpleTextImport;
 import net.nikr.eve.jeveasset.gui.shared.components.JTextDialog.TextReturn;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
-import net.nikr.eve.jeveasset.io.local.text.TextImportType;
 
 
-public class TextImport {
+public class TextImport<T extends Enum<?> & SimpleTextImport> {
 	private final Program program;
+	private final String toolName;
 	private final JTextDialog jTextDialog;
 
-	public TextImport(Program program) {
+	public TextImport(Program program, String toolName) {
 		this.program = program;
+		this.toolName = toolName;
 
 		jTextDialog = new JTextDialog(program.getMainWindow().getFrame());
 	}
 
-	public void importText(TextImportType[] types, TextImportHandler handler) {
-		importText("", types, null, handler);
-	}
-
-	private void importText(String text, TextImportType[] types, TextImportType selected, TextImportHandler handler) {
+	public void importText(String text, T[] types, T selected, TextImportHandler<T> handler) {
 		//Get string from clipboard
-		TextReturn<TextImportType> textReturn = jTextDialog.importText(text, types, selected);
+		TextReturn<T> textReturn = jTextDialog.importText(text, types, selected);
 		String importText = textReturn.getText();
-		TextImportType importType = textReturn.getType();
+		T importType = textReturn.getType();
+		if (importType != null) {
+			Settings.lock("Import (" + toolName + ")");
+			Settings.get().putImportSettings(toolName, importType);
+			Settings.unlock("Import (" + toolName + ")");
+			program.saveSettings("Import (" + toolName + ")");
+		}
 		if (importText == null || importType == null) {
 			return; //Cancelled
 		}
@@ -60,18 +64,10 @@ public class TextImport {
 			return;
 		}
 
-		Map<Integer, Double> data = importType.importText(importText);
-		//Validate Output
-		if (data == null || data.isEmpty()) {
-			JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), GuiShared.get().textInvalid(), GuiShared.get().textImport(), JOptionPane.PLAIN_MESSAGE);
-			importText(importText, types, importType, handler); //Again!
-			return;
-		}
-		//Add items
-		handler.addItems(data, importType);
+		handler.addItems(textReturn);
 	}
 
-	public static interface TextImportHandler {
-		public void addItems(Map<Integer, Double> data, TextImportType type);
+	public static interface TextImportHandler<T extends SimpleTextImport> {
+		public void addItems(TextReturn<T> textReturn);
 	}
 }

@@ -182,6 +182,8 @@ public class Settings {
 	//Lock OK
 	private final CopySettings copySettings = new CopySettings();
 	private final Map<String, ExportSettings> exportSettings = new HashMap<>();
+//Import
+	private final Map<String, String> importSettings = new HashMap<>();
 //Tracker						Saved by TaskDialog.update() (on API update)
 	private final TrackerSettings trackerSettings = new TrackerSettings();
 //Price History
@@ -421,6 +423,36 @@ public class Settings {
 			exportSettings.put(toolName, new ExportSettings(toolName));
 		}
 		return exportSettings.get(toolName);
+	}
+
+	/***
+	 *
+	 * @return
+	 */
+	public Map<String, String> getImportSettings() {	
+		return importSettings;
+	}
+
+	/***
+	 *
+	 * @param toolName
+	 * @param defaultValue
+	 * @return
+	 */
+	public String getImportSettings(String toolName, Enum<?> defaultValue) {
+		if (!importSettings.containsKey(toolName)) {
+			importSettings.put(toolName, defaultValue.name());
+		}
+		return importSettings.get(toolName);
+	}
+
+	/***
+	 *
+	 * @param toolName
+	 * @param type
+	 */
+	public void putImportSettings(String toolName, Enum<?> type) {
+		importSettings.put(toolName, type.name());
 	}
 
 	public CopySettings getCopySettings() {
