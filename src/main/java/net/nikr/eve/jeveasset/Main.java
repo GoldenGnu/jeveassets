@@ -63,29 +63,7 @@ public final class Main {
 		System.setProperty("sun.jnu.encoding", "UTF-8");
 		System.setProperty("file.encoding", "UTF-8");
 
-		// the tests for null indicate that the property is not set
-		// It is possible to set properties using the -Dlog.home=foo/bar
-		// and thus we want to allow this to take priority over the
-		// configuration options here.
-		if (System.getProperty("log.home") == null) {
-			if (portable) {
-				try {
-					//jeveassets.jar directory
-					File file = new File(net.nikr.eve.jeveasset.Program.class.getProtectionDomain().getCodeSource().getLocation().toURI()).getParentFile();
-					System.setProperty("log.home", file.getAbsolutePath() + File.separator);
-				} catch (URISyntaxException ex) {
-					//Working directory
-					System.setProperty("log.home", System.getProperty("user.dir") + File.separator); //Working directory
-				}
-			} else {
-				//Note: We can not use Program.onMac() as that will initialize the Program LOG
-				if (System.getProperty("os.name").toLowerCase().startsWith("mac os x")) { //Mac
-					System.setProperty("log.home", System.getProperty("user.home") + File.separator + "Library" + File.separator + "Preferences" + File.separator + "JEveAssets" + File.separator);
-				} else { //Windows/Linux
-					System.setProperty("log.home", System.getProperty("user.home") + File.separator + ".jeveassets" + File.separator);
-				}
-			}
-		}
+		setLogLocation(portable);
 		// ditto here.
 		if (System.getProperty("log.level") == null) {
 			if (debug) {
@@ -181,6 +159,32 @@ public final class Main {
 					Program program = new Program();
 				}
 			});
+		}
+	}
+
+	public static void setLogLocation(boolean portable) {
+		// the tests for null indicate that the property is not set
+		// It is possible to set properties using the -Dlog.home=foo/bar
+		// and thus we want to allow this to take priority over the
+		// configuration options here.
+		if (System.getProperty("log.home") == null) {
+			if (portable) {
+				try {
+					//jeveassets.jar directory
+					File file = new File(net.nikr.eve.jeveasset.Program.class.getProtectionDomain().getCodeSource().getLocation().toURI()).getParentFile();
+					System.setProperty("log.home", file.getAbsolutePath() + File.separator);
+				} catch (URISyntaxException ex) {
+					//Working directory
+					System.setProperty("log.home", System.getProperty("user.dir") + File.separator); //Working directory
+				}
+			} else {
+				//Note: We can not use Program.onMac() as that will initialize the Program LOG
+				if (System.getProperty("os.name").toLowerCase().startsWith("mac os x")) { //Mac
+					System.setProperty("log.home", System.getProperty("user.home") + File.separator + "Library" + File.separator + "Preferences" + File.separator + "JEveAssets" + File.separator);
+				} else { //Windows/Linux
+					System.setProperty("log.home", System.getProperty("user.home") + File.separator + ".jeveassets" + File.separator);
+				}
+			}
 		}
 	}
 }

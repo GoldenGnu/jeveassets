@@ -29,8 +29,8 @@ public class TestUtil {
 
 	@BeforeClass
 	public static void initLog() {
+		Main.setLogLocation(true);
 		System.setProperty("http.agent", Program.PROGRAM_USER_AGENT);
-		System.setProperty("log.home", "");
 		Settings.setTestMode(true);
 	}
 
