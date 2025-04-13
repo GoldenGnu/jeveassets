@@ -22,14 +22,14 @@ package net.nikr.eve.jeveasset.io.local.text;
 
 import java.util.Map;
 import javax.swing.Icon;
-import net.nikr.eve.jeveasset.gui.shared.components.JTextDialog.TextImport;
+import net.nikr.eve.jeveasset.gui.shared.components.JTextDialog.SimpleTextImport;
 
 
-public enum TextImportType implements TextImport {
-	ISK_PER_HOUR(new ImportIskPerHour()),
-	STCOKPILE_SHOPPING_LIST(new ImportShoppingList()),
+public enum TextImportType implements SimpleTextImport {
 	EVE_MULTIBUY(new ImportEveMultibuy()),
-	EFT(new ImportEft()),;
+	EFT(new ImportEft()),
+	STCOKPILE_SHOPPING_LIST(new ImportShoppingList()),
+	ISK_PER_HOUR(new ImportIskPerHour());
 
 	private final AbstractTextImport textImport;
 
