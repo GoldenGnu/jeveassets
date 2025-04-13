@@ -171,6 +171,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 		writeTableFormulas(xmldoc, settings.getTableFormulas());
 		writeTableChanges(xmldoc, settings.getTableChanged());
 		writeExportSettings(xmldoc, settings.getExportSettings(), settings.getCopySettings());
+		writeImportSettings(xmldoc, settings.getImportSettings());
 		writeTrackerNotes(xmldoc, settings.getTrackerSettings().getNotes());
 		writeTrackerFilters(xmldoc, settings.getTrackerSettings().getFilters(), settings.getTrackerSettings().isSelectNew(), settings.getTrackerSettings().getSkillPointFilters());
 		writeTrackerSettings(xmldoc, settings);
@@ -856,6 +857,17 @@ public class SettingsWriter extends AbstractXmlWriter {
 			setAttribute(htmlNode, "repeatheader", exportSetting.getValue().getHtmlRepeatHeader());
 			exportNode.appendChild(htmlNode);
 
+		}
+		xmldoc.getDocumentElement().appendChild(node);
+	}
+
+	private void writeImportSettings(final Document xmldoc, final Map<String, String> importSettings) {
+		Element node = xmldoc.createElementNS(null, "imports");
+		for(Map.Entry<String, String> exportSetting : importSettings.entrySet()) {
+			Element importNode = xmldoc.createElementNS(null, "import");
+			setAttribute(importNode, "name", exportSetting.getKey());
+			setAttribute(importNode, "type", exportSetting.getValue());
+			node.appendChild(importNode);
 		}
 		xmldoc.getDocumentElement().appendChild(node);
 	}
