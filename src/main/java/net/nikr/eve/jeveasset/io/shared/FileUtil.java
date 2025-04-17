@@ -130,13 +130,13 @@ public class FileUtil extends FileUtilSimple {
 				file = new File(userDir.getAbsolutePath() + File.separator + ".jeveassets");
 			}
 			ret = new File(file.getAbsolutePath() + File.separator + filename);
-			File parent = ret.getParentFile();
-			if (!parent.exists() && !parent.mkdirs()) {
-				JOptionPane.showMessageDialog(null, "Failed to create directory " + parent.getAbsolutePath(), Program.PROGRAM_NAME + " - Critical Error", JOptionPane.ERROR_MESSAGE);
-				System.exit(-1);
-			}
 		} else {
 			ret = new File(FileUtilSimple.getLocalFile(filename));
+		}
+		File parent = ret.getParentFile();
+		if (!parent.exists() && !parent.mkdirs()) {
+			JOptionPane.showMessageDialog(null, "Failed to create directory " + parent.getAbsolutePath(), Program.PROGRAM_NAME + " - Critical Error", JOptionPane.ERROR_MESSAGE);
+			System.exit(-1);
 		}
 		return ret.getAbsolutePath();
 	}
@@ -344,6 +344,10 @@ public class FileUtil extends FileUtilSimple {
 
 	public static String getPathProfilesDirectory() {
 		return getLocalFile(PATH_PROFILES, !CliOptions.get().isPortable());
+	}
+
+	public static String getPathProfile(String filename) {
+		return getLocalFile(PATH_PROFILES + File.separator + filename, !CliOptions.get().isPortable());
 	}
 
 	public static String getPathStaticDataDirectory() {

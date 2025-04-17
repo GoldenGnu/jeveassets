@@ -40,9 +40,6 @@ import javax.swing.Timer;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.accounts.ApiType;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
-import net.nikr.eve.jeveasset.data.api.accounts.EveApiAccount;
-import net.nikr.eve.jeveasset.data.api.accounts.EveApiOwner;
-import net.nikr.eve.jeveasset.data.api.accounts.EveKitOwner;
 import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
 import net.nikr.eve.jeveasset.data.profile.ProfileData;
 import net.nikr.eve.jeveasset.data.profile.ProfileManager;
@@ -402,7 +399,7 @@ public class UpdateDialog extends JDialogCentered {
 
 		Date priceData = program.getPriceDataGetter().getNextUpdate();
 		for (OwnerType owner : program.getOwnerTypes()) {
-			if (!owner.isShowOwner() || owner.isInvalid() || owner.isExpired() || owner.getAccountAPI() == ApiType.EVE_ONLINE || owner.getAccountAPI() == ApiType.EVEKIT) {
+			if (!owner.isShowOwner() || owner.isInvalid() || owner.isExpired()) {
 				continue;
 			}
 			if (owner.isIndustryJobs()) {
@@ -678,24 +675,6 @@ public class UpdateDialog extends JDialogCentered {
 		@Override
 		public void update() {
 			setIcon(null);
-			for (EveApiAccount account : profileManager.getAccounts()) {
-				for (EveApiOwner eveApiOwner : account.getOwners()) {
-					if (eveApiOwner.canMigrate()) {
-						addError("EveApi accounts must be migrated to ESI", "Add ESI accounts in the account manager:\r\nOptions > Accounts... > Add > ESI");
-						break;
-					} else {
-						addError("Migrated EveApi accounts can safely be deleted", "Delete EveApi accounts in the account manager:\r\nOptions > Accounts... > Edit");
-					}
-				}
-			}
-			for (EveKitOwner eveKitOwner : profileManager.getEveKitOwners()) {
-				if (eveKitOwner.canMigrate()) {
-					addError("EveKit accounts must be migrated to ESI", "Add ESI accounts in the account manager:\r\nOptions > Accounts... > Add > ESI");
-					break;
-				} else {
-					addError("Migrated EveKit accounts can safely be deleted", "Delete EveApi accounts in the account manager:\r\nOptions > Accounts... > Edit");
-				}
-			}
 			//Esi
 			List<Runnable> updates = new ArrayList<>();
 			for (EsiOwner esiOwner : profileManager.getEsiOwners()) {
@@ -841,7 +820,7 @@ public class UpdateDialog extends JDialogCentered {
 			List<Runnable> updates = new ArrayList<>();
 			EsiContractItemsGetter.reset();
 			for (EsiOwner esiOwner : profileManager.getEsiOwners()) {
-				updates.add(new EsiContractItemsGetter(this, esiOwner, profileManager.getEsiOwners()));
+				updates.add(new EsiContractItemsGetter(this, esiOwner, profileManager.getEsiOwners(), Settings.get().isContractHistory()));
 			}
 			ThreadWoker.start(this, updates, false);
 		}

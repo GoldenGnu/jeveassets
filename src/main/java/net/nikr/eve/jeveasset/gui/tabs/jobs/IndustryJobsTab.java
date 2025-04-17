@@ -62,6 +62,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
 import net.nikr.eve.jeveasset.gui.shared.table.TableFormatFactory;
 import net.nikr.eve.jeveasset.i18n.TabsJobs;
+import net.nikr.eve.jeveasset.io.local.profile.ProfileDatabase;
 
 
 public class IndustryJobsTab extends JMainTabPrimary {
@@ -224,7 +225,7 @@ public class IndustryJobsTab extends JMainTabPrimary {
 						} else {
 							tableModel.fireTableDataChanged();
 						}
-						program.saveProfile();
+						program.saveTable(ProfileDatabase.Table.INDUSTRY_JOBS);
 					}
 				});
 				jStatus.add(jMenuItem);

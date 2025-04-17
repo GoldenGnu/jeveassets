@@ -45,7 +45,7 @@ public class EsiNameGetterOnlineTest extends TestUtil {
 
 		List<OwnerType> owners = new ArrayList<>();
 		for (Long id : ids) {
-			EsiOwner esiOwner = new EsiOwner();
+			EsiOwner esiOwner = EsiOwner.create();
 			esiOwner.setOwnerID(id);
 			owners.add(esiOwner);
 		}
