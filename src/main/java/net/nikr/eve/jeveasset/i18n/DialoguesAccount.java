@@ -101,8 +101,6 @@ public abstract class DialoguesAccount extends Bundle {
 
 	public abstract String accountExpired();
 	public abstract String accountInvalid();
-	public abstract String accountMigrated();
-	public abstract String accountCanMigrate();
 	public abstract String add();
 	public abstract String revalidate();
 	public abstract String revalidateMsgAll(int total);
@@ -128,23 +126,11 @@ public abstract class DialoguesAccount extends Bundle {
 	public abstract String close();
 	public abstract String noOwners();
 
-	public abstract String migrateTitle();
-	public abstract String migrateDone();
-	public abstract String migrateEsiEmpty(String ownerName);
-	public abstract String migrateEsiSelect();
-	public abstract String migrateOk();
-	public abstract String migrateAll();
-	public abstract String migrateEsiAccountName(String name, int included, int total);
-	public abstract String migrateHelp();
-	public abstract String accountMigratedDoneMsg();
-	public abstract String accountMigratedDoneTitle();
-
 	public abstract String deleteAccountQuestion();
 	public abstract String deleteAccount();
 
 	public abstract String delete();
 	public abstract String edit();
-	public abstract String migrate();
 
 	public abstract String tableFormatName();
 	public abstract String tableFormatClones();

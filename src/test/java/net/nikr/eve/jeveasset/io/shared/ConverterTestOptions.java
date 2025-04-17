@@ -25,8 +25,6 @@ import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.Date;
 import javax.swing.JButton;
-import net.nikr.eve.jeveasset.data.api.accounts.EveApiAccount;
-import net.nikr.eve.jeveasset.data.api.accounts.EveApiAccount.KeyType;
 import net.nikr.eve.jeveasset.data.api.my.MyBlueprint;
 import net.nikr.eve.jeveasset.data.api.my.MyShip;
 import net.nikr.eve.jeveasset.data.api.raw.RawBlueprint;
@@ -100,7 +98,7 @@ public interface ConverterTestOptions {
 	//LocationType
 	public MyLocation getMyLocation();
 
-	public Long getLocationTypeEveApi();
+	public Long getLocationID();
 
 	public CharacterAssetsResponse.LocationTypeEnum getLocationTypeEsiCharacter();
 
@@ -117,18 +115,12 @@ public interface ConverterTestOptions {
 
 	public CorporationContainersLogsResponse.LocationFlagEnum getLocationFlagEsiContainersLogsCorporation();
 
-	public String getLocationFlagEveKit();
-
-	public int getLocationFlagEveApi();
-
 	//ContractAvailability
 	public RawContract.ContractAvailability getContractAvailabilityRaw();
 
 	public CharacterContractsResponse.AvailabilityEnum getContractAvailabilityEsiCharacter();
 
 	public CorporationContractsResponse.AvailabilityEnum getContractAvailabilityEsiCorporation();
-
-	public String getContractAvailabilityEveKit();
 
 	//ContractStatus
 	public RawContract.ContractStatus getContractStatusRaw();
@@ -137,8 +129,6 @@ public interface ConverterTestOptions {
 
 	public CorporationContractsResponse.StatusEnum getContractStatusEsiCorporation();
 
-	public String getContractStatusEveKit();
-
 	//ContractType
 	public RawContract.ContractType getContractTypeRaw();
 
@@ -146,18 +136,12 @@ public interface ConverterTestOptions {
 
 	public CorporationContractsResponse.TypeEnum getContractTypeEsiCorporation();
 
-	public String getContractTypeEveKit();
-
 	//IndustryJobStatus
 	public RawIndustryJob.IndustryJobStatus getIndustryJobStatusRaw();
 
 	public CharacterIndustryJobsResponse.StatusEnum getIndustryJobStatusEsiCharacter();
 
 	public CorporationIndustryJobsResponse.StatusEnum getIndustryJobStatusEsiCorporation();
-
-	public int getIndustryJobStatusEveApi();
-
-	public String getIndustryJobStatusEveKit();
 
 	//JournalContextType
 	public ContextType getJournalContextTypeRaw();
@@ -184,8 +168,6 @@ public interface ConverterTestOptions {
 
 	public CorporationOrdersHistoryResponse.RangeEnum getMarketOrderRangeEsiCorporationHistory();
 
-	public int getMarketOrderRangeEveApi();
-
 	//MarketOrderState
 	public RawMarketOrder.MarketOrderState getMarketOrderStateRaw();
 
@@ -194,8 +176,6 @@ public interface ConverterTestOptions {
 	public Outbid getMarketOrdersOutbid();
 
 	public CorporationOrdersHistoryResponse.StateEnum getMarketOrderStateEsiCorporationHistory();
-
-	public int getMarketOrderStateEveApi();
 
 	public int getIndex();
 
@@ -212,11 +192,6 @@ public interface ConverterTestOptions {
 	//Owner
 	public EsiCallbackURL getEsiCallbackURL();
 
-	public KeyType getKeyType();
-
-	public EveApiAccount getEveApiAccount();
-
-	//Default
 	default OffsetDateTime getOffsetDateTime() {
 		return getDate().toInstant().atOffset(ZoneOffset.UTC);
 	}

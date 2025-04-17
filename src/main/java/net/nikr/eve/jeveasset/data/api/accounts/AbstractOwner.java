@@ -57,12 +57,13 @@ public abstract class AbstractOwner implements OwnerType {
 	private Map<Integer, String> walletDivisions = new HashMap<>();
 	private Map<Integer, String> assetDivisions = new HashMap<>();
 	private List<MySkill> skills = new ArrayList<>();
-	private List<MyMining> mining = new ArrayList<>();
-	private List<MyExtraction> extractions = new ArrayList<>();
+	private Set<MyMining> mining = new HashSet<>();
+	private Set<MyExtraction> extractions = new HashSet<>();
 	private Long totalSkillPoints = null;
 	private Integer unallocatedSkillPoints = null;
 	private List<MyContainerLog> containerLogs = new ArrayList<>();
 
+	private final String accountID;
 	private String ownerName;
 	private String corporationName = null;
 	private long ownerID;
@@ -85,14 +86,12 @@ public abstract class AbstractOwner implements OwnerType {
 	private Date miningNextUpdate = Settings.getNow();
 	private Date containerLogsNextUpdate = Settings.getNow();
 
-	public AbstractOwner() { }
-
-	public AbstractOwner(String ownerName, long ownerID) {
-		this.ownerName = ownerName;
-		this.ownerID = ownerID;
+	public AbstractOwner(String uniqueID) {
+		this.accountID = uniqueID;
 	}
 
 	public AbstractOwner(AbstractOwner abstractOwner) {
+		accountID = abstractOwner.accountID;
 		accountBalances.addAll(abstractOwner.accountBalances);
 		marketOrders.addAll(abstractOwner.marketOrders);
 		transactions.addAll(abstractOwner.transactions);
@@ -128,6 +127,11 @@ public abstract class AbstractOwner implements OwnerType {
 		this.skillsNextUpdate = abstractOwner.skillsNextUpdate;
 		this.miningNextUpdate = abstractOwner.miningNextUpdate;
 		this.containerLogsNextUpdate = abstractOwner.containerLogsNextUpdate;
+	}
+
+	@Override
+	public String getAccountID() {
+		return accountID;
 	}
 
 	@Override
@@ -393,12 +397,12 @@ public abstract class AbstractOwner implements OwnerType {
 	}
 
 	@Override
-	public List<MyMining> getMining() {
+	public Set<MyMining> getMining() {
 		return mining;
 	}
 
 	@Override
-	public List<MyExtraction> getExtractions() {
+	public Set<MyExtraction> getExtractions() {
 		return extractions;
 	}
 
@@ -503,12 +507,12 @@ public abstract class AbstractOwner implements OwnerType {
 	}
 
 	@Override
-	public void setMining(List<MyMining> mining) {
+	public void setMining(Set<MyMining> mining) {
 		this.mining = mining;
 	}
 
 	@Override
-	public void setExtractions(List<MyExtraction> extractions) {
+	public void setExtractions(Set<MyExtraction> extractions) {
 		this.extractions = extractions;
 	}
 

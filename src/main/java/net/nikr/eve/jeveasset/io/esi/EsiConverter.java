@@ -218,31 +218,52 @@ public class EsiConverter extends DataConverter {
 		return convertRawContracts(rawContracts, owner, saveHistory);
 	}
 
-	public static Map<MyContract, List<MyContractItem>> toContractItems(MyContract contract, List<CharacterContractsItemsResponse> responses, OwnerType owner) {
-		List<RawContractItem> rawContractItems = new ArrayList<>();
-		for (CharacterContractsItemsResponse response : responses) {
-			rawContractItems.add(new RawContractItem(response));
-			ApiIdConverter.updateItem(response.getTypeId());
+	public static Map<MyContract, List<MyContractItem>> toContractItems(Map<MyContract, List<CharacterContractsItemsResponse>> responsess, OwnerType owner, boolean saveHistory) {
+		Map<MyContract, List<RawContractItem>> rawContractItems = new HashMap<>();
+		for (Map.Entry<MyContract, List<CharacterContractsItemsResponse>> entry : responsess.entrySet()) {
+			for (CharacterContractsItemsResponse response : entry.getValue()) {
+				List<RawContractItem> list = rawContractItems.get(entry.getKey());
+				if (list == null) {
+					list = new ArrayList<>();
+					rawContractItems.put(entry.getKey(), list);
+				}
+				list.add(new RawContractItem(response));
+				ApiIdConverter.updateItem(response.getTypeId());
+			}
 		}
-		return convertRawContractItems(contract, rawContractItems, owner);
+		return convertRawContractItems(rawContractItems, owner, saveHistory);
 	}
 
-	public static Map<MyContract, List<MyContractItem>> toContractItemsCorporation(MyContract contract, List<CorporationContractsItemsResponse> responses, OwnerType owner) {
-		List<RawContractItem> rawContractItems = new ArrayList<>();
-		for (CorporationContractsItemsResponse response : responses) {
-			rawContractItems.add(new RawContractItem(response));
-			ApiIdConverter.updateItem(response.getTypeId());
+	public static Map<MyContract, List<MyContractItem>> toContractItemsCorporation(Map<MyContract, List<CorporationContractsItemsResponse>> responsess, OwnerType owner, boolean saveHistory) {
+		Map<MyContract, List<RawContractItem>> rawContractItems = new HashMap<>();
+		for (Map.Entry<MyContract, List<CorporationContractsItemsResponse>> entry : responsess.entrySet()) {
+			for (CorporationContractsItemsResponse response : entry.getValue()) {
+				List<RawContractItem> list = rawContractItems.get(entry.getKey());
+				if (list == null) {
+					list = new ArrayList<>();
+					rawContractItems.put(entry.getKey(), list);
+				}
+				list.add(new RawContractItem(response));
+				ApiIdConverter.updateItem(response.getTypeId());
+			}
 		}
-		return convertRawContractItems(contract, rawContractItems, owner);
+		return convertRawContractItems(rawContractItems, owner, saveHistory);
 	}
 
-	public static Map<MyContract, List<MyContractItem>> toContractItemsPublic(MyContract contract, List<PublicContractsItemsResponse> responses, OwnerType owner) {
-		List<RawContractItem> rawContractItems = new ArrayList<>();
-		for (PublicContractsItemsResponse response : responses) {
-			rawContractItems.add(new RawContractItem(response));
-			ApiIdConverter.updateItem(response.getTypeId());
+	public static Map<MyContract, List<MyContractItem>> toContractItemsPublic(Map<MyContract, List<PublicContractsItemsResponse>> responsess, OwnerType owner, boolean saveHistory) {
+		Map<MyContract, List<RawContractItem>> rawContractItems = new HashMap<>();
+		for (Map.Entry<MyContract, List<PublicContractsItemsResponse>> entry : responsess.entrySet()) {
+			for (PublicContractsItemsResponse response : entry.getValue()) {
+				List<RawContractItem> list = rawContractItems.get(entry.getKey());
+				if (list == null) {
+					list = new ArrayList<>();
+					rawContractItems.put(entry.getKey(), list);
+				}
+				list.add(new RawContractItem(response));
+				ApiIdConverter.updateItem(response.getTypeId());
+			}
 		}
-		return convertRawContractItems(contract, rawContractItems, owner);
+		return convertRawContractItems(rawContractItems, owner, saveHistory);
 	}
 
 	public static Set<MyMarketOrder> toMarketOrders(List<CharacterOrdersResponse> responses, List<CharacterOrdersHistoryResponse> responsesHistory, OwnerType owner, boolean saveHistory) {
@@ -335,7 +356,7 @@ public class EsiConverter extends DataConverter {
 		return convertRawSkills(skills, owner);
 	}
 
-	public static List<MyMining> toMining(List<CharacterMiningResponse> responses, OwnerType owner, boolean saveHistory) {
+	public static Set<MyMining> toMining(List<CharacterMiningResponse> responses, OwnerType owner, boolean saveHistory) {
 		List<RawMining> mining = new ArrayList<>();
 		for (CharacterMiningResponse response : responses) {
 			mining.add(new RawMining(response, owner));
@@ -344,7 +365,7 @@ public class EsiConverter extends DataConverter {
 		return convertRawMining(mining, owner, saveHistory);
 	}
 
-	public static List<MyMining> toMining(Map<CorporationMiningObserversResponse, List<CorporationMiningObserverResponse>> responses, OwnerType owner, boolean saveHistory) {
+	public static Set<MyMining> toMining(Map<CorporationMiningObserversResponse, List<CorporationMiningObserverResponse>> responses, OwnerType owner, boolean saveHistory) {
 		List<RawMining> mining = new ArrayList<>();
 		for (Map.Entry<CorporationMiningObserversResponse, List<CorporationMiningObserverResponse>> response : responses.entrySet()) {
 			for (CorporationMiningObserverResponse miningObserver : response.getValue()) {
@@ -354,7 +375,7 @@ public class EsiConverter extends DataConverter {
 		return convertRawMining(mining, owner, saveHistory);
 	}
 
-	public static List<MyExtraction> toExtraction(List<CorporationMiningExtractionsResponse> responses, OwnerType owner, boolean saveHistory) {
+	public static Set<MyExtraction> toExtraction(List<CorporationMiningExtractionsResponse> responses, OwnerType owner, boolean saveHistory) {
 		List<RawExtraction> extractions = new ArrayList<>();
 		for (CorporationMiningExtractionsResponse response : responses) {
 			extractions.add(new RawExtraction(response));

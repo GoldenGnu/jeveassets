@@ -20,6 +20,8 @@
  */
 package net.nikr.eve.jeveasset.io.shared;
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -58,6 +60,14 @@ import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
+import net.nikr.eve.jeveasset.io.local.profile.ProfileContracts;
+import net.nikr.eve.jeveasset.io.local.profile.ProfileDatabase;
+import net.nikr.eve.jeveasset.io.local.profile.ProfileIndustryJobs;
+import net.nikr.eve.jeveasset.io.local.profile.ProfileJournals;
+import net.nikr.eve.jeveasset.io.local.profile.ProfileMarketOrders;
+import net.nikr.eve.jeveasset.io.local.profile.ProfileMining;
+import net.nikr.eve.jeveasset.io.local.profile.ProfileTransactions;
+import net.nikr.eve.jeveasset.io.local.profile.ProfileConnectionData;
 
 public abstract class DataConverter {
 
@@ -152,7 +162,7 @@ public abstract class DataConverter {
 		return list;
 	}
 
-	public static List<MyAccountBalance> convertRawAccountBalance(List<RawAccountBalance> rawAccountBalances, OwnerType owner) {
+	protected static List<MyAccountBalance> convertRawAccountBalance(List<RawAccountBalance> rawAccountBalances, OwnerType owner) {
 		List<MyAccountBalance> accountBalances = new ArrayList<>();
 		for (RawAccountBalance rawAccountBalance : rawAccountBalances) { //Lookup by ItemID
 			accountBalances.add(toMyAccountBalance(rawAccountBalance, owner));
@@ -162,6 +172,10 @@ public abstract class DataConverter {
 
 	public static MyAccountBalance toMyAccountBalance(RawAccountBalance rawAccountBalance, OwnerType owner) {
 		return new MyAccountBalance(rawAccountBalance, owner);
+	}
+
+	public static List<MyAsset> toRawAssets(List<RawAsset> rawAssets, OwnerType owner) {
+		return convertRawAssets(rawAssets, owner);
 	}
 
 	protected static List<MyAsset> convertRawAssets(List<RawAsset> rawAssets, OwnerType owner) {
@@ -218,38 +232,61 @@ public abstract class DataConverter {
 		return new MyAsset(rawAsset, item, owner, parents);
 	}
 
-	public static Map<MyContract, List<MyContractItem>> convertRawContracts(List<RawContract> rawContracts, OwnerType owner, boolean saveHistory) {
+	protected static Map<MyContract, List<MyContractItem>> convertRawContracts(List<RawContract> rawContracts, OwnerType owner, boolean saveHistory) {
 		Map<MyContract, List<MyContractItem>> contracts = new HashMap<>();
-		if (saveHistory) { //Will be overwritten by new contracts
-			contracts.putAll(owner.getContracts());
-			for (MyContract contract : owner.getContracts().keySet()) {
-				contract.archive();
-			}
-		}
 		for (RawContract rawContract : rawContracts) {
-			MyContract myContract = toMyContract(rawContract);
-			List<MyContractItem> contractItems = owner.getContracts().get(myContract); //Load ContractItems
+			MyContract contract = toMyContract(rawContract);
+			List<MyContractItem> contractItems = owner.getContracts().get(contract); //Load ContractItems
 			if (contractItems == null) { //New
 				contractItems = new ArrayList<>();
 			} else { //Old, update contract items
 				for (MyContractItem contractItem : contractItems) {
-					contractItem.setContract(myContract);
+					contractItem.setContract(contract);
 				}
 			}
-			contracts.remove(myContract); //Remove old value (if present)
-			contracts.put(myContract, contractItems);
+			contracts.put(contract, contractItems);
+		}
+		if (saveHistory) {
+			Set<MyContract> update = new HashSet<>(contracts.keySet()); //Contracts in esi needs to be update
+			for (Map.Entry<MyContract, List<MyContractItem>> entry : owner.getContracts().entrySet()) {
+				MyContract contract = entry.getKey();
+				if (!contracts.containsKey(contract)) {
+					if(contract.archive()) {
+						update.add(contract); //Archived contracts needs to be update
+					}
+					contracts.put(contract, entry.getValue());
+				}
+			}
+			ProfileDatabase.update(new ProfileConnectionData<MyContract>(new HashSet<>(update)) {
+				@Override
+				public void update(Connection connection, Collection<MyContract> data) throws SQLException {
+					ProfileContracts.updateContracts(connection, owner.getAccountID(), data);
+				}
+			});
 		}
 		return contracts;
 	}
 
-	public static Map<MyContract, List<MyContractItem>> convertRawContractItems(MyContract contract, List<RawContractItem> rawContractItems, OwnerType owner) {
-		Map<MyContract, List<MyContractItem>> contracts = new HashMap<>(owner.getContracts()); //Copy list
-		List<MyContractItem> contractItems = new ArrayList<>();
-		for (RawContractItem rawContract : rawContractItems) {
-			contractItems.add(toMyContractItem(rawContract, contract));
+	protected static Map<MyContract, List<MyContractItem>> convertRawContractItems(Map<MyContract, List<RawContractItem>> rawContractItems, OwnerType owner, boolean saveHistory) {
+		Map<MyContract, List<MyContractItem>> contracts = new HashMap<>();
+		for (Map.Entry<MyContract, List<RawContractItem>> entry : rawContractItems.entrySet()) {
+			List<MyContractItem> contractItems = new ArrayList<>();
+			for (RawContractItem response : entry.getValue()) {
+				contractItems.add(toMyContractItem(response, entry.getKey()));
+			}
+			contracts.put(entry.getKey(), contractItems);
 		}
-		contracts.remove(contract);
-		contracts.put(contract, contractItems);
+		if (saveHistory) {
+			ProfileDatabase.update(new ProfileConnectionData<List<MyContractItem>>(contracts.values()) {
+				@Override
+				public void update(Connection connection, Collection<List<MyContractItem>> data) throws SQLException {
+					ProfileContracts.updateContractItems(connection, data);
+				}
+			});
+			for (Map.Entry<MyContract, List<MyContractItem>> entry : owner.getContracts().entrySet()) {
+				contracts.putIfAbsent(entry.getKey(), entry.getValue());
+			}
+		}
 		return contracts;
 	}
 
@@ -262,16 +299,25 @@ public abstract class DataConverter {
 		return new MyContractItem(rawContractItem, contract, item);
 	}
 
-	public static Set<MyIndustryJob> convertRawIndustryJobs(List<RawIndustryJob> rawIndustryJobs, OwnerType owner, boolean saveHistory) {
+	protected static Set<MyIndustryJob> convertRawIndustryJobs(List<RawIndustryJob> rawIndustryJobs, OwnerType owner, boolean saveHistory) {
 		Set<MyIndustryJob> industryJobs = new HashSet<>();
 		for (RawIndustryJob rawIndustryJob : rawIndustryJobs) {
 			industryJobs.add(toMyIndustryJob(rawIndustryJob, owner));
 		}
 		if (saveHistory) {
+			Set<MyIndustryJob> update = new HashSet<>(industryJobs); //Industry jobs in esi needs to be update
 			for (MyIndustryJob industryJob : owner.getIndustryJobs()) {
-				industryJob.archive();
+				if (industryJob.archive()) {
+					update.add(industryJob); //Archived industry jobs needs to be update
+				}
 				industryJobs.add(industryJob);
 			}
+			ProfileDatabase.update(new ProfileConnectionData<MyIndustryJob>(update) {
+				@Override
+				public void update(Connection connection, Collection<MyIndustryJob> data) throws SQLException {
+					ProfileIndustryJobs.updateIndustryJobs(connection, owner.getAccountID(), data);
+				}
+			});
 		}
 		return industryJobs;
 	}
@@ -282,12 +328,18 @@ public abstract class DataConverter {
 		return new MyIndustryJob(rawIndustryJob, item, output, owner);
 	}
 
-	public static Set<MyJournal> convertRawJournals(List<RawJournal> rawJournals, OwnerType owner, boolean saveHistory) {
+	protected static Set<MyJournal> convertRawJournals(List<RawJournal> rawJournals, OwnerType owner, boolean saveHistory) {
 		Set<MyJournal> journals = new HashSet<>();
 		for (RawJournal rawJournal : rawJournals) {
 			journals.add(toMyJournal(rawJournal, owner));
 		}
 		if (saveHistory) {
+			ProfileDatabase.update(new ProfileConnectionData<MyJournal>(journals) {
+				@Override
+				public void update(Connection connection, Collection<MyJournal> data) throws SQLException {
+					ProfileJournals.updateJournals(connection, owner.getAccountID(), data);
+				}
+			});
 			journals.addAll(owner.getJournal());
 		}
 		return journals;
@@ -297,7 +349,7 @@ public abstract class DataConverter {
 		return new MyJournal(rawJournal, owner);
 	}
 
-	public static Set<MyMarketOrder> convertRawMarketOrders(List<RawMarketOrder> rawMarketOrders, OwnerType owner, boolean saveHistory) {
+	protected static Set<MyMarketOrder> convertRawMarketOrders(List<RawMarketOrder> rawMarketOrders, OwnerType owner, boolean saveHistory) {
 		Set<MyMarketOrder> marketOrders = new HashSet<>();
 		Map<Long, Set<Change>> changed = new HashMap<>();
 		for (MyMarketOrder marketOrder : owner.getMarketOrders()) {
@@ -309,10 +361,19 @@ public abstract class DataConverter {
 			marketOrder.addChanges(changed.get(marketOrder.getOrderID()));
 		}
 		if (saveHistory) {
+			Set<MyMarketOrder> update = new HashSet<>(marketOrders); //Market orders in esi needs to be update
 			for (MyMarketOrder marketOrder : owner.getMarketOrders()) {
-				marketOrder.archive();
+				if (marketOrder.archive()) {
+					update.add(marketOrder); //Archived market orders needs to be update
+				}
 				marketOrders.add(marketOrder);
 			}
+			ProfileDatabase.update(new ProfileConnectionData<MyMarketOrder>(update) {
+				@Override
+				public void update(Connection connection, Collection<MyMarketOrder> data) throws SQLException {
+					ProfileMarketOrders.updateMarketOrders(connection, owner.getAccountID(), data);
+				}
+			});
 		}
 		return marketOrders;
 	}
@@ -322,15 +383,21 @@ public abstract class DataConverter {
 		return new MyMarketOrder(rawMarketOrder, item, owner);
 	}
 
-	public static Set<MyTransaction> convertRawTransactions(List<RawTransaction> rawTransactions, OwnerType owner, boolean saveHistory) {
-		Set<MyTransaction> myTransactions = new HashSet<>();
+	protected static Set<MyTransaction> convertRawTransactions(List<RawTransaction> rawTransactions, OwnerType owner, boolean saveHistory) {
+		Set<MyTransaction> transactions = new HashSet<>();
 		for (RawTransaction rawTransaction : rawTransactions) {
-			myTransactions.add(toMyTransaction(rawTransaction, owner));
+			transactions.add(toMyTransaction(rawTransaction, owner));
 		}
 		if (saveHistory) {
-			myTransactions.addAll(owner.getTransactions());
+			ProfileDatabase.update(new ProfileConnectionData<MyTransaction>(transactions) {
+				@Override
+				public void update(Connection connection, Collection<MyTransaction> data) throws SQLException {
+					ProfileTransactions.updateTransactions(connection, owner.getAccountID(), data);
+				}
+			});
+			transactions.addAll(owner.getTransactions());
 		}
-		return myTransactions;
+		return transactions;
 	}
 
 	public static MyTransaction toMyTransaction(RawTransaction rawTransaction, OwnerType owner) {
@@ -350,12 +417,12 @@ public abstract class DataConverter {
 		return new MyContainerLog(rawContainerLog);
 	}
 
-	public static List<MySkill> convertRawSkills(List<RawSkill> rawSkills, OwnerType owner) {
-		List<MySkill> mySkills = new ArrayList<>();
+	protected static List<MySkill> convertRawSkills(List<RawSkill> rawSkills, OwnerType owner) {
+		List<MySkill> skills = new ArrayList<>();
 		for (RawSkill rawSkill : rawSkills) {
-			mySkills.add(toMySkill(rawSkill, owner));
+			skills.add(toMySkill(rawSkill, owner));
 		}
-		return mySkills;
+		return skills;
 	}
 
 	public static MySkill toMySkill(RawSkill rawSkill, OwnerType owner) {
@@ -363,15 +430,21 @@ public abstract class DataConverter {
 		return new MySkill(rawSkill, item, owner.getOwnerName());
 	}
 
-	public static List<MyMining> convertRawMining(List<RawMining> rawMinings, OwnerType owner, boolean saveHistory) {
-		List<MyMining> myMinings = new ArrayList<>();
+	protected static Set<MyMining> convertRawMining(List<RawMining> rawMinings, OwnerType owner, boolean saveHistory) {
+		Set<MyMining> minings = new HashSet<>();
 		for (RawMining rawMining : rawMinings) {
-			myMinings.add(toMyMining(rawMining));
+			minings.add(toMyMining(rawMining));
 		}
 		if (saveHistory) {
-			myMinings.addAll(owner.getMining());
+			ProfileDatabase.update(new ProfileConnectionData<MyMining>(minings) {
+				@Override
+				public void update(Connection connection, Collection<MyMining> data) throws SQLException {
+					ProfileMining.updateMinings(connection, owner.getAccountID(), data);
+				}
+			});
+			minings.addAll(owner.getMining());
 		}
-		return myMinings;
+		return minings;
 	}
 
 	public static MyMining toMyMining(RawMining rawMining) {
@@ -380,15 +453,21 @@ public abstract class DataConverter {
 		return new MyMining(rawMining, item, location);
 	}
 
-	public static List<MyExtraction> convertRawExtraction(List<RawExtraction> rawExtractions, OwnerType owner, boolean saveHistory) {
-		List<MyExtraction> myExtractions = new ArrayList<>();
+	protected static Set<MyExtraction> convertRawExtraction(List<RawExtraction> rawExtractions, OwnerType owner, boolean saveHistory) {
+		Set<MyExtraction> extractions = new HashSet<>();
 		for (RawExtraction rawMining : rawExtractions) {
-			myExtractions.add(toMyExtraction(rawMining));
+			extractions.add(toMyExtraction(rawMining));
 		}
 		if (saveHistory) {
-			myExtractions.addAll(owner.getExtractions());
+			ProfileDatabase.update(new ProfileConnectionData<MyExtraction>(new ArrayList<>(extractions)) {
+				@Override
+				public void update(Connection connection, Collection<MyExtraction> data) throws SQLException {
+					ProfileMining.updateExtractions(connection, owner.getAccountID(), data);
+				}
+			});
+			extractions.addAll(owner.getExtractions());
 		}
-		return myExtractions;
+		return extractions;
 	}
 
 	public static MyExtraction toMyExtraction(RawExtraction rawExtraction) {
