@@ -18,37 +18,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  */
-package net.nikr.eve.jeveasset.data.api.accounts;
+package net.nikr.eve.jeveasset.io.local.profile;
+
+import java.sql.Connection;
+import java.sql.SQLException;
 
 
-public abstract class DeprecatedOwner extends AbstractOwner implements OwnerType {
-	private boolean migrated;
-
-	protected DeprecatedOwner(String ownerName, long ownerID, boolean migrated) {
-		super(ownerName, ownerID);
-		this.migrated = migrated;
-	}
-
-	protected DeprecatedOwner(AbstractOwner abstractOwner, boolean migrated) {
-		super(abstractOwner);
-		this.migrated = migrated;
-	}
-
-	protected DeprecatedOwner(boolean migrated) {
-		this.migrated = migrated;
-	}
-
-	private DeprecatedOwner() { }
-
-	public boolean isMigrated() {
-		return migrated;
-	}
-
-	public void setMigrated(boolean migrated) {
-		this.migrated = migrated;
-	}
-
-	public boolean canMigrate() {
-		return !isMigrated();
-	}
+public interface ProfileConnection {
+	public void update(Connection connection) throws SQLException;
 }

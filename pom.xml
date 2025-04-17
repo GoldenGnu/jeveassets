@@ -175,6 +175,7 @@
 										<mkdir dir="${project.build.directory}/profiles"/>
 										<copy todir="${project.build.directory}/profiles">
 											<fileset dir="profiles" includes="*.xml"/>
+											<fileset dir="profiles" includes="*.db"/>
 										</copy>
 									</then>
 								</if>
@@ -770,7 +771,7 @@
 		<dependency>
 			<groupId>net.troja.eve</groupId>
 			<artifactId>eve-esi</artifactId>
-			<version>5.0.0</version>
+			<version>5.1.0</version>
 		</dependency>
 		<dependency>
 			<groupId>uk.me.candle</groupId>
