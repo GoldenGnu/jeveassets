@@ -42,6 +42,7 @@ import net.nikr.eve.jeveasset.data.api.raw.RawBlueprint;
 public interface OwnerType extends SimpleOwner {
 
 	//Info
+	public String getAccountID();
 	public String getCorporationName();
 	public void setOwnerName(final String ownerName);
 	public void setCorporationName(String corporationName);
@@ -71,8 +72,8 @@ public interface OwnerType extends SimpleOwner {
 	public List<MySkill> getSkills();
 	public Long getTotalSkillPoints();
 	public Integer getUnallocatedSkillPoints();
-	public List<MyMining> getMining();
-	public List<MyExtraction> getExtractions();
+	public Set<MyMining> getMining();
+	public Set<MyExtraction> getExtractions();
 	public void setBlueprints(final Map<Long, RawBlueprint> blueprints);
 	public void setIndustryJobs(final Set<MyIndustryJob> industryJobs);
 	public void setTransactions(final Set<MyTransaction> transactions);
@@ -86,8 +87,8 @@ public interface OwnerType extends SimpleOwner {
 	public void setSkills(final List<MySkill> skills);
 	public void setTotalSkillPoints(final Long totalSkillPoints);
 	public void setUnallocatedSkillPoints(final Integer unallocatedSkillPoints);
-	public void setMining(List<MyMining> mining);
-	public void setExtractions(List<MyExtraction> extractions);
+	public void setMining(Set<MyMining> mining);
+	public void setExtractions(Set<MyExtraction> extractions);
 	//Account Mask
 	public boolean isCharacter();
 	public boolean isAssetList();

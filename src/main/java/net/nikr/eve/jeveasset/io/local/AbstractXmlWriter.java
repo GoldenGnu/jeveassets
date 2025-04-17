@@ -149,7 +149,7 @@ public abstract class AbstractXmlWriter extends AbstractBackup {
 		node.setAttribute(qualifiedName, value);
 	}
 
-	private String valueOf(final Object object) {
+	public static String valueOf(final Object object) {
 		if (object == null) {
 			throw new RuntimeException("Can't save null");
 		} else if (object instanceof Collection) {

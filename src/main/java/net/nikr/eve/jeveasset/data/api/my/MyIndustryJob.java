@@ -477,11 +477,13 @@ public class MyIndustryJob extends RawIndustryJob implements Comparable<MyIndust
 	}
 
 	@Override
-	public void archive() {
+	public boolean archive() {
+		boolean update = esi; //Update if in esi
 		if (esi && (getStatus() == IndustryJobStatus.READY || getStatus() == IndustryJobStatus.ACTIVE)) {
 			setStatus(IndustryJobStatus.ARCHIVED);
 		}
 		this.esi = false;
+		return update;
 	}
 
 	@Override
