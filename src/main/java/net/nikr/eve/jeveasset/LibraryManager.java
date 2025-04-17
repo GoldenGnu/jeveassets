@@ -134,7 +134,7 @@ public class LibraryManager {
 			//MP3
 			files.add("jlayer-1.0.2.jar");
 			//Eve-ESI
-			files.add("eve-esi-5.0.0.jar");
+			files.add("eve-esi-5.1.0.jar");
 			files.add("gson-2.9.1.jar");
 			files.add("jackson-core-2.14.0-rc2.jar");
 			files.add("org.apache.oltu.oauth2.common-1.0.2.jar");
