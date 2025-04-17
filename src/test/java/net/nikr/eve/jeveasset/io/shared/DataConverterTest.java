@@ -47,6 +47,7 @@ import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder.MarketOrderState;
 import net.nikr.eve.jeveasset.data.api.raw.RawTransaction;
 import net.nikr.eve.jeveasset.i18n.General;
+import net.nikr.eve.jeveasset.io.local.profile.ProfileDatabase;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
@@ -54,11 +55,17 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 
 public class DataConverterTest extends TestUtil {
 
+	@BeforeClass
+	public static void setUpClass() {
+		ProfileDatabase.setUpdateConnectionUrl(null);
+	}
+	
 	@Test
 	public void testAssetIndustryJob() {
 		Date date = new Date();
@@ -68,7 +75,6 @@ public class DataConverterTest extends TestUtil {
 			MyIndustryJob industryJob = ConverterTestUtil.getMyIndustryJob(esiOwner, false, true, options);
 			industryJob.setJobID(industryJob.getJobID() + 1);
 			industryJob.setBlueprintID(industryJob.getBlueprintID() + 1);
-			industryJob.setStationID(options.getLocationTypeEveApi());
 			industryJob.setCompletedDate(new Date(date.getTime() + 1L));
 			List<MyAsset> assets = DataConverter.assetIndustryJob(Collections.singletonList(industryJob), true, true);
 			if (industryJob.isDone()) {
@@ -94,7 +100,6 @@ public class DataConverterTest extends TestUtil {
 		for (ConverterTestOptions options : ConverterTestOptionsGetter.getConverterOptions()) {
 			MyMarketOrder marketOrder = ConverterTestUtil.getMyMarketOrder(ConverterTestUtil.getEsiOwner(options), false, true, options);
 			marketOrder.setOrderID(marketOrder.getOrderID() + 1);
-			marketOrder.setLocationID(options.getLocationTypeEveApi());
 			List<MyAsset> assets = DataConverter.assetMarketOrder(Collections.singletonList(marketOrder), true, true);
 			if (assets.isEmpty()) {
 				assertFalse(marketOrder.isActive());
@@ -118,8 +123,6 @@ public class DataConverterTest extends TestUtil {
 			MyContractItem contractItem = ConverterTestUtil.getMyContractItem(ConverterTestUtil.getMyContract(false, true, options), false, true, options);
 			contractItem.setRecordID(contractItem.getRecordID() + 1);
 			contractItem.setItemID(contractItem.getItemID()+ 1);
-			contractItem.getContract().setStartLocationID(options.getLocationTypeEveApi());
-			contractItem.getContract().setEndLocationID(options.getLocationTypeEveApi());
 			final Map<Long, OwnerType> owners = new HashMap<>();
 			EsiOwner owner = ConverterTestUtil.getEsiOwner(options);
 			owners.put(owner.getOwnerID(), owner);
@@ -157,11 +160,11 @@ public class DataConverterTest extends TestUtil {
 		for (ConverterTestOptions options : ConverterTestOptionsGetter.getConverterOptions()) {
 			List<RawAsset> rawAssets = new ArrayList<>();
 			RawAsset rootRawAsset = ConverterTestUtil.getRawAsset(false, options);
+			rootRawAsset.setItemID(rootRawAsset.getItemID() + 1);
 			rawAssets.add(rootRawAsset);
 
 			RawAsset childRawAsset = ConverterTestUtil.getRawAsset(false, options);
 			rawAssets.add(childRawAsset);
-			childRawAsset.setItemID(childRawAsset.getItemID() + 1);
 			childRawAsset.setLocationID(rootRawAsset.getItemID());
 
 			EsiOwner owner = ConverterTestUtil.getEsiOwner(options);
@@ -172,7 +175,6 @@ public class DataConverterTest extends TestUtil {
 
 				assertEquals("List empty @" + options.getIndex(), 1, assets.get(0).getAssets().size());
 				MyAsset childMyAsset = assets.get(0).getAssets().get(0);
-				childMyAsset.setItemID(childMyAsset.getItemID() - 1);
 				ConverterTestUtil.testValues(childMyAsset, options);
 			} else {
 				assertEquals(assets.size(), 0);
@@ -244,7 +246,7 @@ public class DataConverterTest extends TestUtil {
 	@Test
 	public void testConvertRawContractItems() {
 		for (ConverterTestOptions options : ConverterTestOptionsGetter.getConverterOptions()) {
-			Map<MyContract, List<MyContractItem>> contractItems = DataConverter.convertRawContractItems(ConverterTestUtil.getMyContract(false, true, options), Collections.singletonList(ConverterTestUtil.getRawContractItem(false, options)), ConverterTestUtil.getEsiOwner(options));
+			Map<MyContract, List<MyContractItem>> contractItems = DataConverter.convertRawContractItems(Collections.singletonMap(ConverterTestUtil.getMyContract(false, true, options), Collections.singletonList(ConverterTestUtil.getRawContractItem(false, options))), ConverterTestUtil.getEsiOwner(options), false);
 			ConverterTestUtil.testValues(contractItems.values().iterator().next().get(0), options);
 		}
 	}
@@ -435,7 +437,7 @@ public class DataConverterTest extends TestUtil {
 	@Test
 	public void testConvertRawMining() {
 		for (ConverterTestOptions options : ConverterTestOptionsGetter.getConverterOptions()) {
-			List<MyMining> minings = DataConverter.convertRawMining(Collections.singletonList(ConverterTestUtil.getRawMining(false, options)), ConverterTestUtil.getEsiOwner(options), false);
+			Set<MyMining> minings = DataConverter.convertRawMining(Collections.singletonList(ConverterTestUtil.getRawMining(false, options)), ConverterTestUtil.getEsiOwner(options), false);
 			ConverterTestUtil.testValues(minings.iterator().next(), options);
 		}
 	}
@@ -451,7 +453,7 @@ public class DataConverterTest extends TestUtil {
 	@Test
 	public void testConvertRawExtraction() {
 		for (ConverterTestOptions options : ConverterTestOptionsGetter.getConverterOptions()) {
-			List<MyExtraction> extractions = DataConverter.convertRawExtraction(Collections.singletonList(ConverterTestUtil.getRawExtraction(false, options)), ConverterTestUtil.getEsiOwner(options), false);
+			Set<MyExtraction> extractions = DataConverter.convertRawExtraction(Collections.singletonList(ConverterTestUtil.getRawExtraction(false, options)), ConverterTestUtil.getEsiOwner(options), false);
 			ConverterTestUtil.testValues(extractions.iterator().next(), options);
 		}
 	}

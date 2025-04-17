@@ -29,10 +29,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
-import net.nikr.eve.jeveasset.data.api.accounts.EveApiAccount;
-import net.nikr.eve.jeveasset.data.api.accounts.EveApiAccount.KeyType;
-import net.nikr.eve.jeveasset.data.api.accounts.EveApiOwner;
-import net.nikr.eve.jeveasset.data.api.accounts.EveKitOwner;
 import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
 import net.nikr.eve.jeveasset.data.api.my.MyAccountBalance;
 import net.nikr.eve.jeveasset.data.api.my.MyAsset;
@@ -79,7 +75,7 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 	private final Profile profile;
 
 	public static boolean load(final Profile profile) {
-		return load(profile, profile.getFilename());
+		return load(profile, profile.getXmlFilename());
 	}
 
 	public static boolean load(final Profile profile, final String filename) {
@@ -122,23 +118,26 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 			Element stockpilesElement = (Element) stockpilesNodes.item(0);
 			parseStockpiles(stockpilesElement, profile);
 		}
-		//Eve XML Api
-		NodeList accountNodes = element.getElementsByTagName("accounts");
-		if (accountNodes.getLength() == 1) {
-			Element accountsElement = (Element) accountNodes.item(0);
-			parseAccounts(accountsElement, profile.getAccounts());
-		}
-		//EveKit
-		NodeList eveKitOwnersNodes = element.getElementsByTagName("evekitowners");
-		if (eveKitOwnersNodes.getLength() == 1) {
-			Element eveKitOwnersElement = (Element) eveKitOwnersNodes.item(0);
-			parseEveKitOwners(eveKitOwnersElement, profile.getEveKitOwners());
-		}
 		//Esi
 		NodeList esiOwnersNodes = element.getElementsByTagName("esiowners");
 		if (esiOwnersNodes.getLength() == 1) {
 			Element esiElement = (Element) esiOwnersNodes.item(0);
 			parseEsiOwners(esiElement, profile.getEsiOwners());
+			Map<MyContract, List<MyContractItem>> contracts = new HashMap<>();
+			for (EsiOwner esiOwner : profile.getEsiOwners()) {
+				for (Map.Entry<MyContract, List<MyContractItem>> entry : esiOwner.getContracts().entrySet()) {
+					if (!entry.getValue().isEmpty()) {
+						contracts.put(entry.getKey(), entry.getValue());
+					}
+				}
+			}
+			for (Map.Entry<MyContract, List<MyContractItem>> entry : contracts.entrySet()) {
+				for (EsiOwner esiOwner : profile.getEsiOwners()) {
+					if (esiOwner.getContracts().containsKey(entry.getKey())) {
+						esiOwner.getContracts().put(entry.getKey(), entry.getValue());
+					}
+				}
+			}
 		}
 	}
 
@@ -178,7 +177,7 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 					}
 				}
 			}
-			EsiOwner owner = new EsiOwner();
+			EsiOwner owner = EsiOwner.create();
 			owner.setRoles(roles);
 			owner.setAccountName(accountName);
 			owner.setScopes(scopes);
@@ -188,92 +187,6 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 
 			parseOwnerType(currentNode, owner);
 			esiOwners.add(owner);
-		}
-	}
-
-	private void parseEveKitOwners(final Element element, final List<EveKitOwner> eveKitOwners) throws XmlException {
-		NodeList ownerNodes = element.getElementsByTagName("evekitowner");
-		for (int i = 0; i < ownerNodes.getLength(); i++) {
-			Element currentNode = (Element) ownerNodes.item(i);
-			int accessKey = getInt(currentNode, "accesskey");
-			String accessCred = getString(currentNode, "accesscred");
-			Date expire = getDateOptional(currentNode, "expire");
-			long accessmask = getLong(currentNode, "accessmask");
-			boolean corporation = getBoolean(currentNode, "corporation");
-			Date limit = getDateOptional(currentNode, "limit");
-			String accountName = getString(currentNode, "accountname");
-			//ContID
-			Long journalCID = getLongOptional(currentNode, "journalcid");
-			Long transactionsCID = getLongOptional(currentNode, "transactionscid");
-			Long contractsCID = getLongOptional(currentNode, "contractscid");
-			Long industryJobsCID = getLongOptional(currentNode, "industryjobscid");
-			Long marketOrdersCID = getLongOptional(currentNode, "marketorderscid");
-			Date accountNextUpdate = getDateOptional(currentNode, "accountnextupdate");
-			boolean migrated = getBooleanNotNull(currentNode, "migrated", false);
-			EveKitOwner owner = new EveKitOwner(accessKey, accessCred, expire, accessmask, corporation, limit, accountName, migrated);
-			owner.setJournalCID(journalCID);
-			owner.setTransactionsCID(transactionsCID);
-			owner.setContractsCID(contractsCID);
-			owner.setIndustryJobsCID(industryJobsCID);
-			owner.setMarketOrdersCID(marketOrdersCID);
-			owner.setAccountNextUpdate(accountNextUpdate);
-			parseOwnerType(currentNode, owner);
-			eveKitOwners.add(owner);
-		}
-	}
-
-	private void parseAccounts(final Element element, final List<EveApiAccount> accounts) throws XmlException {
-		NodeList accountNodes = element.getElementsByTagName("account");
-		for (int i = 0; i < accountNodes.getLength(); i++) {
-			Element currentNode = (Element) accountNodes.item(i);
-			EveApiAccount account = parseAccount(currentNode);
-			parseOwners(currentNode, account);
-			accounts.add(account);
-		}
-	}
-
-	private EveApiAccount parseAccount(final Node node) throws XmlException {
-		int keyID;
-		if (haveAttribute(node, "keyid")) {
-			keyID = getInt(node, "keyid");
-		} else {
-			keyID = getInt(node, "userid");
-		}
-		String vCode;
-		if (haveAttribute(node, "vcode")) {
-			vCode = getString(node, "vcode");
-		} else {
-			vCode = getString(node, "apikey");
-		}
-		Date nextUpdate = getDate(node, "charactersnextupdate");
-		String name = Integer.toString(keyID);
-		if (haveAttribute(node, "name")) {
-			name = getString(node, "name");
-		}
-		long accessMask = getLongNotNull(node, "accessmask", 0);
-		KeyType type = null;
-		if (haveAttribute(node, "type")) {
-			type = KeyType.valueOf(getString(node, "type").toUpperCase());
-		}
-		Date expires = null;
-		if (haveAttribute(node, "expires")) {
-			long i = getLong(node, "expires");
-			if (i != 0) {
-				expires = new Date(i);
-			}
-		}
-		boolean invalid = getBooleanNotNull(node, "invalid", false);
-		return new EveApiAccount(keyID, vCode, name, nextUpdate, accessMask, type, expires, invalid);
-	}
-
-	private void parseOwners(final Element element, final EveApiAccount account) throws XmlException {
-		NodeList ownerNodes = element.getElementsByTagName("human");
-		for (int i = 0; i < ownerNodes.getLength(); i++) {
-			Element currentNode = (Element) ownerNodes.item(i);
-			boolean migrated = getBooleanNotNull(currentNode, "migrated", false) ;
-			EveApiOwner owner = new EveApiOwner(account, migrated);
-			parseOwnerType(currentNode, owner);
-			account.getOwners().add(owner);
 		}
 	}
 
@@ -944,21 +857,31 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 				Long corporationID = getLongOptional(currentNode, "corporationid");
 				boolean forCorporation = getBoolean(currentNode, "forcorp");
 
-				RawMining mining = RawMining.create();
-				mining.setTypeID(typeID);
-				mining.setDate(date);
-				mining.setCount(count);
-				mining.setLocationID(locationID);
-				mining.setCharacterID(characterID);
-				mining.setCorporationID(corporationID);
-				mining.setCorporationName(corporationName);
-				mining.setForCorporation(forCorporation);
+				RawMining rawMining = RawMining.create();
+				rawMining.setTypeID(typeID);
+				rawMining.setDate(date);
+				rawMining.setCount(count);
+				rawMining.setLocationID(locationID);
+				rawMining.setCharacterID(characterID);
+				rawMining.setCorporationID(corporationID);
+				rawMining.setCorporationName(corporationName);
+				rawMining.setForCorporation(forCorporation);
 
-				minings.add(DataConverter.toMyMining(mining));
+				MyMining mining = DataConverter.toMyMining(rawMining);
+				int index = minings.indexOf(mining);
+				if (index >= 0) { //Duplicate
+					MyMining oldMining = minings.get(index); //Current value
+					if (mining.getCount() > oldMining.getCount()) { //New value higher - Replace
+						minings.remove(index);
+						minings.add(mining);
+					}
+				} else {
+					minings.add(mining);
+				}
 			}
-			owners.setMining(minings);
+			owners.setMining(new HashSet<>(minings));
 
-			List<MyExtraction> extractions = new ArrayList<>();
+			Set<MyExtraction> extractions = new HashSet<>();
 			NodeList extractionNodes = currentMiningsNode.getElementsByTagName("extraction");
 			for (int b = 0; b < extractionNodes.getLength(); b++) {
 				Element currentNode = (Element) extractionNodes.item(b);
@@ -967,7 +890,7 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 				Date decay = getDate(currentNode, "decay");
 				int moon = getInt(currentNode, "moon");
 				long structure = getLong(currentNode, "structure");
-				
+
 				RawExtraction mining = RawExtraction.create();
 				mining.setChunkArrivalTime(arrival);
 				mining.setExtractionStartTime(start);

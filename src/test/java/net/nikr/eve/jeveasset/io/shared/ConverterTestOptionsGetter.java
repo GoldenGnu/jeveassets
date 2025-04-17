@@ -28,8 +28,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.swing.JButton;
-import net.nikr.eve.jeveasset.data.api.accounts.EveApiAccount;
-import net.nikr.eve.jeveasset.data.api.accounts.EveApiAccount.KeyType;
 import net.nikr.eve.jeveasset.data.api.my.MyBlueprint;
 import net.nikr.eve.jeveasset.data.api.my.MyShip;
 import net.nikr.eve.jeveasset.data.api.raw.RawBlueprint;
@@ -109,55 +107,29 @@ public class ConverterTestOptionsGetter {
 		private static final MyShip MY_SHIP = new MyShip(LONG[0], INTEGER[0], 60003466L);
 		private static final JButton BUTTON = new JButton();
 		private static final MyBlueprint BLUEPRINT = new MyBlueprint(INTEGER[0], INTEGER[0], INTEGER[0]);
-				
+
 		//LocationType
 		private static final CharacterAssetsResponse.LocationTypeEnum[] ESI_LOCATION_TYPE_CHARACTER = CharacterAssetsResponse.LocationTypeEnum.values();
 		private static final CorporationAssetsResponse.LocationTypeEnum[] ESI_LOCATION_TYPE_CORPORATION = CorporationAssetsResponse.LocationTypeEnum.values();
-		private static final Long[] EVE_API_LOCATION_TYPE = {60003466L, 30000142L, 100000000L, 10000002L};
+		private static final Long[] LOCATION_ID = {60003466L, 30000142L, 100000000L, 10000002L};
 		//LocationFlag
 		private static final List<LocationFlag> LOCATION_TYPE = createLocationTypes();
 		//ContractAvailability
 		private static final RawContract.ContractAvailability[] RAW_CONTRACT_AVAILABILITY = RawContract.ContractAvailability.values();
 		private static final CharacterContractsResponse.AvailabilityEnum[] ESI_CONTRACTS_AVAILABILITY_CHARACTER = CharacterContractsResponse.AvailabilityEnum.values();
 		private static final CorporationContractsResponse.AvailabilityEnum[] ESI_CONTRACTS_AVAILABILITY_CORPORATION = CorporationContractsResponse.AvailabilityEnum.values();
-		private static final String[] EVE_KIT_CONTRACT_AVAILABILITY = {
-			"public",
-			"private",
-			"private",
-			"private"
-		};
 		//ContractStatus
 		private static final RawContract.ContractStatus[] RAW_CONTRACT_STATUS = RawContract.ContractStatus.values();
 		private static final CharacterContractsResponse.StatusEnum[] ESI_CONTRACT_STATUS_CHARACTER = CharacterContractsResponse.StatusEnum.values();
 		private static final CorporationContractsResponse.StatusEnum[] ESI_CONTRACT_STATUS_CORPORATION = CorporationContractsResponse.StatusEnum.values();
-		private static final String[] EVE_KIT_CONTRACT_STATUS = {
-			"outstanding",
-			"inprogress",
-			"completedbyissuer",
-			"completedbycontractor",
-			"completed",
-			"cancelled",
-			"rejected",
-			"failed",
-			"deleted",
-			"reversed"
-		};
 		//ContractType
 		private static final RawContract.ContractType[] RAW_CONTRACT_TYPE = RawContract.ContractType.values();
 		private static final CharacterContractsResponse.TypeEnum[] ESI_CONTRACT_TYPE_CHARACTER = CharacterContractsResponse.TypeEnum.values();
 		private static final CorporationContractsResponse.TypeEnum[] ESI_CONTRACT_TYPE_CORPORATION = CorporationContractsResponse.TypeEnum.values();
-		private static final String[] EVE_KIT_CONTRACT_TYPE = {
-			null,
-			"itemexchange",
-			"auction",
-			"courier",
-			"loan"
-		};
 		//IndustryJobStatus
 		private static final RawIndustryJob.IndustryJobStatus[] RAW_INDUSTRY_JOB_STATUS = RawIndustryJob.IndustryJobStatus.values();
 		private static final CharacterIndustryJobsResponse.StatusEnum[] ESI_INDUSTRY_JOB_STATUS_CHARACTER = CharacterIndustryJobsResponse.StatusEnum.values();
 		private static final CorporationIndustryJobsResponse.StatusEnum[] ESI_INDUSTRY_JOB_STATUS_CORPORATION = CorporationIndustryJobsResponse.StatusEnum.values();
-		private static final Integer[] EVE_API_INDUSTRY_JOB_STATUS = {1, 102, 101, 2, 3, 103};
 		//Journal RefType and ContextType
 		private static final List<JournalData> JOURNAL_DATA = createJournalData();
 		//MarketOrderRange
@@ -166,7 +138,6 @@ public class ConverterTestOptionsGetter {
 		private static final CharacterOrdersHistoryResponse.RangeEnum[] ESI_MARKET_ORDER_RANGE_CHARACTER_HISTORY = CharacterOrdersHistoryResponse.RangeEnum.values();
 		private static final CorporationOrdersResponse.RangeEnum[] ESI_MARKET_ORDER_RANGE_CORPORATION = CorporationOrdersResponse.RangeEnum.values();
 		private static final CorporationOrdersHistoryResponse.RangeEnum[] ESI_MARKET_ORDER_RANGE_CORPORATION_HISTORY = CorporationOrdersHistoryResponse.RangeEnum.values();
-		private static final Integer[] EVE_API_MARKET_ORDER_RANGE = {1, 10, 2, 20, 3, 30, 4, 40, 5, 32767, 0, -1};
 		//MarketOrderState
 		private static final RawMarketOrder.MarketOrderState[] RAW_MARKET_ORDER_STATE = {
 			RawMarketOrder.MarketOrderState.CANCELLED,
@@ -181,10 +152,8 @@ public class ConverterTestOptionsGetter {
 		private static final Outbid ESI_MARKET_ORDER_OUTBID = new Outbid(0.0, 0);
 		private static final CharacterOrdersHistoryResponse.StateEnum[] ESI_MARKET_ORDER_STATE_CHARACTER_HISTORY = CharacterOrdersHistoryResponse.StateEnum.values();
 		private static final CorporationOrdersHistoryResponse.StateEnum[] ESI_MARKET_ORDER_STATE_CORPORATION_HISTORY = CorporationOrdersHistoryResponse.StateEnum.values();
-		private static final Integer[] EVE_API_MARKET_ORDER_STATE = {3, 5, 1, 2, 0, 4};
 		//Owners
 		private static final EsiCallbackURL[] ESI_CALLBACK_URL = EsiCallbackURL.values();
-		private static final KeyType[] KEY_TYPE = {KeyType.CORPORATION};
 		//Control
 		private static final int MAX = createMax();
 
@@ -206,7 +175,6 @@ public class ConverterTestOptionsGetter {
 					locationFlags.put(itemFlag.getFlagID(), locationFlag);
 				}
 				locationFlag.setLocationFlag(locationFlagEnum);
-				locationFlag.setLocationFlag(locationFlagEnum.toString());
 			}
 			//Corporation Blueprints
 			for (CorporationBlueprintsResponse.LocationFlagEnum locationFlagEnum : CorporationBlueprintsResponse.LocationFlagEnum.values()) {
@@ -217,7 +185,6 @@ public class ConverterTestOptionsGetter {
 					locationFlags.put(itemFlag.getFlagID(), locationFlag);
 				}
 				locationFlag.setLocationFlag(locationFlagEnum);
-				locationFlag.setLocationFlag(locationFlagEnum.toString());
 			}
 			//Character Assets
 			for (CharacterAssetsResponse.LocationFlagEnum locationFlagEnum : CharacterAssetsResponse.LocationFlagEnum.values()) {
@@ -228,7 +195,6 @@ public class ConverterTestOptionsGetter {
 					locationFlags.put(itemFlag.getFlagID(), locationFlag);
 				}
 				locationFlag.setLocationFlag(locationFlagEnum);
-				locationFlag.setLocationFlag(locationFlagEnum.toString());
 			}
 			//Corporation Assets
 			for (CorporationAssetsResponse.LocationFlagEnum locationFlagEnum : CorporationAssetsResponse.LocationFlagEnum.values()) {
@@ -239,7 +205,6 @@ public class ConverterTestOptionsGetter {
 					locationFlags.put(itemFlag.getFlagID(), locationFlag);
 				}
 				locationFlag.setLocationFlag(locationFlagEnum);
-				locationFlag.setLocationFlag(locationFlagEnum.toString());
 			}
 			Set<Integer> remove = new HashSet<>();
 			for (LocationFlag locationType : locationFlags.values()) {
@@ -316,42 +281,34 @@ public class ConverterTestOptionsGetter {
 			//LocationType
 			tempMax = Math.max(tempMax, ESI_LOCATION_TYPE_CHARACTER.length);
 			tempMax = Math.max(tempMax, ESI_LOCATION_TYPE_CORPORATION.length);
-			tempMax = Math.max(tempMax, EVE_API_LOCATION_TYPE.length);
 			//LocationFlag
 			tempMax = Math.max(tempMax, LOCATION_TYPE.size());
 			//ContractAvailability
 			tempMax = Math.max(tempMax, RAW_CONTRACT_AVAILABILITY.length);
 			tempMax = Math.max(tempMax, ESI_CONTRACTS_AVAILABILITY_CHARACTER.length);
 			tempMax = Math.max(tempMax, ESI_CONTRACTS_AVAILABILITY_CORPORATION.length);
-			tempMax = Math.max(tempMax, EVE_KIT_CONTRACT_AVAILABILITY.length);
 			//ContractStatus
 			tempMax = Math.max(tempMax, RAW_CONTRACT_STATUS.length);
 			tempMax = Math.max(tempMax, ESI_CONTRACT_STATUS_CHARACTER.length);
 			tempMax = Math.max(tempMax, ESI_CONTRACT_STATUS_CORPORATION.length);
-			tempMax = Math.max(tempMax, EVE_KIT_CONTRACT_STATUS.length);
 			//ContractType
 			tempMax = Math.max(tempMax, RAW_CONTRACT_TYPE.length);
 			tempMax = Math.max(tempMax, ESI_CONTRACT_TYPE_CHARACTER.length);
 			tempMax = Math.max(tempMax, ESI_CONTRACT_TYPE_CORPORATION.length);
-			tempMax = Math.max(tempMax, EVE_KIT_CONTRACT_TYPE.length);
 			//IndustryJobStatus
 			tempMax = Math.max(tempMax, RAW_INDUSTRY_JOB_STATUS.length);
 			tempMax = Math.max(tempMax, ESI_INDUSTRY_JOB_STATUS_CHARACTER.length);
 			tempMax = Math.max(tempMax, ESI_INDUSTRY_JOB_STATUS_CORPORATION.length);
-			tempMax = Math.max(tempMax, EVE_API_INDUSTRY_JOB_STATUS.length);
 			//JournalRefType
 			tempMax = Math.max(tempMax, JOURNAL_DATA.size());
 			//MarketOrderRange
 			tempMax = Math.max(tempMax, RAW_MARKET_ORDER_RANGE.length);
 			tempMax = Math.max(tempMax, ESI_MARKET_ORDER_RANGE_CHARACTER.length);
 			tempMax = Math.max(tempMax, ESI_MARKET_ORDER_RANGE_CORPORATION.length);
-			tempMax = Math.max(tempMax, EVE_API_MARKET_ORDER_RANGE.length);
 			//MarketOrderState
 			tempMax = Math.max(tempMax, RAW_MARKET_ORDER_STATE.length);
-			tempMax = Math.max(tempMax, EVE_API_MARKET_ORDER_STATE.length);
 			//Owners
 			tempMax = Math.max(tempMax, ESI_CALLBACK_URL.length);
-			tempMax = Math.max(tempMax, KEY_TYPE.length);
 			return tempMax;
 		}
 
@@ -466,8 +423,8 @@ public class ConverterTestOptionsGetter {
 
 //LocationType
 		@Override
-		public Long getLocationTypeEveApi() {
-			return get(EVE_API_LOCATION_TYPE, index);
+		public Long getLocationID() {
+			return get(LOCATION_ID, index);
 		}
 
 		@Override
@@ -502,16 +459,6 @@ public class ConverterTestOptionsGetter {
 		}
 
 		@Override
-		public int getLocationFlagEveApi() {
-			return get(LOCATION_TYPE, index).getItemFlag().getFlagID();
-		}
-
-		@Override
-		public String getLocationFlagEveKit() {
-			return get(LOCATION_TYPE, index).getLocationFlagEveKit();
-		}
-
-		@Override
 		public ItemFlag getItemFlag() {
 			return get(LOCATION_TYPE, index).getItemFlag();
 		}
@@ -531,12 +478,6 @@ public class ConverterTestOptionsGetter {
 		public CorporationContractsResponse.AvailabilityEnum getContractAvailabilityEsiCorporation() {
 			return get(ESI_CONTRACTS_AVAILABILITY_CORPORATION, index);
 		}
-
-		@Override
-		public String getContractAvailabilityEveKit() {
-			return get(EVE_KIT_CONTRACT_AVAILABILITY, index);
-		}
-
 //ContractStatus
 		@Override
 		public RawContract.ContractStatus getContractStatusRaw() {
@@ -551,11 +492,6 @@ public class ConverterTestOptionsGetter {
 		@Override
 		public CorporationContractsResponse.StatusEnum getContractStatusEsiCorporation() {
 			return get(ESI_CONTRACT_STATUS_CORPORATION, index);
-		}
-
-		@Override
-		public String getContractStatusEveKit() {
-			return get(EVE_KIT_CONTRACT_STATUS, index);
 		}
 
 //ContractType
@@ -574,11 +510,6 @@ public class ConverterTestOptionsGetter {
 			return get(ESI_CONTRACT_TYPE_CORPORATION, index);
 		}
 
-		@Override
-		public String getContractTypeEveKit() {
-			return get(EVE_KIT_CONTRACT_TYPE, index);
-		}
-
 //IndustryJobStatus
 		@Override
 		public RawIndustryJob.IndustryJobStatus getIndustryJobStatusRaw() {
@@ -595,15 +526,6 @@ public class ConverterTestOptionsGetter {
 			return get(ESI_INDUSTRY_JOB_STATUS_CORPORATION, index);
 		}
 
-		@Override
-		public int getIndustryJobStatusEveApi() {
-			return get(EVE_API_INDUSTRY_JOB_STATUS, index);
-		}
-
-		@Override
-		public String getIndustryJobStatusEveKit() {
-			return get(ESI_INDUSTRY_JOB_STATUS_CHARACTER, index).toString();
-		}
 //JournalContextType
 		@Override
 		public ContextType getJournalContextTypeRaw() {
@@ -661,11 +583,6 @@ public class ConverterTestOptionsGetter {
 			return get(ESI_MARKET_ORDER_RANGE_CORPORATION_HISTORY, index);
 		}
 
-		@Override
-		public int getMarketOrderRangeEveApi() {
-			return get(EVE_API_MARKET_ORDER_RANGE, index);
-		}
-
 //MarketOrderState
 		@Override
 		public RawMarketOrder.MarketOrderState getMarketOrderStateRaw() {
@@ -681,12 +598,6 @@ public class ConverterTestOptionsGetter {
 		public CorporationOrdersHistoryResponse.StateEnum getMarketOrderStateEsiCorporationHistory() {
 			return get(ESI_MARKET_ORDER_STATE_CORPORATION_HISTORY, index);
 		}
-
-		@Override
-		public int getMarketOrderStateEveApi() {
-			return get(EVE_API_MARKET_ORDER_STATE, index);
-		}
-
 //MarketOrder Outbid
 		@Override
 		public Outbid getMarketOrdersOutbid() {
@@ -698,20 +609,9 @@ public class ConverterTestOptionsGetter {
 		public EsiCallbackURL getEsiCallbackURL() {
 			return get(ESI_CALLBACK_URL, index);
 		}
-
-		@Override
-		public KeyType getKeyType() {
-			return get(KEY_TYPE, index);
-		}
-
-		@Override
-		public EveApiAccount getEveApiAccount() {
-			return ConverterTestUtil.getEveApiAccount(this);
-		}
 	}
 
 	private static class LocationFlag {
-		private String locationFlagEveKit;
 		private CharacterBlueprintsResponse.LocationFlagEnum locationFlagEsiBlueprintsCharacter;
 		private CorporationBlueprintsResponse.LocationFlagEnum locationFlagEsiBlueprintsCorporation;
 		private CharacterAssetsResponse.LocationFlagEnum locationFlagEsiAssetsCharacter;
@@ -726,8 +626,7 @@ public class ConverterTestOptionsGetter {
 			return locationFlagEsiBlueprintsCharacter == null
 					|| locationFlagEsiBlueprintsCorporation == null
 					|| locationFlagEsiAssetsCharacter == null
-					|| locationFlagEsiAssetsCorporation == null
-					|| locationFlagEveKit == null;
+					|| locationFlagEsiAssetsCorporation == null;
 		}
 
 		public ItemFlag getItemFlag() {
@@ -750,10 +649,6 @@ public class ConverterTestOptionsGetter {
 			return locationFlagEsiAssetsCorporation;
 		}
 
-		public String getLocationFlagEveKit() {
-			return locationFlagEveKit;
-		}
-
 		public void setLocationFlag(CharacterAssetsResponse.LocationFlagEnum locationFlagEsiAssetsCharacter) {
 			this.locationFlagEsiAssetsCharacter = locationFlagEsiAssetsCharacter;
 		}
@@ -768,10 +663,6 @@ public class ConverterTestOptionsGetter {
 
 		public void setLocationFlag(CharacterBlueprintsResponse.LocationFlagEnum locationFlagEsiBlueprintsCharacter) {
 			this.locationFlagEsiBlueprintsCharacter = locationFlagEsiBlueprintsCharacter;
-		}
-
-		public void setLocationFlag(String locationFlagEveKit) {
-			this.locationFlagEveKit = locationFlagEveKit;
 		}
 	}
 

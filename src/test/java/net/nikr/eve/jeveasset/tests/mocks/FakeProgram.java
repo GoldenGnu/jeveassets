@@ -68,6 +68,7 @@ import net.nikr.eve.jeveasset.gui.tabs.transaction.TransactionTab;
 import net.nikr.eve.jeveasset.gui.tabs.tree.TreeTab;
 import net.nikr.eve.jeveasset.gui.tabs.values.ValueRetroTab;
 import net.nikr.eve.jeveasset.gui.tabs.values.ValueTableTab;
+import net.nikr.eve.jeveasset.io.local.profile.ProfileDatabase.Table;
 import net.nikr.eve.jeveasset.io.online.PriceDataGetter;
 
 /**
@@ -385,4 +386,7 @@ public abstract class FakeProgram extends Program {
 		throw new UnsupportedOperationException("Not implemented");
 	}
 
+	public synchronized void saveTable(Table table) {
+		throw new UnsupportedOperationException("Not implemented");
+	}
 }

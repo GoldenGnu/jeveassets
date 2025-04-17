@@ -22,7 +22,5 @@ package net.nikr.eve.jeveasset.data.api.accounts;
 
 
 public enum ApiType {
-	EVE_ONLINE,
-	EVEKIT,
 	ESI
 }
