@@ -30,7 +30,6 @@ import net.nikr.eve.jeveasset.data.settings.Settings.SettingsFactory;
 public class FileLockSettings extends Settings implements SettingsFactory {
 
 	private static final String SETTINGS = "settings_test";
-	private static final String PROFILE = "profile_test";
 	private static final String TIMEOUT = "timeout";
 	private static final String XML = ".xml";
 	private static final String BAC = ".bac";
@@ -64,22 +63,6 @@ public class FileLockSettings extends Settings implements SettingsFactory {
 
 	public static String getPathSettingsError() {
 		return getPath(SETTINGS+ERROR);
-	}
-
-	public static String getPathProfile() {
-		return getPath(PROFILE+XML);
-	}
-
-	public static String getPathProfileBackup() {
-		return getPath(PROFILE+BAC);
-	}
-
-	public static String getPathProfileVerionsBackup() {
-		return getVersionBackup(getPath(PROFILE+XML));
-	}
-
-	public static String getPathProfileError() {
-		return getPath(PROFILE+ERROR);
 	}
 
 	public static String getPathTimeout() {

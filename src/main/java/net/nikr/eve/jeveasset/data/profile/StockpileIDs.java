@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Set;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
+import net.nikr.eve.jeveasset.io.local.profile.ProfileTable.Rows;
 import net.nikr.eve.jeveasset.io.shared.FileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,10 +41,6 @@ import org.slf4j.LoggerFactory;
 public class StockpileIDs {
 
 	private static final Logger LOG = LoggerFactory.getLogger(StockpileIDs.class);
-
-	public static final String DEFAULT_CONNECTION_URL = "jdbc:sqlite:" + FileUtil.getPathStockpileIDsDatabase();
-
-	private static String connectionUrl = DEFAULT_CONNECTION_URL;
 
 	private final Set<Long> hidden = new HashSet<>();
 	private String tableName;
@@ -60,8 +57,8 @@ public class StockpileIDs {
 		}
 	}
 
-	protected static void setConnectionUrl(String connectionUrl) {
-		StockpileIDs.connectionUrl = connectionUrl;
+	private static String getConnectionUrl() {
+		return "jdbc:sqlite:" + FileUtil.getPathStockpileIDsDatabase();
 	}
 
 	protected void setNewDatabase(boolean newDatabase) {
@@ -146,17 +143,13 @@ public class StockpileIDs {
 			return;
 		}
 		String sql = "INSERT INTO " + tableName + "(id) VALUES(?)";
-		try (Connection connection = DriverManager.getConnection(connectionUrl);
+		try (Connection connection = DriverManager.getConnection(getConnectionUrl());
 				PreparedStatement statement = connection.prepareStatement(sql)) {
-			int i = 0;
+			Rows rows = new Rows(statement, data.size());
 			connection.setAutoCommit(false);
 			for (Long id : data) {
 				statement.setLong(1, id);
-				statement.addBatch();
-				i++;
-				if (i % 1000 == 0 || i == data.size()) {
-					statement.executeBatch(); // Execute every 1000 items.
-				}
+				rows.addRow();
 			}
 			connection.commit();
 			connection.setAutoCommit(true);
@@ -170,17 +163,13 @@ public class StockpileIDs {
 			return;
 		}
 		String sql = "DELETE FROM " + tableName + " WHERE id = ?";
-		try (Connection connection = DriverManager.getConnection(connectionUrl);
+		try (Connection connection = DriverManager.getConnection(getConnectionUrl());
 				PreparedStatement statement = connection.prepareStatement(sql)) {
-			int i = 0;
+			Rows rows = new Rows(statement, data.size());
 			connection.setAutoCommit(false);
 			for (Long id : data) {
 				statement.setLong(1, id);
-				statement.addBatch();
-				i++;
-				if (i % 1000 == 0 || i == data.size()) {
-					statement.executeBatch(); // Execute every 1000 items.
-				}
+				rows.addRow();
 			}
 			connection.commit();
 			connection.setAutoCommit(true);
@@ -191,7 +180,7 @@ public class StockpileIDs {
 
 	private void get() {
 		String sql = "SELECT * FROM " + tableName;
-		try (Connection connection = DriverManager.getConnection(connectionUrl);
+		try (Connection connection = DriverManager.getConnection(getConnectionUrl());
 				PreparedStatement statement = connection.prepareStatement(sql);
 				ResultSet rs = statement.executeQuery();) {
 			while (rs.next()) {
@@ -212,7 +201,7 @@ public class StockpileIDs {
 		String sql = "CREATE TABLE IF NOT EXISTS " + tableName + " (\n"
 				+ "	id integer PRIMARY KEY\n"
 				+ ");";
-		try (Connection connection = DriverManager.getConnection(connectionUrl);
+		try (Connection connection = DriverManager.getConnection(getConnectionUrl());
 				Statement statement = connection.createStatement()) {
 			statement.execute(sql);
 		} catch (SQLException ex) {
@@ -229,7 +218,7 @@ public class StockpileIDs {
 			return false; //FAILURE (table already exist)
 		}
 		String sql = "ALTER TABLE " + this.tableName + " RENAME TO " + tableName + ";";
-		try (Connection connection = DriverManager.getConnection(connectionUrl);
+		try (Connection connection = DriverManager.getConnection(getConnectionUrl());
 				Statement statement = connection.createStatement()) {
 			statement.execute(sql);
 			this.tableName = tableName; //OK (change successful)
@@ -246,7 +235,7 @@ public class StockpileIDs {
 
 	public static boolean tableExist(String tableName) {
 		String sql = "SELECT name FROM sqlite_master WHERE type='table' AND name='" + tableName + "'";
-		try (Connection connection = DriverManager.getConnection(connectionUrl);
+		try (Connection connection = DriverManager.getConnection(getConnectionUrl());
 				Statement statement = connection.createStatement();
 				ResultSet rs = statement.executeQuery(sql)) {
 			while (rs.next()) {
@@ -260,7 +249,7 @@ public class StockpileIDs {
 
 	public void removeTable() {
 		String sql = "DROP TABLE IF EXISTS " + this.tableName + ";";
-		try (Connection connection = DriverManager.getConnection(connectionUrl);
+		try (Connection connection = DriverManager.getConnection(getConnectionUrl());
 				Statement statement = connection.createStatement()) {
 			statement.execute(sql);
 		} catch (SQLException ex) {

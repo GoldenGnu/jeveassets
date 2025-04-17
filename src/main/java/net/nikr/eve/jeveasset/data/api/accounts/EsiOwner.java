@@ -26,6 +26,7 @@ import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+import java.util.UUID;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.io.esi.AbstractEsiGetter;
 import net.nikr.eve.jeveasset.io.esi.EsiCallbackURL;
@@ -72,7 +73,18 @@ public class EsiOwner extends AbstractOwner implements OwnerType {
 	private EsiCallbackURL callbackURL;
 	private Set<RolesEnum> roles = EnumSet.noneOf(RolesEnum.class);
 
-	public EsiOwner() {}
+	public static EsiOwner create() {
+		return new EsiOwner();
+	}
+
+	private EsiOwner() {
+		super(UUID.randomUUID().toString());
+	}
+
+	public EsiOwner(String uniqueID) {
+		super(uniqueID);
+	}
+
 
 	public EsiOwner(EsiOwner esiOwner) {
 		super(esiOwner);

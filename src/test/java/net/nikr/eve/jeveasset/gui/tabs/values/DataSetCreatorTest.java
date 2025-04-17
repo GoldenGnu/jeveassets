@@ -123,13 +123,13 @@ public class DataSetCreatorTest extends TestUtil {
 	}
 
 	private void test(int iteration, final List<TestMatch> matchs, final TestData test) {
-		OwnerType issuer = new EsiOwner();
+		OwnerType issuer = EsiOwner.create();
 		issuer.setOwnerID(ISSUER_ID);
 		issuer.setOwnerName("issuer");
 		//issuer.setCorporationID(ISSUER_CORPORATION_ID);
 		issuer.setCorporationName("issuer corporation");
 		setOwnerData(issuer, test.getIssuer());
-		OwnerType acceptor = new EsiOwner();
+		OwnerType acceptor = EsiOwner.create();
 		acceptor.setOwnerID(ACCEPTOR_ID);
 		acceptor.setOwnerName("acceptor");
 		//acceptor.setCorporationID(ACCEPTOR_CORPORATION_ID);

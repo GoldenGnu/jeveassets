@@ -21,17 +21,16 @@
 package net.nikr.eve.jeveasset.data.profile;
 
 import java.awt.Component;
-import net.nikr.eve.jeveasset.data.api.accounts.EveApiAccount;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JOptionPane;
 import net.nikr.eve.jeveasset.SplashUpdater;
-import net.nikr.eve.jeveasset.data.api.accounts.EveKitOwner;
 import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
-import net.nikr.eve.jeveasset.data.profile.Profile.DefaultProfile;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 import net.nikr.eve.jeveasset.io.local.ProfileFinder;
+import net.nikr.eve.jeveasset.io.local.profile.ProfileDatabase;
+import net.nikr.eve.jeveasset.io.local.profile.ProfileDatabase.Table;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,7 +44,7 @@ public class ProfileManager {
 	private List<Profile> profiles = new ArrayList<>();
 
 	public ProfileManager() {
-		activeProfile = new DefaultProfile();
+		setActiveProfile(new Profile());
 		profiles.add(activeProfile);
 	}
 
@@ -74,8 +73,9 @@ public class ProfileManager {
 		this.profiles = profiles;
 	}
 
-	public void setActiveProfile(final Profile activeProfile) {
+	public final void setActiveProfile(final Profile activeProfile) {
 		this.activeProfile = activeProfile;
+		ProfileDatabase.setUpdateConnectionUrl(activeProfile);
 	}
 
 	public StockpileIDs getStockpileIDs() {
@@ -90,26 +90,22 @@ public class ProfileManager {
 		activeProfile.save();
 	}
 
+	public void saveProfileSoft() {
+		activeProfile.saveSoft();
+	}
+
+	public void saveProfileTable(Table table) {
+		activeProfile.saveTable(table);
+	}
+
 	public List<OwnerType> getOwnerTypes() {
 		List<OwnerType> owners = new ArrayList<>();
-		for (EveApiAccount account : getAccounts()) {
-			owners.addAll(account.getOwners());
-		}
-		owners.addAll(getEveKitOwners());
 		owners.addAll(getEsiOwners());
 		return owners;
 	}
 
-	public List<EveKitOwner> getEveKitOwners() {
-		return activeProfile.getEveKitOwners();
-	}
-
 	public List<EsiOwner> getEsiOwners() {
 		return activeProfile.getEsiOwners();
-	}
-
-	public List<EveApiAccount> getAccounts() {
-		return activeProfile.getAccounts();
 	}
 
 	public void clear() {

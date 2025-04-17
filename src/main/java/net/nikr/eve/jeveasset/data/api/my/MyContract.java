@@ -32,7 +32,7 @@ import net.nikr.eve.jeveasset.data.settings.types.OwnersType;
 import net.nikr.eve.jeveasset.i18n.TabsContracts;
 import net.nikr.eve.jeveasset.data.settings.types.EsiType;
 
-public class MyContract extends RawContract implements LocationsType, OwnersType, EsiType {
+public class MyContract extends RawContract implements Comparable<MyContract>, LocationsType, OwnersType, EsiType {
 
 	private MyLocation endLocation;
 	private MyLocation startLocation;
@@ -256,11 +256,13 @@ public class MyContract extends RawContract implements LocationsType, OwnersType
 	}
 
 	@Override
-	public void archive() {
+	public boolean archive() {
+		boolean update = esi; //Update if in esi
 		if (esi && (getStatus() == ContractStatus.OUTSTANDING || getStatus() == ContractStatus.IN_PROGRESS)) {
 			setStatus(ContractStatus.ARCHIVED);
 		}
 		this.esi = false;
+		return update;
 	}
 
 	@Override
@@ -294,5 +296,10 @@ public class MyContract extends RawContract implements LocationsType, OwnersType
 			return false;
 		}
 		return Objects.equals(this.getIssuerID(), other.getIssuerID());
+	}
+
+	@Override
+	public int compareTo(MyContract o) {
+		return Integer.compare(this.getContractID(), o.getContractID());
 	}
 }

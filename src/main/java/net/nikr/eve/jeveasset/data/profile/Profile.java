@@ -24,11 +24,11 @@ package net.nikr.eve.jeveasset.data.profile;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
-import net.nikr.eve.jeveasset.data.api.accounts.EveApiAccount;
-import net.nikr.eve.jeveasset.data.api.accounts.EveKitOwner;
+import net.nikr.eve.jeveasset.io.local.profile.ProfileDatabase;
 import net.nikr.eve.jeveasset.io.local.ProfileReader;
-import net.nikr.eve.jeveasset.io.local.ProfileWriter;
+import net.nikr.eve.jeveasset.io.local.profile.ProfileDatabase.Table;
 import net.nikr.eve.jeveasset.io.shared.FileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,34 +37,75 @@ import org.slf4j.LoggerFactory;
 public class Profile implements Comparable<Profile> {
 
 	private static final Logger LOG = LoggerFactory.getLogger(Profile.class);
+	private static final String XML = "xml";
+	private static final String XML_BAC = "bac";
+	private static final String XML_BACKUP = "xmlbackup";
+	private static final String SQLITE = "db";
+	private static final String SQLITE_BACKUP = "zip";
+
+	public static enum ProfileType {
+		XML, SQLITE
+	}
 
 	private String name;
 	private boolean defaultProfile;
 	private boolean activeProfile;
+	private ProfileType type;
 	private final StockpileIDs stockpileIDs;
-	private final List<EveApiAccount> accounts = new ArrayList<>();
-	private final List<EveKitOwner> eveKitOwners = new ArrayList<>();
 	private final List<EsiOwner> esiOwners = new ArrayList<>();
 
-	private Profile() {
-		this("Default", true, true);
+	public Profile() {
+		this("Default", true, true, ProfileType.SQLITE);
 	}
 
-	public Profile(final String name, final boolean defaultProfile, final boolean activeProfile) {
+	public Profile(final String name, final boolean defaultProfile, final boolean activeProfile, final ProfileType type) {
 		this.name = name;
 		this.defaultProfile = defaultProfile;
 		this.activeProfile = activeProfile;
 		this.stockpileIDs = new StockpileIDs(name);
+		this.type = type;
 	}
 
 	public boolean load() {
 		clear(); //Clear the profile before loading
 		stockpileIDs.load(); //Load stockpileIDs
-		return ProfileReader.load(this); //Assets (Must be loaded before the price data)
+		if (type == ProfileType.XML) {
+			return ProfileReader.load(this); //Assets (Must be loaded before the price data)
+		} else if (type == ProfileType.SQLITE) {
+			return ProfileDatabase.load(this);
+		} else {
+			return false;
+		}
 	}
 
 	public void save() {
-		ProfileWriter.save(this);
+		save(true);
+	}
+
+	public void saveSoft() {
+		if (type == ProfileType.XML) {
+			save(true); //Full save
+		} else {
+			save(false);
+		}
+	}
+
+	public void saveTable(Table table) {
+		if (type == ProfileType.XML) {
+			save(true); //Full save
+		} else {
+			ProfileDatabase.save(this, table, true);
+		}
+	}
+
+	private void save(boolean full) {
+		boolean save = ProfileDatabase.save(this, full);
+		if (save && type == ProfileType.XML) {
+			type = ProfileType.SQLITE; //Migrated to SQLite
+			File file = new File(getXmlFilename());
+			File backup = new File(getBackupXmlFilename());
+			file.renameTo(backup);
+		}
 	}
 
 	public boolean isDefaultProfile() {
@@ -83,47 +124,62 @@ public class Profile implements Comparable<Profile> {
 		return stockpileIDs;
 	}
 
-	public List<EveApiAccount> getAccounts() {
-		return accounts;
-	}
-
-	public List<EveKitOwner> getEveKitOwners() {
-		return eveKitOwners;
-	}
-
 	public List<EsiOwner> getEsiOwners() {
 		return esiOwners;
 	}
 
 	public void clear() {
-		accounts.clear();
-		eveKitOwners.clear();
 		esiOwners.clear();
 	}
 
-	public String getBackupFilename() {
-		return getFilenameNoExtension() + ".bac";
+	public String getXmlFilename() {
+		return getFilenameExtension(XML);
 	}
 
-	public String getFilename() {
-		return getFilenameNoExtension() + ".xml";
+	public String getBackupXmlFilename() {
+		return getFilenameExtension(XML_BACKUP);
 	}
 
-	public File getBackupFile() {
-		return new File(getFilenameNoExtension() + ".bac");
+	public String getSQLiteFilename() {
+		return getFilenameExtension(SQLITE);
 	}
 
-	public File getFile() {
-		return new File(getFilenameNoExtension() + ".xml");
-	}
-
-	private String getFilenameNoExtension() {
-		String filename = getName();
-		filename = filename.replace(" ", "_");
+	public String getBackupSQLiteFilename() {
+		String filename = getName() + "_" + Program.PROGRAM_VERSION + "_dbbackup";
+		filename = filename.replace(" ", "_"); //Remove spaces
+		filename = filename + "." + SQLITE_BACKUP; //Add extension
 		if (defaultProfile) {
-			filename = "#" + filename;
+			filename = "#" + filename; //Mark active profile
 		}
-		filename = FileUtil.getPathProfilesDirectory() + File.separator + filename;
+		
+		filename = FileUtil.getPathProfile(filename);
+		return filename;
+	}
+
+	private File getBackupFile() {
+		switch (type) {
+			case XML: return new File(getFilenameExtension(XML_BAC));
+			case SQLITE: return null;
+			default: return null;
+		}
+	}
+
+	private File getFile() {
+		switch (type) {
+			case XML: return new File(getFilenameExtension(XML));
+			case SQLITE: return new File(getFilenameExtension(SQLITE));
+			default: return null;
+		}
+	}
+
+	private String getFilenameExtension(String extension) {
+		String filename = getName();
+		filename = filename.replace(" ", "_"); //Remove spaces
+		filename = filename + "." + extension; //Add extension
+		if (defaultProfile) {
+			filename = "#" + filename; //Mark active profile
+		}
+		filename = FileUtil.getPathProfile(filename);
 		return filename;
 	}
 
@@ -138,13 +194,11 @@ public class Profile implements Comparable<Profile> {
 			this.defaultProfile = defaultProfile;
 			File to = getFile();
 			File backTo = getBackupFile();
-			if (!from.equals(to)
-							&& !from.renameTo(to)) {
-				LOG.warn("Failed to rename profile: {}", this.getName());
+			if (from != null && to != null && !from.equals(to) && !from.renameTo(to)) {
+				LOG.warn("Failed to rename profile: {}", getName());
 			}
-			if (!backFrom.equals(backTo)
-							&& !backFrom.renameTo(backTo)) {
-				LOG.warn("Failed to rename profile backup: {}", this.getName());
+			if (backFrom != null && backTo != null && !backFrom.equals(backTo) && !backFrom.renameTo(backTo)) {
+				LOG.warn("Failed to rename profile backup: {}", getName());
 			}
 		}
 	}
@@ -155,18 +209,24 @@ public class Profile implements Comparable<Profile> {
 		this.name = name;
 		File to = getFile();
 		File backTo = getBackupFile();
-		if (!from.equals(to)) {
-			from.renameTo(to);
+		if (from != null && to != null && !from.equals(to) && !from.renameTo(to)) {
+			LOG.warn("Failed to rename profile: {}", getName());
 		}
-		if (!backFrom.equals(backTo)) {
-			backFrom.renameTo(backTo);
+		if (backFrom != null && backTo != null && !backFrom.equals(backTo) && !backFrom.renameTo(backTo)) {
+			LOG.warn("Failed to rename profile backup: {}", getName());
 		}
 		stockpileIDs.renameTable(name);
 	}
 
 	public void delete() {
-		getFile().delete();
-		getBackupFile().delete();
+		File file = getFile();
+		if (file != null && !file.delete()) {
+			LOG.warn("Failed to delete profile: {}", getName());
+		}
+		File backupFile = getBackupFile();
+		if (backupFile != null && !backupFile.delete()) {
+			LOG.warn("Failed to delete profile backup: {}", getName());
+		}
 		stockpileIDs.removeTable();
 	}
 
@@ -198,8 +258,6 @@ public class Profile implements Comparable<Profile> {
 		return hash;
 	}
 
-
-
 	@Override
 	public String toString() {
 		String temp = name;
@@ -213,12 +271,5 @@ public class Profile implements Comparable<Profile> {
 	@Override
 	public int compareTo(final Profile o) {
 		return this.getName().compareToIgnoreCase(o.getName());
-	}
-
-	public static class DefaultProfile extends Profile {
-
-		public DefaultProfile() {
-			super();
-		}
 	}
 }

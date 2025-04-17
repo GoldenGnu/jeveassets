@@ -75,11 +75,13 @@ public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarket
 	}
 
 	@Override
-	public void archive() {
+	public boolean archive() {
+		boolean update = esi; //Update if in esi
 		if (esi && getState() == MarketOrderState.OPEN) { //Only do once, as the user can set the state to open
 			setState(MarketOrderState.UNKNOWN);
 		}
 		esi = false;
+		return update;
 	}
 
 	@Override

@@ -30,6 +30,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import net.nikr.eve.jeveasset.io.local.AssetAddedReader;
+import net.nikr.eve.jeveasset.io.local.profile.ProfileTable.Rows;
 import net.nikr.eve.jeveasset.io.shared.FileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,10 +71,13 @@ public class AddedData {
 		public void load() { }
 	}
 
-	private static final String CONNECTION_URL = "jdbc:sqlite:" + FileUtil.getPathAssetAddedDatabase();
 	private Map<Long, Date> insert = null;
 	private Map<Long, Date> update = null;
 	private final DataSettings dataSettings;
+
+	private String getConnectionURL() {
+		return "jdbc:sqlite:" + FileUtil.getPathAssetAddedDatabase();
+	}
 
 	private AddedData(DataSettings dataSettings) {
 		this.dataSettings = dataSettings;
@@ -173,7 +177,7 @@ public class AddedData {
 
 	public boolean isEmpty() {
 		String sql = "SELECT * FROM " + dataSettings.getTableName();
-		try (Connection connection = DriverManager.getConnection(CONNECTION_URL);
+		try (Connection connection = DriverManager.getConnection(getConnectionURL());
 				PreparedStatement statement = connection.prepareStatement(sql);
 				ResultSet rs = statement.executeQuery()) {
 			while (rs.next()) {
@@ -198,19 +202,14 @@ public class AddedData {
 			return;
 		}
 		String sql = "INSERT INTO " + dataSettings.getTableName() + "(itemid,date) VALUES(?,?)";
-		try (Connection connection = DriverManager.getConnection(CONNECTION_URL);
+		try (Connection connection = DriverManager.getConnection(getConnectionURL());
 				PreparedStatement statement = connection.prepareStatement(sql)) {
-			int i = 0;
 			connection.setAutoCommit(false);
+			Rows rows = new Rows(statement, data.size());
 			for (Map.Entry<Long, Date> entry : data.entrySet()) {
 				statement.setLong(1, entry.getKey());
 				statement.setLong(2, entry.getValue().getTime());
-
-				statement.addBatch();
-				i++;
-				if (i % 1000 == 0 || i == data.size()) {
-					statement.executeBatch(); // Execute every 1000 items.
-				}
+				rows.addRow();
 			}
 			connection.commit();
 			connection.setAutoCommit(true);
@@ -224,19 +223,14 @@ public class AddedData {
 			return;
 		}
 		String sql = "UPDATE " + dataSettings.getTableName() + " SET date = ? WHERE itemid = ?";
-		try (Connection connection = DriverManager.getConnection(CONNECTION_URL);
+		try (Connection connection = DriverManager.getConnection(getConnectionURL());
 				PreparedStatement statement = connection.prepareStatement(sql)) {
-			int i = 0;
+			Rows rows = new Rows(statement, data.size());
 			connection.setAutoCommit(false);
 			for (Map.Entry<Long, Date> entry : data.entrySet()) {
 				statement.setLong(1, entry.getValue().getTime());
 				statement.setLong(2, entry.getKey());
-
-				statement.addBatch();
-				i++;
-				if (i % 1000 == 0 || i == data.size()) {
-					statement.executeBatch(); // Execute every 1000 items.
-				}
+				rows.addRow();
 			}
 			connection.commit();
 			connection.setAutoCommit(true);
@@ -248,9 +242,10 @@ public class AddedData {
 	public Map<Long, Date> getAll() {
 		Map<Long, Date> map = new HashMap<>();
 		String sql = "SELECT * FROM " + dataSettings.getTableName();
-		try (Connection connection = DriverManager.getConnection(CONNECTION_URL);
+		try (Connection connection = DriverManager.getConnection(getConnectionURL());
 				PreparedStatement statement = connection.prepareStatement(sql);
-				ResultSet rs = statement.executeQuery();) {
+				ResultSet rs = statement.executeQuery();
+				) {
 			while (rs.next()) {
 				map.put(rs.getLong("itemid"), new Date(rs.getLong("date")));
 			}
@@ -265,7 +260,7 @@ public class AddedData {
 				+ "	itemid integer PRIMARY KEY,\n"
 				+ "	date integer NOT NULL\n"
 				+ ");";
-		try (Connection connection = DriverManager.getConnection(CONNECTION_URL);
+		try (Connection connection = DriverManager.getConnection(getConnectionURL());
 				Statement statement = connection.createStatement()) {
 			statement.execute(sql);
 		} catch (SQLException ex) {
@@ -275,7 +270,7 @@ public class AddedData {
 
 	private boolean tableExist() {
 		String sql = "SELECT name FROM sqlite_master WHERE type='table' AND name='" + dataSettings.getTableName() + "'";
-		try (Connection connection = DriverManager.getConnection(CONNECTION_URL);
+		try (Connection connection = DriverManager.getConnection(getConnectionURL());
 				Statement statement = connection.createStatement();
 				ResultSet rs = statement.executeQuery(sql)) {
 			while (rs.next()) {

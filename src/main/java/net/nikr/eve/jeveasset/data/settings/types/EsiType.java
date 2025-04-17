@@ -22,7 +22,7 @@ package net.nikr.eve.jeveasset.data.settings.types;
 
 
 public interface EsiType {
-	public void archive();
+	public boolean archive();
 	public void setESI(boolean esi);
 	public boolean isESI();
 }

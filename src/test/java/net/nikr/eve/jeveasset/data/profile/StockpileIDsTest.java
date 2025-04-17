@@ -42,21 +42,17 @@ public class StockpileIDsTest extends TestUtil {
 	private static final long VALUE = 1234L;
 	private static final Set<Long> VALUES = Collections.singleton(VALUE);
 	//Database file
-	private static final String FILENAME = FileUtil.getLocalFile("testing" + File.separator + "stockpileids_testdb.db", false);
 	private static StockpileIDs stockpileIDs;
 
 	@BeforeClass
-	public static void init() {
-		new File(FILENAME).getParentFile().mkdirs();
-		StockpileIDs.setConnectionUrl("jdbc:sqlite:" + FILENAME);
+	public static void before() {
 		stockpileIDs = new StockpileIDs(TABLE_1, true);
 	}
 
 	@AfterClass
-	public static void out() {
-		StockpileIDs.setConnectionUrl(StockpileIDs.DEFAULT_CONNECTION_URL);
+	public static void after() {
+		new File(FileUtil.getPathStockpileIDsDatabase()).delete();
 		stockpileIDs.removeTable();
-		new File(FILENAME).delete();
 	}
 
 	@Test

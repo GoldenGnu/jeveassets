@@ -20,29 +20,33 @@
  */
 package net.nikr.eve.jeveasset.io.local;
 
-import java.io.File;
-import net.nikr.eve.jeveasset.Program;
+import ch.qos.logback.classic.Level;
 import net.nikr.eve.jeveasset.TestUtil;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
-import net.nikr.eve.jeveasset.data.api.accounts.EveApiAccount;
-import net.nikr.eve.jeveasset.data.api.accounts.EveApiOwner;
-import net.nikr.eve.jeveasset.data.api.accounts.EveKitOwner;
 import net.nikr.eve.jeveasset.data.profile.Profile;
-import net.nikr.eve.jeveasset.data.profile.Profile.DefaultProfile;
 import net.nikr.eve.jeveasset.data.profile.ProfileData;
 import net.nikr.eve.jeveasset.data.profile.ProfileManager;
 import net.nikr.eve.jeveasset.data.settings.AddedData;
 import net.nikr.eve.jeveasset.io.shared.ConverterTestOptions;
 import net.nikr.eve.jeveasset.io.shared.ConverterTestOptionsGetter;
 import net.nikr.eve.jeveasset.io.shared.ConverterTestUtil;
+import org.junit.AfterClass;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 
 public class ProfileReadWriteTest extends TestUtil {
 
-	private static final String FILENAME = "target" + File.separator + "profile_read_write_test.xml";
+	@BeforeClass
+	public static void setUpClass() {
+		setLoggingLevel(Level.WARN);
+	}
+
+	@AfterClass
+	public static void tearDownClass() {
+		setLoggingLevel(Level.INFO);
+	}
 
 	@Test
 	public void testNotNull() {
@@ -56,50 +60,30 @@ public class ProfileReadWriteTest extends TestUtil {
 
 	private void test(boolean setNull) {
 		AddedData.load();
+		
 		for (ConverterTestOptions options : ConverterTestOptionsGetter.getConverterOptions()) {
-			Profile saveProfile = new DefaultProfile();
+			Profile saveProfile = new Profile();
 			//ESI
 			saveProfile.getEsiOwners().add(ConverterTestUtil.getEsiOwner(true, setNull, false, options));
-			//EveAPI
-			EveApiOwner saveEveApiOwner = ConverterTestUtil.getEveApiOwner(true, setNull, false, options);
-			saveEveApiOwner.getParentAccount().getOwners().add(saveEveApiOwner);
-			saveProfile.getAccounts().add(saveEveApiOwner.getParentAccount());
-			//EveKit
-			saveProfile.getEveKitOwners().add(ConverterTestUtil.getEveKitOwner(true, setNull, false, options));
 
 			//Write
-			ProfileWriter.save(saveProfile, FILENAME);
+			saveProfile.save();
 
 			//Read
-			ProfileManager loadProfile = new ProfileManager();
-			ProfileReader.load(loadProfile.getActiveProfile(), FILENAME);
+			ProfileManager loadProfileManager = new ProfileManager();
+
+			Profile loadProfile = new Profile();
+			loadProfile.load();
+			loadProfileManager.setActiveProfile(loadProfile);
 
 			//Update dynamic data
-			ProfileData profileData = new ProfileData(loadProfile);
+			ProfileData profileData = new ProfileData(loadProfileManager);
 			profileData.updateEventLists();
 
 			//ESI
 			assertEquals(1, loadProfile.getEsiOwners().size());
 			EsiOwner esiOwner = loadProfile.getEsiOwners().get(0);
 			ConverterTestUtil.testOwner(esiOwner, setNull, options);
-			//EveAPI
-			assertEquals(1, loadProfile.getAccounts().size());
-			EveApiAccount loadEveApiAccount = loadProfile.getAccounts().get(0);
-			ConverterTestUtil.testValues(loadEveApiAccount, options);
-			assertEquals(1, loadEveApiAccount.getOwners().size());
-			EveApiOwner eveApiOwner = loadEveApiAccount.getOwners().get(0);
-			ConverterTestUtil.testOwner(eveApiOwner, setNull, options);
-			//EveKit
-			assertEquals(1, loadProfile.getEveKitOwners().size());
-			EveKitOwner eveKitOwner = loadProfile.getEveKitOwners().get(0);
-			ConverterTestUtil.testOwner(eveKitOwner, setNull, options);
-
-			//Clean up
-			File file = new File(FILENAME);
-			assertTrue(file.delete());
-
-			File backupFile = new File(FILENAME.substring(0, FILENAME.lastIndexOf(".")) + "_" + Program.PROGRAM_VERSION.replace(" ", "_") + "_backup.zip");
-			assertTrue(backupFile.delete());
 		}
 	}
 

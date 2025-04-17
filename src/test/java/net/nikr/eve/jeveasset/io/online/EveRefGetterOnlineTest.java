@@ -28,7 +28,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
-import net.nikr.eve.jeveasset.CliOptions;
 import net.nikr.eve.jeveasset.TestUtil;
 import net.nikr.eve.jeveasset.data.sde.IndustryMaterial;
 import net.nikr.eve.jeveasset.data.sde.Item;
@@ -58,13 +57,11 @@ public class EveRefGetterOnlineTest extends TestUtil {
 	@BeforeClass
 	public static void setUpClass() {
 		setLoggingLevel(Level.ERROR);
-		CliOptions.get().setPortable(true);
 	}
 
 	@AfterClass
 	public static void tearDownClass() {
 		setLoggingLevel(Level.INFO);
-		CliOptions.get().setPortable(false);
 	}
 
 	@ClassRule

@@ -30,8 +30,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import net.nikr.eve.jeveasset.TestUtil;
-import net.nikr.eve.jeveasset.data.profile.Profile;
-import net.nikr.eve.jeveasset.data.profile.Profile.DefaultProfile;
 import net.nikr.eve.jeveasset.io.shared.FileUtil;
 import org.junit.AfterClass;
 import static org.junit.Assert.assertFalse;
@@ -54,19 +52,11 @@ public class FileLockTest extends TestUtil {
 		File settingsBackup = new File(FileLockSettings.getPathSettingsBackup());
 		File settingsVersionBackup = new File(FileLockSettings.getPathSettingsVersionBackup());
 		File settingsError = new File(FileLockSettings.getPathSettingsError());
-		File profile = new File(FileLockSettings.getPathProfile());
-		File profileBackup = new File(FileLockSettings.getPathProfileBackup());
-		File profileVersionBackup = new File(FileLockSettings.getPathProfileVerionsBackup());
-		File profileError = new File(FileLockSettings.getPathProfileError());
 		File timeout = new File(FileLockSettings.getPathTimeout());
 		settings.delete();
 		settingsBackup.delete();
 		settingsVersionBackup.delete();
 		settingsError.delete();
-		profile.delete();
-		profileBackup.delete();
-		profileVersionBackup.delete();
-		profileError.delete();
 		timeout.delete();
 	}
 
@@ -114,24 +104,6 @@ public class FileLockTest extends TestUtil {
 		File file = new File(FileLockSettings.getPathTimeout());
 		FileLock.lock(file);
 		FileLock.lock(file);
-	}
-
-	@Test
-	public void restoreBackupProfileTest() throws IOException {
-		File file = new File (FileLockSettings.getPathProfile());
-		Profile profile = new DefaultProfile();
-		boolean saved;
-		saved = ProfileWriter.save(profile, FileLockSettings.getPathProfile());
-		assertTrue("LockTest: Backup - Save profile failed (1 of 2)", saved);
-		saved = ProfileWriter.save(profile, FileLockSettings.getPathProfile());
-		assertTrue("LockTest: Backup - Save profile failed (2 of 2)", saved);
-		boolean deleted = file.delete();
-		assertTrue("LockTest: Backup - Delete profile failed", deleted);
-		boolean created = file.createNewFile();
-		assertTrue("LockTest: Backup - Create profile failed", created);
-		System.out.println("\"Premature end of file\": Is an expected error:");
-		boolean loaded = ProfileReader.load(profile, FileLockSettings.getPathProfile());
-		assertTrue("LockTest: Backup - Load profile failed", loaded);
 	}
 
 	@Test
@@ -251,58 +223,6 @@ public class FileLockTest extends TestUtil {
 		}
 		for (int i = 0; i < 8; i++) {
 			threads.add(new LoadSettings(settings));
-		}
-		for (TestThread thread : threads) {
-			thread.start();
-		}
-		for (TestThread thread : threads) {
-			thread.join();
-		}
-		for (TestThread thread : threads) {
-			assertTrue(thread.isOk());
-		}
-	}
-
-	private static class LoadProfile extends Thread implements TestThread {
-		Boolean ok = null;
-
-		@Override
-		public void run() {
-			ok = ProfileReader.load(new DefaultProfile(), FileLockSettings.getPathProfile());
-		}
-
-		@Override
-		public Boolean isOk() {
-			return ok;
-		}
-	}
-
-	private static class SaveProfile extends Thread implements TestThread {
-		private Boolean ok = null;
-
-		@Override
-		public void run() {
-			ok = ProfileWriter.save(new DefaultProfile(), FileLockSettings.getPathProfile());
-		}
-
-		@Override
-		public Boolean isOk() {
-			return ok;
-		}
-	}
-
-	@Test
-	public void profileLockTest() throws InterruptedException {
-		//Setup
-		boolean ok = ProfileWriter.save(new DefaultProfile(), FileLockSettings.getPathProfile());
-		assertTrue("LockTest: Setup failed", ok);
-		//Chaos! :D
-		List<TestThread> threads = new ArrayList<>();
-		for (int i = 0; i < 8; i++) {
-			threads.add(new LoadProfile());
-		}
-		for (int i = 0; i < 8; i++) {
-			threads.add(new SaveProfile());
 		}
 		for (TestThread thread : threads) {
 			thread.start();

@@ -49,9 +49,12 @@ public class EsiContractItemsGetter extends AbstractEsiGetter {
 	private final static AtomicInteger PROGRESS = new AtomicInteger(0);
 	private final static int BATCH_SIZE = 20;
 
-	public EsiContractItemsGetter(UpdateTask updateTask, EsiOwner owner, List<EsiOwner> owners) {
+	private final boolean saveHistory;
+
+	public EsiContractItemsGetter(UpdateTask updateTask, EsiOwner owner, List<EsiOwner> owners, boolean saveHistory) {
 		super(updateTask, owner, false, Settings.getNow(), TaskType.CONTRACT_ITEMS);
 		this.owners = owners;
+		this.saveHistory = saveHistory;
 	}
 
 	public static void reset() {
@@ -65,7 +68,7 @@ public class EsiContractItemsGetter extends AbstractEsiGetter {
 		createContracts(owners);
 		if (owner.isCorporation()) {
 			List<List<MyContract>> updates = splitList(contracts.get(owner.getOwnerID()), BATCH_SIZE);
-			Map<MyContract, List<CorporationContractsItemsResponse>> responseList = new HashMap<>();
+			Map<MyContract, List<CorporationContractsItemsResponse>> responses = new HashMap<>();
 			boolean first = true;
 			for (List<MyContract> list : updates) {
 				if (first) {
@@ -77,19 +80,17 @@ public class EsiContractItemsGetter extends AbstractEsiGetter {
 						throw new RuntimeException(ex);
 					}
 				}
-				Map<MyContract, List<CorporationContractsItemsResponse>> responses = updateList(list, DEFAULT_RETRIES, new ListHandler<MyContract, List<CorporationContractsItemsResponse>>() {
+				Map<MyContract, List<CorporationContractsItemsResponse>> response = updateList(list, DEFAULT_RETRIES, new ListHandler<MyContract, List<CorporationContractsItemsResponse>>() {
 					@Override
 					public ApiResponse<List<CorporationContractsItemsResponse>> get(MyContract t) throws ApiException {
 						return getContractsApiAuth().getCorporationsCorporationIdContractsContractIdItemsWithHttpInfo(t.getContractID(), (int) owner.getOwnerID(), DATASOURCE, null, null);
 					}
 				});
-				responseList.putAll(responses);
+				responses.putAll(response);
 				PROGRESS.getAndAdd(list.size());
 				setProgress(SIZE.get(), PROGRESS.get(), 0, 100);
 			}
-			for (Map.Entry<MyContract, List<CorporationContractsItemsResponse>> entry : responseList.entrySet()) {
-				owner.setContracts(EsiConverter.toContractItemsCorporation(entry.getKey(), entry.getValue(), owner));
-			}
+			owner.setContracts(EsiConverter.toContractItemsCorporation(responses, owner, saveHistory));
 		} else {
 			Map<MyContract, List<CharacterContractsItemsResponse>> responses = updateList(contracts.get(owner.getOwnerID()), DEFAULT_RETRIES, new ListHandler<MyContract, List<CharacterContractsItemsResponse>>() {
 				@Override
@@ -100,9 +101,7 @@ public class EsiContractItemsGetter extends AbstractEsiGetter {
 					return response;
 				}
 			});
-			for (Map.Entry<MyContract, List<CharacterContractsItemsResponse>> entry : responses.entrySet()) {
-				owner.setContracts(EsiConverter.toContractItems(entry.getKey(), entry.getValue(), owner));
-			}
+			owner.setContracts(EsiConverter.toContractItems(responses, owner, saveHistory));
 		}
 		//Public contracts (Have blueprint info Runs/Me/Te)
 		Map<MyContract, List<PublicContractsItemsResponse>> responses = updatePagedMap(publicContracts.get(owner.getOwnerID()), new PagedListHandler<MyContract, PublicContractsItemsResponse>() {
@@ -119,9 +118,7 @@ public class EsiContractItemsGetter extends AbstractEsiGetter {
 				});
 			}
 		});
-		for (Map.Entry<MyContract, List<PublicContractsItemsResponse>> entry : responses.entrySet()) {
-			owner.setContracts(EsiConverter.toContractItemsPublic(entry.getKey(), entry.getValue(), owner));
-		}
+		owner.setContracts(EsiConverter.toContractItemsPublic(responses, owner, saveHistory));
 	}
 
 	private static synchronized void createContracts(List<EsiOwner> owners) {

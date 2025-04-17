@@ -40,6 +40,7 @@ import net.nikr.eve.jeveasset.data.settings.PriceDataSettings.PriceMode;
 import net.nikr.eve.jeveasset.gui.shared.Formatter.DateFormatThreadSafe;
 import net.nikr.eve.jeveasset.gui.tabs.prices.PriceChangesTab.PriceChange;
 import net.nikr.eve.jeveasset.gui.tabs.prices.PriceHistoryTab.PriceHistoryData;
+import net.nikr.eve.jeveasset.io.local.profile.ProfileTable.Rows;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import net.nikr.eve.jeveasset.io.shared.FileUtil;
 import org.slf4j.Logger;
@@ -50,14 +51,12 @@ public class PriceHistoryDatabase {
 
 	private static final Logger LOG = LoggerFactory.getLogger(PriceHistoryDatabase.class);
 
-	public static final String DEFAULT_CONNECTION_URL = "jdbc:sqlite:" + FileUtil.getPathPriceHistoryDatabase();
 	public static final String ZKILLBOARD_TABLE = "zkillboard";
 	public static final String ZBLACKLIST_TABLE = "zblacklist";
 	public static final String PRICEDATA_TABLE = "pricedata";
 
 	public static final DateFormatThreadSafe DATE = new DateFormatThreadSafe("yyyy-MM-dd", true);
 
-	private static String connectionUrl = DEFAULT_CONNECTION_URL;
 	private static PriceHistoryDatabase instance;
 
 	public PriceHistoryDatabase() {
@@ -82,8 +81,8 @@ public class PriceHistoryDatabase {
 		}
 	}
 
-	protected static void setConnectionUrl(String connectionUrl) {
-		PriceHistoryDatabase.connectionUrl = connectionUrl;
+	private static String getConnectionUrl() {
+		return "jdbc:sqlite:" + FileUtil.getPathPriceHistoryDatabase();
 	}
 
 	private static PriceHistoryDatabase getInstance() {
@@ -203,19 +202,15 @@ public class PriceHistoryDatabase {
 			return;
 		}
 		String sql = "INSERT OR IGNORE INTO " + ZKILLBOARD_TABLE + "  (typeid,date,price) VALUES(?,?,?)";
-		try (Connection connection = DriverManager.getConnection(connectionUrl);
+		try (Connection connection = DriverManager.getConnection(getConnectionUrl());
 				PreparedStatement statement = connection.prepareStatement(sql)) {
-			int i = 0;
+			Rows rows = new Rows(statement, insert.size());
 			connection.setAutoCommit(false);
 			for (PriceHistoryData killboardData : insert) {
 				statement.setInt(1, killboardData.getTypeID());
 				statement.setString(2, killboardData.getDateString());
 				statement.setDouble(3, killboardData.getPrice());
-				statement.addBatch();
-				i++;
-				if (i % 1000 == 0 || i == insert.size()) {
-					statement.executeBatch(); // Execute every 1000 items.
-				}
+				rows.addRow();
 			}
 			connection.commit();
 			connection.setAutoCommit(true);
@@ -229,17 +224,13 @@ public class PriceHistoryDatabase {
 			return;
 		}
 		String sql = "INSERT OR IGNORE INTO " + ZBLACKLIST_TABLE + "  (typeid) VALUES(?)";
-		try (Connection connection = DriverManager.getConnection(connectionUrl);
+		try (Connection connection = DriverManager.getConnection(getConnectionUrl());
 				PreparedStatement statement = connection.prepareStatement(sql)) {
-			int i = 0;
+			Rows rows = new Rows(statement, insert.size());
 			connection.setAutoCommit(false);
 			for (Integer typeID : insert) {
 				statement.setInt(1, typeID);
-				statement.addBatch();
-				i++;
-				if (i % 1000 == 0 || i == insert.size()) {
-					statement.executeBatch(); // Execute every 1000 items.
-				}
+				rows.addRow();
 			}
 			connection.commit();
 			connection.setAutoCommit(true);
@@ -250,7 +241,7 @@ public class PriceHistoryDatabase {
 
 	private void deleteZBlaclist() {
 		String sql = "DELETE FROM " + ZBLACKLIST_TABLE;
-		try (Connection connection = DriverManager.getConnection(connectionUrl);
+		try (Connection connection = DriverManager.getConnection(getConnectionUrl());
 				Statement statement = connection.createStatement()) {
 			statement.execute(sql);
 		} catch (SQLException ex) {
@@ -275,9 +266,9 @@ public class PriceHistoryDatabase {
 				+ "buymedian,"
 				+ "buymin)"
 				+ "VALUES(?,?,?,?,?,?,?,?,?,?,?,?)";
-		try (Connection connection = DriverManager.getConnection(connectionUrl);
+		try (Connection connection = DriverManager.getConnection(getConnectionUrl());
 				PreparedStatement statement = connection.prepareStatement(sql)) {
-			int i = 0;
+			Rows rows = new Rows(statement, insert.size());
 			connection.setAutoCommit(false);
 			for (Map.Entry<Integer, PriceData> entry : insert.entrySet()) {
 				statement.setInt(1, entry.getKey());
@@ -292,11 +283,7 @@ public class PriceHistoryDatabase {
 				statement.setDouble(10, entry.getValue().getBuyAvg());
 				statement.setDouble(11, entry.getValue().getBuyMedian());
 				statement.setDouble(12, entry.getValue().getBuyMin());
-				statement.addBatch();
-				i++;
-				if (i % 1000 == 0 || i == insert.size()) {
-					statement.executeBatch(); // Execute every 1000 items.
-				}
+				rows.addRow();
 			}
 			connection.commit();
 			connection.setAutoCommit(true);
@@ -322,7 +309,7 @@ public class PriceHistoryDatabase {
 			data.put(ApiIdConverter.getItem(typeID), new TreeSet<>());
 		}
 		String sql = "SELECT * FROM " + ZKILLBOARD_TABLE + " WHERE typeid IN (" + builder.toString()  + ")";
-		try (Connection connection = DriverManager.getConnection(connectionUrl);
+		try (Connection connection = DriverManager.getConnection(getConnectionUrl());
 				PreparedStatement statement = connection.prepareStatement(sql);
 				ResultSet rs = statement.executeQuery();) {
 			while (rs.next()) {
@@ -358,7 +345,7 @@ public class PriceHistoryDatabase {
 			data.put(ApiIdConverter.getItem(typeID), new TreeSet<>());
 		}
 		String sql = "SELECT * FROM " + PRICEDATA_TABLE + " WHERE typeid IN (" + builder.toString()  + ")";
-		try (Connection connection = DriverManager.getConnection(connectionUrl);
+		try (Connection connection = DriverManager.getConnection(getConnectionUrl());
 				PreparedStatement statement = connection.prepareStatement(sql);
 				ResultSet rs = statement.executeQuery();) {
 			while (rs.next()) {
@@ -405,7 +392,7 @@ public class PriceHistoryDatabase {
 			typeFilter.append(") ");
 		}
 		String sql = "SELECT date FROM " + PRICEDATA_TABLE + typeFilter.toString()  + " GROUP BY date";
-		try (Connection connection = DriverManager.getConnection(connectionUrl);
+		try (Connection connection = DriverManager.getConnection(getConnectionUrl());
 				PreparedStatement statement = connection.prepareStatement(sql);
 				ResultSet rs = statement.executeQuery();) {
 			while (rs.next()) {
@@ -443,7 +430,7 @@ public class PriceHistoryDatabase {
 		dateFilter.append(toString);
 		dateFilter.append("\"");
 		String sql = "SELECT * FROM " + PRICEDATA_TABLE + " WHERE date IN (" + dateFilter.toString() + ") " + typeFilter.toString() + " ORDER BY date";
-		try (Connection connection = DriverManager.getConnection(connectionUrl);
+		try (Connection connection = DriverManager.getConnection(getConnectionUrl());
 				PreparedStatement statement = connection.prepareStatement(sql);
 				ResultSet rs = statement.executeQuery();) {
 			while (rs.next()) {
@@ -493,7 +480,7 @@ public class PriceHistoryDatabase {
 	private Set<Integer> selectZKillboardUpdated() {
 		Set<Integer> typeIDs = new HashSet<>();
 		String sql = "SELECT typeid FROM " + ZKILLBOARD_TABLE + " WHERE date = ?";
-		try (Connection connection = DriverManager.getConnection(connectionUrl);
+		try (Connection connection = DriverManager.getConnection(getConnectionUrl());
 				PreparedStatement statement = connection.prepareStatement(sql);
 				) {
 				statement.setString(1, getZKillboardDate());
@@ -510,7 +497,7 @@ public class PriceHistoryDatabase {
 	private Set<Integer> selectZBlacklist() {
 		Set<Integer> typeIDs = new HashSet<>();
 		String sql = "SELECT typeid FROM " + ZBLACKLIST_TABLE;
-		try (Connection connection = DriverManager.getConnection(connectionUrl);
+		try (Connection connection = DriverManager.getConnection(getConnectionUrl());
 				PreparedStatement statement = connection.prepareStatement(sql);
 				ResultSet rs = statement.executeQuery();
 				) {
@@ -530,7 +517,7 @@ public class PriceHistoryDatabase {
 				+ "	price REAL,\n"
 				+ "	UNIQUE(typeid, date)\n"
 				+ ");";
-		try (Connection connection = DriverManager.getConnection(connectionUrl);
+		try (Connection connection = DriverManager.getConnection(getConnectionUrl());
 				Statement statement = connection.createStatement()) {
 			statement.execute(sql);
 		} catch (SQLException ex) {
@@ -542,7 +529,7 @@ public class PriceHistoryDatabase {
 		String sql = "CREATE TABLE IF NOT EXISTS " + ZBLACKLIST_TABLE + " (\n"
 				+ "	typeid INTEGER\n"
 				+ ");";
-		try (Connection connection = DriverManager.getConnection(connectionUrl);
+		try (Connection connection = DriverManager.getConnection(getConnectionUrl());
 				Statement statement = connection.createStatement()) {
 			statement.execute(sql);
 		} catch (SQLException ex) {
@@ -566,7 +553,7 @@ public class PriceHistoryDatabase {
 				+ "	buymin REAL,\n"
 				+ "	UNIQUE(typeid, date)\n"
 				+ ");";
-		try (Connection connection = DriverManager.getConnection(connectionUrl);
+		try (Connection connection = DriverManager.getConnection(getConnectionUrl());
 				Statement statement = connection.createStatement()) {
 			statement.execute(sql);
 		} catch (SQLException ex) {
@@ -588,7 +575,7 @@ public class PriceHistoryDatabase {
 
 	public static boolean tableExist(String tableName) {
 		String sql = "SELECT name FROM sqlite_master WHERE type='table' AND name='" + tableName + "'";
-		try (Connection connection = DriverManager.getConnection(connectionUrl);
+		try (Connection connection = DriverManager.getConnection(getConnectionUrl());
 				Statement statement = connection.createStatement();
 				ResultSet rs = statement.executeQuery(sql)) {
 			while (rs.next()) {

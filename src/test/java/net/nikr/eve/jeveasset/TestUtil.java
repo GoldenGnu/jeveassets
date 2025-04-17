@@ -21,7 +21,11 @@
 package net.nikr.eve.jeveasset;
 
 import ch.qos.logback.classic.Level;
+import java.io.File;
+import net.nikr.eve.jeveasset.data.profile.Profile;
 import net.nikr.eve.jeveasset.data.settings.Settings;
+import net.nikr.eve.jeveasset.io.shared.FileUtil;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 
 
@@ -30,12 +34,30 @@ public class TestUtil {
 	@BeforeClass
 	public static void initLog() {
 		Main.setLogLocation(true);
+		CliOptions.get().setPortable(true);
 		System.setProperty("http.agent", Program.PROGRAM_USER_AGENT);
 		Settings.setTestMode(true);
+	}
+
+	@AfterClass
+	public static void cleanup() {
+		Profile profile = new Profile();
+		deleteProfileFilename(profile.getSQLiteFilename());
+		deleteProfileFilename(profile.getBackupSQLiteFilename());
+		deleteProfileFilename(FileUtil.getPathAssetAdded());
+		deleteProfileFilename(FileUtil.getPathStockpileIDsDatabase());
+		deleteProfileFilename(FileUtil.getPathTrackerData());
 	}
 
 	protected static void setLoggingLevel(Level level) {
 		ch.qos.logback.classic.Logger root = (ch.qos.logback.classic.Logger) org.slf4j.LoggerFactory.getLogger(ch.qos.logback.classic.Logger.ROOT_LOGGER_NAME);
 		root.setLevel(level);
+	}
+
+	private static void deleteProfileFilename(String filename) {
+		File file = new File(filename);
+		if (file.exists() && !file.delete()) {
+			throw new RuntimeException("Failed to delete:" + filename);
+		}
 	}
 }

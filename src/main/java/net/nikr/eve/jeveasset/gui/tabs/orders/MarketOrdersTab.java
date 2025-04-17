@@ -110,6 +110,7 @@ import net.nikr.eve.jeveasset.i18n.TabsOrders;
 import net.nikr.eve.jeveasset.io.esi.EsiPublicMarketOrdersGetter;
 import net.nikr.eve.jeveasset.io.local.MarketLogReader;
 import net.nikr.eve.jeveasset.gui.sounds.SoundPlayer;
+import net.nikr.eve.jeveasset.io.local.profile.ProfileDatabase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -514,7 +515,7 @@ public class MarketOrdersTab extends JMainTabPrimary {
 				//Save Profile
 				if (!output.getUpdates().isEmpty()) {
 					LOG.info("Saving Profile");
-					program.saveProfile();
+					program.saveTable(ProfileDatabase.Table.MARKET_ORDERS);
 				}
 				//Update time again
 				timer.start();
@@ -648,7 +649,7 @@ public class MarketOrdersTab extends JMainTabPrimary {
 						}
 						marketOrder.setState(state);
 						tableModel.fireTableDataChanged();
-						program.saveProfile();
+						program.saveTable(ProfileDatabase.Table.MARKET_ORDERS);
 					}
 				});
 				jStatus.add(jMenuItem);
@@ -888,7 +889,7 @@ public class MarketOrdersTab extends JMainTabPrimary {
 					//Save Profile
 					if (!output.getUpdates().isEmpty()) {
 						LOG.info("Saving Profile");
-						program.saveProfile();
+						program.saveTable(ProfileDatabase.Table.MARKET_ORDERS);
 					}
 					LOG.info("Marketlog update thread done in " + Formatter.milliseconds(System.currentTimeMillis() - start) + " for " + file.getName());
 				}

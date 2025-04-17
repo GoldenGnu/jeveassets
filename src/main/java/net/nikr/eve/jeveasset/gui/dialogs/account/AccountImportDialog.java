@@ -318,7 +318,7 @@ public class AccountImportDialog extends JDialogCentered {
 
 	private void startImport() {
 		if (share == Share.IMPORT) {
-			esiOwner = new EsiOwner();
+			esiOwner = EsiOwner.create();
 			try {
 				String code = new String(Base64.getUrlDecoder().decode(jImport.getText().trim()), "UTF-8");
 				String[] codes = code.split(" ");
@@ -331,7 +331,7 @@ public class AccountImportDialog extends JDialogCentered {
 			addTask.execute();
 		} else if (apiType == ApiType.ESI) {
 			if (editEsiOwner == null) { //Add
-				esiOwner = new EsiOwner();
+				esiOwner = EsiOwner.create();
 			} else { //Edit
 				esiOwner = new EsiOwner(editEsiOwner);
 			}

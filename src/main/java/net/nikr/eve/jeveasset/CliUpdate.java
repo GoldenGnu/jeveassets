@@ -98,7 +98,7 @@ public class CliUpdate {
 			//Save settings
 			Settings.saveSettings();
 			//Save profile
-			profile.save();
+			profile.saveSoft();
 			//Clean up
 			profile.clear();
 			//Progress
