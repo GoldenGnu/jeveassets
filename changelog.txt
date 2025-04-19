@@ -16,6 +16,26 @@
                   #### #  # #  # #  # #### #### #### #### ####
 
 ________________________________________________________________________________
+_8.0.0__________________________________________________________________________
+
+New Features:
+-Import routes from system names/ids in routing tool (Issue #475)
+-Moved stockpile and reprocessing import format selecting to the import dialog
+-Save profile data in SQLite
+-Include plugged implants in assets and tracker (Issue #124)
+-Automatic naming for loadout EFT export (Issue #471)
+-Added dotlan lookup link to system on region map
+
+Bug Fixes:
+-Dotlan constellation lookup didn't replace space
+-Blueprint runs rounding did not match fuzzwork and IPH
+-Fixed how flags are handled in the tracker edit dialog
+-Tracker assets containers not in the correct corp hangar division (Issue #519)
+
+Code:
+-Added email to user agent (thanks to the ccp esi team for making this matter!)
+
+________________________________________________________________________________
 _7.9.4__________________________________________________________________________
 
 Bug Fixes:
