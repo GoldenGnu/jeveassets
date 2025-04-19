@@ -135,6 +135,11 @@ public abstract class AbstractOwner implements OwnerType {
 	}
 
 	@Override
+	public String getAccountID() {
+		return accountID;
+	}
+
+	@Override
 	public synchronized void setAssetNextUpdate(final Date nextUpdate) {
 		this.assetNextUpdate = nextUpdate;
 	}
