@@ -26,6 +26,7 @@ import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+import java.util.UUID;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.io.esi.AbstractEsiGetter;
 import net.nikr.eve.jeveasset.io.esi.EsiCallbackURL;
@@ -34,6 +35,7 @@ import net.troja.eve.esi.ApiClient;
 import net.troja.eve.esi.ApiClientBuilder;
 import net.troja.eve.esi.api.AssetsApi;
 import net.troja.eve.esi.api.CharacterApi;
+import net.troja.eve.esi.api.ClonesApi;
 import net.troja.eve.esi.api.ContractsApi;
 import net.troja.eve.esi.api.CorporationApi;
 import net.troja.eve.esi.api.IndustryApi;
@@ -54,6 +56,7 @@ public class EsiOwner extends AbstractOwner implements OwnerType {
 	private final MarketApi marketApi = new MarketApi(apiClient);
 	private final IndustryApi industryApi = new IndustryApi(apiClient);
 	private final CharacterApi characterApi = new CharacterApi(apiClient);
+	private final ClonesApi clonesApi = new ClonesApi(apiClient);
 	private final AssetsApi assetsApi = new AssetsApi(apiClient);
 	private final WalletApi walletApi = new WalletApi(apiClient);
 	private final UniverseApi universeApi = new UniverseApi(apiClient);
@@ -70,7 +73,18 @@ public class EsiOwner extends AbstractOwner implements OwnerType {
 	private EsiCallbackURL callbackURL;
 	private Set<RolesEnum> roles = EnumSet.noneOf(RolesEnum.class);
 
-	public EsiOwner() {}
+	public static EsiOwner create() {
+		return new EsiOwner();
+	}
+
+	private EsiOwner() {
+		super(UUID.randomUUID().toString());
+	}
+
+	public EsiOwner(String uniqueID) {
+		super(uniqueID);
+	}
+
 
 	public EsiOwner(EsiOwner esiOwner) {
 		super(esiOwner);
@@ -181,6 +195,24 @@ public class EsiOwner extends AbstractOwner implements OwnerType {
 					|| roles.contains(RolesEnum.DIRECTOR));
 		} else {
 			return EsiScopes.CHARACTER_WALLET.isInScope(scopes);
+		}
+	}
+	
+	@Override
+	public boolean isClones() {
+		if (isCorporation()) {
+			return false; //Character Endpoint
+		} else {
+			return EsiScopes.CHARACTER_CLONE.isInScope(scopes);
+		}
+	}
+	
+	@Override
+	public boolean isImplants() {
+		if (isCorporation()) {
+			return false; //Character Endpoint
+		} else {
+			return EsiScopes.CHARACTER_IMPLANT.isInScope(scopes);
 		}
 	}
 
@@ -385,6 +417,10 @@ public class EsiOwner extends AbstractOwner implements OwnerType {
 
 	public UniverseApi getUniverseApiAuth() {
 		return universeApi;
+	}
+	
+	public ClonesApi getClonesApiAuth() {
+		return clonesApi;
 	}
 
 	public ContractsApi getContractsApiAuth() {

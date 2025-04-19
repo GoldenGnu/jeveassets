@@ -22,6 +22,7 @@
 package net.nikr.eve.jeveasset.gui.shared.components;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -30,12 +31,19 @@ import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.DefaultListCellRenderer;
 import javax.swing.GroupLayout;
+import javax.swing.Icon;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
+import javax.swing.ListCellRenderer;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.settings.Colors;
 import net.nikr.eve.jeveasset.gui.images.Images;
@@ -46,6 +54,7 @@ import net.nikr.eve.jeveasset.i18n.GuiShared;
 public class JTextDialog extends JDialogCentered {
 
 	private enum TextDialogAction {
+		IMPORT_TYPE,
 		TO_CLIPBOARD,
 		TO_FILE,
 		FROM_CLIPBOARD,
@@ -55,6 +64,7 @@ public class JTextDialog extends JDialogCentered {
 	}
 
 	private final JTextAreaPlaceholder jText;
+	private final JComboBox<SimpleTextImport> jImportTypes;
 	private final JButton jToClipboard;
 	private final JButton jFromClipboard;
 	private final JButton jToFile;
@@ -74,6 +84,11 @@ public class JTextDialog extends JDialogCentered {
 		jFileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 
 		ListenerClass listener = new ListenerClass();
+
+		jImportTypes = new JComboBox<>();
+		jImportTypes.setRenderer(new TextImportListRenderer());
+		jImportTypes.setActionCommand(TextDialogAction.IMPORT_TYPE.name());
+		jImportTypes.addActionListener(listener);
 
 		jToClipboard = new JButton(GuiShared.get().textToClipboard(), Images.EDIT_COPY.getIcon());
 		jToClipboard.setActionCommand(TextDialogAction.TO_CLIPBOARD.name());
@@ -112,6 +127,7 @@ public class JTextDialog extends JDialogCentered {
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.LEADING)
 				.addGroup(layout.createSequentialGroup()
+					.addComponent(jImportTypes)
 					.addComponent(jToClipboard)
 					.addComponent(jToFile)
 					.addComponent(jFromClipboard)
@@ -127,6 +143,7 @@ public class JTextDialog extends JDialogCentered {
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
 				.addGroup(layout.createParallelGroup()
+					.addComponent(jImportTypes, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jToClipboard, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jToFile, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jFromClipboard, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
@@ -169,7 +186,40 @@ public class JTextDialog extends JDialogCentered {
 	}
 
 	public String importText(String text, String example) {
+		return importText(text, example, null, null).getText();
+	}
+
+	public <E extends SimpleTextImport> TextReturn<E> importText(E[] imports) {
+		return importText("", "", imports, null);
+	}
+
+	public <E extends SimpleTextImport> TextReturn<E> importText(E[] imports, E selected) {
+		return importText("", "", imports, selected);
+	}
+
+	public <E extends SimpleTextImport> TextReturn<E> importText(String text, E[] imports) {
+		return importText(text, "", imports, null);
+	}
+
+	public <E extends SimpleTextImport> TextReturn<E> importText(String text, E[] imports, E selected) {
+		return importText(text, "", imports, selected);
+	}
+
+	public <E extends SimpleTextImport> TextReturn<E> importText(String text, String example, E[] imports, E selected) {
 		getDialog().setTitle(GuiShared.get().textImport());
+		if (imports == null || imports.length < 1) {
+			jImportTypes.removeAllItems();
+			jImportTypes.setVisible(false);
+		} else {
+			jImportTypes.setModel(new DefaultComboBoxModel<>(imports));
+			if (selected != null) {
+				jImportTypes.setSelectedItem(selected);
+			} else {
+				jImportTypes.setSelectedIndex(0);
+			}
+			example = jImportTypes.getItemAt(jImportTypes.getSelectedIndex()).getExample();
+			jImportTypes.setVisible(true);
+		}
 		jText.setEditable(true);
 		jText.setOpaque(true);
 		jText.setBackground(importColor);
@@ -186,7 +236,11 @@ public class JTextDialog extends JDialogCentered {
 		jToFile.setVisible(false);
 		returnValue = null;
 		setVisible(true);
-		return returnValue;
+		if (imports == null) {
+			return new TextReturn<>(returnValue, null);
+		} else {
+			return new TextReturn<>(returnValue, imports[jImportTypes.getSelectedIndex()]);
+		}
 	}
 
 	public void exportText(String text) {
@@ -199,6 +253,7 @@ public class JTextDialog extends JDialogCentered {
 		jCancel.setVisible(false);
 		jFromClipboard.setVisible(false);
 		jFromFile.setVisible(false);
+		jImportTypes.setVisible(false);
 		jToClipboard.setVisible(true);
 		jToFile.setVisible(true);
 		setVisible(true);
@@ -253,29 +308,70 @@ public class JTextDialog extends JDialogCentered {
 		}
 	}
 
+	public static interface SimpleTextImport {
+		public String getExample();
+		public Icon getIcon();
+		public String getType();
+	}
+
+	public static class TextReturn<E extends SimpleTextImport> {
+		private final String text;
+		private final E type;
+
+		public TextReturn(String text, E type) {
+			this.text = text;
+			this.type = type;
+		}
+
+		public String getText() {
+			return text;
+		}
+
+		public E getType() {
+			return type;
+		}
+	}
+
 	private class ListenerClass implements ActionListener {
 		@Override
 		public void actionPerformed(final ActionEvent e) {
 			if (TextDialogAction.TO_CLIPBOARD.name().equals(e.getActionCommand())) {
 				CopyHandler.toClipboard(jText.getText());
-			}
-			if (TextDialogAction.TO_FILE.name().equals(e.getActionCommand())) {
+			} else if (TextDialogAction.TO_FILE.name().equals(e.getActionCommand())) {
 				toFile();
-			}
-			if (TextDialogAction.FROM_CLIPBOARD.name().equals(e.getActionCommand())) {
+			} else if (TextDialogAction.FROM_CLIPBOARD.name().equals(e.getActionCommand())) {
 				CopyHandler.paste(jText);
-			}
-			if (TextDialogAction.FROM_FILE.name().equals(e.getActionCommand())) {
+			} else if (TextDialogAction.FROM_FILE.name().equals(e.getActionCommand())) {
 				fromFile();
-			}
-			if (TextDialogAction.OK.name().equals(e.getActionCommand())) {
+			} else if (TextDialogAction.OK.name().equals(e.getActionCommand())) {
 				returnValue = jText.getText();
 				setVisible(false);
-			}
-			if (TextDialogAction.CANCEL.name().equals(e.getActionCommand())) {
+			} else if (TextDialogAction.CANCEL.name().equals(e.getActionCommand())) {
 				returnValue = null;
 				setVisible(false);
+			} else if (TextDialogAction.IMPORT_TYPE.name().equals(e.getActionCommand())) {
+				SimpleTextImport textImport = jImportTypes.getItemAt(jImportTypes.getSelectedIndex());
+				jText.setPlaceholderText(textImport.getExample());
 			}
 		}
+	}
+
+	class TextImportListRenderer implements ListCellRenderer<SimpleTextImport> {
+
+		private final DefaultListCellRenderer renderer;
+
+		public TextImportListRenderer() {
+			renderer = new DefaultListCellRenderer();
+		}
+
+		@Override
+		public Component getListCellRendererComponent(JList<? extends SimpleTextImport> list, SimpleTextImport value, int index, boolean isSelected, boolean cellHasFocus) {
+			JLabel label = (JLabel) renderer.getListCellRendererComponent(list, value.getType(), index, isSelected, cellHasFocus);
+			// Set icon to display for value 
+			label.setIcon(value.getIcon());
+			return label;
+		}
+
+		
 	}
 }

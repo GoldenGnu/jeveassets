@@ -80,6 +80,14 @@ public abstract class TabsRouting extends Bundle {
 	public abstract String resultEmpty();
 	public abstract String resultExport();
 	public abstract String resultImport();
+	public abstract String resultImportIDs();
+	public abstract String resultImportNames();
+	public abstract String resultImportRoute();
+	public abstract String resultImportRouteEmpty();
+	public abstract String resultImportRouteInvalid();
+	public abstract String resultImportText();
+	public abstract String resultImportXml();
+	public abstract String resultImported();
 	public abstract String resultLoad();
 	public abstract String resultManage();
 	public abstract String resultManageTitle();

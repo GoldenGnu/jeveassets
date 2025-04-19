@@ -27,8 +27,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.swing.Icon;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.StaticData;
+import net.nikr.eve.jeveasset.gui.images.Images;
+import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 
 public class ImportEft extends AbstractTextImport {
@@ -57,6 +60,16 @@ public class ImportEft extends AbstractTextImport {
 				+ "Cap Booster 200 x11\n"
 				+ "Fusion S x2360"
 				;
+	}
+
+	@Override
+	public Icon getIcon() {
+		return Images.TOOL_SHIP_LOADOUTS.getIcon();
+	}
+
+	@Override
+	public String getType() {
+		return GuiShared.get().importEft();
 	}
 
 	@Override

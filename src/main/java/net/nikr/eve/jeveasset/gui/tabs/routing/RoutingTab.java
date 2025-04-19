@@ -48,6 +48,7 @@ import java.util.TreeSet;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.GroupLayout;
+import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
@@ -76,6 +77,8 @@ import net.nikr.eve.jeveasset.data.settings.RouteResult;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formatter;
+import net.nikr.eve.jeveasset.gui.shared.TextImport;
+import net.nikr.eve.jeveasset.gui.shared.TextImport.TextImportHandler;
 import net.nikr.eve.jeveasset.gui.shared.components.JCustomFileChooser;
 import net.nikr.eve.jeveasset.gui.shared.components.JDropDownButton;
 import net.nikr.eve.jeveasset.gui.shared.components.JFixedToolBar;
@@ -84,6 +87,7 @@ import net.nikr.eve.jeveasset.gui.shared.components.JImportDialog.ImportReturn;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTabSecondary;
 import net.nikr.eve.jeveasset.gui.shared.components.JMultiSelectionDialog;
 import net.nikr.eve.jeveasset.gui.shared.components.JTextDialog;
+import net.nikr.eve.jeveasset.gui.shared.components.JTextDialog.TextReturn;
 import net.nikr.eve.jeveasset.gui.shared.components.ListComboBoxModel;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuUI;
 import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
@@ -92,6 +96,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.EventModels.StringFilterator;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewGroup;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewLocation;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewLocation.LocationType;
+import net.nikr.eve.jeveasset.gui.tabs.routing.JRouteEditDialog.Route;
 import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 import net.nikr.eve.jeveasset.i18n.TabsRouting;
@@ -112,6 +117,7 @@ import uk.me.candle.eve.routing.Progress;
 import uk.me.candle.eve.routing.RoutingAlgorithm;
 import uk.me.candle.eve.routing.SimpleUnisexMutatorHibrid2Opt;
 import uk.me.candle.eve.routing.cancel.CancelService;
+import net.nikr.eve.jeveasset.gui.shared.components.JTextDialog.SimpleTextImport;
 
 /**
  *
@@ -120,6 +126,47 @@ import uk.me.candle.eve.routing.cancel.CancelService;
 public class RoutingTab extends JMainTabSecondary {
 
 	private static final Logger LOG = LoggerFactory.getLogger(RoutingTab.class);
+
+	enum ImportSystemType implements SimpleTextImport {
+		SYSTEM_NAMES(TabsRouting.get().resultImportNames(), SYSTEM_NAMES_EXAMPLE, Images.STOCKPILE_SHOPPING_LIST.getIcon()),
+		SYSTEM_IDS(TabsRouting.get().resultImportIDs(), SYSTEM_IDS_EXAMPLE, Images.LOC_SYSTEM.getIcon());
+		private final String type;
+		private final String example;
+		private final Icon icon;
+
+		private ImportSystemType(String type, String example, Icon icon) {
+			this.type = type;
+			this.example = example;
+			this.icon = icon;
+		}
+
+		@Override
+		public String getType() {
+			return type;
+		}
+
+		@Override
+		public String getExample() {
+			return example;
+		}
+
+		@Override
+		public Icon getIcon() {
+			return icon;
+		}
+		
+	}
+
+	private static final String SYSTEM_NAMES_EXAMPLE =
+			"Jita\n" +
+			"Sobaseki\n" +
+			"Malkalen\n" +
+			"New Caldari\n" +
+			"Niyabainen\n" +
+			"Perimeter\n" +
+			"Maurasi";
+
+	private static final String SYSTEM_IDS_EXAMPLE = "30000142 30001363 30001393 30000145 30000143 30000144 30000140";
 
 	private enum RoutingAction {
 		ADD,
@@ -135,7 +182,8 @@ public class RoutingTab extends JMainTabSecondary {
 		ROUTE_SAVE,
 		ROUTE_EDIT,
 		ROUTE_MANAGE,
-		ROUTE_IMPORT,
+		IMPORT_ROUTE_XML,
+		IMPORT_ROUTE,
 		ROUTE_EXPORT,
 		AVOID_ADD,
 		AVOID_REMOVE,
@@ -191,6 +239,7 @@ public class RoutingTab extends JMainTabSecondary {
 	private JTextArea jInfo;
 	private List<ResultToolbar> resultToolbars = new ArrayList<>();
 	//Dialogs
+	private TextImport<ImportSystemType> textImport;
 	private JTextDialog jImportSystemsDialog;
 	private JStationDialog jStationDialog;
 	private JSystemDialog jSystemDialog;
@@ -230,6 +279,7 @@ public class RoutingTab extends JMainTabSecondary {
 
 		listener = new ListenerClass();
 
+		textImport = new TextImport<>(program, NAME);
 		jImportSystemsDialog = new JTextDialog(program.getMainWindow().getFrame());
 		jStationDialog = new JStationDialog(program);
 		jSystemDialog = new JSystemDialog(program);
@@ -959,8 +1009,8 @@ public class RoutingTab extends JMainTabSecondary {
 		try {
 			//Update Graph if needed (AKA filter has changed)
 			if (lastSecMin != (Double) jSecurityMinimum.getSelectedItem()
-					|| lastSecMax != (Double) jSecurityMaximum.getSelectedItem()
-					|| !lastAvoid.equals(new ArrayList<>(Settings.get().getRoutingSettings().getAvoid().keySet()))) {
+				|| lastSecMax != (Double) jSecurityMaximum.getSelectedItem()
+				|| !lastAvoid.equals(new ArrayList<>(Settings.get().getRoutingSettings().getAvoid().keySet()))) {
 				buildGraph(false);
 				lastSecMin = (Double) jSecurityMinimum.getSelectedItem();
 				lastSecMax = (Double) jSecurityMaximum.getSelectedItem();
@@ -1414,6 +1464,92 @@ public class RoutingTab extends JMainTabSecondary {
 		return importReturn;
 	}
 
+	private boolean makeRoute(List<Route> list) {
+		if (list.isEmpty()) {
+			JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsRouting.get().resultImportRouteEmpty(), TabsRouting.get().resultImportRoute(), JOptionPane.PLAIN_MESSAGE);
+			return false;
+		}
+		if (list.size() < 2) {
+			JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsRouting.get().resultImportRouteInvalid(), TabsRouting.get().resultImportRoute(), JOptionPane.PLAIN_MESSAGE);
+			return false;
+		}
+		RouteResult result;
+		try {
+			result = JRouteEditDialog.makeRouteResult(program, systemCache, filteredGraph, list, TabsRouting.get().resultImported());
+		} catch (DisconnectedGraphException ex) {
+			JOptionPane.showMessageDialog(program.getMainWindow().getFrame(),
+					ex.getMessage(),
+					TabsRouting.get().error(),
+					JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
+		if (jResult.isEnabled()) {
+			int value = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), TabsRouting.get().resultOverwrite(), TabsRouting.get().resultImportRoute(), JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+			if (value != JOptionPane.OK_OPTION) {
+				return false;
+			}
+		}
+		setRouteResult(result);
+		return true;
+	}
+
+	private void importText() {
+		ImportSystemType systemType = ImportSystemType.SYSTEM_NAMES;
+		try {
+			systemType = ImportSystemType.valueOf(Settings.get().getImportSettings(NAME, systemType));
+		} catch (IllegalArgumentException ex) {
+			//No problem, use default
+		}
+		importText("", systemType);
+	}
+
+	private void importText(String text, ImportSystemType selected) {
+		textImport.importText(text, ImportSystemType.values(), selected, new TextImportHandler<ImportSystemType>() {
+			@Override
+			public void addItems(TextReturn<ImportSystemType> textReturn) {
+				String importText = textReturn.getText();
+				ImportSystemType importType = textReturn.getType();
+				if (importText == null || importType == null) {
+					return; //Cancel
+				}
+				List<Route> list = new ArrayList<>();
+				if (importType == ImportSystemType.SYSTEM_NAMES) {
+					//Build lookup map
+					Map<String, SolarSystem> systems = new HashMap<>();
+					for (SolarSystem node : systemCache.values()) {
+						systems.put(node.getSystem().toLowerCase(), node);
+					}
+					//For each line, check if the line matches a system name
+
+					for (String line : importText.split("[\r\n]+")) {
+						SolarSystem system = systems.get(line.toLowerCase().trim());
+						if (system != null) {
+							list.add(new Route(system.getSystemID(), system.getName()));
+						}
+					}
+				} else if (importType == ImportSystemType.SYSTEM_IDS) {
+					//For each line, check if the line matches a system name
+					for (String line : importText.split("\\s+")) {
+						try {
+							long systemID = Long.parseLong(line.toLowerCase().trim());
+							SolarSystem system = systemCache.get(systemID);
+							if (system != null) {
+								list.add(new Route(system.getSystemID(), system.getName()));
+							}
+						} catch (NumberFormatException ex) {
+							//Try next line...
+						}
+					}
+				}
+
+				boolean update = makeRoute(list);
+				if (!update) {
+					importText(importText, importType);
+				}
+			}
+		});
+	}
+
 	private class ListenerClass extends MouseAdapter implements ActionListener, ListSelectionListener {
 
 		@Override
@@ -1500,7 +1636,7 @@ public class RoutingTab extends JMainTabSecondary {
 				program.saveSettings("Routing (Security)");
 				updateFilterLabels();
 			} else if (RoutingAction.IMPORT_SYSTEMS.name().equals(e.getActionCommand())) {
-				String importText = jImportSystemsDialog.importText();
+				String importText = jImportSystemsDialog.importText("", SYSTEM_NAMES_EXAMPLE);
 				if (importText == null || importText.isEmpty()) {
 					return;
 				}
@@ -1595,7 +1731,7 @@ public class RoutingTab extends JMainTabSecondary {
 			} else if (RoutingAction.ROUTE_MANAGE.name().equals(e.getActionCommand())) {
 				jManageRoutesDialog.updateData();
 				jManageRoutesDialog.setVisible(true);
-			} else if (RoutingAction.ROUTE_IMPORT.name().equals(e.getActionCommand())) {
+			} else if (RoutingAction.IMPORT_ROUTE_XML.name().equals(e.getActionCommand())) {
 				jFileChooser.setSelectedFile(null);
 				jFileChooser.setCurrentDirectory(null);
 				int returnValue = jFileChooser.showOpenDialog(program.getMainWindow().getFrame());
@@ -1640,6 +1776,8 @@ public class RoutingTab extends JMainTabSecondary {
 				}
 				Settings.unlock("Routing (Import Route)");
 				program.saveSettings("Routing (Import Route)");
+			} else if (RoutingAction.IMPORT_ROUTE.name().equals(e.getActionCommand())) {
+				importText();
 			} else if (RoutingAction.ROUTE_EXPORT.name().equals(e.getActionCommand())) {
 				List<String> selected = jRouteSelectionDialog.show(Settings.get().getRoutingSettings().getRoutes().keySet(), false);
 				if (selected == null) {
@@ -1700,7 +1838,6 @@ public class RoutingTab extends JMainTabSecondary {
 		private final JButton jEveUiSetRoute;
 		private final JButton jEditRoute;
 		private final JButton jExportRoute;
-		private final JButton jImportRoute;
 		private final JButton jSaveRoute;
 		private final JDropDownButton jLoadRoute;
 		private final JMenuItem jManageRoutes;
@@ -1738,10 +1875,21 @@ public class RoutingTab extends JMainTabSecondary {
 			jExportRoute.addActionListener(listener);
 			jExportRoute.setEnabled(false);
 
-			jImportRoute = new JButton(TabsRouting.get().resultImport(), Images.EDIT_IMPORT.getIcon());
-			jImportRoute.setHorizontalAlignment(JButton.LEFT);
-			jImportRoute.setActionCommand(RoutingAction.ROUTE_IMPORT.name());
-			jImportRoute.addActionListener(listener);
+			JDropDownButton jImport = new JDropDownButton(TabsRouting.get().resultImport(), Images.EDIT_IMPORT.getIcon());
+
+			JMenuItem jImportXml = new JMenuItem(TabsRouting.get().resultImportXml(), Images.TOOL_ROUTING.getIcon());
+			jImportXml.setHorizontalAlignment(JButton.LEFT);
+			jImportXml.setActionCommand(RoutingAction.IMPORT_ROUTE_XML.name());
+			jImportXml.addActionListener(listener);
+			jImport.add(jImportXml);
+
+			jImport.addSeparator();
+
+			JMenuItem jImportText = new JMenuItem(TabsRouting.get().resultImportText(), Images.STOCKPILE_SHOPPING_LIST.getIcon());
+			jImportText.setHorizontalAlignment(JButton.LEFT);
+			jImportText.setActionCommand(RoutingAction.IMPORT_ROUTE.name());
+			jImportText.addActionListener(listener);
+			jImport.add(jImportText);
 
 			jSaveRoute = new JButton(TabsRouting.get().resultSave(), Images.FILTER_SAVE.getIcon());
 			jSaveRoute.setHorizontalAlignment(JButton.LEFT);
@@ -1760,7 +1908,7 @@ public class RoutingTab extends JMainTabSecondary {
 					.addComponent(jEveUiSetRoute)
 					.addComponent(jEditRoute, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, 100)
 					.addComponent(jExportRoute, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, 100)
-					.addComponent(jImportRoute, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, 100)
+					.addComponent(jImport, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, 100)
 					.addComponent(jSaveRoute, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, 100)
 					.addComponent(jLoadRoute, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, 100)
 					.addContainerGap()
@@ -1771,7 +1919,7 @@ public class RoutingTab extends JMainTabSecondary {
 					.addComponent(jEveUiSetRoute)
 					.addComponent(jEditRoute)
 					.addComponent(jExportRoute)
-					.addComponent(jImportRoute)
+					.addComponent(jImport)
 					.addComponent(jSaveRoute)
 					.addComponent(jLoadRoute)
 			);

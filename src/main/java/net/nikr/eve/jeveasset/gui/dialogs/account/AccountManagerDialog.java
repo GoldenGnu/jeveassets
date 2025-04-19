@@ -40,11 +40,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.api.accounts.DeprecatedOwner;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
-import net.nikr.eve.jeveasset.data.api.accounts.EveApiAccount;
-import net.nikr.eve.jeveasset.data.api.accounts.EveApiOwner;
-import net.nikr.eve.jeveasset.data.api.accounts.EveKitOwner;
 import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
 import net.nikr.eve.jeveasset.gui.dialogs.account.AccountSeparatorTableCell.AccountCellAction;
 import net.nikr.eve.jeveasset.gui.images.Images;
@@ -58,6 +54,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.JSeparatorTable;
 import net.nikr.eve.jeveasset.gui.shared.table.TableFormatFactory;
 import net.nikr.eve.jeveasset.i18n.DialoguesAccount;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
+import net.nikr.eve.jeveasset.io.local.profile.ProfileDatabase;
 import net.troja.eve.esi.auth.OAuth;
 
 
@@ -90,7 +87,6 @@ public class AccountManagerDialog extends JDialogCentered {
 	private final DefaultEventTableModel<OwnerType> tableModel;
 	private final SeparatorList<OwnerType> separatorList;
 	private final DefaultEventSelectionModel<OwnerType> selectionModel;
-	private final JMigrateDialog jMigrateDialog;
 	private final JLockWindow jLockWindow;
 	private final JLockWindow jRevalidateLock;
 	private final Map<OwnerType, Boolean> ownersShownCache = new HashMap<>();
@@ -101,8 +97,6 @@ public class AccountManagerDialog extends JDialogCentered {
 		super(program, DialoguesAccount.get().dialogueNameAccountManagement(), Images.DIALOG_ACCOUNTS.getImage());
 
 		accountImportDialog = new AccountImportDialog(this, program);
-
-		jMigrateDialog = new JMigrateDialog(program, this);
 
 		jLockWindow = new JLockWindow(program.getMainWindow().getFrame());
 		jRevalidateLock = new JLockWindow(getDialog());
@@ -230,16 +224,6 @@ public class AccountManagerDialog extends JDialogCentered {
 	public void updateTable() {
 		//Collect owners
 		List<OwnerType> ownerTypes = new ArrayList<>();
-		//Eve Online API
-		for (EveApiAccount account : program.getProfileManager().getAccounts()) {
-			if (account.getOwners().isEmpty()) {
-				ownerTypes.add(new EveApiOwner(account, DialoguesAccount.get().noOwners(), 0));
-			} else {
-				ownerTypes.addAll(account.getOwners());
-			}
-		}
-		//EveKit API
-		ownerTypes.addAll(program.getProfileManager().getEveKitOwners());
 		//ESI
 		ownerTypes.addAll(program.getProfileManager().getEsiOwners());
 		//Update rows (Add all rows)
@@ -327,7 +311,7 @@ public class AccountManagerDialog extends JDialogCentered {
 			jLockWindow.show(GuiShared.get().updating(), new LockWorkerAdaptor() {
 				@Override
 				public void task() {
-					program.saveProfile();
+					program.saveTable(ProfileDatabase.Table.OWNERS);
 					program.updateEventLists();
 				}
 			});
@@ -387,57 +371,12 @@ public class AccountManagerDialog extends JDialogCentered {
 					if (nReturn == JOptionPane.YES_OPTION) {
 						SeparatorList.Separator<?> separator = (SeparatorList.Separator<?>) o;
 						Object object = separator.first();
-						if (object instanceof EveApiOwner) { //Eve Api
-							EveApiOwner owner = (EveApiOwner) object;
-							EveApiAccount account = owner.getParentAccount();
-							program.getProfileManager().getAccounts().remove(account);
-							forceUpdate();
-							updateTable();
-						}
-						if (object instanceof EveKitOwner) {
-							EveKitOwner eveKitOwner = (EveKitOwner) object;
-							program.getProfileManager().getEveKitOwners().remove(eveKitOwner);
-							forceUpdate();
-							updateTable();
-						}
 						if (object instanceof EsiOwner) {
 							EsiOwner esiOwner = (EsiOwner) object;
 							program.getProfileManager().getEsiOwners().remove(esiOwner);
 							forceUpdate();
 							updateTable();
 						}
-					}
-				}
-			} else if (AccountCellAction.MIGRATE.name().equals(e.getActionCommand())) {
-				int index = jTable.getSelectedRow();
-				Object o = tableModel.getElementAt(index);
-				if (o instanceof SeparatorList.Separator<?>) {
-					SeparatorList.Separator<?> separator = (SeparatorList.Separator<?>) o;
-					List<DeprecatedOwner> owners = new ArrayList<>();
-					try {
-						separatorList.getReadWriteLock().readLock().lock();
-						for (Object object : separator.getGroup()) {
-							if (object instanceof DeprecatedOwner) { //Eve Api
-								owners.add((DeprecatedOwner) object);
-							}
-						}
-					} finally {
-						separatorList.getReadWriteLock().readLock().unlock();
-					}
-					boolean updated = jMigrateDialog.show(owners);
-					if (updated) {
-						boolean allMigrated = true;
-						for (DeprecatedOwner owner : owners) {
-							if (!owner.isMigrated()) {
-								allMigrated = false;
-								break;
-							}
-						}
-						if (allMigrated) {
-							JOptionPane.showMessageDialog(getDialog(), DialoguesAccount.get().accountMigratedDoneMsg(), DialoguesAccount.get().accountMigratedDoneTitle(), JOptionPane.PLAIN_MESSAGE);
-						}
-						forceUpdate();
-						updateTable();
 					}
 				}
 			} else if (AccountManagerAction.REVALIDATE.name().equals(e.getActionCommand())) {

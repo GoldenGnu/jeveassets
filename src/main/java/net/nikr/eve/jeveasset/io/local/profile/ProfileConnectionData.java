@@ -18,31 +18,26 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  */
-package net.nikr.eve.jeveasset.data.api.accounts;
+package net.nikr.eve.jeveasset.io.local.profile;
+
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collection;
 
 
-public enum EveApiAccessMask {
-	OPEN(0L),
-	ACCOUNT_BALANCE(1L),
-	ASSET_LIST(2L),
-	INDUSTRY_JOBS(128L),
-	MARKET_ORDERS(4096L),
-	TRANSACTIONS_CHAR(4194304L),
-	TRANSACTIONS_CORP(2097152L),
-	JOURNAL_CHAR(2097152L),
-	JOURNAL_CORP(1048576L),
-	CONTRACTS_CHAR(67108864L),
-	CONTRACTS_CORP(8388608L),
-	LOCATIONS_CHAR(134217728L),
-	LOCATIONS_CORP(16777216L);
+public abstract class ProfileConnectionData<T> implements ProfileConnection {
 
-	private final long accessMask;
+	private final Collection<T> t;
 
-	private EveApiAccessMask(long accessMask) {
-		this.accessMask = accessMask;
+	public ProfileConnectionData(Collection<T> t) {
+		this.t = new ArrayList<>(t);
 	}
-
-	public long getAccessMask() {
-		return accessMask;
+	
+	@Override
+	public void update(Connection connection) throws SQLException {
+		update(connection, t);
 	}
+	
+	public abstract void update(Connection connection, Collection<T> data) throws SQLException;
 }

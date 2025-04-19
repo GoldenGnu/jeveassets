@@ -113,6 +113,7 @@ import net.nikr.eve.jeveasset.gui.tabs.values.ValueRetroTab;
 import net.nikr.eve.jeveasset.gui.tabs.values.ValueTableTab;
 import net.nikr.eve.jeveasset.i18n.GuiFrame;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
+import net.nikr.eve.jeveasset.io.local.profile.ProfileDatabase.Table;
 import net.nikr.eve.jeveasset.io.online.PriceDataGetter;
 import net.nikr.eve.jeveasset.io.online.Updater;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
@@ -129,7 +130,7 @@ public class Program implements ActionListener {
 		TIMER
 	}
 	//Major.Minor.Bugfix [Release Candidate n] [BETA n] [DEV BUILD #n];
-	public static final String PROGRAM_VERSION = "7.9.5 DEV BUILD 1";
+	public static final String PROGRAM_VERSION = "8.0.0";
 	public static final String PROGRAM_NAME = "jEveAssets";
 	public static final String PROGRAM_HOMEPAGE = "https://eve.nikr.net/jeveasset";
 	public static final String PROGRAM_USER_AGENT = PROGRAM_NAME + "/" + PROGRAM_VERSION.replace(" ", "_") + " (nkr@niklaskr.dk)";
@@ -750,12 +751,17 @@ public class Program implements ActionListener {
 			saveSettings("API Update");
 			Settings.waitForEmptySaveQueue();
 		}
-		saveProfile();
+		profileManager.saveProfileSoft();
 	}
 
 	public synchronized void saveProfile() {
 		LOG.info("Saving Profile");
 		profileManager.saveProfile();
+	}
+
+	public synchronized void saveTable(Table table) {
+		LOG.info("Saving Profile Table");
+		profileManager.saveProfileTable(table);
 	}
 
 	public void exit() {

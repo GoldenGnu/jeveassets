@@ -25,6 +25,9 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.swing.Icon;
+import net.nikr.eve.jeveasset.gui.images.Images;
+import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 
 public class ImportEveMultibuy extends AbstractTextImport {
@@ -47,6 +50,16 @@ public class ImportEveMultibuy extends AbstractTextImport {
 				+ "x<number><space><item name>\n"
 				+ "x10 Veldspar\n"
 				;
+	}
+
+	@Override
+	public Icon getIcon() {
+		return Images.MISC_EVE.getIcon();
+	}
+
+	@Override
+	public String getType() {
+		return GuiShared.get().importEveMultibuy();
 	}
 
 	@Override

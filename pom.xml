@@ -5,7 +5,7 @@
 	<groupId>net.nikr</groupId>
 	<artifactId>jeveassets</artifactId>
 	<packaging>jar</packaging>
-	<version>7.9.5-SNAPSHOT</version>
+	<version>8.0.0</version>
 	<name>jeveassets</name>
 	<description>jEveAssets is an out-of-game asset manager for Eve-Online, written in Java</description>
 	<url>https://eve.nikr.net/jeveasset</url>
@@ -175,6 +175,7 @@
 										<mkdir dir="${project.build.directory}/profiles"/>
 										<copy todir="${project.build.directory}/profiles">
 											<fileset dir="profiles" includes="*.xml"/>
+											<fileset dir="profiles" includes="*.db"/>
 										</copy>
 									</then>
 								</if>
@@ -392,8 +393,8 @@
 						<exclude>${tests.to.skip}</exclude>
 					</excludes>
 					<environmentVariables>
-                        <JANICE_API_KEY>${janice}</JANICE_API_KEY>
-                    </environmentVariables>
+						<JANICE_API_KEY>${janice}</JANICE_API_KEY>
+					</environmentVariables>
 					<trimStackTrace>false</trimStackTrace>
 				</configuration>
 			</plugin>
@@ -677,6 +678,18 @@
 			<properties>
 				<tests.to.skip>**/*OnlineTest.java</tests.to.skip>
 			</properties>
+		</profile>
+		<profile>
+		    <id>skip-all-tests</id>
+		    <activation>
+			<property>
+			    <name>skip-all-tests</name>
+			    <value>true</value>
+			</property>
+		    </activation>
+		    <properties>
+			<maven.test.skip>true</maven.test.skip>
+		    </properties>
 		</profile>
 		<profile>
 			<id>skip-online-price-tests</id>

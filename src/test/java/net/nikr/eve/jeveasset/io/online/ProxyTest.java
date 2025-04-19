@@ -91,7 +91,7 @@ public class ProxyTest extends TestUtil {
 
 	private void testConnections() {
 		//ESI
-		EsiOwner esiOwner = new EsiOwner();
+		EsiOwner esiOwner = EsiOwner.create();
 		esiOwner.setAuth(EsiCallbackURL.LOCALHOST, null, null);
 		EsiOwnerGetter esi = new EsiOwnerGetter(esiOwner, false);
 		esi.start();

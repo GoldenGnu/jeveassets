@@ -31,15 +31,12 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.swing.JButton;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
-import net.nikr.eve.jeveasset.data.api.accounts.EveApiAccount;
-import net.nikr.eve.jeveasset.data.api.accounts.EveApiAccount.KeyType;
-import net.nikr.eve.jeveasset.data.api.accounts.EveApiOwner;
-import net.nikr.eve.jeveasset.data.api.accounts.EveKitOwner;
 import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
 import net.nikr.eve.jeveasset.data.api.my.MyAccountBalance;
 import net.nikr.eve.jeveasset.data.api.my.MyAsset;
@@ -80,6 +77,7 @@ import net.nikr.eve.jeveasset.io.esi.EsiCallbackURL;
 import net.troja.eve.esi.ApiClient;
 import net.troja.eve.esi.api.AssetsApi;
 import net.troja.eve.esi.api.CharacterApi;
+import net.troja.eve.esi.api.ClonesApi;
 import net.troja.eve.esi.api.ContractsApi;
 import net.troja.eve.esi.api.CorporationApi;
 import net.troja.eve.esi.api.IndustryApi;
@@ -114,48 +112,21 @@ import net.troja.eve.esi.model.CorporationOrdersResponse;
 import net.troja.eve.esi.model.CorporationWalletJournalResponse;
 import net.troja.eve.esi.model.CorporationWalletsResponse;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 
 public class ConverterTestUtil {
-
-	public static EveApiOwner getEveApiOwner(ConverterTestOptions options) {
-		return getEveApiOwner(false, false, false, options);
-	}
-
-	public static EveApiOwner getEveApiOwner(boolean data, boolean setNull, boolean setValues, ConverterTestOptions options) {
-		EveApiOwner owner = new EveApiOwner(null, false);
-		setValues(owner, options);
-		if (data) {
-			setData(owner, setNull, setValues, options);
-		}
-		return owner;
-	}
-
-	public static EveKitOwner getEveKitOwner(ConverterTestOptions options) {
-		return getEveKitOwner(false, false, false, options);
-	}
-
-	public static EveKitOwner getEveKitOwner(boolean data, boolean setNull, boolean setValues, ConverterTestOptions options) {
-		EveKitOwner owner = new EveKitOwner(false);
-		setValues(owner, options);
-		if (data) {
-			setData(owner, setNull, setValues, options);
-		}
-		return owner;
-	}
 
 	public static EsiOwner getEsiOwner(ConverterTestOptions options) {
 		return getEsiOwner(false, false, false, options);
 	}
 
 	public static EsiOwner getEsiOwner(boolean data, boolean setNull, boolean setValues, ConverterTestOptions options) {
-		EsiOwner esiOwner = new EsiOwner();
+		EsiOwner esiOwner = EsiOwner.create();
 		setValues(esiOwner, options);
 		if (data) {
 			setData(esiOwner, setNull, setValues, options);
-			esiOwner.setRoles(Collections.singleton(RolesEnum.DIRECTOR));
+			esiOwner.setRoles(set(RolesEnum.DIRECTOR));
 			esiOwner.setScopes(SsoScopes.ESI_CHARACTERS_READ_CORPORATION_ROLES_V1);
 		}
 		return esiOwner;
@@ -163,40 +134,46 @@ public class ConverterTestUtil {
 
 	private static void setData(OwnerType owner, boolean setNull, boolean setValues, ConverterTestOptions options) {
 		//Account Balance
-		MyAccountBalance myAccountBalance = getMyAccountBalance(owner, setValues, options);
-		owner.setAccountBalances(Collections.singletonList(myAccountBalance));
+		owner.setAccountBalances(list(getMyAccountBalance(owner, setValues, options)));
 
 		//Asset
 		owner.setAssets(getMyAssets(owner, setNull, setValues, options));
 
 		//Blueprint
 		RawBlueprint rawBlueprint = getRawBlueprint(options);
-		owner.setBlueprints(Collections.singletonMap(rawBlueprint.getItemID(), rawBlueprint));
+		owner.setBlueprints(map(rawBlueprint.getItemID(), rawBlueprint));
 
 		//Contract
 		MyContract saveMyContract = getMyContract(setNull, setValues, options);
-		MyContractItem saveMyContractItem = getMyContractItem(saveMyContract, setNull, setValues, options);
-		owner.setContracts(Collections.singletonMap(saveMyContract, Collections.singletonList(saveMyContractItem)));
+		owner.setContracts(map(saveMyContract, list(getMyContractItem(saveMyContract, setNull, setValues, options))));
 
 		//IndustryJob
-		MyIndustryJob saveMyIndustryJob = getMyIndustryJob(owner, setNull, setValues, options);
-		owner.setIndustryJobs(Collections.singleton(saveMyIndustryJob));
+		owner.setIndustryJobs(set(getMyIndustryJob(owner, setNull, setValues, options)));
 
 		//Journal
-		MyJournal saveMyJournal = getMyJournal(owner, setNull, setValues, options);
-		owner.setJournal(Collections.singleton(saveMyJournal));
+		owner.setJournal(set(getMyJournal(owner, setNull, setValues, options)));
 
 		//MarketOrder
-		MyMarketOrder saveMyMarketOrder = getMyMarketOrder(owner, setNull, setValues, options);
-		owner.setMarketOrders(Collections.singleton(saveMyMarketOrder));
+		owner.setMarketOrders(set(getMyMarketOrder(owner, setNull, setValues, options)));
 
 		//Transaction
-		MyTransaction saveMyTransaction = getMyTransaction(owner, setNull, setValues, options);
-		owner.setTransactions(Collections.singleton(saveMyTransaction));
+		owner.setTransactions(set(getMyTransaction(owner, setNull, setValues, options)));
 	}
 
+	public static <T> Set<T> set(T o) {
+        return new HashSet<>(Collections.singleton(o));
+    }
+
+	public static <K,V> Map<K,V> map(K key, V value) {
+        return new HashMap<>(Collections.singletonMap(key, value));
+    }
+
+	public static <T> List<T> list(T o) {
+        return new ArrayList<>(Collections.singletonList(o));
+    }
+
 	private static Item getItem(ConverterTestOptions options) {
-		return new Item(options.getInteger());
+		return ApiIdConverter.getItem(options.getInteger());
 	}
 
 	public static RawAccountBalance getRawAccountBalance(ConverterTestOptions options) {
@@ -232,13 +209,14 @@ public class ConverterTestUtil {
 		if (setValues) {
 			setValues(rootAsset, options, null, false);
 		}
+		rootAsset.setItemID(rootAsset.getItemID() + 1);
 		MyAsset childAsset = getMyAsset(owner, setNull, setValues, options);
 		if (setValues) {
 			setValues(childAsset, options, null, false);
 		}
 		rootAsset.getAssets().add(childAsset);
 
-		return Collections.singletonList(rootAsset);
+		return list(rootAsset);
 	}
 
 	public static RawBlueprint getRawBlueprint(ConverterTestOptions options) {
@@ -282,8 +260,10 @@ public class ConverterTestUtil {
 	}
 
 	public static MyIndustryJob getMyIndustryJob(OwnerType owner, boolean setNull, boolean setValues, ConverterTestOptions options) {
+		RawIndustryJob rawIndustryJob = getRawIndustryJob(setNull, options);
 		Item item = getItem(options);
-		MyIndustryJob industryJob = new MyIndustryJob(getRawIndustryJob(setNull, options), item, item, owner);
+		Item output = ApiIdConverter.getItem(rawIndustryJob.getProductTypeID());
+		MyIndustryJob industryJob = new MyIndustryJob(rawIndustryJob, item, output, owner);
 		if (setValues) {
 			setValues(industryJob, options, null, false);
 		}
@@ -360,12 +340,6 @@ public class ConverterTestUtil {
 		return mining;
 	}
 
-	static EveApiAccount getEveApiAccount(ConverterTestOptions options) {
-		EveApiAccount account = new EveApiAccount(0, null);
-		setValues(account, options);
-		return account;
-	}
-
 	public static void testOwner(OwnerType esiOwner, boolean setNull, ConverterTestOptions options) {
 		//Account Balance
 		assertEquals(esiOwner.getAccountBalances().size(), 1);
@@ -382,7 +356,6 @@ public class ConverterTestUtil {
 			testValues(childMyAsset, options, setNull ? CharacterAssetsResponse.class : null, false);
 		} else {
 			assertEquals(esiOwner.getAssets().size(), 0);
-			assertTrue(DataConverter.ignoreAsset(ConverterTestUtil.getRawAsset(setNull, options), esiOwner));
 		}
 
 		//Blueprint
@@ -435,6 +408,7 @@ public class ConverterTestUtil {
 		Map<String, Boolean> optional = getOptional(esi);
 		for (Field field : fields) {
 			Class<?> type = field.getType();
+			String name = field.getName();
 			if (ignore(object, field, type)) {
 				continue;
 			}
@@ -442,6 +416,22 @@ public class ConverterTestUtil {
 				field.setAccessible(true);
 				if (!overwrite && field.get(object) != null) {
 					continue;
+				}
+				if ((Long.class.equals(type) || long.class.equals(type))
+						&& ("locationID".equals(name)
+						|| "locationId".equals(name)
+						|| "stationId".equals(name)
+						|| "startLocationId".equals(name)
+						|| "endLocationId".equals(name))) {
+					if (isOptional(optional, field)) {
+						if (type.equals(Boolean.class) || type.equals(boolean.class)) {
+							field.set(object, false);
+						} else {
+							field.set(object, options.getNull());
+						}
+					} else {
+						field.set(object, options.getLocationID());
+					}
 				}
 				field.set(object, getValue(type, isOptional(optional, field), options));
 			} catch (IllegalArgumentException | IllegalAccessException ex) {
@@ -459,13 +449,11 @@ public class ConverterTestUtil {
 		if (object instanceof CharacterAssetsResponse) {
 			CharacterAssetsResponse asset = (CharacterAssetsResponse) object;
 			asset.setItemId(asset.getItemId() + 1); //Workaround for itemID == locationID
-			asset.setLocationId(options.getLocationTypeEveApi());
 		}
 		//ESI Corporation
 		if (object instanceof CorporationAssetsResponse) {
 			CorporationAssetsResponse asset = (CorporationAssetsResponse) object;
 			asset.setItemId(asset.getItemId() + 1); //Workaround for itemID == locationID
-			asset.setLocationId(options.getLocationTypeEveApi());
 		}
 		//ESI Ship
 		if (object instanceof CharacterShipResponse) {
@@ -475,7 +463,7 @@ public class ConverterTestUtil {
 		//ESI Location
 		if (object instanceof CharacterLocationResponse) {
 			CharacterLocationResponse asset = (CharacterLocationResponse) object;
-			long locationID = options.getLocationTypeEveApi();
+			long locationID = options.getLocationID();
 			if (locationID >= 30000000 && locationID <= 32000000) { //System
 				asset.setSolarSystemId((int)locationID);
 				asset.setStationId(null);
@@ -494,7 +482,11 @@ public class ConverterTestUtil {
 		if (object instanceof RawAsset) {
 			RawAsset asset = (RawAsset) object;
 			asset.setItemID(asset.getItemID() + 1); //Workaround for itemID == locationID
-			asset.setLocationID(options.getLocationTypeEveApi());
+		}
+		//EsiOwner
+		if (object instanceof EsiOwner) {
+			EsiOwner esiOwner = (EsiOwner) object;
+			esiOwner.setAuth(EsiCallbackURL.LOCALHOST, options.getString(), options.getString());
 		}
 	}
 
@@ -509,7 +501,11 @@ public class ConverterTestUtil {
 	public static void testValues(Object object, ConverterTestOptions options, Class<?> esi, boolean superClassOnly) {
 		if (object instanceof MyAsset) {
 			MyAsset myAsset = (MyAsset) object;
-			myAsset.setItemID(myAsset.getItemID() - 1); //Workaround for itemID == locationID
+			if (myAsset.getAssets().isEmpty()) {
+				myAsset.setItemID(myAsset.getItemID() - 1); //Workaround for itemID == locationID
+			} else {
+				myAsset.setItemID(myAsset.getItemID() - 2); //Workaround for itemID == locationID
+			}
 			myAsset.setLocationID(options.getLong());
 			myAsset.setLocationFlagString(options.getString());
 			myAsset.setItemFlag(options.getItemFlag());
@@ -547,7 +543,7 @@ public class ConverterTestUtil {
 			marketOrder.setStateString(options.getString());
 			marketOrder.setIssuedBy(options.getInteger());
 			marketOrder.setChanged(options.getDate());
-			marketOrder.addChanges(Collections.singleton(new Change(new Date(), 0.0, 0)));
+			marketOrder.addChanges(set(new Change(new Date(), 0.0, 0)));
 		}
 		if (object instanceof MyJournal) {
 			MyJournal journal = (MyJournal) object;
@@ -632,6 +628,9 @@ public class ConverterTestUtil {
 			return true;
 		}
 		if (type.equals(SkillsApi.class)) {
+			return true;
+		}
+		if (type.equals(ClonesApi.class)) {
 			return true;
 		}
 		return false;
@@ -739,10 +738,6 @@ public class ConverterTestUtil {
 			return options.getBigDecimal();
 		} else if (type.equals(EsiCallbackURL.class)) {
 			return options.getEsiCallbackURL();
-		} else if (type.equals(KeyType.class)) {
-			return options.getKeyType();
-		} else if (type.equals(EveApiAccount.class)) {
-			return options.getEveApiAccount();
 		} else if (type.equals(ApiClient.class)) {
 			return new ApiClient();
 		} else if (type.equals(CorporationOrdersHistoryResponse.RangeEnum.class)) {

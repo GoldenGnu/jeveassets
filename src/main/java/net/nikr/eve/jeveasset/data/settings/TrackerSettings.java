@@ -39,6 +39,7 @@ public class TrackerSettings {
 		TOTAL,
 		WALLET,
 		ASSET,
+		IMPLANT,
 		SELL_ORDER,
 		ESCROW,
 		ESCROW_TO_COVER,

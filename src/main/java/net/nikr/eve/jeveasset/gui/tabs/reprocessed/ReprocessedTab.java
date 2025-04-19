@@ -42,20 +42,21 @@ import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JMenu;
-import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.StaticData;
+import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.types.LocationType;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.TextImport;
 import net.nikr.eve.jeveasset.gui.shared.TextImport.TextImportHandler;
-import net.nikr.eve.jeveasset.gui.shared.components.JDropDownButton;
 import net.nikr.eve.jeveasset.gui.shared.components.JFixedToolBar;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTabSecondary;
+import net.nikr.eve.jeveasset.gui.shared.components.JTextDialog;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuColumns;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
@@ -67,6 +68,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.JSeparatorTable;
 import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
 import net.nikr.eve.jeveasset.gui.shared.table.TableFormatFactory;
 import net.nikr.eve.jeveasset.gui.tabs.reprocessed.ReprocessedSeparatorTableCell.ReprocessedCellAction;
+import net.nikr.eve.jeveasset.i18n.GuiShared;
 import net.nikr.eve.jeveasset.i18n.TabsReprocessed;
 import net.nikr.eve.jeveasset.io.local.text.TextImportType;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
@@ -79,10 +81,7 @@ public class ReprocessedTab extends JMainTabSecondary {
 		EXPAND,
 		CLEAR,
 		ADD_ITEM,
-		IMPORT_EFT,
-		IMPORT_ISK_PER_HOUR,
-		IMPORT_MULTIBUY,
-		IMPORT_STOCKPILE_SHOPPING_LIST,
+		IMPORT_TEXT_FORMATS,
 	}
 
 	//GUI
@@ -90,7 +89,7 @@ public class ReprocessedTab extends JMainTabSecondary {
 
 	//Dialogs
 	private final JReprocessedAddItemDialog jAddItemDialog;
-	private final TextImport textImport;
+	private final TextImport<TextImportType> textImport;
 
 	//Table
 	private final ReprocessedFilterControl filterControl;
@@ -125,7 +124,7 @@ public class ReprocessedTab extends JMainTabSecondary {
 		jAddItemDialog = new JReprocessedAddItemDialog(program);
 		jAddItemDialog.updateData(reprocessableItems);
 
-		textImport = new TextImport(program);
+		textImport = new TextImport<>(program, NAME);
 
 		JFixedToolBar jToolBar = new JFixedToolBar();
 
@@ -139,28 +138,10 @@ public class ReprocessedTab extends JMainTabSecondary {
 		jClear.addActionListener(listener);
 		jToolBar.addButton(jClear);
 
-		JDropDownButton jImport = new JDropDownButton(TabsReprocessed.get().importButton(), Images.EDIT_IMPORT.getIcon());
+		JButton jImport = new JButton(TabsReprocessed.get().importButton(), Images.EDIT_IMPORT.getIcon());
+		jImport.setActionCommand(ReprocessedAction.IMPORT_TEXT_FORMATS.name());
+		jImport.addActionListener(listener);
 		jToolBar.addButton(jImport);
-
-		JMenuItem jImportEFT = new JMenuItem(TabsReprocessed.get().importEft(), Images.TOOL_SHIP_LOADOUTS.getIcon());
-		jImportEFT.setActionCommand(ReprocessedAction.IMPORT_EFT.name());
-		jImportEFT.addActionListener(listener);
-		jImport.add(jImportEFT);
-
-		JMenuItem jImportIskPerHour = new JMenuItem(TabsReprocessed.get().importIskPerHour(), Images.TOOL_VALUES.getIcon());
-		jImportIskPerHour.setActionCommand(ReprocessedAction.IMPORT_ISK_PER_HOUR.name());
-		jImportIskPerHour.addActionListener(listener);
-		jImport.add(jImportIskPerHour);
-
-		JMenuItem jImportEve = new JMenuItem(TabsReprocessed.get().importEveMultibuy(), Images.MISC_EVE.getIcon());
-		jImportEve.setActionCommand(ReprocessedAction.IMPORT_MULTIBUY.name());
-		jImportEve.addActionListener(listener);
-		jImport.add(jImportEve);
-
-		JMenuItem jImportShoppingList = new JMenuItem(TabsReprocessed.get().importStockpilesShoppingList(), Images.STOCKPILE_SHOPPING_LIST.getIcon());
-		jImportShoppingList.setActionCommand(ReprocessedAction.IMPORT_STOCKPILE_SHOPPING_LIST.name());
-		jImportShoppingList.addActionListener(listener);
-		jImport.add(jImportShoppingList);
 
 		jToolBar.addGlue();
 
@@ -315,10 +296,30 @@ public class ReprocessedTab extends JMainTabSecondary {
 		program.getMainWindow().addTab(this);
 	}
 
-	private void importText(TextImportType type) {
-		textImport.importText(type, new TextImportHandler() {
+	private void importText() {
+		TextImportType systemType = TextImportType.EVE_MULTIBUY;
+		try {
+			systemType = TextImportType.valueOf(Settings.get().getImportSettings(NAME, systemType));
+		} catch (IllegalArgumentException ex) {
+			//No problem, use default
+		}
+		importText("", systemType);
+	}
+
+	private void importText(String text, TextImportType selected) {
+		textImport.importText(text, TextImportType.values(), selected, new TextImportHandler<TextImportType>() {
 			@Override
-			public void addItems(Map<Integer, Double> data) {
+			public void addItems(JTextDialog.TextReturn<TextImportType> textReturn) {
+				TextImportType importType = textReturn.getType();
+				String importText = textReturn.getText();
+				Map<Integer, Double> data = importType.importText(importText);
+				//Validate Output
+				if (data == null || data.isEmpty()) {
+					JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), GuiShared.get().textInvalid(), GuiShared.get().textImport(), JOptionPane.PLAIN_MESSAGE);
+					importText(importText, importType); //Again!
+					return;
+				}
+				//Add items
 				Map<Item, Long> newItems = new HashMap<>();
 				for (Map.Entry<Integer, Double> entry : data.entrySet()) {
 					Item item = ApiIdConverter.getItemUpdate(entry.getKey());
@@ -377,14 +378,8 @@ public class ReprocessedTab extends JMainTabSecondary {
 					items.put(selectedItem, 1L);
 					reprocessedData.addItem(eventList, selectedItem, 1L);
 				}
-			} else if (ReprocessedAction.IMPORT_EFT.name().equals(e.getActionCommand())) { //Add stockpile (EFT Import)
-				importText(TextImportType.EFT);
-			} else if (ReprocessedAction.IMPORT_ISK_PER_HOUR.name().equals(e.getActionCommand())) { //Add stockpile (Isk Per Hour)
-				importText(TextImportType.ISK_PER_HOUR);
-			} else if (ReprocessedAction.IMPORT_MULTIBUY.name().equals(e.getActionCommand())) { //Add stockpile (Eve Multibuy)
-				importText(TextImportType.EVE_MULTIBUY);
-			} else if (ReprocessedAction.IMPORT_STOCKPILE_SHOPPING_LIST.name().equals(e.getActionCommand())) { //Add stockpile (Shopping List)
-				importText(TextImportType.STCOKPILE_SHOPPING_LIST);
+			} else if (ReprocessedAction.IMPORT_TEXT_FORMATS.name().equals(e.getActionCommand())) { //Add stockpile (EFT Import)
+				importText();
 			}
 		}
 	}

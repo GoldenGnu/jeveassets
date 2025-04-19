@@ -374,7 +374,7 @@ public class LoadoutsTab extends JMainTabSecondary {
 		if (exportAsset == null) {
 			return;
 		}
-		String buildName = getBuildName();
+		String buildName = getBuildName(exportAsset.getName());
 		if (buildName == null) {
 			return; //Cancel
 		}
@@ -467,8 +467,9 @@ public class LoadoutsTab extends JMainTabSecondary {
 		}
 	}
 
-	private String getBuildName() {
-		String buildName = JOptionInput.showInputDialog(program.getMainWindow().getFrame(), "Enter Build Name", "Export EFT", JOptionPane.PLAIN_MESSAGE);
+	private String getBuildName(String shipName) {
+		String defaultName = shipName.replaceFirst("\\s*\\([^)]*\\)\\s*$", "");
+		String buildName = (String) JOptionInput.showInputDialog(program.getMainWindow().getFrame(), "Enter Build Name", "Export EFT", JOptionPane.PLAIN_MESSAGE, null, null, defaultName);
 		if (buildName == null) {
 			return null; //Cancel
 		} else if (buildName.isEmpty()) {
@@ -476,7 +477,7 @@ public class LoadoutsTab extends JMainTabSecondary {
 					TabsLoadout.get().name1(),
 					TabsLoadout.get().empty(),
 					JOptionPane.PLAIN_MESSAGE);
-			return getBuildName();
+			return getBuildName(defaultName);
 		} else {
 			return buildName;
 		}

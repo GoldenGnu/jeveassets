@@ -43,6 +43,7 @@ import net.troja.eve.esi.ApiException;
 import net.troja.eve.esi.ApiResponse;
 import net.troja.eve.esi.api.AssetsApi;
 import net.troja.eve.esi.api.CharacterApi;
+import net.troja.eve.esi.api.ClonesApi;
 import net.troja.eve.esi.api.ContractsApi;
 import net.troja.eve.esi.api.CorporationApi;
 import net.troja.eve.esi.api.FactionWarfareApi;
@@ -276,6 +277,10 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner> {
 	protected UniverseApi getUniverseApiAuth() {
 		return owner.getUniverseApiAuth();
  	}
+	
+	public ClonesApi getClonesApiAuth() {
+		return owner.getClonesApiAuth();
+	}
 
 	public ContractsApi getContractsApiAuth() {
 		return owner.getContractsApiAuth();

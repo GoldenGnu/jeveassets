@@ -73,6 +73,7 @@ public class JTextAreaPlaceholder extends JTextArea {
 	/**
 	 * Create a textfield with hint.
 	 *
+	 * @param text
 	 * @param placeholder Text displayed when empty
 	 */
 	public JTextAreaPlaceholder(String text, String placeholder) {
@@ -192,8 +193,12 @@ public class JTextAreaPlaceholder extends JTextArea {
 	}
 
 	private void updateShown() {
+		updateShown(false);
+	}
+
+	private void updateShown(boolean forceRepaint) {
 		boolean paint = getText().isEmpty() && placeholderText != null && !placeholderText.isEmpty();
-		boolean repaint = paint != paintPlaceholder;
+		boolean repaint = forceRepaint || paint != paintPlaceholder;
 		getMock().setText(placeholderText);
 		paintPlaceholder = paint;
 		if (repaint) {
@@ -214,7 +219,7 @@ public class JTextAreaPlaceholder extends JTextArea {
 
 	public void setPlaceholderText(String placeholder) {
 		this.placeholderText = placeholder;
-		updateShown();
+		updateShown(true);
 	}
 
 	public void setPlaceholderForeground(Color fg) {
