@@ -25,6 +25,7 @@ New Features:
 -Include plugged implants in assets and tracker (Issue #124)
 -Automatic naming for loadout EFT export (Issue #471)
 -Added dotlan lookup link to system on region map
+-Added contract count to the statusbar (Issue #513)
 
 Bug Fixes:
 -Dotlan constellation lookup didn't replace space
