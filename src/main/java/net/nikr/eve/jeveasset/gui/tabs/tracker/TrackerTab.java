@@ -387,7 +387,7 @@ public class TrackerTab extends JMainTabSecondary {
 		jShow.add(jAssets, true);
 
 		jImplants = new JCheckBoxMenuItem(TabsTracker.get().implants());
-		jImplants.setSelected(trackerSettings.hasShowOption(ShowOption.ALL) || trackerSettings.hasShowOption(ShowOption.ASSET));
+		jImplants.setSelected(trackerSettings.hasShowOption(ShowOption.ALL) || trackerSettings.hasShowOption(ShowOption.IMPLANT));
 		jImplants.setActionCommand(TrackerAction.UPDATE_SHOWN.name());
 		jImplants.addActionListener(listener);
 		jShow.add(jImplants, true);

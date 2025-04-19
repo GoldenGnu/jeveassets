@@ -250,7 +250,8 @@ public class FileUtil extends FileUtilSimple {
 				}
 			}
 			if (Files.exists(profilesFrom) && !Files.exists(profilesTo)) {
-				PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:*.xml");
+				PathMatcher xmlMatcher = FileSystems.getDefault().getPathMatcher("glob:*.xml");
+				PathMatcher dbMatcher = FileSystems.getDefault().getPathMatcher("glob:*.db");
 				try {
 					LOG.info("Importing profiles");
 					Files.walkFileTree(profilesFrom, new SimpleFileVisitor<Path>() {
@@ -266,7 +267,7 @@ public class FileUtil extends FileUtilSimple {
 
 						@Override
 						public FileVisitResult visitFile(final Path file, final BasicFileAttributes attrs) throws IOException {
-							if (matcher.matches(file.getFileName())) {
+							if (xmlMatcher.matches(file.getFileName()) || dbMatcher.matches(file.getFileName())) {
 								Files.copy(file, profilesTo.resolve(profilesFrom.relativize(file)));
 							}
 							return FileVisitResult.CONTINUE;
