@@ -29,7 +29,6 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.List;
@@ -37,6 +36,7 @@ import java.util.Map;
 import net.nikr.eve.jeveasset.data.settings.TrackerData;
 import net.nikr.eve.jeveasset.gui.tabs.values.AssetValue;
 import net.nikr.eve.jeveasset.gui.tabs.values.Value;
+import net.nikr.eve.jeveasset.io.local.FileLock.SafeFileIO;
 import net.nikr.eve.jeveasset.io.shared.FileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,27 +63,20 @@ public class TrackerDataWriter extends AbstractBackup {
 			file = new File(filename);
 		}
 		Gson gson = new GsonBuilder().registerTypeAdapter(Value.class, new ValueSerializerGJson()).create();
-		FileWriter fileWriter = null;
-		try {
-			lock(filename);
-			fileWriter = new FileWriter(file);
-			gson.toJson(trackerData, fileWriter);
-			LOG.info("Tracker data saved");
-		} catch (IOException | JsonParseException ex) {
-			LOG.error(ex.getMessage(), ex);
-		} finally {
-			if (fileWriter != null) {
-				try {
-					fileWriter.close();
-				} catch (IOException ex) {
-					//No problem
-				}
-			}
+		try (SafeFileIO io = new SafeFileIO(file)) {
+			//gson.toJson(trackerData, io.getOutputStreamWriter());
+			gson.toJson(trackerData, io.getOutputStreamWriter());
+			io.unlock(); //Unlock before backupFile() is called
 			//Saving done - create backup and rename new file to target
 			if (createBackup) {
 				backupFile(filename); //Rename .xml => .bac (.new is safe) and .new => .xml (.bac is safe). That way we always have at least one safe file
 			}
-			unlock(filename); //Last thing to do
+			LOG.info("Tracker data saved");
+		} catch (IOException | JsonParseException ex) {
+			LOG.error(ex.getMessage(), ex);
+		} finally {
+			System.out.println("createBackup:" + createBackup);
+			
 		}
 	}
 

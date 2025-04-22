@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import net.nikr.eve.jeveasset.TestUtil;
+import net.nikr.eve.jeveasset.io.local.FileLock.SafeFileIO;
 import net.nikr.eve.jeveasset.io.shared.FileUtil;
 import org.junit.AfterClass;
 import static org.junit.Assert.assertFalse;
@@ -102,8 +103,10 @@ public class FileLockTest extends TestUtil {
 	//@Test
 	public void timeoutTest() throws IOException {
 		File file = new File(FileLockSettings.getPathTimeout());
-		FileLock.lock(file);
-		FileLock.lock(file);
+		try (SafeFileIO aLock = new SafeFileIO(file); SafeFileIO  bLock =  new SafeFileIO(file);){
+			aLock.getFileInputStream();
+			bLock.getFileInputStream();
+		}
 	}
 
 	@Test
@@ -126,36 +129,40 @@ public class FileLockTest extends TestUtil {
 
 	@Test
 	public void unlockAllTest() throws IOException {
+		List<File> files = new ArrayList<>();
+		File items = new File(FileUtil.getPathItems());
+		files.add(items);
+		File flags = new File(FileUtil.getPathFlags());
+		files.add(flags);
+		File jumps = new File(FileUtil.getPathJumps());
+		files.add(jumps);
+		File locations = new File(FileUtil.getPathLocations());
+		files.add(locations);
 		File profile = new File(FileUtil.getPathProfilesDirectory() + File.separator + "some_test_profile.xml");
+		profile.getParentFile().mkdirs();
+		profile.createNewFile();
+		files.add(profile);
 		File conquerableStations = new File(FileUtil.getPathConquerableStations());
+		files.add(conquerableStations);
 		boolean emptyConquerableStations = false;
-		try {
-			List<File> files = new ArrayList<>();
-			//Static data directory
-			File items = new File(FileUtil.getPathItems());
-			files.add(items);
-			FileLock.lock(items);
-			File flags = new File(FileUtil.getPathFlags());
-			files.add(flags);
-			FileLock.lock(flags);
-			File jumps = new File(FileUtil.getPathJumps());
-			files.add(jumps);
-			FileLock.lock(jumps);
-			File locations = new File(FileUtil.getPathLocations());
-			files.add(locations);
-			FileLock.lock(locations);
-			//Profile directory
-			files.add(profile);
-			profile.getParentFile().mkdirs();
-			profile.createNewFile();
-			FileLock.lock(profile);
+		if (!conquerableStations.exists()) {
+			conquerableStations.createNewFile();
+			emptyConquerableStations = true;
+		}
+		try (SafeFileIO itemsLock = new SafeFileIO(items);
+				SafeFileIO  flagsLock =  new SafeFileIO(flags);
+				SafeFileIO  jumpsLock =  new SafeFileIO(jumps);
+				SafeFileIO  locationsLock =  new SafeFileIO(locations);
+				SafeFileIO  profileLock =  new SafeFileIO(profile);
+				SafeFileIO  conquerableStationsLock =  new SafeFileIO(conquerableStations);
+				){
+			itemsLock.getFileInputStream();
+			flagsLock.getFileInputStream();
+			jumpsLock.getFileInputStream();
+			locationsLock.getFileInputStream();
+			profileLock.getFileInputStream();
+			conquerableStationsLock.getFileInputStream();
 			//Data directory
-			files.add(conquerableStations);
-			if (!conquerableStations.exists()) {
-				conquerableStations.createNewFile();
-				emptyConquerableStations = true;
-			}
-			FileLock.lock(conquerableStations);
 			FileLock.unlockAll();
 			for (File file : files) {
 				if (FileLock.isLocked(file)) {
