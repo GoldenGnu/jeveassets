@@ -1073,7 +1073,6 @@ public class TrackerTab extends JMainTabSecondary {
 		for (Map.Entry<Date, Boolean> entry : assetBuggedFilterColumns.entrySet()) {
 			if (entry.getValue()) {
 				assetBuggedFilterColumn = count;
-				System.out.println("Found at: " + count + " " + entry.getKey());
 				break;
 			}
 			count++;
