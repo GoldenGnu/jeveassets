@@ -74,9 +74,6 @@ public class TrackerDataWriter extends AbstractBackup {
 			LOG.info("Tracker data saved");
 		} catch (IOException | JsonParseException ex) {
 			LOG.error(ex.getMessage(), ex);
-		} finally {
-			System.out.println("createBackup:" + createBackup);
-			
 		}
 	}
 
