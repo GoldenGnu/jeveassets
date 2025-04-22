@@ -53,6 +53,7 @@ public class ProfileDatabase {
 	public static enum Table {
 		OWNERS(new ProfileOwners()),
 		ASSETS(new ProfileAssets()),
+		CLONES(new ProfileClones()),
 		CONTRACTS(new ProfileContracts()),
 		ACTIVE_SHIP(new ProfileActiveShip()),
 		ACCOUNT_BALANCES(new ProfileAccountBalances()),
