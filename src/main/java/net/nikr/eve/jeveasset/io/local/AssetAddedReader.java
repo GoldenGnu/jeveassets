@@ -28,13 +28,14 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 import com.google.gson.reflect.TypeToken;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.lang.reflect.Type;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import net.nikr.eve.jeveasset.data.settings.AddedData;
+import net.nikr.eve.jeveasset.io.local.FileLock.SafeFileIO;
 import net.nikr.eve.jeveasset.io.shared.FileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,12 +56,9 @@ public class AssetAddedReader extends AbstractBackup {
 			return;
 		}
 		backup(filename);
-		FileReader fileReader = null;
-		try {
-			lock(filename);
-			fileReader = new FileReader(file);
+		try (SafeFileIO io = new SafeFileIO(file)){
 			Gson gson = new GsonBuilder().registerTypeAdapter(Date.class, new DateDeserializer()).create();
-			Map<Long, Date> assetAddedData = gson.fromJson(fileReader, new TypeToken<HashMap<Long, Date>>() {}.getType());
+			Map<Long, Date> assetAddedData = gson.fromJson(new InputStreamReader(io.getFileInputStream()), new TypeToken<HashMap<Long, Date>>() {}.getType());
 			if (assetAddedData != null) {
 				AddedData.getAssets().set(assetAddedData); //Import from added.json
 				LOG.info("Asset added data loaded");
@@ -74,15 +72,6 @@ public class AssetAddedReader extends AbstractBackup {
 				restoreFailed(filename); //Backup error file
 				LOG.error(ex.getMessage(), ex);
 			}
-		} finally {
-			if (fileReader != null) {
-				try {
-					fileReader.close();
-				} catch (IOException ex) {
-					//No problem
-				}
-			}
-			unlock(filename);
 		}
 	}
 
