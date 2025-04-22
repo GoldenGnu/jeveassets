@@ -35,11 +35,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
@@ -51,9 +48,7 @@ import org.slf4j.LoggerFactory;
 public class ProfileDatabase {
 	private static final Logger LOG = LoggerFactory.getLogger(ProfileDatabase.class);
 
-	private static final Collection<Future<Boolean>> UPDATES = Collections.synchronizedCollection(new ArrayList<>());
-
-	private static final ExecutorService UPDATES_THREAD_POOL = Executors.newSingleThreadExecutor();
+	private static final BlockingQueue<Update> UPDATES = new LinkedBlockingQueue<>();
 
 	public static enum Table {
 		OWNERS(new ProfileOwners()),
@@ -103,8 +98,13 @@ public class ProfileDatabase {
 
 	private static Connection updateConnection = null;
 	private static String updateConnectionUrl = null;
+	private static Updater updater = null;
 
 	public static synchronized void setUpdateConnectionUrl(Profile profile) {
+		if (updater == null) {
+			updater = new Updater();
+			updater.start();
+		}
 		if (profile == null) {
 			updateConnectionUrl = null;
 		} else {
@@ -155,27 +155,20 @@ public class ProfileDatabase {
 	}
 
 	public static void update(ProfileConnection profileConnection) {
-		UPDATES.add(UPDATES_THREAD_POOL.submit(new Update(profileConnection)));
+		UPDATES.add(new Update(profileConnection));
 	}
 
-	public static boolean waitForUpdates() {
-		boolean ok = true;
-		synchronized (UPDATES) {
-			for (Future<Boolean> update : UPDATES) {
-				try {
-					ok = update.get() && ok;
-				} catch (InterruptedException ex) {
-					logError(ex);
-					ok = false;
-				} catch (ExecutionException ex) {
-					logError(ex);
-					ok = false;
+	public static void waitForUpdates() {
+		try {
+			synchronized (UPDATES) {
+				if (!UPDATES.isEmpty())  {
+					UPDATES.wait();
 				}
 			}
+		} catch (InterruptedException ex) {
+			//No problem
 		}
-		UPDATES.clear();
 		closeUpdateConnection();
-		return ok;
 	}
 
 	public static boolean save(Profile profile, boolean full) {
@@ -240,7 +233,7 @@ public class ProfileDatabase {
 		}
 	}
 
-	private static class Update implements Callable<Boolean> {
+	private static class Update {
 
 		private final ProfileConnection profileConnection;
 
@@ -248,23 +241,43 @@ public class ProfileDatabase {
 			this.profileConnection = profileConnection;
 		}
 
-		@Override
-		public Boolean call() throws Exception {
+		public void doUpdate() throws SQLException {
 			Connection connection = getUpdateConnection();
 			if (connection == null) {
-				return false;
+				return;
 			}
 			try {
 				profileConnection.update(connection);
 				//Only commit once, when everything is done - so we can rollback on any errors 
 				connection.commit();
-				return true;
 			} catch (SQLException ex) {
 				connection.rollback();
 				logError(ex);
-				return false;
 			}
 		}
+	}
+
+	private static class Updater extends Thread {
+
+		@Override
+		public void run() {
+			while (true) {
+				try {
+					Update update = UPDATES.take();
+					update.doUpdate();
+				} catch (InterruptedException ex) {
+					//No problem
+				} catch (SQLException ex) {
+					logError(ex);
+				}
+				synchronized (UPDATES) {
+					if (UPDATES.isEmpty()) {
+						UPDATES.notifyAll();
+					}
+				}
+			}
+		}
+
 	}
 
 	private static void logError(Exception ex) {
