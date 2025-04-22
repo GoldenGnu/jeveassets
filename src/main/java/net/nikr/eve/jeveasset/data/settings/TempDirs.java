@@ -31,7 +31,7 @@ public enum TempDirs {
 	USER_HOME(System.getProperty("user.home")), //User Home Directory
 	USER_DIR(System.getProperty("user.dir")), //jEveAssets Working Directory
 	DATA_DIR(FileUtil.getPathDataDirectory()), //jEveAssets Data Directory
-	PROGRAM_DIR(FileUtil.getLocalFile("", false)), //jEveAssets Program Directory
+	PROGRAM_DIR(FileUtil.getStaticFile("")), //jEveAssets Program Directory
 	;
 
 	private static final Logger LOG = LoggerFactory.getLogger(TempDirs.class);

@@ -21,11 +21,11 @@
 package net.nikr.eve.jeveasset.io.local.update;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 import net.nikr.eve.jeveasset.io.local.AbstractXmlReader;
+import net.nikr.eve.jeveasset.io.local.FileLock.SafeFileIO;
 import net.nikr.eve.jeveasset.io.local.SettingsReader;
 import net.nikr.eve.jeveasset.io.local.XmlException;
 import net.nikr.eve.jeveasset.io.local.update.updates.Update1To2;
@@ -73,40 +73,29 @@ public class Update extends AbstractXmlReader<Integer> {
 	}
 
 	void setVersion(final File xml, final int newVersion) throws DocumentException {
-		SAXReader xmlReader = new SAXReader();
-		Document doc = xmlReader.read(xml);
+		try (SafeFileIO io = new SafeFileIO(xml)){
+			SAXReader xmlReader = new SAXReader();
+			Document doc = xmlReader.read(io.getFileInputStream());
 
-		XPath xpathSelector = DocumentHelper.createXPath("/settings");
-		List<?> results = xpathSelector.selectNodes(doc);
-		for (Iterator<?> iter = results.iterator(); iter.hasNext();) {
-			Element element = (Element) iter.next();
-			Attribute attr = element.attribute("version");
-			if (attr == null) {
-				element.add(new DefaultAttribute("version", String.valueOf(newVersion)));
-			} else {
-				attr.setText(String.valueOf(newVersion));
+			XPath xpathSelector = DocumentHelper.createXPath("/settings");
+			List<?> results = xpathSelector.selectNodes(doc);
+			for (Iterator<?> iter = results.iterator(); iter.hasNext();) {
+				Element element = (Element) iter.next();
+				Attribute attr = element.attribute("version");
+				if (attr == null) {
+					element.add(new DefaultAttribute("version", String.valueOf(newVersion)));
+				} else {
+					attr.setText(String.valueOf(newVersion));
+				}
 			}
-		}
-
-		FileOutputStream fos = null;
-		try {
-			fos = new FileOutputStream(xml);
 			OutputFormat outformat = OutputFormat.createPrettyPrint();
 			outformat.setEncoding("UTF-16");
-			XMLWriter writer = new XMLWriter(fos, outformat);
+			XMLWriter writer = new XMLWriter(io.getFileOutputStream(), outformat);
 			writer.write(doc);
 			writer.flush();
 		} catch (IOException ioe) {
 			LOG.error("Failed to update the serttings.xml version number", ioe);
 			throw new RuntimeException(ioe);
-		} finally {
-			if (fos != null) {
-				try {
-					fos.close();
-				} catch (IOException ex) {
-					//No problem
-				}
-			}
 		}
 	}
 
@@ -126,7 +115,6 @@ public class Update extends AbstractXmlReader<Integer> {
 		}
 		try {
 			int currentVersion = read("update settings", path, AbstractXmlReader.XmlType.DYNAMIC);
-			lock(path);
 			if (requiredVersion > currentVersion) {
 				LOG.info("settings.xml are out of date, updating.");
 				Update1To2 update = new Update1To2();
@@ -138,8 +126,6 @@ public class Update extends AbstractXmlReader<Integer> {
 		} catch (DocumentException ex) {
 			LOG.warn("Failed to update settings", ex);
 			throw new XmlException(ex);
-		} finally {
-			unlock(path);
 		}
 	}
 }

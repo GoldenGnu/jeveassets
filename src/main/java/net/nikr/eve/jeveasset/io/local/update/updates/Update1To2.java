@@ -20,12 +20,12 @@
  */
 package net.nikr.eve.jeveasset.io.local.update.updates;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import net.nikr.eve.jeveasset.data.settings.PriceDataSettings.PriceMode;
+import net.nikr.eve.jeveasset.io.local.FileLock.SafeFileIO;
 import net.nikr.eve.jeveasset.io.local.XmlException;
 import net.nikr.eve.jeveasset.io.local.update.LocalUpdate;
 import org.dom4j.Attribute;
@@ -54,8 +54,7 @@ public class Update1To2 implements LocalUpdate {
 		LOG.info("Performing update from v1 to v2");
 		LOG.info(" - modifies files:");
 		LOG.info("  - settings.xml");
-		FileOutputStream fos = null;
-		try {
+		try (SafeFileIO io = new SafeFileIO(path)){
 			// We need to update the settings
 			// current changes are:
 			// 1. XPath: /settings/filters/filter/row[@mode]
@@ -64,15 +63,13 @@ public class Update1To2 implements LocalUpdate {
 			// 3. settings/columns/column --> settings/tables/table/column
 			// settings/flags/flag --> removed two flags (now in settings/tables/table)
 			SAXReader xmlReader = new SAXReader();
-			Document doc = xmlReader.read(path);
+			Document doc = xmlReader.read(io.getFileInputStream());
 			convertDefaultPriceModes(doc);
 			convertModes(doc);
 			convertTableSettings(doc);
-
-			fos = new FileOutputStream(path);
 			OutputFormat outformat = OutputFormat.createPrettyPrint();
 			outformat.setEncoding("UTF-16");
-			XMLWriter writer = new XMLWriter(fos, outformat);
+			XMLWriter writer = new XMLWriter(io.getFileOutputStream(), outformat);
 			writer.write(doc);
 			writer.flush();
 		} catch (IOException ex) {
@@ -81,14 +78,6 @@ public class Update1To2 implements LocalUpdate {
 		} catch (DocumentException ex) {
 			LOG.error("", ex);
 			throw new XmlException(ex);
-		} finally {
-			if (fos != null) {
-				try {
-					fos.close();
-				} catch (IOException ex) {
-					//No problem
-				}
-			}
 		}
 	}
 
@@ -119,8 +108,8 @@ public class Update1To2 implements LocalUpdate {
 	private void convertTableSettings(final Document doc) {
 		XPath xpathSelector = DocumentHelper.createXPath("/settings/columns/column");
 		List<?> results = xpathSelector.selectNodes(doc);
-		List<String> tableColumnNames = new ArrayList<String>();
-		List<String> tableColumnVisible = new ArrayList<String>();
+		List<String> tableColumnNames = new ArrayList<>();
+		List<String> tableColumnVisible = new ArrayList<>();
 		for (Iterator<?> iter = results.iterator(); iter.hasNext();) {
 			Element element = (Element) iter.next();
 			Attribute name = element.attribute("name");

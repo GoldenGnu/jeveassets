@@ -44,6 +44,7 @@ import net.nikr.eve.jeveasset.data.api.my.MySkill;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.api.raw.RawAccountBalance;
 import net.nikr.eve.jeveasset.data.api.raw.RawAsset;
+import net.nikr.eve.jeveasset.data.api.raw.RawClone;
 import net.nikr.eve.jeveasset.data.api.raw.RawContract;
 import net.nikr.eve.jeveasset.data.api.raw.RawContractItem;
 import net.nikr.eve.jeveasset.data.api.raw.RawExtraction;
@@ -158,6 +159,19 @@ public abstract class DataConverter {
 			}
 		}
 		return list;
+	}
+
+	public static List<MyAsset> assetCloneImplants(final Map<OwnerType, List<RawClone>> clones) {
+		List<MyAsset> assets = new ArrayList<>();
+		for (Map.Entry<OwnerType, List<RawClone>> entry : clones.entrySet()) {
+			OwnerType owner = entry.getKey();
+			for (RawClone clone : entry.getValue()) {
+				for (Integer implantTypeID : clone.getImplants()) {
+					assets.add(new MyAsset(clone, implantTypeID, owner));
+				}
+			}
+		}
+		return assets;
 	}
 
 	protected static List<MyAccountBalance> convertRawAccountBalance(List<RawAccountBalance> rawAccountBalances, OwnerType owner) {

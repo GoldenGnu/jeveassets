@@ -30,6 +30,7 @@ import java.util.Set;
 import net.nikr.eve.jeveasset.data.api.accounts.SimpleOwner;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob.IndustryActivity;
 import net.nikr.eve.jeveasset.data.api.raw.RawAsset;
+import net.nikr.eve.jeveasset.data.api.raw.RawClone;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.settings.MarketPriceData;
@@ -194,6 +195,10 @@ public class MyAsset extends RawAsset implements Comparable<MyAsset>, InfoItem, 
 
 	public MyAsset(MyContractItem contractItem, final SimpleOwner owner) {
 		this(new RawAsset(contractItem), contractItem.getItem(), owner, new ArrayList<>());
+	}
+
+	public MyAsset(RawClone clone, Integer impantTypeID, final SimpleOwner owner) {
+		this(new RawAsset(clone, impantTypeID),ApiIdConverter.getItem(impantTypeID), owner, new ArrayList<>());
 	}
 
 	public void addAsset(final MyAsset asset) {

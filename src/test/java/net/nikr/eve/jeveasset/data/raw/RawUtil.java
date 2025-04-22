@@ -30,6 +30,7 @@ import java.util.Map;
 import java.util.Set;
 import net.nikr.eve.jeveasset.data.api.raw.RawAsset;
 import net.nikr.eve.jeveasset.data.api.raw.RawBlueprint;
+import net.nikr.eve.jeveasset.data.api.raw.RawClone;
 import net.nikr.eve.jeveasset.data.api.raw.RawContract.ContractStatus;
 import net.nikr.eve.jeveasset.data.api.raw.RawContractItem;
 import net.nikr.eve.jeveasset.data.api.raw.RawIndustryJob;
@@ -97,16 +98,16 @@ public class RawUtil {
 	}
 
 	private static boolean ignore(Field value, Class<?> raw) {
-		if (value.getName().equals("itemFlag") && (raw.equals(RawAsset.class) || raw.equals(RawBlueprint.class))) {
+		if (value.getName().equals("itemFlag") && (raw.equals(RawAsset.class) || raw.equals(RawBlueprint.class) || raw.equals(RawClone.class))) {
 			return true;
 		}
 		if (value.getName().equals("locationFlagEnum") && (raw.equals(RawAsset.class) || raw.equals(RawBlueprint.class))) {
 			return true;
 		}
-		if (value.getName().equals("locationType") && (raw.equals(RawAsset.class))) { //Note used be jEveAssets
+		if (value.getName().equals("locationType") && (raw.equals(RawAsset.class))) { //Not used be jEveAssets
 			return true;
 		}
-		if (value.getName().equals("locationTypeEnum") && (raw.equals(RawAsset.class))) { //Note used be jEveAssets
+		if (value.getName().equals("locationTypeEnum") && (raw.equals(RawAsset.class)) || raw.equals(RawClone.class)) { //Not used be jEveAssets
 			return true;
 		}
 		if (value.getName().equals("isBlueprintCopy") && raw.equals(RawAsset.class)) { //Converted to quantity

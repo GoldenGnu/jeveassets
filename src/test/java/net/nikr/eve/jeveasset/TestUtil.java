@@ -35,6 +35,7 @@ public class TestUtil {
 	public static void initLog() {
 		Main.setLogLocation(true);
 		CliOptions.get().setPortable(true);
+		FileUtil.enableTestPath();
 		System.setProperty("http.agent", Program.PROGRAM_USER_AGENT);
 		Settings.setTestMode(true);
 	}

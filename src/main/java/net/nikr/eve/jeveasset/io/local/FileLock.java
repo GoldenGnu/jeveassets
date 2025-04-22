@@ -20,8 +20,13 @@
  */
 package net.nikr.eve.jeveasset.io.local;
 
+import java.io.Closeable;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JEditorPane;
@@ -38,7 +43,8 @@ public class FileLock {
 	private static final int MAX_TRIES = 12; //1 minute
 	private static final int DELAY = 5000;
 	private static final List<File> LOCKS = new ArrayList<>();
-	private static boolean SAFE = false;
+	private static final List<SafeFileIO> OS_LOCKS = new ArrayList<>();
+	private static boolean safe = false;
 
 	private static void saferShutdown() {
 		Runtime.getRuntime().addShutdownHook(new Thread() {
@@ -57,8 +63,8 @@ public class FileLock {
 	}
 
 	private static void add(File file) {
-		if (!SAFE) {
-			SAFE = true;
+		if (!safe) {
+			safe = true;
 			saferShutdown();
 
 		}
@@ -78,6 +84,13 @@ public class FileLock {
 		unlockFiles(folder.listFiles());
 		folder = new File(FileUtil.getPathDataDirectory());
 		unlockFiles(folder.listFiles());
+		while (!OS_LOCKS.isEmpty()) {
+			try {
+				OS_LOCKS.get(0).close();
+			} catch (IOException ex) {
+				throw new RuntimeException(ex);
+			}
+		}
 	}
 
 	private static void unlockFiles(File[] files) {
@@ -91,7 +104,7 @@ public class FileLock {
 		}
 	}
 
-	public static void lock(File file) {
+	private static void lock(File file) {
 		lock(file, 0, DELAY);
 	}
 
@@ -121,7 +134,7 @@ public class FileLock {
 		add(file);
 	}
 
-	public static synchronized void unlock(File file) {
+	private static synchronized void unlock(File file) {
 		convertFile(file).delete();
 		remove(file);
 		synchronized (SYNC_LOCK) {
@@ -150,5 +163,76 @@ public class FileLock {
 	private static JEditorPane getMessage(File file) {
 		JLabelMultilineHtml jEditorPane = new JLabelMultilineHtml(General.get().fileLockMsg(file.getName()));
 		return jEditorPane;
+	}
+
+	public static class SafeFileIO implements Closeable {
+
+		private final File file;
+		private Closeable closeable;
+		private FileChannel channel;
+		private java.nio.channels.FileLock lock;
+
+		public SafeFileIO(String filename) {
+			this(new File(filename));
+		}
+
+		public SafeFileIO(File file) {
+			this.file = file;
+			FileLock.lock(file); //Lock internally - must be first
+			OS_LOCKS.add(this);
+		}
+
+		public OutputStreamWriter getOutputStreamWriter() throws IOException {
+			return getOutputStreamWriter(null);
+		}
+
+		public OutputStreamWriter getOutputStreamWriter(final String encoding) throws IOException {
+			FileOutputStream os = getFileOutputStream();
+			OutputStreamWriter osw;
+			if (encoding != null) {
+				osw = new OutputStreamWriter(os, encoding);
+			} else {
+				osw = new OutputStreamWriter(os);
+			}
+			closeable = osw;
+			return osw;
+		}
+
+		public FileOutputStream getFileOutputStream() throws IOException {
+			unlock();
+			FileOutputStream os = new FileOutputStream(file);
+			closeable = os;
+			channel = os.getChannel();
+			lock = channel.lock(); //Write Lock
+			return os;
+		}
+
+		public FileInputStream getFileInputStream() throws IOException {
+			unlock();
+			FileInputStream is = new FileInputStream(file);
+			closeable = is;
+			channel = is.getChannel();
+			lock = channel.lock(0, Long.MAX_VALUE, true); //Read Lock
+			return is;
+		}
+
+		public final void unlock() throws IOException {
+			if (lock != null && lock.isValid()) {
+				lock.release();
+			}
+			if (closeable != null) {
+				closeable.close();
+			}
+			if (channel != null) {
+				channel.close();
+			}
+			OS_LOCKS.remove(this);
+		}
+
+		@Override
+		public final void close() throws IOException {
+			unlock();
+			FileLock.unlock(file); //Release internally - must be last
+		}
 	}
 }

@@ -57,7 +57,7 @@ public class EsiClonesGetter extends AbstractEsiGetter {
 			}
 		});
 		//Get Active Clone
-		List<Integer> activeClone = update(DEFAULT_RETRIES, new EsiHandler<List<Integer>>() {
+		List<Integer> activeCloneImplants = update(DEFAULT_RETRIES, new EsiHandler<List<Integer>>() {
 			@Override
 			public ApiResponse<List<Integer>> get() throws ApiException {
 				return getClonesApiAuth().getCharactersCharacterIdImplantsWithHttpInfo((int)owner.getOwnerID(), DATASOURCE, null, null);
@@ -70,43 +70,9 @@ public class EsiClonesGetter extends AbstractEsiGetter {
 				return getLocationApiAuth().getCharactersCharacterIdLocationWithHttpInfo((int)owner.getOwnerID(), DATASOURCE, null, null);
 			}
 		});
-		Long activeCloneLocation = RawConverter.toLocationID(characterLocation);
-		
-		//Create assets
-		List<MyAsset> implants = new ArrayList<>();
-		List<Clone> jumpClones = jumpClonesResponse.getJumpClones();
-		
-		for (Clone clone : jumpClones){
-			List<Integer> cloneImplants = clone.getImplants();
-			Long cloneLocation = clone.getLocationId();
-			Long cloneId = (long)clone.getJumpCloneId();
-			for (Integer implant : cloneImplants){
-				MyAsset implantAsset = EsiConverter.toAssetsImplant(implant, cloneLocation, cloneId, owner);
-				implants.add(implantAsset);
-			}
-		}
+		Long activeCloneLocationID = RawConverter.toLocationID(characterLocation);
 
-		for (Integer implant : activeClone){
-			Long cloneId = owner.getOwnerID();
-			MyAsset activeCloneImplant = EsiConverter.toAssetsImplant(implant, activeCloneLocation, cloneId, owner);
-			implants.add(activeCloneImplant);
-		}
-		
-		
-		//Clear out implants
-		List<MyAsset> assets;
-		synchronized (owner) {
-			assets = new ArrayList<>(owner.getAssets());
-		}
-		List<MyAsset> existingImplants = assets.stream().filter(asset -> "Plugged in Implant".equals(asset.getFlag())).collect(Collectors.toList());
-		if (!existingImplants.isEmpty()) {
-			owner.removeAssets(existingImplants);
-		}
-		
-		//Reload Implants
-		for (MyAsset implant : implants){
-			owner.addAsset(implant);
-		}
+		owner.setClones(EsiConverter.toClones(jumpClonesResponse, activeCloneImplants, activeCloneLocationID, owner));
 	}
 
 	@Override

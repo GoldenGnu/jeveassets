@@ -22,13 +22,13 @@
 package net.nikr.eve.jeveasset.io.local;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.io.local.FileLock.SafeFileIO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -76,14 +76,11 @@ public abstract class AbstractBackup extends AttributeGetters {
 	}
 
 	protected void backup(final String filename) {
+		File sourceFile = new File(filename);
 		File backupFile = getProgramBackup(filename);
 		if (!backupFile.exists()) {
-			ZipOutputStream out = null;
-			InputStream in = null;
-			try {
-				File sourceFile = new File(filename);
-				out = new ZipOutputStream(new FileOutputStream(backupFile));
-				in = new FileInputStream(sourceFile);
+			try (SafeFileIO io = new SafeFileIO(sourceFile); ZipOutputStream out  = new ZipOutputStream(new FileOutputStream(backupFile))){
+				InputStream in = io.getFileInputStream();
 				ZipEntry e = new ZipEntry(sourceFile.getName());
 				out.putNextEntry(e);
 				byte[] buffer = new byte[8192];
@@ -95,33 +92,8 @@ public abstract class AbstractBackup extends AttributeGetters {
 				LOG.info("Backup Created: " + backupFile.getName());
 			} catch (IOException ex) {
 				LOG.error("Failed to create backup for new program version", ex);
-			} finally {
-				try {
-					if (out != null) {
-						out.close();
-					}
-				} catch (IOException ex) {
-					//No problem
-				}
-				try {
-					if (in != null) {
-						in.close();
-					}
-				} catch (IOException ex) {
-					//No problem
-				}
 			}
 		}
-	}
-
-	protected void lock(final String filename) {
-		File xmlFile = new File(filename);
-		FileLock.lock(xmlFile);
-	}
-
-	protected void unlock(final String filename) {
-		File xmlFile = new File(filename);
-		FileLock.unlock(xmlFile);
 	}
 
 	private File getBackupFile(final String filename) {

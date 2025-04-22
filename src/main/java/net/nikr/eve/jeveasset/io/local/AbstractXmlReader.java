@@ -22,11 +22,11 @@
 package net.nikr.eve.jeveasset.io.local;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import net.nikr.eve.jeveasset.io.local.FileLock.SafeFileIO;
 import net.nikr.eve.jeveasset.io.online.Updater;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,12 +53,13 @@ public abstract class AbstractXmlReader<T> extends AbstractBackup {
 			LOG.info(name+ " loaded");
 			return t;
 		} catch (IOException ex) {
+			LOG.error(name+ " not loaded", ex);
 			if (xmlType == XmlType.STATIC) {
 				staticDataFix();
 			}
-			LOG.info(name+ " not loaded");
 			return failValue();
 		} catch (IllegalArgumentException | ArrayIndexOutOfBoundsException | XmlException ex) {
+			LOG.error(name+ " not loaded: " + ex.getMessage(), ex);
 			if (xmlType == XmlType.STATIC) { //Static data
 				staticDataFix();
 			} else if (xmlType == XmlType.DYNAMIC || xmlType == XmlType.DYNAMIC_BACKUP) { //Dynamic data
@@ -70,7 +71,6 @@ public abstract class AbstractXmlReader<T> extends AbstractBackup {
 					restoreFailed(filename); //Backup error file
 				}
 			}
-			LOG.error(name+ " not loaded: " + ex.getMessage(), ex);
 			return failValue();
 		}
 	}
@@ -85,32 +85,20 @@ public abstract class AbstractXmlReader<T> extends AbstractBackup {
 	}
 
 	private Element getDocumentElement(final String filename, final XmlType xmlType) throws XmlException, IOException {
-		FileInputStream is = null;
-		try {
-			if (xmlType == XmlType.DYNAMIC || xmlType == XmlType.DYNAMIC_BACKUP) {
-				lock(filename);
-			}
-			File file = new File(filename);
-			is = new FileInputStream(file);
+		File file = new File(filename);
+		if (xmlType == XmlType.DYNAMIC_BACKUP) {
+			backup(filename);
+		}
+		try (SafeFileIO io = new SafeFileIO(file)){
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder builder = factory.newDocumentBuilder();
-			Document doc = builder.parse(is);
+			Document doc = builder.parse(io.getFileInputStream());
 			Element element = doc.getDocumentElement();
-			if (xmlType == XmlType.DYNAMIC_BACKUP) {
-				backup(filename);
-			}
 			return element;
 		} catch (SAXException ex) {
 			throw new XmlException(ex.getMessage(), ex);
 		} catch (ParserConfigurationException ex) {
 			throw new XmlException(ex.getMessage(), ex);
-		} finally {
-			if (is != null) {
-				is.close();
-			}
-			if (xmlType == XmlType.DYNAMIC || xmlType == XmlType.DYNAMIC_BACKUP) {
-				unlock(filename); //Last thing to do
-			}
 		}
 	}
 
