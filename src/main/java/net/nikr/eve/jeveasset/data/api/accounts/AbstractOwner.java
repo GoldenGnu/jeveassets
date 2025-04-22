@@ -41,6 +41,7 @@ import net.nikr.eve.jeveasset.data.api.my.MyShip;
 import net.nikr.eve.jeveasset.data.api.my.MySkill;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.api.raw.RawBlueprint;
+import net.nikr.eve.jeveasset.data.api.raw.RawClone;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 
 
@@ -57,6 +58,7 @@ public abstract class AbstractOwner implements OwnerType {
 	private Map<Integer, String> walletDivisions = new HashMap<>();
 	private Map<Integer, String> assetDivisions = new HashMap<>();
 	private List<MySkill> skills = new ArrayList<>();
+	private List<RawClone> clones = new ArrayList<>();
 	private Set<MyMining> mining = new HashSet<>();
 	private Set<MyExtraction> extractions = new HashSet<>();
 	private Long totalSkillPoints = null;
@@ -127,11 +129,6 @@ public abstract class AbstractOwner implements OwnerType {
 		this.skillsNextUpdate = abstractOwner.skillsNextUpdate;
 		this.miningNextUpdate = abstractOwner.miningNextUpdate;
 		this.containerLogsNextUpdate = abstractOwner.containerLogsNextUpdate;
-	}
-
-	@Override
-	public String getAccountID() {
-		return accountID;
 	}
 
 	@Override
@@ -402,6 +399,11 @@ public abstract class AbstractOwner implements OwnerType {
 	}
 
 	@Override
+	public List<RawClone> getClones() {
+		return clones;
+	}
+
+	@Override
 	public Set<MyMining> getMining() {
 		return mining;
 	}
@@ -509,6 +511,11 @@ public abstract class AbstractOwner implements OwnerType {
 	@Override
 	public void setSkills(List<MySkill> skills) {
 		this.skills = skills;
+	}
+
+	@Override
+	public void setClones(List<RawClone> clones) {
+		this.clones = clones;
 	}
 
 	@Override

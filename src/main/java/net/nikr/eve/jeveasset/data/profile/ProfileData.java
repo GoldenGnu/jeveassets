@@ -48,6 +48,7 @@ import net.nikr.eve.jeveasset.data.api.my.MyMining;
 import net.nikr.eve.jeveasset.data.api.my.MySkill;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.api.raw.RawBlueprint;
+import net.nikr.eve.jeveasset.data.api.raw.RawClone;
 import net.nikr.eve.jeveasset.data.api.raw.RawIndustryJob.IndustryJobStatus;
 import net.nikr.eve.jeveasset.data.api.raw.RawJournalRefType;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder.Change;
@@ -279,6 +280,15 @@ public class ProfileData {
 					priceTypeIDs.add(item.getTypeID());
 				}
 			}
+			//Add Clone to uniqueIds
+			for (RawClone clone : owner.getClones()) {
+				for (Integer typeID : clone.getImplants()) {
+					Item item = ApiIdConverter.getItem(typeID);
+					if (item.isMarketGroup()) {
+						priceTypeIDs.add(item.getTypeID());
+					}
+				}
+			}
 		}
 		//Add StockpileItems to uniqueIds
 		for (Stockpile stockpile : Settings.get().getStockpiles()) {
@@ -439,6 +449,7 @@ public class ProfileData {
 		Map<Long, OwnerType> blueprintsMap = new HashMap<>();
 		Map<Long, MyBlueprint> blueprints = new HashMap<>();
 		Map<String, Long> skillPointsTotalCache = new HashMap<>();
+		Map<OwnerType, List<RawClone>> clones = new HashMap<>();
 
 		calcTransactionsPriceData();
 		for (OwnerType owner : profileManager.getOwnerTypes()) {
@@ -453,6 +464,8 @@ public class ProfileData {
 			if (!owner.isShowOwner()) {
 				continue;
 			}
+			//Clones
+			clones.put(owner, owner.getClones());
 			//Market Orders
 			//If owner is corporation overwrite the character orders (to use the "right" owner)
 			if (owner.isCorporation()) {
@@ -724,6 +737,9 @@ public class ProfileData {
 
 				//Add Contract Items to Assets
 				addAssets(DataConverter.assetContracts(contractItems, uniqueOwners, Settings.get().isIncludeSellContracts(), Settings.get().isIncludeBuyContracts()), assets, blueprints, assetAdded, addedDate);
+
+				//Add Clone Implants to Assets
+				addAssets(DataConverter.assetCloneImplants(clones), assets, blueprints, assetAdded, addedDate);
 
 				//Add Assets to Assets
 				for (OwnerType owner : assetsMap.values()) {

@@ -44,6 +44,7 @@ import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.api.raw.RawAccountBalance;
 import net.nikr.eve.jeveasset.data.api.raw.RawAsset;
 import net.nikr.eve.jeveasset.data.api.raw.RawBlueprint;
+import net.nikr.eve.jeveasset.data.api.raw.RawClone;
 import net.nikr.eve.jeveasset.data.api.raw.RawContainerLog;
 import net.nikr.eve.jeveasset.data.api.raw.RawContract;
 import net.nikr.eve.jeveasset.data.api.raw.RawContractItem;
@@ -59,6 +60,7 @@ import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import net.nikr.eve.jeveasset.io.shared.DataConverter;
 import net.troja.eve.esi.model.CharacterAssetsResponse;
 import net.troja.eve.esi.model.CharacterBlueprintsResponse;
+import net.troja.eve.esi.model.CharacterClonesResponse;
 import net.troja.eve.esi.model.CharacterContractsItemsResponse;
 import net.troja.eve.esi.model.CharacterContractsResponse;
 import net.troja.eve.esi.model.CharacterIndustryJobsResponse;
@@ -70,6 +72,7 @@ import net.troja.eve.esi.model.CharacterPlanetsResponse;
 import net.troja.eve.esi.model.CharacterShipResponse;
 import net.troja.eve.esi.model.CharacterWalletJournalResponse;
 import net.troja.eve.esi.model.CharacterWalletTransactionsResponse;
+import net.troja.eve.esi.model.Clone;
 import net.troja.eve.esi.model.CorporationAssetsResponse;
 import net.troja.eve.esi.model.CorporationBlueprintsResponse;
 import net.troja.eve.esi.model.CorporationContainersLogsResponse;
@@ -133,10 +136,6 @@ public class EsiConverter extends DataConverter {
 
 	public static MyAsset toAssetsShip(CharacterShipResponse shipType, CharacterLocationResponse shipLocation, OwnerType owner) {
 		return toMyAsset(new RawAsset(shipType, shipLocation), owner, new ArrayList<>());
-	}
-	
-	public static MyAsset toAssetsImplant(Integer implantType, Long implantLocation, Long cloneId, OwnerType owner) {
-		return toMyAsset(new RawAsset(implantType, implantLocation, cloneId), owner, new ArrayList<>());
 	}
 
 	public static MyAsset toAssetsPlanetaryInteraction(CharacterPlanetsResponse planet, PlanetPin pin, OwnerType owner) {
@@ -381,5 +380,14 @@ public class EsiConverter extends DataConverter {
 			extractions.add(new RawExtraction(response));
 		}
 		return convertRawExtraction(extractions, owner, saveHistory);
+	}
+
+	public static List<RawClone> toClones(CharacterClonesResponse responses, List<Integer> activeCloneImplants, Long activeCloneLocationID, OwnerType owner) {
+		List<RawClone> clones = new ArrayList<>();
+		clones.add(new RawClone(activeCloneImplants, owner.getOwnerID(), activeCloneLocationID));
+		for (Clone response : responses.getJumpClones()) {
+			clones.add(new RawClone(response));
+		}
+		return clones;
 	}
 }

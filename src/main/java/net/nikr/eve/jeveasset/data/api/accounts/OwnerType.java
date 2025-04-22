@@ -38,6 +38,7 @@ import net.nikr.eve.jeveasset.data.api.my.MyShip;
 import net.nikr.eve.jeveasset.data.api.my.MySkill;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.api.raw.RawBlueprint;
+import net.nikr.eve.jeveasset.data.api.raw.RawClone;
 
 
 public interface OwnerType extends SimpleOwner {
@@ -75,6 +76,7 @@ public interface OwnerType extends SimpleOwner {
 	public Integer getUnallocatedSkillPoints();
 	public Set<MyMining> getMining();
 	public Set<MyExtraction> getExtractions();
+	public List<RawClone> getClones();
 	public List<MyContainerLog> getContainerLogs();
 	public void setBlueprints(final Map<Long, RawBlueprint> blueprints);
 	public void setIndustryJobs(final Set<MyIndustryJob> industryJobs);
@@ -91,6 +93,7 @@ public interface OwnerType extends SimpleOwner {
 	public void setUnallocatedSkillPoints(final Integer unallocatedSkillPoints);
 	public void setMining(Set<MyMining> mining);
 	public void setExtractions(Set<MyExtraction> extractions);
+	public void setClones(List<RawClone> clones);
 	public void setContainerLogs(final List<MyContainerLog> containersLogs);
 	//Account Mask
 	public boolean isCharacter();

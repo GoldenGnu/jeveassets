@@ -43,6 +43,7 @@ import net.troja.eve.esi.model.CharacterLocationResponse;
 import net.troja.eve.esi.model.CharacterOrdersHistoryResponse;
 import net.troja.eve.esi.model.CharacterOrdersResponse;
 import net.troja.eve.esi.model.CharacterWalletJournalResponse;
+import net.troja.eve.esi.model.Clone;
 import net.troja.eve.esi.model.CorporationAssetsResponse;
 import net.troja.eve.esi.model.CorporationBlueprintsResponse;
 import net.troja.eve.esi.model.CorporationContainersLogsResponse;
@@ -174,6 +175,10 @@ public class RawConverter {
 		} else {
 			return 0; //Fallback
 		}
+	}
+
+	public static ItemFlag toFlag(Clone.LocationTypeEnum value) {
+		return toFlagEnum(value);
 	}
 
 	public static ItemFlag toFlag(CharacterAssetsResponse.LocationFlagEnum value) {

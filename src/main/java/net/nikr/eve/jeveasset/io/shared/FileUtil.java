@@ -69,20 +69,30 @@ public class FileUtil extends FileUtilSimple {
 	private static final String PATH_MEMORY = "jmemory.jar";
 	private static final String PATH_EXPORT = "exports";
 
+	private static enum FileType {
+		STATIC_DATA, USER_FILES
+	}
+
+	private static boolean testPath = false;
+
+	public static void enableTestPath() {
+		testPath = true;
+	}
+
 	public static boolean onMac() {
 		return System.getProperty("os.name").toLowerCase().startsWith("mac os x");
 	}
 
 	public static String getPathDataVersion() {
-		return getLocalFile(PATH_DATA_VERSION, false);
+		return getStaticFile(PATH_DATA_VERSION);
 	}
 
 	public static String getPathRunMemory() {
-		return getLocalFile(PATH_MEMORY, false);
+		return getStaticFile(PATH_MEMORY);
 	}
 
 	public static String getPathPackageManager() {
-		return getLocalFile(PATH_PACKAGE_MANAGER, false);
+		return getStaticFile(PATH_PACKAGE_MANAGER);
 	}
 
 	public static String getPathRunUpdate() {
@@ -96,24 +106,31 @@ public class FileUtil extends FileUtilSimple {
 	}
 
 	public static String getPathSounds(String filename) {
-		return getLocalFile(PATH_SOUNDS + File.separator + filename, !CliOptions.get().isPortable());
+		return getUserFile(PATH_SOUNDS + File.separator + filename);
 	}
 
 	public static String getPathSoundsDirectory() {
-		return getLocalFile(PATH_SOUNDS, !CliOptions.get().isPortable());
+		return getUserFile(PATH_SOUNDS);
+	}
+
+	public static String getUserFile(final String filename) {
+		return getLocalFile(filename, FileType.USER_FILES);
+	}
+
+	public static String getStaticFile(final String filename) {
+		return getLocalFile(filename, FileType.STATIC_DATA);
 	}
 
 	/**
 	 *
 	 * @param filename the name of the data file to obtain
-	 * @param dynamic true if the file is expecting to be written to, false for
-	 * things like the items and locations.
+	 * @param fileType
 	 * @return
 	 */
-	public static String getLocalFile(final String filename, final boolean dynamic) {
+	private static String getLocalFile(final String filename, FileType fileType) {
 		File file;
 		File ret;
-		if (dynamic) {
+		if (fileType == FileType.USER_FILES && !CliOptions.get().isPortable()) {
 			File userDir = new File(System.getProperty("user.home", "."));
 			if (onMac()) { // preferences are stored in user.home/Library/Preferences
 				file = new File(userDir, "Library" + File.separator + "Preferences" + File.separator + "JEveAssets");
@@ -121,8 +138,12 @@ public class FileUtil extends FileUtilSimple {
 				file = new File(userDir.getAbsolutePath() + File.separator + ".jeveassets");
 			}
 			ret = new File(file.getAbsolutePath() + File.separator + filename);
-		} else {
-			ret = new File(FileUtilSimple.getLocalFile(filename));
+		} else { //jEveAssets program directory
+			if (fileType == FileType.USER_FILES && testPath) {
+				ret = new File(FileUtilSimple.getLocalFile("test-output" + File.separator + filename));
+			} else {
+				ret = new File(FileUtilSimple.getLocalFile(filename));
+			}
 		}
 		File parent = ret.getParentFile();
 		if (!parent.exists() && !parent.mkdirs()) {
@@ -283,103 +304,103 @@ public class FileUtil extends FileUtilSimple {
 	}
 
 	public static String getPathExports() {
-		return getLocalFile(PATH_EXPORT, !CliOptions.get().isPortable());
+		return getUserFile(PATH_EXPORT);
 	}
 
 	public static String getPathSettings() {
-		return getLocalFile(PATH_SETTINGS, !CliOptions.get().isPortable());
+		return getUserFile(PATH_SETTINGS);
 	}
 
 	public static String getPathTrackerData() {
-		return getLocalFile(PATH_TRACKER_DATA, !CliOptions.get().isPortable());
+		return getUserFile(PATH_TRACKER_DATA);
 	}
 
 	public static String getPathAssetAdded() {
-		return getLocalFile(PATH_ASSET_ADDED, !CliOptions.get().isPortable());
+		return getUserFile(PATH_ASSET_ADDED);
 	}
 
 	public static String getPathAssetAddedDatabase() {
-		return getLocalFile(PATH_ASSET_ADDED_DATABASE, !CliOptions.get().isPortable());
+		return getUserFile(PATH_ASSET_ADDED_DATABASE);
 	}
 
 	public static String getPathStockpileIDsDatabase() {
-		return getLocalFile(PATH_STOCKPILE_IDS_DATABASE, !CliOptions.get().isPortable());
+		return getUserFile(PATH_STOCKPILE_IDS_DATABASE);
 	}
 
 	public static String getPathPriceHistoryDatabase() {
-		return getLocalFile(PATH_PRICE_HISTORY_DATABASE, !CliOptions.get().isPortable());
+		return getUserFile(PATH_PRICE_HISTORY_DATABASE);
 	}
 
 	public static String getPathConquerableStations() {
-		return getLocalFile(PATH_CONQUERABLE_STATIONS, !CliOptions.get().isPortable());
+		return getUserFile(PATH_CONQUERABLE_STATIONS);
 	}
 
 	public static String getPathCitadel() {
-		return getLocalFile(PATH_CITADEL, !CliOptions.get().isPortable());
-	}
-
-	public static String getPathJumps() {
-		return getLocalFile(PATH_JUMPS, false);
-	}
-
-	public static String getPathFlags() {
-		return getLocalFile(PATH_FLAGS, false);
+		return getUserFile(PATH_CITADEL);
 	}
 
 	public static String getPathPriceData() {
-		return getLocalFile(PATH_PRICE_DATA, !CliOptions.get().isPortable());
+		return getUserFile(PATH_PRICE_DATA);
 	}
 
 	public static String getPathAssetsOld() {
-		return getLocalFile(PATH_ASSETS, !CliOptions.get().isPortable());
+		return getUserFile(PATH_ASSETS);
 	}
 
 	public static String getPathProfilesDirectory() {
-		return getLocalFile(PATH_PROFILES, !CliOptions.get().isPortable());
+		return getUserFile(PATH_PROFILES);
 	}
 
 	public static String getPathProfile(String filename) {
-		return getLocalFile(PATH_PROFILES + File.separator + filename, !CliOptions.get().isPortable());
-	}
-
-	public static String getPathStaticDataDirectory() {
-		return getLocalFile(PATH_DATA, false);
+		return getUserFile(PATH_PROFILES + File.separator + filename);
 	}
 
 	public static String getPathDataDirectory() {
-		return getLocalFile(PATH_DATA, !CliOptions.get().isPortable());
-	}
-
-	public static String getPathItems() {
-		return getLocalFile(PATH_ITEMS, false);
+		return getUserFile(PATH_DATA);
 	}
 
 	public static String getPathItemsUpdates() {
-		return getLocalFile(PATH_ITEMS_UPDATES, !CliOptions.get().isPortable());
+		return getUserFile(PATH_ITEMS_UPDATES);
+	}
+
+	public static String getPathJumps() {
+		return getStaticFile(PATH_JUMPS);
+	}
+
+	public static String getPathFlags() {
+		return getStaticFile(PATH_FLAGS);
+	}
+
+	public static String getPathStaticDataDirectory() {
+		return getStaticFile(PATH_DATA);
+	}
+
+	public static String getPathItems() {
+		return getStaticFile(PATH_ITEMS);
 	}
 
 	public static String getPathLocations() {
-		return getLocalFile(PATH_LOCATIONS, false);
+		return getStaticFile(PATH_LOCATIONS);
 	}
 
 	public static String getPathLogs() {
-		return getLocalFile(PATH_LOGS, !CliOptions.get().isPortable());
+		return getUserFile(PATH_LOGS);
 	}
 
 	public static String getPathReadme() {
-		return getLocalFile(PATH_README, false);
+		return getStaticFile(PATH_README);
 	}
 
 	public static String getPathLicense() {
-		return getLocalFile(PATH_LICENSE, false);
+		return getStaticFile(PATH_LICENSE);
 	}
 
 	public static String getPathCredits() {
-		return getLocalFile(PATH_CREDITS, false);
+		return getStaticFile(PATH_CREDITS);
 	}
 
 	public static String getPathChangeLog() {
-		return getLocalFile(PATH_CHANGELOG, false);
+		return getStaticFile(PATH_CHANGELOG);
 	}
 
 	public static String getUserDirectory() {

@@ -226,18 +226,17 @@ public class RawAsset {
 	/**
 	 * ESI Implant
 	 *
-	 * @param implantType
-	 * @param implantLocation
-	 * @param cloneId
+	 * @param clone
+	 * @param impantTypeID
 	 */
-	public RawAsset(Integer implantType, Long implantLocation, Long cloneId) {
+	public RawAsset(RawClone clone, Integer impantTypeID) {
 		isSingleton = true; //Unpacked
-		long combinedId = Long.parseLong(cloneId + "" + implantType);
+		long combinedId = Long.parseLong(clone.getJumpCloneID() + "" + impantTypeID);
 		itemId = combinedId;
 		itemFlag = ApiIdConverter.getFlag(89); //Implant
-		locationId = implantLocation;
+		locationId = clone.getLocationID();
 		quantity = 1; //Plugged in AKA always 1
-		typeId = implantType;
+		typeId = impantTypeID;
 	}
 	
 	/**
