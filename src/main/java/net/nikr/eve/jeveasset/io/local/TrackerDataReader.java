@@ -29,8 +29,8 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.reflect.TypeToken;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Date;
@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.Map;
 import net.nikr.eve.jeveasset.gui.tabs.values.AssetValue;
 import net.nikr.eve.jeveasset.gui.tabs.values.Value;
+import net.nikr.eve.jeveasset.io.local.FileLock.SafeFileIO;
 import net.nikr.eve.jeveasset.io.shared.FileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,11 +67,8 @@ public class TrackerDataReader extends AbstractBackup {
 			backup(filename);
 		}
 		Gson gson = new GsonBuilder().registerTypeAdapter(Value.class, new ValueDeserializerJSon()).create();
-		FileReader fileReader = null;
-		try {
-			lock(filename);
-			fileReader = new FileReader(file);
-			Map<String, List<Value>> trackerData = gson.fromJson(fileReader, new TypeToken<HashMap<String, ArrayList<Value>>>() {}.getType());
+		try (SafeFileIO io = new SafeFileIO(file)){
+			Map<String, List<Value>> trackerData = gson.fromJson(new InputStreamReader(io.getFileInputStream()), new TypeToken<HashMap<String, ArrayList<Value>>>() {}.getType());
 			LOG.info("Tracker data loaded");
 			return trackerData;
 		} catch (IOException | JsonParseException ex) {
@@ -83,15 +81,6 @@ public class TrackerDataReader extends AbstractBackup {
 				restoreFailed(filename); //Backup error file
 				LOG.error(ex.getMessage(), ex);
 			}
-		} finally {
-			if (fileReader != null) {
-				try {
-					fileReader.close();
-				} catch (IOException ex) {
-					//No problem
-				}
-			}
-			unlock(filename);
 		}
 		return null;
 	}

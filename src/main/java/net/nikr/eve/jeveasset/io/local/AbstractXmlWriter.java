@@ -24,10 +24,10 @@ package net.nikr.eve.jeveasset.io.local;
 import java.awt.Color;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
+import java.nio.channels.NonWritableChannelException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -43,6 +43,7 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import net.nikr.eve.jeveasset.io.local.FileLock.SafeFileIO;
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -79,18 +80,15 @@ public abstract class AbstractXmlWriter extends AbstractBackup {
 
 	private void writeXmlFile(final Document doc, final String filename, final String encoding, boolean createBackup, boolean fitting) throws XmlException {
 		DOMSource source = new DOMSource(doc);
-		FileOutputStream outputStream = null;
 		File file;
 		if (createBackup) {
 			file = getNewFile(filename); //Save to .new file
 		} else {
 			file = new File(filename);
 		}
-		try {
-			lock(filename);
+		try (SafeFileIO io = new SafeFileIO(file)){
 			//Save file
-			outputStream = new FileOutputStream(file);
-			OutputStreamWriter outputStreamWriter = new OutputStreamWriter(outputStream, encoding);
+			OutputStreamWriter outputStreamWriter = io.getOutputStreamWriter(encoding);
 			if (fitting) {
 				outputStreamWriter.append("<?xml version=\"1.0\" ?>\r\n");
 			}
@@ -109,6 +107,11 @@ public abstract class AbstractXmlWriter extends AbstractBackup {
 				transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
 			}
 			transformer.transform(source, result);
+			io.unlock(); //Unlock before backupFile() is called
+			//Saving done - create backup and rename new file to target
+			if (createBackup) {
+				backupFile(filename); //Rename .xml => .bac (.new is safe) and .new => .xml (.bac is safe). That way we always have at least one safe file
+			}
 		} catch (FileNotFoundException ex) {
 			throw new XmlException(ex.getMessage(), ex);
 		} catch (TransformerConfigurationException ex) {
@@ -117,21 +120,10 @@ public abstract class AbstractXmlWriter extends AbstractBackup {
 			throw new XmlException(ex.getMessage(), ex);
 		} catch (UnsupportedEncodingException ex) {
 			throw new XmlException(ex.getMessage(), ex);
+		} catch (NonWritableChannelException ex) {
+			throw new XmlException(ex.getMessage(), ex);
 		} catch (IOException ex) {
 			throw new XmlException(ex.getMessage(), ex);
-		} finally {
-			if (outputStream != null) {
-				try {
-					outputStream.close();
-				} catch (IOException ex) {
-					throw new XmlException(ex.getMessage(), ex);
-				}
-			}
-			//Saving done - create backup and rename new file to target
-			if (createBackup) {
-				backupFile(filename); //Rename .xml => .bac (.new is safe) and .new => .xml (.bac is safe). That way we always have at least one safe file
-			}
-			unlock(filename); //Last thing to do
 		}
 	}
 
