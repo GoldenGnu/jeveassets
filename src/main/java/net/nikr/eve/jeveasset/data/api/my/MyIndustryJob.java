@@ -283,6 +283,7 @@ public class MyIndustryJob extends RawIndustryJob implements Comparable<MyIndust
 		return getStatus() == IndustryJobStatus.DELIVERED
 				|| getStatus() == IndustryJobStatus.CANCELLED
 				|| getStatus() == IndustryJobStatus.REVERTED
+				|| getStatus() == IndustryJobStatus.ARCHIVED //Status is unknown -> default to done > true
 				;
 	}
 
