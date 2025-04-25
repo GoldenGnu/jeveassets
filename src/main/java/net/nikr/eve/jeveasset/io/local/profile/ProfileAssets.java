@@ -45,7 +45,7 @@ public class ProfileAssets extends ProfileTable {
 		tableDelete(connection, ASSETS_TABLE);
 
 		//Insert data
-		String sql = "INSERT INTO " + ASSETS_TABLE + " ("
+		String sql = "INSERT OR REPLACE INTO " + ASSETS_TABLE + " ("
 				+ "	accountid,"
 				+ "	count,"
 				+ "	flagid,"
