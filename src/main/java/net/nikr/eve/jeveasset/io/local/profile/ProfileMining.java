@@ -143,7 +143,7 @@ public class ProfileMining extends ProfileTable {
 		tableDelete(connection, MINING_TABLE, MINING_EXTRACTION_TABLE);
 
 		//Insert data
-		String miningSQL = "INSERT INTO " + MINING_TABLE + " ("
+		String miningSQL = "INSERT OR REPLACE INTO " + MINING_TABLE + " ("
 				+ "	accountid,"
 				+ "	typeid,"
 				+ "	date,"
