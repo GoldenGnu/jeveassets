@@ -145,6 +145,11 @@ public class ProfileClones  extends ProfileTable {
 	}
 
 	@Override
+	protected boolean isEmpty(Connection connection) throws SQLException {
+		return !tableExist(connection, CLONES_TABLE, CLONES_IMPLANTS_TABLE);
+	}
+
+	@Override
 	protected void create(Connection connection) throws SQLException {
 		if (!tableExist(connection, CLONES_TABLE)) {
 			String sql = "CREATE TABLE IF NOT EXISTS " + CLONES_TABLE + " (\n"

@@ -148,6 +148,11 @@ public class ProfileAssets extends ProfileTable {
 	}
 
 	@Override
+	protected boolean isEmpty(Connection connection) throws SQLException {
+		return !tableExist(connection, ASSETS_TABLE);
+	}
+
+	@Override
 	protected void create(Connection connection) throws SQLException {
 		if (!tableExist(connection, ASSETS_TABLE)) {
 			String sql = "CREATE TABLE IF NOT EXISTS " + ASSETS_TABLE + " (\n"

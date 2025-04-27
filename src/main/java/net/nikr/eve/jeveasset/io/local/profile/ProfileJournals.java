@@ -217,6 +217,11 @@ public class ProfileJournals extends ProfileTable {
 	}
 
 	@Override
+	protected boolean isEmpty(Connection connection) throws SQLException {
+		return !tableExist(connection, JOURNALS_TABLE);
+	}
+
+	@Override
 	protected void create(Connection connection) throws SQLException {
 		if (!tableExist(connection, JOURNALS_TABLE)) {
 			String sql = "CREATE TABLE IF NOT EXISTS " + JOURNALS_TABLE + " (\n"

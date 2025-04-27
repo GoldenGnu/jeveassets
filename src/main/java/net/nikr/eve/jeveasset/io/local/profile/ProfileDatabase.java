@@ -95,6 +95,10 @@ public class ProfileDatabase {
 		public void create(Connection connection) throws SQLException {
 			profileTable.create(connection);
 		}
+
+		public boolean isEmpty(Connection connection) throws SQLException {
+			return profileTable.isEmpty(connection);
+		}
 	}
 
 	private static Connection updateConnection = null;
@@ -145,10 +149,22 @@ public class ProfileDatabase {
 		backup(profile);
 		String connectionUrl = getConnectionUrl(profile.getSQLiteFilename());
 		try (Connection connection = DriverManager.getConnection(connectionUrl)) {
+			int loaded = 0;
 			for (Table table : Table.values()) {
-				table.select(connection, profile.getEsiOwners());
+				if (!table.isEmpty(connection)) {
+					table.select(connection, profile.getEsiOwners());
+					loaded++;
+				} else if (table == Table.OWNERS) {
+					return false; //Fatal error
+				} else if (table == Table.CLONES) {
+					loaded++; //No problem (new talbe)
+				}
 			}
-			return true;
+			if (loaded == Table.values().length) {
+				return true;
+			} else {
+				return false;
+			}
 		} catch (SQLException ex) {
 			logError(ex);
 			return false;
