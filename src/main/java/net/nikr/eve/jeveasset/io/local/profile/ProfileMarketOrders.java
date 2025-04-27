@@ -301,6 +301,11 @@ public class ProfileMarketOrders extends ProfileTable {
 	}
 
 	@Override
+	protected boolean isEmpty(Connection connection) throws SQLException {
+		return !tableExist(connection, MARKET_ORDERS_TABLE, MARKET_ORDER_CHANGES_TABLE);
+	}
+
+	@Override
 	protected void create(Connection connection) throws SQLException {
 		if (!tableExist(connection, MARKET_ORDERS_TABLE)) {
 			String sql = "CREATE TABLE IF NOT EXISTS " + MARKET_ORDERS_TABLE + " (\n"
