@@ -185,6 +185,11 @@ public class ProfileOwners extends ProfileTable {
 	}
 
 	@Override
+	protected boolean isEmpty(Connection connection) throws SQLException {
+		return !tableExist(connection, OWNERS_TABLE);
+	}
+
+	@Override
 	protected void create(Connection connection) throws SQLException {
 		if (!tableExist(connection, OWNERS_TABLE)) {
 			String sql = "CREATE TABLE IF NOT EXISTS " + OWNERS_TABLE + " (\n"
@@ -221,7 +226,4 @@ public class ProfileOwners extends ProfileTable {
 			}
 		}
 	}
-
-	protected boolean update(Connection connection) { return true; }
-	
 }
