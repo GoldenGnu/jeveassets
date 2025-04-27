@@ -146,7 +146,7 @@ public class EsiOwnerGetter extends AbstractEsiGetter implements AccountAdder{
 			addWarning("LIMITED ACCOUNT", "Limited account data access\r\n(Fix: Options > Accounts... > Edit)");
 			setError(null);
 		}
-		setNextUpdate(nextUpdate);
+		setNextUpdateInner(nextUpdate);
 	}
 
 	@Override
