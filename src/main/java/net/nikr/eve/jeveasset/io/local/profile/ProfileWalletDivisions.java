@@ -90,6 +90,11 @@ public class ProfileWalletDivisions extends ProfileTable {
 	}
 
 	@Override
+	protected boolean isEmpty(Connection connection) throws SQLException {
+		return !tableExist(connection, WALLET_DIVISIONS_TABLE);
+	}
+
+	@Override
 	protected void create(Connection connection) throws SQLException {
 		if (!tableExist(connection, WALLET_DIVISIONS_TABLE)) {
 			String sql = "CREATE TABLE IF NOT EXISTS " + WALLET_DIVISIONS_TABLE + " (\n"

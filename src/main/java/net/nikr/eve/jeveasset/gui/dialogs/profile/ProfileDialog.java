@@ -360,8 +360,8 @@ public class ProfileDialog extends JDialogCentered {
 		public void task() {
 			Profile profile = new Profile(profileName, false, false, ProfileType.SQLITE);
 			program.getProfileManager().getProfiles().add(profile);
+			profile.save();
 			loadProfileWork(profile);
-			program.saveProfile();
 		}
 
 		@Override
