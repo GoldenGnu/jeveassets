@@ -16,6 +16,22 @@
                   #### #  # #  # #  # #### #### #### #### ####
 
 ________________________________________________________________________________
+_8.0.1__________________________________________________________________________
+
+New Features:
+-Added OS file locks (may help prevent errors when syncing data to the cloud)
+
+Bug Fixes:
+-Fixed CtD because of duplicated assets and mining logs
+-Fixed CtD due to empty tables (users will need to restore a backup)
+-Archived industry jobs now count as done (again)
+
+Code:
+-Add 30 seconds delay to esi cache expiry to avoid stale responses
+-Ensure crash on OutOfMemoryError when updating
+-Moved clones and clone implants to their own table
+
+________________________________________________________________________________
 _8.0.0__________________________________________________________________________
 
 New Features:
