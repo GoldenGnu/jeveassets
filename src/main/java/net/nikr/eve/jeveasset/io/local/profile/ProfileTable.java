@@ -48,6 +48,7 @@ public abstract class ProfileTable {
 
 	private static final int BATCH_SIZE = 1000;
 
+	protected abstract boolean isEmpty(Connection connection) throws SQLException;
 	protected abstract void insert(Connection connection, final List<EsiOwner> esiOwners) throws SQLException;
 	protected abstract void select(Connection connection, List<EsiOwner> esiOwners, Map<String, EsiOwner> owners) throws SQLException;
 	protected abstract void create(Connection connection) throws SQLException;

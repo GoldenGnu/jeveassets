@@ -90,6 +90,11 @@ public class ProfileActiveShip extends ProfileTable {
 	}
 
 	@Override
+	protected boolean isEmpty(Connection connection) throws SQLException {
+		return !tableExist(connection, ACTIVE_SHIP_TABLE);
+	}
+
+	@Override
 	protected void create(Connection connection) throws SQLException {
 		if (!tableExist(connection, ACTIVE_SHIP_TABLE)) {
 			String sql = "CREATE TABLE IF NOT EXISTS " + ACTIVE_SHIP_TABLE + " (\n"

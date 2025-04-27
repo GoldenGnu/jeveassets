@@ -457,6 +457,11 @@ public class ProfileContracts extends ProfileTable {
 	}
 
 	@Override
+	protected boolean isEmpty(Connection connection) throws SQLException {
+		return !tableExist(connection, CONTRACTS_OWNERS_TABLE, CONTRACTS_TABLE, CONTRACT_ITEMS_TABLE);
+	}
+
+	@Override
 	protected void create(Connection connection) throws SQLException {
 		if (!tableExist(connection, CONTRACTS_OWNERS_TABLE)) {
 			String sql = "CREATE TABLE IF NOT EXISTS " + CONTRACTS_OWNERS_TABLE + " ("
