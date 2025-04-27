@@ -47,6 +47,7 @@ import org.slf4j.LoggerFactory;
 public abstract class AbstractGetter<O extends OwnerType> implements Runnable {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AbstractGetter.class);
+	private static final long NEXT_UPDATE_ADDED_TIME = 30L * 1000L; //30 seconds
 
 	protected static final int NO_RETRIES = 0;
 
@@ -139,8 +140,13 @@ public abstract class AbstractGetter<O extends OwnerType> implements Runnable {
 
 	protected synchronized void setExpires(Map<String, List<String>> headers) {
 		Date expires = getHeaderDate(headers, "expires");
-		if (expires != null) {
-			setNextUpdate(expires);
+		setNextUpdateInner(expires);
+	}
+
+	protected synchronized void setNextUpdateInner(Date date) {
+		if (date != null) {
+			date = new Date(date.getTime() + NEXT_UPDATE_ADDED_TIME);
+			setNextUpdate(date);
 		}
 	}
 
