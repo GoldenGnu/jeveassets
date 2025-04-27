@@ -18,7 +18,7 @@
 ________________________________________________________________________________
 _8.0.1__________________________________________________________________________
 
-New Feature:
+New Features:
 -Added OS file locks (may help prevent errors when syncing data to the cloud)
 
 Bug Fixes:
