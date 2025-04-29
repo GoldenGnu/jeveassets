@@ -45,6 +45,7 @@ public abstract class General extends Bundle {
 	public abstract String industryJobFlag();
 	public abstract String marketOrderSellFlag();
 	public abstract String marketOrderBuyFlag();
+	public abstract String jumpClone();
 	public abstract String none();
 	public abstract String all();
 	public abstract String fileLockTitle();
