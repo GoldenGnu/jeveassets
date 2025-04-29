@@ -89,7 +89,7 @@ public class SkillsTab extends JMainTabPrimary {
 		jTable.setRowSelectionAllowed(true);
 		jTable.setColumnSelectionAllowed(true);
 		//Sorting
-		TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
+		TableComparatorChooser<MySkill> comparatorChooser = TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
 		//Selection Model
 		selectionModel = EventModels.createSelectionModel(filterList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
@@ -102,7 +102,7 @@ public class SkillsTab extends JMainTabPrimary {
 		//Table Filter
 		filterControl = new SkillsFilterControl(sortedList);
 		//Menu
-		installTableTool(new SkillsTableMenu(), tableFormat, tableModel, jTable, filterControl, MySkill.class);
+		installTableTool(new SkillsTableMenu(), tableFormat, comparatorChooser, tableModel, jTable, filterControl, MySkill.class);
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()

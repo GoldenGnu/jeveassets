@@ -86,7 +86,7 @@ public class ExtractionsTab extends JMainTabPrimary {
 		jTable.setRowSelectionAllowed(true);
 		jTable.setColumnSelectionAllowed(true);
 		//Sorting
-		TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
+		TableComparatorChooser<MyExtraction> comparatorChooser = TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
 		//Selection Model
 		selectionModel = EventModels.createSelectionModel(filterList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
@@ -99,7 +99,7 @@ public class ExtractionsTab extends JMainTabPrimary {
 		//Table Filter
 		filterControl = new ExtractionFilterControl(sortedList);
 		//Menu
-		installTableTool(new ExtractionTableMenu(), tableFormat, tableModel, jTable, filterControl, MyExtraction.class);
+		installTableTool(new ExtractionTableMenu(), tableFormat, comparatorChooser, tableModel, jTable, filterControl, MyExtraction.class);
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()
