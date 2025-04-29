@@ -85,6 +85,8 @@ public class Settings {
 		FLAG_INCLUDE_BUY_CONTRACTS,
 		FLAG_INCLUDE_MANUFACTURING,
 		FLAG_INCLUDE_COPYING,
+		FLAG_INCLUDE_JUMP_CLONES,
+		FLAG_INCLUDE_PLUGGED_IN_IMPLANTS,
 		FLAG_HIGHLIGHT_SELECTED_ROWS,
 		FLAG_STOCKPILE_FOCUS_TAB,
 		FLAG_STOCKPILE_HALF_COLORS,
@@ -288,12 +290,14 @@ public class Settings {
 		flags.put(SettingFlag.FLAG_IGNORE_SECURE_CONTAINERS, true);
 		flags.put(SettingFlag.FLAG_STOCKPILE_FOCUS_TAB, true);
 		flags.put(SettingFlag.FLAG_STOCKPILE_HALF_COLORS, false); //Cached
-		flags.put(SettingFlag.FLAG_INCLUDE_SELL_ORDERS, true);
+		flags.put(SettingFlag.FLAG_INCLUDE_SELL_ORDERS, false);
 		flags.put(SettingFlag.FLAG_INCLUDE_BUY_ORDERS, false);
 		flags.put(SettingFlag.FLAG_INCLUDE_SELL_CONTRACTS, false);
 		flags.put(SettingFlag.FLAG_INCLUDE_BUY_CONTRACTS, false);
 		flags.put(SettingFlag.FLAG_INCLUDE_MANUFACTURING, false);
 		flags.put(SettingFlag.FLAG_INCLUDE_COPYING, false);
+		flags.put(SettingFlag.FLAG_INCLUDE_JUMP_CLONES, true);
+		flags.put(SettingFlag.FLAG_INCLUDE_PLUGGED_IN_IMPLANTS, true);
 		flags.put(SettingFlag.FLAG_BLUEPRINT_BASE_PRICE_TECH_1, true);
 		flags.put(SettingFlag.FLAG_BLUEPRINT_BASE_PRICE_TECH_2, false);
 		flags.put(SettingFlag.FLAG_TRANSACTION_HISTORY, true);
@@ -884,6 +888,22 @@ public class Settings {
 
 	public boolean setIncludeCopying(final boolean includeCopying) {
 		return flags.put(SettingFlag.FLAG_INCLUDE_COPYING, includeCopying);
+	}
+
+	public boolean isIncludeJumpClones() {
+		return flags.get(SettingFlag.FLAG_INCLUDE_JUMP_CLONES);
+	}
+
+	public boolean setIncludeJumpClones(final boolean includeJumpClones) {
+		return flags.put(SettingFlag.FLAG_INCLUDE_JUMP_CLONES, includeJumpClones);
+	}
+
+	public boolean isIncludePluggedInImplants() {
+		return flags.get(SettingFlag.FLAG_INCLUDE_PLUGGED_IN_IMPLANTS);
+	}
+
+	public boolean setIncludePluggedInImplants(final boolean includePluggedInImplants) {
+		return flags.put(SettingFlag.FLAG_INCLUDE_PLUGGED_IN_IMPLANTS, includePluggedInImplants);
 	}
 
 	public boolean isBlueprintBasePriceTech1() {
