@@ -102,6 +102,7 @@ public class ProfileData {
 	private final List<MyJournal> journalList = new ArrayList<>();
 	private final List<MyTransaction> transactionsList = new ArrayList<>();
 	private final List<MyAsset> assetsList = new ArrayList<>();
+	private final Map<OwnerType, List<RawClone>> clonesList = new HashMap<>();
 	private final List<MyAccountBalance> accountBalanceList = new ArrayList<>();
 	private final List<MyContract> contractList = new ArrayList<>();
 	private final Map<String, Long> skillPointsTotal = new HashMap<>();
@@ -197,6 +198,10 @@ public class ProfileData {
 
 	public List<MyAccountBalance> getAccountBalanceList() {
 		return accountBalanceList;
+	}
+
+	public Map<OwnerType, List<RawClone>> getClonesList() {
+		return clonesList;
 	}
 
 	public List<MyContract> getContractList() {
@@ -738,8 +743,8 @@ public class ProfileData {
 				//Add Contract Items to Assets
 				addAssets(DataConverter.assetContracts(contractItems, uniqueOwners, Settings.get().isIncludeSellContracts(), Settings.get().isIncludeBuyContracts()), assets, blueprints, assetAdded, addedDate);
 
-				//Add Clone Implants to Assets
-				addAssets(DataConverter.assetCloneImplants(clones), assets, blueprints, assetAdded, addedDate);
+				//Add Jump Clones and Plugged in Implant to Assets
+				addAssets(DataConverter.assetCloneImplants(clones, Settings.get().isIncludeJumpClones(), Settings.get().isIncludePluggedInImplants()), assets, blueprints, assetAdded, addedDate);
 
 				//Add Assets to Assets
 				for (OwnerType owner : assetsMap.values()) {
@@ -798,6 +803,8 @@ public class ProfileData {
 		accountBalanceList.addAll(accountBalance);
 		skillPointsTotal.clear();
 		skillPointsTotal.putAll(skillPointsTotalCache);
+		clonesList.clear();
+		clonesList.putAll(clones);
 		//Update EventLists
 		Program.ensureEDT(new Runnable() {
 			@Override
