@@ -168,6 +168,7 @@ public class FileLock {
 	public static class SafeFileIO implements Closeable {
 
 		private final File file;
+		private final boolean skipInternalLock;
 		private Closeable closeable;
 		private FileChannel channel;
 		private java.nio.channels.FileLock lock;
@@ -177,8 +178,15 @@ public class FileLock {
 		}
 
 		public SafeFileIO(File file) {
+			this(file, false);
+		}
+
+		public SafeFileIO(File file, boolean skipInternalLock) {
 			this.file = file;
-			FileLock.lock(file); //Lock internally - must be first
+			this.skipInternalLock = skipInternalLock;
+			if (!skipInternalLock) {
+				FileLock.lock(file); //Lock internally - must be first
+			}
 			OS_LOCKS.add(this);
 		}
 
@@ -232,7 +240,9 @@ public class FileLock {
 		@Override
 		public final void close() throws IOException {
 			unlock();
-			FileLock.unlock(file); //Release internally - must be last
+			if (!skipInternalLock) {
+				FileLock.unlock(file); //Release internally - must be last
+			}
 		}
 	}
 }
