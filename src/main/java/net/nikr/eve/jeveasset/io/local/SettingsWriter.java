@@ -163,6 +163,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 		writeEveNames(xmldoc, settings.getEveNames());
 		writeTableFilters(xmldoc, settings.getTableFilters());
 		writeCurrentTableFilters(xmldoc, settings.getCurrentTableFilters(), settings.getCurrentTableFiltersShown());
+		writeCurrentSorting(xmldoc, settings.getCurrentTableSorting());
 		writeTableColumns(xmldoc, settings.getTableColumns());
 		writeTableColumnsWidth(xmldoc, settings.getTableColumnsWidth());
 		writeTableResize(xmldoc, settings.getTableResize());
@@ -460,6 +461,23 @@ public class SettingsWriter extends AbstractXmlWriter {
 			setAttribute(filterNode, "show", tableFiltersShow.getOrDefault(filters.getKey(), true));
 			tableNode.appendChild(filterNode);
 			writeFilters(xmldoc, filterNode, filters);
+		}
+	}
+
+	/***
+	 * Write setting for current table filters to the xml settings document 'currnettablefilters' element.
+	 *
+	 * @param xmldoc Settings document to write to.
+	 * @param currentTableSorting Current sorting to be written to the document one per table.
+	 */
+	private void writeCurrentSorting(final Document xmldoc, final Map<String, String> currentTableSorting) {
+		Element currentTableSortingNode = xmldoc.createElementNS(null, "currenttablesorting");
+		xmldoc.getDocumentElement().appendChild(currentTableSortingNode);
+		for (Map.Entry<String, String> filters : currentTableSorting.entrySet()) {
+			Element tableNode = xmldoc.createElementNS(null, "table");
+			setAttribute(tableNode, "name", filters.getKey());
+			setAttribute(tableNode, "sorting", filters.getValue());
+			currentTableSortingNode.appendChild(tableNode);
 		}
 	}
 
