@@ -144,7 +144,7 @@ public class AssetsTab extends JMainTabPrimary implements TagUpdate {
 		jTable.setRowSelectionAllowed(true);
 		jTable.setColumnSelectionAllowed(true);
 		//Sorting
-		TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
+		TableComparatorChooser<MyAsset> comparatorChooser = TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
 		//Selection Model
 		selectionModel = EventModels.createSelectionModel(filterList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
@@ -157,7 +157,7 @@ public class AssetsTab extends JMainTabPrimary implements TagUpdate {
 		//Table Filter
 		filterControl = new AssetFilterControl(sortedList);
 		//Menu
-		installTableTool(new AssetTableMenu(), tableFormat, tableModel, jTable, filterControl, MyAsset.class);
+		installTableTool(new AssetTableMenu(), tableFormat, comparatorChooser, tableModel, jTable, filterControl, MyAsset.class);
 
 		jVolume = StatusPanel.createLabel(TabsAssets.get().totalVolume(), Images.ASSETS_VOLUME.getIcon(), AutoNumberFormat.DOUBLE);
 		this.addStatusbarLabel(jVolume);

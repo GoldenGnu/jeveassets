@@ -220,7 +220,7 @@ public class OverviewTab extends JMainTabSecondary {
 		//Table
 		jTable = new JOverviewTable(program, tableModel);
 		//Sorting
-		TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
+		TableComparatorChooser<Overview> comparatorChooser = TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
 		//Selection Model
 		selectionModel = EventModels.createSelectionModel(filterList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
@@ -232,7 +232,7 @@ public class OverviewTab extends JMainTabSecondary {
 		//Table Filter
 		filterControl = new OverviewTabFilterControl(sortedList);
 		//Menu
-		installTableTool(new OverviewTableMenu(), tableFormat, tableModel, jTable, filterControl, Overview.class);
+		installTableTool(new OverviewTableMenu(), tableFormat, comparatorChooser, tableModel, jTable, filterControl, Overview.class);
 
 		jVolume = StatusPanel.createLabel(TabsOverview.get().totalVolume(), Images.ASSETS_VOLUME.getIcon(), AutoNumberFormat.DOUBLE);
 		this.addStatusbarLabel(jVolume);

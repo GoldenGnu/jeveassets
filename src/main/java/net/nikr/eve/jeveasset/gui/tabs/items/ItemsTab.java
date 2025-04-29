@@ -88,7 +88,7 @@ public class ItemsTab extends JMainTabPrimary {
 		jTable = new JAutoColumnTable(program, tableModel);
 		jTable.setCellSelectionEnabled(true);
 		//Sorting
-		TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
+		TableComparatorChooser<Item> comparatorChooser = TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
 		//Selection Model
 		selectionModel = EventModels.createSelectionModel(filterList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
@@ -100,7 +100,7 @@ public class ItemsTab extends JMainTabPrimary {
 		//Table Filter
 		filterControl = new ItemsFilterControl(sortedList);
 		//Menu
-		installTableTool(new ItemTableMenu(), tableFormat, tableModel, jTable, filterControl, Item.class);
+		installTableTool(new ItemTableMenu(), tableFormat, comparatorChooser, tableModel, jTable, filterControl, Item.class);
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()
