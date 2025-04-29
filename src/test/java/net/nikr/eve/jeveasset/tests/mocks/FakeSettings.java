@@ -842,4 +842,34 @@ public abstract class FakeSettings extends Settings {
 	public Map<String, String> getImportSettings() {
 		throw new UnsupportedOperationException("not implemented");
 	}
+
+	@Override
+	public boolean setIncludePluggedInImplants(boolean includePluggedInImplants) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public boolean isIncludePluggedInImplants() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public boolean setIncludeJumpClones(boolean includeJumpClones) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public boolean isIncludeJumpClones() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public String getCurrentTableSorting(String toolName) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public Map<String, String> getCurrentTableSorting() {
+		throw new UnsupportedOperationException("not implemented");
+	}
 }
