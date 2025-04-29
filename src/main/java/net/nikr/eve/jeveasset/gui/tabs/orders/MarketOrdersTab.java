@@ -238,7 +238,7 @@ public class MarketOrdersTab extends JMainTabPrimary {
 		//Padding
 		PaddingTableCellRenderer.install(jTable, 1);
 		//Sorting
-		TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
+		TableComparatorChooser<MyMarketOrder> comparatorChooser = TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
 		//Selection Model
 		selectionModel = EventModels.createSelectionModel(filterList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
@@ -257,7 +257,7 @@ public class MarketOrdersTab extends JMainTabPrimary {
 		//Table Filter
 		filterControl = new MarketOrdersFilterControl(sortedList);
 		//Menu
-		installTableTool(new OrdersTableMenu(), tableFormat, tableModel, jTable, filterControl, MyMarketOrder.class);
+		installTableTool(new OrdersTableMenu(), tableFormat, comparatorChooser, tableModel, jTable, filterControl, MyMarketOrder.class);
 
 		jSellOrdersTotal = StatusPanel.createLabel(TabsOrders.get().totalSellOrders(), Images.ORDERS_SELL.getIcon(), AutoNumberFormat.ISK);
 		this.addStatusbarLabel(jSellOrdersTotal);

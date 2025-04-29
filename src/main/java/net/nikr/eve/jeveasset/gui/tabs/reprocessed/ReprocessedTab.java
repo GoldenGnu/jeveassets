@@ -183,7 +183,7 @@ public class ReprocessedTab extends JMainTabSecondary {
 		jTable.setCellSelectionEnabled(true);
 		PaddingTableCellRenderer.install(jTable, 3);
 		//Sorting
-		TableComparatorChooser.install(jTable, sortedListColumn, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
+		TableComparatorChooser<ReprocessedInterface> comparatorChooser = TableComparatorChooser.install(jTable, sortedListColumn, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
 		//Selection Model
 		selectionModel = EventModels.createSelectionModel(separatorList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
@@ -195,7 +195,7 @@ public class ReprocessedTab extends JMainTabSecondary {
 		//Table Filter
 		filterControl = new ReprocessedFilterControl(sortedListTotal);
 		//Menu
-		installTableTool(new ReprocessedTableMenu(), tableFormat, tableModel, jTable, filterControl, ReprocessedInterface.class);
+		installTableTool(new ReprocessedTableMenu(), tableFormat, comparatorChooser, tableModel, jTable, filterControl, ReprocessedInterface.class);
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.TRAILING)

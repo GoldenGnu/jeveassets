@@ -101,7 +101,7 @@ public class MiningTab extends JMainTabPrimary {
 		jTable.setRowSelectionAllowed(true);
 		jTable.setColumnSelectionAllowed(true);
 		//Sorting
-		TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
+		TableComparatorChooser<MyMining> comparatorChooser = TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
 		//Selection Model
 		selectionModel = EventModels.createSelectionModel(filterList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
@@ -114,7 +114,7 @@ public class MiningTab extends JMainTabPrimary {
 		//Table Filter
 		filterControl = new MiningFilterControl(sortedList);
 		//Menu
-		installTableTool(new MiningTableMenu(), tableFormat, tableModel, jTable, filterControl, MyMining.class);
+		installTableTool(new MiningTableMenu(), tableFormat, comparatorChooser, tableModel, jTable, filterControl, MyMining.class);
 
 		jVolume = StatusPanel.createLabel(TabsMining.get().totalVolume(), Images.ASSETS_VOLUME.getIcon(), AutoNumberFormat.DOUBLE);
 		this.addStatusbarLabel(jVolume);

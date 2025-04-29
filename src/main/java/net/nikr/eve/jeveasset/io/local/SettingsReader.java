@@ -507,9 +507,15 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		}
 
 		//Current Table Filters (Must be loaded before Asset Filters)
-		Element currenttablefiltersElement = getNodeOptional(element, "currenttablefilters");
-		if (currenttablefiltersElement != null) {
-			parseCurrentTableFilters(currenttablefiltersElement, settings);
+		Element currentTableFiltersElement = getNodeOptional(element, "currenttablefilters");
+		if (currentTableFiltersElement != null) {
+			parseCurrentTableFilters(currentTableFiltersElement, settings);
+		}
+
+		//Current Table Filters (Must be loaded before Asset Filters)
+		Element currentTableSortingElement = getNodeOptional(element, "currenttablesorting");
+		if (currentTableSortingElement != null) {
+			parseCurrentTableSorting(currentTableSortingElement, settings);
 		}
 
 		//Asset Filters
@@ -1562,6 +1568,23 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 				LOG.warn(tableName + " current filter empty");
 			}
 			settings.getCurrentTableFilters().put(tableName, filters);
+		}
+	}
+
+	/***
+	 * Parse the current table filters elements of the settings file.
+	 *
+	 * @param element The 'currenttablesorting' element of the xml.
+	 * @param settings The settings to be loaded to.
+	 * @throws XmlException
+	 */
+	private void parseCurrentTableSorting(final Element element, final Settings settings) throws XmlException {
+		NodeList tableNodeList = element.getElementsByTagName("table");
+		for (int a = 0; a < tableNodeList.getLength(); a++) {
+			Element tableNode = (Element) tableNodeList.item(a);
+			String tableName = getString(tableNode, "name");
+			String sorting = getString(tableNode, "sorting");
+			settings.getCurrentTableSorting().put(tableName, sorting);
 		}
 	}
 

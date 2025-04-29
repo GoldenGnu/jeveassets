@@ -248,6 +248,7 @@ public class Settings {
 	private final Map<String, Map<String, List<Filter>>> defaultTableFilters = new HashMap<>();
 	private final Map<String, List<Filter>> currentTableFilters = new HashMap<>();
 	private final Map<String, Boolean> currentTableFiltersShown = new HashMap<>();
+	private final Map<String, String> currentTableSorting = new HashMap<>();
 	private final Map<String, List<SimpleColumn>> tableColumns = new HashMap<>();
 	//Column Width				Saved by JAutoColumnTable.saveColumnsWidth()
 	//Lock OK
@@ -641,6 +642,21 @@ public class Settings {
 			currentTableFiltersShown.put(tableName, true);
 		}
 		return currentTableFiltersShown.get(tableName);
+	}
+
+	/***
+	 * @return Current table sorting state, values may be empty but should never be null.
+	 */
+	public Map<String, String> getCurrentTableSorting() {
+		return currentTableSorting;
+	}
+
+	/***
+	 * @param toolName Tool to look up.
+	 * @return Current table sorting. Can be empty, but, never null.
+	 */
+	public String getCurrentTableSorting(final String toolName) {
+		return currentTableSorting.getOrDefault(toolName, "");
 	}
 
 	public Map<String, List<SimpleColumn>> getTableColumns() {
