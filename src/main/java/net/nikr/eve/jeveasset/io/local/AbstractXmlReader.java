@@ -89,7 +89,7 @@ public abstract class AbstractXmlReader<T> extends AbstractBackup {
 		if (xmlType == XmlType.DYNAMIC_BACKUP) {
 			backup(filename);
 		}
-		try (SafeFileIO io = new SafeFileIO(file)){
+		try (SafeFileIO io = new SafeFileIO(file, xmlType == XmlType.IMPORT || xmlType == XmlType.STATIC)){
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder builder = factory.newDocumentBuilder();
 			Document doc = builder.parse(io.getFileInputStream());
