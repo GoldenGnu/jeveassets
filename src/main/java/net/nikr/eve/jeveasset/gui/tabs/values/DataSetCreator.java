@@ -33,6 +33,7 @@ import net.nikr.eve.jeveasset.data.api.my.MyContract;
 import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
+import net.nikr.eve.jeveasset.data.api.raw.RawClone;
 import net.nikr.eve.jeveasset.data.profile.ProfileData;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.TrackerData;
@@ -124,6 +125,17 @@ public class DataSetCreator {
 			}
 		} finally {
 			profileData.getAssetsEventList().getReadWriteLock().readLock().unlock();
+		}
+		//Implants
+		for (Map.Entry<OwnerType, List<RawClone>> entry : profileData.getClonesList().entrySet()) {
+			Value value = getValueInner(values, entry.getKey().getOwnerName(), date);
+			double implants = 0;
+			for (RawClone rawClone : entry.getValue()) {
+				for (int typeID : rawClone.getImplants()) {
+					implants += ApiIdConverter.getPrice(typeID, false);
+				}
+			}
+			value.addImplants(implants);
 		}
 		//Account Balance
 		try {
