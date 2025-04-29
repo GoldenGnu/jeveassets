@@ -191,6 +191,7 @@ public class MainWindow {
 		if (!tabs.contains(jMainTab)) {
 			LOG.info("Opening tab: " + jMainTab.getTitle());
 			TextManager.installAll(jMainTab.getPanel());
+			jMainTab.loadCurrentSorting();
 			jMainTab.beforeUpdateData();
 			jMainTab.updateData();
 			jMainTab.afterUpdateData();

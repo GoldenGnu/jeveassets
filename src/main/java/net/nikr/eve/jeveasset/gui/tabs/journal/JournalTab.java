@@ -133,7 +133,7 @@ public class JournalTab extends JMainTabPrimary implements TagUpdate {
 		jTable.setCellSelectionEnabled(true);
 		PaddingTableCellRenderer.install(jTable, 1);
 		//Sorting
-		TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
+		TableComparatorChooser<MyJournal> comparatorChooser = TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
 		//Selection Model
 		selectionModel = EventModels.createSelectionModel(filterList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
@@ -145,7 +145,7 @@ public class JournalTab extends JMainTabPrimary implements TagUpdate {
 		//Table Filter
 		filterControl = new JournalFilterControl(sortedList);
 		//Menu
-		installTableTool(new JournalTableMenu(), tableFormat, tableModel, jTable, filterControl, MyJournal.class);
+		installTableTool(new JournalTableMenu(), tableFormat, comparatorChooser, tableModel, jTable, filterControl, MyJournal.class);
 
 		//Positive
 		jPositiveTotal = StatusPanel.createLabel(TabsJournal.get().totalPositive(), Images.ORDERS_SELL.getIcon(), JMenuInfo.AutoNumberFormat.ISK);

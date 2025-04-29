@@ -226,7 +226,7 @@ public class LoadoutsTab extends JMainTabSecondary {
 		//Scroll
 		JScrollPane jTableScroll = new JScrollPane(jTable);
 		//Menu
-		installTableTool(new LoadoutTableMenu(), tableFormat, tableModel, jTable, eventList, Loadout.class);
+		installTableTool(new LoadoutTableMenu(), tableFormat, null, tableModel, jTable, eventList, Loadout.class);
 
 		exportDialog = new ExportDialog<>(program.getMainWindow().getFrame(), NAME, null, new LoadoutsFilterControl(), tableFormat, filterList);
 

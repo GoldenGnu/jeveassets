@@ -107,7 +107,7 @@ public class IndustryJobsTab extends JMainTabPrimary {
 		jTable.setCellSelectionEnabled(true);
 		PaddingTableCellRenderer.install(jTable, 1);
 		//Sorting
-		TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
+		TableComparatorChooser<MyIndustryJob> comparatorChooser = TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
 		//Selection Model
 		selectionModel = EventModels.createSelectionModel(filterList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
@@ -119,7 +119,7 @@ public class IndustryJobsTab extends JMainTabPrimary {
 		//Table Filter
 		filterControl = new IndustryJobsFilterControl(sortedList);
 		//Menu
-		installTableTool(new JobsTableMenu(), tableFormat, tableModel, jTable, filterControl, MyIndustryJob.class);
+		installTableTool(new JobsTableMenu(), tableFormat, comparatorChooser, tableModel, jTable, filterControl, MyIndustryJob.class);
 
 		jInventionSuccess = StatusPanel.createLabel(TabsJobs.get().inventionSuccess(), Images.JOBS_INVENTION_SUCCESS.getIcon(), AutoNumberFormat.PERCENT);
 		this.addStatusbarLabel(jInventionSuccess);
