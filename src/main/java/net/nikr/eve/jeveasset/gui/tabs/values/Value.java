@@ -87,13 +87,8 @@ public class Value implements Comparable<Value>, LocationType {
 	}
 
 	public void addAssets(AssetValue id, MyAsset asset) {
-		String flag = asset.getFlag();
 		double total = asset.getDynamicPrice() * asset.getCount();
-		if (flag != null && flag.equals("Implant")) {
-			addImplants(total);
-		} else {
-			addAssets(id, total);
-		}
+		addAssets(id, total);
 		setBestAsset(asset);
 		setBestShip(asset);
 		setBestShipFitted(asset);

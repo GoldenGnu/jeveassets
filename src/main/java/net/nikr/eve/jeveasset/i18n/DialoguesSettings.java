@@ -71,6 +71,8 @@ public abstract class DialoguesSettings extends Bundle {
 	public abstract String includeBuyOrders();
 	public abstract String includeManufacturing();
 	public abstract String includeCopying();
+	public abstract String includeJumpClones();
+	public abstract String includePluggedInImplants();
 	public abstract String showContainerItemID();
 	public abstract String contractAssetsBoth();
 	public abstract String contractAssetsCharacter();

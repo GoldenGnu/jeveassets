@@ -161,13 +161,18 @@ public abstract class DataConverter {
 		return list;
 	}
 
-	public static List<MyAsset> assetCloneImplants(final Map<OwnerType, List<RawClone>> clones) {
+	public static List<MyAsset> assetCloneImplants(final Map<OwnerType, List<RawClone>> clones, boolean includeJumpClones, boolean includePluggedInImplants) {
 		List<MyAsset> assets = new ArrayList<>();
 		for (Map.Entry<OwnerType, List<RawClone>> entry : clones.entrySet()) {
 			OwnerType owner = entry.getKey();
 			for (RawClone clone : entry.getValue()) {
-				for (Integer implantTypeID : clone.getImplants()) {
-					assets.add(new MyAsset(clone, implantTypeID, owner));
+				if (includeJumpClones) {
+					assets.add(new MyAsset(clone, owner));
+				}
+				if (includePluggedInImplants) {
+					for (Integer implantTypeID : clone.getImplants()) {
+						assets.add(new MyAsset(clone, implantTypeID, owner));
+					}
 				}
 			}
 		}

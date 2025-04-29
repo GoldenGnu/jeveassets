@@ -148,6 +148,8 @@ public class MyAsset extends RawAsset implements Comparable<MyAsset>, InfoItem, 
 						|| getFlag().equals(IndustryActivity.ACTIVITY_MANUFACTURING.toString()) //industry job manufacturing
 						|| getFlag().equals(IndustryActivity.ACTIVITY_REACTIONS.toString()) //industry job reactions
 						|| getFlag().equals(IndustryActivity.ACTIVITY_COPYING.toString()) //industry job copying
+						|| getFlag().equals(General.get().jumpClone()) //jump clone
+						|| getFlagID() == 89 //plugged in implant
 						;
 		if (getQuantity() == null || getQuantity() <= 0) {
 			this.count = 1;
@@ -201,6 +203,31 @@ public class MyAsset extends RawAsset implements Comparable<MyAsset>, InfoItem, 
 		this(new RawAsset(clone, impantTypeID),ApiIdConverter.getItem(impantTypeID), owner, new ArrayList<>());
 	}
 
+	public MyAsset(RawClone clone, final SimpleOwner owner) {
+		this(new RawAsset(clone), getJumpCloneItem(), owner, new ArrayList<>());
+	}
+
+	private static Item getJumpCloneItem() {
+		Item omegaClone = ApiIdConverter.getItem(29143); //Clone Grade Omega
+		return new Item(0,
+				General.get().jumpClone(),
+				omegaClone.getGroup(),
+				omegaClone.getCategory(),
+				900000,
+				omegaClone.getVolume(),
+				omegaClone.getVolumePackaged(),
+				omegaClone.getCapacity(),
+				omegaClone.getMeta(),
+				omegaClone.getTech(),
+				omegaClone.isMarketGroup(),
+				omegaClone.getPortion(),
+				omegaClone.getProductTypeID(),
+				omegaClone.getProductQuantity(),
+				omegaClone.getSlot(),
+				omegaClone.getChargeSize(),
+				null);
+	}
+
 	public void addAsset(final MyAsset asset) {
 		assets.add(asset);
 	}
@@ -242,7 +269,7 @@ public class MyAsset extends RawAsset implements Comparable<MyAsset>, InfoItem, 
 		}
 	}
 
-	public Integer getFlagID() {
+	public final Integer getFlagID() {
 		if (getItemFlag() != null) {
 			return getItemFlag().getFlagID();
 		} else {
