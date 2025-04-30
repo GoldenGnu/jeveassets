@@ -27,6 +27,7 @@ import java.util.Map;
 import net.nikr.eve.jeveasset.data.sde.IndustryMaterial;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.StaticData;
+import net.nikr.eve.jeveasset.data.settings.SQLiteSettings;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import static net.nikr.eve.jeveasset.io.esi.AbstractEsiGetter.DATASOURCE;
@@ -70,7 +71,7 @@ public class EsiManufacturingPrices extends AbstractEsiGetter {
 			manufacturingPrices.put(productTypeID, price);
 			manufacturingPrices.put(item.getTypeID(), price);
 		}
-		Settings.get().getManufacturingSettings().setPrices(manufacturingPrices);
+		SQLiteSettings.setManufacturingPrices(manufacturingPrices);
 		//System Indexes
 		List<IndustrySystemsResponse> systemResponses = update(DEFAULT_RETRIES, new EsiHandler<List<IndustrySystemsResponse>>() {
 			@Override
@@ -88,7 +89,7 @@ public class EsiManufacturingPrices extends AbstractEsiGetter {
 				}
 			}
 		}
-		Settings.get().getManufacturingSettings().setSystems(manufacturingSystems);
+		SQLiteSettings.setManufacturingSystemIndex(manufacturingSystems);
 	}
 
 	@Override

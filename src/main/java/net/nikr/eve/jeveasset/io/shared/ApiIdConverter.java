@@ -57,6 +57,7 @@ import net.nikr.eve.jeveasset.data.settings.ManufacturingSettings.ManufacturingS
 import net.nikr.eve.jeveasset.data.settings.ManufacturingSettings.ReactionSecurity;
 import net.nikr.eve.jeveasset.data.settings.PriceData;
 import net.nikr.eve.jeveasset.data.settings.ReprocessSettings;
+import net.nikr.eve.jeveasset.data.settings.SQLiteSettings;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.UserItem;
 import net.nikr.eve.jeveasset.gui.shared.Formatter;
@@ -315,12 +316,12 @@ public final class ApiIdConverter {
 
 	protected static double getPriceManufacturing(ManufacturingSettings manufacturingSettings, Item item) {
 		//Installation Fee
-		Double baseCost = manufacturingSettings.getPrices().get(item.getTypeID());
+		Double baseCost = SQLiteSettings.getManufacturingPrice(item.getTypeID());
 		if (baseCost == null) {
 			return 0;
 		}
 		int systemID = manufacturingSettings.getSystemID();
-		Float systemIndex = manufacturingSettings.getSystems().get(systemID);
+		Float systemIndex = SQLiteSettings.getManufacturingSystemIndex(systemID);
 		if (systemIndex == null) {
 			return 0.1;
 		}
@@ -573,7 +574,7 @@ public final class ApiIdConverter {
 		if (ownerID == null || ownerID == 0) { //0 (zero) is valid, but, should return empty string
 			return EMPTY_STRING;
 		}
-		String owner = Settings.get().getOwners().get(ownerID);
+		String owner = SQLiteSettings.getOwner(ownerID);
 		if (owner != null) {
 			return owner;
 		} else { // OwnerIDs from the journal can be a system ID

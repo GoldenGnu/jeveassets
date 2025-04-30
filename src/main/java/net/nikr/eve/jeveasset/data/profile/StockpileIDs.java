@@ -32,13 +32,14 @@ import java.util.List;
 import java.util.Set;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
-import net.nikr.eve.jeveasset.io.local.profile.ProfileTable.Rows;
+import net.nikr.eve.jeveasset.io.local.sqlite.SQLiteTable;
+import net.nikr.eve.jeveasset.io.local.sqlite.SQLiteTable.Rows;
 import net.nikr.eve.jeveasset.io.shared.FileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-public class StockpileIDs {
+public class StockpileIDs extends SQLiteTable {
 
 	private static final Logger LOG = LoggerFactory.getLogger(StockpileIDs.class);
 
@@ -148,7 +149,7 @@ public class StockpileIDs {
 			Rows rows = new Rows(statement, data.size());
 			connection.setAutoCommit(false);
 			for (Long id : data) {
-				statement.setLong(1, id);
+				setAttribute(statement, 1, id);
 				rows.addRow();
 			}
 			connection.commit();
@@ -168,7 +169,7 @@ public class StockpileIDs {
 			Rows rows = new Rows(statement, data.size());
 			connection.setAutoCommit(false);
 			for (Long id : data) {
-				statement.setLong(1, id);
+				setAttribute(statement, 1, id);
 				rows.addRow();
 			}
 			connection.commit();
@@ -184,7 +185,7 @@ public class StockpileIDs {
 				PreparedStatement statement = connection.prepareStatement(sql);
 				ResultSet rs = statement.executeQuery();) {
 			while (rs.next()) {
-				hidden.add(rs.getLong("id"));
+				hidden.add(getLong(rs, "id"));
 			}
 		} catch (SQLException ex) {
 			LOG.error(ex.getMessage(), ex);
@@ -199,7 +200,7 @@ public class StockpileIDs {
 
 	private void createTable() {
 		String sql = "CREATE TABLE IF NOT EXISTS " + tableName + " (\n"
-				+ "	id integer PRIMARY KEY\n"
+				+ "	id INTEGER PRIMARY KEY\n"
 				+ ");";
 		try (Connection connection = DriverManager.getConnection(getConnectionUrl());
 				Statement statement = connection.createStatement()) {

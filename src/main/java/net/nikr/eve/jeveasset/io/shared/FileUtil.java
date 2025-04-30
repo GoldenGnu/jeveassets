@@ -44,6 +44,7 @@ public class FileUtil extends FileUtilSimple {
 	private static final String PATH_SOUNDS = "sounds";
 	private static final String PATH_ASSET_ADDED = "data" + File.separator + "added.json";
 	private static final String PATH_ASSET_ADDED_DATABASE = "data" + File.separator + "addedsql.db";
+	private static final String PATH_SETTINGS_DATABASE = "data" + File.separator + "settings.db";
 	private static final String PATH_STOCKPILE_IDS_DATABASE = "data" + File.separator + "stockpileids.db";
 	private static final String PATH_PRICE_HISTORY_DATABASE = "data" + File.separator + "pricehistory.db";
 	private static final String PATH_TRACKER_DATA = "data" + File.separator + "tracker.json";
@@ -178,6 +179,7 @@ public class FileUtil extends FileUtilSimple {
 			Path priceFrom = Paths.get(getPathPriceData());
 			Path profilesFrom = Paths.get(getPathProfilesDirectory());
 			Path itemsUpdatesFrom = Paths.get(getPathItemsUpdates());
+			Path settingsDatabaseFrom = Paths.get(getPathSettingsDatabase());
 			CliOptions.get().setPortable(true);
 			Path settingsTo = Paths.get(getPathSettings());
 			Path trackerTo = Paths.get(getPathTrackerData());
@@ -189,6 +191,7 @@ public class FileUtil extends FileUtilSimple {
 			Path priceTo = Paths.get(getPathPriceData());
 			Path profilesTo = Paths.get(getPathProfilesDirectory());
 			Path itemsUpdatesTo = Paths.get(getPathItemsUpdates());
+			Path settingsDatabaseTo = Paths.get(getPathSettingsDatabase());
 			if (Files.exists(settingsFrom) && !Files.exists(settingsTo)) {
 				LOG.info("Importing settings");
 				try {
@@ -270,6 +273,15 @@ public class FileUtil extends FileUtilSimple {
 					LOG.info("	FAILED");
 				}
 			}
+			if (Files.exists(settingsDatabaseFrom) && !Files.exists(settingsDatabaseTo)) {
+				LOG.info("Importing settings database");
+				try {
+					Files.copy(settingsDatabaseFrom, settingsDatabaseTo);
+					LOG.info("	OK");
+				} catch (IOException ex) {
+					LOG.info("	FAILED");
+				}
+			}
 			if (Files.exists(profilesFrom) && !Files.exists(profilesTo)) {
 				PathMatcher xmlMatcher = FileSystems.getDefault().getPathMatcher("glob:*.xml");
 				PathMatcher dbMatcher = FileSystems.getDefault().getPathMatcher("glob:*.db");
@@ -320,6 +332,10 @@ public class FileUtil extends FileUtilSimple {
 
 	public static String getPathAssetAddedDatabase() {
 		return getUserFile(PATH_ASSET_ADDED_DATABASE);
+	}
+
+	public static String getPathSettingsDatabase() {
+		return getUserFile(PATH_SETTINGS_DATABASE);
 	}
 
 	public static String getPathStockpileIDsDatabase() {

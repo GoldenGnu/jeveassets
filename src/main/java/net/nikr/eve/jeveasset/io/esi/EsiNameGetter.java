@@ -21,6 +21,7 @@
 package net.nikr.eve.jeveasset.io.esi;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -33,6 +34,7 @@ import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
 import net.nikr.eve.jeveasset.data.api.my.MyMining;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.api.raw.RawJournal.ContextType;
+import net.nikr.eve.jeveasset.data.settings.SQLiteSettings;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.gui.shared.Updatable;
@@ -74,9 +76,11 @@ public class EsiNameGetter extends AbstractEsiGetter {
 
 		Set<Integer> retries = new HashSet<>(ids);
 		for (Map.Entry<Set<Integer>, List<UniverseNamesResponse>> entry : responses.entrySet()) {
+			Map<Long, String> names = new HashMap<>();
 			for (UniverseNamesResponse lookup : entry.getValue()) {
-				Settings.get().getOwners().put((long)lookup.getId(), lookup.getName());
+				names.put((long) lookup.getId(), lookup.getName());
 			}
+			SQLiteSettings.setOwners(names);
 			retries.removeAll(entry.getKey());
 		}
 		Map<Set<Integer>, List<UniverseNamesResponse>> retryResponses = updateList(splitSet(retries, 1), DEFAULT_RETRIES, new ListHandler<Set<Integer>, List<UniverseNamesResponse>>() {
@@ -95,17 +99,22 @@ public class EsiNameGetter extends AbstractEsiGetter {
 			}
 		});
 		int count = 30;
+		Map<Long, String> names = new HashMap<>();
+		Map<Long, Date> dates = new HashMap<>();
 		for (Map.Entry<Set<Integer>, List<UniverseNamesResponse>> entry : retryResponses.entrySet()) {
+			
 			for (UniverseNamesResponse lookup : entry.getValue()) {
-				Settings.get().getOwners().put((long)lookup.getId(), lookup.getName());
+				names.put((long) lookup.getId(), lookup.getName());
 				Date date = new Date(System.currentTimeMillis() + (ONE_DAY * count));
 				count--;
 				if (count < 1) {
 					count = 30;
 				}
-				Settings.get().getOwnersNextUpdate().put((long)lookup.getId(), date);
+				dates.put((long)lookup.getId(), date);
 			}
 		}
+		SQLiteSettings.setOwners(names);
+		SQLiteSettings.setOwnerNextUpdate(dates);
 	}
 
 	private Set<Integer> getOwnerIDs(List<OwnerType> ownerTypes) {
@@ -157,7 +166,7 @@ public class EsiNameGetter extends AbstractEsiGetter {
 			return;
 		}
 		//Next Update
-		Date nextUpdate = Settings.get().getOwnersNextUpdate().get(number.longValue());
+		Date nextUpdate = SQLiteSettings.getOwnerNextUpdate(number.longValue());
 		if (nextUpdate != null && !Updatable.isUpdatable(nextUpdate)) {
 			return;
 		}

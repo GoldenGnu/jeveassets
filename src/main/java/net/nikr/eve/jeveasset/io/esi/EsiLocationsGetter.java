@@ -29,6 +29,7 @@ import net.nikr.eve.jeveasset.data.api.my.MyAsset;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.settings.Citadel;
 import net.nikr.eve.jeveasset.data.settings.Citadel.CitadelSource;
+import net.nikr.eve.jeveasset.data.settings.SQLiteSettings;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.io.online.CitadelGetter;
@@ -63,13 +64,13 @@ public class EsiLocationsGetter extends AbstractEsiGetter {
 						final long itemID = response.getItemId();
 						final String eveName = response.getName();
 						if (!eveName.isEmpty()) { //Set name
-							Settings.get().getEveNames().put(itemID, eveName);
+							SQLiteSettings.putEveName(itemID, eveName);
 							MyAsset asset = iDs.get(itemID);
 							if (asset.getItem().getCategory().equals(Item.CATEGORY_STRUCTURE)) {
 								CitadelGetter.set(new Citadel(asset.getItemID(), eveName, asset.getLocationID(), false, true, CitadelSource.ESI_LOCATIONS));
 							}
 						} else { //Remove name (Empty)
-							Settings.get().getEveNames().remove(itemID);
+							SQLiteSettings.removeEveName(itemID);
 						}
 					}
 				}
@@ -90,13 +91,13 @@ public class EsiLocationsGetter extends AbstractEsiGetter {
 						final long itemID = response.getItemId();
 						final String eveName = response.getName();
 						if (!eveName.isEmpty()) { //Set name
-							Settings.get().getEveNames().put(itemID, eveName);
+							SQLiteSettings.putEveName(itemID, eveName);
 							MyAsset asset = iDs.get(itemID);
 							if (asset.getItem().getCategory().equals(Item.CATEGORY_STRUCTURE)) {
 								CitadelGetter.set(new Citadel(asset.getItemID(), eveName, asset.getLocationID(), false, true, CitadelSource.ESI_LOCATIONS));
 							}
 						} else { //Remove name (Empty)
-							Settings.get().getEveNames().remove(itemID);
+							SQLiteSettings.removeEveName(itemID);
 						}
 					}
 				}

@@ -153,10 +153,6 @@ public class Settings {
 //External
 	//Price						Saved by PriceDataGetter.process() in pricedata.dat (on api update)
 	private Map<Integer, PriceData> priceDatas = new HashMap<>(); //TypeID : int
-//API Data
-	//Api id to owner name		Saved by TaskDialog.update() (on API update)
-	private final Map<Long, Date> ownersNextUpdate = new HashMap<>();
-	private final Map<Long, String> owners = new HashMap<>();
 //!! - Values
 	//OK - Custom Price			Saved by JUserListPanel.edit()/delete() + SettingsDialog.save()
 	//Lock OK
@@ -164,9 +160,6 @@ public class Settings {
 	//OK - Custom Item Name		Saved by JUserListPanel.edit()/delete() + SettingsDialog.save()
 	//Lock OK
 	private Map<Long, UserItem<Long, String>> userNames = new HashMap<>(); //ItemID : long
-	//Eve Item Name				Saved by TaskDialog.update() (on API update)
-	//Lock ???
-	private Map<Long, String> eveNames = new HashMap<>();
 //!! - Stockpile				Saved by StockpileTab.removeItems() / addStockpile() / removeStockpile()
 	//							Could be more selective...
 	//Lock FAIL!!!
@@ -509,14 +502,6 @@ public class Settings {
 		this.priceDatas = priceData;
 	}
 
-	public Map<Long, String> getEveNames() {
-		return eveNames;
-	}
-
-	public void setEveNames(Map<Long, String> eveNames) {
-		this.eveNames = eveNames;
-	}
-
 	public Map<Integer, PriceData> getPriceData() {
 		return priceDatas;
 	}
@@ -582,14 +567,6 @@ public class Settings {
 
 	public void setProxyData(ProxyData proxyData) {
 		this.proxyData = proxyData;
-	}
-
-	public Map<Long, Date> getOwnersNextUpdate() {
-		return ownersNextUpdate;
-	}
-
-	public Map<Long, String> getOwners() {
-		return owners;
 	}
 
 	public Map<String, Map<String, List<Filter>>> getTableFilters() {

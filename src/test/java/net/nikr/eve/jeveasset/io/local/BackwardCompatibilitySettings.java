@@ -57,7 +57,6 @@ public class BackwardCompatibilitySettings extends FakeSettings implements Setti
 		GET_EXPORT_SETTINGS,
 		GET_FLAGS,
 		GET_OVERVIEW_GROUPS,
-		GET_OWNERS,
 		GET_PRICE_DATA_SETTINGS,
 		GET_STOCKPILES,
 		GET_TABLE_COLUMNS,
@@ -176,17 +175,6 @@ public class BackwardCompatibilitySettings extends FakeSettings implements Setti
 	@Override
 	public Map<String, OverviewGroup> getOverviewGroups() {
 		ok.put(Function.GET_OVERVIEW_GROUPS, true);
-		return new HashMap<>();
-	}
-
-	@Override
-	public Map<Long, String> getOwners() {
-		ok.put(Function.GET_OWNERS, true);
-		return new HashMap<>();
-	}
-
-	@Override
-	public Map<Long, Date> getOwnersNextUpdate() {
 		return new HashMap<>();
 	}
 

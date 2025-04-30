@@ -30,13 +30,14 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import net.nikr.eve.jeveasset.io.local.AssetAddedReader;
-import net.nikr.eve.jeveasset.io.local.profile.ProfileTable.Rows;
+import net.nikr.eve.jeveasset.io.local.sqlite.SQLiteTable;
+import net.nikr.eve.jeveasset.io.local.sqlite.SQLiteTable.Rows;
 import net.nikr.eve.jeveasset.io.shared.FileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-public class AddedData {
+public class AddedData extends SQLiteTable {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AddedData.class);
 
@@ -207,8 +208,8 @@ public class AddedData {
 			connection.setAutoCommit(false);
 			Rows rows = new Rows(statement, data.size());
 			for (Map.Entry<Long, Date> entry : data.entrySet()) {
-				statement.setLong(1, entry.getKey());
-				statement.setLong(2, entry.getValue().getTime());
+				setAttribute(statement, 1, entry.getKey());
+				setAttribute(statement, 2, entry.getValue().getTime());
 				rows.addRow();
 			}
 			connection.commit();
@@ -228,8 +229,8 @@ public class AddedData {
 			Rows rows = new Rows(statement, data.size());
 			connection.setAutoCommit(false);
 			for (Map.Entry<Long, Date> entry : data.entrySet()) {
-				statement.setLong(1, entry.getValue().getTime());
-				statement.setLong(2, entry.getKey());
+				setAttribute(statement, 1, entry.getValue().getTime());
+				setAttribute(statement, 2, entry.getKey());
 				rows.addRow();
 			}
 			connection.commit();
@@ -247,7 +248,7 @@ public class AddedData {
 				ResultSet rs = statement.executeQuery();
 				) {
 			while (rs.next()) {
-				map.put(rs.getLong("itemid"), new Date(rs.getLong("date")));
+				map.put(getLong(rs, "itemid"), new Date(getLong(rs, "date")));
 			}
 		} catch (SQLException ex) {
 			LOG.error(ex.getMessage(), ex);
@@ -257,8 +258,8 @@ public class AddedData {
 
 	private void createTable() {
 		String sql = "CREATE TABLE IF NOT EXISTS " + dataSettings.getTableName() + " (\n"
-				+ "	itemid integer PRIMARY KEY,\n"
-				+ "	date integer NOT NULL\n"
+				+ "	itemid INTEGER PRIMARY KEY,\n"
+				+ "	date INTEGER NOT NULL\n"
 				+ ");";
 		try (Connection connection = DriverManager.getConnection(getConnectionURL());
 				Statement statement = connection.createStatement()) {

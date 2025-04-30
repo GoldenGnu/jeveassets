@@ -314,11 +314,6 @@ public abstract class FakeSettings extends Settings {
 	}
 
 	@Override
-	public Map<Long, String> getOwners() {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
 	public Map<Integer, PriceData> getPriceData() {
 		throw new UnsupportedOperationException("not implemented");
 	}
@@ -400,16 +395,6 @@ public abstract class FakeSettings extends Settings {
 
 	@Override
 	public boolean isTransactionHistory() {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
-	public void setEveNames(Map<Long, String> eveNames) {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
-	public Map<Long, String> getEveNames() {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
@@ -610,11 +595,6 @@ public abstract class FakeSettings extends Settings {
 
 	@Override
 	public Map<Long, String> getFactionWarfareSystemOwners() {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
-	public Map<Long, Date> getOwnersNextUpdate() {
 		throw new UnsupportedOperationException("not implemented");
 	}
 

@@ -18,24 +18,37 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  */
-package net.nikr.eve.jeveasset.io.local.profile;
+package net.nikr.eve.jeveasset.io.local.sqlite;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.List;
-import java.util.Map;
-import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
-import net.nikr.eve.jeveasset.io.local.sqlite.SQLiteTable;
+import java.util.Collection;
+import java.util.Collections;
 
 
-public abstract class ProfileTable extends SQLiteTable {
+public abstract class TableMapAdvanced<K, V> extends TableMap<K, V> {
 
-	protected abstract boolean isEmpty(Connection connection) throws SQLException;
-	protected abstract void insert(Connection connection, final List<EsiOwner> esiOwners) throws SQLException;
-	protected abstract void select(Connection connection, List<EsiOwner> esiOwners, Map<String, EsiOwner> owners) throws SQLException;
-	protected abstract void create(Connection connection) throws SQLException;
-
-	protected boolean isUpdated() {
-		return false;
+	public TableMapAdvanced(Tables table) {
+		super(table);
 	}
+
+	
+	public void delete(K key) {
+		delete(Collections.singleton(key));
+	}
+
+	public void delete(Collection<K> keys) {
+		if (keys == null || keys.isEmpty()) {
+			return;
+		}
+		try {
+			getData().keySet().removeAll(keys);
+			delete(getConnection(), keys);
+		} catch (SQLException ex) {
+			logError(ex);
+		}
+	}
+
+
+	protected abstract void delete(Connection connection, Collection<K> keys) throws SQLException;
 }

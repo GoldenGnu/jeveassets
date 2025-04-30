@@ -59,6 +59,7 @@ import net.nikr.eve.jeveasset.data.sde.RouteFinder;
 import net.nikr.eve.jeveasset.data.sde.StaticData;
 import net.nikr.eve.jeveasset.data.settings.AddedData;
 import net.nikr.eve.jeveasset.data.settings.MarketPriceData;
+import net.nikr.eve.jeveasset.data.settings.SQLiteSettings;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.tag.Tags;
 import net.nikr.eve.jeveasset.data.settings.types.EditableLocationType;
@@ -1386,7 +1387,7 @@ public class ProfileData {
 	}
 
 	private void updateName(MyAsset asset) {
-		asset.setName(Settings.get().getUserItemNames().get(asset.getItemID()), Settings.get().getEveNames().get(asset.getItemID()));
+		asset.setName(Settings.get().getUserItemNames().get(asset.getItemID()), SQLiteSettings.getEveName(asset.getItemID()));
 	}
 
 	private void updateContainerChildren(List<MyAsset> found, List<MyAsset> assets) {

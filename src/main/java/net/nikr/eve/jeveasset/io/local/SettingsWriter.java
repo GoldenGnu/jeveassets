@@ -160,7 +160,6 @@ public class SettingsWriter extends AbstractXmlWriter {
 		writeFlags(xmldoc, settings.getFlags());
 		writeUserPrices(xmldoc, settings.getUserPrices());
 		writeUserItemNames(xmldoc, settings.getUserItemNames());
-		writeEveNames(xmldoc, settings.getEveNames());
 		writeTableFilters(xmldoc, settings.getTableFilters());
 		writeCurrentTableFilters(xmldoc, settings.getCurrentTableFilters(), settings.getCurrentTableFiltersShown());
 		writeCurrentSorting(xmldoc, settings.getCurrentTableSorting());
@@ -176,7 +175,6 @@ public class SettingsWriter extends AbstractXmlWriter {
 		writeTrackerNotes(xmldoc, settings.getTrackerSettings().getNotes());
 		writeTrackerFilters(xmldoc, settings.getTrackerSettings().getFilters(), settings.getTrackerSettings().isSelectNew(), settings.getTrackerSettings().getSkillPointFilters());
 		writeTrackerSettings(xmldoc, settings);
-		writeOwners(xmldoc, settings.getOwners(), settings.getOwnersNextUpdate());
 		writeTags(xmldoc, settings.getTags());
 		writeRoutingSettings(xmldoc, settings.getRoutingSettings());
 		writeMarketOrderOutbid(xmldoc, settings.getPublicMarketOrdersNextUpdate(), settings.getPublicMarketOrdersLastUpdate(), settings.getOutbidOrderRange(), settings.getMarketOrdersOutbid());
@@ -206,19 +204,6 @@ public class SettingsWriter extends AbstractXmlWriter {
 		setAttributeOptional(manufacturingNode, "systemid", settings.getSystemID());
 		setAttributeOptional(manufacturingNode, "me", settings.getMaterialEfficiency());
 		setAttributeOptional(manufacturingNode, "tax", settings.getTax());
-		xmldoc.getDocumentElement().appendChild(manufacturingNode);
-		for (Map.Entry<Integer, Double> entry : settings.getPrices().entrySet()) {
-			Element priceNode = xmldoc.createElementNS(null, "price");
-			setAttribute(priceNode, "typeid", entry.getKey());
-			setAttributeOptional(priceNode, "price", entry.getValue());
-			manufacturingNode.appendChild(priceNode);
-		}
-		for (Map.Entry<Integer, Float> entry : settings.getSystems().entrySet()) {
-			Element systemNode = xmldoc.createElementNS(null, "system");
-			setAttribute(systemNode, "systemid", entry.getKey());
-			setAttributeOptional(systemNode, "index", entry.getValue());
-			manufacturingNode.appendChild(systemNode);
-		}
 	}
 
 	private void writePriceHistorySettings(Document xmldoc, Settings settings) {
@@ -362,18 +347,6 @@ public class SettingsWriter extends AbstractXmlWriter {
 				setAttribute(tagIdNode, "d", tagID.getDouble());
 				tagNode.appendChild(tagIdNode);
 			}
-		}
-	}
-
-	private void writeOwners(final Document xmldoc, final Map<Long, String> owners, final Map<Long, Date> ownersNextUpdate) {
-		Element trackerDataNode = xmldoc.createElementNS(null, "owners");
-		xmldoc.getDocumentElement().appendChild(trackerDataNode);
-		for (Map.Entry<Long, String> entry : owners.entrySet()) {
-			Element ownerNode = xmldoc.createElementNS(null, "owner");
-			setAttribute(ownerNode, "name", entry.getValue());
-			setAttribute(ownerNode, "id", entry.getKey());
-			setAttributeOptional(ownerNode, "date", ownersNextUpdate.get(entry.getKey()));
-			trackerDataNode.appendChild(ownerNode);
 		}
 	}
 
@@ -733,17 +706,6 @@ public class SettingsWriter extends AbstractXmlWriter {
 			setAttribute(node, "name", userItemName.getValue());
 			setAttribute(node, "typename", userItemName.getName());
 			setAttribute(node, "itemid", userItemName.getKey());
-			parentNode.appendChild(node);
-		}
-	}
-
-	private void writeEveNames(final Document xmldoc, final Map<Long, String> eveNames) {
-		Element parentNode = xmldoc.createElementNS(null, "evenames");
-		xmldoc.getDocumentElement().appendChild(parentNode);
-		for (Map.Entry<Long, String> entry : eveNames.entrySet()) {
-			Element node = xmldoc.createElementNS(null, "evename");
-			setAttribute(node, "name", entry.getValue());
-			setAttribute(node, "itemid", entry.getKey());
 			parentNode.appendChild(node);
 		}
 	}

@@ -419,6 +419,15 @@ public class MainMenu extends JMenuBar {
 			});
 			menu.add(menuItem);
 
+			menuItem = new JMenuItem("Save Settings", Images.MISC_DEBUG.getIcon());
+			menuItem.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					program.saveSettings("TEST Save");
+				}
+			});
+			menu.add(menuItem);
+
 			menuItem = new JMenuItem("Create Tracker Point", Images.MISC_DEBUG.getIcon());
 			menuItem.addActionListener(new ActionListener() {
 				@Override

@@ -36,6 +36,7 @@ import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.data.api.my.MyContract;
 import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
+import net.nikr.eve.jeveasset.data.settings.SQLiteSettings;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.JOptionInput;
@@ -262,7 +263,7 @@ public class JMenuUI <T> extends MenuManager.JAutoMenu<T> {
 				List<Owner> owners = new ArrayList<>();
 				for (Long ownerID : menuData.getOwnerIDs()) {
 					if (ownerID != null && ownerID > 0) {
-						String name = Settings.get().getOwners().get(ownerID);
+						String name = SQLiteSettings.getOwner(ownerID);
 						if (name == null) {
 							name = GuiShared.get().unknownOwner();
 						}

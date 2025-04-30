@@ -59,6 +59,7 @@ import net.nikr.eve.jeveasset.data.settings.PriceDataSettings.PriceSource;
 import net.nikr.eve.jeveasset.data.settings.ProxyData;
 import net.nikr.eve.jeveasset.data.settings.ReprocessSettings;
 import net.nikr.eve.jeveasset.data.settings.RouteResult;
+import net.nikr.eve.jeveasset.data.settings.SQLiteSettings;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.Settings.SettingFlag;
 import net.nikr.eve.jeveasset.data.settings.Settings.SettingsFactory;
@@ -566,6 +567,8 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		long ONE_DAY = 1000 * 60 * 60 * 24;
 		NodeList ownerNodeList = element.getElementsByTagName("owner");
 		int count = 1;
+		Map<Long, String> names = new HashMap<>();
+		Map<Long, Date> nextUpdates = new HashMap<>();
 		for (int i = 0; i < ownerNodeList.getLength(); i++) {
 			//Read Owner
 			Element ownerNode = (Element) ownerNodeList.item(i);
@@ -579,9 +582,11 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 					count = 1;
 				}
 			}
-			settings.getOwners().put(ownerID, ownerName);
-			settings.getOwnersNextUpdate().put(ownerID, date);
+			names.put(ownerID, ownerName);
+			nextUpdates.put(ownerID, date);
 		}
+		SQLiteSettings.setOwners(names);
+		SQLiteSettings.setOwnerNextUpdate(nextUpdates);
 	}
 
 	private Map<String, List<Value>> parseTrackerData(final Element element) throws XmlException {
@@ -927,7 +932,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			double price = getDouble(priceNode, "price");
 			manufacturingPrices.put(typeID, price);
 		}
-		manufacturingSettings.setPrices(manufacturingPrices);
+		SQLiteSettings.setManufacturingPrices(manufacturingPrices);
 
 		Map<Integer, Float> manufacturingSystems = new HashMap<>();
 		NodeList systemNodes = manufacturingElement.getElementsByTagName("system");
@@ -937,8 +942,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			float index = getFloat(systemNode, "index");
 			manufacturingSystems.put(systemID, index);
 		}
-
-		manufacturingSettings.setSystems(manufacturingSystems);
+		SQLiteSettings.setManufacturingSystemIndex(manufacturingSystems);
 	}
 
 	private void parsePriceHistorySettings(Element priceHistoryElement, Settings settings) throws XmlException {
@@ -1286,13 +1290,15 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 	}
 
 	private void parseEveNames(final Element element, final Settings settings) throws XmlException {
+		Map<Long, String> data = new HashMap<>();
 		NodeList eveNameNodes = element.getElementsByTagName("evename");
 		for (int i = 0; i < eveNameNodes.getLength(); i++) {
 			Element currentNode = (Element) eveNameNodes.item(i);
 			String name = getString(currentNode, "name");
 			long itemId = getLong(currentNode, "itemid");
-			settings.getEveNames().put(itemId, name);
+			data.put(itemId, name);
 		}
+		SQLiteSettings.setEveNames(data);
 	}
 
 	private void parsePriceDataSettings(final Element element, final Settings settings) throws XmlException {

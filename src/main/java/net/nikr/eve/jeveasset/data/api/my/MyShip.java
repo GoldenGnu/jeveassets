@@ -22,7 +22,7 @@ package net.nikr.eve.jeveasset.data.api.my;
 
 import java.util.Objects;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
-import net.nikr.eve.jeveasset.data.settings.Settings;
+import net.nikr.eve.jeveasset.data.settings.SQLiteSettings;
 import net.nikr.eve.jeveasset.data.settings.types.LocationType;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import net.nikr.eve.jeveasset.io.shared.RawConverter;
@@ -54,8 +54,8 @@ public class MyShip implements Comparable<MyShip>, LocationType {
 
 		this.typeName = ApiIdConverter.getItemUpdate(typeID).getTypeName();
 
-		if (Settings.get().getEveNames().get(itemID) != null) {
-			this.eveName = Settings.get().getEveNames().get(itemID);
+		if (SQLiteSettings.getEveName(itemID) != null) {
+			this.eveName = SQLiteSettings.getEveName(itemID);
 			this.name = this.eveName + " (" + this.typeName + ")";
 		} else {
 			this.eveName = "";

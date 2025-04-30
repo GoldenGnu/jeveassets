@@ -61,6 +61,7 @@ import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.sde.StaticData;
 import net.nikr.eve.jeveasset.data.settings.AddedData;
 import net.nikr.eve.jeveasset.data.settings.PriceHistoryDatabase;
+import net.nikr.eve.jeveasset.data.settings.SQLiteSettings;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.TempDirs;
 import net.nikr.eve.jeveasset.data.settings.TrackerData;
@@ -375,6 +376,7 @@ public class Program implements ActionListener {
 		FileUtil.autoImportFileUtil();
 		TempDirs.fixTempDir();
 		StaticData.load();
+		SQLiteSettings.load();
 		Settings.load();
 		TrackerData.load();
 		AddedData.load();
