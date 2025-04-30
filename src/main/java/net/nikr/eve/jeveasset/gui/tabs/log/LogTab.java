@@ -111,7 +111,7 @@ public class LogTab extends JMainTabSecondary {
 		jTable.setRowSelectionAllowed(true);
 		jTable.setColumnSelectionAllowed(true);
 		//Sorting
-		TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
+		TableComparatorChooser<AssetLogSource> comparatorChooser = TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
 		//Selection Model
 		selectionModel = EventModels.createSelectionModel(separatorList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
@@ -124,7 +124,7 @@ public class LogTab extends JMainTabSecondary {
 		//Table Filter
 		filterControl = new LogFilterControl(sortedList);
 		//Menu
-		installTableTool(new LogTableMenu(), tableFormat, tableModel, jTable, filterControl, AssetLogSource.class);
+		installTableTool(new LogTableMenu(), tableFormat, comparatorChooser, tableModel, jTable, filterControl, AssetLogSource.class);
 
 		JFixedToolBar jToolBar = new JFixedToolBar();
 
