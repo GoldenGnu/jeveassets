@@ -72,7 +72,7 @@ public class ProfileSkills extends ProfileTable {
 			}
 		}
 
-		String totalSQL = "INSERT INTO " + SKILLS_TOTAL_TABLE + " ("
+		String totalSQL = "INSERT OR REPLACE INTO " + SKILLS_TOTAL_TABLE + " ("
 				+ "	accountid,"
 				+ "	total,"
 				+ "	unallocated)"
