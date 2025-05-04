@@ -211,7 +211,14 @@ public class FileLock {
 			FileOutputStream os = new FileOutputStream(file);
 			closeable = os;
 			channel = os.getChannel();
-			lock = channel.lock(); //Write Lock
+			try {
+				lock = channel.lock(); //Write Lock
+			} catch (IOException ex) {
+				//Ignore operation not supported (the file will not be locked)
+				if (!ex.getMessage().equalsIgnoreCase("Operation not supported")) {
+					throw ex;
+				}
+			}
 			return os;
 		}
 
@@ -220,7 +227,14 @@ public class FileLock {
 			FileInputStream is = new FileInputStream(file);
 			closeable = is;
 			channel = is.getChannel();
-			lock = channel.lock(0, Long.MAX_VALUE, true); //Read Lock
+			try {
+				lock = channel.lock(0, Long.MAX_VALUE, true); //Read Lock
+			} catch (IOException ex) {
+				//Ignore operation not supported (the file will not be locked)
+				if (!ex.getMessage().equalsIgnoreCase("Operation not supported")) {
+					throw ex;
+				}
+			}
 			return is;
 		}
 
