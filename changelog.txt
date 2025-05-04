@@ -16,6 +16,15 @@
                   #### #  # #  # #  # #### #### #### #### ####
 
 ________________________________________________________________________________
+_8.0.2__________________________________________________________________________
+
+Bug Fixes:
+-Static files should not be file locked (Issue #528)
+-Handle when os locks are not supported (Issue #528)
+-Ignore duplicates in the skills table (BugId: 1315)
+-Outbid could have the wrong color for types in multiple regions
+
+________________________________________________________________________________
 _8.0.1__________________________________________________________________________
 
 New Features:
