@@ -966,20 +966,25 @@ public class ProfileData {
 	}
 
 	private void updateOutbidOwned(Collection<MyMarketOrder> marketOrders) {
-		Map<Integer, Set<Long>> lowestBuy = new HashMap<>();
-		Map<Integer, Set<Long>> lowestSell = new HashMap<>();
+		Map<Integer, Map<Integer, Set<Long>>> lowestBuy = new HashMap<>();
+		Map<Integer, Map<Integer, Set<Long>>> lowestSell = new HashMap<>();
 		for (MyMarketOrder order : marketOrders) { //Find lowest
 			if (order.isActive() && order.haveOutbid() && !order.isOutbid()) { //Lowest
-				Map<Integer, Set<Long>> lowest;
+				Map<Integer, Map<Integer, Set<Long>>> lowest;
 				if (order.isBuyOrder()) {
 					lowest = lowestBuy;
 				} else {
 					lowest = lowestSell;
 				}
-				Set<Long> orderIDs = lowest.get(order.getTypeID());
+				Map<Integer, Set<Long>> region = lowest.get(order.getRegionID());
+				if (region == null) {
+					region = new HashMap<>();
+					lowest.put(order.getRegionID(), region);
+				}
+				Set<Long> orderIDs = region.get(order.getTypeID());
 				if (orderIDs == null) {
 					orderIDs = new HashSet<>();
-					lowest.put(order.getTypeID(), orderIDs);
+					region.put(order.getTypeID(), orderIDs);
 				}
 				orderIDs.add(order.getOrderID());
 			}
@@ -989,14 +994,23 @@ public class ProfileData {
 				order.setOutbidOwned(false);
 				continue;
 			}
-			Map<Integer, Set<Long>> lowest;
+			Map<Integer, Map<Integer, Set<Long>>> lowest;
 			if (order.isBuyOrder()) {
 				lowest = lowestBuy;
 			} else {
 				lowest = lowestSell;
 			}
-			Set<Long> orderIDs = lowest.get(order.getTypeID());
-			order.setOutbidOwned(orderIDs != null && !orderIDs.contains(order.getOrderID())); //Not null and not one of the lowest orders
+			Map<Integer, Set<Long>> region = lowest.get(order.getRegionID());
+			if (region == null) {
+				order.setOutbidOwned(false);
+				continue;
+			}
+			Set<Long> orderIDs = region.get(order.getTypeID());
+			if (orderIDs == null) {
+				order.setOutbidOwned(false);
+				continue;
+			}
+			order.setOutbidOwned(!orderIDs.contains(order.getOrderID())); //not one of the lowest orders
 		}
 	}
 
