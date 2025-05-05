@@ -91,6 +91,7 @@ import net.nikr.eve.jeveasset.gui.tabs.items.ItemsTab;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJobsTab;
 import net.nikr.eve.jeveasset.gui.tabs.journal.JournalTab;
 import net.nikr.eve.jeveasset.gui.tabs.loadout.LoadoutsTab;
+import net.nikr.eve.jeveasset.gui.tabs.loyalty.LoyaltyPointsTab;
 import net.nikr.eve.jeveasset.gui.tabs.materials.MaterialsTab;
 import net.nikr.eve.jeveasset.gui.tabs.mining.ExtractionsTab;
 import net.nikr.eve.jeveasset.gui.tabs.mining.MiningGraphTab;
@@ -171,6 +172,7 @@ public class Program implements ActionListener {
 	private ContractsTab contractsTab;
 	private TreeTab treeTab;
 	private SkillsTab skillsTab;
+	private LoyaltyPointsTab loyaltyPointsTab;
 	private MiningTab miningTab;
 	private MiningGraphTab miningGraphTab;
 	private ExtractionsTab extractionsTab;
@@ -987,6 +989,14 @@ public class Program implements ActionListener {
 		return skillsTab;
 	}
 
+	public SkillsTab getLoyaltyPointsTab(boolean init) {
+		if (init && loyaltyPointsTab == null) {
+			LOG.info("Loading: Skills Tab");
+			loyaltyPointsTab = new LoyaltyPointsTab(this);
+		}
+		return skillsTab;
+	}
+
 	public StatusPanel getStatusPanel() {
 		return this.getMainWindow().getStatusPanel();
 	}
@@ -1188,6 +1198,8 @@ public class Program implements ActionListener {
 			mainWindow.addTab(getTreeTab(true));
 		} else if (MainMenuAction.SKILLS.name().equals(e.getActionCommand())) {
 			mainWindow.addTab(getSkillsTab(true));
+		} else if (MainMenuAction.LOYALTY_POINTS.name().equals(e.getActionCommand())) {
+			mainWindow.addTab(getLoyaltyPointsTab(true));
 		} else if (MainMenuAction.MINING_ALL.name().equals(e.getActionCommand())) {
 			mainWindow.addTab(getMiningTab(true));
 			mainWindow.addTab(getMiningGraphTab(true));
