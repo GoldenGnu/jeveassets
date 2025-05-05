@@ -62,6 +62,7 @@ import net.nikr.eve.jeveasset.gui.tabs.journal.JournalTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.loadout.Loadout;
 import net.nikr.eve.jeveasset.gui.tabs.loadout.LoadoutExtendedTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.loadout.LoadoutTableFormat;
+import net.nikr.eve.jeveasset.gui.tabs.loyalty.LoyaltyPointsTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.materials.Material;
 import net.nikr.eve.jeveasset.gui.tabs.materials.MaterialExtendedTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.materials.MaterialTableFormat;
@@ -167,6 +168,8 @@ public class TableFormatTest extends TestUtil {
 			}
 			//Skills
 			test(SkillsTableFormat.class);
+			//Loyalty Points
+			test(LoyaltyPointsTableFormat.class);
 			//Mining
 			test(MiningTableFormat.class);
 			//Extractions

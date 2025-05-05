@@ -38,6 +38,7 @@ import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
 import net.nikr.eve.jeveasset.data.api.my.MyExtraction;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
 import net.nikr.eve.jeveasset.data.api.my.MyJournal;
+import net.nikr.eve.jeveasset.data.api.my.MyLoyaltyPoints;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
 import net.nikr.eve.jeveasset.data.api.my.MyMining;
 import net.nikr.eve.jeveasset.data.api.my.MySkill;
@@ -50,6 +51,7 @@ import net.nikr.eve.jeveasset.data.api.raw.RawContractItem;
 import net.nikr.eve.jeveasset.data.api.raw.RawExtraction;
 import net.nikr.eve.jeveasset.data.api.raw.RawIndustryJob;
 import net.nikr.eve.jeveasset.data.api.raw.RawJournal;
+import net.nikr.eve.jeveasset.data.api.raw.RawLoyaltyPoints;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder.Change;
 import net.nikr.eve.jeveasset.data.api.raw.RawMining;
@@ -478,5 +480,17 @@ public abstract class DataConverter {
 	public static MyExtraction toMyExtraction(RawExtraction rawExtraction) {
 		MyLocation moon = ApiIdConverter.getLocation(rawExtraction.getMoonID());
 		return new MyExtraction(rawExtraction, moon);
+	}
+
+	protected static Set<MyLoyaltyPoints> convertMyLoyaltyPoints(Set<RawLoyaltyPoints> rawLoyaltyPointses, OwnerType owner) {
+		Set<MyLoyaltyPoints> loyaltyPointses = new HashSet<>();
+		for (RawLoyaltyPoints rawLoyaltyPoints : rawLoyaltyPointses) {
+			loyaltyPointses.add(toMyLoyaltyPoints(rawLoyaltyPoints, owner));
+		}
+		return loyaltyPointses;
+	}
+
+	public static MyLoyaltyPoints toMyLoyaltyPoints(RawLoyaltyPoints rawLoyaltyPoints, OwnerType owner) {
+		return new MyLoyaltyPoints(rawLoyaltyPoints, owner);
 	}
 }

@@ -42,6 +42,7 @@ import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
 import net.nikr.eve.jeveasset.data.api.my.MyExtraction;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
 import net.nikr.eve.jeveasset.data.api.my.MyJournal;
+import net.nikr.eve.jeveasset.data.api.my.MyLoyaltyPoints;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
 import net.nikr.eve.jeveasset.data.api.my.MyMining;
 import net.nikr.eve.jeveasset.data.api.my.MySkill;
@@ -91,6 +92,7 @@ public class ProfileData {
 	private final EventList<MyAccountBalance> accountBalanceEventList = EventListManager.create();
 	private final EventList<MyContract> contractEventList = EventListManager.create();
 	private final EventList<MySkill> skillsEventList = EventListManager.create();
+	private final EventList<MyLoyaltyPoints> loyaltyPointsEventList = EventListManager.create();
 	private final EventList<MyMining> miningEventList = EventListManager.create();
 	private final EventList<MyExtraction> extractionsEventList = EventListManager.create();
 	private final List<MyContractItem> contractItemList = new ArrayList<>();
@@ -157,6 +159,10 @@ public class ProfileData {
 
 	public EventList<MySkill> getSkillsEventList() {
 		return skillsEventList;
+	}
+
+	public EventList<MyLoyaltyPoints> getLoyaltyPointsEventList() {
+		return loyaltyPointsEventList;
 	}
 
 	public EventList<MyMining> getMiningEventList() {
@@ -438,6 +444,7 @@ public class ProfileData {
 		Set<MyContractItem> contractItems = new HashSet<>();
 		Set<MyContract> contracts = new HashSet<>();
 		Set<MySkill> skills = new HashSet<>();
+		Set<MyLoyaltyPoints> loyaltyPointses = new HashSet<>();
 		Set<MyMining> minings = new HashSet<>();
 		Set<MyExtraction> extractions = new HashSet<>();
 		Map<Long, OwnerType> blueprintsMap = new HashMap<>();
@@ -543,6 +550,8 @@ public class ProfileData {
 					skillPointsTotalCache.put(owner.getOwnerName(), owner.getTotalSkillPoints());
 				}
 			}
+			//Loyalty Points
+			loyaltyPointses.addAll(owner.getLoyaltyPoints());
 			//Mining
 			minings.addAll(owner.getMining());
 			//Extractions
@@ -699,6 +708,10 @@ public class ProfileData {
 		}
 		AddedData.getJournals().commitQueue();
 
+		for (MyLoyaltyPoints loyaltyPoints : loyaltyPointses) {
+			//Names
+			loyaltyPoints.setCorporationName(ApiIdConverter.getOwnerName(loyaltyPoints.getCorporationID()));
+		}
 		//Update Mining dynamic values
 		for (MyMining mining : minings) {
 			mining.setCharacterName(ApiIdConverter.getOwnerName(mining.getCharacterID()));
@@ -895,6 +908,18 @@ public class ProfileData {
 					skillsEventList.addAll(skills);
 				} finally {
 					skillsEventList.getReadWriteLock().writeLock().unlock();
+				}
+			}
+		});
+		Program.ensureEDT(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					loyaltyPointsEventList.getReadWriteLock().writeLock().lock();
+					loyaltyPointsEventList.clear();
+					loyaltyPointsEventList.addAll(loyaltyPointses);
+				} finally {
+					loyaltyPointsEventList.getReadWriteLock().writeLock().unlock();
 				}
 			}
 		});
