@@ -67,6 +67,7 @@ public abstract class DialoguesUpdate extends Bundle {
 	public abstract String names();
 	public abstract String blueprints();
 	public abstract String skills();
+	public abstract String loyaltyPoints();
 	public abstract String mining();
 	public abstract String structures();
 	public abstract String publicMarketOrders();
