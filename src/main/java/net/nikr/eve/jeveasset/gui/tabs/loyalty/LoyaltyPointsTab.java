@@ -194,13 +194,6 @@ public class LoyaltyPointsTab extends JMainTabPrimary implements TagUpdate {
 		}
 
 		@Override
-		protected void updateFilters() {
-			if (program != null && program.getOverviewTab() != null) {
-				program.getOverviewTab().updateFilters();
-			}
-		}
-
-		@Override
 		public void saveSettings(final String msg) {
 			program.saveSettings("Loyalty Points Table: " + msg); //Save Loyalty Points Filters and Export Settings
 		}
