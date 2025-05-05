@@ -35,6 +35,8 @@ public abstract class ProfileTable extends SQLiteTable {
 	protected abstract void select(Connection connection, List<EsiOwner> esiOwners, Map<String, EsiOwner> owners) throws SQLException;
 	protected abstract void create(Connection connection) throws SQLException;
 
+	protected void updateTable(Connection connection) throws SQLException { }
+
 	protected boolean isUpdated() {
 		return false;
 	}

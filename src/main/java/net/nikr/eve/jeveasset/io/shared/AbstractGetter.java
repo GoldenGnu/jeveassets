@@ -76,6 +76,7 @@ public abstract class AbstractGetter<O extends OwnerType> implements Runnable {
 		TRANSACTIONS("Transactions"),
 		SKILLS("Skills"),
 		MANUFACTURING_PRICES("Manufacturing Prices"),
+		LOYALTY_POINTS("Loyalty Points"),
 		;
 
 		private final String taskName;

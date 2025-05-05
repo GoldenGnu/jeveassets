@@ -40,6 +40,7 @@ import net.troja.eve.esi.api.ContractsApi;
 import net.troja.eve.esi.api.CorporationApi;
 import net.troja.eve.esi.api.IndustryApi;
 import net.troja.eve.esi.api.LocationApi;
+import net.troja.eve.esi.api.LoyaltyApi;
 import net.troja.eve.esi.api.MarketApi;
 import net.troja.eve.esi.api.PlanetaryInteractionApi;
 import net.troja.eve.esi.api.SkillsApi;
@@ -66,6 +67,7 @@ public class EsiOwner extends AbstractOwner implements OwnerType {
 	private final PlanetaryInteractionApi planetaryInteractionApi = new PlanetaryInteractionApi(apiClient);
 	private final UserInterfaceApi userInterfaceApi = new UserInterfaceApi(apiClient);
 	private final SkillsApi skillsApi = new SkillsApi(apiClient);
+	private final LoyaltyApi loyaltyApi = new LoyaltyApi(apiClient);
 	private String accountName;
 	private Set<String> scopes = new HashSet<>();
 	private Date structuresNextUpdate = Settings.getNow();
@@ -356,6 +358,11 @@ public class EsiOwner extends AbstractOwner implements OwnerType {
 	}
 
 	@Override
+	public boolean isLoyaltyPoints() {
+		return EsiScopes.CHARACTER_LOYALTY_POINTS.isInScope(scopes);
+	}
+
+	@Override
 	public boolean isMining() {
 		if (isCorporation()) {
 			return EsiScopes.CORPORATION_MINING.isInScope(scopes)
@@ -443,8 +450,12 @@ public class EsiOwner extends AbstractOwner implements OwnerType {
 		return planetaryInteractionApi;
 	}
 
-	public SkillsApi getSkillsApi() {
+	public SkillsApi getSkillsApiAuth() {
 		return skillsApi;
+	}
+
+	public LoyaltyApi getLoyaltyApiAuth() {
+		return loyaltyApi;
 	}
 
 	@Override

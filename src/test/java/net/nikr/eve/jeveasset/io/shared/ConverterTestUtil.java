@@ -46,6 +46,7 @@ import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
 import net.nikr.eve.jeveasset.data.api.my.MyExtraction;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
 import net.nikr.eve.jeveasset.data.api.my.MyJournal;
+import net.nikr.eve.jeveasset.data.api.my.MyLoyaltyPoints;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
 import net.nikr.eve.jeveasset.data.api.my.MyMining;
 import net.nikr.eve.jeveasset.data.api.my.MyShip;
@@ -62,6 +63,7 @@ import net.nikr.eve.jeveasset.data.api.raw.RawIndustryJob;
 import net.nikr.eve.jeveasset.data.api.raw.RawJournal;
 import net.nikr.eve.jeveasset.data.api.raw.RawJournal.ContextType;
 import net.nikr.eve.jeveasset.data.api.raw.RawJournalRefType;
+import net.nikr.eve.jeveasset.data.api.raw.RawLoyaltyPoints;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder.Change;
 import net.nikr.eve.jeveasset.data.api.raw.RawMining;
@@ -85,6 +87,7 @@ import net.troja.eve.esi.api.ContractsApi;
 import net.troja.eve.esi.api.CorporationApi;
 import net.troja.eve.esi.api.IndustryApi;
 import net.troja.eve.esi.api.LocationApi;
+import net.troja.eve.esi.api.LoyaltyApi;
 import net.troja.eve.esi.api.MarketApi;
 import net.troja.eve.esi.api.PlanetaryInteractionApi;
 import net.troja.eve.esi.api.SkillsApi;
@@ -177,6 +180,9 @@ public class ConverterTestUtil {
 
 		//Extractions
 		owner.setExtractions(set(getMyExtraction(owner, setNull, setValues, options)));
+
+		//LoyaltyPoints
+		owner.setLoyaltyPoints(set(getMyLoyaltyPoints(owner, setNull, setValues, options)));
 
 		//Wallet Divisions
 		//owner.setWalletDivisions(walletDivisions);
@@ -355,6 +361,20 @@ public class ConverterTestUtil {
 			setValues(skill, options, null, false);
 		}
 		return skill;
+	}
+
+	public static RawLoyaltyPoints getRawLoyaltyPoints(boolean setNull, ConverterTestOptions options) {
+		RawLoyaltyPoints rawLoyaltyPoints = RawLoyaltyPoints.create();
+		setValues(rawLoyaltyPoints, options, setNull ? CharacterMiningResponse.class : null);
+		return rawLoyaltyPoints;
+	}
+
+	public static MyLoyaltyPoints getMyLoyaltyPoints(OwnerType owner, boolean setNull, boolean setValues, ConverterTestOptions options) {
+		MyLoyaltyPoints loyaltyPoints = new MyLoyaltyPoints(getRawLoyaltyPoints(setNull, options), owner);
+		if (setValues) {
+			setValues(loyaltyPoints, options, null, false);
+		}
+		return loyaltyPoints;
 	}
 
 	public static RawMining getRawMining(boolean setNull, ConverterTestOptions options) {
@@ -673,6 +693,9 @@ public class ConverterTestUtil {
 			return true;
 		}
 		if (type.equals(SkillsApi.class)) {
+			return true;
+		}
+		if (type.equals(LoyaltyApi.class)) {
 			return true;
 		}
 		if (type.equals(ClonesApi.class)) {

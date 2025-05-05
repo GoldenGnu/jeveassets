@@ -79,26 +79,6 @@ public enum AccountTableFormat implements EnumTableColumn<OwnerType> {
 			return new YesNo(from.isCorporation());
 		}
 	},
-	CLONES(YesNo.class) {
-		@Override
-		public String getColumnName() {
-			return DialoguesAccount.get().tableFormatClones();
-		}
-		@Override
-		public Object getColumnValue(final OwnerType from) {
-			return new YesNo(from.isClones());
-		}
-	},
-	IMPLANTS(YesNo.class) {
-		@Override
-		public String getColumnName() {
-			return DialoguesAccount.get().tableFormatImplants();
-		}
-		@Override
-		public Object getColumnValue(final OwnerType from) {
-			return new YesNo(from.isImplants());
-		}
-	},
 	ASSET_LIST(YesNo.class) {
 		@Override
 		public String getColumnName() {
@@ -277,6 +257,36 @@ public enum AccountTableFormat implements EnumTableColumn<OwnerType> {
 		@Override
 		public Object getColumnValue(final OwnerType from) {
 			return new YesNo(from.isMining());
+		}
+	},
+	CLONES(YesNo.class) {
+		@Override
+		public String getColumnName() {
+			return DialoguesAccount.get().tableFormatClones();
+		}
+		@Override
+		public Object getColumnValue(final OwnerType from) {
+			return new YesNo(from.isClones());
+		}
+	},
+	IMPLANTS(YesNo.class) {
+		@Override
+		public String getColumnName() {
+			return DialoguesAccount.get().tableFormatImplants();
+		}
+		@Override
+		public Object getColumnValue(final OwnerType from) {
+			return new YesNo(from.isImplants());
+		}
+	},
+	LOYALTY_POINTS(YesNo.class) {
+		@Override
+		public String getColumnName() {
+			return DialoguesAccount.get().tableFormatLoyaltyPoints();
+		}
+		@Override
+		public Object getColumnValue(final OwnerType from) {
+			return new YesNo(from.isLoyaltyPoints());
 		}
 	},
 	EXPIRES(ExpirerDate.class) {

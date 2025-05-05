@@ -27,6 +27,7 @@ import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
 import net.nikr.eve.jeveasset.data.api.my.MyExtraction;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
 import net.nikr.eve.jeveasset.data.api.my.MyJournal;
+import net.nikr.eve.jeveasset.data.api.my.MyLoyaltyPoints;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
 import net.nikr.eve.jeveasset.data.api.my.MyMining;
 import net.nikr.eve.jeveasset.data.api.my.MySkill;
@@ -43,6 +44,7 @@ import net.nikr.eve.jeveasset.gui.tabs.journal.JournalTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.loadout.Loadout;
 import net.nikr.eve.jeveasset.gui.tabs.loadout.LoadoutExtendedTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.loadout.LoadoutTableFormat;
+import net.nikr.eve.jeveasset.gui.tabs.loyalty.LoyaltyPointsTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.materials.Material;
 import net.nikr.eve.jeveasset.gui.tabs.materials.MaterialExtendedTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.materials.MaterialTableFormat;
@@ -151,6 +153,10 @@ public class TableFormatFactory {
 
 	public static EnumTableFormatAdaptor<SkillsTableFormat, MySkill> skillsTableFormat() {
 		return new EnumTableFormatAdaptor<>(SkillsTableFormat.class);
+	}
+
+	public static EnumTableFormatAdaptor<LoyaltyPointsTableFormat, MyLoyaltyPoints> loyaltyPointsTableFormat() {
+		return new EnumTableFormatAdaptor<>(LoyaltyPointsTableFormat.class);
 	}
 
 	public static EnumTableFormatAdaptor<MiningTableFormat, MyMining> miningTableFormat() {

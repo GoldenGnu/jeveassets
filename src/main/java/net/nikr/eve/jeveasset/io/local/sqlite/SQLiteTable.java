@@ -64,6 +64,19 @@ public abstract class SQLiteTable {
 		}
 	}
 
+	protected Set<String> tableColumns(Connection connection, String tableName) throws SQLException {
+		Set<String> columns = new HashSet<>();
+		String sql = "SELECT name FROM pragma_table_info('" + tableName + "')";
+		try (PreparedStatement statement = connection.prepareStatement(sql);
+			ResultSet rs = statement.executeQuery();) {
+			while (rs.next()) {
+				String columnName = getString(rs, "name");
+				columns.add(columnName);
+			}
+		}
+		return columns;
+	}
+
 	protected static void setAttributeNull(final PreparedStatement statement, final int index) throws SQLException {
 		statement.setNull(index, Types.NULL);
 	}
