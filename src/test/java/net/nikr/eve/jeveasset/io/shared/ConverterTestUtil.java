@@ -50,11 +50,13 @@ import net.nikr.eve.jeveasset.data.api.my.MyJournal;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
 import net.nikr.eve.jeveasset.data.api.my.MyMining;
 import net.nikr.eve.jeveasset.data.api.my.MyShip;
+import net.nikr.eve.jeveasset.data.api.my.MySkill;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.api.raw.RawAccountBalance;
 import net.nikr.eve.jeveasset.data.api.raw.RawAsset;
 import net.nikr.eve.jeveasset.data.api.raw.RawBlueprint;
 import net.nikr.eve.jeveasset.data.api.raw.RawContainerLog;
+import net.nikr.eve.jeveasset.data.api.raw.RawClone;
 import net.nikr.eve.jeveasset.data.api.raw.RawContract;
 import net.nikr.eve.jeveasset.data.api.raw.RawContractItem;
 import net.nikr.eve.jeveasset.data.api.raw.RawExtraction;
@@ -65,6 +67,7 @@ import net.nikr.eve.jeveasset.data.api.raw.RawJournalRefType;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder.Change;
 import net.nikr.eve.jeveasset.data.api.raw.RawMining;
+import net.nikr.eve.jeveasset.data.api.raw.RawSkill;
 import net.nikr.eve.jeveasset.data.api.raw.RawTransaction;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.ItemFlag;
@@ -136,6 +139,10 @@ public class ConverterTestUtil {
 	}
 
 	private static void setData(OwnerType owner, boolean setNull, boolean setValues, ConverterTestOptions options) {
+		/*
+	private Long totalSkillPoints = null;
+	private Integer unallocatedSkillPoints = null;
+		*/
 		//Account Balance
 		owner.setAccountBalances(list(getMyAccountBalance(owner, setValues, options)));
 
@@ -165,6 +172,24 @@ public class ConverterTestUtil {
 		//ConatinerLog
 		MyContainerLog saveRawContainerLog = getMyContainerLog(setNull, setValues, options);
 		owner.setContainerLogs(list(saveRawContainerLog));
+
+		//Clones
+		owner.setClones(list(getRawClone(setNull, options)));
+
+		//Skills
+		owner.setSkills(list(getMySkill(owner, setNull, setValues, options)));
+
+		//Mining
+		owner.setMining(set(getMyMining(owner, setNull, setValues, options)));
+
+		//Extractions
+		owner.setExtractions(set(getMyExtraction(owner, setNull, setValues, options)));
+
+		//Wallet Divisions
+		//owner.setWalletDivisions(walletDivisions);
+
+		//Asset Divisions
+		//owner.setAssetDivisions(assetDivisions);
 	}
 
 	public static <T> Set<T> set(T o) {
@@ -331,6 +356,26 @@ public class ConverterTestUtil {
 			setValues(containerLog, options, null, false);
 		}
 		return containerLog;
+	}
+
+	public static RawClone getRawClone(boolean setNull, ConverterTestOptions options) {
+		RawClone rawClone = RawClone.create();
+		setValues(rawClone, options, setNull ? CharacterMiningResponse.class : null);
+		return rawClone;
+	}
+
+	public static RawSkill getRawSkill(boolean setNull, ConverterTestOptions options) {
+		RawSkill rawSkill = RawSkill.create();
+		setValues(rawSkill, options, setNull ? CharacterMiningResponse.class : null);
+		return rawSkill;
+	}
+
+	public static MySkill getMySkill(OwnerType owner, boolean setNull, boolean setValues, ConverterTestOptions options) {
+		MySkill skill = new MySkill(getRawSkill(setNull, options), getItem(options), options.getString());
+		if (setValues) {
+			setValues(skill, options, null, false);
+		}
+		return skill;
 	}
 
 	public static RawMining getRawMining(boolean setNull, ConverterTestOptions options) {
