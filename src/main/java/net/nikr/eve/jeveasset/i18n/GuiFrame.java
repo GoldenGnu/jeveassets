@@ -60,6 +60,7 @@ public abstract class GuiFrame extends Bundle {
 	public abstract String linkWiki();
 	public abstract String lock();
 	public abstract String log();
+	public abstract String loyaltyPoints();
 	public abstract String market();
 	public abstract String materials();
 	public abstract String mining();

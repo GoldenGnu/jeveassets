@@ -95,6 +95,7 @@ import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJobsTab;
 import net.nikr.eve.jeveasset.gui.tabs.journal.JournalTab;
 import net.nikr.eve.jeveasset.gui.tabs.loadout.LoadoutsTab;
 import net.nikr.eve.jeveasset.gui.tabs.log.LogTab;
+import net.nikr.eve.jeveasset.gui.tabs.loyalty.LoyaltyPointsTab;
 import net.nikr.eve.jeveasset.gui.tabs.materials.MaterialsTab;
 import net.nikr.eve.jeveasset.gui.tabs.mining.ExtractionsTab;
 import net.nikr.eve.jeveasset.gui.tabs.mining.MiningGraphTab;
@@ -175,6 +176,7 @@ public class Program implements ActionListener {
 	private ContractsTab contractsTab;
 	private TreeTab treeTab;
 	private SkillsTab skillsTab;
+	private LoyaltyPointsTab loyaltyPointsTab;
 	private MiningTab miningTab;
 	private MiningGraphTab miningGraphTab;
 	private ExtractionsTab extractionsTab;
@@ -278,21 +280,24 @@ public class Program implements ActionListener {
 		SplashUpdater.setProgress(72);
 		LOG.info("Loading: Stockpile Tab");
 		stockpileTab = new StockpileTab(this);
-		SplashUpdater.setProgress(74);
+		SplashUpdater.setProgress(73);
 		LOG.info("Loading: Items Tab");
 		itemsTab = new ItemsTab(this);
-		SplashUpdater.setProgress(75);
+		SplashUpdater.setProgress(74);
 		LOG.info("Loading: Tracker Tab");
 		trackerTab = new TrackerTab(this);
-		SplashUpdater.setProgress(76);
+		SplashUpdater.setProgress(75);
 		LOG.info("Loading: Reprocessed Tab");
 		reprocessedTab = new ReprocessedTab(this);
-		SplashUpdater.setProgress(77);
+		SplashUpdater.setProgress(76);
 		LOG.info("Loading: Contracts Tab");
 		contractsTab = new ContractsTab(this);
-		SplashUpdater.setProgress(78);
+		SplashUpdater.setProgress(77);
 		LOG.info("Loading: Skills Tab");
 		skillsTab = new SkillsTab(this);
+		SplashUpdater.setProgress(78);
+		LOG.info("Loading: Loyalty Points Tab");
+		loyaltyPointsTab = new LoyaltyPointsTab(this);
 		SplashUpdater.setProgress(79);
 		LOG.info("Loading: Mining Log Tab");
 		miningTab = new MiningTab(this);
@@ -1123,6 +1128,8 @@ public class Program implements ActionListener {
 			mainWindow.addTab(treeTab);
 		} else if (MainMenuAction.SKILLS.name().equals(e.getActionCommand())) {
 			mainWindow.addTab(skillsTab);
+		} else if (MainMenuAction.LOYALTY_POINTS.name().equals(e.getActionCommand())) {
+			mainWindow.addTab(loyaltyPointsTab);
 		} else if (MainMenuAction.MINING_ALL.name().equals(e.getActionCommand())) {
 			mainWindow.addTab(miningTab);
 			mainWindow.addTab(miningGraphTab);

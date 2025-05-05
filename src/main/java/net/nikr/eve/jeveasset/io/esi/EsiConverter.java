@@ -36,6 +36,7 @@ import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
 import net.nikr.eve.jeveasset.data.api.my.MyExtraction;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
 import net.nikr.eve.jeveasset.data.api.my.MyJournal;
+import net.nikr.eve.jeveasset.data.api.my.MyLoyaltyPoints;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
 import net.nikr.eve.jeveasset.data.api.my.MyMining;
 import net.nikr.eve.jeveasset.data.api.my.MyShip;
@@ -51,6 +52,7 @@ import net.nikr.eve.jeveasset.data.api.raw.RawContractItem;
 import net.nikr.eve.jeveasset.data.api.raw.RawExtraction;
 import net.nikr.eve.jeveasset.data.api.raw.RawIndustryJob;
 import net.nikr.eve.jeveasset.data.api.raw.RawJournal;
+import net.nikr.eve.jeveasset.data.api.raw.RawLoyaltyPoints;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder;
 import net.nikr.eve.jeveasset.data.api.raw.RawMining;
 import net.nikr.eve.jeveasset.data.api.raw.RawPublicMarketOrder;
@@ -65,6 +67,7 @@ import net.troja.eve.esi.model.CharacterContractsItemsResponse;
 import net.troja.eve.esi.model.CharacterContractsResponse;
 import net.troja.eve.esi.model.CharacterIndustryJobsResponse;
 import net.troja.eve.esi.model.CharacterLocationResponse;
+import net.troja.eve.esi.model.CharacterLoyaltyPointsResponse;
 import net.troja.eve.esi.model.CharacterMiningResponse;
 import net.troja.eve.esi.model.CharacterOrdersHistoryResponse;
 import net.troja.eve.esi.model.CharacterOrdersResponse;
@@ -389,5 +392,13 @@ public class EsiConverter extends DataConverter {
 			clones.add(new RawClone(response));
 		}
 		return clones;
+	}
+
+	public static Set<MyLoyaltyPoints> toLoyaltyPoints(List<CharacterLoyaltyPointsResponse> responses, OwnerType owner) {
+		Set<RawLoyaltyPoints> clones = new HashSet<>();
+		for (CharacterLoyaltyPointsResponse response : responses) {
+			clones.add(new RawLoyaltyPoints(response));
+		}
+		return convertMyLoyaltyPoints(clones, owner);
 	}
 }

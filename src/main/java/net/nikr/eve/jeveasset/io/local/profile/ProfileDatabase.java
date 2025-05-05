@@ -65,6 +65,7 @@ public class ProfileDatabase {
 		ASSET_DIVISIONS(new ProfileAssetDivisions()),
 		WALLET_DIVISIONS(new ProfileWalletDivisions()),
 		SKILLS(new ProfileSkills()),
+		LOYALTY_POINTS(new ProfileLoyaltyPoints()),
 		MINING(new ProfileMining())
 		;
 
@@ -94,6 +95,10 @@ public class ProfileDatabase {
 
 		public void create(Connection connection) throws SQLException {
 			profileTable.create(connection);
+		}
+
+		public void updateTable(Connection connection) throws SQLException {
+			profileTable.updateTable(connection);
 		}
 
 		public boolean isEmpty(Connection connection) throws SQLException {
@@ -152,12 +157,13 @@ public class ProfileDatabase {
 			int loaded = 0;
 			for (Table table : Table.values()) {
 				if (!table.isEmpty(connection)) {
+					table.updateTable(connection);
 					table.select(connection, profile.getEsiOwners());
 					loaded++;
 				} else if (table == Table.OWNERS) {
 					return false; //Fatal error
-				} else if (table == Table.CLONES) {
-					loaded++; //No problem (new talbe)
+				} else if (table == Table.CLONES || table == Table.LOYALTY_POINTS) {
+					loaded++; //No problem (new talbes)
 				}
 			}
 			if (loaded == Table.values().length) {
@@ -210,6 +216,7 @@ public class ProfileDatabase {
 				connection.setAutoCommit(false);
 				for (Table profileTable : tables) {
 					profileTable.create(connection);
+					profileTable.updateTable(connection);
 					profileTable.insert(connection, profile.getEsiOwners(), full);
 				}
 				connection.commit();

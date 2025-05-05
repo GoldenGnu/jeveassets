@@ -35,6 +35,7 @@ import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
 import net.nikr.eve.jeveasset.data.api.my.MyExtraction;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
 import net.nikr.eve.jeveasset.data.api.my.MyJournal;
+import net.nikr.eve.jeveasset.data.api.my.MyLoyaltyPoints;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
 import net.nikr.eve.jeveasset.data.api.my.MyMining;
 import net.nikr.eve.jeveasset.data.api.my.MyShip;
@@ -61,6 +62,7 @@ public abstract class AbstractOwner implements OwnerType {
 	private List<RawClone> clones = new ArrayList<>();
 	private Set<MyMining> mining = new HashSet<>();
 	private Set<MyExtraction> extractions = new HashSet<>();
+	private Set<MyLoyaltyPoints> loyaltyPoints = new HashSet<>();
 	private Long totalSkillPoints = null;
 	private Integer unallocatedSkillPoints = null;
 	private List<MyContainerLog> containerLogs = new ArrayList<>();
@@ -85,6 +87,7 @@ public abstract class AbstractOwner implements OwnerType {
 	private Date locationsNextUpdate = Settings.getNow();
 	private Date blueprintsNextUpdate = Settings.getNow();
 	private Date skillsNextUpdate = Settings.getNow();
+	private Date loyaltyPointsNextUpdate = Settings.getNow();
 	private Date miningNextUpdate = Settings.getNow();
 	private Date containerLogsNextUpdate = Settings.getNow();
 
@@ -127,6 +130,7 @@ public abstract class AbstractOwner implements OwnerType {
 		this.locationsNextUpdate = abstractOwner.locationsNextUpdate;
 		this.blueprintsNextUpdate = abstractOwner.blueprintsNextUpdate;
 		this.skillsNextUpdate = abstractOwner.skillsNextUpdate;
+		this.loyaltyPointsNextUpdate = abstractOwner.loyaltyPointsNextUpdate;
 		this.miningNextUpdate = abstractOwner.miningNextUpdate;
 		this.containerLogsNextUpdate = abstractOwner.containerLogsNextUpdate;
 	}
@@ -179,6 +183,11 @@ public abstract class AbstractOwner implements OwnerType {
 	@Override
 	public void setSkillsNextUpdate(Date skillsNextUpdate) {
 		this.skillsNextUpdate = skillsNextUpdate;
+	}
+
+	@Override
+	public Date getLoyaltyPointsNextUpdate() {
+		return loyaltyPointsNextUpdate;
 	}
 
 	@Override
@@ -244,6 +253,11 @@ public abstract class AbstractOwner implements OwnerType {
 	@Override
 	public Date getSkillsNextUpdate() {
 		return skillsNextUpdate;
+	}
+
+	@Override
+	public void setLoyaltyPointsNextUpdate(Date loyaltyPointsNextUpdate) {
+		this.loyaltyPointsNextUpdate = loyaltyPointsNextUpdate;
 	}
 
 	@Override
@@ -399,6 +413,11 @@ public abstract class AbstractOwner implements OwnerType {
 	}
 
 	@Override
+	public Set<MyLoyaltyPoints> getLoyaltyPoints() {
+		return loyaltyPoints;
+	}
+
+	@Override
 	public List<RawClone> getClones() {
 		return clones;
 	}
@@ -511,6 +530,11 @@ public abstract class AbstractOwner implements OwnerType {
 	@Override
 	public void setSkills(List<MySkill> skills) {
 		this.skills = skills;
+	}
+
+	@Override
+	public void setLoyaltyPoints(Set<MyLoyaltyPoints> loyaltyPoints) {
+		this.loyaltyPoints = loyaltyPoints;
 	}
 
 	@Override

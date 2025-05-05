@@ -74,6 +74,7 @@ public class MainMenu extends JMenuBar {
 		CONTRACTS,
 		SLOTS,
 		SKILLS,
+		LOYALTY_POINTS,
 		MINING_ALL,
 		MINING_LOG,
 		MINING_GRAPH,
@@ -285,6 +286,12 @@ public class MainMenu extends JMenuBar {
 		menuItem = new JMenuItem(GuiFrame.get().skills());
 		menuItem.setIcon(Images.TOOL_SKILLS.getIcon());
 		menuItem.setActionCommand(MainMenuAction.SKILLS.name());
+		menuItem.addActionListener(program);
+		submenu.add(menuItem);
+
+		menuItem = new JMenuItem(GuiFrame.get().loyaltyPoints());
+		menuItem.setIcon(Images.TOOL_LOYALTY_POINTS.getIcon());
+		menuItem.setActionCommand(MainMenuAction.LOYALTY_POINTS.name());
 		menuItem.addActionListener(program);
 		submenu.add(menuItem);
 
