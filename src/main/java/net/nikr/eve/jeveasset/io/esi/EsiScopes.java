@@ -42,6 +42,7 @@ public enum EsiScopes {
 	CHARACTER_PLANETARY_INTERACTION(SsoScopes.ESI_PLANETS_MANAGE_PLANETS_V1, DialoguesAccount.get().scopePlanetaryInteraction(), ScopeType.CHARACTER),
 	CHARACTER_AUTOPILOT(SsoScopes.ESI_UI_WRITE_WAYPOINT_V1, DialoguesAccount.get().scopeAutopilot(), ScopeType.CHARACTER),
 	CHARACTER_SKILLS(SsoScopes.ESI_SKILLS_READ_SKILLS_V1, DialoguesAccount.get().scopeSkills(), ScopeType.CHARACTER),
+	CHARACTER_LOYALTY_POINTS(SsoScopes.ESI_CHARACTERS_READ_LOYALTY_V1, DialoguesAccount.get().scopeLoyaltyPoints(), ScopeType.CHARACTER),
 	CHARACTER_MINING(SsoScopes.ESI_INDUSTRY_READ_CHARACTER_MINING_V1, DialoguesAccount.get().scopeMining(), ScopeType.CHARACTER),
 	CORPORATION_ROLES(SsoScopes.ESI_CHARACTERS_READ_CORPORATION_ROLES_V1, DialoguesAccount.get().scopeRoles(), ScopeType.CORPORATION, true),
 	CORPORATION_ASSETS(SsoScopes.ESI_ASSETS_READ_CORPORATION_ASSETS_V1, DialoguesAccount.get().scopeAssets(), ScopeType.CORPORATION),
