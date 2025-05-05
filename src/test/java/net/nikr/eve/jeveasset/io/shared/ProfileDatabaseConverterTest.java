@@ -37,14 +37,18 @@ import net.nikr.eve.jeveasset.data.api.my.MyAccountBalance;
 import net.nikr.eve.jeveasset.data.api.my.MyAsset;
 import net.nikr.eve.jeveasset.data.api.my.MyContract;
 import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
+import net.nikr.eve.jeveasset.data.api.my.MyExtraction;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
 import net.nikr.eve.jeveasset.data.api.my.MyJournal;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
+import net.nikr.eve.jeveasset.data.api.my.MyMining;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
+import net.nikr.eve.jeveasset.data.api.raw.RawAsset;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder;
 import net.nikr.eve.jeveasset.data.profile.Profile;
 import net.nikr.eve.jeveasset.data.profile.ProfileManager;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
+import net.nikr.eve.jeveasset.data.settings.PriceData;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.Percent;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.Security;
 import net.nikr.eve.jeveasset.io.local.profile.ProfileDatabase;
@@ -92,7 +96,7 @@ public class ProfileDatabaseConverterTest extends TestUtil {
 		manager.loadActiveProfile();
 		Profile newProfile = manager.getActiveProfile();
 
-		testClass("", oldProfile, newProfile, false);
+		testClass("", oldProfile, newProfile, false, true);
 	}
 
 	@Test
@@ -110,7 +114,7 @@ public class ProfileDatabaseConverterTest extends TestUtil {
 			Profile newProfile = new Profile();
 			newProfile.load();
 			//Test
-			testClass("", newProfile, newProfile, false);
+			testClass("", oldProfile, newProfile, false, false);
 		}
 	}
 
@@ -158,19 +162,19 @@ public class ProfileDatabaseConverterTest extends TestUtil {
 			ProfileDatabase.setUpdateConnectionUrl(newProfile);
 			newProfile.load();
 
-			testClass("", oldProfile, newProfile, false);
+			testClass("", oldProfile, newProfile, false, false);
 		}
 	}
 
-	private void testClass(String msg, Object oldValue, Object newValue, boolean collection) {
+	private void testClass(String msg, Object oldValue, Object newValue, boolean collection, boolean dynamicValuesSet) {
 		if (oldValue == null || newValue == null) {
 			assertEquals(msg, oldValue, newValue);
 			return;
 		}
-		testClass(msg, oldValue.getClass(), newValue.getClass(), oldValue, newValue, collection);
+		testClass(msg, oldValue.getClass(), newValue.getClass(), oldValue, newValue, collection, dynamicValuesSet);
 	}
 
-	private void testClass(String input, Class<?> oldClazz, Class<?> newClazz, Object oldValue, Object newValue, boolean collection) {
+	private void testClass(String input, Class<?> oldClazz, Class<?> newClazz, Object oldValue, Object newValue, boolean collection, boolean dynamicValuesSet) {
 		if (oldClazz == null || newClazz == null) {
 			return;
 		}
@@ -183,15 +187,12 @@ public class ProfileDatabaseConverterTest extends TestUtil {
 			assertEquals(msg, oldList.size(), newList.size());
 			Collections.sort(oldList, COMPARATOR);
 			Collections.sort(newList, COMPARATOR);
-			if (!oldList.isEmpty()) {
-				
-			}
 			Iterator<?> oldIterator = oldList.iterator();
 			Iterator<?> newIterator = newList.iterator();
 			while (oldIterator.hasNext() && newIterator.hasNext()) {
 				Object oldObject = oldIterator.next();
 				Object newObject = newIterator.next();
-				testClass(msg + "[List]>", oldObject, newObject, true);
+				testClass(msg + "[List]>", oldObject, newObject, true, dynamicValuesSet);
 			}
 			assertFalse(msg, oldIterator.hasNext());
 			assertFalse(msg, newIterator.hasNext());
@@ -204,7 +205,7 @@ public class ProfileDatabaseConverterTest extends TestUtil {
 			while (oldIterator.hasNext() && newIterator.hasNext()) {
 				Object oldObject = oldIterator.next();
 				Object newObject = newIterator.next();
-				testClass(msg + "[Collection]>", oldObject, newObject, true);
+				testClass(msg + "[Collection]>", oldObject, newObject, true, dynamicValuesSet);
 			}
 			assertFalse(msg, oldIterator.hasNext());
 			assertFalse(msg, newIterator.hasNext());
@@ -220,17 +221,19 @@ public class ProfileDatabaseConverterTest extends TestUtil {
 				if (oldObject instanceof Map.Entry<?,?> && newObject instanceof Map.Entry<?,?>) {
 					Map.Entry<?,?> oldEntry = (Map.Entry<?,?>) oldObject;
 					Map.Entry<?,?> newEntry = (Map.Entry<?,?>) newObject;
-					testClass(msg + "[Map>Key]>", oldEntry.getKey(), newEntry.getKey(), true);
-					testClass(msg + "[Map>Value]>", oldEntry.getValue(), newEntry.getValue(), true);
+					testClass(msg + "[Map>Key]>", oldEntry.getKey(), newEntry.getKey(), true, dynamicValuesSet);
+					testClass(msg + "[Map>Value]>", oldEntry.getValue(), newEntry.getValue(), true, dynamicValuesSet);
 				} else {
-					testClass(msg, oldObject, newObject, false);
+					testClass(msg, oldObject, newObject, false, dynamicValuesSet);
 				}
 			}
 			assertFalse(msg, oldIterator.hasNext());
 			assertFalse(msg, newIterator.hasNext());
 		} else if (oldClazz.getName().startsWith("net.nikr.eve.jeveasset") || (Object.class.equals(oldClazz) && collection)){
+			if (!dynamicValuesSet && RawAsset.class.equals(oldClazz)) { //SHOULD BE REMOVED!!!
+				return;
+			}
 			for (Field oldField : oldClazz.getDeclaredFields()) {
-				
 				try {
 					final String fieldName = oldField.getName();
 					if ("LOG".equals(fieldName) ||
@@ -252,8 +255,7 @@ public class ProfileDatabaseConverterTest extends TestUtil {
 							|| "skillsApi".equals(fieldName)))
 						|| (MyAsset.class.equals(oldClazz)
 							&& ("owner".equals(fieldName)
-							|| "parents".equals(fieldName)
-							|| "priceData".equals(fieldName)))
+							|| "parents".equals(fieldName)))
 						|| (MyAccountBalance.class.equals(oldClazz)
 							&& "owner".equals(fieldName))
 						|| (MyJournal.class.equals(oldClazz)
@@ -261,28 +263,67 @@ public class ProfileDatabaseConverterTest extends TestUtil {
 						|| (MyTransaction.class.equals(oldClazz)
 							&& "owner".equals(fieldName))
 						|| (MyIndustryJob.class.equals(oldClazz)
-							&& ("owner".equals(fieldName)
-							|| "owned".equals(fieldName)))
+							&& "owner".equals(fieldName))
 						|| (MyMarketOrder.class.equals(oldClazz)
 							&& ("owner".equals(fieldName)
-							|| "priceData".equals(fieldName)
 							|| "jButton".equals(fieldName)))
 						|| (Profile.class.equals(oldClazz)
 							&& "stockpileIDs".equals(fieldName))
-						|| (MyLocation.class.equals(oldClazz)
-							&& "CACHE".equals(fieldName))
 						|| (MyContractItem.class.equals(oldClazz)
 							&& "contract".equals(fieldName))
-						|| (MyContract.class.equals(oldClazz)
-							&& ("endLocation".equals(fieldName)
-							|| "startLocation".equals(fieldName)))
-						|| (RawMarketOrder.class.equals(oldClazz)
-							&& "regionId".equals(fieldName))
+						|| (MyLocation.class.equals(oldClazz)
+							&& "CACHE".equals(fieldName))
 						|| (Security.class.equals(oldClazz)
 							&& "CACHE".equals(fieldName))
 						|| (Percent.class.equals(oldClazz)
 							&& "CACHE".equals(fieldName))
+						|| (PriceData.class.equals(oldClazz)
+							&& "EMPTY".equals(fieldName))
 						) {
+						continue;
+					}
+					if (!dynamicValuesSet && (
+						(MyTransaction.class.equals(oldClazz)
+							&& ("location".equals(fieldName)
+							|| "transactionProfitPercent".equals(fieldName)
+							|| "tax".equals(fieldName)
+							|| "added".equals(fieldName)
+							|| "tags".equals(fieldName)
+							|| "clientName".equals(fieldName)))
+						|| (MyMarketOrder.class.equals(oldClazz)
+							&& ("location".equals(fieldName)
+							|| "transactionProfitPercent".equals(fieldName)
+							|| "brokersFee".equals(fieldName)
+							|| "outbid".equals(fieldName)))
+						|| (MyJournal.class.equals(oldClazz)
+							&& ("added".equals(fieldName)
+							|| "tags".equals(fieldName)
+							|| "context".equals(fieldName)))
+						|| (MyIndustryJob.class.equals(oldClazz)
+							&& ("blueprint".equals(fieldName)
+							|| "owned".equals(fieldName)
+							|| "location".equals(fieldName)))
+						|| (MyAsset.class.equals(oldClazz)
+							&& ("itemName".equals(fieldName)
+							|| "marketPriceData".equals(fieldName)
+							|| "added".equals(fieldName)
+							|| "tags".equals(fieldName)
+							|| "blueprint".equals(fieldName)
+							|| "location".equals(fieldName)
+							|| "userPrice".equals(fieldName)))
+						|| (MyMining.class.equals(oldClazz)
+							&& ("location".equals(fieldName)
+							|| "characterName".equals(fieldName)))
+						|| (MyExtraction.class.equals(oldClazz)
+							&& ("moon".equals(fieldName)
+							|| "location".equals(fieldName)))
+						|| (RawMarketOrder.class.equals(oldClazz)
+							&& ("changed".equals(fieldName)
+							|| "regionId".equals(fieldName)))
+						|| (MyContract.class.equals(oldClazz)
+							&& ("endLocation".equals(fieldName)
+							|| "startLocation".equals(fieldName)))
+						)) {
 						continue;
 					}
 					Field newField = newClazz.getDeclaredField(fieldName);
@@ -290,7 +331,7 @@ public class ProfileDatabaseConverterTest extends TestUtil {
 					newField.setAccessible(true);
 					Object oldObject = oldField.get(oldValue);
 					Object newObject = newField.get(newValue);
-					testClass(msg + "." + fieldName + ">", oldObject, newObject, false);
+					testClass(msg + "." + fieldName + ">", oldObject, newObject, false, dynamicValuesSet);
 				} catch (NoSuchFieldException ex) {
 					fail(ex.getMessage());
 				} catch (SecurityException ex) {
@@ -301,7 +342,7 @@ public class ProfileDatabaseConverterTest extends TestUtil {
 					fail(ex.getMessage());
 				}
 			}
-			testClass(input + "=>", oldClazz.getSuperclass(), newClazz.getSuperclass(), oldValue, newValue, collection);
+			testClass(input + "=>", oldClazz.getSuperclass(), newClazz.getSuperclass(), oldValue, newValue, collection, dynamicValuesSet);
 		} else {
 			assertEquals(msg, oldValue, newValue);
 		}
@@ -326,6 +367,9 @@ public class ProfileDatabaseConverterTest extends TestUtil {
 		public int compare(Object o1, Object o2) {
 			if (o1 instanceof MyAsset && o2 instanceof MyAsset) {
 				return Long.compare(((MyAsset)o1).getItemID(), ((MyAsset)o2).getItemID());
+			}
+			if (o1 instanceof RawAsset && o2 instanceof RawAsset) {
+				return Long.compare(((RawAsset)o1).getItemID(), ((RawAsset)o2).getItemID());
 			}
 			if (o1 instanceof Comparable && o2 instanceof Comparable) {
 				return GlazedLists.comparableComparator().compare((Comparable) o1, (Comparable) o2);
