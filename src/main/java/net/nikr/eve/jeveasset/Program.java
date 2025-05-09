@@ -758,7 +758,7 @@ public class Program implements ActionListener {
 			saveSettings("API Update");
 			Settings.waitForEmptySaveQueue();
 		}
-		profileManager.saveProfileSoft();
+		profileManager.saveProfile();
 	}
 
 	public synchronized void saveProfile() {
