@@ -194,27 +194,26 @@ public class ProfileDatabase {
 		closeUpdateConnection();
 	}
 
-	public static boolean save(Profile profile, boolean full) {
-		return save(profile, Table.values(), full);
+	public static boolean save(Profile profile) {
+		return save(profile, Table.values());
 	}
 
-	public static boolean save(Profile profile, Table table, boolean full) {
-		return save(profile, Collections.singleton(table), full);
+	public static boolean save(Profile profile, Table table) {
+		return save(profile, Collections.singleton(table));
 	}
 
-	private static boolean save(Profile profile, Table[] tables, boolean full) {
-		return save(profile, Arrays.asList(tables), full);
+	private static boolean save(Profile profile, Table[] tables) {
+		return save(profile, Arrays.asList(tables));
 	}
 
-	private static boolean save(Profile profile, Collection<Table> tables, boolean full) {
+	private static boolean save(Profile profile, Collection<Table> tables) {
 		String connectionUrl = getConnectionUrl(profile.getSQLiteFilename());
-		if (!full) {
-			waitForUpdates();
-		}
+		waitForUpdates();
 		try (Connection connection = DriverManager.getConnection(connectionUrl);) {
 			try {
 				connection.setAutoCommit(false);
 				for (Table profileTable : tables) {
+					boolean full = profileTable.isEmpty(connection);
 					profileTable.create(connection);
 					profileTable.updateTable(connection);
 					profileTable.insert(connection, profile.getEsiOwners(), full);
