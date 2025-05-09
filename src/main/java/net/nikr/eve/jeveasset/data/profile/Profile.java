@@ -78,28 +78,16 @@ public class Profile implements Comparable<Profile> {
 		}
 	}
 
-	public void save() {
-		save(true);
-	}
-
-	public void saveSoft() {
-		if (type == ProfileType.XML) {
-			save(true); //Full save
-		} else {
-			save(false);
-		}
-	}
-
 	public void saveTable(Table table) {
 		if (type == ProfileType.XML) {
-			save(true); //Full save
+			save(); //Full save
 		} else {
-			ProfileDatabase.save(this, table, true);
+			ProfileDatabase.save(this, table);
 		}
 	}
 
-	private void save(boolean full) {
-		boolean save = ProfileDatabase.save(this, full);
+	public void save() {
+		boolean save = ProfileDatabase.save(this);
 		if (save && type == ProfileType.XML) {
 			type = ProfileType.SQLITE; //Migrated to SQLite
 			File file = new File(getXmlFilename());
