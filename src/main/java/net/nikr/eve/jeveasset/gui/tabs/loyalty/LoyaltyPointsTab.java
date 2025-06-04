@@ -28,11 +28,16 @@ import ca.odell.glazedlists.SortedList;
 import ca.odell.glazedlists.swing.DefaultEventSelectionModel;
 import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import ca.odell.glazedlists.swing.TableComparatorChooser;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import javax.swing.JComponent;
 import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
@@ -51,6 +56,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 import net.nikr.eve.jeveasset.gui.shared.table.TableFormatFactory;
 import net.nikr.eve.jeveasset.i18n.TabsLoyaltyPoints;
+import net.nikr.eve.jeveasset.io.shared.DesktopUtil;
 
 
 public class LoyaltyPointsTab extends JMainTabPrimary implements TagUpdate {
@@ -178,7 +184,45 @@ public class LoyaltyPointsTab extends JMainTabPrimary implements TagUpdate {
 		public void addInfoMenu(JPopupMenu jPopupMenu) { }
 
 		@Override
-		public void addToolMenu(JComponent jComponent) { }
+		public void addToolMenu(JComponent jComponent) {
+			JMenu fuzzwork = new JMenu(TabsLoyaltyPoints.get().fuzzworkLoyaltyPointsStore());
+			fuzzwork.setIcon(Images.LINK_FUZZWORK.getIcon());
+			jComponent.add(fuzzwork);
+
+			boolean enabled = !selectionModel.getSelected().isEmpty();
+
+			JMenuItem jSell = new JMenuItem(TabsLoyaltyPoints.get().sell(), Images.ORDERS_SELL.getIcon());
+			jSell.setEnabled(enabled);
+			jSell.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					Set<String> links = new HashSet<>();
+					for (MyLoyaltyPoints loyaltyPoints : selectionModel.getSelected()) {
+						links.add("https://www.fuzzwork.co.uk/lpstore/sell/10000002/"+loyaltyPoints.getCorporationID());
+						
+					}
+					DesktopUtil.browse(links, program);
+					
+				}
+			});
+			fuzzwork.add(jSell);
+
+			JMenuItem jBuy = new JMenuItem(TabsLoyaltyPoints.get().buy(), Images.ORDERS_BUY.getIcon());
+			jBuy.setEnabled(enabled);
+			jBuy.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					Set<String> links = new HashSet<>();
+					for (MyLoyaltyPoints loyaltyPoints : selectionModel.getSelected()) {
+						links.add("https://www.fuzzwork.co.uk/lpstore/buy/10000002/"+loyaltyPoints.getCorporationID());
+						
+					}
+					DesktopUtil.browse(links, program);
+					
+				}
+			});
+			fuzzwork.add(jBuy);
+		}
 	}
 
 	private class LoyaltyPointsFilterControl extends FilterControl<MyLoyaltyPoints> {
