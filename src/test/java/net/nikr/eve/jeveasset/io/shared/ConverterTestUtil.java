@@ -181,7 +181,7 @@ public class ConverterTestUtil {
 		//Extractions
 		owner.setExtractions(set(getMyExtraction(owner, setNull, setValues, options)));
 
-		//LoyaltyPoints
+		//Loyalty Points
 		owner.setLoyaltyPoints(set(getMyLoyaltyPoints(owner, setNull, setValues, options)));
 
 		//Wallet Divisions

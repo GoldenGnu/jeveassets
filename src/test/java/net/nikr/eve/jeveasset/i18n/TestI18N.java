@@ -143,6 +143,11 @@ public class TestI18N extends TestUtil {
 		assertNotNull(g.cancel());
 	}
 
+	@Test public void testTabsLoyaltyPoints_en() throws Exception {
+		TabsLoyaltyPoints g = BundleServiceFactory.getBundleService().get(TabsLoyaltyPoints.class);
+		assertNotNull(g.loyaltyPoints());
+	}
+
 	@Test public void testTabsMaterials_en() throws Exception {
 		TabsMaterials g = BundleServiceFactory.getBundleService().get(TabsMaterials.class);
 		assertNotNull(g.collapse());

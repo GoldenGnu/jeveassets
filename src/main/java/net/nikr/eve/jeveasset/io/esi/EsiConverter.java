@@ -384,10 +384,10 @@ public class EsiConverter extends DataConverter {
 	}
 
 	public static Set<MyLoyaltyPoints> toLoyaltyPoints(List<CharacterLoyaltyPointsResponse> responses, OwnerType owner) {
-		Set<RawLoyaltyPoints> clones = new HashSet<>();
+		Set<RawLoyaltyPoints> loyaltyPoints = new HashSet<>();
 		for (CharacterLoyaltyPointsResponse response : responses) {
-			clones.add(new RawLoyaltyPoints(response));
+			loyaltyPoints.add(new RawLoyaltyPoints(response));
 		}
-		return convertMyLoyaltyPoints(clones, owner);
+		return convertMyLoyaltyPoints(loyaltyPoints, owner);
 	}
 }
