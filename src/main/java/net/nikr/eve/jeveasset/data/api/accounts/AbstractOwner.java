@@ -105,6 +105,7 @@ public abstract class AbstractOwner implements OwnerType {
 		walletDivisions.putAll(abstractOwner.walletDivisions);
 		assetDivisions.putAll(abstractOwner.assetDivisions);
 		skills.addAll(abstractOwner.skills);
+		loyaltyPoints.addAll(abstractOwner.loyaltyPoints);
 		mining.addAll(abstractOwner.mining);
 		extractions.addAll(abstractOwner.extractions);
 		this.totalSkillPoints = abstractOwner.totalSkillPoints;
