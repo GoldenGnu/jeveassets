@@ -106,6 +106,9 @@ public class ProfileDatabaseConverterTest extends TestUtil {
 		boolean setNull = false;
 		boolean setValues = true;
 		for (ConverterTestOptions options : ConverterTestOptionsGetter.getConverterOptions()) {
+			//Clear previouse test data
+			cleanup();
+
 			//Generated data
 			Profile oldProfile = new Profile();
 			oldProfile.getEsiOwners().add(ConverterTestUtil.getEsiOwner(data, setNull, setValues, options));
@@ -124,6 +127,9 @@ public class ProfileDatabaseConverterTest extends TestUtil {
 		boolean setNull = false;
 		boolean setValues = true;
 		for (ConverterTestOptions options : ConverterTestOptionsGetter.getConverterOptions()) {
+			//Clear previouse test data
+			cleanup();
+
 			//Empty data
 			Profile oldProfile = new Profile();
 			ProfileDatabase.setUpdateConnectionUrl(oldProfile);
