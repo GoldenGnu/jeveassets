@@ -43,6 +43,7 @@ import net.nikr.eve.jeveasset.data.api.my.MyJournal;
 import net.nikr.eve.jeveasset.data.api.my.MyLoyaltyPoints;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
 import net.nikr.eve.jeveasset.data.api.my.MyMining;
+import net.nikr.eve.jeveasset.data.api.my.MyNpcStanding;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.api.raw.RawAsset;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder;
@@ -107,6 +108,9 @@ public class ProfileDatabaseConverterTest extends TestUtil {
 		boolean setNull = false;
 		boolean setValues = true;
 		for (ConverterTestOptions options : ConverterTestOptionsGetter.getConverterOptions()) {
+			//Clear previouse test data
+			cleanup();
+
 			//Generated data
 			Profile oldProfile = new Profile();
 			oldProfile.getEsiOwners().add(ConverterTestUtil.getEsiOwner(data, setNull, setValues, options));
@@ -125,6 +129,9 @@ public class ProfileDatabaseConverterTest extends TestUtil {
 		boolean setNull = false;
 		boolean setValues = true;
 		for (ConverterTestOptions options : ConverterTestOptionsGetter.getConverterOptions()) {
+			//Clear previouse test data
+			cleanup();
+
 			//Empty data
 			Profile oldProfile = new Profile();
 			ProfileDatabase.setUpdateConnectionUrl(oldProfile);
@@ -267,6 +274,8 @@ public class ProfileDatabaseConverterTest extends TestUtil {
 						|| (MyIndustryJob.class.equals(oldClazz)
 							&& "owner".equals(fieldName))
 						|| (MyLoyaltyPoints.class.equals(oldClazz)
+							&& "owner".equals(fieldName))
+						|| (MyNpcStanding.class.equals(oldClazz)
 							&& "owner".equals(fieldName))
 						|| (MyMarketOrder.class.equals(oldClazz)
 							&& ("owner".equals(fieldName)
