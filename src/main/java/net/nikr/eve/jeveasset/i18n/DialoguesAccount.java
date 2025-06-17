@@ -96,6 +96,7 @@ public abstract class DialoguesAccount extends Bundle {
 	public abstract String scopeSkills();
 	public abstract String scopeMining();
 	public abstract String scopeLoyaltyPoints();
+	public abstract String scopeNpcStanding();
 
 	public abstract String dialogueNameAccountManagement();
 
@@ -154,6 +155,7 @@ public abstract class DialoguesAccount extends Bundle {
 	public abstract String tableFormatAutopilot();
 	public abstract String tableFormatSkills();
 	public abstract String tableFormatLoyaltyPoints();
+	public abstract String tableFormatNpcStanding();
 	public abstract String tableFormatMining();
 	public abstract String tableFormatYes();
 	public abstract String tableFormatNo();

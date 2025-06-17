@@ -105,6 +105,7 @@ import net.nikr.eve.jeveasset.gui.tabs.reprocessed.ReprocessedTab;
 import net.nikr.eve.jeveasset.gui.tabs.routing.RoutingTab;
 import net.nikr.eve.jeveasset.gui.tabs.skills.SkillsTab;
 import net.nikr.eve.jeveasset.gui.tabs.slots.SlotsTab;
+import net.nikr.eve.jeveasset.gui.tabs.standing.NpcStandingTab;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileTab;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerTab;
 import net.nikr.eve.jeveasset.gui.tabs.transaction.TransactionTab;
@@ -173,6 +174,7 @@ public class Program implements ActionListener {
 	private TreeTab treeTab;
 	private SkillsTab skillsTab;
 	private LoyaltyPointsTab loyaltyPointsTab;
+	private NpcStandingTab npcStandingTab;
 	private MiningTab miningTab;
 	private MiningGraphTab miningGraphTab;
 	private ExtractionsTab extractionsTab;
@@ -272,27 +274,30 @@ public class Program implements ActionListener {
 		SplashUpdater.setProgress(70);
 		LOG.info("Loading: Overview Tab");
 		overviewTab = new OverviewTab(this);
-		SplashUpdater.setProgress(72);
+		SplashUpdater.setProgress(71);
 		LOG.info("Loading: Stockpile Tab");
 		stockpileTab = new StockpileTab(this);
-		SplashUpdater.setProgress(73);
+		SplashUpdater.setProgress(72);
 		LOG.info("Loading: Items Tab");
 		itemsTab = new ItemsTab(this);
-		SplashUpdater.setProgress(74);
+		SplashUpdater.setProgress(73);
 		LOG.info("Loading: Tracker Tab");
 		trackerTab = new TrackerTab(this);
-		SplashUpdater.setProgress(75);
+		SplashUpdater.setProgress(74);
 		LOG.info("Loading: Reprocessed Tab");
 		reprocessedTab = new ReprocessedTab(this);
-		SplashUpdater.setProgress(76);
+		SplashUpdater.setProgress(75);
 		LOG.info("Loading: Contracts Tab");
 		contractsTab = new ContractsTab(this);
-		SplashUpdater.setProgress(77);
+		SplashUpdater.setProgress(76);
 		LOG.info("Loading: Skills Tab");
 		skillsTab = new SkillsTab(this);
-		SplashUpdater.setProgress(78);
+		SplashUpdater.setProgress(77);
 		LOG.info("Loading: Loyalty Points Tab");
 		loyaltyPointsTab = new LoyaltyPointsTab(this);
+		SplashUpdater.setProgress(78);
+		LOG.info("Loading: NPC Standing Tab");
+		npcStandingTab = new NpcStandingTab(this);
 		SplashUpdater.setProgress(79);
 		LOG.info("Loading: Mining Log Tab");
 		miningTab = new MiningTab(this);
@@ -1111,6 +1116,8 @@ public class Program implements ActionListener {
 			mainWindow.addTab(skillsTab);
 		} else if (MainMenuAction.LOYALTY_POINTS.name().equals(e.getActionCommand())) {
 			mainWindow.addTab(loyaltyPointsTab);
+		} else if (MainMenuAction.NPC_STANDING.name().equals(e.getActionCommand())) {
+			mainWindow.addTab(npcStandingTab);
 		} else if (MainMenuAction.MINING_ALL.name().equals(e.getActionCommand())) {
 			mainWindow.addTab(miningTab);
 			mainWindow.addTab(miningGraphTab);

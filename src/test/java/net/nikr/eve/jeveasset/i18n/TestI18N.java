@@ -113,6 +113,11 @@ public class TestI18N extends TestUtil {
 		assertNotNull(g.add());
 	}
 
+	@Test public void testTabNpcStandingPoints_en() throws Exception {
+		TabsNpcStanding g = BundleServiceFactory.getBundleService().get(TabsNpcStanding.class);
+		assertNotNull(g.npcStanding());
+	}
+
 	@Test public void testTabsAssets_en() throws Exception {
 		TabsAssets g = BundleServiceFactory.getBundleService().get(TabsAssets.class);
 		assertNotNull(g.assets());

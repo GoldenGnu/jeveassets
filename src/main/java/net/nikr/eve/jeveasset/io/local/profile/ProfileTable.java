@@ -373,6 +373,10 @@ public abstract class ProfileTable {
 		}
 	}
 
+	protected Float getFloat(ResultSet rs, String columnLabel) throws SQLException {
+		return rs.getFloat(columnLabel);
+	}
+
 	protected double getDouble(ResultSet rs, String columnLabel) throws SQLException {
 		 return rs.getDouble(columnLabel);
 	}
