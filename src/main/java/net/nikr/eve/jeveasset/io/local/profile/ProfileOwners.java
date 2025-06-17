@@ -67,6 +67,7 @@ public class ProfileOwners extends ProfileTable {
 				+ "	blueprintsnextupdate,"
 				+ "	skillsnextupdate,"
 				+ "	loyaltypointsnextupdate,"
+				+ "	npcstandingnextupdate,"
 				+ "	miningnextupdate,"
 				+ "	accountname,"
 				+ "	refreshtoken,"
@@ -75,7 +76,7 @@ public class ProfileOwners extends ProfileTable {
 				+ "	accountnextupdate,"
 				+ "	callbackurl,"
 				+ "	characterroles)"
-				+ " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+				+ " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 		try (PreparedStatement statement = connection.prepareStatement(sql)) {
 			Rows rows = new Rows(statement, esiOwners.size());
 			for (EsiOwner owner : esiOwners) {
@@ -99,6 +100,7 @@ public class ProfileOwners extends ProfileTable {
 				setAttribute(statement, ++index, owner.getBlueprintsNextUpdate());
 				setAttribute(statement, ++index, owner.getSkillsNextUpdate());
 				setAttribute(statement, ++index, owner.getLoyaltyPointsNextUpdate());
+				setAttribute(statement, ++index, owner.getNpcStandingNextUpdate());
 				setAttribute(statement, ++index, owner.getMiningNextUpdate());
 				setAttribute(statement, ++index, owner.getAccountName());
 				setAttribute(statement, ++index, owner.getRefreshToken());
@@ -137,6 +139,7 @@ public class ProfileOwners extends ProfileTable {
 				Date blueprintsNextUpdate = getDateNotNull(rs, "blueprintsnextupdate");
 				Date skillsNextUpdate = getDateNotNull(rs, "skillsnextupdate");
 				Date loyaltyPointsNextUpdate = getDateNotNull(rs, "loyaltypointsnextupdate");
+				Date npcStandingNextUpdate = getDateNotNull(rs, "npcstandingnextupdate");
 				Date miningNextUpdate = getDateNotNull(rs, "miningnextupdate");
 				String accountName = getString(rs, "accountname");
 				String refreshToken = getString(rs, "refreshtoken");
@@ -182,6 +185,7 @@ public class ProfileOwners extends ProfileTable {
 				owner.setBlueprintsNextUpdate(blueprintsNextUpdate);
 				owner.setSkillsNextUpdate(skillsNextUpdate);
 				owner.setLoyaltyPointsNextUpdate(loyaltyPointsNextUpdate);
+				owner.setNpcStandingNextUpdate(npcStandingNextUpdate);
 				owner.setMiningNextUpdate(miningNextUpdate);
 				esiOwners.add(owner);
 			}
@@ -193,6 +197,12 @@ public class ProfileOwners extends ProfileTable {
 		Set<String> tableColumns = tableColumns(connection, OWNERS_TABLE);
 		if (!tableColumns.contains("loyaltypointsnextupdate")) {
 			String sql = "ALTER TABLE " + OWNERS_TABLE + " ADD COLUMN loyaltypointsnextupdate INTEGER";
+			try (PreparedStatement statement = connection.prepareStatement(sql)) {
+				statement.execute();
+			}
+		}
+		if (!tableColumns.contains("npcstandingnextupdate")) {
+			String sql = "ALTER TABLE " + OWNERS_TABLE + " ADD COLUMN npcstandingnextupdate INTEGER";
 			try (PreparedStatement statement = connection.prepareStatement(sql)) {
 				statement.execute();
 			}
@@ -233,6 +243,7 @@ public class ProfileOwners extends ProfileTable {
 					+ "	structuresnextupdate INTEGER,\n"
 					+ "	accountnextupdate INTEGER,\n"
 					+ "	loyaltypointsnextupdate INTEGER,\n"
+					+ "	npcstandingnextupdate INTEGER,\n"
 					+ "	callbackurl TEXT,\n"
 					+ "	characterroles TEXT,\n"
 					+ "	UNIQUE(accountid)\n"
