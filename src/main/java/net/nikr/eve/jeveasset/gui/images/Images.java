@@ -261,6 +261,7 @@ public enum Images {
 	TOOL_EXTRACTIONS ("tool_extractions.png"),
 	TOOL_PRICE_CHANGE ("tool_price_change.png"),
 	TOOL_LOYALTY_POINTS ("tool_loyalty_points.png"),
+	TOOL_NPC_STANDING ("tool_npc_standing.png"),
 
 	UPDATE_NOT_STARTED ("update_not_started.png"),
 	UPDATE_WORKING ("update_working.png"),

@@ -66,6 +66,7 @@ public class ProfileDatabase {
 		WALLET_DIVISIONS(new ProfileWalletDivisions()),
 		SKILLS(new ProfileSkills()),
 		LOYALTY_POINTS(new ProfileLoyaltyPoints()),
+		NPC_STANDING(new ProfileNpcStanding()),
 		MINING(new ProfileMining())
 		;
 
@@ -162,7 +163,7 @@ public class ProfileDatabase {
 					loaded++;
 				} else if (table == Table.OWNERS) {
 					return false; //Fatal error
-				} else if (table == Table.CLONES || table == Table.LOYALTY_POINTS) {
+				} else if (table == Table.CLONES || table == Table.LOYALTY_POINTS || table == Table.NPC_STANDING) {
 					loaded++; //No problem (new talbes)
 				}
 			}

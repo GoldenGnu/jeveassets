@@ -105,6 +105,7 @@ import net.nikr.eve.jeveasset.gui.tabs.reprocessed.ReprocessedTab;
 import net.nikr.eve.jeveasset.gui.tabs.routing.RoutingTab;
 import net.nikr.eve.jeveasset.gui.tabs.skills.SkillsTab;
 import net.nikr.eve.jeveasset.gui.tabs.slots.SlotsTab;
+import net.nikr.eve.jeveasset.gui.tabs.standing.NpcStandingTab;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileTab;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerTab;
 import net.nikr.eve.jeveasset.gui.tabs.transaction.TransactionTab;
@@ -173,6 +174,7 @@ public class Program implements ActionListener {
 	private TreeTab treeTab;
 	private SkillsTab skillsTab;
 	private LoyaltyPointsTab loyaltyPointsTab;
+	private NpcStandingTab npcStandingTab;
 	private MiningTab miningTab;
 	private MiningGraphTab miningGraphTab;
 	private ExtractionsTab extractionsTab;
@@ -997,6 +999,14 @@ public class Program implements ActionListener {
 		return skillsTab;
 	}
 
+	public NpcStandingTab getNpcStandingTab(boolean init) {
+		if (init && npcStandingTab == null) {
+			LOG.info("Loading: Skills Tab");
+			npcStandingTab = new NpcStandingTab(this);
+		}
+		return npcStandingTab;
+	}
+
 	public StatusPanel getStatusPanel() {
 		return this.getMainWindow().getStatusPanel();
 	}
@@ -1200,6 +1210,8 @@ public class Program implements ActionListener {
 			mainWindow.addTab(getSkillsTab(true));
 		} else if (MainMenuAction.LOYALTY_POINTS.name().equals(e.getActionCommand())) {
 			mainWindow.addTab(getLoyaltyPointsTab(true));
+		} else if (MainMenuAction.NPC_STANDING.name().equals(e.getActionCommand())) {
+			mainWindow.addTab(getNpcStandingTab(true));
 		} else if (MainMenuAction.MINING_ALL.name().equals(e.getActionCommand())) {
 			mainWindow.addTab(getMiningTab(true));
 			mainWindow.addTab(getMiningGraphTab(true));
