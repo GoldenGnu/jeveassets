@@ -37,6 +37,7 @@ import net.nikr.eve.jeveasset.data.api.raw.RawIndustryJob;
 import net.nikr.eve.jeveasset.data.api.raw.RawJournal.ContextType;
 import net.nikr.eve.jeveasset.data.api.raw.RawJournalRefType;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder;
+import net.nikr.eve.jeveasset.data.api.raw.RawNpcStanding;
 import net.nikr.eve.jeveasset.data.sde.ItemFlag;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.settings.MarketPriceData;
@@ -163,9 +164,11 @@ public class ConverterTestOptionsGetter {
 		private static final CorporationContainersLogsResponse.PasswordTypeEnum[] ESI_CONTAINER_PASSWORD_TYPE = CorporationContainersLogsResponse.PasswordTypeEnum.values();
 		//Owners
 		private static final EsiCallbackURL[] ESI_CALLBACK_URL = EsiCallbackURL.values();
+		//NpcStanding
+		private static final RawNpcStanding.FromType[] NPC_STANDING_FROM_TYPE = RawNpcStanding.FromType.values();
+
 		//Control
 		private static final int MAX = createMax();
-
 		//Controls
 		private final int index;
 
@@ -328,6 +331,8 @@ public class ConverterTestOptionsGetter {
 			tempMax = Math.max(tempMax, RAW_MARKET_ORDER_STATE.length);
 			//Owners
 			tempMax = Math.max(tempMax, ESI_CALLBACK_URL.length);
+			//Npc Standing
+			tempMax = Math.max(tempMax, NPC_STANDING_FROM_TYPE.length);
 			return tempMax;
 		}
 
@@ -652,6 +657,11 @@ public class ConverterTestOptionsGetter {
 		@Override
 		public EsiCallbackURL getEsiCallbackURL() {
 			return get(ESI_CALLBACK_URL, index);
+		}
+//NPC Standing
+		@Override
+		public RawNpcStanding.FromType getNpcStandingFromType() {
+			return get(NPC_STANDING_FROM_TYPE, index);
 		}
 	}
 

@@ -70,6 +70,7 @@ public abstract class GuiFrame extends Bundle {
 	public abstract String misc();
 	public abstract String netWorth();
 	public abstract String not();
+	public abstract String npcStanding();
 	public abstract String options();
 	public abstract String options1();
 	public abstract String overview();

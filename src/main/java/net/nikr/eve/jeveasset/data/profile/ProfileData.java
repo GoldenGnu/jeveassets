@@ -46,6 +46,7 @@ import net.nikr.eve.jeveasset.data.api.my.MyJournal;
 import net.nikr.eve.jeveasset.data.api.my.MyLoyaltyPoints;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
 import net.nikr.eve.jeveasset.data.api.my.MyMining;
+import net.nikr.eve.jeveasset.data.api.my.MyNpcStanding;
 import net.nikr.eve.jeveasset.data.api.my.MySkill;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.api.raw.RawBlueprint;
@@ -96,6 +97,7 @@ public class ProfileData {
 	private final EventList<MyContract> contractEventList = EventListManager.create();
 	private final EventList<MySkill> skillsEventList = EventListManager.create();
 	private final EventList<MyLoyaltyPoints> loyaltyPointsEventList = EventListManager.create();
+	private final EventList<MyNpcStanding> npcStandingsEventList = EventListManager.create();
 	private final EventList<MyMining> miningEventList = EventListManager.create();
 	private final EventList<MyExtraction> extractionsEventList = EventListManager.create();
 	private final List<MyContractItem> contractItemList = new ArrayList<>();
@@ -168,6 +170,10 @@ public class ProfileData {
 
 	public EventList<MyLoyaltyPoints> getLoyaltyPointsEventList() {
 		return loyaltyPointsEventList;
+	}
+
+	public EventList<MyNpcStanding> getNpcStandingsEventList() {
+		return npcStandingsEventList;
 	}
 
 	public EventList<MyMining> getMiningEventList() {
@@ -456,6 +462,7 @@ public class ProfileData {
 		Set<MyContract> contracts = new HashSet<>();
 		Set<MySkill> skills = new HashSet<>();
 		Set<MyLoyaltyPoints> loyaltyPointses = new HashSet<>();
+		Set<MyNpcStanding> npcStandings = new HashSet<>();
 		Set<MyMining> minings = new HashSet<>();
 		Set<MyExtraction> extractions = new HashSet<>();
 		Map<Long, OwnerType> blueprintsMap = new HashMap<>();
@@ -563,6 +570,8 @@ public class ProfileData {
 			}
 			//Loyalty Points
 			loyaltyPointses.addAll(owner.getLoyaltyPoints());
+			//NPC Standing
+			npcStandings.addAll(owner.getNpcStanding());
 			//Mining
 			minings.addAll(owner.getMining());
 			//Extractions
@@ -727,6 +736,11 @@ public class ProfileData {
 		for (MyLoyaltyPoints loyaltyPoints : loyaltyPointses) {
 			//Names
 			loyaltyPoints.setCorporationName(ApiIdConverter.getOwnerName(loyaltyPoints.getCorporationID()));
+		}
+
+		for (MyNpcStanding npcStanding : npcStandings) {
+			//Names
+			npcStanding.setName(ApiIdConverter.getOwnerName(npcStanding.getFromID()));
 		}
 		//Update Mining dynamic values
 		for (MyMining mining : minings) {
@@ -936,6 +950,18 @@ public class ProfileData {
 					loyaltyPointsEventList.addAll(loyaltyPointses);
 				} finally {
 					loyaltyPointsEventList.getReadWriteLock().writeLock().unlock();
+				}
+			}
+		});
+		Program.ensureEDT(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					npcStandingsEventList.getReadWriteLock().writeLock().lock();
+					npcStandingsEventList.clear();
+					npcStandingsEventList.addAll(npcStandings);
+				} finally {
+					npcStandingsEventList.getReadWriteLock().writeLock().unlock();
 				}
 			}
 		});

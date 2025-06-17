@@ -60,8 +60,11 @@ public class ProfileReadWriteTest extends TestUtil {
 
 	private void test(boolean setNull) {
 		AddedData.load();
-		
+
 		for (ConverterTestOptions options : ConverterTestOptionsGetter.getConverterOptions()) {
+			//Clear previouse test data
+			cleanup();
+
 			Profile saveProfile = new Profile();
 			//ESI
 			saveProfile.getEsiOwners().add(ConverterTestUtil.getEsiOwner(true, setNull, false, options));

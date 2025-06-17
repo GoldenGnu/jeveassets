@@ -372,6 +372,15 @@ public class EsiOwner extends AbstractOwner implements OwnerType {
 	}
 
 	@Override
+	public boolean isNpcStanding() {
+		if (isCorporation()) {
+			return EsiScopes.CORPORATION_NPC_STANDING.isInScope(scopes);
+		} else {
+			return EsiScopes.CHARACTER_NPC_STANDING.isInScope(scopes);
+		}
+	}
+
+	@Override
 	public boolean isMining() {
 		if (isCorporation()) {
 			return EsiScopes.CORPORATION_MINING.isInScope(scopes)

@@ -37,7 +37,9 @@ import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
 import net.nikr.eve.jeveasset.data.api.my.MyJournal;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
+import net.nikr.eve.jeveasset.data.api.my.MyNpcStanding;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
+import net.nikr.eve.jeveasset.data.api.raw.RawNpcStanding.FromType;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.sde.ReprocessedMaterial;
@@ -80,6 +82,7 @@ import net.nikr.eve.jeveasset.gui.tabs.reprocessed.ReprocessedTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.reprocessed.ReprocessedTotal;
 import net.nikr.eve.jeveasset.gui.tabs.skills.SkillsTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.slots.SlotsTableFormat;
+import net.nikr.eve.jeveasset.gui.tabs.standing.NpcStandingTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileExtendedTableFormat;
@@ -170,6 +173,8 @@ public class TableFormatTest extends TestUtil {
 			test(SkillsTableFormat.class);
 			//Loyalty Points
 			test(LoyaltyPointsTableFormat.class);
+			//NPC Standing
+			test(NpcStandingTableFormat.class);
 			//Mining
 			test(MiningTableFormat.class);
 			//Extractions
@@ -289,6 +294,8 @@ public class TableFormatTest extends TestUtil {
 				assertNotNull(enumColumn.getClass().getName() + "." + enumColumn.name() + " -> is null", type);
 				if (String.class.isAssignableFrom(type)) {
 					assertEquals(StringComparators.TO_STRING, comparator);
+				} else if (FromType.class.isAssignableFrom(type)) {
+					assertEquals(MyNpcStanding.FROM_TYPE_COMPARATOR, comparator);
 				} else if (Comparable.class.isAssignableFrom(type)) {
 					assertEquals(GlazedLists.comparableComparator(), comparator);
 				} else if (Component.class.isAssignableFrom(type)

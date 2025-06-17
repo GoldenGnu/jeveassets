@@ -39,6 +39,7 @@ import net.nikr.eve.jeveasset.data.api.my.MyJournal;
 import net.nikr.eve.jeveasset.data.api.my.MyLoyaltyPoints;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
 import net.nikr.eve.jeveasset.data.api.my.MyMining;
+import net.nikr.eve.jeveasset.data.api.my.MyNpcStanding;
 import net.nikr.eve.jeveasset.data.api.my.MyShip;
 import net.nikr.eve.jeveasset.data.api.my.MySkill;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
@@ -55,6 +56,7 @@ import net.nikr.eve.jeveasset.data.api.raw.RawJournal;
 import net.nikr.eve.jeveasset.data.api.raw.RawLoyaltyPoints;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder;
 import net.nikr.eve.jeveasset.data.api.raw.RawMining;
+import net.nikr.eve.jeveasset.data.api.raw.RawNpcStanding;
 import net.nikr.eve.jeveasset.data.api.raw.RawPublicMarketOrder;
 import net.nikr.eve.jeveasset.data.api.raw.RawSkill;
 import net.nikr.eve.jeveasset.data.api.raw.RawTransaction;
@@ -73,6 +75,7 @@ import net.troja.eve.esi.model.CharacterOrdersHistoryResponse;
 import net.troja.eve.esi.model.CharacterOrdersResponse;
 import net.troja.eve.esi.model.CharacterPlanetsResponse;
 import net.troja.eve.esi.model.CharacterShipResponse;
+import net.troja.eve.esi.model.CharacterStandingsResponse;
 import net.troja.eve.esi.model.CharacterWalletJournalResponse;
 import net.troja.eve.esi.model.CharacterWalletTransactionsResponse;
 import net.troja.eve.esi.model.Clone;
@@ -89,6 +92,7 @@ import net.troja.eve.esi.model.CorporationMiningObserverResponse;
 import net.troja.eve.esi.model.CorporationMiningObserversResponse;
 import net.troja.eve.esi.model.CorporationOrdersHistoryResponse;
 import net.troja.eve.esi.model.CorporationOrdersResponse;
+import net.troja.eve.esi.model.CorporationStandingsResponse;
 import net.troja.eve.esi.model.CorporationWalletJournalResponse;
 import net.troja.eve.esi.model.CorporationWalletTransactionsResponse;
 import net.troja.eve.esi.model.CorporationWalletsResponse;
@@ -395,10 +399,26 @@ public class EsiConverter extends DataConverter {
 	}
 
 	public static Set<MyLoyaltyPoints> toLoyaltyPoints(List<CharacterLoyaltyPointsResponse> responses, OwnerType owner) {
-		Set<RawLoyaltyPoints> clones = new HashSet<>();
+		Set<RawLoyaltyPoints> loyaltyPoints = new HashSet<>();
 		for (CharacterLoyaltyPointsResponse response : responses) {
-			clones.add(new RawLoyaltyPoints(response));
+			loyaltyPoints.add(new RawLoyaltyPoints(response));
 		}
-		return convertMyLoyaltyPoints(clones, owner);
+		return convertMyLoyaltyPoints(loyaltyPoints, owner);
+	}
+
+	public static Set<MyNpcStanding> toNpcStanding(List<CharacterStandingsResponse> responses, OwnerType owner) {
+		Set<RawNpcStanding> npcStandings = new HashSet<>();
+		for (CharacterStandingsResponse response : responses) {
+			npcStandings.add(new RawNpcStanding(response));
+		}
+		return convertMyNpcStanding(npcStandings, owner);
+	}
+
+	public static Set<MyNpcStanding> toNpcStandingCorporation(List<CorporationStandingsResponse> responses, OwnerType owner) {
+		Set<RawNpcStanding> npcStandings = new HashSet<>();
+		for (CorporationStandingsResponse response : responses) {
+			npcStandings.add(new RawNpcStanding(response));
+		}
+		return convertMyNpcStanding(npcStandings, owner);
 	}
 }

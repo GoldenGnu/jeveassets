@@ -71,6 +71,7 @@ import net.nikr.eve.jeveasset.io.esi.EsiOwnerGetter;
 import net.nikr.eve.jeveasset.io.esi.EsiPlanetaryInteractionGetter;
 import net.nikr.eve.jeveasset.io.esi.EsiShipGetter;
 import net.nikr.eve.jeveasset.io.esi.EsiSkillGetter;
+import net.nikr.eve.jeveasset.io.esi.EsiNpcStandingGetter;
 import net.nikr.eve.jeveasset.io.esi.EsiTransactionsGetter;
 import net.nikr.eve.jeveasset.io.online.PriceDataGetter;
 import net.nikr.eve.jeveasset.io.shared.ThreadWoker;
@@ -113,6 +114,9 @@ public class UpdateDialog extends JDialogCentered {
 	private final JCheckBox jLoyaltyPoints;
 	private final JLabel jLoyaltyPointsLeftFirst;
 	private final JLabel jLoyaltyPointsLeftLast;
+	private final JCheckBox jNpcStanding;
+	private final JLabel jNpcStandingLeftFirst;
+	private final JLabel jNpcStandingLeftLast;
 	private final JCheckBox jMining;
 	private final JLabel jMiningLeftFirst;
 	private final JLabel jMiningLeftLast;
@@ -155,6 +159,7 @@ public class UpdateDialog extends JDialogCentered {
 		jContainerLogs = new JCheckBox(DialoguesUpdate.get().containerLogs());
 		jSkills = new JCheckBox(DialoguesUpdate.get().skills());
 		jLoyaltyPoints = new JCheckBox(DialoguesUpdate.get().loyaltyPoints());
+		jNpcStanding = new JCheckBox(DialoguesUpdate.get().npcStanding());
 		jMining = new JCheckBox(DialoguesUpdate.get().mining());
 		jPriceDataAll = new JRadioButton(DialoguesUpdate.get().priceData());
 		jPriceDataAll.setActionCommand(UpdateDialogAction.CHANGED.name());
@@ -180,6 +185,7 @@ public class UpdateDialog extends JDialogCentered {
 		jCheckBoxes.add(jBlueprints);
 		jCheckBoxes.add(jSkills);
 		jCheckBoxes.add(jLoyaltyPoints);
+		jCheckBoxes.add(jNpcStanding);
 		jCheckBoxes.add(jMining);
 		jCheckBoxes.add(jContainerLogs);
 		for (JCheckBox jCheckBox : jCheckBoxes) {
@@ -198,6 +204,7 @@ public class UpdateDialog extends JDialogCentered {
 		jBlueprintsLeftFirst = new JLabel();
 		jSkillsLeftFirst = new JLabel();
 		jLoyaltyPointsLeftFirst = new JLabel();
+		jNpcStandingLeftFirst = new JLabel();
 		jMiningLeftFirst = new JLabel();
 		jContainerLogsLeftFirst = new JLabel();
 		jPriceDataLeft = new JLabel();
@@ -213,6 +220,7 @@ public class UpdateDialog extends JDialogCentered {
 		jBlueprintsLeftLast = new JLabel();
 		jSkillLeftLast = new JLabel();
 		jLoyaltyPointsLeftLast = new JLabel();
+		jNpcStandingLeftLast = new JLabel();
 		jMiningLeftLast = new JLabel();
 		jContainerLogsLeftLast = new JLabel();
 
@@ -241,6 +249,7 @@ public class UpdateDialog extends JDialogCentered {
 								.addComponent(jBlueprints)
 								.addComponent(jSkills)
 								.addComponent(jLoyaltyPoints)
+								.addComponent(jNpcStanding)
 								.addComponent(jMining)
 								.addComponent(jContainerLogs)
 							)
@@ -257,6 +266,7 @@ public class UpdateDialog extends JDialogCentered {
 								.addComponent(jBlueprintsLeftFirst)
 								.addComponent(jSkillsLeftFirst)
 								.addComponent(jLoyaltyPointsLeftFirst)
+								.addComponent(jNpcStandingLeftFirst)
 								.addComponent(jMiningLeftFirst)
 								.addComponent(jContainerLogsLeftFirst)
 							)
@@ -282,6 +292,7 @@ public class UpdateDialog extends JDialogCentered {
 						.addComponent(jBlueprintsLeftLast)
 						.addComponent(jSkillLeftLast)
 						.addComponent(jLoyaltyPointsLeftLast)
+						.addComponent(jNpcStandingLeftLast)
 						.addComponent(jMiningLeftLast)
 						.addComponent(jContainerLogsLeftLast)
 						.addComponent(jPriceDataLeft)
@@ -355,6 +366,11 @@ public class UpdateDialog extends JDialogCentered {
 					.addComponent(jLoyaltyPointsLeftLast, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				)
 				.addGroup(layout.createParallelGroup()
+					.addComponent(jNpcStanding, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jNpcStandingLeftFirst, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jNpcStandingLeftLast, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+				)
+				.addGroup(layout.createParallelGroup()
 					.addComponent(jMining, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jMiningLeftFirst, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jMiningLeftLast, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
@@ -415,6 +431,7 @@ public class UpdateDialog extends JDialogCentered {
 		Date blueprintsFirst = null;
 		Date skillsFirst = null;
 		Date loyaltyPointsFirst = null;
+		Date npcStandingFirst = null;
 		Date miningFirst = null;
 		Date containerLogsFirst = null;
 		Date accountBalanceFirst = null;
@@ -428,6 +445,7 @@ public class UpdateDialog extends JDialogCentered {
 		Date blueprintsLast = null;
 		Date skillsLast = null;
 		Date loyaltyPointsLast = null;
+		Date npcStandingLast = null;
 		Date miningLast = null;
 		Date containerLogsLast = null;
 		Date accountBalanceLast = null;
@@ -481,6 +499,10 @@ public class UpdateDialog extends JDialogCentered {
 				loyaltyPointsFirst = updateFirst(loyaltyPointsFirst, owner.getLoyaltyPointsNextUpdate());
 				loyaltyPointsLast = updateLast(loyaltyPointsLast, owner.getLoyaltyPointsNextUpdate());
 			}
+			if (owner.isNpcStanding()) {
+				npcStandingFirst = updateFirst(npcStandingFirst, owner.getNpcStandingNextUpdate());
+				npcStandingLast = updateLast(npcStandingLast, owner.getNpcStandingNextUpdate());
+			}
 			if (owner.isMining()) {
 				miningFirst = updateFirst(miningFirst, owner.getMiningNextUpdate());
 				miningLast = updateLast(miningLast, owner.getMiningNextUpdate());
@@ -512,6 +534,7 @@ public class UpdateDialog extends JDialogCentered {
 		setUpdateLabel(jContainerLogsLeftFirst, jContainerLogsLeftLast, jContainerLogs, containerLogsFirst, containerLogsLast, check);
 		setUpdateLabel(jSkillsLeftFirst, jSkillLeftLast, jSkills, skillsFirst, skillsLast, check);
 		setUpdateLabel(jLoyaltyPointsLeftFirst, jLoyaltyPointsLeftLast, jLoyaltyPoints, loyaltyPointsFirst, loyaltyPointsLast, check);
+		setUpdateLabel(jNpcStandingLeftFirst, jNpcStandingLeftLast, jNpcStanding, loyaltyPointsFirst, loyaltyPointsLast, check);
 		setUpdateLabel(jMiningLeftFirst, jMiningLeftLast, jMining, miningFirst, miningLast, check);
 		changed();
 
@@ -608,6 +631,7 @@ public class UpdateDialog extends JDialogCentered {
 			jBlueprints.setSelected(true);
 			jSkills.setSelected(true);
 			jLoyaltyPoints.setSelected(true);
+			jNpcStanding.setSelected(true);
 			jMining.setSelected(true);
 			jContainerLogs.setSelected(true);
 			jPriceDataAll.setSelected(true);
@@ -655,6 +679,7 @@ public class UpdateDialog extends JDialogCentered {
 						|| jTransactions.isSelected()
 						|| jSkills.isSelected()
 						|| jLoyaltyPoints.isSelected()
+						|| jNpcStanding.isSelected()
 						) {
 					updateTasks.add(new Step1Task(program.getProfileManager()));
 					updateTasks.add(new Step2Task(program.getProfileManager(),
@@ -669,9 +694,9 @@ public class UpdateDialog extends JDialogCentered {
 							jMining.isSelected(),
 							jTransactions.isSelected(),
 							jSkills.isSelected(),
-							jLoyaltyPoints.isSelected()));
-					updateTasks.add(new Step3Task(program.getProfileManager(),
-							jAssets.isSelected()));
+							jLoyaltyPoints.isSelected(),
+							jNpcStanding.isSelected()));
+					updateTasks.add(new Step3Task(program.getProfileManager(), jAssets.isSelected()));
 				}
 				if (jContracts.isSelected()) {
 					updateTasks.add(new Step4Task(program.getProfileManager()));
@@ -762,6 +787,7 @@ public class UpdateDialog extends JDialogCentered {
 		private final boolean transactions;
 		private final boolean skills;
 		private final boolean loyaltyPoints;
+		private final boolean npcStanding;
 
 		public Step2Task(final ProfileManager profileManager,
 								final boolean assets,
@@ -775,7 +801,8 @@ public class UpdateDialog extends JDialogCentered {
 								final boolean mining,
 								final boolean transactions,
 								final boolean skills,
-								final boolean loyaltyPoints) {
+								final boolean loyaltyPoints,
+								final boolean npcStanding) {
 			super(DialoguesUpdate.get().step2());
 			this.profileManager = profileManager;
 			this.assets = assets;
@@ -790,6 +817,7 @@ public class UpdateDialog extends JDialogCentered {
 			this.transactions = transactions;
 			this.skills = skills;
 			this.loyaltyPoints = loyaltyPoints;
+			this.npcStanding = npcStanding;
 		}
 
 		@Override
@@ -836,6 +864,9 @@ public class UpdateDialog extends JDialogCentered {
 				}
 				if (loyaltyPoints) {
 					updates.add(new EsiLoyaltyPointsGetter(this, esiOwner));
+				}
+				if (npcStanding) {
+					updates.add(new EsiNpcStandingGetter(this, esiOwner));
 				}
 			}
 			ThreadWoker.start(this, updates);

@@ -32,6 +32,7 @@ import net.nikr.eve.jeveasset.data.api.my.MyJournal;
 import net.nikr.eve.jeveasset.data.api.my.MyLoyaltyPoints;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
 import net.nikr.eve.jeveasset.data.api.my.MyMining;
+import net.nikr.eve.jeveasset.data.api.my.MyNpcStanding;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.api.raw.RawContainerLog;
 import net.nikr.eve.jeveasset.data.api.raw.RawJournal.ContextType;
@@ -143,6 +144,9 @@ public class EsiNameGetter extends AbstractEsiGetter {
 			}
 			for (MyLoyaltyPoints loyaltyPoints : ownerType.getLoyaltyPoints()) {
 				addOwnerID(list, loyaltyPoints.getCorporationID());
+			}
+			for (MyNpcStanding npcStanding : ownerType.getNpcStanding()) {
+				addOwnerID(list, npcStanding.getFromID());
 			}
 			for (MyMining mining : ownerType.getMining()) {
 				addOwnerID(list, mining.getCharacterID());

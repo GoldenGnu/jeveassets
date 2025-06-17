@@ -50,6 +50,7 @@ import net.nikr.eve.jeveasset.data.api.my.MyJournal;
 import net.nikr.eve.jeveasset.data.api.my.MyLoyaltyPoints;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
 import net.nikr.eve.jeveasset.data.api.my.MyMining;
+import net.nikr.eve.jeveasset.data.api.my.MyNpcStanding;
 import net.nikr.eve.jeveasset.data.api.my.MyShip;
 import net.nikr.eve.jeveasset.data.api.my.MySkill;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
@@ -69,6 +70,8 @@ import net.nikr.eve.jeveasset.data.api.raw.RawLoyaltyPoints;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder.Change;
 import net.nikr.eve.jeveasset.data.api.raw.RawMining;
+import net.nikr.eve.jeveasset.data.api.raw.RawNpcStanding;
+import net.nikr.eve.jeveasset.data.api.raw.RawNpcStanding.FromType;
 import net.nikr.eve.jeveasset.data.api.raw.RawSkill;
 import net.nikr.eve.jeveasset.data.api.raw.RawTransaction;
 import net.nikr.eve.jeveasset.data.sde.Item;
@@ -188,8 +191,11 @@ public class ConverterTestUtil {
 		//Extractions
 		owner.setExtractions(set(getMyExtraction(owner, setNull, setValues, options)));
 
-		//LoyaltyPoints
+		//Loyalty Points
 		owner.setLoyaltyPoints(set(getMyLoyaltyPoints(owner, setNull, setValues, options)));
+
+		//Npc Standing
+		owner.setNpcStanding(set(getMyNpcStanding(owner, setNull, setValues, options)));
 
 		//Wallet Divisions
 		//owner.setWalletDivisions(walletDivisions);
@@ -396,6 +402,20 @@ public class ConverterTestUtil {
 			setValues(loyaltyPoints, options, null, false);
 		}
 		return loyaltyPoints;
+	}
+
+	public static RawNpcStanding getRawNpcStanding(boolean setNull, ConverterTestOptions options) {
+		RawNpcStanding rawNpcStanding = RawNpcStanding.create();
+		setValues(rawNpcStanding, options, setNull ? CharacterMiningResponse.class : null);
+		return rawNpcStanding;
+	}
+
+	public static MyNpcStanding getMyNpcStanding(OwnerType owner, boolean setNull, boolean setValues, ConverterTestOptions options) {
+		MyNpcStanding npcStanding = new MyNpcStanding(getRawNpcStanding(setNull, options), owner);
+		if (setValues) {
+			setValues(npcStanding, options, null, false);
+		}
+		return npcStanding;
 	}
 
 	public static RawMining getRawMining(boolean setNull, ConverterTestOptions options) {
@@ -860,6 +880,8 @@ public class ConverterTestUtil {
 			return options.getButton();
 		} else if (type.equals(MyBlueprint.class)) {
 			return options.getMyBlueprint();
+		} else if (type.equals(FromType.class)) {
+			return options.getNpcStandingFromType();
 		} else {
 			fail("No test value for: " + type.getSimpleName());
 			return null;

@@ -30,6 +30,7 @@ import net.nikr.eve.jeveasset.data.api.my.MyJournal;
 import net.nikr.eve.jeveasset.data.api.my.MyLoyaltyPoints;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
 import net.nikr.eve.jeveasset.data.api.my.MyMining;
+import net.nikr.eve.jeveasset.data.api.my.MyNpcStanding;
 import net.nikr.eve.jeveasset.data.api.my.MySkill;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.sde.Item;
@@ -63,6 +64,7 @@ import net.nikr.eve.jeveasset.gui.tabs.reprocessed.ReprocessedTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.skills.SkillsTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.slots.Slots;
 import net.nikr.eve.jeveasset.gui.tabs.slots.SlotsTableFormat;
+import net.nikr.eve.jeveasset.gui.tabs.standing.NpcStandingTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileExtendedTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileTableFormat;
@@ -163,6 +165,10 @@ public class TableFormatFactory {
 
 	public static EnumTableFormatAdaptor<LoyaltyPointsTableFormat, MyLoyaltyPoints> loyaltyPointsTableFormat() {
 		return new EnumTableFormatAdaptor<>(LoyaltyPointsTableFormat.class);
+	}
+
+	public static EnumTableFormatAdaptor<NpcStandingTableFormat, MyNpcStanding> npcStandingTableFormat() {
+		return new EnumTableFormatAdaptor<>(NpcStandingTableFormat.class);
 	}
 
 	public static EnumTableFormatAdaptor<MiningTableFormat, MyMining> miningTableFormat() {

@@ -33,6 +33,7 @@ import net.nikr.eve.jeveasset.data.api.raw.RawIndustryJob;
 import net.nikr.eve.jeveasset.data.api.raw.RawJournal;
 import net.nikr.eve.jeveasset.data.api.raw.RawJournalRefType;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder;
+import net.nikr.eve.jeveasset.data.api.raw.RawNpcStanding;
 import net.nikr.eve.jeveasset.data.sde.ItemFlag;
 import net.nikr.eve.jeveasset.data.sde.StaticData;
 import net.troja.eve.esi.model.CharacterAssetsResponse;
@@ -42,6 +43,7 @@ import net.troja.eve.esi.model.CharacterIndustryJobsResponse;
 import net.troja.eve.esi.model.CharacterLocationResponse;
 import net.troja.eve.esi.model.CharacterOrdersHistoryResponse;
 import net.troja.eve.esi.model.CharacterOrdersResponse;
+import net.troja.eve.esi.model.CharacterStandingsResponse;
 import net.troja.eve.esi.model.CharacterWalletJournalResponse;
 import net.troja.eve.esi.model.Clone;
 import net.troja.eve.esi.model.CorporationAssetsResponse;
@@ -51,6 +53,7 @@ import net.troja.eve.esi.model.CorporationContractsResponse;
 import net.troja.eve.esi.model.CorporationIndustryJobsResponse;
 import net.troja.eve.esi.model.CorporationOrdersHistoryResponse;
 import net.troja.eve.esi.model.CorporationOrdersResponse;
+import net.troja.eve.esi.model.CorporationStandingsResponse;
 import net.troja.eve.esi.model.CorporationWalletJournalResponse;
 import net.troja.eve.esi.model.MarketOrdersResponse;
 import net.troja.eve.esi.model.MarketStructuresResponse;
@@ -374,6 +377,43 @@ public class RawConverter {
 		}
 		try {
 			return RawContract.ContractType.valueOf(value.name());
+		} catch (IllegalArgumentException ex) {
+			return null;
+		}
+	}
+
+	public static RawNpcStanding.FromType toNpcStandingFromType(String valueEnum, String valueString) {
+		if (valueEnum != null) {
+			try {
+				return RawNpcStanding.FromType.valueOf(valueEnum);
+			} catch (IllegalArgumentException ex) {
+
+			}
+		}
+		if (valueString != null) {
+			for (RawNpcStanding.FromType value : RawNpcStanding.FromType.values()) {
+				if (value.getValue().equals(valueString)) {
+					return value;
+				}
+			}
+		}
+		return null;
+	}
+
+	public static RawNpcStanding.FromType toNpcStandingFromType(CharacterStandingsResponse.FromTypeEnum value) {
+		return toNpcStandingFromTypeEnum(value);
+	}
+
+	public static RawNpcStanding.FromType toNpcStandingFromType(CorporationStandingsResponse.FromTypeEnum value) {
+		return toNpcStandingFromTypeEnum(value);
+	}
+
+	private static <E extends Enum<E>> RawNpcStanding.FromType toNpcStandingFromTypeEnum(E value) {
+		if (value == null) {
+			return null;
+		}
+		try {
+			return RawNpcStanding.FromType.valueOf(value.name());
 		} catch (IllegalArgumentException ex) {
 			return null;
 		}

@@ -24,21 +24,22 @@ package net.nikr.eve.jeveasset.i18n;
 import java.util.Locale;
 import uk.me.candle.translations.Bundle;
 
-public abstract class TabsLoyaltyPoints extends Bundle {
+public abstract class TabsNpcStanding extends Bundle {
 
-	public static TabsLoyaltyPoints get() {
-		return BundleServiceFactory.getBundleService().get(TabsLoyaltyPoints.class);
+	public static TabsNpcStanding get() {
+		return BundleServiceFactory.getBundleService().get(TabsNpcStanding.class);
 	}
 
-	public TabsLoyaltyPoints(final Locale locale) {
+	public TabsNpcStanding(final Locale locale) {
 		super(locale);
 	}
 
-	public abstract String loyaltyPoints();
+	public abstract String npcStanding();
 	public abstract String columnOwner();
-	public abstract String columnCorporationName();
-	public abstract String columnLoyaltyPoints();
-	public abstract String fuzzworkLoyaltyPointsStore();
-	public abstract String sell();
-	public abstract String buy();
+	public abstract String columnName();
+	public abstract String columnType();
+	public abstract String columnStanding();
+	public abstract String typeAgent();
+	public abstract String typeCorporation();
+	public abstract String typeFaction();
 }

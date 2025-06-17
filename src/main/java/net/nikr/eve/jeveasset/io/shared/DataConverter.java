@@ -42,6 +42,7 @@ import net.nikr.eve.jeveasset.data.api.my.MyJournal;
 import net.nikr.eve.jeveasset.data.api.my.MyLoyaltyPoints;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
 import net.nikr.eve.jeveasset.data.api.my.MyMining;
+import net.nikr.eve.jeveasset.data.api.my.MyNpcStanding;
 import net.nikr.eve.jeveasset.data.api.my.MySkill;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.api.raw.RawAccountBalance;
@@ -57,6 +58,7 @@ import net.nikr.eve.jeveasset.data.api.raw.RawLoyaltyPoints;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder.Change;
 import net.nikr.eve.jeveasset.data.api.raw.RawMining;
+import net.nikr.eve.jeveasset.data.api.raw.RawNpcStanding;
 import net.nikr.eve.jeveasset.data.api.raw.RawSkill;
 import net.nikr.eve.jeveasset.data.api.raw.RawTransaction;
 import net.nikr.eve.jeveasset.data.sde.Item;
@@ -506,5 +508,17 @@ public abstract class DataConverter {
 
 	public static MyLoyaltyPoints toMyLoyaltyPoints(RawLoyaltyPoints rawLoyaltyPoints, OwnerType owner) {
 		return new MyLoyaltyPoints(rawLoyaltyPoints, owner);
+	}
+
+	protected static Set<MyNpcStanding> convertMyNpcStanding(Set<RawNpcStanding> rawNpcStandings, OwnerType owner) {
+		Set<MyNpcStanding> npcStandings = new HashSet<>();
+		for (RawNpcStanding rawNpcStanding : rawNpcStandings) {
+			npcStandings.add(toMyNpcStanding(rawNpcStanding, owner));
+		}
+		return npcStandings;
+	}
+
+	public static MyNpcStanding toMyNpcStanding(RawNpcStanding rawNpcStanding, OwnerType owner) {
+		return new MyNpcStanding(rawNpcStanding, owner);
 	}
 }

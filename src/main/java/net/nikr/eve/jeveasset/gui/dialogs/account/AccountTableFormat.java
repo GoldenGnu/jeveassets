@@ -299,6 +299,16 @@ public enum AccountTableFormat implements EnumTableColumn<OwnerType> {
 			return new YesNo(from.isLoyaltyPoints());
 		}
 	},
+	NPC_STANDING(YesNo.class) {
+		@Override
+		public String getColumnName() {
+			return DialoguesAccount.get().tableFormatNpcStanding();
+		}
+		@Override
+		public Object getColumnValue(final OwnerType from) {
+			return new YesNo(from.isNpcStanding());
+		}
+	},
 	EXPIRES(ExpirerDate.class) {
 		@Override
 		public String getColumnName() {
