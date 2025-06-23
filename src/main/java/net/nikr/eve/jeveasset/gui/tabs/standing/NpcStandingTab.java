@@ -93,6 +93,7 @@ public class NpcStandingTab extends JMainTabPrimary implements TagUpdate {
 		jTable.setCellSelectionEnabled(true);
 		jTable.setRowSelectionAllowed(true);
 		jTable.setColumnSelectionAllowed(true);
+		jTable.setRowHeight(MyNpcStanding.IMAGE_SIZE.getSize());
 		//Sorting
 		TableComparatorChooser<MyNpcStanding> comparatorChooser = TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
 		//Selection Model

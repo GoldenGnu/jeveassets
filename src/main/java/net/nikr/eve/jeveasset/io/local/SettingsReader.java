@@ -100,6 +100,8 @@ import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJobTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJobsTab;
 import net.nikr.eve.jeveasset.gui.tabs.journal.JournalTab;
 import net.nikr.eve.jeveasset.gui.tabs.journal.JournalTableFormat;
+import net.nikr.eve.jeveasset.gui.tabs.loyalty.LoyaltyPointsTab;
+import net.nikr.eve.jeveasset.gui.tabs.loyalty.LoyaltyPointsTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.mining.ExtractionsTab;
 import net.nikr.eve.jeveasset.gui.tabs.mining.ExtractionsTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.mining.MiningTab;
@@ -116,6 +118,8 @@ import net.nikr.eve.jeveasset.gui.tabs.skills.SkillsTab;
 import net.nikr.eve.jeveasset.gui.tabs.skills.SkillsTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.slots.SlotsTab;
 import net.nikr.eve.jeveasset.gui.tabs.slots.SlotsTableFormat;
+import net.nikr.eve.jeveasset.gui.tabs.standing.NpcStandingTab;
+import net.nikr.eve.jeveasset.gui.tabs.standing.NpcStandingTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter.StockpileContainer;
@@ -1734,6 +1738,22 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		try {
 			if (toolName.equals(MiningTab.NAME)) {
 				return MiningTableFormat.valueOf(column);
+			}
+		} catch (IllegalArgumentException exception) {
+
+		}
+		//Loyalty Points
+		try {
+			if (toolName.equals(LoyaltyPointsTab.NAME)) {
+				return LoyaltyPointsTableFormat.valueOf(column);
+			}
+		} catch (IllegalArgumentException exception) {
+
+		}
+		//Npc Standing 
+		try {
+			if (toolName.equals(NpcStandingTab.NAME)) {
+				return NpcStandingTableFormat.valueOf(column);
 			}
 		} catch (IllegalArgumentException exception) {
 

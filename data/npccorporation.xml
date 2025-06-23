@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<rows>
+    <!--Generated from Eve Online Toolkit. ©CCP hf. All rights reserved. Used with permission.-->
+    <row c="true" corporationid="1000002" factionid="500001"/>
+    <row c="true" corporationid="1000003" factionid="500001"/>
+    <row c="true" corporationid="1000004" factionid="500001"/>
+    <row c="true" corporationid="1000005" factionid="500001"/>
+    <row c="true" corporationid="1000006" factionid="500001"/>
+    <row c="true" corporationid="1000007" factionid="500001"/>
+    <row c="true" corporationid="1000008" factionid="500001"/>
+    <row c="true" corporationid="1000009" factionid="500001"/>
+    <row c="true" corporationid="1000010" factionid="500001"/>
+    <row c="true" corporationid="1000011" factionid="500001"/>
+    <row c="true" corporationid="1000012" factionid="500001"/>
+    <row c="true" corporationid="1000013" factionid="500001"/>
+    <row c="true" corporationid="1000014" factionid="500001"/>
+    <row c="true" corporationid="1000015" factionid="500001"/>
+    <row c="true" corporationid="1000016" factionid="500001"/>
+    <row c="true" corporationid="1000017" factionid="500001"/>
+    <row c="true" corporationid="1000018" factionid="500001"/>
+    <row c="true" corporationid="1000019" factionid="500001"/>
+    <row c="true" corporationid="1000020" factionid="500001"/>
+    <row c="true" corporationid="1000021" factionid="500013"/>
+    <row c="true" corporationid="1000022" factionid="500001"/>
+    <row c="true" corporationid="1000023" factionid="500001"/>
+    <row c="true" corporationid="1000024" factionid="500001"/>
+    <row c="true" corporationid="1000025" factionid="500001"/>
+    <row c="true" corporationid="1000026" factionid="500001"/>
+    <row c="true" corporationid="1000027" factionid="500001"/>
+    <row c="true" corporationid="1000028" factionid="500001"/>
+    <row c="true" corporationid="1000029" factionid="500001"/>
+    <row c="true" corporationid="1000030" factionid="500001"/>
+    <row c="true" corporationid="1000031" factionid="500001"/>
+    <row c="true" corporationid="1000032" factionid="500001"/>
+    <row c="true" corporationid="1000033" factionid="500001"/>
+    <row c="true" corporationid="1000034" factionid="500001"/>
+    <row c="true" corporationid="1000035" factionid="500001"/>
+    <row c="true" corporationid="1000036" factionid="500001"/>
+    <row c="true" corporationid="1000037" factionid="500001"/>
+    <row c="true" corporationid="1000038" factionid="500001"/>
+    <row c="true" corporationid="1000039" factionid="500001"/>
+    <row c="true" corporationid="1000040" factionid="500001"/>
+    <row c="true" corporationid="1000041" factionid="500001"/>
+    <row c="true" corporationid="1000042" factionid="500001"/>
+    <row c="true" corporationid="1000043" factionid="500001"/>
+    <row c="true" corporationid="1000044" factionid="500001"/>
+    <row c="true" corporationid="1000045" factionid="500001"/>
+    <row c="true" corporationid="1000046" factionid="500002"/>
+    <row c="true" corporationid="1000047" factionid="500002"/>
+    <row c="true" corporationid="1000048" factionid="500002"/>
+    <row c="true" corporationid="1000049" factionid="500002"/>
+    <row c="true" corporationid="1000050" factionid="500002"/>
+    <row c="true" corporationid="1000051" factionid="500002"/>
+    <row c="true" corporationid="1000052" factionid="500002"/>
+    <row c="true" corporationid="1000053" factionid="500002"/>
+    <row c="true" corporationid="1000054" factionid="500002"/>
+    <row c="true" corporationid="1000055" factionid="500002"/>
+    <row c="true" corporationid="1000056" factionid="500002"/>
+    <row c="true" corporationid="1000057" factionid="500002"/>
+    <row c="true" corporationid="1000058" factionid="500002"/>
+    <row c="true" corporationid="1000059" factionid="500002"/>
+    <row c="true" corporationid="1000060" factionid="500002"/>
+    <row c="true" corporationid="1000061" factionid="500002"/>
+    <row c="true" corporationid="1000062" factionid="500002"/>
+    <row c="true" corporationid="1000063" factionid="500003"/>
+    <row c="true" corporationid="1000064" factionid="500003"/>
+    <row c="true" corporationid="1000065" factionid="500003"/>
+    <row c="true" corporationid="1000066" factionid="500003"/>
+    <row c="true" corporationid="1000067" factionid="500003"/>
+    <row c="true" corporationid="1000068" factionid="500003"/>
+    <row c="true" corporationid="1000069" factionid="500003"/>
+    <row c="true" corporationid="1000070" factionid="500003"/>
+    <row c="true" corporationid="1000071" factionid="500003"/>
+    <row c="true" corporationid="1000072" factionid="500003"/>
+    <row c="true" corporationid="1000073" factionid="500003"/>
+    <row c="true" corporationid="1000074" factionid="500003"/>
+    <row c="true" corporationid="1000075" factionid="500003"/>
+    <row c="true" corporationid="1000076" factionid="500003"/>
+    <row c="true" corporationid="1000077" factionid="500003"/>
+    <row c="true" corporationid="1000078" factionid="500003"/>
+    <row c="true" corporationid="1000079" factionid="500003"/>
+    <row c="true" corporationid="1000080" factionid="500003"/>
+    <row c="true" corporationid="1000081" factionid="500003"/>
+    <row c="true" corporationid="1000082" factionid="500003"/>
+    <row c="true" corporationid="1000083" factionid="500003"/>
+    <row c="true" corporationid="1000084" factionid="500003"/>
+    <row c="true" corporationid="1000085" factionid="500003"/>
+    <row c="true" corporationid="1000086" factionid="500003"/>
+    <row c="true" corporationid="1000087" factionid="500003"/>
+    <row c="true" corporationid="1000088" factionid="500003"/>
+    <row c="true" corporationid="1000089" factionid="500003"/>
+    <row c="true" corporationid="1000090" factionid="500003"/>
+    <row c="true" corporationid="1000091" factionid="500003"/>
+    <row c="true" corporationid="1000092" factionid="500003"/>
+    <row c="true" corporationid="1000093" factionid="500003"/>
+    <row c="true" corporationid="1000094" factionid="500004"/>
+    <row c="true" corporationid="1000095" factionid="500004"/>
+    <row c="true" corporationid="1000096" factionid="500013"/>
+    <row c="true" corporationid="1000097" factionid="500004"/>
+    <row c="true" corporationid="1000098" factionid="500004"/>
+    <row c="true" corporationid="1000099" factionid="500004"/>
+    <row c="true" corporationid="1000100" factionid="500004"/>
+    <row c="true" corporationid="1000101" factionid="500004"/>
+    <row c="true" corporationid="1000102" factionid="500004"/>
+    <row c="true" corporationid="1000103" factionid="500004"/>
+    <row c="true" corporationid="1000104" factionid="500004"/>
+    <row c="true" corporationid="1000105" factionid="500004"/>
+    <row c="true" corporationid="1000106" factionid="500004"/>
+    <row c="true" corporationid="1000107" factionid="500004"/>
+    <row c="true" corporationid="1000108" factionid="500004"/>
+    <row c="true" corporationid="1000109" factionid="500004"/>
+    <row c="true" corporationid="1000110" factionid="500004"/>
+    <row c="true" corporationid="1000111" factionid="500004"/>
+    <row c="true" corporationid="1000112" factionid="500004"/>
+    <row c="true" corporationid="1000113" factionid="500004"/>
+    <row c="true" corporationid="1000114" factionid="500004"/>
+    <row c="true" corporationid="1000115" factionid="500004"/>
+    <row c="true" corporationid="1000116" factionid="500004"/>
+    <row c="true" corporationid="1000117" factionid="500004"/>
+    <row c="true" corporationid="1000118" factionid="500004"/>
+    <row c="true" corporationid="1000119" factionid="500004"/>
+    <row c="true" corporationid="1000120" factionid="500004"/>
+    <row c="true" corporationid="1000121" factionid="500004"/>
+    <row c="true" corporationid="1000122" factionid="500004"/>
+    <row c="true" corporationid="1000123" factionid="500007"/>
+    <row cc="true" corporationid="1000124" factionid="500011"/>
+    <row c="true" corporationid="1000125" factionid="500006"/>
+    <row c="true" corporationid="1000126" factionid="500007"/>
+    <row cc="true" corporationid="1000127" factionid="500010"/>
+    <row c="true" corporationid="1000128" factionid="500018"/>
+    <row c="true" corporationid="1000129" factionid="500014"/>
+    <row c="true" corporationid="1000130" factionid="500016"/>
+    <row c="true" corporationid="1000131" factionid="500017"/>
+    <row c="true" corporationid="1000132" factionid="500006"/>
+    <row cc="true" corporationid="1000133" factionid="500011"/>
+    <row cc="true" corporationid="1000134" factionid="500012"/>
+    <row cc="true" corporationid="1000135" factionid="500020"/>
+    <row cc="true" corporationid="1000136" factionid="500011"/>
+    <row c="true" corporationid="1000137" factionid="500006"/>
+    <row cc="true" corporationid="1000138" factionid="500011"/>
+    <row c="true" corporationid="1000139" factionid="500016"/>
+    <row c="true" corporationid="1000140" factionid="500017"/>
+    <row cc="true" corporationid="1000141" factionid="500010"/>
+    <row c="true" corporationid="1000142" factionid="500017"/>
+    <row c="true" corporationid="1000143" factionid="500006"/>
+    <row c="true" corporationid="1000144" factionid="500009"/>
+    <row c="true" corporationid="1000145" factionid="500009"/>
+    <row c="true" corporationid="1000146" factionid="500009"/>
+    <row c="true" corporationid="1000147" factionid="500009"/>
+    <row c="true" corporationid="1000148" factionid="500013"/>
+    <row c="true" corporationid="1000149" factionid="500005"/>
+    <row c="true" corporationid="1000150" factionid="500005"/>
+    <row c="true" corporationid="1000151" factionid="500008"/>
+    <row c="true" corporationid="1000152" factionid="500008"/>
+    <row c="true" corporationid="1000153" factionid="500008"/>
+    <row c="true" corporationid="1000154" factionid="500007"/>
+    <row c="true" corporationid="1000155" factionid="500005"/>
+    <row c="true" corporationid="1000156" factionid="500008"/>
+    <row cc="true" corporationid="1000157" factionid="500020"/>
+    <row c="true" corporationid="1000158" factionid="500005"/>
+    <row c="true" corporationid="1000159" factionid="500016"/>
+    <row c="true" corporationid="1000160" factionid="500015"/>
+    <row cc="true" corporationid="1000161" factionid="500019"/>
+    <row cc="true" corporationid="1000162" factionid="500019"/>
+    <row c="true" corporationid="1000163" factionid="500015"/>
+    <row c="true" corporationid="1000164" factionid="500017"/>
+    <row c="true" corporationid="1000165" factionid="500003"/>
+    <row c="true" corporationid="1000166" factionid="500003"/>
+    <row c="true" corporationid="1000167" factionid="500001"/>
+    <row c="true" corporationid="1000168" factionid="500004"/>
+    <row c="true" corporationid="1000169" factionid="500004"/>
+    <row c="true" corporationid="1000170" factionid="500002"/>
+    <row c="true" corporationid="1000171" factionid="500002"/>
+    <row c="true" corporationid="1000172" factionid="500002"/>
+    <row c="true" corporationid="1000177" factionid="500005"/>
+    <row c="true" corporationid="1000178" factionid="500005"/>
+    <row c="true" corporationid="1000179" factionid="500003"/>
+    <row c="true" corporationid="1000180" factionid="500001"/>
+    <row c="true" corporationid="1000181" factionid="500004"/>
+    <row c="true" corporationid="1000182" factionid="500002"/>
+    <row cc="true" corporationid="1000193" factionid="500029"/>
+    <row c="true" corporationid="1000198" factionid="500003"/>
+    <row c="true" corporationid="1000205" factionid="500003"/>
+    <row c="true" corporationid="1000206" factionid="500003"/>
+    <row c="true" corporationid="1000207" factionid="500003"/>
+    <row c="true" corporationid="1000208" factionid="500001"/>
+    <row c="true" corporationid="1000213" factionid="500001"/>
+    <row c="true" corporationid="1000214" factionid="500001"/>
+    <row c="true" corporationid="1000215" factionid="500004"/>
+    <row c="true" corporationid="1000216" factionid="500004"/>
+    <row c="true" corporationid="1000217" factionid="500013"/>
+    <row c="true" corporationid="1000218" factionid="500002"/>
+    <row c="true" corporationid="1000219" factionid="500002"/>
+    <row c="true" corporationid="1000220" factionid="500002"/>
+    <row c="true" corporationid="1000222" factionid="500004"/>
+    <row c="true" corporationid="1000223" factionid="500003"/>
+    <row c="true" corporationid="1000224" factionid="500003"/>
+    <row c="true" corporationid="1000225" factionid="500003"/>
+    <row c="true" corporationid="1000226" factionid="500003"/>
+    <row c="true" corporationid="1000227" factionid="500003"/>
+    <row c="true" corporationid="1000228" factionid="500003"/>
+    <row c="true" corporationid="1000229" factionid="500003"/>
+    <row c="true" corporationid="1000230" factionid="500003"/>
+    <row c="true" corporationid="1000231" factionid="500003"/>
+    <row c="true" corporationid="1000232" factionid="500001"/>
+    <row c="true" corporationid="1000233" factionid="500001"/>
+    <row c="true" corporationid="1000234" factionid="500001"/>
+    <row c="true" corporationid="1000235" factionid="500001"/>
+    <row c="true" corporationid="1000236" factionid="500001"/>
+    <row c="true" corporationid="1000237" factionid="500001"/>
+    <row c="true" corporationid="1000238" factionid="500001"/>
+    <row c="true" corporationid="1000239" factionid="500001"/>
+    <row c="true" corporationid="1000240" factionid="500001"/>
+    <row c="true" corporationid="1000243" factionid="500004"/>
+    <row c="true" corporationid="1000244" factionid="500004"/>
+    <row c="true" corporationid="1000245" factionid="500004"/>
+    <row c="true" corporationid="1000246" factionid="500004"/>
+    <row c="true" corporationid="1000247" factionid="500004"/>
+    <row c="true" corporationid="1000248" factionid="500004"/>
+    <row c="true" corporationid="1000249" factionid="500004"/>
+    <row c="true" corporationid="1000250" factionid="500004"/>
+    <row c="true" corporationid="1000251" factionid="500002"/>
+    <row c="true" corporationid="1000252" factionid="500002"/>
+    <row c="true" corporationid="1000253" factionid="500002"/>
+    <row c="true" corporationid="1000254" factionid="500002"/>
+    <row c="true" corporationid="1000255" factionid="500002"/>
+    <row c="true" corporationid="1000256" factionid="500002"/>
+    <row c="true" corporationid="1000257" factionid="500002"/>
+    <row c="true" corporationid="1000258" factionid="500002"/>
+    <row c="true" corporationid="1000259" factionid="500002"/>
+    <row c="true" corporationid="1000261" factionid="500001"/>
+    <row c="true" corporationid="1000262" factionid="500004"/>
+    <row c="true" corporationid="1000263" factionid="500002"/>
+    <row c="true" corporationid="1000270" factionid="500014"/>
+    <row c="true" corporationid="1000271" factionid="500014"/>
+    <row c="true" corporationid="1000274" factionid="500024"/>
+    <row c="true" corporationid="1000276" factionid="500014"/>
+    <row c="true" corporationid="1000277" factionid="500014"/>
+    <row c="true" corporationid="1000279" factionid="500006"/>
+    <row c="true" corporationid="1000280" factionid="500006"/>
+    <row c="true" corporationid="1000281" factionid="500006"/>
+    <row c="true" corporationid="1000282" factionid="500006"/>
+    <row c="true" corporationid="1000283" factionid="500003"/>
+    <row c="true" corporationid="1000284" factionid="500001"/>
+    <row c="true" corporationid="1000285" factionid="500004"/>
+    <row c="true" corporationid="1000286" factionid="500002"/>
+    <row c="true" corporationid="1000287" factionid="500025"/>
+    <row c="true" corporationid="1000288" factionid="500026"/>
+    <row c="true" corporationid="1000289" factionid="500025"/>
+    <row c="true" corporationid="1000292" factionid="500026"/>
+    <row c="true" corporationid="1000293" factionid="500026"/>
+    <row c="true" corporationid="1000294" factionid="500026"/>
+    <row c="true" corporationid="1000297" factionid="500027"/>
+    <row c="true" corporationid="1000298" factionid="500026"/>
+    <row c="true" corporationid="1000299" factionid="500001"/>
+    <row c="true" corporationid="1000300" factionid="500001"/>
+    <row c="true" corporationid="1000410" factionid="500015"/>
+    <row c="true" corporationid="1000411" factionid="500002"/>
+    <row c="true" corporationid="1000412" factionid="500002"/>
+    <row c="true" corporationid="1000413" factionid="500028"/>
+    <row c="true" corporationid="1000419" factionid="500013"/>
+    <row c="true" corporationid="1000425" factionid="500013"/>
+    <row c="true" corporationid="1000426" factionid="500013"/>
+    <row c="true" corporationid="1000427" factionid="500013"/>
+    <row c="true" corporationid="1000428" factionid="500013"/>
+    <row c="true" corporationid="1000429" factionid="500013"/>
+    <row cc="true" corporationid="1000436" factionid="500011"/>
+    <row cc="true" corporationid="1000437" factionid="500010"/>
+    <row cc="true" corporationid="1000438" factionid="500029"/>
+    <row cc="true" corporationid="1000439" factionid="500029"/>
+    <row cc="true" corporationid="1000440" factionid="500029"/>
+    <row cc="true" corporationid="1000441" factionid="500029"/>
+    <row c="true" factionid="500001"/>
+    <row c="true" factionid="500002"/>
+    <row c="true" factionid="500003"/>
+    <row c="true" factionid="500004"/>
+    <row c="true" factionid="500005"/>
+    <row c="true" factionid="500006"/>
+    <row c="true" factionid="500007"/>
+    <row c="true" factionid="500008"/>
+    <row c="true" factionid="500009"/>
+    <row cc="true" factionid="500010"/>
+    <row cc="true" factionid="500011"/>
+    <row cc="true" factionid="500012"/>
+    <row c="true" factionid="500013"/>
+    <row c="true" factionid="500014"/>
+    <row c="true" factionid="500015"/>
+    <row c="true" factionid="500016"/>
+    <row c="true" factionid="500017"/>
+    <row c="true" factionid="500018"/>
+    <row cc="true" factionid="500019"/>
+    <row cc="true" factionid="500020"/>
+    <row c="true" factionid="500024"/>
+    <row c="true" factionid="500025"/>
+    <row c="true" factionid="500026"/>
+    <row c="true" factionid="500027"/>
+    <row c="true" factionid="500028"/>
+    <row cc="true" factionid="500029"/>
+</rows>

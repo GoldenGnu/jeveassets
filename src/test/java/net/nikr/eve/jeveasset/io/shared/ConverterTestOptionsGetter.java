@@ -20,6 +20,10 @@
  */
 package net.nikr.eve.jeveasset.io.shared;
 
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -27,6 +31,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import javax.swing.Icon;
 import javax.swing.JButton;
 import net.nikr.eve.jeveasset.data.api.my.MyBlueprint;
 import net.nikr.eve.jeveasset.data.api.my.MyShip;
@@ -45,6 +50,7 @@ import net.nikr.eve.jeveasset.data.settings.UserItem;
 import net.nikr.eve.jeveasset.data.settings.tag.Tags;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.UserPriceSettingsPanel.UserPrice;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.Percent;
+import net.nikr.eve.jeveasset.gui.shared.table.containers.TextIcon;
 import net.nikr.eve.jeveasset.gui.tabs.orders.Outbid;
 import net.nikr.eve.jeveasset.io.esi.EsiCallbackURL;
 import net.troja.eve.esi.model.CharacterAssetsResponse;
@@ -98,6 +104,24 @@ public class ConverterTestOptionsGetter {
 		private static final Double[] DOUBLE = {5.1};
 		private static final Date[] DATE = {new Date()};
 		private static final String[] STRING = {"StringValue"};
+		private static final Icon ICON = new Icon() {
+			@Override
+			public void paintIcon(Component c, Graphics g, int x, int y) {
+				Graphics2D g2d = (Graphics2D) g;
+				g2d.setPaint(Color.GREEN);
+				g2d.fillRect(0, 0, getIconWidth(), getIconHeight());
+			}
+
+			@Override
+			public int getIconWidth() {
+				return 16;
+			}
+
+			@Override
+			public int getIconHeight() {
+				return 16;
+			}
+		};
 		//Data
 		private static final MyLocation[] MY_LOCATION = {ApiIdConverter.getLocation(60003466)};
 		private static final PriceData[] PRICE_DATA = {new PriceData()};
@@ -157,6 +181,7 @@ public class ConverterTestOptionsGetter {
 		private static final EsiCallbackURL[] ESI_CALLBACK_URL = EsiCallbackURL.values();
 		//NpcStanding
 		private static final RawNpcStanding.FromType[] NPC_STANDING_FROM_TYPE = RawNpcStanding.FromType.values();
+		private static final TextIcon TEXT_ICON = new TextIcon(ICON, STRING[0]);
 
 		//Control
 		private static final int MAX = createMax();
@@ -618,6 +643,11 @@ public class ConverterTestOptionsGetter {
 		@Override
 		public RawNpcStanding.FromType getNpcStandingFromType() {
 			return get(NPC_STANDING_FROM_TYPE, index);
+		}
+
+		@Override
+		public TextIcon getTextIcon() {
+			return TEXT_ICON;
 		}
 	}
 

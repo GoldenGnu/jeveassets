@@ -99,6 +99,7 @@ public class LoyaltyPointsTab extends JMainTabPrimary implements TagUpdate {
 		jTable.setCellSelectionEnabled(true);
 		jTable.setRowSelectionAllowed(true);
 		jTable.setColumnSelectionAllowed(true);
+		jTable.setRowHeight(MyLoyaltyPoints.IMAGE_SIZE.getSize());
 		//Sorting
 		TableComparatorChooser<MyLoyaltyPoints> comparatorChooser = TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
 		//Selection Model

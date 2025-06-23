@@ -25,6 +25,7 @@ import java.util.Comparator;
 import net.nikr.eve.jeveasset.data.api.my.MyNpcStanding;
 import net.nikr.eve.jeveasset.data.api.raw.RawNpcStanding.FromType;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
+import net.nikr.eve.jeveasset.gui.shared.table.containers.TextIcon;
 import net.nikr.eve.jeveasset.i18n.TabsNpcStanding;
 
 
@@ -39,17 +40,37 @@ public enum NpcStandingTableFormat implements EnumTableColumn<MyNpcStanding> {
 			return from.getOwnerName();
 		}
 	},
-	NAME(String.class) {
+	FACTION(TextIcon.class) {
 		@Override
 		public String getColumnName() {
-			return TabsNpcStanding.get().columnName();
+			return TabsNpcStanding.get().columnFaction();
 		}
 		@Override
 		public Object getColumnValue(final MyNpcStanding from) {
-			return from.getName();
+			return from.getFactionTextIcon();
 		}
 	},
-	TYPE(FromType.class, MyNpcStanding.FROM_TYPE_COMPARATOR) {
+	CORPORATION(TextIcon.class) {
+		@Override
+		public String getColumnName() {
+			return TabsNpcStanding.get().columnCorporation();
+		}
+		@Override
+		public Object getColumnValue(final MyNpcStanding from) {
+			return from.getCorporationTextIcon();
+		}
+	},
+	AGENT(TextIcon.class) {
+		@Override
+		public String getColumnName() {
+			return TabsNpcStanding.get().columnAgent();
+		}
+		@Override
+		public Object getColumnValue(final MyNpcStanding from) {
+			return from.getAgentTextIcon();
+		}
+	},
+	TYPE(FromType.class) {
 		@Override
 		public String getColumnName() {
 			return TabsNpcStanding.get().columnType();
@@ -66,7 +87,17 @@ public enum NpcStandingTableFormat implements EnumTableColumn<MyNpcStanding> {
 		}
 		@Override
 		public Object getColumnValue(final MyNpcStanding from) {
-			return from.getStanding();
+			return from.getStandingEffective();
+		}
+	},
+	ID(Integer.class) {
+		@Override
+		public String getColumnName() {
+			return TabsNpcStanding.get().columnID();
+		}
+		@Override
+		public Object getColumnValue(final MyNpcStanding from) {
+			return from.getFromID();
 		}
 	};
 
@@ -76,11 +107,6 @@ public enum NpcStandingTableFormat implements EnumTableColumn<MyNpcStanding> {
 	private NpcStandingTableFormat(final Class<?> type) {
 		this.type = type;
 		this.comparator = EnumTableColumn.getComparator(type);
-	}
-
-	private NpcStandingTableFormat(Class<?> type, Comparator<?> comparator) {
-		this.type = type;
-		this.comparator = comparator;
 	}
 
 	@Override

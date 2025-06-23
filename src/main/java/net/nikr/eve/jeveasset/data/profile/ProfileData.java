@@ -724,7 +724,9 @@ public class ProfileData {
 
 		for (MyNpcStanding npcStanding : npcStandings) {
 			//Names
-			npcStanding.setName(ApiIdConverter.getOwnerName(npcStanding.getFromID()));
+			npcStanding.setAgentName(ApiIdConverter.getOwnerName(npcStanding.getAgentID()));
+			npcStanding.setCorporationName(ApiIdConverter.getOwnerName(npcStanding.getCorporationID()));
+			npcStanding.setFactionName(ApiIdConverter.getOwnerName(npcStanding.getFactionID()));
 		}
 		//Update Mining dynamic values
 		for (MyMining mining : minings) {

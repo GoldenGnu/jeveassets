@@ -27,10 +27,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import net.nikr.eve.jeveasset.SplashUpdater;
+import net.nikr.eve.jeveasset.io.local.AgentsReader;
 import net.nikr.eve.jeveasset.io.local.FlagsReader;
 import net.nikr.eve.jeveasset.io.local.ItemsReader;
 import net.nikr.eve.jeveasset.io.local.JumpsReader;
 import net.nikr.eve.jeveasset.io.local.LocationsReader;
+import net.nikr.eve.jeveasset.io.local.NpcCorporationsReader;
 
 
 public class StaticData {
@@ -40,6 +42,8 @@ public class StaticData {
 	private final Map<Integer, ItemFlag> flags = new HashMap<>(); //FlagID : int
 	private final Map<Long, MyLocation> locations = new HashMap<>(); //LocationID : long
 	private final List<Jump> jumps = new ArrayList<>(); //LocationID : long
+	private final Map<Integer, Agent> agents = new HashMap<>(); //AgentID : int
+	private final Map<Integer, NpcCorporation> npcCorporations = new HashMap<>(); //corporationID : int
 
 	private static StaticData staticData = null;
 
@@ -60,6 +64,8 @@ public class StaticData {
 	private void loadData() {
 		SplashUpdater.setProgress(5);
 		ItemsReader.load(items); //Items
+		AgentsReader.load(agents);
+		NpcCorporationsReader.load(npcCorporations);
 		SplashUpdater.setProgress(10);
 		try {
 			LOCATIONS_LOCK.writeLock().lock();
@@ -84,6 +90,14 @@ public class StaticData {
 
 	public List<Jump> getJumps() {
 		return jumps;
+	}
+
+	public Map<Integer, Agent> getAgents() {
+		return agents;
+	}
+
+	public Map<Integer, NpcCorporation> getNpcCorporations() {
+		return npcCorporations;
 	}
 
 	public void addLocation(MyLocation location) {

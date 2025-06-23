@@ -43,6 +43,8 @@ import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJobTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJobsTab;
 import net.nikr.eve.jeveasset.gui.tabs.journal.JournalTab;
 import net.nikr.eve.jeveasset.gui.tabs.journal.JournalTableFormat;
+import net.nikr.eve.jeveasset.gui.tabs.loyalty.LoyaltyPointsTab;
+import net.nikr.eve.jeveasset.gui.tabs.loyalty.LoyaltyPointsTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.mining.ExtractionsTab;
 import net.nikr.eve.jeveasset.gui.tabs.mining.ExtractionsTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.mining.MiningTab;
@@ -55,6 +57,8 @@ import net.nikr.eve.jeveasset.gui.tabs.skills.SkillsTab;
 import net.nikr.eve.jeveasset.gui.tabs.skills.SkillsTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.slots.SlotsTab;
 import net.nikr.eve.jeveasset.gui.tabs.slots.SlotsTableFormat;
+import net.nikr.eve.jeveasset.gui.tabs.standing.NpcStandingTab;
+import net.nikr.eve.jeveasset.gui.tabs.standing.NpcStandingTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileExtendedTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileTab;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileTableFormat;
@@ -99,6 +103,10 @@ public class FilterExportTest extends TestUtil {
 		test(SkillsTab.NAME, SkillsTableFormat.values());
 		//Mining
 		test(MiningTab.NAME, MiningTableFormat.values());
+		//Loyalty Points
+		test(LoyaltyPointsTab.NAME, LoyaltyPointsTableFormat.values());
+		//Mining
+		test(NpcStandingTab.NAME, NpcStandingTableFormat.values());
 		//Extractions
 		test(ExtractionsTab.NAME, ExtractionsTableFormat.values());
 	//Secondary Tools
