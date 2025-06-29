@@ -25,19 +25,32 @@ import net.nikr.eve.jeveasset.i18n.DialoguesAccount;
 
 public class YesNo implements Comparable<YesNo> {
 
-	private final boolean b;
+	private static final YesNo YES = YesNo.get(true);
+	private static final YesNo NO = YesNo.get(false);
 
-	public YesNo(final boolean b) {
+	public static YesNo get(final boolean b) {
+		if (b) {
+			return YES;
+		} else {
+			return NO;
+		}
+	}
+
+	private final boolean b;
+	private final String text;
+
+	private YesNo(final boolean b) {
 		this.b = b;
+		if (b) {
+			text = DialoguesAccount.get().tableFormatYes();
+		} else {
+			text =DialoguesAccount.get().tableFormatNo();
+		}
 	}
 
 	@Override
 	public String toString() {
-		if (b) {
-			return DialoguesAccount.get().tableFormatYes();
-		} else {
-			return DialoguesAccount.get().tableFormatNo();
-		}
+		return text;
 	}
 
 	@Override
