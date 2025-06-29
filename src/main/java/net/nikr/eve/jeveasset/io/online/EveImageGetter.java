@@ -53,8 +53,6 @@ public class EveImageGetter implements Runnable {
 
 	private static final Logger LOG = LoggerFactory.getLogger(EveImageGetter.class);
 
-	private static final ExecutorService RETURN_THREAD_POOL = Executors.newFixedThreadPool(10);
-	
 	public static enum ImageSize {
 		SIZE_32(32),
 		SIZE_64(64),
@@ -159,15 +157,16 @@ public class EveImageGetter implements Runnable {
 	@Override
 	public void run() {
 		try {
+			ExecutorService threadPool = Executors.newFixedThreadPool(10);
 			List<Future<?>> futures = new ArrayList<>();
 			for (Runnable runnable : getImageDownloads(ownerTypes)) {
-				futures.add(RETURN_THREAD_POOL.submit(runnable));
+				futures.add(threadPool.submit(runnable));
 			}
-			RETURN_THREAD_POOL.shutdown();
-			while (!RETURN_THREAD_POOL.awaitTermination(500, TimeUnit.MICROSECONDS)) {
+			threadPool.shutdown();
+			while (!threadPool.awaitTermination(500, TimeUnit.MICROSECONDS)) {
 				if (updateTask != null) {
 					if (updateTask.isCancelled()) {
-						RETURN_THREAD_POOL.shutdownNow();
+						threadPool.shutdownNow();
 					}
 				}
 			}
