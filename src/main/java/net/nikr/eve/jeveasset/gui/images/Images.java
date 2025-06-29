@@ -204,6 +204,8 @@ public enum Images {
 	MISC_DATE ("misc_date.png"),
 	MISC_NUMBER ("misc_number.png"),
 	MISC_DISCORD ("misc_discord.png"),
+	MISC_MISC ("misc_misc.png"),
+	MISC_OWNERS ("misc_owners.png"),
 
 	SETTINGS_TOOLS ("settings_tools.png"),
 	SETTINGS_PRICE_DATA ("settings_price_data.png"),

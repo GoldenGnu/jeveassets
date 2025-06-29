@@ -73,6 +73,7 @@ public abstract class GuiFrame extends Bundle {
 	public abstract String options();
 	public abstract String options1();
 	public abstract String overview();
+	public abstract String owners();
 	public abstract String priceChanges();
 	public abstract String priceHistory();
 	public abstract String profiles();
