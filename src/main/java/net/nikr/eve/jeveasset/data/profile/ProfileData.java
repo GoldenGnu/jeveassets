@@ -73,6 +73,7 @@ import net.nikr.eve.jeveasset.gui.shared.StringComparators;
 import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.Percent;
 import net.nikr.eve.jeveasset.gui.sounds.SoundPlayer;
+import net.nikr.eve.jeveasset.gui.tabs.loyalty.TotalLoyaltyPoints;
 import net.nikr.eve.jeveasset.gui.tabs.orders.OutbidProcesser.OutbidProcesserOutput;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
@@ -451,6 +452,7 @@ public class ProfileData {
 		Set<MyContract> contracts = new HashSet<>();
 		Set<MySkill> skills = new HashSet<>();
 		Set<MyLoyaltyPoints> loyaltyPointses = new HashSet<>();
+		Map<String, TotalLoyaltyPoints> loyaltyPointsTotals = new HashMap<>();
 		Set<MyNpcStanding> npcStandings = new HashSet<>();
 		Set<MyMining> minings = new HashSet<>();
 		Set<MyExtraction> extractions = new HashSet<>();
@@ -719,8 +721,20 @@ public class ProfileData {
 
 		for (MyLoyaltyPoints loyaltyPoints : loyaltyPointses) {
 			//Names
-			loyaltyPoints.setCorporationName(ApiIdConverter.getOwnerName(loyaltyPoints.getCorporationID()));
+			String corporationName = ApiIdConverter.getOwnerName(loyaltyPoints.getCorporationID());
+			loyaltyPoints.setCorporationName(corporationName);
+			//Totals
+			if (corporationName != null && !corporationName.isEmpty()) {
+				TotalLoyaltyPoints total = loyaltyPointsTotals.get(corporationName);
+				if (total == null) {
+					total = new TotalLoyaltyPoints(loyaltyPoints);
+					loyaltyPointsTotals.put(corporationName, total);
+				}
+				total.add(loyaltyPoints);
+			}
 		}
+		//Add Totals
+		loyaltyPointses.addAll(loyaltyPointsTotals.values());
 
 		for (MyNpcStanding npcStanding : npcStandings) {
 			//Names

@@ -62,11 +62,11 @@ public class MyLoyaltyPoints extends RawLoyaltyPoints implements Comparable<MyLo
 
 	@Override
 	public int compareTo(MyLoyaltyPoints o) {
-		int comp = this.owner.compareTo(o.owner);
+		int comp = this.getOwnerName().compareTo(o.getOwnerName());
 		if (comp != 0) {
 			return comp;
 		}
-		return this.corporationName.compareTo(o.corporationName);
+		return this.getCorporationName().compareTo(o.getCorporationName());
 		
 	}
 	
