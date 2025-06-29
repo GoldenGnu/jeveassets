@@ -25,8 +25,8 @@ import net.nikr.eve.jeveasset.i18n.DialoguesAccount;
 
 public class YesNo implements Comparable<YesNo> {
 
-	private static final YesNo YES = YesNo.get(true);
-	private static final YesNo NO = YesNo.get(false);
+	private static final YesNo YES = new YesNo(true);
+	private static final YesNo NO = new YesNo(false);
 
 	public static YesNo get(final boolean b) {
 		if (b) {
