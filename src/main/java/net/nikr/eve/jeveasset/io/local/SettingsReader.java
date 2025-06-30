@@ -58,6 +58,7 @@ import net.nikr.eve.jeveasset.data.settings.PriceDataSettings.PriceMode;
 import net.nikr.eve.jeveasset.data.settings.PriceDataSettings.PriceSource;
 import net.nikr.eve.jeveasset.data.settings.ProxyData;
 import net.nikr.eve.jeveasset.data.settings.ReprocessSettings;
+import net.nikr.eve.jeveasset.data.settings.RouteAvoidSettings;
 import net.nikr.eve.jeveasset.data.settings.RouteResult;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.Settings.SettingFlag;
@@ -367,6 +368,12 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		Element routingElement = getNodeOptional(element, "routingsettings");
 		if (routingElement != null) {
 			parseRoutingSettings(routingElement, settings);
+		}
+
+		//Jumps Avoid
+		Element jumpsElement = getNodeOptional(element, "jumpssettings");
+		if (jumpsElement != null) {
+			parseJumpsSettings(jumpsElement, settings);
 		}
 
 		//Tags - Must be loaded before stockpiles (and everything else that uses tags)
@@ -1098,18 +1105,27 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 	}
 
 	private void parseRoutingSettings(Element routingElement, Settings settings) throws XmlException {
-		double secMax = getDouble(routingElement, "securitymaximum");
-		double secMin = getDouble(routingElement, "securityminimum");
-		settings.getRoutingSettings().setSecMax(secMax);
-		settings.getRoutingSettings().setSecMin(secMin);
-		NodeList systemNodes = routingElement.getElementsByTagName("routingsystem");
+		parseRouteAvoidSettings(routingElement, settings.getRoutingSettings().getAvoidSettings());
+		parseRoutes(routingElement, settings.getRoutingSettings().getRoutes());
+	}
+
+	private void parseJumpsSettings(Element jumpsElement, Settings settings) throws XmlException {
+		parseRouteAvoidSettings(jumpsElement, settings.getJumpsAvoidSettings());
+	}
+
+	private void parseRouteAvoidSettings(Element avoidElement, RouteAvoidSettings routeAvoidSettings) throws XmlException {
+		double secMax = getDouble(avoidElement, "securitymaximum");
+		double secMin = getDouble(avoidElement, "securityminimum");
+		routeAvoidSettings.setSecMax(secMax);
+		routeAvoidSettings.setSecMin(secMin);
+		NodeList systemNodes = avoidElement.getElementsByTagName("routingsystem");
 		for (int a = 0; a < systemNodes.getLength(); a++) {
 			Element systemNode = (Element) systemNodes.item(a);
 			long systemID = getLong(systemNode, "id");
 			MyLocation location = ApiIdConverter.getLocation(systemID);
-			settings.getRoutingSettings().getAvoid().put(systemID, new SolarSystem(location));
+			routeAvoidSettings.getAvoid().put(systemID, new SolarSystem(location));
 		}
-		NodeList presetNodes = routingElement.getElementsByTagName("routingpreset");
+		NodeList presetNodes = avoidElement.getElementsByTagName("routingpreset");
 		for (int a = 0; a < presetNodes.getLength(); a++) {
 			Element presetNode = (Element) presetNodes.item(a);
 			String name = getString(presetNode, "name");
@@ -1120,9 +1136,8 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 				long systemID = getLong(systemNode, "id");
 				systemIDs.add(systemID);
 			}
-			settings.getRoutingSettings().getPresets().put(name, systemIDs);
+			routeAvoidSettings.getPresets().put(name, systemIDs);
 		}
-		parseRoutes(routingElement, settings.getRoutingSettings().getRoutes());
 	}
 
 	private void parseRoutes(Element routingElement, Map<String, RouteResult> map) throws XmlException {

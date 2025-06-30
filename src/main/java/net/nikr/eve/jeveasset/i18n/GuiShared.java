@@ -122,6 +122,7 @@ public abstract class GuiShared extends Bundle {
 	public abstract String jumpsAddSelected();
 	public abstract String jumpsClear();
 	public abstract String jumpsColumnToolTip(String systemName);
+	public abstract String jumpsSettings();
 	public abstract String lazyBlacksmith();
 	public abstract String lazyBlacksmithInvention();
 	public abstract String lazyBlacksmithManufacturing();

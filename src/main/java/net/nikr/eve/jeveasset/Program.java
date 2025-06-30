@@ -948,6 +948,12 @@ public class Program implements ActionListener {
 		}
 	}
 
+	public void showJumpsSettingsPanel() {
+		if (settingsDialog != null) {
+			settingsDialog.showJumpsSettingsPanel();
+		}
+	}
+
 	public ProfileData getProfileData() {
 		return profileData;
 	}

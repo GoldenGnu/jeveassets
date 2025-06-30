@@ -45,7 +45,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.GroupLayout;
 import javax.swing.Icon;
@@ -53,7 +52,6 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -67,11 +65,10 @@ import javax.swing.SwingWorker;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.SplashUpdater;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.data.api.my.MyAsset;
-import net.nikr.eve.jeveasset.data.sde.Jump;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
+import net.nikr.eve.jeveasset.data.sde.RouteFinder;
 import net.nikr.eve.jeveasset.data.sde.StaticData;
 import net.nikr.eve.jeveasset.data.settings.RouteResult;
 import net.nikr.eve.jeveasset.data.settings.Settings;
@@ -81,7 +78,6 @@ import net.nikr.eve.jeveasset.gui.shared.TextImport;
 import net.nikr.eve.jeveasset.gui.shared.TextImport.TextImportHandler;
 import net.nikr.eve.jeveasset.gui.shared.components.JCustomFileChooser;
 import net.nikr.eve.jeveasset.gui.shared.components.JDropDownButton;
-import net.nikr.eve.jeveasset.gui.shared.components.JFixedToolBar;
 import net.nikr.eve.jeveasset.gui.shared.components.JImportDialog;
 import net.nikr.eve.jeveasset.gui.shared.components.JImportDialog.ImportReturn;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTabSecondary;
@@ -103,11 +99,9 @@ import net.nikr.eve.jeveasset.i18n.TabsRouting;
 import net.nikr.eve.jeveasset.io.esi.AbstractEsiGetter;
 import net.nikr.eve.jeveasset.io.local.SettingsReader;
 import net.nikr.eve.jeveasset.io.local.SettingsWriter;
-import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.me.candle.eve.graph.DisconnectedGraphException;
-import uk.me.candle.eve.graph.Edge;
 import uk.me.candle.eve.graph.Graph;
 import uk.me.candle.eve.graph.distances.Jumps;
 import uk.me.candle.eve.routing.BruteForce;
@@ -185,13 +179,6 @@ public class RoutingTab extends JMainTabSecondary {
 		IMPORT_ROUTE_XML,
 		IMPORT_ROUTE,
 		ROUTE_EXPORT,
-		AVOID_ADD,
-		AVOID_REMOVE,
-		AVOID_CLEAR,
-		AVOID_SAVE,
-		AVOID_LOAD,
-		AVOID_MANAGE,
-		SAVE
 	}
 	//Routing
 	private JLabel jAlgorithmLabel;
@@ -219,17 +206,7 @@ public class RoutingTab extends JMainTabSecondary {
 	private MoveJList<SolarSystem> jWaypoints;
 	private JLabel jWaypointsRemaining;
 	//Filter
-	private JList<SolarSystem> jAvoid;
-	private EditableListModel<SolarSystem> avoidModel = new EditableListModel<>();
-	private JButton jAvoidAdd;
-	private JButton jAvoidRemove;
-	private JButton jAvoidClear;
-	private JButton jAvoidSave;
-	private JDropDownButton jAvoidLoad;
-	private JLabel jSecurityIcon;
-	private JComboBox<Double> jSecurityMinimum;
-	private JLabel jSecuritySeparatorLabel;
-	private JComboBox<Double> jSecurityMaximum;
+	private JAvoid jAvoid;
 	//Progress
 	private JProgressBar jProgress;
 	private JButton jCalculate;
@@ -243,8 +220,6 @@ public class RoutingTab extends JMainTabSecondary {
 	private JTextDialog jImportSystemsDialog;
 	private JStationDialog jStationDialog;
 	private JSystemDialog jSystemDialog;
-	private JSaveAvoidDialog jSaveSystemDialog;
-	private JManageAvoidDialog jManageAvoidDialog;
 	private JRouteSaveDialog jSaveRouteDialog;
 	private JRouteManageDialog jManageRoutesDialog;
 	private JRouteEditDialog jRouteEditDialog;
@@ -283,8 +258,6 @@ public class RoutingTab extends JMainTabSecondary {
 		jImportSystemsDialog = new JTextDialog(program.getMainWindow().getFrame());
 		jStationDialog = new JStationDialog(program);
 		jSystemDialog = new JSystemDialog(program);
-		jSaveSystemDialog = new JSaveAvoidDialog(program);
-		jManageAvoidDialog = new JManageAvoidDialog(this, program);
 		jSaveRouteDialog = new JRouteSaveDialog(program);
 		jManageRoutesDialog = new JRouteManageDialog(this, program);
 		jRouteEditDialog = new JRouteEditDialog(program);
@@ -382,15 +355,10 @@ public class RoutingTab extends JMainTabSecondary {
 		}
 		jStart.setSelectedItem(TabsRouting.get().startEmpty());
 
-		Comparator<SolarSystem> comp = new Comparator<SolarSystem>() {
-			@Override
-			public int compare(final SolarSystem o1, final SolarSystem o2) {
-				return o1.getName().compareToIgnoreCase(o2.getName());
-			}
-		};
+		jAvoid = new JAvoid(program, Settings.get().getRoutingSettings().getAvoidSettings(), true);
 
 		jAvailable = new MoveJList<>(new EditableListModel<>());
-		jAvailable.getEditableModel().setSortComparator(comp);
+		jAvailable.getEditableModel().setSortComparator(JAvoid.SOLAR_SYSTEM_COMPARATOR);
 		jAvailable.addMouseListener(listener);
 		jAvailable.addListSelectionListener(listener);
 
@@ -419,7 +387,7 @@ public class RoutingTab extends JMainTabSecondary {
 		jAddStation.addActionListener(listener);
 
 		jWaypoints = new MoveJList<>(new EditableListModel<>());
-		jWaypoints.getEditableModel().setSortComparator(comp);
+		jWaypoints.getEditableModel().setSortComparator(JAvoid.SOLAR_SYSTEM_COMPARATOR);
 		jWaypoints.addMouseListener(listener);
 		jWaypoints.addListSelectionListener(listener);
 
@@ -527,107 +495,17 @@ public class RoutingTab extends JMainTabSecondary {
 		filterLayout.setAutoCreateGaps(true);
 		filterLayout.setAutoCreateContainerGaps(true);
 
-		JPanel jAvoidPanel = new JPanel();
-		jAvoidPanel.setBorder(BorderFactory.createTitledBorder(TabsRouting.get().avoid()));
-		GroupLayout avoidLayout = new GroupLayout(jAvoidPanel);
-		jAvoidPanel.setLayout(avoidLayout);
-		avoidLayout.setAutoCreateGaps(true);
-		avoidLayout.setAutoCreateContainerGaps(true);
-
-		JPanel jSecurityPanel = new JPanel();
-		jSecurityPanel.setBorder(BorderFactory.createTitledBorder(TabsRouting.get().security()));
-		GroupLayout securityLayout = new GroupLayout(jSecurityPanel);
-		jSecurityPanel.setLayout(securityLayout);
-		securityLayout.setAutoCreateGaps(true);
-		securityLayout.setAutoCreateContainerGaps(true);
-
-		avoidModel.setSortComparator(comp);
-		avoidModel.addAll(Settings.get().getRoutingSettings().getAvoid().values());
-
-		jAvoid = new JList<>(avoidModel);
-		jAvoid.addMouseListener(listener);
-		jAvoid.addListSelectionListener(listener);
-
-		JFixedToolBar jToolBar = new JFixedToolBar(JFixedToolBar.Orientation.VERTICAL);
-
-		jAvoidAdd = new JButton(TabsRouting.get().avoidAdd(), Images.EDIT_ADD.getIcon());
-		jAvoidAdd.setActionCommand(RoutingAction.AVOID_ADD.name());
-		jAvoidAdd.addActionListener(listener);
-		jToolBar.addButton(jAvoidAdd);
-
-		jAvoidRemove = new JButton(TabsRouting.get().avoidRemove(), Images.EDIT_DELETE.getIcon());
-		jAvoidRemove.setActionCommand(RoutingAction.AVOID_REMOVE.name());
-		jAvoidRemove.addActionListener(listener);
-		jAvoidRemove.setEnabled(false);
-		jToolBar.addButton(jAvoidRemove);
-
-		jAvoidClear = new JButton(TabsRouting.get().avoidClear(), Images.FILTER_CLEAR.getIcon());
-		jAvoidClear.setActionCommand(RoutingAction.AVOID_CLEAR.name());
-		jAvoidClear.addActionListener(listener);
-		jToolBar.addButton(jAvoidClear);
-
-		jAvoidSave = new JButton(TabsRouting.get().avoidSave(), Images.FILTER_SAVE.getIcon());
-		jAvoidSave.setActionCommand(RoutingAction.AVOID_SAVE.name());
-		jAvoidSave.addActionListener(listener);
-		jToolBar.addButton(jAvoidSave);
-
-		jAvoidLoad = new JDropDownButton(TabsRouting.get().avoidLoad(), Images.FILTER_LOAD.getIcon());
-		jToolBar.addButton(jAvoidLoad);
-
-		JScrollPane jAvoidScroll = new JScrollPane(jAvoid);
-
-		Double[] security = {0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
-
-		jSecurityIcon = new JLabel();
-
-		jSecurityMinimum = new JComboBox<>(security);
-		jSecurityMinimum.setSelectedItem(Settings.get().getRoutingSettings().getSecMin());
-		jSecurityMinimum.setActionCommand(RoutingAction.SAVE.name());
-		jSecurityMinimum.addActionListener(listener);
-
-		jSecuritySeparatorLabel = new JLabel(" - ");
-
-		jSecurityMaximum = new JComboBox<>(security);
-		jSecurityMaximum.setSelectedItem(Settings.get().getRoutingSettings().getSecMax());
-		jSecurityMaximum.setActionCommand(RoutingAction.SAVE.name());
-		jSecurityMaximum.addActionListener(listener);
-
 		updateFilterLabels();
-		updateSavedFilters();
 
-		avoidLayout.setHorizontalGroup(
-			avoidLayout.createSequentialGroup()
-				.addComponent(jAvoidScroll, 300, 300, Integer.MAX_VALUE)
-				.addComponent(jToolBar)
-		);
-		avoidLayout.setVerticalGroup(
-			avoidLayout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
-				.addComponent(jAvoidScroll, 160, 160, Integer.MAX_VALUE)
-				.addComponent(jToolBar)
-		);
-		securityLayout.setHorizontalGroup(
-			securityLayout.createSequentialGroup()
-				.addComponent(jSecurityIcon)
-				.addComponent(jSecurityMinimum, 80, 80, Short.MAX_VALUE)
-				.addComponent(jSecuritySeparatorLabel)
-				.addComponent(jSecurityMaximum, 80, 80, Short.MAX_VALUE)
-		);
-		securityLayout.setVerticalGroup(
-			securityLayout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
-				.addComponent(jSecurityIcon, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-				.addComponent(jSecurityMinimum, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-				.addComponent(jSecuritySeparatorLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-				.addComponent(jSecurityMaximum, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-		);
 		filterLayout.setHorizontalGroup(
 			filterLayout.createSequentialGroup()
-				.addComponent(jAvoidPanel)
-				.addComponent(jSecurityPanel)
+				.addComponent(jAvoid.getAvoidPanel())
+				.addComponent(jAvoid.getSecurityPanel())
 		);
 		filterLayout.setVerticalGroup(
 			filterLayout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
-				.addComponent(jAvoidPanel)
-				.addComponent(jSecurityPanel)
+				.addComponent(jAvoid.getAvoidPanel())
+				.addComponent(jAvoid.getSecurityPanel())
 		);
 	//Progress
 		jProgress = new JProgressBar();
@@ -754,6 +632,7 @@ public class RoutingTab extends JMainTabSecondary {
 		);
 		buildGraph(true); //Build default Graph (0.0/All sec - no avoids)
 		jSystemDialog.updateData(filteredGraph.getNodes()); //Will be replaced by valid systems by processRouteInner()
+		jAvoid.updateSystemDialog(filteredGraph.getNodes()); //Will be replaced by valid systems by processRouteInner()
 	}
 
 	@Override
@@ -854,42 +733,7 @@ public class RoutingTab extends JMainTabSecondary {
 			filteredGraph.clear();
 		}
 		filteredGraph = new Graph<>(new Jumps<>());
-		double secMin;
-		double secMax;
-		if (jSecurityMinimum != null) {
-			secMin = (Double) jSecurityMinimum.getSelectedItem();
-		} else {
-			secMin = 0.0f;
-		}
-		if (jSecurityMaximum != null) {
-			secMax = (Double) jSecurityMaximum.getSelectedItem();
-		} else {
-			secMax = 1.0f;
-		}
-		int count = 0;
-		for (Jump jump : StaticData.get().getJumps()) { // this way we exclude the locations that are unreachable.
-			count++;
-			SplashUpdater.setSubProgress((int) (count * 100.0 / StaticData.get().getJumps().size()));
-
-			SolarSystem from = systemCache.get(jump.getFrom().getSystemID());
-			SolarSystem to = systemCache.get(jump.getTo().getSystemID());
-			if (from == null) {
-				from = SolarSystem.create(systemCache, jump.getFrom());
-			}
-			if (to == null) {
-				to = SolarSystem.create(systemCache, jump.getTo());
-			}
-			if (all || (jump.getFrom().getSecurityObject().getDouble() >= secMin
-						&& jump.getTo().getSecurityObject().getDouble() >= secMin
-						&& jump.getFrom().getSecurityObject().getDouble() <= secMax
-						&& jump.getTo().getSecurityObject().getDouble() <= secMax
-						&& !Settings.get().getRoutingSettings().getAvoid().keySet().contains(jump.getFrom().getSystemID())
-						&& !Settings.get().getRoutingSettings().getAvoid().keySet().contains(jump.getTo().getSystemID())
-					)) {
-				filteredGraph.addEdge(new Edge<>(from, to));
-			}
-		}
-		SplashUpdater.setSubProgress(100);
+		RouteFinder.generateGraph(systemCache, filteredGraph, all ? null : Settings.get().getRoutingSettings().getAvoidSettings());
 	}
 
 	protected void processFilteredAssets() {
@@ -1008,12 +852,12 @@ public class RoutingTab extends JMainTabSecondary {
 	private void processRouteInner() {
 		try {
 			//Update Graph if needed (AKA filter has changed)
-			if (lastSecMin != (Double) jSecurityMinimum.getSelectedItem()
-				|| lastSecMax != (Double) jSecurityMaximum.getSelectedItem()
+			if (lastSecMin != jAvoid.getSecurityMinimum()
+				|| lastSecMax != jAvoid.getSecurityMaximum()
 				|| !lastAvoid.equals(new ArrayList<>(Settings.get().getRoutingSettings().getAvoid().keySet()))) {
 				buildGraph(false);
-				lastSecMin = (Double) jSecurityMinimum.getSelectedItem();
-				lastSecMax = (Double) jSecurityMaximum.getSelectedItem();
+				lastSecMin = jAvoid.getSecurityMinimum();
+				lastSecMax = jAvoid.getSecurityMaximum();
 				lastAvoid = new ArrayList<>(Settings.get().getRoutingSettings().getAvoid().keySet());
 			}
 			//Warning for 2 or less systems
@@ -1122,9 +966,9 @@ public class RoutingTab extends JMainTabSecondary {
 
 	public String getSecurityString() {
 		final StringBuilder builder = new StringBuilder();
-		builder.append(Formatter.securityFormat(jSecurityMinimum.getSelectedItem()));
+		builder.append(Formatter.securityFormat(jAvoid.getSecurityMinimum()));
 		builder.append(" - ");
-		builder.append(Formatter.securityFormat(jSecurityMaximum.getSelectedItem()));
+		builder.append(Formatter.securityFormat(jAvoid.getSecurityMaximum()));
 		return builder.toString();
 	}
 
@@ -1240,21 +1084,6 @@ public class RoutingTab extends JMainTabSecondary {
 		jWaypointsRemaining.setEnabled(b);
 		//Filters
 		jAvoid.setEnabled(b);
-		jAvoidAdd.setEnabled(b);
-		if (b) {
-			jAvoidRemove.setEnabled(jAvoid.getSelectedIndices().length > 0);
-			jAvoidClear.setEnabled(!avoidModel.getAll().isEmpty());
-			jAvoidSave.setEnabled(!avoidModel.getAll().isEmpty());
-			jAvoidLoad.setEnabled(!Settings.get().getRoutingSettings().getPresets().isEmpty());
-		} else {
-			jAvoidRemove.setEnabled(b);
-			jAvoidClear.setEnabled(b);
-			jAvoidSave.setEnabled(b);
-			jAvoidLoad.setEnabled(b);
-		}
-		jSecurityMinimum.setEnabled(b);
-		jSecuritySeparatorLabel.setEnabled(b);
-		jSecurityMaximum.setEnabled(b);
 		for (ResultToolbar resultToolbar : resultToolbars) {
 			resultToolbar.setEnabled(b);
 		}
@@ -1317,96 +1146,6 @@ public class RoutingTab extends JMainTabSecondary {
 		}
 	}
 
-	private void updateFilterLabels() {
-		double secMin = Settings.get().getRoutingSettings().getSecMin();
-		double secMax = Settings.get().getRoutingSettings().getSecMax();
-		int size = Settings.get().getRoutingSettings().getAvoid().size();
-		jFilterSecurity.setText(Formatter.securityFormat(secMin) + " - " + Formatter.securityFormat(secMax));
-		if (secMin == 0.0) {
-			jSecurityIcon.setIcon(Images.UPDATE_CANCELLED.getIcon());
-			jFilterSecurityIcon.setIcon(Images.UPDATE_CANCELLED.getIcon());
-		} else if (secMin >= 0.5) {
-			jSecurityIcon.setIcon(Images.UPDATE_DONE_OK.getIcon());
-			jFilterSecurityIcon.setIcon(Images.UPDATE_DONE_OK.getIcon());
-		} else {
-			jSecurityIcon.setIcon(Images.UPDATE_DONE_SOME.getIcon());
-			jFilterSecurityIcon.setIcon(Images.UPDATE_DONE_SOME.getIcon());
-		}
-		jFilterSystem.setText(String.valueOf(size));
-		jAvoidClear.setEnabled(!avoidModel.getAll().isEmpty());
-		jAvoidSave.setEnabled(!avoidModel.getAll().isEmpty());
-		jAvoidLoad.setEnabled(!Settings.get().getRoutingSettings().getPresets().isEmpty());
-	}
-
-	private void updateSavedFilters() {
-		jAvoidLoad.removeAll();
-
-		JMenuItem jManage = new JMenuItem(TabsRouting.get().avoidManage(), Images.DIALOG_SETTINGS.getIcon());
-		jManage.setActionCommand(RoutingAction.AVOID_MANAGE.name());
-		jManage.addActionListener(listener);
-		jAvoidLoad.add(jManage);
-
-		if (!Settings.get().getRoutingSettings().getPresets().isEmpty()) {
-			jAvoidLoad.addSeparator();
-		}
-
-		ArrayList<String> presets = new ArrayList<>(Settings.get().getRoutingSettings().getPresets().keySet());
-		Collections.sort(presets);
-		for (String name : presets) {
-			JMenuItem jMenuItem = new JLoadMenuItem(name, Settings.get().getRoutingSettings().getPresets().get(name));
-			jMenuItem.setActionCommand(RoutingAction.AVOID_LOAD.name());
-			jMenuItem.addActionListener(listener);
-			jAvoidLoad.add(jMenuItem);
-		}
-		jAvoidLoad.setEnabled(!Settings.get().getRoutingSettings().getPresets().isEmpty());
-		jManageAvoidDialog.updateData();
-	}
-
-	public void loadFilter(Set<Long> systemIds) {
-		avoidModel.clear();
-		Settings.lock("Routing (Load Filter)");
-		Settings.get().getRoutingSettings().getAvoid().clear();
-		for (Long systemID : systemIds) {
-			SolarSystem system = new SolarSystem(ApiIdConverter.getLocation(systemID));
-			Settings.get().getRoutingSettings().getAvoid().put(system.getSystemID(), system);
-			avoidModel.add(system);
-		}
-		Settings.unlock("Routing (Load Filter)");
-		program.saveSettings("Routing (Load Filter)");
-		updateFilterLabels();
-	}
-
-	public void deleteFilters(List<String> list) {
-		Settings.lock("Routing (Delete Filters)");
-		for (String filter : list) {
-			Settings.get().getRoutingSettings().getPresets().remove(filter);
-		}
-		Settings.unlock("Routing (Delete Filters)");
-		program.saveSettings("Routing (Delete Filters)");
-		updateSavedFilters();
-	}
-
-	public void renameFilter(String name, String oldName) {
-		Settings.lock("Routing (Rename Filter)");
-		Set<Long> systemIDs = Settings.get().getRoutingSettings().getPresets().remove(oldName);
-		Settings.get().getRoutingSettings().getPresets().put(name, systemIDs);
-		Settings.unlock("Routing (Rename Filter)");
-		program.saveSettings("Routing (Rename Filter)");
-		updateSavedFilters();
-	}
-
-	public void mergeFilters(String name, List<String> list) {
-		Set<Long> systemIDs = new HashSet<>();
-		Settings.lock("Routing (Merge Filters)");
-		for (String mergeName : list) {
-			systemIDs.addAll(Settings.get().getRoutingSettings().getPresets().get(mergeName));
-		}
-		Settings.get().getRoutingSettings().getPresets().put(name, systemIDs);
-		Settings.unlock("Routing (Merge Filters)");
-		program.saveSettings("Routing (Merge Filters)");
-		updateSavedFilters();
-	}
-
 	public void addLocation(MyLocation location) {
 		if (location == null) {
 			return; //Cancel
@@ -1426,17 +1165,6 @@ public class RoutingTab extends JMainTabSecondary {
 			jWaypoints.getEditableModel().add(solarSystem);
 		} //Else: Already in waypoints - do nothing
 		updateRemaining();
-	}
-
-	private void removeSystems() {
-		Settings.lock("Routing (Delete Systems)");
-		for (SolarSystem system : jAvoid.getSelectedValuesList()) {
-			avoidModel.remove(system);
-			Settings.get().getRoutingSettings().getAvoid().remove(system.getSystemID());
-		}
-		Settings.unlock("Routing (Delete Systems)");
-		program.saveSettings("Routing (Delete Systems)");
-		updateFilterLabels();
 	}
 
 	private ImportReturn importOptions(final RouteResult routeResult, final String routeName, ImportReturn importReturn, final int count) {
@@ -1550,6 +1278,22 @@ public class RoutingTab extends JMainTabSecondary {
 		});
 	}
 
+	private void updateFilterLabels() {
+		jAvoid.updateFilterLabels();
+		double secMin = Settings.get().getRoutingSettings().getSecMin();
+		double secMax = Settings.get().getRoutingSettings().getSecMax();
+		int size = Settings.get().getRoutingSettings().getAvoid().size();
+		jFilterSecurity.setText(Formatter.securityFormat(secMin) + " - " + Formatter.securityFormat(secMax));
+		if (secMin == 0.0) {
+			jFilterSecurityIcon.setIcon(Images.UPDATE_CANCELLED.getIcon());
+		} else if (secMin >= 0.5) {
+			jFilterSecurityIcon.setIcon(Images.UPDATE_DONE_OK.getIcon());
+		} else {
+			jFilterSecurityIcon.setIcon(Images.UPDATE_DONE_SOME.getIcon());
+		}
+		jFilterSystem.setText(String.valueOf(size));
+	}
+
 	private class ListenerClass extends MouseAdapter implements ActionListener, ListSelectionListener {
 
 		@Override
@@ -1579,62 +1323,6 @@ public class RoutingTab extends JMainTabSecondary {
 			} else if (RoutingAction.ALGORITHM_HELP.name().equals(e.getActionCommand())) {
 				RoutingAlgorithmContainer rac = ((RoutingAlgorithmContainer) jAlgorithm.getSelectedItem());
 				JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), rac.getBasicDescription(), rac.getName(), JOptionPane.INFORMATION_MESSAGE);
-			} else if (RoutingAction.AVOID_REMOVE.name().equals(e.getActionCommand())) {
-				removeSystems();
-			} else if (RoutingAction.AVOID_CLEAR.name().equals(e.getActionCommand())) {
-				Settings.lock("Routing (Clear Systems)");
-				Settings.get().getRoutingSettings().getAvoid().clear();
-				avoidModel.clear();
-				updateFilterLabels();
-				Settings.unlock("Routing (Clear Systems)");
-				program.saveSettings("Routing (Clear Systems)");
-			} else if (RoutingAction.AVOID_ADD.name().equals(e.getActionCommand())) {
-				SolarSystem system = jSystemDialog.show();
-				if (system != null) {
-					Settings.lock("Routing (Add System)");
-					Settings.get().getRoutingSettings().getAvoid().put(system.getSystemID(), system);
-					avoidModel.clear();
-					avoidModel.addAll(Settings.get().getRoutingSettings().getAvoid().values());
-					Settings.unlock("Routing (Add System)");
-					program.saveSettings("Routing (Add System)");
-					updateFilterLabels();
-				}
-			} else if (RoutingAction.AVOID_SAVE.name().equals(e.getActionCommand())) {
-				jSaveSystemDialog.updateData(new ArrayList<>(Settings.get().getRoutingSettings().getPresets().keySet()));
-				String name = jSaveSystemDialog.show();
-				if (name != null) {
-					Settings.lock("Routing (Save Filter)");
-					Set<Long> systemIDs = new HashSet<>();
-					for (SolarSystem system : avoidModel.getAll()) {
-						systemIDs.add(system.getSystemID());
-					}
-					Settings.get().getRoutingSettings().getPresets().put(name, systemIDs);
-					Settings.unlock("Routing (Save Filter)");
-					program.saveSettings("Routing (Save Filter)");
-					updateSavedFilters();
-				}
-			} else if (RoutingAction.AVOID_LOAD.name().equals(e.getActionCommand())) {
-				Object source = e.getSource();
-				if (source instanceof JLoadMenuItem) {
-					JLoadMenuItem menuItem = (JLoadMenuItem) source;
-					loadFilter(menuItem.getSystemIDs());
-				}
-			} else if (RoutingAction.AVOID_MANAGE.name().equals(e.getActionCommand())) {
-				jManageAvoidDialog.updateData();
-				jManageAvoidDialog.setVisible(true);
-			} else if (RoutingAction.SAVE.name().equals(e.getActionCommand())) {
-				double min = (Double) jSecurityMinimum.getSelectedItem();
-				double max = (Double) jSecurityMaximum.getSelectedItem();
-				if (max < min) {
-					max = min;
-					jSecurityMaximum.setSelectedItem(min);
-				}
-				Settings.lock("Routing (Security)");
-				Settings.get().getRoutingSettings().setSecMin(min);
-				Settings.get().getRoutingSettings().setSecMax(max);
-				Settings.unlock("Routing (Security)");
-				program.saveSettings("Routing (Security)");
-				updateFilterLabels();
 			} else if (RoutingAction.IMPORT_SYSTEMS.name().equals(e.getActionCommand())) {
 				String importText = jImportSystemsDialog.importText("", SYSTEM_NAMES_EXAMPLE);
 				if (importText == null || importText.isEmpty()) {
@@ -1815,8 +1503,6 @@ public class RoutingTab extends JMainTabSecondary {
 					move(jAvailable, jWaypoints);
 				} else if (e.getSource().equals(jWaypoints) && jWaypoints.isEnabled()) {
 					move(jWaypoints, jAvailable);
-				} else if (e.getSource().equals(jAvoid) && jAvoid.isEnabled()) {
-					removeSystems();
 				}
 			}
 		}
@@ -1825,8 +1511,6 @@ public class RoutingTab extends JMainTabSecondary {
 		public void valueChanged(ListSelectionEvent e) {
 			if (e.getSource().equals(jAvailable) || e.getSource().equals(jWaypoints)) {
 				validateLists();
-			} else if (e.getSource().equals(jAvoid)) {
-				jAvoidRemove.setEnabled(jAvoid.getSelectedIndices().length > 0);
 			}
 		}
 	}
@@ -2150,20 +1834,6 @@ public class RoutingTab extends JMainTabSecondary {
 		@Override
 		public int compareTo(final SourceItem o) {
 			return this.getName().compareToIgnoreCase(o.getName());
-		}
-	}
-
-	private static class JLoadMenuItem extends JMenuItem {
-
-		private final Set<Long> systemIDs;
-
-		public JLoadMenuItem(String name, Set<Long> systemIDs) {
-			super(name, Images.FILTER_LOAD.getIcon());
-			this.systemIDs = systemIDs;
-		}
-
-		public Set<Long> getSystemIDs() {
-			return systemIDs;
 		}
 	}
 }
