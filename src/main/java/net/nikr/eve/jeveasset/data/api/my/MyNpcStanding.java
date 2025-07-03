@@ -25,10 +25,10 @@ import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
 import net.nikr.eve.jeveasset.data.api.raw.RawNpcStanding;
 import net.nikr.eve.jeveasset.data.sde.Agent;
 import net.nikr.eve.jeveasset.data.sde.NpcCorporation;
-import net.nikr.eve.jeveasset.data.sde.StaticData;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.TextIcon;
 import net.nikr.eve.jeveasset.io.online.EveImageGetter.ImageSize;
+import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 
 
 public class MyNpcStanding extends RawNpcStanding implements Comparable<MyNpcStanding> {
@@ -39,11 +39,11 @@ public class MyNpcStanding extends RawNpcStanding implements Comparable<MyNpcSta
 	private final int factionID;
 	private final int corporationID;
 	private final int agentID;
+	private final Agent agent;
 	private final boolean connections;
 	private final boolean criminalConnections;
 	private String factionName;
 	private String corporationName;
-	private String agentName;
 	private TextIcon factionTextIcon = null;
 	private TextIcon corporationTextIcon = null;
 	private TextIcon agentTextIcon = null;
@@ -54,33 +54,28 @@ public class MyNpcStanding extends RawNpcStanding implements Comparable<MyNpcSta
 	public MyNpcStanding(RawNpcStanding rawNpcStanding, OwnerType owner) {
 		super(rawNpcStanding);
 		this.owner = owner;
+		agentID = getFromType() == FromType.AGENT ? getFromID() : 0;
+		agent = ApiIdConverter.getAgent(agentID);
+		NpcCorporation npcCorporation;
 		if (getFromType() == FromType.AGENT) {
-			agentID = getFromID();
-		} else {
-			agentID = 0;
-		}
-		if (getFromType() == FromType.AGENT) {
-			Agent agent = StaticData.get().getAgents().get(getFromID());
 			if (agent != null) {
 				corporationID = agent.getCorporationID();
+				npcCorporation = ApiIdConverter.getNpcCorporation(corporationID);
+				factionID = npcCorporation.getFactionID();
 			} else {
-				corporationID = 0;
+				npcCorporation = ApiIdConverter.getNpcCorporation(getCorporationID());
+				corporationID = npcCorporation.getCorporationID();
+				factionID = npcCorporation.getFactionID();
 			}
 		} else if (getFromType() == FromType.NPC_CORP) {
 			corporationID = getFromID();
-		} else {
-			corporationID = 0;
-		}
-		NpcCorporation npcCorporation = StaticData.get().getNpcCorporations().get(corporationID);
-		
-		if (getFromType() == FromType.FACTION) {
-			factionID = getFromID();
-		} else if (npcCorporation != null) {
+			npcCorporation = ApiIdConverter.getNpcCorporation(corporationID);
 			factionID = npcCorporation.getFactionID();
-		} else {
-			factionID = 0;
+		} else { //FromType.FACTION
+			corporationID = 0;
+			factionID = getFromID();
+			npcCorporation = ApiIdConverter.getNpcCorporation(factionID);
 		}
-		
 		if (npcCorporation != null) {
 			connections = npcCorporation.isConnections();
 			criminalConnections = npcCorporation.isCriminalConnections();
@@ -106,15 +101,23 @@ public class MyNpcStanding extends RawNpcStanding implements Comparable<MyNpcSta
 		return agentID;
 	}
 
+	public Agent getAgent() {
+		return agent;
+	}
+
+	public String getAgentName() {
+		return agent.getAgent();
+	}
+
 	public TextIcon getFactionTextIcon() {
-		if (factionTextIcon == null) {
+		if (factionTextIcon == null && factionID > 0) {
 			factionTextIcon = new TextIcon(Images.getIcon(factionID), factionName);
 		}
 		return factionTextIcon;
 	}
 
 	public TextIcon getCorporationTextIcon() {
-		if (corporationTextIcon == null && (getFromType() == FromType.AGENT || getFromType() == FromType.NPC_CORP)) {
+		if (corporationTextIcon == null && corporationID > 0 && (getFromType() == FromType.AGENT || getFromType() == FromType.NPC_CORP)) {
 			corporationTextIcon = new TextIcon(Images.getIcon(corporationID), corporationName);
 		}
 		return corporationTextIcon;
@@ -122,7 +125,7 @@ public class MyNpcStanding extends RawNpcStanding implements Comparable<MyNpcSta
 
 	public TextIcon getAgentTextIcon() {
 		if (agentTextIcon == null && getFromType() == FromType.AGENT) {
-			agentTextIcon = new TextIcon(Images.getIcon(this), agentName);
+			agentTextIcon = new TextIcon(Images.getIcon(this), getAgentName());
 		}
 		return agentTextIcon;
 	}
@@ -135,8 +138,7 @@ public class MyNpcStanding extends RawNpcStanding implements Comparable<MyNpcSta
 		this.corporationName = corporationName;
 	}
 
-	public void setAgentName(String agentName) {
-		this.agentName = agentName;
+	public void updateSkills() {
 		for (MySkill mySkill : owner.getSkills()) {
 			if (mySkill.getTypeID() == 3359) { //Connections
 				connectionsLevel = mySkill.getActiveSkillLevel();
@@ -147,7 +149,7 @@ public class MyNpcStanding extends RawNpcStanding implements Comparable<MyNpcSta
 			if (mySkill.getTypeID() == 3361) { //Connections
 				criminalConnectionsLevel = mySkill.getActiveSkillLevel();
 			}
-		}	
+		}
 	}
 
 	public Float getStandingEffective() {
@@ -165,6 +167,10 @@ public class MyNpcStanding extends RawNpcStanding implements Comparable<MyNpcSta
 		return standing;
 	}
 
+	public Float getStandingMaximum() {
+		return calc(getStanding(), 5);
+	}
+
 	private Float calc(Float standing, int modifier) {
 		return standing + (10 - standing) * 0.04F * modifier;
 	}
@@ -178,5 +184,4 @@ public class MyNpcStanding extends RawNpcStanding implements Comparable<MyNpcSta
 		return Float.compare(o.getStanding(), this.getStanding());
 		
 	}
-
 }

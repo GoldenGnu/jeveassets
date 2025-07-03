@@ -35,6 +35,7 @@ import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder;
 import net.nikr.eve.jeveasset.data.api.raw.RawNpcStanding;
 import net.nikr.eve.jeveasset.data.sde.ItemFlag;
 import net.nikr.eve.jeveasset.data.sde.StaticData;
+import net.nikr.eve.jeveasset.i18n.GuiShared;
 import net.troja.eve.esi.model.CharacterAssetsResponse;
 import net.troja.eve.esi.model.CharacterBlueprintsResponse;
 import net.troja.eve.esi.model.CharacterContractsResponse;
@@ -382,6 +383,46 @@ public class RawConverter {
 
 	public static RawNpcStanding.FromType toNpcStandingFromType(CharacterStandingsResponse.FromTypeEnum value) {
 		return toNpcStandingFromTypeEnum(value);
+	}
+
+	public static String toAgentDivision(Integer value) {
+		if (value == null) {
+			return null;
+		}
+		switch (value) {
+			case 18: return GuiShared.get().agentDivisionResearchAndDevelopment();
+			case 22: return GuiShared.get().agentDivisionDistribution();
+			case 23: return GuiShared.get().agentDivisionMining();
+			case 24: return GuiShared.get().agentDivisionSecurity();
+			case 25: return GuiShared.get().agentDivisionIndustrialistEntrepreneur();
+			case 26: return GuiShared.get().agentDivisionExplorer();
+			case 27: return GuiShared.get().agentDivisionIndustrialistProducer();
+			case 28: return GuiShared.get().agentDivisionEnforcer();
+			case 29: return GuiShared.get().agentDivisionSoldierOfFortune();
+			case 37: return GuiShared.get().agentDivisionInterBus();
+			default: return null;
+		}
+	}
+
+	public static String toAgentType(Integer value) {
+		if (value == null) {
+			return null;
+		}
+		switch (value) {
+			case 1: return GuiShared.get().agentTypeNonAgent();
+			case 2: return GuiShared.get().agentTypeBasicAgent();
+			case 3: return GuiShared.get().agentTypeTutorialAgent();
+			case 4: return GuiShared.get().agentTypeResearchAgent();
+			case 5: return GuiShared.get().agentTypeConcordAgent();
+			case 6: return GuiShared.get().agentTypeGenericStorylineMissionAgent();
+			case 7: return GuiShared.get().agentTypeStorylineMissionAgent();
+			case 8: return GuiShared.get().agentTypeEventMissionAgent();
+			case 9: return GuiShared.get().agentTypeFactionalWarfareAgent();
+			case 10: return GuiShared.get().agentTypeEpicArcAgent();
+			case 11: return GuiShared.get().agentTypeAuraAgent();
+			case 12: return GuiShared.get().agentTypeCareerAgent();
+			default: return null;
+		}
 	}
 
 	public static RawNpcStanding.FromType toNpcStandingFromType(CorporationStandingsResponse.FromTypeEnum value) {

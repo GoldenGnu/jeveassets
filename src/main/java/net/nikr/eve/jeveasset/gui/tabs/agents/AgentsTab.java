@@ -19,7 +19,7 @@
  *
  */
 
-package net.nikr.eve.jeveasset.gui.tabs.loyalty;
+package net.nikr.eve.jeveasset.gui.tabs.agents;
 
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.FilterList;
@@ -28,20 +28,16 @@ import ca.odell.glazedlists.SortedList;
 import ca.odell.glazedlists.swing.DefaultEventSelectionModel;
 import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import ca.odell.glazedlists.swing.TableComparatorChooser;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import javax.swing.JComponent;
 import javax.swing.JMenu;
-import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.api.my.MyLoyaltyPoints;
+import net.nikr.eve.jeveasset.data.sde.Agent;
+import net.nikr.eve.jeveasset.data.sde.StaticData;
 import net.nikr.eve.jeveasset.data.settings.tag.TagUpdate;
 import net.nikr.eve.jeveasset.data.settings.types.LocationType;
 import net.nikr.eve.jeveasset.gui.images.Images;
@@ -52,40 +48,39 @@ import net.nikr.eve.jeveasset.gui.shared.menu.JMenuColumns;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
+import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
-import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
 import net.nikr.eve.jeveasset.gui.shared.table.TableFormatFactory;
-import net.nikr.eve.jeveasset.i18n.TabsLoyaltyPoints;
-import net.nikr.eve.jeveasset.io.shared.DesktopUtil;
+import net.nikr.eve.jeveasset.i18n.TabsAgents;
 
 
-public class LoyaltyPointsTab extends JMainTabPrimary implements TagUpdate {
+public class AgentsTab extends JMainTabPrimary implements TagUpdate {
 
 	//GUI
 	private final JAutoColumnTable jTable;
 
 	//Table
-	private final LoyaltyPointsFilterControl filterControl;
-	private final EnumTableFormatAdaptor<LoyaltyPointsTableFormat, MyLoyaltyPoints> tableFormat;
-	private final DefaultEventTableModel<MyLoyaltyPoints> tableModel;
-	private final EventList<MyLoyaltyPoints> eventList;
-	private final FilterList<MyLoyaltyPoints> filterList;
-	private final DefaultEventSelectionModel<MyLoyaltyPoints> selectionModel;
+	private final AgentsFilterControl filterControl;
+	private final EnumTableFormatAdaptor<AgentsTableFormat, Agent> tableFormat;
+	private final DefaultEventTableModel<Agent> tableModel;
+	private final EventList<Agent> eventList;
+	private final FilterList<Agent> filterList;
+	private final DefaultEventSelectionModel<Agent> selectionModel;
 
-	public static final String NAME = "loyaltypoints"; //Not to be changed!
+	public static final String NAME = "agents"; //Not to be changed!
 
-	public LoyaltyPointsTab(final Program program) {
-		super(program, NAME, TabsLoyaltyPoints.get().loyaltyPoints(), Images.TOOL_LOYALTY_POINTS.getIcon(), true);
+	public AgentsTab(final Program program) {
+		super(program, NAME, TabsAgents.get().agents(), Images.TOOL_AGENTS.getIcon(), true);
 		layout.setAutoCreateGaps(true);
 
 		//Table Format
-		tableFormat = TableFormatFactory.loyaltyPointsTableFormat();
+		tableFormat = TableFormatFactory.agentsTableFormat();
 		//Backend
-		eventList = program.getProfileData().getLoyaltyPointsEventList();
+		eventList = EventListManager.create();
 		//Sorting (per column)
 		eventList.getReadWriteLock().readLock().lock();
-		SortedList<MyLoyaltyPoints> sortedList = new SortedList<>(eventList);
+		SortedList<Agent> sortedList = new SortedList<>(eventList);
 		eventList.getReadWriteLock().readLock().unlock();
 
 		//Filter
@@ -100,10 +95,8 @@ public class LoyaltyPointsTab extends JMainTabPrimary implements TagUpdate {
 		jTable.setCellSelectionEnabled(true);
 		jTable.setRowSelectionAllowed(true);
 		jTable.setColumnSelectionAllowed(true);
-		jTable.setRowHeight(MyLoyaltyPoints.IMAGE_SIZE.getSize());
-		PaddingTableCellRenderer.install(jTable, 0, 5, 0, 5);
 		//Sorting
-		TableComparatorChooser<MyLoyaltyPoints> comparatorChooser = TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
+		TableComparatorChooser<Agent> comparatorChooser = TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
 		//Selection Model
 		selectionModel = EventModels.createSelectionModel(filterList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
@@ -114,9 +107,9 @@ public class LoyaltyPointsTab extends JMainTabPrimary implements TagUpdate {
 		//Scroll
 		JScrollPane jTableScroll = new JScrollPane(jTable);
 		//Table Filter
-		filterControl = new LoyaltyPointsFilterControl(sortedList);
+		filterControl = new AgentsFilterControl(sortedList);
 		//Menu
-		installTableTool(new LoyaltyPointsTableMenu(), tableFormat, comparatorChooser, tableModel, jTable, filterControl, MyLoyaltyPoints.class);
+		installTableTool(new AgentsTableMenu(), tableFormat, comparatorChooser, tableModel, jTable, filterControl, Agent.class);
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()
@@ -128,6 +121,14 @@ public class LoyaltyPointsTab extends JMainTabPrimary implements TagUpdate {
 				.addComponent(filterControl.getPanel())
 				.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
 		);
+
+		try {
+			eventList.getReadWriteLock().writeLock().lock();
+			eventList.clear();
+			eventList.addAll(StaticData.get().getAgents().values());
+		} finally {
+			eventList.getReadWriteLock().writeLock().unlock();
+		}
 	}
 
 	@Override
@@ -167,9 +168,9 @@ public class LoyaltyPointsTab extends JMainTabPrimary implements TagUpdate {
 		return filterControl.getCurrentFilterName();
 	}
 
-	private class LoyaltyPointsTableMenu implements TableMenu<MyLoyaltyPoints> {
+	private class AgentsTableMenu implements TableMenu<Agent> {
 		@Override
-		public MenuData<MyLoyaltyPoints> getMenuData() {
+		public MenuData<Agent> getMenuData() {
 			return new MenuData<>(selectionModel.getSelected());
 		}
 
@@ -187,50 +188,12 @@ public class LoyaltyPointsTab extends JMainTabPrimary implements TagUpdate {
 		public void addInfoMenu(JPopupMenu jPopupMenu) { }
 
 		@Override
-		public void addToolMenu(JComponent jComponent) {
-			JMenu fuzzwork = new JMenu(TabsLoyaltyPoints.get().fuzzworkLoyaltyPointsStore());
-			fuzzwork.setIcon(Images.LINK_FUZZWORK.getIcon());
-			jComponent.add(fuzzwork);
-
-			boolean enabled = !selectionModel.getSelected().isEmpty();
-
-			JMenuItem jSell = new JMenuItem(TabsLoyaltyPoints.get().sell(), Images.ORDERS_SELL.getIcon());
-			jSell.setEnabled(enabled);
-			jSell.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					Set<String> links = new HashSet<>();
-					for (MyLoyaltyPoints loyaltyPoints : selectionModel.getSelected()) {
-						links.add("https://www.fuzzwork.co.uk/lpstore/sell/10000002/"+loyaltyPoints.getCorporationID());
-						
-					}
-					DesktopUtil.browse(links, program);
-					
-				}
-			});
-			fuzzwork.add(jSell);
-
-			JMenuItem jBuy = new JMenuItem(TabsLoyaltyPoints.get().buy(), Images.ORDERS_BUY.getIcon());
-			jBuy.setEnabled(enabled);
-			jBuy.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					Set<String> links = new HashSet<>();
-					for (MyLoyaltyPoints loyaltyPoints : selectionModel.getSelected()) {
-						links.add("https://www.fuzzwork.co.uk/lpstore/buy/10000002/"+loyaltyPoints.getCorporationID());
-						
-					}
-					DesktopUtil.browse(links, program);
-					
-				}
-			});
-			fuzzwork.add(jBuy);
-		}
+		public void addToolMenu(JComponent jComponent) { }
 	}
 
-	private class LoyaltyPointsFilterControl extends FilterControl<MyLoyaltyPoints> {
+	private class AgentsFilterControl extends FilterControl<Agent> {
 
-		public LoyaltyPointsFilterControl(EventList<MyLoyaltyPoints> exportEventList) {
+		public AgentsFilterControl(EventList<Agent> exportEventList) {
 			super(program.getMainWindow().getFrame(),
 					NAME,
 					tableFormat,
@@ -242,7 +205,7 @@ public class LoyaltyPointsTab extends JMainTabPrimary implements TagUpdate {
 
 		@Override
 		public void saveSettings(final String msg) {
-			program.saveSettings("Loyalty Points Table: " + msg); //Save Loyalty Points Filters and Export Settings
+			program.saveSettings("Agents Table: " + msg); //Save Agents Filters and Export Settings
 		}
 	}
 }

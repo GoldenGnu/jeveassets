@@ -24,33 +24,30 @@ package net.nikr.eve.jeveasset.i18n;
 import java.util.Locale;
 import uk.me.candle.translations.Bundle;
 
-public abstract class TabsNpcStanding extends Bundle {
+public abstract class TabsAgents extends Bundle {
 
-	public static TabsNpcStanding get() {
-		return BundleServiceFactory.getBundleService().get(TabsNpcStanding.class);
+	public static TabsAgents get() {
+		return BundleServiceFactory.getBundleService().get(TabsAgents.class);
 	}
 
-	public TabsNpcStanding(final Locale locale) {
+	public TabsAgents(final Locale locale) {
 		super(locale);
 	}
 
-	public abstract String npcStanding();
-	public abstract String columnOwner();
-	public abstract String columnFaction();
+	public abstract String agents();
+	public abstract String columnName();
 	public abstract String columnCorporation();
-	public abstract String columnAgent();
-	public abstract String columnAgentLevel();
-	public abstract String columnAgentDivision();
-	public abstract String columnAgentType();
+	public abstract String columnFaction();
+	public abstract String columnLevel();
+	public abstract String columnLocation();
+	public abstract String columnSecurity();
+	public abstract String columnSystem();
+	public abstract String columnConstellation();
+	public abstract String columnRegion();
+	public abstract String columnDivision();
 	public abstract String columnType();
-	public abstract String columnRawStanding();
-	public abstract String columnRawStandingToolTip();
-	public abstract String columnStanding();
-	public abstract String columnStandingToolTip();
-	public abstract String columnStandingMax();
-	public abstract String columnStandingMaxToolTip();
-	public abstract String columnID();
-	public abstract String typeAgent();
-	public abstract String typeCorporation();
-	public abstract String typeFaction();
+	public abstract String columnLocator();
+	public abstract String columnAgentID();
+	public abstract String columnCorporationID();
+	public abstract String columnFactionID();
 }

@@ -33,10 +33,12 @@ import net.nikr.eve.jeveasset.data.api.my.MyMining;
 import net.nikr.eve.jeveasset.data.api.my.MyNpcStanding;
 import net.nikr.eve.jeveasset.data.api.my.MySkill;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
+import net.nikr.eve.jeveasset.data.sde.Agent;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.settings.ColorSettings.ColorRow;
 import net.nikr.eve.jeveasset.gui.dialogs.account.AccountTableFormat;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.ColorsTableFormat;
+import net.nikr.eve.jeveasset.gui.tabs.agents.AgentsTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.assets.AssetTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractsTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.items.ItemTableFormat;
@@ -163,6 +165,10 @@ public class TableFormatFactory {
 
 	public static EnumTableFormatAdaptor<NpcStandingTableFormat, MyNpcStanding> npcStandingTableFormat() {
 		return new EnumTableFormatAdaptor<>(NpcStandingTableFormat.class);
+	}
+
+	public static EnumTableFormatAdaptor<AgentsTableFormat, Agent> agentsTableFormat() {
+		return new EnumTableFormatAdaptor<>(AgentsTableFormat.class);
 	}
 
 	public static EnumTableFormatAdaptor<MiningTableFormat, MyMining> miningTableFormat() {

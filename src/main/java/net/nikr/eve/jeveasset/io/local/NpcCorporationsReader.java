@@ -63,15 +63,17 @@ public final class NpcCorporationsReader extends AbstractXmlReader<Boolean> {
 		for (int i = 0; i < nodes.getLength(); i++) {
 			Element itemElement = (Element) nodes.item(i);
 			NpcCorporation npcCorporation = parseNpcCorporation(itemElement);
-			npcCorporations.put(npcCorporation.getCorporationID(), npcCorporation);
+			npcCorporations.put(npcCorporation.isFaction() ? npcCorporation.getFactionID() : npcCorporation.getCorporationID(), npcCorporation);
 		}
 	}
 
 	private NpcCorporation parseNpcCorporation(final Node node) throws XmlException {
+		String faction = getStringOptional(node, "faction");
 		int factionID = getInt(node, "factionid");
+		String corporation = getStringOptional(node, "corporation");
 		int corporationID = getIntNotNull(node, "corporationid", 0);
 		boolean connections = getBooleanNotNull(node, "c", false);
 		boolean criminalConnections = getBooleanNotNull(node, "cc", false);
-		return new NpcCorporation(factionID, corporationID, connections, criminalConnections);
+		return new NpcCorporation(faction, factionID, corporation, corporationID, connections, criminalConnections);
 	}
 }

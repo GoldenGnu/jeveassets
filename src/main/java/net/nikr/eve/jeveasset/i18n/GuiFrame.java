@@ -36,6 +36,7 @@ public abstract class GuiFrame extends Bundle {
 
 	public abstract String about();
 	public abstract String accounts();
+	public abstract String agents();
 	public abstract String business();
 	public abstract String change();
 	public abstract String clickToShow(String text);

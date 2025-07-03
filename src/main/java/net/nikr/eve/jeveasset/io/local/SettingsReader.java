@@ -91,6 +91,8 @@ import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.SimpleColu
 import net.nikr.eve.jeveasset.gui.shared.table.View;
 import net.nikr.eve.jeveasset.gui.sounds.DefaultSound;
 import net.nikr.eve.jeveasset.gui.sounds.FileSound;
+import net.nikr.eve.jeveasset.gui.tabs.agents.AgentsTab;
+import net.nikr.eve.jeveasset.gui.tabs.agents.AgentsTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.assets.AssetTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.assets.AssetsTab;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractsTab;
@@ -1769,6 +1771,14 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		try {
 			if (toolName.equals(NpcStandingTab.NAME)) {
 				return NpcStandingTableFormat.valueOf(column);
+			}
+		} catch (IllegalArgumentException exception) {
+
+		}
+		//Agents
+		try {
+			if (toolName.equals(AgentsTab.NAME)) {
+				return AgentsTableFormat.valueOf(column);
 			}
 		} catch (IllegalArgumentException exception) {
 

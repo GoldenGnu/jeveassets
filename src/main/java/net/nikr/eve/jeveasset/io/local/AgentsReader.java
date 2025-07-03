@@ -68,8 +68,14 @@ public final class AgentsReader extends AbstractXmlReader<Boolean> {
 	}
 
 	private Agent parseAgent(final Node node) throws XmlException {
+		String agent = getString(node, "agent");
 		int agentID = getInt(node, "agentid");
 		int corporationID = getInt(node, "corporationid");
-		return new Agent(agentID, corporationID);
+		int level = getInt(node, "level");
+		int divisionID = getInt(node, "divisionid");
+		int agentTypeID = getInt(node, "agenttypeid");
+		long locationID = getLong(node, "locationid");
+		boolean locator = getBoolean(node, "locator");
+		return new Agent(agent, agentID, corporationID, level, divisionID, agentTypeID, locationID, locator);
 	}
 }

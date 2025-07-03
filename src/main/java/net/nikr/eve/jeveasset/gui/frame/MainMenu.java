@@ -75,6 +75,7 @@ public class MainMenu extends JMenuBar {
 		SKILLS,
 		LOYALTY_POINTS,
 		NPC_STANDING,
+		AGENTS,
 		MINING_ALL,
 		MINING_LOG,
 		MINING_GRAPH,
@@ -301,6 +302,12 @@ public class MainMenu extends JMenuBar {
 		menuItem = new JMenuItem(GuiFrame.get().items());
 		menuItem.setIcon(Images.TOOL_ITEMS.getIcon());
 		menuItem.setActionCommand(MainMenuAction.ITEMS.name());
+		menuItem.addActionListener(program);
+		submenu.add(menuItem);
+
+		menuItem = new JMenuItem(GuiFrame.get().agents());
+		menuItem.setIcon(Images.TOOL_AGENTS.getIcon());
+		menuItem.setActionCommand(MainMenuAction.AGENTS.name());
 		menuItem.addActionListener(program);
 		submenu.add(menuItem);
 

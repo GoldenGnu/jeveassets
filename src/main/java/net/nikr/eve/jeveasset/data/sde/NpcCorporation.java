@@ -24,20 +24,45 @@ package net.nikr.eve.jeveasset.data.sde;
 
 public class NpcCorporation implements Comparable<NpcCorporation> {
 
+	private final String faction;
 	private final int factionID; //corporationID : int
+	private final String corporation;
 	private final int corporationID; //corporationID : int
 	private final boolean connections;
 	private final boolean criminalConnections;
 
-	public NpcCorporation(int factionID, int corporationID, boolean connections, boolean criminalConnections) {
+	public NpcCorporation(String faction, int factionID, String corporation, int corporationID, boolean connections, boolean criminalConnections) {
+		this.faction = faction;
 		this.factionID = factionID;
+		this.corporation = corporation;
 		this.corporationID = corporationID;
 		this.connections = connections;
 		this.criminalConnections = criminalConnections;
 	}
 
+	public NpcCorporation(Integer corporationID) {
+		this.faction = null;
+		this.factionID = 0;
+		this.corporation = null;
+		this.corporationID = corporationID;
+		this.connections = false;
+		this.criminalConnections = false;
+	}
+
+	public boolean isFaction() {
+		return corporationID == 0;
+	}
+
+	public String getFaction() {
+		return faction;
+	}
+
 	public int getFactionID() {
 		return factionID;
+	}
+
+	public String getCorporation() {
+		return corporation;
 	}
 
 	public int getCorporationID() {

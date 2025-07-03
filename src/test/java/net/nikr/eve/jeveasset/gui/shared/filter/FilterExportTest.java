@@ -33,6 +33,8 @@ import net.nikr.eve.jeveasset.gui.shared.table.ColumnManager.JumpColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.SimpleColumnManager;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.NumberValue;
+import net.nikr.eve.jeveasset.gui.tabs.agents.AgentsTab;
+import net.nikr.eve.jeveasset.gui.tabs.agents.AgentsTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.assets.AssetTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.assets.AssetsTab;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractsTab;
@@ -105,6 +107,8 @@ public class FilterExportTest extends TestUtil {
 		test(MiningTab.NAME, MiningTableFormat.values());
 		//Loyalty Points
 		test(LoyaltyPointsTab.NAME, LoyaltyPointsTableFormat.values());
+		//Agents
+		test(AgentsTab.NAME, AgentsTableFormat.values());
 		//Mining
 		test(NpcStandingTab.NAME, NpcStandingTableFormat.values());
 		//Extractions

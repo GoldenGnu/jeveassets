@@ -64,8 +64,8 @@ public class StaticData {
 	private void loadData() {
 		SplashUpdater.setProgress(5);
 		ItemsReader.load(items); //Items
-		AgentsReader.load(agents);
 		NpcCorporationsReader.load(npcCorporations);
+		AgentsReader.load(agents);
 		SplashUpdater.setProgress(10);
 		try {
 			LOCATIONS_LOCK.writeLock().lock();

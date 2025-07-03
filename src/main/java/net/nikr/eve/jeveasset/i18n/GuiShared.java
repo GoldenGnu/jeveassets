@@ -34,6 +34,28 @@ public abstract class GuiShared extends Bundle {
 		super(locale);
 	}
 
+	public abstract String agentDivisionResearchAndDevelopment();
+	public abstract String agentDivisionDistribution();
+	public abstract String agentDivisionMining();
+	public abstract String agentDivisionSecurity();
+	public abstract String agentDivisionIndustrialistEntrepreneur();
+	public abstract String agentDivisionExplorer();
+	public abstract String agentDivisionIndustrialistProducer();
+	public abstract String agentDivisionEnforcer();
+	public abstract String agentDivisionSoldierOfFortune();
+	public abstract String agentDivisionInterBus();
+	public abstract String agentTypeNonAgent();
+	public abstract String agentTypeBasicAgent();
+	public abstract String agentTypeTutorialAgent();
+	public abstract String agentTypeResearchAgent();
+	public abstract String agentTypeConcordAgent();
+	public abstract String agentTypeGenericStorylineMissionAgent();
+	public abstract String agentTypeStorylineMissionAgent();
+	public abstract String agentTypeEventMissionAgent();
+	public abstract String agentTypeFactionalWarfareAgent();
+	public abstract String agentTypeEpicArcAgent();
+	public abstract String agentTypeAuraAgent();
+	public abstract String agentTypeCareerAgent();
 	public abstract String adam4eve();
 	public abstract String add();
 	public abstract String addFilter();

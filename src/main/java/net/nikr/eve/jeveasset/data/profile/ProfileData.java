@@ -387,12 +387,15 @@ public class ProfileData {
 		} finally {
 			contractEventList.getReadWriteLock().readLock().unlock();
 		}
-		updateLocation(transactionsEventList, locationIDs);
-		updateLocation(marketOrdersEventList, locationIDs);
-		updateLocation(assetsEventList, locationIDs);
-		updateLocation(industryJobsEventList, locationIDs);
+		updateEditableLocation(transactionsEventList, locationIDs);
+		updateEditableLocation(marketOrdersEventList, locationIDs);
+		updateEditableLocation(assetsEventList, locationIDs);
+		updateEditableLocation(industryJobsEventList, locationIDs);
 		updateLocations(contractItemEventList, locationIDs);
 		updateLocations(contractEventList, locationIDs);
+		updateEditableLocation(miningEventList, locationIDs);
+		updateEditableLocation(extractionsEventList, locationIDs);
+		updateLocationList(StaticData.get().getAgents().values(), locationIDs);
 	}
 
 	public void updateNames(Set<Long> itemIDs) {
@@ -738,7 +741,7 @@ public class ProfileData {
 
 		for (MyNpcStanding npcStanding : npcStandings) {
 			//Names
-			npcStanding.setAgentName(ApiIdConverter.getOwnerName(npcStanding.getAgentID()));
+			npcStanding.updateSkills();
 			npcStanding.setCorporationName(ApiIdConverter.getOwnerName(npcStanding.getCorporationID()));
 			npcStanding.setFactionName(ApiIdConverter.getOwnerName(npcStanding.getFactionID()));
 		}
@@ -789,6 +792,7 @@ public class ProfileData {
 		editableLocationTypes.addAll(industryJobs);
 		editableLocationTypes.addAll(minings);
 		editableLocationTypes.addAll(extractions);
+		editableLocationTypes.addAll(StaticData.get().getAgents().values());
 		for (EditableLocationType editableLocationType : editableLocationTypes) {
 			editableLocationType.setLocation(ApiIdConverter.getLocation(editableLocationType.getLocationID()));
 		}
@@ -1117,7 +1121,7 @@ public class ProfileData {
 		}
 	}
 
-	public static <T extends EditableLocationType> void updateLocation(EventList<T> eventList, Set<Long> locationIDs) {
+	public static <T extends EditableLocationType> void updateEditableLocation(EventList<T> eventList, Set<Long> locationIDs) {
 		if (locationIDs == null || locationIDs.isEmpty()) {
 			return;
 		}
@@ -1134,6 +1138,17 @@ public class ProfileData {
 			eventList.getReadWriteLock().readLock().unlock();
 		}
 		updateList(eventList, found);
+	}
+
+	public static <T extends EditableLocationType> void updateLocationList(Collection<T> collection, Set<Long> locationIDs) {
+		if (locationIDs == null || locationIDs.isEmpty()) {
+			return;
+		}
+		for (T t : collection) {
+			if (locationIDs.contains(t.getLocationID())) {
+				t.setLocation(ApiIdConverter.getLocation(t.getLocationID())); //Update data
+			}
+		}
 	}
 
 	private <T extends LocationsType> void updateLocations(EventList<T> eventList, Set<Long> locationIDs) {

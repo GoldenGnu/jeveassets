@@ -70,6 +70,36 @@ public enum NpcStandingTableFormat implements EnumTableColumn<MyNpcStanding> {
 			return from.getAgentTextIcon();
 		}
 	},
+	LEVEL(Integer.class) {
+		@Override
+		public String getColumnName() {
+			return TabsNpcStanding.get().columnAgentLevel();
+		}
+		@Override
+		public Object getColumnValue(final MyNpcStanding from) {
+			return from.getAgent().getLevel();
+		}
+	},
+	DIVISION(String.class) {
+		@Override
+		public String getColumnName() {
+			return TabsNpcStanding.get().columnAgentDivision();
+		}
+		@Override
+		public Object getColumnValue(final MyNpcStanding from) {
+			return from.getAgent().getDivision();
+		}
+	},
+	AGENT_TYPE(String.class) {
+		@Override
+		public String getColumnName() {
+			return TabsNpcStanding.get().columnAgentType();
+		}
+		@Override
+		public Object getColumnValue(final MyNpcStanding from) {
+			return from.getAgent().getAgentType();
+		}
+	},
 	TYPE(FromType.class) {
 		@Override
 		public String getColumnName() {
@@ -80,14 +110,47 @@ public enum NpcStandingTableFormat implements EnumTableColumn<MyNpcStanding> {
 			return from.getFromType();
 		}
 	},
+	RAW_STANDING(Double.class) {
+		@Override
+		public String getColumnName() {
+			return TabsNpcStanding.get().columnRawStanding();
+		}
+		@Override
+		public String getColumnToolTip() {
+			return TabsNpcStanding.get().columnRawStandingToolTip();
+		}
+		@Override
+		public Object getColumnValue(final MyNpcStanding from) {
+			return from.getStanding();
+		}
+	},
 	STANDING(Double.class) {
 		@Override
 		public String getColumnName() {
 			return TabsNpcStanding.get().columnStanding();
 		}
 		@Override
+		public String getColumnToolTip() {
+			return TabsNpcStanding.get().columnStandingToolTip();
+		}
+		@Override
 		public Object getColumnValue(final MyNpcStanding from) {
 			return from.getStandingEffective();
+		}
+	},
+	MAX_STANDING(Double.class) {
+		@Override
+		public String getColumnName() {
+			return TabsNpcStanding.get().columnStandingMax();
+		}
+
+		@Override
+		public String getColumnToolTip() {
+			return TabsNpcStanding.get().columnStandingMaxToolTip();
+		}
+		@Override
+		public Object getColumnValue(final MyNpcStanding from) {
+			return from.getStandingMaximum();
 		}
 	},
 	ID(Integer.class) {
