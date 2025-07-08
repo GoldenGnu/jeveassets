@@ -67,7 +67,7 @@ public class PriceDataGetter implements PricingListener {
 	private static final long PRICE_CACHE_TIMER = 1 * 60 * 60 * 1000L; // 1 hour (hours*min*sec*ms)
 	private static final int ATTEMPT_COUNT = 2;
 	private static final int ZERO_PRICES_WARNING_LIMIT = 10;
-	private static final int FAILED_PERCENT_CANCEL_LIMIT = 5;
+	private static final double FAILED_PERCENT_CANCEL_LIMIT = 5.0;
 
 	private UpdateTask updateTask;
 	private boolean update;
