@@ -555,6 +555,16 @@ public class RawConverter {
 		return argID;
 	}
 
+	public static int toMarketOrderRegionID(long locationID, int typeID, Integer regionID) {
+		if (regionID != null) {
+			return regionID;
+		} else if (typeID == 44992) { //PLEX
+			return 19000001; //Global PLEX Market Region
+		} else {
+			return (int) ApiIdConverter.getLocation(locationID).getRegionID();
+		}
+	}
+
 	public static RawMarketOrder.MarketOrderRange toMarketOrderRange(Integer valueInt, String valueEnum, String valueString) {
 		if (valueEnum != null) {
 			try {

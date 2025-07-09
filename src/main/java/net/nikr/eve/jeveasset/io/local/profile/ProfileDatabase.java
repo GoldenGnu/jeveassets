@@ -96,6 +96,10 @@ public class ProfileDatabase {
 			profileTable.create(connection);
 		}
 
+		public void updateTable(Connection connection) throws SQLException {
+			profileTable.updateTable(connection);
+		}
+
 		public boolean isEmpty(Connection connection) throws SQLException {
 			return profileTable.isEmpty(connection);
 		}
@@ -152,12 +156,13 @@ public class ProfileDatabase {
 			int loaded = 0;
 			for (Table table : Table.values()) {
 				if (!table.isEmpty(connection)) {
+					table.updateTable(connection);
 					table.select(connection, profile.getEsiOwners());
 					loaded++;
 				} else if (table == Table.OWNERS) {
 					return false; //Fatal error
 				} else if (table == Table.CLONES) {
-					loaded++; //No problem (new talbe)
+					loaded++; //No problem (new talbes)
 				}
 			}
 			if (loaded == Table.values().length) {
@@ -188,28 +193,28 @@ public class ProfileDatabase {
 		closeUpdateConnection();
 	}
 
-	public static boolean save(Profile profile, boolean full) {
-		return save(profile, Table.values(), full);
+	public static boolean save(Profile profile) {
+		return save(profile, Table.values());
 	}
 
-	public static boolean save(Profile profile, Table table, boolean full) {
-		return save(profile, Collections.singleton(table), full);
+	public static boolean save(Profile profile, Table table) {
+		return save(profile, Collections.singleton(table));
 	}
 
-	private static boolean save(Profile profile, Table[] tables, boolean full) {
-		return save(profile, Arrays.asList(tables), full);
+	private static boolean save(Profile profile, Table[] tables) {
+		return save(profile, Arrays.asList(tables));
 	}
 
-	private static boolean save(Profile profile, Collection<Table> tables, boolean full) {
+	private static boolean save(Profile profile, Collection<Table> tables) {
 		String connectionUrl = getConnectionUrl(profile.getSQLiteFilename());
-		if (!full) {
-			waitForUpdates();
-		}
+		waitForUpdates();
 		try (Connection connection = DriverManager.getConnection(connectionUrl);) {
 			try {
 				connection.setAutoCommit(false);
 				for (Table profileTable : tables) {
+					boolean full = profileTable.isEmpty(connection);
 					profileTable.create(connection);
+					profileTable.updateTable(connection);
 					profileTable.insert(connection, profile.getEsiOwners(), full);
 				}
 				connection.commit();

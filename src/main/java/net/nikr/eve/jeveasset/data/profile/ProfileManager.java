@@ -90,10 +90,6 @@ public class ProfileManager {
 		activeProfile.save();
 	}
 
-	public void saveProfileSoft() {
-		activeProfile.saveSoft();
-	}
-
 	public void saveProfileTable(Table table) {
 		activeProfile.saveTable(table);
 	}

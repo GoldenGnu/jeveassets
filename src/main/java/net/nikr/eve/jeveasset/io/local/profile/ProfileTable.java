@@ -53,6 +53,8 @@ public abstract class ProfileTable {
 	protected abstract void select(Connection connection, List<EsiOwner> esiOwners, Map<String, EsiOwner> owners) throws SQLException;
 	protected abstract void create(Connection connection) throws SQLException;
 
+	protected void updateTable(Connection connection) throws SQLException { }
+
 	protected boolean isUpdated() {
 		return false;
 	}
@@ -70,8 +72,31 @@ public abstract class ProfileTable {
 
  	protected static void tableDelete(Connection connection, String ... tableNames) throws SQLException {
 		for (String tableName : tableNames) {
-			String deleteSQL = "DELETE FROM " + tableName;
-			try (PreparedStatement statement = connection.prepareStatement(deleteSQL)) {
+			String sql = "DELETE FROM " + tableName;
+			try (PreparedStatement statement = connection.prepareStatement(sql)) {
+				statement.execute();
+			}
+		}
+	}
+
+ 	private Set<String> tableColumns(Connection connection, String tableName) throws SQLException {
+		Set<String> columns = new HashSet<>();
+		String sql = "SELECT name FROM pragma_table_info('" + tableName + "')";
+		try (PreparedStatement statement = connection.prepareStatement(sql);
+			ResultSet rs = statement.executeQuery();) {
+			while (rs.next()) {
+				String columnName = getString(rs, "name");
+				columns.add(columnName);
+			}
+		}
+		return columns;
+	}
+
+ 	protected  void addColumn(Connection connection, String tableName, String columnName) throws SQLException {
+		Set<String> tableColumns = tableColumns(connection, tableName);
+		if (!tableColumns.contains(columnName)) {
+			String sql = "ALTER TABLE " + tableName + " ADD COLUMN " + columnName + " INTEGER";
+			try (PreparedStatement statement = connection.prepareStatement(sql)) {
 				statement.execute();
 			}
 		}
@@ -356,6 +381,10 @@ public abstract class ProfileTable {
 		} else {
 			return value;
 		}
+	}
+
+	protected Float getFloat(ResultSet rs, String columnLabel) throws SQLException {
+		return rs.getFloat(columnLabel);
 	}
 
 	protected double getDouble(ResultSet rs, String columnLabel) throws SQLException {
