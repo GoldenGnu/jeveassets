@@ -331,4 +331,9 @@ public abstract class FakeProgram extends Program {
 	public synchronized void saveTable(Table table) {
 		throw new UnsupportedOperationException("Not implemented");
 	}
+
+	@Override
+	public void showJumpsSettingsPanel() {
+		throw new UnsupportedOperationException("Not implemented");
+	}
 }
