@@ -44,12 +44,14 @@ import net.nikr.eve.jeveasset.gui.dialogs.settings.UserPriceSettingsPanel;
 import net.nikr.eve.jeveasset.gui.frame.MainWindow;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
+import net.nikr.eve.jeveasset.gui.tabs.agents.AgentsTab;
 import net.nikr.eve.jeveasset.gui.tabs.assets.AssetsTab;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractsTab;
 import net.nikr.eve.jeveasset.gui.tabs.items.ItemsTab;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJobsTab;
 import net.nikr.eve.jeveasset.gui.tabs.journal.JournalTab;
 import net.nikr.eve.jeveasset.gui.tabs.loadout.LoadoutsTab;
+import net.nikr.eve.jeveasset.gui.tabs.loyalty.LoyaltyPointsTab;
 import net.nikr.eve.jeveasset.gui.tabs.materials.MaterialsTab;
 import net.nikr.eve.jeveasset.gui.tabs.mining.ExtractionsTab;
 import net.nikr.eve.jeveasset.gui.tabs.mining.MiningGraphTab;
@@ -62,6 +64,7 @@ import net.nikr.eve.jeveasset.gui.tabs.reprocessed.ReprocessedTab;
 import net.nikr.eve.jeveasset.gui.tabs.routing.RoutingTab;
 import net.nikr.eve.jeveasset.gui.tabs.skills.SkillsTab;
 import net.nikr.eve.jeveasset.gui.tabs.slots.SlotsTab;
+import net.nikr.eve.jeveasset.gui.tabs.standing.NpcStandingTab;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileTab;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerTab;
 import net.nikr.eve.jeveasset.gui.tabs.transaction.TransactionTab;
@@ -386,12 +389,28 @@ public abstract class FakeProgram extends Program {
 		throw new UnsupportedOperationException("Not implemented");
 	}
 
+	@Override
 	public synchronized void saveTable(Table table) {
 		throw new UnsupportedOperationException("Not implemented");
 	}
 
 	@Override
 	public void showJumpsSettingsPanel() {
+		throw new UnsupportedOperationException("Not implemented");
+	}
+
+	@Override
+	public AgentsTab getAgentsTab(boolean init) {
+		throw new UnsupportedOperationException("Not implemented");
+	}
+
+	@Override
+	public NpcStandingTab getNpcStandingTab(boolean init) {
+		throw new UnsupportedOperationException("Not implemented");
+	}
+
+	@Override
+	public LoyaltyPointsTab getLoyaltyPointsTab(boolean init) {
 		throw new UnsupportedOperationException("Not implemented");
 	}
 }

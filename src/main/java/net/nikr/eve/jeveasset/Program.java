@@ -993,12 +993,12 @@ public class Program implements ActionListener {
 		return skillsTab;
 	}
 
-	public SkillsTab getLoyaltyPointsTab(boolean init) {
+	public LoyaltyPointsTab getLoyaltyPointsTab(boolean init) {
 		if (init && loyaltyPointsTab == null) {
 			LOG.info("Loading: Loyalty Points Tab");
 			loyaltyPointsTab = new LoyaltyPointsTab(this);
 		}
-		return skillsTab;
+		return loyaltyPointsTab;
 	}
 
 	public NpcStandingTab getNpcStandingTab(boolean init) {
