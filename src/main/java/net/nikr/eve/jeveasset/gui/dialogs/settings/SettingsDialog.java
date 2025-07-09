@@ -84,6 +84,7 @@ public class SettingsDialog extends JDialogCentered {
 	private final UserPriceSettingsPanel userPriceSettingsPanel;
 	private final UserNameSettingsPanel userNameSettingsPanel;
 	private final UserLocationSettingsPanel locationSettingsPanel;
+	private final JumpsSettingsPanel jumpsSettingsPanel;
 	private boolean tabSelected = false;
 
 	public SettingsDialog(final Program program) {
@@ -152,6 +153,9 @@ public class SettingsDialog extends JDialogCentered {
 		add(valuesNode, locationSettingsPanel);
 
 		add(valuesNode, new TagsSettingsPanel(program, this));
+		
+		jumpsSettingsPanel = new JumpsSettingsPanel(program, this);
+		add(jumpsSettingsPanel);
 
 		add(new ColorSettingsPanel(program, this));
 
@@ -262,6 +266,10 @@ public class SettingsDialog extends JDialogCentered {
 		return locationSettingsPanel;
 	}
 
+	public void showJumpsSettingsPanel() {
+		setVisible(jumpsSettingsPanel);
+	}
+
 	private void expandAll(final TreePath parent, final boolean expand) {
 		TreeNode node = (TreeNode) parent.getLastPathComponent();
 		if (node.getChildCount() >= 0) {
@@ -354,7 +362,7 @@ public class SettingsDialog extends JDialogCentered {
 	}
 
 	public void setVisible(final JSettingsPanel c) {
-		jTree.setSelectionPath(new TreePath(c.getTreeNode()));
+		jTree.setSelectionPath(new TreePath(c.getTreeNode().getPath()));
 		tabSelected = true;
 		setVisible(true);
 	}

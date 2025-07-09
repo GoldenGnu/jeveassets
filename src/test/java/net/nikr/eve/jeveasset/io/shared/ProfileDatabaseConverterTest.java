@@ -336,6 +336,16 @@ public class ProfileDatabaseConverterTest extends TestUtil {
 						|| (MyContract.class.equals(oldClazz)
 							&& ("endLocation".equals(fieldName)
 							|| "startLocation".equals(fieldName)))
+						|| (MyLoyaltyPoints.class.equals(oldClazz)
+							&& "textIcon".equals(fieldName))
+						|| (MyNpcStanding.class.equals(oldClazz)
+							&& ("factionName".equals(fieldName)
+							|| "corporationName".equals(fieldName)
+							|| "agentName".equals(fieldName)
+							|| "factionTextIcon".equals(fieldName)
+							|| "corporationTextIcon".equals(fieldName)
+							|| "agentTextIcon".equals(fieldName)
+							))
 						)) {
 						continue;
 					}

@@ -38,6 +38,7 @@ import net.nikr.eve.jeveasset.data.settings.MarketOrdersSettings;
 import net.nikr.eve.jeveasset.data.settings.PriceDataSettings;
 import net.nikr.eve.jeveasset.data.settings.ProxyData;
 import net.nikr.eve.jeveasset.data.settings.ReprocessSettings;
+import net.nikr.eve.jeveasset.data.settings.RouteAvoidSettings;
 import net.nikr.eve.jeveasset.data.settings.RouteResult;
 import net.nikr.eve.jeveasset.data.settings.RoutingSettings;
 import net.nikr.eve.jeveasset.data.settings.Settings;
@@ -179,6 +180,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 		writeOwners(xmldoc, settings.getOwners(), settings.getOwnersNextUpdate());
 		writeTags(xmldoc, settings.getTags());
 		writeRoutingSettings(xmldoc, settings.getRoutingSettings());
+		writeJumpsSettings(xmldoc, settings.getJumpsAvoidSettings());
 		writeMarketOrderOutbid(xmldoc, settings.getPublicMarketOrdersNextUpdate(), settings.getPublicMarketOrdersLastUpdate(), settings.getOutbidOrderRange(), settings.getMarketOrdersOutbid());
 		writeMarketOrdersSettings(xmldoc, settings.getMarketOrdersSettings());
 		writeShowTool(xmldoc, settings.getShowTools(), settings.isSaveToolsOnExit());
@@ -293,15 +295,25 @@ public class SettingsWriter extends AbstractXmlWriter {
 
 	private void writeRoutingSettings(Document xmldoc, RoutingSettings routingSettings) {
 		Element routingNode = xmldoc.createElementNS(null, "routingsettings");
+		writeRouteAvoidSettings(xmldoc, routingNode, routingSettings.getAvoidSettings());
+		writeRoutes(xmldoc, routingNode, routingSettings.getRoutes());
+	}
+
+	private void writeJumpsSettings(Document xmldoc, RouteAvoidSettings routeAvoidSettings) {
+		Element routingNode = xmldoc.createElementNS(null, "jumpssettings");
+		writeRouteAvoidSettings(xmldoc, routingNode, routeAvoidSettings);
+	}
+
+	private void writeRouteAvoidSettings(Document xmldoc, Element routingNode, RouteAvoidSettings routeAvoidSettings) {
 		xmldoc.getDocumentElement().appendChild(routingNode);
-		setAttribute(routingNode, "securitymaximum", routingSettings.getSecMax());
-		setAttribute(routingNode, "securityminimum", routingSettings.getSecMin());
-		for (long systemID : routingSettings.getAvoid().keySet()) {
+		setAttribute(routingNode, "securitymaximum", routeAvoidSettings.getSecMax());
+		setAttribute(routingNode, "securityminimum", routeAvoidSettings.getSecMin());
+		for (long systemID : routeAvoidSettings.getAvoid().keySet()) {
 			Element systemNode = xmldoc.createElementNS(null, "routingsystem");
 			setAttribute(systemNode, "id", systemID);
 			routingNode.appendChild(systemNode);
 		}
-		for (Map.Entry<String, Set<Long>> entry : routingSettings.getPresets().entrySet()) {
+		for (Map.Entry<String, Set<Long>> entry : routeAvoidSettings.getPresets().entrySet()) {
 			Element presetNode = xmldoc.createElementNS(null, "routingpreset");
 			setAttribute(presetNode, "name", entry.getKey());
 			routingNode.appendChild(presetNode);
@@ -311,7 +323,6 @@ public class SettingsWriter extends AbstractXmlWriter {
 				presetNode.appendChild(systemNode);
 			}
 		}
-		writeRoutes(xmldoc, routingNode, routingSettings.getRoutes());
 	}
 
 	private void writeRoutes(Document xmldoc, Element routingNode, Map<String, RouteResult> routes) {

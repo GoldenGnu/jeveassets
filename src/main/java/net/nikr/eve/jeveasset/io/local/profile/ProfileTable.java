@@ -79,7 +79,7 @@ public abstract class ProfileTable {
 		}
 	}
 
- 	protected Set<String> tableColumns(Connection connection, String tableName) throws SQLException {
+ 	private Set<String> tableColumns(Connection connection, String tableName) throws SQLException {
 		Set<String> columns = new HashSet<>();
 		String sql = "SELECT name FROM pragma_table_info('" + tableName + "')";
 		try (PreparedStatement statement = connection.prepareStatement(sql);
@@ -90,6 +90,16 @@ public abstract class ProfileTable {
 			}
 		}
 		return columns;
+	}
+
+ 	protected  void addColumn(Connection connection, String tableName, String columnName) throws SQLException {
+		Set<String> tableColumns = tableColumns(connection, tableName);
+		if (!tableColumns.contains(columnName)) {
+			String sql = "ALTER TABLE " + tableName + " ADD COLUMN " + columnName + " INTEGER";
+			try (PreparedStatement statement = connection.prepareStatement(sql)) {
+				statement.execute();
+			}
+		}
 	}
 
 	protected static void setAttributeNull(final PreparedStatement statement, final int index) throws SQLException {

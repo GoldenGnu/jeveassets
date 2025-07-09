@@ -146,6 +146,8 @@ public class EsiNameGetter extends AbstractEsiGetter {
 			}
 			for (MyNpcStanding npcStanding : ownerType.getNpcStanding()) {
 				addOwnerID(list, npcStanding.getFromID());
+				addOwnerID(list, npcStanding.getCorporationID());
+				addOwnerID(list, npcStanding.getFactionID());
 			}
 			for (MyMining mining : ownerType.getMining()) {
 				addOwnerID(list, mining.getCharacterID());

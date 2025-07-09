@@ -30,6 +30,7 @@ import javax.swing.JMenuItem;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.sde.RouteFinder;
+import net.nikr.eve.jeveasset.data.sde.RouteFinder.RouteFinderFilter;
 import net.nikr.eve.jeveasset.data.sde.StaticData;
 import net.nikr.eve.jeveasset.data.settings.types.LocationType;
 import net.nikr.eve.jeveasset.gui.images.Images;
@@ -45,11 +46,12 @@ import net.nikr.eve.jeveasset.i18n.GuiShared;
 public class JMenuJumps<T extends Enum<T> & EnumTableColumn<Q>, Q> extends JAutoMenu<Q> {
 
 	private enum MenuJumpsAction {
-		ADD_SELECTED, ADD_OTHER, CLEAR
+		ADD_SELECTED, ADD_OTHER, CLEAR, SETTINGS
 	}
 
 	private final JMenuItem jAddOther;
 	private final JMenuItem jAddSelected;
+	private final JMenuItem jSettings;
 	private final JMenuItem jClear;
 	private final ColumnManager<T, Q> columnManager;
 
@@ -75,6 +77,11 @@ public class JMenuJumps<T extends Enum<T> & EnumTableColumn<Q>, Q> extends JAuto
 		jAddSelected.setActionCommand(MenuJumpsAction.ADD_SELECTED.name());
 		jAddSelected.addActionListener(listener);
 
+		jSettings = new JMenuItem(GuiShared.get().jumpsSettings());
+		jSettings.setIcon(Images.DIALOG_SETTINGS.getIcon());
+		jSettings.setActionCommand(MenuJumpsAction.SETTINGS.name());
+		jSettings.addActionListener(listener);
+
 		jClear = new JMenuItem(GuiShared.get().jumpsClear());
 		jClear.setIcon(Images.EDIT_DELETE.getIcon());
 		jClear.setActionCommand(MenuJumpsAction.CLEAR.name());
@@ -89,6 +96,12 @@ public class JMenuJumps<T extends Enum<T> & EnumTableColumn<Q>, Q> extends JAuto
 		jAddSelected.setEnabled(!menuData.getSystemLocations().isEmpty());
 
 		add(jAddOther);
+
+		addSeparator();
+
+		add(jSettings);
+
+		addSeparator();
 
 		add(jClear);
 
@@ -120,11 +133,9 @@ public class JMenuJumps<T extends Enum<T> & EnumTableColumn<Q>, Q> extends JAuto
 		public void actionPerformed(final ActionEvent e) {
 			if (MenuJumpsAction.ADD_SELECTED.name().equals(e.getActionCommand())) {
 				columnManager.addColumns(menuData.getSystemLocations());
-			}
-			if (MenuJumpsAction.CLEAR.name().equals(e.getActionCommand())) {
+			} else if (MenuJumpsAction.CLEAR.name().equals(e.getActionCommand())) {
 				columnManager.clearJumpColumns();
-			}
-			if (MenuJumpsAction.ADD_OTHER.name().equals(e.getActionCommand())) {
+			} else if (MenuJumpsAction.ADD_OTHER.name().equals(e.getActionCommand())) {
 				//Clear tab
 				SolarSystem solarSystem = program.getRoutingTab(true).getSolarSystem();
 				if (solarSystem != null) {
@@ -133,6 +144,8 @@ public class JMenuJumps<T extends Enum<T> & EnumTableColumn<Q>, Q> extends JAuto
 						columnManager.addColumn(new Jump(location));
 					}
 				}
+			} else if (MenuJumpsAction.SETTINGS.name().equals(e.getActionCommand())) {
+				program.showJumpsSettingsPanel();
 			}
 		}
 	}
@@ -168,7 +181,7 @@ public class JMenuJumps<T extends Enum<T> & EnumTableColumn<Q>, Q> extends JAuto
 			if (systemID <= 0) {
 				return null;
 			}
-			Integer distanceBetween = RouteFinder.get().distanceBetween(getSystemID(), systemID);
+			Integer distanceBetween = RouteFinder.get().distanceBetween(RouteFinderFilter.JUMPS, getSystemID(), systemID);
 			jumps.put(locationType, distanceBetween);
 			return distanceBetween;
 		}

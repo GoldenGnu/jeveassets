@@ -30,11 +30,11 @@ import net.nikr.eve.jeveasset.i18n.TabsRouting;
 
 public class JManageAvoidDialog extends JManageDialog {
 
-	private final RoutingTab routingTab;
+	private final JAvoid jAvoid;
 
-	public JManageAvoidDialog(RoutingTab routingTab, Program program) {
+	public JManageAvoidDialog(JAvoid jAvoid, Program program) {
 		super(program, program.getMainWindow().getFrame(), TabsRouting.get().manageFiltersTitle(), true, false);
-		this.routingTab = routingTab;
+		this.jAvoid = jAvoid;
 	}
 
 	public void updateData() {
@@ -43,23 +43,23 @@ public class JManageAvoidDialog extends JManageDialog {
 
 	@Override
 	protected void load(String name) {
-		routingTab.loadFilter(Settings.get().getRoutingSettings().getPresets().get(name));
+		jAvoid.loadFilter(Settings.get().getRoutingSettings().getPresets().get(name));
 		setVisible(false);
 	}
 
 	@Override
 	protected void merge(String name, List<String> list) {
-		routingTab.mergeFilters(name, list);
+		jAvoid.mergeFilters(name, list);
 	}
 
 	@Override
 	protected void rename(String name, String oldName) {
-		routingTab.renameFilter(name, oldName);
+		jAvoid.renameFilter(name, oldName);
 	}
 
 	@Override
 	protected void delete(List<String> list) {
-		routingTab.deleteFilters(list);
+		jAvoid.deleteFilters(list);
 	}
 
 	@Override

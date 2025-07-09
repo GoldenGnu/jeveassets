@@ -85,6 +85,7 @@ import net.nikr.eve.jeveasset.gui.shared.components.JLockWindow.LockWorkerAdapto
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterMatcher;
 import net.nikr.eve.jeveasset.gui.sounds.SoundPlayer;
+import net.nikr.eve.jeveasset.gui.tabs.agents.AgentsTab;
 import net.nikr.eve.jeveasset.gui.tabs.assets.AssetsTab;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractsTab;
 import net.nikr.eve.jeveasset.gui.tabs.items.ItemsTab;
@@ -175,6 +176,7 @@ public class Program implements ActionListener {
 	private SkillsTab skillsTab;
 	private LoyaltyPointsTab loyaltyPointsTab;
 	private NpcStandingTab npcStandingTab;
+	private AgentsTab agentsTab;
 	private MiningTab miningTab;
 	private MiningGraphTab miningGraphTab;
 	private ExtractionsTab extractionsTab;
@@ -993,7 +995,7 @@ public class Program implements ActionListener {
 
 	public SkillsTab getLoyaltyPointsTab(boolean init) {
 		if (init && loyaltyPointsTab == null) {
-			LOG.info("Loading: Skills Tab");
+			LOG.info("Loading: Loyalty Points Tab");
 			loyaltyPointsTab = new LoyaltyPointsTab(this);
 		}
 		return skillsTab;
@@ -1001,10 +1003,18 @@ public class Program implements ActionListener {
 
 	public NpcStandingTab getNpcStandingTab(boolean init) {
 		if (init && npcStandingTab == null) {
-			LOG.info("Loading: Skills Tab");
+			LOG.info("Loading: NPC Standing Tab");
 			npcStandingTab = new NpcStandingTab(this);
 		}
 		return npcStandingTab;
+	}
+
+	public AgentsTab getAgentsTab(boolean init) {
+		if (init && agentsTab == null) {
+			LOG.info("Loading: Agents Tab");
+			agentsTab = new AgentsTab(this);
+		}
+		return agentsTab;
 	}
 
 	public StatusPanel getStatusPanel() {
@@ -1032,6 +1042,12 @@ public class Program implements ActionListener {
 			return settingsDialog.getUserLocationSettingsPanel();
 		} else {
 			return null;
+		}
+	}
+
+	public void showJumpsSettingsPanel() {
+		if (settingsDialog != null) {
+			settingsDialog.showJumpsSettingsPanel();
 		}
 	}
 
@@ -1212,6 +1228,8 @@ public class Program implements ActionListener {
 			mainWindow.addTab(getLoyaltyPointsTab(true));
 		} else if (MainMenuAction.NPC_STANDING.name().equals(e.getActionCommand())) {
 			mainWindow.addTab(getNpcStandingTab(true));
+		} else if (MainMenuAction.AGENTS.name().equals(e.getActionCommand())) {
+			mainWindow.addTab(getAgentsTab(true));
 		} else if (MainMenuAction.MINING_ALL.name().equals(e.getActionCommand())) {
 			mainWindow.addTab(getMiningTab(true));
 			mainWindow.addTab(getMiningGraphTab(true));

@@ -133,6 +133,9 @@ public abstract class DialoguesSettings extends Bundle {
 	public abstract String mining();
 	public abstract String miningSaveHistory();
 
+	// used in JumpsSettingsPanel
+	public abstract String jumps();
+
 	// used in ColorSettingsPanel
 	public abstract String chartColors();
 	public abstract String colors();

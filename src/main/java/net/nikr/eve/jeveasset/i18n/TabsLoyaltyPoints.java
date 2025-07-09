@@ -41,4 +41,5 @@ public abstract class TabsLoyaltyPoints extends Bundle {
 	public abstract String fuzzworkLoyaltyPointsStore();
 	public abstract String sell();
 	public abstract String buy();
+	public abstract String total();
 }
