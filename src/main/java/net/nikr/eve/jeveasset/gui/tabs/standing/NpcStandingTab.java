@@ -49,6 +49,7 @@ import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
+import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
 import net.nikr.eve.jeveasset.gui.shared.table.TableFormatFactory;
 import net.nikr.eve.jeveasset.i18n.TabsNpcStanding;
 
@@ -93,6 +94,8 @@ public class NpcStandingTab extends JMainTabPrimary implements TagUpdate {
 		jTable.setCellSelectionEnabled(true);
 		jTable.setRowSelectionAllowed(true);
 		jTable.setColumnSelectionAllowed(true);
+		jTable.setRowHeight(MyNpcStanding.IMAGE_SIZE.getSize());
+		PaddingTableCellRenderer.install(jTable, 0, 5, 0, 5);
 		//Sorting
 		TableComparatorChooser<MyNpcStanding> comparatorChooser = TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
 		//Selection Model

@@ -36,9 +36,20 @@ public abstract class TabsNpcStanding extends Bundle {
 
 	public abstract String npcStanding();
 	public abstract String columnOwner();
-	public abstract String columnName();
+	public abstract String columnFaction();
+	public abstract String columnCorporation();
+	public abstract String columnAgent();
+	public abstract String columnAgentLevel();
+	public abstract String columnAgentDivision();
+	public abstract String columnAgentType();
 	public abstract String columnType();
+	public abstract String columnRawStanding();
+	public abstract String columnRawStandingToolTip();
 	public abstract String columnStanding();
+	public abstract String columnStandingToolTip();
+	public abstract String columnStandingMax();
+	public abstract String columnStandingMaxToolTip();
+	public abstract String columnID();
 	public abstract String typeAgent();
 	public abstract String typeCorporation();
 	public abstract String typeFaction();

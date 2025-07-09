@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<rows>
+    <!--Generated from Eve Online Toolkit. ©CCP hf. All rights reserved. Used with permission.-->
+    <row c="true" corporation="CBD Corporation" corporationid="1000002" faction="Caldari State" factionid="500001"/>
+    <row c="true" corporation="Prompt Delivery" corporationid="1000003" faction="Caldari State" factionid="500001"/>
+    <row c="true" corporation="Ytiri" corporationid="1000004" faction="Caldari State" factionid="500001"/>
+    <row c="true" corporation="Hyasyoda Corporation" corporationid="1000005" faction="Caldari State" factionid="500001"/>
+    <row c="true" corporation="Deep Core Mining Inc." corporationid="1000006" faction="Caldari State" factionid="500001"/>
+    <row c="true" corporation="Poksu Mineral Group" corporationid="1000007" faction="Caldari State" factionid="500001"/>
+    <row c="true" corporation="Minedrill" corporationid="1000008" faction="Caldari State" factionid="500001"/>
+    <row c="true" corporation="Caldari Provisions" corporationid="1000009" faction="Caldari State" factionid="500001"/>
+    <row c="true" corporation="Kaalakiota Corporation" corporationid="1000010" faction="Caldari State" factionid="500001"/>
+    <row c="true" corporation="Wiyrkomi Corporation" corporationid="1000011" faction="Caldari State" factionid="500001"/>
+    <row c="true" corporation="Top Down" corporationid="1000012" faction="Caldari State" factionid="500001"/>
+    <row c="true" corporation="Rapid Assembly" corporationid="1000013" faction="Caldari State" factionid="500001"/>
+    <row c="true" corporation="Perkone" corporationid="1000014" faction="Caldari State" factionid="500001"/>
+    <row c="true" corporation="Caldari Steel" corporationid="1000015" faction="Caldari State" factionid="500001"/>
+    <row c="true" corporation="Zainou" corporationid="1000016" faction="Caldari State" factionid="500001"/>
+    <row c="true" corporation="Nugoeihuvi Corporation" corporationid="1000017" faction="Caldari State" factionid="500001"/>
+    <row c="true" corporation="Echelon Entertainment" corporationid="1000018" faction="Caldari State" factionid="500001"/>
+    <row c="true" corporation="Ishukone Corporation" corporationid="1000019" faction="Caldari State" factionid="500001"/>
+    <row c="true" corporation="Lai Dai Corporation" corporationid="1000020" faction="Caldari State" factionid="500001"/>
+    <row c="true" corporation="Zero-G Research Firm" corporationid="1000021" faction="EverMore" factionid="500013"/>
+    <row c="true" corporation="Propel Dynamics" corporationid="1000022" faction="Caldari State" factionid="500001"/>
+    <row c="true" corporation="Expert Distribution" corporationid="1000023" faction="Caldari State" factionid="500001"/>
+    <row c="true" corporation="CBD Sell Division" corporationid="1000024" faction="Caldari State" factionid="500001"/>
+    <row c="true" corporation="Sukuuvestaa Corporation" corporationid="1000025" faction="Caldari State" factionid="500001"/>
+    <row c="true" corporation="Caldari Constructions" corporationid="1000026" faction="Caldari State" factionid="500001"/>
+    <row c="true" corporation="Expert Housing" corporationid="1000027" faction="Caldari State" factionid="500001"/>
+    <row c="true" corporation="Caldari Funds Unlimited" corporationid="1000028" faction="Caldari State" factionid="500001"/>
+    <row c="true" corporation="State and Region Bank" corporationid="1000029" faction="Caldari State" factionid="500001"/>
+    <row c="true" corporation="Modern Finances" corporationid="1000030" faction="Caldari State" factionid="500001"/>
+    <row c="true" corporation="Chief Executive Panel" corporationid="1000031" faction="Caldari State" factionid="500001"/>
+    <row c="true" corporation="Mercantile Club" corporationid="1000032" faction="Caldari State" factionid="500001"/>
+    <row c="true" corporation="Caldari Business Tribunal" corporationid="1000033" faction="Caldari State" factionid="500001"/>
+    <row c="true" corporation="House of Records" corporationid="1000034" faction="Caldari State" factionid="500001"/>
+    <row c="true" corporation="Caldari Navy" corporationid="1000035" faction="Caldari State" factionid="500001"/>
+    <row c="true" corporation="Internal Security" corporationid="1000036" faction="Caldari State" factionid="500001"/>
+    <row c="true" corporation="Lai Dai Protection Service" corporationid="1000037" faction="Caldari State" factionid="500001"/>
+    <row c="true" corporation="Ishukone Watch" corporationid="1000038" faction="Caldari State" factionid="500001"/>
+    <row c="true" corporation="Home Guard" corporationid="1000039" faction="Caldari State" factionid="500001"/>
+    <row c="true" corporation="Peace and Order Unit" corporationid="1000040" faction="Caldari State" factionid="500001"/>
+    <row c="true" corporation="Spacelane Patrol" corporationid="1000041" faction="Caldari State" factionid="500001"/>
+    <row c="true" corporation="Wiyrkomi Peace Corps" corporationid="1000042" faction="Caldari State" factionid="500001"/>
+    <row c="true" corporation="Corporate Police Force" corporationid="1000043" faction="Caldari State" factionid="500001"/>
+    <row c="true" corporation="School of Applied Knowledge" corporationid="1000044" faction="Caldari State" factionid="500001"/>
+    <row c="true" corporation="Science and Trade Institute" corporationid="1000045" faction="Caldari State" factionid="500001"/>
+    <row c="true" corporation="Sebiestor Tribe" corporationid="1000046" faction="Minmatar Republic" factionid="500002"/>
+    <row c="true" corporation="Krusual Tribe" corporationid="1000047" faction="Minmatar Republic" factionid="500002"/>
+    <row c="true" corporation="Vherokior Tribe" corporationid="1000048" faction="Minmatar Republic" factionid="500002"/>
+    <row c="true" corporation="Brutor Tribe" corporationid="1000049" faction="Minmatar Republic" factionid="500002"/>
+    <row c="true" corporation="Republic Parliament" corporationid="1000050" faction="Minmatar Republic" factionid="500002"/>
+    <row c="true" corporation="Republic Fleet" corporationid="1000051" faction="Minmatar Republic" factionid="500002"/>
+    <row c="true" corporation="Republic Justice Department" corporationid="1000052" faction="Minmatar Republic" factionid="500002"/>
+    <row c="true" corporation="Urban Management" corporationid="1000053" faction="Minmatar Republic" factionid="500002"/>
+    <row c="true" corporation="Republic Security Services" corporationid="1000054" faction="Minmatar Republic" factionid="500002"/>
+    <row c="true" corporation="Minmatar Mining Corporation" corporationid="1000055" faction="Minmatar Republic" factionid="500002"/>
+    <row c="true" corporation="Core Complexion Inc." corporationid="1000056" faction="Minmatar Republic" factionid="500002"/>
+    <row c="true" corporation="Boundless Creation" corporationid="1000057" faction="Minmatar Republic" factionid="500002"/>
+    <row c="true" corporation="Eifyr and Co." corporationid="1000058" faction="Minmatar Republic" factionid="500002"/>
+    <row c="true" corporation="Six Kin Development" corporationid="1000059" faction="Minmatar Republic" factionid="500002"/>
+    <row c="true" corporation="Native Freshfood" corporationid="1000060" faction="Minmatar Republic" factionid="500002"/>
+    <row c="true" corporation="Freedom Extension" corporationid="1000061" faction="Minmatar Republic" factionid="500002"/>
+    <row c="true" corporation="The Leisure Group" corporationid="1000062" faction="Minmatar Republic" factionid="500002"/>
+    <row c="true" corporation="Amarr Constructions" corporationid="1000063" faction="Amarr Empire" factionid="500003"/>
+    <row c="true" corporation="Carthum Conglomerate" corporationid="1000064" faction="Amarr Empire" factionid="500003"/>
+    <row c="true" corporation="Imperial Armaments" corporationid="1000065" faction="Amarr Empire" factionid="500003"/>
+    <row c="true" corporation="Viziam" corporationid="1000066" faction="Amarr Empire" factionid="500003"/>
+    <row c="true" corporation="Zoar and Sons" corporationid="1000067" faction="Amarr Empire" factionid="500003"/>
+    <row c="true" corporation="Noble Appliances" corporationid="1000068" faction="Amarr Empire" factionid="500003"/>
+    <row c="true" corporation="Ducia Foundry" corporationid="1000069" faction="Amarr Empire" factionid="500003"/>
+    <row c="true" corporation="HZO Refinery" corporationid="1000070" faction="Amarr Empire" factionid="500003"/>
+    <row c="true" corporation="Inherent Implants" corporationid="1000071" faction="Amarr Empire" factionid="500003"/>
+    <row c="true" corporation="Imperial Shipment" corporationid="1000072" faction="Amarr Empire" factionid="500003"/>
+    <row c="true" corporation="Amarr Certified News" corporationid="1000073" faction="Amarr Empire" factionid="500003"/>
+    <row c="true" corporation="Joint Harvesting" corporationid="1000074" faction="Amarr Empire" factionid="500003"/>
+    <row c="true" corporation="Nurtura" corporationid="1000075" faction="Amarr Empire" factionid="500003"/>
+    <row c="true" corporation="Further Foodstuffs" corporationid="1000076" faction="Amarr Empire" factionid="500003"/>
+    <row c="true" corporation="Royal Amarr Institute" corporationid="1000077" faction="Amarr Empire" factionid="500003"/>
+    <row c="true" corporation="Imperial Chancellor" corporationid="1000078" faction="Amarr Empire" factionid="500003"/>
+    <row c="true" corporation="Amarr Civil Service" corporationid="1000079" faction="Amarr Empire" factionid="500003"/>
+    <row c="true" corporation="Ministry of War" corporationid="1000080" faction="Amarr Empire" factionid="500003"/>
+    <row c="true" corporation="Ministry of Assessment" corporationid="1000081" faction="Amarr Empire" factionid="500003"/>
+    <row c="true" corporation="Ministry of Internal Order" corporationid="1000082" faction="Amarr Empire" factionid="500003"/>
+    <row c="true" corporation="Amarr Trade Registry" corporationid="1000083" faction="Amarr Empire" factionid="500003"/>
+    <row c="true" corporation="Amarr Navy" corporationid="1000084" faction="Amarr Empire" factionid="500003"/>
+    <row c="true" corporation="Court Chamberlain" corporationid="1000085" faction="Amarr Empire" factionid="500003"/>
+    <row c="true" corporation="Emperor Family" corporationid="1000086" faction="Amarr Empire" factionid="500003"/>
+    <row c="true" corporation="Kador Family" corporationid="1000087" faction="Amarr Empire" factionid="500003"/>
+    <row c="true" corporation="Sarum Family" corporationid="1000088" faction="Amarr Empire" factionid="500003"/>
+    <row c="true" corporation="Kor-Azor Family" corporationid="1000089" faction="Amarr Empire" factionid="500003"/>
+    <row c="true" corporation="Ardishapur Family" corporationid="1000090" faction="Amarr Empire" factionid="500003"/>
+    <row c="true" corporation="Tash-Murkon Family" corporationid="1000091" faction="Amarr Empire" factionid="500003"/>
+    <row c="true" corporation="Civic Court" corporationid="1000092" faction="Amarr Empire" factionid="500003"/>
+    <row c="true" corporation="Theology Council" corporationid="1000093" faction="Amarr Empire" factionid="500003"/>
+    <row c="true" corporation="TransStellar Shipping" corporationid="1000094" faction="Gallente Federation" factionid="500004"/>
+    <row c="true" corporation="Federal Freight" corporationid="1000095" faction="Gallente Federation" factionid="500004"/>
+    <row c="true" corporation="Inner Zone Shipping" corporationid="1000096" faction="EverMore" factionid="500013"/>
+    <row c="true" corporation="Material Acquisition" corporationid="1000097" faction="Gallente Federation" factionid="500004"/>
+    <row c="true" corporation="Astral Mining Inc." corporationid="1000098" faction="Gallente Federation" factionid="500004"/>
+    <row c="true" corporation="Combined Harvest" corporationid="1000099" faction="Gallente Federation" factionid="500004"/>
+    <row c="true" corporation="Quafe Company" corporationid="1000100" faction="Gallente Federation" factionid="500004"/>
+    <row c="true" corporation="CreoDron" corporationid="1000101" faction="Gallente Federation" factionid="500004"/>
+    <row c="true" corporation="Roden Shipyards" corporationid="1000102" faction="Gallente Federation" factionid="500004"/>
+    <row c="true" corporation="Allotek Industries" corporationid="1000103" faction="Gallente Federation" factionid="500004"/>
+    <row c="true" corporation="Poteque Pharmaceuticals" corporationid="1000104" faction="Gallente Federation" factionid="500004"/>
+    <row c="true" corporation="Impetus" corporationid="1000105" faction="Gallente Federation" factionid="500004"/>
+    <row c="true" corporation="Egonics Inc." corporationid="1000106" faction="Gallente Federation" factionid="500004"/>
+    <row c="true" corporation="The Scope" corporationid="1000107" faction="Gallente Federation" factionid="500004"/>
+    <row c="true" corporation="Chemal Tech" corporationid="1000108" faction="Gallente Federation" factionid="500004"/>
+    <row c="true" corporation="Duvolle Laboratories" corporationid="1000109" faction="Gallente Federation" factionid="500004"/>
+    <row c="true" corporation="FedMart" corporationid="1000110" faction="Gallente Federation" factionid="500004"/>
+    <row c="true" corporation="Aliastra" corporationid="1000111" faction="Gallente Federation" factionid="500004"/>
+    <row c="true" corporation="Bank of Luminaire" corporationid="1000112" faction="Gallente Federation" factionid="500004"/>
+    <row c="true" corporation="Pend Insurance" corporationid="1000113" faction="Gallente Federation" factionid="500004"/>
+    <row c="true" corporation="Garoun Investment Bank" corporationid="1000114" faction="Gallente Federation" factionid="500004"/>
+    <row c="true" corporation="University of Caille" corporationid="1000115" faction="Gallente Federation" factionid="500004"/>
+    <row c="true" corporation="President" corporationid="1000116" faction="Gallente Federation" factionid="500004"/>
+    <row c="true" corporation="Senate" corporationid="1000117" faction="Gallente Federation" factionid="500004"/>
+    <row c="true" corporation="Supreme Court" corporationid="1000118" faction="Gallente Federation" factionid="500004"/>
+    <row c="true" corporation="Federal Administration" corporationid="1000119" faction="Gallente Federation" factionid="500004"/>
+    <row c="true" corporation="Federation Navy" corporationid="1000120" faction="Gallente Federation" factionid="500004"/>
+    <row c="true" corporation="Federal Intelligence Office" corporationid="1000121" faction="Gallente Federation" factionid="500004"/>
+    <row c="true" corporation="Federation Customs" corporationid="1000122" faction="Gallente Federation" factionid="500004"/>
+    <row c="true" corporation="Ammatar Fleet" corporationid="1000123" faction="Ammatar Mandate" factionid="500007"/>
+    <row cc="true" corporation="Archangels" corporationid="1000124" faction="Angel Cartel" factionid="500011"/>
+    <row c="true" corporation="CONCORD" corporationid="1000125" faction="CONCORD Assembly" factionid="500006"/>
+    <row c="true" corporation="Ammatar Consulate" corporationid="1000126" faction="Ammatar Mandate" factionid="500007"/>
+    <row cc="true" corporation="Guristas" corporationid="1000127" faction="Guristas Pirates" factionid="500010"/>
+    <row c="true" corporation="Mordu's Legion" corporationid="1000128" faction="Mordu's Legion Command" factionid="500018"/>
+    <row c="true" corporation="Outer Ring Excavations" corporationid="1000129" faction="ORE" factionid="500014"/>
+    <row c="true" corporation="Sisters of EVE" corporationid="1000130" faction="Servant Sisters of EVE" factionid="500016"/>
+    <row c="true" corporation="Society of Conscious Thought" corporationid="1000131" faction="The Society of Conscious Thought" factionid="500017"/>
+    <row c="true" corporation="Secure Commerce Commission" corporationid="1000132" faction="CONCORD Assembly" factionid="500006"/>
+    <row cc="true" corporation="Salvation Angels" corporationid="1000133" faction="Angel Cartel" factionid="500011"/>
+    <row cc="true" corporation="Blood Raiders" corporationid="1000134" faction="Blood Raider Covenant" factionid="500012"/>
+    <row cc="true" corporation="Serpentis Corporation" corporationid="1000135" faction="Serpentis" factionid="500020"/>
+    <row cc="true" corporation="Guardian Angels" corporationid="1000136" faction="Angel Cartel" factionid="500011"/>
+    <row c="true" corporation="DED" corporationid="1000137" faction="CONCORD Assembly" factionid="500006"/>
+    <row cc="true" corporation="Dominations" corporationid="1000138" faction="Angel Cartel" factionid="500011"/>
+    <row c="true" corporation="Food Relief" corporationid="1000139" faction="Servant Sisters of EVE" factionid="500016"/>
+    <row c="true" corporation="Genolution" corporationid="1000140" faction="The Society of Conscious Thought" factionid="500017"/>
+    <row cc="true" corporation="Guristas Production" corporationid="1000141" faction="Guristas Pirates" factionid="500010"/>
+    <row c="true" corporation="Impro" corporationid="1000142" faction="The Society of Conscious Thought" factionid="500017"/>
+    <row c="true" corporation="Inner Circle" corporationid="1000143" faction="CONCORD Assembly" factionid="500006"/>
+    <row c="true" corporation="Intaki Bank" corporationid="1000144" faction="The Syndicate" factionid="500009"/>
+    <row c="true" corporation="Intaki Commerce" corporationid="1000145" faction="The Syndicate" factionid="500009"/>
+    <row c="true" corporation="Intaki Space Police" corporationid="1000146" faction="The Syndicate" factionid="500009"/>
+    <row c="true" corporation="Intaki Syndicate" corporationid="1000147" faction="The Syndicate" factionid="500009"/>
+    <row c="true" corporation="InterBus" corporationid="1000148" faction="EverMore" factionid="500013"/>
+    <row c="true" corporation="Jove Navy" corporationid="1000149" faction="Jove Empire" factionid="500005"/>
+    <row c="true" corporation="Jovian Directorate" corporationid="1000150" faction="Jove Empire" factionid="500005"/>
+    <row c="true" corporation="Khanid Innovation" corporationid="1000151" faction="Khanid Kingdom" factionid="500008"/>
+    <row c="true" corporation="Khanid Transport" corporationid="1000152" faction="Khanid Kingdom" factionid="500008"/>
+    <row c="true" corporation="Khanid Works" corporationid="1000153" faction="Khanid Kingdom" factionid="500008"/>
+    <row c="true" corporation="Nefantar Miner Association" corporationid="1000154" faction="Ammatar Mandate" factionid="500007"/>
+    <row c="true" corporation="Prosper" corporationid="1000155" faction="Jove Empire" factionid="500005"/>
+    <row c="true" corporation="Royal Khanid Navy" corporationid="1000156" faction="Khanid Kingdom" factionid="500008"/>
+    <row cc="true" corporation="Serpentis Inquest" corporationid="1000157" faction="Serpentis" factionid="500020"/>
+    <row c="true" corporation="Shapeset" corporationid="1000158" faction="Jove Empire" factionid="500005"/>
+    <row c="true" corporation="The Sanctuary" corporationid="1000159" faction="Servant Sisters of EVE" factionid="500016"/>
+    <row c="true" corporation="Thukker Mix" corporationid="1000160" faction="Thukker Tribe" factionid="500015"/>
+    <row cc="true" corporation="True Creations" corporationid="1000161" faction="Sansha's Nation" factionid="500019"/>
+    <row cc="true" corporation="True Power" corporationid="1000162" faction="Sansha's Nation" factionid="500019"/>
+    <row c="true" corporation="Trust Partners" corporationid="1000163" faction="Thukker Tribe" factionid="500015"/>
+    <row c="true" corporation="X-Sense" corporationid="1000164" faction="The Society of Conscious Thought" factionid="500017"/>
+    <row c="true" corporation="Hedion University" corporationid="1000165" faction="Amarr Empire" factionid="500003"/>
+    <row c="true" corporation="Imperial Academy" corporationid="1000166" faction="Amarr Empire" factionid="500003"/>
+    <row c="true" corporation="State War Academy" corporationid="1000167" faction="Caldari State" factionid="500001"/>
+    <row c="true" corporation="Federal Navy Academy" corporationid="1000168" faction="Gallente Federation" factionid="500004"/>
+    <row c="true" corporation="Center for Advanced Studies" corporationid="1000169" faction="Gallente Federation" factionid="500004"/>
+    <row c="true" corporation="Republic Military School" corporationid="1000170" faction="Minmatar Republic" factionid="500002"/>
+    <row c="true" corporation="Republic University" corporationid="1000171" faction="Minmatar Republic" factionid="500002"/>
+    <row c="true" corporation="Pator Tech School" corporationid="1000172" faction="Minmatar Republic" factionid="500002"/>
+    <row c="true" corporation="Material Institute" corporationid="1000177" faction="Jove Empire" factionid="500005"/>
+    <row c="true" corporation="Academy of Aggressive Behaviour" corporationid="1000178" faction="Jove Empire" factionid="500005"/>
+    <row c="true" corporation="24th Imperial Crusade" corporationid="1000179" faction="Amarr Empire" factionid="500003"/>
+    <row c="true" corporation="State Protectorate" corporationid="1000180" faction="Caldari State" factionid="500001"/>
+    <row c="true" corporation="Federal Defense Union" corporationid="1000181" faction="Gallente Federation" factionid="500004"/>
+    <row c="true" corporation="Tribal Liberation Force" corporationid="1000182" faction="Minmatar Republic" factionid="500002"/>
+    <row cc="true" corporation="Arkombine" corporationid="1000193" faction="Deathless Circle" factionid="500029"/>
+    <row c="true" corporation="Imperial Guard" corporationid="1000198" faction="Amarr Empire" factionid="500003"/>
+    <row c="true" corporation="Amarr Templars" corporationid="1000205" faction="Amarr Empire" factionid="500003"/>
+    <row c="true" corporation="Royal Uhlans" corporationid="1000206" faction="Amarr Empire" factionid="500003"/>
+    <row c="true" corporation="Bragian Order" corporationid="1000207" faction="Amarr Empire" factionid="500003"/>
+    <row c="true" corporation="Zumari Force Projection" corporationid="1000208" faction="Caldari State" factionid="500001"/>
+    <row c="true" corporation="Osmon Surveillance" corporationid="1000213" faction="Caldari State" factionid="500001"/>
+    <row c="true" corporation="Seituoda Taskforce Command" corporationid="1000214" faction="Caldari State" factionid="500001"/>
+    <row c="true" corporation="Algintal Core" corporationid="1000215" faction="Gallente Federation" factionid="500004"/>
+    <row c="true" corporation="Crux Special Tasks Group" corporationid="1000216" faction="Gallente Federation" factionid="500004"/>
+    <row c="true" corporation="Villore Sec Ops" corporationid="1000217" faction="EverMore" factionid="500013"/>
+    <row c="true" corporation="Circle of Huskarl" corporationid="1000218" faction="Minmatar Republic" factionid="500002"/>
+    <row c="true" corporation="Tronhadar Free Guard" corporationid="1000219" faction="Minmatar Republic" factionid="500002"/>
+    <row c="true" corporation="Sanmatar Kelkoons" corporationid="1000220" faction="Minmatar Republic" factionid="500002"/>
+    <row c="true" corporation="Ostrakon Agency" corporationid="1000222" faction="Gallente Federation" factionid="500004"/>
+    <row c="true" corporation="Fraternity of St. Venefice" corporationid="1000223" faction="Amarr Empire" factionid="500003"/>
+    <row c="true" corporation="Shining Flame" corporationid="1000224" faction="Amarr Empire" factionid="500003"/>
+    <row c="true" corporation="Paladin Survey Force" corporationid="1000225" faction="Amarr Empire" factionid="500003"/>
+    <row c="true" corporation="Ametat Security" corporationid="1000226" faction="Amarr Empire" factionid="500003"/>
+    <row c="true" corporation="Company of Marcher Lords" corporationid="1000227" faction="Amarr Empire" factionid="500003"/>
+    <row c="true" corporation="Tal-Romon Legion" corporationid="1000228" faction="Amarr Empire" factionid="500003"/>
+    <row c="true" corporation="Kameira Lodge" corporationid="1000229" faction="Amarr Empire" factionid="500003"/>
+    <row c="true" corporation="Red and Silver Hand" corporationid="1000230" faction="Amarr Empire" factionid="500003"/>
+    <row c="true" corporation="Holdfast Syndicate" corporationid="1000231" faction="Amarr Empire" factionid="500003"/>
+    <row c="true" corporation="Kinsho Swords" corporationid="1000232" faction="Caldari State" factionid="500001"/>
+    <row c="true" corporation="Expert Intervention" corporationid="1000233" faction="Caldari State" factionid="500001"/>
+    <row c="true" corporation="Onikanabo Brigade" corporationid="1000234" faction="Caldari State" factionid="500001"/>
+    <row c="true" corporation="Kirkinen Risk Control" corporationid="1000235" faction="Caldari State" factionid="500001"/>
+    <row c="true" corporation="Storm Wind Strikeforce" corporationid="1000236" faction="Caldari State" factionid="500001"/>
+    <row c="true" corporation="Commando Perkone" corporationid="1000237" faction="Caldari State" factionid="500001"/>
+    <row c="true" corporation="Isuuaya Tactical" corporationid="1000238" faction="Caldari State" factionid="500001"/>
+    <row c="true" corporation="Intara Direct Action" corporationid="1000239" faction="Caldari State" factionid="500001"/>
+    <row c="true" corporation="Ikomari-Onu Enforcement" corporationid="1000240" faction="Caldari State" factionid="500001"/>
+    <row c="true" corporation="Namtar Elite" corporationid="1000243" faction="Gallente Federation" factionid="500004"/>
+    <row c="true" corporation="Mannar Focused Warfare" corporationid="1000244" faction="Gallente Federation" factionid="500004"/>
+    <row c="true" corporation="Resheph Interstellar Strategy" corporationid="1000245" faction="Gallente Federation" factionid="500004"/>
+    <row c="true" corporation="Sinq Laison Gendarmes" corporationid="1000246" faction="Gallente Federation" factionid="500004"/>
+    <row c="true" corporation="Chatelain Rapid Response" corporationid="1000247" faction="Gallente Federation" factionid="500004"/>
+    <row c="true" corporation="Edimmu Warfighters" corporationid="1000248" faction="Gallente Federation" factionid="500004"/>
+    <row c="true" corporation="Kang Lo Directorate" corporationid="1000249" faction="Gallente Federation" factionid="500004"/>
+    <row c="true" corporation="Condotta Rouvenor" corporationid="1000250" faction="Gallente Federation" factionid="500004"/>
+    <row c="true" corporation="Brutor Vanguard" corporationid="1000251" faction="Minmatar Republic" factionid="500002"/>
+    <row c="true" corporation="Vherokior Combat Logistics" corporationid="1000252" faction="Minmatar Republic" factionid="500002"/>
+    <row c="true" corporation="Krullefor Organization" corporationid="1000253" faction="Minmatar Republic" factionid="500002"/>
+    <row c="true" corporation="Mikramurka Shock Troop" corporationid="1000254" faction="Minmatar Republic" factionid="500002"/>
+    <row c="true" corporation="Eyniletti Rangers" corporationid="1000255" faction="Minmatar Republic" factionid="500002"/>
+    <row c="true" corporation="Sebiestor Field Sappers" corporationid="1000256" faction="Minmatar Republic" factionid="500002"/>
+    <row c="true" corporation="Forty-Nine Fedayeen" corporationid="1000257" faction="Minmatar Republic" factionid="500002"/>
+    <row c="true" corporation="Seykal Expeditionary Group" corporationid="1000258" faction="Minmatar Republic" factionid="500002"/>
+    <row c="true" corporation="Krusual Covert Operators" corporationid="1000259" faction="Minmatar Republic" factionid="500002"/>
+    <row c="true" corporation="State Peacekeepers" corporationid="1000261" faction="Caldari State" factionid="500001"/>
+    <row c="true" corporation="Federal Marines" corporationid="1000262" faction="Gallente Federation" factionid="500004"/>
+    <row c="true" corporation="Republic Command" corporationid="1000263" faction="Minmatar Republic" factionid="500002"/>
+    <row c="true" corporation="Outer Ring Development" corporationid="1000270" faction="ORE" factionid="500014"/>
+    <row c="true" corporation="Outer Ring Prospecting" corporationid="1000271" faction="ORE" factionid="500014"/>
+    <row c="true" corporation="Vigilant Tyrannos" corporationid="1000274" faction="Drifters" factionid="500024"/>
+    <row c="true" corporation="ORE Technologies" corporationid="1000276" faction="ORE" factionid="500014"/>
+    <row c="true" corporation="Frostline Laboratories" corporationid="1000277" faction="ORE" factionid="500014"/>
+    <row c="true" corporation="Project Discovery" corporationid="1000279" faction="CONCORD Assembly" factionid="500006"/>
+    <row c="true" corporation="CONCORD Aerospace" corporationid="1000280" faction="CONCORD Assembly" factionid="500006"/>
+    <row c="true" corporation="Independent Gaming Commission" corporationid="1000281" faction="CONCORD Assembly" factionid="500006"/>
+    <row c="true" corporation="Directive Intelligence Agency" corporationid="1000282" faction="CONCORD Assembly" factionid="500006"/>
+    <row c="true" corporation="Imperial War Reserves" corporationid="1000283" faction="Amarr Empire" factionid="500003"/>
+    <row c="true" corporation="State Military Stockpile" corporationid="1000284" faction="Caldari State" factionid="500001"/>
+    <row c="true" corporation="Federal Strategic Materiel" corporationid="1000285" faction="Gallente Federation" factionid="500004"/>
+    <row c="true" corporation="Republic Fleet Ordnance" corporationid="1000286" faction="Minmatar Republic" factionid="500002"/>
+    <row c="true" corporation="Infested Regions Hiveminds" corporationid="1000287" faction="Rogue Drones" factionid="500025"/>
+    <row c="true" corporation="Navka Overminds" corporationid="1000288" faction="Triglavian Collective" factionid="500026"/>
+    <row c="true" corporation="Unshackled Overminds" corporationid="1000289" faction="Rogue Drones" factionid="500025"/>
+    <row c="true" corporation="Veles Clade" corporationid="1000292" faction="Triglavian Collective" factionid="500026"/>
+    <row c="true" corporation="Perun Clade" corporationid="1000293" faction="Triglavian Collective" factionid="500026"/>
+    <row c="true" corporation="Svarog Clade" corporationid="1000294" faction="Triglavian Collective" factionid="500026"/>
+    <row c="true" corporation="AEGIS" corporationid="1000297" faction="EDENCOM" factionid="500027"/>
+    <row c="true" corporation="The Convocation of Triglav" corporationid="1000298" faction="Triglavian Collective" factionid="500026"/>
+    <row c="true" corporation="PKN Cryptographic" corporationid="1000299" faction="Caldari State" factionid="500001"/>
+    <row c="true" corporation="PKN Interstellar" corporationid="1000300" faction="Caldari State" factionid="500001"/>
+    <row c="true" corporation="Thukker Council" corporationid="1000410" faction="Thukker Tribe" factionid="500015"/>
+    <row c="true" corporation="Nefantar Council" corporationid="1000411" faction="Minmatar Republic" factionid="500002"/>
+    <row c="true" corporation="Starkmanir Council" corporationid="1000412" faction="Minmatar Republic" factionid="500002"/>
+    <row c="true" corporation="AIR Laboratories" corporationid="1000413" faction="Association for Interdisciplinary Research" factionid="500028"/>
+    <row c="true" corporation="Paragon" corporationid="1000419" faction="EverMore" factionid="500013"/>
+    <row c="true" corporation="Cromeaux Inc" corporationid="1000425" faction="EverMore" factionid="500013"/>
+    <row c="true" corporation="Adaptive Provisioning" corporationid="1000426" faction="EverMore" factionid="500013"/>
+    <row c="true" corporation="Interplanetary Media Network" corporationid="1000427" faction="EverMore" factionid="500013"/>
+    <row c="true" corporation="Verity Enhancements" corporationid="1000428" faction="EverMore" factionid="500013"/>
+    <row c="true" corporation="Vapor Sea Technologies" corporationid="1000429" faction="EverMore" factionid="500013"/>
+    <row cc="true" corporation="Malakim Zealots" corporationid="1000436" faction="Angel Cartel" factionid="500011"/>
+    <row cc="true" corporation="Commando Guri" corporationid="1000437" faction="Guristas Pirates" factionid="500010"/>
+    <row cc="true" corporation="Deathless Custodians" corporationid="1000438" faction="Deathless Circle" factionid="500029"/>
+    <row cc="true" corporation="Satori-Horigu Epistemics" corporationid="1000439" faction="Deathless Circle" factionid="500029"/>
+    <row cc="true" corporation="Hrada-Oki Caravan" corporationid="1000440" faction="Deathless Circle" factionid="500029"/>
+    <row cc="true" corporation="Deathless Wraiths" corporationid="1000441" faction="Deathless Circle" factionid="500029"/>
+    <row c="true" factionid="500001"/>
+    <row c="true" factionid="500002"/>
+    <row c="true" factionid="500003"/>
+    <row c="true" factionid="500004"/>
+    <row c="true" factionid="500005"/>
+    <row c="true" factionid="500006"/>
+    <row c="true" factionid="500007"/>
+    <row c="true" factionid="500008"/>
+    <row c="true" factionid="500009"/>
+    <row cc="true" factionid="500010"/>
+    <row cc="true" factionid="500011"/>
+    <row cc="true" factionid="500012"/>
+    <row c="true" factionid="500013"/>
+    <row c="true" factionid="500014"/>
+    <row c="true" factionid="500015"/>
+    <row c="true" factionid="500016"/>
+    <row c="true" factionid="500017"/>
+    <row c="true" factionid="500018"/>
+    <row cc="true" factionid="500019"/>
+    <row cc="true" factionid="500020"/>
+    <row c="true" factionid="500024"/>
+    <row c="true" factionid="500025"/>
+    <row c="true" factionid="500026"/>
+    <row c="true" factionid="500027"/>
+    <row c="true" factionid="500028"/>
+    <row cc="true" factionid="500029"/>
+</rows>

@@ -177,6 +177,9 @@ public class Settings {
 //Routing						Saved by ???
 	//Lock ???
 	private final RoutingSettings routingSettings = new RoutingSettings();
+//Jumps
+	//Lock ???
+	private final RouteAvoidSettings jumpsAvoidSettings = new RouteAvoidSettings();
 //Overview						Saved by JOverviewMenu.ListenerClass.NEW/DELETE/RENAME
 	//Lock OK
 	private final Map<String, OverviewGroup> overviewGroups = new HashMap<>();
@@ -544,6 +547,10 @@ public class Settings {
 
 	public RoutingSettings getRoutingSettings() {
 		return routingSettings;
+	}
+
+	public RouteAvoidSettings getJumpsAvoidSettings() {
+		return jumpsAvoidSettings;
 	}
 
 	public Map<String, List<Jump>> getTableJumps() {

@@ -85,6 +85,7 @@ import net.nikr.eve.jeveasset.gui.shared.components.JLockWindow.LockWorkerAdapto
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterMatcher;
 import net.nikr.eve.jeveasset.gui.sounds.SoundPlayer;
+import net.nikr.eve.jeveasset.gui.tabs.agents.AgentsTab;
 import net.nikr.eve.jeveasset.gui.tabs.assets.AssetsTab;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractsTab;
 import net.nikr.eve.jeveasset.gui.tabs.items.ItemsTab;
@@ -175,6 +176,7 @@ public class Program implements ActionListener {
 	private SkillsTab skillsTab;
 	private LoyaltyPointsTab loyaltyPointsTab;
 	private NpcStandingTab npcStandingTab;
+	private AgentsTab agentsTab;
 	private MiningTab miningTab;
 	private MiningGraphTab miningGraphTab;
 	private ExtractionsTab extractionsTab;
@@ -271,30 +273,33 @@ public class Program implements ActionListener {
 		SplashUpdater.setProgress(68);
 		LOG.info("Loading: Routing Tab");
 		routingTab = new RoutingTab(this);
-		SplashUpdater.setProgress(70);
+		SplashUpdater.setProgress(69);
 		LOG.info("Loading: Overview Tab");
 		overviewTab = new OverviewTab(this);
-		SplashUpdater.setProgress(71);
+		SplashUpdater.setProgress(70);
 		LOG.info("Loading: Stockpile Tab");
 		stockpileTab = new StockpileTab(this);
-		SplashUpdater.setProgress(72);
+		SplashUpdater.setProgress(71);
 		LOG.info("Loading: Items Tab");
 		itemsTab = new ItemsTab(this);
-		SplashUpdater.setProgress(73);
+		SplashUpdater.setProgress(72);
 		LOG.info("Loading: Tracker Tab");
 		trackerTab = new TrackerTab(this);
-		SplashUpdater.setProgress(74);
+		SplashUpdater.setProgress(73);
 		LOG.info("Loading: Reprocessed Tab");
 		reprocessedTab = new ReprocessedTab(this);
-		SplashUpdater.setProgress(75);
+		SplashUpdater.setProgress(74);
 		LOG.info("Loading: Contracts Tab");
 		contractsTab = new ContractsTab(this);
-		SplashUpdater.setProgress(76);
+		SplashUpdater.setProgress(75);
 		LOG.info("Loading: Skills Tab");
 		skillsTab = new SkillsTab(this);
-		SplashUpdater.setProgress(77);
+		SplashUpdater.setProgress(76);
 		LOG.info("Loading: Loyalty Points Tab");
 		loyaltyPointsTab = new LoyaltyPointsTab(this);
+		SplashUpdater.setProgress(77);
+		LOG.info("Loading: Agents Tab");
+		agentsTab = new AgentsTab(this);
 		SplashUpdater.setProgress(78);
 		LOG.info("Loading: NPC Standing Tab");
 		npcStandingTab = new NpcStandingTab(this);
@@ -948,6 +953,12 @@ public class Program implements ActionListener {
 		}
 	}
 
+	public void showJumpsSettingsPanel() {
+		if (settingsDialog != null) {
+			settingsDialog.showJumpsSettingsPanel();
+		}
+	}
+
 	public ProfileData getProfileData() {
 		return profileData;
 	}
@@ -1118,6 +1129,8 @@ public class Program implements ActionListener {
 			mainWindow.addTab(loyaltyPointsTab);
 		} else if (MainMenuAction.NPC_STANDING.name().equals(e.getActionCommand())) {
 			mainWindow.addTab(npcStandingTab);
+		} else if (MainMenuAction.AGENTS.name().equals(e.getActionCommand())) {
+			mainWindow.addTab(agentsTab);
 		} else if (MainMenuAction.MINING_ALL.name().equals(e.getActionCommand())) {
 			mainWindow.addTab(miningTab);
 			mainWindow.addTab(miningGraphTab);

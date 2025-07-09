@@ -37,7 +37,6 @@ import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder.Change;
 import net.nikr.eve.jeveasset.data.settings.Settings;
-import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import net.nikr.eve.jeveasset.io.shared.DataConverter;
 import net.nikr.eve.jeveasset.io.shared.RawConverter;
 
@@ -65,6 +64,7 @@ public class ProfileMarketOrders extends ProfileTable {
 		setAttribute(statement, ++index, accountID);
 		setAttribute(statement, ++index, marketOrder.getOrderID());
 		setAttribute(statement, ++index, marketOrder.getLocationID());
+		setAttribute(statement, ++index, marketOrder.getRegionID());
 		setAttribute(statement, ++index, marketOrder.getVolumeTotal());
 		setAttribute(statement, ++index, marketOrder.getVolumeRemain());
 		setAttribute(statement, ++index, marketOrder.getMinVolume());
@@ -102,6 +102,7 @@ public class ProfileMarketOrders extends ProfileTable {
 				+ "	accountid,"
 				+ "	orderid,"
 				+ "	stationid,"
+				+ "	regionid,"
 				+ "	volentered,"
 				+ "	volremaining,"
 				+ "	minvolume,"
@@ -119,7 +120,7 @@ public class ProfileMarketOrders extends ProfileTable {
 				+ "	issuedby,"
 				+ "	corp,"
 				+ "	esi)"
-				+ " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
+				+ " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
 				;
 		try (PreparedStatement statement = connection.prepareStatement(ordersSQL)) {
 			Rows rows = new Rows(statement, marketOrders.size());
@@ -156,6 +157,7 @@ public class ProfileMarketOrders extends ProfileTable {
 				+ "	accountid,"
 				+ "	orderid,"
 				+ "	stationid,"
+				+ "	regionid,"
 				+ "	volentered,"
 				+ "	volremaining,"
 				+ "	minvolume,"
@@ -173,7 +175,7 @@ public class ProfileMarketOrders extends ProfileTable {
 				+ "	issuedby,"
 				+ "	corp,"
 				+ "	esi)"
-				+ " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
+				+ " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
 				;
 		try (PreparedStatement statement = connection.prepareStatement(ordersSQL)) {
 			Rows rows = new Rows(statement, esiOwners, new RowSize<EsiOwner>() {
@@ -249,6 +251,7 @@ public class ProfileMarketOrders extends ProfileTable {
 				RawMarketOrder rawMarketOrder = RawMarketOrder.create();
 				long orderID = getLong(rs, "orderid");
 				long locationID = getLong(rs, "stationid");
+				Integer regionID = getIntOptional(rs, "regionid");
 				int volEntered = getInt(rs, "volentered");
 				int volRemaining = getInt(rs, "volremaining");
 				int minVolume = getInt(rs, "minvolume");
@@ -282,7 +285,7 @@ public class ProfileMarketOrders extends ProfileTable {
 				rawMarketOrder.setPrice(price);
 				rawMarketOrder.setRange(RawConverter.toMarketOrderRange(null, rangeEnum, rangeString));
 				rawMarketOrder.setRangeString(rangeString);
-				rawMarketOrder.setRegionID((int) ApiIdConverter.getLocation(locationID).getRegionID());
+				rawMarketOrder.setRegionID(RawConverter.toMarketOrderRegionID(locationID, typeID, regionID));
 				rawMarketOrder.setState(RawConverter.toMarketOrderState(null, stateEnum, stateString));
 				rawMarketOrder.setStateString(stateString);
 				rawMarketOrder.setTypeID(typeID);
@@ -301,6 +304,11 @@ public class ProfileMarketOrders extends ProfileTable {
 	}
 
 	@Override
+	protected void updateTable(Connection connection) throws SQLException {
+		addColumn(connection, MARKET_ORDERS_TABLE, "regionid");
+	}
+
+	@Override
 	protected boolean isEmpty(Connection connection) throws SQLException {
 		return !tableExist(connection, MARKET_ORDERS_TABLE, MARKET_ORDER_CHANGES_TABLE);
 	}
@@ -312,6 +320,7 @@ public class ProfileMarketOrders extends ProfileTable {
 					+ "	accountid TEXT,"
 					+ "	orderid INTEGER,"
 					+ "	stationid INTEGER,"
+					+ "	regionid INTEGER,"
 					+ "	volentered INTEGER,"
 					+ "	volremaining INTEGER,"
 					+ "	minvolume INTEGER,"
