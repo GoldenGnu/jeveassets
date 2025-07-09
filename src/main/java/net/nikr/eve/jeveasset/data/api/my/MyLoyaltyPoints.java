@@ -23,12 +23,18 @@ package net.nikr.eve.jeveasset.data.api.my;
 
 import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
 import net.nikr.eve.jeveasset.data.api.raw.RawLoyaltyPoints;
+import net.nikr.eve.jeveasset.gui.images.Images;
+import net.nikr.eve.jeveasset.gui.shared.table.containers.TextIcon;
+import net.nikr.eve.jeveasset.io.online.EveImageGetter.ImageSize;
 
 
 public class MyLoyaltyPoints extends RawLoyaltyPoints implements Comparable<MyLoyaltyPoints> {
 
+	public static ImageSize IMAGE_SIZE = ImageSize.SIZE_32;
+
 	private final OwnerType owner;
 	private String corporationName = "";
+	private TextIcon textIcon = null;
 	
 	public MyLoyaltyPoints(RawLoyaltyPoints rawLoyaltyPoints, OwnerType owner) {
 		super(rawLoyaltyPoints);
@@ -47,13 +53,20 @@ public class MyLoyaltyPoints extends RawLoyaltyPoints implements Comparable<MyLo
 		this.corporationName = corporationName;
 	}
 
+	public TextIcon getTextIcon() {
+		if (textIcon == null) {
+			textIcon = new TextIcon(Images.getIcon(this), corporationName);
+		}
+		return textIcon;
+	}
+
 	@Override
 	public int compareTo(MyLoyaltyPoints o) {
-		int comp = this.owner.compareTo(o.owner);
+		int comp = this.getOwnerName().compareTo(o.getOwnerName());
 		if (comp != 0) {
 			return comp;
 		}
-		return this.corporationName.compareTo(o.corporationName);
+		return this.getCorporationName().compareTo(o.getCorporationName());
 		
 	}
 	

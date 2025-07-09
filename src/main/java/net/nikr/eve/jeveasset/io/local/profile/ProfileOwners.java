@@ -194,19 +194,8 @@ public class ProfileOwners extends ProfileTable {
 
 	@Override
 	protected void updateTable(Connection connection) throws SQLException {
-		Set<String> tableColumns = tableColumns(connection, OWNERS_TABLE);
-		if (!tableColumns.contains("loyaltypointsnextupdate")) {
-			String sql = "ALTER TABLE " + OWNERS_TABLE + " ADD COLUMN loyaltypointsnextupdate INTEGER";
-			try (PreparedStatement statement = connection.prepareStatement(sql)) {
-				statement.execute();
-			}
-		}
-		if (!tableColumns.contains("npcstandingnextupdate")) {
-			String sql = "ALTER TABLE " + OWNERS_TABLE + " ADD COLUMN npcstandingnextupdate INTEGER";
-			try (PreparedStatement statement = connection.prepareStatement(sql)) {
-				statement.execute();
-			}
-		}
+		addColumn(connection, OWNERS_TABLE, "loyaltypointsnextupdate");
+		addColumn(connection, OWNERS_TABLE, "npcstandingnextupdate");
 	}
 
 	@Override

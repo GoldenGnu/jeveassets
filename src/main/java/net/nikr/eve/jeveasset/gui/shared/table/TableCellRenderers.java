@@ -27,6 +27,7 @@ import java.awt.Component;
 import java.util.Date;
 import javax.swing.AbstractCellEditor;
 import javax.swing.DefaultCellEditor;
+import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -40,6 +41,7 @@ import net.nikr.eve.jeveasset.data.settings.tag.Tags;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formatter;
 import net.nikr.eve.jeveasset.gui.shared.components.JButtonComparable;
+import net.nikr.eve.jeveasset.gui.shared.table.containers.TextIcon;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileTableFormat;
 
@@ -163,6 +165,43 @@ public class TableCellRenderers {
 			} else {
 				setText(value.toString());
 			}
+		}
+	}
+
+	public static class IconTableCellRenderer extends DefaultTableCellRenderer {
+
+		@Override
+		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+			Component component = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+			if (component instanceof JLabel) {
+				JLabel jLabel = (JLabel) component;
+				if (value instanceof Icon) {
+					jLabel.setIcon((Icon) value);
+					jLabel.setText("");
+				} else {
+					jLabel.setIcon(null);
+				}
+			}
+			return component;
+		}
+	}
+
+	public static class TextIconTableCellRenderer extends DefaultTableCellRenderer {
+
+		@Override
+		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+			Component component = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+			if (component instanceof JLabel) {
+				JLabel jLabel = (JLabel) component;
+				if (value instanceof TextIcon) {
+					TextIcon textIcon = (TextIcon) value;
+					jLabel.setIcon(textIcon.getIcon());
+					jLabel.setText(textIcon.getText());
+				} else {
+					jLabel.setIcon(null);
+				}
+			}
+			return component;
 		}
 	}
 

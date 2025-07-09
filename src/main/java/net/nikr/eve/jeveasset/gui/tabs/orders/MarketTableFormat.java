@@ -322,7 +322,7 @@ public enum MarketTableFormat implements EnumTableColumn<MyMarketOrder> {
 		}
 		@Override
 		public Object getColumnValue(final MyMarketOrder from) {
-			return new YesNo(from.isOwned());
+			return YesNo.get(from.isOwned());
 		}
 	},
 	WalletDivision(Integer.class) {

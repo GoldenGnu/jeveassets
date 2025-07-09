@@ -80,6 +80,7 @@ import net.nikr.eve.jeveasset.data.settings.PriceData;
 import net.nikr.eve.jeveasset.data.settings.UserItem;
 import net.nikr.eve.jeveasset.data.settings.tag.Tags;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.Percent;
+import net.nikr.eve.jeveasset.gui.shared.table.containers.TextIcon;
 import net.nikr.eve.jeveasset.gui.tabs.orders.Outbid;
 import net.nikr.eve.jeveasset.io.esi.EsiCallbackURL;
 import net.troja.eve.esi.ApiClient;
@@ -846,6 +847,8 @@ public class ConverterTestUtil {
 			return options.getMyBlueprint();
 		} else if (type.equals(FromType.class)) {
 			return options.getNpcStandingFromType();
+		} else if (type.equals(TextIcon.class)) {
+			return options.getTextIcon();
 		} else {
 			fail("No test value for: " + type.getSimpleName());
 			return null;

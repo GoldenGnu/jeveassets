@@ -34,6 +34,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -74,13 +75,16 @@ import net.nikr.eve.jeveasset.gui.shared.table.TableCellRenderers.DateCellRender
 import net.nikr.eve.jeveasset.gui.shared.table.TableCellRenderers.DateOnlyCellRenderer;
 import net.nikr.eve.jeveasset.gui.shared.table.TableCellRenderers.DoubleCellRenderer;
 import net.nikr.eve.jeveasset.gui.shared.table.TableCellRenderers.FloatCellRenderer;
+import net.nikr.eve.jeveasset.gui.shared.table.TableCellRenderers.IconTableCellRenderer;
 import net.nikr.eve.jeveasset.gui.shared.table.TableCellRenderers.IntegerCellRenderer;
 import net.nikr.eve.jeveasset.gui.shared.table.TableCellRenderers.LongCellRenderer;
 import net.nikr.eve.jeveasset.gui.shared.table.TableCellRenderers.TagsCellRenderer;
+import net.nikr.eve.jeveasset.gui.shared.table.TableCellRenderers.TextIconTableCellRenderer;
 import net.nikr.eve.jeveasset.gui.shared.table.TableCellRenderers.ToStringCellRenderer;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.AssetContainer;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.DateOnly;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.ExpirerDate;
+import net.nikr.eve.jeveasset.gui.shared.table.containers.TextIcon;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.YesNo;
 
 
@@ -137,9 +141,12 @@ public class JAutoColumnTable extends JTable {
 		this.setDefaultRenderer(String.class, new ToStringCellRenderer(SwingConstants.LEFT));
 		this.setDefaultRenderer(Object.class, new ToStringCellRenderer());
 		this.setDefaultRenderer(AssetContainer.class, new ToStringCellRenderer(SwingConstants.LEFT));
+		this.setDefaultRenderer(Enum.class, new ToStringCellRenderer(SwingConstants.LEFT));
 		this.setDefaultRenderer(Tags.class, new TagsCellRenderer());
 		this.setDefaultRenderer(YesNo.class, new ToStringCellRenderer(SwingConstants.CENTER));
 		this.setDefaultRenderer(ExpirerDate.class, new ToStringCellRenderer(SwingConstants.CENTER));
+		this.setDefaultRenderer(Icon.class, new IconTableCellRenderer());
+		this.setDefaultRenderer(TextIcon.class, new TextIconTableCellRenderer());
 		this.setDefaultRenderer(Component.class, new ComponentRenderer());
 		this.setDefaultEditor(Component.class, new ComponentEditor(this.getDefaultEditor(Component.class)));
 		this.setDefaultEditor(Number.class, new BetterNumberEditor());
