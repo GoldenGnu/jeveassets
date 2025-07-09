@@ -246,7 +246,7 @@ public class OutbidProcesser {
 							set.add(marketOrder);
 							//RegionIDs
 							Integer regionID = marketOrder.getRegionID();
-							if (regionID != null && (regionID >= 10000000 && regionID <= 13000000) || regionID == 19000001) {
+							if (regionID != null && ((regionID >= 10000000 && regionID <= 13000000) || regionID == 19000001)) {
 								regionIDs.add(regionID);
 							}
 						}
