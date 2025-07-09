@@ -37,6 +37,7 @@ import net.nikr.eve.jeveasset.data.settings.PriceData;
 import net.nikr.eve.jeveasset.data.settings.PriceDataSettings;
 import net.nikr.eve.jeveasset.data.settings.ProxyData;
 import net.nikr.eve.jeveasset.data.settings.ReprocessSettings;
+import net.nikr.eve.jeveasset.data.settings.RouteAvoidSettings;
 import net.nikr.eve.jeveasset.data.settings.RoutingSettings;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.StockpileGroupSettings;
@@ -850,6 +851,11 @@ public abstract class FakeSettings extends Settings {
 
 	@Override
 	public Map<String, String> getCurrentTableSorting() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public RouteAvoidSettings getJumpsAvoidSettings() {
 		throw new UnsupportedOperationException("not implemented");
 	}
 }
