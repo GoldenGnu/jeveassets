@@ -42,6 +42,7 @@ import net.nikr.eve.jeveasset.data.settings.PriceData;
 import net.nikr.eve.jeveasset.data.settings.UserItem;
 import net.nikr.eve.jeveasset.data.settings.tag.Tags;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.Percent;
+import net.nikr.eve.jeveasset.gui.shared.table.containers.TextIcon;
 import net.nikr.eve.jeveasset.gui.tabs.orders.Outbid;
 import net.nikr.eve.jeveasset.io.esi.EsiCallbackURL;
 import net.troja.eve.esi.model.CharacterAssetsResponse;
@@ -179,6 +180,8 @@ public interface ConverterTestOptions {
 	public CorporationOrdersHistoryResponse.StateEnum getMarketOrderStateEsiCorporationHistory();
 	
 	public RawNpcStanding.FromType getNpcStandingFromType();
+
+	public TextIcon getTextIcon();
 
 	public int getIndex();
 

@@ -91,7 +91,7 @@ public enum IndustryJobTableFormat implements EnumTableColumn<MyIndustryJob> {
 		}
 		@Override
 		public Object getColumnValue(final MyIndustryJob from) {
-			return new YesNo(from.isOwned());
+			return YesNo.get(from.isOwned());
 		}
 	},
 	COMPLETED_CHARACTER(String.class) {

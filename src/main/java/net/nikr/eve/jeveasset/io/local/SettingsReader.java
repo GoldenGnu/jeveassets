@@ -58,6 +58,7 @@ import net.nikr.eve.jeveasset.data.settings.PriceDataSettings.PriceMode;
 import net.nikr.eve.jeveasset.data.settings.PriceDataSettings.PriceSource;
 import net.nikr.eve.jeveasset.data.settings.ProxyData;
 import net.nikr.eve.jeveasset.data.settings.ReprocessSettings;
+import net.nikr.eve.jeveasset.data.settings.RouteAvoidSettings;
 import net.nikr.eve.jeveasset.data.settings.RouteResult;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.Settings.SettingFlag;
@@ -90,6 +91,8 @@ import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.SimpleColu
 import net.nikr.eve.jeveasset.gui.shared.table.View;
 import net.nikr.eve.jeveasset.gui.sounds.DefaultSound;
 import net.nikr.eve.jeveasset.gui.sounds.FileSound;
+import net.nikr.eve.jeveasset.gui.tabs.agents.AgentsTab;
+import net.nikr.eve.jeveasset.gui.tabs.agents.AgentsTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.assets.AssetTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.assets.AssetsTab;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractsTab;
@@ -100,6 +103,8 @@ import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJobTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJobsTab;
 import net.nikr.eve.jeveasset.gui.tabs.journal.JournalTab;
 import net.nikr.eve.jeveasset.gui.tabs.journal.JournalTableFormat;
+import net.nikr.eve.jeveasset.gui.tabs.loyalty.LoyaltyPointsTab;
+import net.nikr.eve.jeveasset.gui.tabs.loyalty.LoyaltyPointsTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.mining.ExtractionsTab;
 import net.nikr.eve.jeveasset.gui.tabs.mining.ExtractionsTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.mining.MiningTab;
@@ -116,6 +121,8 @@ import net.nikr.eve.jeveasset.gui.tabs.skills.SkillsTab;
 import net.nikr.eve.jeveasset.gui.tabs.skills.SkillsTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.slots.SlotsTab;
 import net.nikr.eve.jeveasset.gui.tabs.slots.SlotsTableFormat;
+import net.nikr.eve.jeveasset.gui.tabs.standing.NpcStandingTab;
+import net.nikr.eve.jeveasset.gui.tabs.standing.NpcStandingTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter.StockpileContainer;
@@ -363,6 +370,12 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		Element routingElement = getNodeOptional(element, "routingsettings");
 		if (routingElement != null) {
 			parseRoutingSettings(routingElement, settings);
+		}
+
+		//Jumps Avoid
+		Element jumpsElement = getNodeOptional(element, "jumpssettings");
+		if (jumpsElement != null) {
+			parseJumpsSettings(jumpsElement, settings);
 		}
 
 		//Tags - Must be loaded before stockpiles (and everything else that uses tags)
@@ -1094,18 +1107,27 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 	}
 
 	private void parseRoutingSettings(Element routingElement, Settings settings) throws XmlException {
-		double secMax = getDouble(routingElement, "securitymaximum");
-		double secMin = getDouble(routingElement, "securityminimum");
-		settings.getRoutingSettings().setSecMax(secMax);
-		settings.getRoutingSettings().setSecMin(secMin);
-		NodeList systemNodes = routingElement.getElementsByTagName("routingsystem");
+		parseRouteAvoidSettings(routingElement, settings.getRoutingSettings().getAvoidSettings());
+		parseRoutes(routingElement, settings.getRoutingSettings().getRoutes());
+	}
+
+	private void parseJumpsSettings(Element jumpsElement, Settings settings) throws XmlException {
+		parseRouteAvoidSettings(jumpsElement, settings.getJumpsAvoidSettings());
+	}
+
+	private void parseRouteAvoidSettings(Element avoidElement, RouteAvoidSettings routeAvoidSettings) throws XmlException {
+		double secMax = getDouble(avoidElement, "securitymaximum");
+		double secMin = getDouble(avoidElement, "securityminimum");
+		routeAvoidSettings.setSecMax(secMax);
+		routeAvoidSettings.setSecMin(secMin);
+		NodeList systemNodes = avoidElement.getElementsByTagName("routingsystem");
 		for (int a = 0; a < systemNodes.getLength(); a++) {
 			Element systemNode = (Element) systemNodes.item(a);
 			long systemID = getLong(systemNode, "id");
 			MyLocation location = ApiIdConverter.getLocation(systemID);
-			settings.getRoutingSettings().getAvoid().put(systemID, new SolarSystem(location));
+			routeAvoidSettings.getAvoid().put(systemID, new SolarSystem(location));
 		}
-		NodeList presetNodes = routingElement.getElementsByTagName("routingpreset");
+		NodeList presetNodes = avoidElement.getElementsByTagName("routingpreset");
 		for (int a = 0; a < presetNodes.getLength(); a++) {
 			Element presetNode = (Element) presetNodes.item(a);
 			String name = getString(presetNode, "name");
@@ -1116,9 +1138,8 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 				long systemID = getLong(systemNode, "id");
 				systemIDs.add(systemID);
 			}
-			settings.getRoutingSettings().getPresets().put(name, systemIDs);
+			routeAvoidSettings.getPresets().put(name, systemIDs);
 		}
-		parseRoutes(routingElement, settings.getRoutingSettings().getRoutes());
 	}
 
 	private void parseRoutes(Element routingElement, Map<String, RouteResult> map) throws XmlException {
@@ -1734,6 +1755,30 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		try {
 			if (toolName.equals(MiningTab.NAME)) {
 				return MiningTableFormat.valueOf(column);
+			}
+		} catch (IllegalArgumentException exception) {
+
+		}
+		//Loyalty Points
+		try {
+			if (toolName.equals(LoyaltyPointsTab.NAME)) {
+				return LoyaltyPointsTableFormat.valueOf(column);
+			}
+		} catch (IllegalArgumentException exception) {
+
+		}
+		//Npc Standing 
+		try {
+			if (toolName.equals(NpcStandingTab.NAME)) {
+				return NpcStandingTableFormat.valueOf(column);
+			}
+		} catch (IllegalArgumentException exception) {
+
+		}
+		//Agents
+		try {
+			if (toolName.equals(AgentsTab.NAME)) {
+				return AgentsTableFormat.valueOf(column);
 			}
 		} catch (IllegalArgumentException exception) {
 

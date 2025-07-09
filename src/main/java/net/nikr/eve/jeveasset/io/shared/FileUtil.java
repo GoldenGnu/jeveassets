@@ -40,7 +40,10 @@ import org.slf4j.LoggerFactory;
 
 public class FileUtil extends FileUtilSimple {
 	private static final Logger LOG = LoggerFactory.getLogger(FileUtil.class);
+	private static final Object SYNC_LOCK = new Object();
+	
 
+	private static final String PATH_IMAGES = "images";
 	private static final String PATH_SOUNDS = "sounds";
 	private static final String PATH_ASSET_ADDED = "data" + File.separator + "added.json";
 	private static final String PATH_ASSET_ADDED_DATABASE = "data" + File.separator + "addedsql.db";
@@ -48,6 +51,8 @@ public class FileUtil extends FileUtilSimple {
 	private static final String PATH_PRICE_HISTORY_DATABASE = "data" + File.separator + "pricehistory.db";
 	private static final String PATH_TRACKER_DATA = "data" + File.separator + "tracker.json";
 	private static final String PATH_SETTINGS = "data" + File.separator + "settings.xml";
+	private static final String PATH_AGENTS = "data" + File.separator + "agents.xml";
+	private static final String PATH_NPC_CORPORATION = "data" + File.separator + "npccorporation.xml";
 	private static final String PATH_ITEMS = "data" + File.separator + "items.xml";
 	private static final String PATH_ITEMS_UPDATES = "data" + File.separator + "items_updates.xml";
 	private static final String PATH_JUMPS = "data" + File.separator + "jumps.xml";
@@ -105,6 +110,10 @@ public class FileUtil extends FileUtilSimple {
 		return file.getAbsolutePath();
 	}
 
+	public static String getPathImages(String filename) {
+		return getUserFile(PATH_IMAGES + File.separator + filename);
+	}
+
 	public static String getPathSounds(String filename) {
 		return getUserFile(PATH_SOUNDS + File.separator + filename);
 	}
@@ -146,9 +155,11 @@ public class FileUtil extends FileUtilSimple {
 			}
 		}
 		File parent = ret.getParentFile();
-		if (!parent.exists() && !parent.mkdirs()) {
-			JOptionPane.showMessageDialog(null, "Failed to create directory " + parent.getAbsolutePath(), Program.PROGRAM_NAME + " - Critical Error", JOptionPane.ERROR_MESSAGE);
-			System.exit(-1);
+		synchronized (SYNC_LOCK) {
+			if (!parent.exists() && !parent.mkdirs()) {
+				JOptionPane.showMessageDialog(null, "Failed to create directory " + parent.getAbsolutePath(), Program.PROGRAM_NAME + " - Critical Error", JOptionPane.ERROR_MESSAGE);
+				System.exit(-1);
+			}
 		}
 		return ret.getAbsolutePath();
 	}
@@ -377,6 +388,13 @@ public class FileUtil extends FileUtilSimple {
 
 	public static String getPathItems() {
 		return getStaticFile(PATH_ITEMS);
+	}
+
+	public static String getPathAgents() {
+		return getStaticFile(PATH_AGENTS);
+	}
+	public static String getPathNpcCorporation() {
+		return getStaticFile(PATH_NPC_CORPORATION);
 	}
 
 	public static String getPathLocations() {

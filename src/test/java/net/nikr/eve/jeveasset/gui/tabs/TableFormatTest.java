@@ -56,6 +56,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.ColumnManager.JumpColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.ISK;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.ModulePriceValue;
+import net.nikr.eve.jeveasset.gui.tabs.agents.AgentsTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.assets.AssetTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractsTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.items.ItemTableFormat;
@@ -175,6 +176,8 @@ public class TableFormatTest extends TestUtil {
 			test(LoyaltyPointsTableFormat.class);
 			//NPC Standing
 			test(NpcStandingTableFormat.class);
+			//Agents
+			test(AgentsTableFormat.class);
 			//Mining
 			test(MiningTableFormat.class);
 			//Extractions

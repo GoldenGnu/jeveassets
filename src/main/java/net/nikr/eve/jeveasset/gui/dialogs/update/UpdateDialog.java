@@ -73,6 +73,7 @@ import net.nikr.eve.jeveasset.io.esi.EsiShipGetter;
 import net.nikr.eve.jeveasset.io.esi.EsiSkillGetter;
 import net.nikr.eve.jeveasset.io.esi.EsiNpcStandingGetter;
 import net.nikr.eve.jeveasset.io.esi.EsiTransactionsGetter;
+import net.nikr.eve.jeveasset.io.online.EveImageGetter;
 import net.nikr.eve.jeveasset.io.online.PriceDataGetter;
 import net.nikr.eve.jeveasset.io.shared.ThreadWoker;
 
@@ -905,6 +906,8 @@ public class UpdateDialog extends JDialogCentered {
 			updates.add(new EsiFactionWarfareGetter(this));
 			//char/corp/alliance IDs to names (ESI)
 			updates.add(new EsiNameGetter(this, profileManager.getOwnerTypes()));
+			//char/corp/alliance images
+			updates.add(new EveImageGetter(this, profileManager.getOwnerTypes()));
 			ThreadWoker.start(this, updates);
 		}
 	}
