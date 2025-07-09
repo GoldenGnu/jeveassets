@@ -246,7 +246,7 @@ public enum AccountTableFormat implements EnumTableColumn<OwnerType> {
 		}
 		@Override
 		public Object getColumnValue(final OwnerType from) {
-			return new YesNo(from.isContainerLogs());
+			return YesNo.get(from.isContainerLogs());
 		}
 	},
 	SKILLS(YesNo.class) {
