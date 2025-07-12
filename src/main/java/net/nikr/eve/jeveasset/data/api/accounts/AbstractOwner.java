@@ -102,11 +102,13 @@ public abstract class AbstractOwner implements OwnerType {
 		walletDivisions.putAll(abstractOwner.walletDivisions);
 		assetDivisions.putAll(abstractOwner.assetDivisions);
 		skills.addAll(abstractOwner.skills);
+		clones.addAll(abstractOwner.clones);
 		mining.addAll(abstractOwner.mining);
 		extractions.addAll(abstractOwner.extractions);
 		this.totalSkillPoints = abstractOwner.totalSkillPoints;
 		this.unallocatedSkillPoints = abstractOwner.unallocatedSkillPoints;
 		this.ownerName = abstractOwner.ownerName;
+		this.corporationName = abstractOwner.corporationName;
 		this.ownerID = abstractOwner.ownerID;
 		this.showOwner = abstractOwner.showOwner;
 		this.invalid = abstractOwner.invalid;
