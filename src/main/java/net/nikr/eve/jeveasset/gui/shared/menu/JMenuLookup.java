@@ -60,6 +60,7 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 		FUZZWORK_MARKET,
 		EVE_TYCOON,
 		EVE_MARKET_BROWSER,
+		JITA_SPACE,
 		EVEMAPS_DOTLAN_STATION,
 		EVEMAPS_DOTLAN_PLANET,
 		EVEMAPS_DOTLAN_SYSTEM,
@@ -237,6 +238,16 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 				return urls;
 			}
 		},
+		JITA_SPACE {
+			@Override
+			public Set<String> getLinks(MenuData<?> menuData) {
+				Set<String> urls = new HashSet<>();
+				for (int marketTypeID : menuData.getMarketTypeIDs()) {
+					urls.add("https://www.jita.space/market/" + marketTypeID);
+				}
+				return urls;
+			}
+		},
 	//Info
 		GAMES_CHRUKER() {
 			@Override
@@ -379,6 +390,7 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 	private final JMenuItem jEveCookbook;
 	private final JMenuItem jAdam4eve;
 	private final JMenuItem jEveMarketBrowser;
+	private final JMenuItem jJitaSpace;
 
 	public JMenuLookup(final Program program) {
 		super(GuiShared.get().lookup(), program);
@@ -512,6 +524,12 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 		jEveMarketBrowser.setActionCommand(MenuLookupAction.EVE_MARKET_BROWSER.name());
 		jEveMarketBrowser.addActionListener(listener);
 		jMarket.add(jEveMarketBrowser);
+
+		jJitaSpace = new JMenuItem(GuiShared.get().jitaSpace());
+		jJitaSpace.setIcon(Images.LINK_JITA_SPACE.getIcon());
+		jJitaSpace.setActionCommand(MenuLookupAction.JITA_SPACE.name());
+		jJitaSpace.addActionListener(listener);
+		jMarket.add(jJitaSpace);
 
 		jItemDatabase = new JMenu(GuiShared.get().itemDatabase());
 		jItemDatabase.setIcon(Images.TOOL_ASSETS.getIcon());
@@ -744,6 +762,8 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 				DesktopUtil.browse(LookupLinks.EVE_TYCOON.getLinks(menuData), program);
 			} else if (MenuLookupAction.EVE_MARKET_BROWSER.name().equals(e.getActionCommand())) {
 				DesktopUtil.browse(LookupLinks.EVE_MARKET_BROWSER.getLinks(menuData), program);
+			} else if (MenuLookupAction.JITA_SPACE.name().equals(e.getActionCommand())) {
+				DesktopUtil.browse(LookupLinks.JITA_SPACE.getLinks(menuData), program);
 		//Info
 			} else if (MenuLookupAction.GAMES_CHRUKER.name().equals(e.getActionCommand())) {
 				DesktopUtil.browse(LookupLinks.GAMES_CHRUKER.getLinks(menuData), program);

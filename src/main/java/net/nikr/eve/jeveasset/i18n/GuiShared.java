@@ -118,6 +118,7 @@ public abstract class GuiShared extends Bundle {
 	public abstract String itemEdit();
 	public abstract String itemNameTitle();
 	public abstract String itemPriceTitle();
+	public abstract String jitaSpace();
 	public abstract String jumps();
 	public abstract String jumpsAddCustom();
 	public abstract String jumpsAddSelected();
