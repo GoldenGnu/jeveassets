@@ -524,7 +524,7 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 		jItemDatabase.add(jzKillboardItem);
 
 		jEveRef = new JMenuItem(GuiShared.get().eveRef());
-		//jEveRef.setIcon(Images.LINK_EVE_REF.getIcon());
+		jEveRef.setIcon(Images.LINK_EVE_REF.getIcon());
 		jEveRef.setActionCommand(MenuLookupAction.EVE_REF.name());
 		jEveRef.addActionListener(listener);
 		jItemDatabase.add(jEveRef);
