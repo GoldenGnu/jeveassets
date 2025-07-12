@@ -59,6 +59,7 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 		EVE_COOKBOOK,
 		FUZZWORK_MARKET,
 		EVE_TYCOON,
+		EVE_MARKET_BROWSER,
 		EVEMAPS_DOTLAN_STATION,
 		EVEMAPS_DOTLAN_PLANET,
 		EVEMAPS_DOTLAN_SYSTEM,
@@ -226,6 +227,16 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 				return urls;
 			}
 		},
+		EVE_MARKET_BROWSER {
+			@Override
+			public Set<String> getLinks(MenuData<?> menuData) {
+				Set<String> urls = new HashSet<>();
+				for (int marketTypeID : menuData.getMarketTypeIDs()) {
+					urls.add("https://evemarketbrowser.com/region/0/type/" + marketTypeID);
+				}
+				return urls;
+			}
+		},
 	//Info
 		GAMES_CHRUKER() {
 			@Override
@@ -367,6 +378,7 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 	private final JMenuItem jLazyBlacksmithManufacturing;
 	private final JMenuItem jEveCookbook;
 	private final JMenuItem jAdam4eve;
+	private final JMenuItem jEveMarketBrowser;
 
 	public JMenuLookup(final Program program) {
 		super(GuiShared.get().lookup(), program);
@@ -494,6 +506,12 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 		jAdam4eve.setActionCommand(MenuLookupAction.ADAM4EVE.name());
 		jAdam4eve.addActionListener(listener);
 		jMarket.add(jAdam4eve);
+
+		jEveMarketBrowser = new JMenuItem(GuiShared.get().eveMarketBrowser());
+		jEveMarketBrowser.setIcon(Images.LINK_EVE_MARKET_BROWSER.getIcon());
+		jEveMarketBrowser.setActionCommand(MenuLookupAction.EVE_MARKET_BROWSER.name());
+		jEveMarketBrowser.addActionListener(listener);
+		jMarket.add(jEveMarketBrowser);
 
 		jItemDatabase = new JMenu(GuiShared.get().itemDatabase());
 		jItemDatabase.setIcon(Images.TOOL_ASSETS.getIcon());
@@ -724,6 +742,8 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 				DesktopUtil.browse(LookupLinks.FUZZWORK_MARKET.getLinks(menuData), program);
 			} else if (MenuLookupAction.EVE_TYCOON.name().equals(e.getActionCommand())) {
 				DesktopUtil.browse(LookupLinks.EVE_TYCOON.getLinks(menuData), program);
+			} else if (MenuLookupAction.EVE_MARKET_BROWSER.name().equals(e.getActionCommand())) {
+				DesktopUtil.browse(LookupLinks.EVE_MARKET_BROWSER.getLinks(menuData), program);
 		//Info
 			} else if (MenuLookupAction.GAMES_CHRUKER.name().equals(e.getActionCommand())) {
 				DesktopUtil.browse(LookupLinks.GAMES_CHRUKER.getLinks(menuData), program);

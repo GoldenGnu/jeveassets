@@ -79,6 +79,7 @@ public abstract class GuiShared extends Bundle {
 	public abstract String errorLoadingProfileTitle();
 	public abstract String eveCookbook();
 	public abstract String eveInfo();
+	public abstract String eveMarketBrowser();
 	public abstract String eveMissioneer();
 	public abstract String eveRef();
 	public abstract String eveTycoon();
