@@ -148,7 +148,9 @@ public class FileUtil extends FileUtilSimple {
 	private static String getLocalFile(final String filename, FileType fileType) {
 		File file;
 		File ret;
-		if (fileType == FileType.USER_FILES && !CliOptions.get().isPortable()) {
+		if (fileType == FileType.USER_FILES && testPath) {
+			ret = new File(FileUtilSimple.getLocalFile("test-output" + File.separator + filename));
+		} else if (fileType == FileType.USER_FILES && !CliOptions.get().isPortable()) {
 			File userDir = new File(System.getProperty("user.home", "."));
 			if (onMac()) { // preferences are stored in user.home/Library/Preferences
 				file = new File(userDir, "Library" + File.separator + "Preferences" + File.separator + "JEveAssets");
@@ -157,11 +159,7 @@ public class FileUtil extends FileUtilSimple {
 			}
 			ret = new File(file.getAbsolutePath() + File.separator + filename);
 		} else { //jEveAssets program directory
-			if (fileType == FileType.USER_FILES && testPath) {
-				ret = new File(FileUtilSimple.getLocalFile("test-output" + File.separator + filename));
-			} else {
-				ret = new File(FileUtilSimple.getLocalFile(filename));
-			}
+			ret = new File(FileUtilSimple.getLocalFile(filename));
 		}
 		File parent = ret.getParentFile();
 		synchronized (SYNC_LOCK) {
