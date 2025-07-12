@@ -994,8 +994,8 @@ public class Settings {
 		return flags.get(SettingFlag.FLAG_INDUSTRY_JOBS_HISTORY);
 	}
 
-	public void setIndustryJobsHistory(final boolean journalHistory) {
-		flags.put(SettingFlag.FLAG_INDUSTRY_JOBS_HISTORY, journalHistory);
+	public void setIndustryJobsHistory(final boolean industryJobsHistory) {
+		flags.put(SettingFlag.FLAG_INDUSTRY_JOBS_HISTORY, industryJobsHistory);
 	}
 
 	public boolean isAssetsContractsOwnerCorporation() {
