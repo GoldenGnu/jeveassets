@@ -118,6 +118,9 @@ public enum Images {
 	LINK_KHON_SPACE ("link_khon_space.png"),
 	LINK_EVE_COOKBOOK ("link_eve_cookbook.png"),
 	LINK_EVEMISSIONEER ("link_evemissioneer.png"),
+	LINK_EVE_REF ("link_eve_ref.png"),
+	LINK_EVE_MARKET_BROWSER ("link_eve_market_browser.png"),
+	LINK_JITA_SPACE ("link_jita_space.png"),
 
 	LOC_GROUPS ("loc_groups.png"),
 	LOC_PIN_COMMAND ("loc_pin_command.png"),
