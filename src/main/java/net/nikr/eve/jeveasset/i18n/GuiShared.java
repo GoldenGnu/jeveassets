@@ -101,6 +101,7 @@ public abstract class GuiShared extends Bundle {
 	public abstract String errorLoadingProfileTitle();
 	public abstract String eveCookbook();
 	public abstract String eveInfo();
+	public abstract String eveMarketBrowser();
 	public abstract String eveMissioneer();
 	public abstract String eveRef();
 	public abstract String eveTycoon();
@@ -139,6 +140,7 @@ public abstract class GuiShared extends Bundle {
 	public abstract String itemEdit();
 	public abstract String itemNameTitle();
 	public abstract String itemPriceTitle();
+	public abstract String jitaSpace();
 	public abstract String jumps();
 	public abstract String jumpsAddCustom();
 	public abstract String jumpsAddSelected();
