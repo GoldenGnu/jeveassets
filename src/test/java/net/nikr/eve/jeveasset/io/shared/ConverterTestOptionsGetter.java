@@ -639,6 +639,7 @@ public class ConverterTestOptionsGetter {
 		public EsiCallbackURL getEsiCallbackURL() {
 			return get(ESI_CALLBACK_URL, index);
 		}
+
 //NPC Standing
 		@Override
 		public RawNpcStanding.FromType getNpcStandingFromType() {

@@ -83,6 +83,21 @@ public class ProfileDatabaseConverterTest extends TestUtil {
 	}
 
 	@Test
+	public void testAbstractOwner() {
+		boolean setNull = false;
+		for (ConverterTestOptions options : ConverterTestOptionsGetter.getConverterOptions()) {
+			//Clear previouse test data
+			cleanup();
+			//Old
+			EsiOwner oldOwner = ConverterTestUtil.getEsiOwner(true, setNull, false, options);
+			//New
+			EsiOwner newOwner = new EsiOwner(oldOwner);
+
+			testClass("", oldOwner, newOwner, false, true);
+		}
+	}
+
+	@Test
 	public void testLocal() {
 		//Exiting data
 		CliOptions.get().setPortable(false);
