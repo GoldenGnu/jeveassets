@@ -30,7 +30,7 @@ import org.junit.Test;
 public class RawNpcStandingTest extends TestUtil {
 
 	@Test
-	public void rawSkillTest() {
+	public void rawNpcStandingTest() {
 		RawUtil.compare(RawNpcStanding.class, CharacterStandingsResponse.class);
 		RawUtil.compare(RawNpcStanding.class, CorporationStandingsResponse.class);
 		RawUtil.compare(RawNpcStanding.FromType.values(), CharacterStandingsResponse.FromTypeEnum.values(), CorporationStandingsResponse.FromTypeEnum.values());

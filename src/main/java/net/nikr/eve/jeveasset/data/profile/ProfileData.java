@@ -737,7 +737,7 @@ public class ProfileData {
 			journal.setTags(tags);
 		}
 		AddedData.getJournals().commitQueue();
-
+		//Update Loyalty Points dynamic values
 		for (MyLoyaltyPoints loyaltyPoints : loyaltyPointses) {
 			//Names
 			String corporationName = ApiIdConverter.getOwnerName(loyaltyPoints.getCorporationID());
@@ -754,7 +754,7 @@ public class ProfileData {
 		}
 		//Add Totals
 		loyaltyPointses.addAll(loyaltyPointsTotals.values());
-
+		//Update Npc Standing dynamic values
 		for (MyNpcStanding npcStanding : npcStandings) {
 			//Names
 			npcStanding.updateSkills();
