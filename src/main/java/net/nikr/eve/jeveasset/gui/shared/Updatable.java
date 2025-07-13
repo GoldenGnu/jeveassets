@@ -72,6 +72,12 @@ public class Updatable {
 			if (owner.isSkills() && isUpdatable(owner.getSkillsNextUpdate())) {
 				return true;
 			}
+			if (owner.isLoyaltyPoints()&& isUpdatable(owner.getLoyaltyPointsNextUpdate())) {
+				return true;
+			}
+			if (owner.isNpcStanding()&& isUpdatable(owner.getNpcStandingNextUpdate())) {
+				return true;
+			}
 			if (owner.isMining() && isUpdatable(owner.getMiningNextUpdate())){
 				return true;
 			}
