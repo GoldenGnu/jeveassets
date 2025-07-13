@@ -56,6 +56,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
 import net.nikr.eve.jeveasset.gui.shared.table.TableFormatFactory;
+import net.nikr.eve.jeveasset.i18n.GuiShared;
 import net.nikr.eve.jeveasset.i18n.TabsLoyaltyPoints;
 import net.nikr.eve.jeveasset.io.shared.DesktopUtil;
 
@@ -188,9 +189,17 @@ public class LoyaltyPointsTab extends JMainTabPrimary implements TagUpdate {
 
 		@Override
 		public void addToolMenu(JComponent jComponent) {
-			JMenu fuzzwork = new JMenu(TabsLoyaltyPoints.get().fuzzworkLoyaltyPointsStore());
-			fuzzwork.setIcon(Images.LINK_FUZZWORK.getIcon());
-			jComponent.add(fuzzwork);
+			JMenu jLookup = new JMenu(GuiShared.get().lookup());
+			jLookup.setIcon(Images.LINK_LOOKUP.getIcon());
+			jComponent.add(jLookup);
+
+			JMenu jLoyaltyPointsStore = new JMenu(TabsLoyaltyPoints.get().loyaltyPointsStore());
+			jLoyaltyPointsStore.setIcon(Images.LINK_LOOKUP.getIcon());
+			jLookup.add(jLoyaltyPointsStore);
+
+			JMenu jFuzzwork = new JMenu(TabsLoyaltyPoints.get().fuzzwork());
+			jFuzzwork.setIcon(Images.LINK_FUZZWORK.getIcon());
+			jLoyaltyPointsStore.add(jFuzzwork);
 
 			boolean enabled = !selectionModel.getSelected().isEmpty();
 
@@ -208,7 +217,7 @@ public class LoyaltyPointsTab extends JMainTabPrimary implements TagUpdate {
 					
 				}
 			});
-			fuzzwork.add(jSell);
+			jFuzzwork.add(jSell);
 
 			JMenuItem jBuy = new JMenuItem(TabsLoyaltyPoints.get().buy(), Images.ORDERS_BUY.getIcon());
 			jBuy.setEnabled(enabled);
@@ -224,7 +233,24 @@ public class LoyaltyPointsTab extends JMainTabPrimary implements TagUpdate {
 					
 				}
 			});
-			fuzzwork.add(jBuy);
+			jFuzzwork.add(jBuy);
+
+			JMenuItem jJitaSpace = new JMenuItem(TabsLoyaltyPoints.get().jitaSpace(), Images.LINK_JITA_SPACE.getIcon());
+			jJitaSpace.setEnabled(enabled);
+			jJitaSpace.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					Set<String> links = new HashSet<>();
+					for (MyLoyaltyPoints loyaltyPoints : selectionModel.getSelected()) {
+						String corporationName = loyaltyPoints.getCorporationName();
+						if (corporationName != null) {
+							links.add("https://www.jita.space/lp-store/"+corporationName.replace(" ", "_"));
+						}
+					}
+					DesktopUtil.browse(links, program);
+				}
+			});
+			jLoyaltyPointsStore.add(jJitaSpace);
 		}
 	}
 
