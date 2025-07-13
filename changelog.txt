@@ -16,6 +16,19 @@
                   #### #  # #  # #  # #### #### #### #### ####
 
 ________________________________________________________________________________
+_8.0.3__________________________________________________________________________
+
+New Features:
+-Added eve market browser to the lookup menu
+-Added jita space to the lookup menu
+
+Bug Fixes:
+-Price update would sometimes fail due to a rounding error
+-Add support for global plex market region to fuzzwork price source
+-Added global plex market region support to outbid
+-Duplicates in account balances  (BugID: 1323)
+
+________________________________________________________________________________
 _8.0.2__________________________________________________________________________
 
 Bug Fixes:
