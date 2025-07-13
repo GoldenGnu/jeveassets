@@ -141,4 +141,5 @@
     <row flagid="184" flagname="CorpProjectsHangar" flagtext="Corporation Projects Hangar "/>
     <row flagid="185" flagname="ColonyResourcesHold" flagtext="Infrastructure Hold"/>
     <row flagid="186" flagname="MoonMaterialBay" flagtext="Moon Material Bay"/>
+    <row flagid="187" flagname="CapsuleerDeliveries" flagtext="Capsuleer Deliveries"/>
 </rows>
