@@ -113,6 +113,7 @@
     <row c="" ci="0" r="VR-03" ri="14000003" s="" se="0.0" si="0" sy="" syi="0"/>
     <row c="" ci="0" r="VR-04" ri="14000004" s="" se="0.0" si="0" sy="" syi="0"/>
     <row c="" ci="0" r="VR-05" ri="14000005" s="" se="0.0" si="0" sy="" syi="0"/>
+    <row c="" ci="0" r="Global PLEX Market Region" ri="19000001" s="" se="0.0" si="0" sy="" syi="0"/>
     <row c="San Matar" ci="20000001" r="Derelik" ri="10000001" s="" se="0.0" si="0" sy="" syi="0"/>
     <row c="Anares" ci="20000002" r="Derelik" ri="10000001" s="" se="0.0" si="0" sy="" syi="0"/>
     <row c="Mamouna" ci="20000003" r="Derelik" ri="10000001" s="" se="0.0" si="0" sy="" syi="0"/>
@@ -1287,6 +1288,7 @@
     <row c="VC-023" ci="24000023" r="VR-05" ri="14000005" s="" se="0.0" si="0" sy="" syi="0"/>
     <row c="VC-024" ci="24000024" r="VR-05" ri="14000005" s="" se="0.0" si="0" sy="" syi="0"/>
     <row c="VC-025" ci="24000025" r="VR-05" ri="14000005" s="" se="0.0" si="0" sy="" syi="0"/>
+    <row c="Global PLEX Market Constellation" ci="26000001" r="Global PLEX Market Region" ri="19000001" s="" se="0.0" si="0" sy="" syi="0"/>
     <row c="San Matar" ci="20000001" r="Derelik" ri="10000001" s="" se="0.9" si="0" sy="Tanoo" syi="30000001"/>
     <row c="San Matar" ci="20000001" r="Derelik" ri="10000001" s="" se="0.8" si="0" sy="Lashesih" syi="30000002"/>
     <row c="San Matar" ci="20000001" r="Derelik" ri="10000001" s="" se="0.8" si="0" sy="Akpivem" syi="30000003"/>
@@ -9723,6 +9725,7 @@
     <row c="VC-025" ci="24000025" r="VR-05" ri="14000005" s="" se="0.0" si="0" sy="V-198" syi="34000198"/>
     <row c="VC-025" ci="24000025" r="VR-05" ri="14000005" s="" se="0.0" si="0" sy="V-199" syi="34000199"/>
     <row c="VC-025" ci="24000025" r="VR-05" ri="14000005" s="" se="0.0" si="0" sy="V-200" syi="34000200"/>
+    <row c="Global PLEX Market Constellation" ci="26000001" r="Global PLEX Market Region" ri="19000001" s="" se="1.0" si="0" sy="Global PLEX Market System" syi="36000001"/>
     <row c="Outartoh" ci="20000407" r="The Citadel" ri="10000033" s="Muvolailen X - Moon 3 - CBD Corporation Storage" se="0.7" si="60000004" sy="Muvolailen" syi="30002780"/>
     <row c="Outartoh" ci="20000407" r="The Citadel" ri="10000033" s="Ono V - Moon 9 - CBD Corporation Storage" se="0.8" si="60000007" sy="Ono" syi="30002779"/>
     <row c="Outartoh" ci="20000407" r="The Citadel" ri="10000033" s="Annaro I - CBD Corporation Storage" se="0.8" si="60000010" sy="Annaro" syi="30002776"/>
