@@ -130,7 +130,7 @@ public class Program implements ActionListener {
 		TIMER
 	}
 	//Major.Minor.Bugfix [Release Candidate n] [BETA n] [DEV BUILD #n];
-	public static final String PROGRAM_VERSION = "8.0.3 DEV BUILD 1";
+	public static final String PROGRAM_VERSION = "8.0.3";
 	public static final String PROGRAM_NAME = "jEveAssets";
 	public static final String PROGRAM_HOMEPAGE = "https://eve.nikr.net/jeveasset";
 	public static final String PROGRAM_USER_AGENT = PROGRAM_NAME + "/" + PROGRAM_VERSION.replace(" ", "_") + " (nkr@niklaskr.dk)";
