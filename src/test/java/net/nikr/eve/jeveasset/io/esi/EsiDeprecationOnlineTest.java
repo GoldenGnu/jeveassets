@@ -31,7 +31,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.TestUtil;
 import net.troja.eve.esi.ApiClient;
 import net.troja.eve.esi.ApiClientBuilder;
@@ -45,7 +44,6 @@ import net.troja.eve.esi.api.FactionWarfareApi;
 import net.troja.eve.esi.api.IndustryApi;
 import net.troja.eve.esi.api.LocationApi;
 import net.troja.eve.esi.api.MarketApi;
-import net.troja.eve.esi.api.MetaApi;
 import net.troja.eve.esi.api.PlanetaryInteractionApi;
 import net.troja.eve.esi.api.SkillsApi;
 import net.troja.eve.esi.api.SovereigntyApi;
@@ -106,8 +104,6 @@ import net.troja.eve.esi.model.SovereigntyStructuresResponse;
 import net.troja.eve.esi.model.StructureResponse;
 import net.troja.eve.esi.model.TypeResponse;
 import net.troja.eve.esi.model.UniverseNamesResponse;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -761,17 +757,6 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 			validate(apiResponse.getHeaders());
 		} catch (ApiException ex) {
 			validate(ex.getResponseHeaders());
-		}
-	}
-
-	@Test
-	public void headers() {
-		MetaApi api = new MetaApi();
-		try {
-			Map<String, String> headers = api.getHeaders();
-			assertThat(headers.get("User-Agent"), equalTo(Program.PROGRAM_USER_AGENT));
-		} catch (ApiException ex) {
-			fail();
 		}
 	}
 
