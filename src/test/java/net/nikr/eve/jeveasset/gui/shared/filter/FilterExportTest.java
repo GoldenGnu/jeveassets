@@ -109,7 +109,7 @@ public class FilterExportTest extends TestUtil {
 		test(LoyaltyPointsTab.NAME, LoyaltyPointsTableFormat.values());
 		//Agents
 		test(AgentsTab.NAME, AgentsTableFormat.values());
-		//Mining
+		//NPC Standing
 		test(NpcStandingTab.NAME, NpcStandingTableFormat.values());
 		//Extractions
 		test(ExtractionsTab.NAME, ExtractionsTableFormat.values());
