@@ -30,8 +30,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import javax.swing.Icon;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -41,6 +43,7 @@ import javax.swing.JTable;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.SettingsUpdateListener;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.AllColumn;
+import net.nikr.eve.jeveasset.gui.shared.filter.FilterMenu.SimpleFilter;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.NumberValue;
 import net.nikr.eve.jeveasset.io.shared.DesktopUtil.HelpLink;
@@ -48,6 +51,7 @@ import net.nikr.eve.jeveasset.io.shared.DesktopUtil.HelpLink;
 
 public abstract class FilterControl<E> implements ColumnCache<E>, SimpleFilterControl<E> {
 
+	private final JFrame jFrame;
 	private final String toolName;
 	private final SimpleTableFormat<E> tableFormat;
 	private final EventList<E> eventList;
@@ -61,6 +65,7 @@ public abstract class FilterControl<E> implements ColumnCache<E>, SimpleFilterCo
 
 	/** Do not use this constructor - it's here only for test purposes. */
 	protected FilterControl() {
+		jFrame = null;
 		toolName = null;
 		tableFormat = null;
 		eventList = null;
@@ -73,6 +78,7 @@ public abstract class FilterControl<E> implements ColumnCache<E>, SimpleFilterCo
 	}
 
 	protected FilterControl(final JFrame jFrame, final String toolName, SimpleTableFormat<E> tableFormat, final EventList<E> eventList, final EventList<E> exportEventList, final FilterList<E> filterList) {
+		this.jFrame = jFrame;
 		this.toolName = toolName;
 		this.tableFormat = tableFormat;
 		this.eventList = eventList;
@@ -221,23 +227,29 @@ public abstract class FilterControl<E> implements ColumnCache<E>, SimpleFilterCo
 	}
 
 	public JMenu getMenu(final JTable jTable, final List<E> items) {
-		String text = null;
-		EnumTableColumn<?> column = null;
 		boolean isNumeric = false;
 		boolean isDate = false;
 		int columnIndex = jTable.getSelectedColumn();
+		Set<SimpleFilter> simpleFilters = new HashSet<>();
 		if (jTable.getSelectedColumnCount() == 1 //Single cell (column)
-				&& jTable.getSelectedRowCount() == 1 //Single cell (row)
-				&& items.size() == 1 //Single element
+				//&& jTable.getSelectedRowCount() == 1 //Single cell (row)
+				//&& items.size() == 1 //Single element
 				&& !(items.get(0) instanceof SeparatorList.Separator) //Not Separator
 				&& columnIndex >= 0 //Shown column
 				&& columnIndex < tableFormat.getShownColumns().size()) { //Shown column
-			column = tableFormat.getShownColumns().get(columnIndex);
-			isNumeric = isNumeric(column);
-			isDate = isDate(column);
-			text = FilterMatcher.formatFilter(tableFormat.getColumnValue(items.get(0), column.name()));
+			EnumTableColumn<?> column = tableFormat.getShownColumns().get(columnIndex);
+			if (column != null) {
+				isNumeric = isNumeric(column);
+				isDate = isDate(column);
+				for (E e : items) {
+					String text = FilterMatcher.formatFilter(tableFormat.getColumnValue(e, column.name()));
+					if (text != null) {
+						simpleFilters.add(new SimpleFilter(column, text));
+					}
+				}
+			}
 		}
-		return new FilterMenu<>(gui, column, text, isNumeric, isDate);
+		return new FilterMenu<>(jFrame, gui, simpleFilters, isNumeric, isDate);
 	}
 
 	String getName() {
