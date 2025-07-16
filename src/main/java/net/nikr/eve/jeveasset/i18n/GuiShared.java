@@ -83,6 +83,7 @@ public abstract class GuiShared extends Bundle {
 	public abstract String eveMissioneer();
 	public abstract String eveRef();
 	public abstract String eveTycoon();
+	public abstract String eveconomy();
 	public abstract String foreground();
 	public abstract String formulaColumns();
 	public abstract String formulaDateToolTip();

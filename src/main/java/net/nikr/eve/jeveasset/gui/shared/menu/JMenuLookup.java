@@ -23,6 +23,7 @@ package net.nikr.eve.jeveasset.gui.shared.menu;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import javax.swing.JMenu;
@@ -42,38 +43,6 @@ import net.nikr.eve.jeveasset.io.shared.DesktopUtil;
 
 
 public class JMenuLookup<T> extends JAutoMenu<T> {
-
-	private enum MenuLookupAction {
-		GAMES_CHRUKER,
-		FUZZWORK_ITEMS,
-		ZKILLBOARD_ITEM,
-		ZKILLBOARD_SYSTEM,
-		ZKILLBOARD_CONSTELLATION,
-		ZKILLBOARD_REGION,
-		ZKILLBOARD_OVERVIEW_GROUP,
-		EVE_REF,
-		FUZZWORK_BLUEPRINTS,
-		LAZY_BLACKSMITH_INVENTION,
-		LAZY_BLACKSMITH_RESEARCH,
-		LAZY_BLACKSMITH_MANUFACTURING,
-		EVE_COOKBOOK,
-		FUZZWORK_MARKET,
-		EVE_TYCOON,
-		EVE_MARKET_BROWSER,
-		JITA_SPACE,
-		EVEMAPS_DOTLAN_STATION,
-		EVEMAPS_DOTLAN_PLANET,
-		EVEMAPS_DOTLAN_SYSTEM,
-		EVEMAPS_DOTLAN_SYSTEM_REGION,
-		EVEMAPS_DOTLAN_CONSTELLATION,
-		EVEMAPS_DOTLAN_REGION,
-		EVEMAPS_DOTLAN_OVERVIEW_GROUP,
-		EVE_INFO,
-		ADAM4EVE,
-		EVEMISSIONEER_SYSTEM,
-		EVEMISSIONEER_CONSTELLATION,
-		EVEMISSIONEER_REGION,
-	}
 
 	public static enum LookupLinks {
 	//Locations
@@ -137,6 +106,12 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 				return urls;
 			}
 		},
+		EVEMAPS_DOTLAN_OVERVIEW_GROUP() {
+			@Override
+			public Set<String> getLinks(MenuData<?> menuData) {
+				return Collections.emptySet();
+			}
+		},
 		ZKILLBOARD_SYSTEM() {
 			@Override
 			public Set<String> getLinks(MenuData<?> menuData) {
@@ -155,6 +130,12 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 					urls.add("https://zkillboard.com/constellation/" +location.getLocationID() + "/");
 				}
 				return urls;
+			}
+		},
+		ZKILLBOARD_OVERVIEW_GROUP() {
+			@Override
+			public Set<String> getLinks(MenuData<?> menuData) {
+				return Collections.emptySet();
 			}
 		},
 		ZKILLBOARD_REGION() {
@@ -238,12 +219,22 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 				return urls;
 			}
 		},
-		JITA_SPACE {
+		JITA_SPACE_MARKET {
 			@Override
 			public Set<String> getLinks(MenuData<?> menuData) {
 				Set<String> urls = new HashSet<>();
 				for (int marketTypeID : menuData.getMarketTypeIDs()) {
 					urls.add("https://www.jita.space/market/" + marketTypeID);
+				}
+				return urls;
+			}
+		},
+		EVECONOMY {
+			@Override
+			public Set<String> getLinks(MenuData<?> menuData) {
+				Set<String> urls = new HashSet<>();
+				for (int marketTypeID : menuData.getMarketTypeIDs()) {
+					urls.add("https://eveconomy.online/item/" + marketTypeID);
 				}
 				return urls;
 			}
@@ -295,6 +286,16 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 				Set<String> urls = new HashSet<>();
 				for (int typeID : menuData.getTypeIDs()) {
 					urls.add("https://eveinfo.com/item/" + typeID);
+				}
+				return urls;
+			}
+		},
+		JITA_SPACE_ITEM {
+			@Override
+			public Set<String> getLinks(MenuData<?> menuData) {
+				Set<String> urls = new HashSet<>();
+				for (int typeID : menuData.getTypeIDs()) {
+					urls.add("https://www.jita.space/type/" + typeID);
 				}
 				return urls;
 			}
@@ -390,7 +391,9 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 	private final JMenuItem jEveCookbook;
 	private final JMenuItem jAdam4eve;
 	private final JMenuItem jEveMarketBrowser;
-	private final JMenuItem jJitaSpace;
+	private final JMenuItem jJitaSpaceMarket;
+	private final JMenuItem jJitaSpaceItem;
+	private final JMenuItem jEveconomy;
 
 	public JMenuLookup(final Program program) {
 		super(GuiShared.get().lookup(), program);
@@ -409,25 +412,25 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 
 		jzKillboardSystem = new JMenuItem(GuiShared.get().system());
 		jzKillboardSystem.setIcon(Images.LOC_SYSTEM.getIcon());
-		jzKillboardSystem.setActionCommand(MenuLookupAction.ZKILLBOARD_SYSTEM.name());
+		jzKillboardSystem.setActionCommand(LookupLinks.ZKILLBOARD_SYSTEM.name());
 		jzKillboardSystem.addActionListener(listener);
 		jzKillboard.add(jzKillboardSystem);
 
 		jzKillboardConstellation = new JMenuItem(GuiShared.get().constellation());
 		jzKillboardConstellation.setIcon(Images.LOC_CONSTELLATION.getIcon());
-		jzKillboardConstellation.setActionCommand(MenuLookupAction.ZKILLBOARD_CONSTELLATION.name());
+		jzKillboardConstellation.setActionCommand(LookupLinks.ZKILLBOARD_CONSTELLATION.name());
 		jzKillboardConstellation.addActionListener(listener);
 		jzKillboard.add(jzKillboardConstellation);
 
 		jzKillboardRegion = new JMenuItem(GuiShared.get().region());
 		jzKillboardRegion.setIcon(Images.LOC_REGION.getIcon());
-		jzKillboardRegion.setActionCommand(MenuLookupAction.ZKILLBOARD_REGION.name());
+		jzKillboardRegion.setActionCommand(LookupLinks.ZKILLBOARD_REGION.name());
 		jzKillboardRegion.addActionListener(listener);
 		jzKillboard.add(jzKillboardRegion);
 
 		jzKillboardLocations = new JMenuItem(TabsOverview.get().locations());
 		jzKillboardLocations.setIcon(Images.LOC_REGION.getIcon());
-		jzKillboardLocations.setActionCommand(MenuLookupAction.ZKILLBOARD_OVERVIEW_GROUP.name());
+		jzKillboardLocations.setActionCommand(LookupLinks.ZKILLBOARD_OVERVIEW_GROUP.name());
 		jzKillboardLocations.addActionListener(listener);
 
 		jDotlan = new JMenu(GuiShared.get().dotlan());
@@ -436,43 +439,43 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 
 		jDotlanStation = new JMenuItem(GuiShared.get().station());
 		jDotlanStation.setIcon(Images.LOC_STATION.getIcon());
-		jDotlanStation.setActionCommand(MenuLookupAction.EVEMAPS_DOTLAN_STATION.name());
+		jDotlanStation.setActionCommand(LookupLinks.EVEMAPS_DOTLAN_STATION.name());
 		jDotlanStation.addActionListener(listener);
 		jDotlan.add(jDotlanStation);
 
 		jDotlanPlanet = new JMenuItem(GuiShared.get().planet());
 		jDotlanPlanet.setIcon(Images.LOC_PLANET.getIcon());
-		jDotlanPlanet.setActionCommand(MenuLookupAction.EVEMAPS_DOTLAN_PLANET.name());
+		jDotlanPlanet.setActionCommand(LookupLinks.EVEMAPS_DOTLAN_PLANET.name());
 		jDotlanPlanet.addActionListener(listener);
 		jDotlan.add(jDotlanPlanet);
 
 		jDotlanSystem = new JMenuItem(GuiShared.get().system());
 		jDotlanSystem.setIcon(Images.LOC_SYSTEM.getIcon());
-		jDotlanSystem.setActionCommand(MenuLookupAction.EVEMAPS_DOTLAN_SYSTEM.name());
+		jDotlanSystem.setActionCommand(LookupLinks.EVEMAPS_DOTLAN_SYSTEM.name());
 		jDotlanSystem.addActionListener(listener);
 		jDotlan.add(jDotlanSystem);
 
 		jDotlanSystemRegion = new JMenuItem(GuiShared.get().systemRegion());
 		jDotlanSystemRegion.setIcon(Images.LOC_SYSTEM.getIcon());
-		jDotlanSystemRegion.setActionCommand(MenuLookupAction.EVEMAPS_DOTLAN_SYSTEM_REGION.name());
+		jDotlanSystemRegion.setActionCommand(LookupLinks.EVEMAPS_DOTLAN_SYSTEM_REGION.name());
 		jDotlanSystemRegion.addActionListener(listener);
 		jDotlan.add(jDotlanSystemRegion);
 
 		jDotlanConstellation = new JMenuItem(GuiShared.get().constellation());
 		jDotlanConstellation.setIcon(Images.LOC_CONSTELLATION.getIcon());
-		jDotlanConstellation.setActionCommand(MenuLookupAction.EVEMAPS_DOTLAN_CONSTELLATION.name());
+		jDotlanConstellation.setActionCommand(LookupLinks.EVEMAPS_DOTLAN_CONSTELLATION.name());
 		jDotlanConstellation.addActionListener(listener);
 		jDotlan.add(jDotlanConstellation);
 
 		jDotlanRegion = new JMenuItem(GuiShared.get().region());
 		jDotlanRegion.setIcon(Images.LOC_REGION.getIcon());
-		jDotlanRegion.setActionCommand(MenuLookupAction.EVEMAPS_DOTLAN_REGION.name());
+		jDotlanRegion.setActionCommand(LookupLinks.EVEMAPS_DOTLAN_REGION.name());
 		jDotlanRegion.addActionListener(listener);
 		jDotlan.add(jDotlanRegion);
 
 		jDotlanLocations = new JMenuItem(TabsOverview.get().locations());
 		jDotlanLocations.setIcon(Images.LOC_LOCATIONS.getIcon());
-		jDotlanLocations.setActionCommand(MenuLookupAction.EVEMAPS_DOTLAN_OVERVIEW_GROUP.name());
+		jDotlanLocations.setActionCommand(LookupLinks.EVEMAPS_DOTLAN_OVERVIEW_GROUP.name());
 		jDotlanLocations.addActionListener(listener);
 
 		jEveMissioneer = new JMenu(GuiShared.get().eveMissioneer());
@@ -481,19 +484,19 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 
 		jEveMissioneerSystem = new JMenuItem(GuiShared.get().system());
 		jEveMissioneerSystem.setIcon(Images.LOC_SYSTEM.getIcon());
-		jEveMissioneerSystem.setActionCommand(MenuLookupAction.EVEMISSIONEER_SYSTEM.name());
+		jEveMissioneerSystem.setActionCommand(LookupLinks.EVEMISSIONEER_SYSTEM.name());
 		jEveMissioneerSystem.addActionListener(listener);
 		jEveMissioneer.add(jEveMissioneerSystem);
 
 		jEveMissioneerConstellation = new JMenuItem(GuiShared.get().constellation());
 		jEveMissioneerConstellation.setIcon(Images.LOC_CONSTELLATION.getIcon());
-		jEveMissioneerConstellation.setActionCommand(MenuLookupAction.EVEMISSIONEER_CONSTELLATION.name());
+		jEveMissioneerConstellation.setActionCommand(LookupLinks.EVEMISSIONEER_CONSTELLATION.name());
 		jEveMissioneerConstellation.addActionListener(listener);
 		jEveMissioneer.add(jEveMissioneerConstellation);
 
 		jEveMissioneerRegion = new JMenuItem(GuiShared.get().region());
 		jEveMissioneerRegion.setIcon(Images.LOC_REGION.getIcon());
-		jEveMissioneerRegion.setActionCommand(MenuLookupAction.EVEMISSIONEER_REGION.name());
+		jEveMissioneerRegion.setActionCommand(LookupLinks.EVEMISSIONEER_REGION.name());
 		jEveMissioneerRegion.addActionListener(listener);
 		jEveMissioneer.add(jEveMissioneerRegion);
 
@@ -503,33 +506,39 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 
 		jFuzzworkMarket = new JMenuItem(GuiShared.get().fuzzworkMarket());
 		jFuzzworkMarket.setIcon(Images.LINK_FUZZWORK.getIcon());
-		jFuzzworkMarket.setActionCommand(MenuLookupAction.FUZZWORK_MARKET.name());
+		jFuzzworkMarket.setActionCommand(LookupLinks.FUZZWORK_MARKET.name());
 		jFuzzworkMarket.addActionListener(listener);
 		jMarket.add(jFuzzworkMarket);
 
 		jEveTycoon = new JMenuItem(GuiShared.get().eveTycoon());
 		jEveTycoon.setIcon(Images.LINK_EVE_TYCOON.getIcon());
-		jEveTycoon.setActionCommand(MenuLookupAction.EVE_TYCOON.name());
+		jEveTycoon.setActionCommand(LookupLinks.EVE_TYCOON.name());
 		jEveTycoon.addActionListener(listener);
 		jMarket.add(jEveTycoon);
 
 		jAdam4eve = new JMenuItem(GuiShared.get().adam4eve());
 		jAdam4eve.setIcon(Images.LINK_ADAM4EVE.getIcon());
-		jAdam4eve.setActionCommand(MenuLookupAction.ADAM4EVE.name());
+		jAdam4eve.setActionCommand(LookupLinks.ADAM4EVE.name());
 		jAdam4eve.addActionListener(listener);
 		jMarket.add(jAdam4eve);
 
 		jEveMarketBrowser = new JMenuItem(GuiShared.get().eveMarketBrowser());
 		jEveMarketBrowser.setIcon(Images.LINK_EVE_MARKET_BROWSER.getIcon());
-		jEveMarketBrowser.setActionCommand(MenuLookupAction.EVE_MARKET_BROWSER.name());
+		jEveMarketBrowser.setActionCommand(LookupLinks.EVE_MARKET_BROWSER.name());
 		jEveMarketBrowser.addActionListener(listener);
 		jMarket.add(jEveMarketBrowser);
 
-		jJitaSpace = new JMenuItem(GuiShared.get().jitaSpace());
-		jJitaSpace.setIcon(Images.LINK_JITA_SPACE.getIcon());
-		jJitaSpace.setActionCommand(MenuLookupAction.JITA_SPACE.name());
-		jJitaSpace.addActionListener(listener);
-		jMarket.add(jJitaSpace);
+		jJitaSpaceMarket = new JMenuItem(GuiShared.get().jitaSpace());
+		jJitaSpaceMarket.setIcon(Images.LINK_JITA_SPACE.getIcon());
+		jJitaSpaceMarket.setActionCommand(LookupLinks.JITA_SPACE_MARKET.name());
+		jJitaSpaceMarket.addActionListener(listener);
+		jMarket.add(jJitaSpaceMarket);
+
+		jEveconomy = new JMenuItem(GuiShared.get().eveconomy());
+		jEveconomy.setIcon(Images.LINK_EVECONOMY.getIcon());
+		jEveconomy.setActionCommand(LookupLinks.EVECONOMY.name());
+		jEveconomy.addActionListener(listener);
+		jMarket.add(jEveconomy);
 
 		jItemDatabase = new JMenu(GuiShared.get().itemDatabase());
 		jItemDatabase.setIcon(Images.TOOL_ASSETS.getIcon());
@@ -537,33 +546,39 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 
 		jChruker = new JMenuItem(GuiShared.get().chruker());
 		jChruker.setIcon(Images.LINK_CHRUKER.getIcon());
-		jChruker.setActionCommand(MenuLookupAction.GAMES_CHRUKER.name());
+		jChruker.setActionCommand(LookupLinks.GAMES_CHRUKER.name());
 		jChruker.addActionListener(listener);
 		jItemDatabase.add(jChruker);
 
 		jEveInfo = new JMenuItem(GuiShared.get().eveInfo());
 		jEveInfo.setIcon(Images.LINK_EVEINFO.getIcon());
-		jEveInfo.setActionCommand(MenuLookupAction.EVE_INFO.name());
+		jEveInfo.setActionCommand(LookupLinks.EVE_INFO.name());
 		jEveInfo.addActionListener(listener);
 		jItemDatabase.add(jEveInfo);
 
 		jFuzzworkItems = new JMenuItem(GuiShared.get().fuzzworkItems());
 		jFuzzworkItems.setIcon(Images.LINK_FUZZWORK.getIcon());
-		jFuzzworkItems.setActionCommand(MenuLookupAction.FUZZWORK_ITEMS.name());
+		jFuzzworkItems.setActionCommand(LookupLinks.FUZZWORK_ITEMS.name());
 		jFuzzworkItems.addActionListener(listener);
 		jItemDatabase.add(jFuzzworkItems);
 
 		jzKillboardItem = new JMenuItem(GuiShared.get().zKillboard());
 		jzKillboardItem.setIcon(Images.LINK_ZKILLBOARD.getIcon());
-		jzKillboardItem.setActionCommand(MenuLookupAction.ZKILLBOARD_ITEM.name());
+		jzKillboardItem.setActionCommand(LookupLinks.ZKILLBOARD_ITEM.name());
 		jzKillboardItem.addActionListener(listener);
 		jItemDatabase.add(jzKillboardItem);
 
 		jEveRef = new JMenuItem(GuiShared.get().eveRef());
 		jEveRef.setIcon(Images.LINK_EVE_REF.getIcon());
-		jEveRef.setActionCommand(MenuLookupAction.EVE_REF.name());
+		jEveRef.setActionCommand(LookupLinks.EVE_REF.name());
 		jEveRef.addActionListener(listener);
 		jItemDatabase.add(jEveRef);
+
+		jJitaSpaceItem = new JMenuItem(GuiShared.get().jitaSpace());
+		jJitaSpaceItem.setIcon(Images.LINK_JITA_SPACE.getIcon());
+		jJitaSpaceItem.setActionCommand(LookupLinks.JITA_SPACE_ITEM.name());
+		jJitaSpaceItem.addActionListener(listener);
+		jItemDatabase.add(jJitaSpaceItem);
 
 		jIndustry = new JMenu(GuiShared.get().industry());
 		jIndustry.setIcon(Images.TOOL_INDUSTRY_JOBS.getIcon());
@@ -571,7 +586,7 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 
 		jFuzzworkBlueprints = new JMenuItem(GuiShared.get().fuzzworkBlueprints());
 		jFuzzworkBlueprints.setIcon(Images.LINK_FUZZWORK.getIcon());
-		jFuzzworkBlueprints.setActionCommand(MenuLookupAction.FUZZWORK_BLUEPRINTS.name());
+		jFuzzworkBlueprints.setActionCommand(LookupLinks.FUZZWORK_BLUEPRINTS.name());
 		jFuzzworkBlueprints.addActionListener(listener);
 		jIndustry.add(jFuzzworkBlueprints);
 
@@ -581,25 +596,25 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 
 		jLazyBlacksmithInvention = new JMenuItem(GuiShared.get().lazyBlacksmithInvention());
 		jLazyBlacksmithInvention.setIcon(Images.MISC_INVENTION.getIcon());
-		jLazyBlacksmithInvention.setActionCommand(MenuLookupAction.LAZY_BLACKSMITH_INVENTION.name());
+		jLazyBlacksmithInvention.setActionCommand(LookupLinks.LAZY_BLACKSMITH_INVENTION.name());
 		jLazyBlacksmithInvention.addActionListener(listener);
 		jKhonSpace.add(jLazyBlacksmithInvention);
 
 		jLazyBlacksmithResearch = new JMenuItem(GuiShared.get().lazyBlacksmithResearch());
 		jLazyBlacksmithResearch.setIcon(Images.MISC_COPYING.getIcon());
-		jLazyBlacksmithResearch.setActionCommand(MenuLookupAction.LAZY_BLACKSMITH_RESEARCH.name());
+		jLazyBlacksmithResearch.setActionCommand(LookupLinks.LAZY_BLACKSMITH_RESEARCH.name());
 		jLazyBlacksmithResearch.addActionListener(listener);
 		jKhonSpace.add(jLazyBlacksmithResearch);
 
 		jLazyBlacksmithManufacturing = new JMenuItem(GuiShared.get().lazyBlacksmithManufacturing());
 		jLazyBlacksmithManufacturing.setIcon(Images.MISC_MANUFACTURING.getIcon());
-		jLazyBlacksmithManufacturing.setActionCommand(MenuLookupAction.LAZY_BLACKSMITH_MANUFACTURING.name());
+		jLazyBlacksmithManufacturing.setActionCommand(LookupLinks.LAZY_BLACKSMITH_MANUFACTURING.name());
 		jLazyBlacksmithManufacturing.addActionListener(listener);
 		jKhonSpace.add(jLazyBlacksmithManufacturing);
 
 		jEveCookbook = new JMenuItem(GuiShared.get().eveCookbook());
 		jEveCookbook.setIcon(Images.LINK_EVE_COOKBOOK.getIcon());
-		jEveCookbook.setActionCommand(MenuLookupAction.EVE_COOKBOOK.name());
+		jEveCookbook.setActionCommand(LookupLinks.EVE_COOKBOOK.name());
 		jEveCookbook.addActionListener(listener);
 		jIndustry.add(jEveCookbook);
 	}
@@ -624,6 +639,9 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 		jFuzzworkMarket.setEnabled(!menuData.getMarketTypeIDs().isEmpty());
 		jEveTycoon.setEnabled(!menuData.getMarketTypeIDs().isEmpty());
 		jAdam4eve.setEnabled(!menuData.getMarketTypeIDs().isEmpty());
+		jEveMarketBrowser.setEnabled(!menuData.getMarketTypeIDs().isEmpty());
+		jJitaSpaceMarket.setEnabled(!menuData.getMarketTypeIDs().isEmpty());
+		jEveconomy.setEnabled(!menuData.getMarketTypeIDs().isEmpty());
 	//Info
 		jItemDatabase.setEnabled(!menuData.getTypeIDs().isEmpty());
 		jFuzzworkItems.setEnabled(!menuData.getTypeIDs().isEmpty());
@@ -659,13 +677,13 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 		@Override
 		public void actionPerformed(final ActionEvent e) {
 		//Locations
-			if (MenuLookupAction.ZKILLBOARD_SYSTEM.name().equals(e.getActionCommand())) {
+			if (LookupLinks.ZKILLBOARD_SYSTEM.name().equals(e.getActionCommand())) {
 				DesktopUtil.browse(LookupLinks.ZKILLBOARD_SYSTEM.getLinks(menuData), program);
-			} else if (MenuLookupAction.ZKILLBOARD_REGION.name().equals(e.getActionCommand())) {
+			} else if (LookupLinks.ZKILLBOARD_REGION.name().equals(e.getActionCommand())) {
 				DesktopUtil.browse(LookupLinks.ZKILLBOARD_REGION.getLinks(menuData), program);
-			} else if (MenuLookupAction.ZKILLBOARD_CONSTELLATION.name().equals(e.getActionCommand())) {
+			} else if (LookupLinks.ZKILLBOARD_CONSTELLATION.name().equals(e.getActionCommand())) {
 				DesktopUtil.browse(LookupLinks.ZKILLBOARD_CONSTELLATION.getLinks(menuData), program);
-			} else if (MenuLookupAction.ZKILLBOARD_OVERVIEW_GROUP.name().equals(e.getActionCommand())) {
+			} else if (LookupLinks.ZKILLBOARD_OVERVIEW_GROUP.name().equals(e.getActionCommand())) {
 				OverviewGroup overviewGroup = program.getOverviewTab().getSelectGroup();
 				if (overviewGroup == null) {
 					return;
@@ -699,19 +717,19 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 				urls.addAll(LookupLinks.ZKILLBOARD_CONSTELLATION.getLinks(menuData));
 				urls.addAll(LookupLinks.ZKILLBOARD_REGION.getLinks(menuData));
 				DesktopUtil.browse(urls, program);
-			}else if (MenuLookupAction.EVEMAPS_DOTLAN_STATION.name().equals(e.getActionCommand())) {
+			}else if (LookupLinks.EVEMAPS_DOTLAN_STATION.name().equals(e.getActionCommand())) {
 				DesktopUtil.browse(LookupLinks.EVEMAPS_DOTLAN_STATION.getLinks(menuData), program);
-			} else if (MenuLookupAction.EVEMAPS_DOTLAN_PLANET.name().equals(e.getActionCommand())) {
+			} else if (LookupLinks.EVEMAPS_DOTLAN_PLANET.name().equals(e.getActionCommand())) {
 				DesktopUtil.browse(LookupLinks.EVEMAPS_DOTLAN_PLANET.getLinks(menuData), program);
-			} else if (MenuLookupAction.EVEMAPS_DOTLAN_SYSTEM.name().equals(e.getActionCommand())) {
+			} else if (LookupLinks.EVEMAPS_DOTLAN_SYSTEM.name().equals(e.getActionCommand())) {
 				DesktopUtil.browse(LookupLinks.EVEMAPS_DOTLAN_SYSTEM.getLinks(menuData), program);
-			} else if (MenuLookupAction.EVEMAPS_DOTLAN_SYSTEM_REGION.name().equals(e.getActionCommand())) {
+			} else if (LookupLinks.EVEMAPS_DOTLAN_SYSTEM_REGION.name().equals(e.getActionCommand())) {
 				DesktopUtil.browse(LookupLinks.EVEMAPS_DOTLAN_SYSTEM_REGION.getLinks(menuData), program);
-			} else if (MenuLookupAction.EVEMAPS_DOTLAN_CONSTELLATION.name().equals(e.getActionCommand())) {
+			} else if (LookupLinks.EVEMAPS_DOTLAN_CONSTELLATION.name().equals(e.getActionCommand())) {
 				DesktopUtil.browse(LookupLinks.EVEMAPS_DOTLAN_CONSTELLATION.getLinks(menuData), program);
-			} else if (MenuLookupAction.EVEMAPS_DOTLAN_REGION.name().equals(e.getActionCommand())) {
+			} else if (LookupLinks.EVEMAPS_DOTLAN_REGION.name().equals(e.getActionCommand())) {
 				DesktopUtil.browse(LookupLinks.EVEMAPS_DOTLAN_REGION.getLinks(menuData), program);
-			} else if (MenuLookupAction.EVEMAPS_DOTLAN_OVERVIEW_GROUP.name().equals(e.getActionCommand())) {
+			} else if (LookupLinks.EVEMAPS_DOTLAN_OVERVIEW_GROUP.name().equals(e.getActionCommand())) {
 				OverviewGroup overviewGroup = program.getOverviewTab().getSelectGroup();
 				if (overviewGroup == null) {
 					return;
@@ -747,44 +765,48 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 				urls.addAll(LookupLinks.EVEMAPS_DOTLAN_CONSTELLATION.getLinks(menuData));
 				urls.addAll(LookupLinks.EVEMAPS_DOTLAN_REGION.getLinks(menuData));
 				DesktopUtil.browse(urls, program);
-			} else if (MenuLookupAction.EVEMISSIONEER_SYSTEM.name().equals(e.getActionCommand())) {
+			} else if (LookupLinks.EVEMISSIONEER_SYSTEM.name().equals(e.getActionCommand())) {
 				DesktopUtil.browse(LookupLinks.EVEMISSIONEER_SYSTEM.getLinks(menuData), program);
-			} else if (MenuLookupAction.EVEMISSIONEER_CONSTELLATION.name().equals(e.getActionCommand())) {
+			} else if (LookupLinks.EVEMISSIONEER_CONSTELLATION.name().equals(e.getActionCommand())) {
 				DesktopUtil.browse(LookupLinks.EVEMISSIONEER_CONSTELLATION.getLinks(menuData), program);
-			} else if (MenuLookupAction.EVEMISSIONEER_REGION.name().equals(e.getActionCommand())) {
+			} else if (LookupLinks.EVEMISSIONEER_REGION.name().equals(e.getActionCommand())) {
 				DesktopUtil.browse(LookupLinks.EVEMISSIONEER_REGION.getLinks(menuData), program);
 		//Market
-			} else if (MenuLookupAction.ADAM4EVE.name().equals(e.getActionCommand())) {
+			} else if (LookupLinks.ADAM4EVE.name().equals(e.getActionCommand())) {
 				DesktopUtil.browse(LookupLinks.ADAM4EVE.getLinks(menuData), program);
-			} else if (MenuLookupAction.FUZZWORK_MARKET.name().equals(e.getActionCommand())) {
+			} else if (LookupLinks.FUZZWORK_MARKET.name().equals(e.getActionCommand())) {
 				DesktopUtil.browse(LookupLinks.FUZZWORK_MARKET.getLinks(menuData), program);
-			} else if (MenuLookupAction.EVE_TYCOON.name().equals(e.getActionCommand())) {
+			} else if (LookupLinks.EVE_TYCOON.name().equals(e.getActionCommand())) {
 				DesktopUtil.browse(LookupLinks.EVE_TYCOON.getLinks(menuData), program);
-			} else if (MenuLookupAction.EVE_MARKET_BROWSER.name().equals(e.getActionCommand())) {
+			} else if (LookupLinks.EVE_MARKET_BROWSER.name().equals(e.getActionCommand())) {
 				DesktopUtil.browse(LookupLinks.EVE_MARKET_BROWSER.getLinks(menuData), program);
-			} else if (MenuLookupAction.JITA_SPACE.name().equals(e.getActionCommand())) {
-				DesktopUtil.browse(LookupLinks.JITA_SPACE.getLinks(menuData), program);
+			} else if (LookupLinks.JITA_SPACE_MARKET.name().equals(e.getActionCommand())) {
+				DesktopUtil.browse(LookupLinks.JITA_SPACE_MARKET.getLinks(menuData), program);
+			} else if (LookupLinks.EVECONOMY.name().equals(e.getActionCommand())) {
+				DesktopUtil.browse(LookupLinks.EVECONOMY.getLinks(menuData), program);
 		//Info
-			} else if (MenuLookupAction.GAMES_CHRUKER.name().equals(e.getActionCommand())) {
+			} else if (LookupLinks.GAMES_CHRUKER.name().equals(e.getActionCommand())) {
 				DesktopUtil.browse(LookupLinks.GAMES_CHRUKER.getLinks(menuData), program);
-			} else if (MenuLookupAction.FUZZWORK_ITEMS.name().equals(e.getActionCommand())) {
+			} else if (LookupLinks.FUZZWORK_ITEMS.name().equals(e.getActionCommand())) {
 				DesktopUtil.browse(LookupLinks.FUZZWORK_ITEMS.getLinks(menuData), program);
-			} else if (MenuLookupAction.ZKILLBOARD_ITEM.name().equals(e.getActionCommand())) {
+			} else if (LookupLinks.ZKILLBOARD_ITEM.name().equals(e.getActionCommand())) {
 				DesktopUtil.browse(LookupLinks.ZKILLBOARD_ITEM.getLinks(menuData), program);
-			} else if (MenuLookupAction.EVE_REF.name().equals(e.getActionCommand())) {
+			} else if (LookupLinks.EVE_REF.name().equals(e.getActionCommand())) {
 				DesktopUtil.browse(LookupLinks.EVE_REF.getLinks(menuData), program);
-			} else if (MenuLookupAction.EVE_INFO.name().equals(e.getActionCommand())) {
+			} else if (LookupLinks.EVE_INFO.name().equals(e.getActionCommand())) {
 				DesktopUtil.browse(LookupLinks.EVE_INFO.getLinks(menuData), program);
+			} else if (LookupLinks.JITA_SPACE_ITEM.name().equals(e.getActionCommand())) {
+				DesktopUtil.browse(LookupLinks.JITA_SPACE_ITEM.getLinks(menuData), program);
 		//Industry
-			} else if (MenuLookupAction.FUZZWORK_BLUEPRINTS.name().equals(e.getActionCommand())) {
+			} else if (LookupLinks.FUZZWORK_BLUEPRINTS.name().equals(e.getActionCommand())) {
 				DesktopUtil.browse(LookupLinks.FUZZWORK_BLUEPRINTS.getLinks(menuData), program);
-			} else if (MenuLookupAction.LAZY_BLACKSMITH_INVENTION.name().equals(e.getActionCommand())) {
+			} else if (LookupLinks.LAZY_BLACKSMITH_INVENTION.name().equals(e.getActionCommand())) {
 				DesktopUtil.browse(LookupLinks.LAZY_BLACKSMITH_INVENTION.getLinks(menuData), program);
-			} else if (MenuLookupAction.LAZY_BLACKSMITH_MANUFACTURING.name().equals(e.getActionCommand())) {
+			} else if (LookupLinks.LAZY_BLACKSMITH_MANUFACTURING.name().equals(e.getActionCommand())) {
 				DesktopUtil.browse(LookupLinks.LAZY_BLACKSMITH_MANUFACTURING.getLinks(menuData), program);
-			} else if (MenuLookupAction.LAZY_BLACKSMITH_RESEARCH.name().equals(e.getActionCommand())) {
+			} else if (LookupLinks.LAZY_BLACKSMITH_RESEARCH.name().equals(e.getActionCommand())) {
 				DesktopUtil.browse(LookupLinks.LAZY_BLACKSMITH_RESEARCH.getLinks(menuData), program);
-			} else if (MenuLookupAction.EVE_COOKBOOK.name().equals(e.getActionCommand())) {
+			} else if (LookupLinks.EVE_COOKBOOK.name().equals(e.getActionCommand())) {
 				DesktopUtil.browse(LookupLinks.EVE_COOKBOOK.getLinks(menuData), program);
 			}
 		}
