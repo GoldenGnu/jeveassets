@@ -707,6 +707,7 @@ public class Program implements ActionListener {
 				public void run() {
 					jMainTab.afterUpdateData();
 					jMainTab.updateCache();
+					jMainTab.repaintFilters();
 				}
 			});
 		}

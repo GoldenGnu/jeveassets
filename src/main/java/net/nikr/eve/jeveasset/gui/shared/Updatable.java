@@ -24,7 +24,6 @@ package net.nikr.eve.jeveasset.gui.shared;
 import java.util.Date;
 import net.nikr.eve.jeveasset.CliOptions;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.api.accounts.ApiType;
 import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 
@@ -73,6 +72,12 @@ public class Updatable {
 				return true;
 			}
 			if (owner.isSkills() && isUpdatable(owner.getSkillsNextUpdate())) {
+				return true;
+			}
+			if (owner.isLoyaltyPoints() && isUpdatable(owner.getLoyaltyPointsNextUpdate())) {
+				return true;
+			}
+			if (owner.isNpcStanding() && isUpdatable(owner.getNpcStandingNextUpdate())) {
 				return true;
 			}
 			if (owner.isMining() && isUpdatable(owner.getMiningNextUpdate())){

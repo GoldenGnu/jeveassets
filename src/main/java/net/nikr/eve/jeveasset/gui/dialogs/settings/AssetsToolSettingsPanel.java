@@ -162,11 +162,10 @@ public class AssetsToolSettingsPanel extends JSettingsPanel {
 						|| jCopying.isSelected() != Settings.get().isIncludeCopying()
 						|| jJumpClones.isSelected() != Settings.get().isIncludeJumpClones()
 						|| jPluggedInImplants.isSelected() != Settings.get().isIncludePluggedInImplants()
-						|| Settings.get().isIncludeCopying()
-						|| (contractsOwnerFormat != ContractsOwnerFormat.ISSUER_CHARACTER && !Settings.get().isAssetsContractsOwnerCorporation() && !Settings.get().isAssetsContractsOwnerBoth())
-						|| (contractsOwnerFormat != ContractsOwnerFormat.ISSUER_CORPORATION && Settings.get().isAssetsContractsOwnerCorporation())
-						|| (contractsOwnerFormat != ContractsOwnerFormat.ISSUER_BOTH && Settings.get().isAssetsContractsOwnerBoth())
-						
+						|| ((jSellContracts.isSelected() || jBuyContracts.isSelected())
+						&& ((contractsOwnerFormat == ContractsOwnerFormat.ISSUER_CHARACTER && (Settings.get().isAssetsContractsOwnerCorporation() || Settings.get().isAssetsContractsOwnerBoth()))
+						|| (contractsOwnerFormat == ContractsOwnerFormat.ISSUER_CORPORATION && !Settings.get().isAssetsContractsOwnerCorporation())
+						|| (contractsOwnerFormat == ContractsOwnerFormat.ISSUER_BOTH && !Settings.get().isAssetsContractsOwnerBoth())))
 						;
 		boolean updateContainers = jContainerItemID.isSelected() != Settings.get().isContainersShowItemID();
 		Settings.get().setIncludeSellOrders(jSellOrders.isSelected());
