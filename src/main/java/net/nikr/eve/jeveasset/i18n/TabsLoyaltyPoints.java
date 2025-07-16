@@ -38,7 +38,9 @@ public abstract class TabsLoyaltyPoints extends Bundle {
 	public abstract String columnOwner();
 	public abstract String columnCorporationName();
 	public abstract String columnLoyaltyPoints();
-	public abstract String fuzzworkLoyaltyPointsStore();
+	public abstract String loyaltyPointsStore();
+	public abstract String fuzzwork();
+	public abstract String jitaSpace();
 	public abstract String sell();
 	public abstract String buy();
 	public abstract String total();
