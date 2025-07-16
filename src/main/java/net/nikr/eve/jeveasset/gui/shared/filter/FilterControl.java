@@ -122,6 +122,10 @@ public abstract class FilterControl<E> implements ColumnCache<E>, SimpleFilterCo
 		gui.refilter();
 	}
 
+	public void repaint() {
+		gui.repaint();
+	}
+
 	@Override
 	public Map<E, String> getCache() {
 		return cache;
@@ -344,6 +348,7 @@ public abstract class FilterControl<E> implements ColumnCache<E>, SimpleFilterCo
 	boolean isAll(final EnumTableColumn<?> column) {
 		return (column instanceof AllColumn);
 	}
+
 
 	private class ListenerClass implements ListEventListener<E> {
 		@Override

@@ -136,6 +136,13 @@ public abstract class JMainTab {
 		if (jTable != null) {
 			jTable.repaint();
 		}
+		repaintFilters();
+	}
+
+	public void repaintFilters() {
+		if (filterControl != null) {
+			filterControl.repaint();
+		}
 	}
 
 	public final void saveSettings() {
