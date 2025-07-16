@@ -24,7 +24,6 @@ package net.nikr.eve.jeveasset.gui.shared;
 import java.util.Date;
 import net.nikr.eve.jeveasset.CliOptions;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.api.accounts.ApiType;
 import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 
