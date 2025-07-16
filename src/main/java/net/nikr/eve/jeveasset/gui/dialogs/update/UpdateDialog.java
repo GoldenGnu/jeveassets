@@ -38,7 +38,6 @@ import javax.swing.JRadioButton;
 import javax.swing.JToggleButton;
 import javax.swing.Timer;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.api.accounts.ApiType;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
 import net.nikr.eve.jeveasset.data.profile.ProfileData;
