@@ -530,6 +530,12 @@ class FilterGui<E> {
 		fireSettingsUpdate();
 	}
 
+	protected void repaint() {
+		for (FilterPanel<E> filterPanel : filterPanels) {
+			filterPanel.repaint();
+		}
+	}
+
 	protected String getFilterName() {
 		return filterSave.show(new ArrayList<>(filterControl.getFilters().keySet()), new ArrayList<>(filterControl.getDefaultFilters().keySet()));
 	}

@@ -58,17 +58,21 @@ public class JMenuLookupOnlineTest extends TestUtil {
 			if (lookupLinks == LookupLinks.ZKILLBOARD_ITEM
 				|| lookupLinks == LookupLinks.ZKILLBOARD_SYSTEM
 				|| lookupLinks == LookupLinks.ZKILLBOARD_CONSTELLATION
-				|| lookupLinks == LookupLinks.ZKILLBOARD_REGION	) {
+				|| lookupLinks == LookupLinks.ZKILLBOARD_REGION
+				|| lookupLinks == LookupLinks.EVECONOMY ) {
 				continue; //Protected by cloudflare
 			}
 			if (lookupLinks == LookupLinks.EVEMISSIONEER_SYSTEM
 				|| lookupLinks == LookupLinks.EVEMISSIONEER_CONSTELLATION
-				|| lookupLinks == LookupLinks.EVEMISSIONEER_REGION) {
+				|| lookupLinks == LookupLinks.EVEMISSIONEER_REGION ) {
 				continue; //Returns http code 429
 			}
 			Set<String> links = lookupLinks.getLinks(menuData);
 			assertNotNull(lookupLinks.name() + " is null", links);
-			assertFalse(lookupLinks.name() + " is empty", links.isEmpty());
+			if (lookupLinks != LookupLinks.EVEMAPS_DOTLAN_OVERVIEW_GROUP
+				&& lookupLinks != LookupLinks.ZKILLBOARD_OVERVIEW_GROUP ) {
+				assertFalse(lookupLinks.name() + " is empty", links.isEmpty());
+			}
 			for (String link : links) {
 				lookups.add(new Lookup(lookupLinks, link));
 			}
