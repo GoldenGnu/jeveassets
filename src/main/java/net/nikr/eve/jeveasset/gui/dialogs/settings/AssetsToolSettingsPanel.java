@@ -152,11 +152,10 @@ public class AssetsToolSettingsPanel extends JSettingsPanel {
 						|| jBuyContracts.isSelected() != Settings.get().isIncludeBuyContracts()
 						|| jManufacturing.isSelected() != Settings.get().isIncludeManufacturing()
 						|| jCopying.isSelected() != Settings.get().isIncludeCopying()
-						|| Settings.get().isIncludeCopying()
-						|| (contractsOwnerFormat != ContractsOwnerFormat.ISSUER_CHARACTER && !Settings.get().isAssetsContractsOwnerCorporation() && !Settings.get().isAssetsContractsOwnerBoth())
-						|| (contractsOwnerFormat != ContractsOwnerFormat.ISSUER_CORPORATION && Settings.get().isAssetsContractsOwnerCorporation())
-						|| (contractsOwnerFormat != ContractsOwnerFormat.ISSUER_BOTH && Settings.get().isAssetsContractsOwnerBoth())
-						
+						|| ((jSellContracts.isSelected() || jBuyContracts.isSelected())
+						&& ((contractsOwnerFormat == ContractsOwnerFormat.ISSUER_CHARACTER && (Settings.get().isAssetsContractsOwnerCorporation() || Settings.get().isAssetsContractsOwnerBoth()))
+						|| (contractsOwnerFormat == ContractsOwnerFormat.ISSUER_CORPORATION && !Settings.get().isAssetsContractsOwnerCorporation())
+						|| (contractsOwnerFormat == ContractsOwnerFormat.ISSUER_BOTH && !Settings.get().isAssetsContractsOwnerBoth())))
 						;
 		boolean updateContainers = jContainerItemID.isSelected() != Settings.get().isContainersShowItemID();
 		Settings.get().setIncludeSellOrders(jSellOrders.isSelected());
