@@ -92,10 +92,10 @@ public abstract class ProfileTable {
 		return columns;
 	}
 
- 	protected  void addColumn(Connection connection, String tableName, String columnName) throws SQLException {
+ 	protected  void addColumn(Connection connection, String tableName, String columnName, String type) throws SQLException {
 		Set<String> tableColumns = tableColumns(connection, tableName);
 		if (!tableColumns.contains(columnName)) {
-			String sql = "ALTER TABLE " + tableName + " ADD COLUMN " + columnName + " INTEGER";
+			String sql = "ALTER TABLE " + tableName + " ADD COLUMN " + columnName + " " + type;
 			try (PreparedStatement statement = connection.prepareStatement(sql)) {
 				statement.execute();
 			}

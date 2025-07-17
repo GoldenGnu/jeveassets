@@ -305,7 +305,7 @@ public class ProfileMarketOrders extends ProfileTable {
 
 	@Override
 	protected void updateTable(Connection connection) throws SQLException {
-		addColumn(connection, MARKET_ORDERS_TABLE, "regionid");
+		addColumn(connection, MARKET_ORDERS_TABLE, "regionid", "INTEGER");
 	}
 
 	@Override
