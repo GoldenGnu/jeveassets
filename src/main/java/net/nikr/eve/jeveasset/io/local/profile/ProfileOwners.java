@@ -194,8 +194,8 @@ public class ProfileOwners extends ProfileTable {
 
 	@Override
 	protected void updateTable(Connection connection) throws SQLException {
-		addColumn(connection, OWNERS_TABLE, "loyaltypointsnextupdate");
-		addColumn(connection, OWNERS_TABLE, "npcstandingnextupdate");
+		addColumn(connection, OWNERS_TABLE, "loyaltypointsnextupdate", "INTEGER");
+		addColumn(connection, OWNERS_TABLE, "npcstandingnextupdate", "INTEGER");
 	}
 
 	@Override
