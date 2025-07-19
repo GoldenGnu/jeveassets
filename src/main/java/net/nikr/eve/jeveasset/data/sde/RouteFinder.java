@@ -132,6 +132,7 @@ public class RouteFinder {
 		SolarSystem from = filter.getSystemCache().get(fromSystemID);
 		SolarSystem to = filter.getSystemCache().get(toSystemID);
 		if (from == null || to == null) {
+			filter.getDistance().put(route, -2);
 			return null;
 		}
 		try {
