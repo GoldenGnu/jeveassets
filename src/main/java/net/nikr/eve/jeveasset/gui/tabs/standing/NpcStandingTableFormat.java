@@ -30,14 +30,14 @@ import net.nikr.eve.jeveasset.i18n.TabsNpcStanding;
 
 
 public enum NpcStandingTableFormat implements EnumTableColumn<MyNpcStanding> {
-	OWNER(String.class) {
+	OWNER(TextIcon.class) {
 		@Override
 		public String getColumnName() {
 			return TabsNpcStanding.get().columnOwner();
 		}
 		@Override
 		public Object getColumnValue(final MyNpcStanding from) {
-			return from.getOwnerName();
+			return from.getOwnerTextIcon();
 		}
 	},
 	FACTION(TextIcon.class) {
