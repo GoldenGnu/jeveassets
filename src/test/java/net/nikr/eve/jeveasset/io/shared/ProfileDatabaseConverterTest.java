@@ -356,6 +356,7 @@ public class ProfileDatabaseConverterTest extends TestUtil {
 						|| (MyNpcStanding.class.equals(oldClazz)
 							&& ("factionName".equals(fieldName)
 							|| "corporationName".equals(fieldName)
+							|| "ownerTextIcon".equals(fieldName)
 							|| "agentName".equals(fieldName)
 							|| "factionTextIcon".equals(fieldName)
 							|| "corporationTextIcon".equals(fieldName)
