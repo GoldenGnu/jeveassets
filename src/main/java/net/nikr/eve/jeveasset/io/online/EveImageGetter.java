@@ -127,8 +127,8 @@ public class EveImageGetter implements Runnable {
 		this.ownerTypes = ownerTypes;
 	}
 
-	public static BufferedImage getBufferedImage(int corporationID) {
-		ImageDownload imageDownload = new ImageDownload(corporationID);
+	public static BufferedImage getBufferedImage(int corporationID, ImageCategory imageCategory) {
+		ImageDownload imageDownload = new ImageDownload(corporationID, imageCategory);
 		try {
 			return imageDownload.get();
 		} catch (Exception ex) {
@@ -184,9 +184,19 @@ public class EveImageGetter implements Runnable {
 	private Set<ImageDownload> getImageDownloads(List<OwnerType> ownerTypes) {
 		Set<ImageDownload> set = new HashSet<>();
 		for (OwnerType ownerType : ownerTypes) {
+			if (ownerType.isCharacter()) {
+				set.add(new ImageDownload((int) ownerType.getOwnerID(), ImageCategory.CHARACTERS));
+			} else {
+				set.add(new ImageDownload((int) ownerType.getOwnerID(), ImageCategory.CORPORATIONS));
+			}
 			for (MyNpcStanding npcStanding : ownerType.getNpcStanding()) {
 				set.add(new ImageDownload(npcStanding));
-				set.add(new ImageDownload(npcStanding.getCorporationID()));
+				set.add(new ImageDownload(npcStanding.getCorporationID(), ImageCategory.CORPORATIONS));
+			}
+			for (MyNpcStanding npcStanding : ownerType.getNpcStanding()) {
+				set.add(new ImageDownload(npcStanding));
+				set.add(new ImageDownload(npcStanding.getCorporationID(), ImageCategory.CORPORATIONS));
+				
 			}
 			for (MyLoyaltyPoints loyaltyPoints : ownerType.getLoyaltyPoints()) {
 				set.add(new ImageDownload(loyaltyPoints));
@@ -208,9 +218,9 @@ public class EveImageGetter implements Runnable {
 			typeVariation = null;
 		}
 
-		private ImageDownload(int corporationID) {
+		private ImageDownload(int corporationID, ImageCategory imageCategory) {
 			this.id = corporationID;
-			this.category = ImageCategory.CORPORATIONS;
+			this.category = imageCategory;
 			size = MyNpcStanding.IMAGE_SIZE;
 			typeVariation = null;
 		}
