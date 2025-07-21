@@ -25,19 +25,20 @@ import java.util.Comparator;
 import net.nikr.eve.jeveasset.data.api.my.MyNpcStanding;
 import net.nikr.eve.jeveasset.data.api.raw.RawNpcStanding.FromType;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
+import net.nikr.eve.jeveasset.gui.shared.table.containers.Standing;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.TextIcon;
 import net.nikr.eve.jeveasset.i18n.TabsNpcStanding;
 
 
 public enum NpcStandingTableFormat implements EnumTableColumn<MyNpcStanding> {
-	OWNER(String.class) {
+	OWNER(TextIcon.class) {
 		@Override
 		public String getColumnName() {
 			return TabsNpcStanding.get().columnOwner();
 		}
 		@Override
 		public Object getColumnValue(final MyNpcStanding from) {
-			return from.getOwnerName();
+			return from.getOwnerTextIcon();
 		}
 	},
 	FACTION(TextIcon.class) {
@@ -110,7 +111,7 @@ public enum NpcStandingTableFormat implements EnumTableColumn<MyNpcStanding> {
 			return from.getFromType();
 		}
 	},
-	RAW_STANDING(Double.class) {
+	RAW_STANDING(Standing.class) {
 		@Override
 		public String getColumnName() {
 			return TabsNpcStanding.get().columnRawStanding();
@@ -121,10 +122,10 @@ public enum NpcStandingTableFormat implements EnumTableColumn<MyNpcStanding> {
 		}
 		@Override
 		public Object getColumnValue(final MyNpcStanding from) {
-			return from.getStanding();
+			return Standing.create(from.getStanding());
 		}
 	},
-	STANDING(Double.class) {
+	STANDING(Standing.class) {
 		@Override
 		public String getColumnName() {
 			return TabsNpcStanding.get().columnStanding();
@@ -135,10 +136,10 @@ public enum NpcStandingTableFormat implements EnumTableColumn<MyNpcStanding> {
 		}
 		@Override
 		public Object getColumnValue(final MyNpcStanding from) {
-			return from.getStandingEffective();
+			return Standing.create(from.getStandingEffective());
 		}
 	},
-	MAX_STANDING(Double.class) {
+	MAX_STANDING(Standing.class) {
 		@Override
 		public String getColumnName() {
 			return TabsNpcStanding.get().columnStandingMax();
@@ -150,7 +151,7 @@ public enum NpcStandingTableFormat implements EnumTableColumn<MyNpcStanding> {
 		}
 		@Override
 		public Object getColumnValue(final MyNpcStanding from) {
-			return from.getStandingMaximum();
+			return Standing.create(from.getStandingMaximum());
 		}
 	},
 	ID(Integer.class) {

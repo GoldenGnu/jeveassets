@@ -33,6 +33,7 @@ import net.nikr.eve.jeveasset.SplashUpdater;
 import net.nikr.eve.jeveasset.data.api.my.MyLoyaltyPoints;
 import net.nikr.eve.jeveasset.data.api.my.MyNpcStanding;
 import net.nikr.eve.jeveasset.io.online.EveImageGetter;
+import net.nikr.eve.jeveasset.io.online.EveImageGetter.ImageCategory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -343,12 +344,12 @@ public enum Images {
 		return null;
 	}
 
-	public static BufferedImage getBufferedImage(int corporationID) {
-		return EveImageGetter.getBufferedImage(corporationID);
+	public static BufferedImage getBufferedImage(int corporationID, ImageCategory imageCategory) {
+		return EveImageGetter.getBufferedImage(corporationID, imageCategory);
 	}
 
-	public static ImageIcon getIcon(int corporationID) {
-		BufferedImage bufferedImage = getBufferedImage(corporationID);
+	public static ImageIcon getIcon(int corporationID, ImageCategory imageCategory) {
+		BufferedImage bufferedImage = getBufferedImage(corporationID, imageCategory);
 		if (bufferedImage != null) {
 			bufferedImage = setBackground(bufferedImage, Color.BLACK);
 			return new ImageIcon(bufferedImage);
