@@ -73,6 +73,7 @@ public abstract class JMainTab {
 	private int[] selectedColumns;
 	private String toolName;
 	private Class<?> clazz;
+	private boolean sortLock = false;
 	protected JMainTab(final boolean load) { }
 
 	public JMainTab(final Program program, final String toolName, final String title, final Icon icon, final boolean closeable) {
@@ -116,6 +117,9 @@ public abstract class JMainTab {
 			comparatorChooser.addSortActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
+					if (sortLock) {
+						return;
+					}
 					Settings.lock("Current Sorting");
 					Settings.get().getCurrentTableSorting().put(toolName, comparatorChooser.toString());
 					Settings.unlock("Current Sorting");
@@ -129,19 +133,28 @@ public abstract class JMainTab {
 	 * Restore sorting from settings
 	 */
 	public void loadCurrentSorting() {
-		String sorting = Settings.get().getCurrentTableSorting(toolName);
-		if (comparatorChooser != null && sorting != null && !sorting.isEmpty()) {
-			comparatorChooser.fromString(sorting);
-		}
+		setSorting(Settings.get().getCurrentTableSorting(toolName), false);
 	}
 
 	/**
-	 * Set sorting
+	 * Set sorting - does not save the new sorting
 	 * @param sorting 
+	 * @param save Save settings
 	 */
-	public void setSorting(String sorting) {
+	private void setSorting(String sorting, boolean save) {
 		if (comparatorChooser != null && sorting != null && !sorting.isEmpty()) { //Load sorting
-			comparatorChooser.fromString(sorting);
+			try {
+				sortLock = true;
+				comparatorChooser.fromString(sorting);
+			} finally {
+				sortLock = false;
+			}
+			if (save) {
+				Settings.lock("Set Sorting");
+				Settings.get().getCurrentTableSorting().put(toolName, comparatorChooser.toString());
+				Settings.unlock("SetSorting");
+				program.saveSettings("Set Sorting");
+			}
 		}
 	}
 

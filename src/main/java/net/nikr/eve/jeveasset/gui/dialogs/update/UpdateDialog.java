@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.swing.ButtonGroup;
+import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -83,50 +84,224 @@ public class UpdateDialog extends JDialogCentered {
 		CANCEL, UPDATE, CHANGED, CHECK_ALL
 	}
 
+	private static enum Updates {
+		MARKET_ORDERS(DialoguesUpdate.get().marketOrders()){
+			@Override
+			public boolean is(OwnerType owner) {
+				return owner.isMarketOrders();
+			}
+
+			@Override
+			public Date nextUpdate(OwnerType owner) {
+				return owner.getMarketOrdersNextUpdate();
+			}
+		},
+		JOURNAL(DialoguesUpdate.get().journal()){
+			@Override
+			public boolean is(OwnerType owner) {
+				return owner.isJournal();
+			}
+
+			@Override
+			public Date nextUpdate(OwnerType owner) {
+				return owner.getJournalNextUpdate();
+			}
+		},
+		TRANSACTIONS(DialoguesUpdate.get().transactions()){
+			@Override
+			public boolean is(OwnerType owner) {
+				return owner.isTransactions();
+			}
+
+			@Override
+			public Date nextUpdate(OwnerType owner) {
+				return owner.getTransactionsNextUpdate();
+			}
+		},
+		INDUSTRY_JOBS(DialoguesUpdate.get().industryJobs()){
+			@Override
+			public boolean is(OwnerType owner) {
+				return owner.isIndustryJobs();
+			}
+
+			@Override
+			public Date nextUpdate(OwnerType owner) {
+				return owner.getIndustryJobsNextUpdate();
+			}
+		},
+		ACCOUNT_BALANCE(DialoguesUpdate.get().accountBalance()){
+			@Override
+			public boolean is(OwnerType owner) {
+				return owner.isAccountBalance();
+			}
+
+			@Override
+			public Date nextUpdate(OwnerType owner) {
+				return owner.getBalanceNextUpdate();
+			}
+		},
+		CONTRACTS(DialoguesUpdate.get().contracts()){
+			@Override
+			public boolean is(OwnerType owner) {
+				return owner.isContracts();
+			}
+
+			@Override
+			public Date nextUpdate(OwnerType owner) {
+				return owner.getContractsNextUpdate();
+			}
+		},
+		ASSETS(DialoguesUpdate.get().assets()) {
+			@Override
+			public boolean is(OwnerType owner) {
+				return owner.isAssetList();
+			}
+
+			@Override
+			public Date nextUpdate(OwnerType owner) {
+				return owner.getAssetNextUpdate();
+			}
+		},
+		BLUEPRINTS(DialoguesUpdate.get().blueprints()){
+			@Override
+			public boolean is(OwnerType owner) {
+				return owner.isBlueprints();
+			}
+
+			@Override
+			public Date nextUpdate(OwnerType owner) {
+				return owner.getBlueprintsNextUpdate();
+			}
+		},
+		SKILLS(DialoguesUpdate.get().skills()){
+			@Override
+			public boolean is(OwnerType owner) {
+				return owner.isSkills();
+			}
+
+			@Override
+			public Date nextUpdate(OwnerType owner) {
+				return owner.getSkillsNextUpdate();
+			}
+		},
+		LOYALTY_POINTS(DialoguesUpdate.get().loyaltyPoints()){
+			@Override
+			public boolean is(OwnerType owner) {
+				return owner.isLoyaltyPoints();
+			}
+
+			@Override
+			public Date nextUpdate(OwnerType owner) {
+				return owner.getLoyaltyPointsNextUpdate();
+			}
+		},
+		NPC_STANDING(DialoguesUpdate.get().npcStanding()) {
+			@Override
+			public boolean is(OwnerType owner) {
+				return owner.isNpcStanding();
+			}
+
+			@Override
+			public Date nextUpdate(OwnerType owner) {
+				return owner.getNpcStandingNextUpdate();
+			}
+		},
+		MINING(DialoguesUpdate.get().mining()){
+			@Override
+			public boolean is(OwnerType owner) {
+				return owner.isMining();
+			}
+
+			@Override
+			public Date nextUpdate(OwnerType owner) {
+				return owner.getMiningNextUpdate();
+			}
+		};
+
+		private final String title;
+		private UpdateUI updateUI = null;
+		private Date first = null;
+		private Date last = null;
+		private Updates(String title) {
+			this.title = title;
+		}
+
+		public abstract boolean is(OwnerType owner);
+		public abstract Date nextUpdate(OwnerType owner);
+
+		public Date getFirst() {
+			return first;
+		}
+
+		public Date getLast() {
+			return last;
+		}
+
+		public JCheckBox getCheckBox() {
+			return getUI().getCheckBox();
+		}
+
+		public JLabel getLeftFirst() {
+			return getUI().getLeftFirst();
+		}
+
+		public JLabel getLeftLast() {
+			return getUI().getLeftLast();
+		}
+
+		public boolean isSelected() {
+			return getCheckBox().isSelected();
+		}
+
+		public void setSelected(boolean b) {
+			getCheckBox().setSelected(b);
+		}
+
+		public void reset() {
+			first = null;
+			last = null;
+		}
+
+		public void updateDates(OwnerType owner) {
+			if (is(owner)) {
+				first = updateFirst(first, nextUpdate(owner));
+				last = updateLast(last, nextUpdate(owner));
+			}
+		}
+
+		private UpdateUI getUI() {
+			if (updateUI == null) {
+				updateUI = new UpdateUI(title);
+			}
+			return updateUI;
+		}
+
+		private Date updateFirst(Date nextUpdate, Date thisUpdate) {
+			if (nextUpdate == null) { //First
+				nextUpdate = thisUpdate;
+			} else if (thisUpdate.before(nextUpdate)) {
+				nextUpdate = thisUpdate;
+			}
+			return nextUpdate;
+		}
+
+		private Date updateLast(Date lastUpdate, Date thisUpdate) {
+			if (lastUpdate == null) { //First
+				lastUpdate = thisUpdate;
+			} else if (thisUpdate.after(lastUpdate)) {
+				lastUpdate = thisUpdate;
+			}
+			return lastUpdate;
+		}
+	}
+
 	private final JCheckBox jCheckAll;
-	private final JCheckBox jMarketOrders;
-	private final JLabel jMarketOrdersLeftFirst;
-	private final JLabel jMarketOrdersLeftLast;
-	private final JCheckBox jJournal;
-	private final JLabel jJournalLeftFirst;
-	private final JLabel jJournalLeftLast;
-	private final JCheckBox jTransactions;
-	private final JLabel jTransactionsLeftFirst;
-	private final JLabel jTransactionsLeftLast;
-	private final JCheckBox jIndustryJobs;
-	private final JLabel jIndustryJobsLeftFirst;
-	private final JLabel jIndustryJobsLeftLast;
-	private final JCheckBox jAccountBalance;
-	private final JLabel jAccountBalanceLeftFirst;
-	private final JLabel jAccountBalanceLeftLast;
-	private final JCheckBox jContracts;
-	private final JLabel jContractsLeftFirst;
-	private final JLabel jContractsLeftLast;
-	private final JCheckBox jAssets;
-	private final JLabel jAssetsLeftFirst;
-	private final JLabel jAssetsLeftLast;
-	private final JCheckBox jBlueprints;
-	private final JLabel jBlueprintsLeftFirst;
-	private final JLabel jBlueprintsLeftLast;
-	private final JCheckBox jSkills;
-	private final JLabel jSkillsLeftFirst;
-	private final JLabel jSkillLeftLast;
-	private final JCheckBox jLoyaltyPoints;
-	private final JLabel jLoyaltyPointsLeftFirst;
-	private final JLabel jLoyaltyPointsLeftLast;
-	private final JCheckBox jNpcStanding;
-	private final JLabel jNpcStandingLeftFirst;
-	private final JLabel jNpcStandingLeftLast;
-	private final JCheckBox jMining;
-	private final JLabel jMiningLeftFirst;
-	private final JLabel jMiningLeftLast;
 	private final JRadioButton jPriceDataAll;
 	private final JRadioButton jPriceDataNew;
 	private final JRadioButton jPriceDataNone;
 	private final JLabel jPriceDataLeft;
 	private final JButton jUpdate;
 	private final JButton jCancel;
-	private final List<JCheckBox> jCheckBoxes = new ArrayList<>();
 	private final Timer timer;
 
 	public UpdateDialog(final Program program) {
@@ -144,19 +319,9 @@ public class UpdateDialog extends JDialogCentered {
 		jCheckAll = new JCheckBox(General.get().all());
 		jCheckAll.setActionCommand(UpdateDialogAction.CHECK_ALL.name());
 		jCheckAll.addActionListener(listener);
+		JLabel jLeftFirst = new JLabel(DialoguesUpdate.get().firstAccount());
+		JLabel jLeftLast = new JLabel(DialoguesUpdate.get().allAccounts());
 
-		jMarketOrders = new JCheckBox(DialoguesUpdate.get().marketOrders());
-		jJournal = new JCheckBox(DialoguesUpdate.get().journal());
-		jTransactions = new JCheckBox(DialoguesUpdate.get().transactions());
-		jIndustryJobs = new JCheckBox(DialoguesUpdate.get().industryJobs());
-		jAccountBalance = new JCheckBox(DialoguesUpdate.get().accountBalance());
-		jContracts = new JCheckBox(DialoguesUpdate.get().contracts());
-		jAssets = new JCheckBox(DialoguesUpdate.get().assets());
-		jBlueprints = new JCheckBox(DialoguesUpdate.get().blueprints());
-		jSkills = new JCheckBox(DialoguesUpdate.get().skills());
-		jLoyaltyPoints = new JCheckBox(DialoguesUpdate.get().loyaltyPoints());
-		jNpcStanding = new JCheckBox(DialoguesUpdate.get().npcStanding());
-		jMining = new JCheckBox(DialoguesUpdate.get().mining());
 		jPriceDataAll = new JRadioButton(DialoguesUpdate.get().priceData());
 		jPriceDataAll.setActionCommand(UpdateDialogAction.CHANGED.name());
 		jPriceDataAll.addActionListener(listener);
@@ -166,56 +331,11 @@ public class UpdateDialog extends JDialogCentered {
 		jPriceDataNone = new JRadioButton(DialoguesUpdate.get().priceDataNone());
 		jPriceDataNone.setActionCommand(UpdateDialogAction.CHANGED.name());
 		jPriceDataNone.addActionListener(listener);
+		jPriceDataLeft = new JLabel();
 		ButtonGroup buttonGroup = new ButtonGroup();
 		buttonGroup.add(jPriceDataAll);
 		buttonGroup.add(jPriceDataNew);
 		buttonGroup.add(jPriceDataNone);
-
-		jCheckBoxes.add(jMarketOrders);
-		jCheckBoxes.add(jJournal);
-		jCheckBoxes.add(jTransactions);
-		jCheckBoxes.add(jIndustryJobs);
-		jCheckBoxes.add(jAccountBalance);
-		jCheckBoxes.add(jContracts);
-		jCheckBoxes.add(jAssets);
-		jCheckBoxes.add(jBlueprints);
-		jCheckBoxes.add(jSkills);
-		jCheckBoxes.add(jLoyaltyPoints);
-		jCheckBoxes.add(jNpcStanding);
-		jCheckBoxes.add(jMining);
-		for (JCheckBox jCheckBox : jCheckBoxes) {
-			jCheckBox.setActionCommand(UpdateDialogAction.CHANGED.name());
-			jCheckBox.addActionListener(listener);
-		}
-
-		JLabel jLeftFirst = new JLabel(DialoguesUpdate.get().firstAccount());
-		jMarketOrdersLeftFirst = new JLabel();
-		jJournalLeftFirst = new JLabel();
-		jTransactionsLeftFirst = new JLabel();
-		jIndustryJobsLeftFirst = new JLabel();
-		jAccountBalanceLeftFirst = new JLabel();
-		jContractsLeftFirst = new JLabel();
-		jAssetsLeftFirst = new JLabel();
-		jBlueprintsLeftFirst = new JLabel();
-		jSkillsLeftFirst = new JLabel();
-		jLoyaltyPointsLeftFirst = new JLabel();
-		jNpcStandingLeftFirst = new JLabel();
-		jMiningLeftFirst = new JLabel();
-		jPriceDataLeft = new JLabel();
-
-		JLabel jLeftLast = new JLabel(DialoguesUpdate.get().allAccounts());
-		jMarketOrdersLeftLast = new JLabel();
-		jJournalLeftLast = new JLabel();
-		jTransactionsLeftLast = new JLabel();
-		jIndustryJobsLeftLast = new JLabel();
-		jAccountBalanceLeftLast = new JLabel();
-		jContractsLeftLast = new JLabel();
-		jAssetsLeftLast = new JLabel();
-		jBlueprintsLeftLast = new JLabel();
-		jSkillLeftLast = new JLabel();
-		jLoyaltyPointsLeftLast = new JLabel();
-		jNpcStandingLeftLast = new JLabel();
-		jMiningLeftLast = new JLabel();
 
 		jUpdate = new JButton(DialoguesUpdate.get().update());
 		jUpdate.setActionCommand(UpdateDialogAction.UPDATE.name());
@@ -225,42 +345,55 @@ public class UpdateDialog extends JDialogCentered {
 		jCancel.setActionCommand(UpdateDialogAction.CANCEL.name());
 		jCancel.addActionListener(listener);
 
+		GroupLayout.ParallelGroup horizontalCheckBox = layout.createParallelGroup();
+		GroupLayout.ParallelGroup horizontalLeftFirst = layout.createParallelGroup(Alignment.TRAILING);
+		GroupLayout.ParallelGroup horizontalLeftLast = layout.createParallelGroup(Alignment.TRAILING);
+		horizontalCheckBox.addComponent(jCheckAll);
+		horizontalLeftFirst.addComponent(jLeftFirst);
+		horizontalLeftLast.addComponent(jLeftLast);
+
+		GroupLayout.SequentialGroup vertical = layout.createSequentialGroup();
+		vertical.addGroup(layout.createParallelGroup()
+				.addComponent(jCheckAll, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+				.addComponent(jLeftFirst, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+				.addComponent(jLeftLast, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+			);
+		
+		for (Updates updates : Updates.values()) {
+			JCheckBox jCheckBox = updates.getCheckBox();
+			horizontalCheckBox.addComponent(jCheckBox);
+			horizontalLeftFirst.addComponent(updates.getLeftFirst());
+			horizontalLeftLast.addComponent(updates.getLeftLast());
+			vertical.addGroup(layout.createParallelGroup()
+					.addComponent(updates.getCheckBox(), Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(updates.getLeftFirst(), Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(updates.getLeftLast(), Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+				);
+			jCheckBox.setActionCommand(UpdateDialogAction.CHANGED.name());
+			jCheckBox.addActionListener(listener);
+		}
+		horizontalLeftLast.addComponent(jPriceDataLeft);
+
+		vertical.addGroup(layout.createParallelGroup()
+				.addComponent(jPriceDataAll, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+				.addComponent(jPriceDataNew, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+				.addComponent(jPriceDataNone, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+				.addComponent(jPriceDataLeft, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+			)
+			.addGap(30)
+			.addGroup(layout.createParallelGroup()
+				.addComponent(jUpdate, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+				.addComponent(jCancel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+			);
+
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()
 				.addGroup(layout.createSequentialGroup()
 					.addGroup(layout.createParallelGroup()
 						.addGroup(layout.createSequentialGroup()
-							.addGroup(layout.createParallelGroup()
-								.addComponent(jCheckAll)
-								.addComponent(jMarketOrders)
-								.addComponent(jJournal)
-								.addComponent(jTransactions)
-								.addComponent(jIndustryJobs)
-								.addComponent(jAccountBalance)
-								.addComponent(jContracts)
-								.addComponent(jAssets)
-								.addComponent(jBlueprints)
-								.addComponent(jSkills)
-								.addComponent(jLoyaltyPoints)
-								.addComponent(jNpcStanding)
-								.addComponent(jMining)
-							)
+							.addGroup(horizontalCheckBox)
 							.addGap(20)
-							.addGroup(layout.createParallelGroup(Alignment.TRAILING)
-								.addComponent(jLeftFirst)
-								.addComponent(jMarketOrdersLeftFirst)
-								.addComponent(jJournalLeftFirst)
-								.addComponent(jTransactionsLeftFirst)
-								.addComponent(jIndustryJobsLeftFirst)
-								.addComponent(jAccountBalanceLeftFirst)
-								.addComponent(jContractsLeftFirst)
-								.addComponent(jAssetsLeftFirst)
-								.addComponent(jBlueprintsLeftFirst)
-								.addComponent(jSkillsLeftFirst)
-								.addComponent(jLoyaltyPointsLeftFirst)
-								.addComponent(jNpcStandingLeftFirst)
-								.addComponent(jMiningLeftFirst)
-							)
+							.addGroup(horizontalLeftFirst)
 							.addGap(20)
 						)
 						.addGroup(layout.createSequentialGroup()
@@ -271,114 +404,22 @@ public class UpdateDialog extends JDialogCentered {
 							.addComponent(jPriceDataNone)
 						)
 					)
-					.addGroup(layout.createParallelGroup(Alignment.TRAILING)
-						.addComponent(jLeftLast)
-						.addComponent(jMarketOrdersLeftLast)
-						.addComponent(jJournalLeftLast)
-						.addComponent(jTransactionsLeftLast)
-						.addComponent(jIndustryJobsLeftLast)
-						.addComponent(jAccountBalanceLeftLast)
-						.addComponent(jContractsLeftLast)
-						.addComponent(jAssetsLeftLast)
-						.addComponent(jBlueprintsLeftLast)
-						.addComponent(jSkillLeftLast)
-						.addComponent(jLoyaltyPointsLeftLast)
-						.addComponent(jNpcStandingLeftLast)
-						.addComponent(jMiningLeftLast)
-						.addComponent(jPriceDataLeft)
-					)
+					.addGroup(horizontalLeftLast)
 				)
 				.addGroup(Alignment.TRAILING, layout.createSequentialGroup()
 					.addComponent(jUpdate, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
 					.addComponent(jCancel, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
 				)
 		);
-		layout.setVerticalGroup(
-			layout.createSequentialGroup()
-				.addGroup(layout.createParallelGroup()
-					.addComponent(jCheckAll, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					.addComponent(jLeftFirst, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					.addComponent(jLeftLast, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-				)
-				.addGroup(layout.createParallelGroup()
-					.addComponent(jMarketOrders, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					.addComponent(jMarketOrdersLeftFirst, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					.addComponent(jMarketOrdersLeftLast, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-				)
-				.addGroup(layout.createParallelGroup()
-					.addComponent(jJournal, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					.addComponent(jJournalLeftFirst, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					.addComponent(jJournalLeftLast, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-				)
-				.addGroup(layout.createParallelGroup()
-					.addComponent(jTransactions, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					.addComponent(jTransactionsLeftFirst, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					.addComponent(jTransactionsLeftLast, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-				)
-				.addGroup(layout.createParallelGroup()
-					.addComponent(jIndustryJobs, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					.addComponent(jIndustryJobsLeftFirst, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					.addComponent(jIndustryJobsLeftLast, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-				)
-				.addGroup(layout.createParallelGroup()
-					.addComponent(jAccountBalance, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					.addComponent(jAccountBalanceLeftFirst, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					.addComponent(jAccountBalanceLeftLast, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-				)
-				.addGroup(layout.createParallelGroup()
-					.addComponent(jContracts, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					.addComponent(jContractsLeftFirst, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					.addComponent(jContractsLeftLast, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-				)
-				.addGroup(layout.createParallelGroup()
-					.addComponent(jAssets, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					.addComponent(jAssetsLeftFirst, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					.addComponent(jAssetsLeftLast, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-				)
-				.addGroup(layout.createParallelGroup()
-					.addComponent(jBlueprints, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					.addComponent(jBlueprintsLeftFirst, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					.addComponent(jBlueprintsLeftLast, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-				)
-				.addGroup(layout.createParallelGroup()
-					.addComponent(jSkills, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					.addComponent(jSkillsLeftFirst, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					.addComponent(jSkillLeftLast, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-				)
-				.addGroup(layout.createParallelGroup()
-					.addComponent(jLoyaltyPoints, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					.addComponent(jLoyaltyPointsLeftFirst, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					.addComponent(jLoyaltyPointsLeftLast, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-				)
-				.addGroup(layout.createParallelGroup()
-					.addComponent(jNpcStanding, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					.addComponent(jNpcStandingLeftFirst, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					.addComponent(jNpcStandingLeftLast, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-				)
-				.addGroup(layout.createParallelGroup()
-					.addComponent(jMining, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					.addComponent(jMiningLeftFirst, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					.addComponent(jMiningLeftLast, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-				)
-				.addGroup(layout.createParallelGroup()
-					.addComponent(jPriceDataAll, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					.addComponent(jPriceDataNew, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					.addComponent(jPriceDataNone, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					.addComponent(jPriceDataLeft, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-				)
-				.addGap(30)
-				.addGroup(layout.createParallelGroup()
-					.addComponent(jUpdate, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					.addComponent(jCancel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-				)
-		);
+		layout.setVerticalGroup(vertical);
 	}
 
 	private void changed() {
 		boolean allChecked = true;
 		boolean someChecked = false;
 		boolean allDisabled = true;
-		for (JCheckBox jCheckBox : jCheckBoxes) {
+		for (Updates updates : Updates.values()) {
+			JCheckBox jCheckBox = updates.getCheckBox();
 			if (jCheckBox.isEnabled()) {
 				if (jCheckBox.isSelected()) {
 					someChecked = true;
@@ -407,84 +448,16 @@ public class UpdateDialog extends JDialogCentered {
 	}
 
 	private void update(boolean check) {
-		Date industryJobsFirst = null;
-		Date marketOrdersFirst = null;
-		Date journalFirst = null;
-		Date transactionsFirst = null;
-		Date contractsFirst = null;
-		Date assetsFirst = null;
-		Date blueprintsFirst = null;
-		Date skillsFirst = null;
-		Date loyaltyPointsFirst = null;
-		Date npcStandingFirst = null;
-		Date miningFirst = null;
-		Date accountBalanceFirst = null;
-
-		Date industryJobsLast = null;
-		Date marketOrdersLast = null;
-		Date journalLast = null;
-		Date transactionsLast = null;
-		Date contractsLast = null;
-		Date assetsLast = null;
-		Date blueprintsLast = null;
-		Date skillsLast = null;
-		Date loyaltyPointsLast = null;
-		Date npcStandingLast = null;
-		Date miningLast = null;
-		Date accountBalanceLast = null;
-
+		for (Updates updates : Updates.values()) {
+			updates.reset();
+		}
 		Date priceData = program.getPriceDataGetter().getNextUpdate();
 		for (OwnerType owner : program.getOwnerTypes()) {
 			if (!owner.isShowOwner() || owner.isInvalid() || owner.isExpired()) {
 				continue;
 			}
-			if (owner.isIndustryJobs()) {
-				industryJobsFirst = updateFirst(industryJobsFirst, owner.getIndustryJobsNextUpdate());
-				industryJobsLast = updateLast(industryJobsLast, owner.getIndustryJobsNextUpdate());
-			}
-			if (owner.isMarketOrders()) {
-				marketOrdersFirst = updateFirst(marketOrdersFirst, owner.getMarketOrdersNextUpdate());
-				marketOrdersLast = updateLast(marketOrdersLast, owner.getMarketOrdersNextUpdate());
-			}
-			if (owner.isJournal()) {
-				journalFirst = updateFirst(journalFirst, owner.getJournalNextUpdate());
-				journalLast = updateLast(journalLast, owner.getJournalNextUpdate());
-			}
-			if (owner.isTransactions()) {
-				transactionsFirst = updateFirst(transactionsFirst, owner.getTransactionsNextUpdate());
-				transactionsLast = updateLast(transactionsLast, owner.getTransactionsNextUpdate());
-			}
-			if (owner.isContracts()) {
-				contractsFirst = updateFirst(contractsFirst, owner.getContractsNextUpdate());
-				contractsLast = updateLast(contractsLast, owner.getContractsNextUpdate());
-			}
-			if (owner.isAssetList()) {
-				assetsFirst = updateFirst(assetsFirst, owner.getAssetNextUpdate());
-				assetsLast = updateLast(assetsLast, owner.getAssetNextUpdate());
-			}
-			if (owner.isBlueprints()) {
-				blueprintsFirst = updateFirst(blueprintsFirst, owner.getBlueprintsNextUpdate());
-				blueprintsLast = updateLast(blueprintsLast, owner.getBlueprintsNextUpdate());
-			}
-			if (owner.isAccountBalance()) {
-				accountBalanceFirst = updateFirst(accountBalanceFirst, owner.getBalanceNextUpdate());
-				accountBalanceLast = updateLast(accountBalanceLast, owner.getBalanceNextUpdate());
-			}
-			if (owner.isSkills()) {
-				skillsFirst = updateFirst(skillsFirst, owner.getSkillsNextUpdate());
-				skillsLast = updateLast(skillsLast, owner.getSkillsNextUpdate());
-			}
-			if (owner.isLoyaltyPoints()) {
-				loyaltyPointsFirst = updateFirst(loyaltyPointsFirst, owner.getLoyaltyPointsNextUpdate());
-				loyaltyPointsLast = updateLast(loyaltyPointsLast, owner.getLoyaltyPointsNextUpdate());
-			}
-			if (owner.isNpcStanding()) {
-				npcStandingFirst = updateFirst(npcStandingFirst, owner.getNpcStandingNextUpdate());
-				npcStandingLast = updateLast(npcStandingLast, owner.getNpcStandingNextUpdate());
-			}
-			if (owner.isMining()) {
-				miningFirst = updateFirst(miningFirst, owner.getMiningNextUpdate());
-				miningLast = updateLast(miningLast, owner.getMiningNextUpdate());
+			for (Updates updates : Updates.values()) {
+				updates.updateDates(owner);
 			}
 		}
 		if (program.getOwnerTypes().isEmpty()) {
@@ -502,23 +475,14 @@ public class UpdateDialog extends JDialogCentered {
 				jPriceDataNew.setSelected(true);
 			}
 		}
-		setUpdateLabel(jMarketOrdersLeftFirst, jMarketOrdersLeftLast, jMarketOrders, marketOrdersFirst, marketOrdersLast, check);
-		setUpdateLabel(jJournalLeftFirst, jJournalLeftLast, jJournal, journalFirst, journalLast, check);
-		setUpdateLabel(jTransactionsLeftFirst, jTransactionsLeftLast, jTransactions, transactionsFirst, transactionsLast, check);
-		setUpdateLabel(jIndustryJobsLeftFirst, jIndustryJobsLeftLast, jIndustryJobs, industryJobsFirst, industryJobsLast, check);
-		setUpdateLabel(jAccountBalanceLeftFirst, jAccountBalanceLeftLast, jAccountBalance, accountBalanceFirst, accountBalanceLast, check);
-		setUpdateLabel(jContractsLeftFirst, jContractsLeftLast, jContracts, contractsFirst, contractsLast, check);
-		setUpdateLabel(jAssetsLeftFirst, jAssetsLeftLast, jAssets, assetsFirst, assetsLast, check);
-		setUpdateLabel(jBlueprintsLeftFirst, jBlueprintsLeftLast, jBlueprints, blueprintsFirst, blueprintsLast, check);
-		setUpdateLabel(jSkillsLeftFirst, jSkillLeftLast, jSkills, skillsFirst, skillsLast, check);
-		setUpdateLabel(jLoyaltyPointsLeftFirst, jLoyaltyPointsLeftLast, jLoyaltyPoints, loyaltyPointsFirst, loyaltyPointsLast, check);
-		setUpdateLabel(jNpcStandingLeftFirst, jNpcStandingLeftLast, jNpcStanding, loyaltyPointsFirst, loyaltyPointsLast, check);
-		setUpdateLabel(jMiningLeftFirst, jMiningLeftLast, jMining, miningFirst, miningLast, check);
+		for (Updates updates : Updates.values()) {
+			setUpdateLabel(updates.getLeftFirst(), updates.getLeftLast(), updates.getCheckBox(), updates.getFirst(), updates.getLast(), check);
+		}
 		changed();
 
 	}
 
-	private void setUpdateLabel(final JLabel jFirst, final JLabel jAll, final JToggleButton jCheckBox, final Date first, final Date last, boolean check) {
+	private void setUpdateLabel(final JLabel jFirst, final JLabel jLast, final JToggleButton jCheckBox, final Date first, final Date last, boolean check) {
 		if (jFirst != null) {
 			if (Updatable.isUpdatable(last)) {
 				jFirst.setText("");
@@ -528,9 +492,9 @@ public class UpdateDialog extends JDialogCentered {
 			jFirst.setEnabled(first != null);
 		} else {
 		}
-		if (jAll != null) {
-			jAll.setText(getFormattedDuration(last));
-			jAll.setEnabled(last != null);
+		if (jLast != null) {
+			jLast.setText(getFormattedDuration(last));
+			jLast.setEnabled(last != null);
 		}
 		if (jCheckBox != null) {
 			if ((Updatable.isUpdatable(first) || Updatable.isUpdatable(last))) {
@@ -564,24 +528,6 @@ public class UpdateDialog extends JDialogCentered {
 		}
 	}
 
-	private Date updateFirst(Date nextUpdate, Date thisUpdate) {
-		if (nextUpdate == null) { //First
-			nextUpdate = thisUpdate;
-		} else if (thisUpdate.before(nextUpdate)) {
-			nextUpdate = thisUpdate;
-		}
-		return nextUpdate;
-	}
-
-	private Date updateLast(Date lastUpdate, Date thisUpdate) {
-		if (lastUpdate == null) { //First
-			lastUpdate = thisUpdate;
-		} else if (thisUpdate.after(lastUpdate)) {
-			lastUpdate = thisUpdate;
-		}
-		return lastUpdate;
-	}
-
 	@Override
 	protected JComponent getDefaultFocus() {
 		return jUpdate;
@@ -599,18 +545,9 @@ public class UpdateDialog extends JDialogCentered {
 	@Override
 	public void setVisible(boolean b) {
 		if (b) {
-			jMarketOrders.setSelected(true);
-			jJournal.setSelected(true);
-			jTransactions.setSelected(true);
-			jIndustryJobs.setSelected(true);
-			jAccountBalance.setSelected(true);
-			jContracts.setSelected(true);
-			jAssets.setSelected(true);
-			jBlueprints.setSelected(true);
-			jSkills.setSelected(true);
-			jLoyaltyPoints.setSelected(true);
-			jNpcStanding.setSelected(true);
-			jMining.setSelected(true);
+			for (Updates updates : Updates.values()) {
+				updates.setSelected(true);
+			}
 			jPriceDataAll.setSelected(true);
 			update(true);
 			timer.start();
@@ -632,36 +569,36 @@ public class UpdateDialog extends JDialogCentered {
 			if (UpdateDialogAction.UPDATE.name().equals(e.getActionCommand())) {
 				setVisible(false);
 				List<UpdateTask> updateTasks = new ArrayList<>();
-				if (jAssets.isSelected()
-						|| jAccountBalance.isSelected()
-						|| jBlueprints.isSelected()
-						|| jContracts.isSelected()
-						|| jIndustryJobs.isSelected()
-						|| jJournal.isSelected()
-						|| jMarketOrders.isSelected()
-						|| jMining.isSelected()
-						|| jTransactions.isSelected()
-						|| jSkills.isSelected()
-						|| jLoyaltyPoints.isSelected()
-						|| jNpcStanding.isSelected()
+				if (Updates.ASSETS.isSelected()
+						|| Updates.ACCOUNT_BALANCE.isSelected()
+						|| Updates.BLUEPRINTS.isSelected()
+						|| Updates.CONTRACTS.isSelected()
+						|| Updates.INDUSTRY_JOBS.isSelected()
+						|| Updates.JOURNAL.isSelected()
+						|| Updates.MARKET_ORDERS.isSelected()
+						|| Updates.MINING.isSelected()
+						|| Updates.TRANSACTIONS.isSelected()
+						|| Updates.SKILLS.isSelected()
+						|| Updates.LOYALTY_POINTS.isSelected()
+						|| Updates.NPC_STANDING.isSelected()
 						) {
 					updateTasks.add(new Step1Task(program.getProfileManager()));
 					updateTasks.add(new Step2Task(program.getProfileManager(),
-							jAssets.isSelected(),
-							jAccountBalance.isSelected(),
-							jBlueprints.isSelected(),
-							jContracts.isSelected(),
-							jIndustryJobs.isSelected(),
-							jJournal.isSelected(),
-							jMarketOrders.isSelected(),
-							jMining.isSelected(),
-							jTransactions.isSelected(),
-							jSkills.isSelected(),
-							jLoyaltyPoints.isSelected(),
-							jNpcStanding.isSelected()));
-					updateTasks.add(new Step3Task(program.getProfileManager(), jAssets.isSelected()));
+							Updates.ASSETS.isSelected(),
+							Updates.ACCOUNT_BALANCE.isSelected(),
+							Updates.BLUEPRINTS.isSelected(),
+							Updates.CONTRACTS.isSelected(),
+							Updates.INDUSTRY_JOBS.isSelected(),
+							Updates.JOURNAL.isSelected(),
+							Updates.MARKET_ORDERS.isSelected(),
+							Updates.MINING.isSelected(),
+							Updates.TRANSACTIONS.isSelected(),
+							Updates.SKILLS.isSelected(),
+							Updates.LOYALTY_POINTS.isSelected(),
+							Updates.NPC_STANDING.isSelected()));
+					updateTasks.add(new Step3Task(program.getProfileManager(), Updates.ASSETS.isSelected()));
 				}
-				if (jContracts.isSelected()) {
+				if (Updates.CONTRACTS.isSelected()) {
 					updateTasks.add(new Step4Task(program.getProfileManager()));
 				}
 				if (jPriceDataAll.isSelected() || jPriceDataNew.isSelected()) {
@@ -695,7 +632,8 @@ public class UpdateDialog extends JDialogCentered {
 			}
 			if (UpdateDialogAction.CHECK_ALL.name().equals(e.getActionCommand())) {
 				boolean checked = jCheckAll.isSelected();
-				for (JCheckBox jCheckBox : jCheckBoxes) {
+				for (Updates updates : Updates.values()) {
+					JCheckBox jCheckBox = updates.getCheckBox();
 					if (jCheckBox.isEnabled()) {
 						jCheckBox.setSelected(checked);
 					}
@@ -913,6 +851,30 @@ public class UpdateDialog extends JDialogCentered {
 			} else {
 				priceDataGetter.updateNew(profileData, this);
 			}
+		}
+	}
+
+	private static class UpdateUI {
+		private final JCheckBox jCheckBox;
+		private final JLabel jLeftFirst;
+		private final JLabel jLeftLast;
+
+		public UpdateUI(String title) {
+			jCheckBox = new JCheckBox(title);
+			jLeftFirst = new JLabel();
+			jLeftLast = new JLabel();
+		}
+
+		public JCheckBox getCheckBox() {
+			return jCheckBox;
+		}
+
+		public JLabel getLeftFirst() {
+			return jLeftFirst;
+		}
+
+		public JLabel getLeftLast() {
+			return jLeftLast;
 		}
 	}
 }

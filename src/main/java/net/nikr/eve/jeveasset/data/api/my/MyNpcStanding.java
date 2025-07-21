@@ -27,6 +27,7 @@ import net.nikr.eve.jeveasset.data.sde.Agent;
 import net.nikr.eve.jeveasset.data.sde.NpcCorporation;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.TextIcon;
+import net.nikr.eve.jeveasset.io.online.EveImageGetter;
 import net.nikr.eve.jeveasset.io.online.EveImageGetter.ImageSize;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 
@@ -44,6 +45,7 @@ public class MyNpcStanding extends RawNpcStanding implements Comparable<MyNpcSta
 	private final boolean criminalConnections;
 	private String factionName;
 	private String corporationName;
+	private TextIcon ownerTextIcon = null;;
 	private TextIcon factionTextIcon = null;
 	private TextIcon corporationTextIcon = null;
 	private TextIcon agentTextIcon = null;
@@ -109,16 +111,27 @@ public class MyNpcStanding extends RawNpcStanding implements Comparable<MyNpcSta
 		return agent.getAgent();
 	}
 
+	public TextIcon getOwnerTextIcon() {
+		if (ownerTextIcon == null ) {
+			if (owner.isCharacter()) {
+				ownerTextIcon = new TextIcon(Images.getIcon((int)owner.getOwnerID(), EveImageGetter.ImageCategory.CHARACTERS), owner.getOwnerName());
+			} else {
+				ownerTextIcon = new TextIcon(Images.getIcon((int)owner.getOwnerID(), EveImageGetter.ImageCategory.CORPORATIONS), owner.getOwnerName());
+			}
+		}
+		return ownerTextIcon;
+	}
+
 	public TextIcon getFactionTextIcon() {
 		if (factionTextIcon == null && factionID > 0) {
-			factionTextIcon = new TextIcon(Images.getIcon(factionID), factionName);
+			factionTextIcon = new TextIcon(Images.getIcon(factionID, EveImageGetter.ImageCategory.CORPORATIONS), factionName);
 		}
 		return factionTextIcon;
 	}
 
 	public TextIcon getCorporationTextIcon() {
 		if (corporationTextIcon == null && corporationID > 0 && (getFromType() == FromType.AGENT || getFromType() == FromType.NPC_CORP)) {
-			corporationTextIcon = new TextIcon(Images.getIcon(corporationID), corporationName);
+			corporationTextIcon = new TextIcon(Images.getIcon(corporationID, EveImageGetter.ImageCategory.CORPORATIONS), corporationName);
 		}
 		return corporationTextIcon;
 	}
