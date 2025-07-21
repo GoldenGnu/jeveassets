@@ -32,6 +32,7 @@ import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import org.junit.Test;
 
@@ -69,9 +70,14 @@ public class JMenuLookupOnlineTest extends TestUtil {
 			}
 			Set<String> links = lookupLinks.getLinks(menuData);
 			assertNotNull(lookupLinks.name() + " is null", links);
+			Boolean enabled = lookupLinks.isEnabled(menuData);
 			if (lookupLinks != LookupLinks.EVEMAPS_DOTLAN_OVERVIEW_GROUP
 				&& lookupLinks != LookupLinks.ZKILLBOARD_OVERVIEW_GROUP ) {
-				assertFalse(lookupLinks.name() + " is empty", links.isEmpty());
+				assertFalse(lookupLinks.name() + " links are empty", links.isEmpty());
+				assertNotNull(lookupLinks.name() + " enabled is null", enabled);
+				assertTrue(lookupLinks.name() + " enabled is false", enabled);
+			} else {
+				assertTrue(lookupLinks.name() + " enabled is not null", enabled == null);
 			}
 			for (String link : links) {
 				lookups.add(new Lookup(lookupLinks, link));

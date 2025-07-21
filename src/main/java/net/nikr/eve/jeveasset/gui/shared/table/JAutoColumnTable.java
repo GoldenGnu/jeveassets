@@ -78,12 +78,14 @@ import net.nikr.eve.jeveasset.gui.shared.table.TableCellRenderers.FloatCellRende
 import net.nikr.eve.jeveasset.gui.shared.table.TableCellRenderers.IconTableCellRenderer;
 import net.nikr.eve.jeveasset.gui.shared.table.TableCellRenderers.IntegerCellRenderer;
 import net.nikr.eve.jeveasset.gui.shared.table.TableCellRenderers.LongCellRenderer;
+import net.nikr.eve.jeveasset.gui.shared.table.TableCellRenderers.StandingTableCellRenderer;
 import net.nikr.eve.jeveasset.gui.shared.table.TableCellRenderers.TagsCellRenderer;
 import net.nikr.eve.jeveasset.gui.shared.table.TableCellRenderers.TextIconTableCellRenderer;
 import net.nikr.eve.jeveasset.gui.shared.table.TableCellRenderers.ToStringCellRenderer;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.AssetContainer;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.DateOnly;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.ExpirerDate;
+import net.nikr.eve.jeveasset.gui.shared.table.containers.Standing;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.TextIcon;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.YesNo;
 
@@ -147,6 +149,7 @@ public class JAutoColumnTable extends JTable {
 		this.setDefaultRenderer(ExpirerDate.class, new ToStringCellRenderer(SwingConstants.CENTER));
 		this.setDefaultRenderer(Icon.class, new IconTableCellRenderer());
 		this.setDefaultRenderer(TextIcon.class, new TextIconTableCellRenderer());
+		this.setDefaultRenderer(Standing.class, new StandingTableCellRenderer());
 		this.setDefaultRenderer(Component.class, new ComponentRenderer());
 		this.setDefaultEditor(Component.class, new ComponentEditor(this.getDefaultEditor(Component.class)));
 		this.setDefaultEditor(Number.class, new BetterNumberEditor());
