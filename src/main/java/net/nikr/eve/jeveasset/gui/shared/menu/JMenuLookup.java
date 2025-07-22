@@ -287,7 +287,7 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 			public Set<String> getLinks(MenuData<?> menuData) {
 				Set<String> urls = new HashSet<>();
 				for (MyLocation location : menuData.getSystemLocations()) {
-					urls.add("https://evemissioneer.com/s/" +location.getLocationID());
+					urls.add("https://evemissioneer.com/s/" + location.getLocationID());
 				}
 				return urls;
 			}
@@ -302,7 +302,7 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 			public Set<String> getLinks(MenuData<?> menuData) {
 				Set<String> urls = new HashSet<>();
 				for (MyLocation location : menuData.getConstellationLocations()) {
-					urls.add("https://evemissioneer.com/c/" +location.getLocationID());
+					urls.add("https://evemissioneer.com/c/" + location.getLocationID());
 				}
 				return urls;
 			}
@@ -317,7 +317,7 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 			public Set<String> getLinks(MenuData<?> menuData) {
 				Set<String> urls = new HashSet<>();
 				for (MyLocation location : menuData.getRegionLocations()) {
-					urls.add("https://evemissioneer.com/r/" +location.getLocationID());
+					urls.add("https://evemissioneer.com/r/" + location.getLocationID());
 				}
 				return urls;
 			}
@@ -484,7 +484,7 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 			public Set<String> getLinks(MenuData<?> menuData) {
 				Set<String> urls = new HashSet<>();
 				for (int typeID : menuData.getTypeIDs()) {
-					urls.add("https://everef.net/types/" + typeID+ "?utm_source=jeveassets");
+					urls.add("https://everef.net/types/" + typeID + "?utm_source=jeveassets");
 				}
 				return urls;
 			}
@@ -584,7 +584,115 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 			public <T> Boolean isEnabled(MenuData<T> menuData) {
 				return !menuData.getBlueprintTypeIDs().isEmpty();
 			}
+		},
+	//Corporation
+		EVEMAPS_DOTLAN_CORPORATION(GuiShared.get().dotlan(), Images.LINK_DOTLAN_EVEMAPS.getIcon()) {
+			@Override
+			public Set<String> getLinks(MenuData<?> menuData) {
+				Set<String> urls = new HashSet<>();
+				for (String corporationName : menuData.getCorporationNames()) {
+					urls.add("https://evemaps.dotlan.net/npc/" + corporationName.replace(" ", "_"));
+				}
+				return urls;
+			}
+
+			@Override
+			public <T> Boolean isEnabled(MenuData<T> menuData) {
+				return !menuData.getCorporationNames().isEmpty();
+			}
+		},
+		EVEMISSIONEER_CORPORATION(GuiShared.get().eveMissioneer(), Images.LINK_EVEMISSIONEER.getIcon()) {
+			@Override
+			public Set<String> getLinks(MenuData<?> menuData) {
+				Set<String> urls = new HashSet<>();
+				for (int corporationID : menuData.getCorporationIDs()) {
+					urls.add("https://evemissioneer.com/co/" + corporationID);
+				}
+				return urls;
+			}
+
+			@Override
+			public <T> Boolean isEnabled(MenuData<T> menuData) {
+				return !menuData.getCorporationIDs().isEmpty();
+			}
+		},
+		JITA_SPACE_CORPORATION(GuiShared.get().jitaSpace(), Images.LINK_JITA_SPACE.getIcon()) {
+			@Override
+			public Set<String> getLinks(MenuData<?> menuData) {
+				Set<String> urls = new HashSet<>();
+				for (int corporationID : menuData.getCorporationIDs()) {
+					urls.add("https://www.jita.space/corporation/" + corporationID);
+				}
+				return urls;
+			}
+
+			@Override
+			public <T> Boolean isEnabled(MenuData<T> menuData) {
+				return !menuData.getCorporationNames().isEmpty();
+			}
+		},
+		ZKILLBOARD_CORPORATION(GuiShared.get().zKillboard(), Images.LINK_ZKILLBOARD.getIcon()) {
+			@Override
+			public Set<String> getLinks(MenuData<?> menuData) {
+				Set<String> urls = new HashSet<>();
+				for (int corporationID : menuData.getCorporationIDs()) {
+					urls.add("https://zkillboard.com/corporation/" + corporationID + "/");
+				}
+				return urls;
+			}
+
+			@Override
+			public <T> Boolean isEnabled(MenuData<T> menuData) {
+				return !menuData.getCorporationNames().isEmpty();
+			}
+		},
+	//Loyalty Points Store
+		FUZZWORK_LP_SELL(GuiShared.get().fuzzworkLPSell(), Images.ORDERS_SELL.getIcon()) {
+			@Override
+			public Set<String> getLinks(MenuData<?> menuData) {
+				Set<String> urls = new HashSet<>();
+				for (int corporationID : menuData.getCorporationIDs()) {
+					urls.add("https://www.fuzzwork.co.uk/lpstore/sell/10000002/" + corporationID);
+				}
+				return urls;
+			}
+
+			@Override
+			public <T> Boolean isEnabled(MenuData<T> menuData) {
+				return !menuData.getCorporationIDs().isEmpty();
+			}
+		},
+		FUZZWORK_LP_BUY(GuiShared.get().fuzzworkLPBuy(), Images.ORDERS_BUY.getIcon()) {
+			@Override
+			public Set<String> getLinks(MenuData<?> menuData) {
+				Set<String> urls = new HashSet<>();
+				for (int corporationID : menuData.getCorporationIDs()) {
+					urls.add("https://www.fuzzwork.co.uk/lpstore/buy/10000002/" + corporationID);
+				}
+				return urls;
+			}
+
+			@Override
+			public <T> Boolean isEnabled(MenuData<T> menuData) {
+				return !menuData.getCorporationIDs().isEmpty();
+			}
+		},
+		JITA_SPACE_LP(GuiShared.get().jitaSpace(), Images.LINK_JITA_SPACE.getIcon()) {
+			@Override
+			public Set<String> getLinks(MenuData<?> menuData) {
+				Set<String> urls = new HashSet<>();
+				for (String corporationName : menuData.getCorporationNames()) {
+					urls.add("https://www.jita.space/lp-store/" + corporationName.replace(" ", "_"));
+				}
+				return urls;
+			}
+
+			@Override
+			public <T> Boolean isEnabled(MenuData<T> menuData) {
+				return !menuData.getCorporationNames().isEmpty();
+			}
 		};
+		
 
 		private final String title;
 		private final Icon icon;
@@ -619,6 +727,7 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 	private final JMenu jMarket;
 	private final JMenu jItemDatabase;
 	private final JMenu jIndustry;
+	private final JMenu jCorporation;
 	private final Map<LookupLinks, JMenuItem> jMenuItems = new EnumMap<>(LookupLinks.class);
 
 	public JMenuLookup(final Program program) {
@@ -695,6 +804,26 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 		add(jKhonSpace, LookupLinks.LAZY_BLACKSMITH_MANUFACTURING, listener);
 	//Other
 		add(jIndustry, LookupLinks.EVE_COOKBOOK, listener);
+//Corporation
+		jCorporation = new JMenu(GuiShared.get().corporation());
+		jCorporation.setIcon(Images.LINK_LOOKUP.getIcon());
+		add(jCorporation);
+		add(jCorporation, LookupLinks.EVEMAPS_DOTLAN_CORPORATION, listener);
+		add(jCorporation, LookupLinks.EVEMISSIONEER_CORPORATION, listener);
+		add(jCorporation, LookupLinks.JITA_SPACE_CORPORATION, listener);
+		add(jCorporation, LookupLinks.ZKILLBOARD_CORPORATION, listener);
+
+		JMenu jLoyaltyPointsStore = new JMenu(GuiShared.get().loyaltyPointsStore());
+		jLoyaltyPointsStore.setIcon(Images.TOOL_LOYALTY_POINTS.getIcon());
+		jCorporation.add(jLoyaltyPointsStore);
+
+		JMenu jFuzzwork = new JMenu(GuiShared.get().fuzzworkLP());
+		jFuzzwork.setIcon(Images.LINK_FUZZWORK.getIcon());
+		jLoyaltyPointsStore.add(jFuzzwork);
+		add(jFuzzwork, LookupLinks.FUZZWORK_LP_SELL, listener);
+		add(jFuzzwork, LookupLinks.FUZZWORK_LP_BUY, listener);
+
+		add(jLoyaltyPointsStore, LookupLinks.JITA_SPACE_LP, listener);
 	}
 
 	@Override
@@ -713,6 +842,8 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 		jItemDatabase.setEnabled(!menuData.getTypeIDs().isEmpty());
 	//Industry
 		jIndustry.setEnabled(!menuData.getBlueprintTypeIDs().isEmpty());
+	//Corporation
+		jCorporation.setEnabled(!menuData.getCorporationNames().isEmpty() || !menuData.getCorporationIDs().isEmpty());
 	}
 
 	public void setTool(Object object) {

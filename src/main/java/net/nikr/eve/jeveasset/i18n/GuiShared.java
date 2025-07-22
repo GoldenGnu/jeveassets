@@ -89,6 +89,7 @@ public abstract class GuiShared extends Bundle {
 	public abstract String copy();
 	public abstract String copyEveMultiBuy();
 	public abstract String copyPlus();
+	public abstract String corporation();
 	public abstract String custom();
 	public abstract String cut();
 	public abstract String delete();
@@ -117,6 +118,9 @@ public abstract class GuiShared extends Bundle {
 	public abstract String formulaTitle();
 	public abstract String fuzzworkBlueprints();
 	public abstract String fuzzworkItems();
+	public abstract String fuzzworkLP();
+	public abstract String fuzzworkLPBuy();
+	public abstract String fuzzworkLPSell();
 	public abstract String fuzzworkMarket();
 	public abstract String helpFilter();
 	public abstract String helpSettings();
@@ -165,6 +169,7 @@ public abstract class GuiShared extends Bundle {
 	public abstract String locationRename();
 	public abstract String locationSystem();
 	public abstract String lookup();
+	public abstract String loyaltyPointsStore();
 	public abstract String market();
 	public abstract String newStockpile();
 	public abstract String none();

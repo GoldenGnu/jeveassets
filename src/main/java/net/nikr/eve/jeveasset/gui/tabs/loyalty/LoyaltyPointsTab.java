@@ -28,16 +28,11 @@ import ca.odell.glazedlists.SortedList;
 import ca.odell.glazedlists.swing.DefaultEventSelectionModel;
 import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import ca.odell.glazedlists.swing.TableComparatorChooser;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import javax.swing.JComponent;
 import javax.swing.JMenu;
-import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
@@ -56,9 +51,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
 import net.nikr.eve.jeveasset.gui.shared.table.TableFormatFactory;
-import net.nikr.eve.jeveasset.i18n.GuiShared;
 import net.nikr.eve.jeveasset.i18n.TabsLoyaltyPoints;
-import net.nikr.eve.jeveasset.io.shared.DesktopUtil;
 
 
 public class LoyaltyPointsTab extends JMainTabPrimary implements TagUpdate {
@@ -188,70 +181,7 @@ public class LoyaltyPointsTab extends JMainTabPrimary implements TagUpdate {
 		public void addInfoMenu(JPopupMenu jPopupMenu) { }
 
 		@Override
-		public void addToolMenu(JComponent jComponent) {
-			JMenu jLookup = new JMenu(GuiShared.get().lookup());
-			jLookup.setIcon(Images.LINK_LOOKUP.getIcon());
-			jComponent.add(jLookup);
-
-			JMenu jLoyaltyPointsStore = new JMenu(TabsLoyaltyPoints.get().loyaltyPointsStore());
-			jLoyaltyPointsStore.setIcon(Images.LINK_LOOKUP.getIcon());
-			jLookup.add(jLoyaltyPointsStore);
-
-			JMenu jFuzzwork = new JMenu(TabsLoyaltyPoints.get().fuzzwork());
-			jFuzzwork.setIcon(Images.LINK_FUZZWORK.getIcon());
-			jLoyaltyPointsStore.add(jFuzzwork);
-
-			boolean enabled = !selectionModel.getSelected().isEmpty();
-
-			JMenuItem jSell = new JMenuItem(TabsLoyaltyPoints.get().sell(), Images.ORDERS_SELL.getIcon());
-			jSell.setEnabled(enabled);
-			jSell.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					Set<String> links = new HashSet<>();
-					for (MyLoyaltyPoints loyaltyPoints : selectionModel.getSelected()) {
-						links.add("https://www.fuzzwork.co.uk/lpstore/sell/10000002/"+loyaltyPoints.getCorporationID());
-						
-					}
-					DesktopUtil.browse(links, program);
-					
-				}
-			});
-			jFuzzwork.add(jSell);
-
-			JMenuItem jBuy = new JMenuItem(TabsLoyaltyPoints.get().buy(), Images.ORDERS_BUY.getIcon());
-			jBuy.setEnabled(enabled);
-			jBuy.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					Set<String> links = new HashSet<>();
-					for (MyLoyaltyPoints loyaltyPoints : selectionModel.getSelected()) {
-						links.add("https://www.fuzzwork.co.uk/lpstore/buy/10000002/"+loyaltyPoints.getCorporationID());
-						
-					}
-					DesktopUtil.browse(links, program);
-					
-				}
-			});
-			jFuzzwork.add(jBuy);
-
-			JMenuItem jJitaSpace = new JMenuItem(TabsLoyaltyPoints.get().jitaSpace(), Images.LINK_JITA_SPACE.getIcon());
-			jJitaSpace.setEnabled(enabled);
-			jJitaSpace.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					Set<String> links = new HashSet<>();
-					for (MyLoyaltyPoints loyaltyPoints : selectionModel.getSelected()) {
-						String corporationName = loyaltyPoints.getCorporationName();
-						if (corporationName != null) {
-							links.add("https://www.jita.space/lp-store/"+corporationName.replace(" ", "_"));
-						}
-					}
-					DesktopUtil.browse(links, program);
-				}
-			});
-			jLoyaltyPointsStore.add(jJitaSpace);
-		}
+		public void addToolMenu(JComponent jComponent) { }
 	}
 
 	private class LoyaltyPointsFilterControl extends FilterControl<MyLoyaltyPoints> {

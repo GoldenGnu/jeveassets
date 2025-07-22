@@ -25,6 +25,7 @@ import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
 import net.nikr.eve.jeveasset.data.api.raw.RawNpcStanding;
 import net.nikr.eve.jeveasset.data.sde.Agent;
 import net.nikr.eve.jeveasset.data.sde.NpcCorporation;
+import net.nikr.eve.jeveasset.data.settings.types.CorporationType;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.TextIcon;
 import net.nikr.eve.jeveasset.io.online.EveImageGetter;
@@ -32,7 +33,7 @@ import net.nikr.eve.jeveasset.io.online.EveImageGetter.ImageSize;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 
 
-public class MyNpcStanding extends RawNpcStanding implements Comparable<MyNpcStanding> {
+public class MyNpcStanding extends RawNpcStanding implements Comparable<MyNpcStanding>, CorporationType {
 
 	public static ImageSize IMAGE_SIZE = ImageSize.SIZE_32;
 
@@ -95,8 +96,14 @@ public class MyNpcStanding extends RawNpcStanding implements Comparable<MyNpcSta
 		return factionID;
 	}
 
-	public int getCorporationID() {
+	@Override
+	public Integer getCorporationID() {
 		return corporationID;
+	}
+
+	@Override
+	public String getCorporationName() {
+		return corporationName;
 	}
 
 	public int getAgentID() {

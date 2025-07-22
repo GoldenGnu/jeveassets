@@ -54,6 +54,8 @@ public class JMenuLookupOnlineTest extends TestUtil {
 		menuData.getTypeIDs().add(10679);
 		menuData.getBlueprintTypeIDs().add(10679);
 		menuData.getInventionTypeIDs().add(10679);
+		menuData.getCorporationIDs().add(1000055);
+		menuData.getCorporationNames().add("Minmatar Mining Corporation");
 		List<Lookup> lookups = new ArrayList<>();
 		for (LookupLinks lookupLinks : LookupLinks.values()) {
 			if (lookupLinks == LookupLinks.ZKILLBOARD_ITEM
