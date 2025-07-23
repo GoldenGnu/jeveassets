@@ -64,8 +64,6 @@ public class StaticData {
 	private void loadData() {
 		SplashUpdater.setProgress(5);
 		ItemsReader.load(items); //Items
-		NpcCorporationsReader.load(npcCorporations);
-		AgentsReader.load(agents);
 		SplashUpdater.setProgress(10);
 		try {
 			LOCATIONS_LOCK.writeLock().lock();
@@ -77,6 +75,8 @@ public class StaticData {
 		JumpsReader.load(jumps); //Jumps
 		SplashUpdater.setProgress(20);
 		FlagsReader.load(flags); //Item Flags
+		NpcCorporationsReader.load(npcCorporations); //Must be loaded after locations
+		AgentsReader.load(agents);  //Must be loaded after locations
 		SplashUpdater.setProgress(25);
 	}
 
