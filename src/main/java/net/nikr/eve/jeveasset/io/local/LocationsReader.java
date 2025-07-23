@@ -39,7 +39,7 @@ public final class LocationsReader extends AbstractXmlReader<Boolean> {
 
 	public static void load(Map<Long, MyLocation> locations) {
 		LocationsReader reader = new LocationsReader(locations);
-		reader.read("Locations loaded", FileUtil.getPathLocations(), AbstractXmlReader.XmlType.STATIC);
+		reader.read("Locations", FileUtil.getPathLocations(), AbstractXmlReader.XmlType.STATIC);
 	}
 
 	@Override
