@@ -85,147 +85,147 @@ public class UpdateDialog extends JDialogCentered {
 		CANCEL, UPDATE, CHANGED, CHECK_ALL
 	}
 
-	private static enum Updates {
+	public static enum Updates {
 		MARKET_ORDERS(DialoguesUpdate.get().marketOrders()){
 			@Override
-			public boolean is(OwnerType owner) {
+			public boolean isEnabled(OwnerType owner) {
 				return owner.isMarketOrders();
 			}
 
 			@Override
-			public Date nextUpdate(OwnerType owner) {
+			public Date getNextUpdate(OwnerType owner) {
 				return owner.getMarketOrdersNextUpdate();
 			}
 		},
 		JOURNAL(DialoguesUpdate.get().journal()){
 			@Override
-			public boolean is(OwnerType owner) {
+			public boolean isEnabled(OwnerType owner) {
 				return owner.isJournal();
 			}
 
 			@Override
-			public Date nextUpdate(OwnerType owner) {
+			public Date getNextUpdate(OwnerType owner) {
 				return owner.getJournalNextUpdate();
 			}
 		},
 		TRANSACTIONS(DialoguesUpdate.get().transactions()){
 			@Override
-			public boolean is(OwnerType owner) {
+			public boolean isEnabled(OwnerType owner) {
 				return owner.isTransactions();
 			}
 
 			@Override
-			public Date nextUpdate(OwnerType owner) {
+			public Date getNextUpdate(OwnerType owner) {
 				return owner.getTransactionsNextUpdate();
 			}
 		},
 		INDUSTRY_JOBS(DialoguesUpdate.get().industryJobs()){
 			@Override
-			public boolean is(OwnerType owner) {
+			public boolean isEnabled(OwnerType owner) {
 				return owner.isIndustryJobs();
 			}
 
 			@Override
-			public Date nextUpdate(OwnerType owner) {
+			public Date getNextUpdate(OwnerType owner) {
 				return owner.getIndustryJobsNextUpdate();
 			}
 		},
 		ACCOUNT_BALANCE(DialoguesUpdate.get().accountBalance()){
 			@Override
-			public boolean is(OwnerType owner) {
+			public boolean isEnabled(OwnerType owner) {
 				return owner.isAccountBalance();
 			}
 
 			@Override
-			public Date nextUpdate(OwnerType owner) {
+			public Date getNextUpdate(OwnerType owner) {
 				return owner.getBalanceNextUpdate();
 			}
 		},
 		CONTRACTS(DialoguesUpdate.get().contracts()){
 			@Override
-			public boolean is(OwnerType owner) {
+			public boolean isEnabled(OwnerType owner) {
 				return owner.isContracts();
 			}
 
 			@Override
-			public Date nextUpdate(OwnerType owner) {
+			public Date getNextUpdate(OwnerType owner) {
 				return owner.getContractsNextUpdate();
 			}
 		},
 		ASSETS(DialoguesUpdate.get().assets()) {
 			@Override
-			public boolean is(OwnerType owner) {
+			public boolean isEnabled(OwnerType owner) {
 				return owner.isAssetList();
 			}
 
 			@Override
-			public Date nextUpdate(OwnerType owner) {
+			public Date getNextUpdate(OwnerType owner) {
 				return owner.getAssetNextUpdate();
 			}
 		},
 		BLUEPRINTS(DialoguesUpdate.get().blueprints()){
 			@Override
-			public boolean is(OwnerType owner) {
+			public boolean isEnabled(OwnerType owner) {
 				return owner.isBlueprints();
 			}
 
 			@Override
-			public Date nextUpdate(OwnerType owner) {
+			public Date getNextUpdate(OwnerType owner) {
 				return owner.getBlueprintsNextUpdate();
 			}
 		},
 		SKILLS(DialoguesUpdate.get().skills()){
 			@Override
-			public boolean is(OwnerType owner) {
+			public boolean isEnabled(OwnerType owner) {
 				return owner.isSkills();
 			}
 
 			@Override
-			public Date nextUpdate(OwnerType owner) {
+			public Date getNextUpdate(OwnerType owner) {
 				return owner.getSkillsNextUpdate();
 			}
 		},
 		LOYALTY_POINTS(DialoguesUpdate.get().loyaltyPoints()){
 			@Override
-			public boolean is(OwnerType owner) {
+			public boolean isEnabled(OwnerType owner) {
 				return owner.isLoyaltyPoints();
 			}
 
 			@Override
-			public Date nextUpdate(OwnerType owner) {
+			public Date getNextUpdate(OwnerType owner) {
 				return owner.getLoyaltyPointsNextUpdate();
 			}
 		},
 		NPC_STANDING(DialoguesUpdate.get().npcStanding()) {
 			@Override
-			public boolean is(OwnerType owner) {
+			public boolean isEnabled(OwnerType owner) {
 				return owner.isNpcStanding();
 			}
 
 			@Override
-			public Date nextUpdate(OwnerType owner) {
+			public Date getNextUpdate(OwnerType owner) {
 				return owner.getNpcStandingNextUpdate();
 			}
 		},
 		CONTAINER_LOGS(DialoguesUpdate.get().containerLogs()){
 			@Override
-			public boolean is(OwnerType owner) {
+			public boolean isEnabled(OwnerType owner) {
 				return owner.isContainerLogs();
 			}
 
 			@Override
-			public Date nextUpdate(OwnerType owner) {
+			public Date getNextUpdate(OwnerType owner) {
 				return owner.getContainerLogsNextUpdate();
 			}
 		},
 		MINING(DialoguesUpdate.get().mining()){
 			@Override
-			public boolean is(OwnerType owner) {
+			public boolean isEnabled(OwnerType owner) {
 				return owner.isMining();
 			}
 
 			@Override
-			public Date nextUpdate(OwnerType owner) {
+			public Date getNextUpdate(OwnerType owner) {
 				return owner.getMiningNextUpdate();
 			}
 		};
@@ -238,8 +238,8 @@ public class UpdateDialog extends JDialogCentered {
 			this.title = title;
 		}
 
-		public abstract boolean is(OwnerType owner);
-		public abstract Date nextUpdate(OwnerType owner);
+		public abstract boolean isEnabled(OwnerType owner);
+		public abstract Date getNextUpdate(OwnerType owner);
 
 		public Date getFirst() {
 			return first;
@@ -275,9 +275,9 @@ public class UpdateDialog extends JDialogCentered {
 		}
 
 		public void updateDates(OwnerType owner) {
-			if (is(owner)) {
-				first = updateFirst(first, nextUpdate(owner));
-				last = updateLast(last, nextUpdate(owner));
+			if (isEnabled(owner)) {
+				first = updateFirst(first, getNextUpdate(owner));
+				last = updateLast(last, getNextUpdate(owner));
 			}
 		}
 
