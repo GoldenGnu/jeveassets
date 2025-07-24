@@ -237,7 +237,7 @@ public abstract class FilterControl<E> implements ColumnCache<E>, SimpleFilterCo
 		Set<SimpleFilter> simpleFilters = new HashSet<>();
 		if (jTable.getSelectedColumnCount() == 1 //Single cell (column)
 				//&& jTable.getSelectedRowCount() == 1 //Single cell (row)
-				//&& items.size() == 1 //Single element
+				&& !items.isEmpty() //Single element
 				&& !(items.get(0) instanceof SeparatorList.Separator) //Not Separator
 				&& columnIndex >= 0 //Shown column
 				&& columnIndex < tableFormat.getShownColumns().size()) { //Shown column
