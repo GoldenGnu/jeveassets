@@ -145,6 +145,7 @@ public enum Images {
 	LOC_CONTRACTS ("loc_contracts.png"),
 	LOC_SAFTY ("loc_safty.png"),
 	LOC_SHIP ("loc_ship.png"),
+	LOC_CLONEBAY ("loc_clonebay.png"),
 
 	INCLUDE_ASSETS_SELECTED ("include_assets_selected.png"),
 	INCLUDE_ASSETS ("include_assets.png"),

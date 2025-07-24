@@ -41,6 +41,7 @@ import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.data.profile.TableData;
 import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
 import net.nikr.eve.jeveasset.i18n.General;
+import net.nikr.eve.jeveasset.i18n.TabsTree;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 
 
@@ -64,30 +65,37 @@ public class TreeData extends TableData {
 		categories.clear();
 		locationsExport.clear();
 		categoriesExport.clear();
-		Map<Flag, Set<String>> flags = new HashMap<>();
-		Flag shipHangar = new Flag("Ship Hangar", Images.LOC_HANGAR_SHIPS.getIcon());
-		flags.put(new Flag("Asset Safety", Images.LOC_SAFTY.getIcon()), Collections.singleton("AssetSafety")); //FlagID 36 (Asset Safety)
-		flags.put(new Flag("Item Hangar", Images.LOC_HANGAR_ITEMS.getIcon()), Collections.singleton("Hangar")); //FlagID 4
+
+		Map<Flag, Set<String>> flagsNames = new HashMap<>();
+		Flag shipHangar = new Flag(TabsTree.get().locationShipHangar(), Images.LOC_HANGAR_SHIPS.getIcon());
+		flagsNames.put(new Flag(TabsTree.get().locationAssetSafety(), Images.LOC_SAFTY.getIcon()), Collections.singleton(ApiIdConverter.getFlag(36).getFlagName())); //FlagName AssetSafety  (Asset Safety)
+		flagsNames.put(new Flag(TabsTree.get().locationItemHangar(), Images.LOC_HANGAR_ITEMS.getIcon()), Collections.singleton(ApiIdConverter.getFlag(4).getFlagName())); //FlagName Hangar
 		Set<String> deliveries = new HashSet<>();
-		deliveries.add("Deliveries"); //FlagID 173
-		deliveries.add("CorpMarket"); //FlagID 62 (Corporation Deliveries)
-		flags.put(new Flag("Deliveries", Images.LOC_DELIVERIES.getIcon()), deliveries);
+		deliveries.add(ApiIdConverter.getFlag(173).getFlagName()); //FlagName Deliveries 
+		deliveries.add(ApiIdConverter.getFlag(62).getFlagName()); //FlagName CorpMarket (Corporation Deliveries)
+		flagsNames.put(new Flag(TabsTree.get().locationDeliveries(), Images.LOC_DELIVERIES.getIcon()), deliveries);
 		Set<String> industryJobs = new HashSet<>();
 		industryJobs.add(General.get().industryJobFlag());
 		industryJobs.add(MyIndustryJob.IndustryActivity.ACTIVITY_MANUFACTURING.toString()); //industry job manufacturing
 		industryJobs.add(MyIndustryJob.IndustryActivity.ACTIVITY_REACTIONS.toString()); //industry job reactions
-		flags.put(new Flag(General.get().industryJobFlag(), Images.LOC_INDUSTRY.getIcon()), industryJobs);
+		flagsNames.put(new Flag(General.get().industryJobFlag(), Images.LOC_INDUSTRY.getIcon()), industryJobs);
 		Set<String> contracts = new HashSet<>();
 		contracts.add(General.get().contractExcluded());
 		contracts.add(General.get().contractIncluded());
-		flags.put(new Flag("Contracts", Images.LOC_CONTRACTS.getIcon()), contracts);
+		flagsNames.put(new Flag(TabsTree.get().locationContracts(), Images.LOC_CONTRACTS.getIcon()), contracts);
 		Set<String> marketOrders = new HashSet<>();
 		marketOrders.add(General.get().marketOrderBuyFlag());
 		marketOrders.add(General.get().marketOrderSellFlag());
-		flags.put(new Flag("Market Orders", Images.LOC_MARKET.getIcon()), marketOrders);
+		flagsNames.put(new Flag(TabsTree.get().locationMarketOrders(), Images.LOC_MARKET.getIcon()), marketOrders);
+		Set<String> clones = new HashSet<>();
+		clones.add(ApiIdConverter.getFlag(89).getFlagName());
+		clones.add(General.get().jumpClone());
+		flagsNames.put(new Flag(TabsTree.get().locationClones(), Images.LOC_CLONEBAY.getIcon()), clones);
+
+		MyLocation emptyLocation = new MyLocation(0, "", 0, "", 0, "", 0, "", "");
+
 		Map<String, TreeAsset> categoryCache = new HashMap<>();
 		Map<String, TreeAsset> locationCache = new HashMap<>();
-		MyLocation emptyLocation = new MyLocation(0, "", 0, "", 0, "", 0, "", "");
 		for (MyAsset asset : profileData.getAssetsList()) {
 		//LOCATION
 			List<TreeAsset> locationTree = new ArrayList<>();
@@ -154,7 +162,7 @@ public class TreeData extends TableData {
 					}
 					//Flags
 					if (parent == null) {
-						for (Map.Entry<Flag, Set<String>> entry: flags.entrySet()) {
+						for (Map.Entry<Flag, Set<String>> entry: flagsNames.entrySet()) {
 							if (entry.getValue().contains(parentAsset.getFlag())) {
 								final Flag flag;
 								if (entry.getKey().getName().equals("Item Hangar") && parentAsset.getItem().isShip()) {
