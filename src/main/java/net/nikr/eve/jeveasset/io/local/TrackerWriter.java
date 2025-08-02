@@ -42,16 +42,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-public class TrackerDataWriter extends AbstractBackup {
+public class TrackerWriter extends AbstractBackup {
 
-	private static final Logger LOG = LoggerFactory.getLogger(TrackerDataWriter.class);
+	private static final Logger LOG = LoggerFactory.getLogger(TrackerWriter.class);
 
 	public static void save() {
 		save(FileUtil.getPathTrackerData(), TrackerData.get(), true);
 	}
 
 	protected static void save(String filename, Map<String, List<Value>> trackerData, boolean createBackup) {
-		TrackerDataWriter writer = new TrackerDataWriter();
+		TrackerWriter writer = new TrackerWriter();
 		writer.write(filename, trackerData, createBackup);
 	}
 

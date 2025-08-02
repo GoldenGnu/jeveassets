@@ -116,8 +116,8 @@ import net.nikr.eve.jeveasset.i18n.TabsStockpile;
 import net.nikr.eve.jeveasset.io.local.EveFittingReader;
 import net.nikr.eve.jeveasset.io.local.SettingsReader;
 import net.nikr.eve.jeveasset.io.local.SettingsWriter;
-import net.nikr.eve.jeveasset.io.local.StockpileDataReader;
-import net.nikr.eve.jeveasset.io.local.StockpileDataWriter;
+import net.nikr.eve.jeveasset.io.local.StockpileReader;
+import net.nikr.eve.jeveasset.io.local.StockpileWriter;
 import net.nikr.eve.jeveasset.io.local.text.TextImportType;
 import net.nikr.eve.jeveasset.io.shared.DesktopUtil.HelpLink;
 
@@ -1387,7 +1387,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		if (importText == null) {
 			return; //Cancel
 		}
-		List<Stockpile> stockpiles = StockpileDataReader.load(importText);
+		List<Stockpile> stockpiles = StockpileReader.load(importText);
 		if (stockpiles != null) {
 			importStockpiles(stockpiles);
 		} else {
@@ -1542,7 +1542,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 	private void exportText() {
 		List<Stockpile> stockpiles = stockpileSelectionDialog.show(getShownStockpiles(), Settings.get().getStockpiles(), TabsStockpile.get().showHidden(), false);
 		if (stockpiles != null) {
-			String json = StockpileDataWriter.save(stockpiles);
+			String json = StockpileWriter.save(stockpiles);
 			if (json != null) {
 				jTextDialog.setLineWrap(true);
 				jTextDialog.exportText(json);
