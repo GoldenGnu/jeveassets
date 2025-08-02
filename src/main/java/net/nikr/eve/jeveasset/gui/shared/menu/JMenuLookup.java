@@ -652,7 +652,7 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 			public Set<String> getLinks(MenuData<?> menuData) {
 				Set<String> urls = new HashSet<>();
 				for (int corporationID : menuData.getCorporationIDs()) {
-					urls.add("https://www.fuzzwork.co.uk/lpstore/sell/10000002/" + corporationID);
+					urls.add("https://www.fuzzwork.co.uk/lpstore/sell/10000002/" + corporationID + "/withblueprints");
 				}
 				return urls;
 			}
@@ -667,7 +667,7 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 			public Set<String> getLinks(MenuData<?> menuData) {
 				Set<String> urls = new HashSet<>();
 				for (int corporationID : menuData.getCorporationIDs()) {
-					urls.add("https://www.fuzzwork.co.uk/lpstore/buy/10000002/" + corporationID);
+					urls.add("https://www.fuzzwork.co.uk/lpstore/buy/10000002/" + corporationID + "/withblueprints");
 				}
 				return urls;
 			}

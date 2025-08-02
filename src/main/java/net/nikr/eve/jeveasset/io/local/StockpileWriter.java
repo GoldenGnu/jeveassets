@@ -43,12 +43,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-public class StockpileDataWriter extends AbstractBackup {
+public class StockpileWriter extends AbstractBackup {
 
-	private static final Logger LOG = LoggerFactory.getLogger(StockpileDataWriter.class);
+	private static final Logger LOG = LoggerFactory.getLogger(StockpileWriter.class);
 
 	public static String save(List<Stockpile> stockpiles) {
-		StockpileDataWriter writer = new StockpileDataWriter();
+		StockpileWriter writer = new StockpileWriter();
 		return writer.write(stockpiles);
 	}
 
