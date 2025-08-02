@@ -113,7 +113,7 @@ import net.nikr.eve.jeveasset.gui.tabs.values.Value;
 import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.i18n.TabsTracker;
 import net.nikr.eve.jeveasset.io.local.SettingsReader;
-import net.nikr.eve.jeveasset.io.local.TrackerDataReader;
+import net.nikr.eve.jeveasset.io.local.TrackerReader;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import net.nikr.eve.jeveasset.io.shared.FileUtil;
 import org.jfree.chart.ChartMouseEvent;
@@ -1941,7 +1941,7 @@ public class TrackerTab extends JMainTabSecondary {
 					trackerData = SettingsReader.loadTracker(file.getAbsolutePath());
 					break;
 				case "json":
-					trackerData = TrackerDataReader.load(file.getAbsolutePath(), false);
+					trackerData = TrackerReader.load(file.getAbsolutePath(), false);
 					break;
 				default:
 					trackerData = null;

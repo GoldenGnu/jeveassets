@@ -30,8 +30,8 @@ import java.util.TreeSet;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import net.nikr.eve.jeveasset.CliOptions;
 import net.nikr.eve.jeveasset.gui.tabs.values.Value;
-import net.nikr.eve.jeveasset.io.local.TrackerDataReader;
-import net.nikr.eve.jeveasset.io.local.TrackerDataWriter;
+import net.nikr.eve.jeveasset.io.local.TrackerReader;
+import net.nikr.eve.jeveasset.io.local.TrackerWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -73,7 +73,7 @@ public class TrackerData {
 	}
 
 	public static void load() {
-		Map<String, List<Value>> trackerData = TrackerDataReader.load();
+		Map<String, List<Value>> trackerData = TrackerReader.load();
 		TrackerData.set(trackerData);
 	}
 
@@ -224,7 +224,7 @@ public class TrackerData {
 
 			LOG.info("Saving tracker data: " + msg);
 			TrackerData.readLock();
-			TrackerDataWriter.save();
+			TrackerWriter.save();
 			TrackerData.readUnlock();
 			saveQueueRemove();
 			LOG.debug("Tracker data saved in: " + (System.currentTimeMillis() - before) + "ms");
