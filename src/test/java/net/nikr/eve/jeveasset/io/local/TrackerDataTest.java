@@ -96,14 +96,14 @@ public class TrackerDataTest extends TestUtil {
 	}
 
 	private void testWriteRead(final Map<String, List<Value>> out) {
-		TrackerDataWriter.save(filename, out, false);
+		TrackerWriter.save(filename, out, false);
 		read(out, filename);
 		File file = new File(filename);
 		file.delete();
 	}
 
 	private void read(final Map<String, List<Value>> out, String filename) {
-		final Map<String, List<Value>> in = TrackerDataReader.load(filename, false);
+		final Map<String, List<Value>> in = TrackerReader.load(filename, false);
 		assertThat(in.keySet(), equalTo(out.keySet()));
 		for (String key : in.keySet()) {
 			List<Value> outValues = out.get(key);
