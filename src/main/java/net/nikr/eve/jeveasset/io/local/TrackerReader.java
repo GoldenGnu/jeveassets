@@ -45,16 +45,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-public class TrackerDataReader extends AbstractBackup {
+public class TrackerReader extends AbstractBackup {
 
-	private static final Logger LOG = LoggerFactory.getLogger(TrackerDataReader.class);
+	private static final Logger LOG = LoggerFactory.getLogger(TrackerReader.class);
 
 	public static Map<String, List<Value>> load() {
 		return load(FileUtil.getPathTrackerData(), true);
 	}
 
 	public static Map<String, List<Value>> load(String filename, boolean backup) {
-		TrackerDataReader reader = new TrackerDataReader();
+		TrackerReader reader = new TrackerReader();
 		return reader.read(filename, backup);
 	}
 
