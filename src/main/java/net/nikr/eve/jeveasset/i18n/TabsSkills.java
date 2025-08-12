@@ -24,7 +24,6 @@ package net.nikr.eve.jeveasset.i18n;
 import java.util.Locale;
 import uk.me.candle.translations.Bundle;
 
-
 public abstract class TabsSkills extends Bundle {
 
 	public static TabsSkills get() {
@@ -36,9 +35,18 @@ public abstract class TabsSkills extends Bundle {
 	}
 
 	public abstract String skills();
+
 	public abstract String columnSkill();
+
 	public abstract String columnGroup();
+
 	public abstract String columnCharacter();
+
 	public abstract String columnActive();
+
 	public abstract String columnTrained();
+
+	public abstract String columnTotalSp();
+
+	public abstract String columnUnallocatedSp();
 }
