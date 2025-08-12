@@ -70,8 +70,19 @@ import net.nikr.eve.jeveasset.gui.tabs.tree.TreeTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.values.Value;
 import net.nikr.eve.jeveasset.gui.tabs.values.ValueTableFormat;
 
-
 public class TableFormatFactory {
+	// Generic creators to allow tabs to construct format adaptors for their own
+	// enums
+	public static <T extends Enum<T> & EnumTableColumn<Q>, Q> EnumTableFormatAdaptor<T, Q> create(
+			final Class<T> enumClass) {
+		return new EnumTableFormatAdaptor<>(enumClass);
+	}
+
+	public static <T extends Enum<T> & EnumTableColumn<Q>, Q> EnumTableFormatAdaptor<T, Q> create(
+			final Class<T> enumClass, final java.util.List<EnumTableColumn<Q>> extra) {
+		return new EnumTableFormatAdaptor<>(enumClass, extra);
+	}
+
 	public static EnumTableFormatAdaptor<AccountTableFormat, OwnerType> accountTableFormat() {
 		return new EnumTableFormatAdaptor<>(AccountTableFormat.class);
 	}
@@ -84,7 +95,7 @@ public class TableFormatFactory {
 		return new EnumTableFormatAdaptor<>(ColorsTableFormat.class);
 	}
 
-	//Extended
+	// Extended
 	public static EnumTableFormatAdaptor<ContractsTableFormat, MyContractItem> contractsTableFormat() {
 		return new EnumTableFormatAdaptor<>(ContractsTableFormat.class);
 	}
@@ -105,32 +116,36 @@ public class TableFormatFactory {
 		return new EnumTableFormatAdaptor<>(JournalTableFormat.class);
 	}
 
-	//Extended
+	// Extended
 	public static EnumTableFormatAdaptor<LoadoutTableFormat, Loadout> loadoutTableFormat() {
-		return new EnumTableFormatAdaptor<>(LoadoutTableFormat.class, Arrays.asList(LoadoutExtendedTableFormat.values()));
+		return new EnumTableFormatAdaptor<>(LoadoutTableFormat.class,
+				Arrays.asList(LoadoutExtendedTableFormat.values()));
 	}
 
 	public static EnumTableFormatAdaptor<MarketTableFormat, MyMarketOrder> marketTableFormat() {
 		return new EnumTableFormatAdaptor<>(MarketTableFormat.class);
 	}
 
-	//Extended
+	// Extended
 	public static EnumTableFormatAdaptor<MaterialTableFormat, Material> materialTableFormat() {
-		return new EnumTableFormatAdaptor<>(MaterialTableFormat.class, Arrays.asList(MaterialExtendedTableFormat.values()));
+		return new EnumTableFormatAdaptor<>(MaterialTableFormat.class,
+				Arrays.asList(MaterialExtendedTableFormat.values()));
 	}
 
 	public static EnumTableFormatAdaptor<OverviewTableFormat, Overview> overviewTableFormat() {
 		return new EnumTableFormatAdaptor<>(OverviewTableFormat.class);
 	}
 
-	//Extended
+	// Extended
 	public static EnumTableFormatAdaptor<ReprocessedTableFormat, ReprocessedInterface> reprocessedTableFormat() {
-		return new EnumTableFormatAdaptor<>(ReprocessedTableFormat.class, Arrays.asList(ReprocessedExtendedTableFormat.values()));
+		return new EnumTableFormatAdaptor<>(ReprocessedTableFormat.class,
+				Arrays.asList(ReprocessedExtendedTableFormat.values()));
 	}
 
-	//Extended
+	// Extended
 	public static EnumTableFormatAdaptor<StockpileTableFormat, Stockpile.StockpileItem> stockpileTableFormat() {
-		return new EnumTableFormatAdaptor<>(StockpileTableFormat.class, Arrays.asList(StockpileExtendedTableFormat.values()));
+		return new EnumTableFormatAdaptor<>(StockpileTableFormat.class,
+				Arrays.asList(StockpileExtendedTableFormat.values()));
 	}
 
 	public static EnumTableFormatAdaptor<TrackerSkillPointsFilterTableFormat, TrackerSkillPointFilter> trackerSkillPointsFilterTableFormat() {

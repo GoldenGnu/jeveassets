@@ -150,7 +150,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import uk.me.candle.eve.pricing.options.LocationType;
 
-
 public final class SettingsReader extends AbstractXmlReader<Boolean> {
 
 	public static final int SETTINGS_VERSION = 2;
@@ -275,7 +274,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		if (!element.getNodeName().equals("settings")) {
 			throw new XmlException("Wrong root element name.");
 		}
-		//Tracker Data
+		// Tracker Data
 		NodeList trackerDataNodes = element.getElementsByTagName("trackerdata");
 		if (trackerDataNodes.getLength() == 1) {
 			Element trackerDataElement = (Element) trackerDataNodes.item(0);
@@ -288,7 +287,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		if (!element.getNodeName().equals("settings")) {
 			throw new XmlException("Wrong root element name.");
 		}
-		//Stockpiles
+		// Stockpiles
 		List<Stockpile> stockpiles = new ArrayList<>();
 		NodeList stockpilesNodes = element.getElementsByTagName("stockpiles");
 		if (stockpilesNodes.getLength() == 1) {
@@ -302,7 +301,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		if (!element.getNodeName().equals("settings")) {
 			throw new XmlException("Wrong root element name.");
 		}
-		//Routing
+		// Routing
 		Map<String, RouteResult> map = new HashMap<>();
 		Element routingElement = getNodeOptional(element, "routingsettings");
 		if (routingElement != null) {
@@ -316,238 +315,244 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			throw new XmlException("Wrong root element name.");
 		}
 
-		//Manufacturing Prices
+		// Manufacturing Prices
 		Element manufacturingElement = getNodeOptional(element, "manufacturing");
 		if (manufacturingElement != null) {
 			parseManufacturingPriceSettings(manufacturingElement, settings);
 		}
 
-		//Price History
+		// Price History
 		Element priceHistoryElement = getNodeOptional(element, "pricehistory");
 		if (priceHistoryElement != null) {
 			parsePriceHistorySettings(priceHistoryElement, settings);
 		}
 
-		//Faction Warfare System Owners
+		// Faction Warfare System Owners
 		Element factionWarfareSystemOwnersElement = getNodeOptional(element, "factionwarfaresystemowners");
 		if (factionWarfareSystemOwnersElement != null) {
 			parseFactionWarfareSystemOwners(factionWarfareSystemOwnersElement, settings);
 		}
 
-		//Color Settings
+		// Color Settings
 		Element colorSettingsElement = getNodeOptional(element, "colorsettings");
 		if (colorSettingsElement != null) {
 			parseColorSettings(colorSettingsElement, settings);
 		}
 
-		//Sound Settings
+		// Sound Settings
 		Element soundSettingsElement = getNodeOptional(element, "soundsettings");
 		if (soundSettingsElement != null) {
 			parseSoundSettings(soundSettingsElement, settings);
 		}
 
-		//Tracker Settings
+		// Tracker Settings
 		Element trackerSettingsElement = getNodeOptional(element, "trackersettings");
 		if (trackerSettingsElement != null) {
 			parseTrackerSettings(trackerSettingsElement, settings);
 		}
 
-		//Show Tools
+		// Show Tools
 		Element showToolsElement = getNodeOptional(element, "showtools");
 		if (showToolsElement != null) {
 			parseShowToolsNodes(showToolsElement, settings);
 		}
 
-		//Outbid
+		// Outbid
 		Element marketOrderOutbidElement = getNodeOptional(element, "marketorderoutbid");
 		if (marketOrderOutbidElement != null) {
 			parseMarketOrderOutbidNodes(marketOrderOutbidElement, settings);
 		}
 
-		//Routing
+		// Routing
 		Element routingElement = getNodeOptional(element, "routingsettings");
 		if (routingElement != null) {
 			parseRoutingSettings(routingElement, settings);
 		}
 
-		//Tags - Must be loaded before stockpiles (and everything else that uses tags)
+		// Tags - Must be loaded before stockpiles (and everything else that uses tags)
 		Element tagsElement = getNodeOptional(element, "tags");
 		if (tagsElement != null) {
 			parseTags(tagsElement, settings);
 		}
 
-		//Owners
+		// Owners
 		Element ownersElement = getNodeOptional(element, "owners");
 		if (ownersElement != null) {
 			parseOwners(ownersElement, settings);
 		}
 
-		//Tracker Data
+		// Tracker Data
 		Element trackerDataElement = getNodeOptional(element, "trackerdata");
 		if (trackerDataElement != null) {
 			Map<String, List<Value>> trackerData = parseTrackerData(trackerDataElement);
 			TrackerData.set(trackerData);
 		}
 
-		//Tracker Data
+		// Tracker Data
 		Element trackerNoteElement = getNodeOptional(element, "trackernotes");
 		if (trackerNoteElement != null) {
 			parseTrackerNotes(trackerNoteElement, settings);
 		}
 
-		//Tracker Filters
+		// Tracker Filters
 		Element trackerFilterElement = getNodeOptional(element, "trackerfilters");
 		if (trackerFilterElement != null) {
 			parseTrackerFilters(trackerFilterElement, settings);
 		}
 
-		//Asset Settings
+		// Asset Settings
 		Element assetSettingsElement = getNodeOptional(element, "assetsettings");
 		if (assetSettingsElement != null) {
 			parseAssetSettings(assetSettingsElement, settings);
 		}
 
-		//Stockpiles
+		// Stockpiles
 		Element stockpilesElement = getNodeOptional(element, "stockpiles");
 		if (stockpilesElement != null) {
 			parseStockpiles(stockpilesElement, settings.getStockpiles(), settings.getStockpileGroupSettings());
 		}
 
-		//Stockpile Groups
+		// Stockpile Groups
 		Element stockpileGroupsElement = getNodeOptional(element, "stockpilegroups");
 		if (stockpileGroupsElement != null) {
 			parseStockpileGroups(stockpileGroupsElement, settings);
 		}
 
-		//Export Settings
-		//Legacy support for 6.8.0 and later
-		//TODO: Remove support at some future date
+		// Export Settings
+		// Legacy support for 6.8.0 and later
+		// TODO: Remove support at some future date
 		Element exportElementLegacy = getNodeOptional(element, "csvexport");
 		if (exportElementLegacy != null) {
 			parseExportSettingsLegacy(exportElementLegacy, settings);
 		}
 
-		//Export Settings
+		// Export Settings
 		Element exportElement = getNodeOptional(element, "exports");
 		if (exportElement != null) {
 			parseExportSettings(exportElement, settings);
 		}
 
-		//Import Settings
+		// Import Settings
 		Element importElement = getNodeOptional(element, "imports");
 		if (importElement != null) {
 			parseImportSettings(importElement, settings);
 		}
 
-		//Overview
+		// Overview
 		Element overviewElement = getNodeOptional(element, "overview");
 		if (overviewElement != null) {
 			parseOverview(overviewElement, settings);
 		}
 
-		//Window
+		// Window
 		Element windowElement = getNodeOptional(element, "window");
 		if (windowElement != null) {
 			parseWindow(windowElement, settings);
 		}
 
-		//Reprocessing
+		// Reprocessing
 		Element reprocessingElement = getNodeOptional(element, "reprocessing");
 		if (reprocessingElement != null) {
 			parseReprocessing(reprocessingElement, settings);
 		}
 
-		//UserPrices
+		// UserPrices
 		Element userPriceElement = getNode(element, "userprices");
 		parseUserPrices(userPriceElement, settings);
 
-		//User Item Names
+		// User Item Names
 		Element userItemNameElement = getNodeOptional(element, "itemmames");
 		if (userItemNameElement != null) {
 			parseUserItemNames(userItemNameElement, settings);
 		}
 
-		//Eve Item Names
+		// Eve Item Names
 		Element eveNameElement = getNodeOptional(element, "evenames");
 		if (eveNameElement != null) {
 			parseEveNames(eveNameElement, settings);
 		}
 
-		//PriceDataSettings
+		// PriceDataSettings
 		Element priceDataSettingsElement = getNode(element, "marketstat");
 		parsePriceDataSettings(priceDataSettingsElement, settings);
 
-		//MarketOrdersSettings
+		// MarketOrdersSettings
 		Element marketOrdersSettingsElement = getNodeOptional(element, "marketorderssettings");
 		if (marketOrdersSettingsElement != null) {
 			parseMarketOrdersSettings(marketOrdersSettingsElement, settings);
 		}
 
-		//Flags
+		// Flags
 		Element flagsElement = getNode(element, "flags");
 		parseFlags(flagsElement, settings);
 
-		//Table Changes
+		// Table Changes
 		Element tableChangesElement = getNodeOptional(element, "tablechanges");
 		if (tableChangesElement != null) {
 			parseTableChanges(tableChangesElement, settings);
 		}
 
-		//Table Formulas (Must be loaded before filters)
+		// Table Formulas (Must be loaded before filters)
 		Element tableFormulasElement = getNodeOptional(element, "tableformulas");
 		if (tableFormulasElement != null) {
 			parseTableFormulas(tableFormulasElement, settings);
 		}
 
-		//Table Jumps (Must be loaded before filters)
+		// Table Jumps (Must be loaded before filters)
 		Element tableJumpsElement = getNodeOptional(element, "tablejumps");
 		if (tableJumpsElement != null) {
 			parseTableJumps(tableJumpsElement, settings);
 		}
 
-		//Table Filters (Must be loaded before Asset Filters)
+		// Skill Plans
+		Element skillPlansElement = getNodeOptional(element, "skillplans");
+		if (skillPlansElement != null) {
+			parseSkillPlans(skillPlansElement, settings);
+		}
+
+		// Table Filters (Must be loaded before Asset Filters)
 		Element tablefiltersElement = getNodeOptional(element, "tablefilters");
 		if (tablefiltersElement != null) {
 			parseTableFilters(tablefiltersElement, settings);
 		}
 
-		//Current Table Filters (Must be loaded before Asset Filters)
+		// Current Table Filters (Must be loaded before Asset Filters)
 		Element currenttablefiltersElement = getNodeOptional(element, "currenttablefilters");
 		if (currenttablefiltersElement != null) {
 			parseCurrentTableFilters(currenttablefiltersElement, settings);
 		}
 
-		//Asset Filters
+		// Asset Filters
 		Element filtersElement = getNodeOptional(element, "filters");
 		if (filtersElement != null) {
 			parseAssetFilters(filtersElement, settings);
 		}
 
-		//Table Columns
+		// Table Columns
 		Element tablecolumnsElement = getNodeOptional(element, "tablecolumns");
 		if (tablecolumnsElement != null) {
 			parseTableColumns(tablecolumnsElement, settings);
 		}
 
-		//Table Columns Width
+		// Table Columns Width
 		Element tableColumnsWidthElement = getNodeOptional(element, "tablecolumnswidth");
 		if (tableColumnsWidthElement != null) {
 			parseTableColumnsWidth(tableColumnsWidthElement, settings);
 		}
 
-		//Table Resize
+		// Table Resize
 		Element tableResizeElement = getNodeOptional(element, "tableresize");
 		if (tableResizeElement != null) {
 			parseTableResize(tableResizeElement, settings);
 		}
 
-		//Table Views
+		// Table Views
 		Element tableViewsElement = getNodeOptional(element, "tableviews");
 		if (tableViewsElement != null) {
 			parseTableViews(tableViewsElement, settings);
 		}
 
-		//Asset added
+		// Asset added
 		Element assetaddedElement = getNodeOptional(element, "assetadded");
 		if (assetaddedElement != null) {
 			parseAssetAdded(assetaddedElement);
@@ -561,17 +566,34 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		return settings;
 	}
 
+	private void parseSkillPlans(final Element element, final Settings settings) throws XmlException {
+		NodeList planNodes = element.getElementsByTagName("plan");
+		for (int i = 0; i < planNodes.getLength(); i++) {
+			Element planNode = (Element) planNodes.item(i);
+			String name = getString(planNode, "name");
+			Map<Integer, Integer> map = new HashMap<>();
+			NodeList reqNodes = planNode.getElementsByTagName("req");
+			for (int j = 0; j < reqNodes.getLength(); j++) {
+				Element reqNode = (Element) reqNodes.item(j);
+				int typeId = getInt(reqNode, "typeid");
+				int level = getInt(reqNode, "level");
+				map.put(typeId, level);
+			}
+			settings.getSkillPlans().put(name, map);
+		}
+	}
+
 	private void parseOwners(final Element element, final Settings settings) throws XmlException {
 		long ONE_DAY = 1000 * 60 * 60 * 24;
 		NodeList ownerNodeList = element.getElementsByTagName("owner");
 		int count = 1;
 		for (int i = 0; i < ownerNodeList.getLength(); i++) {
-			//Read Owner
+			// Read Owner
 			Element ownerNode = (Element) ownerNodeList.item(i);
 			String ownerName = getString(ownerNode, "name");
 			long ownerID = getLong(ownerNode, "id");
 			Date date = getDateOptional(ownerNode, "date");
-			if (date == null) { //1-30 days from now
+			if (date == null) { // 1-30 days from now
 				date = new Date(System.currentTimeMillis() + (ONE_DAY * count));
 				count++;
 				if (count > 30) {
@@ -587,17 +609,17 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		Map<String, List<Value>> trackerData = new HashMap<>();
 		NodeList tableNodeList = element.getElementsByTagName("owner");
 		for (int a = 0; a < tableNodeList.getLength(); a++) {
-			//Read Owner
+			// Read Owner
 			Element ownerNode = (Element) tableNodeList.item(a);
 			String owner = getString(ownerNode, "name");
-			//Ignore grand total, not used anymore
+			// Ignore grand total, not used anymore
 			if (owner.isEmpty()) {
 				continue;
 			}
-			//Data
+			// Data
 			NodeList dataNodeList = ownerNode.getElementsByTagName("data");
 			for (int b = 0; b < dataNodeList.getLength(); b++) {
-				//Read data
+				// Read data
 				Element dataNode = (Element) dataNodeList.item(b);
 				Date date = getDate(dataNode, "date");
 				double assetsTotal = getDouble(dataNode, "assets");
@@ -608,28 +630,28 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 				double manufacturing = getDoubleNotNull(dataNode, "manufacturing", 0.0);
 				double contractCollateral = getDoubleNotNull(dataNode, "contractcollateral", 0.0);
 				double contractValue = getDoubleNotNull(dataNode, "contractvalue", 0.0);
-				//Add data
+				// Add data
 				Value value = new Value(date);
-				//Balance
+				// Balance
 				NodeList balanceNodeList = dataNode.getElementsByTagName("balance");
-				for (int c = 0; c < balanceNodeList.getLength(); c++) { //New data
+				for (int c = 0; c < balanceNodeList.getLength(); c++) { // New data
 					Element balanceNode = (Element) balanceNodeList.item(c);
 					String id = getString(balanceNode, "id");
 					double balance = getDouble(balanceNode, "value");
 					value.addBalance(id, balance);
 				}
-				if (balanceNodeList.getLength() == 0) { //Old data
+				if (balanceNodeList.getLength() == 0) { // Old data
 					value.setBalanceTotal(balanceTotal);
 				}
-				//Assets
+				// Assets
 				NodeList assetNodeList = dataNode.getElementsByTagName("asset");
-				for (int c = 0; c < assetNodeList.getLength(); c++) { //New data
+				for (int c = 0; c < assetNodeList.getLength(); c++) { // New data
 					Element assetNode = (Element) assetNodeList.item(c);
 					AssetValue assetValue = parseAssetValue(assetNode);
 					double assets = getDouble(assetNode, "value");
 					value.addAssets(assetValue, assets);
 				}
-				if (assetNodeList.getLength() == 0) { //Old data
+				if (assetNodeList.getLength() == 0) { // Old data
 					value.setAssetsTotal(assetsTotal);
 				}
 				value.setEscrows(escrows);
@@ -664,7 +686,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 	private void parseTrackerNotes(final Element element, final Settings settings) throws XmlException {
 		NodeList noteNodeList = element.getElementsByTagName("trackernote");
 		for (int a = 0; a < noteNodeList.getLength(); a++) {
-			//Read Owner
+			// Read Owner
 			Element noteNode = (Element) noteNodeList.item(a);
 			String note = getString(noteNode, "note");
 			Date date = getDate(noteNode, "date");
@@ -688,7 +710,8 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			String id = getString(filterNode, "id");
 			boolean selected = getBoolean(filterNode, "selected");
 			long mimimum = getLong(filterNode, "mimimum");
-			settings.getTrackerSettings().getSkillPointFilters().put(id, new TrackerSkillPointFilter(id, selected, mimimum));
+			settings.getTrackerSettings().getSkillPointFilters().put(id,
+					new TrackerSkillPointFilter(id, selected, mimimum));
 		}
 	}
 
@@ -697,9 +720,10 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		TransactionProfitPrice transactionProfitPrice = TransactionProfitPrice.LASTEST;
 		if (haveAttribute(assetSettingsElement, "transactionprofitprice")) {
 			try {
-				transactionProfitPrice = TransactionProfitPrice.valueOf(getString(assetSettingsElement, "transactionprofitprice"));
+				transactionProfitPrice = TransactionProfitPrice
+						.valueOf(getString(assetSettingsElement, "transactionprofitprice"));
 			} catch (IllegalArgumentException ex) {
-				//No problem already set
+				// No problem already set
 			}
 		}
 		int transactionProfitMargin = getIntNotNull(assetSettingsElement, "transactionprofitmargin", 0);
@@ -720,18 +744,20 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 
 	/**
 	 * -!- `!´ IMPORTANT `!´ -!-
-	 * StockpileDataWriter and StockpileDataReader needs to be updated too - on any changes!!!
+	 * StockpileDataWriter and StockpileDataReader needs to be updated too - on any
+	 * changes!!!
 	 */
-	private void parseStockpiles(final Element stockpilesElement, final List<Stockpile> stockpiles, StockpileGroupSettings stockpileGroupSettings) throws XmlException {
+	private void parseStockpiles(final Element stockpilesElement, final List<Stockpile> stockpiles,
+			StockpileGroupSettings stockpileGroupSettings) throws XmlException {
 		NodeList stockpileNodes = stockpilesElement.getElementsByTagName("stockpile");
 		Map<String, Stockpile> stockpileMap = new HashMap<>();
 		Map<Stockpile, Map<String, Double>> subpileMap = new HashMap<>();
 		for (int a = 0; a < stockpileNodes.getLength(); a++) {
 			Element stockpileNode = (Element) stockpileNodes.item(a);
 			String name = getString(stockpileNode, "name");
-			Long stockpileID = getLongOptional(stockpileNode, "id"); //If null > get new id
-		//LEGACY
-			//Owners
+			Long stockpileID = getLongOptional(stockpileNode, "id"); // If null > get new id
+			// LEGACY
+			// Owners
 			List<Long> ownerIDs = new ArrayList<>();
 			if (haveAttribute(stockpileNode, "characterid")) {
 				long ownerID = getLong(stockpileNode, "characterid");
@@ -739,7 +765,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 					ownerIDs.add(ownerID);
 				}
 			}
-			//Containers
+			// Containers
 			List<StockpileContainer> containers = new ArrayList<>();
 			if (haveAttribute(stockpileNode, "container")) {
 				String container = getString(stockpileNode, "container");
@@ -747,7 +773,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 					containers.add(new StockpileContainer(container, false));
 				}
 			}
-			//Flags
+			// Flags
 			List<StockpileFlag> flags = new ArrayList<>();
 			if (haveAttribute(stockpileNode, "flagid")) {
 				int flagID = getInt(stockpileNode, "flagid");
@@ -755,28 +781,29 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 					flags.add(new StockpileFlag(flagID, true));
 				}
 			}
-			//Locations
+			// Locations
 			MyLocation location = null;
 			if (haveAttribute(stockpileNode, "locationid")) {
 				long locationID = getLong(stockpileNode, "locationid");
 				location = ApiIdConverter.getLocation(locationID);
 			}
 			boolean exclude = false;
-			//Include
+			// Include
 			Boolean inventory = getBooleanOptional(stockpileNode, "inventory");
 			Boolean sellOrders = getBooleanOptional(stockpileNode, "sellorders");
 			Boolean buyOrders = getBooleanOptional(stockpileNode, "buyorders");
 			Boolean jobs = getBooleanOptional(stockpileNode, "jobs");
 			List<StockpileFilter> filters = new ArrayList<>();
 			if (inventory != null && sellOrders != null && buyOrders != null && jobs != null) {
-				StockpileFilter filter = new StockpileFilter(location, exclude, flags, containers, ownerIDs, null, null, null, inventory, sellOrders, buyOrders, jobs, false, false, false, false, false, false);
+				StockpileFilter filter = new StockpileFilter(location, exclude, flags, containers, ownerIDs, null, null,
+						null, inventory, sellOrders, buyOrders, jobs, false, false, false, false, false, false);
 				filters.add(filter);
 			}
-		//NEW
+			// NEW
 			NodeList filterNodes = stockpileNode.getElementsByTagName("stockpilefilter");
 			for (int b = 0; b < filterNodes.getLength(); b++) {
 				Element filterNode = (Element) filterNodes.item(b);
-				//Include
+				// Include
 				boolean filterExclude = getBooleanNotNull(filterNode, "exclude", false);
 				Boolean filterSingleton = getBooleanOptional(filterNode, "singleton");
 				Integer filterJobsDaysLess = getIntOptional(filterNode, "jobsdaysless");
@@ -791,10 +818,10 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 				boolean filterBuyTransactions = getBooleanNotNull(filterNode, "buytransactions", false);
 				boolean filterSellTransactions = getBooleanNotNull(filterNode, "selltransactions", false);
 				boolean filterJobs = getBoolean(filterNode, "jobs");
-				//Location
+				// Location
 				long locationID = getLong(filterNode, "locationid");
 				location = ApiIdConverter.getLocation(locationID);
-				//Owners
+				// Owners
 				List<Long> filterOwnerIDs = new ArrayList<>();
 				NodeList ownerNodes = filterNode.getElementsByTagName("owner");
 				for (int c = 0; c < ownerNodes.getLength(); c++) {
@@ -802,7 +829,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 					long filterOwnerID = getLong(ownerNode, "ownerid");
 					filterOwnerIDs.add(filterOwnerID);
 				}
-				//Containers
+				// Containers
 				List<StockpileContainer> filterContainers = new ArrayList<>();
 				NodeList containerNodes = filterNode.getElementsByTagName("container");
 				for (int c = 0; c < containerNodes.getLength(); c++) {
@@ -811,7 +838,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 					boolean filterIncludeSubs = getBooleanNotNull(containerNode, "includecontainer", false);
 					filterContainers.add(new StockpileContainer(filterContainer, filterIncludeSubs));
 				}
-				//Flags
+				// Flags
 				List<StockpileFlag> filterFlags = new ArrayList<>();
 				NodeList flagNodes = filterNode.getElementsByTagName("flag");
 				for (int c = 0; c < flagNodes.getLength(); c++) {
@@ -820,10 +847,14 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 					boolean filterIncludeSubs = getBooleanNotNull(flagNode, "includecontainer", true);
 					filterFlags.add(new StockpileFlag(filterFlagID, filterIncludeSubs));
 				}
-				StockpileFilter stockpileFilter = new StockpileFilter(location, filterExclude, filterFlags, filterContainers, filterOwnerIDs, filterJobsDaysLess, filterJobsDaysMore, filterSingleton, filterInventory, filterSellOrders, filterBuyOrders, filterJobs, filterBuyTransactions, filterSellTransactions, filterSellingContracts, filterSoldBuy, filterBuyingContracts, filterBoughtContracts);
+				StockpileFilter stockpileFilter = new StockpileFilter(location, filterExclude, filterFlags,
+						filterContainers, filterOwnerIDs, filterJobsDaysLess, filterJobsDaysMore, filterSingleton,
+						filterInventory, filterSellOrders, filterBuyOrders, filterJobs, filterBuyTransactions,
+						filterSellTransactions, filterSellingContracts, filterSoldBuy, filterBuyingContracts,
+						filterBoughtContracts);
 				filters.add(stockpileFilter);
 			}
-		//SUBPILES
+			// SUBPILES
 			NodeList subpileNodes = stockpileNode.getElementsByTagName("subpile");
 			Map<String, Double> subpileNames = new HashMap<>();
 			for (int b = 0; b < subpileNodes.getLength(); b++) {
@@ -832,11 +863,11 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 				double minimum = getDouble(subpileNode, "minimum");
 				subpileNames.put(subpileName, minimum);
 			}
-		//MULTIPLIER
+			// MULTIPLIER
 			double multiplier = getDoubleNotNull(stockpileNode, "multiplier", 1);
-		//GROUP
-			String group = getStringOptional(stockpileNode, "stockpilegroup"); //Null is handled by settings
-		//MATCH ALL
+			// GROUP
+			String group = getStringOptional(stockpileNode, "stockpilegroup"); // Null is handled by settings
+			// MATCH ALL
 			boolean matchAll;
 			if (haveAttribute(stockpileNode, "contractsmatchall")) {
 				matchAll = getBoolean(stockpileNode, "contractsmatchall");
@@ -851,7 +882,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			stockpiles.add(stockpile);
 			subpileMap.put(stockpile, subpileNames);
 			stockpileMap.put(name, stockpile);
-		//ITEMS
+			// ITEMS
 			NodeList itemNodes = stockpileNode.getElementsByTagName("item");
 			for (int b = 0; b < itemNodes.getLength(); b++) {
 				Element itemNode = (Element) itemNodes.item(b);
@@ -865,9 +896,10 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 				boolean runs = getBooleanNotNull(itemNode, "runs", false);
 				boolean ignoreMultiplier = getBooleanNotNull(itemNode, "ignoremultiplier", false);
 				double countMinimum = getDouble(itemNode, "minimum");
-				if (typeID != 0) { //Ignore Total
+				if (typeID != 0) { // Ignore Total
 					Item item = ApiIdConverter.getItemUpdate(Math.abs(typeID), true);
-					StockpileItem stockpileItem = new StockpileItem(stockpile, item, typeID, countMinimum, runs, ignoreMultiplier, id);
+					StockpileItem stockpileItem = new StockpileItem(stockpile, item, typeID, countMinimum, runs,
+							ignoreMultiplier, id);
 					stockpile.add(stockpileItem);
 				}
 			}
@@ -917,7 +949,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		manufacturingSettings.setSystemID(system);
 		manufacturingSettings.setMaterialEfficiency(materialEfficiency);
 		manufacturingSettings.setTax(tax);
-		//Manufacturing Adjusted Prices
+		// Manufacturing Adjusted Prices
 		Map<Integer, Double> manufacturingPrices = new HashMap<>();
 		NodeList priceNodes = manufacturingElement.getElementsByTagName("price");
 		for (int a = 0; a < priceNodes.getLength(); a++) {
@@ -951,7 +983,8 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		}
 	}
 
-	private void parseFactionWarfareSystemOwners(Element factionWarfareSystemOwnersElement, Settings settings) throws XmlException {
+	private void parseFactionWarfareSystemOwners(Element factionWarfareSystemOwnersElement, Settings settings)
+			throws XmlException {
 		Date factionWarfareNextUpdate = getDateNotNull(factionWarfareSystemOwnersElement, "factionwarfarenextupdate");
 		settings.setFactionWarfareNextUpdate(factionWarfareNextUpdate);
 		NodeList systemNodes = factionWarfareSystemOwnersElement.getElementsByTagName("system");
@@ -974,7 +1007,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 				Color foreground = getColorOptional(colorNode, "foreground");
 				settings.getColorSettings().setBackground(entry, background);
 				settings.getColorSettings().setForeground(entry, foreground);
-			} catch (IllegalArgumentException ex ) {
+			} catch (IllegalArgumentException ex) {
 				LOG.error(ex.getMessage(), ex);
 			}
 		}
@@ -1001,12 +1034,12 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			String sound = getString(soundNode, "sound");
 			try {
 				settings.getSoundSettings().put(option, DefaultSound.valueOf(sound));
-			} catch (IllegalArgumentException ex ) {
+			} catch (IllegalArgumentException ex) {
 				File file = new File(FileUtil.getPathSounds(sound));
 				if (file.exists()) {
 					settings.getSoundSettings().put(option, new FileSound(file));
 				} else {
-					settings.getSoundSettings().put(option, DefaultSound.BEEP); //Fallback
+					settings.getSoundSettings().put(option, DefaultSound.BEEP); // Fallback
 				}
 			}
 		}
@@ -1033,8 +1066,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		if (displayType != null) {
 			try {
 				trackerSettings.setDisplayType(DisplayType.valueOf(displayType));
-			}
-			catch (IllegalArgumentException e) {
+			} catch (IllegalArgumentException e) {
 				LOG.warn("Could not parse trackersettigns displaytype: " + displayType);
 			}
 		}
@@ -1158,7 +1190,8 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 					stationsList.add(station);
 				}
 			}
-			map.put(name, new RouteResult(route, stationsMap, waypoints, algorithmName, algorithmTime, jumps, avoid, security));
+			map.put(name, new RouteResult(route, stationsMap, waypoints, algorithmName, algorithmTime, jumps, avoid,
+					security));
 		}
 	}
 
@@ -1255,7 +1288,8 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		int port = getInt(proxyElement, "port");
 		String username = getStringOptional(proxyElement, "username");
 		String password = getStringOptional(proxyElement, "password");
-		if (type != null && type != Proxy.Type.DIRECT && !address.isEmpty() && port != 0) { // check the proxy attributes are all there.
+		if (type != null && type != Proxy.Type.DIRECT && !address.isEmpty() && port != 0) { // check the proxy
+																							// attributes are all there.
 			settings.setProxyData(new ProxyData(address, type, port, username, password));
 		}
 	}
@@ -1295,30 +1329,31 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 	}
 
 	private void parsePriceDataSettings(final Element element, final Settings settings) throws XmlException {
-		PriceMode priceType = settings.getPriceDataSettings().getPriceType(); //Default
+		PriceMode priceType = settings.getPriceDataSettings().getPriceType(); // Default
 		if (haveAttribute(element, "defaultprice")) {
 			priceType = PriceMode.valueOf(getString(element, "defaultprice"));
 		}
 
-		PriceMode priceReprocessedType = settings.getPriceDataSettings().getPriceReprocessedType(); //Default
+		PriceMode priceReprocessedType = settings.getPriceDataSettings().getPriceReprocessedType(); // Default
 		if (haveAttribute(element, "defaultreprocessedprice")) {
 			priceReprocessedType = PriceMode.valueOf(getString(element, "defaultreprocessedprice"));
 		}
-		PriceMode priceManufacturingType = settings.getPriceDataSettings().getPriceManufacturingType(); //Default
+		PriceMode priceManufacturingType = settings.getPriceDataSettings().getPriceManufacturingType(); // Default
 		if (haveAttribute(element, "defaultmanufacturingprice")) {
 			priceManufacturingType = PriceMode.valueOf(getString(element, "defaultmanufacturingprice"));
 		}
 
-		//null = default
+		// null = default
 		Long locationID = null;
 		LocationType locationType = null;
-		//Backward compatibility
+		// Backward compatibility
 		if (haveAttribute(element, "regiontype")) {
-			RegionTypeBackwardCompatibility regionType = RegionTypeBackwardCompatibility.valueOf(getString(element, "regiontype"));
+			RegionTypeBackwardCompatibility regionType = RegionTypeBackwardCompatibility
+					.valueOf(getString(element, "regiontype"));
 			locationID = regionType.getRegion();
 			locationType = LocationType.REGION;
 		}
-		//Backward compatibility
+		// Backward compatibility
 		if (haveAttribute(element, "locations")) {
 			String string = getString(element, "locations");
 			String[] split = string.split(",");
@@ -1341,21 +1376,24 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			try {
 				priceSource = PriceSource.valueOf(getString(element, "pricesource"));
 			} catch (IllegalArgumentException ex) {
-				//In case a price source is removed: Use the default
+				// In case a price source is removed: Use the default
 			}
 		}
 		String janiceKey = getStringOptional(element, "janicekey");
-		//Validate
+		// Validate
 		if (!priceSource.isValid(locationType, locationID)) {
 			locationType = priceSource.getDefaultLocationType();
 			locationID = priceSource.getDefaultLocationID();
 		}
-		settings.setPriceDataSettings(new PriceDataSettings(locationType, locationID, priceSource, priceType, priceReprocessedType, priceManufacturingType, janiceKey));
+		settings.setPriceDataSettings(new PriceDataSettings(locationType, locationID, priceSource, priceType,
+				priceReprocessedType, priceManufacturingType, janiceKey));
 	}
 
 	private void parseMarketOrdersSettings(final Element element, final Settings settings) throws XmlException {
-		int expireWarnDays = getIntNotNull(element, "expirewarndays", settings.getMarketOrdersSettings().getExpireWarnDays());
-		int remainingWarnPercent = getIntNotNull(element, "remainingwarnpercent", settings.getMarketOrdersSettings().getRemainingWarnPercent());
+		int expireWarnDays = getIntNotNull(element, "expirewarndays",
+				settings.getMarketOrdersSettings().getExpireWarnDays());
+		int remainingWarnPercent = getIntNotNull(element, "remainingwarnpercent",
+				settings.getMarketOrdersSettings().getRemainingWarnPercent());
 		MarketOrdersSettings marketOrdersSettings = settings.getMarketOrdersSettings();
 		marketOrdersSettings.setExpireWarnDays(expireWarnDays);
 		marketOrdersSettings.setRemainingWarnPercent(remainingWarnPercent);
@@ -1394,7 +1432,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			List<SimpleColumn> columns = new ArrayList<>();
 			Element tableNode = (Element) tableNodeList.item(a);
 			String tableName = getString(tableNode, "name");
-			//Ignore old tables
+			// Ignore old tables
 			if (tableName.equals("marketorderssell") || tableName.equals("marketordersbuy")) {
 				continue;
 			}
@@ -1460,7 +1498,6 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		}
 	}
 
-
 	private void parseTableFormulas(final Element element, final Settings settings) throws XmlException {
 		NodeList formulasNodeList = element.getElementsByTagName("formulas");
 		for (int a = 0; a < formulasNodeList.getLength(); a++) {
@@ -1505,11 +1542,10 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		}
 	}
 
-
 	/***
 	 * Parse the table filters elements of the settings file.
 	 *
-	 * @param element The 'tablefilters' element of the xml.
+	 * @param element  The 'tablefilters' element of the xml.
 	 * @param settings The settings to be loaded to.
 	 * @throws XmlException
 	 */
@@ -1537,7 +1573,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 	/***
 	 * Parse the current table filters elements of the settings file.
 	 *
-	 * @param element The 'currenttablefilters' element of the xml.
+	 * @param element  The 'currenttablefilters' element of the xml.
 	 * @param settings The settings to be loaded to.
 	 * @throws XmlException
 	 */
@@ -1552,7 +1588,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			if (filterNodeList.getLength() == 1) {
 				Element filterNode = (Element) filterNodeList.item(0);
 
-				if(haveAttribute(filterNode, "show")) {
+				if (haveAttribute(filterNode, "show")) {
 					settings.getCurrentTableFiltersShown().put(tableName, getBoolean(filterNode, "show"));
 				} else {
 					settings.getCurrentTableFiltersShown().put(tableName, true);
@@ -1571,11 +1607,13 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 	}
 
 	/***
-	 * Parse a filter element of the settings file. This can be used on both table and current table filters.
+	 * Parse a filter element of the settings file. This can be used on both table
+	 * and current table filters.
 	 *
 	 * @param filterNode The node of the filter element of the xml.
-	 * @param tableName The name of the table the filter is for.
-	 * @return A list of filters if the element had one. If not an empty list is returned.
+	 * @param tableName  The name of the table the filter is for.
+	 * @return A list of filters if the element had one. If not an empty list is
+	 *         returned.
 	 * @throws XmlException
 	 */
 	private List<Filter> parseFilters(Element filterNode, String tableName, Settings settings) throws XmlException {
@@ -1600,7 +1638,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 	}
 
 	public static EnumTableColumn<?> getColumn(final String column, final String toolName, Settings settings) {
-		//Stockpile (Extended)
+		// Stockpile (Extended)
 		try {
 			if (toolName.equals(StockpileTab.NAME)) {
 				return StockpileExtendedTableFormat.valueOf(column);
@@ -1608,7 +1646,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		} catch (IllegalArgumentException exception) {
 
 		}
-		//Stockpile
+		// Stockpile
 		try {
 			if (toolName.equals(StockpileTab.NAME)) {
 				return StockpileTableFormat.valueOf(column);
@@ -1616,7 +1654,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		} catch (IllegalArgumentException exception) {
 
 		}
-		//Industry Jobs
+		// Industry Jobs
 		try {
 			if (toolName.equals(IndustryJobsTab.NAME)) {
 				return IndustryJobTableFormat.valueOf(column);
@@ -1624,7 +1662,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		} catch (IllegalArgumentException exception) {
 
 		}
-		//Slots
+		// Slots
 		try {
 			if (toolName.equals(SlotsTab.NAME)) {
 				return SlotsTableFormat.valueOf(column);
@@ -1632,7 +1670,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		} catch (IllegalArgumentException exception) {
 
 		}
-		//Market Orders
+		// Market Orders
 		try {
 			if (toolName.equals(MarketOrdersTab.NAME)) {
 				return MarketTableFormat.valueOf(column);
@@ -1640,7 +1678,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		} catch (IllegalArgumentException exception) {
 
 		}
-		//Journal
+		// Journal
 		try {
 			if (toolName.equals(JournalTab.NAME)) {
 				return JournalTableFormat.valueOf(column);
@@ -1648,7 +1686,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		} catch (IllegalArgumentException exception) {
 
 		}
-		//Transaction
+		// Transaction
 		try {
 			if (toolName.equals(TransactionTab.NAME)) {
 				return TransactionTableFormat.valueOf(column);
@@ -1656,7 +1694,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		} catch (IllegalArgumentException exception) {
 
 		}
-		//Assets
+		// Assets
 		try {
 			if (toolName.equals(AssetsTab.NAME)) {
 				return AssetTableFormat.valueOf(column);
@@ -1664,7 +1702,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		} catch (IllegalArgumentException exception) {
 
 		}
-		//Items
+		// Items
 		try {
 			if (toolName.equals(ItemsTab.NAME)) {
 				return ItemTableFormat.valueOf(column);
@@ -1672,7 +1710,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		} catch (IllegalArgumentException exception) {
 
 		}
-		//Overview
+		// Overview
 		try {
 			if (toolName.equals(OverviewTab.NAME)) {
 				return OverviewTableFormat.valueOf(column);
@@ -1680,7 +1718,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		} catch (IllegalArgumentException exception) {
 
 		}
-		//Contracts
+		// Contracts
 		try {
 			if (toolName.equals(ContractsTab.NAME)) {
 				return ContractsTableFormat.valueOf(column);
@@ -1688,7 +1726,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		} catch (IllegalArgumentException exception) {
 
 		}
-		//Isk
+		// Isk
 		try {
 			if (toolName.equals(ValueTableTab.NAME)) {
 				return ValueTableFormat.valueOf(column);
@@ -1696,7 +1734,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		} catch (IllegalArgumentException exception) {
 
 		}
-		//Tree
+		// Tree
 		try {
 			if (toolName.equals(TreeTab.NAME)) {
 				return TreeTableFormat.valueOf(column);
@@ -1704,7 +1742,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		} catch (IllegalArgumentException exception) {
 
 		}
-		//Skills
+		// Skills
 		try {
 			if (toolName.equals(SkillsTab.NAME)) {
 				return SkillsTableFormat.valueOf(column);
@@ -1712,7 +1750,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		} catch (IllegalArgumentException exception) {
 
 		}
-		//Mining
+		// Mining
 		try {
 			if (toolName.equals(MiningTab.NAME)) {
 				return MiningTableFormat.valueOf(column);
@@ -1720,7 +1758,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		} catch (IllegalArgumentException exception) {
 
 		}
-		//Extractions
+		// Extractions
 		try {
 			if (toolName.equals(ExtractionsTab.NAME)) {
 				return ExtractionsTableFormat.valueOf(column);
@@ -1728,7 +1766,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		} catch (IllegalArgumentException exception) {
 
 		}
-		//Reprocessed (Extended)
+		// Reprocessed (Extended)
 		try {
 			if (toolName.equals(ReprocessedTab.NAME)) {
 				return ReprocessedExtendedTableFormat.valueOf(column);
@@ -1736,7 +1774,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		} catch (IllegalArgumentException exception) {
 
 		}
-		//Reprocessed
+		// Reprocessed
 		try {
 			if (toolName.equals(ReprocessedTab.NAME)) {
 				return ReprocessedTableFormat.valueOf(column);
@@ -1744,7 +1782,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		} catch (IllegalArgumentException exception) {
 
 		}
-		//Price Changes 
+		// Price Changes
 		try {
 			if (toolName.equals(PriceChangesTab.NAME)) {
 				return PriceChangesTableFormat.valueOf(column);
@@ -1764,7 +1802,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 				}
 			}
 		}
-		//All
+		// All
 		if (column.equals("ALL") || column.equals("all")) {
 			return AllColumn.ALL;
 		}
@@ -1807,43 +1845,107 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 	}
 
 	private EnumTableColumn<?> convertColumn(final String column) {
-		if (column.equals("Name")) { return AssetTableFormat.NAME; }
-		if (column.equals("Group")) { return AssetTableFormat.GROUP; }
-		if (column.equals("Category")) { return AssetTableFormat.CATEGORY; }
-		if (column.equals("Owner")) { return AssetTableFormat.OWNER; }
-		if (column.equals("Count")) { return AssetTableFormat.COUNT; }
-		if (column.equals("Location")) { return AssetTableFormat.LOCATION; }
-		if (column.equals("Container")) { return AssetTableFormat.CONTAINER; }
-		if (column.equals("Flag")) { return AssetTableFormat.FLAG; }
-		if (column.equals("Price")) { return AssetTableFormat.PRICE; }
-		if (column.equals("Sell Min")) { return AssetTableFormat.PRICE_SELL_MIN; }
-		if (column.equals("Buy Max")) { return AssetTableFormat.PRICE_BUY_MAX; }
-		if (column.equals("Base Price")) { return AssetTableFormat.PRICE_BASE; }
-		if (column.equals("Value")) { return AssetTableFormat.VALUE; }
-		if (column.equals("Meta")) { return AssetTableFormat.META; }
-		if (column.equals("ID")) { return AssetTableFormat.ITEM_ID; }
-		if (column.equals("Volume")) { return AssetTableFormat.VOLUME; }
-		if (column.equals("Type ID")) { return AssetTableFormat.TYPE_ID; }
-		if (column.equals("Region")) { return AssetTableFormat.REGION; }
-		if (column.equals("Type Count")) { return AssetTableFormat.COUNT_TYPE; }
-		if (column.equals("Security")) { return AssetTableFormat.SECURITY; }
-		if (column.equals("Reprocessed")) { return AssetTableFormat.PRICE_REPROCESSED; }
-		if (column.equals("Reprocessed Value")) { return AssetTableFormat.VALUE_REPROCESSED; }
-		if (column.equals("Singleton")) { return AssetTableFormat.SINGLETON; }
-		if (column.equals("Total Volume")) { return AssetTableFormat.VOLUME_TOTAL; }
-		return AllColumn.ALL; //Fallback
+		if (column.equals("Name")) {
+			return AssetTableFormat.NAME;
+		}
+		if (column.equals("Group")) {
+			return AssetTableFormat.GROUP;
+		}
+		if (column.equals("Category")) {
+			return AssetTableFormat.CATEGORY;
+		}
+		if (column.equals("Owner")) {
+			return AssetTableFormat.OWNER;
+		}
+		if (column.equals("Count")) {
+			return AssetTableFormat.COUNT;
+		}
+		if (column.equals("Location")) {
+			return AssetTableFormat.LOCATION;
+		}
+		if (column.equals("Container")) {
+			return AssetTableFormat.CONTAINER;
+		}
+		if (column.equals("Flag")) {
+			return AssetTableFormat.FLAG;
+		}
+		if (column.equals("Price")) {
+			return AssetTableFormat.PRICE;
+		}
+		if (column.equals("Sell Min")) {
+			return AssetTableFormat.PRICE_SELL_MIN;
+		}
+		if (column.equals("Buy Max")) {
+			return AssetTableFormat.PRICE_BUY_MAX;
+		}
+		if (column.equals("Base Price")) {
+			return AssetTableFormat.PRICE_BASE;
+		}
+		if (column.equals("Value")) {
+			return AssetTableFormat.VALUE;
+		}
+		if (column.equals("Meta")) {
+			return AssetTableFormat.META;
+		}
+		if (column.equals("ID")) {
+			return AssetTableFormat.ITEM_ID;
+		}
+		if (column.equals("Volume")) {
+			return AssetTableFormat.VOLUME;
+		}
+		if (column.equals("Type ID")) {
+			return AssetTableFormat.TYPE_ID;
+		}
+		if (column.equals("Region")) {
+			return AssetTableFormat.REGION;
+		}
+		if (column.equals("Type Count")) {
+			return AssetTableFormat.COUNT_TYPE;
+		}
+		if (column.equals("Security")) {
+			return AssetTableFormat.SECURITY;
+		}
+		if (column.equals("Reprocessed")) {
+			return AssetTableFormat.PRICE_REPROCESSED;
+		}
+		if (column.equals("Reprocessed Value")) {
+			return AssetTableFormat.VALUE_REPROCESSED;
+		}
+		if (column.equals("Singleton")) {
+			return AssetTableFormat.SINGLETON;
+		}
+		if (column.equals("Total Volume")) {
+			return AssetTableFormat.VOLUME_TOTAL;
+		}
+		return AllColumn.ALL; // Fallback
 	}
 
 	private CompareType convertMode(final String compareMixed) {
 		String compare = compareMixed.toUpperCase();
-		if (compare.equals("MODE_EQUALS")) { return CompareType.EQUALS; }
-		if (compare.equals("MODE_CONTAIN")) { return CompareType.CONTAINS; }
-		if (compare.equals("MODE_CONTAIN_NOT")) { return CompareType.CONTAINS_NOT; }
-		if (compare.equals("MODE_EQUALS_NOT")) { return CompareType.EQUALS_NOT; }
-		if (compare.equals("MODE_GREATER_THAN")) { return CompareType.GREATER_THAN; }
-		if (compare.equals("MODE_LESS_THAN")) { return CompareType.LESS_THAN; }
-		if (compare.equals("MODE_GREATER_THAN_COLUMN")) { return CompareType.GREATER_THAN_COLUMN; }
-		if (compare.equals("MODE_LESS_THAN_COLUMN")) { return CompareType.LESS_THAN_COLUMN; }
+		if (compare.equals("MODE_EQUALS")) {
+			return CompareType.EQUALS;
+		}
+		if (compare.equals("MODE_CONTAIN")) {
+			return CompareType.CONTAINS;
+		}
+		if (compare.equals("MODE_CONTAIN_NOT")) {
+			return CompareType.CONTAINS_NOT;
+		}
+		if (compare.equals("MODE_EQUALS_NOT")) {
+			return CompareType.EQUALS_NOT;
+		}
+		if (compare.equals("MODE_GREATER_THAN")) {
+			return CompareType.GREATER_THAN;
+		}
+		if (compare.equals("MODE_LESS_THAN")) {
+			return CompareType.LESS_THAN;
+		}
+		if (compare.equals("MODE_GREATER_THAN_COLUMN")) {
+			return CompareType.GREATER_THAN_COLUMN;
+		}
+		if (compare.equals("MODE_LESS_THAN_COLUMN")) {
+			return CompareType.LESS_THAN_COLUMN;
+		}
 		return CompareType.CONTAINS;
 	}
 
@@ -1852,7 +1954,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 	 */
 	@Deprecated
 	private void parseExportSettingsLegacy(final Element element, final Settings settings) throws XmlException {
-		//Copy
+		// Copy
 		String copy = getStringOptional(element, "copy");
 		if (copy != null) {
 			settings.getCopySettings().setCopyDecimalSeparator(DecimalSeparator.valueOf(copy));
@@ -1863,16 +1965,16 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			exportFormat = ExportFormat.valueOf(getString(element, "exportformat"));
 		}
 
-		//CSV
+		// CSV
 		DecimalSeparator decimal = DecimalSeparator.valueOf(getString(element, "decimal"));
 		LineDelimiter line = LineDelimiter.valueOf(getString(element, "line"));
 
-		//SQL
+		// SQL
 		Boolean createTable = getBooleanOptional(element, "sqlcreatetable");
 		Boolean dropTable = getBooleanOptional(element, "sqldroptable");
 		Boolean extendedInserts = getBooleanOptional(element, "sqlextendedinserts");
 
-		//HTML
+		// HTML
 		Boolean htmlStyled = getBooleanOptional(element, "htmlstyled");
 		Boolean htmlIGB = getBooleanOptional(element, "htmligb");
 		Integer htmlRepeatHeader = getIntOptional(element, "htmlrepeatheader");
@@ -1888,7 +1990,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			String tableName = getString(tableNameNode, "tablename");
 			tableNames.put(tool, tableName);
 		}
-		//Shared
+		// Shared
 		NodeList fileNamesNodeList = element.getElementsByTagName("filenames");
 		for (int a = 0; a < fileNamesNodeList.getLength(); a++) {
 			Element tableNameNode = (Element) fileNamesNodeList.item(a);
@@ -1910,20 +2012,20 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			columnNames.put(tableName, columns);
 		}
 
-		//List of existing tools at the time when the data format was changed 6.8.0
+		// List of existing tools at the time when the data format was changed 6.8.0
 		List<String> toolNames = Arrays.asList("industryjobs", "overview", "marketorders", "loadouts", "stockpile",
 				"reprocessed", "contracts", "industryslots", "journal", "assets", "materials", "treeassets", "value",
 				"items", "transaction");
 		for (String toolName : toolNames) {
 			ExportSettings exportSettings = new ExportSettings(toolName);
-			//Common
+			// Common
 			if (exportFormat != null) {
 				exportSettings.setExportFormat(exportFormat);
 			}
-			//CSV
+			// CSV
 			exportSettings.setDecimalSeparator(decimal);
 			exportSettings.setCsvLineDelimiter(line);
-			//SQL
+			// SQL
 			if (createTable != null) {
 				exportSettings.setSqlCreateTable(createTable);
 			}
@@ -1933,7 +2035,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			if (extendedInserts != null) {
 				exportSettings.setSqlExtendedInserts(extendedInserts);
 			}
-			//HTML
+			// HTML
 			if (htmlStyled != null) {
 				exportSettings.setHtmlStyled(htmlStyled);
 			}
@@ -1943,7 +2045,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			if (htmlRepeatHeader != null) {
 				exportSettings.setHtmlRepeatHeader(htmlRepeatHeader);
 			}
-			//Lists
+			// Lists
 			if (tableNames.containsKey(toolName)) {
 				exportSettings.setSqlTableName(tableNames.get(toolName));
 			}
@@ -1964,7 +2066,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 	 * @throws XmlException
 	 */
 	private void parseExportSettings(final Element element, final Settings settings) throws XmlException {
-		//Copy
+		// Copy
 		String copy = getStringOptional(element, "copy");
 		if (copy != null) {
 			settings.getCopySettings().setCopyDecimalSeparator(DecimalSeparator.valueOf(copy));
@@ -1989,7 +2091,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 	private ExportSettings parseExportSetting(final Element exportNode, final String toolName) throws XmlException {
 		ExportSettings exportSetting = new ExportSettings(toolName);
 
-		//Common
+		// Common
 		String exportFormat = getStringOptional(exportNode, "exportformat");
 		if (exportFormat != null) {
 			exportSetting.setExportFormat(ExportFormat.valueOf(exportFormat));
@@ -2032,7 +2134,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			exportSetting.putTableExportColumns(columns);
 		}
 
-		//CSV
+		// CSV
 		Element csvElement = getNodeOptional(exportNode, "csv");
 		if (csvElement != null) {
 			DecimalSeparator decimal = DecimalSeparator.valueOf(getString(csvElement, "decimal"));
@@ -2042,7 +2144,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			exportSetting.setCsvLineDelimiter(line);
 		}
 
-		//SQL
+		// SQL
 		Element sqlElement = getNodeOptional(exportNode, "sql");
 		if (sqlElement != null) {
 			String tableName = getString(sqlElement, "tablename");
@@ -2058,7 +2160,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			exportSetting.setSqlExtendedInserts(extendedInserts);
 		}
 
-		//html
+		// html
 		Element htmlElement = getNodeOptional(exportNode, "html");
 		if (htmlElement != null) {
 			boolean htmlStyled = getBoolean(htmlElement, "styled");
@@ -2099,7 +2201,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			Date date = getDate(currentNode, "date");
 			assetAdded.put(itemID, date);
 		}
-		AddedData.getAssets().set(assetAdded); //Import from settings.xml
+		AddedData.getAssets().set(assetAdded); // Import from settings.xml
 	}
 
 	public enum RegionTypeBackwardCompatibility {
@@ -2132,8 +2234,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		HEIMATAR(10000030L),
 		MOLDEN_HEATH(10000028L),
 		DERELIK(10000001L),
-		KHANID(10000049L)
-		;
+		KHANID(10000049L);
 
 		private final Long region;
 
