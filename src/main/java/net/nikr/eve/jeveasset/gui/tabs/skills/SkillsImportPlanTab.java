@@ -1,6 +1,3 @@
-/*
- * Copyright 2009-2025 Contributors (see credits.txt)
- */
 package net.nikr.eve.jeveasset.gui.tabs.skills;
 
 import java.awt.datatransfer.DataFlavor;
@@ -34,7 +31,7 @@ import net.nikr.eve.jeveasset.gui.shared.components.JMainTabPrimary;
 import net.nikr.eve.jeveasset.i18n.TabsSkills;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 
-public class SkillPlanImportTab extends JMainTabPrimary {
+public class SkillsImportPlanTab extends JMainTabPrimary {
 
     public static final String NAME = "skillplanimport";
 
@@ -48,7 +45,7 @@ public class SkillPlanImportTab extends JMainTabPrimary {
     private final JList<String> jPlans;
     private final DefaultListModel<String> planListModel;
 
-    public SkillPlanImportTab(Program program) {
+    public SkillsImportPlanTab(Program program) {
         super(program, NAME, TabsSkills.get().skills() + " - Import Plan", Images.TOOL_SKILLS.getIcon(), true);
 
         JLabel nameLabel = new JLabel("Plan name");

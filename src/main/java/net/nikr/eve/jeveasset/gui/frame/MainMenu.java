@@ -247,6 +247,28 @@ public class MainMenu extends JMenuBar {
 		menuItem.setActionCommand(MainMenuAction.SLOTS.name());
 		menuItem.addActionListener(program);
 		submenu.add(menuItem);
+		// Skills
+		submenu = new JMenu(GuiFrame.get().skills());
+		submenu.setIcon(Images.TOOL_SKILLS.getIcon());
+		menu.add(submenu);
+
+		menuItem = new JMenuItem(GuiFrame.get().skills());
+		menuItem.setIcon(Images.TOOL_SKILLS.getIcon());
+		menuItem.setActionCommand(MainMenuAction.SKILLS.name());
+		menuItem.addActionListener(program);
+		submenu.add(menuItem);
+
+		menuItem = new JMenuItem("Skills - Overview");
+		menuItem.setIcon(Images.TOOL_SKILLS.getIcon());
+		menuItem.setActionCommand(MainMenuAction.SKILL_PLANS.name());
+		menuItem.addActionListener(program);
+		submenu.add(menuItem);
+
+		menuItem = new JMenuItem("Skills - Import Plan");
+		menuItem.setIcon(Images.EDIT_PASTE.getIcon());
+		menuItem.setActionCommand(MainMenuAction.SKILL_PLAN_IMPORT.name());
+		menuItem.addActionListener(program);
+		submenu.add(menuItem);
 		// Misc
 		submenu = new JMenu(GuiFrame.get().misc());
 		submenu.setIcon(Images.TOOL_ROUTING.getIcon());
@@ -273,24 +295,6 @@ public class MainMenu extends JMenuBar {
 		menuItem = new JMenuItem(GuiFrame.get().items());
 		menuItem.setIcon(Images.TOOL_ITEMS.getIcon());
 		menuItem.setActionCommand(MainMenuAction.ITEMS.name());
-		menuItem.addActionListener(program);
-		submenu.add(menuItem);
-
-		menuItem = new JMenuItem(GuiFrame.get().skills());
-		menuItem.setIcon(Images.TOOL_SKILLS.getIcon());
-		menuItem.setActionCommand(MainMenuAction.SKILLS.name());
-		menuItem.addActionListener(program);
-		submenu.add(menuItem);
-
-		menuItem = new JMenuItem("Skill Plans");
-		menuItem.setIcon(Images.TOOL_SKILLS.getIcon());
-		menuItem.setActionCommand(MainMenuAction.SKILL_PLANS.name());
-		menuItem.addActionListener(program);
-		submenu.add(menuItem);
-
-		menuItem = new JMenuItem("Import Skill Plan");
-		menuItem.setIcon(Images.EDIT_PASTE.getIcon());
-		menuItem.setActionCommand(MainMenuAction.SKILL_PLAN_IMPORT.name());
 		menuItem.addActionListener(program);
 		submenu.add(menuItem);
 
