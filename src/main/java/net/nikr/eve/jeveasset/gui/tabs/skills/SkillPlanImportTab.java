@@ -41,6 +41,7 @@ public class SkillPlanImportTab extends JMainTabPrimary {
     private final JTextField jName;
     private final JTextArea jText;
     private final JButton jPaste;
+    private final JButton jNew;
     private final JButton jSave;
     private final JButton jDelete;
     private final JButton jRename;
@@ -55,6 +56,7 @@ public class SkillPlanImportTab extends JMainTabPrimary {
         jText = new JTextArea(18, 80);
         JScrollPane scroll = new JScrollPane(jText);
         jPaste = new JButton("Paste from Clipboard", Images.EDIT_PASTE.getIcon());
+        jNew = new JButton("New", Images.EDIT_ADD.getIcon());
         jSave = new JButton("Save Plan", Images.FILTER_SAVE.getIcon());
         jDelete = new JButton("Delete Plan", Images.EDIT_DELETE.getIcon());
         jRename = new JButton("Rename Plan", Images.EDIT_EDIT.getIcon());
@@ -66,6 +68,7 @@ public class SkillPlanImportTab extends JMainTabPrimary {
         plansScroll.setPreferredSize(new java.awt.Dimension(220, 300));
 
         jPaste.addActionListener(e -> pasteFromClipboard());
+        jNew.addActionListener(e -> newPlan());
         jSave.addActionListener(e -> savePlan());
         jDelete.addActionListener(e -> deletePlan());
         jRename.addActionListener(e -> renamePlan());
@@ -94,6 +97,8 @@ public class SkillPlanImportTab extends JMainTabPrimary {
                                         .addComponent(jName, 200, 300, Integer.MAX_VALUE))
                                 .addComponent(scroll)
                                 .addGroup(layout.createSequentialGroup()
+                                        .addComponent(jNew, Program.getButtonsWidth(), Program.getButtonsWidth(),
+                                                Integer.MAX_VALUE)
                                         .addComponent(jPaste, Program.getButtonsWidth(), Program.getButtonsWidth(),
                                                 Integer.MAX_VALUE)
                                         .addComponent(jSave, Program.getButtonsWidth(), Program.getButtonsWidth(),
@@ -113,6 +118,8 @@ public class SkillPlanImportTab extends JMainTabPrimary {
                                                 Program.getButtonsHeight()))
                                 .addComponent(scroll)
                                 .addGroup(layout.createParallelGroup()
+                                        .addComponent(jNew, Program.getButtonsHeight(), Program.getButtonsHeight(),
+                                                Program.getButtonsHeight())
                                         .addComponent(jPaste, Program.getButtonsHeight(), Program.getButtonsHeight(),
                                                 Program.getButtonsHeight())
                                         .addComponent(jSave, Program.getButtonsHeight(), Program.getButtonsHeight(),
@@ -122,6 +129,13 @@ public class SkillPlanImportTab extends JMainTabPrimary {
                                         .addComponent(jDelete, Program.getButtonsHeight(), Program.getButtonsHeight(),
                                                 Program.getButtonsHeight()))));
 
+    }
+
+    private void newPlan() {
+        jPlans.clearSelection();
+        jName.setText("");
+        jText.setText("");
+        jName.requestFocusInWindow();
     }
 
     private void pasteFromClipboard() {
