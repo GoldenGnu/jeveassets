@@ -185,6 +185,18 @@ public class SkillsOverviewTab extends JMainTabSecondary {
 			for (Map.Entry<String, Map<Integer, Long>> entry : ownerSp.entrySet()) {
 				Row row = new Row(entry.getKey());
 				row.setOwnerSkillSp(entry.getValue());
+				// Populate Total SP and Unallocated SP for this character
+				OwnerType ownerType = null;
+				for (OwnerType ot : program.getOwnerTypes()) {
+					if (ot.getOwnerName().equals(entry.getKey())) {
+						ownerType = ot;
+						break;
+					}
+				}
+				if (ownerType != null) {
+					row.setTotalSp(ownerType.getTotalSkillPoints());
+					row.setUnallocatedSp(ownerType.getUnallocatedSkillPoints());
+				}
 				for (Map.Entry<String, Map<Integer, Integer>> plan : plans.entrySet()) {
 					double pct = computePlanPercent(entry.getValue(), plan.getValue());
 					row.planToPercent.put(plan.getKey(), Percent.create(pct));
@@ -214,7 +226,6 @@ public class SkillsOverviewTab extends JMainTabSecondary {
 			eventList.getReadWriteLock().writeLock().unlock();
 		}
 	}
-
 
 	private static class TotalComparator implements Comparator<Row> {
 		@Override
@@ -311,6 +322,25 @@ public class SkillsOverviewTab extends JMainTabSecondary {
 			return ownerSkillSp != null ? ownerSkillSp : new LinkedHashMap<Integer, Long>();
 		}
 
+		private Long totalSp;
+		private Integer unallocatedSp;
+
+		public void setTotalSp(Long totalSp) {
+			this.totalSp = totalSp;
+		}
+
+		public Long getTotalSp() {
+			return totalSp;
+		}
+
+		public void setUnallocatedSp(Integer unallocatedSp) {
+			this.unallocatedSp = unallocatedSp;
+		}
+
+		public Integer getUnallocatedSp() {
+			return unallocatedSp;
+		}
+
 		@Override
 		public Tags getTags() {
 			if (tags == null) {
@@ -348,6 +378,28 @@ public class SkillsOverviewTab extends JMainTabSecondary {
 			public Object getColumnValue(Row from) {
 				return from.getOwner();
 			}
+		},
+		TOTAL_SP(Long.class) {
+			@Override
+			public String getColumnName() {
+				return "Total SP";
+			}
+
+			@Override
+			public Object getColumnValue(Row from) {
+				return from.getTotalSp();
+			}
+		},
+		UNALLOCATED_SP(Integer.class) {
+			@Override
+			public String getColumnName() {
+				return "Unallocated SP";
+			}
+
+			@Override
+			public Object getColumnValue(Row from) {
+				return from.getUnallocatedSp();
+			}
 		};
 
 		private final Class<?> type;
@@ -366,7 +418,6 @@ public class SkillsOverviewTab extends JMainTabSecondary {
 			return EnumTableColumn.getComparator(type);
 		}
 	}
-
 
 	private static class PlanColumn implements EnumTableColumn<Row> {
 		private final String plan;
@@ -448,6 +499,3 @@ public class SkillsOverviewTab extends JMainTabSecondary {
 		}
 	}
 }
-
-
-
