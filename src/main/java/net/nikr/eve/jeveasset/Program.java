@@ -103,8 +103,8 @@ import net.nikr.eve.jeveasset.gui.tabs.prices.PriceHistoryTab;
 import net.nikr.eve.jeveasset.gui.tabs.reprocessed.ReprocessedTab;
 import net.nikr.eve.jeveasset.gui.tabs.routing.RoutingTab;
 import net.nikr.eve.jeveasset.gui.tabs.skills.SkillsTab;
-import net.nikr.eve.jeveasset.gui.tabs.skills.SkillPlansTab;
-import net.nikr.eve.jeveasset.gui.tabs.skills.SkillPlanImportTab;
+import net.nikr.eve.jeveasset.gui.tabs.skills.SkillsOverviewTab;
+import net.nikr.eve.jeveasset.gui.tabs.skills.SkillsImportPlanTab;
 import net.nikr.eve.jeveasset.gui.tabs.slots.SlotsTab;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileTab;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerTab;
@@ -174,8 +174,8 @@ public class Program implements ActionListener {
 	private ContractsTab contractsTab;
 	private TreeTab treeTab;
 	private SkillsTab skillsTab;
-	private SkillPlansTab skillPlansTab;
-	private SkillPlanImportTab skillPlanImportTab;
+	private SkillsOverviewTab skillPlansTab;
+	private SkillsImportPlanTab skillPlanImportTab;
 	private MiningTab miningTab;
 	private MiningGraphTab miningGraphTab;
 	private ExtractionsTab extractionsTab;
@@ -294,9 +294,9 @@ public class Program implements ActionListener {
 		SplashUpdater.setProgress(78);
 		LOG.info("Loading: Skills Tab");
 		skillsTab = new SkillsTab(this);
-		LOG.info("Loading: Skill Plans Tabs");
-		skillPlansTab = new SkillPlansTab(this);
-		skillPlanImportTab = new SkillPlanImportTab(this);
+		LOG.info("Loading: Skills Tabs");
+		skillPlansTab = new SkillsOverviewTab(this);
+		skillPlanImportTab = new SkillsImportPlanTab(this);
 		SplashUpdater.setProgress(79);
 		LOG.info("Loading: Mining Log Tab");
 		miningTab = new MiningTab(this);
@@ -919,11 +919,11 @@ public class Program implements ActionListener {
 		return reprocessedTab;
 	}
 
-	public net.nikr.eve.jeveasset.gui.tabs.skills.SkillPlansTab getSkillPlansTab() {
+	public net.nikr.eve.jeveasset.gui.tabs.skills.SkillsOverviewTab getSkillPlansTab() {
 		return skillPlansTab;
 	}
 
-	public net.nikr.eve.jeveasset.gui.tabs.skills.SkillPlanImportTab getSkillPlanImportTab() {
+	public net.nikr.eve.jeveasset.gui.tabs.skills.SkillsImportPlanTab getSkillPlanImportTab() {
 		return skillPlanImportTab;
 	}
 

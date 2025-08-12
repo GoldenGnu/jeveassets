@@ -1,23 +1,3 @@
-/*
- * Copyright 2009-2025 Contributors (see credits.txt)
- *
- * This file is part of jEveAssets.
- *
- * jEveAssets is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * jEveAssets is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with jEveAssets; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- */
-
 package net.nikr.eve.jeveasset.gui.tabs.skills;
 
 import ca.odell.glazedlists.EventList;
@@ -59,16 +39,16 @@ import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SkillPlansTab extends JMainTabSecondary {
+public class SkillsOverviewTab extends JMainTabSecondary {
 
     public static final String NAME = "skillplans";
-    private static final Logger LOG = LoggerFactory.getLogger(SkillPlansTab.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SkillsOverviewTab.class);
 
     // GUI
     private final JAutoColumnTable jTable;
 
     // Table
-    private final SkillPlansFilterControl filterControl;
+    private final SkillsOverviewFilterControl filterControl;
     private final DefaultEventTableModel<Row> tableModel;
     private final EventList<Row> eventList;
     private final FilterList<Row> filterList;
@@ -76,8 +56,8 @@ public class SkillPlansTab extends JMainTabSecondary {
     private final List<EnumTableColumn<Row>> dynamicColumns = new ArrayList<>();
     private final DefaultEventSelectionModel<Row> selectionModel;
 
-    public SkillPlansTab(Program program) {
-        super(program, NAME, TabsSkills.get().skills() + " - Plans", Images.TOOL_SKILLS.getIcon(), true);
+    public SkillsOverviewTab(Program program) {
+        super(program, NAME, TabsSkills.get().skills() + " - Overview", Images.TOOL_SKILLS.getIcon(), true);
 
         tableFormat = TableFormatFactory.create(SkillPlansTableFormat.class);
         eventList = EventListManager.create();
@@ -163,8 +143,8 @@ public class SkillPlansTab extends JMainTabSecondary {
         jTable.setSelectionModel(selectionModel);
         installTable(jTable);
         JScrollPane scrollPane = new JScrollPane(jTable);
-        filterControl = new SkillPlansFilterControl(sorted);
-        installTableTool(new SkillPlansTableMenu(), tableFormat, tableModel, jTable, filterControl, Row.class);
+        filterControl = new SkillsOverviewFilterControl(sorted);
+        installTableTool(new SkillsOverviewTableMenu(), tableFormat, tableModel, jTable, filterControl, Row.class);
 
         layout.setHorizontalGroup(
                 layout.createParallelGroup()
@@ -230,10 +210,10 @@ public class SkillPlansTab extends JMainTabSecondary {
             }
             eventList.add(total);
         } catch (Throwable t) {
-            LOG.error("SkillPlansTab.updateData failed: {}", t.getMessage(), t);
+            LOG.error("SkillsOverviewTab.updateData failed: {}", t.getMessage(), t);
             javax.swing.JOptionPane.showMessageDialog(program.getMainWindow().getFrame(),
-                    "Failed to build Skill Plans table. See log for details.",
-                    "Skill Plans", javax.swing.JOptionPane.ERROR_MESSAGE);
+                    "Failed to build Skills - Overview table. See log for details.",
+                    "Skills - Overview", javax.swing.JOptionPane.ERROR_MESSAGE);
         } finally {
             eventList.getReadWriteLock().writeLock().unlock();
         }
@@ -422,7 +402,7 @@ public class SkillPlansTab extends JMainTabSecondary {
         }
     }
 
-    private class SkillPlansTableMenu implements TableMenu<Row> {
+    private class SkillsOverviewTableMenu implements TableMenu<Row> {
         @Override
         public MenuData<Row> getMenuData() {
             return new MenuData<>(selectionModel.getSelected());
@@ -447,14 +427,14 @@ public class SkillPlansTab extends JMainTabSecondary {
         }
     }
 
-    private class SkillPlansFilterControl extends FilterControl<Row> {
-        public SkillPlansFilterControl(EventList<Row> exportEventList) {
+    private class SkillsOverviewFilterControl extends FilterControl<Row> {
+        public SkillsOverviewFilterControl(EventList<Row> exportEventList) {
             super(program.getMainWindow().getFrame(), NAME, tableFormat, eventList, exportEventList, filterList);
         }
 
         @Override
         public void saveSettings(final String msg) {
-            program.saveSettings("Skill Plans Table: " + msg);
+            program.saveSettings("Skills Overview Table: " + msg);
         }
     }
 }
