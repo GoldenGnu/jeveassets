@@ -390,7 +390,7 @@ public class SkillsOverviewTab extends JMainTabSecondary {
 				return from.getTotalSp();
 			}
 		},
-		UNALLOCATED_SP(Integer.class) {
+		UNALLOCATED_SP(Long.class) {
 			@Override
 			public String getColumnName() {
 				return "Unallocated SP";
@@ -398,7 +398,8 @@ public class SkillsOverviewTab extends JMainTabSecondary {
 
 			@Override
 			public Object getColumnValue(Row from) {
-				return from.getUnallocatedSp();
+				Integer value = from.getUnallocatedSp();
+				return value == null ? null : Long.valueOf(value.longValue());
 			}
 		};
 
