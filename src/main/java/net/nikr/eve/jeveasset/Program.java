@@ -103,6 +103,8 @@ import net.nikr.eve.jeveasset.gui.tabs.prices.PriceHistoryTab;
 import net.nikr.eve.jeveasset.gui.tabs.reprocessed.ReprocessedTab;
 import net.nikr.eve.jeveasset.gui.tabs.routing.RoutingTab;
 import net.nikr.eve.jeveasset.gui.tabs.skills.SkillsTab;
+import net.nikr.eve.jeveasset.gui.tabs.skills.SkillPlansTab;
+import net.nikr.eve.jeveasset.gui.tabs.skills.SkillPlanImportTab;
 import net.nikr.eve.jeveasset.gui.tabs.slots.SlotsTab;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileTab;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerTab;
@@ -122,27 +124,28 @@ import net.nikr.eve.jeveasset.io.shared.FileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 public class Program implements ActionListener {
 	private static final Logger LOG = LoggerFactory.getLogger(Program.class);
 
 	private enum ProgramAction {
 		TIMER
 	}
-	//Major.Minor.Bugfix [Release Candidate n] [BETA n] [DEV BUILD #n];
+
+	// Major.Minor.Bugfix [Release Candidate n] [BETA n] [DEV BUILD #n];
 	public static final String PROGRAM_VERSION = "8.0.4 DEV BUILD 1";
 	public static final String PROGRAM_NAME = "jEveAssets";
 	public static final String PROGRAM_HOMEPAGE = "https://eve.nikr.net/jeveasset";
-	public static final String PROGRAM_USER_AGENT = PROGRAM_NAME + "/" + PROGRAM_VERSION.replace(" ", "_") + " (nkr@niklaskr.dk)";
+	public static final String PROGRAM_USER_AGENT = PROGRAM_NAME + "/" + PROGRAM_VERSION.replace(" ", "_")
+			+ " (nkr@niklaskr.dk)";
 	private static final boolean PROGRAM_DEV_BUILD = false;
 
-	//Height
-	private static int height = 22; //Defaults to 22
+	// Height
+	private static int height = 22; // Defaults to 22
 
-	//GUI
+	// GUI
 	private MainWindow mainWindow;
 
-	//Dialogs
+	// Dialogs
 	private AccountManagerDialog accountManagerDialog;
 	private AboutDialog aboutDialog;
 	private ProfileDialog profileDialog;
@@ -150,7 +153,7 @@ public class Program implements ActionListener {
 	private UpdateDialog updateDialog;
 	private StructureUpdateDialog structureUpdateDialog;
 
-	//Tabs
+	// Tabs
 	private ValueRetroTab valueRetroTab;
 	private ValueTableTab valueTableTab;
 	private PriceHistoryTab priceHistoryTab;
@@ -171,19 +174,21 @@ public class Program implements ActionListener {
 	private ContractsTab contractsTab;
 	private TreeTab treeTab;
 	private SkillsTab skillsTab;
+	private SkillPlansTab skillPlansTab;
+	private SkillPlanImportTab skillPlanImportTab;
 	private MiningTab miningTab;
 	private MiningGraphTab miningGraphTab;
 	private ExtractionsTab extractionsTab;
 	private PriceChangesTab priceChangesTab;
 
-	//Misc
+	// Misc
 	private Updater updater;
 	private Timer timer;
 	private Updatable updatable;
 
 	private final Map<String, JMainTab> jMainTabs = new HashMap<>();
 
-	//Data
+	// Data
 	private final ProfileData profileData;
 	private final ProfileManager profileManager;
 	private final PriceDataGetter priceDataGetter;
@@ -191,36 +196,37 @@ public class Program implements ActionListener {
 
 	public Program() {
 		if (CliOptions.get().isDebug() || CliOptions.get().isEDTdebug()) {
-			LOG.info("ForceUpdate: {} NoUpdate: {} Debug: {} EDTDebug: {}", CliOptions.get().isForceUpdate(), CliOptions.get().isForceNoUpdate(), CliOptions.get().isDebug(), CliOptions.get().isEDTdebug());
+			LOG.info("ForceUpdate: {} NoUpdate: {} Debug: {} EDTDebug: {}", CliOptions.get().isForceUpdate(),
+					CliOptions.get().isForceNoUpdate(), CliOptions.get().isDebug(), CliOptions.get().isEDTdebug());
 			DetectEdtViolationRepaintManager.install();
 		}
-	//Load Static Data, Settings, Tracker Data, Added Data, Contract Prices
+		// Load Static Data, Settings, Tracker Data, Added Data, Contract Prices
 		init();
-	//Look and feel
+		// Look and feel
 		initLookAndFeel(Settings.get().getColorSettings().getLookAndFeelClass());
-		calcButtonsHeight(); //Must be done after setting the LAF
-	//Check for data/program updates
+		calcButtonsHeight(); // Must be done after setting the LAF
+		// Check for data/program updates
 		updater = new Updater();
 		localData = updater.getLocalData();
 		if (!isDevBuild()) {
 			update();
 		}
-	//Load profile data
+		// Load profile data
 		profileManager = new ProfileManager();
 		profileManager.searchProfile();
 		profileManager.loadActiveProfile();
 		profileData = new ProfileData(profileManager);
-		//Can not update profile data now - list needs to be empty doing creation...
-	//Load price data
+		// Can not update profile data now - list needs to be empty doing creation...
+		// Load price data
 		priceDataGetter = new PriceDataGetter();
 		priceDataGetter.load();
 		SplashUpdater.setProgress(45);
-	//Timer
-		timer = new Timer(15000, this); //Once a minute
+		// Timer
+		timer = new Timer(15000, this); // Once a minute
 		timer.setActionCommand(ProgramAction.TIMER.name());
-	//Updatable
+		// Updatable
 		updatable = new Updatable(this);
-	//GUI
+		// GUI
 		SplashUpdater.setText("Loading GUI");
 		LOG.info("GUI Loading:");
 		LOG.info("Loading: Images");
@@ -230,7 +236,7 @@ public class Program implements ActionListener {
 		LOG.info("Loading: Main Window");
 		mainWindow = new MainWindow(this);
 		SplashUpdater.setProgress(50);
-	//Tools
+		// Tools
 		LOG.info("Loading: Assets Tab");
 		assetsTab = new AssetsTab(this);
 		mainWindow.addTab(assetsTab);
@@ -288,6 +294,9 @@ public class Program implements ActionListener {
 		SplashUpdater.setProgress(78);
 		LOG.info("Loading: Skills Tab");
 		skillsTab = new SkillsTab(this);
+		LOG.info("Loading: Skill Plans Tabs");
+		skillPlansTab = new SkillPlansTab(this);
+		skillPlanImportTab = new SkillPlanImportTab(this);
 		SplashUpdater.setProgress(79);
 		LOG.info("Loading: Mining Log Tab");
 		miningTab = new MiningTab(this);
@@ -301,7 +310,7 @@ public class Program implements ActionListener {
 		LOG.info("Loading: Price Changes Tab");
 		priceChangesTab = new PriceChangesTab(this);
 		SplashUpdater.setProgress(84);
-	//Dialogs
+		// Dialogs
 		LOG.info("Loading: Account Manager Dialog");
 		accountManagerDialog = new AccountManagerDialog(this);
 		SplashUpdater.setProgress(85);
@@ -319,14 +328,14 @@ public class Program implements ActionListener {
 		SplashUpdater.setProgress(96);
 		LOG.info("Loading: Structure UpdateDialog");
 		structureUpdateDialog = new StructureUpdateDialog(this);
-	//GUI Done
+		// GUI Done
 		LOG.info("GUI loaded");
-	//Updating data...
+		// Updating data...
 		LOG.info("Updating data...");
 		updateEventLists();
-	//OSXAdapter
+		// OSXAdapter
 		macOsxCode();
-	//Open Tools
+		// Open Tools
 		for (String title : Settings.get().getShowTools()) {
 			for (JMainTab jMainTab : jMainTabs.values()) {
 				if (title.equals(jMainTab.getTitle())) {
@@ -338,21 +347,27 @@ public class Program implements ActionListener {
 		LOG.info("Showing GUI");
 		mainWindow.show();
 		SplashUpdater.hide();
-		//Start timer
+		// Start timer
 		timerTicked();
 		LOG.info("Startup Done");
 		if (CliOptions.get().isDebug()) {
 			LOG.info("Show Debug Warning");
-			JOptionPane.showMessageDialog(mainWindow.getFrame(), "WARNING: Debug is enabled", "Debug", JOptionPane.WARNING_MESSAGE);
+			JOptionPane.showMessageDialog(mainWindow.getFrame(), "WARNING: Debug is enabled", "Debug",
+					JOptionPane.WARNING_MESSAGE);
 		}
 		if (isDevBuild()) {
-			JOptionPane.showMessageDialog(mainWindow.getFrame(), "WARNING: This is a dev build\r\n\r\nNotes:\r\n- Always run portable\r\n- Settings and profiles are cloned\r\n- Does not check for updates\r\n- Expect bugs!", "DEV BUILD", JOptionPane.WARNING_MESSAGE);
+			JOptionPane.showMessageDialog(mainWindow.getFrame(),
+					"WARNING: This is a dev build\r\n\r\nNotes:\r\n- Always run portable\r\n- Settings and profiles are cloned\r\n- Does not check for updates\r\n- Expect bugs!",
+					"DEV BUILD", JOptionPane.WARNING_MESSAGE);
 		}
 		if (Settings.get().isSettingsLoadError()) {
-			JOptionPane.showMessageDialog(mainWindow.getFrame(), GuiShared.get().errorLoadingSettingsMsg(), GuiShared.get().errorLoadingSettingsTitle(), JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(mainWindow.getFrame(), GuiShared.get().errorLoadingSettingsMsg(),
+					GuiShared.get().errorLoadingSettingsTitle(), JOptionPane.ERROR_MESSAGE);
 		}
 		if (NahimicDetector.isNahimicRunning()) {
-			JOptionPane.showMessageDialog(mainWindow.getFrame(), "WARNING: Nahimic service detected. It's known to corrupt the jEveAssets GUI", "Nahimic Detected", JOptionPane.WARNING_MESSAGE);
+			JOptionPane.showMessageDialog(mainWindow.getFrame(),
+					"WARNING: Nahimic service detected. It's known to corrupt the jEveAssets GUI", "Nahimic Detected",
+					JOptionPane.WARNING_MESSAGE);
 		}
 		profileManager.showProfileLoadErrorWarning(mainWindow.getFrame());
 		if (profileManager.getOwnerTypes().isEmpty()) {
@@ -397,43 +412,45 @@ public class Program implements ActionListener {
 	}
 
 	private void initLookAndFeel(String lookAndFeel, boolean tryDefault) {
-		//Allow users to overwrite LaF
+		// Allow users to overwrite LaF
 		if (System.getProperty("swing.defaultlaf") != null) {
 			return;
 		}
-		//lookAndFeel = "com.sun.java.swing.plaf.windows.WindowsLookAndFeel";
-		//lookAndFeel = UIManager.getSystemLookAndFeelClassName(); //System
-		//lookAndFeel = UIManager.getCrossPlatformLookAndFeelClassName(); //Java
-		//lookAndFeel = "javax.swing.plaf.nimbus.NimbusLookAndFeel"; //Nimbus
-		//lookAndFeel = "javax.swing.plaf.metal.MetalLookAndFeel"; //Metal
-		//lookAndFeel = "com.sun.java.swing.plaf.gtk.GTKLookAndFeel"; //GTK+
-		//lookAndFeel = "com.sun.java.swing.plaf.motif.MotifLookAndFeel"; //CDE/Motif
+		// lookAndFeel = "com.sun.java.swing.plaf.windows.WindowsLookAndFeel";
+		// lookAndFeel = UIManager.getSystemLookAndFeelClassName(); //System
+		// lookAndFeel = UIManager.getCrossPlatformLookAndFeelClassName(); //Java
+		// lookAndFeel = "javax.swing.plaf.nimbus.NimbusLookAndFeel"; //Nimbus
+		// lookAndFeel = "javax.swing.plaf.metal.MetalLookAndFeel"; //Metal
+		// lookAndFeel = "com.sun.java.swing.plaf.gtk.GTKLookAndFeel"; //GTK+
+		// lookAndFeel = "com.sun.java.swing.plaf.motif.MotifLookAndFeel"; //CDE/Motif
 
-		//flatlaf
-		//lookAndFeel = "com.formdev.flatlaf.FlatLightLaf"; //Flat Light
-		//lookAndFeel = "com.formdev.flatlaf.FlatDarkLaf"; //Flat Dark
-		//lookAndFeel = "com.formdev.flatlaf.FlatIntelliJLaf"; //Flat IntelliJ
-		//lookAndFeel = "com.formdev.flatlaf.FlatDarculaLaf"; //Flat Darcula
+		// flatlaf
+		// lookAndFeel = "com.formdev.flatlaf.FlatLightLaf"; //Flat Light
+		// lookAndFeel = "com.formdev.flatlaf.FlatDarkLaf"; //Flat Dark
+		// lookAndFeel = "com.formdev.flatlaf.FlatIntelliJLaf"; //Flat IntelliJ
+		// lookAndFeel = "com.formdev.flatlaf.FlatDarculaLaf"; //Flat Darcula
 
 		try {
 			UIManager.setLookAndFeel(lookAndFeel);
-		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
+		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
+				| UnsupportedLookAndFeelException ex) {
 			LOG.error(ex.getMessage(), ex);
-			//In case the settings is using an unsupported look and feel
-			//Try system look and feel
+			// In case the settings is using an unsupported look and feel
+			// Try system look and feel
 			if (tryDefault) {
 				initLookAndFeel(UIManager.getSystemLookAndFeelClassName(), false);
 			}
 		}
 		setKeys(); // This must be performed immediately after the LaF has been set
 
-		//Make sure we have nice window decorations.
+		// Make sure we have nice window decorations.
 		JFrame.setDefaultLookAndFeelDecorated(true);
 		JDialog.setDefaultLookAndFeelDecorated(true);
 	}
 
 	private void setKeys() {
-		// Ensure Max OSX/Windows/Linux key bindings are useable for copy, cut, paste, and select all
+		// Ensure Max OSX/Windows/Linux key bindings are useable for copy, cut, paste,
+		// and select all
 		addKeysText(UIManager.get("EditorPane.focusInputMap"));
 		addKeysText(UIManager.get("FormattedTextField.focusInputMap"));
 		addKeysText(UIManager.get("PasswordField.focusInputMap"));
@@ -446,40 +463,46 @@ public class Program implements ActionListener {
 	}
 
 	private void addKeysText(Object object) {
-		if (object instanceof InputMap) { //Better safe than sorry
+		if (object instanceof InputMap) { // Better safe than sorry
 			InputMap inputMap = (InputMap) object;
-			//Mac Keys
+			// Mac Keys
 			inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.META_DOWN_MASK), DefaultEditorKit.copyAction);
 			inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_X, KeyEvent.META_DOWN_MASK), DefaultEditorKit.cutAction);
 			inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_V, KeyEvent.META_DOWN_MASK), DefaultEditorKit.pasteAction);
-			inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_A, KeyEvent.META_DOWN_MASK), DefaultEditorKit.selectAllAction);
-			//Win Keys
+			inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_A, KeyEvent.META_DOWN_MASK),
+					DefaultEditorKit.selectAllAction);
+			// Win Keys
 			inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.CTRL_DOWN_MASK), DefaultEditorKit.copyAction);
 			inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_X, KeyEvent.CTRL_DOWN_MASK), DefaultEditorKit.cutAction);
 			inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_V, KeyEvent.CTRL_DOWN_MASK), DefaultEditorKit.pasteAction);
-			inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_A, KeyEvent.CTRL_DOWN_MASK), DefaultEditorKit.selectAllAction);
-			//Other
-			inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_INSERT, KeyEvent.CTRL_DOWN_MASK), DefaultEditorKit.copyAction);
-			inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, KeyEvent.SHIFT_DOWN_MASK), DefaultEditorKit.cutAction);
-			inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_INSERT, KeyEvent.SHIFT_DOWN_MASK), DefaultEditorKit.pasteAction);
-			inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_SLASH, KeyEvent.CTRL_DOWN_MASK), DefaultEditorKit.selectAllAction);
+			inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_A, KeyEvent.CTRL_DOWN_MASK),
+					DefaultEditorKit.selectAllAction);
+			// Other
+			inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_INSERT, KeyEvent.CTRL_DOWN_MASK),
+					DefaultEditorKit.copyAction);
+			inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, KeyEvent.SHIFT_DOWN_MASK),
+					DefaultEditorKit.cutAction);
+			inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_INSERT, KeyEvent.SHIFT_DOWN_MASK),
+					DefaultEditorKit.pasteAction);
+			inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_SLASH, KeyEvent.CTRL_DOWN_MASK),
+					DefaultEditorKit.selectAllAction);
 		}
 	}
 
 	private void addKeysMisc(Object object) {
-		if (object instanceof InputMap) { //Better safe than sorry
+		if (object instanceof InputMap) { // Better safe than sorry
 			InputMap inputMap = (InputMap) object;
-			//Mac Keys
+			// Mac Keys
 			inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.META_DOWN_MASK), "copy");
 			inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_X, KeyEvent.META_DOWN_MASK), "cut");
 			inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_V, KeyEvent.META_DOWN_MASK), "parse");
 			inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_A, KeyEvent.META_DOWN_MASK), "selectAll");
-			//Win Keys
+			// Win Keys
 			inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.CTRL_DOWN_MASK), "copy");
 			inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_X, KeyEvent.CTRL_DOWN_MASK), "cut");
 			inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_V, KeyEvent.CTRL_DOWN_MASK), "parse");
 			inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_A, KeyEvent.CTRL_DOWN_MASK), "selectAll");
-			//Other
+			// Other
 			inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_INSERT, KeyEvent.CTRL_DOWN_MASK), "copy");
 			inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, KeyEvent.SHIFT_DOWN_MASK), "cut");
 			inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_INSERT, KeyEvent.SHIFT_DOWN_MASK), "parse");
@@ -539,7 +562,8 @@ public class Program implements ActionListener {
 
 	public final void showUpdateStructuresDialog(boolean minimizable) {
 		if (getStatusPanel().updateing(UpdateType.STRUCTURE)) {
-			JOptionPane.showMessageDialog(getMainWindow().getFrame(), GuiFrame.get().updatingInProgressMsg(), GuiFrame.get().updatingInProgressTitle(), JOptionPane.PLAIN_MESSAGE);
+			JOptionPane.showMessageDialog(getMainWindow().getFrame(), GuiFrame.get().updatingInProgressMsg(),
+					GuiFrame.get().updatingInProgressTitle(), JOptionPane.PLAIN_MESSAGE);
 		} else {
 			updateStructures(null, minimizable);
 		}
@@ -607,7 +631,8 @@ public class Program implements ActionListener {
 		updateEventLists(null, null, null, null);
 	}
 
-	private synchronized void updateEventLists(Set<Long> itemIDs, Set<Long> locationIDs, Set<Integer> typeIDs, OutbidProcesserOutput output) {
+	private synchronized void updateEventLists(Set<Long> itemIDs, Set<Long> locationIDs, Set<Integer> typeIDs,
+			OutbidProcesserOutput output) {
 		LOG.info("Updating EventList");
 		FilterMatcher.clearColumnValueCache();
 		for (JMainTab jMainTab : mainWindow.getTabs()) {
@@ -627,10 +652,10 @@ public class Program implements ActionListener {
 		} else if (typeIDs != null) {
 			profileData.updatePrice(typeIDs);
 		} else {
-			SoundPlayer.cancelAll(); //Stop sounds
+			SoundPlayer.cancelAll(); // Stop sounds
 			profileData.updateEventLists();
 		}
-		if (locationIDs != null) { //Update locations
+		if (locationIDs != null) { // Update locations
 			for (JMainTab jMainTab : mainWindow.getTabs()) {
 				ensureEDT(new Runnable() {
 					@Override
@@ -639,7 +664,7 @@ public class Program implements ActionListener {
 					}
 				});
 			}
-		} else if (typeIDs != null) { //Update prices
+		} else if (typeIDs != null) { // Update prices
 			for (JMainTab jMainTab : mainWindow.getTabs()) {
 				ensureEDT(new Runnable() {
 					@Override
@@ -648,7 +673,7 @@ public class Program implements ActionListener {
 					}
 				});
 			}
-		} else if (itemIDs != null) { //Update names
+		} else if (itemIDs != null) { // Update names
 			for (JMainTab jMainTab : mainWindow.getTabs()) {
 				ensureEDT(new Runnable() {
 					@Override
@@ -657,7 +682,7 @@ public class Program implements ActionListener {
 					}
 				});
 			}
-		} else { //Full update
+		} else { // Full update
 			for (JMainTab jMainTab : mainWindow.getTabs()) {
 				ensureEDT(new Runnable() {
 					@Override
@@ -724,6 +749,7 @@ public class Program implements ActionListener {
 
 	/**
 	 * Save Settings ASAP
+	 * 
 	 * @param msg Who is saving what?
 	 */
 	public void saveSettings(final String msg) {
@@ -736,12 +762,14 @@ public class Program implements ActionListener {
 
 	private void doSaveSettings(final String msg) {
 		LOG.info("Saving Settings: " + msg);
-		Settings.lock("Table (Column/Width/Resize) and Window Settings"); //Lock for Table (Column/Width/Resize) and Window Settings
+		Settings.lock("Table (Column/Width/Resize) and Window Settings"); // Lock for Table (Column/Width/Resize) and
+																			// Window Settings
 		mainWindow.updateSettings();
 		for (JMainTab jMainTab : jMainTabs.values()) {
 			jMainTab.saveSettings();
 		}
-		Settings.unlock("Table (Column/Width/Resize) and Window Settings"); //Unlock for Table (Column/Width/Resize) and Window Settings
+		Settings.unlock("Table (Column/Width/Resize) and Window Settings"); // Unlock for Table (Column/Width/Resize)
+																			// and Window Settings
 		Settings.saveSettings();
 	}
 
@@ -773,11 +801,15 @@ public class Program implements ActionListener {
 
 	/**
 	 * Make ready to exit
+	 * 
 	 * @return true for exit and false to cancel exit
 	 */
 	private boolean safeExit() {
 		if (getStatusPanel().updateInProgress() > 0) {
-			int value = JOptionPane.showConfirmDialog(getMainWindow().getFrame(), GuiFrame.get().exitMsg(getStatusPanel().updateInProgress()), GuiFrame.get().exitTitle(getStatusPanel().updateInProgress()), JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+			int value = JOptionPane.showConfirmDialog(getMainWindow().getFrame(),
+					GuiFrame.get().exitMsg(getStatusPanel().updateInProgress()),
+					GuiFrame.get().exitTitle(getStatusPanel().updateInProgress()), JOptionPane.OK_CANCEL_OPTION,
+					JOptionPane.QUESTION_MESSAGE);
 			if (value != JOptionPane.OK_OPTION) {
 				return false;
 			}
@@ -885,6 +917,14 @@ public class Program implements ActionListener {
 
 	public ReprocessedTab getReprocessedTab() {
 		return reprocessedTab;
+	}
+
+	public net.nikr.eve.jeveasset.gui.tabs.skills.SkillPlansTab getSkillPlansTab() {
+		return skillPlansTab;
+	}
+
+	public net.nikr.eve.jeveasset.gui.tabs.skills.SkillPlanImportTab getSkillPlanImportTab() {
+		return skillPlanImportTab;
 	}
 
 	public RoutingTab getRoutingTab() {
@@ -1010,7 +1050,7 @@ public class Program implements ActionListener {
 		return PROGRAM_DEV_BUILD;
 	}
 
-	public void updateStructures(Set<MyLocation> locations,boolean minimizable) {
+	public void updateStructures(Set<MyLocation> locations, boolean minimizable) {
 		structureUpdateDialog.show(locations, minimizable);
 	}
 
@@ -1028,6 +1068,7 @@ public class Program implements ActionListener {
 					}
 				}
 			}
+
 			@Override
 			public void gui() {
 				for (JMainTab mainTab : jMainTabs.values()) {
@@ -1039,6 +1080,7 @@ public class Program implements ActionListener {
 			}
 		});
 	}
+
 	/**
 	 * Called when Overview Groups are changed.
 	 */
@@ -1063,7 +1105,7 @@ public class Program implements ActionListener {
 
 	@Override
 	public void actionPerformed(final ActionEvent e) {
-	//Tools
+		// Tools
 		if (MainMenuAction.VALUES.name().equals(e.getActionCommand())) {
 			mainWindow.addTab(valueRetroTab);
 		} else if (MainMenuAction.VALUE_TABLE.name().equals(e.getActionCommand())) {
@@ -1105,6 +1147,10 @@ public class Program implements ActionListener {
 			mainWindow.addTab(treeTab);
 		} else if (MainMenuAction.SKILLS.name().equals(e.getActionCommand())) {
 			mainWindow.addTab(skillsTab);
+		} else if (MainMenuAction.SKILL_PLANS.name().equals(e.getActionCommand())) {
+			mainWindow.addTab(skillPlansTab);
+		} else if (MainMenuAction.SKILL_PLAN_IMPORT.name().equals(e.getActionCommand())) {
+			mainWindow.addTab(skillPlanImportTab);
 		} else if (MainMenuAction.MINING_ALL.name().equals(e.getActionCommand())) {
 			mainWindow.addTab(miningTab);
 			mainWindow.addTab(miningGraphTab);
@@ -1115,25 +1161,25 @@ public class Program implements ActionListener {
 			mainWindow.addTab(miningGraphTab);
 		} else if (MainMenuAction.EXTRACTIONS.name().equals(e.getActionCommand())) {
 			mainWindow.addTab(extractionsTab);
-		} else if (MainMenuAction.ACCOUNT_MANAGER.name().equals(e.getActionCommand())) { //Settings
+		} else if (MainMenuAction.ACCOUNT_MANAGER.name().equals(e.getActionCommand())) { // Settings
 			accountManagerDialog.setVisible(true);
 		} else if (MainMenuAction.PROFILES.name().equals(e.getActionCommand())) {
 			profileDialog.setVisible(true);
 		} else if (MainMenuAction.OPTIONS.name().equals(e.getActionCommand())) {
 			showSettings();
-		} else if (MainMenuAction.UPDATE.name().equals(e.getActionCommand())) { //Update
+		} else if (MainMenuAction.UPDATE.name().equals(e.getActionCommand())) { // Update
 			updateDialog.setVisible(true);
 		} else if (MainMenuAction.UPDATE_STRUCTURE.name().equals(e.getActionCommand())) {
 			showUpdateStructuresDialog(true);
-		} else if (MainMenuAction.ABOUT.name().equals(e.getActionCommand())) { //Others
+		} else if (MainMenuAction.ABOUT.name().equals(e.getActionCommand())) { // Others
 			showAbout();
 		} else if (MainMenuAction.LINK_WIKI.name().equals(e.getActionCommand())) {
-			DesktopUtil.browse("https://wiki.jeveassets.org", this); //Links
+			DesktopUtil.browse("https://wiki.jeveassets.org", this); // Links
 		} else if (MainMenuAction.LINK_FEEDBACK_AND_HELP.name().equals(e.getActionCommand())) {
 			DesktopUtil.browse("https://wiki.jeveassets.org/faq#feedback_and_help", this);
 		} else if (MainMenuAction.LINK_DISCORD.name().equals(e.getActionCommand())) {
 			DesktopUtil.browse("https://discord.gg/8kYZvbM", this);
-		} else if (MainMenuAction.README.name().equals(e.getActionCommand())) { //External Files
+		} else if (MainMenuAction.README.name().equals(e.getActionCommand())) { // External Files
 			DesktopUtil.open(FileUtil.getPathReadme(), this);
 		} else if (MainMenuAction.LICENSE.name().equals(e.getActionCommand())) {
 			DesktopUtil.open(FileUtil.getPathLicense(), this);
@@ -1141,9 +1187,9 @@ public class Program implements ActionListener {
 			DesktopUtil.open(FileUtil.getPathCredits(), this);
 		} else if (MainMenuAction.CHANGELOG.name().equals(e.getActionCommand())) {
 			DesktopUtil.open(FileUtil.getPathChangeLog(), this);
-		} else if (MainMenuAction.EXIT_PROGRAM.name().equals(e.getActionCommand())) { //Exit
+		} else if (MainMenuAction.EXIT_PROGRAM.name().equals(e.getActionCommand())) { // Exit
 			exit();
-		} else if (ProgramAction.TIMER.name().equals(e.getActionCommand())) { //Ticker
+		} else if (ProgramAction.TIMER.name().equals(e.getActionCommand())) { // Ticker
 			timerTicked();
 		}
 	}
