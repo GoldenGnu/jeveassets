@@ -24,9 +24,13 @@ package net.nikr.eve.jeveasset.gui.shared.filter;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Date;
+import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formatter;
@@ -38,20 +42,18 @@ import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 class FilterMenu<E> extends JMenu {
 
+	private final JFrame jFrame;
 	private final FilterGui<E> gui;
-	private final EnumTableColumn<?> column;
-	private final String text;
+	private final Set<SimpleFilter> filters;
 
-	FilterMenu(final FilterGui<E> gui, final EnumTableColumn<?> column, final String text, final boolean isNumeric, final boolean isDate) {
+	FilterMenu(final JFrame jFrame, final FilterGui<E> gui, Set<SimpleFilter> filters, final boolean isNumeric, final boolean isDate) {
 		super(GuiShared.get().popupMenuAddField());
+		this.jFrame = jFrame;
 		this.gui = gui;
 		this.setIcon(Images.FILTER_CONTAIN.getIcon());
-		this.column = column;
-		this.text = text;
+		this.filters = filters;
 
 		ListenerClass listener = new ListenerClass();
-
-		boolean isValid = column != null && text != null;
 
 		JMenuItem jMenuItem;
 		CompareType[] compareTypes;
@@ -63,13 +65,12 @@ class FilterMenu<E> extends JMenu {
 			compareTypes = CompareType.valuesString();
 		}
 
-
 		for (CompareType compareType : compareTypes) {
 			jMenuItem = new JMenuItem(compareType.toString());
 			jMenuItem.setIcon(compareType.getIcon());
 			jMenuItem.setActionCommand(compareType.name());
 			jMenuItem.addActionListener(listener);
-			jMenuItem.setEnabled(isValid);
+			jMenuItem.setEnabled(!filters.isEmpty());
 			add(jMenuItem);
 		}
 	}
@@ -77,25 +78,73 @@ class FilterMenu<E> extends JMenu {
 	private class ListenerClass implements ActionListener {
 		@Override
 		public void actionPerformed(final ActionEvent e) {
-			CompareType compareType = Filter.CompareType.valueOf(e.getActionCommand());
-			if (CompareType.isColumnCompare(compareType)) {
-				gui.addFilter(new Filter(LogicType.AND, column, compareType, column.name()));
-			} else if (compareType == CompareType.LAST_DAYS || compareType == CompareType.NEXT_DAYS) {
-				gui.addFilter(new Filter(LogicType.AND, column, compareType, between(TimeUnit.DAYS)));
-			} else if (compareType == CompareType.LAST_HOURS || compareType == CompareType.NEXT_HOURS) {
-				gui.addFilter(new Filter(LogicType.AND, column, compareType, between(TimeUnit.HOURS)));
-			} else {
-				gui.addFilter(new Filter(LogicType.AND, column, compareType, text));
+			if (filters.size() > 1) {
+				int returnValue = JOptionPane.showConfirmDialog(jFrame, GuiShared.get().popupMenuAddFieldMsg(filters.size()), GuiShared.get().popupMenuAddField(), JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+				if (returnValue == JOptionPane.CANCEL_OPTION) {
+					return;
+				}
+			}
+			for (SimpleFilter filter : filters) {
+				gui.addFilter(filter.getFilter(e.getActionCommand()));
 			}
 		}
 	}
 
-	public String between(TimeUnit unit) {
-		Date date = Formatter.columnStringToDate(text);
+	public static class SimpleFilter {
+		private final EnumTableColumn<?> column;
+		private final String text;
 
-		long diff = Math.abs(date.getTime() - Settings.getNow().getTime());
-		long hours = unit.convert(diff, TimeUnit.MILLISECONDS) + 1;
+		public SimpleFilter(EnumTableColumn<?> column, String text) {
+			this.column = column;
+			this.text = text;
+		}
 
-		return String.valueOf(hours);
+		public Filter getFilter(String s) {
+			CompareType compareType = Filter.CompareType.valueOf(s);
+			if (CompareType.isColumnCompare(compareType)) {
+				return new Filter(LogicType.AND, column, compareType, column.name());
+			} else if (compareType == CompareType.LAST_DAYS || compareType == CompareType.NEXT_DAYS) {
+				return new Filter(LogicType.AND, column, compareType, between(TimeUnit.DAYS));
+			} else if (compareType == CompareType.LAST_HOURS || compareType == CompareType.NEXT_HOURS) {
+				return new Filter(LogicType.AND, column, compareType, between(TimeUnit.HOURS));
+			} else {
+				return new Filter(LogicType.AND, column, compareType, text);
+			}
+		}
+
+		private String between(TimeUnit unit) {
+			Date date = Formatter.columnStringToDate(text);
+
+			long diff = Math.abs(date.getTime() - Settings.getNow().getTime());
+			long hours = unit.convert(diff, TimeUnit.MILLISECONDS) + 1;
+
+			return String.valueOf(hours);
+		}
+
+		@Override
+		public int hashCode() {
+			int hash = 7;
+			hash = 79 * hash + Objects.hashCode(this.column);
+			hash = 79 * hash + Objects.hashCode(this.text);
+			return hash;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj) {
+				return true;
+			}
+			if (obj == null) {
+				return false;
+			}
+			if (getClass() != obj.getClass()) {
+				return false;
+			}
+			final SimpleFilter other = (SimpleFilter) obj;
+			if (!Objects.equals(this.text, other.text)) {
+				return false;
+			}
+			return Objects.equals(this.column, other.column);
+		}
 	}
 }

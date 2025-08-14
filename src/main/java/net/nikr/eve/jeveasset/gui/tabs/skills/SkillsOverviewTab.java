@@ -61,7 +61,7 @@ public class SkillsOverviewTab extends JMainTabSecondary {
 	public SkillsOverviewTab(Program program) {
 		super(program, NAME, TabsSkills.get().skills() + " - Overview", Images.TOOL_SKILLS.getIcon(), true);
 
-		tableFormat = TableFormatFactory.create(SkillPlansTableFormat.class);
+		tableFormat = TableFormatFactory.skillsOverviewTableFormat();
 		eventList = EventListManager.create();
 		eventList.getReadWriteLock().readLock().lock();
 		SortedList<Row> sortedColumns = new SortedList<>(eventList, new Comparator<Row>() {
@@ -81,8 +81,9 @@ public class SkillsOverviewTab extends JMainTabSecondary {
 			public String getToolTipText(java.awt.event.MouseEvent e) {
 				int row = rowAtPoint(e.getPoint());
 				int col = columnAtPoint(e.getPoint());
-				if (row < 0 || col < 0)
+				if (row < 0 || col < 0) {
 					return null;
+				}
 				int modelCol = convertColumnIndexToModel(col);
 				String columnName = tableModel.getColumnName(modelCol);
 				Map<String, Map<Integer, Integer>> plans = Settings.get().getSkillPlans();
@@ -135,15 +136,14 @@ public class SkillsOverviewTab extends JMainTabSecondary {
 		jTable.setCellSelectionEnabled(true);
 		jTable.setRowSelectionAllowed(true);
 		jTable.setColumnSelectionAllowed(true);
-		TableComparatorChooser.install(jTable, sortedColumns, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE,
-				tableFormat);
+		TableComparatorChooser<Row> comparatorChooser = TableComparatorChooser.install(jTable, sortedColumns, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
 		selectionModel = EventModels.createSelectionModel(filterList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
 		installTable(jTable);
 		JScrollPane scrollPane = new JScrollPane(jTable);
 		filterControl = new SkillsOverviewFilterControl(sorted);
-		installTableTool(new SkillsOverviewTableMenu(), tableFormat, tableModel, jTable, filterControl, Row.class);
+		installTableTool(new SkillsOverviewTableMenu(), tableFormat, comparatorChooser, tableModel, jTable, eventList, Row.class);
 
 		layout.setHorizontalGroup(
 				layout.createParallelGroup()
@@ -228,16 +228,20 @@ public class SkillsOverviewTab extends JMainTabSecondary {
 	}
 
 	private static class TotalComparator implements Comparator<Row> {
+
 		@Override
 		public int compare(Row a, Row b) {
 			boolean aTotal = "Total".equals(a.owner);
 			boolean bTotal = "Total".equals(b.owner);
-			if (aTotal && bTotal)
+			if (aTotal && bTotal) {
 				return 0;
-			if (aTotal)
+			}
+			if (aTotal) {
 				return 1;
-			if (bTotal)
+			}
+			if (bTotal) {
 				return -1;
+			}
 			return 0;
 		}
 	}
@@ -253,16 +257,18 @@ public class SkillsOverviewTab extends JMainTabSecondary {
 			have += Math.min(current, targetSp);
 			need += targetSp;
 		}
-		if (need <= 0)
+		if (need <= 0) {
 			return 0;
+		}
 		return have / need;
 	}
 
 	private static int approximateLevelFromSp(long currentSp) {
-		double[] rank1Levels = new double[] { 250, 1415, 8000, 45255, 256000 };
+		double[] rank1Levels = new double[]{250, 1415, 8000, 45255, 256000};
 		for (int i = 5; i >= 1; i--) {
-			if (currentSp >= rank1Levels[i - 1])
+			if (currentSp >= rank1Levels[i - 1]) {
 				return i;
+			}
 		}
 		return 0;
 	}
@@ -270,7 +276,7 @@ public class SkillsOverviewTab extends JMainTabSecondary {
 	private double spForLevel(int typeId, int level) {
 		double rank = 1.0;
 		ApiIdConverter.getItem(typeId);
-		double[] rank1Levels = new double[] { 250, 1415, 8000, 45255, 256000 };
+		double[] rank1Levels = new double[]{250, 1415, 8000, 45255, 256000};
 		return rank1Levels[level - 1] * rank;
 	}
 
@@ -296,6 +302,7 @@ public class SkillsOverviewTab extends JMainTabSecondary {
 	}
 
 	public class Row implements TagsType {
+
 		private final String owner;
 		private final Map<String, Percent> planToPercent = new LinkedHashMap<>();
 		private Tags tags;
@@ -421,6 +428,7 @@ public class SkillsOverviewTab extends JMainTabSecondary {
 	}
 
 	private static class PlanColumn implements EnumTableColumn<Row> {
+
 		private final String plan;
 
 		PlanColumn(String plan) {
@@ -465,6 +473,7 @@ public class SkillsOverviewTab extends JMainTabSecondary {
 	}
 
 	private class SkillsOverviewTableMenu implements TableMenu<Row> {
+
 		@Override
 		public MenuData<Row> getMenuData() {
 			return new MenuData<>(selectionModel.getSelected());
@@ -481,15 +490,14 @@ public class SkillsOverviewTab extends JMainTabSecondary {
 		}
 
 		@Override
-		public void addInfoMenu(JPopupMenu jPopupMenu) {
-		}
+		public void addInfoMenu(JPopupMenu jPopupMenu) { }
 
 		@Override
-		public void addToolMenu(JComponent jComponent) {
-		}
+		public void addToolMenu(JComponent jComponent) { }
 	}
 
 	private class SkillsOverviewFilterControl extends FilterControl<Row> {
+
 		public SkillsOverviewFilterControl(EventList<Row> exportEventList) {
 			super(program.getMainWindow().getFrame(), NAME, tableFormat, eventList, exportEventList, filterList);
 		}

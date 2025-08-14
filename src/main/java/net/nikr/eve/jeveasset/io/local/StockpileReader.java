@@ -48,12 +48,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-public class StockpileDataReader extends AbstractBackup {
+public class StockpileReader extends AbstractBackup {
 
-	private static final Logger LOG = LoggerFactory.getLogger(StockpileDataReader.class);
+	private static final Logger LOG = LoggerFactory.getLogger(StockpileReader.class);
 
 	public static List<Stockpile> load(String data) {
-		StockpileDataReader reader = new StockpileDataReader();
+		StockpileReader reader = new StockpileReader();
 		return reader.read(data);
 	}
 

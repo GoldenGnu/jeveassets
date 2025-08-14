@@ -53,6 +53,8 @@ import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewTab;
 import net.nikr.eve.jeveasset.gui.tabs.prices.PriceHistoryTab;
 import net.nikr.eve.jeveasset.gui.tabs.reprocessed.ReprocessedTab;
 import net.nikr.eve.jeveasset.gui.tabs.routing.RoutingTab;
+import net.nikr.eve.jeveasset.gui.tabs.skills.SkillsImportPlanTab;
+import net.nikr.eve.jeveasset.gui.tabs.skills.SkillsOverviewTab;
 import net.nikr.eve.jeveasset.gui.tabs.slots.SlotsTab;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileTab;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerTab;
@@ -329,6 +331,21 @@ public abstract class FakeProgram extends Program {
 
 	@Override
 	public synchronized void saveTable(Table table) {
+		throw new UnsupportedOperationException("Not implemented");
+	}
+
+	@Override
+	public void showJumpsSettingsPanel() {
+		throw new UnsupportedOperationException("Not implemented");
+	}
+
+	@Override
+	public SkillsImportPlanTab getSkillPlanImportTab() {
+		throw new UnsupportedOperationException("Not implemented");
+	}
+
+	@Override
+	public SkillsOverviewTab getSkillPlansTab() {
 		throw new UnsupportedOperationException("Not implemented");
 	}
 }

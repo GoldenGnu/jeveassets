@@ -38,8 +38,10 @@ import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
 import net.nikr.eve.jeveasset.data.api.my.MyExtraction;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
 import net.nikr.eve.jeveasset.data.api.my.MyJournal;
+import net.nikr.eve.jeveasset.data.api.my.MyLoyaltyPoints;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
 import net.nikr.eve.jeveasset.data.api.my.MyMining;
+import net.nikr.eve.jeveasset.data.api.my.MyNpcStanding;
 import net.nikr.eve.jeveasset.data.api.my.MySkill;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.api.raw.RawAccountBalance;
@@ -50,9 +52,11 @@ import net.nikr.eve.jeveasset.data.api.raw.RawContractItem;
 import net.nikr.eve.jeveasset.data.api.raw.RawExtraction;
 import net.nikr.eve.jeveasset.data.api.raw.RawIndustryJob;
 import net.nikr.eve.jeveasset.data.api.raw.RawJournal;
+import net.nikr.eve.jeveasset.data.api.raw.RawLoyaltyPoints;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder.Change;
 import net.nikr.eve.jeveasset.data.api.raw.RawMining;
+import net.nikr.eve.jeveasset.data.api.raw.RawNpcStanding;
 import net.nikr.eve.jeveasset.data.api.raw.RawSkill;
 import net.nikr.eve.jeveasset.data.api.raw.RawTransaction;
 import net.nikr.eve.jeveasset.data.sde.Item;
@@ -161,13 +165,18 @@ public abstract class DataConverter {
 		return list;
 	}
 
-	public static List<MyAsset> assetCloneImplants(final Map<OwnerType, List<RawClone>> clones) {
+	public static List<MyAsset> assetCloneImplants(final Map<OwnerType, List<RawClone>> clones, boolean includeJumpClones, boolean includePluggedInImplants) {
 		List<MyAsset> assets = new ArrayList<>();
 		for (Map.Entry<OwnerType, List<RawClone>> entry : clones.entrySet()) {
 			OwnerType owner = entry.getKey();
 			for (RawClone clone : entry.getValue()) {
-				for (Integer implantTypeID : clone.getImplants()) {
-					assets.add(new MyAsset(clone, implantTypeID, owner));
+				if (includeJumpClones) {
+					assets.add(new MyAsset(clone, owner));
+				}
+				if (includePluggedInImplants) {
+					for (Integer implantTypeID : clone.getImplants()) {
+						assets.add(new MyAsset(clone, implantTypeID, owner));
+					}
 				}
 			}
 		}
@@ -473,5 +482,29 @@ public abstract class DataConverter {
 	public static MyExtraction toMyExtraction(RawExtraction rawExtraction) {
 		MyLocation moon = ApiIdConverter.getLocation(rawExtraction.getMoonID());
 		return new MyExtraction(rawExtraction, moon);
+	}
+
+	protected static Set<MyLoyaltyPoints> convertMyLoyaltyPoints(Set<RawLoyaltyPoints> rawLoyaltyPointses, OwnerType owner) {
+		Set<MyLoyaltyPoints> loyaltyPointses = new HashSet<>();
+		for (RawLoyaltyPoints rawLoyaltyPoints : rawLoyaltyPointses) {
+			loyaltyPointses.add(toMyLoyaltyPoints(rawLoyaltyPoints, owner));
+		}
+		return loyaltyPointses;
+	}
+
+	public static MyLoyaltyPoints toMyLoyaltyPoints(RawLoyaltyPoints rawLoyaltyPoints, OwnerType owner) {
+		return new MyLoyaltyPoints(rawLoyaltyPoints, owner);
+	}
+
+	protected static Set<MyNpcStanding> convertMyNpcStanding(Set<RawNpcStanding> rawNpcStandings, OwnerType owner) {
+		Set<MyNpcStanding> npcStandings = new HashSet<>();
+		for (RawNpcStanding rawNpcStanding : rawNpcStandings) {
+			npcStandings.add(toMyNpcStanding(rawNpcStanding, owner));
+		}
+		return npcStandings;
+	}
+
+	public static MyNpcStanding toMyNpcStanding(RawNpcStanding rawNpcStanding, OwnerType owner) {
+		return new MyNpcStanding(rawNpcStanding, owner);
 	}
 }

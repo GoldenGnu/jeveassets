@@ -26,6 +26,7 @@ import net.nikr.eve.jeveasset.CliOptions;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
 import net.nikr.eve.jeveasset.data.settings.Settings;
+import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateDialog.Updates;
 
 
 public class Updatable {
@@ -44,35 +45,10 @@ public class Updatable {
 			if (!owner.isShowOwner() || owner.isInvalid() || owner.isExpired()) {
 				continue;
 			}
-			if (owner.isAssetList() && isUpdatable(owner.getAssetNextUpdate())) {
-				return true;
-			}
-			if (owner.isAccountBalance() && isUpdatable(owner.getBalanceNextUpdate())) {
-				return true;
-			}
-			if (owner.isIndustryJobs() && isUpdatable(owner.getIndustryJobsNextUpdate())) {
-				return true;
-			}
-			if (owner.isMarketOrders() && isUpdatable(owner.getMarketOrdersNextUpdate())) {
-				return true;
-			}
-			if (owner.isJournal() && isUpdatable(owner.getJournalNextUpdate())) {
-				return true;
-			}
-			if (owner.isTransactions() && isUpdatable(owner.getTransactionsNextUpdate())) {
-				return true;
-			}
-			if (owner.isContracts() && isUpdatable(owner.getContractsNextUpdate())) {
-				return true;
-			}
-			if (owner.isBlueprints() && isUpdatable(owner.getBlueprintsNextUpdate())) {
-				return true;
-			}
-			if (owner.isSkills() && isUpdatable(owner.getSkillsNextUpdate())) {
-				return true;
-			}
-			if (owner.isMining() && isUpdatable(owner.getMiningNextUpdate())){
-				return true;
+			for (Updates update : Updates.values()) {
+				if (update.isEnabled(owner) && isUpdatable(update.getNextUpdate(owner))) {
+					return true;
+				}
 			}
 		}
 		return false;

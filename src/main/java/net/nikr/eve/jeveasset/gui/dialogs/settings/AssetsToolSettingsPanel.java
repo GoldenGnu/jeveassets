@@ -70,6 +70,8 @@ public class AssetsToolSettingsPanel extends JSettingsPanel {
 	private final JComboBox<ContractsOwnerFormat> jContractsOwner;
 	private final JCheckBox jManufacturing;
 	private final JCheckBox jCopying;
+	private final JCheckBox jJumpClones;
+	private final JCheckBox jPluggedInImplants;
 	private final JCheckBox jContainerItemID;
 
 	public AssetsToolSettingsPanel(final Program program, final SettingsDialog settingsDialog) {
@@ -91,6 +93,8 @@ public class AssetsToolSettingsPanel extends JSettingsPanel {
 		});
 		jManufacturing = new JCheckBox(DialoguesSettings.get().includeManufacturing());
 		jCopying = new JCheckBox(DialoguesSettings.get().includeCopying());
+		jJumpClones = new JCheckBox(DialoguesSettings.get().includeJumpClones());
+		jPluggedInImplants = new JCheckBox(DialoguesSettings.get().includePluggedInImplants());
 		jContainerItemID = new JCheckBox(DialoguesSettings.get().showContainerItemID());
 
 		layout.setHorizontalGroup(
@@ -103,6 +107,8 @@ public class AssetsToolSettingsPanel extends JSettingsPanel {
 						.addComponent(jBuyContracts)
 						.addComponent(jManufacturing)
 						.addComponent(jCopying)
+						.addComponent(jJumpClones)
+						.addComponent(jPluggedInImplants)
 					)
 					.addGap(0, 0, 100)
 					.addGroup(layout.createParallelGroup()
@@ -138,6 +144,8 @@ public class AssetsToolSettingsPanel extends JSettingsPanel {
 				)
 				.addGap(0)
 				.addComponent(jCopying, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+				.addComponent(jJumpClones, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+				.addComponent(jPluggedInImplants, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				.addComponent(jContainerItemID, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 		);
 	}
@@ -152,6 +160,8 @@ public class AssetsToolSettingsPanel extends JSettingsPanel {
 						|| jBuyContracts.isSelected() != Settings.get().isIncludeBuyContracts()
 						|| jManufacturing.isSelected() != Settings.get().isIncludeManufacturing()
 						|| jCopying.isSelected() != Settings.get().isIncludeCopying()
+						|| jJumpClones.isSelected() != Settings.get().isIncludeJumpClones()
+						|| jPluggedInImplants.isSelected() != Settings.get().isIncludePluggedInImplants()
 						|| ((jSellContracts.isSelected() || jBuyContracts.isSelected())
 						&& ((contractsOwnerFormat == ContractsOwnerFormat.ISSUER_CHARACTER && (Settings.get().isAssetsContractsOwnerCorporation() || Settings.get().isAssetsContractsOwnerBoth()))
 						|| (contractsOwnerFormat == ContractsOwnerFormat.ISSUER_CORPORATION && !Settings.get().isAssetsContractsOwnerCorporation())
@@ -164,6 +174,8 @@ public class AssetsToolSettingsPanel extends JSettingsPanel {
 		Settings.get().setIncludeBuyContracts(jBuyContracts.isSelected());
 		Settings.get().setIncludeManufacturing(jManufacturing.isSelected());
 		Settings.get().setIncludeCopying(jCopying.isSelected());
+		Settings.get().setIncludeJumpClones(jJumpClones.isSelected());
+		Settings.get().setIncludePluggedInImplants(jPluggedInImplants.isSelected());
 		Settings.get().setContainersShowItemID(jContainerItemID.isSelected());
 		Settings.get().setAssetsContractsOwnerCorporation(contractsOwnerFormat == ContractsOwnerFormat.ISSUER_CORPORATION);
 		Settings.get().setAssetsContractsOwnerBoth(contractsOwnerFormat == ContractsOwnerFormat.ISSUER_BOTH);
@@ -184,6 +196,8 @@ public class AssetsToolSettingsPanel extends JSettingsPanel {
 		jBuyContracts.setSelected(Settings.get().isIncludeBuyContracts());
 		jManufacturing.setSelected(Settings.get().isIncludeManufacturing());
 		jCopying.setSelected(Settings.get().isIncludeCopying());
+		jJumpClones.setSelected(Settings.get().isIncludeJumpClones());
+		jPluggedInImplants.setSelected(Settings.get().isIncludePluggedInImplants());
 		jContainerItemID.setSelected(Settings.get().isContainersShowItemID());
 		if (Settings.get().isAssetsContractsOwnerCorporation()) {
 			jContractsOwner.setSelectedItem(ContractsOwnerFormat.ISSUER_CORPORATION);

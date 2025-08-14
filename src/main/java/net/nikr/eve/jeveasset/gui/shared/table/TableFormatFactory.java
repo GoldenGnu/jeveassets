@@ -27,14 +27,18 @@ import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
 import net.nikr.eve.jeveasset.data.api.my.MyExtraction;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
 import net.nikr.eve.jeveasset.data.api.my.MyJournal;
+import net.nikr.eve.jeveasset.data.api.my.MyLoyaltyPoints;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
 import net.nikr.eve.jeveasset.data.api.my.MyMining;
+import net.nikr.eve.jeveasset.data.api.my.MyNpcStanding;
 import net.nikr.eve.jeveasset.data.api.my.MySkill;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
+import net.nikr.eve.jeveasset.data.sde.Agent;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.settings.ColorSettings.ColorRow;
 import net.nikr.eve.jeveasset.gui.dialogs.account.AccountTableFormat;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.ColorsTableFormat;
+import net.nikr.eve.jeveasset.gui.tabs.agents.AgentsTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.assets.AssetTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractsTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.items.ItemTableFormat;
@@ -43,6 +47,7 @@ import net.nikr.eve.jeveasset.gui.tabs.journal.JournalTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.loadout.Loadout;
 import net.nikr.eve.jeveasset.gui.tabs.loadout.LoadoutExtendedTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.loadout.LoadoutTableFormat;
+import net.nikr.eve.jeveasset.gui.tabs.loyalty.LoyaltyPointsTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.materials.Material;
 import net.nikr.eve.jeveasset.gui.tabs.materials.MaterialExtendedTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.materials.MaterialTableFormat;
@@ -56,9 +61,12 @@ import net.nikr.eve.jeveasset.gui.tabs.prices.PriceChangesTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.reprocessed.ReprocessedExtendedTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.reprocessed.ReprocessedInterface;
 import net.nikr.eve.jeveasset.gui.tabs.reprocessed.ReprocessedTableFormat;
+import net.nikr.eve.jeveasset.gui.tabs.skills.SkillsOverviewTab.Row;
+import net.nikr.eve.jeveasset.gui.tabs.skills.SkillsOverviewTab.SkillPlansTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.skills.SkillsTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.slots.Slots;
 import net.nikr.eve.jeveasset.gui.tabs.slots.SlotsTableFormat;
+import net.nikr.eve.jeveasset.gui.tabs.standing.NpcStandingTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileExtendedTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileTableFormat;
@@ -70,17 +78,11 @@ import net.nikr.eve.jeveasset.gui.tabs.tree.TreeTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.values.Value;
 import net.nikr.eve.jeveasset.gui.tabs.values.ValueTableFormat;
 
-public class TableFormatFactory {
-	// Generic creators to allow tabs to construct format adaptors for their own
-	// enums
-	public static <T extends Enum<T> & EnumTableColumn<Q>, Q> EnumTableFormatAdaptor<T, Q> create(
-			final Class<T> enumClass) {
-		return new EnumTableFormatAdaptor<>(enumClass);
-	}
 
-	public static <T extends Enum<T> & EnumTableColumn<Q>, Q> EnumTableFormatAdaptor<T, Q> create(
-			final Class<T> enumClass, final java.util.List<EnumTableColumn<Q>> extra) {
-		return new EnumTableFormatAdaptor<>(enumClass, extra);
+public class TableFormatFactory {
+
+	public static EnumTableFormatAdaptor<SkillPlansTableFormat, Row> skillsOverviewTableFormat() {
+		return new EnumTableFormatAdaptor<>(SkillPlansTableFormat.class);
 	}
 
 	public static EnumTableFormatAdaptor<AccountTableFormat, OwnerType> accountTableFormat() {
@@ -95,7 +97,7 @@ public class TableFormatFactory {
 		return new EnumTableFormatAdaptor<>(ColorsTableFormat.class);
 	}
 
-	// Extended
+	//Extended
 	public static EnumTableFormatAdaptor<ContractsTableFormat, MyContractItem> contractsTableFormat() {
 		return new EnumTableFormatAdaptor<>(ContractsTableFormat.class);
 	}
@@ -116,36 +118,32 @@ public class TableFormatFactory {
 		return new EnumTableFormatAdaptor<>(JournalTableFormat.class);
 	}
 
-	// Extended
+	//Extended
 	public static EnumTableFormatAdaptor<LoadoutTableFormat, Loadout> loadoutTableFormat() {
-		return new EnumTableFormatAdaptor<>(LoadoutTableFormat.class,
-				Arrays.asList(LoadoutExtendedTableFormat.values()));
+		return new EnumTableFormatAdaptor<>(LoadoutTableFormat.class, Arrays.asList(LoadoutExtendedTableFormat.values()));
 	}
 
 	public static EnumTableFormatAdaptor<MarketTableFormat, MyMarketOrder> marketTableFormat() {
 		return new EnumTableFormatAdaptor<>(MarketTableFormat.class);
 	}
 
-	// Extended
+	//Extended
 	public static EnumTableFormatAdaptor<MaterialTableFormat, Material> materialTableFormat() {
-		return new EnumTableFormatAdaptor<>(MaterialTableFormat.class,
-				Arrays.asList(MaterialExtendedTableFormat.values()));
+		return new EnumTableFormatAdaptor<>(MaterialTableFormat.class, Arrays.asList(MaterialExtendedTableFormat.values()));
 	}
 
 	public static EnumTableFormatAdaptor<OverviewTableFormat, Overview> overviewTableFormat() {
 		return new EnumTableFormatAdaptor<>(OverviewTableFormat.class);
 	}
 
-	// Extended
+	//Extended
 	public static EnumTableFormatAdaptor<ReprocessedTableFormat, ReprocessedInterface> reprocessedTableFormat() {
-		return new EnumTableFormatAdaptor<>(ReprocessedTableFormat.class,
-				Arrays.asList(ReprocessedExtendedTableFormat.values()));
+		return new EnumTableFormatAdaptor<>(ReprocessedTableFormat.class, Arrays.asList(ReprocessedExtendedTableFormat.values()));
 	}
 
-	// Extended
+	//Extended
 	public static EnumTableFormatAdaptor<StockpileTableFormat, Stockpile.StockpileItem> stockpileTableFormat() {
-		return new EnumTableFormatAdaptor<>(StockpileTableFormat.class,
-				Arrays.asList(StockpileExtendedTableFormat.values()));
+		return new EnumTableFormatAdaptor<>(StockpileTableFormat.class, Arrays.asList(StockpileExtendedTableFormat.values()));
 	}
 
 	public static EnumTableFormatAdaptor<TrackerSkillPointsFilterTableFormat, TrackerSkillPointFilter> trackerSkillPointsFilterTableFormat() {
@@ -166,6 +164,18 @@ public class TableFormatFactory {
 
 	public static EnumTableFormatAdaptor<SkillsTableFormat, MySkill> skillsTableFormat() {
 		return new EnumTableFormatAdaptor<>(SkillsTableFormat.class);
+	}
+
+	public static EnumTableFormatAdaptor<LoyaltyPointsTableFormat, MyLoyaltyPoints> loyaltyPointsTableFormat() {
+		return new EnumTableFormatAdaptor<>(LoyaltyPointsTableFormat.class);
+	}
+
+	public static EnumTableFormatAdaptor<NpcStandingTableFormat, MyNpcStanding> npcStandingTableFormat() {
+		return new EnumTableFormatAdaptor<>(NpcStandingTableFormat.class);
+	}
+
+	public static EnumTableFormatAdaptor<AgentsTableFormat, Agent> agentsTableFormat() {
+		return new EnumTableFormatAdaptor<>(AgentsTableFormat.class);
 	}
 
 	public static EnumTableFormatAdaptor<MiningTableFormat, MyMining> miningTableFormat() {

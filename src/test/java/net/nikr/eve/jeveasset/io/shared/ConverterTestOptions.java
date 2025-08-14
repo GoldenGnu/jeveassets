@@ -33,6 +33,7 @@ import net.nikr.eve.jeveasset.data.api.raw.RawIndustryJob;
 import net.nikr.eve.jeveasset.data.api.raw.RawJournal.ContextType;
 import net.nikr.eve.jeveasset.data.api.raw.RawJournalRefType;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder;
+import net.nikr.eve.jeveasset.data.api.raw.RawNpcStanding;
 import net.nikr.eve.jeveasset.data.sde.ItemFlag;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.settings.MarketPriceData;
@@ -40,6 +41,7 @@ import net.nikr.eve.jeveasset.data.settings.PriceData;
 import net.nikr.eve.jeveasset.data.settings.UserItem;
 import net.nikr.eve.jeveasset.data.settings.tag.Tags;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.Percent;
+import net.nikr.eve.jeveasset.gui.shared.table.containers.TextIcon;
 import net.nikr.eve.jeveasset.gui.tabs.orders.Outbid;
 import net.nikr.eve.jeveasset.io.esi.EsiCallbackURL;
 import net.troja.eve.esi.model.CharacterAssetsResponse;
@@ -172,6 +174,10 @@ public interface ConverterTestOptions {
 	public Outbid getMarketOrdersOutbid();
 
 	public CorporationOrdersHistoryResponse.StateEnum getMarketOrderStateEsiCorporationHistory();
+	
+	public RawNpcStanding.FromType getNpcStandingFromType();
+
+	public TextIcon getTextIcon();
 
 	public int getIndex();
 

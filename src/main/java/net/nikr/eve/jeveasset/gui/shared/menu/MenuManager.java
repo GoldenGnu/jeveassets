@@ -43,6 +43,7 @@ import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.my.MyAsset;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.sde.Item;
+import net.nikr.eve.jeveasset.data.settings.types.CorporationType;
 import net.nikr.eve.jeveasset.data.settings.types.ItemType;
 import net.nikr.eve.jeveasset.data.settings.types.LocationType;
 import net.nikr.eve.jeveasset.data.settings.types.LocationsType;
@@ -80,6 +81,7 @@ public class MenuManager<T extends Enum<T> & EnumTableColumn<Q>, Q> {
 	private boolean priceSupported = false;
 	private boolean itemSupported = false;
 	private boolean locationSupported = false;
+	private boolean corporationSupported = false;
 	private boolean jumpsSupported = false;
 	private boolean assets = false;
 	private boolean tree = false;
@@ -189,6 +191,7 @@ public class MenuManager<T extends Enum<T> & EnumTableColumn<Q>, Q> {
 		transactions = MyTransaction.class.isAssignableFrom(clazz);
 		stockpile = Stockpile.StockpileItem.class.isAssignableFrom(clazz);
 		locationSupported = LocationType.class.isAssignableFrom(clazz) || LocationsType.class.isAssignableFrom(clazz);
+		corporationSupported = CorporationType.class.isAssignableFrom(clazz);
 		jumpsSupported = LocationType.class.isAssignableFrom(clazz);
 		itemSupported = ItemType.class.isAssignableFrom(clazz);
 		tagsSupported = TagsType.class.isAssignableFrom(clazz);
@@ -221,7 +224,7 @@ public class MenuManager<T extends Enum<T> & EnumTableColumn<Q>, Q> {
 			menus.put(MenuEnum.STOCKPILE, new JMenuStockpile<>(program));
 		}
 	//LOOKUP
-		if (itemSupported || locationSupported) {
+		if (itemSupported || locationSupported || corporationSupported) {
 			menus.put(MenuEnum.LOOKUP, new JMenuLookup<>(program));
 		}
 	//EDIT

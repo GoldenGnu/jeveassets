@@ -129,7 +129,7 @@ public class TransactionTab extends JMainTabPrimary implements TagUpdate {
 		jTable.setCellSelectionEnabled(true);
 		PaddingTableCellRenderer.install(jTable, 1);
 		//Sorting
-		TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
+		TableComparatorChooser<MyTransaction> comparatorChooser = TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
 		//Selection Model
 		selectionModel = EventModels.createSelectionModel(filterList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
@@ -141,7 +141,7 @@ public class TransactionTab extends JMainTabPrimary implements TagUpdate {
 		//Table Filter
 		filterControl = new TransactionsFilterControl(sortedList);
 		//Menu
-		installTableTool(new TransactionTableMenu(), tableFormat, tableModel, jTable, filterControl, MyTransaction.class);
+		installTableTool(new TransactionTableMenu(), tableFormat, comparatorChooser, tableModel, jTable, filterControl, MyTransaction.class);
 
 		//Sell
 		JLabel jSellOrders = StatusPanel.createIcon(Images.ORDERS_SELL.getIcon(), TabsTransaction.get().sellTitle());

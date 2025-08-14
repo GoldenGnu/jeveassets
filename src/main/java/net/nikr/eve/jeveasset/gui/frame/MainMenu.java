@@ -35,6 +35,7 @@ import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.i18n.GuiFrame;
 
+
 public class MainMenu extends JMenuBar {
 
 	private static final long serialVersionUID = 1L;
@@ -74,6 +75,9 @@ public class MainMenu extends JMenuBar {
 		SKILLS,
 		SKILL_PLANS,
 		SKILL_PLAN_IMPORT,
+		LOYALTY_POINTS,
+		NPC_STANDING,
+		AGENTS,
 		MINING_ALL,
 		MINING_LOG,
 		MINING_GRAPH,
@@ -92,7 +96,7 @@ public class MainMenu extends JMenuBar {
 		JMenuItem menuItem;
 		JCheckBoxMenuItem checkBoxMenuItem;
 
-		// FILE
+//FILE
 		menu = new JMenu(GuiFrame.get().file());
 		menu.setMnemonic(KeyEvent.VK_F);
 		this.add(menu);
@@ -103,11 +107,12 @@ public class MainMenu extends JMenuBar {
 		menuItem.addActionListener(program);
 		menu.add(menuItem);
 
-		// TOOLS
+//TOOLS
 		menu = new JMenu(GuiFrame.get().tools());
 		menu.setMnemonic(KeyEvent.VK_T);
 		this.add(menu);
-		// ISK
+
+	//ISK
 		submenu = new JMenu(GuiFrame.get().netWorth());
 		submenu.setIcon(Images.TOOL_VALUES.getIcon());
 		menu.add(submenu);
@@ -143,7 +148,8 @@ public class MainMenu extends JMenuBar {
 		menuItem.setActionCommand(MainMenuAction.PRICE_CHANGES.name());
 		menuItem.addActionListener(program);
 		submenu.add(menuItem);
-		// Invertory
+
+	//Invertory
 		submenu = new JMenu(GuiFrame.get().inventory()); //
 		submenu.setIcon(Images.TOOL_ASSETS.getIcon());
 		menu.add(submenu);
@@ -203,7 +209,8 @@ public class MainMenu extends JMenuBar {
 		menuItem.setActionCommand(MainMenuAction.EXTRACTIONS.name());
 		menuItem.addActionListener(program);
 		submenu.add(menuItem);
-		// Business
+
+	//Business
 		submenu = new JMenu(GuiFrame.get().business());
 		submenu.setIcon(Images.TOOL_JOURNAL.getIcon());
 		menu.add(submenu);
@@ -247,11 +254,12 @@ public class MainMenu extends JMenuBar {
 		menuItem.setActionCommand(MainMenuAction.SLOTS.name());
 		menuItem.addActionListener(program);
 		submenu.add(menuItem);
-		// Skills
-		submenu = new JMenu(GuiFrame.get().skills());
-		submenu.setIcon(Images.TOOL_SKILLS.getIcon());
-		menu.add(submenu);
 
+	//Owners
+		submenu = new JMenu(GuiFrame.get().owners());
+		submenu.setIcon(Images.MISC_OWNERS.getIcon());
+		menu.add(submenu);
+		
 		menuItem = new JMenuItem(GuiFrame.get().skills());
 		menuItem.setIcon(Images.TOOL_SKILLS.getIcon());
 		menuItem.setActionCommand(MainMenuAction.SKILLS.name());
@@ -269,9 +277,22 @@ public class MainMenu extends JMenuBar {
 		menuItem.setActionCommand(MainMenuAction.SKILL_PLAN_IMPORT.name());
 		menuItem.addActionListener(program);
 		submenu.add(menuItem);
-		// Misc
+
+		menuItem = new JMenuItem(GuiFrame.get().loyaltyPoints());
+		menuItem.setIcon(Images.TOOL_LOYALTY_POINTS.getIcon());
+		menuItem.setActionCommand(MainMenuAction.LOYALTY_POINTS.name());
+		menuItem.addActionListener(program);
+		submenu.add(menuItem);
+
+		menuItem = new JMenuItem(GuiFrame.get().npcStanding());
+		menuItem.setIcon(Images.TOOL_NPC_STANDING.getIcon());
+		menuItem.setActionCommand(MainMenuAction.NPC_STANDING.name());
+		menuItem.addActionListener(program);
+		submenu.add(menuItem);
+
+	//Misc
 		submenu = new JMenu(GuiFrame.get().misc());
-		submenu.setIcon(Images.TOOL_ROUTING.getIcon());
+		submenu.setIcon(Images.MISC_MISC.getIcon());
 		menu.add(submenu);
 
 		menuItem = new JMenuItem(GuiFrame.get().routing());
@@ -298,6 +319,13 @@ public class MainMenu extends JMenuBar {
 		menuItem.addActionListener(program);
 		submenu.add(menuItem);
 
+		menuItem = new JMenuItem(GuiFrame.get().agents());
+		menuItem.setIcon(Images.TOOL_AGENTS.getIcon());
+		menuItem.setActionCommand(MainMenuAction.AGENTS.name());
+		menuItem.addActionListener(program);
+		submenu.add(menuItem);
+
+	//Lock
 		menu.addSeparator();
 
 		checkBoxMenuItem = new JCheckBoxMenuItem(GuiFrame.get().lock());
@@ -314,7 +342,7 @@ public class MainMenu extends JMenuBar {
 		});
 		menu.add(checkBoxMenuItem);
 
-		// UPDATE
+//UPDATE
 		menu = new JMenu(GuiFrame.get().update());
 		menu.setMnemonic(KeyEvent.VK_U);
 		this.add(menu);
@@ -333,12 +361,12 @@ public class MainMenu extends JMenuBar {
 		jStructureMenu.addActionListener(program);
 		menu.add(jStructureMenu);
 
-		// TABLE
+//TABLE
 		jTableMenu = new JMenu(GuiFrame.get().table());
 		jTableMenu.setMnemonic(KeyEvent.VK_A);
 		this.add(jTableMenu);
 
-		// OPTIONS
+//OPTIONS
 		menu = new JMenu(GuiFrame.get().options());
 		menu.setMnemonic(KeyEvent.VK_O);
 		this.add(menu);
@@ -363,7 +391,7 @@ public class MainMenu extends JMenuBar {
 		menuItem.addActionListener(program);
 		menu.add(menuItem);
 
-		// HELP
+//HELP
 		menu = new JMenu(GuiFrame.get().help());
 		menu.setMnemonic(KeyEvent.VK_H);
 		this.add(menu);
@@ -420,11 +448,11 @@ public class MainMenu extends JMenuBar {
 		menuItem.addActionListener(program);
 		menu.add(menuItem);
 
-		// DEBUG
+//DEBUG
 		if (CliOptions.get().isDebug()) {
 			menu = new JMenu("Debug");
-			// FIXME - - > Remove for production
-			// this.add(menu);
+			//FIXME - - > Remove for production
+			//this.add(menu);
 
 			menuItem = new JMenuItem("Update EventLists", Images.MISC_DEBUG.getIcon());
 			menuItem.addActionListener(new ActionListener() {

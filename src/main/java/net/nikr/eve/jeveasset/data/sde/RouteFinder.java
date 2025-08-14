@@ -24,6 +24,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import net.nikr.eve.jeveasset.SplashUpdater;
+import net.nikr.eve.jeveasset.data.settings.RouteAvoidSettings;
+import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.tabs.routing.SolarSystem;
 import uk.me.candle.eve.graph.DisconnectedGraphException;
 import uk.me.candle.eve.graph.Edge;
@@ -33,18 +35,60 @@ import uk.me.candle.eve.graph.distances.Jumps;
 
 public class RouteFinder {
 
+	public static enum RouteFinderFilter {
+		JUMPS() {
+			@Override
+			public RouteAvoidSettings getRouteAvoidSettings() {
+				return Settings.get().getJumpsAvoidSettings();
+			}
+		},
+		MARKET_ORDERS() {
+			@Override
+			public RouteAvoidSettings getRouteAvoidSettings() {
+				return null; //Unfiltered
+			}
+		};
+
+		private final Map<Long, SolarSystem> systemCache = new HashMap<>();
+		private final Graph<SolarSystem> graph = new Graph<>(new Jumps<>());
+		private final Map<Route, Integer> distance = new HashMap<>();
+
+		public Graph<SolarSystem> getGraph() {
+			return graph;
+		}
+
+		Map<Route, Integer> getDistance() {
+			return distance;
+		}
+
+		public Map<Long, SolarSystem> getSystemCache() {
+			return systemCache;
+		}
+
+		public void update() {
+			systemCache.clear();
+			distance.clear();
+			graph.clear();
+			generateGraph(systemCache, graph, getRouteAvoidSettings());
+		}
+
+		abstract public RouteAvoidSettings getRouteAvoidSettings();
+	}
+
 	private static RouteFinder DISTANCE;
 
-	private final Graph<SolarSystem> graph;
-	private final Map<Long, SolarSystem> systemCache;
-	private final Map<Route, Integer> distance = new HashMap<>();
+	
 
 	private RouteFinder() {
 		// build the graph.
 		// filter the solarsystems based on the settings.
-		graph = new Graph<>(new Jumps<>());
+		for (RouteFinderFilter filter : RouteFinderFilter.values()) {
+			filter.update();
+		}
+	}
+
+	public static void generateGraph(Map<Long, SolarSystem> systemCache, Graph<SolarSystem> graph, RouteAvoidSettings avoidSettings) {
 		int count = 0;
-		systemCache = new HashMap<>();
 		for (Jump jump : StaticData.get().getJumps()) { // this way we exclude the locations that are unreachable.
 			count++;
 			SplashUpdater.setSubProgress((int) (count * 100.0 / StaticData.get().getJumps().size()));
@@ -57,11 +101,19 @@ public class RouteFinder {
 			if (to == null) {
 				to = SolarSystem.create(systemCache, jump.getTo());
 			}
-			graph.addEdge(new Edge<>(from, to));
+			if (avoidSettings == null || (jump.getFrom().getSecurityObject().getDouble() >= avoidSettings.getSecMin()
+						&& jump.getTo().getSecurityObject().getDouble() >= avoidSettings.getSecMin()
+						&& jump.getFrom().getSecurityObject().getDouble() <= avoidSettings.getSecMax()
+						&& jump.getTo().getSecurityObject().getDouble() <= avoidSettings.getSecMax()
+						&& !avoidSettings.getAvoid().keySet().contains(jump.getFrom().getSystemID())
+						&& !avoidSettings.getAvoid().keySet().contains(jump.getTo().getSystemID())
+					)) {
+				graph.addEdge(new Edge<>(from, to));
+			}
 		}
 	}
 
-	public Integer distanceBetween(Long fromSystemID, Long toSystemID) {
+	public Integer distanceBetween(RouteFinderFilter filter, Long fromSystemID, Long toSystemID) {
 		if (fromSystemID == null || toSystemID == null) {
 			return null;
 		}
@@ -69,21 +121,26 @@ public class RouteFinder {
 			return 0;
 		}
 		Route route = new Route(fromSystemID, toSystemID);
-		Integer jumps = distance.get(route);
+		Integer jumps = filter.getDistance().get(route);
 		if (jumps != null) {
-			return jumps; //Saved route
+			if (jumps < 0) {
+				return null;
+			} else {
+				return jumps;
+			} //Saved route
 		}
-		SolarSystem from = systemCache.get(fromSystemID);
-		SolarSystem to = systemCache.get(toSystemID);
+		SolarSystem from = filter.getSystemCache().get(fromSystemID);
+		SolarSystem to = filter.getSystemCache().get(toSystemID);
 		if (from == null || to == null) {
+			filter.getDistance().put(route, -2);
 			return null;
 		}
 		try {
-			jumps = graph.distanceBetween(from, to);
-			distance.put(route, jumps);
+			jumps = filter.getGraph().distanceBetween(from, to);
+			filter.getDistance().put(route, jumps);
 			return jumps;
 		} catch (DisconnectedGraphException ex) {
-
+			filter.getDistance().put(route, -1);
 		}
 		return null;
 	}

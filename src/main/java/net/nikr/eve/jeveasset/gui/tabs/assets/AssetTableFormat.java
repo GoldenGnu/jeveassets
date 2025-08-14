@@ -587,7 +587,7 @@ public enum AssetTableFormat implements EnumTableColumn<MyAsset> {
 		}
 		@Override
 		public Object getColumnValue(final MyAsset from) {
-			return new YesNo(from.getLocation().isCitadel());
+			return YesNo.get(from.getLocation().isCitadel());
 		}
 		@Override
 		public boolean isShowDefault() {

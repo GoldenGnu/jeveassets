@@ -83,46 +83,40 @@ public class SkillsImportPlanTab extends JMainTabPrimary {
 		refreshPlanList();
 
 		layout.setHorizontalGroup(
-				layout.createSequentialGroup()
-						.addComponent(plansScroll, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE,
-								GroupLayout.PREFERRED_SIZE)
-						.addGroup(layout.createParallelGroup()
-								.addGroup(layout.createSequentialGroup()
-										.addComponent(nameLabel)
-										.addComponent(jName, 200, 300, Integer.MAX_VALUE))
-								.addComponent(scroll)
-								.addGroup(layout.createSequentialGroup()
-										.addComponent(jNew, Program.getButtonsWidth(), Program.getButtonsWidth(),
-												Integer.MAX_VALUE)
-										.addComponent(jPaste, Program.getButtonsWidth(), Program.getButtonsWidth(),
-												Integer.MAX_VALUE)
-										.addComponent(jSave, Program.getButtonsWidth(), Program.getButtonsWidth(),
-												Integer.MAX_VALUE)
-										.addComponent(jRename, Program.getButtonsWidth(), Program.getButtonsWidth(),
-												Integer.MAX_VALUE)
-										.addComponent(jDelete, Program.getButtonsWidth(), Program.getButtonsWidth(),
-												Integer.MAX_VALUE))));
+			layout.createSequentialGroup()
+				.addComponent(plansScroll, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+				.addGroup(layout.createParallelGroup()
+					.addGroup(layout.createSequentialGroup()
+						.addComponent(nameLabel)
+						.addComponent(jName, 200, 300, Integer.MAX_VALUE)
+					)
+					.addComponent(scroll)
+					.addGroup(layout.createSequentialGroup()
+						.addComponent(jNew, Program.getButtonsWidth(), Program.getButtonsWidth(), Integer.MAX_VALUE)
+						.addComponent(jPaste, Program.getButtonsWidth(), Program.getButtonsWidth(), Integer.MAX_VALUE)
+						.addComponent(jSave, Program.getButtonsWidth(), Program.getButtonsWidth(), Integer.MAX_VALUE)
+						.addComponent(jRename, Program.getButtonsWidth(), Program.getButtonsWidth(), Integer.MAX_VALUE)
+						.addComponent(jDelete, Program.getButtonsWidth(), Program.getButtonsWidth(), Integer.MAX_VALUE)
+					)
+				)
+		);
 		layout.setVerticalGroup(
-				layout.createParallelGroup()
-						.addComponent(plansScroll)
-						.addGroup(layout.createSequentialGroup()
-								.addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
-										.addComponent(nameLabel, Program.getButtonsHeight(), Program.getButtonsHeight(),
-												Program.getButtonsHeight())
-										.addComponent(jName, Program.getButtonsHeight(), Program.getButtonsHeight(),
-												Program.getButtonsHeight()))
-								.addComponent(scroll)
-								.addGroup(layout.createParallelGroup()
-										.addComponent(jNew, Program.getButtonsHeight(), Program.getButtonsHeight(),
-												Program.getButtonsHeight())
-										.addComponent(jPaste, Program.getButtonsHeight(), Program.getButtonsHeight(),
-												Program.getButtonsHeight())
-										.addComponent(jSave, Program.getButtonsHeight(), Program.getButtonsHeight(),
-												Program.getButtonsHeight())
-										.addComponent(jRename, Program.getButtonsHeight(), Program.getButtonsHeight(),
-												Program.getButtonsHeight())
-										.addComponent(jDelete, Program.getButtonsHeight(), Program.getButtonsHeight(),
-												Program.getButtonsHeight()))));
+			layout.createParallelGroup()
+				.addComponent(plansScroll)
+				.addGroup(layout.createSequentialGroup()
+					.addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
+					.addComponent(nameLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jName, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight()))
+					.addComponent(scroll)
+					.addGroup(layout.createParallelGroup()
+						.addComponent(jNew, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+						.addComponent(jPaste, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+						.addComponent(jSave, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+						.addComponent(jRename, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+						.addComponent(jDelete, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					)
+				)
+		);
 
 	}
 

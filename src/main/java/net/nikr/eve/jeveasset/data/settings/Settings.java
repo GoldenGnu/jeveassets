@@ -85,6 +85,8 @@ public class Settings {
 		FLAG_INCLUDE_BUY_CONTRACTS,
 		FLAG_INCLUDE_MANUFACTURING,
 		FLAG_INCLUDE_COPYING,
+		FLAG_INCLUDE_JUMP_CLONES,
+		FLAG_INCLUDE_PLUGGED_IN_IMPLANTS,
 		FLAG_HIGHLIGHT_SELECTED_ROWS,
 		FLAG_STOCKPILE_FOCUS_TAB,
 		FLAG_STOCKPILE_HALF_COLORS,
@@ -148,124 +150,125 @@ public class Settings {
 	private static Settings settings;
 	private static boolean testMode = false;
 
-	// External
-	// Price Saved by PriceDataGetter.process() in pricedata.dat (on api update)
-	private Map<Integer, PriceData> priceDatas = new HashMap<>(); // TypeID : int
-	// API Data
-	// Api id to owner name Saved by TaskDialog.update() (on API update)
+//External
+	//Price						Saved by PriceDataGetter.process() in pricedata.dat (on api update)
+	private Map<Integer, PriceData> priceDatas = new HashMap<>(); //TypeID : int
+//API Data
+	//Api id to owner name		Saved by TaskDialog.update() (on API update)
 	private final Map<Long, Date> ownersNextUpdate = new HashMap<>();
 	private final Map<Long, String> owners = new HashMap<>();
-	// !! - Values
-	// OK - Custom Price Saved by JUserListPanel.edit()/delete() +
-	// SettingsDialog.save()
-	// Lock OK
-	private Map<Integer, UserItem<Integer, Double>> userPrices = new HashMap<>(); // TypeID : int
-	// OK - Custom Item Name Saved by JUserListPanel.edit()/delete() +
-	// SettingsDialog.save()
-	// Lock OK
-	private Map<Long, UserItem<Long, String>> userNames = new HashMap<>(); // ItemID : long
-	// Eve Item Name Saved by TaskDialog.update() (on API update)
-	// Lock ???
+//!! - Values
+	//OK - Custom Price			Saved by JUserListPanel.edit()/delete() + SettingsDialog.save()
+	//Lock OK
+	private Map<Integer, UserItem<Integer, Double>> userPrices = new HashMap<>(); //TypeID : int
+	//OK - Custom Item Name		Saved by JUserListPanel.edit()/delete() + SettingsDialog.save()
+	//Lock OK
+	private Map<Long, UserItem<Long, String>> userNames = new HashMap<>(); //ItemID : long
+	//Eve Item Name				Saved by TaskDialog.update() (on API update)
+	//Lock ???
 	private Map<Long, String> eveNames = new HashMap<>();
-	// !! - Stockpile Saved by StockpileTab.removeItems() / addStockpile() /
-	// removeStockpile()
-	// Could be more selective...
-	// Lock FAIL!!!
+//!! - Stockpile				Saved by StockpileTab.removeItems() / addStockpile() / removeStockpile()
+	//							Could be more selective...
+	//Lock FAIL!!!
 	private final List<Stockpile> stockpiles = new ArrayList<>();
 	private int stockpileColorGroup2 = 100;
 	private int stockpileColorGroup3 = 0;
 	private final StockpileGroupSettings stockpileGroupSettings = new StockpileGroupSettings();
-	// Routing Saved by ???
-	// Lock ???
+//Routing						Saved by ???
+	//Lock ???
 	private final RoutingSettings routingSettings = new RoutingSettings();
-	// Overview Saved by JOverviewMenu.ListenerClass.NEW/DELETE/RENAME
-	// Lock OK
+//Jumps
+	//Lock ???
+	private final RouteAvoidSettings jumpsAvoidSettings = new RouteAvoidSettings();
+//Overview						Saved by JOverviewMenu.ListenerClass.NEW/DELETE/RENAME
+	//Lock OK
 	private final Map<String, OverviewGroup> overviewGroups = new HashMap<>();
-	// Export Saved in ExportDialog.saveSettings()
-	// Lock OK
+//Export						Saved in ExportDialog.saveSettings()
+	//Lock OK
 	private final CopySettings copySettings = new CopySettings();
 	private final Map<String, ExportSettings> exportSettings = new HashMap<>();
-	// Import
+//Import
 	private final Map<String, String> importSettings = new HashMap<>();
-	// Tracker Saved by TaskDialog.update() (on API update)
+//Tracker						Saved by TaskDialog.update() (on API update)
 	private final TrackerSettings trackerSettings = new TrackerSettings();
-	// Price History
+//Price History
 	private final Map<String, Set<Integer>> priceHistorySets = new HashMap<>();
-	// Runtime flags Is not saved to file
+//Runtime flags					Is not saved to file
 	private boolean settingsLoadError = false;
-	// Settings Dialog: Saved by SettingsDialog.save()
-	// Lock OK
-	// Mixed boolean flags
+//Settings Dialog:				Saved by SettingsDialog.save()
+	//Lock OK
+	//Mixed boolean flags
 	private final Map<SettingFlag, Boolean> flags = new EnumMap<>(SettingFlag.class);
-	// Price
+	//Price
 	private PriceDataSettings priceDataSettings = new PriceDataSettings();
-	// Proxy (API)
+	//Proxy (API)
 	private ProxyData proxyData = new ProxyData();
-	// FIXME - - > Settings: Create windows settings
-	// Window
-	// Saved by MainWindow.ListenerClass.componentMoved() (on change)
+	//FIXME - - > Settings: Create windows settings
+	//Window
+	//							Saved by MainWindow.ListenerClass.componentMoved() (on change)
 	private Point windowLocation = new Point(0, 0);
-	// Saved by MainWindow.ListenerClass.componentResized() (on change)
+	//							Saved by MainWindow.ListenerClass.componentResized() (on change)
 	private Dimension windowSize = new Dimension(800, 600);
-	// Saved by MainWindow.ListenerClass.componentMoved() (on change)
+	//							Saved by MainWindow.ListenerClass.componentMoved() (on change)
 	private boolean windowMaximized = false;
-	// Saved by SettingsDialog.save()
+	//							Saved by SettingsDialog.save()
 	private boolean windowAutoSave = true;
 	private boolean windowAlwaysOnTop = false;
-	// Assets
+	//Assets
 	private int maximumPurchaseAge = 0;
 	private int transactionProfitMargin = 0;
 	private TransactionProfitPrice transactionProfitPrice = TransactionProfitPrice.LASTEST;
-	// Reprocess price
+	//Reprocess price
 	private ReprocessSettings reprocessSettings = new ReprocessSettings();
-	// Public Market Orders Last Update
+	//Public Market Orders Last Update
 	private Date publicMarketOrdersLastUpdate = null;
-	// Public Market Orders Next Update
+	//Public Market Orders Next Update
 	private Date publicMarketOrdersNextUpdate = getNow();
-	// Faction Warfare System Owners
+	//Faction Warfare System Owners
 	private Map<Long, String> factionWarfareSystemOwners = new HashMap<>();
-	// Faction Warfare Next Update
+	//Faction Warfare Next Update
 	private Date factionWarfareNextUpdate = getNow();
-	// Market Orders Outbid
+	//Market Orders Outbid
 	private Map<Long, Outbid> marketOrdersOutbid = new HashMap<>();
-	// SellOrderRange
+	//SellOrderRange
 	private MarketOrderRange outbidOrderRange = MarketOrderRange.REGION;
-	// Expire Warning Days
+	//Expire Warning Days
 	private final MarketOrdersSettings marketOrdersSettings = new MarketOrdersSettings();
-	// Cache
-	private Boolean filterOnEnter = null; // Filter tools
-	private Boolean highlightSelectedRows = null; // Assets
-	private Boolean reprocessColors = null; // Assets
-	private Boolean stockpileHalfColors = null; // Stockpile
-	private Boolean containersShowItemID = null; // Container ItemID
-	private Boolean cellValueCache = null; // Cell value cache
-	// Table settings
-	// Filters Saved by ExportFilterControl.saveSettings()
-	// Lock OK
+	//Cache
+	private Boolean filterOnEnter = null; //Filter tools
+	private Boolean highlightSelectedRows = null; //Assets
+	private Boolean reprocessColors = null; //Assets
+	private Boolean stockpileHalfColors = null; //Stockpile
+	private Boolean containersShowItemID = null; //Container ItemID
+	private Boolean cellValueCache = null; //Cell value cache
+//Table settings
+	//Filters					Saved by ExportFilterControl.saveSettings()
+	//Lock OK
 	private final Map<String, Map<String, List<Filter>>> tableFilters = new HashMap<>();
-	// Columns Saved by EnumTableFormatAdaptor.getMenu() - Reset
-	// EditColumnsDialog.save() - Edit Columns
-	// JAutoColumnTable.ListenerClass.mouseReleased() - Moved
-	// ViewManager.loadView() - Load View
-	// Lock OK
+	//Columns					Saved by EnumTableFormatAdaptor.getMenu() - Reset
+	//									 EditColumnsDialog.save() - Edit Columns
+	//									 JAutoColumnTable.ListenerClass.mouseReleased() - Moved
+	//									 ViewManager.loadView() - Load View
+	//Lock OK
 	private final Map<String, Map<String, List<Filter>>> defaultTableFilters = new HashMap<>();
 	private final Map<String, List<Filter>> currentTableFilters = new HashMap<>();
 	private final Map<String, Boolean> currentTableFiltersShown = new HashMap<>();
+	private final Map<String, String> currentTableSorting = new HashMap<>();
 	private final Map<String, List<SimpleColumn>> tableColumns = new HashMap<>();
-	// Column Width Saved by JAutoColumnTable.saveColumnsWidth()
-	// Lock OK
+	//Column Width				Saved by JAutoColumnTable.saveColumnsWidth()
+	//Lock OK
 	private final Map<String, Map<String, Integer>> tableColumnsWidth = new HashMap<>();
-	// Resize Mode Saved by EnumTableFormatAdaptor.getMenu()
-	// Lock OK
+	//Resize Mode				Saved by EnumTableFormatAdaptor.getMenu()
+	//Lock OK
 	private final Map<String, ResizeMode> tableResize = new HashMap<>();
-	// Views Saved by EnumTableFormatAdaptor.getMenu() - New
-	// ViewManager.rename() - Rename
-	// ViewManager.delete() - Delete
-	// Lock OK
+	//Views						Saved by EnumTableFormatAdaptor.getMenu() - New
+	//									 ViewManager.rename() - Rename
+	//									 ViewManager.delete() - Delete
+	//Lock OK
 	private final Map<String, Map<String, View>> tableViews = new HashMap<>();
-	// Formula Columns
+	//Formula Columns
 	private final Map<String, List<Formula>> tableFormulas = new HashMap<>();
-	// Jump Columns
+	//Jump Columns
 	private final Map<String, List<Jump>> tableJumps = new HashMap<>();
 	// Skill Plans: plan name -> (skill typeID -> target level)
 	private final Map<String, Map<Integer, Integer>> skillPlans = new HashMap<>();
@@ -273,31 +276,33 @@ public class Settings {
 	// Lock OK
 	private final Map<String, Tag> tags = new HashMap<>();
 	private final Map<TagID, Tags> tagIds = new HashMap<>();
-	// Changed
+//Changed
 	private final Map<String, Date> tableChanged = new HashMap<>();
-	// Tools
+//Tools
 	private final List<String> showTools = new ArrayList<>();
-	// Colors
+//Colors
 	private final ColorSettings colorSettings = new ColorSettings();
-	// Sounds
+//Sounds
 	private final Map<SoundOption, Sound> soundSettings = new EnumMap<>(SoundOption.class);
-	// Manufacturing
+//Manufacturing
 	private final ManufacturingSettings manufacturingSettings = new ManufacturingSettings();
 
 	protected Settings() {
-		// Settings
-		flags.put(SettingFlag.FLAG_FILTER_ON_ENTER, false); // Cached
-		flags.put(SettingFlag.FLAG_HIGHLIGHT_SELECTED_ROWS, true); // Cached
-		flags.put(SettingFlag.FLAG_REPROCESS_COLORS, false); // Cached
+		//Settings
+		flags.put(SettingFlag.FLAG_FILTER_ON_ENTER, false); //Cached
+		flags.put(SettingFlag.FLAG_HIGHLIGHT_SELECTED_ROWS, true); //Cached
+		flags.put(SettingFlag.FLAG_REPROCESS_COLORS, false); //Cached
 		flags.put(SettingFlag.FLAG_IGNORE_SECURE_CONTAINERS, true);
 		flags.put(SettingFlag.FLAG_STOCKPILE_FOCUS_TAB, true);
-		flags.put(SettingFlag.FLAG_STOCKPILE_HALF_COLORS, false); // Cached
-		flags.put(SettingFlag.FLAG_INCLUDE_SELL_ORDERS, true);
+		flags.put(SettingFlag.FLAG_STOCKPILE_HALF_COLORS, false); //Cached
+		flags.put(SettingFlag.FLAG_INCLUDE_SELL_ORDERS, false);
 		flags.put(SettingFlag.FLAG_INCLUDE_BUY_ORDERS, false);
 		flags.put(SettingFlag.FLAG_INCLUDE_SELL_CONTRACTS, false);
 		flags.put(SettingFlag.FLAG_INCLUDE_BUY_CONTRACTS, false);
 		flags.put(SettingFlag.FLAG_INCLUDE_MANUFACTURING, false);
 		flags.put(SettingFlag.FLAG_INCLUDE_COPYING, false);
+		flags.put(SettingFlag.FLAG_INCLUDE_JUMP_CLONES, true);
+		flags.put(SettingFlag.FLAG_INCLUDE_PLUGGED_IN_IMPLANTS, true);
 		flags.put(SettingFlag.FLAG_BLUEPRINT_BASE_PRICE_TECH_1, true);
 		flags.put(SettingFlag.FLAG_BLUEPRINT_BASE_PRICE_TECH_2, false);
 		flags.put(SettingFlag.FLAG_TRANSACTION_HISTORY, true);
@@ -319,58 +324,44 @@ public class Settings {
 		flags.put(SettingFlag.FLAG_ASSETS_CONTRACTS_OWNER_BOTH, false);
 		flags.put(SettingFlag.FLAG_CELL_VALUE_CACHE, true);
 		cacheFlags();
-		// Default Filters
+		//Default Filters
 		List<Filter> filter;
-		// Market Orders: Default Filters
+		//Market Orders: Default Filters
 		Map<String, List<Filter>> marketOrdersDefaultFilters = new HashMap<>();
 		filter = new ArrayList<>();
-		filter.add(new Filter(Filter.LogicType.AND, MarketTableFormat.ORDER_TYPE, Filter.CompareType.EQUALS,
-				TabsOrders.get().buy()));
-		filter.add(new Filter(Filter.LogicType.AND, MarketTableFormat.STATUS, Filter.CompareType.EQUALS,
-				TabsOrders.get().statusActive()));
+		filter.add(new Filter(Filter.LogicType.AND, MarketTableFormat.ORDER_TYPE, Filter.CompareType.EQUALS, TabsOrders.get().buy()));
+		filter.add(new Filter(Filter.LogicType.AND, MarketTableFormat.STATUS, Filter.CompareType.EQUALS, TabsOrders.get().statusActive()));
 		marketOrdersDefaultFilters.put(TabsOrders.get().activeBuyOrders(), filter);
 		filter = new ArrayList<>();
-		filter.add(new Filter(Filter.LogicType.AND, MarketTableFormat.ORDER_TYPE, Filter.CompareType.EQUALS,
-				TabsOrders.get().sell()));
-		filter.add(new Filter(Filter.LogicType.AND, MarketTableFormat.STATUS, Filter.CompareType.EQUALS,
-				TabsOrders.get().statusActive()));
+		filter.add(new Filter(Filter.LogicType.AND, MarketTableFormat.ORDER_TYPE, Filter.CompareType.EQUALS, TabsOrders.get().sell()));
+		filter.add(new Filter(Filter.LogicType.AND, MarketTableFormat.STATUS, Filter.CompareType.EQUALS, TabsOrders.get().statusActive()));
 		marketOrdersDefaultFilters.put(TabsOrders.get().activeSellOrders(), filter);
 		defaultTableFilters.put(MarketOrdersTab.NAME, marketOrdersDefaultFilters);
-		// Transactions: Default Filters
+		//Transactions: Default Filters
 		Map<String, List<Filter>> transactionsDefaultFilters = new HashMap<>();
 		filter = new ArrayList<>();
-		filter.add(new Filter(Filter.LogicType.AND, TransactionTableFormat.TYPE, Filter.CompareType.EQUALS,
-				TabsTransaction.get().buy()));
+		filter.add(new Filter(Filter.LogicType.AND, TransactionTableFormat.TYPE, Filter.CompareType.EQUALS, TabsTransaction.get().buy()));
 		transactionsDefaultFilters.put(TabsTransaction.get().buy(), filter);
 		filter = new ArrayList<>();
-		filter.add(new Filter(Filter.LogicType.AND, TransactionTableFormat.TYPE, Filter.CompareType.EQUALS,
-				TabsTransaction.get().sell()));
+		filter.add(new Filter(Filter.LogicType.AND, TransactionTableFormat.TYPE, Filter.CompareType.EQUALS, TabsTransaction.get().sell()));
 		transactionsDefaultFilters.put(TabsTransaction.get().sell(), filter);
 		defaultTableFilters.put(TransactionTab.NAME, transactionsDefaultFilters);
-		// Industry Jobs: Default Filters
+		//Industry Jobs: Default Filters
 		Map<String, List<Filter>> industryJobsTabDefaultFilters = new HashMap<>();
 		filter = new ArrayList<>();
-		filter.add(new Filter(Filter.LogicType.AND, IndustryJobTableFormat.STATE, Filter.CompareType.EQUALS_NOT,
-				MyIndustryJob.getStatusName(IndustryJobStatus.DELIVERED)));
-		filter.add(new Filter(Filter.LogicType.AND, IndustryJobTableFormat.STATE, Filter.CompareType.EQUALS_NOT,
-				MyIndustryJob.getStatusName(IndustryJobStatus.CANCELLED)));
-		filter.add(new Filter(Filter.LogicType.AND, IndustryJobTableFormat.STATE, Filter.CompareType.EQUALS_NOT,
-				MyIndustryJob.getStatusName(IndustryJobStatus.REVERTED)));
-		filter.add(new Filter(Filter.LogicType.AND, IndustryJobTableFormat.STATE, Filter.CompareType.EQUALS_NOT,
-				MyIndustryJob.getStatusName(IndustryJobStatus.ARCHIVED)));
+		filter.add(new Filter(Filter.LogicType.AND, IndustryJobTableFormat.STATE, Filter.CompareType.EQUALS_NOT, MyIndustryJob.getStatusName(IndustryJobStatus.DELIVERED)));
+		filter.add(new Filter(Filter.LogicType.AND, IndustryJobTableFormat.STATE, Filter.CompareType.EQUALS_NOT, MyIndustryJob.getStatusName(IndustryJobStatus.CANCELLED)));
+		filter.add(new Filter(Filter.LogicType.AND, IndustryJobTableFormat.STATE, Filter.CompareType.EQUALS_NOT, MyIndustryJob.getStatusName(IndustryJobStatus.REVERTED)));
+		filter.add(new Filter(Filter.LogicType.AND, IndustryJobTableFormat.STATE, Filter.CompareType.EQUALS_NOT, MyIndustryJob.getStatusName(IndustryJobStatus.ARCHIVED)));
 		industryJobsTabDefaultFilters.put(TabsJobs.get().active(), filter);
 		filter = new ArrayList<>();
-		filter.add(new Filter(Filter.LogicType.OR, IndustryJobTableFormat.STATE, Filter.CompareType.EQUALS,
-				MyIndustryJob.getStatusName(IndustryJobStatus.DELIVERED)));
-		filter.add(new Filter(Filter.LogicType.OR, IndustryJobTableFormat.STATE, Filter.CompareType.EQUALS,
-				MyIndustryJob.getStatusName(IndustryJobStatus.CANCELLED)));
-		filter.add(new Filter(Filter.LogicType.OR, IndustryJobTableFormat.STATE, Filter.CompareType.EQUALS,
-				MyIndustryJob.getStatusName(IndustryJobStatus.REVERTED)));
-		filter.add(new Filter(Filter.LogicType.OR, IndustryJobTableFormat.STATE, Filter.CompareType.EQUALS,
-				MyIndustryJob.getStatusName(IndustryJobStatus.ARCHIVED)));
+		filter.add(new Filter(Filter.LogicType.OR, IndustryJobTableFormat.STATE, Filter.CompareType.EQUALS, MyIndustryJob.getStatusName(IndustryJobStatus.DELIVERED)));
+		filter.add(new Filter(Filter.LogicType.OR, IndustryJobTableFormat.STATE, Filter.CompareType.EQUALS, MyIndustryJob.getStatusName(IndustryJobStatus.CANCELLED)));
+		filter.add(new Filter(Filter.LogicType.OR, IndustryJobTableFormat.STATE, Filter.CompareType.EQUALS, MyIndustryJob.getStatusName(IndustryJobStatus.REVERTED)));
+		filter.add(new Filter(Filter.LogicType.OR, IndustryJobTableFormat.STATE, Filter.CompareType.EQUALS, MyIndustryJob.getStatusName(IndustryJobStatus.ARCHIVED)));
 		industryJobsTabDefaultFilters.put(TabsJobs.get().completed(), filter);
 		defaultTableFilters.put(IndustryJobsTab.NAME, industryJobsTabDefaultFilters);
-		// Extractions Default Filters
+		//Extractions Default Filters
 		Map<String, List<Filter>> extractionsDefaultFilters = new HashMap<>();
 		filter = new ArrayList<>();
 		filter.add(new Filter(Filter.LogicType.OR, ExtractionsTableFormat.ARRIVAL, Filter.CompareType.NEXT_DAYS, "2"));
@@ -560,6 +551,10 @@ public class Settings {
 		return routingSettings;
 	}
 
+	public RouteAvoidSettings getJumpsAvoidSettings() {
+		return jumpsAvoidSettings;
+	}
+
 	public Map<String, List<Jump>> getTableJumps() {
 		return tableJumps;
 	}
@@ -633,9 +628,8 @@ public class Settings {
 
 	/***
 	 * @param tableName Table to look up.
-	 * @return The value of the filter if {@code key} is found. If {@code key} is
-	 *         not found it will be added with an
-	 *         empty list and then returned.
+	 * @return The value of the filter if {@code key} is found. If {@code key} is not found it will be added with an
+	 * empty list and then returned.
 	 */
 	public List<Filter> getCurrentTableFilters(final String tableName) {
 		if (!currentTableFilters.containsKey(tableName)) {
@@ -645,8 +639,7 @@ public class Settings {
 	}
 
 	/***
-	 * @return current table filters visibility state, list may be empty but should
-	 *         never be null.
+	 * @return current table filters visibility state, list may be empty but should never be null.
 	 */
 	public Map<String, Boolean> getCurrentTableFiltersShown() {
 		return currentTableFiltersShown;
@@ -654,15 +647,29 @@ public class Settings {
 
 	/***
 	 * @param tableName Table to look up.
-	 * @return The value of the filter visibility state if key is found. If key is
-	 *         not found it will be added as visible
-	 *         and then returned.
+	 * @return The value of the filter visibility state if key is found. If key is not found it will be added as visible
+	 * and then returned.
 	 */
 	public boolean getCurrentTableFiltersShown(final String tableName) {
 		if (!currentTableFiltersShown.containsKey(tableName)) {
 			currentTableFiltersShown.put(tableName, true);
 		}
 		return currentTableFiltersShown.get(tableName);
+	}
+
+	/***
+	 * @return Current table sorting state, values may be empty but should never be null.
+	 */
+	public Map<String, String> getCurrentTableSorting() {
+		return currentTableSorting;
+	}
+
+	/***
+	 * @param toolName Tool to look up.
+	 * @return Current table sorting. Can be empty, but, never null.
+	 */
+	public String getCurrentTableSorting(final String toolName) {
+		return currentTableSorting.getOrDefault(toolName, "");
 	}
 
 	public Map<String, List<SimpleColumn>> getTableColumns() {
@@ -693,6 +700,7 @@ public class Settings {
 	/**
 	 * Skill Plans storage.
 	 * Key: plan name; Value: map of skill typeID to target level (1..5).
+	 * @return 
 	 */
 	public Map<String, Map<Integer, Integer>> getSkillPlans() {
 		return skillPlans;
@@ -805,11 +813,11 @@ public class Settings {
 	}
 
 	public void setFilterOnEnter(final boolean filterOnEnter) {
-		flags.put(SettingFlag.FLAG_FILTER_ON_ENTER, filterOnEnter); // Save & Load
+		flags.put(SettingFlag.FLAG_FILTER_ON_ENTER, filterOnEnter); //Save & Load
 		this.filterOnEnter = filterOnEnter;
 	}
 
-	public boolean isHighlightSelectedRows() { // High volume call - Map.get is too slow, use cache
+	public boolean isHighlightSelectedRows() { //High volume call - Map.get is too slow, use cache
 		return highlightSelectedRows;
 	}
 
@@ -826,7 +834,7 @@ public class Settings {
 		flags.put(SettingFlag.FLAG_IGNORE_SECURE_CONTAINERS, ignoreSecureContainers);
 	}
 
-	public boolean isReprocessColors() { // High volume call - Map.get is too slow, use cache
+	public boolean isReprocessColors() { //High volume call - Map.get is too slow, use cache
 		return reprocessColors;
 	}
 
@@ -898,6 +906,22 @@ public class Settings {
 
 	public boolean setIncludeCopying(final boolean includeCopying) {
 		return flags.put(SettingFlag.FLAG_INCLUDE_COPYING, includeCopying);
+	}
+
+	public boolean isIncludeJumpClones() {
+		return flags.get(SettingFlag.FLAG_INCLUDE_JUMP_CLONES);
+	}
+
+	public boolean setIncludeJumpClones(final boolean includeJumpClones) {
+		return flags.put(SettingFlag.FLAG_INCLUDE_JUMP_CLONES, includeJumpClones);
+	}
+
+	public boolean isIncludePluggedInImplants() {
+		return flags.get(SettingFlag.FLAG_INCLUDE_PLUGGED_IN_IMPLANTS);
+	}
+
+	public boolean setIncludePluggedInImplants(final boolean includePluggedInImplants) {
+		return flags.put(SettingFlag.FLAG_INCLUDE_PLUGGED_IN_IMPLANTS, includePluggedInImplants);
 	}
 
 	public boolean isBlueprintBasePriceTech1() {
@@ -977,8 +1001,8 @@ public class Settings {
 		return flags.get(SettingFlag.FLAG_INDUSTRY_JOBS_HISTORY);
 	}
 
-	public void setIndustryJobsHistory(final boolean journalHistory) {
-		flags.put(SettingFlag.FLAG_INDUSTRY_JOBS_HISTORY, journalHistory);
+	public void setIndustryJobsHistory(final boolean industryJobsHistory) {
+		flags.put(SettingFlag.FLAG_INDUSTRY_JOBS_HISTORY, industryJobsHistory);
 	}
 
 	public boolean isAssetsContractsOwnerCorporation() {
@@ -1098,7 +1122,7 @@ public class Settings {
 		this.stockpileColorGroup3 = stockpileColorGroup2;
 	}
 
-	// Window
+	//Window
 	public Point getWindowLocation() {
 		return windowLocation;
 	}

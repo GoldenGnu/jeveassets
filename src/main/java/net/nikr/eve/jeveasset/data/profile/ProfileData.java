@@ -42,8 +42,10 @@ import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
 import net.nikr.eve.jeveasset.data.api.my.MyExtraction;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
 import net.nikr.eve.jeveasset.data.api.my.MyJournal;
+import net.nikr.eve.jeveasset.data.api.my.MyLoyaltyPoints;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
 import net.nikr.eve.jeveasset.data.api.my.MyMining;
+import net.nikr.eve.jeveasset.data.api.my.MyNpcStanding;
 import net.nikr.eve.jeveasset.data.api.my.MySkill;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.api.raw.RawBlueprint;
@@ -71,6 +73,7 @@ import net.nikr.eve.jeveasset.gui.shared.StringComparators;
 import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.Percent;
 import net.nikr.eve.jeveasset.gui.sounds.SoundPlayer;
+import net.nikr.eve.jeveasset.gui.tabs.loyalty.TotalLoyaltyPoints;
 import net.nikr.eve.jeveasset.gui.tabs.orders.OutbidProcesser.OutbidProcesserOutput;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
@@ -91,6 +94,8 @@ public class ProfileData {
 	private final EventList<MyAccountBalance> accountBalanceEventList = EventListManager.create();
 	private final EventList<MyContract> contractEventList = EventListManager.create();
 	private final EventList<MySkill> skillsEventList = EventListManager.create();
+	private final EventList<MyLoyaltyPoints> loyaltyPointsEventList = EventListManager.create();
+	private final EventList<MyNpcStanding> npcStandingsEventList = EventListManager.create();
 	private final EventList<MyMining> miningEventList = EventListManager.create();
 	private final EventList<MyExtraction> extractionsEventList = EventListManager.create();
 	private final List<MyContractItem> contractItemList = new ArrayList<>();
@@ -99,6 +104,7 @@ public class ProfileData {
 	private final List<MyJournal> journalList = new ArrayList<>();
 	private final List<MyTransaction> transactionsList = new ArrayList<>();
 	private final List<MyAsset> assetsList = new ArrayList<>();
+	private final Map<OwnerType, List<RawClone>> clonesList = new HashMap<>();
 	private final List<MyAccountBalance> accountBalanceList = new ArrayList<>();
 	private final List<MyContract> contractList = new ArrayList<>();
 	private final Map<String, Long> skillPointsTotal = new HashMap<>();
@@ -158,6 +164,14 @@ public class ProfileData {
 		return skillsEventList;
 	}
 
+	public EventList<MyLoyaltyPoints> getLoyaltyPointsEventList() {
+		return loyaltyPointsEventList;
+	}
+
+	public EventList<MyNpcStanding> getNpcStandingsEventList() {
+		return npcStandingsEventList;
+	}
+
 	public EventList<MyMining> getMiningEventList() {
 		return miningEventList;
 	}
@@ -192,6 +206,10 @@ public class ProfileData {
 
 	public List<MyAccountBalance> getAccountBalanceList() {
 		return accountBalanceList;
+	}
+
+	public Map<OwnerType, List<RawClone>> getClonesList() {
+		return clonesList;
 	}
 
 	public List<MyContract> getContractList() {
@@ -369,12 +387,15 @@ public class ProfileData {
 		} finally {
 			contractEventList.getReadWriteLock().readLock().unlock();
 		}
-		updateLocation(transactionsEventList, locationIDs);
-		updateLocation(marketOrdersEventList, locationIDs);
-		updateLocation(assetsEventList, locationIDs);
-		updateLocation(industryJobsEventList, locationIDs);
+		updateEditableLocation(transactionsEventList, locationIDs);
+		updateEditableLocation(marketOrdersEventList, locationIDs);
+		updateEditableLocation(assetsEventList, locationIDs);
+		updateEditableLocation(industryJobsEventList, locationIDs);
 		updateLocations(contractItemEventList, locationIDs);
 		updateLocations(contractEventList, locationIDs);
+		updateEditableLocation(miningEventList, locationIDs);
+		updateEditableLocation(extractionsEventList, locationIDs);
+		updateLocationList(StaticData.get().getAgents().values(), locationIDs);
 	}
 
 	public void updateNames(Set<Long> itemIDs) {
@@ -433,6 +454,9 @@ public class ProfileData {
 		Set<MyContractItem> contractItems = new HashSet<>();
 		Set<MyContract> contracts = new HashSet<>();
 		Set<MySkill> skills = new HashSet<>();
+		Set<MyLoyaltyPoints> loyaltyPointses = new HashSet<>();
+		Map<String, TotalLoyaltyPoints> loyaltyPointsTotals = new HashMap<>();
+		Set<MyNpcStanding> npcStandings = new HashSet<>();
 		Set<MyMining> minings = new HashSet<>();
 		Set<MyExtraction> extractions = new HashSet<>();
 		Map<Long, OwnerType> blueprintsMap = new HashMap<>();
@@ -538,6 +562,10 @@ public class ProfileData {
 					skillPointsTotalCache.put(owner.getOwnerName(), owner.getTotalSkillPoints());
 				}
 			}
+			//Loyalty Points
+			loyaltyPointses.addAll(owner.getLoyaltyPoints());
+			//NPC Standing
+			npcStandings.addAll(owner.getNpcStanding());
 			//Mining
 			minings.addAll(owner.getMining());
 			//Extractions
@@ -693,7 +721,30 @@ public class ProfileData {
 			journal.setTags(tags);
 		}
 		AddedData.getJournals().commitQueue();
-
+		//Update Loyalty Points dynamic values
+		for (MyLoyaltyPoints loyaltyPoints : loyaltyPointses) {
+			//Names
+			String corporationName = ApiIdConverter.getOwnerName(loyaltyPoints.getCorporationID());
+			loyaltyPoints.setCorporationName(corporationName);
+			//Totals
+			if (corporationName != null && !corporationName.isEmpty()) {
+				TotalLoyaltyPoints total = loyaltyPointsTotals.get(corporationName);
+				if (total == null) {
+					total = new TotalLoyaltyPoints(loyaltyPoints);
+					loyaltyPointsTotals.put(corporationName, total);
+				}
+				total.add(loyaltyPoints);
+			}
+		}
+		//Add Totals
+		loyaltyPointses.addAll(loyaltyPointsTotals.values());
+		//Update Npc Standing dynamic values
+		for (MyNpcStanding npcStanding : npcStandings) {
+			//Names
+			npcStanding.updateSkills();
+			npcStanding.setCorporationName(ApiIdConverter.getOwnerName(npcStanding.getCorporationID()));
+			npcStanding.setFactionName(ApiIdConverter.getOwnerName(npcStanding.getFactionID()));
+		}
 		//Update Mining dynamic values
 		for (MyMining mining : minings) {
 			mining.setCharacterName(ApiIdConverter.getOwnerName(mining.getCharacterID()));
@@ -722,8 +773,8 @@ public class ProfileData {
 				//Add Contract Items to Assets
 				addAssets(DataConverter.assetContracts(contractItems, uniqueOwners, Settings.get().isIncludeSellContracts(), Settings.get().isIncludeBuyContracts()), assets, blueprints, assetAdded, addedDate);
 
-				//Add Clone Implants to Assets
-				addAssets(DataConverter.assetCloneImplants(clones), assets, blueprints, assetAdded, addedDate);
+				//Add Jump Clones and Plugged in Implant to Assets
+				addAssets(DataConverter.assetCloneImplants(clones, Settings.get().isIncludeJumpClones(), Settings.get().isIncludePluggedInImplants()), assets, blueprints, assetAdded, addedDate);
 
 				//Add Assets to Assets
 				for (OwnerType owner : assetsMap.values()) {
@@ -741,6 +792,7 @@ public class ProfileData {
 		editableLocationTypes.addAll(industryJobs);
 		editableLocationTypes.addAll(minings);
 		editableLocationTypes.addAll(extractions);
+		editableLocationTypes.addAll(StaticData.get().getAgents().values());
 		for (EditableLocationType editableLocationType : editableLocationTypes) {
 			editableLocationType.setLocation(ApiIdConverter.getLocation(editableLocationType.getLocationID()));
 		}
@@ -782,6 +834,8 @@ public class ProfileData {
 		accountBalanceList.addAll(accountBalance);
 		skillPointsTotal.clear();
 		skillPointsTotal.putAll(skillPointsTotalCache);
+		clonesList.clear();
+		clonesList.putAll(clones);
 		//Update EventLists
 		Program.ensureEDT(new Runnable() {
 			@Override
@@ -888,6 +942,30 @@ public class ProfileData {
 					skillsEventList.addAll(skills);
 				} finally {
 					skillsEventList.getReadWriteLock().writeLock().unlock();
+				}
+			}
+		});
+		Program.ensureEDT(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					loyaltyPointsEventList.getReadWriteLock().writeLock().lock();
+					loyaltyPointsEventList.clear();
+					loyaltyPointsEventList.addAll(loyaltyPointses);
+				} finally {
+					loyaltyPointsEventList.getReadWriteLock().writeLock().unlock();
+				}
+			}
+		});
+		Program.ensureEDT(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					npcStandingsEventList.getReadWriteLock().writeLock().lock();
+					npcStandingsEventList.clear();
+					npcStandingsEventList.addAll(npcStandings);
+				} finally {
+					npcStandingsEventList.getReadWriteLock().writeLock().unlock();
 				}
 			}
 		});
@@ -1043,7 +1121,7 @@ public class ProfileData {
 		}
 	}
 
-	public static <T extends EditableLocationType> void updateLocation(EventList<T> eventList, Set<Long> locationIDs) {
+	public static <T extends EditableLocationType> void updateEditableLocation(EventList<T> eventList, Set<Long> locationIDs) {
 		if (locationIDs == null || locationIDs.isEmpty()) {
 			return;
 		}
@@ -1060,6 +1138,17 @@ public class ProfileData {
 			eventList.getReadWriteLock().readLock().unlock();
 		}
 		updateList(eventList, found);
+	}
+
+	public static <T extends EditableLocationType> void updateLocationList(Collection<T> collection, Set<Long> locationIDs) {
+		if (locationIDs == null || locationIDs.isEmpty()) {
+			return;
+		}
+		for (T t : collection) {
+			if (locationIDs.contains(t.getLocationID())) {
+				t.setLocation(ApiIdConverter.getLocation(t.getLocationID())); //Update data
+			}
+		}
 	}
 
 	private <T extends LocationsType> void updateLocations(EventList<T> eventList, Set<Long> locationIDs) {
