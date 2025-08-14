@@ -949,6 +949,7 @@ public class RawConverter {
 		CORPORATIONGOALDELIVERIES("CorpProjectsHangar", 184),
 		INFRASTRUCTUREHANGAR("ColonyResourcesHold", 185),
 		MOONMATERIALBAY("MoonMaterialBay", 186),
+		CAPSULEERDELIVERIES("CapsuleerDeliveries", 187),
 		;
 
 		private final String value;

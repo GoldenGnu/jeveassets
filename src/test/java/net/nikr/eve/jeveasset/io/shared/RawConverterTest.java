@@ -153,8 +153,11 @@ public class RawConverterTest extends TestUtil {
 					|| (locationFlagEnum.toString().equals("DustBattle") && itemFlag.getFlagName().equals("DustCharacterBattle"))
 					|| (locationFlagEnum.toString().equals("DustDatabank") && itemFlag.getFlagName().equals("DustCharacterDatabank"))
 					|| (locationFlagEnum.toString().equals("HiddenModifers") && itemFlag.getFlagName().equals("HiddenModifiers"))
+					|| (locationFlagEnum.toString().equals("CorporationGoalDeliveries") && itemFlag.getFlagName().equals("CorpProjectsHangar"))
 					|| (locationFlagEnum.toString().equals("QuantumCoreRoom") && itemFlag.getFlagName().equals("StructureDeedBay"))
 					|| (locationFlagEnum.toString().equals("SpecializedOreHold") && itemFlag.getFlagName().equals("SpecializedAsteroidHold"))
+					|| (locationFlagEnum.toString().equals("MobileDepotHold") && itemFlag.getFlagName().equals("MobileDepot"))
+					|| (locationFlagEnum.toString().equals("InfrastructureHangar") && itemFlag.getFlagName().equals("ColonyResourcesHold"))
 			);
 		}
 	}
@@ -345,7 +348,7 @@ public class RawConverterTest extends TestUtil {
 
 	@Test
 	public void testToJournalRefType_CharacterWalletJournalResponseRefTypeEnum() {
-		assertEquals(146, CharacterWalletJournalResponse.RefTypeEnum.values().length);
+		assertEquals(155, CharacterWalletJournalResponse.RefTypeEnum.values().length);
 		int undefined = 0;
 		for (CharacterWalletJournalResponse.RefTypeEnum refType : CharacterWalletJournalResponse.RefTypeEnum.values()) {
 			RawJournalRefType rawJournalRefType = RawConverter.toJournalRefType(refType);
@@ -359,7 +362,7 @@ public class RawConverterTest extends TestUtil {
 
 	@Test
 	public void testToJournalRefType_CorporationWalletJournalResponseRefTypeEnum() {
-		assertEquals(146, CorporationWalletJournalResponse.RefTypeEnum.values().length);
+		assertEquals(155, CorporationWalletJournalResponse.RefTypeEnum.values().length);
 		int undefined = 0;
 		for (CorporationWalletJournalResponse.RefTypeEnum refType : CorporationWalletJournalResponse.RefTypeEnum.values()) {
 			RawJournalRefType rawJournalRefType = RawConverter.toJournalRefType(refType);
