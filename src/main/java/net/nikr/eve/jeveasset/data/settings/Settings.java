@@ -272,8 +272,8 @@ public class Settings {
 	private final Map<String, List<Jump>> tableJumps = new HashMap<>();
 	// Skill Plans: plan name -> (skill typeID -> target level)
 	private final Map<String, Map<Integer, Integer>> skillPlans = new HashMap<>();
-	// Tags Saved by JMenuTags.addTag()/removeTag() + SettingsDialog.save()
-	// Lock OK
+//Tags						Saved by JMenuTags.addTag()/removeTag() + SettingsDialog.save()
+	//Lock OK
 	private final Map<String, Tag> tags = new HashMap<>();
 	private final Map<TagID, Tags> tagIds = new HashMap<>();
 //Changed

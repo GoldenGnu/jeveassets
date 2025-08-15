@@ -1,3 +1,23 @@
+/*
+ * Copyright 2009-2025 Contributors (see credits.txt)
+ *
+ * This file is part of jEveAssets.
+ *
+ * jEveAssets is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * jEveAssets is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with jEveAssets; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ *
+ */
 package net.nikr.eve.jeveasset.gui.tabs.skills;
 
 import java.awt.datatransfer.DataFlavor;
@@ -7,9 +27,8 @@ import java.awt.datatransfer.Clipboard;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
@@ -24,6 +43,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.sde.Item;
+import net.nikr.eve.jeveasset.data.sde.StaticData;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.types.LocationType;
 import net.nikr.eve.jeveasset.gui.images.Images;
@@ -31,9 +51,8 @@ import net.nikr.eve.jeveasset.gui.shared.components.JMainTabPrimary;
 import net.nikr.eve.jeveasset.i18n.TabsSkills;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 
-public class SkillsImportPlanTab extends JMainTabPrimary {
 
-	public static final String NAME = "skillplanimport";
+public class SkillsPlansTab extends JMainTabPrimary {
 
 	private final JTextField jName;
 	private final JTextArea jText;
@@ -45,23 +64,25 @@ public class SkillsImportPlanTab extends JMainTabPrimary {
 	private final JList<String> jPlans;
 	private final DefaultListModel<String> planListModel;
 
-	public SkillsImportPlanTab(Program program) {
-		super(program, NAME, TabsSkills.get().skills() + " - Import Plan", Images.TOOL_SKILLS.getIcon(), true);
+	public static final String NAME = "skillplans";
 
-		JLabel nameLabel = new JLabel("Plan name");
+	public SkillsPlansTab(Program program) {
+		super(program, NAME, TabsSkills.get().skillPlans(), Images.TOOL_SKILLS.getIcon(), true);
+
+		JLabel jNameLabel = new JLabel("Plan name");
 		jName = new JTextField();
 		jText = new JTextArea(18, 80);
-		JScrollPane scroll = new JScrollPane(jText);
+		JScrollPane jTextScroll = new JScrollPane(jText);
 		jPaste = new JButton("Paste from Clipboard", Images.EDIT_PASTE.getIcon());
 		jNew = new JButton("New", Images.EDIT_ADD.getIcon());
-		jSave = new JButton("Save Plan", Images.FILTER_SAVE.getIcon());
-		jDelete = new JButton("Delete Plan", Images.EDIT_DELETE.getIcon());
-		jRename = new JButton("Rename Plan", Images.EDIT_EDIT.getIcon());
+		jSave = new JButton("Save", Images.FILTER_SAVE.getIcon());
+		jDelete = new JButton("Delete", Images.EDIT_DELETE.getIcon());
+		jRename = new JButton("Rename", Images.EDIT_EDIT.getIcon());
 
 		planListModel = new DefaultListModel<>();
 		jPlans = new JList<>(planListModel);
-		JScrollPane plansScroll = new JScrollPane(jPlans);
-		plansScroll.setPreferredSize(new java.awt.Dimension(220, 300));
+		JScrollPane jPlansScroll = new JScrollPane(jPlans);
+		jPlansScroll.setPreferredSize(new java.awt.Dimension(220, 300));
 
 		jPaste.addActionListener(e -> pasteFromClipboard());
 		jNew.addActionListener(e -> newPlan());
@@ -84,30 +105,31 @@ public class SkillsImportPlanTab extends JMainTabPrimary {
 
 		layout.setHorizontalGroup(
 			layout.createSequentialGroup()
-				.addComponent(plansScroll, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+				.addComponent(jPlansScroll, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
 				.addGroup(layout.createParallelGroup()
 					.addGroup(layout.createSequentialGroup()
-						.addComponent(nameLabel)
+						.addComponent(jNameLabel)
 						.addComponent(jName, 200, 300, Integer.MAX_VALUE)
 					)
-					.addComponent(scroll)
+					.addComponent(jTextScroll)
 					.addGroup(layout.createSequentialGroup()
-						.addComponent(jNew, Program.getButtonsWidth(), Program.getButtonsWidth(), Integer.MAX_VALUE)
-						.addComponent(jPaste, Program.getButtonsWidth(), Program.getButtonsWidth(), Integer.MAX_VALUE)
-						.addComponent(jSave, Program.getButtonsWidth(), Program.getButtonsWidth(), Integer.MAX_VALUE)
-						.addComponent(jRename, Program.getButtonsWidth(), Program.getButtonsWidth(), Integer.MAX_VALUE)
-						.addComponent(jDelete, Program.getButtonsWidth(), Program.getButtonsWidth(), Integer.MAX_VALUE)
+						.addComponent(jNew, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
+						.addComponent(jPaste, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
+						.addComponent(jSave, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
+						.addComponent(jRename, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
+						.addComponent(jDelete, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
 					)
 				)
 		);
 		layout.setVerticalGroup(
 			layout.createParallelGroup()
-				.addComponent(plansScroll)
+				.addComponent(jPlansScroll)
 				.addGroup(layout.createSequentialGroup()
 					.addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
-					.addComponent(nameLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					.addComponent(jName, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight()))
-					.addComponent(scroll)
+						.addComponent(jNameLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+						.addComponent(jName, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					)
+					.addComponent(jTextScroll)
 					.addGroup(layout.createParallelGroup()
 						.addComponent(jNew, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 						.addComponent(jPaste, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
@@ -135,28 +157,32 @@ public class SkillsImportPlanTab extends JMainTabPrimary {
 				jText.setText(data);
 			}
 		} catch (UnsupportedFlavorException | IOException ex) {
-			JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), ex.getMessage(), "Clipboard",
-					JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), ex.getMessage(), "Clipboard", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
 	private void savePlan() {
 		String name = jName.getText().trim();
 		if (name.isEmpty()) {
-			JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), "Enter a plan name", "Skill Plan",
-					JOptionPane.WARNING_MESSAGE);
+			JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), "Enter a plan name", "Skill Plan", JOptionPane.WARNING_MESSAGE);
 			return;
 		}
+
+		//Lookup Table
+		Map<String, Integer> names = new HashMap<>();
+		for (Item item : StaticData.get().getItems().values()) {
+			names.put(item.getTypeName().toLowerCase(), item.getTypeID());
+		}
+		
 		String[] lines = jText.getText().split("\r?\n");
 		Map<Integer, Integer> map = new LinkedHashMap<>();
-		List<String> errors = new ArrayList<>();
 		for (String line : lines) {
 			String trimmed = line.trim();
-			if (trimmed.isEmpty())
+			if (trimmed.isEmpty()) {
 				continue;
+			}
 			int space = lastSpaceIndex(trimmed);
 			if (space <= 0 || space == trimmed.length() - 1) {
-				errors.add(trimmed);
 				continue;
 			}
 			String skillName = trimmed.substring(0, space).trim();
@@ -165,20 +191,17 @@ public class SkillsImportPlanTab extends JMainTabPrimary {
 			try {
 				level = Integer.parseInt(levelStr);
 			} catch (NumberFormatException ex) {
-				errors.add(trimmed);
 				continue;
 			}
 			level = Math.max(1, Math.min(5, level));
-			Integer typeId = findTypeIdByName(skillName);
-			if (typeId == null || typeId == 0) {
-				errors.add(trimmed);
+			Integer typeID = names.get(skillName.toLowerCase());
+			if (typeID == null || typeID == 0) {
 				continue;
 			}
-			map.put(typeId, level);
+			map.put(typeID, level);
 		}
 		if (map.isEmpty()) {
-			JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), "No valid skills found", "Skill Plan",
-					JOptionPane.WARNING_MESSAGE);
+			JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), "No valid skills found", "Skill Plan", JOptionPane.WARNING_MESSAGE);
 			return;
 		}
 		Settings.lock("Save Skill Plan");
@@ -188,31 +211,27 @@ public class SkillsImportPlanTab extends JMainTabPrimary {
 			Settings.unlock("Save Skill Plan");
 		}
 		program.saveSettings("Skill Plan: " + name);
-		if (program.getMainWindow().isOpen(program.getSkillPlansTab())) {
-			program.getSkillPlansTab().updateData();
+		if (program.getMainWindow().isOpen(program.getSkillsOverviewTab())) {
+			program.getSkillsOverviewTab().updateData();
 		}
 		refreshPlanList();
-		JOptionPane.showMessageDialog(program.getMainWindow().getFrame(),
-				"Saved plan '" + name + "' (" + map.size() + ")", "Skill Plan", JOptionPane.INFORMATION_MESSAGE);
+		JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), "Saved plan '" + name + "' (" + map.size() + ")", "Skill Plan", JOptionPane.INFORMATION_MESSAGE);
 	}
 
 	private void deletePlan() {
 		String name = jName.getText().trim();
 		if (name.isEmpty()) {
-			JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), "Enter a plan name to delete",
-					"Skill Plan", JOptionPane.WARNING_MESSAGE);
+			JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), "Enter a plan name to delete", "Skill Plan", JOptionPane.WARNING_MESSAGE);
 			return;
 		}
 		if (!Settings.get().getSkillPlans().containsKey(name)) {
-			JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), "Plan not found: " + name, "Skill Plan",
-					JOptionPane.WARNING_MESSAGE);
+			JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), "Plan not found: " + name, "Skill Plan", JOptionPane.WARNING_MESSAGE);
 			return;
 		}
-		int confirm = javax.swing.JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(),
-				"Delete plan '" + name + "'?", "Skill Plan", javax.swing.JOptionPane.OK_CANCEL_OPTION,
-				javax.swing.JOptionPane.WARNING_MESSAGE);
-		if (confirm != javax.swing.JOptionPane.OK_OPTION)
+		int confirm = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), "Delete plan '" + name + "'?", "Skill Plan", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+		if (confirm != JOptionPane.OK_OPTION) {
 			return;
+		}
 		Settings.lock("Delete Skill Plan");
 		try {
 			Settings.get().getSkillPlans().remove(name);
@@ -220,38 +239,35 @@ public class SkillsImportPlanTab extends JMainTabPrimary {
 			Settings.unlock("Delete Skill Plan");
 		}
 		program.saveSettings("Skill Plan (Delete): " + name);
-		if (program.getMainWindow().isOpen(program.getSkillPlansTab())) {
-			program.getSkillPlansTab().updateData();
+		if (program.getMainWindow().isOpen(program.getSkillsOverviewTab())) {
+			program.getSkillsOverviewTab().updateData();
 		}
 		refreshPlanList();
-		JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), "Deleted plan '" + name + "'", "Skill Plan",
-				JOptionPane.INFORMATION_MESSAGE);
+		JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), "Deleted plan '" + name + "'", "Skill Plan", JOptionPane.INFORMATION_MESSAGE);
 	}
 
 	private void renamePlan() {
 		String name = jName.getText().trim();
 		if (name.isEmpty()) {
-			JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), "Enter the current plan name",
-					"Skill Plan", JOptionPane.WARNING_MESSAGE);
+			JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), "Enter the current plan name", "Skill Plan", JOptionPane.WARNING_MESSAGE);
 			return;
 		}
 		if (!Settings.get().getSkillPlans().containsKey(name)) {
-			JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), "Plan not found: " + name, "Skill Plan",
-					JOptionPane.WARNING_MESSAGE);
+			JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), "Plan not found: " + name, "Skill Plan", JOptionPane.WARNING_MESSAGE);
 			return;
 		}
-		String newName = javax.swing.JOptionPane.showInputDialog(program.getMainWindow().getFrame(),
-				"New name for '" + name + "':", name);
-		if (newName == null)
+		String newName = JOptionPane.showInputDialog(program.getMainWindow().getFrame(), "New name for '" + name + "':", name);
+		if (newName == null) {
 			return;
+		}
 		newName = newName.trim();
 		if (newName.isEmpty()) {
-			JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), "New name cannot be empty", "Skill Plan",
-					JOptionPane.WARNING_MESSAGE);
+			JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), "New name cannot be empty", "Skill Plan", JOptionPane.WARNING_MESSAGE);
 			return;
 		}
-		if (name.equals(newName))
+		if (name.equals(newName)) {
 			return;
+		}
 		Settings.lock("Rename Skill Plan");
 		try {
 			Map<Integer, Integer> map = Settings.get().getSkillPlans().remove(name);
@@ -262,12 +278,11 @@ public class SkillsImportPlanTab extends JMainTabPrimary {
 			Settings.unlock("Rename Skill Plan");
 		}
 		program.saveSettings("Skill Plan (Rename): " + name + " -> " + newName);
-		if (program.getMainWindow().isOpen(program.getSkillPlansTab())) {
-			program.getSkillPlansTab().updateData();
+		if (program.getMainWindow().isOpen(program.getSkillsOverviewTab())) {
+			program.getSkillsOverviewTab().updateData();
 		}
 		refreshPlanList();
-		JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), "Renamed plan to '" + newName + "'",
-				"Skill Plan", JOptionPane.INFORMATION_MESSAGE);
+		JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), "Renamed plan to '" + newName + "'", "Skill Plan", JOptionPane.INFORMATION_MESSAGE);
 	}
 
 	private void refreshPlanList() {
@@ -284,30 +299,14 @@ public class SkillsImportPlanTab extends JMainTabPrimary {
 			jText.setText("");
 			return;
 		}
-		StringBuilder sb = new StringBuilder();
+		StringBuilder builder = new StringBuilder();
 		for (Map.Entry<Integer, Integer> e : map.entrySet()) {
-			Item item = net.nikr.eve.jeveasset.io.shared.ApiIdConverter.getItem(e.getKey());
+			Item item = ApiIdConverter.getItem(e.getKey());
 			if (item != null && item.getTypeID() != 0) {
-				sb.append(item.getTypeName()).append(' ').append(e.getValue()).append('\n');
+				builder.append(item.getTypeName()).append(' ').append(e.getValue()).append('\n');
 			}
 		}
-		jText.setText(sb.toString());
-	}
-
-	private Integer findTypeIdByName(String name) {
-		String normalized = name.toLowerCase(Locale.ROOT);
-		for (Item item : net.nikr.eve.jeveasset.data.sde.StaticData.get().getItems().values()) {
-			if (item.getTypeName().equalsIgnoreCase(name)) {
-				return item.getTypeID();
-			}
-		}
-		ApiIdConverter.getItem(0);
-		for (Item item : net.nikr.eve.jeveasset.data.sde.StaticData.get().getItems().values()) {
-			if (item.getTypeName().toLowerCase(Locale.ROOT).equals(normalized)) {
-				return item.getTypeID();
-			}
-		}
-		return null;
+		jText.setText(builder.toString());
 	}
 
 	private static int lastSpaceIndex(String s) {

@@ -73,8 +73,8 @@ public class MainMenu extends JMenuBar {
 		CONTRACTS,
 		SLOTS,
 		SKILLS,
+		SKILLS_OVERVIEW,
 		SKILL_PLANS,
-		SKILL_PLAN_IMPORT,
 		LOYALTY_POINTS,
 		NPC_STANDING,
 		AGENTS,
@@ -266,15 +266,15 @@ public class MainMenu extends JMenuBar {
 		menuItem.addActionListener(program);
 		submenu.add(menuItem);
 
-		menuItem = new JMenuItem("Skills - Overview");
+		menuItem = new JMenuItem(GuiFrame.get().skillsOverview());
 		menuItem.setIcon(Images.TOOL_SKILLS.getIcon());
-		menuItem.setActionCommand(MainMenuAction.SKILL_PLANS.name());
+		menuItem.setActionCommand(MainMenuAction.SKILLS_OVERVIEW.name());
 		menuItem.addActionListener(program);
 		submenu.add(menuItem);
 
 		menuItem = new JMenuItem("Skills - Import Plan");
 		menuItem.setIcon(Images.EDIT_PASTE.getIcon());
-		menuItem.setActionCommand(MainMenuAction.SKILL_PLAN_IMPORT.name());
+		menuItem.setActionCommand(MainMenuAction.SKILL_PLANS.name());
 		menuItem.addActionListener(program);
 		submenu.add(menuItem);
 
