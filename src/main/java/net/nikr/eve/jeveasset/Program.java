@@ -105,6 +105,8 @@ import net.nikr.eve.jeveasset.gui.tabs.prices.PriceHistoryTab;
 import net.nikr.eve.jeveasset.gui.tabs.reprocessed.ReprocessedTab;
 import net.nikr.eve.jeveasset.gui.tabs.routing.RoutingTab;
 import net.nikr.eve.jeveasset.gui.tabs.skills.SkillsTab;
+import net.nikr.eve.jeveasset.gui.tabs.skills.SkillsOverviewTab;
+import net.nikr.eve.jeveasset.gui.tabs.skills.SkillsPlansTab;
 import net.nikr.eve.jeveasset.gui.tabs.slots.SlotsTab;
 import net.nikr.eve.jeveasset.gui.tabs.standing.NpcStandingTab;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileTab;
@@ -174,6 +176,8 @@ public class Program implements ActionListener {
 	private ContractsTab contractsTab;
 	private TreeTab treeTab;
 	private SkillsTab skillsTab;
+	private SkillsOverviewTab skillsOverviewTab;
+	private SkillsPlansTab skillPlansTab;
 	private LoyaltyPointsTab loyaltyPointsTab;
 	private NpcStandingTab npcStandingTab;
 	private AgentsTab agentsTab;
@@ -292,8 +296,10 @@ public class Program implements ActionListener {
 		LOG.info("Loading: Contracts Tab");
 		contractsTab = new ContractsTab(this);
 		SplashUpdater.setProgress(75);
-		LOG.info("Loading: Skills Tab");
+		LOG.info("Loading: Skills Tabs");
 		skillsTab = new SkillsTab(this);
+		skillsOverviewTab = new SkillsOverviewTab(this);
+		skillPlansTab = new SkillsPlansTab(this);
 		SplashUpdater.setProgress(76);
 		LOG.info("Loading: Loyalty Points Tab");
 		loyaltyPointsTab = new LoyaltyPointsTab(this);
@@ -902,6 +908,14 @@ public class Program implements ActionListener {
 		return reprocessedTab;
 	}
 
+	public SkillsOverviewTab getSkillsOverviewTab() {
+		return skillsOverviewTab;
+	}
+
+	public SkillsPlansTab getSkillPlansTab() {
+		return skillPlansTab;
+	}
+
 	public RoutingTab getRoutingTab() {
 		return routingTab;
 	}
@@ -1031,7 +1045,7 @@ public class Program implements ActionListener {
 		return PROGRAM_DEV_BUILD;
 	}
 
-	public void updateStructures(Set<MyLocation> locations,boolean minimizable) {
+	public void updateStructures(Set<MyLocation> locations, boolean minimizable) {
 		structureUpdateDialog.show(locations, minimizable);
 	}
 
@@ -1126,6 +1140,10 @@ public class Program implements ActionListener {
 			mainWindow.addTab(treeTab);
 		} else if (MainMenuAction.SKILLS.name().equals(e.getActionCommand())) {
 			mainWindow.addTab(skillsTab);
+		} else if (MainMenuAction.SKILLS_OVERVIEW.name().equals(e.getActionCommand())) {
+			mainWindow.addTab(skillsOverviewTab);
+		} else if (MainMenuAction.SKILL_PLANS.name().equals(e.getActionCommand())) {
+			mainWindow.addTab(skillPlansTab);
 		} else if (MainMenuAction.LOYALTY_POINTS.name().equals(e.getActionCommand())) {
 			mainWindow.addTab(loyaltyPointsTab);
 		} else if (MainMenuAction.NPC_STANDING.name().equals(e.getActionCommand())) {
