@@ -6,7 +6,7 @@ https://github.com/GoldenGnu/jeveassets/tree/develop
   * Bug Fixes:  
 https://github.com/GoldenGnu/jeveassets/tree/main
 
-It's **strongly** adviced to make a new branch for each PR
+It's **strongly** advised to make a new branch for each PR
 
 # Git Clone #
 
