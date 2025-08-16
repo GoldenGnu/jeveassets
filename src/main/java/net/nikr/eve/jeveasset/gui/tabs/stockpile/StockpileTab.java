@@ -295,32 +295,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 
 		final ListenerClass listener = new ListenerClass();
 
-		jAutoCompleteDialog = new JAutoCompleteDialog<String>(program, "Edit Group", Images.EDIT_EDIT.getImage(), "Select Group:", false, false) {
-			@Override
-			protected Comparator<String> getComparator() {
-				return GlazedLists.comparableComparator();
-			}
-			
-			@Override
-			protected TextFilterator<String> getFilterator() {
-				return new TextFilterator<String>() {
-					@Override
-					public void getFilterStrings(List<String> baseList, String element) {
-						baseList.add(element);
-					}
-				};
-			}
-			
-			@Override
-			protected String getValue(Object object) {
-				return (String) object;
-			}
-			
-			@Override
-			protected boolean isEmpty(String t) {
-				return t.isEmpty();
-			}
-		};
+		jAutoCompleteDialog = new JAutoCompleteDialog<>(program, "Edit Group", Images.EDIT_EDIT.getImage(), "Select Group:", false, false, JAutoCompleteDialog.STRING_OPTIONS);
 
 		jFileChooser = new JCustomFileChooser("xml");
 		jFileChooser.setMultiSelectionEnabled(false);
@@ -1839,7 +1814,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 				Set<String> groups = Settings.get().getStockpileGroupSettings().getGroups();
 				jAutoCompleteDialog.updateData(groups);
 				String group = jAutoCompleteDialog.show();
-				if (group == null || group.isEmpty()) {
+				if (group == null) {
 					return;
 				}
 				List<Stockpile> oldStockpiles = Settings.get().getStockpileGroupSettings().getStockpiles(group);

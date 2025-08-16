@@ -76,6 +76,7 @@ import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formatter;
 import net.nikr.eve.jeveasset.gui.shared.TextImport;
 import net.nikr.eve.jeveasset.gui.shared.TextImport.TextImportHandler;
+import net.nikr.eve.jeveasset.gui.shared.components.JAutoCompleteDialog;
 import net.nikr.eve.jeveasset.gui.shared.components.JCustomFileChooser;
 import net.nikr.eve.jeveasset.gui.shared.components.JDropDownButton;
 import net.nikr.eve.jeveasset.gui.shared.components.JImportDialog;
@@ -218,9 +219,9 @@ public class RoutingTab extends JMainTabSecondary {
 	//Dialogs
 	private TextImport<ImportSystemType> textImport;
 	private JTextDialog jImportSystemsDialog;
-	private JStationDialog jStationDialog;
-	private JSystemDialog jSystemDialog;
-	private JRouteSaveDialog jSaveRouteDialog;
+	private JAutoCompleteDialog<MyLocation> jStationDialog;
+	private JAutoCompleteDialog<SolarSystem> jSystemDialog;
+	private JAutoCompleteDialog<String> jSaveRouteDialog;
 	private JRouteManageDialog jManageRoutesDialog;
 	private JRouteEditDialog jRouteEditDialog;
 	private JMultiSelectionDialog<String> jRouteSelectionDialog;
@@ -256,9 +257,9 @@ public class RoutingTab extends JMainTabSecondary {
 
 		textImport = new TextImport<>(program, NAME);
 		jImportSystemsDialog = new JTextDialog(program.getMainWindow().getFrame());
-		jStationDialog = new JStationDialog(program);
-		jSystemDialog = new JSystemDialog(program);
-		jSaveRouteDialog = new JRouteSaveDialog(program);
+		jStationDialog = new JAutoCompleteDialog<>(program, TabsRouting.get().addStationTitle(), Images.TOOL_ROUTING.getImage(), TabsRouting.get().addStationSelect(), true, JAutoCompleteDialog.LOCATION_OPTIONS);
+		jSystemDialog = new JAutoCompleteDialog<>(program, TabsRouting.get().addSystemTitle(), Images.TOOL_ROUTING.getImage(), TabsRouting.get().addSystemSelect(), true, JAutoCompleteDialog.SOLAR_SYSTEM_OPTIONS);
+		jSaveRouteDialog = new JAutoCompleteDialog<>(program, TabsRouting.get().routeSaveTitle(), Images.TOOL_ROUTING.getImage(), TabsRouting.get().routeSaveMsg(), false, JAutoCompleteDialog.STRING_OPTIONS);
 		jManageRoutesDialog = new JRouteManageDialog(this, program);
 		jRouteEditDialog = new JRouteEditDialog(program);
 		jRouteSelectionDialog = new JMultiSelectionDialog<>(program, TabsRouting.get().resultSelectRoutes());
