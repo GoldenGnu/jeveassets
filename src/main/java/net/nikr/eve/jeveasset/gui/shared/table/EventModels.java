@@ -30,6 +30,7 @@ import java.util.List;
 import javax.swing.JTable;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
+import net.nikr.eve.jeveasset.gui.tabs.routing.SolarSystem;
 
 
 public class EventModels {
@@ -104,6 +105,20 @@ public class EventModels {
 		@Override
 		public void getFilterStrings(List<String> baseList, Item element) {
 			baseList.add(element.getTypeName());
+		}
+	}
+
+	public static class ViewFilterator implements TextFilterator<View> {
+		@Override
+		public void getFilterStrings(final List<String> baseList, final View element) {
+			baseList.add(element.getName());
+		}
+	}
+
+	public static class SolarSystemFilterator implements TextFilterator<SolarSystem> {
+		@Override
+		public void getFilterStrings(final List<String> baseList, final SolarSystem element) {
+			baseList.add(element.getName());
 		}
 	}
 }

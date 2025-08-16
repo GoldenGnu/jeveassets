@@ -54,6 +54,7 @@ import net.nikr.eve.jeveasset.data.settings.types.LocationType;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.TextImport;
 import net.nikr.eve.jeveasset.gui.shared.TextImport.TextImportHandler;
+import net.nikr.eve.jeveasset.gui.shared.components.JAutoCompleteDialog;
 import net.nikr.eve.jeveasset.gui.shared.components.JFixedToolBar;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTabSecondary;
 import net.nikr.eve.jeveasset.gui.shared.components.JTextDialog;
@@ -88,7 +89,7 @@ public class ReprocessedTab extends JMainTabSecondary {
 	private final JSeparatorTable jTable;
 
 	//Dialogs
-	private final JReprocessedAddItemDialog jAddItemDialog;
+	private final JAutoCompleteDialog<Item> jAddItemDialog;
 	private final TextImport<TextImportType> textImport;
 
 	//Table
@@ -121,7 +122,7 @@ public class ReprocessedTab extends JMainTabSecondary {
 				reprocessableItems.add(item);
 			}
 		}
-		jAddItemDialog = new JReprocessedAddItemDialog(program);
+		jAddItemDialog = new JAutoCompleteDialog<>(program, TabsReprocessed.get().addItem(), Images.TOOL_REPROCESSED.getImage(), TabsReprocessed.get().selectItem(), true, JAutoCompleteDialog.ITEM_OPTIONS);
 		jAddItemDialog.updateData(reprocessableItems);
 
 		textImport = new TextImport<>(program, NAME);

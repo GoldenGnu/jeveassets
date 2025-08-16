@@ -46,6 +46,7 @@ import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.settings.RouteAvoidSettings;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
+import net.nikr.eve.jeveasset.gui.shared.components.JAutoCompleteDialog;
 import net.nikr.eve.jeveasset.gui.shared.components.JDropDownButton;
 import net.nikr.eve.jeveasset.gui.shared.components.JFixedToolBar;
 import net.nikr.eve.jeveasset.i18n.TabsRouting;
@@ -81,9 +82,9 @@ public class JAvoid {
 	private final JPanel jSecurityPanel;
 
 	//Dialogs
-	private final JSaveAvoidDialog jSaveSystemDialog;
+	private final JAutoCompleteDialog<String> jSaveSystemDialog;
 	private final JManageAvoidDialog jManageAvoidDialog;
-	private final JSystemDialog jSystemDialog;
+	private final JAutoCompleteDialog<SolarSystem> jSystemDialog;
 
 	private final Program program;
 	private final ListenerClass listener;
@@ -96,9 +97,9 @@ public class JAvoid {
 		this.avoidSettings = avoidSettings;
 		this.saveSettings = saveSettings;
 
-		jSaveSystemDialog = new JSaveAvoidDialog(program);
+		jSaveSystemDialog = new JAutoCompleteDialog<>(program, TabsRouting.get().saveFilterTitle(), Images.TOOL_ROUTING.getImage(), TabsRouting.get().saveFilterMsg(), false, JAutoCompleteDialog.STRING_OPTIONS);
 		jManageAvoidDialog = new JManageAvoidDialog(this, program);
-		jSystemDialog = new JSystemDialog(program);
+		jSystemDialog = new JAutoCompleteDialog<>(program, TabsRouting.get().addSystemTitle(), Images.TOOL_ROUTING.getImage(), TabsRouting.get().addSystemSelect(), true, JAutoCompleteDialog.SOLAR_SYSTEM_OPTIONS);
 
 		jAvoidPanel = new JPanel();
 		jAvoidPanel.setBorder(BorderFactory.createTitledBorder(TabsRouting.get().avoid()));

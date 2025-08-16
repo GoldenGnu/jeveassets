@@ -32,6 +32,7 @@ import javax.swing.table.AbstractTableModel;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
+import net.nikr.eve.jeveasset.gui.shared.components.JAutoCompleteDialog;
 import net.nikr.eve.jeveasset.gui.shared.table.EditColumnsDialog;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
@@ -39,14 +40,13 @@ import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.ResizeMode
 import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 import net.nikr.eve.jeveasset.gui.shared.table.View;
 import net.nikr.eve.jeveasset.gui.shared.table.ViewManager;
-import net.nikr.eve.jeveasset.gui.shared.table.ViewSave;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 
 public class JMenuColumns<T extends Enum<T> & EnumTableColumn<Q>, Q> extends JMenu {
 
 	private EditColumnsDialog<T, Q> editColumns;
-	private ViewSave viewSave;
+	private JAutoCompleteDialog<View> viewSave;
 	private ViewManager viewManager;
 
 	public JMenuColumns(final Program program, EnumTableFormatAdaptor<T, Q> tableFormatAdaptor, final AbstractTableModel tableModel, final JAutoColumnTable jTable, final String name) {
@@ -63,7 +63,7 @@ public class JMenuColumns<T extends Enum<T> & EnumTableColumn<Q>, Q> extends JMe
 				editColumns = new EditColumnsDialog<>(program, tableFormatAdaptor);
 			}
 			if (viewSave == null) { //Create dialog (only once)
-				viewSave = new ViewSave(program);
+				viewSave = new JAutoCompleteDialog<>(program, GuiShared.get().saveView(), Images.FILTER_SAVE.getImage(), GuiShared.get().saveViewMsg(), false, JAutoCompleteDialog.VIEW_OPTIONS);
 			}
 			if (viewManager == null) { //Create dialog (only once)
 				viewManager = new ViewManager(program, tableFormatAdaptor, tableModel, jTable);
