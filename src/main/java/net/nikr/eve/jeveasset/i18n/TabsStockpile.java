@@ -76,6 +76,7 @@ public abstract class TabsStockpile extends Bundle {
 	public abstract String duplicate();
 	public abstract String edit();
 	public abstract String editCell();
+	public abstract String editGroup();
 	public abstract String editItem();
 	public abstract String editStockpile();
 	public abstract String editStockpileFilter();
@@ -198,6 +199,7 @@ public abstract class TabsStockpile extends Bundle {
 	public abstract String renameStockpileTitle();
 	public abstract String runs();
 	public abstract String selectFits();
+	public abstract String selectGroup();
 	public abstract String selectStockpiles();
 	public abstract String shoppingList();
 	public abstract String showHidden();
