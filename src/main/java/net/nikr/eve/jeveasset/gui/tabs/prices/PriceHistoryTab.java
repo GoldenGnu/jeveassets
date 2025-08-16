@@ -20,8 +20,6 @@
  */
 package net.nikr.eve.jeveasset.gui.tabs.prices;
 
-import ca.odell.glazedlists.GlazedLists;
-import ca.odell.glazedlists.TextFilterator;
 import com.github.lgooddatepicker.optionalusertools.DateChangeListener;
 import com.github.lgooddatepicker.zinternaltools.DateChangeEvent;
 import java.awt.Color;
@@ -37,7 +35,6 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -84,7 +81,6 @@ import net.nikr.eve.jeveasset.gui.shared.components.JDropDownButton;
 import net.nikr.eve.jeveasset.gui.shared.components.JLockWindow;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTabSecondary;
 import net.nikr.eve.jeveasset.gui.shared.components.JMultiSelectionList;
-import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.QuickDate;
 import net.nikr.eve.jeveasset.i18n.TabsPriceHistory;
 import net.nikr.eve.jeveasset.io.online.ZkillboardPricesHistoryGetter;
@@ -227,57 +223,14 @@ public class PriceHistoryTab extends JMainTabSecondary {
 		JLabel jToLabel = new JLabel(TabsPriceHistory.get().to());
 		jTo = new JDateChooser(true);
 		if (toDate != null) {
-			jTo.setDate(toDate);
+		jTo.setDate(toDate);
 		}
 		jTo.addDateChangeListener(listener);
 
-		jAddItemDialog = new JAutoCompleteDialog<Item>(program, TabsPriceHistory.get().addTitle(), Images.TOOL_PRICE_HISTORY.getImage(), null, true) {
-			@Override
-			protected Comparator<Item> getComparator() {
-				return GlazedLists.comparableComparator();
-			}
-
-			@Override
-			protected TextFilterator<Item> getFilterator() {
-				return new EventModels.ItemFilterator();
-			}
-
-			@Override
-			protected Item getValue(Object object) {
-				if (object instanceof Item) {
-					return (Item) object;
-				}
-				return null;
-			}
-
-			@Override
-			protected boolean isEmpty(Item t) {
-				return false;
-			}
-		};
+		jAddItemDialog = new JAutoCompleteDialog<>(program, TabsPriceHistory.get().addTitle(), Images.TOOL_PRICE_HISTORY.getImage(), null, true, JAutoCompleteDialog.ITEM_OPTIONS);
 		jAddItemDialog.updateData(StaticData.get().getItems().values());
 
-		jSaveItemsDialog = new JAutoCompleteDialog<String>(program, TabsPriceHistory.get().saveTitle(), Images.TOOL_PRICE_HISTORY.getImage(), null, false) {
-			@Override
-			protected Comparator<String> getComparator() {
-				return GlazedLists.comparableComparator();
-			}
-
-			@Override
-			protected TextFilterator<String> getFilterator() {
-				return new EventModels.StringFilterator();
-			}
-
-			@Override
-			protected String getValue(Object object) {
-				return String.valueOf(object);
-			}
-
-			@Override
-			protected boolean isEmpty(String t) {
-				return t.isEmpty();
-			}
-		};
+		jSaveItemsDialog = new JAutoCompleteDialog<>(program, TabsPriceHistory.get().saveTitle(), Images.TOOL_PRICE_HISTORY.getImage(), null, false, JAutoCompleteDialog.STRING_OPTIONS);
 		jManageItemsDialog = new JManageItemsDialog(program, this);
 
 		jEdit = new JDropDownButton(Images.EDIT_EDIT.getIcon());
