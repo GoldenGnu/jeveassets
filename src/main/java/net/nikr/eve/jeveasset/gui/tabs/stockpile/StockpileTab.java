@@ -295,7 +295,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 
 		final ListenerClass listener = new ListenerClass();
 
-		jAutoCompleteDialog = new JAutoCompleteDialog<>(program, "Edit Group", Images.EDIT_EDIT.getImage(), "Select Group:", false, false, JAutoCompleteDialog.STRING_OPTIONS);
+		jAutoCompleteDialog = new JAutoCompleteDialog<>(program, TabsStockpile.get().editGroup(), Images.EDIT_EDIT.getImage(), TabsStockpile.get().selectGroup(), false, false, JAutoCompleteDialog.STRING_OPTIONS);
 
 		jFileChooser = new JCustomFileChooser("xml");
 		jFileChooser.setMultiSelectionEnabled(false);
