@@ -22,11 +22,13 @@
 package net.nikr.eve.jeveasset.gui.shared.components;
 
 import ca.odell.glazedlists.EventList;
+import ca.odell.glazedlists.GlazedLists;
 import ca.odell.glazedlists.SortedList;
 import ca.odell.glazedlists.TextFilterator;
 import ca.odell.glazedlists.matchers.TextMatcherEditor;
 import ca.odell.glazedlists.swing.AutoCompleteSupport;
 import java.awt.Image;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Collection;
@@ -38,12 +40,161 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.data.sde.Item;
+import net.nikr.eve.jeveasset.data.sde.MyLocation;
+import net.nikr.eve.jeveasset.gui.shared.StringComparators;
 import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
+import net.nikr.eve.jeveasset.gui.shared.table.EventModels.ItemFilterator;
+import net.nikr.eve.jeveasset.gui.shared.table.EventModels.LocationFilterator;
+import net.nikr.eve.jeveasset.gui.shared.table.EventModels.SolarSystemFilterator;
+import net.nikr.eve.jeveasset.gui.shared.table.EventModels.StringFilterator;
+import net.nikr.eve.jeveasset.gui.shared.table.EventModels.ViewFilterator;
+import net.nikr.eve.jeveasset.gui.shared.table.View;
+import net.nikr.eve.jeveasset.gui.tabs.routing.SolarSystem;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 
-public abstract class JAutoCompleteDialog<T> extends JDialogCentered {
+public class JAutoCompleteDialog<T> extends JDialogCentered {
+
+	public static final AutoCompleteOptions<String> STRING_OPTIONS = new AutoCompleteOptions<String>() {
+		@Override
+		public Comparator<String> getComparator() {
+			return StringComparators.CASE_INSENSITIVE;
+		}
+
+		@Override
+		public TextFilterator<String> getFilterator() {
+			return new StringFilterator();
+		}
+
+		@Override
+		public String getValue(Object object) {
+			if (object instanceof String) {
+				return (String) object;
+			} else {
+				return null;
+			}
+		}
+
+		@Override
+		public boolean isEmpty(String t) {
+			return t.isEmpty();
+		}
+	};
+
+	public static final AutoCompleteOptions<MyLocation> LOCATION_OPTIONS = new AutoCompleteOptions<MyLocation>() {
+		@Override
+		public Comparator<MyLocation> getComparator() {
+			return GlazedLists.comparableComparator();
+		}
+
+		@Override
+		public TextFilterator<MyLocation> getFilterator() {
+			return new LocationFilterator();
+		}
+
+		@Override
+		public MyLocation getValue(Object object) {
+			if (object instanceof MyLocation) {
+				return (MyLocation) object;
+			} else {
+				return null;
+			}
+		}
+
+		@Override
+		public boolean isEmpty(MyLocation t) {
+			return false;
+		}
+	};
+
+	public static final AutoCompleteOptions<View> VIEW_OPTIONS = new AutoCompleteOptions<View>() {
+		@Override
+		public Comparator<View> getComparator() {
+			return GlazedLists.comparableComparator();
+		}
+
+		@Override
+		public TextFilterator<View> getFilterator() {
+			return new ViewFilterator();
+		}
+
+		@Override
+		public View getValue(Object object) {
+			if (object instanceof View) {
+				return (View) object;
+			} else if (object instanceof String) {
+				return new View((String) object);
+			} else {
+				return null;
+			}
+		}
+
+		@Override
+		public boolean isEmpty(View t) {
+			return t.getName().isEmpty();
+		}
+	};
+
+	public static final AutoCompleteOptions<Item> ITEM_OPTIONS = new AutoCompleteOptions<Item>() {
+		@Override
+		public Comparator<Item> getComparator() {
+			return GlazedLists.comparableComparator();
+		}
+
+		@Override
+		public TextFilterator<Item> getFilterator() {
+			return new ItemFilterator();
+		}
+
+		@Override
+		public Item getValue(Object object) {
+			if (object instanceof Item) {
+				return (Item) object;
+			} else {
+				return null;
+			}
+		}
+
+		@Override
+		public boolean isEmpty(Item t) {
+			return false;
+		}
+	};
+
+	public static final AutoCompleteOptions<SolarSystem> SOLAR_SYSTEM_OPTIONS = new AutoCompleteOptions<SolarSystem>() {
+		@Override
+		public Comparator<SolarSystem> getComparator() {
+			return new SystemComparator();
+		}
+
+		@Override
+		public TextFilterator<SolarSystem> getFilterator() {
+			return new SolarSystemFilterator();
+		}
+
+		@Override
+		public SolarSystem getValue(Object object) {
+			if (object instanceof SolarSystem) {
+				return (SolarSystem) object;
+			} else {
+				return null;
+			}
+		}
+
+		@Override
+		public boolean isEmpty(SolarSystem t) {
+			return false;
+		}
+	};
+
+	private static class SystemComparator implements Comparator<SolarSystem> {
+		@Override
+		public int compare(SolarSystem o1, SolarSystem o2) {
+			return o1.getName().compareToIgnoreCase(o2.getName());
+		}
+	}
 
 	private enum AutoCompleteAction {
 		OK, CANCEL
@@ -54,19 +205,29 @@ public abstract class JAutoCompleteDialog<T> extends JDialogCentered {
 	private final JComboBox<T> jItems;
 	private final JButton jOK;
 
+	private final AutoCompleteOptions<T> autoCompleteOptions;
 	private final boolean strict;
 	private final boolean askOverwrite;
 
 	private T value;
 
-	public JAutoCompleteDialog(Program program, String title, Image image, String msg, boolean strict) {
-		this(program, title, image, msg, strict, true);
+	public JAutoCompleteDialog(Program program, String title, Image image, String msg, boolean strict, AutoCompleteOptions<T> autoCompleteOptions) {
+		this(program, title, program.getMainWindow().getFrame(), image, msg, strict, true, autoCompleteOptions);
 	}
 
-	public JAutoCompleteDialog(Program program, String title, Image image, String msg, boolean strict, boolean askOverwrite) {
-		super(program, title, image);
+	public JAutoCompleteDialog(Program program, String title, Window window, Image image, String msg, boolean strict, AutoCompleteOptions<T> autoCompleteOptions) {
+		this(program, title, window, image, msg, strict, true, autoCompleteOptions);
+	}
+
+	public JAutoCompleteDialog(Program program, String title, Image image, String msg, boolean strict, boolean askOverwrite, AutoCompleteOptions<T> autoCompleteOptions) {
+		this(program, title, program.getMainWindow().getFrame(), image, msg, strict, askOverwrite, autoCompleteOptions);
+	}
+
+	public JAutoCompleteDialog(Program program, String title, Window window, Image image, String msg, boolean strict, boolean askOverwrite, AutoCompleteOptions<T> autoCompleteOptions) {
+		super(program, title, window, image);
 		this.strict = strict;
 		this.askOverwrite = askOverwrite;
+		this.autoCompleteOptions = autoCompleteOptions;
 		
 		ListenerClass listener = new ListenerClass();
 
@@ -81,10 +242,10 @@ public abstract class JAutoCompleteDialog<T> extends JDialogCentered {
 		eventList = EventListManager.create();
 
 		eventList.getReadWriteLock().readLock().lock();
-		SortedList<T> sortedList = new SortedList<>(eventList, getComparator());
+		SortedList<T> sortedList = new SortedList<>(eventList, autoCompleteOptions.getComparator());
 		eventList.getReadWriteLock().readLock().unlock();
 
-		autoComplete = AutoCompleteSupport.install(jItems, EventModels.createSwingThreadProxyList(sortedList), getFilterator());
+		autoComplete = AutoCompleteSupport.install(jItems, EventModels.createSwingThreadProxyList(sortedList), autoCompleteOptions.getFilterator());
 		if (!strict) {
 			autoComplete.setFilterMode(TextMatcherEditor.CONTAINS);
 		}
@@ -119,11 +280,6 @@ public abstract class JAutoCompleteDialog<T> extends JDialogCentered {
 				)
 		);
 	}
-
-	protected abstract Comparator<T> getComparator();
-	protected abstract TextFilterator<T> getFilterator();
-	protected abstract T getValue(Object object);
-	protected abstract boolean isEmpty(T t);
 
 	public final void updateData(Collection<T> list) {
 		boolean same = false;
@@ -164,8 +320,8 @@ public abstract class JAutoCompleteDialog<T> extends JDialogCentered {
 		return value;
 	}
 
-	protected boolean valied(T value) {
-		if (value == null || isEmpty(value)) {
+	protected boolean valid(T value) {
+		if (value == null || autoCompleteOptions.isEmpty(value)) {
 			JOptionPane.showMessageDialog(getDialog(), GuiShared.get().invalidMsg(), GuiShared.get().invalidTitle(), JOptionPane.PLAIN_MESSAGE);
 			return false;
 		}
@@ -197,8 +353,8 @@ public abstract class JAutoCompleteDialog<T> extends JDialogCentered {
 
 	@Override
 	protected void save() {
-		value = getValue(jItems.getSelectedItem());
-		if (valied(value)) {
+		value = autoCompleteOptions.getValue(jItems.getSelectedItem());
+		if (valid(value)) {
 			setVisible(false);
 		}
 	}
@@ -210,8 +366,16 @@ public abstract class JAutoCompleteDialog<T> extends JDialogCentered {
 				save();
 			}
 			if (AutoCompleteAction.CANCEL.name().equals(e.getActionCommand())) {
+				value = null;
 				setVisible(false);
 			}
 		}
+	}
+
+	public static interface AutoCompleteOptions<T> {
+		public Comparator<T> getComparator();
+		public TextFilterator<T> getFilterator();
+		public T getValue(Object object);
+		public boolean isEmpty(T t);
 	}
 }
