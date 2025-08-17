@@ -858,4 +858,9 @@ public abstract class FakeSettings extends Settings {
 	public RouteAvoidSettings getJumpsAvoidSettings() {
 		throw new UnsupportedOperationException("not implemented");
 	}
+
+	@Override
+	public Map<String, Map<Integer, Integer>> getSkillPlans() {
+		throw new UnsupportedOperationException("not implemented");
+	}
 }
