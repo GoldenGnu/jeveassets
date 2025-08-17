@@ -100,6 +100,14 @@ public class SkillsOverviewTab extends JMainTabSecondary {
 		//Table Model
 		tableModel = EventModels.createTableModel(filterList, tableFormat);
 		//Table
+		UIDefaults uiDefaults = UIManager.getLookAndFeelDefaults();
+		Font font = uiDefaults.getFont("ToolTip.font");
+		if (font == null) {
+			font = new JTable().getFont(); //Better safe, than sorry...
+		}
+		FontMetrics fontMetrics = new Canvas().getFontMetrics(font);
+		double maxHeight = Toolkit.getDefaultToolkit().getScreenSize().getHeight();
+		int lineHeight = fontMetrics.getHeight();
 		jTable = new JAutoColumnTable(program, tableModel) {
 			@Override
 			public String getToolTipText(java.awt.event.MouseEvent e) {
@@ -132,7 +140,7 @@ public class SkillsOverviewTab extends JMainTabSecondary {
 							int approximateLevel = approximateLevelFromSkillPoints(currentSkillPoints);
 							String percent = Formatter.percentFormat(Math.min(1.0, currentSkillPoints / Math.max(1.0, targetSkillPoints)));
 							builder.append(TabsSkills.get().tableToolTipSkill(name, approximateLevel, targetLevel, percent));
-							if (builder.length() > 800) {
+							if (lineHeight * (missing + 3) > maxHeight) {
 								builder.append(TabsSkills.get().tableToolTipTruncated());
 								break;
 							}

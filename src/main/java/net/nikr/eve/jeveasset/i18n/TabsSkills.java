@@ -35,14 +35,14 @@ public abstract class TabsSkills extends Bundle {
 		super(locale);
 	}
 
+	public abstract String skillPlans();
 	public abstract String skills();
 	public abstract String skillsOverview();
-	public abstract String skillPlans();
-	public abstract String total();
 	public abstract String tableToolTipCompleted();
 	public abstract String tableToolTipMissing(int missing);
 	public abstract String tableToolTipSkill(String name, int approximateLevel, int targetLevel, String percent);
 	public abstract String tableToolTipTruncated();
+	public abstract String total();
 	public abstract String columnSkill();
 	public abstract String columnGroup();
 	public abstract String columnCharacter();
