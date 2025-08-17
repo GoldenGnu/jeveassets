@@ -174,6 +174,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 		writeTableChanges(xmldoc, settings.getTableChanged());
 		writeExportSettings(xmldoc, settings.getExportSettings(), settings.getCopySettings());
 		writeImportSettings(xmldoc, settings.getImportSettings());
+		writeSkillPlans(xmldoc, settings.getSkillPlans());
 		writeTrackerNotes(xmldoc, settings.getTrackerSettings().getNotes());
 		writeTrackerFilters(xmldoc, settings.getTrackerSettings().getFilters(), settings.getTrackerSettings().isSelectNew(), settings.getTrackerSettings().getSkillPointFilters());
 		writeTrackerSettings(xmldoc, settings);
@@ -197,6 +198,22 @@ public class SettingsWriter extends AbstractXmlWriter {
 		}
 		LOG.info("Settings saved");
 		return true;
+	}
+
+	private void writeSkillPlans(final Document xmldoc, final Map<String, Map<Integer, Integer>> skillPlans) {
+		Element node = xmldoc.createElementNS(null, "skillplans");
+		xmldoc.getDocumentElement().appendChild(node);
+		for (Map.Entry<String, Map<Integer, Integer>> entry : skillPlans.entrySet()) {
+			Element planNode = xmldoc.createElementNS(null, "plan");
+			setAttribute(planNode, "name", entry.getKey());
+			node.appendChild(planNode);
+			for (Map.Entry<Integer, Integer> req : entry.getValue().entrySet()) {
+				Element reqNode = xmldoc.createElementNS(null, "req");
+				setAttribute(reqNode, "typeid", req.getKey());
+				setAttribute(reqNode, "level", req.getValue());
+				planNode.appendChild(reqNode);
+			}
+		}
 	}
 
 	private void writeManufacturingPriceSettings(Document xmldoc, ManufacturingSettings settings) {
@@ -892,7 +909,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 
 	private void writeImportSettings(final Document xmldoc, final Map<String, String> importSettings) {
 		Element node = xmldoc.createElementNS(null, "imports");
-		for(Map.Entry<String, String> exportSetting : importSettings.entrySet()) {
+		for (Map.Entry<String, String> exportSetting : importSettings.entrySet()) {
 			Element importNode = xmldoc.createElementNS(null, "import");
 			setAttribute(importNode, "name", exportSetting.getKey());
 			setAttribute(importNode, "type", exportSetting.getValue());
