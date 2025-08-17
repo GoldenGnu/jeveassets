@@ -33,21 +33,21 @@ import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JAutoCompleteDialog;
-import net.nikr.eve.jeveasset.gui.shared.table.EditColumnsDialog;
+import net.nikr.eve.jeveasset.gui.shared.table.JEditColumnsDialog;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.ResizeMode;
 import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 import net.nikr.eve.jeveasset.gui.shared.table.View;
-import net.nikr.eve.jeveasset.gui.shared.table.ViewManager;
+import net.nikr.eve.jeveasset.gui.shared.table.JViewManagerDialog;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 
 public class JMenuColumns<T extends Enum<T> & EnumTableColumn<Q>, Q> extends JMenu {
 
-	private EditColumnsDialog<T, Q> editColumns;
-	private JAutoCompleteDialog<View> viewSave;
-	private ViewManager viewManager;
+	private JEditColumnsDialog<T, Q> jEditColumnsDialog;
+	private JAutoCompleteDialog<View> jViewSaveDialog;
+	private JViewManagerDialog jViewManagerDialog;
 
 	public JMenuColumns(final Program program, EnumTableFormatAdaptor<T, Q> tableFormatAdaptor, final AbstractTableModel tableModel, final JAutoColumnTable jTable, final String name) {
 		this(program, tableFormatAdaptor, tableModel, jTable, name, true);
@@ -59,20 +59,20 @@ public class JMenuColumns<T extends Enum<T> & EnumTableColumn<Q>, Q> extends JMe
 		setIcon(Images.TABLE_COLUMN_SHOW.getIcon());
 
 		if (editable) {
-			if (editColumns == null) { //Create dialog (only once)
-				editColumns = new EditColumnsDialog<>(program, tableFormatAdaptor);
+			if (jEditColumnsDialog == null) { //Create dialog (only once)
+				jEditColumnsDialog = new JEditColumnsDialog<>(program, tableFormatAdaptor);
 			}
-			if (viewSave == null) { //Create dialog (only once)
-				viewSave = new JAutoCompleteDialog<>(program, GuiShared.get().saveView(), Images.FILTER_SAVE.getImage(), GuiShared.get().saveViewMsg(), false, JAutoCompleteDialog.VIEW_OPTIONS);
+			if (jViewSaveDialog == null) { //Create dialog (only once)
+				jViewSaveDialog = new JAutoCompleteDialog<>(program, GuiShared.get().saveView(), Images.FILTER_SAVE.getImage(), GuiShared.get().saveViewMsg(), false, JAutoCompleteDialog.VIEW_OPTIONS);
 			}
-			if (viewManager == null) { //Create dialog (only once)
-				viewManager = new ViewManager(program, tableFormatAdaptor, tableModel, jTable);
+			if (jViewManagerDialog == null) { //Create dialog (only once)
+				jViewManagerDialog = new JViewManagerDialog(program, tableFormatAdaptor, tableModel, jTable);
 			}
 			jMenuItem = new JMenuItem(GuiShared.get().tableColumns(), Images.DIALOG_SETTINGS.getIcon());
 			jMenuItem.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(final ActionEvent e) {
-					editColumns.setVisible(true);
+					jEditColumnsDialog.setVisible(true);
 					tableModel.fireTableStructureChanged();
 					jTable.autoResizeColumns();
 				}
@@ -87,8 +87,8 @@ public class JMenuColumns<T extends Enum<T> & EnumTableColumn<Q>, Q> extends JMe
 				public void actionPerformed(final ActionEvent e) {
 					//Get views...
 					Map<String, View> views = Settings.get().getTableViews(name);
-					viewSave.updateData(new ArrayList<>(views.values())); //Update views
-					View view = viewSave.show();
+					jViewSaveDialog.updateData(new ArrayList<>(views.values())); //Update views
+					View view = jViewSaveDialog.show();
 					if (view != null) { //Validate
 						view.setColumns(tableFormatAdaptor.getColumns()); //Set data
 						Settings.lock("View (New)"); //Lock for View (New)
@@ -110,8 +110,8 @@ public class JMenuColumns<T extends Enum<T> & EnumTableColumn<Q>, Q> extends JMe
 				@Override
 				public void actionPerformed(final ActionEvent e) {
 					Map<String, View> views = Settings.get().getTableViews(name);
-					viewManager.updateData(views);
-					viewManager.setVisible(true);
+					jViewManagerDialog.updateData(views);
+					jViewManagerDialog.setVisible(true);
 				}
 			});
 
@@ -127,7 +127,7 @@ public class JMenuColumns<T extends Enum<T> & EnumTableColumn<Q>, Q> extends JMe
 					jMenuItem.addActionListener(new ActionListener() {
 						@Override
 						public void actionPerformed(final ActionEvent e) {
-							viewManager.loadView(view);
+							jViewManagerDialog.loadView(view);
 						}
 					});
 					jLoad.add(jMenuItem);

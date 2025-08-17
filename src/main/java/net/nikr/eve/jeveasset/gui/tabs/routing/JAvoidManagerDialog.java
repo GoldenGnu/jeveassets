@@ -23,17 +23,17 @@ package net.nikr.eve.jeveasset.gui.tabs.routing;
 import java.util.List;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.settings.Settings;
-import net.nikr.eve.jeveasset.gui.shared.components.JManageDialog;
+import net.nikr.eve.jeveasset.gui.shared.components.JManagerDialog;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 import net.nikr.eve.jeveasset.i18n.TabsRouting;
 
 
-public class JManageAvoidDialog extends JManageDialog {
+public class JAvoidManagerDialog extends JManagerDialog {
 
 	private final JAvoid jAvoid;
 
-	public JManageAvoidDialog(JAvoid jAvoid, Program program) {
-		super(program, program.getMainWindow().getFrame(), TabsRouting.get().manageFiltersTitle(), true, false);
+	public JAvoidManagerDialog(JAvoid jAvoid, Program program) {
+		super(program, program.getMainWindow().getFrame(), TabsRouting.get().manageFiltersTitle(), true, false, false, true, false);
 		this.jAvoid = jAvoid;
 	}
 
@@ -48,8 +48,18 @@ public class JManageAvoidDialog extends JManageDialog {
 	}
 
 	@Override
+	protected void edit(String name) {
+		//Edit is not supported
+	}
+
+	@Override
 	protected void merge(String name, List<String> list) {
 		jAvoid.mergeFilters(name, list);
+	}
+
+	@Override
+	protected void copy(String fromName, String toName) {
+		//Copy is not supported
 	}
 
 	@Override
@@ -72,12 +82,11 @@ public class JManageAvoidDialog extends JManageDialog {
 		//Import is not supported
 	}
 
-	@Override protected String textDeleteMultipleMsg(int size) { return GuiShared.get().deleteFilters(size); }
-	@Override protected String textDelete() { return GuiShared.get().deleteFilter(); }
-	@Override protected String textEnterName() { return GuiShared.get().enterFilterName(); }
-	@Override protected String textNoName() { return GuiShared.get().noFilterName(); }
-	@Override protected String textMerge() { return GuiShared.get().mergeFilters(); }
-	@Override protected String textRename() { return GuiShared.get().renameFilter(); }
-	@Override protected String textOverwrite() { return GuiShared.get().overwriteFilter(); }
+	@Override protected String textDeleteMultipleMsg(int size) { return TabsRouting.get().deleteAvoids(size); }
+	@Override protected String textDelete() { return TabsRouting.get().deleteAvoid(); }
+	@Override protected String textEnterName() { return TabsRouting.get().enterAvoidName(); }
+	@Override protected String textMerge() { return TabsRouting.get().mergeAvoids(); }
+	@Override protected String textRename() { return TabsRouting.get().renameAvoid(); }
+	@Override protected String textOverwrite() { return TabsRouting.get().overwriteAvoid(); }
 
 }

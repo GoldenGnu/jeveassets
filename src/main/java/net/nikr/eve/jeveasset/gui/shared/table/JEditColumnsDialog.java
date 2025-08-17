@@ -37,7 +37,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.SimpleColu
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 
-public class EditColumnsDialog<T extends Enum<T> & EnumTableColumn<Q>, Q> extends JDialogCentered {
+public class JEditColumnsDialog<T extends Enum<T> & EnumTableColumn<Q>, Q> extends JDialogCentered {
 
 	private enum EditColumnsAction {
 		OK,
@@ -54,7 +54,7 @@ public class EditColumnsDialog<T extends Enum<T> & EnumTableColumn<Q>, Q> extend
 	private final JTextArea jInfo;
 	private final EnumTableFormatAdaptor<T, Q> adaptor;
 
-	public EditColumnsDialog(final Program program, final EnumTableFormatAdaptor<T, Q> adaptor) {
+	public JEditColumnsDialog(final Program program, final EnumTableFormatAdaptor<T, Q> adaptor) {
 		super(program, GuiShared.get().tableColumnsTitle(), Images.TABLE_COLUMN_SHOW.getImage());
 		this.adaptor = adaptor;
 
