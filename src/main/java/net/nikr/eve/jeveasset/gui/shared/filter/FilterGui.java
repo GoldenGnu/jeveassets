@@ -82,7 +82,7 @@ class FilterGui<E> {
 
 	private final List<FilterPanel<E>> filterPanels = new ArrayList<>();
 	private final FilterSave filterSave;
-	private final FilterManager<E> filterManager;
+	private final JFilterManagerDialog<E> jFilterManagerDialog;
 
 	private final ExportDialog<E> exportDialog;
 	private boolean multiUpdate = false;
@@ -204,7 +204,7 @@ class FilterGui<E> {
 		add();
 
 		filterSave = new FilterSave(jFrame);
-		filterManager = new FilterManager<>(jFrame, filterControl.getName(), this, tableFormat.getAllColumns(), filterControl.getFilters(), filterControl.getDefaultFilters());
+		jFilterManagerDialog = new JFilterManagerDialog<>(jFrame, filterControl.getName(), this, tableFormat.getAllColumns(), filterControl.getFilters(), filterControl.getDefaultFilters());
 	}
 
 	protected JPanel getPanel() {
@@ -560,7 +560,7 @@ class FilterGui<E> {
 			} else if (FilterGuiAction.CLEAR.name().equals(e.getActionCommand())) {
 				clear();
 			} else if (FilterGuiAction.MANAGER.name().equals(e.getActionCommand())) {
-				filterManager.setVisible(true);
+				jFilterManagerDialog.setVisible(true);
 			} else if (FilterGuiAction.SHOW_FILTERS.name().equals(e.getActionCommand())) {
 				update();
 				Settings.get().getCurrentTableFiltersShown().put(filterControl.getName(), isFilterShown());

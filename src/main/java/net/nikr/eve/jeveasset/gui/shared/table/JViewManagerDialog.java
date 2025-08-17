@@ -26,19 +26,19 @@ import java.util.Map;
 import javax.swing.table.AbstractTableModel;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.settings.Settings;
-import net.nikr.eve.jeveasset.gui.shared.components.JManageDialog;
+import net.nikr.eve.jeveasset.gui.shared.components.JManagerDialog;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 
-public class ViewManager extends JManageDialog {
+public class JViewManagerDialog extends JManagerDialog {
 
 	private final EnumTableFormatAdaptor<?, ?> tableFormat;
 	private final AbstractTableModel tableModel;
 	private final JAutoColumnTable jTable;
 	private Map<String, View> views;
 
-	public ViewManager(Program program, EnumTableFormatAdaptor<?, ?> tableFormat, AbstractTableModel tableModel, JAutoColumnTable jTable) {
-		super(program, program.getMainWindow().getFrame(), GuiShared.get().manageViews(), false, false);
+	public JViewManagerDialog(Program program, EnumTableFormatAdaptor<?, ?> tableFormat, AbstractTableModel tableModel, JAutoColumnTable jTable) {
+		super(program, program.getMainWindow().getFrame(), GuiShared.get().manageViews(), true, false, false, false, false);
 		this.tableFormat = tableFormat;
 		this.tableModel = tableModel;
 		this.jTable = jTable;
@@ -54,13 +54,6 @@ public class ViewManager extends JManageDialog {
 		program.updateTableMenu();
 	}
 
-	@Override
-	protected void load(String name) {
-		View view = views.get(name);
-		loadView(view);
-		setVisible(false);
-	}
-
 	public void loadView(View view) {
 		tableFormat.setColumns(view.getColumns());
 		tableModel.fireTableStructureChanged();
@@ -69,9 +62,27 @@ public class ViewManager extends JManageDialog {
 		program.saveSettings("View (Load)"); //Save Columns (Changed - Load View)
 	}
 
+
+	@Override
+	protected void load(String name) {
+		View view = views.get(name);
+		loadView(view);
+		setVisible(false);
+	}
+
+	@Override
+	protected void edit(String name) {
+		//Edit is not supported...
+	}
+	
 	@Override
 	protected void merge(String name, List<String> list) {
 		//Merge is not supported...
+	}
+
+	@Override
+	protected void copy(String fromName, String toName) {
+		//Copy is not supported
 	}
 
 	@Override
@@ -111,7 +122,6 @@ public class ViewManager extends JManageDialog {
 	@Override protected String textDeleteMultipleMsg(int size) { return GuiShared.get().deleteViews(size); }
 	@Override protected String textDelete() { return GuiShared.get().deleteView(); }
 	@Override protected String textEnterName() { return GuiShared.get().enterViewName(); }
-	@Override protected String textNoName() { return GuiShared.get().noViewName(); }
 	@Override protected String textMerge() { return ""; }
 	@Override protected String textRename() { return GuiShared.get().renameView(); }
 	@Override protected String textOverwrite() { return GuiShared.get().overwriteView(); }

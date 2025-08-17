@@ -54,7 +54,10 @@ public abstract class TabsRouting extends Bundle {
 	public abstract String calculate();
 	public abstract String cancel();
 	public abstract String checked();
+	public abstract String deleteAvoids(int size);
+	public abstract String deleteAvoid();
 	public abstract String emptyResult();
+	public abstract String enterAvoidName();
 	public abstract String error();
 	public abstract String filteredAssets();
 	public abstract String filters();
@@ -63,12 +66,15 @@ public abstract class TabsRouting extends Bundle {
 	public abstract String importOptionsOverwriteHelp();
 	public abstract String importOptionsRenameHelp();
 	public abstract String importOptionsSkipHelp();
+	public abstract String mergeAvoids();
 	public abstract String manageFiltersTitle();
 	public abstract String noSystems();
 	public abstract String noSystemsTitle();
 	public abstract String ok();
 	public abstract String overviewGroup(Object arg0);
+	public abstract String overwriteAvoid();
 	public abstract String remove();
+	public abstract String renameAvoid();
 	public abstract String resultArrow();
 	public abstract String resultEdit();
 	public abstract String resultEditAvoid(String avoid);
@@ -105,7 +111,6 @@ public abstract class TabsRouting extends Bundle {
 	public abstract String resultUntitled();
 	public abstract String routeDeleteMsg(int size);
 	public abstract String routeDeleteTitle();
-	public abstract String routeNoName();
 	public abstract String routeOverwrite();
 	public abstract String routeRenameTitle();
 	public abstract String routeSaveTitle();
