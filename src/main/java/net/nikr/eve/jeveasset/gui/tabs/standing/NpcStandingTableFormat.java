@@ -25,6 +25,7 @@ import java.util.Comparator;
 import net.nikr.eve.jeveasset.data.api.my.MyNpcStanding;
 import net.nikr.eve.jeveasset.data.api.raw.RawNpcStanding.FromType;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
+import net.nikr.eve.jeveasset.gui.shared.table.containers.Security;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.Standing;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.TextIcon;
 import net.nikr.eve.jeveasset.i18n.TabsNpcStanding;
@@ -152,6 +153,56 @@ public enum NpcStandingTableFormat implements EnumTableColumn<MyNpcStanding> {
 		@Override
 		public Object getColumnValue(final MyNpcStanding from) {
 			return Standing.create(from.getStandingMaximum());
+		}
+	},
+	LOCATION(String.class) {
+		@Override
+		public String getColumnName() {
+			return TabsNpcStanding.get().columnLocation();
+		}
+		@Override
+		public Object getColumnValue(final MyNpcStanding from) {
+			return from.getLocation();
+		}
+	},
+	SECURITY(Security.class) {
+		@Override
+		public String getColumnName() {
+			return TabsNpcStanding.get().columnSecurity();
+		}
+		@Override
+		public Object getColumnValue(final MyNpcStanding from) {
+			return from.getSecurityObject();
+		}
+	},
+	SYSTEM(String.class) {
+		@Override
+		public String getColumnName() {
+			return TabsNpcStanding.get().columnSystem();
+		}
+		@Override
+		public Object getColumnValue(final MyNpcStanding from) {
+			return from.getSystem();
+		}
+	},
+	CONSTELLATION(String.class) {
+		@Override
+		public String getColumnName() {
+			return TabsNpcStanding.get().columnConstellation();
+		}
+		@Override
+		public Object getColumnValue(final MyNpcStanding from) {
+			return from.getConstellation();
+		}
+	},
+	REGION(String.class) {
+		@Override
+		public String getColumnName() {
+			return TabsNpcStanding.get().columnRegion();
+		}
+		@Override
+		public Object getColumnValue(final MyNpcStanding from) {
+			return from.getRegion();
 		}
 	},
 	ID(Integer.class) {
