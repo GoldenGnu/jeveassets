@@ -74,6 +74,7 @@ public class MainMenu extends JMenuBar {
 		CONTRACTS,
 		SLOTS,
 		SKILLS,
+		SKILLS_OVERVIEW,
 		LOYALTY_POINTS,
 		NPC_STANDING,
 		AGENTS,
@@ -220,13 +221,13 @@ public class MainMenu extends JMenuBar {
 		submenu.setIcon(Images.TOOL_JOURNAL.getIcon());
 		menu.add(submenu);
 
- 		menuItem = new JMenuItem(GuiFrame.get().journal());
+		menuItem = new JMenuItem(GuiFrame.get().journal());
 		menuItem.setIcon(Images.TOOL_JOURNAL.getIcon());
 		menuItem.setActionCommand(MainMenuAction.JOURNAL.name());
 		menuItem.addActionListener(program);
 		submenu.add(menuItem);
 
- 		menuItem = new JMenuItem(GuiFrame.get().transaction());
+		menuItem = new JMenuItem(GuiFrame.get().transaction());
 		menuItem.setIcon(Images.TOOL_TRANSACTION.getIcon());
 		menuItem.setActionCommand(MainMenuAction.TRANSACTION.name());
 		menuItem.addActionListener(program);
@@ -268,6 +269,12 @@ public class MainMenu extends JMenuBar {
 		menuItem = new JMenuItem(GuiFrame.get().skills());
 		menuItem.setIcon(Images.TOOL_SKILLS.getIcon());
 		menuItem.setActionCommand(MainMenuAction.SKILLS.name());
+		menuItem.addActionListener(program);
+		submenu.add(menuItem);
+
+		menuItem = new JMenuItem(GuiFrame.get().skillsOverview());
+		menuItem.setIcon(Images.TOOL_SKILLS.getIcon());
+		menuItem.setActionCommand(MainMenuAction.SKILLS_OVERVIEW.name());
 		menuItem.addActionListener(program);
 		submenu.add(menuItem);
 
@@ -369,7 +376,6 @@ public class MainMenu extends JMenuBar {
 		menuItem.setActionCommand(MainMenuAction.ACCOUNT_MANAGER.name());
 		menuItem.addActionListener(program);
 		menu.add(menuItem);
-
 
 		menuItem = new JMenuItem(GuiFrame.get().profiles());
 		menuItem.setIcon(Images.DIALOG_PROFILES.getIcon());

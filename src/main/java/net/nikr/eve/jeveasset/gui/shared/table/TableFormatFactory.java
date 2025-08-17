@@ -63,6 +63,8 @@ import net.nikr.eve.jeveasset.gui.tabs.prices.PriceChangesTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.reprocessed.ReprocessedExtendedTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.reprocessed.ReprocessedInterface;
 import net.nikr.eve.jeveasset.gui.tabs.reprocessed.ReprocessedTableFormat;
+import net.nikr.eve.jeveasset.gui.tabs.skills.SkillsOverviewTab.SkillsOverview;
+import net.nikr.eve.jeveasset.gui.tabs.skills.SkillsOverviewTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.skills.SkillsTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.slots.Slots;
 import net.nikr.eve.jeveasset.gui.tabs.slots.SlotsTableFormat;
@@ -80,6 +82,11 @@ import net.nikr.eve.jeveasset.gui.tabs.values.ValueTableFormat;
 
 
 public class TableFormatFactory {
+
+	public static EnumTableFormatAdaptor<SkillsOverviewTableFormat, SkillsOverview> skillsOverviewTableFormat() {
+		return new EnumTableFormatAdaptor<>(SkillsOverviewTableFormat.class);
+	}
+
 	public static EnumTableFormatAdaptor<AccountTableFormat, OwnerType> accountTableFormat() {
 		return new EnumTableFormatAdaptor<>(AccountTableFormat.class);
 	}
