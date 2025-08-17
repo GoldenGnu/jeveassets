@@ -39,6 +39,7 @@ public class Agent implements Comparable<Agent>, EditableLocationType {
 	private final String agentType;
 	private final long locationID; //corporationID : long
 	private final boolean locator;
+	private final boolean empty;
 	private MyLocation location;
 
 	public Agent(String agentName, int agentID, int corporationID, int level, int divisionID, int agentTypeID, long locationID, boolean locator) {
@@ -54,6 +55,7 @@ public class Agent implements Comparable<Agent>, EditableLocationType {
 		this.locationID = locationID;
 		this.locator = locator;
 		this.location = ApiIdConverter.getLocation(locationID);
+		this.empty = false;
 	}
 
 	public Agent(Integer agentID) {
@@ -69,6 +71,11 @@ public class Agent implements Comparable<Agent>, EditableLocationType {
 		this.locationID = 0;
 		this.locator = false;
 		this.location = null;
+		this.empty = true;
+	}
+
+	public boolean isEmpty() {
+		return empty;
 	}
 
 	public String getAgent() {

@@ -27,6 +27,7 @@ import net.nikr.eve.jeveasset.data.sde.Agent;
 import net.nikr.eve.jeveasset.data.sde.NpcCorporation;
 import net.nikr.eve.jeveasset.data.settings.types.CorporationType;
 import net.nikr.eve.jeveasset.gui.images.Images;
+import net.nikr.eve.jeveasset.gui.shared.table.containers.Security;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.TextIcon;
 import net.nikr.eve.jeveasset.io.online.EveImageGetter;
 import net.nikr.eve.jeveasset.io.online.EveImageGetter.ImageSize;
@@ -61,7 +62,7 @@ public class MyNpcStanding extends RawNpcStanding implements Comparable<MyNpcSta
 		agent = ApiIdConverter.getAgent(agentID);
 		NpcCorporation npcCorporation;
 		if (getFromType() == FromType.AGENT) {
-			if (agent != null) {
+			if (!agent.isEmpty()) {
 				corporationID = agent.getCorporationID();
 				npcCorporation = ApiIdConverter.getNpcCorporation(corporationID);
 				factionID = npcCorporation.getFactionID();
@@ -193,6 +194,46 @@ public class MyNpcStanding extends RawNpcStanding implements Comparable<MyNpcSta
 
 	private Float calc(Float standing, int modifier) {
 		return standing + (10 - standing) * 0.04F * modifier;
+	}
+
+	public String getLocation() {
+		if (!agent.isEmpty()) {
+			return agent.getLocation().getLocation();
+		} else {
+			return null;
+		}
+	}
+
+	public Security getSecurityObject() {
+		if (!agent.isEmpty()) {
+			return agent.getLocation().getSecurityObject();
+		} else {
+			return null;
+		}
+	}
+
+	public String getSystem() {
+		if (!agent.isEmpty()) {
+			return agent.getLocation().getSystem();
+		} else {
+			return null;
+		}
+	}
+
+	public String getConstellation() {
+		if (!agent.isEmpty()) {
+			return agent.getLocation().getConstellation();
+		} else {
+			return null;
+		}
+	}
+
+	public String getRegion() {
+		if (!agent.isEmpty()) {
+			return agent.getLocation().getRegion();
+		} else {
+			return null;
+		}
 	}
 
 	@Override
