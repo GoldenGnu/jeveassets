@@ -180,17 +180,20 @@ public class ProfileDatabase {
 
 	public static void update(ProfileConnection profileConnection) {
 		UPDATES.add(new Update(profileConnection));
+		synchronized (UPDATES) {
+			UPDATES.notifyAll();
+		}
 	}
 
 	public static void waitForUpdates() {
-		try {
+		while (!UPDATES.isEmpty()) {
 			synchronized (UPDATES) {
-				if (!UPDATES.isEmpty())  {
+				try {
 					UPDATES.wait();
+				} catch (InterruptedException ex) {
+					//No problem...
 				}
 			}
-		} catch (InterruptedException ex) {
-			//No problem
 		}
 		closeUpdateConnection();
 	}
@@ -286,19 +289,31 @@ public class ProfileDatabase {
 		@Override
 		public void run() {
 			while (true) {
-				try {
-					Update update = UPDATES.take();
-					update.doUpdate();
-				} catch (InterruptedException ex) {
-					//No problem
-				} catch (SQLException ex) {
-					logError(ex);
-				}
-				synchronized (UPDATES) {
-					if (UPDATES.isEmpty()) {
-						UPDATES.notifyAll();
+				//Get update (null if queue is empty)
+				Update update = UPDATES.peek();
+				if (update != null) {
+					try {
+						update.doUpdate();
+					} catch (SQLException ex) {
+						logError(ex);
+					} finally {
+						UPDATES.poll(); //Remove update (completed)
+						synchronized (UPDATES) {
+							UPDATES.notifyAll();
+						}
 					}
 				}
+				//Wait for new updates
+				while (UPDATES.isEmpty()) {
+					synchronized (UPDATES) {
+						try {
+							UPDATES.wait();
+						} catch (InterruptedException ex) {
+							//No problem
+						}
+					}
+				}
+
 			}
 		}
 
