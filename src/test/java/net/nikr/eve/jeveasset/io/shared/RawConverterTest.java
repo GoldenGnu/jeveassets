@@ -186,8 +186,11 @@ public class RawConverterTest extends TestUtil {
 					|| (locationFlagEnum.toString().equals("DustBattle") && itemFlag.getFlagName().equals("DustCharacterBattle"))
 					|| (locationFlagEnum.toString().equals("DustDatabank") && itemFlag.getFlagName().equals("DustCharacterDatabank"))
 					|| (locationFlagEnum.toString().equals("HiddenModifers") && itemFlag.getFlagName().equals("HiddenModifiers"))
+					|| (locationFlagEnum.toString().equals("CorporationGoalDeliveries") && itemFlag.getFlagName().equals("CorpProjectsHangar"))
 					|| (locationFlagEnum.toString().equals("QuantumCoreRoom") && itemFlag.getFlagName().equals("StructureDeedBay"))
 					|| (locationFlagEnum.toString().equals("SpecializedOreHold") && itemFlag.getFlagName().equals("SpecializedAsteroidHold"))
+					|| (locationFlagEnum.toString().equals("MobileDepotHold") && itemFlag.getFlagName().equals("MobileDepot"))
+					|| (locationFlagEnum.toString().equals("InfrastructureHangar") && itemFlag.getFlagName().equals("ColonyResourcesHold"))
 			);
 		}
 	}
