@@ -106,7 +106,7 @@ public class LibraryManager {
 			files.add("hamcrest-core-1.3.jar");
 			files.add("hamcrest-core-1.3.jar");
 			files.add("jaxb-api-2.3.1.jar");
-			files.add("sqlite-jdbc-3.41.2.2.jar");
+			files.add("sqlite-jdbc-3.50.3.0.jar");
 			files.add("jna-platform-5.6.0.jar");
 			files.add("jna-5.6.0.jar");
 			files.add("jsr305-3.0.2.jar");
