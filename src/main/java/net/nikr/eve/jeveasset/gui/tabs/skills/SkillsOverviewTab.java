@@ -27,24 +27,43 @@ import ca.odell.glazedlists.SortedList;
 import ca.odell.glazedlists.swing.DefaultEventSelectionModel;
 import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import ca.odell.glazedlists.swing.TableComparatorChooser;
+import java.awt.Canvas;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import javax.swing.GroupLayout;
 import javax.swing.JComponent;
 import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.UIDefaults;
+import javax.swing.UIManager;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
 import net.nikr.eve.jeveasset.data.api.my.MySkill;
+import net.nikr.eve.jeveasset.data.sde.Item;
+import net.nikr.eve.jeveasset.data.sde.StaticData;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.types.LocationType;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formatter;
+import net.nikr.eve.jeveasset.gui.shared.components.JAutoCompleteDialog;
+import net.nikr.eve.jeveasset.gui.shared.components.JDropDownButton;
+import net.nikr.eve.jeveasset.gui.shared.components.JFixedToolBar;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTabSecondary;
+import net.nikr.eve.jeveasset.gui.shared.components.JTextDialog;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuColumns;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
@@ -62,9 +81,47 @@ import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 
 public class SkillsOverviewTab extends JMainTabSecondary {
 
-	private static final double[] RANK_1_LEVELS = new double[]{250, 1415, 8000, 45255, 256000};
+	private enum SkillsOverviewAction {
+		ADD_SKILL_PLAN,
+		MANAGE_SKILL_PLANS,
+	}
 
+	private static final double[] RANK_1_LEVELS = new double[]{250, 1415, 8000, 45255, 256000};
+	private static final String SKILL_PLAN_EXAMPLE =
+			"Power Grid Management 1\n" +
+			"Science 1\n" +
+			"Gunnery 1\n" +
+			"Navigation 1\n" +
+			"Spaceship Command 1\n" +
+			"CPU Management 1\n" +
+			"Drones 1\n" +
+			"Small Hybrid Turret 1\n" +
+			"Afterburner 1\n" +
+			"Drone Avionics 1\n" +
+			"Gallente Frigate 1\n" +
+			"Power Grid Management 2\n" +
+			"CPU Management 2\n" +
+			"Drones 2\n" +
+			"Gunnery 2\n" +
+			"Drone Avionics 2\n" +
+			"Weapon Upgrades 1\n" +
+			"Shield Upgrades 1\n" +
+			"Gallente Frigate 2\n" +
+			"Electronics Upgrades 1\n" +
+			"Shield Upgrades 2\n" +
+			"Power Grid Management 3\n" +
+			"Drones 3\n" +
+			"Drone Avionics 3\n" +
+			"Tactical Shield Manipulation 1\n" +
+			"Gallente Frigate 3\n";
+
+	private final JFixedToolBar jToolBar;
 	private final JAutoColumnTable jTable;
+
+	//Dialog
+	private final JSkillPlansManageDialog jSkillPlansManageDialog;
+	private final JTextDialog jTextDialog;
+	private final JAutoCompleteDialog<String> jSaveDialog;
 
 	private final SkillsOverviewFilterControl filterControl;
 	private final DefaultEventTableModel<SkillsOverview> tableModel;
@@ -78,6 +135,28 @@ public class SkillsOverviewTab extends JMainTabSecondary {
 
 	public SkillsOverviewTab(Program program) {
 		super(program, NAME, TabsSkills.get().skillsOverview(), Images.TOOL_SKILLS.getIcon(), true);
+
+		jSkillPlansManageDialog = new JSkillPlansManageDialog(program, this);
+		jTextDialog = new JTextDialog(program.getMainWindow().getFrame());
+		jSaveDialog = new JAutoCompleteDialog<>(program, TabsSkills.get().add(), Images.TOOL_SKILLS.getImage(), TabsSkills.get().enterName(), false, true, JAutoCompleteDialog.STRING_OPTIONS);
+		final ListenerClass listener = new ListenerClass();
+
+		jToolBar = new JFixedToolBar();
+
+		JDropDownButton jSkills = new JDropDownButton(TabsSkills.get().skillPlans(), Images.TOOL_SKILLS.getIcon());
+		jToolBar.addButton(jSkills);
+
+		JMenuItem jManage = new JMenuItem(TabsSkills.get().manage(), Images.DIALOG_SETTINGS.getIcon());
+		jManage.setActionCommand(SkillsOverviewAction.MANAGE_SKILL_PLANS.name());
+		jManage.addActionListener(listener);
+		jSkills.add(jManage);
+
+		jSkills.addSeparator();
+
+		JMenuItem jAdd = new JMenuItem(TabsSkills.get().add(), Images.EDIT_ADD.getIcon());
+		jAdd.setActionCommand(SkillsOverviewAction.ADD_SKILL_PLAN.name());
+		jAdd.addActionListener(listener);
+		jSkills.add(jAdd);
 
 		//Table Format
 		tableFormat = TableFormatFactory.skillsOverviewTableFormat();
@@ -178,10 +257,12 @@ public class SkillsOverviewTab extends JMainTabSecondary {
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()
 				.addComponent(filterControl.getPanel())
+				.addComponent(jToolBar, jToolBar.getMinimumSize().width, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
 				.addComponent(jScrollPane, 0, 0, Short.MAX_VALUE));
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
 				.addComponent(filterControl.getPanel())
+				.addComponent(jToolBar, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
 				.addComponent(jScrollPane, 0, 0, Short.MAX_VALUE));
 	}
 
@@ -301,6 +382,74 @@ public class SkillsOverviewTab extends JMainTabSecondary {
 		ApiIdConverter.getItem(typeID);
 
 		return RANK_1_LEVELS[level - 1] * rank;
+	}
+
+	public Map<Integer, Integer> importSkillPlan(String text) {
+		String importText = jTextDialog.importText(text, SKILL_PLAN_EXAMPLE);
+		if (importText == null) {
+			return null;
+		}
+		//Lookup Table
+		Map<String, Integer> names = new HashMap<>();
+		for (Item item : StaticData.get().getItems().values()) {
+			names.put(item.getTypeName().toLowerCase(), item.getTypeID());
+		}
+
+		String[] lines = importText.split("[\r\n]+");
+		Map<Integer, Integer> skills = new LinkedHashMap<>();
+		for (String line : lines) {
+			String trimmed = line.trim();
+			if (trimmed.isEmpty()) {
+				continue;
+			}
+			int space = lastSpaceIndex(trimmed);
+			if (space <= 0 || space == trimmed.length() - 1) {
+				continue;
+			}
+			String skillName = trimmed.substring(0, space).trim();
+			String levelStr = trimmed.substring(space + 1).trim();
+			int level;
+			try {
+				level = Integer.parseInt(levelStr);
+			} catch (NumberFormatException ex) {
+				continue;
+			}
+			level = Math.max(1, Math.min(5, level));
+			Integer typeID = names.get(skillName.toLowerCase());
+			if (typeID == null || typeID == 0) {
+				continue;
+			}
+			skills.put(typeID, level);
+		}
+		if (skills.isEmpty()) {
+			JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsSkills.get().noValidSkills (), TabsSkills.get().add(), JOptionPane.WARNING_MESSAGE);
+			return importSkillPlan(text);
+		}
+		return skills;
+	}
+
+	public void newSkillPlan(Map<Integer, Integer> skills) {
+		if (skills == null || skills.isEmpty()) {
+			return;
+		}
+		jSaveDialog.updateData(Settings.get().getSkillPlans().keySet());
+		String name = jSaveDialog.show();
+		if (name == null) {
+			return; //Cancel
+		}
+		Settings.lock("Skills Overview (New Plan)");
+		Settings.get().getSkillPlans().put(name, skills);
+		Settings.unlock("Skills Overview (New Plan)");
+		program.saveSettings("Skills Overview (New Plan)");
+		updateData();
+	}
+
+	private static int lastSpaceIndex(String s) {
+		for (int i = s.length() - 1; i >= 0; i--) {
+			if (Character.isWhitespace(s.charAt(i)))
+				return i;
+		}
+		return -1;
 	}
 
 	@Override
@@ -455,6 +604,19 @@ public class SkillsOverviewTab extends JMainTabSecondary {
 		@Override
 		public void saveSettings(final String msg) {
 			program.saveSettings("Skills Overview Table: " + msg);
+		}
+	}
+
+	private class ListenerClass implements ActionListener {
+
+		@Override
+		public void actionPerformed(final ActionEvent e) {
+			if (SkillsOverviewAction.ADD_SKILL_PLAN.name().equals(e.getActionCommand())) {
+				Map<Integer, Integer> skills = importSkillPlan("");
+				newSkillPlan(skills);
+			} else if (SkillsOverviewAction.MANAGE_SKILL_PLANS.name().equals(e.getActionCommand())) {
+				jSkillPlansManageDialog.setVisible(true);
+			}
 		}
 	}
 }

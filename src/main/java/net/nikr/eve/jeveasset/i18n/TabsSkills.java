@@ -35,6 +35,16 @@ public abstract class TabsSkills extends Bundle {
 		super(locale);
 	}
 
+	public abstract String add();
+	public abstract String deleteSkillPlan();
+	public abstract String deleteSkillPlans(int size);
+	public abstract String enterName();
+	public abstract String manage();
+	public abstract String manageTitle();
+	public abstract String merge();
+	public abstract String noValidSkills();
+	public abstract String overwrite();
+	public abstract String rename();
 	public abstract String skillPlans();
 	public abstract String skills();
 	public abstract String skillsOverview();
