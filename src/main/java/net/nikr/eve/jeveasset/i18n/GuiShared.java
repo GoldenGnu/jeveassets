@@ -316,6 +316,7 @@ public abstract class GuiShared extends Bundle {
 	public abstract String tagsNew();
 	public abstract String tagsNewMsg();
 	public abstract String tagsNewTitle();
+	public abstract String toolsUpdateTitle();
 	public abstract String ui();
 	public abstract String uiWaypoint();
 	public abstract String uiWaypointBeginning();

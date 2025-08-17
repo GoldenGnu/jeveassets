@@ -805,6 +805,26 @@ public abstract class FakeSettings extends Settings {
 	}
 
 	@Override
+	public void setLoadToolsStartup(boolean loadToolsStartup) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+	
+	@Override
+	public boolean isLoadToolsStartup() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public void setLoadToolsBackground(boolean loadToolsBackground) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public boolean isLoadToolsBackground() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
 	public boolean isColumnValueCache() {
 		throw new UnsupportedOperationException("not implemented");
 	}

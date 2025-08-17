@@ -44,20 +44,32 @@ import net.nikr.eve.jeveasset.gui.dialogs.settings.UserPriceSettingsPanel;
 import net.nikr.eve.jeveasset.gui.frame.MainWindow;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
+import net.nikr.eve.jeveasset.gui.tabs.agents.AgentsTab;
 import net.nikr.eve.jeveasset.gui.tabs.assets.AssetsTab;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractsTab;
+import net.nikr.eve.jeveasset.gui.tabs.items.ItemsTab;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJobsTab;
+import net.nikr.eve.jeveasset.gui.tabs.journal.JournalTab;
 import net.nikr.eve.jeveasset.gui.tabs.loadout.LoadoutsTab;
+import net.nikr.eve.jeveasset.gui.tabs.loyalty.LoyaltyPointsTab;
+import net.nikr.eve.jeveasset.gui.tabs.materials.MaterialsTab;
+import net.nikr.eve.jeveasset.gui.tabs.mining.ExtractionsTab;
+import net.nikr.eve.jeveasset.gui.tabs.mining.MiningGraphTab;
+import net.nikr.eve.jeveasset.gui.tabs.mining.MiningTab;
 import net.nikr.eve.jeveasset.gui.tabs.orders.MarketOrdersTab;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewTab;
+import net.nikr.eve.jeveasset.gui.tabs.prices.PriceChangesTab;
 import net.nikr.eve.jeveasset.gui.tabs.prices.PriceHistoryTab;
 import net.nikr.eve.jeveasset.gui.tabs.reprocessed.ReprocessedTab;
 import net.nikr.eve.jeveasset.gui.tabs.routing.RoutingTab;
+import net.nikr.eve.jeveasset.gui.tabs.skills.SkillsTab;
 import net.nikr.eve.jeveasset.gui.tabs.slots.SlotsTab;
+import net.nikr.eve.jeveasset.gui.tabs.standing.NpcStandingTab;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileTab;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerTab;
 import net.nikr.eve.jeveasset.gui.tabs.transaction.TransactionTab;
 import net.nikr.eve.jeveasset.gui.tabs.tree.TreeTab;
+import net.nikr.eve.jeveasset.gui.tabs.values.ValueRetroTab;
 import net.nikr.eve.jeveasset.gui.tabs.values.ValueTableTab;
 import net.nikr.eve.jeveasset.io.local.profile.ProfileDatabase.Table;
 import net.nikr.eve.jeveasset.io.online.PriceDataGetter;
@@ -78,7 +90,7 @@ public abstract class FakeProgram extends Program {
 	}
 
 	@Override
-	public SlotsTab getSlotsTab() {
+	public SlotsTab getSlotsTab(boolean init) {
 		throw new UnsupportedOperationException("Not implemented");
 	}
 
@@ -113,7 +125,7 @@ public abstract class FakeProgram extends Program {
 	}
 
 	@Override
-	public StockpileTab getStockpileTab() {
+	public StockpileTab getStockpileTab(boolean init) {
 		throw new UnsupportedOperationException("Not implemented");
 	}
 
@@ -143,7 +155,7 @@ public abstract class FakeProgram extends Program {
 	}
 
 	@Override
-	public OverviewTab getOverviewTab() {
+	public OverviewTab getOverviewTab(boolean init) {
 		throw new UnsupportedOperationException("Not implemented");
 	}
 
@@ -153,7 +165,7 @@ public abstract class FakeProgram extends Program {
 	}
 
 	@Override
-	public ReprocessedTab getReprocessedTab() {
+	public ReprocessedTab getReprocessedTab(boolean init) {
 		throw new UnsupportedOperationException("Not implemented");
 	}
 
@@ -193,7 +205,7 @@ public abstract class FakeProgram extends Program {
 	}
 
 	@Override
-	public RoutingTab getRoutingTab() {
+	public RoutingTab getRoutingTab(boolean init) {
 		throw new UnsupportedOperationException("Not implemented");
 	}
 
@@ -228,7 +240,7 @@ public abstract class FakeProgram extends Program {
 	}
 
 	@Override
-	public TreeTab getTreeTab() {
+	public TreeTab getTreeTab(boolean init) {
 		throw new UnsupportedOperationException("Not implemented");
 	}
 
@@ -273,17 +285,17 @@ public abstract class FakeProgram extends Program {
 	}
 
 	@Override
-	public TransactionTab getTransactionsTab() {
+	public TransactionTab getTransactionsTab(boolean init) {
 		throw new UnsupportedOperationException("Not implemented");
 	}
 
 	@Override
-	public ValueTableTab getValueTableTab() {
+	public ValueTableTab getIskTab(boolean init) {
 		throw new UnsupportedOperationException("Not implemented");
 	}
 
 	@Override
-	public TrackerTab getTrackerTab() {
+	public TrackerTab getTrackerTab(boolean init) {
 		throw new UnsupportedOperationException("Not implemented");
 	}
 
@@ -298,12 +310,12 @@ public abstract class FakeProgram extends Program {
 	}
 
 	@Override
-	public LoadoutsTab getLoadoutsTab() {
+	public LoadoutsTab getLoadoutsTab(boolean init) {
 		throw new UnsupportedOperationException("Not implemented");
 	}
 
 	@Override
-	public MarketOrdersTab getMarketOrdersTab() {
+	public MarketOrdersTab getMarketOrdersTab(boolean init) {
 		throw new UnsupportedOperationException("Not implemented");
 	}
 
@@ -313,17 +325,67 @@ public abstract class FakeProgram extends Program {
 	}
 
 	@Override
-	public PriceHistoryTab getPriceHistoryTab() {
+	public PriceHistoryTab getPriceHistoryTab(boolean init) {
 		throw new UnsupportedOperationException("Not implemented");
 	}
 
 	@Override
-	public IndustryJobsTab getIndustryJobsTab() {
+	public IndustryJobsTab getIndustryJobsTab(boolean init) {
 		throw new UnsupportedOperationException("Not implemented");
 	}
 
 	@Override
-	public ContractsTab getContractsTab() {
+	public ContractsTab getContractsTab(boolean init) {
+		throw new UnsupportedOperationException("Not implemented");
+	}
+
+	@Override
+	public SkillsTab getSkillsTab(boolean init) {
+		throw new UnsupportedOperationException("Not implemented");
+	}
+
+	@Override
+	public ItemsTab getItemsTab(boolean init) {
+		throw new UnsupportedOperationException("Not implemented");
+	}
+
+	@Override
+	public JournalTab getJournalTab(boolean init) {
+		throw new UnsupportedOperationException("Not implemented");
+	}
+
+	@Override
+	public PriceChangesTab getPriceChangesTab(boolean init) {
+		throw new UnsupportedOperationException("Not implemented");
+	}
+
+	@Override
+	public MaterialsTab getMaterialsTab(boolean init) {
+		throw new UnsupportedOperationException("Not implemented");
+	}
+
+	@Override
+	public ExtractionsTab getExtractionsTab(boolean init) {
+		throw new UnsupportedOperationException("Not implemented");
+	}
+
+	@Override
+	public MiningGraphTab getMiningGraphTab(boolean init) {
+		throw new UnsupportedOperationException("Not implemented");
+	}
+
+	@Override
+	public MiningTab getMiningTab(boolean init) {
+		throw new UnsupportedOperationException("Not implemented");
+	}
+
+	@Override
+	public ValueRetroTab getValueTab(boolean init) {
+		throw new UnsupportedOperationException("Not implemented");
+	}
+
+	@Override
+	public Map<String, JMainTab> getInitTabs() {
 		throw new UnsupportedOperationException("Not implemented");
 	}
 
@@ -334,6 +396,21 @@ public abstract class FakeProgram extends Program {
 
 	@Override
 	public void showJumpsSettingsPanel() {
+		throw new UnsupportedOperationException("Not implemented");
+	}
+
+	@Override
+	public AgentsTab getAgentsTab(boolean init) {
+		throw new UnsupportedOperationException("Not implemented");
+	}
+
+	@Override
+	public NpcStandingTab getNpcStandingTab(boolean init) {
+		throw new UnsupportedOperationException("Not implemented");
+	}
+
+	@Override
+	public LoyaltyPointsTab getLoyaltyPointsTab(boolean init) {
 		throw new UnsupportedOperationException("Not implemented");
 	}
 }

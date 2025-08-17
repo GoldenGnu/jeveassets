@@ -302,7 +302,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		jFileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 
 		stockpileDialog = new StockpileDialog(program);
-		stockpileItemDialog = new StockpileItemDialog(program);
+		stockpileItemDialog = new StockpileItemDialog(this, program);
 		stockpileShoppingListDialog = new StockpileShoppingListDialog(program);
 		stockpileSelectionDialog = new JMultiSelectionDialog<>(program, TabsStockpile.get().selectStockpiles());
 		fitsSelectionDialog = new JMultiSelectionDialog<>(program, TabsStockpile.get().selectFits());
@@ -490,8 +490,8 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		tableModel = EventModels.createTableModel(separatorList, tableFormat);
 		//Table
 		jTable = new JStockpileTable(program, tableModel, separatorList);
-		jTable.setSeparatorRenderer(new StockpileSeparatorTableCell(program, jTable, separatorList, listener));
-		jTable.setSeparatorEditor(new StockpileSeparatorTableCell(program, jTable, separatorList, listener));
+		jTable.setSeparatorRenderer(new StockpileSeparatorTableCell(this, program, jTable, separatorList, listener));
+		jTable.setSeparatorEditor(new StockpileSeparatorTableCell(this, program, jTable, separatorList, listener));
 		jTable.setCellSelectionEnabled(true);
 		//Padding
 		PaddingTableCellRenderer.install(jTable, 3);
@@ -1580,7 +1580,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 					}
 				}
 			}
-			jComponent.add(new JStockpileItemMenu(program, edit, delete, items));
+			jComponent.add(new JStockpileItemMenu(StockpileTab.this, program, edit, delete, items));
 			MenuManager.addSeparator(jComponent);
 		}
 	}

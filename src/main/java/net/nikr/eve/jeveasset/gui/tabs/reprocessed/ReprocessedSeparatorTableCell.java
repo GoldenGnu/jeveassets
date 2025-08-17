@@ -50,11 +50,11 @@ public class ReprocessedSeparatorTableCell extends SeparatorTableCell<Reprocesse
 	private final JLabel jBatchSize;
 	private final JLabel jValueLabel;
 	private final JLabel jValue;
-	private final Program program;
+	private final ReprocessedTab reprocessedTab;
 
-	public ReprocessedSeparatorTableCell(final Program program, final JTable jTable, final SeparatorList<ReprocessedInterface> separatorList, final ActionListener actionListener) {
+	public ReprocessedSeparatorTableCell(final ReprocessedTab reprocessedTab, final JTable jTable, final SeparatorList<ReprocessedInterface> separatorList, final ActionListener actionListener) {
 		super(jTable, separatorList);
-		this.program = program;
+		this.reprocessedTab = reprocessedTab;
 
 		ListenerClass listener = new ListenerClass();
 		addCellEditorListener(listener);
@@ -238,7 +238,7 @@ public class ReprocessedSeparatorTableCell extends SeparatorTableCell<Reprocesse
 			if (reprocessed == null) { // handle 'late' rendering calls after this separator is invalid
 				return;
 			}
-			program.getReprocessedTab().setCount(reprocessed, jCount);
+			reprocessedTab.setCount(reprocessed, jCount);
 		}
 
 	}

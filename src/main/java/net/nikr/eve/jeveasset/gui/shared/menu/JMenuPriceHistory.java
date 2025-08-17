@@ -26,6 +26,7 @@ import javax.swing.JMenuItem;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.JAutoMenu;
+import net.nikr.eve.jeveasset.gui.tabs.prices.PriceHistoryTab;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 
@@ -68,11 +69,13 @@ public class JMenuPriceHistory<T> extends JAutoMenu<T> {
 		@Override
 		public void actionPerformed(final ActionEvent e) {
 			if (MenuPriceHistoryAction.ADD.name().equals(e.getActionCommand())) {
-				program.getMainWindow().addTab(program.getPriceHistoryTab());
-				program.getPriceHistoryTab().addItems(menuData.getTypeIDs());
+				PriceHistoryTab priceHistoryTab = program.getPriceHistoryTab(true);
+				program.getMainWindow().addTab(priceHistoryTab);
+				priceHistoryTab.addItems(menuData.getTypeIDs());
 			} else if (MenuPriceHistoryAction.SET.name().equals(e.getActionCommand())) {
-				program.getMainWindow().addTab(program.getPriceHistoryTab());
-				program.getPriceHistoryTab().setItems(menuData.getTypeIDs());
+				PriceHistoryTab priceHistoryTab = program.getPriceHistoryTab(true);
+				program.getMainWindow().addTab(priceHistoryTab);
+				priceHistoryTab.setItems(menuData.getTypeIDs());
 			}
 		}
 	}

@@ -217,6 +217,32 @@ public class MarketOrdersTab extends JMainTabPrimary {
 		jUpdate.addActionListener(listener);
 		jToolBar.addButton(jUpdate);
 
+		jSellOrdersTotal = StatusPanel.createLabel(TabsOrders.get().totalSellOrders(), Images.ORDERS_SELL.getIcon(), AutoNumberFormat.ISK);
+		this.addStatusbarLabel(jSellOrdersTotal);
+
+		jBuyOrdersTotal = StatusPanel.createLabel(TabsOrders.get().totalBuyOrders(), Images.ORDERS_BUY.getIcon(), AutoNumberFormat.ISK);
+		this.addStatusbarLabel(jBuyOrdersTotal);
+
+		jEscrowTotal = StatusPanel.createLabel(TabsOrders.get().totalEscrow(), Images.ORDERS_ESCROW.getIcon(), AutoNumberFormat.ISK);
+		this.addStatusbarLabel(jEscrowTotal);
+
+		jToCoverTotal = StatusPanel.createLabel(TabsOrders.get().totalToCover(), Images.ORDERS_TO_COVER.getIcon(), AutoNumberFormat.ISK);
+		this.addStatusbarLabel(jToCoverTotal);
+
+		jSellOrderRangeLast = StatusPanel.createLabel(TabsOrders.get().sellOrderRangeLastToolTip(), Images.ORDERS_SELL.getIcon(), null);
+		this.addStatusbarLabel(jSellOrderRangeLast);
+		jSellOrderRangeLast.setText(TabsOrders.get().sellOrderRangeSelcted(Settings.get().getOutbidOrderRange().toString()));
+
+		jClipboard = StatusPanel.createLabel(TabsOrders.get().lastClipboardToolTip(), Images.EDIT_COPY.getIcon(), null);
+		this.addStatusbarLabel(jClipboard);
+		setClipboardData(TabsOrders.get().none());
+
+		jLastLogUpdate = StatusPanel.createLabel(TabsOrders.get().lastLogUpdateToolTip(), null, null);
+		this.addStatusbarLabel(jLastLogUpdate);
+
+		jLastEsiUpdate = StatusPanel.createLabel(TabsOrders.get().lastEsiUpdateToolTip(), null, null);
+		this.addStatusbarLabel(jLastEsiUpdate);
+
 		//Table Format
 		tableFormat = TableFormatFactory.marketTableFormat();
 		//Backend
@@ -258,32 +284,6 @@ public class MarketOrdersTab extends JMainTabPrimary {
 		filterControl = new MarketOrdersFilterControl(sortedList);
 		//Menu
 		installTableTool(new OrdersTableMenu(), tableFormat, comparatorChooser, tableModel, jTable, filterControl, MyMarketOrder.class);
-
-		jSellOrdersTotal = StatusPanel.createLabel(TabsOrders.get().totalSellOrders(), Images.ORDERS_SELL.getIcon(), AutoNumberFormat.ISK);
-		this.addStatusbarLabel(jSellOrdersTotal);
-
-		jBuyOrdersTotal = StatusPanel.createLabel(TabsOrders.get().totalBuyOrders(), Images.ORDERS_BUY.getIcon(), AutoNumberFormat.ISK);
-		this.addStatusbarLabel(jBuyOrdersTotal);
-
-		jEscrowTotal = StatusPanel.createLabel(TabsOrders.get().totalEscrow(), Images.ORDERS_ESCROW.getIcon(), AutoNumberFormat.ISK);
-		this.addStatusbarLabel(jEscrowTotal);
-
-		jToCoverTotal = StatusPanel.createLabel(TabsOrders.get().totalToCover(), Images.ORDERS_TO_COVER.getIcon(), AutoNumberFormat.ISK);
-		this.addStatusbarLabel(jToCoverTotal);
-
-		jSellOrderRangeLast = StatusPanel.createLabel(TabsOrders.get().sellOrderRangeLastToolTip(), Images.ORDERS_SELL.getIcon(), null);
-		this.addStatusbarLabel(jSellOrderRangeLast);
-		jSellOrderRangeLast.setText(TabsOrders.get().sellOrderRangeSelcted(Settings.get().getOutbidOrderRange().toString()));
-
-		jClipboard = StatusPanel.createLabel(TabsOrders.get().lastClipboardToolTip(), Images.EDIT_COPY.getIcon(), null);
-		this.addStatusbarLabel(jClipboard);
-		setClipboardData(TabsOrders.get().none());
-
-		jLastLogUpdate = StatusPanel.createLabel(TabsOrders.get().lastLogUpdateToolTip(), null, null);
-		this.addStatusbarLabel(jLastLogUpdate);
-
-		jLastEsiUpdate = StatusPanel.createLabel(TabsOrders.get().lastEsiUpdateToolTip(), null, null);
-		this.addStatusbarLabel(jLastEsiUpdate);
 
 		updateDates();
 

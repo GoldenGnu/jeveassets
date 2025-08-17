@@ -36,6 +36,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import net.nikr.eve.jeveasset.ToolLoader.ToolTab;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder.MarketOrderRange;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
@@ -91,62 +92,22 @@ import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.SimpleColu
 import net.nikr.eve.jeveasset.gui.shared.table.View;
 import net.nikr.eve.jeveasset.gui.sounds.DefaultSound;
 import net.nikr.eve.jeveasset.gui.sounds.FileSound;
-import net.nikr.eve.jeveasset.gui.tabs.agents.AgentsTab;
-import net.nikr.eve.jeveasset.gui.tabs.agents.AgentsTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.assets.AssetTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.assets.AssetsTab;
-import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractsTab;
-import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractsTableFormat;
-import net.nikr.eve.jeveasset.gui.tabs.items.ItemTableFormat;
-import net.nikr.eve.jeveasset.gui.tabs.items.ItemsTab;
-import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJobTableFormat;
-import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJobsTab;
-import net.nikr.eve.jeveasset.gui.tabs.journal.JournalTab;
-import net.nikr.eve.jeveasset.gui.tabs.journal.JournalTableFormat;
-import net.nikr.eve.jeveasset.gui.tabs.loyalty.LoyaltyPointsTab;
-import net.nikr.eve.jeveasset.gui.tabs.loyalty.LoyaltyPointsTableFormat;
-import net.nikr.eve.jeveasset.gui.tabs.mining.ExtractionsTab;
-import net.nikr.eve.jeveasset.gui.tabs.mining.ExtractionsTableFormat;
-import net.nikr.eve.jeveasset.gui.tabs.mining.MiningTab;
-import net.nikr.eve.jeveasset.gui.tabs.mining.MiningTableFormat;
-import net.nikr.eve.jeveasset.gui.tabs.orders.MarketOrdersTab;
-import net.nikr.eve.jeveasset.gui.tabs.orders.MarketTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.orders.Outbid;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewGroup;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewLocation;
-import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewTab;
-import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewTableFormat;
-import net.nikr.eve.jeveasset.gui.tabs.prices.PriceChangesTab;
-import net.nikr.eve.jeveasset.gui.tabs.prices.PriceChangesTableFormat;
-import net.nikr.eve.jeveasset.gui.tabs.reprocessed.ReprocessedExtendedTableFormat;
-import net.nikr.eve.jeveasset.gui.tabs.reprocessed.ReprocessedTab;
-import net.nikr.eve.jeveasset.gui.tabs.reprocessed.ReprocessedTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.routing.SolarSystem;
-import net.nikr.eve.jeveasset.gui.tabs.skills.SkillsTab;
-import net.nikr.eve.jeveasset.gui.tabs.skills.SkillsTableFormat;
-import net.nikr.eve.jeveasset.gui.tabs.slots.SlotsTab;
-import net.nikr.eve.jeveasset.gui.tabs.slots.SlotsTableFormat;
-import net.nikr.eve.jeveasset.gui.tabs.standing.NpcStandingTab;
-import net.nikr.eve.jeveasset.gui.tabs.standing.NpcStandingTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter.StockpileContainer;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter.StockpileFlag;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
-import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileExtendedTableFormat;
-import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileTab;
-import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerDate;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerNote;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerSkillPointFilter;
-import net.nikr.eve.jeveasset.gui.tabs.transaction.TransactionTab;
-import net.nikr.eve.jeveasset.gui.tabs.transaction.TransactionTableFormat;
-import net.nikr.eve.jeveasset.gui.tabs.tree.TreeTab;
-import net.nikr.eve.jeveasset.gui.tabs.tree.TreeTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.values.AssetValue;
 import net.nikr.eve.jeveasset.gui.tabs.values.Value;
-import net.nikr.eve.jeveasset.gui.tabs.values.ValueTableFormat;
-import net.nikr.eve.jeveasset.gui.tabs.values.ValueTableTab;
 import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.io.local.update.Update;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
@@ -1644,181 +1605,11 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 	}
 
 	public static EnumTableColumn<?> getColumn(final String column, final String toolName, Settings settings) {
-		//Stockpile (Extended)
-		try {
-			if (toolName.equals(StockpileTab.NAME)) {
-				return StockpileExtendedTableFormat.valueOf(column);
+		for (ToolTab toolTab : ToolTab.values()) {
+			EnumTableColumn<?> enumTableColumn = toolTab.getColumn(column, toolName);
+			if (enumTableColumn != null) {
+				return enumTableColumn;
 			}
-		} catch (IllegalArgumentException exception) {
-
-		}
-		//Stockpile
-		try {
-			if (toolName.equals(StockpileTab.NAME)) {
-				return StockpileTableFormat.valueOf(column);
-			}
-		} catch (IllegalArgumentException exception) {
-
-		}
-		//Industry Jobs
-		try {
-			if (toolName.equals(IndustryJobsTab.NAME)) {
-				return IndustryJobTableFormat.valueOf(column);
-			}
-		} catch (IllegalArgumentException exception) {
-
-		}
-		//Slots
-		try {
-			if (toolName.equals(SlotsTab.NAME)) {
-				return SlotsTableFormat.valueOf(column);
-			}
-		} catch (IllegalArgumentException exception) {
-
-		}
-		//Market Orders
-		try {
-			if (toolName.equals(MarketOrdersTab.NAME)) {
-				return MarketTableFormat.valueOf(column);
-			}
-		} catch (IllegalArgumentException exception) {
-
-		}
-		//Journal
-		try {
-			if (toolName.equals(JournalTab.NAME)) {
-				return JournalTableFormat.valueOf(column);
-			}
-		} catch (IllegalArgumentException exception) {
-
-		}
-		//Transaction
-		try {
-			if (toolName.equals(TransactionTab.NAME)) {
-				return TransactionTableFormat.valueOf(column);
-			}
-		} catch (IllegalArgumentException exception) {
-
-		}
-		//Assets
-		try {
-			if (toolName.equals(AssetsTab.NAME)) {
-				return AssetTableFormat.valueOf(column);
-			}
-		} catch (IllegalArgumentException exception) {
-
-		}
-		//Items
-		try {
-			if (toolName.equals(ItemsTab.NAME)) {
-				return ItemTableFormat.valueOf(column);
-			}
-		} catch (IllegalArgumentException exception) {
-
-		}
-		//Overview
-		try {
-			if (toolName.equals(OverviewTab.NAME)) {
-				return OverviewTableFormat.valueOf(column);
-			}
-		} catch (IllegalArgumentException exception) {
-
-		}
-		//Contracts
-		try {
-			if (toolName.equals(ContractsTab.NAME)) {
-				return ContractsTableFormat.valueOf(column);
-			}
-		} catch (IllegalArgumentException exception) {
-
-		}
-		//Isk
-		try {
-			if (toolName.equals(ValueTableTab.NAME)) {
-				return ValueTableFormat.valueOf(column);
-			}
-		} catch (IllegalArgumentException exception) {
-
-		}
-		//Tree
-		try {
-			if (toolName.equals(TreeTab.NAME)) {
-				return TreeTableFormat.valueOf(column);
-			}
-		} catch (IllegalArgumentException exception) {
-
-		}
-		//Skills
-		try {
-			if (toolName.equals(SkillsTab.NAME)) {
-				return SkillsTableFormat.valueOf(column);
-			}
-		} catch (IllegalArgumentException exception) {
-
-		}
-		//Mining
-		try {
-			if (toolName.equals(MiningTab.NAME)) {
-				return MiningTableFormat.valueOf(column);
-			}
-		} catch (IllegalArgumentException exception) {
-
-		}
-		//Loyalty Points
-		try {
-			if (toolName.equals(LoyaltyPointsTab.NAME)) {
-				return LoyaltyPointsTableFormat.valueOf(column);
-			}
-		} catch (IllegalArgumentException exception) {
-
-		}
-		//Npc Standing 
-		try {
-			if (toolName.equals(NpcStandingTab.NAME)) {
-				return NpcStandingTableFormat.valueOf(column);
-			}
-		} catch (IllegalArgumentException exception) {
-
-		}
-		//Agents
-		try {
-			if (toolName.equals(AgentsTab.NAME)) {
-				return AgentsTableFormat.valueOf(column);
-			}
-		} catch (IllegalArgumentException exception) {
-
-		}
-		//Extractions
-		try {
-			if (toolName.equals(ExtractionsTab.NAME)) {
-				return ExtractionsTableFormat.valueOf(column);
-			}
-		} catch (IllegalArgumentException exception) {
-
-		}
-		//Reprocessed (Extended)
-		try {
-			if (toolName.equals(ReprocessedTab.NAME)) {
-				return ReprocessedExtendedTableFormat.valueOf(column);
-			}
-		} catch (IllegalArgumentException exception) {
-
-		}
-		//Reprocessed
-		try {
-			if (toolName.equals(ReprocessedTab.NAME)) {
-				return ReprocessedTableFormat.valueOf(column);
-			}
-		} catch (IllegalArgumentException exception) {
-
-		}
-		//Price Changes 
-		try {
-			if (toolName.equals(PriceChangesTab.NAME)) {
-				return PriceChangesTableFormat.valueOf(column);
-			}
-		} catch (IllegalArgumentException exception) {
-
 		}
 		if (settings != null) {
 			for (Formula formula : settings.getTableFormulas(toolName)) {

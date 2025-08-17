@@ -40,6 +40,9 @@ public abstract class DialoguesSettings extends Bundle {
 
 	// used in GeneralSettingsPanel
 	public abstract String general();
+	public abstract String loadToolsBackground();
+	public abstract String loadToolsOpen();
+	public abstract String loadToolsStartup();
 	public abstract String enterFilter();
 	public abstract String highlightSelectedRow();
 	public abstract String focusEveOnline();

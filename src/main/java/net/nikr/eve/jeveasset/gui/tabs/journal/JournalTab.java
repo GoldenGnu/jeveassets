@@ -66,8 +66,11 @@ import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
 import net.nikr.eve.jeveasset.gui.shared.table.TableFormatFactory;
+import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractsTab;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractsTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJobTableFormat;
+import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJobsTab;
+import net.nikr.eve.jeveasset.gui.tabs.transaction.TransactionTab;
 import net.nikr.eve.jeveasset.gui.tabs.transaction.TransactionTableFormat;
 import net.nikr.eve.jeveasset.i18n.TabsJournal;
 
@@ -263,8 +266,9 @@ public class JournalTab extends JMainTabPrimary implements TagUpdate {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					List<Filter> filters = JMenuAssetFilter.getFilters(contractIDs, ContractsTableFormat.CONTRACT_ID, CompareType.EQUALS);
-					program.getContractsTab().addFilters(filters);
-					program.getMainWindow().addTab(program.getContractsTab());
+					ContractsTab contractsTab = program.getContractsTab(true);
+					contractsTab.addFilters(filters);
+					program.getMainWindow().addTab(contractsTab);
 				}
 			});
 			jJournal.add(jContracts);
@@ -275,8 +279,9 @@ public class JournalTab extends JMainTabPrimary implements TagUpdate {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					List<Filter> filters = JMenuAssetFilter.getFilters(industryJobIDs, IndustryJobTableFormat.JOB_ID, CompareType.EQUALS);
-					program.getIndustryJobsTab().addFilters(filters);
-					program.getMainWindow().addTab(program.getIndustryJobsTab());
+					IndustryJobsTab industryJobsTab = program.getIndustryJobsTab(true);
+					industryJobsTab.addFilters(filters);
+					program.getMainWindow().addTab(industryJobsTab);
 				}
 			});
 			jJournal.add(jIndustryJobs);
@@ -287,8 +292,9 @@ public class JournalTab extends JMainTabPrimary implements TagUpdate {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					List<Filter> filters = JMenuAssetFilter.getFilters(transactionIDs, TransactionTableFormat.TRANSACTION_ID, CompareType.EQUALS);
-					program.getTransactionsTab().addFilters(filters);
-					program.getMainWindow().addTab(program.getTransactionsTab());
+					TransactionTab transactionsTab = program.getTransactionsTab(true);
+					transactionsTab.addFilters(filters);
+					program.getMainWindow().addTab(transactionsTab);
 				}
 			});
 			jJournal.add(jTransactions);

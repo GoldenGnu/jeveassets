@@ -88,7 +88,7 @@ public class ValueTableTab extends JMainTabSecondary {
 		jSkillPointsFilters.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				program.getTrackerTab().showSkillPointsFilter();
+				program.getTrackerTab(true).showSkillPointsFilter();
 			}
 		});
 		jToolBar.addButton(jSkillPointsFilters);

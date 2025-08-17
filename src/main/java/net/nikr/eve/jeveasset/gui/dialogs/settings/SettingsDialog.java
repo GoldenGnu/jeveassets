@@ -52,6 +52,10 @@ import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.JSettingsPanel.UpdateType;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
+import net.nikr.eve.jeveasset.gui.tabs.orders.MarketOrdersTab;
+import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewTab;
+import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileTab;
+import net.nikr.eve.jeveasset.gui.tabs.tree.TreeTab;
 import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 import net.nikr.eve.jeveasset.io.shared.DesktopUtil;
@@ -325,18 +329,30 @@ public class SettingsDialog extends JDialogCentered {
 				program.repaintTables();
 			} else {
 				if (updates.contains(UpdateType.REPAINT_MARKET_ORDERS_TABLE)) {
-					program.getMarketOrdersTab().repaintTable();
+					MarketOrdersTab marketOrdersTab = program.getMarketOrdersTab(false);
+					if (marketOrdersTab != null) {
+						marketOrdersTab.repaintTable();
+					}
 				}
 				if (updates.contains(UpdateType.REPAINT_STOCKPILE_TABLE)) {
-					program.getStockpileTab().repaintTable();
+					StockpileTab stockpileTab = program.getStockpileTab(false);
+					if (stockpileTab != null) {
+						stockpileTab.repaintTable();
+					}
 				}
 			}
 			if (updates.contains(UpdateType.UPDATE_ASSET_TABLES)) {
 				program.getAssetsTab().tableDataChanged();
-				program.getTreeTab().tableDataChanged();
+				TreeTab treeTab = program.getTreeTab(false);
+				if (treeTab != null) {
+					treeTab.tableDataChanged();
+				}
 			}
 			if (updates.contains(UpdateType.UPDATE_OVERVIEW)) {
-				program.getOverviewTab().updateData();
+				OverviewTab overviewTab = program.getOverviewTab(false);
+				if (overviewTab != null) {
+					overviewTab.updateData();
+				}
 			}
 			if (updates.contains(UpdateType.UPDATE_TAGS)) {
 				program.updateTags();
