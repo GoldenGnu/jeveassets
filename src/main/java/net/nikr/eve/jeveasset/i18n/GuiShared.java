@@ -357,7 +357,6 @@ public abstract class GuiShared extends Bundle {
 	public abstract String enterViewName();
 	public abstract String loadView();
 	public abstract String manageViews();
-	public abstract String noViewName();
 	public abstract String overwriteView();
 	public abstract String renameView();
 	public abstract String saveView();
@@ -390,6 +389,8 @@ public abstract class GuiShared extends Bundle {
 	public abstract String managerLoad();
 	public abstract String managerRename();
 	public abstract String managerDelete();
+	public abstract String managerEdit();
+	public abstract String managerCopy();
 	public abstract String managerClose();
 	public abstract String renameFilter();
 	public abstract String deleteFilter();

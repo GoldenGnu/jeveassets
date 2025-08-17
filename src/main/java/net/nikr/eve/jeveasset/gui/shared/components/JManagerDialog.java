@@ -42,15 +42,17 @@ import javax.swing.event.ListSelectionListener;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.StringComparators;
-import net.nikr.eve.jeveasset.gui.shared.JOptionInput;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 
-public abstract class JManageDialog extends JDialogCentered {
+public abstract class JManagerDialog extends JDialogCentered {
 
 	private enum ManageDialogAction {
 		DONE,
 		LOAD,
+		EDIT,
+		MERGE,
+		COPY,
 		RENAME,
 		DELETE,
 		EXPORT,
@@ -59,28 +61,58 @@ public abstract class JManageDialog extends JDialogCentered {
 
 	private final DefaultListModel<String> listModel;
 	private final JList<String> jList;
+	private final JAutoCompleteDialog<String> jSaveDialog;
 	private final JButton jDelete;
 	private final JButton jLoad;
+	private final JButton jEdit;
+	private final JButton jMerge;
+	private final JButton jCopy;
 	private final JButton jRename;
 	private final JButton jExport;
 	private final JButton jImport;
 	private final JButton jClose;
-	private boolean supportMerge = true;
+	private final boolean mergeReplaceLoad;
+	private final boolean mergeReplaceEdit;
 
-	public JManageDialog(Program program, JFrame jFrame, String title, boolean supportMerge, boolean supportExport) {
+	public JManagerDialog(Program program, JFrame jFrame, String title, boolean supportLoad, boolean supportEdit, boolean supportCopy, boolean supportMerge, boolean supportExport) {
 		super(program, title, jFrame, Images.DIALOG_SETTINGS.getImage());
-		this.supportMerge = supportMerge;
+		mergeReplaceLoad = supportLoad && supportMerge && !supportEdit;
+		mergeReplaceEdit = !supportLoad && supportMerge && supportEdit;
 
 		ListenerClass listener = new ListenerClass();
+
+		jSaveDialog = new JAutoCompleteDialog<>(program, "", getDialog(), Images.DIALOG_SETTINGS.getImage(), textEnterName(), false, false, JAutoCompleteDialog.STRING_OPTIONS);
 
 		//Load
 		jLoad = new JButton(GuiShared.get().managerLoad(), Images.FILTER_LOAD.getIcon());
 		jLoad.setActionCommand(ManageDialogAction.LOAD.name());
 		jLoad.addActionListener(listener);
+		jLoad.setVisible(supportLoad);
 		jLoad.setHorizontalAlignment(SwingConstants.LEFT);
 
+		//Edit
+		jEdit = new JButton(GuiShared.get().managerEdit(), Images.EDIT_EDIT.getIcon());
+		jEdit.setActionCommand(ManageDialogAction.EDIT.name());
+		jEdit.addActionListener(listener);
+		jEdit.setVisible(supportEdit);
+		jEdit.setHorizontalAlignment(SwingConstants.LEFT);
+
+		//Merge
+		jMerge = new JButton(GuiShared.get().managerMerge(), Images.EDIT_ADD.getIcon());
+		jMerge.setActionCommand(ManageDialogAction.MERGE.name());
+		jMerge.addActionListener(listener);
+		jMerge.setVisible(supportMerge && !mergeReplaceLoad && !mergeReplaceEdit);
+		jMerge.setHorizontalAlignment(SwingConstants.LEFT);
+
+		//Copy
+		jCopy = new JButton(GuiShared.get().managerCopy(), Images.EDIT_COPY.getIcon());
+		jCopy.setActionCommand(ManageDialogAction.COPY.name());
+		jCopy.addActionListener(listener);
+		jCopy.setVisible(supportCopy);
+		jCopy.setHorizontalAlignment(SwingConstants.LEFT);
+
 		//Rename
-		jRename = new JButton(GuiShared.get().managerRename(), Images.EDIT_EDIT.getIcon());
+		jRename = new JButton(GuiShared.get().managerRename(), Images.EDIT_RENAME.getIcon());
 		jRename.setActionCommand(ManageDialogAction.RENAME.name());
 		jRename.addActionListener(listener);
 		jRename.setHorizontalAlignment(SwingConstants.LEFT);
@@ -123,6 +155,9 @@ public abstract class JManageDialog extends JDialogCentered {
 				.addComponent(jScrollPanel, 175, 175, 175)
 				.addGroup(layout.createParallelGroup()
 					.addComponent(jLoad, 100, 100, 100)
+					.addComponent(jEdit, 100, 100, 100)
+					.addComponent(jMerge, 100, 100, 100)
+					.addComponent(jCopy, 100, 100, 100)
 					.addComponent(jRename, 100, 100, 100)
 					.addComponent(jDelete, 100, 100, 100)
 					.addComponent(jExport, 100, 100, 100)
@@ -135,6 +170,9 @@ public abstract class JManageDialog extends JDialogCentered {
 				.addComponent(jScrollPanel, 250, 250, 250)
 				.addGroup(layout.createSequentialGroup()
 					.addComponent(jLoad, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jEdit, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jMerge, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jCopy, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jRename, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jDelete, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addGap(15, 15, 15)
@@ -156,9 +194,12 @@ public abstract class JManageDialog extends JDialogCentered {
 	}
 
 	private void setEnabledAll(boolean b) {
-		jDelete.setEnabled(b);
 		jLoad.setEnabled(b);
+		jEdit.setEnabled(b);
+		jMerge.setEnabled(b);
 		jRename.setEnabled(b);
+		jDelete.setEnabled(b);
+		jExport.setEnabled(b);
 	}
 
 	protected final void update(Collection<String> list) {
@@ -166,6 +207,7 @@ public abstract class JManageDialog extends JDialogCentered {
 	}
 
 	protected final void update(List<String> list) {
+		jSaveDialog.updateData(list);
 		listModel.clear();
 		Collections.sort(list, StringComparators.CASE_INSENSITIVE);
 		for (String filter: list) {
@@ -210,7 +252,9 @@ public abstract class JManageDialog extends JDialogCentered {
 	}
 
 	protected abstract void load(final String name);
+	protected abstract void edit(final String name);
 	protected abstract void merge(final String name, final List<String> list);
+	protected abstract void copy(final String fromName, final String toName);
 	protected abstract void rename(final String name, final String oldName);
 	protected abstract void delete(final List<String> list);
 	protected abstract void export(final List<String> list);
@@ -218,7 +262,6 @@ public abstract class JManageDialog extends JDialogCentered {
 	protected abstract String textDeleteMultipleMsg(int size);
 	protected abstract String textDelete();
 	protected abstract String textEnterName();
-	protected abstract String textNoName();
 	protected abstract String textMerge();
 	protected abstract String textRename();
 	protected abstract String textOverwrite();
@@ -259,6 +302,14 @@ public abstract class JManageDialog extends JDialogCentered {
 		load(name);
 	}
 
+	private void edit() {
+		String name = getSelectedString();
+		if (name == null) {
+			return;
+		}
+		edit(name);
+	}
+
 	private void merge() {
 		String name = showNameDialog("", "", textMerge());
 		if (name == null) {
@@ -272,16 +323,24 @@ public abstract class JManageDialog extends JDialogCentered {
 		merge(name, list);
 	}
 
+	private void copy() {
+		String fromName = getSelectedString();
+		if (fromName == null) {
+			return;
+		}
+		String toName = showNameDialog("", "", textEnterName());
+		if (toName == null) {
+			return;
+		}
+		copy(fromName, toName);
+	}
+
 	private String showNameDialog(final String oldValue, final String oldName, final String title) {
 		//Show dialog
-		String name = (String) JOptionInput.showInputDialog(this.getDialog(), textEnterName(), title, JOptionPane.PLAIN_MESSAGE, null, null, oldValue);
+		jSaveDialog.getDialog().setTitle(title);
+		String name = jSaveDialog.show(oldValue);
 		if (name == null) { //Cancel (do nothing)
 			return null;
-		}
-
-		if (name.equals("")) { //No input (needed for name)
-			JOptionPane.showMessageDialog(this.getDialog(), textNoName(), title, JOptionPane.PLAIN_MESSAGE);
-			return showNameDialog(name, oldName, title);
 		}
 
 		if (!validateName(name, oldName, title)) {
@@ -310,24 +369,21 @@ public abstract class JManageDialog extends JDialogCentered {
 		public void actionPerformed(final ActionEvent e) {
 			if (ManageDialogAction.DONE.name().equals(e.getActionCommand())) {
 				save();
-			}
-			if (ManageDialogAction.LOAD.name().equals(e.getActionCommand())) {
-				if (jList.getSelectedIndices().length == 1) {
-					load();
-				} else {
-					merge();
-				}
-			}
-			if (ManageDialogAction.RENAME.name().equals(e.getActionCommand())) {
+			} else if (ManageDialogAction.LOAD.name().equals(e.getActionCommand())) {
+				load();
+			} else if (ManageDialogAction.EDIT.name().equals(e.getActionCommand())) {
+				edit();
+			} else if (ManageDialogAction.MERGE.name().equals(e.getActionCommand())) {
+				merge();
+			} else if (ManageDialogAction.COPY.name().equals(e.getActionCommand())) {
+				copy();
+			} else if (ManageDialogAction.RENAME.name().equals(e.getActionCommand())) {
 				rename();
-			}
-			if (ManageDialogAction.DELETE.name().equals(e.getActionCommand())) {
+			} else if (ManageDialogAction.DELETE.name().equals(e.getActionCommand())) {
 				delete();
-			}
-			if (ManageDialogAction.EXPORT.name().equals(e.getActionCommand())) {
+			} else if (ManageDialogAction.EXPORT.name().equals(e.getActionCommand())) {
 				export();
-			}
-			if (ManageDialogAction.IMPORT.name().equals(e.getActionCommand())) {
+			} else if (ManageDialogAction.IMPORT.name().equals(e.getActionCommand())) {
 				importData();
 			}
 		}
@@ -355,19 +411,23 @@ public abstract class JManageDialog extends JDialogCentered {
 
 		@Override
 		public void valueChanged(final ListSelectionEvent e) {
-			if (jList.getSelectedIndices().length > 1) {
-				if (supportMerge) {
-					jLoad.setText(GuiShared.get().managerMerge());
-					jLoad.setIcon(Images.EDIT_ADD.getIcon());
-				} else {
-					jLoad.setEnabled(false);
-				}
-				jRename.setEnabled(false);
-			} else {
-				jLoad.setText(GuiShared.get().managerLoad());
-				jLoad.setIcon(Images.FILTER_LOAD.getIcon());
-				jLoad.setEnabled(true);
-				jRename.setEnabled(true);
+			boolean greatThanZero = jList.getSelectedIndices().length > 0;
+			boolean greatThanOne = jList.getSelectedIndices().length > 1;
+			boolean equalToOne = jList.getSelectedIndices().length == 1;
+			jLoad.setEnabled(equalToOne);
+			jEdit.setEnabled(equalToOne);
+			jMerge.setEnabled(greatThanOne);
+			jCopy.setEnabled(equalToOne);
+			jRename.setEnabled(equalToOne);
+			jDelete.setEnabled(greatThanZero);
+			jExport.setEnabled(greatThanZero);
+			if (mergeReplaceLoad) {
+				jMerge.setVisible(greatThanOne);
+				jLoad.setVisible(!greatThanOne);
+			}
+			if (mergeReplaceEdit) {
+				jMerge.setVisible(greatThanOne);
+				jEdit.setVisible(!greatThanOne);
 			}
 		}
 	}
