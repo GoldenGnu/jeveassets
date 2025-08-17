@@ -479,6 +479,12 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			parseTableJumps(tableJumpsElement, settings);
 		}
 
+		// Skill Plans
+		Element skillPlansElement = getNodeOptional(element, "skillplans");
+		if (skillPlansElement != null) {
+			parseSkillPlans(skillPlansElement, settings);
+		}
+
 		//Table Filters (Must be loaded before Asset Filters)
 		Element tablefiltersElement = getNodeOptional(element, "tablefilters");
 		if (tablefiltersElement != null) {
@@ -539,6 +545,23 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			parseProxy(proxyElement, settings);
 		}
 		return settings;
+	}
+
+	private void parseSkillPlans(final Element element, final Settings settings) throws XmlException {
+		NodeList planNodes = element.getElementsByTagName("plan");
+		for (int i = 0; i < planNodes.getLength(); i++) {
+			Element planNode = (Element) planNodes.item(i);
+			String name = getString(planNode, "name");
+			Map<Integer, Integer> map = new HashMap<>();
+			NodeList reqNodes = planNode.getElementsByTagName("req");
+			for (int j = 0; j < reqNodes.getLength(); j++) {
+				Element reqNode = (Element) reqNodes.item(j);
+				int typeId = getInt(reqNode, "typeid");
+				int level = getInt(reqNode, "level");
+				map.put(typeId, level);
+			}
+			settings.getSkillPlans().put(name, map);
+		}
 	}
 
 	private void parseOwners(final Element element, final Settings settings) throws XmlException {
@@ -954,7 +977,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 				Color foreground = getColorOptional(colorNode, "foreground");
 				settings.getColorSettings().setBackground(entry, background);
 				settings.getColorSettings().setForeground(entry, foreground);
-			} catch (IllegalArgumentException ex ) {
+			} catch (IllegalArgumentException ex) {
 				LOG.error(ex.getMessage(), ex);
 			}
 		}
@@ -981,7 +1004,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			String sound = getString(soundNode, "sound");
 			try {
 				settings.getSoundSettings().put(option, DefaultSound.valueOf(sound));
-			} catch (IllegalArgumentException ex ) {
+			} catch (IllegalArgumentException ex) {
 				File file = new File(FileUtil.getPathSounds(sound));
 				if (file.exists()) {
 					settings.getSoundSettings().put(option, new FileSound(file));
@@ -1013,8 +1036,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		if (displayType != null) {
 			try {
 				trackerSettings.setDisplayType(DisplayType.valueOf(displayType));
-			}
-			catch (IllegalArgumentException e) {
+			} catch (IllegalArgumentException e) {
 				LOG.warn("Could not parse trackersettigns displaytype: " + displayType);
 			}
 		}
@@ -1448,7 +1470,6 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		}
 	}
 
-
 	private void parseTableFormulas(final Element element, final Settings settings) throws XmlException {
 		NodeList formulasNodeList = element.getElementsByTagName("formulas");
 		for (int a = 0; a < formulasNodeList.getLength(); a++) {
@@ -1492,7 +1513,6 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			}
 		}
 	}
-
 
 	/***
 	 * Parse the table filters elements of the settings file.
@@ -1540,7 +1560,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			if (filterNodeList.getLength() == 1) {
 				Element filterNode = (Element) filterNodeList.item(0);
 
-				if(haveAttribute(filterNode, "show")) {
+				if (haveAttribute(filterNode, "show")) {
 					settings.getCurrentTableFiltersShown().put(tableName, getBoolean(filterNode, "show"));
 				} else {
 					settings.getCurrentTableFiltersShown().put(tableName, true);
@@ -1691,7 +1711,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		if (column.equals("Singleton")) { return AssetTableFormat.SINGLETON; }
 		if (column.equals("Total Volume")) { return AssetTableFormat.VOLUME_TOTAL; }
 		return AllColumn.ALL; //Fallback
-	}
+		}
 
 	private CompareType convertMode(final String compareMixed) {
 		String compare = compareMixed.toUpperCase();
@@ -1703,8 +1723,8 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		if (compare.equals("MODE_LESS_THAN")) { return CompareType.LESS_THAN; }
 		if (compare.equals("MODE_GREATER_THAN_COLUMN")) { return CompareType.GREATER_THAN_COLUMN; }
 		if (compare.equals("MODE_LESS_THAN_COLUMN")) { return CompareType.LESS_THAN_COLUMN; }
-		return CompareType.CONTAINS;
-	}
+			return CompareType.CONTAINS;
+		}
 
 	/***
 	 * Old method to process export settings for 6.8.0 and older

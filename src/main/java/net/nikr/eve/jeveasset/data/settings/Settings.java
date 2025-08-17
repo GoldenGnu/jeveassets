@@ -272,6 +272,8 @@ public class Settings {
 	private final Map<String, List<Formula>> tableFormulas = new HashMap<>();
 	//Jump Columns
 	private final Map<String, List<Jump>> tableJumps = new HashMap<>();
+	// Skill Plans: plan name -> (skill typeID -> target level)
+	private final Map<String, Map<Integer, Integer>> skillPlans = new HashMap<>();
 //Tags						Saved by JMenuTags.addTag()/removeTag() + SettingsDialog.save()
 	//Lock OK
 	private final Map<String, Tag> tags = new HashMap<>();
@@ -441,7 +443,7 @@ public class Settings {
 	 *
 	 * @return
 	 */
-	public Map<String, String> getImportSettings() {	
+	public Map<String, String> getImportSettings() {
 		return importSettings;
 	}
 
@@ -697,6 +699,15 @@ public class Settings {
 			tableViews.put(name, views);
 		}
 		return views;
+	}
+
+	/**
+	 * Skill Plans storage.
+	 * Key: plan name; Value: map of skill typeID to target level (1..5).
+	 * @return 
+	 */
+	public Map<String, Map<Integer, Integer>> getSkillPlans() {
+		return skillPlans;
 	}
 
 	public Map<String, List<Formula>> getTableFormulas() {

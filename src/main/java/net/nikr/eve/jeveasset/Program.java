@@ -105,6 +105,7 @@ import net.nikr.eve.jeveasset.gui.tabs.prices.PriceHistoryTab;
 import net.nikr.eve.jeveasset.gui.tabs.reprocessed.ReprocessedTab;
 import net.nikr.eve.jeveasset.gui.tabs.routing.RoutingTab;
 import net.nikr.eve.jeveasset.gui.tabs.skills.SkillsTab;
+import net.nikr.eve.jeveasset.gui.tabs.skills.SkillsOverviewTab;
 import net.nikr.eve.jeveasset.gui.tabs.slots.SlotsTab;
 import net.nikr.eve.jeveasset.gui.tabs.standing.NpcStandingTab;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileTab;
@@ -174,6 +175,7 @@ public class Program implements ActionListener {
 	private ContractsTab contractsTab;
 	private TreeTab treeTab;
 	private SkillsTab skillsTab;
+	private SkillsOverviewTab skillsOverviewTab;
 	private LoyaltyPointsTab loyaltyPointsTab;
 	private NpcStandingTab npcStandingTab;
 	private AgentsTab agentsTab;
@@ -246,7 +248,7 @@ public class Program implements ActionListener {
 		} else {
 			ToolLoader.initTools(this,Settings.get().getShowTools());
 		}
-		
+
 	//Dialogs
 		LOG.info("Loading: Account Manager Dialog");
 		accountManagerDialog = new AccountManagerDialog(this);
@@ -881,6 +883,14 @@ public class Program implements ActionListener {
 		return routingTab;
 	}
 
+	public SkillsOverviewTab getSkillsOverviewTab(boolean init) {
+		if (init && skillsOverviewTab == null) {
+			LOG.info("Loading: Routing Tab");
+			skillsOverviewTab = new SkillsOverviewTab(this);
+		}
+		return skillsOverviewTab;
+	}
+
 	public TrackerTab getTrackerTab(boolean init) {
 		if (init && trackerTab == null) {
 			LOG.info("Loading: Tracker Tab");
@@ -1126,7 +1136,7 @@ public class Program implements ActionListener {
 		return PROGRAM_DEV_BUILD;
 	}
 
-	public void updateStructures(Set<MyLocation> locations,boolean minimizable) {
+	public void updateStructures(Set<MyLocation> locations, boolean minimizable) {
 		structureUpdateDialog.show(locations, minimizable);
 	}
 
@@ -1225,6 +1235,8 @@ public class Program implements ActionListener {
 			mainWindow.addTab(getTreeTab(true));
 		} else if (MainMenuAction.SKILLS.name().equals(e.getActionCommand())) {
 			mainWindow.addTab(getSkillsTab(true));
+		} else if (MainMenuAction.SKILLS_OVERVIEW.name().equals(e.getActionCommand())) {
+			mainWindow.addTab(getSkillsOverviewTab(true));
 		} else if (MainMenuAction.LOYALTY_POINTS.name().equals(e.getActionCommand())) {
 			mainWindow.addTab(getLoyaltyPointsTab(true));
 		} else if (MainMenuAction.NPC_STANDING.name().equals(e.getActionCommand())) {
