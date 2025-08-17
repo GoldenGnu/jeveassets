@@ -26,12 +26,12 @@ import java.util.Map;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import net.nikr.eve.jeveasset.data.settings.Settings;
-import net.nikr.eve.jeveasset.gui.shared.components.JManageDialog;
+import net.nikr.eve.jeveasset.gui.shared.components.JManagerDialog;
 import net.nikr.eve.jeveasset.gui.shared.components.JTextDialog;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 
-public class FilterManager<E> extends JManageDialog {
+public class JFilterManagerDialog<E> extends JManagerDialog {
 
 	private final Map<String, List<Filter>> filters;
 	private final Map<String, List<Filter>> defaultFilters;
@@ -40,14 +40,49 @@ public class FilterManager<E> extends JManageDialog {
 	private final JTextDialog jTextDialog;
 	private final FilterExport filterExport;
 
-	FilterManager(final JFrame jFrame, final String toolName, final FilterGui<E> gui, List<EnumTableColumn<E>> columns, final Map<String, List<Filter>> filters, final Map<String, List<Filter>> defaultFilters) {
-		super(null, jFrame, GuiShared.get().filterManager(), true, true);
+	JFilterManagerDialog(final JFrame jFrame, final String toolName, final FilterGui<E> gui, List<EnumTableColumn<E>> columns, final Map<String, List<Filter>> filters, final Map<String, List<Filter>> defaultFilters) {
+		super(null, jFrame, GuiShared.get().filterManager(), true, false, false, true, true);
 		this.gui = gui;
 		this.columns = columns;
 		this.filters = filters;
 		this.defaultFilters = defaultFilters;
 		jTextDialog = new JTextDialog(jFrame);
 		filterExport = new FilterExport(toolName);
+	}
+
+	@Override
+	protected void load(final String name) {
+		List<Filter> filter = filters.get(name);
+		gui.setFilters(filter);
+		this.setVisible(false);
+	}
+
+	@Override
+	protected void edit(String name) {
+		//Edit is not supported
+	}
+
+	@Override
+	protected void merge(final String name, final List<String> list) {
+		//Get filters to merge
+		Settings.lock("Filter (Merge)"); //Lock for Filter (Merge)
+		List<Filter> filter = new ArrayList<>();
+		for (String mergeName : list) {
+			for (Filter currentFilter : filters.get(mergeName)) {
+				if (!filter.contains(currentFilter)) {
+					filter.add(currentFilter);
+				}
+			}
+		}
+		filters.put(name, filter);
+		updateFilters();
+		Settings.unlock("Filter (Merge)"); //Unlock for Filter (Merge)
+		gui.saveSettings("Filter (Merge)"); //Save Filter (Merge)
+	}
+
+	@Override
+	protected void copy(String fromName, String toName) {
+		//Copy is not supported
 	}
 
 	@Override
@@ -71,31 +106,6 @@ public class FilterManager<E> extends JManageDialog {
 		updateFilters();
 		Settings.unlock("Filter (Delete)"); //Unlock for Filter (Delete)
 		gui.saveSettings("Filter (Delete)"); //Save Filter (Delete)
-	}
-
-	@Override
-	protected void load(final String name) {
-		List<Filter> filter = filters.get(name);
-		gui.setFilters(filter);
-		this.setVisible(false);
-	}
-
-	@Override
-	protected void merge(final String name, final List<String> list) {
-		//Get filters to merge
-		Settings.lock("Filter (Merge)"); //Lock for Filter (Merge)
-		List<Filter> filter = new ArrayList<>();
-		for (String mergeName : list) {
-			for (Filter currentFilter : filters.get(mergeName)) {
-				if (!filter.contains(currentFilter)) {
-					filter.add(currentFilter);
-				}
-			}
-		}
-		filters.put(name, filter);
-		updateFilters();
-		Settings.unlock("Filter (Merge)"); //Unlock for Filter (Merge)
-		gui.saveSettings("Filter (Merge)"); //Save Filter (Merge)
 	}
 
 	@Override
@@ -166,7 +176,6 @@ public class FilterManager<E> extends JManageDialog {
 	@Override protected String textDeleteMultipleMsg(int size) { return GuiShared.get().deleteFilters(size); }
 	@Override protected String textDelete() { return GuiShared.get().deleteFilter(); }
 	@Override protected String textEnterName() { return GuiShared.get().enterFilterName(); }
-	@Override protected String textNoName() { return GuiShared.get().noFilterName(); }
 	@Override protected String textMerge() { return GuiShared.get().mergeFilters(); }
 	@Override protected String textRename() { return GuiShared.get().renameFilter(); }
 	@Override protected String textOverwrite() { return GuiShared.get().overwriteFilter(); }

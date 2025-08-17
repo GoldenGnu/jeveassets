@@ -83,7 +83,7 @@ public class JAvoid {
 
 	//Dialogs
 	private final JAutoCompleteDialog<String> jSaveSystemDialog;
-	private final JManageAvoidDialog jManageAvoidDialog;
+	private final JAvoidManagerDialog jAvoidManagerDialog;
 	private final JAutoCompleteDialog<SolarSystem> jSystemDialog;
 
 	private final Program program;
@@ -98,7 +98,7 @@ public class JAvoid {
 		this.saveSettings = saveSettings;
 
 		jSaveSystemDialog = new JAutoCompleteDialog<>(program, TabsRouting.get().saveFilterTitle(), Images.TOOL_ROUTING.getImage(), TabsRouting.get().saveFilterMsg(), false, JAutoCompleteDialog.STRING_OPTIONS);
-		jManageAvoidDialog = new JManageAvoidDialog(this, program);
+		jAvoidManagerDialog = new JAvoidManagerDialog(this, program);
 		jSystemDialog = new JAutoCompleteDialog<>(program, TabsRouting.get().addSystemTitle(), Images.TOOL_ROUTING.getImage(), TabsRouting.get().addSystemSelect(), true, JAutoCompleteDialog.SOLAR_SYSTEM_OPTIONS);
 
 		jAvoidPanel = new JPanel();
@@ -289,7 +289,7 @@ public class JAvoid {
 			jLoad.add(jMenuItem);
 		}
 		jLoad.setEnabled(!avoidSettings.getPresets().isEmpty());
-		jManageAvoidDialog.updateData();
+		jAvoidManagerDialog.updateData();
 	}
 
 	public void loadFilter(Set<Long> systemIds) {
@@ -456,8 +456,8 @@ public class JAvoid {
 					loadFilter(menuItem.getSystemIDs());
 				}
 			} else if (AvoidAction.AVOID_MANAGE.name().equals(e.getActionCommand())) {
-				jManageAvoidDialog.updateData();
-				jManageAvoidDialog.setVisible(true);
+				jAvoidManagerDialog.updateData();
+				jAvoidManagerDialog.setVisible(true);
 			} else if (AvoidAction.SAVE.name().equals(e.getActionCommand())) {
 				double min = getSecurityMinimum();
 				double max = getSecurityMaximum();

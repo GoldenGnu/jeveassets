@@ -171,7 +171,7 @@ public class PriceHistoryTab extends JMainTabSecondary {
 	//Dialog
 	private final JAutoCompleteDialog<Item> jAddItemDialog;
 	private final JAutoCompleteDialog<String> jSaveItemsDialog;
-	private final JManageItemsDialog jManageItemsDialog;
+	private final JItemsManagerDialog jItemsManagerDialog;
 	private final JLockWindow jLockWindow;
 
 	//Listener
@@ -231,7 +231,7 @@ public class PriceHistoryTab extends JMainTabSecondary {
 		jAddItemDialog.updateData(StaticData.get().getItems().values());
 
 		jSaveItemsDialog = new JAutoCompleteDialog<>(program, TabsPriceHistory.get().saveTitle(), Images.TOOL_PRICE_HISTORY.getImage(), null, false, JAutoCompleteDialog.STRING_OPTIONS);
-		jManageItemsDialog = new JManageItemsDialog(program, this);
+		jItemsManagerDialog = new JItemsManagerDialog(program, this);
 
 		jEdit = new JDropDownButton(Images.EDIT_EDIT.getIcon());
 		jEdit.setToolTipText(TabsPriceHistory.get().edit());
@@ -779,7 +779,7 @@ public class PriceHistoryTab extends JMainTabSecondary {
 				program.saveSettings("Price History (Save Set)");
 				updateSaved();
 			} else if (PriceHistoryAction.MANAGE.name().equals(e.getActionCommand())) {
-				jManageItemsDialog.setVisible(true);
+				jItemsManagerDialog.setVisible(true);
 			} else if (PriceHistoryAction.INCLUDE_ZERO.name().equals(e.getActionCommand())) {
 				rangeLogarithmicAxis.setAutoRangeIncludesZero(jIncludeZero.isSelected());
 				rangeLinearAxis.setAutoRangeIncludesZero(jIncludeZero.isSelected());

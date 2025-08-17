@@ -222,7 +222,7 @@ public class RoutingTab extends JMainTabSecondary {
 	private JAutoCompleteDialog<MyLocation> jStationDialog;
 	private JAutoCompleteDialog<SolarSystem> jSystemDialog;
 	private JAutoCompleteDialog<String> jSaveRouteDialog;
-	private JRouteManageDialog jManageRoutesDialog;
+	private JRouteManagerDialog jRouteManagerDialog;
 	private JRouteEditDialog jRouteEditDialog;
 	private JMultiSelectionDialog<String> jRouteSelectionDialog;
 	private JCustomFileChooser jFileChooser;
@@ -260,7 +260,7 @@ public class RoutingTab extends JMainTabSecondary {
 		jStationDialog = new JAutoCompleteDialog<>(program, TabsRouting.get().addStationTitle(), Images.TOOL_ROUTING.getImage(), TabsRouting.get().addStationSelect(), true, JAutoCompleteDialog.LOCATION_OPTIONS);
 		jSystemDialog = new JAutoCompleteDialog<>(program, TabsRouting.get().addSystemTitle(), Images.TOOL_ROUTING.getImage(), TabsRouting.get().addSystemSelect(), true, JAutoCompleteDialog.SOLAR_SYSTEM_OPTIONS);
 		jSaveRouteDialog = new JAutoCompleteDialog<>(program, TabsRouting.get().routeSaveTitle(), Images.TOOL_ROUTING.getImage(), TabsRouting.get().routeSaveMsg(), false, JAutoCompleteDialog.STRING_OPTIONS);
-		jManageRoutesDialog = new JRouteManageDialog(this, program);
+		jRouteManagerDialog = new JRouteManagerDialog(this, program);
 		jRouteEditDialog = new JRouteEditDialog(program);
 		jRouteSelectionDialog = new JMultiSelectionDialog<>(program, TabsRouting.get().resultSelectRoutes());
 		jFileChooser = new JCustomFileChooser("xml");
@@ -694,7 +694,7 @@ public class RoutingTab extends JMainTabSecondary {
 		for (ResultToolbar resultToolbar : resultToolbars) {
 			resultToolbar.update();
 		}
-		jManageRoutesDialog.updateData();
+		jRouteManagerDialog.updateData();
 		jSaveRouteDialog.updateData(Settings.get().getRoutingSettings().getRoutes().keySet());
 	}
 
@@ -1418,8 +1418,8 @@ public class RoutingTab extends JMainTabSecondary {
 				}
 				setRouteResult(result);
 			} else if (RoutingAction.ROUTE_MANAGE.name().equals(e.getActionCommand())) {
-				jManageRoutesDialog.updateData();
-				jManageRoutesDialog.setVisible(true);
+				jRouteManagerDialog.updateData();
+				jRouteManagerDialog.setVisible(true);
 			} else if (RoutingAction.IMPORT_ROUTE_XML.name().equals(e.getActionCommand())) {
 				jFileChooser.setSelectedFile(null);
 				jFileChooser.setCurrentDirectory(null);

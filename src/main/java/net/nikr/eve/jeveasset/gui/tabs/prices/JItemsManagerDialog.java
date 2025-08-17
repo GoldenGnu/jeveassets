@@ -26,16 +26,16 @@ import java.util.Set;
 import javax.swing.JOptionPane;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.settings.Settings;
-import net.nikr.eve.jeveasset.gui.shared.components.JManageDialog;
+import net.nikr.eve.jeveasset.gui.shared.components.JManagerDialog;
 import net.nikr.eve.jeveasset.i18n.TabsPriceHistory;
 
 
-public class JManageItemsDialog extends JManageDialog {
+public class JItemsManagerDialog extends JManagerDialog {
 
 	private final PriceHistoryTab priceHistoryTab;
 
-	public JManageItemsDialog(Program program, PriceHistoryTab priceHistoryTab) {
-		super(program, program.getMainWindow().getFrame(), TabsPriceHistory.get().manageTitle(), true, false);
+	public JItemsManagerDialog(Program program, PriceHistoryTab priceHistoryTab) {
+		super(program, program.getMainWindow().getFrame(), TabsPriceHistory.get().manageTitle(), true, false, false, true, false);
 		this.priceHistoryTab = priceHistoryTab;
 	}
 
@@ -43,6 +43,11 @@ public class JManageItemsDialog extends JManageDialog {
 	protected void load(String name) {
 		priceHistoryTab.setItems(Settings.get().getPriceHistorySets().get(name));
 		setVisible(false);
+	}
+
+	@Override
+	protected void edit(String name) {
+		//Edit is not supported
 	}
 
 	@Override
@@ -61,6 +66,11 @@ public class JManageItemsDialog extends JManageDialog {
 		program.saveSettings("Price History (Merge Set)");
 		updateData();
 		priceHistoryTab.updateSaved();
+	}
+
+	@Override
+	protected void copy(String fromName, String toName) {
+		//Copy is not supported
 	}
 
 	@Override
@@ -110,7 +120,6 @@ public class JManageItemsDialog extends JManageDialog {
 	@Override protected String textDeleteMultipleMsg(int size) { return TabsPriceHistory.get().deleteHistorySets(size); }
 	@Override protected String textDelete() { return TabsPriceHistory.get().deleteHistorySet(); }
 	@Override protected String textEnterName() { return TabsPriceHistory.get().enterName(); }
-	@Override protected String textNoName() { return TabsPriceHistory.get().empty(); }
 	@Override protected String textMerge() { return TabsPriceHistory.get().merge(); }
 	@Override protected String textRename() { return TabsPriceHistory.get().rename(); }
 	@Override protected String textOverwrite() { return TabsPriceHistory.get().overwrite(); }
