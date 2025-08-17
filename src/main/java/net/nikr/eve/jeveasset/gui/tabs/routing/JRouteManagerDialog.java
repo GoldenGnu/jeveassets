@@ -24,16 +24,16 @@ import java.util.List;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.settings.RouteResult;
 import net.nikr.eve.jeveasset.data.settings.Settings;
-import net.nikr.eve.jeveasset.gui.shared.components.JManageDialog;
+import net.nikr.eve.jeveasset.gui.shared.components.JManagerDialog;
 import net.nikr.eve.jeveasset.i18n.TabsRouting;
 
 
-public class JRouteManageDialog extends JManageDialog {
+public class JRouteManagerDialog extends JManagerDialog {
 
 	private final RoutingTab routingTab;
 
-	public JRouteManageDialog(RoutingTab routingTab, Program program) {
-		super(program, program.getMainWindow().getFrame(), TabsRouting.get().resultManageTitle(), false, false);
+	public JRouteManagerDialog(RoutingTab routingTab, Program program) {
+		super(program, program.getMainWindow().getFrame(), TabsRouting.get().resultManageTitle(), true, false, false, false, false);
 		this.routingTab = routingTab;
 	}
 
@@ -50,8 +50,18 @@ public class JRouteManageDialog extends JManageDialog {
 	}
 
 	@Override
+	protected void edit(String name) {
+		//Edit is not supported
+	}
+
+	@Override
 	protected void merge(String name, List<String> list) {
-		//Not supported
+		//Merge is not supported
+	}
+
+	@Override
+	protected void copy(String fromName, String toName) {
+		//Copy is not supported
 	}
 
 	@Override
@@ -77,18 +87,17 @@ public class JRouteManageDialog extends JManageDialog {
 
 	@Override
 	protected void export(List<String> list) {
-		//Not supported
+		//Export is not supported
 	}
 
 	@Override
 	protected void importData() {
-		//Not supported
+		//Import is not supported
 	}
 
 	@Override protected String textDeleteMultipleMsg(int size) { return TabsRouting.get().routeDeleteMsg(size); }
 	@Override protected String textDelete() { return TabsRouting.get().routeDeleteTitle(); }
 	@Override protected String textEnterName() { return TabsRouting.get().routeSaveMsg(); }
-	@Override protected String textNoName() { return TabsRouting.get().routeNoName(); }
 	@Override protected String textMerge() { return ""; } //Not supported
 	@Override protected String textRename() { return TabsRouting.get().routeRenameTitle(); }
 	@Override protected String textOverwrite() { return TabsRouting.get().routeOverwrite(); }
