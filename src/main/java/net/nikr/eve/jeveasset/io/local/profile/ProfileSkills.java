@@ -45,7 +45,7 @@ public class ProfileSkills extends ProfileTable {
 		tableDelete(connection, SKILLS_TABLE, SKILLS_TOTAL_TABLE);
 
 		//Insert data
-		String skillsSQL = "INSERT INTO " + SKILLS_TABLE + " ("
+		String skillsSQL = "INSERT OR REPLACE INTO " + SKILLS_TABLE + " ("
 				+ "	accountid,"
 				+ "	id,"
 				+ "	sp,"
