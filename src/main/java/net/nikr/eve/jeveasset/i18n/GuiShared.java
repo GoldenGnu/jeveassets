@@ -356,6 +356,7 @@ public abstract class GuiShared extends Bundle {
 	public abstract String enterViewName();
 	public abstract String loadView();
 	public abstract String manageViews();
+	public abstract String noViewName();
 	public abstract String overwriteView();
 	public abstract String renameView();
 	public abstract String saveView();
