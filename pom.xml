@@ -99,6 +99,7 @@
 				<version>2.5</version>
 				<configuration>
 					<encoding>${project.build.sourceEncoding}</encoding>
+					
 				</configuration>
 			</plugin>
 			<plugin>
@@ -147,15 +148,6 @@
 									<fileset dir="${project.build.directory}" includes="*.jar"/>
 									<fileset dir="${project.build.directory}" includes="*.txt"/>
 									<fileset dir="${project.build.directory}" includes="*.properties"/>
-								</copy>
-								<copy todir="${project.build.directory}/install/izpack">
-									<fileset dir="tools" includes="izpack-util.jar"/>
-								</copy>
-								<copy todir="${project.build.directory}/install/izpack">
-									<fileset dir="src/main/izpack" includes="ProcessPanel.Spec.xml"/>
-								</copy>
-								<copy todir="${project.build.directory}">
-									<fileset dir="${project.build.directory}/classes" includes="update_version.dat"/>
 								</copy>
 							</target>
 						</configuration>
@@ -377,7 +369,7 @@
 						</goals>
 						<configuration>
 							<fromDir>${project.build.directory}</fromDir>
-							<includes>*.txt,*.jar,*.md5,lib/*,*.dat,*.php,*.properties,.htaccess</includes>
+							<includes>*.txt,*.jar,*.md5,lib/*,*.dat,*.php,*.properties,.htaccess,*.update</includes>
 							<serverId>eve-nikr-net</serverId>
 							<url>sftp://${upload.url}</url>
 							<toDir>${upload.program.file}</toDir>
@@ -423,6 +415,7 @@
 							<autoIncludeDevelopers>true</autoIncludeDevelopers>
 							<finalName>installer</finalName>
 							<baseDir>${project.build.directory}/install</baseDir>
+							<installFile>${project.build.directory}/izpack/install.xml</installFile>
 						</configuration>
 					</execution>
 				</executions>
@@ -480,22 +473,33 @@
 		</extensions>
 		<resources>
 			<resource>
-				<directory>src/main/izpack</directory>
-				<filtering>true</filtering>
-			</resource>
-			<resource>
-				<directory>src/main/resources</directory>
-				<filtering>true</filtering>
-				<includes>
-					<include>**/update_version.dat</include>
-				</includes>
-			</resource>
-			<resource>
 				<directory>src/main/resources</directory>
 				<filtering>false</filtering>
+			</resource>
+			<resource>
+				<directory>tools/izpack</directory>
+				<filtering>false</filtering>
 				<excludes>
-					<exclude>**/update_version.dat</exclude>
+					<exclude>**/install.xml</exclude>
 				</excludes>
+				<targetPath>../install/izpack</targetPath>
+			</resource>
+			<resource>
+				<directory>tools/izpack</directory>
+				<filtering>true</filtering>
+				<includes>
+					<include>**/install.xml</include>
+				</includes>
+				<targetPath>../izpack</targetPath>
+			</resource>
+			<resource>
+				<directory>tools/update</directory>
+				<filtering>true</filtering>
+				<includes>
+					<include>**/github.update</include>
+					<include>**/update_version.dat</include>
+				</includes>
+				<targetPath>..</targetPath>
 			</resource>
 		</resources>
 	</build>
