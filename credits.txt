@@ -70,8 +70,8 @@ jEveAssets use EVE-Online API and SDE
 
 Link:
   Main site: https://www.eveonline.com
-  SDE: https://developers.eveonline.com/resource/resources
-  API: https://esi.evetech.net/ui
+  SDE: https://developers.eveonline.com/docs/services/sde/
+  API: https://developers.eveonline.com/api-explorer
 
 SDE License:
   ©CCP hf. All rights reserved. Used with permission.
@@ -343,3 +343,4 @@ from the use of this website.
 
 ________________________________________________________________________________
 ________________________________________________________________________________
+

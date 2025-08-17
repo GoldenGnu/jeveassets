@@ -1188,9 +1188,9 @@ public class TrackerTab extends JMainTabSecondary {
 			if (jEscrows.isSelected() && escrows != null) {
 				t += entry.getValue().getEscrows();
 			}
-			//Escrows To Cover is not money you own, It's technically money you owe
-			//Therefor it's not included in the total
-			//See: https://forums.eveonline.com/default.aspx?g=posts&m=6607898#post6607898
+			//Escrows To Cover is not money you own, it's technically money you owe
+			//Therefore, it's not included in the total
+			//See: https://forums-archive.eveonline.com/message/6607898#post6607898
 			//if (jEscrowsToCover.isSelected() && escrowsToCover != null) {
 			//	t += entry.getValue().getEscrowsToCover();
 			//}
@@ -1987,3 +1987,4 @@ public class TrackerTab extends JMainTabSecondary {
 	}
 
 }
+
