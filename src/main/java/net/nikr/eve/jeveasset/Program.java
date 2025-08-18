@@ -877,7 +877,7 @@ public class Program implements ActionListener {
 
 	public SkillsOverviewTab getSkillsOverviewTab(boolean init) {
 		if (init && skillsOverviewTab == null) {
-			LOG.info("Loading: Routing Tab");
+			LOG.info("Loading: Skills Overview Tab");
 			skillsOverviewTab = new SkillsOverviewTab(this);
 		}
 		return skillsOverviewTab;
