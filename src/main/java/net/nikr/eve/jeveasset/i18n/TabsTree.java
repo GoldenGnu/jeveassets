@@ -37,6 +37,13 @@ public abstract class TabsTree extends Bundle {
 	public abstract String categories();
 	public abstract String collapse();
 	public abstract String expand();
+	public abstract String locationAssetSafety();
+	public abstract String locationClones();
+	public abstract String locationContracts();
+	public abstract String locationDeliveries();
+	public abstract String locationItemHangar();
+	public abstract String locationMarketOrders();
+	public abstract String locationShipHangar();
 	public abstract String locations();
 	public abstract String title();
 }

@@ -36,6 +36,7 @@ public abstract class GuiFrame extends Bundle {
 
 	public abstract String about();
 	public abstract String accounts();
+	public abstract String agents();
 	public abstract String business();
 	public abstract String change();
 	public abstract String clickToShow(String text);
@@ -69,9 +70,11 @@ public abstract class GuiFrame extends Bundle {
 	public abstract String misc();
 	public abstract String netWorth();
 	public abstract String not();
+	public abstract String npcStanding();
 	public abstract String options();
 	public abstract String options1();
 	public abstract String overview();
+	public abstract String owners();
 	public abstract String priceChanges();
 	public abstract String priceHistory();
 	public abstract String profiles();
@@ -82,6 +85,7 @@ public abstract class GuiFrame extends Bundle {
 	public abstract String routing();
 	public abstract String ship();
 	public abstract String skills();
+	public abstract String skillsOverview();
 	public abstract String slots();
 	public abstract String stockpile();
 	public abstract String table();

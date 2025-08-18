@@ -30,6 +30,8 @@ import javax.swing.JTable;
 import javax.swing.border.Border;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
+import net.nikr.eve.jeveasset.gui.shared.table.TableCellRenderers.IconTableCellRenderer;
+import net.nikr.eve.jeveasset.gui.shared.table.TableCellRenderers.TextIconTableCellRenderer;
 
 
 public final class PaddingTableCellRenderer implements TableCellRenderer {
@@ -60,7 +62,7 @@ public final class PaddingTableCellRenderer implements TableCellRenderer {
 
 	private final TableCellRenderer renderer;
 	private final Border border;
-	private final Map<BorderState, Border> borders = new EnumMap<BorderState, Border>(BorderState.class);
+	private final Map<BorderState, Border> borders = new EnumMap<>(BorderState.class);
 
 	public static void install(final JTable jTable, final int padding) {
 		install(jTable, padding, padding, padding, padding);
@@ -73,7 +75,9 @@ public final class PaddingTableCellRenderer implements TableCellRenderer {
 			if (defaultRenderer == null) {
 				defaultRenderer = new DefaultTableCellRenderer();
 			}
-			if (!(defaultRenderer instanceof PaddingTableCellRenderer)) {
+			if (!(defaultRenderer instanceof PaddingTableCellRenderer)
+					&& !(defaultRenderer instanceof TextIconTableCellRenderer)
+					&& !(defaultRenderer instanceof IconTableCellRenderer)) {
 				jTable.setDefaultRenderer(clazz, new PaddingTableCellRenderer(defaultRenderer, top, left, bottom, right));
 			}
 		}

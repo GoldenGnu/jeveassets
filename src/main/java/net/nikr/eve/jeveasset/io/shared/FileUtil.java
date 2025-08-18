@@ -40,7 +40,10 @@ import org.slf4j.LoggerFactory;
 
 public class FileUtil extends FileUtilSimple {
 	private static final Logger LOG = LoggerFactory.getLogger(FileUtil.class);
+	private static final Object SYNC_LOCK = new Object();
+	
 
+	private static final String PATH_IMAGES = "images";
 	private static final String PATH_SOUNDS = "sounds";
 	private static final String PATH_ASSET_ADDED = "data" + File.separator + "added.json";
 	private static final String PATH_ASSET_ADDED_DATABASE = "data" + File.separator + "addedsql.db";
@@ -49,6 +52,8 @@ public class FileUtil extends FileUtilSimple {
 	private static final String PATH_PRICE_HISTORY_DATABASE = "data" + File.separator + "pricehistory.db";
 	private static final String PATH_TRACKER_DATA = "data" + File.separator + "tracker.json";
 	private static final String PATH_SETTINGS = "data" + File.separator + "settings.xml";
+	private static final String PATH_AGENTS = "data" + File.separator + "agents.xml";
+	private static final String PATH_NPC_CORPORATION = "data" + File.separator + "npccorporation.xml";
 	private static final String PATH_ITEMS = "data" + File.separator + "items.xml";
 	private static final String PATH_ITEMS_UPDATES = "data" + File.separator + "items_updates.xml";
 	private static final String PATH_JUMPS = "data" + File.separator + "jumps.xml";
@@ -105,6 +110,10 @@ public class FileUtil extends FileUtilSimple {
 		return file.getAbsolutePath();
 	}
 
+	public static String getPathImages(String filename) {
+		return getUserFile(PATH_IMAGES + File.separator + filename);
+	}
+
 	public static String getPathSounds(String filename) {
 		return getUserFile(PATH_SOUNDS + File.separator + filename);
 	}
@@ -130,7 +139,9 @@ public class FileUtil extends FileUtilSimple {
 	private static String getLocalFile(final String filename, FileType fileType) {
 		File file;
 		File ret;
-		if (fileType == FileType.USER_FILES && !CliOptions.get().isPortable()) {
+		if (fileType == FileType.USER_FILES && testPath) {
+			ret = new File(FileUtilSimple.getLocalFile("test-output" + File.separator + filename));
+		} else if (fileType == FileType.USER_FILES && !CliOptions.get().isPortable()) {
 			File userDir = new File(System.getProperty("user.home", "."));
 			if (onMac()) { // preferences are stored in user.home/Library/Preferences
 				file = new File(userDir, "Library" + File.separator + "Preferences" + File.separator + "JEveAssets");
@@ -139,16 +150,14 @@ public class FileUtil extends FileUtilSimple {
 			}
 			ret = new File(file.getAbsolutePath() + File.separator + filename);
 		} else { //jEveAssets program directory
-			if (fileType == FileType.USER_FILES && testPath) {
-				ret = new File(FileUtilSimple.getLocalFile("test-output" + File.separator + filename));
-			} else {
-				ret = new File(FileUtilSimple.getLocalFile(filename));
-			}
+			ret = new File(FileUtilSimple.getLocalFile(filename));
 		}
 		File parent = ret.getParentFile();
-		if (!parent.exists() && !parent.mkdirs()) {
-			JOptionPane.showMessageDialog(null, "Failed to create directory " + parent.getAbsolutePath(), Program.PROGRAM_NAME + " - Critical Error", JOptionPane.ERROR_MESSAGE);
-			System.exit(-1);
+		synchronized (SYNC_LOCK) {
+			if (!parent.exists() && !parent.mkdirs()) {
+				JOptionPane.showMessageDialog(null, "Failed to create directory " + parent.getAbsolutePath(), Program.PROGRAM_NAME + " - Critical Error", JOptionPane.ERROR_MESSAGE);
+				System.exit(-1);
+			}
 		}
 		return ret.getAbsolutePath();
 	}
@@ -392,6 +401,13 @@ public class FileUtil extends FileUtilSimple {
 
 	public static String getPathItems() {
 		return getStaticFile(PATH_ITEMS);
+	}
+
+	public static String getPathAgents() {
+		return getStaticFile(PATH_AGENTS);
+	}
+	public static String getPathNpcCorporation() {
+		return getStaticFile(PATH_NPC_CORPORATION);
 	}
 
 	public static String getPathLocations() {

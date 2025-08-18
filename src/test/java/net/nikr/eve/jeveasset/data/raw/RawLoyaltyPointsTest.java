@@ -29,7 +29,7 @@ import org.junit.Test;
 public class RawLoyaltyPointsTest extends TestUtil {
 
 	@Test
-	public void rawSkillTest() {
+	public void rawLoyaltyPointsTest() {
 		RawUtil.compare(RawLoyaltyPoints.class, CharacterLoyaltyPointsResponse.class);
 	}
 

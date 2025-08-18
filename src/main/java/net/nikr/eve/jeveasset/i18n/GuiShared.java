@@ -34,6 +34,28 @@ public abstract class GuiShared extends Bundle {
 		super(locale);
 	}
 
+	public abstract String agentDivisionResearchAndDevelopment();
+	public abstract String agentDivisionDistribution();
+	public abstract String agentDivisionMining();
+	public abstract String agentDivisionSecurity();
+	public abstract String agentDivisionIndustrialistEntrepreneur();
+	public abstract String agentDivisionExplorer();
+	public abstract String agentDivisionIndustrialistProducer();
+	public abstract String agentDivisionEnforcer();
+	public abstract String agentDivisionSoldierOfFortune();
+	public abstract String agentDivisionInterBus();
+	public abstract String agentTypeNonAgent();
+	public abstract String agentTypeBasicAgent();
+	public abstract String agentTypeTutorialAgent();
+	public abstract String agentTypeResearchAgent();
+	public abstract String agentTypeConcordAgent();
+	public abstract String agentTypeGenericStorylineMissionAgent();
+	public abstract String agentTypeStorylineMissionAgent();
+	public abstract String agentTypeEventMissionAgent();
+	public abstract String agentTypeFactionalWarfareAgent();
+	public abstract String agentTypeEpicArcAgent();
+	public abstract String agentTypeAuraAgent();
+	public abstract String agentTypeCareerAgent();
 	public abstract String adam4eve();
 	public abstract String add();
 	public abstract String addFilter();
@@ -67,6 +89,7 @@ public abstract class GuiShared extends Bundle {
 	public abstract String copy();
 	public abstract String copyEveMultiBuy();
 	public abstract String copyPlus();
+	public abstract String corporation();
 	public abstract String custom();
 	public abstract String cut();
 	public abstract String delete();
@@ -79,9 +102,11 @@ public abstract class GuiShared extends Bundle {
 	public abstract String errorLoadingProfileTitle();
 	public abstract String eveCookbook();
 	public abstract String eveInfo();
+	public abstract String eveMarketBrowser();
 	public abstract String eveMissioneer();
 	public abstract String eveRef();
 	public abstract String eveTycoon();
+	public abstract String eveconomy();
 	public abstract String foreground();
 	public abstract String formulaColumns();
 	public abstract String formulaDateToolTip();
@@ -93,6 +118,9 @@ public abstract class GuiShared extends Bundle {
 	public abstract String formulaTitle();
 	public abstract String fuzzworkBlueprints();
 	public abstract String fuzzworkItems();
+	public abstract String fuzzworkLP();
+	public abstract String fuzzworkLPBuy();
+	public abstract String fuzzworkLPSell();
 	public abstract String fuzzworkMarket();
 	public abstract String helpFilter();
 	public abstract String helpSettings();
@@ -117,11 +145,13 @@ public abstract class GuiShared extends Bundle {
 	public abstract String itemEdit();
 	public abstract String itemNameTitle();
 	public abstract String itemPriceTitle();
+	public abstract String jitaSpace();
 	public abstract String jumps();
 	public abstract String jumpsAddCustom();
 	public abstract String jumpsAddSelected();
 	public abstract String jumpsClear();
 	public abstract String jumpsColumnToolTip(String systemName);
+	public abstract String jumpsSettings();
 	public abstract String lazyBlacksmith();
 	public abstract String lazyBlacksmithInvention();
 	public abstract String lazyBlacksmithManufacturing();
@@ -139,6 +169,7 @@ public abstract class GuiShared extends Bundle {
 	public abstract String locationRename();
 	public abstract String locationSystem();
 	public abstract String lookup();
+	public abstract String loyaltyPointsStore();
 	public abstract String market();
 	public abstract String newStockpile();
 	public abstract String none();
@@ -325,7 +356,6 @@ public abstract class GuiShared extends Bundle {
 	public abstract String enterViewName();
 	public abstract String loadView();
 	public abstract String manageViews();
-	public abstract String noViewName();
 	public abstract String overwriteView();
 	public abstract String renameView();
 	public abstract String saveView();
@@ -358,6 +388,8 @@ public abstract class GuiShared extends Bundle {
 	public abstract String managerLoad();
 	public abstract String managerRename();
 	public abstract String managerDelete();
+	public abstract String managerEdit();
+	public abstract String managerCopy();
 	public abstract String managerClose();
 	public abstract String renameFilter();
 	public abstract String deleteFilter();
@@ -394,6 +426,7 @@ public abstract class GuiShared extends Bundle {
 	public abstract String filterEmpty();
 	public abstract String filterShowing(int rowCount, int size, String filterName);
 	public abstract String popupMenuAddField();
+	public abstract String popupMenuAddFieldMsg(int count);
 	public abstract String export();
 	public abstract String exportToolTip();
 	public abstract String exportTableData();

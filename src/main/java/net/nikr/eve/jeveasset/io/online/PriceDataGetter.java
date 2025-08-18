@@ -67,7 +67,8 @@ public class PriceDataGetter implements PricingListener {
 	private static final long PRICE_CACHE_TIMER = 1 * 60 * 60 * 1000L; // 1 hour (hours*min*sec*ms)
 	private static final int ATTEMPT_COUNT = 2;
 	private static final int ZERO_PRICES_WARNING_LIMIT = 10;
-	private static final int FAILED_PERCENT_CANCEL_LIMIT = 5;
+	private static final double FAILED_PERCENT_CANCEL_LIMIT = 5.0;
+	private static final int PLEX_TYPE_ID = 44992;
 
 	private UpdateTask updateTask;
 	private boolean update;
@@ -163,8 +164,25 @@ public class PriceDataGetter implements PricingListener {
 	 * @return true if OK or false if FAILED
 	 */
 	private boolean processUpdate(final ProfileData profileData, final UpdateTask task, final boolean updateAll) {
-		Map<Integer, PriceData> priceData = processUpdate(task, updateAll, new DefaultPricingOptions(), profileData.getPriceTypeIDs(), Settings.get().getPriceDataSettings().getSource());
+		Set<Integer> priceTypeIDs = profileData.getPriceTypeIDs();
+		//Remove plex
+		boolean plex;
+		if (Settings.get().getPriceDataSettings().getSource() == PriceSource.FUZZWORK) {
+			plex = priceTypeIDs.remove(PLEX_TYPE_ID);
+		} else {
+			plex = false;
+		}
+		//Update normal
+		Map<Integer, PriceData> priceData = processUpdate(task, updateAll, new DefaultPricingOptions(), priceTypeIDs, Settings.get().getPriceDataSettings().getSource());
+		//Update plex
+		Map<Integer, PriceData> plexPriceData = null;
+		if (plex) {
+			plexPriceData = processUpdate(task, updateAll, new PlexPricingOptions(0), Collections.singleton(PLEX_TYPE_ID), Settings.get().getPriceDataSettings().getSource());
+		}
 		if (priceData != null) {
+			if (plexPriceData != null) {
+				priceData.putAll(plexPriceData);
+			}
 			Settings.get().setPriceData(priceData);
 			return true;
 		} else {
@@ -239,7 +257,7 @@ public class PriceDataGetter implements PricingListener {
 			}
 		}
 		boolean updated = !okay.isEmpty() && typeIDs.size() * FAILED_PERCENT_CANCEL_LIMIT / 100 > failed.size();
-
+		
 		if (!failed.isEmpty()) {
 			StringBuilder errorString = new StringBuilder();
 			boolean first = true;
@@ -394,6 +412,35 @@ public class PriceDataGetter implements PricingListener {
 		if (!okay.isEmpty() && !typeIDs.isEmpty()) {
 			SplashUpdater.setSubProgress((int) (okay.size() * 100.0 / typeIDs.size()));
 		}
+	}
+
+	private class PlexPricingOptions extends DefaultPricingOptions {
+
+		private final int globalPlexMarketRegionID;
+
+		public PlexPricingOptions(int globalPlexMarketRegionID) {
+			this.globalPlexMarketRegionID = globalPlexMarketRegionID;
+		}
+
+		@Override
+		public PriceLocation getLocation() {
+			return new PriceLocation() {
+				@Override
+				public long getRegionID() {
+					return globalPlexMarketRegionID;
+				}
+				@Override
+				public long getLocationID() {
+					return globalPlexMarketRegionID;
+				}
+			};
+		}
+
+		@Override
+		public LocationType getLocationType() {
+			return LocationType.REGION;
+		}
+		
 	}
 
 	private class DefaultPricingOptions implements PricingOptions {

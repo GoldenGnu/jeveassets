@@ -40,9 +40,9 @@ import net.nikr.eve.jeveasset.data.settings.Citadel;
 import net.nikr.eve.jeveasset.data.settings.Citadel.CitadelSource;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.JOptionInput;
+import net.nikr.eve.jeveasset.gui.shared.components.JAutoCompleteDialog;
 import net.nikr.eve.jeveasset.gui.shared.components.JLabelMultiline;
 import net.nikr.eve.jeveasset.gui.shared.components.ListComboBoxModel;
-import net.nikr.eve.jeveasset.gui.shared.menu.JSystemDialog;
 import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 import net.nikr.eve.jeveasset.io.online.CitadelGetter;
@@ -58,7 +58,7 @@ public class UserLocationSettingsPanel extends JSettingsPanel {
 	private final JComboBox<MyLocation> jItems;
 	private final JButton jEdit;
 	private final JButton jDelete;
-	private final JSystemDialog jSystemDialog;
+	private final JAutoCompleteDialog<MyLocation> jSystemDialog;
 	private final Set<Long> delete = new HashSet<>();
 	private final List<Citadel> edit = new ArrayList<>();
 	private final Map<Long, MyLocation> citadels = new HashMap<>();
@@ -68,7 +68,7 @@ public class UserLocationSettingsPanel extends JSettingsPanel {
 
 		ListenerClass listener = new ListenerClass();
 
-		jSystemDialog = new JSystemDialog(program);
+		jSystemDialog = new JAutoCompleteDialog<>(program, GuiShared.get().locationRename(), settingsDialog.getDialog(), Images.LOC_LOCATIONS.getImage(), GuiShared.get().locationSystem(), true, JAutoCompleteDialog.LOCATION_OPTIONS);
 
 		jItems = new JComboBox<>();
 

@@ -24,9 +24,14 @@ package net.nikr.eve.jeveasset.gui.shared.table;
 import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.GradientPaint;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.util.Date;
 import javax.swing.AbstractCellEditor;
 import javax.swing.DefaultCellEditor;
+import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -36,10 +41,14 @@ import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellEditor;
+import net.nikr.eve.jeveasset.data.settings.ColorEntry;
+import net.nikr.eve.jeveasset.data.settings.ColorSettings;
 import net.nikr.eve.jeveasset.data.settings.tag.Tags;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formatter;
 import net.nikr.eve.jeveasset.gui.shared.components.JButtonComparable;
+import net.nikr.eve.jeveasset.gui.shared.table.containers.Standing;
+import net.nikr.eve.jeveasset.gui.shared.table.containers.TextIcon;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileTableFormat;
 
@@ -163,6 +172,156 @@ public class TableCellRenderers {
 			} else {
 				setText(value.toString());
 			}
+		}
+	}
+
+	public static class StandingTableCellRenderer extends DefaultTableCellRenderer {
+
+		private static final int TICK_HEIGHT = 1;
+
+		private final JStandingLabel jStandingLabel = new JStandingLabel();
+
+		@Override
+		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+			Component component = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+			if (component instanceof JLabel) {
+				JLabel jLabel = (JLabel) component;
+				if (value instanceof Standing) {
+					jStandingLabel.setup(jLabel, (Standing) value, isSelected);
+					return jStandingLabel;
+				}
+			}
+			return component;
+		}
+
+		private static class JStandingLabel extends JLabel {
+
+			private double standing = 0;
+			private boolean selected;
+
+			public JStandingLabel() {
+				this.setHorizontalTextPosition(DefaultTableCellRenderer.RIGHT);
+				this.setHorizontalAlignment(DefaultTableCellRenderer.RIGHT);
+				this.setOpaque(false);
+			}
+
+			public void setup(JLabel jLabel, Standing standing, boolean selected) {
+				setBackground(jLabel.getBackground());
+				setForeground(jLabel.getForeground());
+				setBorder(jLabel.getBorder());
+				setText(jLabel.getText());
+				setFont(jLabel.getFont());
+				if (standing != null) {
+					this.standing = standing.getStanding();
+				} else {
+					this.standing = 0;
+				}
+				this.selected = selected;
+			}
+			
+			@Override
+			protected void paintComponent(Graphics g) {
+				Graphics2D g2D = (Graphics2D) g;
+				g2D.setBackground(getBackground());
+				Dimension size = getSize();
+				g2D.clearRect(0, 0, size.width, size.height);
+				
+				double tickSise = size.width / 20.0;
+				int middle = size.width / 2;
+				int width = (int)Math.ceil(tickSise * Math.abs(standing));
+				Color standingColor;
+				Color middleColor;
+				if (selected) {
+					standingColor = getBackground().darker().darker();
+					middleColor = getBackground();
+				} else if (standing < 0) {
+					standingColor = ColorSettings.background(ColorEntry.NPC_STANDING_NEGATIVE);
+					middleColor = ColorSettings.background(ColorEntry.NPC_STANDING_NEGATIVE_MIDDLE);
+				} else if (standing > 0) {
+					standingColor = ColorSettings.background(ColorEntry.NPC_STANDING_POSITIVE);
+					middleColor = ColorSettings.background(ColorEntry.NPC_STANDING_POSITIVE_MIDDLE);
+				} else {
+					standingColor = getBackground();
+					middleColor = getBackground();
+				}
+				g2D.setColor(standingColor);
+				if (standing < 0) {
+					int start = middle - width;
+					g2D.setPaint(new GradientPaint(0, 0, standingColor, middle, 0, middleColor));
+					g2D.fillRect(start, 0, width, size.height);
+				} else if (standing > 0) {
+					g2D.setPaint(new GradientPaint(middle, 0, middleColor, size.width, 0, standingColor));
+					g2D.fillRect(middle, 0, width, size.height);
+				}
+
+				g2D.setColor(new Color(getForeground().getRed(), getForeground().getGreen(), getForeground().getBlue(), 100));
+				//g2D.setColor(gridColor);
+				g2D.drawLine(middle, 0, middle, size.height);
+				int bottom = size.height - TICK_HEIGHT;
+
+				int attack = middle - (int)(tickSise * 5);
+				g2D.drawLine(attack, bottom, attack, size.height);
+				g2D.drawLine(attack, 0, attack, TICK_HEIGHT);
+
+				int level1 = middle - (int)(tickSise * 2);
+				g2D.drawLine(level1, bottom, level1, size.height);
+				g2D.drawLine(level1, 0, level1, TICK_HEIGHT);
+
+				int level2 = middle + (int)(tickSise * 1);
+				g2D.drawLine(level2, bottom, level2, size.height);
+				g2D.drawLine(level2, 0, level2, TICK_HEIGHT);
+
+				int level3 = middle + (int)(tickSise * 3);
+				g2D.drawLine(level3, bottom, level3, size.height);
+				g2D.drawLine(level3, 0, level3, TICK_HEIGHT);
+
+				int level4 = middle + (int)(tickSise * 5);
+				g2D.drawLine(level4, bottom, level4, size.height);
+				g2D.drawLine(level4, 0, level4, TICK_HEIGHT);
+
+				int level5 = middle + (int)(tickSise * 7);
+				g2D.drawLine(level5, bottom, level5, size.height);
+				g2D.drawLine(level5, 0, level5, TICK_HEIGHT);
+
+				super.paintComponent(g);
+			}
+		}
+	}
+
+	public static class IconTableCellRenderer extends DefaultTableCellRenderer {
+
+		@Override
+		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+			Component component = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+			if (component instanceof JLabel) {
+				JLabel jLabel = (JLabel) component;
+				if (value instanceof Icon) {
+					jLabel.setIcon((Icon) value);
+					jLabel.setText("");
+				} else {
+					jLabel.setIcon(null);
+				}
+			}
+			return component;
+		}
+	}
+
+	public static class TextIconTableCellRenderer extends DefaultTableCellRenderer {
+
+		@Override
+		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+			Component component = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+			if (component instanceof JLabel) {
+				JLabel jLabel = (JLabel) component;
+				if (value instanceof TextIcon) {
+					TextIcon textIcon = (TextIcon) value;
+					jLabel.setIcon(textIcon.getIcon());
+					jLabel.setText(textIcon.getText());
+				} else {
+					jLabel.setIcon(null);
+				}
+			}
+			return component;
 		}
 	}
 

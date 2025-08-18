@@ -521,15 +521,7 @@ class FilterPanel<E> implements Comparable<FilterPanel<E>> {
 		if (jCompare.equals(e.getSource())) {
 			updateCompare(true);
 		}
-		if (jEnabled.isSelected()) {
-			if (isInvalidRegex()) {
-				ColorSettings.config(jText, ColorEntry.GLOBAL_ENTRY_WARNING);
-			} else {
-				ColorSettings.configReset(jText);
-			}
-		} else {
-			ColorSettings.config(jText, ColorEntry.GLOBAL_ENTRY_INVALID);
-		}
+		updateEnabledColor();
 		timer.stop();
 		loading = oldValue;
 		refilter();
@@ -546,6 +538,23 @@ class FilterPanel<E> implements Comparable<FilterPanel<E>> {
 			groupModel.setValue(size);
 		}
 		loading = oldValue;
+	}
+
+	protected void repaint() {
+		updateEnabledColor();
+		updateGroupColor();
+	}
+
+	private void updateEnabledColor() {
+		if (jEnabled.isSelected()) {
+			if (isInvalidRegex()) {
+				ColorSettings.config(jText, ColorEntry.GLOBAL_ENTRY_WARNING);
+			} else {
+				ColorSettings.configReset(jText);
+			}
+		} else {
+			ColorSettings.config(jText, ColorEntry.GLOBAL_ENTRY_INVALID);
+		}
 	}
 
 	private void updateGroupColor() {

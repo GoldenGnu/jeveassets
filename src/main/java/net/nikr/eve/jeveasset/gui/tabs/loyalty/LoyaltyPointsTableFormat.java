@@ -24,6 +24,7 @@ package net.nikr.eve.jeveasset.gui.tabs.loyalty;
 import java.util.Comparator;
 import net.nikr.eve.jeveasset.data.api.my.MyLoyaltyPoints;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
+import net.nikr.eve.jeveasset.gui.shared.table.containers.TextIcon;
 import net.nikr.eve.jeveasset.i18n.TabsLoyaltyPoints;
 
 
@@ -38,17 +39,17 @@ public enum LoyaltyPointsTableFormat implements EnumTableColumn<MyLoyaltyPoints>
 			return from.getOwnerName();
 		}
 	},
-	CORPORATION_NAME(String.class) {
+	CORPORATION_NAME(TextIcon.class) {
 		@Override
 		public String getColumnName() {
 			return TabsLoyaltyPoints.get().columnCorporationName();
 		}
 		@Override
 		public Object getColumnValue(final MyLoyaltyPoints from) {
-			return from.getCorporationName();
+			return from.getTextIcon();
 		}
 	},
-	LOYALTY_POINTS(Integer.class) {
+	LOYALTY_POINTS(Long.class) {
 		@Override
 		public String getColumnName() {
 			return TabsLoyaltyPoints.get().columnLoyaltyPoints();

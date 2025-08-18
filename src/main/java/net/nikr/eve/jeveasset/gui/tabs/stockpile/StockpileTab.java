@@ -116,8 +116,8 @@ import net.nikr.eve.jeveasset.i18n.TabsStockpile;
 import net.nikr.eve.jeveasset.io.local.EveFittingReader;
 import net.nikr.eve.jeveasset.io.local.SettingsReader;
 import net.nikr.eve.jeveasset.io.local.SettingsWriter;
-import net.nikr.eve.jeveasset.io.local.StockpileDataReader;
-import net.nikr.eve.jeveasset.io.local.StockpileDataWriter;
+import net.nikr.eve.jeveasset.io.local.StockpileReader;
+import net.nikr.eve.jeveasset.io.local.StockpileWriter;
 import net.nikr.eve.jeveasset.io.local.text.TextImportType;
 import net.nikr.eve.jeveasset.io.shared.DesktopUtil.HelpLink;
 
@@ -295,32 +295,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 
 		final ListenerClass listener = new ListenerClass();
 
-		jAutoCompleteDialog = new JAutoCompleteDialog<String>(program, "Edit Group", Images.EDIT_EDIT.getImage(), "Select Group:", false, false) {
-			@Override
-			protected Comparator<String> getComparator() {
-				return GlazedLists.comparableComparator();
-			}
-			
-			@Override
-			protected TextFilterator<String> getFilterator() {
-				return new TextFilterator<String>() {
-					@Override
-					public void getFilterStrings(List<String> baseList, String element) {
-						baseList.add(element);
-					}
-				};
-			}
-			
-			@Override
-			protected String getValue(Object object) {
-				return (String) object;
-			}
-			
-			@Override
-			protected boolean isEmpty(String t) {
-				return t.isEmpty();
-			}
-		};
+		jAutoCompleteDialog = new JAutoCompleteDialog<>(program, TabsStockpile.get().editGroup(), Images.EDIT_EDIT.getImage(), TabsStockpile.get().selectGroup(), false, false, JAutoCompleteDialog.STRING_OPTIONS);
 
 		jFileChooser = new JCustomFileChooser("xml");
 		jFileChooser.setMultiSelectionEnabled(false);
@@ -1387,7 +1362,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		if (importText == null) {
 			return; //Cancel
 		}
-		List<Stockpile> stockpiles = StockpileDataReader.load(importText);
+		List<Stockpile> stockpiles = StockpileReader.load(importText);
 		if (stockpiles != null) {
 			importStockpiles(stockpiles);
 		} else {
@@ -1542,7 +1517,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 	private void exportText() {
 		List<Stockpile> stockpiles = stockpileSelectionDialog.show(getShownStockpiles(), Settings.get().getStockpiles(), TabsStockpile.get().showHidden(), false);
 		if (stockpiles != null) {
-			String json = StockpileDataWriter.save(stockpiles);
+			String json = StockpileWriter.save(stockpiles);
 			if (json != null) {
 				jTextDialog.setLineWrap(true);
 				jTextDialog.exportText(json);
@@ -1839,7 +1814,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 				Set<String> groups = Settings.get().getStockpileGroupSettings().getGroups();
 				jAutoCompleteDialog.updateData(groups);
 				String group = jAutoCompleteDialog.show();
-				if (group == null || group.isEmpty()) {
+				if (group == null) {
 					return;
 				}
 				List<Stockpile> oldStockpiles = Settings.get().getStockpileGroupSettings().getStockpiles(group);

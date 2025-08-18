@@ -44,7 +44,7 @@ public class ProfileAccountBalances extends ProfileTable {
 		tableDelete(connection, ACCOUNT_BALANCES_TABLE);
 
 		//Insert Data
-		String sql = "INSERT INTO " + ACCOUNT_BALANCES_TABLE + " ("
+		String sql = "INSERT OR REPLACE INTO " + ACCOUNT_BALANCES_TABLE + " ("
 				+ "	accountid,"
 				+ "	accountkey,"
 				+ "	balance)"

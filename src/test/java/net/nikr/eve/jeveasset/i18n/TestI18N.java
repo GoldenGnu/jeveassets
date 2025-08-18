@@ -113,6 +113,11 @@ public class TestI18N extends TestUtil {
 		assertNotNull(g.add());
 	}
 
+	@Test public void testTabNpcStandingPoints_en() throws Exception {
+		TabsNpcStanding g = BundleServiceFactory.getBundleService().get(TabsNpcStanding.class);
+		assertNotNull(g.npcStanding());
+	}
+
 	@Test public void testTabsAssets_en() throws Exception {
 		TabsAssets g = BundleServiceFactory.getBundleService().get(TabsAssets.class);
 		assertNotNull(g.assets());
@@ -141,6 +146,11 @@ public class TestI18N extends TestUtil {
 	@Test public void testTabsLoadout_en() throws Exception {
 		TabsLoadout g = BundleServiceFactory.getBundleService().get(TabsLoadout.class);
 		assertNotNull(g.cancel());
+	}
+
+	@Test public void testTabsLoyaltyPoints_en() throws Exception {
+		TabsLoyaltyPoints g = BundleServiceFactory.getBundleService().get(TabsLoyaltyPoints.class);
+		assertNotNull(g.loyaltyPoints());
 	}
 
 	@Test public void testTabsMaterials_en() throws Exception {

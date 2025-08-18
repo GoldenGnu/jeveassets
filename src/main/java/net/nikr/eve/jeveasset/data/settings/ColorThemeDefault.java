@@ -87,6 +87,10 @@ public class ColorThemeDefault extends ColorTheme {
 		colors.put(ColorEntry.TRANSACTIONS_BOUGHT, new ColorThemeEntry(Colors.LIGHT_RED));
 		colors.put(ColorEntry.TRANSACTIONS_SOLD, new ColorThemeEntry(Colors.LIGHT_GREEN));
 		colors.put(ColorEntry.TRANSACTIONS_NEW, new ColorThemeEntry(Colors.LIGHT_GREEN));
+		colors.put(ColorEntry.NPC_STANDING_NEGATIVE, new ColorThemeEntry(Colors.LIGHT_RED));
+		colors.put(ColorEntry.NPC_STANDING_POSITIVE, new ColorThemeEntry(Colors.LIGHT_GREEN));
+		colors.put(ColorEntry.NPC_STANDING_NEGATIVE_MIDDLE, new ColorThemeEntry(Colors.LIGHT_YELLOW));
+		colors.put(ColorEntry.NPC_STANDING_POSITIVE_MIDDLE, new ColorThemeEntry(Colors.LIGHT_YELLOW));
 		colors.put(ColorEntry.GLOBAL_BPC, new ColorThemeEntry(Colors.LIGHT_MAGENTA));
 		colors.put(ColorEntry.GLOBAL_BPO, new ColorThemeEntry(Colors.LIGHT_YELLOW));
 		colors.put(ColorEntry.GLOBAL_VALUE_NEGATIVE, new ColorThemeEntry(null, Colors.FOREGROUND_RED));

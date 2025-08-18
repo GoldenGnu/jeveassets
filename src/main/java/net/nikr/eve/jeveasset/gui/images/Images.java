@@ -21,6 +21,8 @@
 
 package net.nikr.eve.jeveasset.gui.images;
 
+import java.awt.Color;
+import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -28,6 +30,10 @@ import javax.imageio.ImageIO;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import net.nikr.eve.jeveasset.SplashUpdater;
+import net.nikr.eve.jeveasset.data.api.my.MyLoyaltyPoints;
+import net.nikr.eve.jeveasset.data.api.my.MyNpcStanding;
+import net.nikr.eve.jeveasset.io.online.EveImageGetter;
+import net.nikr.eve.jeveasset.io.online.EveImageGetter.ImageCategory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -113,6 +119,10 @@ public enum Images {
 	LINK_KHON_SPACE ("link_khon_space.png"),
 	LINK_EVE_COOKBOOK ("link_eve_cookbook.png"),
 	LINK_EVEMISSIONEER ("link_evemissioneer.png"),
+	LINK_EVE_REF ("link_eve_ref.png"),
+	LINK_EVE_MARKET_BROWSER ("link_eve_market_browser.png"),
+	LINK_JITA_SPACE ("link_jita_space.png"),
+	LINK_EVECONOMY ("link_eveconomy.png"),
 
 	LOC_GROUPS ("loc_groups.png"),
 	LOC_PIN_COMMAND ("loc_pin_command.png"),
@@ -141,6 +151,7 @@ public enum Images {
 	LOC_CONTRACTS ("loc_contracts.png"),
 	LOC_SAFTY ("loc_safty.png"),
 	LOC_SHIP ("loc_ship.png"),
+	LOC_CLONEBAY ("loc_clonebay.png"),
 
 	INCLUDE_ASSETS_SELECTED ("include_assets_selected.png"),
 	INCLUDE_ASSETS ("include_assets.png"),
@@ -199,6 +210,8 @@ public enum Images {
 	MISC_DATE ("misc_date.png"),
 	MISC_NUMBER ("misc_number.png"),
 	MISC_DISCORD ("misc_discord.png"),
+	MISC_MISC ("misc_misc.png"),
+	MISC_OWNERS ("misc_owners.png"),
 
 	SETTINGS_TOOLS ("settings_tools.png"),
 	SETTINGS_PRICE_DATA ("settings_price_data.png"),
@@ -261,6 +274,8 @@ public enum Images {
 	TOOL_EXTRACTIONS ("tool_extractions.png"),
 	TOOL_PRICE_CHANGE ("tool_price_change.png"),
 	TOOL_LOYALTY_POINTS ("tool_loyalty_points.png"),
+	TOOL_NPC_STANDING ("tool_npc_standing.png"),
+	TOOL_AGENTS ("tool_agents.png"),
 
 	UPDATE_NOT_STARTED ("update_not_started.png"),
 	UPDATE_WORKING ("update_working.png"),
@@ -327,5 +342,54 @@ public enum Images {
 			LOG.warn("image: " + s + " not found (IOException)");
 		}
 		return null;
+	}
+
+	public static BufferedImage getBufferedImage(int corporationID, ImageCategory imageCategory) {
+		return EveImageGetter.getBufferedImage(corporationID, imageCategory);
+	}
+
+	public static ImageIcon getIcon(int corporationID, ImageCategory imageCategory) {
+		BufferedImage bufferedImage = getBufferedImage(corporationID, imageCategory);
+		if (bufferedImage != null) {
+			bufferedImage = setBackground(bufferedImage, Color.BLACK);
+			return new ImageIcon(bufferedImage);
+		}
+		return null;
+	}
+
+	public static BufferedImage getBufferedImage(MyNpcStanding npcStanding) {
+		return EveImageGetter.getBufferedImage(npcStanding);
+	}
+
+	public static ImageIcon getIcon(MyNpcStanding npcStanding) {
+		BufferedImage bufferedImage = getBufferedImage(npcStanding);
+		if (bufferedImage != null) {
+			bufferedImage = setBackground(bufferedImage, Color.BLACK);
+			return new ImageIcon(bufferedImage);
+		}
+		return null;
+	}
+
+	public static BufferedImage getBufferedImage(MyLoyaltyPoints loyaltyPoints) {
+		return EveImageGetter.getBufferedImage(loyaltyPoints);
+	}
+
+	public static ImageIcon getIcon(MyLoyaltyPoints loyaltyPoints) {
+		BufferedImage bufferedImage = getBufferedImage(loyaltyPoints);
+		if (bufferedImage != null) {
+			bufferedImage = setBackground(bufferedImage, Color.BLACK);
+			return new ImageIcon(bufferedImage);
+		}
+		return null;
+	}
+
+	private static BufferedImage setBackground(BufferedImage input, Color color) {
+		BufferedImage output = new BufferedImage(input.getWidth(), input.getHeight(), BufferedImage.TYPE_INT_RGB); 
+		Graphics2D g2d = output.createGraphics();
+		g2d.setBackground(color);
+		g2d.clearRect(0, 0, input.getWidth(), input.getHeight());
+		g2d.drawImage(input, 0, 0, null);
+		g2d.dispose();
+		return output;
 	}
 }

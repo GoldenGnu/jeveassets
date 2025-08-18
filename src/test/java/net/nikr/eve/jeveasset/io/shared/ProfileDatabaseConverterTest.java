@@ -43,6 +43,7 @@ import net.nikr.eve.jeveasset.data.api.my.MyJournal;
 import net.nikr.eve.jeveasset.data.api.my.MyLoyaltyPoints;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
 import net.nikr.eve.jeveasset.data.api.my.MyMining;
+import net.nikr.eve.jeveasset.data.api.my.MyNpcStanding;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.api.raw.RawAsset;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder;
@@ -82,6 +83,21 @@ public class ProfileDatabaseConverterTest extends TestUtil {
 	}
 
 	@Test
+	public void testAbstractOwner() {
+		boolean setNull = false;
+		for (ConverterTestOptions options : ConverterTestOptionsGetter.getConverterOptions()) {
+			//Clear previouse test data
+			cleanup();
+			//Old
+			EsiOwner oldOwner = ConverterTestUtil.getEsiOwner(true, setNull, false, options);
+			//New
+			EsiOwner newOwner = new EsiOwner(oldOwner);
+
+			testClass("", oldOwner, newOwner, false, true);
+		}
+	}
+
+	@Test
 	public void testLocal() {
 		//Exiting data
 		CliOptions.get().setPortable(false);
@@ -107,6 +123,9 @@ public class ProfileDatabaseConverterTest extends TestUtil {
 		boolean setNull = false;
 		boolean setValues = true;
 		for (ConverterTestOptions options : ConverterTestOptionsGetter.getConverterOptions()) {
+			//Clear previouse test data
+			cleanup();
+
 			//Generated data
 			Profile oldProfile = new Profile();
 			oldProfile.getEsiOwners().add(ConverterTestUtil.getEsiOwner(data, setNull, setValues, options));
@@ -125,6 +144,9 @@ public class ProfileDatabaseConverterTest extends TestUtil {
 		boolean setNull = false;
 		boolean setValues = true;
 		for (ConverterTestOptions options : ConverterTestOptionsGetter.getConverterOptions()) {
+			//Clear previouse test data
+			cleanup();
+
 			//Empty data
 			Profile oldProfile = new Profile();
 			ProfileDatabase.setUpdateConnectionUrl(oldProfile);
@@ -268,6 +290,8 @@ public class ProfileDatabaseConverterTest extends TestUtil {
 							&& "owner".equals(fieldName))
 						|| (MyLoyaltyPoints.class.equals(oldClazz)
 							&& "owner".equals(fieldName))
+						|| (MyNpcStanding.class.equals(oldClazz)
+							&& "owner".equals(fieldName))
 						|| (MyMarketOrder.class.equals(oldClazz)
 							&& ("owner".equals(fieldName)
 							|| "jButton".equals(fieldName)))
@@ -327,6 +351,17 @@ public class ProfileDatabaseConverterTest extends TestUtil {
 						|| (MyContract.class.equals(oldClazz)
 							&& ("endLocation".equals(fieldName)
 							|| "startLocation".equals(fieldName)))
+						|| (MyLoyaltyPoints.class.equals(oldClazz)
+							&& "textIcon".equals(fieldName))
+						|| (MyNpcStanding.class.equals(oldClazz)
+							&& ("factionName".equals(fieldName)
+							|| "corporationName".equals(fieldName)
+							|| "ownerTextIcon".equals(fieldName)
+							|| "agentName".equals(fieldName)
+							|| "factionTextIcon".equals(fieldName)
+							|| "corporationTextIcon".equals(fieldName)
+							|| "agentTextIcon".equals(fieldName)
+							))
 						)) {
 						continue;
 					}

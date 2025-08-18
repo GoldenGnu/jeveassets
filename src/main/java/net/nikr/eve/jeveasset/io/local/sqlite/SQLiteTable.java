@@ -57,14 +57,14 @@ public abstract class SQLiteTable {
 
  	protected static void tableDelete(Connection connection, String ... tableNames) throws SQLException {
 		for (String tableName : tableNames) {
-			String deleteSQL = "DELETE FROM " + tableName;
-			try (PreparedStatement statement = connection.prepareStatement(deleteSQL)) {
+			String sql = "DELETE FROM " + tableName;
+			try (PreparedStatement statement = connection.prepareStatement(sql)) {
 				statement.execute();
 			}
 		}
 	}
 
-	protected Set<String> tableColumns(Connection connection, String tableName) throws SQLException {
+ 	private Set<String> tableColumns(Connection connection, String tableName) throws SQLException {
 		Set<String> columns = new HashSet<>();
 		String sql = "SELECT name FROM pragma_table_info('" + tableName + "')";
 		try (PreparedStatement statement = connection.prepareStatement(sql);
@@ -75,6 +75,16 @@ public abstract class SQLiteTable {
 			}
 		}
 		return columns;
+	}
+
+	protected  void addColumn(Connection connection, String tableName, String columnName, String type) throws SQLException {
+		Set<String> tableColumns = tableColumns(connection, tableName);
+		if (!tableColumns.contains(columnName)) {
+			String sql = "ALTER TABLE " + tableName + " ADD COLUMN " + columnName + " " + type;
+			try (PreparedStatement statement = connection.prepareStatement(sql)) {
+				statement.execute();
+			}
+		}
 	}
 
 	protected static void setAttributeNull(final PreparedStatement statement, final int index) throws SQLException {
@@ -349,10 +359,6 @@ public abstract class SQLiteTable {
 		}
 	}
 
-	protected float getFloat(ResultSet rs, String columnLabel) throws SQLException {
-		 return rs.getFloat(columnLabel);
-	}
-
 	protected Float getFloatOptional(ResultSet rs, String columnLabel) throws SQLException {
 		float value = rs.getFloat(columnLabel);
 		if (rs.wasNull()) {
@@ -360,6 +366,10 @@ public abstract class SQLiteTable {
 		} else {
 			return value;
 		}
+	}
+
+	protected Float getFloat(ResultSet rs, String columnLabel) throws SQLException {
+		return rs.getFloat(columnLabel);
 	}
 
 	protected double getDouble(ResultSet rs, String columnLabel) throws SQLException {

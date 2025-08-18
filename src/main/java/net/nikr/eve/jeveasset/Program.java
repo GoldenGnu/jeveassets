@@ -86,6 +86,7 @@ import net.nikr.eve.jeveasset.gui.shared.components.JLockWindow.LockWorkerAdapto
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterMatcher;
 import net.nikr.eve.jeveasset.gui.sounds.SoundPlayer;
+import net.nikr.eve.jeveasset.gui.tabs.agents.AgentsTab;
 import net.nikr.eve.jeveasset.gui.tabs.assets.AssetsTab;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractsTab;
 import net.nikr.eve.jeveasset.gui.tabs.items.ItemsTab;
@@ -105,7 +106,9 @@ import net.nikr.eve.jeveasset.gui.tabs.prices.PriceHistoryTab;
 import net.nikr.eve.jeveasset.gui.tabs.reprocessed.ReprocessedTab;
 import net.nikr.eve.jeveasset.gui.tabs.routing.RoutingTab;
 import net.nikr.eve.jeveasset.gui.tabs.skills.SkillsTab;
+import net.nikr.eve.jeveasset.gui.tabs.skills.SkillsOverviewTab;
 import net.nikr.eve.jeveasset.gui.tabs.slots.SlotsTab;
+import net.nikr.eve.jeveasset.gui.tabs.standing.NpcStandingTab;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileTab;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerTab;
 import net.nikr.eve.jeveasset.gui.tabs.transaction.TransactionTab;
@@ -173,7 +176,10 @@ public class Program implements ActionListener {
 	private ContractsTab contractsTab;
 	private TreeTab treeTab;
 	private SkillsTab skillsTab;
+	private SkillsOverviewTab skillsOverviewTab;
 	private LoyaltyPointsTab loyaltyPointsTab;
+	private NpcStandingTab npcStandingTab;
+	private AgentsTab agentsTab;
 	private MiningTab miningTab;
 	private MiningGraphTab miningGraphTab;
 	private ExtractionsTab extractionsTab;
@@ -270,30 +276,37 @@ public class Program implements ActionListener {
 		SplashUpdater.setProgress(68);
 		LOG.info("Loading: Routing Tab");
 		routingTab = new RoutingTab(this);
-		SplashUpdater.setProgress(70);
+		SplashUpdater.setProgress(69);
 		LOG.info("Loading: Overview Tab");
 		overviewTab = new OverviewTab(this);
-		SplashUpdater.setProgress(72);
+		SplashUpdater.setProgress(70);
 		LOG.info("Loading: Stockpile Tab");
 		stockpileTab = new StockpileTab(this);
-		SplashUpdater.setProgress(73);
+		SplashUpdater.setProgress(71);
 		LOG.info("Loading: Items Tab");
 		itemsTab = new ItemsTab(this);
-		SplashUpdater.setProgress(74);
+		SplashUpdater.setProgress(72);
 		LOG.info("Loading: Tracker Tab");
 		trackerTab = new TrackerTab(this);
-		SplashUpdater.setProgress(75);
+		SplashUpdater.setProgress(73);
 		LOG.info("Loading: Reprocessed Tab");
 		reprocessedTab = new ReprocessedTab(this);
-		SplashUpdater.setProgress(76);
+		SplashUpdater.setProgress(74);
 		LOG.info("Loading: Contracts Tab");
 		contractsTab = new ContractsTab(this);
-		SplashUpdater.setProgress(77);
-		LOG.info("Loading: Skills Tab");
+		SplashUpdater.setProgress(75);
+		LOG.info("Loading: Skills Tabs");
 		skillsTab = new SkillsTab(this);
-		SplashUpdater.setProgress(78);
+		skillsOverviewTab = new SkillsOverviewTab(this);
+		SplashUpdater.setProgress(76);
 		LOG.info("Loading: Loyalty Points Tab");
 		loyaltyPointsTab = new LoyaltyPointsTab(this);
+		SplashUpdater.setProgress(77);
+		LOG.info("Loading: Agents Tab");
+		agentsTab = new AgentsTab(this);
+		SplashUpdater.setProgress(78);
+		LOG.info("Loading: NPC Standing Tab");
+		npcStandingTab = new NpcStandingTab(this);
 		SplashUpdater.setProgress(79);
 		LOG.info("Loading: Mining Log Tab");
 		miningTab = new MiningTab(this);
@@ -680,6 +693,7 @@ public class Program implements ActionListener {
 				public void run() {
 					jMainTab.afterUpdateData();
 					jMainTab.updateCache();
+					jMainTab.repaintFilters();
 				}
 			});
 		}
@@ -893,6 +907,10 @@ public class Program implements ActionListener {
 		return reprocessedTab;
 	}
 
+	public SkillsOverviewTab getSkillsOverviewTab() {
+		return skillsOverviewTab;
+	}
+
 	public RoutingTab getRoutingTab() {
 		return routingTab;
 	}
@@ -942,6 +960,12 @@ public class Program implements ActionListener {
 			return settingsDialog.getUserLocationSettingsPanel();
 		} else {
 			return null;
+		}
+	}
+
+	public void showJumpsSettingsPanel() {
+		if (settingsDialog != null) {
+			settingsDialog.showJumpsSettingsPanel();
 		}
 	}
 
@@ -1016,7 +1040,7 @@ public class Program implements ActionListener {
 		return PROGRAM_DEV_BUILD;
 	}
 
-	public void updateStructures(Set<MyLocation> locations,boolean minimizable) {
+	public void updateStructures(Set<MyLocation> locations, boolean minimizable) {
 		structureUpdateDialog.show(locations, minimizable);
 	}
 
@@ -1111,8 +1135,14 @@ public class Program implements ActionListener {
 			mainWindow.addTab(treeTab);
 		} else if (MainMenuAction.SKILLS.name().equals(e.getActionCommand())) {
 			mainWindow.addTab(skillsTab);
+		} else if (MainMenuAction.SKILLS_OVERVIEW.name().equals(e.getActionCommand())) {
+			mainWindow.addTab(skillsOverviewTab);
 		} else if (MainMenuAction.LOYALTY_POINTS.name().equals(e.getActionCommand())) {
 			mainWindow.addTab(loyaltyPointsTab);
+		} else if (MainMenuAction.NPC_STANDING.name().equals(e.getActionCommand())) {
+			mainWindow.addTab(npcStandingTab);
+		} else if (MainMenuAction.AGENTS.name().equals(e.getActionCommand())) {
+			mainWindow.addTab(agentsTab);
 		} else if (MainMenuAction.MINING_ALL.name().equals(e.getActionCommand())) {
 			mainWindow.addTab(miningTab);
 			mainWindow.addTab(miningGraphTab);

@@ -44,9 +44,9 @@ public class StockpileDataReadWriteTest extends TestUtil {
 		testIO(new SaveLoad() {
 			@Override
 			public List<Stockpile> saveAndLoad(List<Stockpile> stockpiles) {
-				String data = StockpileDataWriter.save(stockpiles);
+				String data = StockpileWriter.save(stockpiles);
 				System.out.println(data);
-				return StockpileDataReader.load(data);
+				return StockpileReader.load(data);
 			}
 		});
 	}
@@ -102,7 +102,7 @@ public class StockpileDataReadWriteTest extends TestUtil {
 			testIO(true, new SaveLoad() {
 				@Override
 				public List<Stockpile> saveAndLoad(List<Stockpile> stockpiles) {
-					return StockpileDataReader.load(data[index]);
+					return StockpileReader.load(data[index]);
 				}
 			}, b);
 		}
@@ -202,7 +202,7 @@ public class StockpileDataReadWriteTest extends TestUtil {
 			testIO(false, new SaveLoad() {
 				@Override
 				public List<Stockpile> saveAndLoad(List<Stockpile> stockpiles) {
-					return StockpileDataReader.load(data[index]);
+					return StockpileReader.load(data[index]);
 				}
 			}, b);
 		}

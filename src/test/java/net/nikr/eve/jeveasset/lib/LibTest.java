@@ -52,6 +52,7 @@ public class LibTest extends TestUtil {
 			files.add(file.getName());
 		}
 
+		Set<String> libsNames = new HashSet<>();
 		Set<String> libs = LibraryManager.getLibFiles();
 		StringBuilder missingLibraries = new StringBuilder();
 		missingLibraries.append("\r\n---Libs added---\r\n");
@@ -70,6 +71,8 @@ public class LibTest extends TestUtil {
 			}
 		}
 		for (String lib : libs) {
+			String libName = lib.substring(0, lib.lastIndexOf("-"));
+			assertTrue("Duplicate: " + libName, libsNames.add(libName));
 			if (!files.contains(lib)) {
 				removedLibraries.append(lib);
 				removedLibraries.append("\r\n");

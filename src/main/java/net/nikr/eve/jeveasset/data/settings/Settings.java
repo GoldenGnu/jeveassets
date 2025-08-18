@@ -170,6 +170,9 @@ public class Settings {
 //Routing						Saved by ???
 	//Lock ???
 	private final RoutingSettings routingSettings = new RoutingSettings();
+//Jumps
+	//Lock ???
+	private final RouteAvoidSettings jumpsAvoidSettings = new RouteAvoidSettings();
 //Overview						Saved by JOverviewMenu.ListenerClass.NEW/DELETE/RENAME
 	//Lock OK
 	private final Map<String, OverviewGroup> overviewGroups = new HashMap<>();
@@ -260,6 +263,8 @@ public class Settings {
 	private final Map<String, List<Formula>> tableFormulas = new HashMap<>();
 	//Jump Columns
 	private final Map<String, List<Jump>> tableJumps = new HashMap<>();
+	// Skill Plans: plan name -> (skill typeID -> target level)
+	private final Map<String, Map<Integer, Integer>> skillPlans = new HashMap<>();
 //Tags						Saved by JMenuTags.addTag()/removeTag() + SettingsDialog.save()
 	//Lock OK
 	private final Map<String, Tag> tags = new HashMap<>();
@@ -427,7 +432,7 @@ public class Settings {
 	 *
 	 * @return
 	 */
-	public Map<String, String> getImportSettings() {	
+	public Map<String, String> getImportSettings() {
 		return importSettings;
 	}
 
@@ -529,6 +534,10 @@ public class Settings {
 
 	public RoutingSettings getRoutingSettings() {
 		return routingSettings;
+	}
+
+	public RouteAvoidSettings getJumpsAvoidSettings() {
+		return jumpsAvoidSettings;
 	}
 
 	public Map<String, List<Jump>> getTableJumps() {
@@ -663,6 +672,15 @@ public class Settings {
 			tableViews.put(name, views);
 		}
 		return views;
+	}
+
+	/**
+	 * Skill Plans storage.
+	 * Key: plan name; Value: map of skill typeID to target level (1..5).
+	 * @return 
+	 */
+	public Map<String, Map<Integer, Integer>> getSkillPlans() {
+		return skillPlans;
 	}
 
 	public Map<String, List<Formula>> getTableFormulas() {
@@ -960,8 +978,8 @@ public class Settings {
 		return flags.get(SettingFlag.FLAG_INDUSTRY_JOBS_HISTORY);
 	}
 
-	public void setIndustryJobsHistory(final boolean journalHistory) {
-		flags.put(SettingFlag.FLAG_INDUSTRY_JOBS_HISTORY, journalHistory);
+	public void setIndustryJobsHistory(final boolean industryJobsHistory) {
+		flags.put(SettingFlag.FLAG_INDUSTRY_JOBS_HISTORY, industryJobsHistory);
 	}
 
 	public boolean isAssetsContractsOwnerCorporation() {

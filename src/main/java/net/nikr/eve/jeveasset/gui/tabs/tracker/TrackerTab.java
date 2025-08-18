@@ -113,7 +113,7 @@ import net.nikr.eve.jeveasset.gui.tabs.values.Value;
 import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.i18n.TabsTracker;
 import net.nikr.eve.jeveasset.io.local.SettingsReader;
-import net.nikr.eve.jeveasset.io.local.TrackerDataReader;
+import net.nikr.eve.jeveasset.io.local.TrackerReader;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import net.nikr.eve.jeveasset.io.shared.FileUtil;
 import org.jfree.chart.ChartMouseEvent;
@@ -1188,9 +1188,9 @@ public class TrackerTab extends JMainTabSecondary {
 			if (jEscrows.isSelected() && escrows != null) {
 				t += entry.getValue().getEscrows();
 			}
-			//Escrows To Cover is not money you own, It's technically money you owe
-			//Therefor it's not included in the total
-			//See: https://forums.eveonline.com/default.aspx?g=posts&m=6607898#post6607898
+			//Escrows To Cover is not money you own, it's technically money you owe
+			//Therefore, it's not included in the total
+			//See: https://forums-archive.eveonline.com/message/6607898#post6607898
 			//if (jEscrowsToCover.isSelected() && escrowsToCover != null) {
 			//	t += entry.getValue().getEscrowsToCover();
 			//}
@@ -1941,7 +1941,7 @@ public class TrackerTab extends JMainTabSecondary {
 					trackerData = SettingsReader.loadTracker(file.getAbsolutePath());
 					break;
 				case "json":
-					trackerData = TrackerDataReader.load(file.getAbsolutePath(), false);
+					trackerData = TrackerReader.load(file.getAbsolutePath(), false);
 					break;
 				default:
 					trackerData = null;
@@ -1987,3 +1987,4 @@ public class TrackerTab extends JMainTabSecondary {
 	}
 
 }
+
