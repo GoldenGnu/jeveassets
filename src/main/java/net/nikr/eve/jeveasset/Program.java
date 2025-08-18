@@ -875,20 +875,20 @@ public class Program implements ActionListener {
 		return reprocessedTab;
 	}
 
-	public RoutingTab getRoutingTab(boolean init) {
-		if (init && routingTab == null) {
-			LOG.info("Loading: Routing Tab");
-			routingTab = new RoutingTab(this);
-		}
-		return routingTab;
-	}
-
 	public SkillsOverviewTab getSkillsOverviewTab(boolean init) {
 		if (init && skillsOverviewTab == null) {
 			LOG.info("Loading: Routing Tab");
 			skillsOverviewTab = new SkillsOverviewTab(this);
 		}
 		return skillsOverviewTab;
+	}
+
+	public RoutingTab getRoutingTab(boolean init) {
+		if (init && routingTab == null) {
+			LOG.info("Loading: Routing Tab");
+			routingTab = new RoutingTab(this);
+		}
+		return routingTab;
 	}
 
 	public TrackerTab getTrackerTab(boolean init) {
