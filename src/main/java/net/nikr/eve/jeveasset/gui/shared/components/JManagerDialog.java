@@ -198,6 +198,7 @@ public abstract class JManagerDialog extends JDialogCentered {
 		jEdit.setEnabled(b);
 		jMerge.setEnabled(b);
 		jRename.setEnabled(b);
+		jCopy.setEnabled(b);
 		jDelete.setEnabled(b);
 		jExport.setEnabled(b);
 	}
