@@ -47,7 +47,7 @@ public enum AgentsTableFormat implements EnumTableColumn<Agent> {
 		}
 		@Override
 		public Object getColumnValue(final Agent from) {
-			return from.getCorporation();
+			return from.getCorporationName();
 		}
 	},
 	FACTION(String.class) {
