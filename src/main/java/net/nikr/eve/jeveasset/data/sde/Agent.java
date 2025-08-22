@@ -21,12 +21,13 @@
 
 package net.nikr.eve.jeveasset.data.sde;
 
+import net.nikr.eve.jeveasset.data.settings.types.CorporationType;
 import net.nikr.eve.jeveasset.data.settings.types.EditableLocationType;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import net.nikr.eve.jeveasset.io.shared.RawConverter;
 
 
-public class Agent implements Comparable<Agent>, EditableLocationType {
+public class Agent implements Comparable<Agent>, EditableLocationType, CorporationType {
 
 	private final String agent;
 	private final int agentID; //agentID : int
@@ -86,11 +87,13 @@ public class Agent implements Comparable<Agent>, EditableLocationType {
 		return agentID;
 	}
 
-	public String getCorporation() {
+	@Override
+	public String getCorporationName() {
 		return npcCorporation.getCorporation();
 	}
 
-	public int getCorporationID() {
+	@Override
+	public Integer getCorporationID() {
 		return corporationID;
 	}
 
