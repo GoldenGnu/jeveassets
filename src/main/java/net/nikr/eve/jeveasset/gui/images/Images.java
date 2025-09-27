@@ -123,6 +123,7 @@ public enum Images {
 	LINK_EVE_MARKET_BROWSER ("link_eve_market_browser.png"),
 	LINK_JITA_SPACE ("link_jita_space.png"),
 	LINK_EVECONOMY ("link_eveconomy.png"),
+	LINK_QUANTUM_ANOMALY ("link_quantum_anomaly.png"),
 
 	LOC_GROUPS ("loc_groups.png"),
 	LOC_PIN_COMMAND ("loc_pin_command.png"),
