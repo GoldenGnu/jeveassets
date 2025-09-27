@@ -691,6 +691,21 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 			public <T> Boolean isEnabled(MenuData<T> menuData) {
 				return !menuData.getCorporationNames().isEmpty();
 			}
+		},
+		QUANTUM_ANOMALY_LP(GuiShared.get().quantumAnomaly(), Images.LINK_QUANTUM_ANOMALY.getIcon()) {
+			@Override
+			public Set<String> getLinks(MenuData<?> menuData) {
+				Set<String> urls = new HashSet<>();
+				for (int corporationID : menuData.getCorporationIDs()) {
+					urls.add("https://www.qsna.eu/eve/loyalty-stores/" + corporationID + "/");
+				}
+				return urls;
+			}
+
+			@Override
+			public <T> Boolean isEnabled(MenuData<T> menuData) {
+				return !menuData.getCorporationIDs().isEmpty();
+			}
 		};
 		
 
@@ -824,6 +839,8 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 		add(jFuzzwork, LookupLinks.FUZZWORK_LP_BUY, listener);
 
 		add(jLoyaltyPointsStore, LookupLinks.JITA_SPACE_LP, listener);
+
+		add(jLoyaltyPointsStore, LookupLinks.QUANTUM_ANOMALY_LP, listener);
 	}
 
 	@Override
