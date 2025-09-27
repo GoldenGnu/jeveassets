@@ -182,6 +182,7 @@ public abstract class GuiShared extends Bundle {
 	public abstract String paste();
 	public abstract String planet();
 	public abstract String priceHistory();
+	public abstract String quantumAnomaly();
 	public abstract String region();
 	public abstract String reprocessed();
 	public abstract String routing();
