@@ -408,10 +408,19 @@ public class SkillsOverviewTab extends JMainTabSecondary {
 			}
 			String skillName = trimmed.substring(0, space).trim();
 			String levelStr = trimmed.substring(space + 1).trim();
-			int level;
+			int level = 0;
 			try {
 				level = Integer.parseInt(levelStr);
 			} catch (NumberFormatException ex) {
+				switch (levelStr.toLowerCase()) {
+					case "i": level = 1; break;
+					case "ii": level = 2; break;
+					case "iii": level = 3; break;
+					case "iv": level = 4; break;
+					case "v": level = 5; break;
+				}
+			}
+			if (level == 0) {
 				continue;
 			}
 			level = Math.max(1, Math.min(5, level));
