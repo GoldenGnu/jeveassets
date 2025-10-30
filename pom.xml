@@ -320,7 +320,7 @@
 							<displayCommandOutputs>true</displayCommandOutputs>
 							<serverId>eve-nikr-net</serverId>
 							<url>${upload.url}</url>
-							<commands> 
+							<commands>
 								<!-- remove data directory -->
 								<command>rm -rf ${upload.program.delete}</command>
 							</commands>
@@ -914,6 +914,23 @@
 			<groupId>com.github.umjammer</groupId>
 			<artifactId>jlayer</artifactId>
 			<version>1.0.2</version>
+		</dependency>
+		<dependency>
+			<!-- Jackson for JSON/JSONL parsing -->
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-core</artifactId>
+			<version>2.15.2</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>2.15.2</version>
+		</dependency>
+		<dependency>
+			<!-- Jackson for YAML parsing -->
+			<groupId>com.fasterxml.jackson.dataformat</groupId>
+			<artifactId>jackson-dataformat-yaml</artifactId>
+			<version>2.15.2</version>
 		</dependency>
 	</dependencies>
 

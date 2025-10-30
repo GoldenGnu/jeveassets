@@ -110,10 +110,10 @@ public class LibraryManager {
 			files.add("jna-platform-5.6.0.jar");
 			files.add("jna-5.6.0.jar");
 			files.add("jsr305-3.0.2.jar");
-			files.add("flatlaf-3.4.1.jar");	
+			files.add("flatlaf-3.4.1.jar");
 			files.add("EvalEx-2.7.jar");
 			files.add("picocli-4.6.2.jar");
-			
+
 			//Logging
 			files.add("slf4j-api-2.0.16.jar");
 			files.add("jul-to-slf4j-2.0.16.jar");
@@ -129,18 +129,19 @@ public class LibraryManager {
 			//Eve-ESI
 			files.add("eve-esi-6.0.1.jar");
 			files.add("gson-2.9.0.jar");
-			files.add("jackson-core-2.14.0-rc2.jar");
+			files.add("jackson-core-2.15.2.jar");
 			files.add("org.apache.oltu.oauth2.common-1.0.2.jar");
 			files.add("jackson-databind-nullable-0.2.6.jar");
 			files.add("kotlin-stdlib-common-1.9.10.jar");
 			files.add("kotlin-stdlib-jdk8-1.8.21.jar");
 			files.add("kotlin-stdlib-jdk7-1.8.21.jar");
 			files.add("kotlin-stdlib-1.8.21.jar");
-			files.add("jackson-annotations-2.14.0-rc2.jar");
+			files.add("jackson-annotations-2.15.2.jar");
 			files.add("json-20140107.jar");
 			files.add("commons-codec-1.9.jar");
 			files.add("org.apache.oltu.oauth2.client-1.0.2.jar");
-			files.add("jackson-databind-2.14.0-rc2.jar");
+			files.add("jackson-databind-2.15.2.jar");
+			files.add("jackson-dataformat-yaml-2.15.2.jar");
 			files.add("logging-interceptor-4.12.0.jar");
 			files.add("okio-3.6.0.jar");
 			files.add("okio-jvm-3.6.0.jar");
