@@ -53,6 +53,7 @@ public class FileUtil extends FileUtilSimple {
 	private static final String PATH_JUMPS = "data" + File.separator + "jumps.xml";
 	private static final String PATH_LOCATIONS = "data" + File.separator + "locations.xml";
 	private static final String PATH_FLAGS = "data" + File.separator + "flags.xml";
+	private static final String PATH_SDE_DIRECTORY = "data" + File.separator + "sde";
 	private static final String PATH_PRICE_DATA = "data" + File.separator + "pricedata.dat";
 	private static final String PATH_ASSETS = "data" + File.separator + "assets.xml";
 	private static final String PATH_CONQUERABLE_STATIONS = "data" + File.separator + "conquerable_stations.xml";
@@ -366,6 +367,10 @@ public class FileUtil extends FileUtilSimple {
 
 	public static String getPathFlags() {
 		return getStaticFile(PATH_FLAGS);
+	}
+
+	public static String getPathSdeDirectory() {
+		return getStaticFile(PATH_SDE_DIRECTORY);
 	}
 
 	public static String getPathStaticDataDirectory() {

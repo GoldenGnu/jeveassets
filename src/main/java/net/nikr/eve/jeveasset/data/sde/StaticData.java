@@ -20,6 +20,7 @@
  */
 package net.nikr.eve.jeveasset.data.sde;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -27,13 +28,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import net.nikr.eve.jeveasset.SplashUpdater;
-import net.nikr.eve.jeveasset.io.local.FlagsReader;
-import net.nikr.eve.jeveasset.io.local.ItemsReader;
-import net.nikr.eve.jeveasset.io.local.JumpsReader;
-import net.nikr.eve.jeveasset.io.local.LocationsReader;
+import net.nikr.eve.jeveasset.io.local.SdeFlagsReader;
+import net.nikr.eve.jeveasset.io.local.SdeItemsReader;
+import net.nikr.eve.jeveasset.io.local.SdeJumpsReader;
+import net.nikr.eve.jeveasset.io.local.SdeLocationsReader;
+import net.nikr.eve.jeveasset.io.online.SdeDownloader;
+import net.nikr.eve.jeveasset.io.shared.FileUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class StaticData {
+	private static final Logger LOG = LoggerFactory.getLogger(StaticData.class);
 	private static final ReentrantReadWriteLock LOCATIONS_LOCK = new ReentrantReadWriteLock();
 	//Data
 	private final Map<Integer, Item> items = new HashMap<>(); //TypeID : int
@@ -53,24 +59,51 @@ public class StaticData {
 	public static synchronized void load() {
 		if (staticData == null) {
 			staticData = new StaticData();
+			if (!checkSdeVersion()) {
+				throw new RuntimeException("SDE version check failed. Please ensure SDE files are downloaded and up to date.");
+			}
 			staticData.loadData();
 		}
 	}
 
+	private static boolean checkSdeVersion() {
+		String sdeDirectory = FileUtil.getPathSdeDirectory();
+		File sdeDir = new File(sdeDirectory);
+		File typesFile = new File(sdeDir, "types.jsonl");
+		if (!typesFile.exists()) {
+			LOG.info("SDE files not found. Downloading JSONL archive...");
+			SplashUpdater.setText("Downloading SDE data from CCP...");
+			if (!SdeDownloader.ensureRequiredSdeFiles(sdeDirectory)) {
+				LOG.error("Failed to download required SDE files");
+				return false;
+			}
+			LOG.info("SDE files downloaded successfully");
+		}
+		if (!sdeDir.exists() || !sdeDir.isDirectory()) {
+			LOG.error("SDE directory does not exist: " + sdeDir.getAbsolutePath());
+			return false;
+		}
+		if (!typesFile.exists()) {
+			LOG.error("Required SDE file not found: types.jsonl");
+			return false;
+		}
+		return true;
+	}
+
 	private void loadData() {
 		SplashUpdater.setProgress(5);
-		ItemsReader.load(items); //Items
+		SdeItemsReader.load(items); //Items from SDE
 		SplashUpdater.setProgress(10);
 		try {
 			LOCATIONS_LOCK.writeLock().lock();
-			LocationsReader.load(locations); //Locations
+			SdeLocationsReader.load(locations); //Locations from SDE
 		} finally {
 			LOCATIONS_LOCK.writeLock().unlock();
 		}
 		SplashUpdater.setProgress(15);
-		JumpsReader.load(jumps); //Jumps
+		SdeJumpsReader.load(jumps); //Jumps from SDE
 		SplashUpdater.setProgress(20);
-		FlagsReader.load(flags); //Item Flags
+		SdeFlagsReader.load(flags); //Item Flags from SDE
 		SplashUpdater.setProgress(25);
 	}
 
