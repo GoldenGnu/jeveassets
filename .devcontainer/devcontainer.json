@@ -1,0 +1,31 @@
+{
+	"name": "Java Maven Development",
+	"image": "maven:3.9-eclipse-temurin-17",
+	"features": {
+		"ghcr.io/devcontainers/features/git:1": {}
+	},
+	"workspaceFolder": "/workspace",
+	"workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind",
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"vscjava.vscode-java-pack",
+				"vscjava.vscode-maven",
+				"redhat.java",
+				"vscjava.vscode-java-debug",
+				"vscjava.vscode-java-test",
+				"vscjava.vscode-java-dependency"
+			],
+			"settings": {
+				"java.configuration.updateBuildConfiguration": "automatic",
+				"java.compile.nullAnalysis.mode": "automatic"
+			}
+		}
+	},
+	"remoteUser": "root",
+	"postCreateCommand": "mvn --version && java -version",
+	"remoteEnv": {
+		"MAVEN_OPTS": "-Xmx2048m"
+	}
+}
+
