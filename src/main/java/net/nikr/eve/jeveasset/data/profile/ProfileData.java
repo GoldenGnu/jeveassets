@@ -56,7 +56,6 @@ import net.nikr.eve.jeveasset.data.api.raw.RawJournalRefType;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder.Change;
 import net.nikr.eve.jeveasset.data.sde.IndustryMaterial;
 import net.nikr.eve.jeveasset.data.sde.Item;
-import net.nikr.eve.jeveasset.data.sde.ItemFlag;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.sde.ReprocessedMaterial;
 import net.nikr.eve.jeveasset.data.sde.RouteFinder;
@@ -1014,6 +1013,7 @@ public class ProfileData {
 					if (parent.getTypeID() != 27 
 							&& !parent.getItemFlag().equals(RawAsset.IMPLANT_FLAG)
 							&& !parent.getItemFlag().equals(RawAsset.JUMP_CLONE_FLAG)
+							&& !parent.getItemFlag().equals(RawAsset.ACTIVE_CLONE_FLAG)
 							) {
 						continue;
 					}
@@ -1431,7 +1431,10 @@ public class ProfileData {
 			asset.setMarketPriceData(transactionBuyPriceData.get(asset.getItem().getTypeID()));
 			//User Item Names
 			updateName(asset);
-			if (asset.getItemFlag().equals(RawAsset.IMPLANT_FLAG)|| asset.getItemFlag().equals(RawAsset.JUMP_CLONE_FLAG)) {
+			if (asset.getItemFlag().equals(RawAsset.IMPLANT_FLAG)
+					|| asset.getItemFlag().equals(RawAsset.JUMP_CLONE_FLAG)
+					|| asset.getItemFlag().equals(RawAsset.ACTIVE_CLONE_FLAG)
+					) {
 				for (MyAsset parent : asset.getParents()) {
 					updateName(parent);
 				}
