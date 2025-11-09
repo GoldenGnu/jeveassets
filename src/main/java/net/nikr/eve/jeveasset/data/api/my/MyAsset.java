@@ -199,8 +199,8 @@ public class MyAsset extends RawAsset implements Comparable<MyAsset>, InfoItem, 
 		this(new RawAsset(contractItem), contractItem.getItem(), owner, new ArrayList<>());
 	}
 
-	public MyAsset(RawClone clone, Integer impantTypeID, final SimpleOwner owner) {
-		this(new RawAsset(clone, impantTypeID),ApiIdConverter.getItem(impantTypeID), owner, new ArrayList<>());
+	public MyAsset(RawClone clone, Integer impantTypeID, final SimpleOwner owner, List<MyAsset> parents) {
+		this(new RawAsset(clone, impantTypeID), ApiIdConverter.getItem(impantTypeID), owner, parents);
 	}
 
 	public MyAsset(RawClone clone, final SimpleOwner owner) {

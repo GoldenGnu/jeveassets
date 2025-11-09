@@ -47,7 +47,8 @@ public class RawAsset {
 	private static final ItemFlag MARKET_ORDER_SELL_FLAG = new ItemFlag(0, General.get().marketOrderSellFlag(), General.get().marketOrderSellFlag());
 	private static final ItemFlag CONTRACT_INCLUDED_FLAG = new ItemFlag(0, General.get().contractIncluded(), General.get().contractIncluded());
 	private static final ItemFlag CONTRACT_EXCLUDED_FLAG = new ItemFlag(0, General.get().contractExcluded(), General.get().contractExcluded());
-	private static final ItemFlag JUMP_CLONE_FLAG = new ItemFlag(0, General.get().jumpClone(), General.get().jumpClone());
+	public static final ItemFlag JUMP_CLONE_FLAG = new ItemFlag(0, General.get().jumpClone(), General.get().jumpClone());
+	public static final ItemFlag IMPLANT_FLAG = ApiIdConverter.getFlag(89); //Implant;
 
 	private Boolean isSingleton = null;
 	private Long itemId = null;
@@ -234,7 +235,7 @@ public class RawAsset {
 		isSingleton = true; //Unpacked
 		long combinedId = Long.parseLong(clone.getJumpCloneID() + "" + impantTypeID);
 		itemId = combinedId;
-		itemFlag = ApiIdConverter.getFlag(89); //Implant
+		itemFlag = IMPLANT_FLAG;
 		locationId = clone.getLocationID();
 		quantity = 1; //Plugged in AKA always 1
 		typeId = impantTypeID;

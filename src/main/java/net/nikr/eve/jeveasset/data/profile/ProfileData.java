@@ -48,6 +48,7 @@ import net.nikr.eve.jeveasset.data.api.my.MyMining;
 import net.nikr.eve.jeveasset.data.api.my.MyNpcStanding;
 import net.nikr.eve.jeveasset.data.api.my.MySkill;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
+import net.nikr.eve.jeveasset.data.api.raw.RawAsset;
 import net.nikr.eve.jeveasset.data.api.raw.RawBlueprint;
 import net.nikr.eve.jeveasset.data.api.raw.RawClone;
 import net.nikr.eve.jeveasset.data.api.raw.RawIndustryJob.IndustryJobStatus;
@@ -55,6 +56,7 @@ import net.nikr.eve.jeveasset.data.api.raw.RawJournalRefType;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder.Change;
 import net.nikr.eve.jeveasset.data.sde.IndustryMaterial;
 import net.nikr.eve.jeveasset.data.sde.Item;
+import net.nikr.eve.jeveasset.data.sde.ItemFlag;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.sde.ReprocessedMaterial;
 import net.nikr.eve.jeveasset.data.sde.RouteFinder;
@@ -1009,7 +1011,10 @@ public class ProfileData {
 					updateContainerChildren(found, asset.getAssets()); //Update Container
 				}
 				for (MyAsset parent : asset.getParents()) { //Offices
-					if (parent.getTypeID() != 27) {
+					if (parent.getTypeID() != 27 
+							&& !parent.getItemFlag().equals(RawAsset.IMPLANT_FLAG)
+							&& !parent.getItemFlag().equals(RawAsset.JUMP_CLONE_FLAG)
+							) {
 						continue;
 					}
 					if (itemIDs.contains(parent.getItemID())) {
@@ -1426,6 +1431,11 @@ public class ProfileData {
 			asset.setMarketPriceData(transactionBuyPriceData.get(asset.getItem().getTypeID()));
 			//User Item Names
 			updateName(asset);
+			if (asset.getItemFlag().equals(RawAsset.IMPLANT_FLAG)|| asset.getItemFlag().equals(RawAsset.JUMP_CLONE_FLAG)) {
+				for (MyAsset parent : asset.getParents()) {
+					updateName(parent);
+				}
+			}
 			//Container
 			updateContainer(asset);
 			//Price data
