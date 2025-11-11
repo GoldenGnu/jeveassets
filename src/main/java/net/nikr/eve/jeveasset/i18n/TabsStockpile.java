@@ -103,6 +103,8 @@ public abstract class TabsStockpile extends Bundle {
 	public abstract String groupMenu();
 	public abstract String groupRenameExist();
 	public abstract String groupRenameTitle();
+	public abstract String groupShoppingListMsg();
+	public abstract String groupShoppingListTitle();
 	public abstract String groups();
 	public abstract String hideStockpile();
 	public abstract String importButton();

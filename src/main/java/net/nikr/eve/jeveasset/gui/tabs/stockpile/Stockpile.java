@@ -165,6 +165,10 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 		return id;
 	}
 
+	public String getGroup() {
+		return Settings.get().getStockpileGroupSettings().getGroup(this);
+	}
+
 	private static long getNewID() {
 		long micros = System.currentTimeMillis() * 1000;
 		for ( ; ; ) {
