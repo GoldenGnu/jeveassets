@@ -172,12 +172,17 @@ public abstract class DataConverter {
 		for (Map.Entry<OwnerType, List<RawClone>> entry : clones.entrySet()) {
 			OwnerType owner = entry.getKey();
 			for (RawClone clone : entry.getValue()) {
+				List<MyAsset> parents = new ArrayList<>();
+				MyAsset jumpClone = new MyAsset(clone, owner);
+				parents.add(jumpClone);
 				if (includeJumpClones) {
-					assets.add(new MyAsset(clone, owner));
+					assets.add(jumpClone);
 				}
 				if (includePluggedInImplants) {
 					for (Integer implantTypeID : clone.getImplants()) {
-						assets.add(new MyAsset(clone, implantTypeID, owner));
+						MyAsset implant = new MyAsset(clone, implantTypeID, owner, parents);
+						jumpClone.addAsset(implant);
+						assets.add(implant);
 					}
 				}
 			}
