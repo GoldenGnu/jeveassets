@@ -6721,12 +6721,12 @@
     <row c="Okakuola" ci="20000782" r="Black Rise" ri="10000069" s="" se="0.2" si="0" sy="Pynekastoh" syi="30045353"/>
     <row c="Okakuola" ci="20000782" r="Black Rise" ri="10000069" s="" se="0.2" si="0" sy="Reitsato" syi="30045354"/>
     <row c="Duzna Kah" ci="20010000" r="Yasna Zakh" ri="10001000" s="" se="0.0" si="0" sy="Zarzakh" syi="30100000"/>
-    <row c="K-C00334" ci="21000334" r="K-R00033" ri="11000033" s="" se="0.0" si="0" sy="J055520" syi="31000001"/>
-    <row c="K-C00334" ci="21000334" r="K-R00033" ri="11000033" s="" se="0.0" si="0" sy="J110145" syi="31000002"/>
-    <row c="K-C00334" ci="21000334" r="K-R00033" ri="11000033" s="" se="0.0" si="0" sy="J164710" syi="31000003"/>
-    <row c="K-C00334" ci="21000334" r="K-R00033" ri="11000033" s="" se="0.0" si="0" sy="J200727" syi="31000004"/>
+    <row c="K-C00334" ci="21000334" r="K-R00033" ri="11000033" s="" se="0.0" si="0" sy="Sentinel MZ" syi="31000001"/>
+    <row c="K-C00334" ci="21000334" r="K-R00033" ri="11000033" s="" se="0.0" si="0" sy="Liberated Barbican" syi="31000002"/>
+    <row c="K-C00334" ci="21000334" r="K-R00033" ri="11000033" s="" se="0.0" si="0" sy="Sanctified Vidette" syi="31000003"/>
+    <row c="K-C00334" ci="21000334" r="K-R00033" ri="11000033" s="" se="0.0" si="0" sy="Conflux Eyrie" syi="31000004"/>
     <row c="G-C00324" ci="21000324" r="G-R00031" ri="11000031" s="" se="0.0" si="0" sy="Thera" syi="31000005"/>
-    <row c="K-C00334" ci="21000334" r="K-R00033" ri="11000033" s="" se="0.0" si="0" sy="J174618" syi="31000006"/>
+    <row c="K-C00334" ci="21000334" r="K-R00033" ri="11000033" s="" se="0.0" si="0" sy="Azdaja Redoubt" syi="31000006"/>
     <row c="A-C00311" ci="21000311" r="A-R00001" ri="11000001" s="" se="0.0" si="0" sy="J105443" syi="31000007"/>
     <row c="A-C00311" ci="21000311" r="A-R00001" ri="11000001" s="" se="0.0" si="0" sy="J100744" syi="31000008"/>
     <row c="A-C00311" ci="21000311" r="A-R00001" ri="11000001" s="" se="0.0" si="0" sy="J225046" syi="31000009"/>
