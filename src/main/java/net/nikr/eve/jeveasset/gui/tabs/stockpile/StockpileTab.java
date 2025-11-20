@@ -1855,6 +1855,31 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 				program.saveSettings("Stockpile (Stockpile Rename Group)");
 				//Restore expanded
 				expandGroups(expanded, new MatchGroup(newGroup));
+			} else if (StockpileCellAction.GROUP_SHOPPING_LIST.name().equals(e.getActionCommand())) { //Collapse all
+				Stockpile stockpile = getSelectedStockpile();
+				if (stockpile == null) {
+					return;
+				}
+				String group = stockpile.getGroup();
+				if (group == null || group.isEmpty()) {
+					return;
+				}
+				List<Stockpile> stockpiles = Settings.get().getStockpileGroupSettings().getStockpiles(group);
+				if (stockpiles == null || stockpiles.isEmpty()) {
+					return;
+				}
+				int returnValue = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), TabsStockpile.get().groupShoppingListMsg(), TabsStockpile.get().groupShoppingListTitle(), JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE);
+				if (returnValue == JOptionPane.YES_OPTION) {
+					stockpileShoppingListDialog.show(stockpiles);
+				} else {
+					List<Stockpile> shownStockpiles = new ArrayList<>();
+					for (Stockpile s : stockpiles) {
+						if (program.getProfileManager().getStockpileIDs().isShown(s.getStockpileID())) {
+							shownStockpiles.add(s);
+						}
+					}
+					stockpileShoppingListDialog.show(shownStockpiles);
+				}
 			} else if (StockpileAction.COLLAPSE.name().equals(e.getActionCommand())) { //Collapse all
 				jTable.expandSeparators(false);
 				Settings.get().getStockpileGroupSettings().setStockpileExpanded(Settings.get().getStockpiles(), false);
