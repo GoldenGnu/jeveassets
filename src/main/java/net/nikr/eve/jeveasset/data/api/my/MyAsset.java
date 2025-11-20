@@ -149,6 +149,7 @@ public class MyAsset extends RawAsset implements Comparable<MyAsset>, InfoItem, 
 						|| getFlag().equals(IndustryActivity.ACTIVITY_REACTIONS.toString()) //industry job reactions
 						|| getFlag().equals(IndustryActivity.ACTIVITY_COPYING.toString()) //industry job copying
 						|| getFlag().equals(General.get().jumpClone()) //jump clone
+						|| getFlag().equals(General.get().activeClone()) //active clone
 						|| getFlagID() == 89 //plugged in implant
 						;
 		if (getQuantity() == null || getQuantity() <= 0) {
@@ -199,18 +200,24 @@ public class MyAsset extends RawAsset implements Comparable<MyAsset>, InfoItem, 
 		this(new RawAsset(contractItem), contractItem.getItem(), owner, new ArrayList<>());
 	}
 
-	public MyAsset(RawClone clone, Integer impantTypeID, final SimpleOwner owner) {
-		this(new RawAsset(clone, impantTypeID),ApiIdConverter.getItem(impantTypeID), owner, new ArrayList<>());
+	public MyAsset(RawClone clone, Integer impantTypeID, final SimpleOwner owner, List<MyAsset> parents) {
+		this(new RawAsset(clone, impantTypeID), ApiIdConverter.getItem(impantTypeID), owner, parents);
 	}
 
 	public MyAsset(RawClone clone, final SimpleOwner owner) {
-		this(new RawAsset(clone), getJumpCloneItem(), owner, new ArrayList<>());
+		this(new RawAsset(clone), getJumpCloneItem(clone), owner, new ArrayList<>());
 	}
 
-	private static Item getJumpCloneItem() {
+	private static Item getJumpCloneItem(RawClone clone) {
 		Item omegaClone = ApiIdConverter.getItem(29143); //Clone Grade Omega
+		String name;
+		if (clone.isActive()) {
+			name = General.get().activeClone();
+		} else {
+			name = General.get().jumpClone();
+		}
 		return new Item(0,
-				General.get().jumpClone(),
+				name,
 				omegaClone.getGroup(),
 				omegaClone.getCategory(),
 				900000,

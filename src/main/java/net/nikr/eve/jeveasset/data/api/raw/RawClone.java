@@ -31,6 +31,7 @@ public class RawClone {
 	private Long jumpCloneId;
 	private Long locationId;
 	private String name;
+	private boolean active;
 
 	public static RawClone create() {
 		return new RawClone();
@@ -43,20 +44,33 @@ public class RawClone {
 		this.jumpCloneId = rawClone.jumpCloneId;
 		this.locationId = rawClone.locationId;
 		this.name = rawClone.name;
+		this.active = rawClone.active;
 	}
 
+	/**
+	 * Jump Clone
+	 * @param clone 
+	 */
 	public RawClone(Clone clone) {
 		this.implants = new ArrayList<>(clone.getImplants());
 		this.jumpCloneId = RawConverter.toLong(clone.getJumpCloneId());
 		this.locationId = clone.getLocationId();
 		this.name = clone.getName();
+		this.active = false;
 	}
 
+	/**
+	 * Active Clone
+	 * @param implants
+	 * @param jumpCloneId
+	 * @param locationId 
+	 */
 	public RawClone(List<Integer> implants, Long jumpCloneId, Long locationId) {
 		this.implants = new ArrayList<>(implants);
 		this.jumpCloneId = jumpCloneId;
 		this.locationId = locationId;
 		this.name = null;
+		this.active = true;
 	}
 
 	public List<Integer> getImplants() {
@@ -89,5 +103,13 @@ public class RawClone {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public boolean isActive() {
+		return active;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
 	}
 }
