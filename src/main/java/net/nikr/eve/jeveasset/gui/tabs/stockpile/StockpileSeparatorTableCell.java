@@ -62,6 +62,7 @@ public class StockpileSeparatorTableCell extends SeparatorTableCell<StockpileIte
 		GROUP_TOGGLE_COLLAPSE,
 		GROUP_EXPAND,
 		GROUP_RENAME,
+		GROUP_SHOPPING_LIST,
 		GROUP_COLLAPSE,
 		DELETE_STOCKPILE,
 		EDIT_STOCKPILE,
@@ -82,6 +83,7 @@ public class StockpileSeparatorTableCell extends SeparatorTableCell<StockpileIte
 	private final JButton jCollapseGroupStockpiles;
 	private final JButton jExpandGroupStockpiles;
 	private final JButton jRenameGroup;
+	private final JButton jGroupShoppingList;
 	private final JPanel jInfoPanel;
 	private final JLabel jStartSpaceGroup;
 	private final JLabel jStartSpace;
@@ -142,6 +144,11 @@ public class StockpileSeparatorTableCell extends SeparatorTableCell<StockpileIte
 		jRenameGroup.setActionCommand(StockpileCellAction.GROUP_RENAME.name());
 		jRenameGroup.addActionListener(actionListener);
 
+		jGroupShoppingList = new JButton(Images.STOCKPILE_SHOPPING_LIST.getIcon());
+		jGroupShoppingList.setOpaque(false);
+		jGroupShoppingList.setActionCommand(StockpileCellAction.GROUP_SHOPPING_LIST.name());
+		jGroupShoppingList.addActionListener(actionListener);
+
 		jGroup = new JLabel();
 		jGroup.setBorder(null);
 		jGroup.setForeground(Color.WHITE);
@@ -166,6 +173,8 @@ public class StockpileSeparatorTableCell extends SeparatorTableCell<StockpileIte
 					.addComponent(jExpandGroupStockpiles, Program.getIconButtonsWidth(), Program.getIconButtonsWidth(), Program.getIconButtonsWidth())
 					.addGap(5)
 					.addComponent(jRenameGroup, Program.getIconButtonsWidth(), Program.getIconButtonsWidth(), Program.getIconButtonsWidth())
+					.addGap(5)
+					.addComponent(jGroupShoppingList, Program.getIconButtonsWidth(), Program.getIconButtonsWidth(), Program.getIconButtonsWidth())
 					.addGap(10)
 					.addComponent(jGroup, 0, 0, Integer.MAX_VALUE)
 				)
@@ -179,6 +188,7 @@ public class StockpileSeparatorTableCell extends SeparatorTableCell<StockpileIte
 					.addComponent(jCollapseGroupStockpiles, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jExpandGroupStockpiles, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jRenameGroup, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jGroupShoppingList, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jGroup, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				)
 				.addGap(2)
