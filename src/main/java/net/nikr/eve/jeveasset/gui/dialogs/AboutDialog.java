@@ -115,6 +115,7 @@ public class AboutDialog extends JDialogCentered {
 				+ "&nbsp;Ed Thelleres<br>"
 				+ "&nbsp;Salartarium<br>"
 				+ "&nbsp;WildGear<br>"
+				+ "&nbsp;snipereagle1<br>"
 				+ "<br>"
 				+ "<b>Retired Testers</b><br>"
 				+ "&nbsp;Varo Jan<br>"

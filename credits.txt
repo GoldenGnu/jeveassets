@@ -43,6 +43,7 @@ Contributors:
   Ed Thelleres
   Salartarium
   WildGear
+  snipereagle1
 
 Retired Testers:
   Varo Jan
