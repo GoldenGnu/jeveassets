@@ -38,7 +38,7 @@ public class JumpsSettingsPanel extends JSettingsPanel {
 
 	public JumpsSettingsPanel(final Program program, final SettingsDialog settingsDialog) {
 		super(program, settingsDialog, DialoguesSettings.get().jumps(), Images.TOOL_ROUTING.getIcon());
-		jAvoid = new JAvoid(program, avoidSettings, false);
+		jAvoid = new JAvoid(program, avoidSettings, false, null);
 		jAvoid.updateSystemDialog(RouteFinderFilter.JUMPS.getGraph().getNodes());
 
 		layout.setHorizontalGroup(
