@@ -1047,6 +1047,8 @@ public class RoutingTab extends JMainTabSecondary {
 					}
 				}
 			});
+			String start = jStart.getItemAt(jStart.getSelectedIndex());
+			String startSystem = null;
 			//Update all SolarSystem with the latest from the new Graph
 			//This is needed to get the proper Edge(s) parsed to the routing Algorithm
 			Map<Long, List<SolarSystem>> stationsMap = new HashMap<>();
@@ -1060,20 +1062,29 @@ public class RoutingTab extends JMainTabSecondary {
 					}
 					stations.add(solarSystem);
 				}
-				waypoints.add(systemCache.get(solarSystem.getSystemID()));
+				SolarSystem cachedSystem = systemCache.get(solarSystem.getSystemID());
+				if (start.equals(solarSystem.getName())) {
+					startSystem = cachedSystem.getName();
+				}
+				waypoints.add(cachedSystem);
 			}
 			List<SolarSystem> inputWaypoints = new ArrayList<>(waypoints);
 			//Move frist system to the top....
-			String text = jStart.getItemAt(jStart.getSelectedIndex());
-			if (!text.contains(TabsRouting.get().startEmpty())) {
+			if (!start.contains(TabsRouting.get().startEmpty())) {
+				String startText;
+				if (startSystem != null) {
+					startText = startSystem;
+				} else {
+					startText = start;
+				}
 				Collections.sort(inputWaypoints, new Comparator<SolarSystem>() {
 					@Override
 					public int compare(SolarSystem o1, SolarSystem o2) {
-						if (o1.getName().equals(text) && o2.getName().equals(text)) {
+						if (o1.getName().equals(startText) && o2.getName().equals(startText)) {
 							return 0; //Equal
-						} else if (o1.getName().equals(text)) {
+						} else if (o1.getName().equals(startText)) {
 							return -1; //Before
-						} else if (o2.getName().equals(text)) {
+						} else if (o2.getName().equals(startText)) {
 							return 1; //After
 						} else {
 							return o1.getName().compareTo(o2.getName());
