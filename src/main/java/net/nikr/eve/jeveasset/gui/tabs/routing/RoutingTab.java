@@ -84,6 +84,7 @@ import net.nikr.eve.jeveasset.gui.shared.components.JImportDialog.ImportReturn;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTabSecondary;
 import net.nikr.eve.jeveasset.gui.shared.components.JMultiSelectionDialog;
 import net.nikr.eve.jeveasset.gui.shared.components.JTextDialog;
+import net.nikr.eve.jeveasset.gui.shared.components.JTextDialog.SimpleTextImport;
 import net.nikr.eve.jeveasset.gui.shared.components.JTextDialog.TextReturn;
 import net.nikr.eve.jeveasset.gui.shared.components.ListComboBoxModel;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuUI;
@@ -93,6 +94,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.EventModels.StringFilterator;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewGroup;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewLocation;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewLocation.LocationType;
+import net.nikr.eve.jeveasset.gui.tabs.routing.JAvoid.UpdateFilter;
 import net.nikr.eve.jeveasset.gui.tabs.routing.JRouteEditDialog.Route;
 import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
@@ -112,13 +114,12 @@ import uk.me.candle.eve.routing.Progress;
 import uk.me.candle.eve.routing.RoutingAlgorithm;
 import uk.me.candle.eve.routing.SimpleUnisexMutatorHibrid2Opt;
 import uk.me.candle.eve.routing.cancel.CancelService;
-import net.nikr.eve.jeveasset.gui.shared.components.JTextDialog.SimpleTextImport;
 
 /**
  *
  * @author Candle
  */
-public class RoutingTab extends JMainTabSecondary {
+public class RoutingTab extends JMainTabSecondary implements UpdateFilter {
 
 	private static final Logger LOG = LoggerFactory.getLogger(RoutingTab.class);
 
@@ -356,7 +357,7 @@ public class RoutingTab extends JMainTabSecondary {
 		}
 		jStart.setSelectedItem(TabsRouting.get().startEmpty());
 
-		jAvoid = new JAvoid(program, Settings.get().getRoutingSettings().getAvoidSettings(), true);
+		jAvoid = new JAvoid(program, Settings.get().getRoutingSettings().getAvoidSettings(), true, this);
 
 		jAvailable = new MoveJList<>(new EditableListModel<>());
 		jAvailable.getEditableModel().setSortComparator(JAvoid.SOLAR_SYSTEM_COMPARATOR);
@@ -495,8 +496,6 @@ public class RoutingTab extends JMainTabSecondary {
 		jFilterPanel.setLayout(filterLayout);
 		filterLayout.setAutoCreateGaps(true);
 		filterLayout.setAutoCreateContainerGaps(true);
-
-		updateFilterLabels();
 
 		filterLayout.setHorizontalGroup(
 			filterLayout.createSequentialGroup()
@@ -892,6 +891,8 @@ public class RoutingTab extends JMainTabSecondary {
 					}
 				}
 			});
+			String start = jStart.getItemAt(jStart.getSelectedIndex());
+			String startSystem = null;
 			//Update all SolarSystem with the latest from the new Graph
 			//This is needed to get the proper Edge(s) parsed to the routing Algorithm
 			Map<Long, List<SolarSystem>> stationsMap = new HashMap<>();
@@ -905,20 +906,29 @@ public class RoutingTab extends JMainTabSecondary {
 					}
 					stations.add(solarSystem);
 				}
-				waypoints.add(systemCache.get(solarSystem.getSystemID()));
+				SolarSystem cachedSystem = systemCache.get(solarSystem.getSystemID());
+				if (start.equals(solarSystem.getName())) {
+					startSystem = cachedSystem.getName();
+				}
+				waypoints.add(cachedSystem);
 			}
 			List<SolarSystem> inputWaypoints = new ArrayList<>(waypoints);
 			//Move frist system to the top....
-			String text = jStart.getItemAt(jStart.getSelectedIndex());
-			if (!text.contains(TabsRouting.get().startEmpty())) {
+			if (!start.contains(TabsRouting.get().startEmpty())) {
+				String startText;
+				if (startSystem != null) {
+					startText = startSystem;
+				} else {
+					startText = start;
+				}
 				Collections.sort(inputWaypoints, new Comparator<SolarSystem>() {
 					@Override
 					public int compare(SolarSystem o1, SolarSystem o2) {
-						if (o1.getName().equals(text) && o2.getName().equals(text)) {
+						if (o1.getName().equals(startText) && o2.getName().equals(startText)) {
 							return 0; //Equal
-						} else if (o1.getName().equals(text)) {
+						} else if (o1.getName().equals(startText)) {
 							return -1; //Before
-						} else if (o2.getName().equals(text)) {
+						} else if (o2.getName().equals(startText)) {
 							return 1; //After
 						} else {
 							return o1.getName().compareTo(o2.getName());
@@ -1279,8 +1289,8 @@ public class RoutingTab extends JMainTabSecondary {
 		});
 	}
 
-	private void updateFilterLabels() {
-		jAvoid.updateFilterLabels();
+	@Override
+	public void updateFilterLabels() {
 		double secMin = Settings.get().getRoutingSettings().getSecMin();
 		double secMax = Settings.get().getRoutingSettings().getSecMax();
 		int size = Settings.get().getRoutingSettings().getAvoid().size();

@@ -90,12 +90,14 @@ public class JAvoid {
 	private final ListenerClass listener;
 	private final RouteAvoidSettings avoidSettings;
 	private final boolean saveSettings;
+	private final UpdateFilter updateFilter;
 
-	public <E extends ActionListener & MouseListener> JAvoid(Program program, RouteAvoidSettings avoidSettings, boolean saveSettings) {
+	public <E extends ActionListener & MouseListener> JAvoid(Program program, RouteAvoidSettings avoidSettings, boolean saveSettings, UpdateFilter updateFilter) {
 		this.program = program;
 		this.listener = new ListenerClass();
 		this.avoidSettings = avoidSettings;
 		this.saveSettings = saveSettings;
+		this.updateFilter = updateFilter;
 
 		jSaveSystemDialog = new JAutoCompleteDialog<>(program, TabsRouting.get().saveFilterTitle(), Images.TOOL_ROUTING.getImage(), TabsRouting.get().saveFilterMsg(), false, JAutoCompleteDialog.STRING_OPTIONS);
 		jAvoidManagerDialog = new JAvoidManagerDialog(this, program);
@@ -266,6 +268,9 @@ public class JAvoid {
 		jClear.setEnabled(!avoidModel.getAll().isEmpty());
 		jSave.setEnabled(!avoidModel.getAll().isEmpty());
 		jLoad.setEnabled(!avoidSettings.getPresets().isEmpty());
+		if (updateFilter != null) {
+			updateFilter.updateFilterLabels();
+		}
 	}
 
 	private void updateSavedFilters() {
@@ -490,6 +495,10 @@ public class JAvoid {
 				}
 			}
 		}
+	}
+
+	public static interface UpdateFilter {
+		public void updateFilterLabels();
 	}
 
 }
