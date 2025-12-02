@@ -27,7 +27,7 @@ import javax.swing.AbstractListModel;
 public class EditableListModel<T> extends AbstractListModel<T> {
 
 	private static final long serialVersionUID = 1L;
-	private List<T> backed = new ArrayList<T>();
+	private List<T> backed = new ArrayList<>();
 	private Comparator<T> sortComparator = new Comparator<T>() {
 		@Override
 		public int compare(final T o1, final T o2) {
@@ -105,7 +105,7 @@ public class EditableListModel<T> extends AbstractListModel<T> {
 	public boolean addAll(final Collection<? extends T> c) {
 		boolean b = true;
 		for (T t : c) {
-			b = b && add(t);
+			b = add(t) && b;
 		}
 		return b;
 	}
