@@ -1969,6 +1969,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 						parentStockpile.addSubpileLink(stockpile);
 					}
 					Settings.unlock("Stockpile (Updated Subpiles)");
+					updateStockpile(stockpile);
 					updateSubpile(stockpile);
 					program.saveSettings("Stockpile (Updated subpiles)");
 				}
