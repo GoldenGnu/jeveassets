@@ -203,12 +203,11 @@ public class JAvoid {
 	}
 
 	public void setData(RouteAvoidSettings current) {
+		avoidSettings.update(current);
 		avoidModel.clear();
 		avoidModel.addAll(current.getAvoid().values());
 		jSecurityMinimum.setSelectedItem(current.getSecMin());
 		jSecurityMaximum.setSelectedItem(current.getSecMax());
-		avoidSettings.getPresets().clear();
-		avoidSettings.getPresets().putAll(current.getPresets());
 		updateFilterLabels();
 		updateSavedFilters();
 	}
