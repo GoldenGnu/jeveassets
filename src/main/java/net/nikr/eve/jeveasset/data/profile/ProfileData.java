@@ -80,6 +80,9 @@ import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import net.nikr.eve.jeveasset.io.shared.DataConverter;
+import it.unimi.dsi.fastutil.ints.Int2DoubleOpenHashMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.longs.Long2DoubleOpenHashMap;
 
 public class ProfileData {
 
@@ -108,12 +111,14 @@ public class ProfileData {
 	private final List<MyAccountBalance> accountBalanceList = new ArrayList<>();
 	private final List<MyContract> contractList = new ArrayList<>();
 	private final Map<String, Long> skillPointsTotal = new HashMap<>();
-	private Map<Integer, List<MyAsset>> uniqueAssetsDuplicates = null; //TypeID : int
-	private Map<Integer, MarketPriceData> transactionSellPriceData; //TypeID : int
-	private Map<Integer, MarketPriceData> transactionBuyPriceData; //TypeID : int
-	private Map<Integer, Double> transactionBuyTax; //TypeID : int
-	private Map<Long, Double> transactionSellTax; //TransactionID : long
-	private Map<Long, Double> marketOrdersBrokersFee; //OrderID : long
+	// Primitive collections to avoid autoboxing overhead (Phase 1 & 2 optimization)
+	private Int2ObjectOpenHashMap<List<MyAsset>> uniqueAssetsDuplicates = null; //TypeID : int
+	private Int2ObjectOpenHashMap<MarketPriceData> transactionSellPriceData; //TypeID : int
+	private Int2ObjectOpenHashMap<MarketPriceData> transactionBuyPriceData; //TypeID : int
+	// Phase 1 optimization: primitive-to-primitive maps
+	private Int2DoubleOpenHashMap transactionBuyTax; //TypeID : int
+	private Long2DoubleOpenHashMap transactionSellTax; //TransactionID : long
+	private Long2DoubleOpenHashMap marketOrdersBrokersFee; //OrderID : long
 	private final List<String> ownerNames = new ArrayList<>();
 	private final Map<Long, OwnerType> owners = new HashMap<>();
 	private Set<Integer> staticTypeIDs = null;
@@ -436,7 +441,7 @@ public class ProfileData {
 	}
 
 	public synchronized void updateEventLists(Date addedDate) {
-		uniqueAssetsDuplicates = new HashMap<>();
+		uniqueAssetsDuplicates = new Int2ObjectOpenHashMap<>();
 		Set<String> uniqueOwnerNames = new HashSet<>();
 		Map<Long, OwnerType> uniqueOwners = new HashMap<>();
 		//Temp
@@ -612,7 +617,9 @@ public class ProfileData {
 				setLastTransaction(order, order.getTypeID() , order.isBuyOrder(), order.getPrice(), null);
 			}
 			order.setIssuedByName(ApiIdConverter.getOwnerName(order.getIssuedBy()));
-			order.setBrokersFee(marketOrdersBrokersFee.get(order.getOrderID()));
+			// Fastutil returns primitive double (0.0 if not found); box to Double for API
+			double brokersFee = marketOrdersBrokersFee.get((long) order.getOrderID());
+			order.setBrokersFee(brokersFee == 0.0 ? null : brokersFee);
 			order.setOutbid(Settings.get().getMarketOrdersOutbid().get(order.getOrderID()));
 			//Update Owned
 			Integer issuedBy = order.getIssuedBy();
@@ -687,11 +694,15 @@ public class ProfileData {
 			if (transaction.isBuy()) { //Buy
 				transaction.setTax(null); //Seller pays the tax
 			} else { //Sell
-				transaction.setTax(transactionSellTax.get(transaction.getTransactionID()));
+				// Fastutil returns primitive double (0.0 if not found); box to Double for API
+				double sellTax = transactionSellTax.get((long) transaction.getTransactionID());
+				transaction.setTax(sellTax == 0.0 ? null : sellTax);
 			}
 			//Transaction Profit
 			if (transaction.isBuy()) { //Buy
-				setLastTransaction(transaction, transaction.getTypeID(), transaction.isBuy(), transaction.getPrice(), transactionBuyTax.get(transaction.getTypeID()));
+				// Fastutil returns primitive double (0.0 if not found); box to Double for method call
+				double buyTax = transactionBuyTax.get((int) transaction.getTypeID());
+				setLastTransaction(transaction, transaction.getTypeID(), transaction.isBuy(), transaction.getPrice(), buyTax == 0.0 ? null : buyTax);
 			} else { //Sell
 				double tax = 0;
 				if (transaction.getTax() != null) {
@@ -1208,11 +1219,11 @@ public class ProfileData {
 
 	private void calcTransactionsPriceData() {
 		//Create Transaction Price Data
-		transactionBuyTax = new HashMap<>();
-		transactionSellPriceData = new HashMap<>();
-		transactionBuyPriceData = new HashMap<>();
-		transactionSellTax = new HashMap<>();
-		marketOrdersBrokersFee = new HashMap<>();
+		transactionBuyTax = new Int2DoubleOpenHashMap();
+		transactionSellPriceData = new Int2ObjectOpenHashMap<>();
+		transactionBuyPriceData = new Int2ObjectOpenHashMap<>();
+		transactionSellTax = new Long2DoubleOpenHashMap();
+		marketOrdersBrokersFee = new Long2DoubleOpenHashMap();
 		Date lastTaxDate = null;
 		Date maxAge = new Date(System.currentTimeMillis() - ((long)Settings.get().getMaximumPurchaseAge() * 24L * 60L * 60L * 1000L));
 		for (OwnerType owner : profileManager.getOwnerTypes()) {
@@ -1278,9 +1289,10 @@ public class ProfileData {
 					if (!found.contains(transaction) && found.size() <= list.size()) {
 						found.add(transaction);
 						double tax = match.getAmount();
-						transactionSellTax.put(transaction.getTransactionID(), tax);
+						// Explicit primitive put() to avoid ambiguity with deprecated Object version
+						transactionSellTax.put((long) transaction.getTransactionID(), tax);
 						if ((lastTaxDate == null || lastTaxDate.before(transaction.getDate()))) {
-							transactionBuyTax.put(transaction.getTypeID(), tax / transaction.getItemCount());
+							transactionBuyTax.put((int) transaction.getTypeID(), tax / transaction.getItemCount());
 							lastTaxDate = transaction.getDate();
 						}
 					}
@@ -1319,19 +1331,18 @@ public class ProfileData {
 					MyMarketOrder marketOrder = match.get();
 					if (!found.contains(marketOrder) && found.size() <= list.size()) {
 						found.add(marketOrder);
-						Double fee = marketOrdersBrokersFee.get(marketOrder.getOrderID());
-						if (fee == null) {
-							fee = 0.0;
-						}
+						// Fastutil returns primitive double (0.0 if not found)
+						double fee = marketOrdersBrokersFee.get((long) marketOrder.getOrderID());
 						fee = fee + match.getAmount();
-						marketOrdersBrokersFee.put(marketOrder.getOrderID(), fee);
+						// Explicit primitive put() to avoid ambiguity with deprecated Object version
+						marketOrdersBrokersFee.put((long) marketOrder.getOrderID(), fee);
 					}
 				}
 			}
 		}
 	}
 
-	private void createTransactionsPriceData(Map<Integer, MarketPriceData> transactionPriceData, MyTransaction transaction) {
+	private void createTransactionsPriceData(Int2ObjectOpenHashMap<MarketPriceData> transactionPriceData, MyTransaction transaction) {
 		int typeID = transaction.getTypeID();
 		MarketPriceData data = transactionPriceData.get(typeID);
 		if (data == null) {
