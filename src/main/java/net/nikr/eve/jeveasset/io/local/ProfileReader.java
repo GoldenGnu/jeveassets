@@ -20,6 +20,8 @@
  */
 package net.nikr.eve.jeveasset.io.local;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.EnumSet;
@@ -738,7 +740,7 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 	}
 
 	private void parseBlueprints(final Element element, final OwnerType owners) throws XmlException {
-		Map<Long, RawBlueprint> blueprints = new HashMap<>();
+		Long2ObjectOpenHashMap<RawBlueprint> blueprints = new Long2ObjectOpenHashMap<>();
 		NodeList blueprintsNodes = element.getElementsByTagName("blueprints");
 		for (int a = 0; a < blueprintsNodes.getLength(); a++) {
 			Element currentBlueprintsNode = (Element) blueprintsNodes.item(a);
@@ -746,7 +748,7 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 			for (int b = 0; b < blueprintNodes.getLength(); b++) {
 				Element currentNode = (Element) blueprintNodes.item(b);
 				RawBlueprint blueprint = parseBlueprint(currentNode);
-				blueprints.put(blueprint.getItemID(), blueprint);
+				blueprints.put(blueprint.getItemID().longValue(), blueprint);
 			}
 		}
 		owners.setBlueprints(blueprints);
@@ -777,7 +779,7 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 	}
 
 	private void parseAssetDivisions(final Element element, final OwnerType owners) throws XmlException {
-		Map<Integer, String> divisions = new HashMap<>();
+		Int2ObjectOpenHashMap<String> divisions = new Int2ObjectOpenHashMap<>();
 		NodeList divisionsNodes = element.getElementsByTagName("assetdivisions");
 		for (int a = 0; a < divisionsNodes.getLength(); a++) {
 			Element currentDivisionsNode = (Element) divisionsNodes.item(a);
@@ -793,7 +795,7 @@ public final class ProfileReader extends AbstractXmlReader<Boolean> {
 	}
 
 	private void parseWalletDivisions(final Element element, final OwnerType owners) throws XmlException {
-		Map<Integer, String> divisions = new HashMap<>();
+		Int2ObjectOpenHashMap<String> divisions = new Int2ObjectOpenHashMap<>();
 		NodeList divisionsNodes = element.getElementsByTagName("walletdivisions");
 		for (int a = 0; a < divisionsNodes.getLength(); a++) {
 			Element currentDivisionsNode = (Element) divisionsNodes.item(a);

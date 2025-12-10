@@ -20,10 +20,9 @@
  */
 package net.nikr.eve.jeveasset.io.esi;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import static net.nikr.eve.jeveasset.io.esi.AbstractEsiGetter.DATASOURCE;
@@ -52,9 +51,9 @@ public class EsiItemsGetter extends AbstractEsiGetter {
 	public final static String ESI_ITEM_VERSION = "1.2.0";
 	public final static String ESI_ITEM_EMPTY = "EMPTY";
 
-	private final static Map<Integer, GroupResponse> GROUPS_CACHE = new HashMap<>();
-	private final static Map<Integer, CategoryResponse> CATEGORY_CACHE = new HashMap<>();
-	private final static Map<Integer, MarketGroupResponse> MARKET_GROUP_CACHE = new HashMap<>();
+	private final static Int2ObjectOpenHashMap<GroupResponse> GROUPS_CACHE = new Int2ObjectOpenHashMap<>();
+	private final static Int2ObjectOpenHashMap<CategoryResponse> CATEGORY_CACHE = new Int2ObjectOpenHashMap<>();
+	private final static Int2ObjectOpenHashMap<MarketGroupResponse> MARKET_GROUP_CACHE = new Int2ObjectOpenHashMap<>();
 
 	public final static long BASE_PRICE_DEFAULT = -1;
 	public final static int PRODUCT_TYPE_ID_DEFAULT = 0;
@@ -104,7 +103,7 @@ public class EsiItemsGetter extends AbstractEsiGetter {
 		//Market Groups
 		MarketGroupResponse marketGroupResponse = null;
 		if (typeResponse.getMarketGroupId() != null) {
-			Integer marketGroupID = typeResponse.getMarketGroupId();
+			int marketGroupID = typeResponse.getMarketGroupId().intValue();
 			marketGroupResponse  = MARKET_GROUP_CACHE.get(marketGroupID);
 			if (marketGroupResponse == null) {
 				marketGroupResponse = update(DEFAULT_RETRIES, new EsiHandler<MarketGroupResponse>() {

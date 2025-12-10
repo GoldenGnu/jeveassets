@@ -21,7 +21,7 @@
 
 package net.nikr.eve.jeveasset.io.local;
 
-import java.util.Map;
+import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import net.nikr.eve.jeveasset.data.settings.Citadel;
 import net.nikr.eve.jeveasset.data.settings.CitadelSettings;
 import net.nikr.eve.jeveasset.io.shared.FileUtil;
@@ -62,10 +62,10 @@ public final class CitadelWriter extends AbstractXmlWriter {
 
 	private void writeCitadels(final Document xmldoc, final CitadelSettings settings) {
 		Element parentNode = xmldoc.getDocumentElement();
-		for (Map.Entry<Long, Citadel> entry : settings.getCache()) {
+		for (Long2ObjectMap.Entry<Citadel> entry : settings.getCache()) {
 			Element node = xmldoc.createElementNS(null, "citadel");
 			Citadel citadel = entry.getValue();
-			setAttribute(node, "stationid", entry.getKey());
+			setAttribute(node, "stationid", entry.getLongKey());
 			setAttribute(node, "systemid", citadel.getSystemID());
 			setAttribute(node, "name", citadel.getLocation());
 			setAttribute(node, "userlocation", citadel.isUserLocation());

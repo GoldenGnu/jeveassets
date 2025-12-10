@@ -233,7 +233,7 @@ public final class ApiIdConverter {
 		if (isBlueprintCopy) {
 			return PriceData.EMPTY;
 		}
-		PriceData priceData = Settings.get().getPriceData().get(typeID);
+		PriceData priceData = Settings.get().getPriceData().get(typeID.intValue());
 		if (priceData == null) {
 			return PriceData.EMPTY;
 		}
@@ -259,11 +259,12 @@ public final class ApiIdConverter {
 		if (typeID == null) {
 			return 0;
 		}
+		int typeIDInt = typeID.intValue();
 		UserItem<Integer, Double> userPrice;
 		if (isBlueprintCopy) { //Blueprint Copy
-			userPrice = Settings.get().getUserPrices().get(-typeID);
+			userPrice = Settings.get().getUserPrices().get(-typeIDInt);
 		} else { //All other
-			userPrice = Settings.get().getUserPrices().get(typeID);
+			userPrice = Settings.get().getUserPrices().get(typeIDInt);
 		}
 		if (userPrice != null) {
 			return userPrice.getValue();
@@ -292,7 +293,7 @@ public final class ApiIdConverter {
 		}
 
 		//Price data
-		PriceData priceData = Settings.get().getPriceData().get(typeID);
+		PriceData priceData = Settings.get().getPriceData().get(typeIDInt);
 		if (priceData != null && priceData.isEmpty()) {
 			priceData = null;
 		}
@@ -591,7 +592,7 @@ public final class ApiIdConverter {
 		if (ownerID == null || ownerID == 0) { //0 (zero) is valid, but, should return empty string
 			return EMPTY_STRING;
 		}
-		String owner = Settings.get().getOwners().get(ownerID);
+		String owner = Settings.get().getOwners().get(ownerID.longValue());
 		if (owner != null) {
 			return owner;
 		} else { // OwnerIDs from the journal can be a system ID

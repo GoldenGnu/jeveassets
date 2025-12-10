@@ -20,10 +20,11 @@
  */
 package net.nikr.eve.jeveasset.io.esi;
 
+import it.unimi.dsi.fastutil.ints.Int2DoubleOpenHashMap;
+import it.unimi.dsi.fastutil.ints.Int2FloatOpenHashMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import net.nikr.eve.jeveasset.data.sde.IndustryMaterial;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.StaticData;
@@ -56,11 +57,11 @@ public class EsiManufacturingPrices extends AbstractEsiGetter {
 				return getMarketApiOpen().getMarketsPricesWithHttpInfo(DATASOURCE, null);
 			}
 		});
-		Map<Integer, MarketPricesResponse> prices = new HashMap<>();
+		Int2ObjectOpenHashMap<MarketPricesResponse> prices = new Int2ObjectOpenHashMap<>();
 		for (MarketPricesResponse price : priceResponses) {
-			prices.put(price.getTypeId(), price);
+			prices.put(price.getTypeId().intValue(), price);
 		}
-		Map<Integer, Double> manufacturingPrices = new HashMap<>();
+		Int2DoubleOpenHashMap manufacturingPrices = new Int2DoubleOpenHashMap();
 		for (Item item : StaticData.get().getItems().values()) {
 			int productTypeID = item.getProductTypeID();
 			if (item.getManufacturingMaterials().isEmpty() || productTypeID == 0) {
@@ -78,12 +79,12 @@ public class EsiManufacturingPrices extends AbstractEsiGetter {
 				return getIndustryApiOpen().getIndustrySystemsWithHttpInfo(DATASOURCE, null);
 			}
 		});
-		Map<Integer, Float> manufacturingSystems = new HashMap<>();
+		Int2FloatOpenHashMap manufacturingSystems = new Int2FloatOpenHashMap();
 		for (IndustrySystemsResponse system : systemResponses) {
 			for (SystemCostIndice costIndice : system.getCostIndices()) {
 				switch (costIndice.getActivity()) {
 					case MANUFACTURING:
-						manufacturingSystems.put(system.getSolarSystemId(), costIndice.getCostIndex());
+						manufacturingSystems.put(system.getSolarSystemId().intValue(), costIndice.getCostIndex().floatValue());
 						break;
 				}
 			}
@@ -106,7 +107,7 @@ public class EsiManufacturingPrices extends AbstractEsiGetter {
 		return null; //Public
 	}
 
-	private double getPrice(Map<Integer, MarketPricesResponse> prices, Item item) {
+	private double getPrice(Int2ObjectOpenHashMap<MarketPricesResponse> prices, Item item) {
 		double price = 0;
 		
 		for (IndustryMaterial material : item.getManufacturingMaterials()) {

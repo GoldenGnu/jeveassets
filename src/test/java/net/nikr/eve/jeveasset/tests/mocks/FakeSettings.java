@@ -21,6 +21,8 @@
 
 package net.nikr.eve.jeveasset.tests.mocks;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.util.Date;
@@ -80,12 +82,12 @@ public abstract class FakeSettings extends Settings {
 	}
 
 	@Override
-	public Map<Long, UserItem<Long, String>> getUserItemNames() {
+	public Long2ObjectOpenHashMap<UserItem<Long, String>> getUserItemNames() {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
 	@Override
-	public Map<Integer, UserItem<Integer, Double>> getUserPrices() {
+	public Int2ObjectOpenHashMap<UserItem<Integer, Double>> getUserPrices() {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
@@ -140,7 +142,7 @@ public abstract class FakeSettings extends Settings {
 	}
 
 	@Override
-	public void setPriceData(final Map<Integer, PriceData> priceData) {
+	public void setPriceData(final Int2ObjectOpenHashMap<PriceData> priceData) {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
@@ -160,12 +162,12 @@ public abstract class FakeSettings extends Settings {
 	}
 
 	@Override
-	public void setUserItemNames(final Map<Long, UserItem<Long, String>> userItemNames) {
+	public void setUserItemNames(final Long2ObjectOpenHashMap<UserItem<Long, String>> userItemNames) {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
 	@Override
-	public void setUserPrices(final Map<Integer, UserItem<Integer, Double>> userPrices) {
+	public void setUserPrices(final Int2ObjectOpenHashMap<UserItem<Integer, Double>> userPrices) {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
@@ -315,12 +317,12 @@ public abstract class FakeSettings extends Settings {
 	}
 
 	@Override
-	public Map<Long, String> getOwners() {
+	public Long2ObjectOpenHashMap<String> getOwners() {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
 	@Override
-	public Map<Integer, PriceData> getPriceData() {
+	public Int2ObjectOpenHashMap<PriceData> getPriceData() {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
@@ -405,12 +407,12 @@ public abstract class FakeSettings extends Settings {
 	}
 
 	@Override
-	public void setEveNames(Map<Long, String> eveNames) {
+	public void setEveNames(Long2ObjectOpenHashMap<String> eveNames) {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
 	@Override
-	public Map<Long, String> getEveNames() {
+	public Long2ObjectOpenHashMap<String> getEveNames() {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
@@ -525,12 +527,12 @@ public abstract class FakeSettings extends Settings {
 	}
 
 	@Override
-	public void setMarketOrdersOutbid(Map<Long, Outbid> outbids) {
+	public void setMarketOrdersOutbid(Long2ObjectOpenHashMap<Outbid> outbids) {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
 	@Override
-	public Map<Long, Outbid> getMarketOrdersOutbid() {
+	public Long2ObjectOpenHashMap<Outbid> getMarketOrdersOutbid() {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
@@ -605,17 +607,17 @@ public abstract class FakeSettings extends Settings {
 	}
 
 	@Override
-	public void setFactionWarfareSystemOwners(Map<Long, String> factionWarfareSystemOwners) {
+	public void setFactionWarfareSystemOwners(Long2ObjectOpenHashMap<String> factionWarfareSystemOwners) {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
 	@Override
-	public Map<Long, String> getFactionWarfareSystemOwners() {
+	public Long2ObjectOpenHashMap<String> getFactionWarfareSystemOwners() {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
 	@Override
-	public Map<Long, Date> getOwnersNextUpdate() {
+	public Long2ObjectOpenHashMap<Date> getOwnersNextUpdate() {
 		throw new UnsupportedOperationException("not implemented");
 	}
 

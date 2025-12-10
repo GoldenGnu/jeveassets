@@ -20,6 +20,7 @@
  */
 package net.nikr.eve.jeveasset.io.shared;
 
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -155,7 +156,7 @@ public class ConverterTestUtil {
 
 		//Blueprint
 		RawBlueprint rawBlueprint = getRawBlueprint(options);
-		owner.setBlueprints(map(rawBlueprint.getItemID(), rawBlueprint));
+		owner.setBlueprints(mapLong(rawBlueprint.getItemID(), rawBlueprint));
 
 		//Contract
 		MyContract saveMyContract = getMyContract(setNull, setValues, options);
@@ -205,6 +206,12 @@ public class ConverterTestUtil {
 	public static <K,V> Map<K,V> map(K key, V value) {
         return new HashMap<>(Collections.singletonMap(key, value));
     }
+
+	public static <V> Long2ObjectOpenHashMap<V> mapLong(long key, V value) {
+		Long2ObjectOpenHashMap<V> map = new Long2ObjectOpenHashMap<>();
+		map.put(key, value);
+		return map;
+	}
 
 	public static <T> List<T> list(T o) {
         return new ArrayList<>(Collections.singletonList(o));
@@ -849,6 +856,10 @@ public class ConverterTestUtil {
 			return options.getNpcStandingFromType();
 		} else if (type.equals(TextIcon.class)) {
 			return options.getTextIcon();
+		} else if (type.equals(Long2ObjectOpenHashMap.class)) {
+			return new Long2ObjectOpenHashMap<>();
+		} else if (type.equals(it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap.class)) {
+			return new it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap<>();
 		} else {
 			fail("No test value for: " + type.getSimpleName());
 			return null;

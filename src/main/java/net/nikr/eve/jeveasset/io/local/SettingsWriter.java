@@ -21,6 +21,9 @@
 
 package net.nikr.eve.jeveasset.io.local;
 
+import it.unimi.dsi.fastutil.ints.Int2DoubleMap;
+import it.unimi.dsi.fastutil.ints.Int2FloatMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import java.io.File;
 import java.net.Proxy;
 import java.util.Date;
@@ -226,16 +229,16 @@ public class SettingsWriter extends AbstractXmlWriter {
 		setAttributeOptional(manufacturingNode, "me", settings.getMaterialEfficiency());
 		setAttributeOptional(manufacturingNode, "tax", settings.getTax());
 		xmldoc.getDocumentElement().appendChild(manufacturingNode);
-		for (Map.Entry<Integer, Double> entry : settings.getPrices().entrySet()) {
+		for (Int2DoubleMap.Entry entry : settings.getPrices().int2DoubleEntrySet()) {
 			Element priceNode = xmldoc.createElementNS(null, "price");
-			setAttribute(priceNode, "typeid", entry.getKey());
-			setAttributeOptional(priceNode, "price", entry.getValue());
+			setAttribute(priceNode, "typeid", entry.getIntKey());
+			setAttributeOptional(priceNode, "price", entry.getDoubleValue());
 			manufacturingNode.appendChild(priceNode);
 		}
-		for (Map.Entry<Integer, Float> entry : settings.getSystems().entrySet()) {
+		for (Int2FloatMap.Entry entry : settings.getSystems().int2FloatEntrySet()) {
 			Element systemNode = xmldoc.createElementNS(null, "system");
-			setAttribute(systemNode, "systemid", entry.getKey());
-			setAttributeOptional(systemNode, "index", entry.getValue());
+			setAttribute(systemNode, "systemid", entry.getIntKey());
+			setAttributeOptional(systemNode, "index", entry.getFloatValue());
 			manufacturingNode.appendChild(systemNode);
 		}
 	}
@@ -255,9 +258,9 @@ public class SettingsWriter extends AbstractXmlWriter {
 		Element factionWarfareSystemOwnersNode = xmldoc.createElementNS(null, "factionwarfaresystemowners");
 		xmldoc.getDocumentElement().appendChild(factionWarfareSystemOwnersNode);
 		setAttribute(factionWarfareSystemOwnersNode, "factionwarfarenextupdate", settings.getFactionWarfareNextUpdate());
-		for (Map.Entry<Long, String> entry : settings.getFactionWarfareSystemOwners().entrySet()) {
+		for (Long2ObjectMap.Entry<String> entry : settings.getFactionWarfareSystemOwners().long2ObjectEntrySet()) {
 			Element systemNode = xmldoc.createElementNS(null, "system");
-			setAttribute(systemNode, "system", entry.getKey());
+			setAttribute(systemNode, "system", entry.getLongKey());
 			setAttributeOptional(systemNode, "faction", entry.getValue());
 			factionWarfareSystemOwnersNode.appendChild(systemNode);
 		}

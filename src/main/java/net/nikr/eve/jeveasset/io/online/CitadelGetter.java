@@ -20,8 +20,8 @@
  */
 package net.nikr.eve.jeveasset.io.online;
 
+import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import java.util.Collection;
-import java.util.Map;
 import java.util.Set;
 import net.nikr.eve.jeveasset.data.settings.Citadel;
 import net.nikr.eve.jeveasset.data.settings.CitadelSettings;
@@ -40,7 +40,7 @@ public class CitadelGetter {
 		return getCitadelGetter().getCitadel(locationID);
 	}
 
-	public synchronized static Iterable<Map.Entry<Long, Citadel>> getAll() {
+	public synchronized static Iterable<Long2ObjectMap.Entry<Citadel>> getAll() {
 		return getCitadelGetter().getCitadelAll();
 	}
 
@@ -112,7 +112,7 @@ public class CitadelGetter {
 		return citadel;
 	}
 
-	private Iterable<Map.Entry<Long, Citadel>> getCitadelAll() {
+	private Iterable<Long2ObjectMap.Entry<Citadel>> getCitadelAll() {
 		return citadelSettings.getCache();
 	}
 }

@@ -912,7 +912,8 @@ public class MarketOrdersTab extends JMainTabPrimary {
 						if (!Objects.equals(isBuy(), marketOrder.isBuyOrder())) {
 							continue;
 						}
-						Outbid outbid = output.getOutbids().get(marketOrder.getOrderID());
+						long orderID = marketOrder.getOrderID().longValue();
+						Outbid outbid = output.getOutbids().get(orderID);
 						if (outbid != null) {
 							if (marketOrder.isBuyOrder()) {
 								//Outbid and highest buy price
@@ -931,7 +932,7 @@ public class MarketOrdersTab extends JMainTabPrimary {
 			}
 			if (marketOrderCopy != null) {
 				LOG.info("Found matching order");
-				Outbid outbid = output.getOutbids().get(marketOrderCopy.getOrderID());
+				Outbid outbid = output.getOutbids().get(marketOrderCopy.getOrderID().longValue());
 				if (outbid != null) { //Better safe than sorry
 					copy(marketOrderCopy, outbid.getPrice());
 					setLastLogUpdate();

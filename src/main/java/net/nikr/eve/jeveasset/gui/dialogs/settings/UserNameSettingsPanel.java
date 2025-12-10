@@ -20,6 +20,7 @@
  */
 package net.nikr.eve.jeveasset.gui.dialogs.settings;
 
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -58,7 +59,8 @@ public class UserNameSettingsPanel extends JUserListPanel<Long, String> {
 
 	@Override
 	protected void setItems(final Map<Long, UserItem<Long, String>> items) {
-		Settings.get().setUserItemNames(items);
+		Long2ObjectOpenHashMap<UserItem<Long, String>> fastutilMap = new Long2ObjectOpenHashMap<>(items);
+		Settings.get().setUserItemNames(fastutilMap);
 	}
 
 	@Override

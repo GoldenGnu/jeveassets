@@ -21,6 +21,7 @@
 
 package net.nikr.eve.jeveasset.gui.dialogs.settings;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.HashSet;
@@ -56,7 +57,8 @@ public class UserPriceSettingsPanel extends JUserListPanel<Integer, Double> {
 
 	@Override
 	protected void setItems(final Map<Integer, UserItem<Integer, Double>> items) {
-		Settings.get().setUserPrices(items);
+		Int2ObjectOpenHashMap<UserItem<Integer, Double>> fastutilMap = new Int2ObjectOpenHashMap<>(items);
+		Settings.get().setUserPrices(fastutilMap);
 	}
 
 	@Override

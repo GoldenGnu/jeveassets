@@ -21,6 +21,7 @@
 
 package net.nikr.eve.jeveasset.gui.shared.menu;
 
+import it.unimi.dsi.fastutil.ints.Int2DoubleOpenHashMap;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -53,7 +54,7 @@ public class MenuData<T> {
 	private final Set<MyLocation> constellationLocations = new HashSet<>();
 	private final Set<MyLocation> editableCitadelLocations = new HashSet<>();
 	private final Set<MyLocation> userLocations = new HashSet<>();
-	private final Map<Integer, Double> prices = new HashMap<>();
+	private final Int2DoubleOpenHashMap prices = new Int2DoubleOpenHashMap();
 	private final Set<String> typeNames = new HashSet<>();
 	private final Set<String> stationsAndCitadelsNames = new HashSet<>();
 	private final Set<String> stationNames = new HashSet<>();
@@ -71,8 +72,8 @@ public class MenuData<T> {
 	private final List<MyAsset> assets = new ArrayList<>();
 	private final Set<MyContract> contracts = new HashSet<>();
 	private final Map<Item, Long> itemCounts = new HashMap<>();
-	private final Map<Integer, Double> counts = new HashMap<>();
-	private final Map<Integer, Double> runs = new HashMap<>();
+	private final Int2DoubleOpenHashMap counts = new Int2DoubleOpenHashMap();
+	private final Int2DoubleOpenHashMap runs = new Int2DoubleOpenHashMap();
 	private final Set<String> corporationNames = new HashSet<>();
 	private final Set<Integer> corporationIDs = new HashSet<>();
 
@@ -194,7 +195,7 @@ public class MenuData<T> {
 				counts.put(blueprintTypeID, count);
 				//Price TypeID
 				if (price != null) { //Not unique
-					prices.put(blueprintTypeID, price);
+					prices.put(blueprintTypeID, price.doubleValue());
 				}
 			}
 		}
@@ -291,7 +292,7 @@ public class MenuData<T> {
 		return typeIDs;
 	}
 
-	public Map<Integer, Double> getPrices() {
+	public Int2DoubleOpenHashMap getPrices() {
 		return prices;
 	}
 
@@ -401,11 +402,11 @@ public class MenuData<T> {
 		return itemCounts;
 	}
 
-	public Map<Integer, Double> getCounts() {
+	public Int2DoubleOpenHashMap getCounts() {
 		return counts;
 	}
 
-	public Map<Integer, Double> getRuns() {
+	public Int2DoubleOpenHashMap getRuns() {
 		return runs;
 	}
 

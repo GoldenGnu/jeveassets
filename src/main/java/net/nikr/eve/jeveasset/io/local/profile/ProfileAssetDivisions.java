@@ -20,6 +20,8 @@
  */
 package net.nikr.eve.jeveasset.io.local.profile;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -54,10 +56,10 @@ public class ProfileAssetDivisions extends ProfileTable {
 				}
 			});
 			for (EsiOwner owner : esiOwners) {
-				for (Map.Entry<Integer, String> entry : owner.getAssetDivisions().entrySet()) {
+				for (Int2ObjectMap.Entry<String> entry : owner.getAssetDivisions().int2ObjectEntrySet()) {
 					int index = 0;
 					setAttribute(statement, ++index, owner.getAccountID());
-					setAttribute(statement, ++index, entry.getKey());
+					setAttribute(statement, ++index, entry.getIntKey());
 					setAttributeOptional(statement, ++index, entry.getValue());
 					rows.addRow();
 				}
@@ -67,7 +69,7 @@ public class ProfileAssetDivisions extends ProfileTable {
 
 	@Override
 	protected void select(Connection connection, List<EsiOwner> esiOwners, Map<String, EsiOwner> owners) throws SQLException {
-		Map<EsiOwner, Map<Integer, String>> divisions = new HashMap<>();
+		Map<EsiOwner, Int2ObjectOpenHashMap<String>> divisions = new HashMap<>();
 		String sql = "SELECT * FROM " + ASSET_DIVISIONS_TABLE;
 		try (PreparedStatement statement = connection.prepareStatement(sql);
 				ResultSet rs = statement.executeQuery();) {
@@ -80,9 +82,9 @@ public class ProfileAssetDivisions extends ProfileTable {
 				if (owner == null) {
 					continue;
 				}
-				map(owner, divisions, id, name);
+				mapInt(owner, divisions, id, name);
 			}
-			for (Map.Entry<EsiOwner, Map<Integer, String>> entry : divisions.entrySet()) {
+			for (Map.Entry<EsiOwner, Int2ObjectOpenHashMap<String>> entry : divisions.entrySet()) {
 				entry.getKey().setAssetDivisions(entry.getValue());
 			}
 		}

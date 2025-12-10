@@ -20,8 +20,7 @@
  */
 package net.nikr.eve.jeveasset.data.api.accounts;
 
-import java.util.HashMap;
-import java.util.Map;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import javax.annotation.Nullable;
 import net.nikr.eve.jeveasset.data.api.my.MyShip;
 
@@ -30,8 +29,8 @@ public interface SimpleOwner extends Comparable<SimpleOwner> {
 	public long getOwnerID();
 	public String getOwnerName();
 	public boolean isCorporation();
-	default Map<Integer, String> getAssetDivisions() {
-		return new HashMap<>();
+	default Int2ObjectOpenHashMap<String> getAssetDivisions() {
+		return new Int2ObjectOpenHashMap<>();
 	}
 	@Nullable
 	default MyShip getActiveShip() {

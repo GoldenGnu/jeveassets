@@ -21,6 +21,8 @@
 
 package net.nikr.eve.jeveasset.data.settings;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.text.DateFormat;
@@ -152,21 +154,21 @@ public class Settings {
 
 //External
 	//Price						Saved by PriceDataGetter.process() in pricedata.dat (on api update)
-	private Map<Integer, PriceData> priceDatas = new HashMap<>(); //TypeID : int
+	private Int2ObjectOpenHashMap<PriceData> priceDatas = new Int2ObjectOpenHashMap<>(); //TypeID : int
 //API Data
 	//Api id to owner name		Saved by TaskDialog.update() (on API update)
-	private final Map<Long, Date> ownersNextUpdate = new HashMap<>();
-	private final Map<Long, String> owners = new HashMap<>();
+	private final Long2ObjectOpenHashMap<Date> ownersNextUpdate = new Long2ObjectOpenHashMap<>();
+	private final Long2ObjectOpenHashMap<String> owners = new Long2ObjectOpenHashMap<>();
 //!! - Values
 	//OK - Custom Price			Saved by JUserListPanel.edit()/delete() + SettingsDialog.save()
 	//Lock OK
-	private Map<Integer, UserItem<Integer, Double>> userPrices = new HashMap<>(); //TypeID : int
+	private Int2ObjectOpenHashMap<UserItem<Integer, Double>> userPrices = new Int2ObjectOpenHashMap<>(); //TypeID : int
 	//OK - Custom Item Name		Saved by JUserListPanel.edit()/delete() + SettingsDialog.save()
 	//Lock OK
-	private Map<Long, UserItem<Long, String>> userNames = new HashMap<>(); //ItemID : long
+	private Long2ObjectOpenHashMap<UserItem<Long, String>> userNames = new Long2ObjectOpenHashMap<>(); //ItemID : long
 	//Eve Item Name				Saved by TaskDialog.update() (on API update)
 	//Lock ???
-	private Map<Long, String> eveNames = new HashMap<>();
+	private Long2ObjectOpenHashMap<String> eveNames = new Long2ObjectOpenHashMap<>();
 //!! - Stockpile				Saved by StockpileTab.removeItems() / addStockpile() / removeStockpile()
 	//							Could be more selective...
 	//Lock FAIL!!!
@@ -225,11 +227,11 @@ public class Settings {
 	//Public Market Orders Next Update
 	private Date publicMarketOrdersNextUpdate = getNow();
 	//Faction Warfare System Owners
-	private Map<Long, String> factionWarfareSystemOwners = new HashMap<>();
+	private Long2ObjectOpenHashMap<String> factionWarfareSystemOwners = new Long2ObjectOpenHashMap<>();
 	//Faction Warfare Next Update
 	private Date factionWarfareNextUpdate = getNow();
 	//Market Orders Outbid
-	private Map<Long, Outbid> marketOrdersOutbid = new HashMap<>();
+	private Long2ObjectOpenHashMap<Outbid> marketOrdersOutbid = new Long2ObjectOpenHashMap<>();
 	//SellOrderRange
 	private MarketOrderRange outbidOrderRange = MarketOrderRange.REGION;
 	//Expire Warning Days
@@ -494,35 +496,35 @@ public class Settings {
 		this.priceDataSettings = priceDataSettings;
 	}
 
-	public Map<Integer, UserItem<Integer, Double>> getUserPrices() {
+	public Int2ObjectOpenHashMap<UserItem<Integer, Double>> getUserPrices() {
 		return userPrices;
 	}
 
-	public void setUserPrices(final Map<Integer, UserItem<Integer, Double>> userPrices) {
+	public void setUserPrices(final Int2ObjectOpenHashMap<UserItem<Integer, Double>> userPrices) {
 		this.userPrices = userPrices;
 	}
 
-	public Map<Long, UserItem<Long, String>> getUserItemNames() {
+	public Long2ObjectOpenHashMap<UserItem<Long, String>> getUserItemNames() {
 		return userNames;
 	}
 
-	public void setUserItemNames(final Map<Long, UserItem<Long, String>> userItemNames) {
+	public void setUserItemNames(final Long2ObjectOpenHashMap<UserItem<Long, String>> userItemNames) {
 		this.userNames = userItemNames;
 	}
 
-	public void setPriceData(final Map<Integer, PriceData> priceData) {
+	public void setPriceData(final Int2ObjectOpenHashMap<PriceData> priceData) {
 		this.priceDatas = priceData;
 	}
 
-	public Map<Long, String> getEveNames() {
+	public Long2ObjectOpenHashMap<String> getEveNames() {
 		return eveNames;
 	}
 
-	public void setEveNames(Map<Long, String> eveNames) {
+	public void setEveNames(Long2ObjectOpenHashMap<String> eveNames) {
 		this.eveNames = eveNames;
 	}
 
-	public Map<Integer, PriceData> getPriceData() {
+	public Int2ObjectOpenHashMap<PriceData> getPriceData() {
 		return priceDatas;
 	}
 
@@ -593,11 +595,11 @@ public class Settings {
 		this.proxyData = proxyData;
 	}
 
-	public Map<Long, Date> getOwnersNextUpdate() {
+	public Long2ObjectOpenHashMap<Date> getOwnersNextUpdate() {
 		return ownersNextUpdate;
 	}
 
-	public Map<Long, String> getOwners() {
+	public Long2ObjectOpenHashMap<String> getOwners() {
 		return owners;
 	}
 
@@ -732,11 +734,11 @@ public class Settings {
 		return set;
 	}
 
-	public Map<Long, String> getFactionWarfareSystemOwners() {
+	public Long2ObjectOpenHashMap<String> getFactionWarfareSystemOwners() {
 		return factionWarfareSystemOwners;
 	}
 
-	public void setFactionWarfareSystemOwners(Map<Long, String> factionWarfareSystemOwners) {
+	public void setFactionWarfareSystemOwners(Long2ObjectOpenHashMap<String> factionWarfareSystemOwners) {
 		this.factionWarfareSystemOwners = factionWarfareSystemOwners;
 	}
 
@@ -776,11 +778,11 @@ public class Settings {
 		this.outbidOrderRange = sellOrderOutbidRange;
 	}
 
-	public Map<Long, Outbid> getMarketOrdersOutbid() {
+	public Long2ObjectOpenHashMap<Outbid> getMarketOrdersOutbid() {
 		return marketOrdersOutbid;
 	}
 
-	public void setMarketOrdersOutbid(Map<Long, Outbid> marketOrdersOutbid) {
+	public void setMarketOrdersOutbid(Long2ObjectOpenHashMap<Outbid> marketOrdersOutbid) {
 		this.marketOrdersOutbid = marketOrdersOutbid;
 	}
 

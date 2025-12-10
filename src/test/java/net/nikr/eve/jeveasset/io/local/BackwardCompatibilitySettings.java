@@ -21,6 +21,8 @@
 
 package net.nikr.eve.jeveasset.io.local;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.io.File;
@@ -180,14 +182,14 @@ public class BackwardCompatibilitySettings extends FakeSettings implements Setti
 	}
 
 	@Override
-	public Map<Long, String> getOwners() {
+	public Long2ObjectOpenHashMap<String> getOwners() {
 		ok.put(Function.GET_OWNERS, true);
-		return new HashMap<>();
+		return new Long2ObjectOpenHashMap<>();
 	}
 
 	@Override
-	public Map<Long, Date> getOwnersNextUpdate() {
-		return new HashMap<>();
+	public Long2ObjectOpenHashMap<Date> getOwnersNextUpdate() {
+		return new Long2ObjectOpenHashMap<>();
 	}
 
 	@Override
@@ -255,15 +257,15 @@ public class BackwardCompatibilitySettings extends FakeSettings implements Setti
 	}
 
 	@Override
-	public Map<Long, UserItem<Long, String>> getUserItemNames() {
+	public Long2ObjectOpenHashMap<UserItem<Long, String>> getUserItemNames() {
 		ok.put(Function.GET_USER_ITEM_NAMES, true);
-		return new HashMap<>();
+		return new Long2ObjectOpenHashMap<>();
 	}
 
 	@Override
-	public Map<Integer, UserItem<Integer, Double>> getUserPrices() {
+	public Int2ObjectOpenHashMap<UserItem<Integer, Double>> getUserPrices() {
 		ok.put(Function.GET_USER_PRICES, true);
-		return new HashMap<>();
+		return new Int2ObjectOpenHashMap<>();
 	}
 
 	@Override

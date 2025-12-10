@@ -21,6 +21,8 @@
 package net.nikr.eve.jeveasset.gui.tabs.stockpile;
 
 import ca.odell.glazedlists.EventList;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -55,12 +57,12 @@ import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 
 public class StockpileData extends TableData {
 
-	private Map<Long, String> ownersName;
-	private final Map<Stockpile, Map<Integer, Set<MyContractItem>>> contractItems = new HashMap<>();
-	private final Map<Stockpile, Map<Integer, Set<MyAsset>>> assets = new HashMap<>();
-	private final Map<Integer, Set<MyMarketOrder>> marketOrders = new HashMap<>();
-	private final Map<Integer, Set<MyIndustryJob>> industryJobs = new HashMap<>();
-	private final Map<Integer, Set<MyTransaction>> transactions = new HashMap<>();
+	private Long2ObjectOpenHashMap<String> ownersName;
+	private final Map<Stockpile, Int2ObjectOpenHashMap<Set<MyContractItem>>> contractItems = new HashMap<>();
+	private final Map<Stockpile, Int2ObjectOpenHashMap<Set<MyAsset>>> assets = new HashMap<>();
+	private final Int2ObjectOpenHashMap<Set<MyMarketOrder>> marketOrders = new Int2ObjectOpenHashMap<>();
+	private final Int2ObjectOpenHashMap<Set<MyIndustryJob>> industryJobs = new Int2ObjectOpenHashMap<>();
+	private final Int2ObjectOpenHashMap<Set<MyTransaction>> transactions = new Int2ObjectOpenHashMap<>();
 
 	public StockpileData(Program program) {
 		super(program);
@@ -109,7 +111,7 @@ public class StockpileData extends TableData {
 
 	public void updateOwners() {
 		//Owners Look-Up
-		ownersName = new HashMap<>();
+		ownersName = new Long2ObjectOpenHashMap<>();
 		for (OwnerType owner : profileManager.getOwnerTypes()) {
 			ownersName.put(owner.getOwnerID(), owner.getOwnerName());
 		}
@@ -120,7 +122,7 @@ public class StockpileData extends TableData {
 		Set<String> owners = new HashSet<>();
 		for (StockpileFilter filter : stockpile.getFilters()) {
 			for (Long ownerID : filter.getOwnerIDs()) {
-				String owner = ownersName.get(ownerID);
+				String owner = ownersName.get(ownerID.longValue());
 				if (owner != null) {
 					owners.add(owner);
 				}
@@ -535,10 +537,10 @@ public class StockpileData extends TableData {
 		}
 	}
 
-	private <E> Map<Integer, Set<E>> get(Map<Stockpile, Map<Integer, Set<E>>> map, Stockpile key) {
-		Map<Integer, Set<E>> value = map.get(key);
+	private <E> Int2ObjectOpenHashMap<Set<E>> get(Map<Stockpile, Int2ObjectOpenHashMap<Set<E>>> map, Stockpile key) {
+		Int2ObjectOpenHashMap<Set<E>> value = map.get(key);
 		if (value == null) {
-			value = new HashMap<>();
+			value = new Int2ObjectOpenHashMap<>();
 			map.put(key, value);
 		}
 		return value;

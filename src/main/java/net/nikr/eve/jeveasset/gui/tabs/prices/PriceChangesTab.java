@@ -31,6 +31,7 @@ import ca.odell.glazedlists.swing.TableComparatorChooser;
 import com.github.lgooddatepicker.optionalusertools.DateChangeListener;
 import com.github.lgooddatepicker.optionalusertools.DateVetoPolicy;
 import com.github.lgooddatepicker.zinternaltools.DateChangeEvent;
+import it.unimi.dsi.fastutil.ints.Int2LongOpenHashMap;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.ParseException;
@@ -40,8 +41,6 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.NavigableSet;
 import java.util.Objects;
 import java.util.TreeSet;
@@ -105,7 +104,7 @@ public class PriceChangesTab extends JMainTabSecondary {
 	private final DefaultEventSelectionModel<PriceChange> selectionModel;
 
 	//Date
-	private Map<Integer, Long> ownedTypeIDs;
+	private Int2LongOpenHashMap ownedTypeIDs;
 	private NavigableSet<String> priceChangesDate = new TreeSet<>();
 
 	public static final String NAME = "pricechange"; //Not to be changed!
@@ -227,7 +226,7 @@ public class PriceChangesTab extends JMainTabSecondary {
 	public void updateData() {
 		boolean setDefaults = ownedTypeIDs == null; //First run
 		//Owned
-		ownedTypeIDs = new HashMap<>();		
+		ownedTypeIDs = new Int2LongOpenHashMap();
 		for (MyAsset asset : program.getProfileData().getAssetsList()) {
 			add(ownedTypeIDs, asset.getTypeID(), asset.getItemCount());
 		}
@@ -286,8 +285,8 @@ public class PriceChangesTab extends JMainTabSecondary {
 		return new ArrayList<>(); //No Location
 	}
 
-		private void add(Map<Integer, Long> priceTypeIDs, Integer typeID, Long count) {
-		Long previous = priceTypeIDs.getOrDefault(typeID, 0L);
+	private void add(Int2LongOpenHashMap priceTypeIDs, int typeID, long count) {
+		long previous = priceTypeIDs.getOrDefault(typeID, 0L);
 		priceTypeIDs.put(typeID, previous + count);
 	}
 

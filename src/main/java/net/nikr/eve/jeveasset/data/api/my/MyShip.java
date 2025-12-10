@@ -54,8 +54,9 @@ public class MyShip implements Comparable<MyShip>, LocationType {
 
 		this.typeName = ApiIdConverter.getItemUpdate(typeID).getTypeName();
 
-		if (Settings.get().getEveNames().get(itemID) != null) {
-			this.eveName = Settings.get().getEveNames().get(itemID);
+		long itemIDLong = itemID.longValue();
+		if (Settings.get().getEveNames().get(itemIDLong) != null) {
+			this.eveName = Settings.get().getEveNames().get(itemIDLong);
 			this.name = this.eveName + " (" + this.typeName + ")";
 		} else {
 			this.eveName = "";

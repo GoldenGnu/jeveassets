@@ -21,11 +21,11 @@
 
 package net.nikr.eve.jeveasset.gui.shared.menu;
 
+import it.unimi.dsi.fastutil.ints.Int2DoubleMap;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import javax.swing.JMenuItem;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.sde.Item;
@@ -77,13 +77,14 @@ public class JMenuPrice<T> extends JAutoMenu<T> {
 
 	private List<UserItem<Integer, Double>> createList() {
 		List<UserItem<Integer, Double>> itemPrices = new ArrayList<>();
-		for (Map.Entry<Integer, Double> entry : menuData.getPrices().entrySet()) {
-			Item item = ApiIdConverter.getItem(Math.abs(entry.getKey()));
+		for (Int2DoubleMap.Entry entry : menuData.getPrices().int2DoubleEntrySet()) {
+			int typeID = entry.getIntKey();
+			Item item = ApiIdConverter.getItem(Math.abs(typeID));
 			String name = "";
 			if (!item.isEmpty()) {
 				if (item.isBlueprint()) {
 					//Blueprint
-					if (entry.getKey() < 0) {
+					if (typeID < 0) {
 						//Copy
 						name = item.getTypeName() + " (BPC)";
 					} else {
@@ -95,7 +96,7 @@ public class JMenuPrice<T> extends JAutoMenu<T> {
 					name = item.getTypeName();
 				}
 			}
-			itemPrices.add(new UserPrice(entry.getValue(), entry.getKey(), name));
+			itemPrices.add(new UserPrice(entry.getDoubleValue(), typeID, name));
 		}
 		return itemPrices;
 	}

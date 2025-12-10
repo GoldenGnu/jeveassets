@@ -20,9 +20,9 @@
  */
 package net.nikr.eve.jeveasset.data.settings;
 
+import it.unimi.dsi.fastutil.ints.Int2DoubleOpenHashMap;
+import it.unimi.dsi.fastutil.ints.Int2FloatOpenHashMap;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import static net.nikr.eve.jeveasset.data.settings.Settings.getNow;
 import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
@@ -250,8 +250,8 @@ public class ManufacturingSettings {
 		}
 	}
 
-	private Map<Integer, Double> prices = new HashMap<>(); //Adjusted Prices
-	private Map<Integer, Float> systems = new HashMap<>(); //System Indexs
+	private Int2DoubleOpenHashMap prices = new Int2DoubleOpenHashMap(); //Adjusted Prices
+	private Int2FloatOpenHashMap systems = new Int2FloatOpenHashMap(); //System Indexs
 	private Date nextUpdate = getNow();
 	//Defaults
 	private int systemID = 30000142; //Jita for now
@@ -261,19 +261,19 @@ public class ManufacturingSettings {
 	private ManufacturingSecurity security = ManufacturingSecurity.getDefault();
 	private double tax = 0;
 
-	public Map<Integer, Double> getPrices() {
+	public Int2DoubleOpenHashMap getPrices() {
 		return prices;
 	}
 
-	public void setPrices(Map<Integer, Double> prices) {
+	public void setPrices(Int2DoubleOpenHashMap prices) {
 		this.prices = prices;
 	}
 
-	public Map<Integer, Float> getSystems() {
+	public Int2FloatOpenHashMap getSystems() {
 		return systems;
 	}
 
-	public void setSystems(Map<Integer, Float> systems) {
+	public void setSystems(Int2FloatOpenHashMap systems) {
 		this.systems = systems;
 	}
 

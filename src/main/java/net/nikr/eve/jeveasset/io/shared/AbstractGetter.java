@@ -20,11 +20,11 @@
  */
 package net.nikr.eve.jeveasset.io.shared;
 
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -356,8 +356,8 @@ public abstract class AbstractGetter<O extends OwnerType> implements Runnable {
 		return parts;
 	}
 
-	protected final Map<Long, MyAsset> getIDs(OwnerType owner) {
-		Map<Long, MyAsset> itemMap = new HashMap<>();
+	protected final Long2ObjectOpenHashMap<MyAsset> getIDs(OwnerType owner) {
+		Long2ObjectOpenHashMap<MyAsset> itemMap = new Long2ObjectOpenHashMap<>();
 		ArrayList<MyAsset> assets;
 		synchronized(owner) {
 			assets = new ArrayList<>(owner.getAssets());
@@ -366,7 +366,7 @@ public abstract class AbstractGetter<O extends OwnerType> implements Runnable {
 		return itemMap;
 	}
 
-	private void addItemIDs(Map<Long, MyAsset> itemIDs, List<MyAsset> assets) {
+	private void addItemIDs(Long2ObjectOpenHashMap<MyAsset> itemIDs, List<MyAsset> assets) {
 		for (MyAsset asset : assets) {
 			if ((asset.getItem().isContainer()
 					|| asset.getItem().getGroup().equals(Item.GROUP_BIOMASS)
@@ -374,7 +374,7 @@ public abstract class AbstractGetter<O extends OwnerType> implements Runnable {
 					|| asset.getItem().isShip()
 					|| asset.getItem().getCategory().equals(Item.CATEGORY_STRUCTURE))
 					&& asset.isSingleton()) {
-				itemIDs.put(asset.getItemID(), asset);
+				itemIDs.put(asset.getItemID().longValue(), asset);
 			}
 			addItemIDs(itemIDs, asset.getAssets());
 		}
