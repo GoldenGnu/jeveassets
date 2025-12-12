@@ -40,6 +40,7 @@ import javax.swing.JMenu;
 import javax.swing.JPopupMenu;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JScrollPane;
+import javax.swing.Timer;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
 import net.nikr.eve.jeveasset.data.api.raw.RawIndustryJob.IndustryJobStatus;
@@ -71,6 +72,7 @@ public class IndustryJobsTab extends JMainTabPrimary {
 	private final JStatusLabel jCount;
 	private final JStatusLabel jInventionSuccess;
 	private final JStatusLabel jManufactureOutputValue;
+	private final Timer updateTimeLeftColumn;
 
 	//Table
 	private final EventList<MyIndustryJob> eventList;
@@ -130,6 +132,21 @@ public class IndustryJobsTab extends JMainTabPrimary {
 		jCount = StatusPanel.createLabel(TabsJobs.get().count(), Images.EDIT_ADD.getIcon(), AutoNumberFormat.ITEMS);
 		this.addStatusbarLabel(jCount);
 
+		updateTimeLeftColumn = new Timer(1000, new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				for (int column = 0; column < jTable.getColumnCount(); column++) {
+					String columnName = (String) jTable.getTableHeader().getColumnModel().getColumn(column).getHeaderValue();
+					if (columnName.equals(IndustryJobTableFormat.TIME_LEFT.getColumnName())) {
+						for (int row = 0; row < jTable.getRowCount(); row++) {
+							tableModel.fireTableCellUpdated(row, column);
+						}
+						break;
+					}
+				}
+			}
+		});
+
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()
 				.addComponent(filterControl.getPanel())
@@ -172,6 +189,14 @@ public class IndustryJobsTab extends JMainTabPrimary {
 			return null;
 		}
 		return tableModel.getElementAt(index);
+	}
+
+	public void tabChanged() {
+		if (program.getMainWindow().getSelectedTab().equals(this)) {
+			updateTimeLeftColumn.start();
+		} else {
+			updateTimeLeftColumn.stop();
+		}
 	}
 
 	private class JobsTableMenu implements TableMenu<MyIndustryJob> {
