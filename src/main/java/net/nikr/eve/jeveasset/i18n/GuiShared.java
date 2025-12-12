@@ -94,6 +94,8 @@ public abstract class GuiShared extends Bundle {
 	public abstract String cut();
 	public abstract String delete();
 	public abstract String dotlan();
+	public abstract String durationDone();
+	public abstract String durationNever();
 	public abstract String edit();
 	public abstract String emptyString();
 	public abstract String errorLoadingSettingsMsg();
