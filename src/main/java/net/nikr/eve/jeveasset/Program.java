@@ -1088,6 +1088,9 @@ public class Program implements ActionListener {
 	 */
 	public void tabChanged() {
 		getStatusPanel().tabChanged();
+		if (industryJobsTab != null) {
+			industryJobsTab.tabChanged();
+		}
 		updateTableMenu();
 	}
 
