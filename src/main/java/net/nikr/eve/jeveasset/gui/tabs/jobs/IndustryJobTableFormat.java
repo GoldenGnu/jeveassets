@@ -25,6 +25,7 @@ import java.util.Comparator;
 import java.util.Date;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
+import net.nikr.eve.jeveasset.gui.shared.table.containers.Duration;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.YesNo;
 import net.nikr.eve.jeveasset.i18n.TabsJobs;
 
@@ -172,6 +173,16 @@ public enum IndustryJobTableFormat implements EnumTableColumn<MyIndustryJob> {
 		@Override
 		public Object getColumnValue(final MyIndustryJob from) {
 			return from.getCompletedDate();
+		}
+	},
+	TIME_LEFT(Duration.class) {
+		@Override
+		public String getColumnName() {
+			return TabsJobs.get().columnTimeLeft();
+		}
+		@Override
+		public Object getColumnValue(final MyIndustryJob from) {
+			return from.getTimeLeft();
 		}
 	},
 	PAUSE_DATE(Date.class) {
