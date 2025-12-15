@@ -52,7 +52,7 @@ import net.nikr.eve.jeveasset.data.settings.types.TagsType;
 import net.nikr.eve.jeveasset.gui.shared.components.JDropDownButton;
 import net.nikr.eve.jeveasset.gui.shared.table.ColumnManager;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
-import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
+import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.gui.tabs.tree.TreeAsset;
 
 
@@ -189,7 +189,7 @@ public class MenuManager<T extends Enum<T> & EnumTableColumn<Q>, Q> {
 		assets = MyAsset.class.equals(clazz);
 		tree = TreeAsset.class.equals(clazz);
 		transactions = MyTransaction.class.isAssignableFrom(clazz);
-		stockpile = Stockpile.StockpileItem.class.isAssignableFrom(clazz);
+		stockpile = StockpileItem.class.isAssignableFrom(clazz);
 		locationSupported = LocationType.class.isAssignableFrom(clazz) || LocationsType.class.isAssignableFrom(clazz);
 		corporationSupported = CorporationType.class.isAssignableFrom(clazz);
 		jumpsSupported = LocationType.class.isAssignableFrom(clazz);

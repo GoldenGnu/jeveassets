@@ -162,7 +162,7 @@ public class JMenuStockpile<T> extends JAutoMenu<T> {
 					return null; //Cancel
 				}
 			}
-			if (item.getItem().isFormula() && formulaSelect == null) {
+			if (item.isFormula() && formulaSelect == null) {
 				formulaSelect = getFormulaSelect(program);
 				if (formulaSelect == null) {
 					return null; //Cancel
