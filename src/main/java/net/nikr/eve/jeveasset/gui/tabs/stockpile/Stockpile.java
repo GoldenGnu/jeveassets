@@ -1252,13 +1252,15 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 		}
 
 		public double getPercentNeeded() {
-			double percent;
-			if (getCountNow() == 0) {
-				percent = 0;
+			long countNow = getCountNow();
+			long countMinimumMultiplied = getCountMinimumMultiplied();
+			if (countMinimumMultiplied == 0) {
+				return 100;
+			} else if (countNow == 0 || countMinimumMultiplied == 0) {
+				return 0;
 			} else {
-				percent = getCountNow() / ((double) getCountMinimumMultiplied());
+				return countNow / ((double) getCountMinimumMultiplied());
 			}
-			return percent;
 		}
 
 		public long getInventoryCountNow() {
