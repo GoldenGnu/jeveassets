@@ -216,7 +216,7 @@ public class SlotsTab extends JMainTabSecondary {
 		this.addStatusbarLabel(jManufacturingFree);
 		jManufacturingActive = StatusPanel.createLabel(TabsSlots.get().columnManufacturingActive(), Images.UPDATE_WORKING.getIcon(), AutoNumberFormat.LONG);
 		this.addStatusbarLabel(jManufacturingActive);
-		jManufacturingMax = StatusPanel.createLabel(TabsSlots.get().columnManufacturingDone(), Images.UPDATE_DONE_OK.getIcon(), AutoNumberFormat.LONG);
+		jManufacturingMax = StatusPanel.createLabel(TabsSlots.get().columnManufacturingMax(), Images.UPDATE_DONE_OK.getIcon(), AutoNumberFormat.LONG);
 		this.addStatusbarLabel(jManufacturingMax);
 
 		jResearch = StatusPanel.createIcon(Images.MISC_INVENTION.getIcon(), TabsSlots.get().research());
