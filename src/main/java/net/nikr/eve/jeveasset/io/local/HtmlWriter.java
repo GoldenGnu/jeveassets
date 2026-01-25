@@ -22,8 +22,9 @@
 package net.nikr.eve.jeveasset.io.local;
 
 import java.io.BufferedWriter;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -54,8 +55,7 @@ public final class HtmlWriter {
 	}
 
 	private boolean write(final String filename, final List<Map<EnumTableColumn<?>, String>> data, final List<EnumTableColumn<?>> header, final List<Object> items, final boolean htmlStyled, final int htmlRepeatHeader, final boolean treetable) {
-		try {
-			BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
+		try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filename), "UTF-8"))) {
 			if (htmlStyled) {
 				writeHeader(writer);
 			} else {
@@ -68,7 +68,6 @@ public final class HtmlWriter {
 			if (htmlStyled) {
 				writeFooter(writer);
 			}
-			writer.close();
 		} catch (IOException ex) {
 			LOG.warn("Html file not saved");
 			return false;
