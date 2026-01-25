@@ -22,8 +22,9 @@
 package net.nikr.eve.jeveasset.io.local;
 
 import java.io.BufferedWriter;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -48,6 +49,9 @@ public final class SqlWriter {
 	private final DecimalFormat LONG_FORMAT = new DecimalFormat("0", new DecimalFormatSymbols(Locale.ENGLISH));
 	private final int MAX_LENGTH = 944000; //a little less than 1MB
 	private final DateFormat SQL_DATETIME_FORMATTER = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+	private final String SQL_IDENTIFIER = "\""; //`
+	private final String SQL_STRING = "'";
+	private final String SQL_NULL = "NULL";
 
 	private SqlWriter() { }
 
@@ -57,12 +61,10 @@ public final class SqlWriter {
 	}
 
 	private boolean write(final String filename, final List<Map<EnumTableColumn<?>, Object>> rows, final List<EnumTableColumn<?>> header, final String tableName, final boolean dropTable, final boolean createTable, final boolean extendedInserts) {
-		try {
-			BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
+		try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filename), "UTF-8"))) {
 			writeComment(writer);
 			writeTable(writer, rows, header, tableName, dropTable, createTable);
 			writeRows(writer, rows, header, tableName, extendedInserts);
-			writer.close();
 		} catch (IOException ex) {
 			LOG.warn("SQL file not saved");
 			return false;
@@ -96,10 +98,10 @@ public final class SqlWriter {
 	}
 	private void writeTable(final BufferedWriter writer, final List<Map<EnumTableColumn<?>, Object>> rows, final List<EnumTableColumn<?>> header, final String tableName, final boolean dropTable, final boolean createTable) throws IOException {
 		if (dropTable) {
-			writer.write("DROP TABLE IF EXISTS `" + tableName + "`;\r\n");
+			writer.write("DROP TABLE IF EXISTS " + SQL_IDENTIFIER + tableName + SQL_IDENTIFIER + ";\r\n");
 		}
 		if (createTable && !rows.isEmpty()) {
-			writer.write("CREATE TABLE IF NOT EXISTS `" + tableName + "` (\r\n");
+			writer.write("CREATE TABLE IF NOT EXISTS " + SQL_IDENTIFIER + tableName + SQL_IDENTIFIER + " (\r\n");
 			boolean first = true;
 			for (EnumTableColumn<?> column : header) {
 				if (first) {
@@ -107,17 +109,17 @@ public final class SqlWriter {
 				} else {
 					writer.write(",\r\n");
 				}
-				writer.write("`" + column.name() + "` " + getType(rows.get(0).get(column)));
+				writer.write(SQL_IDENTIFIER + column.name() + SQL_IDENTIFIER + " " + getType(rows.get(0).get(column)));
 			}
 			writer.write("\r\n");
-			writer.write(") ENGINE=MyISAM  DEFAULT CHARSET=utf8 ;\r\n");
+			writer.write(");\r\n");
 		}
 	}
 
 	private void writeRows(final BufferedWriter writer, final List<Map<EnumTableColumn<?>, Object>> rows, final List<EnumTableColumn<?>> header, final String tableName, final boolean extendedInserts) throws IOException {
 		if (!rows.isEmpty()) {
 			//Create INSERT statement
-			String insert = "INSERT INTO `" + tableName + "` (";
+			String insert = "INSERT INTO " + SQL_IDENTIFIER + tableName + SQL_IDENTIFIER + " (";
 			boolean firstInsert = true;
 			for (EnumTableColumn<?> column : header) {
 				if (firstInsert) {
@@ -125,7 +127,7 @@ public final class SqlWriter {
 				} else {
 					insert = insert + ", ";
 				}
-				insert = insert + "`" + column.name() + "`";
+				insert = insert + SQL_IDENTIFIER + column.name() + SQL_IDENTIFIER;
 			}
 			insert = insert + ") VALUES\r\n";
 			if (extendedInserts) {
@@ -175,10 +177,10 @@ public final class SqlWriter {
 
 	private String format(final Object object) {
 		if (object == null) {
-			return "''";
+			return SQL_NULL;
 		} else if (object instanceof HierarchyColumn) {
 			HierarchyColumn column = (HierarchyColumn) object;
-			return "'" + column.getExport().replace("'", "\\'") + "'";
+			return SQL_STRING + column.getExport().replace("'", "\\'") + SQL_STRING;
 		} else if (object instanceof Double) {
 			//Double
 			return DOUBLE_FORMAT.format(object);
@@ -190,14 +192,11 @@ public final class SqlWriter {
 			return LONG_FORMAT.format(object);
 		} else if (object instanceof Date) {
 			//Date
-			return "'" + SQL_DATETIME_FORMATTER.format(object) + "'";
+			return SQL_STRING + SQL_DATETIME_FORMATTER.format(object) + SQL_STRING;
+		} else if (object instanceof String) {
+			return SQL_STRING + ((String)object).replace("'", "''") + SQL_STRING;
 		} else { //String etc.
-			String string = String.valueOf(object);
-			if (string == null) {
-				return "''";
-			} else {
-				return "'" + String.valueOf(object).replace("'", "''") + "'";
-			}
+			return SQL_STRING + String.valueOf(object).replace("'", "''") + SQL_STRING;
 		}
 	}
 }
