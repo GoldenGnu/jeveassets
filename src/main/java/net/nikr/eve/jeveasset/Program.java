@@ -100,6 +100,7 @@ import net.nikr.eve.jeveasset.gui.tabs.orders.OutbidProcesser.OutbidProcesserOut
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewTab;
 import net.nikr.eve.jeveasset.gui.tabs.prices.PriceChangesTab;
 import net.nikr.eve.jeveasset.gui.tabs.prices.PriceHistoryTab;
+import net.nikr.eve.jeveasset.gui.tabs.ratting.RattingTrackerTab;
 import net.nikr.eve.jeveasset.gui.tabs.reprocessed.ReprocessedTab;
 import net.nikr.eve.jeveasset.gui.tabs.routing.RoutingTab;
 import net.nikr.eve.jeveasset.gui.tabs.skills.SkillsTab;
@@ -159,6 +160,7 @@ public class Program implements ActionListener {
 	private RoutingTab routingTab;
 	private MarketOrdersTab marketOrdersTab;
 	private JournalTab journalTab;
+	private RattingTrackerTab rattingTrackerTab;
 	private TransactionTab transactionsTab;
 	private IndustryJobsTab industryJobsTab;
 	private SlotsTab slotsTab;
@@ -249,6 +251,9 @@ public class Program implements ActionListener {
 		LOG.info("Loading: Journal Tab");
 		journalTab = new JournalTab(this);
 		SplashUpdater.setProgress(60);
+		LOG.info("Loading: Ratting Tracker Tab");
+		rattingTrackerTab = new RattingTrackerTab(this);
+		SplashUpdater.setProgress(61);
 		LOG.info("Loading: Transactions Tab");
 		transactionsTab = new TransactionTab(this);
 		SplashUpdater.setProgress(62);
@@ -1080,6 +1085,8 @@ public class Program implements ActionListener {
 			mainWindow.addTab(marketOrdersTab);
 		} else if (MainMenuAction.JOURNAL.name().equals(e.getActionCommand())) {
 			mainWindow.addTab(journalTab);
+		} else if (MainMenuAction.RATTING_TRACKER.name().equals(e.getActionCommand())) {
+			mainWindow.addTab(rattingTrackerTab);
 		} else if (MainMenuAction.TRANSACTION.name().equals(e.getActionCommand())) {
 			mainWindow.addTab(transactionsTab);
 		} else if (MainMenuAction.INDUSTRY_JOBS.name().equals(e.getActionCommand())) {

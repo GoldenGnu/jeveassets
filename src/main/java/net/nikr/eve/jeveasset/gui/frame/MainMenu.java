@@ -63,6 +63,7 @@ public class MainMenu extends JMenuBar {
 		LINK_WIKI,
 		LINK_DISCORD,
 		ROUTING,
+		RATTING_TRACKER,
 		STOCKPILE,
 		UPDATE,
 		UPDATE_STRUCTURE,
@@ -254,6 +255,12 @@ public class MainMenu extends JMenuBar {
 		menuItem = new JMenuItem(GuiFrame.get().routing());
 		menuItem.setIcon(Images.TOOL_ROUTING.getIcon());
 		menuItem.setActionCommand(MainMenuAction.ROUTING.name());
+		menuItem.addActionListener(program);
+		submenu.add(menuItem);
+
+		menuItem = new JMenuItem(GuiFrame.get().rattingTracker());
+		menuItem.setIcon(Images.TOOL_JOURNAL.getIcon());
+		menuItem.setActionCommand(MainMenuAction.RATTING_TRACKER.name());
 		menuItem.addActionListener(program);
 		submenu.add(menuItem);
 

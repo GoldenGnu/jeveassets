@@ -77,6 +77,7 @@ public abstract class GuiFrame extends Bundle {
 	public abstract String programUpdateText();
 	public abstract String programUpdateTip();
 	public abstract String readme();
+	public abstract String rattingTracker();
 	public abstract String reprocessed();
 	public abstract String routing();
 	public abstract String ship();
