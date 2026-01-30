@@ -38,6 +38,7 @@ import java.util.Set;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JOptionPane;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
@@ -80,6 +81,8 @@ public class JournalTab extends JMainTabPrimary implements TagUpdate {
 
 	private final JAutoColumnTable jTable;
 	private final JButton jClearNew;
+	private final JButton jChart;
+	private final JournalChartDialog chartDialog;
 
 	//Table
 	private final JournalFilterControl filterControl;
@@ -109,6 +112,15 @@ public class JournalTab extends JMainTabPrimary implements TagUpdate {
 			}
 		});
 		jToolBar.addButton(jClearNew);
+
+		jChart = new JButton(TabsJournal.get().chart(), Images.TOOL_MINING_GRAPH.getIcon());
+		jChart.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				showChart();
+			}
+		});
+		jToolBar.addButton(jChart);
 
 		//Table Format
 		tableFormat = TableFormatFactory.journalTableFormat();
@@ -143,6 +155,7 @@ public class JournalTab extends JMainTabPrimary implements TagUpdate {
 		filterControl = new JournalFilterControl(sortedList);
 		//Menu
 		installTableTool(new JournalTableMenu(), tableFormat, tableModel, jTable, filterControl, MyJournal.class);
+		chartDialog = new JournalChartDialog(program);
 
 		//Positive
 		jPositiveTotal = StatusPanel.createLabel(TabsJournal.get().totalPositive(), Images.ORDERS_SELL.getIcon(), JMenuInfo.AutoNumberFormat.ISK);
@@ -167,6 +180,21 @@ public class JournalTab extends JMainTabPrimary implements TagUpdate {
 				.addComponent(jToolBar, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
 				.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
 		);
+	}
+
+	private void showChart() {
+		List<MyJournal> journals = new ArrayList<>();
+		filterList.getReadWriteLock().readLock().lock();
+		try {
+			journals.addAll(filterList);
+		} finally {
+			filterList.getReadWriteLock().readLock().unlock();
+		}
+		if (journals.isEmpty()) {
+			JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsJournal.get().noDataFound(), TabsJournal.get().chartTitle(), JOptionPane.PLAIN_MESSAGE);
+			return;
+		}
+		chartDialog.showChart(journals);
 	}
 
 	@Override

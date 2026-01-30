@@ -53,6 +53,8 @@ import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJobTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJobsTab;
 import net.nikr.eve.jeveasset.gui.tabs.mining.ExtractionsTab;
 import net.nikr.eve.jeveasset.gui.tabs.mining.ExtractionsTableFormat;
+import net.nikr.eve.jeveasset.gui.tabs.journal.JournalTab;
+import net.nikr.eve.jeveasset.gui.tabs.journal.JournalTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.orders.MarketOrdersTab;
 import net.nikr.eve.jeveasset.gui.tabs.orders.MarketTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.orders.Outbid;
@@ -62,6 +64,7 @@ import net.nikr.eve.jeveasset.gui.tabs.transaction.TransactionTab;
 import net.nikr.eve.jeveasset.gui.tabs.transaction.TransactionTableFormat;
 import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 import net.nikr.eve.jeveasset.i18n.TabsJobs;
+import net.nikr.eve.jeveasset.i18n.TabsJournal;
 import net.nikr.eve.jeveasset.i18n.TabsMining;
 import net.nikr.eve.jeveasset.i18n.TabsOrders;
 import net.nikr.eve.jeveasset.i18n.TabsTransaction;
@@ -327,6 +330,14 @@ public class Settings {
 		filter.add(new Filter(Filter.LogicType.AND, MarketTableFormat.STATUS, Filter.CompareType.EQUALS, TabsOrders.get().statusActive()));
 		marketOrdersDefaultFilters.put(TabsOrders.get().activeSellOrders(), filter);
 		defaultTableFilters.put(MarketOrdersTab.NAME, marketOrdersDefaultFilters);
+		//Journal: Default Filters
+		Map<String, List<Filter>> journalDefaultFilters = new HashMap<>();
+		filter = new ArrayList<>();
+		filter.add(new Filter(Filter.LogicType.OR, JournalTableFormat.REF_TYPE, Filter.CompareType.CONTAINS, "Bounty"));
+		filter.add(new Filter(Filter.LogicType.OR, JournalTableFormat.REF_TYPE, Filter.CompareType.CONTAINS, "ESS"));
+		filter.add(new Filter(Filter.LogicType.AND, JournalTableFormat.DATE, Filter.CompareType.LAST_DAYS, "7"));
+		journalDefaultFilters.put(TabsJournal.get().rattingIncome(), filter);
+		defaultTableFilters.put(JournalTab.NAME, journalDefaultFilters);
 		//Transactions: Default Filters
 		Map<String, List<Filter>> transactionsDefaultFilters = new HashMap<>();
 		filter = new ArrayList<>();
