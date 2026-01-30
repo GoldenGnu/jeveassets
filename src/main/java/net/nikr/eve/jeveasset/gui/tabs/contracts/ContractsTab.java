@@ -153,11 +153,11 @@ public class ContractsTab extends JMainTabPrimary {
 		jTable.setCellSelectionEnabled(true);
 		PaddingTableCellRenderer.install(jTable, 3);
 		//Sorting
-		TableComparatorChooser<MyContractItem> install = TableComparatorChooser.install(jTable, sortedListColumn, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
-		install.addSortActionListener(new ActionListener() {
+		TableComparatorChooser<MyContractItem> comparatorChooser = TableComparatorChooser.install(jTable, sortedListColumn, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
+		comparatorChooser.addSortActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				separatorList.setComparator(new SeparatorComparator(install));
+				separatorList.setComparator(new SeparatorComparator(comparatorChooser));
 			}
 		});
 		//Selection Model
@@ -171,7 +171,7 @@ public class ContractsTab extends JMainTabPrimary {
 		//Table Filter
 		filterControl = new ContractsFilterControl(sortedListSeparator);
 		//Menu
-		installTableTool(new ContractsTableMenu(), tableFormat, tableModel, jTable, filterControl, MyContractItem.class);
+		installTableTool(new ContractsTableMenu(), tableFormat, comparatorChooser, tableModel, jTable, filterControl, MyContractItem.class);
 		
 		jContractCount = StatusPanel.createLabel(TabsContracts.get().contractCount(), Images.INCLUDE_CONTRACTS.getIcon(), AutoNumberFormat.LONG);
 		addStatusbarLabel(jContractCount);

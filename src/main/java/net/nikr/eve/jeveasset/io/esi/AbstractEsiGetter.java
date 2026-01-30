@@ -49,6 +49,7 @@ import net.troja.eve.esi.api.CorporationApi;
 import net.troja.eve.esi.api.FactionWarfareApi;
 import net.troja.eve.esi.api.IndustryApi;
 import net.troja.eve.esi.api.LocationApi;
+import net.troja.eve.esi.api.LoyaltyApi;
 import net.troja.eve.esi.api.MarketApi;
 import net.troja.eve.esi.api.PlanetaryInteractionApi;
 import net.troja.eve.esi.api.SkillsApi;
@@ -299,7 +300,11 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner> {
  	}
 
 	public SkillsApi getSkillsApiAuth() {
-		return owner.getSkillsApi();
+		return owner.getSkillsApiAuth();
+ 	}
+
+	public LoyaltyApi getLoyaltyApiAuth() {
+		return owner.getLoyaltyApiAuth();
  	}
 
 	public UniverseApi getUniverseApiOpen() {

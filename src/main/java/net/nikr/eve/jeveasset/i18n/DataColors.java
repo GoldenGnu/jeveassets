@@ -82,6 +82,10 @@ public abstract class DataColors extends Bundle {
 	public abstract String transactionsBought();
 	public abstract String transactionsSold();
 	public abstract String transactionsNew();
+	public abstract String npcStandingNegative();
+	public abstract String npcStandingPositive();
+	public abstract String npcStandingNegativeMiddle();
+	public abstract String npcStandingPositiveMiddle();
 	public abstract String globalBPC();
 	public abstract String globalBPO();
 	public abstract String globalValueNegative();
@@ -111,6 +115,7 @@ public abstract class DataColors extends Bundle {
 	public abstract String groupSlots();
 	public abstract String groupJournal();
 	public abstract String groupTransactions();
+	public abstract String groupNpcStanding();
 	public abstract String groupGlobal();
 	public abstract String groupFilters();
 	public abstract String groupReprocessed();

@@ -58,6 +58,7 @@ import net.nikr.eve.jeveasset.data.settings.PriceDataSettings.PriceMode;
 import net.nikr.eve.jeveasset.data.settings.PriceDataSettings.PriceSource;
 import net.nikr.eve.jeveasset.data.settings.ProxyData;
 import net.nikr.eve.jeveasset.data.settings.ReprocessSettings;
+import net.nikr.eve.jeveasset.data.settings.RouteAvoidSettings;
 import net.nikr.eve.jeveasset.data.settings.RouteResult;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.Settings.SettingFlag;
@@ -90,6 +91,8 @@ import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.SimpleColu
 import net.nikr.eve.jeveasset.gui.shared.table.View;
 import net.nikr.eve.jeveasset.gui.sounds.DefaultSound;
 import net.nikr.eve.jeveasset.gui.sounds.FileSound;
+import net.nikr.eve.jeveasset.gui.tabs.agents.AgentsTab;
+import net.nikr.eve.jeveasset.gui.tabs.agents.AgentsTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.assets.AssetTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.assets.AssetsTab;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractsTab;
@@ -100,6 +103,8 @@ import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJobTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJobsTab;
 import net.nikr.eve.jeveasset.gui.tabs.journal.JournalTab;
 import net.nikr.eve.jeveasset.gui.tabs.journal.JournalTableFormat;
+import net.nikr.eve.jeveasset.gui.tabs.loyalty.LoyaltyPointsTab;
+import net.nikr.eve.jeveasset.gui.tabs.loyalty.LoyaltyPointsTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.mining.ExtractionsTab;
 import net.nikr.eve.jeveasset.gui.tabs.mining.ExtractionsTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.mining.MiningTab;
@@ -121,6 +126,8 @@ import net.nikr.eve.jeveasset.gui.tabs.skills.SkillsTab;
 import net.nikr.eve.jeveasset.gui.tabs.skills.SkillsTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.slots.SlotsTab;
 import net.nikr.eve.jeveasset.gui.tabs.slots.SlotsTableFormat;
+import net.nikr.eve.jeveasset.gui.tabs.standing.NpcStandingTab;
+import net.nikr.eve.jeveasset.gui.tabs.standing.NpcStandingTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter.StockpileContainer;
@@ -370,6 +377,12 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			parseRoutingSettings(routingElement, settings);
 		}
 
+		//Jumps Avoid
+		Element jumpsElement = getNodeOptional(element, "jumpssettings");
+		if (jumpsElement != null) {
+			parseJumpsSettings(jumpsElement, settings);
+		}
+
 		//Tags - Must be loaded before stockpiles (and everything else that uses tags)
 		Element tagsElement = getNodeOptional(element, "tags");
 		if (tagsElement != null) {
@@ -505,6 +518,12 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			parseTableJumps(tableJumpsElement, settings);
 		}
 
+		// Skill Plans
+		Element skillPlansElement = getNodeOptional(element, "skillplans");
+		if (skillPlansElement != null) {
+			parseSkillPlans(skillPlansElement, settings);
+		}
+
 		//Table Filters (Must be loaded before Asset Filters)
 		Element tablefiltersElement = getNodeOptional(element, "tablefilters");
 		if (tablefiltersElement != null) {
@@ -512,9 +531,15 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		}
 
 		//Current Table Filters (Must be loaded before Asset Filters)
-		Element currenttablefiltersElement = getNodeOptional(element, "currenttablefilters");
-		if (currenttablefiltersElement != null) {
-			parseCurrentTableFilters(currenttablefiltersElement, settings);
+		Element currentTableFiltersElement = getNodeOptional(element, "currenttablefilters");
+		if (currentTableFiltersElement != null) {
+			parseCurrentTableFilters(currentTableFiltersElement, settings);
+		}
+
+		//Current Table Filters (Must be loaded before Asset Filters)
+		Element currentTableSortingElement = getNodeOptional(element, "currenttablesorting");
+		if (currentTableSortingElement != null) {
+			parseCurrentTableSorting(currentTableSortingElement, settings);
 		}
 
 		//Asset Filters
@@ -559,6 +584,23 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			parseProxy(proxyElement, settings);
 		}
 		return settings;
+	}
+
+	private void parseSkillPlans(final Element element, final Settings settings) throws XmlException {
+		NodeList planNodes = element.getElementsByTagName("plan");
+		for (int i = 0; i < planNodes.getLength(); i++) {
+			Element planNode = (Element) planNodes.item(i);
+			String name = getString(planNode, "name");
+			Map<Integer, Integer> map = new HashMap<>();
+			NodeList reqNodes = planNode.getElementsByTagName("req");
+			for (int j = 0; j < reqNodes.getLength(); j++) {
+				Element reqNode = (Element) reqNodes.item(j);
+				int typeId = getInt(reqNode, "typeid");
+				int level = getInt(reqNode, "level");
+				map.put(typeId, level);
+			}
+			settings.getSkillPlans().put(name, map);
+		}
 	}
 
 	private void parseOwners(final Element element, final Settings settings) throws XmlException {
@@ -974,7 +1016,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 				Color foreground = getColorOptional(colorNode, "foreground");
 				settings.getColorSettings().setBackground(entry, background);
 				settings.getColorSettings().setForeground(entry, foreground);
-			} catch (IllegalArgumentException ex ) {
+			} catch (IllegalArgumentException ex) {
 				LOG.error(ex.getMessage(), ex);
 			}
 		}
@@ -1001,7 +1043,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			String sound = getString(soundNode, "sound");
 			try {
 				settings.getSoundSettings().put(option, DefaultSound.valueOf(sound));
-			} catch (IllegalArgumentException ex ) {
+			} catch (IllegalArgumentException ex) {
 				File file = new File(FileUtil.getPathSounds(sound));
 				if (file.exists()) {
 					settings.getSoundSettings().put(option, new FileSound(file));
@@ -1033,8 +1075,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		if (displayType != null) {
 			try {
 				trackerSettings.setDisplayType(DisplayType.valueOf(displayType));
-			}
-			catch (IllegalArgumentException e) {
+			} catch (IllegalArgumentException e) {
 				LOG.warn("Could not parse trackersettigns displaytype: " + displayType);
 			}
 		}
@@ -1093,18 +1134,27 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 	}
 
 	private void parseRoutingSettings(Element routingElement, Settings settings) throws XmlException {
-		double secMax = getDouble(routingElement, "securitymaximum");
-		double secMin = getDouble(routingElement, "securityminimum");
-		settings.getRoutingSettings().setSecMax(secMax);
-		settings.getRoutingSettings().setSecMin(secMin);
-		NodeList systemNodes = routingElement.getElementsByTagName("routingsystem");
+		parseRouteAvoidSettings(routingElement, settings.getRoutingSettings().getAvoidSettings());
+		parseRoutes(routingElement, settings.getRoutingSettings().getRoutes());
+	}
+
+	private void parseJumpsSettings(Element jumpsElement, Settings settings) throws XmlException {
+		parseRouteAvoidSettings(jumpsElement, settings.getJumpsAvoidSettings());
+	}
+
+	private void parseRouteAvoidSettings(Element avoidElement, RouteAvoidSettings routeAvoidSettings) throws XmlException {
+		double secMax = getDouble(avoidElement, "securitymaximum");
+		double secMin = getDouble(avoidElement, "securityminimum");
+		routeAvoidSettings.setSecMax(secMax);
+		routeAvoidSettings.setSecMin(secMin);
+		NodeList systemNodes = avoidElement.getElementsByTagName("routingsystem");
 		for (int a = 0; a < systemNodes.getLength(); a++) {
 			Element systemNode = (Element) systemNodes.item(a);
 			long systemID = getLong(systemNode, "id");
 			MyLocation location = ApiIdConverter.getLocation(systemID);
-			settings.getRoutingSettings().getAvoid().put(systemID, new SolarSystem(location));
+			routeAvoidSettings.getAvoid().put(systemID, new SolarSystem(location));
 		}
-		NodeList presetNodes = routingElement.getElementsByTagName("routingpreset");
+		NodeList presetNodes = avoidElement.getElementsByTagName("routingpreset");
 		for (int a = 0; a < presetNodes.getLength(); a++) {
 			Element presetNode = (Element) presetNodes.item(a);
 			String name = getString(presetNode, "name");
@@ -1115,9 +1165,8 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 				long systemID = getLong(systemNode, "id");
 				systemIDs.add(systemID);
 			}
-			settings.getRoutingSettings().getPresets().put(name, systemIDs);
+			routeAvoidSettings.getPresets().put(name, systemIDs);
 		}
-		parseRoutes(routingElement, settings.getRoutingSettings().getRoutes());
 	}
 
 	private void parseRoutes(Element routingElement, Map<String, RouteResult> map) throws XmlException {
@@ -1460,7 +1509,6 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		}
 	}
 
-
 	private void parseTableFormulas(final Element element, final Settings settings) throws XmlException {
 		NodeList formulasNodeList = element.getElementsByTagName("formulas");
 		for (int a = 0; a < formulasNodeList.getLength(); a++) {
@@ -1504,7 +1552,6 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			}
 		}
 	}
-
 
 	/***
 	 * Parse the table filters elements of the settings file.
@@ -1552,7 +1599,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			if (filterNodeList.getLength() == 1) {
 				Element filterNode = (Element) filterNodeList.item(0);
 
-				if(haveAttribute(filterNode, "show")) {
+				if (haveAttribute(filterNode, "show")) {
 					settings.getCurrentTableFiltersShown().put(tableName, getBoolean(filterNode, "show"));
 				} else {
 					settings.getCurrentTableFiltersShown().put(tableName, true);
@@ -1567,6 +1614,23 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 				LOG.warn(tableName + " current filter empty");
 			}
 			settings.getCurrentTableFilters().put(tableName, filters);
+		}
+	}
+
+	/***
+	 * Parse the current table filters elements of the settings file.
+	 *
+	 * @param element The 'currenttablesorting' element of the xml.
+	 * @param settings The settings to be loaded to.
+	 * @throws XmlException
+	 */
+	private void parseCurrentTableSorting(final Element element, final Settings settings) throws XmlException {
+		NodeList tableNodeList = element.getElementsByTagName("table");
+		for (int a = 0; a < tableNodeList.getLength(); a++) {
+			Element tableNode = (Element) tableNodeList.item(a);
+			String tableName = getString(tableNode, "name");
+			String sorting = getString(tableNode, "sorting");
+			settings.getCurrentTableSorting().put(tableName, sorting);
 		}
 	}
 
@@ -1720,6 +1784,30 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		} catch (IllegalArgumentException exception) {
 
 		}
+		//Loyalty Points
+		try {
+			if (toolName.equals(LoyaltyPointsTab.NAME)) {
+				return LoyaltyPointsTableFormat.valueOf(column);
+			}
+		} catch (IllegalArgumentException exception) {
+
+		}
+		//Npc Standing 
+		try {
+			if (toolName.equals(NpcStandingTab.NAME)) {
+				return NpcStandingTableFormat.valueOf(column);
+			}
+		} catch (IllegalArgumentException exception) {
+
+		}
+		//Agents
+		try {
+			if (toolName.equals(AgentsTab.NAME)) {
+				return AgentsTableFormat.valueOf(column);
+			}
+		} catch (IllegalArgumentException exception) {
+
+		}
 		//Extractions
 		try {
 			if (toolName.equals(ExtractionsTab.NAME)) {
@@ -1832,7 +1920,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		if (column.equals("Singleton")) { return AssetTableFormat.SINGLETON; }
 		if (column.equals("Total Volume")) { return AssetTableFormat.VOLUME_TOTAL; }
 		return AllColumn.ALL; //Fallback
-	}
+		}
 
 	private CompareType convertMode(final String compareMixed) {
 		String compare = compareMixed.toUpperCase();
@@ -1844,8 +1932,8 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		if (compare.equals("MODE_LESS_THAN")) { return CompareType.LESS_THAN; }
 		if (compare.equals("MODE_GREATER_THAN_COLUMN")) { return CompareType.GREATER_THAN_COLUMN; }
 		if (compare.equals("MODE_LESS_THAN_COLUMN")) { return CompareType.LESS_THAN_COLUMN; }
-		return CompareType.CONTAINS;
-	}
+			return CompareType.CONTAINS;
+		}
 
 	/***
 	 * Old method to process export settings for 6.8.0 and older

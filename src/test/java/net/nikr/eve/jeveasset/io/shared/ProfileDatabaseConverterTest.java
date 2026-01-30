@@ -40,8 +40,10 @@ import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
 import net.nikr.eve.jeveasset.data.api.my.MyExtraction;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
 import net.nikr.eve.jeveasset.data.api.my.MyJournal;
+import net.nikr.eve.jeveasset.data.api.my.MyLoyaltyPoints;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
 import net.nikr.eve.jeveasset.data.api.my.MyMining;
+import net.nikr.eve.jeveasset.data.api.my.MyNpcStanding;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.api.raw.RawAsset;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder;
@@ -273,6 +275,7 @@ public class ProfileDatabaseConverterTest extends TestUtil {
 							|| "locationApi".equals(fieldName)
 							|| "planetaryInteractionApi".equals(fieldName)
 							|| "userInterfaceApi".equals(fieldName)
+							|| "loyaltyApi".equals(fieldName)
 							|| "skillsApi".equals(fieldName)))
 						|| (MyAsset.class.equals(oldClazz)
 							&& ("owner".equals(fieldName)
@@ -284,6 +287,10 @@ public class ProfileDatabaseConverterTest extends TestUtil {
 						|| (MyTransaction.class.equals(oldClazz)
 							&& "owner".equals(fieldName))
 						|| (MyIndustryJob.class.equals(oldClazz)
+							&& "owner".equals(fieldName))
+						|| (MyLoyaltyPoints.class.equals(oldClazz)
+							&& "owner".equals(fieldName))
+						|| (MyNpcStanding.class.equals(oldClazz)
 							&& "owner".equals(fieldName))
 						|| (MyMarketOrder.class.equals(oldClazz)
 							&& ("owner".equals(fieldName)
@@ -344,6 +351,17 @@ public class ProfileDatabaseConverterTest extends TestUtil {
 						|| (MyContract.class.equals(oldClazz)
 							&& ("endLocation".equals(fieldName)
 							|| "startLocation".equals(fieldName)))
+						|| (MyLoyaltyPoints.class.equals(oldClazz)
+							&& "textIcon".equals(fieldName))
+						|| (MyNpcStanding.class.equals(oldClazz)
+							&& ("factionName".equals(fieldName)
+							|| "corporationName".equals(fieldName)
+							|| "ownerTextIcon".equals(fieldName)
+							|| "agentName".equals(fieldName)
+							|| "factionTextIcon".equals(fieldName)
+							|| "corporationTextIcon".equals(fieldName)
+							|| "agentTextIcon".equals(fieldName)
+							))
 						)) {
 						continue;
 					}

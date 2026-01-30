@@ -25,6 +25,9 @@ import ca.odell.glazedlists.GlazedLists;
 import java.awt.Color;
 import java.awt.Component;
 import java.util.Comparator;
+import javax.swing.Icon;
+import net.nikr.eve.jeveasset.data.api.my.MyNpcStanding;
+import net.nikr.eve.jeveasset.data.api.raw.RawNpcStanding;
 import net.nikr.eve.jeveasset.gui.shared.StringComparators;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.ISK;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.ModulePriceValue;
@@ -56,6 +59,10 @@ public interface EnumTableColumn<Q> {
 	public static Comparator<?> getComparator(final Class<?> type) {
 		if (type.equals(String.class)) {
 			return StringComparators.TO_STRING;
+		} else if (type.equals(Icon.class)) {
+			return null; //Not sortable
+		} else if (type.equals(RawNpcStanding.FromType.class)) {
+			return  MyNpcStanding.FROM_TYPE_COMPARATOR;
 		} else if (Comparable.class.isAssignableFrom(type))  {
 			return GlazedLists.comparableComparator();
 		} else if (Component.class.isAssignableFrom(type)

@@ -43,7 +43,7 @@ import org.slf4j.LoggerFactory;
 
 public class AssetAddedReader extends AbstractBackup {
 
-	private static final Logger LOG = LoggerFactory.getLogger(TrackerDataReader.class);
+	private static final Logger LOG = LoggerFactory.getLogger(AssetAddedReader.class);
 
 	public static void load() {
 		AssetAddedReader reader = new AssetAddedReader();

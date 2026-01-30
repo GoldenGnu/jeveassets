@@ -29,7 +29,7 @@ import org.junit.Test;
 public class RawCloneTest extends TestUtil {
 
 	@Test
-	public void rawBlueprintTest() {
+	public void rawCloneTest() {
 		RawUtil.compare(RawClone.class, Clone.class);
 	}
 }

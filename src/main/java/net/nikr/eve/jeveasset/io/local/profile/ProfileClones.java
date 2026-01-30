@@ -47,8 +47,9 @@ public class ProfileClones  extends ProfileTable {
 				+ "	accountid,"
 				+ "	locationid,"
 				+ "	jumpcloneid,"
-				+ "	name)"
-				+ " VALUES (?,?,?,?)";
+				+ "	name,"
+				+ "	active)"
+				+ " VALUES (?,?,?,?,?)";
 		try (PreparedStatement statement = connection.prepareStatement(sql)) {
 			Rows rows = new Rows(statement, esiOwners, new RowSize<EsiOwner>() {
 				@Override
@@ -63,6 +64,7 @@ public class ProfileClones  extends ProfileTable {
 					setAttribute(statement, ++index, rawClone.getLocationID());
 					setAttribute(statement, ++index, rawClone.getJumpCloneID());
 					setAttributeOptional(statement, ++index, rawClone.getName());
+					setAttribute(statement, ++index, rawClone.isActive());
 					rows.addRow();
 				}
 			}
@@ -113,10 +115,12 @@ public class ProfileClones  extends ProfileTable {
 				long locationID = getLong(rs, "locationid");
 				long jumpCloneID = getLong(rs, "jumpcloneid");
 				String name = getStringOptional(rs, "name");
+				boolean active  = getBooleanNotNull(rs, "active", false);
 
 				rawClone.setJumpCloneID(jumpCloneID);
 				rawClone.setLocationID(locationID);
 				rawClone.setName(name);
+				rawClone.setActive(active);
 				
 				EsiOwner owner = owners.get(accountID);
 				if (owner == null) {
@@ -150,6 +154,11 @@ public class ProfileClones  extends ProfileTable {
 	}
 
 	@Override
+	protected void updateTable(Connection connection) throws SQLException {
+		addColumn(connection, CLONES_TABLE, "active", "INTEGER");
+	}
+
+	@Override
 	protected void create(Connection connection) throws SQLException {
 		if (!tableExist(connection, CLONES_TABLE)) {
 			String sql = "CREATE TABLE IF NOT EXISTS " + CLONES_TABLE + " (\n"
@@ -157,6 +166,7 @@ public class ProfileClones  extends ProfileTable {
 					+ "	locationid INTEGER,"
 					+ "	jumpcloneid INTEGER,"
 					+ "	name TEXT,"
+					+ "	active INTEGER,"
 					+ "	UNIQUE(accountid, locationid, jumpcloneid)\n"
 					+ ");";
 			try (Statement statement = connection.createStatement()) {

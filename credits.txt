@@ -42,6 +42,7 @@ Contributors:
   Boran Lordsworth
   Ed Thelleres
   Salartarium
+  WildGear
   snipereagle1
 
 Retired Testers:

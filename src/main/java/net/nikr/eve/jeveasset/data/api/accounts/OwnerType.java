@@ -31,8 +31,10 @@ import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
 import net.nikr.eve.jeveasset.data.api.my.MyExtraction;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
 import net.nikr.eve.jeveasset.data.api.my.MyJournal;
+import net.nikr.eve.jeveasset.data.api.my.MyLoyaltyPoints;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
 import net.nikr.eve.jeveasset.data.api.my.MyMining;
+import net.nikr.eve.jeveasset.data.api.my.MyNpcStanding;
 import net.nikr.eve.jeveasset.data.api.my.MyShip;
 import net.nikr.eve.jeveasset.data.api.my.MySkill;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
@@ -75,6 +77,8 @@ public interface OwnerType extends SimpleOwner {
 	public Integer getUnallocatedSkillPoints();
 	public Set<MyMining> getMining();
 	public Set<MyExtraction> getExtractions();
+	public Set<MyLoyaltyPoints> getLoyaltyPoints();
+	public Set<MyNpcStanding> getNpcStanding();
 	public List<RawClone> getClones();
 	public void setBlueprints(final Map<Long, RawBlueprint> blueprints);
 	public void setIndustryJobs(final Set<MyIndustryJob> industryJobs);
@@ -92,6 +96,8 @@ public interface OwnerType extends SimpleOwner {
 	public void setMining(Set<MyMining> mining);
 	public void setExtractions(Set<MyExtraction> extractions);
 	public void setClones(List<RawClone> clones);
+	public void setLoyaltyPoints(Set<MyLoyaltyPoints> loyaltyPoints);
+	public void setNpcStanding(Set<MyNpcStanding> npcStanding);
 	//Account Mask
 	public boolean isCharacter();
 	public boolean isAssetList();
@@ -116,6 +122,8 @@ public interface OwnerType extends SimpleOwner {
 	public boolean isPrivilegesInvalid();
 	public boolean isSkills();
 	public boolean isMining();
+	public boolean isLoyaltyPoints();
+	public boolean isNpcStanding();
 	//Last Update
 	public Date getAssetLastUpdate();
 	public Date getBalanceLastUpdate();
@@ -132,6 +140,8 @@ public interface OwnerType extends SimpleOwner {
 	public void setJournalNextUpdate(final Date journalNextUpdate);
 	public void setTransactionsNextUpdate(final Date transactionsNextUpdate);
 	public void setSkillsNextUpdate(final Date skillsNextUpdate);
+	public void setLoyaltyPointsNextUpdate(final Date loyaltyPointsNextUpdate);
+	public void setNpcStandingNextUpdate(Date npcStandingNextUpdate);
 	public void setMiningNextUpdate(final Date miningNextUpdate);
 	public Date getTransactionsNextUpdate();
 	public Date getAssetNextUpdate();
@@ -143,5 +153,7 @@ public interface OwnerType extends SimpleOwner {
 	public Date getMarketOrdersNextUpdate();
 	public Date getJournalNextUpdate();
 	public Date getSkillsNextUpdate();
+	public Date getLoyaltyPointsNextUpdate();
+	public Date getNpcStandingNextUpdate();
 	public Date getMiningNextUpdate();
 }

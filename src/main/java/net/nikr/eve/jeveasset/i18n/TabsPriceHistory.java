@@ -40,7 +40,6 @@ public abstract class TabsPriceHistory extends Bundle {
 	public abstract String deleteHistorySet();
 	public abstract String deleteHistorySets(int size);
 	public abstract String edit();
-	public abstract String empty();
 	public abstract String enterName();
 	public abstract String from();
 	public abstract String graphToolTip(Comparable<?> name, String isk, String date);

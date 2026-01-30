@@ -37,6 +37,7 @@ import net.nikr.eve.jeveasset.data.api.raw.RawPublicMarketOrder;
 import net.nikr.eve.jeveasset.data.profile.ProfileData;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.sde.RouteFinder;
+import net.nikr.eve.jeveasset.data.sde.RouteFinder.RouteFinderFilter;
 import net.nikr.eve.jeveasset.data.settings.Citadel;
 import net.nikr.eve.jeveasset.io.online.CitadelGetter;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
@@ -160,7 +161,7 @@ public class OutbidProcesser {
 		} else {
 			int range = getRange(fromRange) + getRange(toRange); //Find overlapping area
 			//int range = Math.max(getRange(response), getRange(marketOrder)); //Use the order with the max range
-			Integer distance = RouteFinder.get().distanceBetween(fromSystemID, toSystemID);
+			Integer distance = RouteFinder.get().distanceBetween(RouteFinderFilter.MARKET_ORDERS, fromSystemID, toSystemID);
 			if (distance == null) {
 				return false;
 			}

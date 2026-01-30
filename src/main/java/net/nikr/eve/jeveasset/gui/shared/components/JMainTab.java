@@ -25,6 +25,9 @@ import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.gui.TableFormat;
 import ca.odell.glazedlists.swing.DefaultEventSelectionModel;
 import ca.odell.glazedlists.swing.DefaultEventTableModel;
+import ca.odell.glazedlists.swing.TableComparatorChooser;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -65,10 +68,12 @@ public abstract class JMainTab {
 	private DefaultEventSelectionModel<?> eventSelectionModel;
 	private DefaultEventTableModel<?> eventTableModel;
 	private FilterControl<?> filterControl;
+	private TableComparatorChooser<?> comparatorChooser;
 	private List<Object> selected;
 	private int[] selectedColumns;
 	private String toolName;
 	private Class<?> clazz;
+	private boolean sortLock = false;
 	protected JMainTab(final boolean load) { }
 
 	public JMainTab(final Program program, final String toolName, final String title, final Icon icon, final boolean closeable) {
@@ -88,16 +93,17 @@ public abstract class JMainTab {
 		layout.setAutoCreateContainerGaps(true);
 	}
 
-	public final <T extends Enum<T> & EnumTableColumn<Q>, Q> void installTableTool(final TableMenu<Q> tableMenu, EnumTableFormatAdaptor<T, Q> tableFormat, DefaultEventTableModel<Q> tableModel, JAutoColumnTable jTable, EventList<Q> eventList, final Class<Q> clazz) {
-		installTableTool(tableMenu, tableFormat, tableModel, jTable, eventList, null, clazz);
+	public final <T extends Enum<T> & EnumTableColumn<Q>, Q> void installTableTool(final TableMenu<Q> tableMenu, EnumTableFormatAdaptor<T, Q> tableFormat, TableComparatorChooser<Q> comparatorChooser, DefaultEventTableModel<Q> tableModel, JAutoColumnTable jTable, EventList<Q> eventList, final Class<Q> clazz) {
+		installTableTool(tableMenu, tableFormat, comparatorChooser, tableModel, jTable, eventList, null, clazz);
 	}
 
-	public final <T extends Enum<T> & EnumTableColumn<Q>, Q> void installTableTool(final TableMenu<Q> tableMenu, EnumTableFormatAdaptor<T, Q> tableFormat, DefaultEventTableModel<Q> tableModel, JAutoColumnTable jTable, FilterControl<Q> filterControl, final Class<Q> clazz) {
-		installTableTool(tableMenu, tableFormat, tableModel, jTable, filterControl.getEventList(), filterControl, clazz);
+	public final <T extends Enum<T> & EnumTableColumn<Q>, Q> void installTableTool(final TableMenu<Q> tableMenu, EnumTableFormatAdaptor<T, Q> tableFormat, TableComparatorChooser<Q> comparatorChooser, DefaultEventTableModel<Q> tableModel, JAutoColumnTable jTable, FilterControl<Q> filterControl, final Class<Q> clazz) {
+		installTableTool(tableMenu, tableFormat, comparatorChooser, tableModel, jTable, filterControl.getEventList(), filterControl, clazz);
 	}
 
-	private <T extends Enum<T> & EnumTableColumn<Q>, Q> void installTableTool(final TableMenu<Q> tableMenu, EnumTableFormatAdaptor<T, Q> tableFormat, DefaultEventTableModel<Q> tableModel, JAutoColumnTable jTable, EventList<Q> eventList, FilterControl<Q> filterControl, final Class<Q> clazz) {
+	private <T extends Enum<T> & EnumTableColumn<Q>, Q> void installTableTool(final TableMenu<Q> tableMenu, EnumTableFormatAdaptor<T, Q> tableFormat, TableComparatorChooser<Q> comparatorChooser, DefaultEventTableModel<Q> tableModel, JAutoColumnTable jTable, EventList<Q> eventList, FilterControl<Q> filterControl, final Class<Q> clazz) {
 		this.clazz = clazz;
+		this.comparatorChooser = comparatorChooser; //Can be null
 		MenuManager.install(program, tableMenu, jTable, new ColumnManager<>(program, toolName, tableFormat, tableModel, jTable, eventList, filterControl), clazz);
 		if(filterControl != null && toolName != null && !toolName.isEmpty()) {
 			filterControl.clearCurrentFilters();
@@ -107,6 +113,57 @@ public abstract class JMainTab {
 			filterControl.getSettingsUpdateListenerList().add(listener);
 			this.filterControl = filterControl;
 		}
+		if (comparatorChooser != null) { //Save current sorting
+			comparatorChooser.addSortActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					if (sortLock) {
+						return;
+					}
+					Settings.lock("Current Sorting");
+					Settings.get().getCurrentTableSorting().put(toolName, comparatorChooser.toString());
+					Settings.unlock("Current Sorting");
+					program.saveSettings("Current Sorting");
+				}
+			});
+		}
+	}
+
+	/**
+	 * Restore sorting from settings
+	 */
+	public void loadCurrentSorting() {
+		setSorting(Settings.get().getCurrentTableSorting(toolName), false);
+	}
+
+	/**
+	 * Set sorting - does not save the new sorting
+	 * @param sorting 
+	 * @param save Save settings
+	 */
+	private void setSorting(String sorting, boolean save) {
+		if (comparatorChooser != null && sorting != null && !sorting.isEmpty()) { //Load sorting
+			try {
+				sortLock = true;
+				comparatorChooser.fromString(sorting);
+			} finally {
+				sortLock = false;
+			}
+			if (save) {
+				Settings.lock("Set Sorting");
+				Settings.get().getCurrentTableSorting().put(toolName, comparatorChooser.toString());
+				Settings.unlock("SetSorting");
+				program.saveSettings("Set Sorting");
+			}
+		}
+	}
+
+	/**
+	 * Supports sorting
+	 * @return 
+	 */
+	public boolean isSortingSupported() {
+		return comparatorChooser != null;
 	}
 
 	public void updateTableMenu() {

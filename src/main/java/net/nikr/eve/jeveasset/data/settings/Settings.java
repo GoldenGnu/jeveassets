@@ -88,6 +88,8 @@ public class Settings {
 		FLAG_INCLUDE_BUY_CONTRACTS,
 		FLAG_INCLUDE_MANUFACTURING,
 		FLAG_INCLUDE_COPYING,
+		FLAG_INCLUDE_JUMP_CLONES,
+		FLAG_INCLUDE_PLUGGED_IN_IMPLANTS,
 		FLAG_HIGHLIGHT_SELECTED_ROWS,
 		FLAG_STOCKPILE_FOCUS_TAB,
 		FLAG_STOCKPILE_HALF_COLORS,
@@ -178,6 +180,9 @@ public class Settings {
 //Routing						Saved by ???
 	//Lock ???
 	private final RoutingSettings routingSettings = new RoutingSettings();
+//Jumps
+	//Lock ???
+	private final RouteAvoidSettings jumpsAvoidSettings = new RouteAvoidSettings();
 //Overview						Saved by JOverviewMenu.ListenerClass.NEW/DELETE/RENAME
 	//Lock OK
 	private final Map<String, OverviewGroup> overviewGroups = new HashMap<>();
@@ -251,6 +256,7 @@ public class Settings {
 	private final Map<String, Map<String, List<Filter>>> defaultTableFilters = new HashMap<>();
 	private final Map<String, List<Filter>> currentTableFilters = new HashMap<>();
 	private final Map<String, Boolean> currentTableFiltersShown = new HashMap<>();
+	private final Map<String, String> currentTableSorting = new HashMap<>();
 	private final Map<String, List<SimpleColumn>> tableColumns = new HashMap<>();
 	//Column Width				Saved by JAutoColumnTable.saveColumnsWidth()
 	//Lock OK
@@ -267,6 +273,8 @@ public class Settings {
 	private final Map<String, List<Formula>> tableFormulas = new HashMap<>();
 	//Jump Columns
 	private final Map<String, List<Jump>> tableJumps = new HashMap<>();
+	// Skill Plans: plan name -> (skill typeID -> target level)
+	private final Map<String, Map<Integer, Integer>> skillPlans = new HashMap<>();
 //Tags						Saved by JMenuTags.addTag()/removeTag() + SettingsDialog.save()
 	//Lock OK
 	private final Map<String, Tag> tags = new HashMap<>();
@@ -290,12 +298,14 @@ public class Settings {
 		flags.put(SettingFlag.FLAG_IGNORE_SECURE_CONTAINERS, true);
 		flags.put(SettingFlag.FLAG_STOCKPILE_FOCUS_TAB, true);
 		flags.put(SettingFlag.FLAG_STOCKPILE_HALF_COLORS, false); //Cached
-		flags.put(SettingFlag.FLAG_INCLUDE_SELL_ORDERS, true);
+		flags.put(SettingFlag.FLAG_INCLUDE_SELL_ORDERS, false);
 		flags.put(SettingFlag.FLAG_INCLUDE_BUY_ORDERS, false);
 		flags.put(SettingFlag.FLAG_INCLUDE_SELL_CONTRACTS, false);
 		flags.put(SettingFlag.FLAG_INCLUDE_BUY_CONTRACTS, false);
 		flags.put(SettingFlag.FLAG_INCLUDE_MANUFACTURING, false);
 		flags.put(SettingFlag.FLAG_INCLUDE_COPYING, false);
+		flags.put(SettingFlag.FLAG_INCLUDE_JUMP_CLONES, true);
+		flags.put(SettingFlag.FLAG_INCLUDE_PLUGGED_IN_IMPLANTS, true);
 		flags.put(SettingFlag.FLAG_BLUEPRINT_BASE_PRICE_TECH_1, true);
 		flags.put(SettingFlag.FLAG_BLUEPRINT_BASE_PRICE_TECH_2, false);
 		flags.put(SettingFlag.FLAG_TRANSACTION_HISTORY, true);
@@ -440,7 +450,7 @@ public class Settings {
 	 *
 	 * @return
 	 */
-	public Map<String, String> getImportSettings() {	
+	public Map<String, String> getImportSettings() {
 		return importSettings;
 	}
 
@@ -552,6 +562,10 @@ public class Settings {
 		return routingSettings;
 	}
 
+	public RouteAvoidSettings getJumpsAvoidSettings() {
+		return jumpsAvoidSettings;
+	}
+
 	public Map<String, List<Jump>> getTableJumps() {
 		return tableJumps;
 	}
@@ -654,6 +668,21 @@ public class Settings {
 		return currentTableFiltersShown.get(tableName);
 	}
 
+	/***
+	 * @return Current table sorting state, values may be empty but should never be null.
+	 */
+	public Map<String, String> getCurrentTableSorting() {
+		return currentTableSorting;
+	}
+
+	/***
+	 * @param toolName Tool to look up.
+	 * @return Current table sorting. Can be empty, but, never null.
+	 */
+	public String getCurrentTableSorting(final String toolName) {
+		return currentTableSorting.getOrDefault(toolName, "");
+	}
+
 	public Map<String, List<SimpleColumn>> getTableColumns() {
 		return tableColumns;
 	}
@@ -677,6 +706,15 @@ public class Settings {
 			tableViews.put(name, views);
 		}
 		return views;
+	}
+
+	/**
+	 * Skill Plans storage.
+	 * Key: plan name; Value: map of skill typeID to target level (1..5).
+	 * @return 
+	 */
+	public Map<String, Map<Integer, Integer>> getSkillPlans() {
+		return skillPlans;
 	}
 
 	public Map<String, List<Formula>> getTableFormulas() {
@@ -881,6 +919,22 @@ public class Settings {
 		return flags.put(SettingFlag.FLAG_INCLUDE_COPYING, includeCopying);
 	}
 
+	public boolean isIncludeJumpClones() {
+		return flags.get(SettingFlag.FLAG_INCLUDE_JUMP_CLONES);
+	}
+
+	public boolean setIncludeJumpClones(final boolean includeJumpClones) {
+		return flags.put(SettingFlag.FLAG_INCLUDE_JUMP_CLONES, includeJumpClones);
+	}
+
+	public boolean isIncludePluggedInImplants() {
+		return flags.get(SettingFlag.FLAG_INCLUDE_PLUGGED_IN_IMPLANTS);
+	}
+
+	public boolean setIncludePluggedInImplants(final boolean includePluggedInImplants) {
+		return flags.put(SettingFlag.FLAG_INCLUDE_PLUGGED_IN_IMPLANTS, includePluggedInImplants);
+	}
+
 	public boolean isBlueprintBasePriceTech1() {
 		return flags.get(SettingFlag.FLAG_BLUEPRINT_BASE_PRICE_TECH_1);
 	}
@@ -958,8 +1012,8 @@ public class Settings {
 		return flags.get(SettingFlag.FLAG_INDUSTRY_JOBS_HISTORY);
 	}
 
-	public void setIndustryJobsHistory(final boolean journalHistory) {
-		flags.put(SettingFlag.FLAG_INDUSTRY_JOBS_HISTORY, journalHistory);
+	public void setIndustryJobsHistory(final boolean industryJobsHistory) {
+		flags.put(SettingFlag.FLAG_INDUSTRY_JOBS_HISTORY, industryJobsHistory);
 	}
 
 	public boolean isAssetsContractsOwnerCorporation() {

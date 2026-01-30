@@ -34,6 +34,7 @@ import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.settings.tag.Tag;
 import net.nikr.eve.jeveasset.data.settings.types.BlueprintType;
+import net.nikr.eve.jeveasset.data.settings.types.CorporationType;
 import net.nikr.eve.jeveasset.data.settings.types.ItemType;
 import net.nikr.eve.jeveasset.data.settings.types.LocationType;
 import net.nikr.eve.jeveasset.data.settings.types.LocationsType;
@@ -72,6 +73,8 @@ public class MenuData<T> {
 	private final Map<Item, Long> itemCounts = new HashMap<>();
 	private final Map<Integer, Double> counts = new HashMap<>();
 	private final Map<Integer, Double> runs = new HashMap<>();
+	private final Set<String> corporationNames = new HashSet<>();
+	private final Set<Integer> corporationIDs = new HashSet<>();
 
 	public MenuData() { }
 
@@ -123,6 +126,11 @@ public class MenuData<T> {
 				tagsType = (TagsType) t;
 			}
 
+			CorporationType corporationType = null;
+			if (t instanceof CorporationType) {
+				corporationType = (CorporationType) t;
+			}
+
 			if (t instanceof Item) {
 				Item item = (Item) t;
 				if (items.size() == 1) { //Always zero for multiple items
@@ -133,11 +141,11 @@ public class MenuData<T> {
 				}
 			}
 
-			add(itemType, locations, price, blueprint, tagsType, owners);
+			add(itemType, locations, price, blueprint, tagsType, owners, corporationType);
 		}
 	}
 
-	private void add(final ItemType itemType, final Collection<MyLocation> locations, final Double price, final BlueprintType blueprintType, final TagsType tagsType, Set<Long> owners) {
+	private void add(final ItemType itemType, final Collection<MyLocation> locations, final Double price, final BlueprintType blueprintType, final TagsType tagsType, Set<Long> owners, CorporationType corporationType) {
 		if (itemType != null) {
 			Item item = itemType.getItem();
 			if (item != null && !item.isEmpty()) {
@@ -256,6 +264,17 @@ public class MenuData<T> {
 					count = 1;
 				}
 				tagCount.put(tagKey, count);
+			}
+		}
+		//Corporations
+		if (corporationType != null) {
+			Integer corporationID = corporationType.getCorporationID();
+			if (corporationID != null) {
+				corporationIDs.add(corporationID);
+			}
+			String corporationName = corporationType.getCorporationName();
+			if (corporationName != null && !corporationName.isEmpty()) {
+				corporationNames.add(corporationName);
 			}
 		}
 	}
@@ -388,6 +407,14 @@ public class MenuData<T> {
 
 	public Map<Integer, Double> getRuns() {
 		return runs;
+	}
+
+	public Set<String> getCorporationNames() {
+		return corporationNames;
+	}
+
+	public Set<Integer> getCorporationIDs() {
+		return corporationIDs;
 	}
 
 	public static class AssetMenuData <T extends MyAsset> extends MenuData<T> {

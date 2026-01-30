@@ -37,6 +37,7 @@ import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
 import net.nikr.eve.jeveasset.data.api.my.MyExtraction;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
 import net.nikr.eve.jeveasset.data.api.my.MyJournal;
+import net.nikr.eve.jeveasset.data.api.my.MyLoyaltyPoints;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
 import net.nikr.eve.jeveasset.data.api.my.MyMining;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
@@ -463,6 +464,14 @@ public class DataConverterTest extends TestUtil {
 		for (ConverterTestOptions options : ConverterTestOptionsGetter.getConverterOptions()) {
 			MyExtraction extraction = DataConverter.toMyExtraction(ConverterTestUtil.getRawExtraction(false, options));
 			ConverterTestUtil.testValues(extraction, options);
+		}
+	}
+
+	@Test
+	public void testToMyLoyaltyPoints() {
+		for (ConverterTestOptions options : ConverterTestOptionsGetter.getConverterOptions()) {
+			MyLoyaltyPoints loyaltyPoints = DataConverter.toMyLoyaltyPoints(ConverterTestUtil.getRawLoyaltyPoints(true, options), ConverterTestUtil.getEsiOwner(options));
+			ConverterTestUtil.testValues(loyaltyPoints, options);
 		}
 	}
 
