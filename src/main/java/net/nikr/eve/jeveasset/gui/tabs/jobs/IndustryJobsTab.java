@@ -137,11 +137,11 @@ public class IndustryJobsTab extends JMainTabPrimary {
 			public void actionPerformed(ActionEvent e) {
 				for (int column = 0; column < jTable.getColumnCount(); column++) {
 					String columnName = (String) jTable.getTableHeader().getColumnModel().getColumn(column).getHeaderValue();
-					if (columnName.equals(IndustryJobTableFormat.TIME_LEFT.getColumnName())) {
+					if (columnName.equals(IndustryJobTableFormat.TIME_LEFT.getColumnName())
+							|| columnName.equals(IndustryJobTableFormat.TIME_REMAINING.getColumnName())) {
 						for (int row = 0; row < jTable.getRowCount(); row++) {
 							tableModel.fireTableCellUpdated(row, column);
 						}
-						break;
 					}
 				}
 			}

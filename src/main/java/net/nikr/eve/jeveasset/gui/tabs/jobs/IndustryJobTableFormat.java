@@ -185,6 +185,16 @@ public enum IndustryJobTableFormat implements EnumTableColumn<MyIndustryJob> {
 			return from.getTimeLeft();
 		}
 	},
+	TIME_REMAINING(Duration.class) {
+		@Override
+		public String getColumnName() {
+			return TabsJobs.get().columnTimeRemaining();
+		}
+		@Override
+		public Object getColumnValue(final MyIndustryJob from) {
+			return from.getTimeRemaining();
+		}
+	},
 	PAUSE_DATE(Date.class) {
 		@Override
 		public String getColumnName() {

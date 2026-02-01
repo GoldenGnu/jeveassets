@@ -273,14 +273,22 @@ public class MyIndustryJob extends RawIndustryJob implements Comparable<MyIndust
 	}
 
 	public Duration getTimeLeft() {
-		if (getEndDate() == null) {
+		return calculateTimeRemaining(getEndDate());
+	}
+
+	public Duration getTimeRemaining() {
+		return calculateTimeRemaining(getEndDate());
+	}
+
+	private static Duration calculateTimeRemaining(Date endDate) {
+		if (endDate == null) {
 			return Duration.NEVER;
 		}
 		Date now = Settings.getNow();
-		if (now.after(getEndDate())) {
+		if (now.after(endDate)) {
 			return Duration.DONE;
 		}
-		long time = getEndDate().getTime() - now.getTime();
+		long time = endDate.getTime() - now.getTime();
 		if (time <= 1000) { //less than 1 second
 			return new Duration("...");
 		} else if (time < (60 * 1000)) { //less than 1 minute
