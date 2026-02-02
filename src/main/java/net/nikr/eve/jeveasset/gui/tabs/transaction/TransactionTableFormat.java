@@ -76,6 +76,26 @@ public enum TransactionTableFormat implements EnumTableColumn<MyTransaction> {
 			return from.getItem().getTypeName();
 		}
 	},
+	GROUP(String.class) {
+		@Override
+		public String getColumnName() {
+			return TabsTransaction.get().columnGroup();
+		}
+		@Override
+		public Object getColumnValue(final MyTransaction from) {
+			return from.getItem().getGroup();
+		}
+	},
+	CATEGORY(String.class) {
+		@Override
+		public String getColumnName() {
+			return TabsTransaction.get().columnCategory();
+		}
+		@Override
+		public Object getColumnValue(final MyTransaction from) {
+			return from.getItem().getCategory();
+		}
+	},
 	QUANTITY(Integer.class) {
 		@Override
 		public String getColumnName() {

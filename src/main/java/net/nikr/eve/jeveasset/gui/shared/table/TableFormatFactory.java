@@ -69,7 +69,7 @@ import net.nikr.eve.jeveasset.gui.tabs.skills.SkillsTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.slots.Slots;
 import net.nikr.eve.jeveasset.gui.tabs.slots.SlotsTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.standing.NpcStandingTableFormat;
-import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
+import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileExtendedTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerSkillPointFilter;
@@ -148,7 +148,7 @@ public class TableFormatFactory {
 	}
 
 	//Extended
-	public static EnumTableFormatAdaptor<StockpileTableFormat, Stockpile.StockpileItem> stockpileTableFormat() {
+	public static EnumTableFormatAdaptor<StockpileTableFormat, StockpileItem> stockpileTableFormat() {
 		return new EnumTableFormatAdaptor<>(StockpileTableFormat.class, Arrays.asList(StockpileExtendedTableFormat.values()));
 	}
 
