@@ -259,8 +259,8 @@ public class MainWindow {
 		Rectangle screen = null;
 		for (GraphicsDevice screenDevices :GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices()) {
 			Rectangle bounds = screenDevices.getDefaultConfiguration().getBounds();
-			if (windowLocation.x > bounds.x && windowLocation.x < bounds.x + bounds.width
-					&& windowLocation.y > bounds.y && windowLocation.y < bounds.y + bounds.height) {
+			if (windowLocation.x >= bounds.x && windowLocation.x <= bounds.x + bounds.width
+					&& windowLocation.y >= bounds.y && windowLocation.y <= bounds.y + bounds.height) {
 				screen = bounds;
 				break;
 			}
