@@ -61,6 +61,16 @@ public enum IndustryJobTableFormat implements EnumTableColumn<MyIndustryJob> {
 			return from.getName();
 		}
 	},
+	GROUP(String.class) {
+		@Override
+		public String getColumnName() {
+			return TabsJobs.get().columnGroup();
+		}
+		@Override
+		public Object getColumnValue(final MyIndustryJob from) {
+			return from.getItem().getGroup();
+		}
+	},
 	OWNER(String.class) {
 		@Override
 		public String getColumnName() {
@@ -246,7 +256,27 @@ public enum IndustryJobTableFormat implements EnumTableColumn<MyIndustryJob> {
 		}
 		@Override
 		public Object getColumnValue(final MyIndustryJob from) {
-			return from.getOutputType();
+			return from.getOutputItem().getTypeName();
+		}
+	},
+	OUTPUT_GROUP(String.class) {
+		@Override
+		public String getColumnName() {
+			return TabsJobs.get().columnOutputGroup();
+		}
+		@Override
+		public Object getColumnValue(final MyIndustryJob from) {
+			return from.getOutputItem().getGroup();
+		}
+	},
+	OUTPUT_CATEGORY(String.class) {
+		@Override
+		public String getColumnName() {
+			return TabsJobs.get().columnOutputCategory();
+		}
+		@Override
+		public Object getColumnValue(final MyIndustryJob from) {
+			return from.getOutputItem().getCategory();
 		}
 	},
 	BPO(String.class) {

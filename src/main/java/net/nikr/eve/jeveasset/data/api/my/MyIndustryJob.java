@@ -424,8 +424,8 @@ public class MyIndustryJob extends RawIndustryJob implements Comparable<MyIndust
 		return outputCount;
 	}
 
-	public String getOutputType() {
-		return output.getTypeName();
+	public Item getOutputItem() {
+		return output;
 	}
 
 	public double getOutputVolume() {
