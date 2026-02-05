@@ -29,15 +29,14 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Insets;
 import java.awt.Point;
-import java.awt.RadialGradientPaint;
 import java.awt.RenderingHints;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
-import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -56,11 +55,14 @@ public class JTreemap extends JComponent {
 	}
 
 	private static final double GAP = 1.0;
-	private static final double MAX_ASPECT_RATIO = 5.0;
 	private static final double MAX_TILE_ASPECT_RATIO = 4.0;
+	private static final int MIN_TILE_SIZE = 6;
 	private static final int LABEL_PADDING = 4;
-	private static final int OVERLAY_ALPHA_CENTER = 0;
-	private static final int OVERLAY_ALPHA_EDGE = 70;
+	private static final int AMBIENT_LIGHT = 30;
+	private static final double LIGHT_X = 0.09759;
+	private static final double LIGHT_Y = 0.19518;
+	private static final double LIGHT_Z = 0.9759;
+	private static final double CUSHION_HEIGHT = 0.35;
 
 	private final SelectionListener selectionListener;
 	private final List<Tile> tiles = new ArrayList<>();
@@ -172,9 +174,7 @@ public class JTreemap extends JComponent {
 			if (paintRect.width <= 0 || paintRect.height <= 0) {
 				continue;
 			}
-			g2.setColor(tile.color);
-			g2.fill(paintRect);
-			paintOverlay(g2, paintRect);
+			paintCushion(g2, tile, paintRect);
 			g2.setColor(tile.borderColor);
 			g2.draw(paintRect);
 			paintLabel(g2, tile, paintRect);
@@ -228,212 +228,115 @@ public class JTreemap extends JComponent {
 			height = newHeight;
 		}
 		double area = width * height;
-		for (Tile tile : tiles) {
-			tile.area = tile.value / total * area;
-		}
-		List<Tile> row = new ArrayList<>();
-		RowLayout rowLayout = null;
-		int index = 0;
-		while (index < tiles.size()) {
-			Tile tile = tiles.get(index);
-			if (row.isEmpty()) {
-				row.add(tile);
-				rowLayout = chooseRowLayout(row, width, height);
-				if (!rowLayout.feasible) {
-					rowLayout = forceLayout(row, width, height);
-				}
-				index++;
-				continue;
-			}
-			row.add(tile);
-			double effectiveSide = effectiveSide(width, height);
-			double worstAfter = worst(row, effectiveSide);
-			RowLayout candidate = chooseRowLayout(row, width, height);
-			if (row.size() == 1 || (candidate.feasible && worstAfter <= MAX_ASPECT_RATIO)) {
-				rowLayout = candidate;
-				index++;
-			} else {
-				row.remove(row.size() - 1);
-				if (rowLayout == null || !rowLayout.feasible) {
-					rowLayout = forceLayout(row, width, height);
-				}
-				layoutRow(row, x, y, width, height, rowLayout);
-				if (rowLayout.horizontal) {
-					y += rowLayout.thickness;
-					height -= rowLayout.thickness;
-				} else {
-					x += rowLayout.thickness;
-					width -= rowLayout.thickness;
-				}
-				row.clear();
-				rowLayout = null;
-			}
-		}
-		if (!row.isEmpty()) {
-			if (rowLayout == null || !rowLayout.feasible) {
-				rowLayout = chooseRowLayout(row, width, height);
-				if (!rowLayout.feasible) {
-					rowLayout = forceLayout(row, width, height);
-				}
-			}
-			layoutRow(row, x, y, width, height, rowLayout);
-		}
-	}
-
-	private void layoutRow(List<Tile> row, double x, double y, double width, double height, RowLayout layout) {
-		if (row.isEmpty()) {
+		double scale = area / total;
+		if (!Double.isFinite(scale) || scale <= 0) {
 			return;
 		}
-		if (layout.horizontal) {
-			double rowHeight = layout.thickness;
-			double currentX = x;
-			for (int i = 0; i < row.size(); i++) {
-				Tile tile = row.get(i);
-				double tileWidth = tile.area / rowHeight;
-				if (tileWidth < 0) {
-					tileWidth = 0;
+		double minValue = MIN_TILE_SIZE / scale;
+		List<Tile> layoutTiles = new ArrayList<>();
+		for (Tile tile : tiles) {
+			if (tile.value >= minValue) {
+				layoutTiles.add(tile);
+			}
+		}
+		if (layoutTiles.isEmpty()) {
+			return;
+		}
+		Rectangle2D.Double remaining = new Rectangle2D.Double(x, y, width, height);
+		int index = 0;
+		while (index < layoutTiles.size()) {
+			List<Tile> row = squarifyRow(layoutTiles, index, remaining, scale);
+			if (row.isEmpty()) {
+				break;
+			}
+			Rectangle2D.Double next = layoutRow(remaining, scale, row);
+			if (next == null) {
+				break;
+			}
+			index += row.size();
+			remaining = next;
+		}
+	}
+
+	private List<Tile> squarifyRow(List<Tile> tiles, int startIndex, Rectangle2D.Double rect, double scale) {
+		List<Tile> row = new ArrayList<>();
+		double length = Math.max(rect.width, rect.height);
+		if (length <= 0 || scale <= 0) {
+			return row;
+		}
+		double scaledLengthSquare = (length * length) / scale;
+		double sum = 0.0;
+		double lastWorst = -1.0;
+		for (int i = startIndex; i < tiles.size(); i++) {
+			Tile tile = tiles.get(i);
+			double nextSum = sum + tile.value;
+			if (nextSum <= 0 || tile.value <= 0) {
+				break;
+			}
+			double sumSquare = nextSum * nextSum;
+			double worst = row.isEmpty()
+				? Math.max(scaledLengthSquare * tile.value / sumSquare, sumSquare / (scaledLengthSquare * tile.value))
+				: Math.max(scaledLengthSquare * row.get(0).value / sumSquare, sumSquare / (scaledLengthSquare * tile.value));
+			if (lastWorst >= 0.0 && worst > lastWorst) {
+				break;
+			}
+			lastWorst = worst;
+			row.add(tile);
+			sum = nextSum;
+		}
+		if (row.isEmpty() || lastWorst > MAX_TILE_ASPECT_RATIO) {
+			row.clear();
+		}
+		return row;
+	}
+
+	private Rectangle2D.Double layoutRow(Rectangle2D.Double rect, double scale, List<Tile> row) {
+		if (row.isEmpty()) {
+			return null;
+		}
+		double sum = sumValues(row);
+		if (sum <= 0) {
+			return null;
+		}
+		double primary = Math.max(rect.width, rect.height);
+		if (primary <= 0) {
+			return null;
+		}
+		double secondary = (sum * scale) / primary;
+		if (secondary < MIN_TILE_SIZE) {
+			return null;
+		}
+		boolean horizontal = rect.width >= rect.height;
+		double offset = 0.0;
+		double remaining = primary;
+		for (int i = 0; i < row.size(); i++) {
+			Tile tile = row.get(i);
+			double childSize = tile.value / sum * primary;
+			if (childSize > remaining) {
+				childSize = remaining;
+			}
+			remaining -= childSize;
+			if (childSize >= MIN_TILE_SIZE) {
+				if (horizontal) {
+					tile.rect = new Rectangle2D.Double(rect.x + offset, rect.y, childSize, secondary);
+				} else {
+					tile.rect = new Rectangle2D.Double(rect.x, rect.y + offset, secondary, childSize);
 				}
-				tile.rect = new Rectangle2D.Double(currentX, y, tileWidth, rowHeight);
-				currentX += tileWidth;
-			}
-		} else {
-			double rowWidth = layout.thickness;
-			double currentY = y;
-			for (int i = 0; i < row.size(); i++) {
-				Tile tile = row.get(i);
-				double tileHeight = tile.area / rowWidth;
-				if (tileHeight < 0) {
-					tileHeight = 0;
-				}
-				tile.rect = new Rectangle2D.Double(x, currentY, rowWidth, tileHeight);
-				currentY += tileHeight;
+				offset += childSize;
 			}
 		}
+		if (horizontal) {
+			return new Rectangle2D.Double(rect.x, rect.y + secondary, rect.width, rect.height - secondary);
+		}
+		return new Rectangle2D.Double(rect.x + secondary, rect.y, rect.width - secondary, rect.height);
 	}
 
-	private RowLayout chooseRowLayout(List<Tile> row, double width, double height) {
-		RowLayout horizontal = computeRowLayout(row, width, height, true);
-		RowLayout vertical = computeRowLayout(row, width, height, false);
-		if (horizontal.feasible && !vertical.feasible) {
-			return horizontal;
-		}
-		if (!horizontal.feasible && vertical.feasible) {
-			return vertical;
-		}
-		if (!horizontal.feasible && !vertical.feasible) {
-			if (horizontal.maxRatio < vertical.maxRatio) {
-				return horizontal;
-			}
-			if (vertical.maxRatio < horizontal.maxRatio) {
-				return vertical;
-			}
-			return width >= height ? horizontal : vertical;
-		}
-		if (horizontal.maxRatio < vertical.maxRatio) {
-			return horizontal;
-		}
-		if (vertical.maxRatio < horizontal.maxRatio) {
-			return vertical;
-		}
-		return width >= height ? horizontal : vertical;
-	}
-
-	private RowLayout computeRowLayout(List<Tile> row, double width, double height, boolean horizontal) {
-		if (row.isEmpty() || width <= 0 || height <= 0) {
-			return new RowLayout(false, horizontal, 0.0, Double.MAX_VALUE);
-		}
-		double rowArea = sumArea(row);
-		if (rowArea <= 0) {
-			return new RowLayout(false, horizontal, 0.0, Double.MAX_VALUE);
-		}
-		double thickness = horizontal ? (rowArea / width) : (rowArea / height);
-		if (thickness <= 0) {
-			return new RowLayout(false, horizontal, 0.0, Double.MAX_VALUE);
-		}
-		double maxRatio = maxRatioForThickness(row, thickness);
-		boolean feasible = maxRatio <= MAX_TILE_ASPECT_RATIO;
-		return new RowLayout(feasible, horizontal, thickness, maxRatio);
-	}
-
-	private RowLayout forceLayout(List<Tile> row, double width, double height) {
-		if (row.isEmpty() || width <= 0 || height <= 0) {
-			return new RowLayout(false, true, 0.0, Double.MAX_VALUE);
-		}
-		double rowArea = sumArea(row);
-		boolean horizontal = width >= height;
-		double thickness = horizontal ? (rowArea / width) : (rowArea / height);
-		double maxRatio = maxRatioForThickness(row, thickness);
-		return new RowLayout(true, horizontal, thickness, maxRatio);
-	}
-
-	private double maxRatioForThickness(List<Tile> row, double thickness) {
-		if (row.isEmpty() || thickness <= 0) {
-			return Double.MAX_VALUE;
-		}
-		double maxRatio = 0.0;
-		for (Tile tile : row) {
-			if (tile.area <= 0) {
-				continue;
-			}
-			double ratio = tile.area / (thickness * thickness);
-			if (ratio < 1.0) {
-				ratio = 1.0 / ratio;
-			}
-			maxRatio = Math.max(maxRatio, ratio);
-		}
-		return maxRatio;
-	}
-
-	private double sumArea(List<Tile> tiles) {
+	private double sumValues(List<Tile> tiles) {
 		double sum = 0.0;
 		for (Tile tile : tiles) {
-			sum += tile.area;
+			sum += tile.value;
 		}
 		return sum;
-	}
-
-	private double worst(List<Tile> tiles, double side) {
-		double min = Double.MAX_VALUE;
-		double max = 0.0;
-		double total = 0.0;
-		for (Tile tile : tiles) {
-			min = Math.min(min, tile.area);
-			max = Math.max(max, tile.area);
-			total += tile.area;
-		}
-		if (min == 0 || total == 0) {
-			return Double.MAX_VALUE;
-		}
-		double sideSquared = side * side;
-		double totalSquared = total * total;
-		double ratio1 = sideSquared * max / totalSquared;
-		double ratio2 = totalSquared / (sideSquared * min);
-		return Math.max(ratio1, ratio2);
-	}
-
-	private double effectiveSide(double width, double height) {
-		double shortSide = Math.min(width, height);
-		double longSide = Math.max(width, height);
-		if (shortSide <= 0) {
-			return shortSide;
-		}
-		double aspect = longSide / shortSide;
-		double bias = 1.0 + Math.min(0.5, (aspect - 1.0) * 0.25);
-		return shortSide * bias;
-	}
-
-	private static class RowLayout {
-		private final boolean feasible;
-		private final boolean horizontal;
-		private final double thickness;
-		private final double maxRatio;
-
-		private RowLayout(boolean feasible, boolean horizontal, double thickness, double maxRatio) {
-			this.feasible = feasible;
-			this.horizontal = horizontal;
-			this.thickness = thickness;
-			this.maxRatio = maxRatio;
-		}
 	}
 
 	private Tile findTile(Point point) {
@@ -474,26 +377,96 @@ public class JTreemap extends JComponent {
 		}
 	}
 
-	private void paintOverlay(Graphics2D g2, Rectangle2D.Double rect) {
-		if (rect.width <= 4 || rect.height <= 4) {
+	private void paintCushion(Graphics2D g2, Tile tile, Rectangle2D.Double rect) {
+		int width = (int) Math.round(rect.width);
+		int height = (int) Math.round(rect.height);
+		if (width < 2 || height < 2) {
+			g2.setColor(tile.color);
+			g2.fill(rect);
 			return;
 		}
-		double radius = Math.max(rect.width, rect.height) / 2.0;
-		if (radius <= 1) {
+		BufferedImage cushion = getCushion(tile, width, height);
+		if (cushion == null) {
+			g2.setColor(tile.color);
+			g2.fill(rect);
 			return;
 		}
-		Point2D center = new Point2D.Double(rect.getCenterX(), rect.getCenterY());
-		RadialGradientPaint paint = new RadialGradientPaint(
-			center,
-			(float) radius,
-			new float[] {0f, 1f},
-			new Color[] {new Color(0, 0, 0, OVERLAY_ALPHA_CENTER), new Color(0, 0, 0, OVERLAY_ALPHA_EDGE)}
-		);
-		Graphics2D gOverlay = (Graphics2D) g2.create();
-		gOverlay.setClip(rect);
-		gOverlay.setPaint(paint);
-		gOverlay.fill(rect);
-		gOverlay.dispose();
+		int x = (int) Math.round(rect.x);
+		int y = (int) Math.round(rect.y);
+		g2.drawImage(cushion, x, y, width, height, null);
+	}
+
+	private BufferedImage getCushion(Tile tile, int width, int height) {
+		if (tile.cushion != null && tile.cushionWidth == width && tile.cushionHeight == height) {
+			return tile.cushion;
+		}
+		BufferedImage cushion = renderCushion(tile, width, height);
+		tile.cushion = cushion;
+		tile.cushionWidth = width;
+		tile.cushionHeight = height;
+		return cushion;
+	}
+
+	private BufferedImage renderCushion(Tile tile, int width, int height) {
+		if (width <= 0 || height <= 0) {
+			return null;
+		}
+		double xx2 = 0.0;
+		double xx1 = 0.0;
+		double yy2 = 0.0;
+		double yy1 = 0.0;
+		if (width > 1) {
+			xx2 = squareRidge(xx2, CUSHION_HEIGHT, 0, width - 1);
+			xx1 = linearRidge(xx1, CUSHION_HEIGHT, 0, width - 1);
+		}
+		if (height > 1) {
+			yy2 = squareRidge(yy2, CUSHION_HEIGHT, 0, height - 1);
+			yy1 = linearRidge(yy1, CUSHION_HEIGHT, 0, height - 1);
+		}
+		BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+		int maxRed = Math.max(0, tile.color.getRed() - AMBIENT_LIGHT);
+		int maxGreen = Math.max(0, tile.color.getGreen() - AMBIENT_LIGHT);
+		int maxBlue = Math.max(0, tile.color.getBlue() - AMBIENT_LIGHT);
+		for (int y = 0; y < height; y++) {
+			for (int x = 0; x < width; x++) {
+				double nx = 2.0 * xx2 * x + xx1;
+				double ny = 2.0 * yy2 * y + yy1;
+				double denom = Math.sqrt(nx * nx + ny * ny + 1.0);
+				double cosa = (nx * LIGHT_X + ny * LIGHT_Y + LIGHT_Z) / denom;
+				int red = (int) (maxRed * cosa + 0.5);
+				int green = (int) (maxGreen * cosa + 0.5);
+				int blue = (int) (maxBlue * cosa + 0.5);
+				if (red < 0) {
+					red = 0;
+				}
+				if (green < 0) {
+					green = 0;
+				}
+				if (blue < 0) {
+					blue = 0;
+				}
+				red = Math.min(255, red + AMBIENT_LIGHT);
+				green = Math.min(255, green + AMBIENT_LIGHT);
+				blue = Math.min(255, blue + AMBIENT_LIGHT);
+				int rgb = (0xFF << 24) | (red << 16) | (green << 8) | blue;
+				image.setRGB(x, y, rgb);
+			}
+		}
+		return image;
+	}
+
+	private double squareRidge(double squareCoefficient, double height, int x1, int x2) {
+		if (x2 != x1) {
+			squareCoefficient -= 4.0 * height / (x2 - x1);
+		}
+		return squareCoefficient;
+	}
+
+	private double linearRidge(double linearCoefficient, double height, int x1, int x2) {
+		if (x2 != x1) {
+			linearCoefficient += 4.0 * height * (x2 + x1) / (x2 - x1);
+		}
+		return linearCoefficient;
 	}
 
 	private Rectangle2D.Double inset(Rectangle2D.Double rect, double inset) {
@@ -562,8 +535,10 @@ public class JTreemap extends JComponent {
 		private final Color borderColor;
 		private final Color highlightColor;
 		private final Color textColor;
-		private double area;
 		private Rectangle2D.Double rect;
+		private BufferedImage cushion;
+		private int cushionWidth;
+		private int cushionHeight;
 
 		private Tile(String name, double value) {
 			this.name = name;
