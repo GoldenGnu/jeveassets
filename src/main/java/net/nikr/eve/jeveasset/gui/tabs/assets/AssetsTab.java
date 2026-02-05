@@ -57,6 +57,7 @@ import net.nikr.eve.jeveasset.gui.frame.StatusPanel.JStatusLabel;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JFixedToolBar;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTabPrimary;
+import net.nikr.eve.jeveasset.gui.shared.components.JTreemap;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuColumns;
@@ -89,7 +90,7 @@ public class AssetsTab extends JMainTabPrimary implements TagUpdate {
 	private final JStatusLabel jAverage;
 	private final JStatusLabel jVolume;
 	private final JButton jClearNew;
-	private final JAssetTreemap jTreemapView;
+	private final JTreemap jTreemapView;
 	private final JPanel jViewPanel;
 	private final CardLayout viewLayout;
 
@@ -177,9 +178,9 @@ public class AssetsTab extends JMainTabPrimary implements TagUpdate {
 		//Menu
 		installTableTool(new AssetTableMenu(), tableFormat, comparatorChooser, tableModel, jTable, filterControl, MyAsset.class);
 
-		jTreemapView = new JAssetTreemap(new JAssetTreemap.GroupSelectionListener() {
+		jTreemapView = new JTreemap(new JTreemap.SelectionListener() {
 			@Override
-			public void groupSelected(String group) {
+			public void itemSelected(String group) {
 				applyGroupFilter(group);
 			}
 		});
@@ -337,7 +338,7 @@ public class AssetsTab extends JMainTabPrimary implements TagUpdate {
 		} finally {
 			filterList.getReadWriteLock().readLock().unlock();
 		}
-		jTreemapView.setGroups(groupValues);
+		jTreemapView.setItems(groupValues);
 	}
 
 	private void showTreemap(boolean show) {
@@ -352,6 +353,10 @@ public class AssetsTab extends JMainTabPrimary implements TagUpdate {
 	private void applyGroupFilter(String group) {
 		if (group == null || group.isEmpty()) {
 			return;
+		}
+		if (jTreemap.isSelected()) {
+			jTreemap.setSelected(false);
+			showTreemap(false);
 		}
 		List<Filter> filters = new ArrayList<>();
 		for (Filter filter : filterControl.getCurrentFilters()) {

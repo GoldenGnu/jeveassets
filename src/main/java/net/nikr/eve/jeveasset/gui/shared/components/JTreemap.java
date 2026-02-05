@@ -19,7 +19,7 @@
  *
  */
 
-package net.nikr.eve.jeveasset.gui.tabs.assets;
+package net.nikr.eve.jeveasset.gui.shared.components;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -29,12 +29,14 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Insets;
 import java.awt.Point;
+import java.awt.RadialGradientPaint;
 import java.awt.RenderingHints;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
+import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -47,23 +49,27 @@ import javax.swing.UIManager;
 import net.nikr.eve.jeveasset.gui.shared.Formatter;
 
 
-class JAssetTreemap extends JComponent {
+public class JTreemap extends JComponent {
 
-	interface GroupSelectionListener {
-		void groupSelected(String group);
+	public interface SelectionListener {
+		void itemSelected(String name);
 	}
 
 	private static final double GAP = 1.0;
+	private static final double MAX_ASPECT_RATIO = 5.0;
+	private static final double MAX_TILE_ASPECT_RATIO = 4.0;
 	private static final int LABEL_PADDING = 4;
+	private static final int OVERLAY_ALPHA_CENTER = 0;
+	private static final int OVERLAY_ALPHA_EDGE = 70;
 
-	private final GroupSelectionListener selectionListener;
+	private final SelectionListener selectionListener;
 	private final List<Tile> tiles = new ArrayList<>();
 	private Dimension lastSize;
 	private boolean layoutDirty = true;
 	private Tile hovered;
 	private final Font labelFont;
 
-	JAssetTreemap(final GroupSelectionListener selectionListener) {
+	public JTreemap(final SelectionListener selectionListener) {
 		this.selectionListener = selectionListener;
 		setOpaque(true);
 		Color background = UIManager.getColor("Panel.background");
@@ -108,17 +114,17 @@ class JAssetTreemap extends JComponent {
 				}
 				Tile tile = findTile(e.getPoint());
 				if (tile != null && selectionListener != null) {
-					selectionListener.groupSelected(tile.name);
+					selectionListener.itemSelected(tile.name);
 				}
 			}
 		});
 	}
 
-	void setGroups(final Map<String, Double> groupValues) {
+	public void setItems(final Map<String, Double> valuesByName) {
 		tiles.clear();
 		hovered = null;
-		if (groupValues != null) {
-			for (Map.Entry<String, Double> entry : groupValues.entrySet()) {
+		if (valuesByName != null) {
+			for (Map.Entry<String, Double> entry : valuesByName.entrySet()) {
 				String name = entry.getKey();
 				if (name == null || name.isEmpty()) {
 					name = "Unknown";
@@ -168,6 +174,7 @@ class JAssetTreemap extends JComponent {
 			}
 			g2.setColor(tile.color);
 			g2.fill(paintRect);
+			paintOverlay(g2, paintRect);
 			g2.setColor(tile.borderColor);
 			g2.draw(paintRect);
 			paintLabel(g2, tile, paintRect);
@@ -210,57 +217,79 @@ class JAssetTreemap extends JComponent {
 		if (width <= 0 || height <= 0) {
 			return;
 		}
+		double aspect = width / height;
+		if (aspect > MAX_TILE_ASPECT_RATIO) {
+			double newWidth = height * MAX_TILE_ASPECT_RATIO;
+			x += (width - newWidth) / 2.0;
+			width = newWidth;
+		} else if ((1.0 / aspect) > MAX_TILE_ASPECT_RATIO) {
+			double newHeight = width * MAX_TILE_ASPECT_RATIO;
+			y += (height - newHeight) / 2.0;
+			height = newHeight;
+		}
 		double area = width * height;
 		for (Tile tile : tiles) {
 			tile.area = tile.value / total * area;
 		}
 		List<Tile> row = new ArrayList<>();
+		RowLayout rowLayout = null;
 		int index = 0;
 		while (index < tiles.size()) {
 			Tile tile = tiles.get(index);
 			if (row.isEmpty()) {
 				row.add(tile);
+				rowLayout = chooseRowLayout(row, width, height);
+				if (!rowLayout.feasible) {
+					rowLayout = forceLayout(row, width, height);
+				}
 				index++;
 				continue;
 			}
-			double shortSide = Math.min(width, height);
-			double worstBefore = worst(row, shortSide);
 			row.add(tile);
-			double worstAfter = worst(row, shortSide);
-			if (worstAfter <= worstBefore) {
+			double effectiveSide = effectiveSide(width, height);
+			double worstAfter = worst(row, effectiveSide);
+			RowLayout candidate = chooseRowLayout(row, width, height);
+			if (row.size() == 1 || (candidate.feasible && worstAfter <= MAX_ASPECT_RATIO)) {
+				rowLayout = candidate;
 				index++;
 			} else {
 				row.remove(row.size() - 1);
-				layoutRow(row, x, y, width, height);
-				double rowArea = sumArea(row);
-				if (width >= height) {
-					double rowHeight = rowArea / width;
-					y += rowHeight;
-					height -= rowHeight;
+				if (rowLayout == null || !rowLayout.feasible) {
+					rowLayout = forceLayout(row, width, height);
+				}
+				layoutRow(row, x, y, width, height, rowLayout);
+				if (rowLayout.horizontal) {
+					y += rowLayout.thickness;
+					height -= rowLayout.thickness;
 				} else {
-					double rowWidth = rowArea / height;
-					x += rowWidth;
-					width -= rowWidth;
+					x += rowLayout.thickness;
+					width -= rowLayout.thickness;
 				}
 				row.clear();
+				rowLayout = null;
 			}
 		}
 		if (!row.isEmpty()) {
-			layoutRow(row, x, y, width, height);
+			if (rowLayout == null || !rowLayout.feasible) {
+				rowLayout = chooseRowLayout(row, width, height);
+				if (!rowLayout.feasible) {
+					rowLayout = forceLayout(row, width, height);
+				}
+			}
+			layoutRow(row, x, y, width, height, rowLayout);
 		}
 	}
 
-	private void layoutRow(List<Tile> row, double x, double y, double width, double height) {
+	private void layoutRow(List<Tile> row, double x, double y, double width, double height, RowLayout layout) {
 		if (row.isEmpty()) {
 			return;
 		}
-		double rowArea = sumArea(row);
-		if (width >= height) {
-			double rowHeight = rowArea / width;
+		if (layout.horizontal) {
+			double rowHeight = layout.thickness;
 			double currentX = x;
 			for (int i = 0; i < row.size(); i++) {
 				Tile tile = row.get(i);
-				double tileWidth = (i == row.size() - 1) ? (x + width - currentX) : (tile.area / rowHeight);
+				double tileWidth = tile.area / rowHeight;
 				if (tileWidth < 0) {
 					tileWidth = 0;
 				}
@@ -268,11 +297,11 @@ class JAssetTreemap extends JComponent {
 				currentX += tileWidth;
 			}
 		} else {
-			double rowWidth = rowArea / height;
+			double rowWidth = layout.thickness;
 			double currentY = y;
 			for (int i = 0; i < row.size(); i++) {
 				Tile tile = row.get(i);
-				double tileHeight = (i == row.size() - 1) ? (y + height - currentY) : (tile.area / rowWidth);
+				double tileHeight = tile.area / rowWidth;
 				if (tileHeight < 0) {
 					tileHeight = 0;
 				}
@@ -280,6 +309,79 @@ class JAssetTreemap extends JComponent {
 				currentY += tileHeight;
 			}
 		}
+	}
+
+	private RowLayout chooseRowLayout(List<Tile> row, double width, double height) {
+		RowLayout horizontal = computeRowLayout(row, width, height, true);
+		RowLayout vertical = computeRowLayout(row, width, height, false);
+		if (horizontal.feasible && !vertical.feasible) {
+			return horizontal;
+		}
+		if (!horizontal.feasible && vertical.feasible) {
+			return vertical;
+		}
+		if (!horizontal.feasible && !vertical.feasible) {
+			if (horizontal.maxRatio < vertical.maxRatio) {
+				return horizontal;
+			}
+			if (vertical.maxRatio < horizontal.maxRatio) {
+				return vertical;
+			}
+			return width >= height ? horizontal : vertical;
+		}
+		if (horizontal.maxRatio < vertical.maxRatio) {
+			return horizontal;
+		}
+		if (vertical.maxRatio < horizontal.maxRatio) {
+			return vertical;
+		}
+		return width >= height ? horizontal : vertical;
+	}
+
+	private RowLayout computeRowLayout(List<Tile> row, double width, double height, boolean horizontal) {
+		if (row.isEmpty() || width <= 0 || height <= 0) {
+			return new RowLayout(false, horizontal, 0.0, Double.MAX_VALUE);
+		}
+		double rowArea = sumArea(row);
+		if (rowArea <= 0) {
+			return new RowLayout(false, horizontal, 0.0, Double.MAX_VALUE);
+		}
+		double thickness = horizontal ? (rowArea / width) : (rowArea / height);
+		if (thickness <= 0) {
+			return new RowLayout(false, horizontal, 0.0, Double.MAX_VALUE);
+		}
+		double maxRatio = maxRatioForThickness(row, thickness);
+		boolean feasible = maxRatio <= MAX_TILE_ASPECT_RATIO;
+		return new RowLayout(feasible, horizontal, thickness, maxRatio);
+	}
+
+	private RowLayout forceLayout(List<Tile> row, double width, double height) {
+		if (row.isEmpty() || width <= 0 || height <= 0) {
+			return new RowLayout(false, true, 0.0, Double.MAX_VALUE);
+		}
+		double rowArea = sumArea(row);
+		boolean horizontal = width >= height;
+		double thickness = horizontal ? (rowArea / width) : (rowArea / height);
+		double maxRatio = maxRatioForThickness(row, thickness);
+		return new RowLayout(true, horizontal, thickness, maxRatio);
+	}
+
+	private double maxRatioForThickness(List<Tile> row, double thickness) {
+		if (row.isEmpty() || thickness <= 0) {
+			return Double.MAX_VALUE;
+		}
+		double maxRatio = 0.0;
+		for (Tile tile : row) {
+			if (tile.area <= 0) {
+				continue;
+			}
+			double ratio = tile.area / (thickness * thickness);
+			if (ratio < 1.0) {
+				ratio = 1.0 / ratio;
+			}
+			maxRatio = Math.max(maxRatio, ratio);
+		}
+		return maxRatio;
 	}
 
 	private double sumArea(List<Tile> tiles) {
@@ -307,6 +409,31 @@ class JAssetTreemap extends JComponent {
 		double ratio1 = sideSquared * max / totalSquared;
 		double ratio2 = totalSquared / (sideSquared * min);
 		return Math.max(ratio1, ratio2);
+	}
+
+	private double effectiveSide(double width, double height) {
+		double shortSide = Math.min(width, height);
+		double longSide = Math.max(width, height);
+		if (shortSide <= 0) {
+			return shortSide;
+		}
+		double aspect = longSide / shortSide;
+		double bias = 1.0 + Math.min(0.5, (aspect - 1.0) * 0.25);
+		return shortSide * bias;
+	}
+
+	private static class RowLayout {
+		private final boolean feasible;
+		private final boolean horizontal;
+		private final double thickness;
+		private final double maxRatio;
+
+		private RowLayout(boolean feasible, boolean horizontal, double thickness, double maxRatio) {
+			this.feasible = feasible;
+			this.horizontal = horizontal;
+			this.thickness = thickness;
+			this.maxRatio = maxRatio;
+		}
 	}
 
 	private Tile findTile(Point point) {
@@ -345,6 +472,28 @@ class JAssetTreemap extends JComponent {
 				g2.drawString(valueText, x, y);
 			}
 		}
+	}
+
+	private void paintOverlay(Graphics2D g2, Rectangle2D.Double rect) {
+		if (rect.width <= 4 || rect.height <= 4) {
+			return;
+		}
+		double radius = Math.max(rect.width, rect.height) / 2.0;
+		if (radius <= 1) {
+			return;
+		}
+		Point2D center = new Point2D.Double(rect.getCenterX(), rect.getCenterY());
+		RadialGradientPaint paint = new RadialGradientPaint(
+			center,
+			(float) radius,
+			new float[] {0f, 1f},
+			new Color[] {new Color(0, 0, 0, OVERLAY_ALPHA_CENTER), new Color(0, 0, 0, OVERLAY_ALPHA_EDGE)}
+		);
+		Graphics2D gOverlay = (Graphics2D) g2.create();
+		gOverlay.setClip(rect);
+		gOverlay.setPaint(paint);
+		gOverlay.fill(rect);
+		gOverlay.dispose();
 	}
 
 	private Rectangle2D.Double inset(Rectangle2D.Double rect, double inset) {
