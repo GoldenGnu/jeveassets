@@ -442,6 +442,10 @@ public class Program implements ActionListener {
 					window.validate();
 					window.repaint();
 				}
+				// Also refresh hidden/lazy tabs that are not currently attached to a visible window.
+				for (JMainTab jMainTab : getMainTabs().values()) {
+					SwingUtilities.updateComponentTreeUI(jMainTab.getPanel());
+				}
 				applied[0] = true;
 			}
 		});
