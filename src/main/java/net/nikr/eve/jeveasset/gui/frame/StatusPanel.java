@@ -35,10 +35,10 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JProgressBar;
 import javax.swing.Timer;
+import javax.swing.UIManager;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
-import net.nikr.eve.jeveasset.gui.shared.ColorUtil;
 import net.nikr.eve.jeveasset.gui.shared.CopyHandler;
 import net.nikr.eve.jeveasset.gui.shared.Formatter;
 import net.nikr.eve.jeveasset.gui.shared.components.JFixedToolBar;
@@ -371,11 +371,7 @@ public class StatusPanel extends JGroupLayoutPanel {
 
 		private void init(final String toolTip, final Icon icon) {
 			setIcon(icon);
-			if (ColorUtil.isBrightColor(getBackground())) { //Light background color
-				setForeground(getBackground().darker().darker().darker());
-			} else { //Dark background color
-				setForeground(getBackground().brighter().brighter());
-			}
+			updateForegroundFromLookAndFeel();
 			setIconTextGap(3);
 			setToolTipText(GuiShared.get().clickToCopyWrap(toolTip));
 			setHorizontalAlignment(JLabel.LEFT);
@@ -410,6 +406,23 @@ public class StatusPanel extends JGroupLayoutPanel {
 					}
 				}
 			});
+		}
+
+		@Override
+		public void updateUI() {
+			super.updateUI();
+			updateForegroundFromLookAndFeel();
+		}
+
+		private void updateForegroundFromLookAndFeel() {
+			// Match status label color behavior to the "New update available" button.
+			java.awt.Color foreground = UIManager.getColor("Button.foreground");
+			if (foreground == null) {
+				foreground = UIManager.getColor("Label.foreground");
+			}
+			if (foreground != null) {
+				setForeground(foreground);
+			}
 		}
 
 		@Override

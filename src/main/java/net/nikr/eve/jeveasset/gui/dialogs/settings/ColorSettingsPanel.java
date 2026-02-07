@@ -316,8 +316,11 @@ public class ColorSettingsPanel extends JSettingsPanel {
 						|| Settings.get().isEasyChartColors() != easyChartColors;
 		Settings.get().setEasyChartColors(easyChartColors);
 		colors = Settings.get().getColorSettings().get(); //Copy to check for changes on save
-		if (lookAndfeelChanged && !UIManager.getLookAndFeel().getClass().getName().equals(lookAndFeelClass)) {
-			JOptionPane.showMessageDialog(parent, DialoguesSettings.get().lookAndFeelMsg(), DialoguesSettings.get().lookAndFeelTitle(), JOptionPane.PLAIN_MESSAGE);
+		if (lookAndfeelChanged) {
+			boolean applied = program.applyLookAndFeel(lookAndFeelClass);
+			if (!applied) {
+				JOptionPane.showMessageDialog(parent, DialoguesSettings.get().lookAndFeelMsg(), DialoguesSettings.get().lookAndFeelTitle(), JOptionPane.PLAIN_MESSAGE);
+			}
 		}
 		return repaint ? UpdateType.FULL_REPAINT : UpdateType.NONE;
 	}

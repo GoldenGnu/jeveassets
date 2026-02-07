@@ -153,6 +153,7 @@ public abstract class DialoguesSettings extends Bundle {
 	public abstract String lookAndFeelDefaultName(String name);
 	public abstract String lookAndFeelFlatLight();
 	public abstract String lookAndFeelFlatDark();
+	public abstract String lookAndFeelFlatDarkDarker();
 	public abstract String lookAndFeelFlatIntelliJ();
 	public abstract String lookAndFeelFlatDarcula();
 	public abstract String lookAndFeelNimbusDark();
