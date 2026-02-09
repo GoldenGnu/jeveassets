@@ -414,44 +414,6 @@ public class Program implements ActionListener {
 		initLookAndFeel(lookAndFeel, true);
 	}
 
-	public boolean applyLookAndFeel(String lookAndFeelClass) {
-		if (lookAndFeelClass == null || lookAndFeelClass.isEmpty()) {
-			return false;
-		}
-		String current = UIManager.getLookAndFeel().getClass().getName();
-		if (current.equals(lookAndFeelClass)) {
-			return true;
-		}
-		final boolean[] applied = {false};
-		ensureEDT(new Runnable() {
-			@Override
-			public void run() {
-				initLookAndFeel(lookAndFeelClass, false);
-				String active = UIManager.getLookAndFeel().getClass().getName();
-				if (!active.equals(lookAndFeelClass)) {
-					return;
-				}
-				height = 22;
-				calcButtonsHeight();
-				for (Window window : Window.getWindows()) {
-					if (!window.isDisplayable()) {
-						continue;
-					}
-					SwingUtilities.updateComponentTreeUI(window);
-					window.invalidate();
-					window.validate();
-					window.repaint();
-				}
-				// Also refresh hidden/lazy tabs that are not currently attached to a visible window.
-				for (JMainTab jMainTab : getMainTabs().values()) {
-					SwingUtilities.updateComponentTreeUI(jMainTab.getPanel());
-				}
-				applied[0] = true;
-			}
-		});
-		return applied[0];
-	}
-
 	private void initLookAndFeel(String lookAndFeel, boolean tryDefault) {
 		//Allow users to overwrite LaF
 		if (System.getProperty("swing.defaultlaf") != null) {
