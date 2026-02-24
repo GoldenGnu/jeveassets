@@ -23,8 +23,8 @@ package net.nikr.eve.jeveasset.data.api.raw;
 import java.util.Comparator;
 import net.nikr.eve.jeveasset.i18n.TabsNpcStanding;
 import net.nikr.eve.jeveasset.io.shared.RawConverter;
-import net.troja.eve.esi.model.CharacterStandingsResponse;
-import net.troja.eve.esi.model.CorporationStandingsResponse;
+import net.nikr.eve.jeveasset.io.shared.SafeConverter;
+import net.troja.eve.esi.model.StandingsResponse;
 
 
 public class RawNpcStanding {
@@ -82,18 +82,15 @@ public class RawNpcStanding {
 
 	private RawNpcStanding() { }
 
-	public RawNpcStanding(CharacterStandingsResponse response) {
+	/**
+	 * ESI Character/Corporation
+	 * @param response 
+	 */
+	public RawNpcStanding(StandingsResponse response) {
 		fromType = response.getFromTypeString();
 		fromTypeEnum = RawConverter.toNpcStandingFromType(response.getFromType());
-		fromId = response.getFromId();
-		standing = response.getStanding();
-	}
-
-	public RawNpcStanding(CorporationStandingsResponse response) {
-		fromType = response.getFromTypeString();
-		fromTypeEnum = RawConverter.toNpcStandingFromType(response.getFromType());
-		fromId = response.getFromId();
-		standing = response.getStanding();
+		fromId = SafeConverter.toInteger(response.getFromId());
+		standing = SafeConverter.toFloat(response.getStanding());
 	}
 
 	public RawNpcStanding(RawNpcStanding response) {

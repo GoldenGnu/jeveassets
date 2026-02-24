@@ -324,6 +324,15 @@ public abstract class GuiShared extends Bundle {
 	public abstract String uiWaypoint();
 	public abstract String uiWaypointBeginning();
 	public abstract String uiWaypointClear();
+	public abstract String uiWaypointEveGatecampCheck();
+	public abstract String uiWaypointEveGatecampCheckAsk();
+	public abstract String uiWaypointEveGatecampCheckAlwaysOpen();
+	public abstract String uiWaypointEveGatecampCheckDefault();
+	public abstract String uiWaypointEveGatecampCheckNeverOpen();
+	public abstract String uiWaypointEveGatecampCheckUnsecure();
+	public abstract String uiWaypointEveGatecampCheckOptions();
+	public abstract String uiWaypointEveGatecampCheckSecure();
+	public abstract String uiWaypointEveGatecampCheckShortest();
 	public abstract String uiWaypointFail();
 	public abstract String uiWaypointOk();
 	public abstract String uiWaypointTitle();

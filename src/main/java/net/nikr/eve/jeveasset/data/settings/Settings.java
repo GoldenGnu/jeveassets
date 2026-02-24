@@ -114,7 +114,12 @@ public class Settings {
 		FLAG_ASSETS_CONTRACTS_OWNER_BOTH,
 		FLAG_CELL_VALUE_CACHE,
 		FLAG_LOAD_TOOLS_BACKGROUND,
-		FLAG_LOAD_TOOLS_STARTUP
+		FLAG_LOAD_TOOLS_STARTUP,
+		FLAG_EVE_GATECAMP_CHECK_SET,
+		FLAG_EVE_GATECAMP_CHECK_ALWAYS_OPEN,
+		FLAG_EVE_GATECAMP_CHECK_NEVER_OPEN,
+		FLAG_EVE_GATECAMP_CHECK_SECURE,
+		FLAG_EVE_GATECAMP_CHECK_UNSECURE
 	}
 
 	public static enum TransactionProfitPrice {
@@ -330,6 +335,11 @@ public class Settings {
 		flags.put(SettingFlag.FLAG_CELL_VALUE_CACHE, true);
 		flags.put(SettingFlag.FLAG_LOAD_TOOLS_BACKGROUND, true);
 		flags.put(SettingFlag.FLAG_LOAD_TOOLS_STARTUP, false);
+		flags.put(SettingFlag.FLAG_EVE_GATECAMP_CHECK_SET, false);
+		flags.put(SettingFlag.FLAG_EVE_GATECAMP_CHECK_ALWAYS_OPEN, false);
+		flags.put(SettingFlag.FLAG_EVE_GATECAMP_CHECK_NEVER_OPEN, false);
+		flags.put(SettingFlag.FLAG_EVE_GATECAMP_CHECK_UNSECURE, false);
+		flags.put(SettingFlag.FLAG_EVE_GATECAMP_CHECK_SECURE, false);
 		cacheFlags();
 		//Default Filters
 		List<Filter> filter;
@@ -1059,6 +1069,46 @@ public class Settings {
 
 	public void setLoadToolsStartup(final boolean loadToolsStartup) {
 		flags.put(SettingFlag.FLAG_LOAD_TOOLS_STARTUP, loadToolsStartup);
+	}
+
+	public boolean isEveGatecampCheckSet() {
+		return false; // flags.get(SettingFlag.FLAG_EVE_GATECAMP_CHECK_SET);
+	}
+
+	public void setEveGatecampCheckSet(final boolean eveGatecampCheckSet) {
+		flags.put(SettingFlag.FLAG_EVE_GATECAMP_CHECK_SET, eveGatecampCheckSet);
+	}
+
+	public boolean isEveGatecampCheckAlwaysOpen() {
+		return flags.get(SettingFlag.FLAG_EVE_GATECAMP_CHECK_ALWAYS_OPEN);
+	}
+
+	public void setEveGatecampCheckAlwaysOpen(final boolean eveGatecampCheckAlwaysOpen) {
+		flags.put(SettingFlag.FLAG_EVE_GATECAMP_CHECK_ALWAYS_OPEN, eveGatecampCheckAlwaysOpen);
+	}
+
+	public boolean isEveGatecampCheckNeverOpen() {
+		return flags.get(SettingFlag.FLAG_EVE_GATECAMP_CHECK_NEVER_OPEN);
+	}
+	
+	public void setEveGatecampCheckNeverOpen(final boolean eveGatecampCheckNeverOpen) {
+		flags.put(SettingFlag.FLAG_EVE_GATECAMP_CHECK_NEVER_OPEN, eveGatecampCheckNeverOpen);
+	}
+		
+	public boolean isEveGatecampCheckSecure() {
+		return flags.get(SettingFlag.FLAG_EVE_GATECAMP_CHECK_SECURE);
+	}
+	
+	public void setEveGatecampCheckSecure(final boolean eveGatecampCheckSecure) {
+		flags.put(SettingFlag.FLAG_EVE_GATECAMP_CHECK_SECURE, eveGatecampCheckSecure);
+	}
+
+	public boolean isEveGatecampCheckUnsecure() {
+		return flags.get(SettingFlag.FLAG_EVE_GATECAMP_CHECK_UNSECURE);
+	}
+	
+	public void setEveGatecampCheckUnsecure(final boolean eveGatecampCheckUnsecure) {
+		flags.put(SettingFlag.FLAG_EVE_GATECAMP_CHECK_UNSECURE, eveGatecampCheckUnsecure);
 	}
 
 	public boolean isMarketOrderHistory() {

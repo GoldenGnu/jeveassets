@@ -135,6 +135,9 @@ public abstract class DialoguesSettings extends Bundle {
 
 	// used in JumpsSettingsPanel
 	public abstract String jumps();
+	public abstract String eveGatecampCheck();
+	public abstract String eveGatecampCheckOpenOptions();
+	public abstract String eveGatecampCheckRouteOptions();
 
 	// used in ColorSettingsPanel
 	public abstract String chartColors();

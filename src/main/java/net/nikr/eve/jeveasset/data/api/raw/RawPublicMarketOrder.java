@@ -25,8 +25,9 @@ import java.util.Objects;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder.MarketOrderRange;
 import net.nikr.eve.jeveasset.gui.tabs.orders.MarketLog;
 import net.nikr.eve.jeveasset.io.shared.RawConverter;
-import net.troja.eve.esi.model.MarketOrdersResponse;
-import net.troja.eve.esi.model.MarketStructuresResponse;
+import net.nikr.eve.jeveasset.io.shared.SafeConverter;
+import net.troja.eve.esi.model.MarketRegionOrdersResponse;
+import net.troja.eve.esi.model.MarketStructureResponse;
 
 
 public class RawPublicMarketOrder {
@@ -45,35 +46,35 @@ public class RawPublicMarketOrder {
 	private final Integer volumeRemain;
 	private final Long locationId;
 
-	public RawPublicMarketOrder(MarketOrdersResponse marketOrder) {
-		this.duration = marketOrder.getDuration();
-		this.minVolume = marketOrder.getMinVolume();
+	public RawPublicMarketOrder(MarketRegionOrdersResponse marketOrder) {
+		this.duration = SafeConverter.toInteger(marketOrder.getDuration());
+		this.minVolume = SafeConverter.toInteger(marketOrder.getMinVolume());
 		this.isBuyOrder = marketOrder.getIsBuyOrder();
 		this.price = marketOrder.getPrice();
-		this.systemId = marketOrder.getSystemId();
-		this.typeId = marketOrder.getTypeId();
+		this.systemId = SafeConverter.toInteger(marketOrder.getSystemId());
+		this.typeId = SafeConverter.toInteger(marketOrder.getTypeId());
 		this.range = marketOrder.getRangeString();
 		this.rangeEnum = RawConverter.toMarketOrderRange(marketOrder.getRange());
-		this.volumeTotal = marketOrder.getVolumeTotal();
+		this.volumeTotal = SafeConverter.toInteger(marketOrder.getVolumeTotal());
 		this.issued = RawConverter.toDate(marketOrder.getIssued());
 		this.orderId = marketOrder.getOrderId();
-		this.volumeRemain = marketOrder.getVolumeRemain();
+		this.volumeRemain = SafeConverter.toInteger(marketOrder.getVolumeRemain());
 		this.locationId = marketOrder.getLocationId();
 	}
 
-	public RawPublicMarketOrder(MarketStructuresResponse marketOrder, final Long systemId) {
-		this.duration = marketOrder.getDuration();
-		this.minVolume = marketOrder.getMinVolume();
+	public RawPublicMarketOrder(MarketStructureResponse marketOrder, final Long systemId) {
+		this.duration = SafeConverter.toInteger(marketOrder.getDuration());
+		this.minVolume = SafeConverter.toInteger(marketOrder.getMinVolume());
 		this.isBuyOrder = marketOrder.getIsBuyOrder();
 		this.price = marketOrder.getPrice();
-		this.systemId = RawConverter.toInteger(systemId);
-		this.typeId = marketOrder.getTypeId();
+		this.systemId = SafeConverter.toInteger(systemId);
+		this.typeId = SafeConverter.toInteger(marketOrder.getTypeId());
 		this.range = marketOrder.getRangeString();
 		this.rangeEnum = RawConverter.toMarketOrderRange(marketOrder.getRange());
-		this.volumeTotal = marketOrder.getVolumeTotal();
+		this.volumeTotal = SafeConverter.toInteger(marketOrder.getVolumeTotal());
 		this.issued = RawConverter.toDate(marketOrder.getIssued());
 		this.orderId = marketOrder.getOrderId();
-		this.volumeRemain = marketOrder.getVolumeRemain();
+		this.volumeRemain = SafeConverter.toInteger(marketOrder.getVolumeRemain());
 		this.locationId = marketOrder.getLocationId();
 	}
 
@@ -82,7 +83,7 @@ public class RawPublicMarketOrder {
 		this.minVolume = marketLog.getMinVolume();
 		this.isBuyOrder = marketLog.getBid();
 		this.price = marketLog.getPrice();
-		this.systemId = RawConverter.toInteger(marketLog.getSolarSystemID());
+		this.systemId = SafeConverter.toInteger(marketLog.getSolarSystemID());
 		this.typeId = marketLog.getTypeID();
 		this.range = null;
 		this.rangeEnum = RawConverter.toMarketOrderRange(marketLog.getRange(), null, null);

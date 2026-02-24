@@ -46,8 +46,8 @@ import net.troja.eve.esi.model.CorporationIndustryJobsResponse;
 import net.troja.eve.esi.model.CorporationOrdersHistoryResponse;
 import net.troja.eve.esi.model.CorporationOrdersResponse;
 import net.troja.eve.esi.model.CorporationWalletJournalResponse;
-import net.troja.eve.esi.model.MarketOrdersResponse;
-import net.troja.eve.esi.model.MarketStructuresResponse;
+import net.troja.eve.esi.model.MarketRegionOrdersResponse;
+import net.troja.eve.esi.model.MarketStructureResponse;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -532,9 +532,9 @@ public class RawConverterTest extends TestUtil {
 	}
 
 	@Test
-	public void testToMarketOrderRange_MarketOrdersResponseRangeEnum() {
+	public void testToMarketOrderRange_MarketRegionOrdersResponseRangeEnum() {
 		//Enum
-		for (MarketOrdersResponse.RangeEnum value : MarketOrdersResponse.RangeEnum.values()) {
+		for (MarketRegionOrdersResponse.RangeEnum value : MarketRegionOrdersResponse.RangeEnum.values()) {
 			assertEquals(value.name(), RawConverter.toMarketOrderRange(value).name());
 		}
 	}
@@ -542,7 +542,7 @@ public class RawConverterTest extends TestUtil {
 	@Test
 	public void testToMarketOrderRange_MarketStructuresResponseRangeEnum() {
 		//Enum
-		for (MarketStructuresResponse.RangeEnum value : MarketStructuresResponse.RangeEnum.values()) {
+		for (MarketStructureResponse.RangeEnum value : MarketStructureResponse.RangeEnum.values()) {
 			assertEquals(value.name(), RawConverter.toMarketOrderRange(value).name());
 		}
 	}

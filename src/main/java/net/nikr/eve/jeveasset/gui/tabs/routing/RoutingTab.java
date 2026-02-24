@@ -88,6 +88,7 @@ import net.nikr.eve.jeveasset.gui.shared.components.JTextDialog.SimpleTextImport
 import net.nikr.eve.jeveasset.gui.shared.components.JTextDialog.TextReturn;
 import net.nikr.eve.jeveasset.gui.shared.components.ListComboBoxModel;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuUI;
+import net.nikr.eve.jeveasset.gui.shared.menu.JMenuUI.EveGatecampCheck;
 import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels.StringFilterator;
@@ -1382,6 +1383,7 @@ public class RoutingTab extends JMainTabSecondary implements UpdateFilter {
 				if (owner == null) {
 					return;
 				}
+				Set<Long> locationIDs = new HashSet<>();
 				JMenuUI.getLockWindow(program).show(GuiShared.get().updating(), new JMenuUI.EsiUpdate(owner) {
 					@Override
 					protected void updateESI() throws Throwable {
@@ -1391,10 +1393,12 @@ public class RoutingTab extends JMainTabSecondary implements UpdateFilter {
 							List<SolarSystem> stations = routeResult.getStations().get(system.getSystemID());
 							if (stations != null && !stations.isEmpty()) { //Station(s)
 								for (SolarSystem station : stations) {
-									getApi().postUiAutopilotWaypoint(false, clear, station.getLocationID(), AbstractEsiGetter.DATASOURCE, null);
+									getApi().postUiAutopilotWaypoint(false, clear, station.getLocationID(), AbstractEsiGetter.COMPATIBILITY_DATE, null, null, null);
+									locationIDs.add(station.getLocationID());
 								}
 							} else { //System
-								getApi().postUiAutopilotWaypoint(false, clear, system.getSystemID(), AbstractEsiGetter.DATASOURCE, null);
+								getApi().postUiAutopilotWaypoint(false, clear, system.getSystemID(), AbstractEsiGetter.COMPATIBILITY_DATE, null, null, null);
+								locationIDs.add(system.getSystemID());
 							}
 							if (clear) {
 								clear = false;
@@ -1404,6 +1408,7 @@ public class RoutingTab extends JMainTabSecondary implements UpdateFilter {
 					@Override
 					protected void ok() {
 						JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsRouting.get().resultUiOk(), GuiShared.get().uiWaypointTitle(), JOptionPane.PLAIN_MESSAGE);
+						EveGatecampCheck.open(program, owner, locationIDs);
 					}
 					@Override
 					protected void fail() {

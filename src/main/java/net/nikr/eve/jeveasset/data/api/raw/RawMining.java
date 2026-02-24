@@ -23,6 +23,7 @@ package net.nikr.eve.jeveasset.data.api.raw;
 import java.util.Date;
 import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
 import net.nikr.eve.jeveasset.io.shared.RawConverter;
+import net.nikr.eve.jeveasset.io.shared.SafeConverter;
 import net.troja.eve.esi.model.CharacterMiningResponse;
 import net.troja.eve.esi.model.CorporationMiningObserverResponse;
 import net.troja.eve.esi.model.CorporationMiningObserversResponse;
@@ -64,8 +65,8 @@ public class RawMining {
 	public RawMining(CharacterMiningResponse mining, OwnerType owner) {
 		this.date = RawConverter.toDate(mining.getDate());
 		this.count = mining.getQuantity();
-		this.locationID = RawConverter.toLong(mining.getSolarSystemId());
-		this.typeID = mining.getTypeId();
+		this.locationID = mining.getSolarSystemId();
+		this.typeID = SafeConverter.toInteger(mining.getTypeId());
 		this.characterID = owner.getOwnerID();
 		this.corporationID = null;
 		this.corporationName = owner.getCorporationName();
@@ -82,11 +83,11 @@ public class RawMining {
 	public RawMining(CorporationMiningObserversResponse observers, CorporationMiningObserverResponse mining, OwnerType owner) {
 		this.date = RawConverter.toDate(mining.getLastUpdated());
 		this.count = mining.getQuantity();
-		this.locationID = RawConverter.toLong(observers.getObserverId());
-		this.typeID = mining.getTypeId();
+		this.locationID = observers.getObserverId();
+		this.typeID = SafeConverter.toInteger(mining.getTypeId());
 		this.characterID = mining.getCharacterId();
 		this.corporationName = null;
-		this.corporationID = RawConverter.toLong(mining.getRecordedCorporationId());
+		this.corporationID = mining.getRecordedCorporationId();
 		this.forCorporation = true;
 	}
 
