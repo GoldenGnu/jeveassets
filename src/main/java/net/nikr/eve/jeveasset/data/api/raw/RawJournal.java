@@ -23,8 +23,10 @@ package net.nikr.eve.jeveasset.data.api.raw;
 import java.util.Date;
 import net.nikr.eve.jeveasset.i18n.TabsJournal;
 import net.nikr.eve.jeveasset.io.shared.RawConverter;
+import net.nikr.eve.jeveasset.io.shared.SafeConverter;
 import net.troja.eve.esi.model.CharacterWalletJournalResponse;
 import net.troja.eve.esi.model.CorporationWalletJournalResponse;
+
 
 public class RawJournal {
 
@@ -208,14 +210,14 @@ public class RawJournal {
 		contextIdTypeEnum = RawConverter.toJournalContextType(journal.getContextIdType());
 		date = RawConverter.toDate(journal.getDate());
 		description = journal.getDescription();
-		firstPartyId = journal.getFirstPartyId();
+		firstPartyId = SafeConverter.toInteger(journal.getFirstPartyId());
 		reason = journal.getReason();
 		id = journal.getId();
 		refType = journal.getRefTypeString();
 		refTypeEnum = RawConverter.toJournalRefType(journal.getRefType());
-		secondPartyId = journal.getSecondPartyId();
+		secondPartyId = SafeConverter.toInteger(journal.getSecondPartyId());
 		tax = journal.getTax();
-		taxReceiverId = journal.getTaxReceiverId();
+		taxReceiverId = SafeConverter.toInteger(journal.getTaxReceiverId());
 		this.accountKey = accountKey;
 	}
 
@@ -233,14 +235,14 @@ public class RawJournal {
 		contextIdTypeEnum = RawConverter.toJournalContextType(journal.getContextIdType());
 		date = RawConverter.toDate(journal.getDate());
 		description = journal.getDescription();
-		firstPartyId = journal.getFirstPartyId();
+		firstPartyId = SafeConverter.toInteger(journal.getFirstPartyId());
 		reason = journal.getReason();
 		id = journal.getId();
 		refType = journal.getRefTypeString();
 		refTypeEnum = RawConverter.toJournalRefType(journal.getRefType());
-		secondPartyId = journal.getSecondPartyId();
+		secondPartyId = SafeConverter.toInteger(journal.getSecondPartyId());
 		tax = journal.getTax();
-		taxReceiverId = journal.getTaxReceiverId();
+		taxReceiverId = SafeConverter.toInteger(journal.getTaxReceiverId());
 		this.accountKey = accountKey;
 	}
 

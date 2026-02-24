@@ -18,20 +18,45 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  */
-package net.nikr.eve.jeveasset.data.raw;
+package net.nikr.eve.jeveasset.io.shared;
 
-import net.nikr.eve.jeveasset.TestUtil;
-import net.nikr.eve.jeveasset.data.api.raw.RawNpcStanding;
-import net.troja.eve.esi.model.StandingsResponse;
-import org.junit.Test;
+import java.util.ArrayList;
+import java.util.List;
 
 
-public class RawNpcStandingTest extends TestUtil {
+public class SafeConverter {
 
-	@Test
-	public void rawNpcStandingTest() {
-		RawUtil.compare(RawNpcStanding.class, StandingsResponse.class);
-		RawUtil.compare(RawNpcStanding.FromType.values(), StandingsResponse.FromTypeEnum.values());
+	public static Long toLong(Integer value) {
+		if (value != null) {
+			return value.longValue();
+		} else {
+			return null;
+		}
 	}
 
+	public static Integer toInteger(Long value) {
+		if (value != null) {
+			return Math.toIntExact(value);
+		}
+		return null;
+	}
+
+	public static List<Integer> toInteger(List<Long> values) {
+		if (values != null) {
+			List<Integer> output = new ArrayList<>();
+			for (long value : values) {
+				output.add(toInteger(value));
+			}
+			return output;
+		}
+		return new ArrayList<>();
+	}
+
+	public static Float toFloat(Number value) {
+		if (value != null) {
+			return value.floatValue();
+		} else {
+			return null;
+		}
+	}
 }

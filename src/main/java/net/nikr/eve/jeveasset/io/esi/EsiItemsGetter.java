@@ -26,18 +26,18 @@ import java.util.List;
 import java.util.Map;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.settings.Settings;
-import static net.nikr.eve.jeveasset.io.esi.AbstractEsiGetter.DATASOURCE;
 import static net.nikr.eve.jeveasset.io.esi.AbstractEsiGetter.getMarketApiOpen;
 import net.nikr.eve.jeveasset.io.local.ItemsReader;
 import net.nikr.eve.jeveasset.io.online.EveRefGetter;
+import net.nikr.eve.jeveasset.io.shared.SafeConverter;
 import net.troja.eve.esi.ApiException;
 import net.troja.eve.esi.ApiResponse;
 import net.troja.eve.esi.model.CategoryResponse;
 import net.troja.eve.esi.model.CharacterRolesResponse.RolesEnum;
+import net.troja.eve.esi.model.DogmaAttribute;
+import net.troja.eve.esi.model.DogmaEffect;
 import net.troja.eve.esi.model.GroupResponse;
 import net.troja.eve.esi.model.MarketGroupResponse;
-import net.troja.eve.esi.model.TypeDogmaAttribute;
-import net.troja.eve.esi.model.TypeDogmaEffect;
 import net.troja.eve.esi.model.TypeResponse;
 
 
@@ -52,9 +52,9 @@ public class EsiItemsGetter extends AbstractEsiGetter {
 	public final static String ESI_ITEM_VERSION = "1.2.0";
 	public final static String ESI_ITEM_EMPTY = "EMPTY";
 
-	private final static Map<Integer, GroupResponse> GROUPS_CACHE = new HashMap<>();
-	private final static Map<Integer, CategoryResponse> CATEGORY_CACHE = new HashMap<>();
-	private final static Map<Integer, MarketGroupResponse> MARKET_GROUP_CACHE = new HashMap<>();
+	private final static Map<Long, GroupResponse> GROUPS_CACHE = new HashMap<>();
+	private final static Map<Long, CategoryResponse> CATEGORY_CACHE = new HashMap<>();
+	private final static Map<Long, MarketGroupResponse> MARKET_GROUP_CACHE = new HashMap<>();
 
 	public final static long BASE_PRICE_DEFAULT = -1;
 	public final static int PRODUCT_TYPE_ID_DEFAULT = 0;
@@ -74,29 +74,29 @@ public class EsiItemsGetter extends AbstractEsiGetter {
 		TypeResponse typeResponse = update(DEFAULT_RETRIES, new EsiHandler<TypeResponse>() {
 			@Override
 			public ApiResponse<TypeResponse> get() throws ApiException {
-				return getUniverseApiOpen().getUniverseTypesTypeIdWithHttpInfo(typeID, null, DATASOURCE, null, null);
+				return getUniverseApiOpen().getTypeWithHttpInfo((long) typeID, COMPATIBILITY_DATE, null, null, null);
 			}
 		});
 		//Groups
-		final int groupID = typeResponse.getGroupId();
+		final long groupID = typeResponse.getGroupId();
 		GroupResponse groupResponse = GROUPS_CACHE.get(groupID);
 		if (groupResponse == null) {
 			groupResponse = update(DEFAULT_RETRIES, new EsiHandler<GroupResponse>() {
 				@Override
 				public ApiResponse<GroupResponse> get() throws ApiException {
-					return getUniverseApiOpen().getUniverseGroupsGroupIdWithHttpInfo(groupID, null, DATASOURCE, null, null);
+					return getUniverseApiOpen().getGroupWithHttpInfo(groupID, COMPATIBILITY_DATE, null, null, null);
 				}
 			});
 			GROUPS_CACHE.put(groupID, groupResponse);
 		}
-		final int categoryID = groupResponse.getCategoryId();
+		final long categoryID = groupResponse.getCategoryId();
 		//Categories
 		CategoryResponse categoryResponse = CATEGORY_CACHE.get(categoryID);
 		if (categoryResponse == null) {
 			categoryResponse = update(DEFAULT_RETRIES, new EsiHandler<CategoryResponse>() {
 				@Override
 				public ApiResponse<CategoryResponse> get() throws ApiException {
-					return getUniverseApiOpen().getUniverseCategoriesCategoryIdWithHttpInfo(categoryID, null, DATASOURCE, null, null);
+					return getUniverseApiOpen().getCategoryWithHttpInfo(categoryID, COMPATIBILITY_DATE, null, null, null);
 				}
 			});
 			CATEGORY_CACHE.put(categoryID, categoryResponse);
@@ -104,13 +104,13 @@ public class EsiItemsGetter extends AbstractEsiGetter {
 		//Market Groups
 		MarketGroupResponse marketGroupResponse = null;
 		if (typeResponse.getMarketGroupId() != null) {
-			Integer marketGroupID = typeResponse.getMarketGroupId();
+			Long marketGroupID = typeResponse.getMarketGroupId();
 			marketGroupResponse  = MARKET_GROUP_CACHE.get(marketGroupID);
 			if (marketGroupResponse == null) {
 				marketGroupResponse = update(DEFAULT_RETRIES, new EsiHandler<MarketGroupResponse>() {
 					@Override
 					public ApiResponse<MarketGroupResponse> get() throws ApiException {
-						return getMarketApiOpen().getMarketsGroupsMarketGroupIdWithHttpInfo(marketGroupID, null, DATASOURCE, null, null);
+						return getMarketApiOpen().getMarketGroupWithHttpInfo(groupID, COMPATIBILITY_DATE, null, null, null);
 					}
 				});
 				MARKET_GROUP_CACHE.put(marketGroupID, marketGroupResponse);
@@ -142,10 +142,10 @@ public class EsiItemsGetter extends AbstractEsiGetter {
 	//Meta / Charge Sire
 		Integer metaGroupID = null;
 		int metaLevel = 0;
-		List<TypeDogmaAttribute> dogmaAttributes = typeResponse.getDogmaAttributes();
+		List<DogmaAttribute> dogmaAttributes = typeResponse.getDogmaAttributes();
 		Integer charge = null;
 		if (dogmaAttributes != null) {
-			for (TypeDogmaAttribute attribute : dogmaAttributes) {
+			for (DogmaAttribute attribute : dogmaAttributes) {
 				if (attribute.getAttributeId() == 1692) { //1692 = meta group
 					metaGroupID = attribute.getValue().intValue();
 				}
@@ -162,18 +162,18 @@ public class EsiItemsGetter extends AbstractEsiGetter {
 		
 		boolean marketGroup;
 		if (marketGroupResponse != null) {
-			marketGroup = marketGroupResponse.getTypes().contains(typeID);
+			marketGroup = marketGroupResponse.getTypes().contains(SafeConverter.toLong(typeID));
 		} else {
 			marketGroup = false;
 		}
-		int portion = typeResponse.getPortionSize();
+		int portion = SafeConverter.toInteger(typeResponse.getPortionSize());
 		int productTypeID = PRODUCT_TYPE_ID_DEFAULT; //Product
 		int productQuantity = PRODUCT_QUANTITY_DEFAULT; //Product Quantity
 		//Slot
 		String slot = null;
-		List<TypeDogmaEffect> dogmaEffects = typeResponse.getDogmaEffects();
+		List<DogmaEffect> dogmaEffects = typeResponse.getDogmaEffects();
 		if (dogmaEffects != null) {
-			for (TypeDogmaEffect attribute : dogmaEffects) {
+			for (DogmaEffect attribute : dogmaEffects) {
 				if (attribute.getIsDefault()) {
 					continue;
 				}
@@ -208,9 +208,9 @@ public class EsiItemsGetter extends AbstractEsiGetter {
 		item = EveRefGetter.getItem(item); //Update from EveRef
 	}
 
-	private float getNotNull(Float f) {
-		if (f != null) {
-			return f;
+	private float getNotNull(Double d) {
+		if (d != null) {
+			return SafeConverter.toFloat(d);
 		} else {
 			return 0f;
 		}

@@ -101,7 +101,6 @@ import net.troja.eve.esi.api.WalletApi;
 import net.troja.eve.esi.auth.SsoScopes;
 import net.troja.eve.esi.model.CharacterAssetsResponse;
 import net.troja.eve.esi.model.CharacterBlueprintsResponse;
-import net.troja.eve.esi.model.CharacterContractsItemsResponse;
 import net.troja.eve.esi.model.CharacterContractsResponse;
 import net.troja.eve.esi.model.CharacterIndustryJobsResponse;
 import net.troja.eve.esi.model.CharacterLocationResponse;
@@ -112,6 +111,7 @@ import net.troja.eve.esi.model.CharacterRolesResponse.RolesEnum;
 import net.troja.eve.esi.model.CharacterShipResponse;
 import net.troja.eve.esi.model.CharacterWalletJournalResponse;
 import net.troja.eve.esi.model.CharacterWalletTransactionsResponse;
+import net.troja.eve.esi.model.ContractItemsResponse;
 import net.troja.eve.esi.model.CorporationAssetsResponse;
 import net.troja.eve.esi.model.CorporationBlueprintsResponse;
 import net.troja.eve.esi.model.CorporationContractsResponse;
@@ -279,7 +279,7 @@ public class ConverterTestUtil {
 
 	public static RawContractItem getRawContractItem(boolean setNull, ConverterTestOptions options) {
 		RawContractItem rawContractItem = RawContractItem.create();
-		setValues(rawContractItem, options, setNull ? CharacterContractsItemsResponse.class : null);
+		setValues(rawContractItem, options, setNull ? ContractItemsResponse.class : null);
 		return rawContractItem;
 	}
 
@@ -453,7 +453,7 @@ public class ConverterTestUtil {
 		assertEquals(esiOwner.getContracts().size(), 1);
 		Map.Entry<MyContract, List<MyContractItem>> entry = esiOwner.getContracts().entrySet().iterator().next();
 		testValues(entry.getKey(), options, setNull ? CharacterContractsResponse.class : null, false);
-		testValues(entry.getValue().iterator().next(), options, setNull ? CharacterContractsItemsResponse.class : null, false);
+		testValues(entry.getValue().iterator().next(), options, setNull ? ContractItemsResponse.class : null, false);
 
 		//IndustryJobs
 		assertEquals(esiOwner.getIndustryJobs().size(), 1);
@@ -551,12 +551,12 @@ public class ConverterTestUtil {
 			CharacterLocationResponse asset = (CharacterLocationResponse) object;
 			long locationID = options.getLocationID();
 			if (locationID >= 30000000 && locationID <= 32000000) { //System
-				asset.setSolarSystemId((int)locationID);
+				asset.setSolarSystemId(locationID);
 				asset.setStationId(null);
 				asset.setStructureId(null);
 			} else if (locationID >= 60000000 && locationID <= 64000000) { //Station
 				asset.setSolarSystemId(null);
-				asset.setStationId((int)locationID);
+				asset.setStationId(locationID);
 				asset.setStructureId(null);
 			} else { //Other
 				asset.setSolarSystemId(null);

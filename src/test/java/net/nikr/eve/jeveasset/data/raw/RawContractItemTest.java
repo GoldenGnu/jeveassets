@@ -22,8 +22,7 @@ package net.nikr.eve.jeveasset.data.raw;
 
 import net.nikr.eve.jeveasset.TestUtil;
 import net.nikr.eve.jeveasset.data.api.raw.RawContractItem;
-import net.troja.eve.esi.model.CharacterContractsItemsResponse;
-import net.troja.eve.esi.model.CorporationContractsItemsResponse;
+import net.troja.eve.esi.model.ContractItemsResponse;
 import net.troja.eve.esi.model.PublicContractsItemsResponse;
 import org.junit.Test;
 
@@ -32,8 +31,7 @@ public class RawContractItemTest extends TestUtil {
 
 	@Test
 	public void rawContractItemTest() {
-		RawUtil.compare(RawContractItem.class, CharacterContractsItemsResponse.class);
-		RawUtil.compare(RawContractItem.class, CorporationContractsItemsResponse.class);
+		RawUtil.compare(RawContractItem.class, ContractItemsResponse.class);
 		RawUtil.compare(RawContractItem.class, PublicContractsItemsResponse.class);
 	}
 
