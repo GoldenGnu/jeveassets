@@ -1072,7 +1072,7 @@ public class Settings {
 	}
 
 	public boolean isEveGatecampCheckSet() {
-		return false; // flags.get(SettingFlag.FLAG_EVE_GATECAMP_CHECK_SET);
+		return flags.get(SettingFlag.FLAG_EVE_GATECAMP_CHECK_SET);
 	}
 
 	public void setEveGatecampCheckSet(final boolean eveGatecampCheckSet) {
