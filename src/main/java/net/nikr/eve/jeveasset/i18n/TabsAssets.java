@@ -38,6 +38,8 @@ public abstract class TabsAssets extends Bundle {
 	public abstract String average();
 	public abstract String reprocessColors();
 	public abstract String reprocessColorsToolTip();
+	public abstract String treemap();
+	public abstract String treemapToolTip();
 	public abstract String totalCount();
 	public abstract String totalReprocessed();
 	public abstract String totalValue();
