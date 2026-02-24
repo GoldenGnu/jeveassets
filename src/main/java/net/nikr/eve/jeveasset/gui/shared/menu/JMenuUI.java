@@ -35,6 +35,7 @@ import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.data.api.my.MyContract;
 import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
+import net.nikr.eve.jeveasset.data.api.my.MyShip;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
@@ -42,9 +43,12 @@ import net.nikr.eve.jeveasset.gui.shared.JOptionInput;
 import net.nikr.eve.jeveasset.gui.shared.NativeUtil;
 import net.nikr.eve.jeveasset.gui.shared.components.JLockWindow;
 import net.nikr.eve.jeveasset.gui.shared.components.JLockWindow.LockWorkerAdaptor;
+import net.nikr.eve.jeveasset.gui.tabs.routing.SolarSystem;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 import net.nikr.eve.jeveasset.io.esi.AbstractEsiGetter;
 import net.nikr.eve.jeveasset.io.shared.SafeConverter;
+import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
+import net.nikr.eve.jeveasset.io.shared.DesktopUtil;
 import net.troja.eve.esi.api.UserInterfaceApi;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -197,7 +201,7 @@ public class JMenuUI <T> extends MenuManager.JAutoMenu<T> {
 		} else {
 			int beginningValue = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), GuiShared.get().uiWaypointBeginning(), GuiShared.get().uiWaypointTitle(), JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE);
 			addToBeginning = beginningValue == JOptionPane.YES_OPTION;
-		}
+		}		
 		getLockWindow().show(GuiShared.get().updating(), new EsiUpdate(owner) {
 			@Override
 			protected void updateESI() throws Throwable {
@@ -206,6 +210,7 @@ public class JMenuUI <T> extends MenuManager.JAutoMenu<T> {
 			@Override
 			protected void ok() {
 				JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), GuiShared.get().uiWaypointOk(), GuiShared.get().uiWaypointTitle(), JOptionPane.PLAIN_MESSAGE);
+				EveGatecampCheck.open(program, owner, locationID);
 			}
 			@Override
 			protected void fail() {
@@ -419,6 +424,187 @@ public class JMenuUI <T> extends MenuManager.JAutoMenu<T> {
 					}
 				}
 			});
+		}
+	}
+
+	public static class EveGatecampCheck {
+
+		public static final String[] EVE_GATECAMP_CHECK_ROUTE_OPTIONS = {
+					GuiShared.get().uiWaypointEveGatecampCheckSecure(),
+					GuiShared.get().uiWaypointEveGatecampCheckUnsecure(),
+					GuiShared.get().uiWaypointEveGatecampCheckShortest()
+				};
+		public static final String[] EVE_GATECAMP_CHECK_OPEN_OPTIONS = {
+					GuiShared.get().uiWaypointEveGatecampCheckAsk(),
+					GuiShared.get().uiWaypointEveGatecampCheckAlwaysOpen(),
+					GuiShared.get().uiWaypointEveGatecampCheckNeverOpen()
+				};
+
+		public static void setOpenOption(Object object) {
+			if (object == null) {
+				return; //Cancel
+			}
+			if (GuiShared.get().uiWaypointEveGatecampCheckAlwaysOpen().equals(object)) {
+				//Secure
+				Settings.get().setEveGatecampCheckAlwaysOpen(true);
+				Settings.get().setEveGatecampCheckNeverOpen(false);
+			} else if (GuiShared.get().uiWaypointEveGatecampCheckNeverOpen().equals(object)) {
+				//Unsecure
+				Settings.get().setEveGatecampCheckSecure(false);
+				Settings.get().setEveGatecampCheckUnsecure(true);
+			} else if (GuiShared.get().uiWaypointEveGatecampCheckAsk().equals(object)) {
+				//Shortest
+				Settings.get().setEveGatecampCheckSecure(false);
+				Settings.get().setEveGatecampCheckUnsecure(false);
+			} else {
+				//Default
+				Settings.get().setEveGatecampCheckSecure(false);
+				Settings.get().setEveGatecampCheckUnsecure(false);
+			}
+		}
+
+		public static String getOpenOption() {
+			if (Settings.get().isEveGatecampCheckAlwaysOpen()) {
+				return GuiShared.get().uiWaypointEveGatecampCheckAlwaysOpen();
+			} else if (Settings.get().isEveGatecampCheckNeverOpen()) {
+				return GuiShared.get().uiWaypointEveGatecampCheckNeverOpen();
+			} else {
+				return GuiShared.get().uiWaypointEveGatecampCheckAsk();
+			}
+		}
+
+		public static String setRouteOption(Object object) {
+			if (object == null) {
+				return ""; //Cancel
+			}
+			if (GuiShared.get().uiWaypointEveGatecampCheckSecure().equals(object)) {
+				//Secure
+				Settings.get().setEveGatecampCheckSecure(true);
+				Settings.get().setEveGatecampCheckUnsecure(false);
+				return ":secure";
+			} else if (GuiShared.get().uiWaypointEveGatecampCheckUnsecure().equals(object)) {
+				//Unsecure
+				Settings.get().setEveGatecampCheckSecure(false);
+				Settings.get().setEveGatecampCheckUnsecure(true);
+				return ":insecure";
+			} else if (GuiShared.get().uiWaypointEveGatecampCheckShortest().equals(object)) {
+				//Shortest
+				Settings.get().setEveGatecampCheckSecure(false);
+				Settings.get().setEveGatecampCheckUnsecure(false);
+				return ":shortest";
+			}
+			return "";
+		}
+
+		public static String getRouteOption() {
+			if (Settings.get().isEveGatecampCheckSecure()) {
+				//Secure
+				return GuiShared.get().uiWaypointEveGatecampCheckSecure();
+			} else if (Settings.get().isEveGatecampCheckUnsecure()) {
+				//Unsecure
+				return GuiShared.get().uiWaypointEveGatecampCheckUnsecure();
+			} else {
+				//Shortest
+				return GuiShared.get().uiWaypointEveGatecampCheckShortest();
+			}
+		}
+
+		public static void open(Program program, EsiOwner owner, long locationID) {
+			open(program, owner, Collections.singleton(locationID));
+		}
+
+		public static void open(Program program, EsiOwner owner, Set<Long> locationIDs) {
+			if (owner == null) {
+				return;
+			}
+			MyShip activeShip = owner.getActiveShip();
+			
+			if (activeShip == null || activeShip.getLocation().isEmpty()) {
+				return;
+			}
+			String from = activeShip.getLocation().getSystem();
+
+			StringBuilder routeBuilder = new StringBuilder();
+			Set<String> route = new HashSet<>();
+			for (Long locationID : locationIDs) {
+				MyLocation toLocation = ApiIdConverter.getLocation(locationID);
+				if (toLocation.isEmpty()) {
+					return;
+				}
+				String to = toLocation.getSystem();
+				if (routeBuilder.length() > 0) {
+					routeBuilder.append(",");
+				} else {
+					if (from.equals(to)) {
+						continue;
+					}
+				}
+				route.add(to);
+				routeBuilder.append(to.replace(" ", "%20"));
+			}
+			if (routeBuilder.length() == 0) {
+				return;
+			}
+			StringBuilder avoidBuilder = new StringBuilder();
+			boolean avoidInRoute = false;
+			for (SolarSystem system : Settings.get().getJumpsAvoidSettings().getAvoid().values()) {
+				if (avoidBuilder.length() > 0) {
+					avoidBuilder.append(",");
+				}
+				String systemName = system.getName();
+				if (!avoidInRoute && route.contains(systemName)) {
+					avoidInRoute = true;
+				}
+				avoidBuilder.append(systemName.replace(" ", "%20"));
+			}
+			if (!Settings.get().isEveGatecampCheckSet()) {
+				//Default Options
+				
+				int returnValue = JOptionPane.showOptionDialog(program.getMainWindow().getFrame(), GuiShared.get().uiWaypointEveGatecampCheckOptions(), GuiShared.get().uiWaypointTitle(), JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, EVE_GATECAMP_CHECK_OPEN_OPTIONS, EVE_GATECAMP_CHECK_OPEN_OPTIONS[0]);
+				if (returnValue == JOptionPane.CLOSED_OPTION) {
+					return; //Cancel
+				}
+				String openOption = EVE_GATECAMP_CHECK_OPEN_OPTIONS[returnValue];
+				if (GuiShared.get().uiWaypointEveGatecampCheckAlwaysOpen().equals(openOption)) { //Always Open
+					//Default Route Options
+					Object routeOption = JOptionInput.showInputDialog(program.getMainWindow().getFrame(), GuiShared.get().uiWaypointEveGatecampCheckDefault(), GuiShared.get().uiWaypointTitle(), JOptionPane.PLAIN_MESSAGE, null, EVE_GATECAMP_CHECK_ROUTE_OPTIONS, EVE_GATECAMP_CHECK_ROUTE_OPTIONS[0]);
+					if (routeOption == null) {
+						return; //cancel
+					}
+					setRouteOption(routeOption);
+				}
+				setOpenOption(openOption);
+				Settings.get().setEveGatecampCheckSet(true);
+			}
+			if (Settings.get().isEveGatecampCheckNeverOpen()) {
+				return;
+			}
+			String routeOption;
+			if (Settings.get().isEveGatecampCheckAlwaysOpen()) {
+				if (Settings.get().isEveGatecampCheckSecure()) {
+					//Secure
+					routeOption = ":secure";
+				} else if (Settings.get().isEveGatecampCheckUnsecure()) {
+					//Unsecure
+					routeOption = ":insecure";
+				} else {
+					//Shortest
+					routeOption = ":shortest";
+				}
+			} else {
+				String defaultOption = getRouteOption();
+				Object object = JOptionInput.showInputDialog(program.getMainWindow().getFrame(), GuiShared.get().uiWaypointEveGatecampCheck(), GuiShared.get().uiWaypointTitle(), JOptionPane.PLAIN_MESSAGE, null, EVE_GATECAMP_CHECK_ROUTE_OPTIONS, defaultOption);
+				if (object == null) {
+					return;
+				}
+				routeOption = setRouteOption(object);
+			}
+			/*
+			if (avoidInRoute) {
+				JOptionPane.showMessageDialog(program.getMainWindow().get, EAST);
+			}
+			*/
+			DesktopUtil.browse("https://eve-gatecheck.space/eve/#" + from + ":" + routeBuilder.toString() + routeOption + ":" + avoidBuilder.toString(), program);
 		}
 	}
 
