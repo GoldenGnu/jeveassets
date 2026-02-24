@@ -98,6 +98,7 @@ public abstract class TabsContracts extends Bundle {
 	public abstract String included();
 	public abstract String itemExchange();
 	public abstract String loan();
+	public abstract String missing();
 	public abstract String notAccepted();
 	public abstract String packaged();
 	public abstract String publicContract();
