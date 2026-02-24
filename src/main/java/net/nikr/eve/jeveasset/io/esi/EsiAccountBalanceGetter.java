@@ -24,7 +24,6 @@ import java.util.Date;
 import java.util.List;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
-import static net.nikr.eve.jeveasset.io.esi.AbstractEsiGetter.DATASOURCE;
 import net.troja.eve.esi.ApiException;
 import net.troja.eve.esi.ApiResponse;
 import net.troja.eve.esi.model.CharacterRolesResponse.RolesEnum;
@@ -42,8 +41,8 @@ public class EsiAccountBalanceGetter extends AbstractEsiGetter {
 		if (owner.isCorporation()) {
 			List<CorporationWalletsResponse> response = update(DEFAULT_RETRIES, new EsiHandler<List<CorporationWalletsResponse>>() {
 				@Override
-				public ApiResponse<List<CorporationWalletsResponse>> get() throws ApiException {
-					ApiResponse<List<CorporationWalletsResponse>> apiResponse = getWalletApiAuth().getCorporationsCorporationIdWalletsWithHttpInfo((int)owner.getOwnerID(), DATASOURCE, null, null);
+				public ApiResponse<List<CorporationWalletsResponse>> get() throws ApiException {//(, DATASOURCE, null, null);
+					ApiResponse<List<CorporationWalletsResponse>> apiResponse = getWalletApiAuth().getCorporationWalletsWithHttpInfo(owner.getOwnerID(), COMPATIBILITY_DATE, null, null, null);
 					Date modified = getHeaderDate(apiResponse.getHeaders(), "last-modified");
 					if (modified != null && (owner.getBalanceLastUpdate() == null || modified.after(owner.getBalanceLastUpdate()))) {
 						owner.setBalanceLastUpdate(modified);
@@ -56,7 +55,7 @@ public class EsiAccountBalanceGetter extends AbstractEsiGetter {
 			Double response = update(DEFAULT_RETRIES, new EsiHandler<Double>() {
 				@Override
 				public ApiResponse<Double> get() throws ApiException {
-					ApiResponse<Double> apiResponse = getWalletApiAuth().getCharactersCharacterIdWalletWithHttpInfo((int) owner.getOwnerID(), DATASOURCE, null, null);
+					ApiResponse<Double> apiResponse = getWalletApiAuth().getCharacterWalletWithHttpInfo(owner.getOwnerID(), COMPATIBILITY_DATE, null, null, null);
 					Date modified = getHeaderDate(apiResponse.getHeaders(), "last-modified");
 					if (modified != null && (owner.getBalanceLastUpdate() == null || modified.after(owner.getBalanceLastUpdate()))) {
 						owner.setBalanceLastUpdate(modified);

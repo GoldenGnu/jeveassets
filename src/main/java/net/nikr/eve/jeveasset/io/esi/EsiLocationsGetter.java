@@ -34,9 +34,8 @@ import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.io.online.CitadelGetter;
 import net.troja.eve.esi.ApiException;
 import net.troja.eve.esi.ApiResponse;
-import net.troja.eve.esi.model.CharacterAssetsNamesResponse;
+import net.troja.eve.esi.model.AssetsNamesResponse;
 import net.troja.eve.esi.model.CharacterRolesResponse.RolesEnum;
-import net.troja.eve.esi.model.CorporationAssetsNamesResponse;
 
 
 public class EsiLocationsGetter extends AbstractEsiGetter {
@@ -49,17 +48,17 @@ public class EsiLocationsGetter extends AbstractEsiGetter {
 	protected void update() throws ApiException {
 		Map<Long, MyAsset> iDs = getIDs(owner);
 		if (owner.isCorporation()) {
-			Map<Set<Long>, List<CorporationAssetsNamesResponse>> responses = updateList(splitSet(iDs.keySet(), LOCATIONS_BATCH_SIZE), DEFAULT_RETRIES, new ListHandler<Set<Long>, List<CorporationAssetsNamesResponse>>() {
+			Map<Set<Long>, List<AssetsNamesResponse>> responses = updateList(splitSet(iDs.keySet(), LOCATIONS_BATCH_SIZE), DEFAULT_RETRIES, new ListHandler<Set<Long>, List<AssetsNamesResponse>>() {
 				@Override
-				public ApiResponse<List<CorporationAssetsNamesResponse>> get(Set<Long> t) throws ApiException {
-					return getAssetsApiAuth().postCorporationsCorporationIdAssetsNamesWithHttpInfo((int) owner.getOwnerID(), t, DATASOURCE, null);
+				public ApiResponse<List<AssetsNamesResponse>> get(Set<Long> t) throws ApiException {
+					return getAssetsApiAuth().postCorporationAssetsNamesWithHttpInfo(owner.getOwnerID(), COMPATIBILITY_DATE, t, null, null, null);
 				}
 			});
 
 			try {
 				Settings.lock("Ship/Container Names");
-				for (Map.Entry<Set<Long>, List<CorporationAssetsNamesResponse>> entry : responses.entrySet()) {
-					for (CorporationAssetsNamesResponse response : entry.getValue()) {
+				for (Map.Entry<Set<Long>, List<AssetsNamesResponse>> entry : responses.entrySet()) {
+					for (AssetsNamesResponse response : entry.getValue()) {
 						final long itemID = response.getItemId();
 						final String eveName = response.getName();
 						if (!eveName.isEmpty()) { //Set name
@@ -77,16 +76,17 @@ public class EsiLocationsGetter extends AbstractEsiGetter {
 				Settings.unlock("Ship/Container Names");
 			}
 		} else {
-			Map<Set<Long>, List<CharacterAssetsNamesResponse>> responses = updateList(splitSet(iDs.keySet(), LOCATIONS_BATCH_SIZE), DEFAULT_RETRIES, new ListHandler<Set<Long>, List<CharacterAssetsNamesResponse>>() {
+			Map<Set<Long>, List<AssetsNamesResponse>> responses = updateList(splitSet(iDs.keySet(), LOCATIONS_BATCH_SIZE), DEFAULT_RETRIES, new ListHandler<Set<Long>, List<AssetsNamesResponse>>() {
 				@Override
-				public ApiResponse<List<CharacterAssetsNamesResponse>> get(Set<Long> t) throws ApiException {
-					return getAssetsApiAuth().postCharactersCharacterIdAssetsNamesWithHttpInfo((int) owner.getOwnerID(), t, DATASOURCE, null);
+				public ApiResponse<List<AssetsNamesResponse>> get(Set<Long> t) throws ApiException {
+					//((int) , t, DATASOURCE, null);
+					return getAssetsApiAuth().postCharacterAssetsNamesWithHttpInfo(owner.getOwnerID(), COMPATIBILITY_DATE, t, null, null, null);
 				}
 			});
 			try {
 				Settings.lock("Ship/Container Names");
-				for (Map.Entry<Set<Long>, List<CharacterAssetsNamesResponse>> entry : responses.entrySet()) {
-					for (CharacterAssetsNamesResponse response : entry.getValue()) {
+				for (Map.Entry<Set<Long>, List<AssetsNamesResponse>> entry : responses.entrySet()) {
+					for (AssetsNamesResponse response : entry.getValue()) {
 						final long itemID = response.getItemId();
 						final String eveName = response.getName();
 						if (!eveName.isEmpty()) { //Set name

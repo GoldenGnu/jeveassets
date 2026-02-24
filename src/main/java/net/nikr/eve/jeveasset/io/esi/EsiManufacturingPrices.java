@@ -29,13 +29,13 @@ import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.StaticData;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
-import static net.nikr.eve.jeveasset.io.esi.AbstractEsiGetter.DATASOURCE;
 import static net.nikr.eve.jeveasset.io.esi.AbstractEsiGetter.getIndustryApiOpen;
 import static net.nikr.eve.jeveasset.io.esi.AbstractEsiGetter.getMarketApiOpen;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
+import net.nikr.eve.jeveasset.io.shared.SafeConverter;
 import net.troja.eve.esi.ApiException;
 import net.troja.eve.esi.ApiResponse;
-import net.troja.eve.esi.model.CharacterRolesResponse;
+import net.troja.eve.esi.model.CharacterRolesResponse.RolesEnum;
 import net.troja.eve.esi.model.IndustrySystemsResponse;
 import net.troja.eve.esi.model.MarketPricesResponse;
 import net.troja.eve.esi.model.SystemCostIndice;
@@ -53,12 +53,12 @@ public class EsiManufacturingPrices extends AbstractEsiGetter {
 		List<MarketPricesResponse> priceResponses = update(DEFAULT_RETRIES, new EsiHandler<List<MarketPricesResponse>>() {
 			@Override
 			public ApiResponse<List<MarketPricesResponse>> get() throws ApiException {
-				return getMarketApiOpen().getMarketsPricesWithHttpInfo(DATASOURCE, null);
+				return getMarketApiOpen().getMarketPricesWithHttpInfo(COMPATIBILITY_DATE, null, null, null);
 			}
 		});
 		Map<Integer, MarketPricesResponse> prices = new HashMap<>();
 		for (MarketPricesResponse price : priceResponses) {
-			prices.put(price.getTypeId(), price);
+			prices.put(SafeConverter.toInteger(price.getTypeId()), price);
 		}
 		Map<Integer, Double> manufacturingPrices = new HashMap<>();
 		for (Item item : StaticData.get().getItems().values()) {
@@ -75,7 +75,7 @@ public class EsiManufacturingPrices extends AbstractEsiGetter {
 		List<IndustrySystemsResponse> systemResponses = update(DEFAULT_RETRIES, new EsiHandler<List<IndustrySystemsResponse>>() {
 			@Override
 			public ApiResponse<List<IndustrySystemsResponse>> get() throws ApiException {
-				return getIndustryApiOpen().getIndustrySystemsWithHttpInfo(DATASOURCE, null);
+				return getIndustryApiOpen().getIndustrySystemsWithHttpInfo(COMPATIBILITY_DATE, null, null, null);
 			}
 		});
 		Map<Integer, Float> manufacturingSystems = new HashMap<>();
@@ -83,7 +83,7 @@ public class EsiManufacturingPrices extends AbstractEsiGetter {
 			for (SystemCostIndice costIndice : system.getCostIndices()) {
 				switch (costIndice.getActivity()) {
 					case MANUFACTURING:
-						manufacturingSystems.put(system.getSolarSystemId(), costIndice.getCostIndex());
+						manufacturingSystems.put(SafeConverter.toInteger(system.getSolarSystemId()), SafeConverter.toFloat(costIndice.getCostIndex()));
 						break;
 				}
 			}
@@ -102,7 +102,7 @@ public class EsiManufacturingPrices extends AbstractEsiGetter {
 	}
 
 	@Override
-	protected CharacterRolesResponse.RolesEnum[] getRequiredRoles() {
+	protected RolesEnum[] getRequiredRoles() {
 		return null; //Public
 	}
 

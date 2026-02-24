@@ -33,12 +33,13 @@ import net.nikr.eve.jeveasset.data.api.my.MyContract;
 import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
+import net.nikr.eve.jeveasset.io.shared.SafeConverter;
 import net.troja.eve.esi.ApiException;
 import net.troja.eve.esi.ApiResponse;
-import net.troja.eve.esi.model.CharacterContractsItemsResponse;
+import net.troja.eve.esi.model.ContractItemsResponse;
 import net.troja.eve.esi.model.CharacterRolesResponse.RolesEnum;
-import net.troja.eve.esi.model.CorporationContractsItemsResponse;
 import net.troja.eve.esi.model.PublicContractsItemsResponse;
+
 
 public class EsiContractItemsGetter extends AbstractEsiGetter {
 
@@ -68,7 +69,7 @@ public class EsiContractItemsGetter extends AbstractEsiGetter {
 		createContracts(owners);
 		if (owner.isCorporation()) {
 			List<List<MyContract>> updates = splitList(contracts.get(owner.getOwnerID()), BATCH_SIZE);
-			Map<MyContract, List<CorporationContractsItemsResponse>> responses = new HashMap<>();
+			Map<MyContract, List<ContractItemsResponse>> responses = new HashMap<>();
 			boolean first = true;
 			for (List<MyContract> list : updates) {
 				if (first) {
@@ -80,22 +81,23 @@ public class EsiContractItemsGetter extends AbstractEsiGetter {
 						throw new RuntimeException(ex);
 					}
 				}
-				Map<MyContract, List<CorporationContractsItemsResponse>> response = updateList(list, DEFAULT_RETRIES, new ListHandler<MyContract, List<CorporationContractsItemsResponse>>() {
+				Map<MyContract, List<ContractItemsResponse>> response = updateList(list, DEFAULT_RETRIES, new ListHandler<MyContract, List<ContractItemsResponse>>() {
 					@Override
-					public ApiResponse<List<CorporationContractsItemsResponse>> get(MyContract t) throws ApiException {
-						return getContractsApiAuth().getCorporationsCorporationIdContractsContractIdItemsWithHttpInfo(t.getContractID(), (int) owner.getOwnerID(), DATASOURCE, null, null);
+					public ApiResponse<List<ContractItemsResponse>> get(MyContract t) throws ApiException {
+						return getContractsApiAuth().getCorporationContractItemsWithHttpInfo(SafeConverter.toLong(t.getContractID()), owner.getOwnerID(), COMPATIBILITY_DATE, null, null, null);
 					}
 				});
 				responses.putAll(response);
 				PROGRESS.getAndAdd(list.size());
 				setProgress(SIZE.get(), PROGRESS.get(), 0, 100);
 			}
-			owner.setContracts(EsiConverter.toContractItemsCorporation(responses, owner, saveHistory));
+			owner.setContracts(EsiConverter.toContractItems(responses, owner, saveHistory));
 		} else {
-			Map<MyContract, List<CharacterContractsItemsResponse>> responses = updateList(contracts.get(owner.getOwnerID()), DEFAULT_RETRIES, new ListHandler<MyContract, List<CharacterContractsItemsResponse>>() {
+			Map<MyContract, List<ContractItemsResponse>> responses = updateList(contracts.get(owner.getOwnerID()), DEFAULT_RETRIES, new ListHandler<MyContract, List<ContractItemsResponse>>() {
 				@Override
-				public ApiResponse<List<CharacterContractsItemsResponse>> get(MyContract t) throws ApiException {
-					ApiResponse<List<CharacterContractsItemsResponse>> response = getContractsApiAuth().getCharactersCharacterIdContractsContractIdItemsWithHttpInfo((int) owner.getOwnerID(), t.getContractID(), DATASOURCE, null, null);
+				public ApiResponse<List<ContractItemsResponse>> get(MyContract t) throws ApiException {
+					//((int) , , DATASOURCE, null, null);
+					ApiResponse<List<ContractItemsResponse>> response = getContractsApiAuth().getCharacterContractItemsWithHttpInfo(owner.getOwnerID(), SafeConverter.toLong(t.getContractID()), COMPATIBILITY_DATE, null, null, null);
 					PROGRESS.getAndAdd(1);
 					setProgress(SIZE.get(), PROGRESS.get(), 0, 100);
 					return response;
@@ -110,7 +112,7 @@ public class EsiContractItemsGetter extends AbstractEsiGetter {
 				return updatePages(DEFAULT_RETRIES, new EsiPagesHandler<PublicContractsItemsResponse>() {
 					@Override
 					public ApiResponse<List<PublicContractsItemsResponse>> get(Integer page) throws ApiException {
-						ApiResponse<List<PublicContractsItemsResponse>> response = getContractsApiOpen().getContractsPublicItemsContractIdWithHttpInfo(contract.getContractID(), DATASOURCE, null, page);
+						ApiResponse<List<PublicContractsItemsResponse>> response = getContractsApiOpen().getPublicContractsItemsContractIdWithHttpInfo(SafeConverter.toLong(contract.getContractID()), COMPATIBILITY_DATE, page, null, null, null);
 						PROGRESS.getAndAdd(1);
 						setProgress(SIZE.get(), PROGRESS.get(), 0, 100);
 						return response;

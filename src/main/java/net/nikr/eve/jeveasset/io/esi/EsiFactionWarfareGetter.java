@@ -44,22 +44,22 @@ public class EsiFactionWarfareGetter extends AbstractEsiGetter {
 		List<FactionWarfareSystemsResponse> factionWarfareSystems = update(DEFAULT_RETRIES, new EsiHandler<List<FactionWarfareSystemsResponse>>() {
 			@Override
 			public ApiResponse<List<FactionWarfareSystemsResponse>> get() throws ApiException {
-				return getFactionWarfareApiOpen().getFwSystemsWithHttpInfo(DATASOURCE, null);
+				return getFactionWarfareApiOpen().getFactionWarfareSystemsWithHttpInfo(COMPATIBILITY_DATE, null, null, null);
 			}
 		});
 		List<FactionsResponse> factions = update(DEFAULT_RETRIES, new EsiHandler<List<FactionsResponse>>() {
 			@Override
 			public ApiResponse<List<FactionsResponse>> get() throws ApiException {
-				return getUniverseApiOpen().getUniverseFactionsWithHttpInfo(null, DATASOURCE, null, null);
+				return getUniverseApiOpen().getFactionsWithHttpInfo(COMPATIBILITY_DATE, null, null, null);
 			}
 		});
-		Map<Integer, String> factionNames = new HashMap<>();
+		Map<Long, String> factionNames = new HashMap<>();
 		for (FactionsResponse faction : factions) {
 			factionNames.put(faction.getFactionId(), faction.getName());
 		}
 		Map<Long, String> systemOwners = new HashMap<>();
 		for (FactionWarfareSystemsResponse system : factionWarfareSystems) {
-			systemOwners.put((long) system.getSolarSystemId(), factionNames.get(system.getOccupierFactionId()));
+			systemOwners.put(system.getSolarSystemId(), factionNames.get(system.getOccupierFactionId()));
 		}
 		Settings.get().setFactionWarfareSystemOwners(systemOwners);
 	}

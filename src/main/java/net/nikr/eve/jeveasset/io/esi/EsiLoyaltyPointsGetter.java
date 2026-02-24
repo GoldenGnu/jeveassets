@@ -24,7 +24,6 @@ import java.util.Date;
 import java.util.List;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
-import static net.nikr.eve.jeveasset.io.esi.AbstractEsiGetter.DATASOURCE;
 import net.troja.eve.esi.ApiException;
 import net.troja.eve.esi.ApiResponse;
 import net.troja.eve.esi.model.CharacterLoyaltyPointsResponse;
@@ -42,7 +41,7 @@ public class EsiLoyaltyPointsGetter extends AbstractEsiGetter {
 		List<CharacterLoyaltyPointsResponse> response = update(DEFAULT_RETRIES, new EsiHandler<List<CharacterLoyaltyPointsResponse>>() {
 			@Override
 			public ApiResponse<List<CharacterLoyaltyPointsResponse>> get() throws ApiException {
-				return getLoyaltyApiAuth().getCharactersCharacterIdLoyaltyPointsWithHttpInfo((int) owner.getOwnerID(), DATASOURCE, null, null);
+				return getLoyaltyApiAuth().getCharacterLoyaltyPointsWithHttpInfo(owner.getOwnerID(), COMPATIBILITY_DATE, null, null, null);
 			}
 		});
 		owner.setLoyaltyPoints(EsiConverter.toLoyaltyPoints(response, owner));

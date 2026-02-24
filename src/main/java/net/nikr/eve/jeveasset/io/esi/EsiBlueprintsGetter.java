@@ -28,6 +28,7 @@ import net.troja.eve.esi.ApiException;
 import net.troja.eve.esi.ApiResponse;
 import net.troja.eve.esi.model.CharacterBlueprintsResponse;
 import net.troja.eve.esi.model.CharacterRolesResponse;
+import net.troja.eve.esi.model.CharacterRolesResponse.RolesEnum;
 import net.troja.eve.esi.model.CorporationBlueprintsResponse;
 
 
@@ -43,7 +44,7 @@ public class EsiBlueprintsGetter extends AbstractEsiGetter {
 			List<CorporationBlueprintsResponse> responses = updatePages(DEFAULT_RETRIES, new EsiPagesHandler<CorporationBlueprintsResponse>() {
 				@Override
 				public ApiResponse<List<CorporationBlueprintsResponse>> get(Integer page) throws ApiException {
-					return getCorporationApiAuth().getCorporationsCorporationIdBlueprintsWithHttpInfo((int) owner.getOwnerID(), DATASOURCE, null, page, null);
+					return getCorporationApiAuth().getCorporationBlueprintsWithHttpInfo(owner.getOwnerID(), COMPATIBILITY_DATE, page, null, null, null);
 				}
 			});
 			owner.setBlueprints(EsiConverter.toBlueprintsCorporation(responses));
@@ -51,7 +52,7 @@ public class EsiBlueprintsGetter extends AbstractEsiGetter {
 			List<CharacterBlueprintsResponse> responses = updatePages(DEFAULT_RETRIES, new EsiPagesHandler<CharacterBlueprintsResponse>() {
 				@Override
 				public ApiResponse<List<CharacterBlueprintsResponse>> get(Integer page) throws ApiException {
-					return getCharacterApiAuth().getCharactersCharacterIdBlueprintsWithHttpInfo((int) owner.getOwnerID(), DATASOURCE, null, page, null);
+					return getCharacterApiAuth().getCharacterBlueprintsWithHttpInfo(owner.getOwnerID(), COMPATIBILITY_DATE, page, null, null, null);
 				}
 			});
 			owner.setBlueprints(EsiConverter.toBlueprints(responses));
@@ -72,7 +73,7 @@ public class EsiBlueprintsGetter extends AbstractEsiGetter {
 	}
 
 	@Override
-	protected CharacterRolesResponse.RolesEnum[] getRequiredRoles() {
+	protected RolesEnum[] getRequiredRoles() {
 		CharacterRolesResponse.RolesEnum[] roles = {CharacterRolesResponse.RolesEnum.DIRECTOR};
 		return roles;
 	}

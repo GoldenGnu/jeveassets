@@ -28,8 +28,8 @@ import java.util.List;
 import java.util.Set;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
-import static net.nikr.eve.jeveasset.io.esi.AbstractEsiGetter.DATASOURCE;
 import net.nikr.eve.jeveasset.io.shared.AccountAdder;
+import net.troja.eve.esi.ApiClientBuilder;
 import net.troja.eve.esi.ApiException;
 import net.troja.eve.esi.ApiResponse;
 import net.troja.eve.esi.auth.JWT;
@@ -37,7 +37,7 @@ import net.troja.eve.esi.auth.OAuth;
 import net.troja.eve.esi.model.CharacterAffiliationResponse;
 import net.troja.eve.esi.model.CharacterRolesResponse;
 import net.troja.eve.esi.model.CharacterRolesResponse.RolesEnum;
-import net.troja.eve.esi.model.UniverseNamesResponse;
+import net.troja.eve.esi.model.NamesResponse;
 
 
 public class EsiOwnerGetter extends AbstractEsiGetter implements AccountAdder{
@@ -62,7 +62,7 @@ public class EsiOwnerGetter extends AbstractEsiGetter implements AccountAdder{
 	@Override
 	protected void update() throws ApiException {
 		//characterID
-		OAuth auth = (OAuth) owner.getApiClient().getAuthentication("evesso");
+		OAuth auth = (OAuth) owner.getApiClient().getAuthentication(ApiClientBuilder.AUTHENTICATION);
 		JWT jwt = auth.getJWT();
 		if (jwt == null) {
 			addError("INVALID AUTHORIZATION (JWT)", "Account Authorization Invalid\r\n(Fix: Options > Accounts... > Edit the account)", null);
@@ -76,12 +76,12 @@ public class EsiOwnerGetter extends AbstractEsiGetter implements AccountAdder{
 			return;
 		}
 		Set<RolesEnum> roles = EnumSet.noneOf(RolesEnum.class);
-		Integer characterID = payload.getCharacterID();
+		Long characterID = payload.getCharacterID();
 		//CorporationID
 		List<CharacterAffiliationResponse> affiliationResponse = update(DEFAULT_RETRIES, new EsiHandler<List<CharacterAffiliationResponse>>() {
 			@Override
 			public ApiResponse<List<CharacterAffiliationResponse>> get() throws ApiException {
-				return getCharacterApiOpen().postCharactersAffiliationWithHttpInfo(Collections.singleton(characterID), DATASOURCE);
+				return getCharacterApiOpen().postCharactersAffiliationWithHttpInfo(COMPATIBILITY_DATE, Collections.singleton(characterID), null, null, null);
 			}
 		});
 		if (affiliationResponse.isEmpty()) {
@@ -89,20 +89,21 @@ public class EsiOwnerGetter extends AbstractEsiGetter implements AccountAdder{
 			owner.setInvalid(true);
 			return;
 		}
-		Integer corporationID = affiliationResponse.get(0).getCorporationId();
+		Long corporationID = affiliationResponse.get(0).getCorporationId();
 		//IDs to Names
-		Set<Integer> ids = new HashSet<>();
+		Set<Long> ids = new HashSet<>();
 		ids.add(characterID);
 		ids.add(corporationID);
-		List<UniverseNamesResponse> namesResponse = update(DEFAULT_RETRIES, new EsiHandler<List<UniverseNamesResponse>>() {
+		List<NamesResponse> namesResponse = update(DEFAULT_RETRIES, new EsiHandler<List<NamesResponse>>() {
 			@Override
-			public ApiResponse<List<UniverseNamesResponse>> get() throws ApiException {
-				return getUniverseApiOpen().postUniverseNamesWithHttpInfo(ids, DATASOURCE);
+			public ApiResponse<List<NamesResponse>> get() throws ApiException {
+				//UniverseNamesWithHttpInfo(, DATASOURCE);
+				return getUniverseApiOpen().postNamesWithHttpInfo(COMPATIBILITY_DATE, ids, null, null, null);
 			}
 		});
 		String characterName = null;
 		String corporationName = null;
-		for (UniverseNamesResponse response : namesResponse) {
+		for (NamesResponse response : namesResponse) {
 			if (characterID.equals(response.getId())) {
 				characterName = response.getName();
 			} else if (corporationID.equals(response.getId())) {
@@ -121,7 +122,7 @@ public class EsiOwnerGetter extends AbstractEsiGetter implements AccountAdder{
 			CharacterRolesResponse characterRolesResponse = update(DEFAULT_RETRIES, new EsiHandler<CharacterRolesResponse>() {
 				@Override
 				public ApiResponse<CharacterRolesResponse> get() throws ApiException {
-					return getCharacterApiAuth().getCharactersCharacterIdRolesWithHttpInfo(characterID, DATASOURCE, null, null);
+					return getCharacterApiAuth().getCharacterRolesWithHttpInfo(characterID, COMPATIBILITY_DATE, null, null, null);
 				}
 			});
 			roles.addAll(characterRolesResponse.getRoles());
