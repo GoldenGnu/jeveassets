@@ -81,13 +81,22 @@ public class EsiContractItemsGetter extends AbstractEsiGetter {
 						throw new RuntimeException(ex);
 					}
 				}
-				Map<MyContract, List<ContractItemsResponse>> response = updateList(list, DEFAULT_RETRIES, new ListHandler<MyContract, List<ContractItemsResponse>>() {
-					@Override
-					public ApiResponse<List<ContractItemsResponse>> get(MyContract t) throws ApiException {
-						return getContractsApiAuth().getCorporationContractItemsWithHttpInfo(SafeConverter.toLong(t.getContractID()), owner.getOwnerID(), COMPATIBILITY_DATE, null, null, null);
+				try {
+					Map<MyContract, List<ContractItemsResponse>> response = updateList(list, DEFAULT_RETRIES, new ListHandler<MyContract, List<ContractItemsResponse>>() {
+						@Override
+						public ApiResponse<List<ContractItemsResponse>> get(MyContract t) throws ApiException {
+							return getContractsApiAuth().getCorporationContractItemsWithHttpInfo(SafeConverter.toLong(t.getContractID()), owner.getOwnerID(), COMPATIBILITY_DATE, null, null, null);
+						}
+					});
+					responses.putAll(response);
+				} catch (ApiException ex) {
+					if (ex.getCode() == 429) {
+						addError("RATE LIMIT 429", "ESI rate limit reached. Contracts will be missing data. Try again in 15 minutes", ex);
+						break; //Ignoring rate limit
+					} else {
+						throw ex;
 					}
-				});
-				responses.putAll(response);
+				}
 				PROGRESS.getAndAdd(list.size());
 				setProgress(SIZE.get(), PROGRESS.get(), 0, 100);
 			}

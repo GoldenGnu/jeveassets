@@ -69,6 +69,8 @@ public class MyContractItem extends RawContractItem implements Comparable<MyCont
 	public String getIncluded() {
 		if (getContract().isCourierContract()) {
 			return TabsContracts.get().courier();
+		} else if (getTypeID() == 0) {
+			return TabsContracts.get().missing();
 		} else if (isIncluded()) {
 			return TabsContracts.get().included();
 		} else {
@@ -79,6 +81,8 @@ public class MyContractItem extends RawContractItem implements Comparable<MyCont
 	public String getSingleton() {
 		if (getContract().isCourierContract()) {
 			return TabsContracts.get().courier();
+		} else if (getTypeID() == 0) {
+			return TabsContracts.get().missing();
 		} else if (isSingleton()) {
 			return TabsContracts.get().unpackaged();
 		} else {
