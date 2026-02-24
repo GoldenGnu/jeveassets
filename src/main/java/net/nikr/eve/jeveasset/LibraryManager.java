@@ -98,7 +98,7 @@ public class LibraryManager {
 			files.add("guava-r09.jar");
 			files.add("LGoodDatePicker-11.2.1.jar");
 			files.add("jfreechart-1.5.3.jar");
-			files.add("pricing-3.1.1.jar");
+			files.add("pricing-3.1.2.jar");
 			files.add("routing-2.0.0.jar");
 			files.add("super-csv-2.4.0.jar");
 			files.add("translations-3.1.1.jar");
