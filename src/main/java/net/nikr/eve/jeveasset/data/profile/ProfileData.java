@@ -528,6 +528,9 @@ public class ProfileData {
 					//Add contracts and ContractItems
 					contracts.add(contract);
 					contractItems.add(new MyContractItem(contract));
+				} else if (entry.getValue().isEmpty()) {
+					contracts.add(contract);
+					contractItems.add(new MyContractItem(contract));
 				} else if (!entry.getValue().isEmpty()) {
 					//Add contracts and ContractItems
 					contracts.add(contract);
