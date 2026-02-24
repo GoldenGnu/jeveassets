@@ -525,51 +525,6 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 				return !menuData.getBlueprintTypeIDs().isEmpty();
 			}
 		},
-		LAZY_BLACKSMITH_INVENTION(GuiShared.get().lazyBlacksmithInvention(), Images.MISC_INVENTION.getIcon()) {
-			@Override
-			public Set<String> getLinks(MenuData<?> menuData) {
-				Set<String> urls = new HashSet<>();
-				for (int typeID : menuData.getInventionTypeIDs()) {
-					urls.add("https://lzb.eveskillboard.com/blueprint/invention/" + typeID);
-				}
-				return urls;
-			}
-
-			@Override
-			public <T> Boolean isEnabled(MenuData<T> menuData) {
-				return !menuData.getInventionTypeIDs().isEmpty();
-			}
-		},
-		LAZY_BLACKSMITH_RESEARCH(GuiShared.get().lazyBlacksmithResearch(), Images.MISC_COPYING.getIcon()) {
-			@Override
-			public Set<String> getLinks(MenuData<?> menuData) {
-				Set<String> urls = new HashSet<>();
-				for (int typeID : menuData.getBlueprintTypeIDs()) {
-					urls.add("https://lzb.eveskillboard.com/blueprint/research_copy/" + typeID);
-				}
-				return urls;
-			}
-
-			@Override
-			public <T> Boolean isEnabled(MenuData<T> menuData) {
-				return !menuData.getBlueprintTypeIDs().isEmpty();
-			}
-		},
-		LAZY_BLACKSMITH_MANUFACTURING(GuiShared.get().lazyBlacksmithManufacturing(), Images.MISC_MANUFACTURING.getIcon()) {
-			@Override
-			public Set<String> getLinks(MenuData<?> menuData) {
-				Set<String> urls = new HashSet<>();
-				for (int typeID : menuData.getBlueprintTypeIDs()) {
-					urls.add("https://lzb.eveskillboard.com/blueprint/manufacturing/" + typeID);
-				}
-				return urls;
-			}
-
-			@Override
-			public <T> Boolean isEnabled(MenuData<T> menuData) {
-				return !menuData.getBlueprintTypeIDs().isEmpty();
-			}
-		},
 		EVE_COOKBOOK(GuiShared.get().eveCookbook(), Images.LINK_EVE_COOKBOOK.getIcon()) {
 			@Override
 			public Set<String> getLinks(MenuData<?> menuData) {
@@ -810,13 +765,6 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 		add(jIndustry);
 
 		add(jIndustry, LookupLinks.FUZZWORK_BLUEPRINTS, listener);
-	//KhonSpace
-		JMenu jKhonSpace = new JMenu(GuiShared.get().lazyBlacksmith());
-		jKhonSpace.setIcon(Images.LINK_KHON_SPACE.getIcon());
-		jIndustry.add(jKhonSpace);
-		add(jKhonSpace, LookupLinks.LAZY_BLACKSMITH_INVENTION, listener);
-		add(jKhonSpace, LookupLinks.LAZY_BLACKSMITH_RESEARCH, listener);
-		add(jKhonSpace, LookupLinks.LAZY_BLACKSMITH_MANUFACTURING, listener);
 	//Other
 		add(jIndustry, LookupLinks.EVE_COOKBOOK, listener);
 //Corporation
