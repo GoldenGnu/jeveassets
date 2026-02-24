@@ -863,4 +863,54 @@ public abstract class FakeSettings extends Settings {
 	public Map<String, Map<Integer, Integer>> getSkillPlans() {
 		throw new UnsupportedOperationException("not implemented");
 	}
+
+	@Override
+	public void setEveGatecampCheckUnsecure(boolean eveGatecampCheckUnsecure) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public boolean isEveGatecampCheckUnsecure() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public void setEveGatecampCheckSecure(boolean eveGatecampCheckSecure) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public boolean isEveGatecampCheckSecure() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public void setEveGatecampCheckNeverOpen(boolean eveGatecampCheckNeverOpen) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public boolean isEveGatecampCheckNeverOpen() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public void setEveGatecampCheckAlwaysOpen(boolean eveGatecampCheckAlwaysOpen) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public boolean isEveGatecampCheckAlwaysOpen() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public void setEveGatecampCheckSet(boolean eveGatecampCheckSet) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public boolean isEveGatecampCheckSet() {
+		throw new UnsupportedOperationException("not implemented");
+	}
 }
