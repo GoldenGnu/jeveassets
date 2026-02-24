@@ -20,6 +20,7 @@
  */
 package net.nikr.eve.jeveasset.io.esi;
 
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -43,8 +44,8 @@ import net.troja.eve.esi.model.PublicContractsItemsResponse;
 public class EsiContractItemsGetter extends AbstractEsiGetter {
 
 	private final List<EsiOwner> owners;
-	private static Map<Long, List<MyContract>> contracts;
-	private static Map<Long, List<MyContract>> publicContracts;
+	private static Long2ObjectOpenHashMap<List<MyContract>> contracts;
+	private static Long2ObjectOpenHashMap<List<MyContract>> publicContracts;
 	private final static AtomicInteger SIZE = new AtomicInteger(0);
 	private final static AtomicInteger PROGRESS = new AtomicInteger(0);
 	private final static int BATCH_SIZE = 20;
@@ -123,10 +124,10 @@ public class EsiContractItemsGetter extends AbstractEsiGetter {
 
 	private static synchronized void createContracts(List<EsiOwner> owners) {
 		if (contracts == null) {
-			contracts = new HashMap<>();
-			publicContracts = new HashMap<>();
+			contracts = new Long2ObjectOpenHashMap<>();
+			publicContracts = new Long2ObjectOpenHashMap<>();
 			Set<MyContract> uniqueContacts = new HashSet<>();
-			Map<Long, EsiOwner> uniqueOwners = new HashMap<>();
+			Long2ObjectOpenHashMap<EsiOwner> uniqueOwners = new Long2ObjectOpenHashMap<>();
 			for (EsiOwner esiOwner : owners) {
 				if (!esiOwner.isShowOwner()) {
 					continue;

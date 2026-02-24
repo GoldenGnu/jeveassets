@@ -113,7 +113,8 @@ public class LibraryManager {
 			files.add("flatlaf-3.4.1.jar");	
 			files.add("EvalEx-2.7.jar");
 			files.add("picocli-4.6.2.jar");
-			
+			files.add("fastutil-8.5.15.jar");
+
 			//Logging
 			files.add("slf4j-api-2.0.16.jar");
 			files.add("jul-to-slf4j-2.0.16.jar");

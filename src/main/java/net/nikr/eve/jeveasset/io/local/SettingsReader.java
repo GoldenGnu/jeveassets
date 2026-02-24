@@ -21,6 +21,9 @@
 
 package net.nikr.eve.jeveasset.io.local;
 
+import it.unimi.dsi.fastutil.ints.Int2DoubleOpenHashMap;
+import it.unimi.dsi.fastutil.ints.Int2FloatOpenHashMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Point;
@@ -960,7 +963,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		manufacturingSettings.setMaterialEfficiency(materialEfficiency);
 		manufacturingSettings.setTax(tax);
 		//Manufacturing Adjusted Prices
-		Map<Integer, Double> manufacturingPrices = new HashMap<>();
+		Int2DoubleOpenHashMap manufacturingPrices = new Int2DoubleOpenHashMap();
 		NodeList priceNodes = manufacturingElement.getElementsByTagName("price");
 		for (int a = 0; a < priceNodes.getLength(); a++) {
 			Element priceNode = (Element) priceNodes.item(a);
@@ -970,7 +973,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		}
 		manufacturingSettings.setPrices(manufacturingPrices);
 
-		Map<Integer, Float> manufacturingSystems = new HashMap<>();
+		Int2FloatOpenHashMap manufacturingSystems = new Int2FloatOpenHashMap();
 		NodeList systemNodes = manufacturingElement.getElementsByTagName("system");
 		for (int a = 0; a < systemNodes.getLength(); a++) {
 			Element systemNode = (Element) systemNodes.item(a);
@@ -1182,7 +1185,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			String security = getStringOptional(routeNode, "security");
 			NodeList routeSystemsNodes = routeNode.getElementsByTagName("routesystems");
 			List<List<SolarSystem>> route = new ArrayList<>();
-			Map<Long, List<SolarSystem>> stationsMap = new HashMap<>();
+			Long2ObjectOpenHashMap<List<SolarSystem>> stationsMap = new Long2ObjectOpenHashMap<>();
 			for (int b = 0; b < routeSystemsNodes.getLength(); b++) {
 				Element routeStartSystemNode = (Element) routeSystemsNodes.item(b);
 				NodeList routeSystemNodes = routeStartSystemNode.getElementsByTagName("routesystem");
@@ -2180,7 +2183,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 
 	private void parseAssetAdded(final Element element) throws XmlException {
 		NodeList assetNodes = element.getElementsByTagName("asset");
-		Map<Long, Date> assetAdded = new HashMap<>();
+		Long2ObjectOpenHashMap<Date> assetAdded = new Long2ObjectOpenHashMap<>();
 		for (int i = 0; i < assetNodes.getLength(); i++) {
 			Element currentNode = (Element) assetNodes.item(i);
 			long itemID = getLong(currentNode, "itemid");

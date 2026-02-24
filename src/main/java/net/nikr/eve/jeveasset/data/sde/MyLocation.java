@@ -21,8 +21,7 @@
 
 package net.nikr.eve.jeveasset.data.sde;
 
-import java.util.HashMap;
-import java.util.Map;
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.Security;
 import net.nikr.eve.jeveasset.i18n.General;
@@ -32,7 +31,7 @@ import uk.me.candle.eve.pricing.options.NamedPriceLocation;
 
 public class MyLocation implements Comparable<MyLocation>, NamedPriceLocation {
 
-	private final static Map<Long, MyLocation> CACHE = new HashMap<>();
+	private final static Long2ObjectOpenHashMap<MyLocation> CACHE = new Long2ObjectOpenHashMap<>();
 
 	private final long locationID; //LocationID : long
 	private String location;

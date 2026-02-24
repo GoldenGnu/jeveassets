@@ -20,6 +20,7 @@
  */
 package net.nikr.eve.jeveasset.io.shared;
 
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -207,17 +208,24 @@ public abstract class DataConverter {
 	protected static List<MyAsset> convertRawAssets(List<RawAsset> rawAssets, OwnerType owner) {
 		List<MyAsset> assets = new ArrayList<>();
 
-		Map<Long, RawAsset> lookup = new HashMap<>();
-		Map<Long, List<RawAsset>> childMap = new HashMap<>();
+		Long2ObjectOpenHashMap<RawAsset> lookup = new Long2ObjectOpenHashMap<>();
+		Long2ObjectOpenHashMap<List<RawAsset>> childMap = new Long2ObjectOpenHashMap<>();
 		List<RawAsset> root = new ArrayList<>();
 		for (RawAsset rawAsset : rawAssets) { //Lookup by ItemID
-			lookup.put(rawAsset.getItemID(), rawAsset);
-			childMap.put(rawAsset.getItemID(), new ArrayList<>());
+			Long itemID = rawAsset.getItemID();
+			if (itemID != null) {
+				lookup.put(itemID.longValue(), rawAsset);
+				childMap.put(itemID.longValue(), new ArrayList<>());
+			}
 		}
 		for (RawAsset rawAsset : rawAssets) { //Create child map
-			RawAsset parent = lookup.get(rawAsset.getLocationID());
+			Long locationID = rawAsset.getLocationID();
+			RawAsset parent = locationID != null ? lookup.get(locationID.longValue()) : null;
 			if (parent != null) { //Is Child Asset
-				childMap.get(parent.getItemID()).add(rawAsset);
+				Long parentItemID = parent.getItemID();
+				if (parentItemID != null) {
+					childMap.get(parentItemID.longValue()).add(rawAsset);
+				}
 			} else { //Is Root Asset
 				root.add(rawAsset);
 			}
@@ -231,15 +239,16 @@ public abstract class DataConverter {
 		return assets;
 	}
 
-	private static MyAsset deepAsset(RawAsset rawAsset, OwnerType owner, Map<Long, List<RawAsset>> childMap, MyAsset parent) {
+	private static MyAsset deepAsset(RawAsset rawAsset, OwnerType owner, Long2ObjectOpenHashMap<List<RawAsset>> childMap, MyAsset parent) {
 		List<MyAsset> parents = new ArrayList<>();
 		if (parent != null) {
 			parents.addAll(parent.getParents());
 			parents.add(parent);
 		}
 		MyAsset asset = toMyAsset(rawAsset, owner, parents);
-		if (asset != null) {
-			for (RawAsset child : childMap.get(rawAsset.getItemID())) {
+		Long itemID = rawAsset.getItemID();
+		if (asset != null && itemID != null) {
+			for (RawAsset child : childMap.get(itemID.longValue())) {
 				MyAsset childAsset = deepAsset(child, owner, childMap, asset);
 				if (childAsset != null) {
 					asset.addAsset(childAsset);
@@ -377,14 +386,16 @@ public abstract class DataConverter {
 
 	protected static Set<MyMarketOrder> convertRawMarketOrders(List<RawMarketOrder> rawMarketOrders, OwnerType owner, boolean saveHistory) {
 		Set<MyMarketOrder> marketOrders = new HashSet<>();
-		Map<Long, Set<Change>> changed = new HashMap<>();
+		Long2ObjectOpenHashMap<Set<Change>> changed = new Long2ObjectOpenHashMap<>();
 		for (MyMarketOrder marketOrder : owner.getMarketOrders()) {
-			changed.put(marketOrder.getOrderID(), marketOrder.getChanges());
+			long orderID = marketOrder.getOrderID();
+			changed.put(orderID, marketOrder.getChanges());
 		}
 		for (RawMarketOrder rawMarketOrder : rawMarketOrders) {
 			MyMarketOrder marketOrder = toMyMarketOrder(rawMarketOrder, owner);
 			marketOrders.add(marketOrder);
-			marketOrder.addChanges(changed.get(marketOrder.getOrderID()));
+			long orderID = marketOrder.getOrderID();
+			marketOrder.addChanges(changed.get(orderID));
 		}
 		if (saveHistory) {
 			Set<MyMarketOrder> update = new HashSet<>(marketOrders); //Market orders in esi needs to be update

@@ -20,6 +20,7 @@
  */
 package net.nikr.eve.jeveasset.io.local.profile;
 
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -83,7 +84,7 @@ public class ProfileBlueprints extends ProfileTable {
 
 	@Override
 	protected void select(Connection connection, List<EsiOwner> esiOwners, Map<String, EsiOwner> owners) throws SQLException {
-		Map<EsiOwner, Map<Long, RawBlueprint>> blueprints = new HashMap<>();
+		Map<EsiOwner, Long2ObjectOpenHashMap<RawBlueprint>> blueprints = new HashMap<>();
 		String sql = "SELECT * FROM " + BLUEPRINTS_TABLE;
 		try (PreparedStatement statement = connection.prepareStatement(sql);
 				ResultSet rs = statement.executeQuery();) {
@@ -115,9 +116,9 @@ public class ProfileBlueprints extends ProfileTable {
 				if (owner == null) {
 					continue;
 				}
-				map(owner, blueprints, itemID, blueprint);
+				mapLong(owner, blueprints, itemID, blueprint);
 			}
-			for (Map.Entry<EsiOwner, Map<Long, RawBlueprint>> entry : blueprints.entrySet()) {
+			for (Map.Entry<EsiOwner, Long2ObjectOpenHashMap<RawBlueprint>> entry : blueprints.entrySet()) {
 				entry.getKey().setBlueprints(entry.getValue());
 			}
 		}

@@ -21,21 +21,21 @@
 
 package net.nikr.eve.jeveasset.data.settings;
 
-import java.util.HashMap;
-import java.util.Map;
+import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 
 
 public class CitadelSettings {
-	private final Map<Long, Citadel> cache = new HashMap<>();
+	private final Long2ObjectOpenHashMap<Citadel> cache = new Long2ObjectOpenHashMap<>();
 
 	public Citadel get(long location) {
 		return cache.get(location);
 	}
 
-	public Iterable<Map.Entry<Long, Citadel>> getCache() {
-		return cache.entrySet();
+	public Iterable<Long2ObjectMap.Entry<Citadel>> getCache() {
+		return cache.long2ObjectEntrySet();
 	}
 
 	public void put(long locationID, Citadel citadel) {

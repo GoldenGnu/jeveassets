@@ -20,6 +20,8 @@
  */
 package net.nikr.eve.jeveasset.io.esi;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -151,19 +153,19 @@ public class EsiConverter extends DataConverter {
 		return parent;
 	}
 
-	public static Map<Long, RawBlueprint> toBlueprints(List<CharacterBlueprintsResponse> responses) {
-		Map<Long, RawBlueprint> rawBlueprints = new HashMap<>();
+	public static Long2ObjectOpenHashMap<RawBlueprint> toBlueprints(List<CharacterBlueprintsResponse> responses) {
+		Long2ObjectOpenHashMap<RawBlueprint> rawBlueprints = new Long2ObjectOpenHashMap<>();
 		for (CharacterBlueprintsResponse response : responses) {
-			rawBlueprints.put(response.getItemId(), new RawBlueprint(response));
+			rawBlueprints.put(response.getItemId().longValue(), new RawBlueprint(response));
 			ApiIdConverter.updateItem(response.getTypeId());
 		}
 		return rawBlueprints;
 	}
 
-	public static Map<Long, RawBlueprint> toBlueprintsCorporation(List<CorporationBlueprintsResponse> responses) {
-		Map<Long, RawBlueprint> rawBlueprints = new HashMap<>();
+	public static Long2ObjectOpenHashMap<RawBlueprint> toBlueprintsCorporation(List<CorporationBlueprintsResponse> responses) {
+		Long2ObjectOpenHashMap<RawBlueprint> rawBlueprints = new Long2ObjectOpenHashMap<>();
 		for (CorporationBlueprintsResponse response : responses) {
-			rawBlueprints.put(response.getItemId(), new RawBlueprint(response));
+			rawBlueprints.put(response.getItemId().longValue(), new RawBlueprint(response));
 			ApiIdConverter.updateItem(response.getTypeId());
 		}
 		return rawBlueprints;
@@ -311,31 +313,32 @@ public class EsiConverter extends DataConverter {
 		return convertRawTransactions(rawTransactions, owner, saveHistory);
 	}
 
-	public static Map<Integer, String> toWalletDivisions(List<CorporationDivisionsWallet> divisionsWallets) {
-		Map<Integer, String> divisions = new HashMap<>();
+	public static Int2ObjectOpenHashMap<String> toWalletDivisions(List<CorporationDivisionsWallet> divisionsWallets) {
+		Int2ObjectOpenHashMap<String> divisions = new Int2ObjectOpenHashMap<>();
 		for (CorporationDivisionsWallet response : divisionsWallets) {
-			divisions.put(response.getDivision(), response.getName());
+			divisions.put(response.getDivision().intValue(), response.getName());
 		}
 		return divisions;
 	}
 
-	public static Map<Integer, String> toAssetDivisions(List<CorporationDivisionsHangar> divisionsWallets) {
-		Map<Integer, String> divisions = new HashMap<>();
+	public static Int2ObjectOpenHashMap<String> toAssetDivisions(List<CorporationDivisionsHangar> divisionsWallets) {
+		Int2ObjectOpenHashMap<String> divisions = new Int2ObjectOpenHashMap<>();
 		for (CorporationDivisionsHangar response : divisionsWallets) {
-			divisions.put(response.getDivision(), response.getName());
+			divisions.put(response.getDivision().intValue(), response.getName());
 		}
 		return divisions;
 	}
 
-	public static Map<Integer, Set<RawPublicMarketOrder>> toPublicMarketOrders(List<MarketOrdersResponse> responses) {
-		Map<Integer, Set<RawPublicMarketOrder>> marketOrders = new HashMap<>();
+	public static Int2ObjectOpenHashMap<Set<RawPublicMarketOrder>> toPublicMarketOrders(List<MarketOrdersResponse> responses) {
+		Int2ObjectOpenHashMap<Set<RawPublicMarketOrder>> marketOrders = new Int2ObjectOpenHashMap<>();
 		for (MarketOrdersResponse response : responses) {
 			RawPublicMarketOrder marketOrder = new RawPublicMarketOrder(response);
 			ApiIdConverter.updateItem(response.getTypeId());
-			Set<RawPublicMarketOrder> set = marketOrders.get(marketOrder.getTypeID());
+			int typeID = marketOrder.getTypeID();
+			Set<RawPublicMarketOrder> set = marketOrders.get(typeID);
 			if (set == null) {
 				set = new HashSet<>();
-				marketOrders.put(marketOrder.getTypeID(), set);
+				marketOrders.put(typeID, set);
 			}
 			set.add(marketOrder);
 		}

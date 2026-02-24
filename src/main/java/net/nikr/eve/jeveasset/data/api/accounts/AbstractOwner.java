@@ -20,6 +20,8 @@
  */
 package net.nikr.eve.jeveasset.data.api.accounts;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -55,9 +57,9 @@ public abstract class AbstractOwner implements OwnerType {
 	private Set<MyIndustryJob> industryJobs = new HashSet<>();
 	private Map<MyContract, List<MyContractItem>> contracts = new HashMap<>();
 	private List<MyAsset> assets = new ArrayList<>();
-	private Map<Long, RawBlueprint> blueprints = new HashMap<>();
-	private Map<Integer, String> walletDivisions = new HashMap<>();
-	private Map<Integer, String> assetDivisions = new HashMap<>();
+	private Long2ObjectOpenHashMap<RawBlueprint> blueprints = new Long2ObjectOpenHashMap<>();
+	private Int2ObjectOpenHashMap<String> walletDivisions = new Int2ObjectOpenHashMap<>();
+	private Int2ObjectOpenHashMap<String> assetDivisions = new Int2ObjectOpenHashMap<>();
 	private List<MySkill> skills = new ArrayList<>();
 	private List<RawClone> clones = new ArrayList<>();
 	private Set<MyMining> mining = new HashSet<>();
@@ -406,7 +408,7 @@ public abstract class AbstractOwner implements OwnerType {
 	}
 
 	@Override
-	public final Map<Long, RawBlueprint> getBlueprints() {
+	public final Long2ObjectOpenHashMap<RawBlueprint> getBlueprints() {
 		return blueprints;
 	}
 
@@ -461,7 +463,7 @@ public abstract class AbstractOwner implements OwnerType {
 	}
 
 	@Override
-	public final void setBlueprints(final Map<Long, RawBlueprint> blueprints) {
+	public final void setBlueprints(final Long2ObjectOpenHashMap<RawBlueprint> blueprints) {
 		this.blueprints = blueprints;
 	}
 
@@ -506,22 +508,22 @@ public abstract class AbstractOwner implements OwnerType {
 	}
 
 	@Override
-	public Map<Integer, String> getWalletDivisions() {
+	public Int2ObjectOpenHashMap<String> getWalletDivisions() {
 		return walletDivisions;
 	}
 
 	@Override
-	public void setWalletDivisions(Map<Integer, String> walletDivisions) {
+	public void setWalletDivisions(Int2ObjectOpenHashMap<String> walletDivisions) {
 		this.walletDivisions = walletDivisions;
 	}
 
 	@Override
-	public Map<Integer, String> getAssetDivisions() {
+	public Int2ObjectOpenHashMap<String> getAssetDivisions() {
 		return assetDivisions;
 	}
 
 	@Override
-	public void setAssetDivisions(Map<Integer, String> assetDivisions) {
+	public void setAssetDivisions(Int2ObjectOpenHashMap<String> assetDivisions) {
 		this.assetDivisions = assetDivisions;
 	}
 

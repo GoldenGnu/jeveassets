@@ -20,6 +20,7 @@
  */
 package net.nikr.eve.jeveasset.data.settings;
 
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -27,7 +28,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 import net.nikr.eve.jeveasset.io.local.AssetAddedReader;
 import net.nikr.eve.jeveasset.io.local.profile.ProfileTable.Rows;
@@ -71,8 +71,8 @@ public class AddedData {
 		public void load() { }
 	}
 
-	private Map<Long, Date> insert = null;
-	private Map<Long, Date> update = null;
+	private Long2ObjectOpenHashMap<Date> insert = null;
+	private Long2ObjectOpenHashMap<Date> update = null;
 	private final DataSettings dataSettings;
 
 	private String getConnectionURL() {
@@ -156,16 +156,16 @@ public class AddedData {
 
 	private void insertQueue(Long id, Date date) {
 		if (insert == null) {
-			insert = new HashMap<>();
+			insert = new Long2ObjectOpenHashMap<>();
 		}
-		insert.put(id, date);
+		insert.put(id.longValue(), date);
 	}
 
 	private void updateQueue(Long id, Date date) {
 		if (update == null) {
-			update = new HashMap<>();
+			update = new Long2ObjectOpenHashMap<>();
 		}
-		update.put(id, date);
+		update.put(id.longValue(), date);
 	}
 
 	public void commitQueue() {
@@ -239,8 +239,8 @@ public class AddedData {
 		}
 	}
 
-	public Map<Long, Date> getAll() {
-		Map<Long, Date> map = new HashMap<>();
+	public Long2ObjectOpenHashMap<Date> getAll() {
+		Long2ObjectOpenHashMap<Date> map = new Long2ObjectOpenHashMap<>();
 		String sql = "SELECT * FROM " + dataSettings.getTableName();
 		try (Connection connection = DriverManager.getConnection(getConnectionURL());
 				PreparedStatement statement = connection.prepareStatement(sql);

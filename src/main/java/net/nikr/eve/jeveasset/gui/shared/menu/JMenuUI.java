@@ -262,7 +262,7 @@ public class JMenuUI <T> extends MenuManager.JAutoMenu<T> {
 				List<Owner> owners = new ArrayList<>();
 				for (Long ownerID : menuData.getOwnerIDs()) {
 					if (ownerID != null && ownerID > 0) {
-						String name = Settings.get().getOwners().get(ownerID);
+						String name = Settings.get().getOwners().get(ownerID.longValue());
 						if (name == null) {
 							name = GuiShared.get().unknownOwner();
 						}

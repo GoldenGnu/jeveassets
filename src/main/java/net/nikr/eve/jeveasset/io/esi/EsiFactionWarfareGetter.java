@@ -20,10 +20,10 @@
  */
 package net.nikr.eve.jeveasset.io.esi;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.troja.eve.esi.ApiException;
@@ -53,13 +53,13 @@ public class EsiFactionWarfareGetter extends AbstractEsiGetter {
 				return getUniverseApiOpen().getUniverseFactionsWithHttpInfo(null, DATASOURCE, null, null);
 			}
 		});
-		Map<Integer, String> factionNames = new HashMap<>();
+		Int2ObjectOpenHashMap<String> factionNames = new Int2ObjectOpenHashMap<>();
 		for (FactionsResponse faction : factions) {
-			factionNames.put(faction.getFactionId(), faction.getName());
+			factionNames.put(faction.getFactionId().intValue(), faction.getName());
 		}
-		Map<Long, String> systemOwners = new HashMap<>();
+		Long2ObjectOpenHashMap<String> systemOwners = new Long2ObjectOpenHashMap<>();
 		for (FactionWarfareSystemsResponse system : factionWarfareSystems) {
-			systemOwners.put((long) system.getSolarSystemId(), factionNames.get(system.getOccupierFactionId()));
+			systemOwners.put((long) system.getSolarSystemId(), factionNames.get(system.getOccupierFactionId().intValue()));
 		}
 		Settings.get().setFactionWarfareSystemOwners(systemOwners);
 	}

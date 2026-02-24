@@ -20,6 +20,8 @@
  */
 package net.nikr.eve.jeveasset.data.sde;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -37,10 +39,10 @@ import net.nikr.eve.jeveasset.io.local.NpcCorporationsReader;
 
 public class StaticData {
 	private static final ReentrantReadWriteLock LOCATIONS_LOCK = new ReentrantReadWriteLock();
-	//Data
-	private final Map<Integer, Item> items = new HashMap<>(); //TypeID : int
-	private final Map<Integer, ItemFlag> flags = new HashMap<>(); //FlagID : int
-	private final Map<Long, MyLocation> locations = new HashMap<>(); //LocationID : long
+	//Data - Using fastutil primitive collections to avoid autoboxing overhead
+	private final Int2ObjectOpenHashMap<Item> items = new Int2ObjectOpenHashMap<>(); //TypeID : int
+	private final Int2ObjectOpenHashMap<ItemFlag> flags = new Int2ObjectOpenHashMap<>(); //FlagID : int
+	private final Long2ObjectOpenHashMap<MyLocation> locations = new Long2ObjectOpenHashMap<>(); //LocationID : long
 	private final List<Jump> jumps = new ArrayList<>(); //LocationID : long
 	private final Map<Integer, Agent> agents = new HashMap<>(); //AgentID : int
 	private final Map<Integer, NpcCorporation> npcCorporations = new HashMap<>(); //corporationID : int

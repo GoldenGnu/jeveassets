@@ -96,7 +96,7 @@ public class EsiShipGetter extends AbstractEsiGetter {
 			//Save ship name
 			try {
 				Settings.lock("Active Ship Name");
-				Settings.get().getEveNames().put(shipType.getShipItemId(), shipType.getShipName());
+				Settings.get().getEveNames().put(shipType.getShipItemId().longValue(), shipType.getShipName());
 			} finally {
 				Settings.unlock("Active Ship Name");
 			}

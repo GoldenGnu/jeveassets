@@ -20,6 +20,9 @@
  */
 package net.nikr.eve.jeveasset.gui.tabs.orders;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.longs.Long2LongOpenHashMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -68,11 +71,12 @@ public class OutbidProcesser {
 	private void process() {
 		//Process order updates
 		for (RawPublicMarketOrder ordersResponse : input.getMarketOrders()) {
-			Set<MyMarketOrder> orders = input.getTypeIDs().get(ordersResponse.getTypeID());
+			int typeID = ordersResponse.getTypeID().intValue();
+			Set<MyMarketOrder> orders = input.getTypeIDs().get(typeID);
 			if (orders != null) {
 				for (MyMarketOrder marketOrder : orders) {
 					if (isSameOrder(marketOrder, ordersResponse)) { //Orders to be updated
-						output.getUpdates().put(ordersResponse.getOrderID(), ordersResponse);
+						output.getUpdates().put(ordersResponse.getOrderID().longValue(), ordersResponse);
 					}
 				}
 			}
@@ -84,7 +88,8 @@ public class OutbidProcesser {
 			if (!orderLocation.isEmpty()) {
 				output.getRegionIDs().add(orderLocation.getRegionID());
 			}
-			Set<MyMarketOrder> orders = input.getTypeIDs().get(ordersResponse.getTypeID());
+			int typeID = ordersResponse.getTypeID().intValue();
+			Set<MyMarketOrder> orders = input.getTypeIDs().get(typeID);
 			if (orders != null) {
 				//Orders to match
 				for (MyMarketOrder marketOrder : orders) {
@@ -97,12 +102,13 @@ public class OutbidProcesser {
 					if (!isInRange(marketOrder, ordersResponse)) { //Order range overlap
 						continue;
 					}
-					Outbid outbid = output.getOutbids().get(marketOrder.getOrderID());
+					long orderID = marketOrder.getOrderID().longValue();
+					Outbid outbid = output.getOutbids().get(orderID);
 					if (outbid == null) {
 						outbid = new Outbid(ordersResponse);
-						output.getOutbids().put(marketOrder.getOrderID(), outbid);
+						output.getOutbids().put(orderID, outbid);
 					}
-					RawPublicMarketOrder rawPublicMarketOrder = output.getUpdates().get(marketOrder.getOrderID());
+					RawPublicMarketOrder rawPublicMarketOrder = output.getUpdates().get(orderID);
 					final double price;
 					final Date issued;
 					if (rawPublicMarketOrder != null) { //Updated price/issued
@@ -218,9 +224,9 @@ public class OutbidProcesser {
 
 		private static final Map<Integer, DatedMarketOrders> MARKET_ORDERS = Collections.synchronizedMap(new HashMap<>());
 
-		private final Map<Long, Long> locationToSystem = new HashMap<>();
-		private final Map<Long, Citadel> citadels = new HashMap<>();
-		private final Map<Integer, Set<MyMarketOrder>> typeIDs = new HashMap<>();
+		private final Long2LongOpenHashMap locationToSystem = new Long2LongOpenHashMap();
+		private final Long2ObjectOpenHashMap<Citadel> citadels = new Long2ObjectOpenHashMap<>();
+		private final Int2ObjectOpenHashMap<Set<MyMarketOrder>> typeIDs = new Int2ObjectOpenHashMap<>();
 		private final Set<Long> structureIDs = new HashSet<>();
 		private final Set<Integer> regionIDs = new HashSet<>();
 		private final MarketOrderRange sellOrderRange;
@@ -238,10 +244,11 @@ public class OutbidProcesser {
 								structureIDs.add(marketOrder.getLocationID());
 							}
 							//TypeIDs
-							Set<MyMarketOrder> set = typeIDs.get(marketOrder.getTypeID());
+							int marketTypeID = marketOrder.getTypeID();
+							Set<MyMarketOrder> set = typeIDs.get(marketTypeID);
 							if (set == null) {
 								set = new HashSet<>();
-								typeIDs.put(marketOrder.getTypeID(), set);
+								typeIDs.put(marketTypeID, set);
 							}
 							set.add(marketOrder);
 							//RegionIDs
@@ -295,15 +302,15 @@ public class OutbidProcesser {
 			return marketOrders;
 		}
 
-		public Map<Long, Long> getLocationToSystem() {
+		public Long2LongOpenHashMap getLocationToSystem() {
 			return locationToSystem;
 		}
 
-		public Map<Long, Citadel> getCitadels() {
+		public Long2ObjectOpenHashMap<Citadel> getCitadels() {
 			return citadels;
 		}
 
-		public Map<Integer, Set<MyMarketOrder>> getTypeIDs() {
+		public Int2ObjectOpenHashMap<Set<MyMarketOrder>> getTypeIDs() {
 			return typeIDs;
 		}
 
@@ -329,16 +336,16 @@ public class OutbidProcesser {
 	}
 
 	public static class OutbidProcesserOutput {
-		private final Map<Long, Outbid> outbids = new HashMap<>();
-		private final Map<Long, RawPublicMarketOrder> updates = new HashMap<>();
+		private final Long2ObjectOpenHashMap<Outbid> outbids = new Long2ObjectOpenHashMap<>();
+		private final Long2ObjectOpenHashMap<RawPublicMarketOrder> updates = new Long2ObjectOpenHashMap<>();
 		private final Set<Long> regionIDs = new HashSet<>();
 		private boolean unknownLocations = false;
 
-		public Map<Long, Outbid> getOutbids() {
+		public Long2ObjectOpenHashMap<Outbid> getOutbids() {
 			return outbids;
 		}
 
-		public Map<Long, RawPublicMarketOrder> getUpdates() {
+		public Long2ObjectOpenHashMap<RawPublicMarketOrder> getUpdates() {
 			return updates;
 		}
 

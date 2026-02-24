@@ -113,7 +113,7 @@ public class EsiPublicMarketOrdersGetter extends AbstractEsiGetter {
 				input.getStructureIDs().add(ordersResponse.getLocationId());
 			}
 			//Map known locationID <=> systemID
-			input.getLocationToSystem().put(ordersResponse.getLocationId(), RawConverter.toLong(ordersResponse.getSystemId()));
+			input.getLocationToSystem().put(ordersResponse.getLocationId().longValue(), RawConverter.toLong(ordersResponse.getSystemId()).longValue());
 		}
 		//Get public structures
 		input.getStructureIDs().addAll(update(DEFAULT_RETRIES, new EsiHandler<Set<Long>>() {

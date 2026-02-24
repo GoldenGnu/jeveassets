@@ -21,6 +21,7 @@
 
 package net.nikr.eve.jeveasset.io.online;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -77,13 +78,13 @@ public class PriceDataGetter implements PricingListener {
 	private Set<Integer> okay;
 	private Set<Integer> zero;
 	private Set<Integer> queue;
-	private final Map<Integer, PriceData> updatedList = Collections.synchronizedMap(new HashMap<>());
-	private final Map<Integer, PriceData> priceDataList = Collections.synchronizedMap(new HashMap<>());
+	private final Int2ObjectOpenHashMap<PriceData> updatedList = new Int2ObjectOpenHashMap<>();
+	private final Int2ObjectOpenHashMap<PriceData> priceDataList = new Int2ObjectOpenHashMap<>();
 
 	private long nextUpdate = 0;
 
 	public void load() {
-		Map<Integer, PriceData> priceData = processLoad();
+		Int2ObjectOpenHashMap<PriceData> priceData = processLoad();
 		if (priceData != null) {
 			Settings.get().setPriceData(priceData);
 		}
@@ -113,47 +114,49 @@ public class PriceDataGetter implements PricingListener {
 	 * Load data from price cache
 	 * @return available price data
 	 */
-	private Map<Integer, PriceData> processLoad() {
+	private Int2ObjectOpenHashMap<PriceData> processLoad() {
 		Pricing pricing = PricingFactory.getPricing(PricingFetch.FUZZWORK, new DefaultPricingOptions());
 		LOG.info("Price data loading");
-		for (Item item : StaticData.get().getItems().values()) { //For each typeID
-			if (!item.isMarketGroup()) {
-				continue;
-			}
-			int typeID = item.getTypeID();
-			PriceData priceData = priceDataList.get(typeID);
-			if (priceData == null) {
-				priceData = new PriceData();
-				priceDataList.put(typeID, priceData);
-			}
-			boolean ok = false;
-			for (PriceMode priceMode : PriceMode.values()) { //For each PriceMode (all combinations of PricingNumber & PricingType)
-				PriceType priceType = priceMode.getPricingType();
-				if (priceType == null) {
-					continue; //Ignore calculated prices - f.ex. PriceMode.PRICE_MIDPOINT
+		synchronized (priceDataList) {
+			for (Item item : StaticData.get().getItems().values()) { //For each typeID
+				if (!item.isMarketGroup()) {
+					continue;
 				}
-				Double price = pricing.getPriceCache(typeID, priceType);
-				if (price != null) {
-					ok = true; //Something is set
-					PriceMode.setDefaultPrice(priceData, priceMode, price);
+				int typeID = item.getTypeID();
+				PriceData priceData = priceDataList.get(typeID);
+				if (priceData == null) {
+					priceData = new PriceData();
+					priceDataList.put(typeID, priceData);
+				}
+				boolean ok = false;
+				for (PriceMode priceMode : PriceMode.values()) { //For each PriceMode (all combinations of PricingNumber & PricingType)
+					PriceType priceType = priceMode.getPricingType();
+					if (priceType == null) {
+						continue; //Ignore calculated prices - f.ex. PriceMode.PRICE_MIDPOINT
+					}
+					Double price = pricing.getPriceCache(typeID, priceType);
+					if (price != null) {
+						ok = true; //Something is set
+						PriceMode.setDefaultPrice(priceData, priceMode, price);
+					}
+				}
+				if (!ok) {
+					priceDataList.remove(typeID); //Remove failed typeID
+				}
+				long nextUpdateTemp = pricing.getNextUpdateTime(typeID);
+				if (nextUpdateTemp >= 0 && nextUpdateTemp > getNextUpdateTime()) {
+					setUpdateNext(nextUpdateTemp);
 				}
 			}
-			if (!ok) {
-				priceDataList.remove(typeID); //Remove failed typeID
+			if (!priceDataList.isEmpty()) {
+				LOG.info("	Price data loaded");
+				Int2ObjectOpenHashMap<PriceData> hashMap = new Int2ObjectOpenHashMap<>();
+				hashMap.putAll(priceDataList);
+				return hashMap; //Return copy of Map
+			} else {
+				LOG.info("	Price data not loaded");
+				return null;
 			}
-			long nextUpdateTemp = pricing.getNextUpdateTime(typeID);
-			if (nextUpdateTemp >= 0 && nextUpdateTemp > getNextUpdateTime()) {
-				setUpdateNext(nextUpdateTemp);
-			}
-		}
-		if (!priceDataList.isEmpty()) {
-			LOG.info("	Price data loaded");
-			Map<Integer, PriceData> hashMap = new HashMap<>();
-			hashMap.putAll(priceDataList);
-			return hashMap; //Return copy of Map
-		} else {
-			LOG.info("	Price data not loaded");
-			return null;
 		}
 	}
 
@@ -173,9 +176,9 @@ public class PriceDataGetter implements PricingListener {
 			plex = false;
 		}
 		//Update normal
-		Map<Integer, PriceData> priceData = processUpdate(task, updateAll, new DefaultPricingOptions(), priceTypeIDs, Settings.get().getPriceDataSettings().getSource());
+		Int2ObjectOpenHashMap<PriceData> priceData = processUpdate(task, updateAll, new DefaultPricingOptions(), priceTypeIDs, Settings.get().getPriceDataSettings().getSource());
 		//Update plex
-		Map<Integer, PriceData> plexPriceData = null;
+		Int2ObjectOpenHashMap<PriceData> plexPriceData = null;
 		if (plex) {
 			plexPriceData = processUpdate(task, updateAll, new PlexPricingOptions(0), Collections.singleton(PLEX_TYPE_ID), Settings.get().getPriceDataSettings().getSource());
 		}
@@ -199,7 +202,7 @@ public class PriceDataGetter implements PricingListener {
 	 * @param priceSource Price data source to update from (only used in log)
 	 * @return
 	 */
-	protected Map<Integer, PriceData> processUpdate(final UpdateTask task, final boolean updateAll, final PricingOptions pricingOptions, final Set<Integer> typeIDs, final PriceSource priceSource) {
+	protected Int2ObjectOpenHashMap<PriceData> processUpdate(final UpdateTask task, final boolean updateAll, final PricingOptions pricingOptions, final Set<Integer> typeIDs, final PriceSource priceSource) {
 		this.updateTask = task;
 		this.update = updateAll;
 		this.typeIDs = Collections.synchronizedSet(new HashSet<>(typeIDs));
@@ -207,7 +210,9 @@ public class PriceDataGetter implements PricingListener {
 		this.zero = Collections.synchronizedSet(new HashSet<>());
 		this.okay = Collections.synchronizedSet(new HashSet<>());
 		this.queue = Collections.synchronizedSet(new HashSet<>(typeIDs));
-		this.updatedList.clear();
+		synchronized (updatedList) {
+			this.updatedList.clear();
+		}
 
 		if (priceSource == PriceSource.JANICE) {
 			String janiceKey = Settings.get().getPriceDataSettings().getJaniceKey();
@@ -310,10 +315,14 @@ public class PriceDataGetter implements PricingListener {
 			try {
 				//return new HashMap<Integer, PriceData>(priceDataList);
 				// XXX - Workaround for ConcurrentModificationException in HashMap constructor
-				Map<Integer, PriceData> hashMap = new HashMap<>();
-				priceDataList.keySet().removeAll(failed); //Remove failed
-				hashMap.putAll(priceDataList);
-				PriceHistoryDatabase.setPriceData(updatedList);
+				Int2ObjectOpenHashMap<PriceData> hashMap = new Int2ObjectOpenHashMap<>();
+				synchronized (priceDataList) {
+					priceDataList.keySet().removeAll(failed); //Remove failed
+					hashMap.putAll(priceDataList);
+				}
+				synchronized (updatedList) {
+					PriceHistoryDatabase.setPriceData(updatedList);
+				}
 				return hashMap;
 			} finally {
 				clear(pricing);
@@ -369,10 +378,13 @@ public class PriceDataGetter implements PricingListener {
 	}
 
 	private void createPriceData(final int typeID, final Pricing pricing) {
-		PriceData priceData = priceDataList.get(typeID);
-		if (priceData == null) {
-			priceData = new PriceData();
-			priceDataList.put(typeID, priceData);
+		PriceData priceData;
+		synchronized (priceDataList) {
+			priceData = priceDataList.get(typeID);
+			if (priceData == null) {
+				priceData = new PriceData();
+				priceDataList.put(typeID, priceData);
+			}
 		}
 		boolean ok = false;
 		boolean isZero = true;
@@ -394,7 +406,9 @@ public class PriceDataGetter implements PricingListener {
 			if (isZero) {
 				zero.add(typeID);
 			}
-			updatedList.put(typeID, priceData);
+			synchronized (updatedList) {
+				updatedList.put(typeID, priceData);
+			}
 			okay.add(typeID);
 			failed.remove(typeID);
 			queue.remove(typeID); //Load price...

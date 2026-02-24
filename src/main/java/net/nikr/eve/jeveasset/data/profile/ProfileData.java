@@ -21,6 +21,7 @@
 package net.nikr.eve.jeveasset.data.profile;
 
 import ca.odell.glazedlists.EventList;
+import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -81,6 +82,10 @@ import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import net.nikr.eve.jeveasset.io.shared.DataConverter;
+import it.unimi.dsi.fastutil.ints.Int2DoubleOpenHashMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.longs.Long2DoubleOpenHashMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 
 public class ProfileData {
 
@@ -109,14 +114,16 @@ public class ProfileData {
 	private final List<MyAccountBalance> accountBalanceList = new ArrayList<>();
 	private final List<MyContract> contractList = new ArrayList<>();
 	private final Map<String, Long> skillPointsTotal = new HashMap<>();
-	private Map<Integer, List<MyAsset>> uniqueAssetsDuplicates = null; //TypeID : int
-	private Map<Integer, MarketPriceData> transactionSellPriceData; //TypeID : int
-	private Map<Integer, MarketPriceData> transactionBuyPriceData; //TypeID : int
-	private Map<Integer, Double> transactionBuyTax; //TypeID : int
-	private Map<Long, Double> transactionSellTax; //TransactionID : long
-	private Map<Long, Double> marketOrdersBrokersFee; //OrderID : long
+	// Primitive collections to avoid autoboxing overhead (Phase 1 & 2 optimization)
+	private Int2ObjectOpenHashMap<List<MyAsset>> uniqueAssetsDuplicates = null; //TypeID : int
+	private Int2ObjectOpenHashMap<MarketPriceData> transactionSellPriceData; //TypeID : int
+	private Int2ObjectOpenHashMap<MarketPriceData> transactionBuyPriceData; //TypeID : int
+	// Phase 1 optimization: primitive-to-primitive maps
+	private Int2DoubleOpenHashMap transactionBuyTax; //TypeID : int
+	private Long2DoubleOpenHashMap transactionSellTax; //TransactionID : long
+	private Long2DoubleOpenHashMap marketOrdersBrokersFee; //OrderID : long
 	private final List<String> ownerNames = new ArrayList<>();
-	private final Map<Long, OwnerType> owners = new HashMap<>();
+	private final Long2ObjectOpenHashMap<OwnerType> owners = new Long2ObjectOpenHashMap<>();
 	private Set<Integer> staticTypeIDs = null;
 
 	public ProfileData(ProfileManager profileManager) {
@@ -231,9 +238,9 @@ public class ProfileData {
 		}
 	}
 
-	public Map<Long, OwnerType> getOwners() {
+	public Long2ObjectOpenHashMap<OwnerType> getOwners() {
 		synchronized (owners) { //synchronized as owners are modified by updateEventLists
-			return new HashMap<>(owners);
+			return new Long2ObjectOpenHashMap<>(owners);
 		}
 	}
 
@@ -348,8 +355,9 @@ public class ProfileData {
 		synchronized (owners) { //synchronized as owners are modified by updateEventLists
 			for (OwnerType ownerType : owners.values()) {
 				for (MyMarketOrder order : ownerType.getMarketOrders()) { // getMarketOrders() is thread safe
-					order.setOutbid(output.getOutbids().get(order.getOrderID()));
-					boolean updated = order.addChanges(output.getUpdates().get(order.getOrderID()));
+					long orderID = order.getOrderID().longValue();
+					order.setOutbid(output.getOutbids().get(orderID));
+					boolean updated = order.addChanges(output.getUpdates().get(orderID));
 					if (updated) { //If Market Order have been updated
 						order.setChanged(AddedData.getMarketOrders().getPut(marketOrdersAdded, order.getOrderID(), addedDate));
 					}
@@ -437,15 +445,15 @@ public class ProfileData {
 	}
 
 	public synchronized void updateEventLists(Date addedDate) {
-		uniqueAssetsDuplicates = new HashMap<>();
+		uniqueAssetsDuplicates = new Int2ObjectOpenHashMap<>();
 		Set<String> uniqueOwnerNames = new HashSet<>();
-		Map<Long, OwnerType> uniqueOwners = new HashMap<>();
+		Long2ObjectOpenHashMap<OwnerType> uniqueOwners = new Long2ObjectOpenHashMap<>();
 		//Temp
 		List<MyAsset> assets = new ArrayList<>();
 		List<MyAccountBalance> accountBalance = new ArrayList<>();
-		Map<Long, OwnerType> assetsMap = new HashMap<>();
-		Map<Long, OwnerType> accountBalanceMap = new HashMap<>();
-		Map<Long, MyIndustryJob> copyIndustryJobs = new HashMap<>();
+		Long2ObjectOpenHashMap<OwnerType> assetsMap = new Long2ObjectOpenHashMap<>();
+		Long2ObjectOpenHashMap<OwnerType> accountBalanceMap = new Long2ObjectOpenHashMap<>();
+		Long2ObjectOpenHashMap<MyIndustryJob> copyIndustryJobs = new Long2ObjectOpenHashMap<>();
 		Set<MyMarketOrder> marketOrders = new HashSet<>();
 		Set<MyMarketOrder> charMarketOrders = new HashSet<>();
 		Set<MyJournal> journals = new HashSet<>();
@@ -460,8 +468,8 @@ public class ProfileData {
 		Set<MyNpcStanding> npcStandings = new HashSet<>();
 		Set<MyMining> minings = new HashSet<>();
 		Set<MyExtraction> extractions = new HashSet<>();
-		Map<Long, OwnerType> blueprintsMap = new HashMap<>();
-		Map<Long, MyBlueprint> blueprints = new HashMap<>();
+		Long2ObjectOpenHashMap<OwnerType> blueprintsMap = new Long2ObjectOpenHashMap<>();
+		Long2ObjectOpenHashMap<MyBlueprint> blueprints = new Long2ObjectOpenHashMap<>();
 		Map<String, Long> skillPointsTotalCache = new HashMap<>();
 		Map<OwnerType, List<RawClone>> clones = new HashMap<>();
 
@@ -498,10 +506,15 @@ public class ProfileData {
 			//Industry Jobs > MyBlueprint
 			industryJobs.addAll(owner.getIndustryJobs());
 			for (MyIndustryJob myIndustryJob : owner.getIndustryJobs()) {
-				blueprints.put(myIndustryJob.getBlueprintID(), new MyBlueprint(myIndustryJob));
+				Long blueprintID = myIndustryJob.getBlueprintID();
+				if (blueprintID != null) {
+					blueprints.put(blueprintID.longValue(), new MyBlueprint(myIndustryJob));
+				}
 				if (myIndustryJob.isCopying()) {
 					blueprints.put(myIndustryJob.getJobID().longValue(), new MyBlueprint(myIndustryJob));
-					copyIndustryJobs.put(myIndustryJob.getBlueprintID(), myIndustryJob);
+					if (blueprintID != null) {
+						copyIndustryJobs.put(blueprintID.longValue(), myIndustryJob);
+					}
 				}
 			}
 			//Contracts & Contract Items
@@ -527,31 +540,34 @@ public class ProfileData {
 					Long itemID = contractItem.getItemID();
 					if (blueprint != null) {
 						if (itemID != null) {
-							blueprints.put(itemID, blueprint);
+							blueprints.put(itemID.longValue(), blueprint);
 						}
-						blueprints.put(contractItem.getRecordID(), blueprint);
+						blueprints.put(contractItem.getRecordID().longValue(), blueprint);
 					}
 				}
 			}
 			//Blueprints (Newest)
 			if (!owner.getBlueprints().isEmpty()) {
-				OwnerType ownerType = blueprintsMap.get(owner.getOwnerID());
+				long ownerID = owner.getOwnerID();
+				OwnerType ownerType = blueprintsMap.get(ownerID);
 				if (ownerType == null || (owner.getBlueprintsNextUpdate() != null && ownerType.getBalanceNextUpdate() != null && owner.getBlueprintsNextUpdate().after(ownerType.getBalanceNextUpdate()))) {
-					blueprintsMap.put(owner.getOwnerID(), owner);
+					blueprintsMap.put(ownerID, owner);
 				}
 			}
 			//Assets (Newest)
 			if (!owner.getAssets().isEmpty()) {
-				OwnerType ownerType = assetsMap.get(owner.getOwnerID());
+				long ownerID = owner.getOwnerID();
+				OwnerType ownerType = assetsMap.get(ownerID);
 				if (ownerType == null || (owner.getAssetNextUpdate() != null && ownerType.getAssetNextUpdate() != null && owner.getAssetNextUpdate().after(ownerType.getAssetNextUpdate()))) {
-					assetsMap.put(owner.getOwnerID(), owner);
+					assetsMap.put(ownerID, owner);
 				}
 			}
 			//Account Balance (Newest)
 			if (!owner.getAccountBalances().isEmpty()) {
-				OwnerType ownerType = accountBalanceMap.get(owner.getOwnerID());
+				long ownerID = owner.getOwnerID();
+				OwnerType ownerType = accountBalanceMap.get(ownerID);
 				if (ownerType == null || (owner.getBalanceNextUpdate() != null && ownerType.getBalanceNextUpdate() != null && owner.getBalanceNextUpdate().after(ownerType.getBalanceNextUpdate()))) {
-					accountBalanceMap.put(owner.getOwnerID(), owner);
+					accountBalanceMap.put(ownerID, owner);
 				}
 			}
 			//Skills
@@ -580,10 +596,11 @@ public class ProfileData {
 
 		//RawBlueprint > MyBlueprint
 		for (OwnerType owner : blueprintsMap.values()) {
-			for (Map.Entry<Long, RawBlueprint> entry : owner.getBlueprints().entrySet()) {
-				blueprints.put(entry.getKey(), new MyBlueprint(entry.getValue())); //Best source - overwrite other sources
+			for (Long2ObjectMap.Entry<RawBlueprint> entry : owner.getBlueprints().long2ObjectEntrySet()) {
+				long key = entry.getLongKey();
+				blueprints.put(key, new MyBlueprint(entry.getValue())); //Best source - overwrite other sources
 				//Copy Industry Jobs
-				MyIndustryJob industryJob = copyIndustryJobs.get(entry.getKey());
+				MyIndustryJob industryJob = copyIndustryJobs.get(key);
 				if (industryJob != null) {
 					blueprints.put(industryJob.getJobID().longValue(), new MyBlueprint(industryJob.getLicensedRuns(), entry.getValue().getMaterialEfficiency(), entry.getValue().getTimeEfficiency()));
 				}
@@ -613,8 +630,11 @@ public class ProfileData {
 				setLastTransaction(order, order.getTypeID() , order.isBuyOrder(), order.getPrice(), null);
 			}
 			order.setIssuedByName(ApiIdConverter.getOwnerName(order.getIssuedBy()));
-			order.setBrokersFee(marketOrdersBrokersFee.get(order.getOrderID()));
-			order.setOutbid(Settings.get().getMarketOrdersOutbid().get(order.getOrderID()));
+			// Fastutil returns primitive double (0.0 if not found); box to Double for API
+			long orderID = order.getOrderID();
+			double brokersFee = marketOrdersBrokersFee.get(orderID);
+			order.setBrokersFee(brokersFee == 0.0 ? null : brokersFee);
+			order.setOutbid(Settings.get().getMarketOrdersOutbid().get(orderID));
 			//Update Owned
 			Integer issuedBy = order.getIssuedBy();
 			if (order.isCorporation() && issuedBy != null) {
@@ -647,7 +667,8 @@ public class ProfileData {
 				industryJob.setOwned(uniqueOwners.containsKey(industryJob.getInstallerID()));
 			}
 			//Update BPO/BPC status
-			industryJob.setBlueprint(blueprints.get(industryJob.getBlueprintID()));
+			Long blueprintID = industryJob.getBlueprintID();
+			industryJob.setBlueprint(blueprintID != null ? blueprints.get(blueprintID.longValue()) : null);
 			//Price
 			updatePrice(industryJob);
 			//Queue Sound
@@ -688,11 +709,15 @@ public class ProfileData {
 			if (transaction.isBuy()) { //Buy
 				transaction.setTax(null); //Seller pays the tax
 			} else { //Sell
-				transaction.setTax(transactionSellTax.get(transaction.getTransactionID()));
+				// Fastutil returns primitive double (0.0 if not found); box to Double for API
+				double sellTax = transactionSellTax.get((long) transaction.getTransactionID());
+				transaction.setTax(sellTax == 0.0 ? null : sellTax);
 			}
 			//Transaction Profit
 			if (transaction.isBuy()) { //Buy
-				setLastTransaction(transaction, transaction.getTypeID(), transaction.isBuy(), transaction.getPrice(), transactionBuyTax.get(transaction.getTypeID()));
+				// Fastutil returns primitive double (0.0 if not found); box to Double for method call
+				double buyTax = transactionBuyTax.get((int) transaction.getTypeID());
+				setLastTransaction(transaction, transaction.getTypeID(), transaction.isBuy(), transaction.getPrice(), buyTax == 0.0 ? null : buyTax);
 			} else { //Sell
 				double tax = 0;
 				if (transaction.getTax() != null) {
@@ -1049,25 +1074,27 @@ public class ProfileData {
 	}
 
 	private void updateOutbidOwned(Collection<MyMarketOrder> marketOrders) {
-		Map<Integer, Map<Integer, Set<Long>>> lowestBuy = new HashMap<>();
-		Map<Integer, Map<Integer, Set<Long>>> lowestSell = new HashMap<>();
+		Int2ObjectOpenHashMap<Int2ObjectOpenHashMap<Set<Long>>> lowestBuy = new Int2ObjectOpenHashMap<>();
+		Int2ObjectOpenHashMap<Int2ObjectOpenHashMap<Set<Long>>> lowestSell = new Int2ObjectOpenHashMap<>();
 		for (MyMarketOrder order : marketOrders) { //Find lowest
 			if (order.isActive() && order.haveOutbid() && !order.isOutbid()) { //Lowest
-				Map<Integer, Map<Integer, Set<Long>>> lowest;
+				Int2ObjectOpenHashMap<Int2ObjectOpenHashMap<Set<Long>>> lowest;
 				if (order.isBuyOrder()) {
 					lowest = lowestBuy;
 				} else {
 					lowest = lowestSell;
 				}
-				Map<Integer, Set<Long>> region = lowest.get(order.getRegionID());
+				int regionID = order.getRegionID().intValue();
+				int typeID = order.getTypeID();
+				Int2ObjectOpenHashMap<Set<Long>> region = lowest.get(regionID);
 				if (region == null) {
-					region = new HashMap<>();
-					lowest.put(order.getRegionID(), region);
+					region = new Int2ObjectOpenHashMap<>();
+					lowest.put(regionID, region);
 				}
-				Set<Long> orderIDs = region.get(order.getTypeID());
+				Set<Long> orderIDs = region.get(typeID);
 				if (orderIDs == null) {
 					orderIDs = new HashSet<>();
-					region.put(order.getTypeID(), orderIDs);
+					region.put(typeID, orderIDs);
 				}
 				orderIDs.add(order.getOrderID());
 			}
@@ -1077,18 +1104,20 @@ public class ProfileData {
 				order.setOutbidOwned(false);
 				continue;
 			}
-			Map<Integer, Map<Integer, Set<Long>>> lowest;
+			Int2ObjectOpenHashMap<Int2ObjectOpenHashMap<Set<Long>>> lowest;
 			if (order.isBuyOrder()) {
 				lowest = lowestBuy;
 			} else {
 				lowest = lowestSell;
 			}
-			Map<Integer, Set<Long>> region = lowest.get(order.getRegionID());
+			int regionID = order.getRegionID().intValue();
+			int typeID = order.getTypeID();
+			Int2ObjectOpenHashMap<Set<Long>> region = lowest.get(regionID);
 			if (region == null) {
 				order.setOutbidOwned(false);
 				continue;
 			}
-			Set<Long> orderIDs = region.get(order.getTypeID());
+			Set<Long> orderIDs = region.get(typeID);
 			if (orderIDs == null) {
 				order.setOutbidOwned(false);
 				continue;
@@ -1213,11 +1242,11 @@ public class ProfileData {
 
 	private void calcTransactionsPriceData() {
 		//Create Transaction Price Data
-		transactionBuyTax = new HashMap<>();
-		transactionSellPriceData = new HashMap<>();
-		transactionBuyPriceData = new HashMap<>();
-		transactionSellTax = new HashMap<>();
-		marketOrdersBrokersFee = new HashMap<>();
+		transactionBuyTax = new Int2DoubleOpenHashMap();
+		transactionSellPriceData = new Int2ObjectOpenHashMap<>();
+		transactionBuyPriceData = new Int2ObjectOpenHashMap<>();
+		transactionSellTax = new Long2DoubleOpenHashMap();
+		marketOrdersBrokersFee = new Long2DoubleOpenHashMap();
 		Date lastTaxDate = null;
 		Date maxAge = new Date(System.currentTimeMillis() - ((long)Settings.get().getMaximumPurchaseAge() * 24L * 60L * 60L * 1000L));
 		for (OwnerType owner : profileManager.getOwnerTypes()) {
@@ -1283,9 +1312,10 @@ public class ProfileData {
 					if (!found.contains(transaction) && found.size() <= list.size()) {
 						found.add(transaction);
 						double tax = match.getAmount();
-						transactionSellTax.put(transaction.getTransactionID(), tax);
+						// Explicit primitive put() to avoid ambiguity with deprecated Object version
+						transactionSellTax.put((long) transaction.getTransactionID(), tax);
 						if ((lastTaxDate == null || lastTaxDate.before(transaction.getDate()))) {
-							transactionBuyTax.put(transaction.getTypeID(), tax / transaction.getItemCount());
+							transactionBuyTax.put((int) transaction.getTypeID(), tax / transaction.getItemCount());
 							lastTaxDate = transaction.getDate();
 						}
 					}
@@ -1324,19 +1354,18 @@ public class ProfileData {
 					MyMarketOrder marketOrder = match.get();
 					if (!found.contains(marketOrder) && found.size() <= list.size()) {
 						found.add(marketOrder);
-						Double fee = marketOrdersBrokersFee.get(marketOrder.getOrderID());
-						if (fee == null) {
-							fee = 0.0;
-						}
+						// Fastutil returns primitive double (0.0 if not found)
+						double fee = marketOrdersBrokersFee.get((long) marketOrder.getOrderID());
 						fee = fee + match.getAmount();
-						marketOrdersBrokersFee.put(marketOrder.getOrderID(), fee);
+						// Explicit primitive put() to avoid ambiguity with deprecated Object version
+						marketOrdersBrokersFee.put((long) marketOrder.getOrderID(), fee);
 					}
 				}
 			}
 		}
 	}
 
-	private void createTransactionsPriceData(Map<Integer, MarketPriceData> transactionPriceData, MyTransaction transaction) {
+	private void createTransactionsPriceData(Int2ObjectOpenHashMap<MarketPriceData> transactionPriceData, MyTransaction transaction) {
 		int typeID = transaction.getTypeID();
 		MarketPriceData data = transactionPriceData.get(typeID);
 		if (data == null) {
@@ -1495,7 +1524,8 @@ public class ProfileData {
 	}
 
 	private void updateName(MyAsset asset) {
-		asset.setName(Settings.get().getUserItemNames().get(asset.getItemID()), Settings.get().getEveNames().get(asset.getItemID()));
+		long itemID = asset.getItemID().longValue();
+		asset.setName(Settings.get().getUserItemNames().get(itemID), Settings.get().getEveNames().get(itemID));
 	}
 
 	private void updateContainerChildren(List<MyAsset> found, List<MyAsset> assets) {

@@ -20,6 +20,8 @@
  */
 package net.nikr.eve.jeveasset.io.local.profile;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import java.awt.Color;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -413,6 +415,24 @@ public abstract class ProfileTable {
 		Map<K, T> hmm = map.get(owner);
 		if (hmm == null) {
 			hmm = new HashMap<>();
+			map.put(owner, hmm);
+		}
+		hmm.put(key, value);
+	}
+
+	protected <T> void mapLong(EsiOwner owner, Map<EsiOwner, Long2ObjectOpenHashMap<T>> map, long key, T value) {
+		Long2ObjectOpenHashMap<T> hmm = map.get(owner);
+		if (hmm == null) {
+			hmm = new Long2ObjectOpenHashMap<>();
+			map.put(owner, hmm);
+		}
+		hmm.put(key, value);
+	}
+
+	protected <T> void mapInt(EsiOwner owner, Map<EsiOwner, Int2ObjectOpenHashMap<T>> map, int key, T value) {
+		Int2ObjectOpenHashMap<T> hmm = map.get(owner);
+		if (hmm == null) {
+			hmm = new Int2ObjectOpenHashMap<>();
 			map.put(owner, hmm);
 		}
 		hmm.put(key, value);

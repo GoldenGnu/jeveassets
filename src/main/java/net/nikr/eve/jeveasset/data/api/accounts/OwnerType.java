@@ -20,6 +20,8 @@
  */
 package net.nikr.eve.jeveasset.data.api.accounts;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -70,8 +72,8 @@ public interface OwnerType extends SimpleOwner {
 	public Set<MyIndustryJob> getIndustryJobs();
 	public Map<MyContract, List<MyContractItem>> getContracts();
 	public List<MyAsset> getAssets();
-	public Map<Long, RawBlueprint> getBlueprints();
-	public Map<Integer, String> getWalletDivisions();
+	public Long2ObjectOpenHashMap<RawBlueprint> getBlueprints();
+	public Int2ObjectOpenHashMap<String> getWalletDivisions();
 	public List<MySkill> getSkills();
 	public Long getTotalSkillPoints();
 	public Integer getUnallocatedSkillPoints();
@@ -80,7 +82,7 @@ public interface OwnerType extends SimpleOwner {
 	public Set<MyLoyaltyPoints> getLoyaltyPoints();
 	public Set<MyNpcStanding> getNpcStanding();
 	public List<RawClone> getClones();
-	public void setBlueprints(final Map<Long, RawBlueprint> blueprints);
+	public void setBlueprints(final Long2ObjectOpenHashMap<RawBlueprint> blueprints);
 	public void setIndustryJobs(final Set<MyIndustryJob> industryJobs);
 	public void setTransactions(final Set<MyTransaction> transactions);
 	public void setJournal(final Set<MyJournal> journal);
@@ -88,8 +90,8 @@ public interface OwnerType extends SimpleOwner {
 	public void setContracts(final Map<MyContract, List<MyContractItem>> contracts);
 	public void setAssets(final List<MyAsset> assets);
 	public void setAccountBalances(final List<MyAccountBalance> accountBalances);
-	public void setWalletDivisions(final Map<Integer, String> walletDivisions);
-	public void setAssetDivisions(final Map<Integer, String> assetDivisions);
+	public void setWalletDivisions(final Int2ObjectOpenHashMap<String> walletDivisions);
+	public void setAssetDivisions(final Int2ObjectOpenHashMap<String> assetDivisions);
 	public void setSkills(final List<MySkill> skills);
 	public void setTotalSkillPoints(final Long totalSkillPoints);
 	public void setUnallocatedSkillPoints(final Integer unallocatedSkillPoints);
