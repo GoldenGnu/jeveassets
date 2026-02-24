@@ -217,6 +217,7 @@ public class MarketOrdersTab extends JMainTabPrimary {
 		jUpdate.addActionListener(listener);
 		jToolBar.addButton(jUpdate);
 
+	//StatusPanels must be initialized before the eventlist
 		jSellOrdersTotal = StatusPanel.createLabel(TabsOrders.get().totalSellOrders(), Images.ORDERS_SELL.getIcon(), AutoNumberFormat.ISK);
 		this.addStatusbarLabel(jSellOrdersTotal);
 
