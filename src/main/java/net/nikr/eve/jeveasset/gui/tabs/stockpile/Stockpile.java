@@ -514,13 +514,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 			if (item.isTotal()) {
 				continue; //Ignore Total
 			}
-			double percent;
-			if (item.getCountNow() == 0) {
-				percent = 0;
-			} else {
-				percent = item.getCountNow() / ((double) item.getCountMinimumMultiplied());
-			}
-			percentFull = Math.min(percent, percentFull);
+			percentFull = Math.min(item.getPercentNeeded(), percentFull);
 			totalItem.updateTotal(item);
 		}
 		if (percentFull == Double.MAX_VALUE) { //Default value
@@ -1260,10 +1254,10 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 			long countMinimumMultiplied = getCountMinimumMultiplied();
 			if (countMinimumMultiplied == 0) {
 				return 100;
-			} else if (countNow == 0 || countMinimumMultiplied == 0) {
+			} else if (countNow == 0) {
 				return 0;
 			} else {
-				return countNow / ((double) getCountMinimumMultiplied());
+				return countNow / (double) countMinimumMultiplied;
 			}
 		}
 
@@ -1618,7 +1612,6 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 
 		@Override
 		public long getCountNow() {
-			//return inventoryCountNow + buyOrdersCountNow + jobsCountNow + sellOrdersCountNow;
 			return inventoryCountNow
 					+ buyOrdersCountNow
 					+ sellOrdersCountNow
