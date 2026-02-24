@@ -154,10 +154,6 @@ public abstract class GuiShared extends Bundle {
 	public abstract String jumpsClear();
 	public abstract String jumpsColumnToolTip(String systemName);
 	public abstract String jumpsSettings();
-	public abstract String lazyBlacksmith();
-	public abstract String lazyBlacksmithInvention();
-	public abstract String lazyBlacksmithManufacturing();
-	public abstract String lazyBlacksmithResearch();
 	public abstract String loadout();
 	public abstract String loadoutOpen();
 	public abstract String loadoutSelectShip();

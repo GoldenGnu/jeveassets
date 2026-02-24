@@ -67,7 +67,8 @@ public class JMenuLookupOnlineTest extends TestUtil {
 			}
 			if (lookupLinks == LookupLinks.EVEMISSIONEER_SYSTEM
 				|| lookupLinks == LookupLinks.EVEMISSIONEER_CONSTELLATION
-				|| lookupLinks == LookupLinks.EVEMISSIONEER_REGION ) {
+				|| lookupLinks == LookupLinks.EVEMISSIONEER_REGION
+				|| lookupLinks == LookupLinks.EVEMISSIONEER_CORPORATION ) {
 				continue; //Returns http code 429
 			}
 			Set<String> links = lookupLinks.getLinks(menuData);
