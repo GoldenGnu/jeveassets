@@ -102,6 +102,18 @@ public class JournalTab extends JMainTabPrimary implements TagUpdate {
 
 		ListenerClass listener = new ListenerClass();
 
+	//StatusPanels must be initialized before the eventlist
+		//Positive
+		jPositiveTotal = StatusPanel.createLabel(TabsJournal.get().totalPositive(), Images.ORDERS_SELL.getIcon(), JMenuInfo.AutoNumberFormat.ISK);
+		this.addStatusbarLabel(jPositiveTotal);
+
+		jBothTotal = StatusPanel.createLabel(TabsJournal.get().total(), Images.TOOL_TRANSACTION.getIcon(), JMenuInfo.AutoNumberFormat.ISK);
+		this.addStatusbarLabel(jBothTotal);
+
+		//Negative
+		jNegativeTotal = StatusPanel.createLabel(TabsJournal.get().totalNegative(), Images.ORDERS_BUY.getIcon(), JMenuInfo.AutoNumberFormat.ISK);
+		this.addStatusbarLabel(jNegativeTotal);
+
 		JFixedToolBar jToolBar = new JFixedToolBar();
 
 		jClearNew = new JButton(TabsJournal.get().clearNew(), Images.UPDATE_DONE_OK.getIcon());
@@ -159,17 +171,6 @@ public class JournalTab extends JMainTabPrimary implements TagUpdate {
 		//Menu
 		installTableTool(new JournalTableMenu(), tableFormat, comparatorChooser, tableModel, jTable, filterControl, MyJournal.class);
 		chartDialog = new JournalChartDialog(program);
-
-		//Positive
-		jPositiveTotal = StatusPanel.createLabel(TabsJournal.get().totalPositive(), Images.ORDERS_SELL.getIcon(), JMenuInfo.AutoNumberFormat.ISK);
-		this.addStatusbarLabel(jPositiveTotal);
-
-		jBothTotal = StatusPanel.createLabel(TabsJournal.get().total(), Images.TOOL_TRANSACTION.getIcon(), JMenuInfo.AutoNumberFormat.ISK);
-		this.addStatusbarLabel(jBothTotal);
-
-		//Negative
-		jNegativeTotal = StatusPanel.createLabel(TabsJournal.get().totalNegative(), Images.ORDERS_BUY.getIcon(), JMenuInfo.AutoNumberFormat.ISK);
-		this.addStatusbarLabel(jNegativeTotal);
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()
