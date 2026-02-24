@@ -42,7 +42,7 @@ import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import net.troja.eve.esi.ApiException;
 import net.troja.eve.esi.ApiResponse;
 import net.troja.eve.esi.model.CharacterRolesResponse.RolesEnum;
-import net.troja.eve.esi.model.UniverseNamesResponse;
+import net.troja.eve.esi.model.NamesResponse;
 
 
 public class EsiNameGetter extends AbstractEsiGetter {
@@ -57,12 +57,12 @@ public class EsiNameGetter extends AbstractEsiGetter {
 
 	@Override
 	protected void update() throws ApiException {
-		Set<Integer> ids = getOwnerIDs(ownerTypes);
-		Map<Set<Integer>, List<UniverseNamesResponse>> responses = updateList(splitSet(ids, UNIVERSE_BATCH_SIZE), DEFAULT_RETRIES, new ListHandler<Set<Integer>, List<UniverseNamesResponse>>() {
+		Set<Long> ids = getOwnerIDs(ownerTypes);
+		Map<Set<Long>, List<NamesResponse>> responses = updateList(splitSet(ids, UNIVERSE_BATCH_SIZE), DEFAULT_RETRIES, new ListHandler<Set<Long>, List<NamesResponse>>() {
 			@Override
-			public ApiResponse<List<UniverseNamesResponse>> get(Set<Integer> t) throws ApiException {
+			public ApiResponse<List<NamesResponse>> get(Set<Long> t) throws ApiException {
 				try {
-					return getUniverseApiOpen().postUniverseNamesWithHttpInfo(t, DATASOURCE);
+					return getUniverseApiOpen().postNamesWithHttpInfo(COMPATIBILITY_DATE, t, null, null, null);
 				} catch (ApiException ex) {
 					if (ex.getCode() == 404 && ex.getResponseBody().toLowerCase().contains("ensure all ids are valid before resolving")) {
 						handleHeaders(ex);
@@ -74,18 +74,18 @@ public class EsiNameGetter extends AbstractEsiGetter {
 			}
 		});
 
-		Set<Integer> retries = new HashSet<>(ids);
-		for (Map.Entry<Set<Integer>, List<UniverseNamesResponse>> entry : responses.entrySet()) {
-			for (UniverseNamesResponse lookup : entry.getValue()) {
+		Set<Long> retries = new HashSet<>(ids);
+		for (Map.Entry<Set<Long>, List<NamesResponse>> entry : responses.entrySet()) {
+			for (NamesResponse lookup : entry.getValue()) {
 				Settings.get().getOwners().put((long)lookup.getId(), lookup.getName());
 			}
 			retries.removeAll(entry.getKey());
 		}
-		Map<Set<Integer>, List<UniverseNamesResponse>> retryResponses = updateList(splitSet(retries, 1), DEFAULT_RETRIES, new ListHandler<Set<Integer>, List<UniverseNamesResponse>>() {
+		Map<Set<Long>, List<NamesResponse>> retryResponses = updateList(splitSet(retries, 1), DEFAULT_RETRIES, new ListHandler<Set<Long>, List<NamesResponse>>() {
 			@Override
-			public ApiResponse<List<UniverseNamesResponse>> get(Set<Integer> t) throws ApiException {
+			public ApiResponse<List<NamesResponse>> get(Set<Long> t) throws ApiException {
 				try {
-					return getUniverseApiOpen().postUniverseNamesWithHttpInfo(t, DATASOURCE);
+					return getUniverseApiOpen().postNamesWithHttpInfo(COMPATIBILITY_DATE, t, null, null, null);
 				} catch (ApiException ex) {
 					if (ex.getCode() == 404 && ex.getResponseBody().toLowerCase().contains("ensure all ids are valid before resolving")) {
 						handleHeaders(ex);
@@ -97,21 +97,21 @@ public class EsiNameGetter extends AbstractEsiGetter {
 			}
 		});
 		int count = 30;
-		for (Map.Entry<Set<Integer>, List<UniverseNamesResponse>> entry : retryResponses.entrySet()) {
-			for (UniverseNamesResponse lookup : entry.getValue()) {
+		for (Map.Entry<Set<Long>, List<NamesResponse>> entry : retryResponses.entrySet()) {
+			for (NamesResponse lookup : entry.getValue()) {
 				Settings.get().getOwners().put((long)lookup.getId(), lookup.getName());
 				Date date = new Date(System.currentTimeMillis() + (ONE_DAY * count));
 				count--;
 				if (count < 1) {
 					count = 30;
 				}
-				Settings.get().getOwnersNextUpdate().put((long)lookup.getId(), date);
+				Settings.get().getOwnersNextUpdate().put(lookup.getId(), date);
 			}
 		}
 	}
 
-	private Set<Integer> getOwnerIDs(List<OwnerType> ownerTypes) {
-		Set<Integer> list = new HashSet<>();
+	private Set<Long> getOwnerIDs(List<OwnerType> ownerTypes) {
+		Set<Long> list = new HashSet<>();
 		for (OwnerType ownerType : ownerTypes) {
 			addOwnerID(list, ownerType.getOwnerID());
 			for (MyIndustryJob myIndustryJob : ownerType.getIndustryJobs()) {
@@ -157,7 +157,7 @@ public class EsiNameGetter extends AbstractEsiGetter {
 		return list;
 	}
 
-	private void addOwnerID(Set<Integer> list, Number number) {
+	private void addOwnerID(Set<Long> list, Number number) {
 		//Ignore null
 		if (number == null) {
 			return;
@@ -171,7 +171,7 @@ public class EsiNameGetter extends AbstractEsiGetter {
 		if (nextUpdate != null && !Updatable.isUpdatable(nextUpdate)) {
 			return;
 		}
-		int l = number.intValue();
+		long l = number.longValue();
 		if (l >= 100) {
 			list.add(l);
 		}

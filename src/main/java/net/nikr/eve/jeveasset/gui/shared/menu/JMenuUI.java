@@ -44,6 +44,7 @@ import net.nikr.eve.jeveasset.gui.shared.components.JLockWindow;
 import net.nikr.eve.jeveasset.gui.shared.components.JLockWindow.LockWorkerAdaptor;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 import net.nikr.eve.jeveasset.io.esi.AbstractEsiGetter;
+import net.nikr.eve.jeveasset.io.shared.SafeConverter;
 import net.troja.eve.esi.api.UserInterfaceApi;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -200,7 +201,7 @@ public class JMenuUI <T> extends MenuManager.JAutoMenu<T> {
 		getLockWindow().show(GuiShared.get().updating(), new EsiUpdate(owner) {
 			@Override
 			protected void updateESI() throws Throwable {
-				getApi().postUiAutopilotWaypoint(addToBeginning, clearOtherWaypoints, locationID, AbstractEsiGetter.DATASOURCE, null);
+				getApi().postUiAutopilotWaypoint(addToBeginning, clearOtherWaypoints, locationID, AbstractEsiGetter.COMPATIBILITY_DATE, null, null, null);
 			}
 			@Override
 			protected void ok() {
@@ -289,7 +290,7 @@ public class JMenuUI <T> extends MenuManager.JAutoMenu<T> {
 				getLockWindow().show(GuiShared.get().updating(), new EsiUpdate(esiOwner) {
 					@Override
 					protected void updateESI() throws Throwable {
-						getApi().postUiOpenwindowInformation((int)owner.getID(), AbstractEsiGetter.DATASOURCE, null);
+						getApi().postUiOpenwindowInformation(owner.getID(), AbstractEsiGetter.COMPATIBILITY_DATE, null, null, null);
 					}
 					@Override
 					protected void ok() {
@@ -309,7 +310,7 @@ public class JMenuUI <T> extends MenuManager.JAutoMenu<T> {
 				getLockWindow().show(GuiShared.get().updating(), new EsiUpdate(owner) {
 					@Override
 					protected void updateESI() throws Throwable {
-						getApi().postUiOpenwindowContract(contract.getContractID(), AbstractEsiGetter.DATASOURCE, null);
+						getApi().postUiOpenwindowContract(SafeConverter.toLong(contract.getContractID()), AbstractEsiGetter.COMPATIBILITY_DATE, null, null, null);
 					}
 					@Override
 					protected void ok() {
@@ -331,7 +332,7 @@ public class JMenuUI <T> extends MenuManager.JAutoMenu<T> {
 		getLockWindow(program).show(GuiShared.get().updating(), new EsiUpdate(owner) {
 			@Override
 			protected void updateESI() throws Throwable {
-				getApi().postUiOpenwindowMarketdetails(typeID, AbstractEsiGetter.DATASOURCE, null);
+				getApi().postUiOpenwindowMarketdetails(SafeConverter.toLong(typeID), AbstractEsiGetter.COMPATIBILITY_DATE, null, null, null);
 			}
 			@Override
 			protected void ok() {

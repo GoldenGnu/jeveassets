@@ -22,8 +22,10 @@ package net.nikr.eve.jeveasset.data.api.raw;
 
 import java.util.Date;
 import net.nikr.eve.jeveasset.io.shared.RawConverter;
+import net.nikr.eve.jeveasset.io.shared.SafeConverter;
 import net.troja.eve.esi.model.CharacterIndustryJobsResponse;
 import net.troja.eve.esi.model.CorporationIndustryJobsResponse;
+
 
 public class RawIndustryJob {
 
@@ -118,29 +120,29 @@ public class RawIndustryJob {
 	 * @param industryJob
 	 */
 	public RawIndustryJob(CharacterIndustryJobsResponse industryJob) {
-		activityId = industryJob.getActivityId();
+		activityId = SafeConverter.toInteger(industryJob.getActivityId());
 		blueprintId = industryJob.getBlueprintId();
 		blueprintLocationId = industryJob.getBlueprintLocationId();
-		blueprintTypeId = industryJob.getBlueprintTypeId();
-		completedCharacterId = industryJob.getCompletedCharacterId();
+		blueprintTypeId = SafeConverter.toInteger(industryJob.getBlueprintTypeId());
+		completedCharacterId = SafeConverter.toInteger(industryJob.getCompletedCharacterId());
 		completedDate = RawConverter.toDate(industryJob.getCompletedDate());
 		cost = industryJob.getCost();
-		duration = industryJob.getDuration();
+		duration = SafeConverter.toInteger(industryJob.getDuration());
 		endDate = RawConverter.toDate(industryJob.getEndDate());
 		facilityId = industryJob.getFacilityId();
-		installerId = industryJob.getInstallerId();
-		jobId = industryJob.getJobId();
-		licensedRuns = industryJob.getLicensedRuns();
+		installerId = SafeConverter.toInteger(industryJob.getInstallerId());
+		jobId = SafeConverter.toInteger(industryJob.getJobId());
+		licensedRuns = SafeConverter.toInteger(industryJob.getLicensedRuns());
 		outputLocationId = industryJob.getOutputLocationId();
 		pauseDate = RawConverter.toDate(industryJob.getPauseDate());
-		probability = industryJob.getProbability();
-		productTypeId = industryJob.getProductTypeId();
-		runs = industryJob.getRuns();
+		probability = SafeConverter.toFloat(industryJob.getProbability());
+		productTypeId = SafeConverter.toInteger(industryJob.getProductTypeId());
+		runs = SafeConverter.toInteger(industryJob.getRuns());
 		startDate = RawConverter.toDate(industryJob.getStartDate());
 		stationId = industryJob.getStationId();
 		status = industryJob.getStatusString();
 		statusEnum = RawConverter.toIndustryJobStatus(industryJob.getStatus());
-		successfulRuns = industryJob.getSuccessfulRuns();
+		successfulRuns = SafeConverter.toInteger(industryJob.getSuccessfulRuns());
 	}
 
 	/**
@@ -149,29 +151,29 @@ public class RawIndustryJob {
 	 * @param industryJob
 	 */
 	public RawIndustryJob(CorporationIndustryJobsResponse industryJob) {
-		activityId = industryJob.getActivityId();
+		activityId = SafeConverter.toInteger(industryJob.getActivityId());
 		blueprintId = industryJob.getBlueprintId();
 		blueprintLocationId = industryJob.getBlueprintLocationId();
-		blueprintTypeId = industryJob.getBlueprintTypeId();
-		completedCharacterId = industryJob.getCompletedCharacterId();
+		blueprintTypeId = SafeConverter.toInteger(industryJob.getBlueprintTypeId());
+		completedCharacterId = SafeConverter.toInteger(industryJob.getCompletedCharacterId());
 		completedDate = RawConverter.toDate(industryJob.getCompletedDate());
 		cost = industryJob.getCost();
-		duration = industryJob.getDuration();
+		duration = SafeConverter.toInteger(industryJob.getDuration());
 		endDate = RawConverter.toDate(industryJob.getEndDate());
 		facilityId = industryJob.getFacilityId();
-		installerId = industryJob.getInstallerId();
-		jobId = industryJob.getJobId();
-		licensedRuns = industryJob.getLicensedRuns();
+		installerId = SafeConverter.toInteger(industryJob.getInstallerId());
+		jobId = SafeConverter.toInteger(industryJob.getJobId());
+		licensedRuns = SafeConverter.toInteger(industryJob.getLicensedRuns());
 		outputLocationId = industryJob.getOutputLocationId();
 		pauseDate = RawConverter.toDate(industryJob.getPauseDate());
-		probability = industryJob.getProbability();
-		productTypeId = industryJob.getProductTypeId();
-		runs = industryJob.getRuns();
+		probability = SafeConverter.toFloat(industryJob.getProbability());
+		productTypeId = SafeConverter.toInteger(industryJob.getProductTypeId());
+		runs = SafeConverter.toInteger(industryJob.getRuns());
 		startDate = RawConverter.toDate(industryJob.getStartDate());
 		stationId = industryJob.getLocationId();
 		status = industryJob.getStatusString();
 		statusEnum = RawConverter.toIndustryJobStatus(industryJob.getStatus());
-		successfulRuns = industryJob.getSuccessfulRuns();
+		successfulRuns = SafeConverter.toInteger(industryJob.getSuccessfulRuns());
 	}
 
 	public final Integer getActivityID() {

@@ -20,6 +20,7 @@
  */
 package net.nikr.eve.jeveasset.data.api.raw;
 
+import net.nikr.eve.jeveasset.io.shared.SafeConverter;
 import net.troja.eve.esi.model.CharacterLoyaltyPointsResponse;
 
 
@@ -36,8 +37,8 @@ public class RawLoyaltyPoints {
 	private RawLoyaltyPoints() { }
 
 	public RawLoyaltyPoints(CharacterLoyaltyPointsResponse response) {
-		corporationId = response.getCorporationId();
-		loyaltyPoints = response.getLoyaltyPoints();
+		corporationId = SafeConverter.toInteger(response.getCorporationId());
+		loyaltyPoints = SafeConverter.toInteger(response.getLoyaltyPoints());
 	}
 
 	public RawLoyaltyPoints(RawLoyaltyPoints response) {

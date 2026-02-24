@@ -1391,10 +1391,10 @@ public class RoutingTab extends JMainTabSecondary implements UpdateFilter {
 							List<SolarSystem> stations = routeResult.getStations().get(system.getSystemID());
 							if (stations != null && !stations.isEmpty()) { //Station(s)
 								for (SolarSystem station : stations) {
-									getApi().postUiAutopilotWaypoint(false, clear, station.getLocationID(), AbstractEsiGetter.DATASOURCE, null);
+									getApi().postUiAutopilotWaypoint(false, clear, station.getLocationID(), AbstractEsiGetter.COMPATIBILITY_DATE, null, null, null);
 								}
 							} else { //System
-								getApi().postUiAutopilotWaypoint(false, clear, system.getSystemID(), AbstractEsiGetter.DATASOURCE, null);
+								getApi().postUiAutopilotWaypoint(false, clear, system.getSystemID(), AbstractEsiGetter.COMPATIBILITY_DATE, null, null, null);
 							}
 							if (clear) {
 								clear = false;

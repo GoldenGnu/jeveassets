@@ -22,7 +22,7 @@ package net.nikr.eve.jeveasset.data.raw;
 
 import net.nikr.eve.jeveasset.TestUtil;
 import net.nikr.eve.jeveasset.data.api.raw.RawClone;
-import net.troja.eve.esi.model.Clone;
+import net.troja.eve.esi.model.JumpClone;
 import org.junit.Test;
 
 
@@ -30,6 +30,6 @@ public class RawCloneTest extends TestUtil {
 
 	@Test
 	public void rawCloneTest() {
-		RawUtil.compare(RawClone.class, Clone.class);
+		RawUtil.compare(RawClone.class, JumpClone.class);
 	}
 }

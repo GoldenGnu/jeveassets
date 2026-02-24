@@ -22,8 +22,10 @@ package net.nikr.eve.jeveasset.data.api.raw;
 
 import java.util.Date;
 import net.nikr.eve.jeveasset.io.shared.RawConverter;
+import net.nikr.eve.jeveasset.io.shared.SafeConverter;
 import net.troja.eve.esi.model.CharacterContractsResponse;
 import net.troja.eve.esi.model.CorporationContractsResponse;
+
 
 public class RawContract {
 
@@ -161,22 +163,22 @@ public class RawContract {
 	 * @param contract
 	 */
 	public RawContract(CharacterContractsResponse contract) {
-		acceptorId = contract.getAcceptorId();
-		assigneeId = contract.getAssigneeId();
+		acceptorId = SafeConverter.toInteger(contract.getAcceptorId());
+		assigneeId = SafeConverter.toInteger(contract.getAssigneeId());
 		availability = contract.getAvailabilityString();
 		availabilityEnum = RawConverter.toContractAvailability(contract.getAvailability());
 		buyout = contract.getBuyout();
 		collateral = contract.getCollateral();
-		contractId = contract.getContractId();
+		contractId = SafeConverter.toInteger(contract.getContractId());
 		dateAccepted = RawConverter.toDate(contract.getDateAccepted());
 		dateCompleted = RawConverter.toDate(contract.getDateCompleted());
 		dateExpired = RawConverter.toDate(contract.getDateExpired());
 		dateIssued = RawConverter.toDate(contract.getDateIssued());
-		daysToComplete = contract.getDaysToComplete();
+		daysToComplete = SafeConverter.toInteger(contract.getDaysToComplete());
 		endLocationId = contract.getEndLocationId();
 		forCorporation = contract.getForCorporation();
-		issuerCorporationId = contract.getIssuerCorporationId();
-		issuerId = contract.getIssuerId();
+		issuerCorporationId = SafeConverter.toInteger(contract.getIssuerCorporationId());
+		issuerId = SafeConverter.toInteger(contract.getIssuerId());
 		price = contract.getPrice();
 		reward = contract.getReward();
 		startLocationId = contract.getStartLocationId();
@@ -194,22 +196,22 @@ public class RawContract {
 	 * @param contract
 	 */
 	public RawContract(CorporationContractsResponse contract) {
-		acceptorId = contract.getAcceptorId();
-		assigneeId = contract.getAssigneeId();
+		acceptorId = SafeConverter.toInteger(contract.getAcceptorId());
+		assigneeId = SafeConverter.toInteger(contract.getAssigneeId());
 		availability = contract.getAvailabilityString();
 		availabilityEnum = RawConverter.toContractAvailability(contract.getAvailability());
 		buyout = contract.getBuyout();
 		collateral = contract.getCollateral();
-		contractId = contract.getContractId();
+		contractId = SafeConverter.toInteger(contract.getContractId());
 		dateAccepted = RawConverter.toDate(contract.getDateAccepted());
 		dateCompleted = RawConverter.toDate(contract.getDateCompleted());
 		dateExpired = RawConverter.toDate(contract.getDateExpired());
 		dateIssued = RawConverter.toDate(contract.getDateIssued());
-		daysToComplete = contract.getDaysToComplete();
+		daysToComplete = SafeConverter.toInteger(contract.getDaysToComplete());
 		endLocationId = contract.getEndLocationId();
 		forCorporation = contract.getForCorporation();
-		issuerCorporationId = contract.getIssuerCorporationId();
-		issuerId = contract.getIssuerId();
+		issuerCorporationId = SafeConverter.toInteger(contract.getIssuerCorporationId());
+		issuerId = SafeConverter.toInteger(contract.getIssuerId());
 		price = contract.getPrice();
 		reward = contract.getReward();
 		startLocationId = contract.getStartLocationId();

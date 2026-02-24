@@ -127,25 +127,23 @@ public class LibraryManager {
 			//MP3
 			files.add("jlayer-1.0.2.jar");
 			//Eve-ESI
-			files.add("eve-esi-6.0.1.jar");
+			files.add("eve-esi-7.0.0.jar");
+			files.add("logging-interceptor-5.1.0.jar");
+			files.add("okio-jvm-3.15.0.jar");
+			files.add("kotlin-stdlib-2.2.0.jar");
+			files.add("okio-3.15.0.jar");
+			files.add("okhttp-5.1.0.jar");
+			files.add("okhttp-jvm-5.1.0.jar");
 			files.add("gson-2.9.0.jar");
 			files.add("jackson-core-2.14.0-rc2.jar");
 			files.add("org.apache.oltu.oauth2.common-1.0.2.jar");
 			files.add("jackson-databind-nullable-0.2.6.jar");
-			files.add("kotlin-stdlib-common-1.9.10.jar");
-			files.add("kotlin-stdlib-jdk8-1.8.21.jar");
-			files.add("kotlin-stdlib-jdk7-1.8.21.jar");
-			files.add("kotlin-stdlib-1.8.21.jar");
 			files.add("jackson-annotations-2.14.0-rc2.jar");
 			files.add("json-20140107.jar");
 			files.add("commons-codec-1.9.jar");
 			files.add("org.apache.oltu.oauth2.client-1.0.2.jar");
 			files.add("jackson-databind-2.14.0-rc2.jar");
-			files.add("logging-interceptor-4.12.0.jar");
-			files.add("okio-3.6.0.jar");
-			files.add("okio-jvm-3.6.0.jar");
 			files.add("gson-fire-1.9.0.jar");
-			files.add("okhttp-4.12.0.jar");
 			files.add("commons-lang3-3.18.0.jar");
 		}
 		return files;
