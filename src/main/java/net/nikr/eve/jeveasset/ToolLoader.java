@@ -524,7 +524,7 @@ public class ToolLoader implements ActionListener, KeyListener, MouseListener, M
 	private static void openTool(Program program, String title) {
 		ToolTab tool = getTools(program).get(title);
 		if (tool != null) {
-			program.getMainWindow().addTab(tool.getTool(program, true));
+			program.getMainWindow().addTab(tool.getTool(program, true), false);
 		}
 	}
 
