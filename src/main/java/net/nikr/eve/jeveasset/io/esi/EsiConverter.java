@@ -62,10 +62,10 @@ import net.nikr.eve.jeveasset.data.api.raw.RawSkill;
 import net.nikr.eve.jeveasset.data.api.raw.RawTransaction;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import net.nikr.eve.jeveasset.io.shared.DataConverter;
+import net.nikr.eve.jeveasset.io.shared.SafeConverter;
 import net.troja.eve.esi.model.CharacterAssetsResponse;
 import net.troja.eve.esi.model.CharacterBlueprintsResponse;
 import net.troja.eve.esi.model.CharacterClonesResponse;
-import net.troja.eve.esi.model.CharacterContractsItemsResponse;
 import net.troja.eve.esi.model.CharacterContractsResponse;
 import net.troja.eve.esi.model.CharacterIndustryJobsResponse;
 import net.troja.eve.esi.model.CharacterLocationResponse;
@@ -75,32 +75,31 @@ import net.troja.eve.esi.model.CharacterOrdersHistoryResponse;
 import net.troja.eve.esi.model.CharacterOrdersResponse;
 import net.troja.eve.esi.model.CharacterPlanetsResponse;
 import net.troja.eve.esi.model.CharacterShipResponse;
-import net.troja.eve.esi.model.CharacterStandingsResponse;
+import net.troja.eve.esi.model.StandingsResponse;
 import net.troja.eve.esi.model.CharacterWalletJournalResponse;
 import net.troja.eve.esi.model.CharacterWalletTransactionsResponse;
-import net.troja.eve.esi.model.Clone;
 import net.troja.eve.esi.model.CorporationAssetsResponse;
 import net.troja.eve.esi.model.CorporationBlueprintsResponse;
 import net.troja.eve.esi.model.CorporationContainersLogsResponse;
-import net.troja.eve.esi.model.CorporationContractsItemsResponse;
+import net.troja.eve.esi.model.PlanetPin;
+import net.troja.eve.esi.model.Skill;
+import net.troja.eve.esi.model.ContractItemsResponse;
 import net.troja.eve.esi.model.CorporationContractsResponse;
-import net.troja.eve.esi.model.CorporationDivisionsHangar;
-import net.troja.eve.esi.model.CorporationDivisionsWallet;
 import net.troja.eve.esi.model.CorporationIndustryJobsResponse;
 import net.troja.eve.esi.model.CorporationMiningExtractionsResponse;
 import net.troja.eve.esi.model.CorporationMiningObserverResponse;
 import net.troja.eve.esi.model.CorporationMiningObserversResponse;
 import net.troja.eve.esi.model.CorporationOrdersHistoryResponse;
 import net.troja.eve.esi.model.CorporationOrdersResponse;
-import net.troja.eve.esi.model.CorporationStandingsResponse;
 import net.troja.eve.esi.model.CorporationWalletJournalResponse;
 import net.troja.eve.esi.model.CorporationWalletTransactionsResponse;
 import net.troja.eve.esi.model.CorporationWalletsResponse;
-import net.troja.eve.esi.model.MarketOrdersResponse;
-import net.troja.eve.esi.model.PlanetContent;
-import net.troja.eve.esi.model.PlanetPin;
+import net.troja.eve.esi.model.DivisionsHangar;
+import net.troja.eve.esi.model.DivisionsWallet;
+import net.troja.eve.esi.model.JumpClone;
+import net.troja.eve.esi.model.MarketRegionOrdersResponse;
+import net.troja.eve.esi.model.PinContent;
 import net.troja.eve.esi.model.PublicContractsItemsResponse;
-import net.troja.eve.esi.model.Skill;
 
 
 public class EsiConverter extends DataConverter {
@@ -127,7 +126,7 @@ public class EsiConverter extends DataConverter {
 		List<RawAsset> rawAssets = new ArrayList<>();
 		for (CharacterAssetsResponse response : responses) {
 			rawAssets.add(new RawAsset(response));
-			ApiIdConverter.updateItem(response.getTypeId());
+			ApiIdConverter.updateItem(SafeConverter.toInteger(response.getTypeId()));
 		}
 		return convertRawAssets(rawAssets, owner);
 	}
@@ -136,7 +135,7 @@ public class EsiConverter extends DataConverter {
 		List<RawAsset> rawAssets = new ArrayList<>();
 		for (CorporationAssetsResponse response : responses) {
 			rawAssets.add(new RawAsset(response));
-			ApiIdConverter.updateItem(response.getTypeId());
+			ApiIdConverter.updateItem(SafeConverter.toInteger(response.getTypeId()));
 		}
 		return convertRawAssets(rawAssets, owner);
 	}
@@ -148,7 +147,7 @@ public class EsiConverter extends DataConverter {
 	public static MyAsset toAssetsPlanetaryInteraction(CharacterPlanetsResponse planet, PlanetPin pin, OwnerType owner) {
 		MyAsset parent = toMyAsset(new RawAsset(planet, pin), owner, new ArrayList<>());
 		List<MyAsset> parents = Collections.singletonList(parent);
-		for (PlanetContent content : pin.getContents()) {
+		for (PinContent content : pin.getContents()) {
 			parent.addAsset(toMyAsset(new RawAsset(planet, pin, content), owner, parents));
 		}
 		return parent;
@@ -158,7 +157,7 @@ public class EsiConverter extends DataConverter {
 		Map<Long, RawBlueprint> rawBlueprints = new HashMap<>();
 		for (CharacterBlueprintsResponse response : responses) {
 			rawBlueprints.put(response.getItemId(), new RawBlueprint(response));
-			ApiIdConverter.updateItem(response.getTypeId());
+			ApiIdConverter.updateItem(SafeConverter.toInteger(response.getTypeId()));
 		}
 		return rawBlueprints;
 	}
@@ -167,7 +166,7 @@ public class EsiConverter extends DataConverter {
 		Map<Long, RawBlueprint> rawBlueprints = new HashMap<>();
 		for (CorporationBlueprintsResponse response : responses) {
 			rawBlueprints.put(response.getItemId(), new RawBlueprint(response));
-			ApiIdConverter.updateItem(response.getTypeId());
+			ApiIdConverter.updateItem(SafeConverter.toInteger(response.getTypeId()));
 		}
 		return rawBlueprints;
 	}
@@ -176,8 +175,8 @@ public class EsiConverter extends DataConverter {
 		List<RawIndustryJob> rawIndustryJobs = new ArrayList<>();
 		for (CharacterIndustryJobsResponse response : responses) {
 			rawIndustryJobs.add(new RawIndustryJob(response));
-			ApiIdConverter.updateItem(response.getBlueprintTypeId());
-			ApiIdConverter.updateItem(response.getProductTypeId());
+			ApiIdConverter.updateItem(SafeConverter.toInteger(response.getBlueprintTypeId()));
+			ApiIdConverter.updateItem(SafeConverter.toInteger(response.getProductTypeId()));
 		}
 		return convertRawIndustryJobs(rawIndustryJobs, owner, saveHistory);
 	}
@@ -186,8 +185,8 @@ public class EsiConverter extends DataConverter {
 		List<RawIndustryJob> rawIndustryJobs = new ArrayList<>();
 		for (CorporationIndustryJobsResponse response : responses) {
 			rawIndustryJobs.add(new RawIndustryJob(response));
-			ApiIdConverter.updateItem(response.getBlueprintTypeId());
-			ApiIdConverter.updateItem(response.getProductTypeId());
+			ApiIdConverter.updateItem(SafeConverter.toInteger(response.getBlueprintTypeId()));
+			ApiIdConverter.updateItem(SafeConverter.toInteger(response.getProductTypeId()));
 		}
 		return convertRawIndustryJobs(rawIndustryJobs, owner, saveHistory);
 	}
@@ -224,33 +223,17 @@ public class EsiConverter extends DataConverter {
 		return convertRawContracts(rawContracts, owner, saveHistory);
 	}
 
-	public static Map<MyContract, List<MyContractItem>> toContractItems(Map<MyContract, List<CharacterContractsItemsResponse>> responsess, OwnerType owner, boolean saveHistory) {
+	public static Map<MyContract, List<MyContractItem>> toContractItems(Map<MyContract, List<ContractItemsResponse>> responsess, OwnerType owner, boolean saveHistory) {
 		Map<MyContract, List<RawContractItem>> rawContractItems = new HashMap<>();
-		for (Map.Entry<MyContract, List<CharacterContractsItemsResponse>> entry : responsess.entrySet()) {
-			for (CharacterContractsItemsResponse response : entry.getValue()) {
+		for (Map.Entry<MyContract, List<ContractItemsResponse>> entry : responsess.entrySet()) {
+			for (ContractItemsResponse response : entry.getValue()) {
 				List<RawContractItem> list = rawContractItems.get(entry.getKey());
 				if (list == null) {
 					list = new ArrayList<>();
 					rawContractItems.put(entry.getKey(), list);
 				}
 				list.add(new RawContractItem(response));
-				ApiIdConverter.updateItem(response.getTypeId());
-			}
-		}
-		return convertRawContractItems(rawContractItems, owner, saveHistory);
-	}
-
-	public static Map<MyContract, List<MyContractItem>> toContractItemsCorporation(Map<MyContract, List<CorporationContractsItemsResponse>> responsess, OwnerType owner, boolean saveHistory) {
-		Map<MyContract, List<RawContractItem>> rawContractItems = new HashMap<>();
-		for (Map.Entry<MyContract, List<CorporationContractsItemsResponse>> entry : responsess.entrySet()) {
-			for (CorporationContractsItemsResponse response : entry.getValue()) {
-				List<RawContractItem> list = rawContractItems.get(entry.getKey());
-				if (list == null) {
-					list = new ArrayList<>();
-					rawContractItems.put(entry.getKey(), list);
-				}
-				list.add(new RawContractItem(response));
-				ApiIdConverter.updateItem(response.getTypeId());
+				ApiIdConverter.updateItem(SafeConverter.toInteger(response.getTypeId()));
 			}
 		}
 		return convertRawContractItems(rawContractItems, owner, saveHistory);
@@ -266,7 +249,7 @@ public class EsiConverter extends DataConverter {
 					rawContractItems.put(entry.getKey(), list);
 				}
 				list.add(new RawContractItem(response));
-				ApiIdConverter.updateItem(response.getTypeId());
+				ApiIdConverter.updateItem(SafeConverter.toInteger(response.getTypeId()));
 			}
 		}
 		return convertRawContractItems(rawContractItems, owner, saveHistory);
@@ -276,7 +259,7 @@ public class EsiConverter extends DataConverter {
 		List<RawMarketOrder> rawMarketOrders = new ArrayList<>();
 		for (CharacterOrdersResponse response : responses) {
 			rawMarketOrders.add(new RawMarketOrder(response));
-			ApiIdConverter.updateItem(response.getTypeId());
+			ApiIdConverter.updateItem(SafeConverter.toInteger(response.getTypeId()));
 		}
 		for (CharacterOrdersHistoryResponse response : responsesHistory) {
 			rawMarketOrders.add(new RawMarketOrder(response));
@@ -288,7 +271,7 @@ public class EsiConverter extends DataConverter {
 		List<RawMarketOrder> rawMarketOrders = new ArrayList<>();
 		for (CorporationOrdersResponse response : responses) {
 			rawMarketOrders.add(new RawMarketOrder(response));
-			ApiIdConverter.updateItem(response.getTypeId());
+			ApiIdConverter.updateItem(SafeConverter.toInteger(response.getTypeId()));
 		}
 		for (CorporationOrdersHistoryResponse response : responsesHistory) {
 			rawMarketOrders.add(new RawMarketOrder(response));
@@ -300,7 +283,7 @@ public class EsiConverter extends DataConverter {
 		List<RawTransaction> rawTransactions = new ArrayList<>();
 		for (CharacterWalletTransactionsResponse response : responses) {
 			rawTransactions.add(new RawTransaction(response, accountKey));
-			ApiIdConverter.updateItem(response.getTypeId());
+			ApiIdConverter.updateItem(SafeConverter.toInteger(response.getTypeId()));
 		}
 		return convertRawTransactions(rawTransactions, owner, saveHistory);
 	}
@@ -309,23 +292,23 @@ public class EsiConverter extends DataConverter {
 		List<RawTransaction> rawTransactions = new ArrayList<>();
 		for (CorporationWalletTransactionsResponse response : responses) {
 			rawTransactions.add(new RawTransaction(response, accountKey));
-			ApiIdConverter.updateItem(response.getTypeId());
+			ApiIdConverter.updateItem(SafeConverter.toInteger(response.getTypeId()));
 		}
 		return convertRawTransactions(rawTransactions, owner, saveHistory);
 	}
 
-	public static Map<Integer, String> toWalletDivisions(List<CorporationDivisionsWallet> divisionsWallets) {
+	public static Map<Integer, String> toWalletDivisions(List<DivisionsWallet> divisionsWallets) {
 		Map<Integer, String> divisions = new HashMap<>();
-		for (CorporationDivisionsWallet response : divisionsWallets) {
-			divisions.put(response.getDivision(), response.getName());
+		for (DivisionsWallet response : divisionsWallets) {
+			divisions.put(SafeConverter.toInteger(response.getDivision()), response.getName());
 		}
 		return divisions;
 	}
 
-	public static Map<Integer, String> toAssetDivisions(List<CorporationDivisionsHangar> divisionsWallets) {
+	public static Map<Integer, String> toAssetDivisions(List<DivisionsHangar> divisionsWallets) {
 		Map<Integer, String> divisions = new HashMap<>();
-		for (CorporationDivisionsHangar response : divisionsWallets) {
-			divisions.put(response.getDivision(), response.getName());
+		for (DivisionsHangar response : divisionsWallets) {
+			divisions.put(SafeConverter.toInteger(response.getDivision()), response.getName());
 		}
 		return divisions;
 	}
@@ -338,11 +321,11 @@ public class EsiConverter extends DataConverter {
 		return convertRawContainersLogs(rawContainersLogs);
 	}
 
-	public static Map<Integer, Set<RawPublicMarketOrder>> toPublicMarketOrders(List<MarketOrdersResponse> responses) {
+	public static Map<Integer, Set<RawPublicMarketOrder>> toPublicMarketOrders(List<MarketRegionOrdersResponse> responses) {
 		Map<Integer, Set<RawPublicMarketOrder>> marketOrders = new HashMap<>();
-		for (MarketOrdersResponse response : responses) {
+		for (MarketRegionOrdersResponse response : responses) {
 			RawPublicMarketOrder marketOrder = new RawPublicMarketOrder(response);
-			ApiIdConverter.updateItem(response.getTypeId());
+			ApiIdConverter.updateItem(SafeConverter.toInteger(response.getTypeId()));
 			Set<RawPublicMarketOrder> set = marketOrders.get(marketOrder.getTypeID());
 			if (set == null) {
 				set = new HashSet<>();
@@ -357,7 +340,7 @@ public class EsiConverter extends DataConverter {
 		List<RawSkill> skills = new ArrayList<>();
 		for (Skill response : responses) {
 			skills.add(new RawSkill(response));
-			ApiIdConverter.updateItem(response.getSkillId());
+			ApiIdConverter.updateItem(SafeConverter.toInteger(response.getSkillId()));
 		}
 		return convertRawSkills(skills, owner);
 	}
@@ -366,7 +349,7 @@ public class EsiConverter extends DataConverter {
 		List<RawMining> mining = new ArrayList<>();
 		for (CharacterMiningResponse response : responses) {
 			mining.add(new RawMining(response, owner));
-			ApiIdConverter.updateItem(response.getTypeId());
+			ApiIdConverter.updateItem(SafeConverter.toInteger(response.getTypeId()));
 		}
 		return convertRawMining(mining, owner, saveHistory);
 	}
@@ -389,10 +372,10 @@ public class EsiConverter extends DataConverter {
 		return convertRawExtraction(extractions, owner, saveHistory);
 	}
 
-	public static List<RawClone> toClones(CharacterClonesResponse responses, List<Integer> activeCloneImplants, Long activeCloneLocationID, OwnerType owner) {
+	public static List<RawClone> toClones(CharacterClonesResponse responses, List<Long> activeCloneImplants, Long activeCloneLocationID, OwnerType owner) {
 		List<RawClone> clones = new ArrayList<>();
 		clones.add(new RawClone(activeCloneImplants, owner.getOwnerID(), activeCloneLocationID));
-		for (Clone response : responses.getJumpClones()) {
+		for (JumpClone response : responses.getJumpClones()) {
 			clones.add(new RawClone(response));
 		}
 		return clones;
@@ -406,17 +389,9 @@ public class EsiConverter extends DataConverter {
 		return convertMyLoyaltyPoints(loyaltyPoints, owner);
 	}
 
-	public static Set<MyNpcStanding> toNpcStanding(List<CharacterStandingsResponse> responses, OwnerType owner) {
+	public static Set<MyNpcStanding> toNpcStanding(List<StandingsResponse> responses, OwnerType owner) {
 		Set<RawNpcStanding> npcStandings = new HashSet<>();
-		for (CharacterStandingsResponse response : responses) {
-			npcStandings.add(new RawNpcStanding(response));
-		}
-		return convertMyNpcStanding(npcStandings, owner);
-	}
-
-	public static Set<MyNpcStanding> toNpcStandingCorporation(List<CorporationStandingsResponse> responses, OwnerType owner) {
-		Set<RawNpcStanding> npcStandings = new HashSet<>();
-		for (CorporationStandingsResponse response : responses) {
+		for (StandingsResponse response : responses) {
 			npcStandings.add(new RawNpcStanding(response));
 		}
 		return convertMyNpcStanding(npcStandings, owner);

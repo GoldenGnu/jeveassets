@@ -22,8 +22,8 @@ package net.nikr.eve.jeveasset.data.api.raw;
 
 import java.util.ArrayList;
 import java.util.List;
-import net.nikr.eve.jeveasset.io.shared.RawConverter;
-import net.troja.eve.esi.model.Clone;
+import net.nikr.eve.jeveasset.io.shared.SafeConverter;
+import net.troja.eve.esi.model.JumpClone;
 
 
 public class RawClone {
@@ -51,13 +51,14 @@ public class RawClone {
 	 * Jump Clone
 	 * @param clone 
 	 */
-	public RawClone(Clone clone) {
-		this.implants = new ArrayList<>(clone.getImplants());
-		this.jumpCloneId = RawConverter.toLong(clone.getJumpCloneId());
+	public RawClone(JumpClone clone) {
+		this.implants = SafeConverter.toInteger(clone.getImplants());
+		this.jumpCloneId = clone.getJumpCloneId();
 		this.locationId = clone.getLocationId();
 		this.name = clone.getName();
 		this.active = false;
 	}
+
 
 	/**
 	 * Active Clone
@@ -65,8 +66,8 @@ public class RawClone {
 	 * @param jumpCloneId
 	 * @param locationId 
 	 */
-	public RawClone(List<Integer> implants, Long jumpCloneId, Long locationId) {
-		this.implants = new ArrayList<>(implants);
+	public RawClone(List<Long> implants, Long jumpCloneId, Long locationId) {
+		this.implants = SafeConverter.toInteger(implants);
 		this.jumpCloneId = jumpCloneId;
 		this.locationId = locationId;
 		this.name = null;

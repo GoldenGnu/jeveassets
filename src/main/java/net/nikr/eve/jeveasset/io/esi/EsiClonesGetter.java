@@ -24,11 +24,10 @@ import java.util.Date;
 import java.util.List;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
-import static net.nikr.eve.jeveasset.io.esi.AbstractEsiGetter.DATASOURCE;
-import static net.nikr.eve.jeveasset.io.esi.AbstractEsiGetter.DEFAULT_RETRIES;
 import net.nikr.eve.jeveasset.io.shared.RawConverter;
 import net.troja.eve.esi.ApiException;
 import net.troja.eve.esi.ApiResponse;
+import net.troja.eve.esi.api.FittingsApi;
 import net.troja.eve.esi.model.CharacterClonesResponse;
 import net.troja.eve.esi.model.CharacterLocationResponse;
 import net.troja.eve.esi.model.CharacterRolesResponse.RolesEnum;
@@ -49,21 +48,21 @@ public class EsiClonesGetter extends AbstractEsiGetter {
 		CharacterClonesResponse jumpClonesResponse = update(DEFAULT_RETRIES, new EsiHandler<CharacterClonesResponse>() {
 			@Override
 			public ApiResponse<CharacterClonesResponse> get() throws ApiException {
-				return getClonesApiAuth().getCharactersCharacterIdClonesWithHttpInfo((int)owner.getOwnerID(), DATASOURCE, null, null);
+				return getClonesApiAuth().getCharacterClonesWithHttpInfo(owner.getOwnerID(), COMPATIBILITY_DATE, null, null, null);
 			}
 		});
 		//Get Active Clone
-		List<Integer> activeCloneImplants = update(DEFAULT_RETRIES, new EsiHandler<List<Integer>>() {
+		List<Long> activeCloneImplants = update(DEFAULT_RETRIES, new EsiHandler<List<Long>>() {
 			@Override
-			public ApiResponse<List<Integer>> get() throws ApiException {
-				return getClonesApiAuth().getCharactersCharacterIdImplantsWithHttpInfo((int)owner.getOwnerID(), DATASOURCE, null, null);
+			public ApiResponse<List<Long>> get() throws ApiException {
+				return getClonesApiAuth().getCharacterImplantsWithHttpInfo(owner.getOwnerID(), COMPATIBILITY_DATE, null, null, null);
 			}
 		});
 		//Get Location
 		CharacterLocationResponse characterLocation = update(DEFAULT_RETRIES, new EsiHandler<CharacterLocationResponse>() {
 			@Override
 			public ApiResponse<CharacterLocationResponse> get() throws ApiException {
-				return getLocationApiAuth().getCharactersCharacterIdLocationWithHttpInfo((int)owner.getOwnerID(), DATASOURCE, null, null);
+				return getLocationApiAuth().getCharacterLocationWithHttpInfo(owner.getOwnerID(), COMPATIBILITY_DATE, null, null, null);
 			}
 		});
 		Long activeCloneLocationID = RawConverter.toLocationID(characterLocation);

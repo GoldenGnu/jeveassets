@@ -29,13 +29,15 @@ import net.nikr.eve.jeveasset.data.sde.ItemFlag;
 import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import net.nikr.eve.jeveasset.io.shared.RawConverter;
+import net.nikr.eve.jeveasset.io.shared.SafeConverter;
 import net.troja.eve.esi.model.CharacterAssetsResponse;
 import net.troja.eve.esi.model.CharacterLocationResponse;
+import net.troja.eve.esi.model.PlanetPin;
 import net.troja.eve.esi.model.CharacterPlanetsResponse;
 import net.troja.eve.esi.model.CharacterShipResponse;
 import net.troja.eve.esi.model.CorporationAssetsResponse;
-import net.troja.eve.esi.model.PlanetContent;
-import net.troja.eve.esi.model.PlanetPin;
+import net.troja.eve.esi.model.PinContent;
+
 
 public class RawAsset {
 
@@ -141,7 +143,7 @@ public class RawAsset {
 		if (contractItem.getItemID() != null) {
 			itemId = contractItem.getItemID();
 		} else {
-			itemId = RawConverter.toLong(contractItem.getRecordID());
+			itemId = contractItem.getRecordID();
 		}
 		if (contractItem.isIncluded()) { //Sell
 			itemFlag = CONTRACT_INCLUDED_FLAG;
@@ -194,9 +196,9 @@ public class RawAsset {
 				quantity = -1;
 			}
 		} else {
-			quantity = asset.getQuantity();
+			quantity = SafeConverter.toInteger(asset.getQuantity());
 		}
-		typeId = asset.getTypeId();
+		typeId = SafeConverter.toInteger(asset.getTypeId());
 	}
 
 	/**
@@ -221,9 +223,9 @@ public class RawAsset {
 				quantity = -1;
 			}
 		} else {
-			quantity = asset.getQuantity();
+			quantity = SafeConverter.toInteger(asset.getQuantity());
 		}
-		typeId = asset.getTypeId();
+		typeId = SafeConverter.toInteger(asset.getTypeId());
 	}
 
 	/**
@@ -272,7 +274,7 @@ public class RawAsset {
 		itemFlag = ApiIdConverter.getFlag(0); //None
 		locationId = RawConverter.toLocationID(shipLocation);
 		quantity = 1; //Unpacked AKA always 1
-		typeId = shipType.getShipTypeId();
+		typeId = SafeConverter.toInteger(shipType.getShipTypeId());
 	}
 
 	/**
@@ -282,13 +284,13 @@ public class RawAsset {
 	 * @param pin
 	 * @param content
 	 */
-	public RawAsset(CharacterPlanetsResponse planet, PlanetPin pin, PlanetContent content) {
+	public RawAsset(CharacterPlanetsResponse planet, PlanetPin pin, PinContent content) {
 		isSingleton = false; //Packed
 		itemId = Long.valueOf(pin.getPinId() + "" + content.getTypeId()); //Semi unique
 		itemFlag = ApiIdConverter.getFlag(0); //None
-		locationId = (long) planet.getPlanetId(); //Planet
+		locationId = planet.getPlanetId(); //Planet
 		quantity = content.getAmount().intValue(); //Not perfect, but, will have to do
-		typeId = content.getTypeId();
+		typeId = SafeConverter.toInteger(content.getTypeId());
 	}
 
 	/**
@@ -303,7 +305,7 @@ public class RawAsset {
 		itemFlag = ApiIdConverter.getFlag(0); //None
 		locationId = (long) planet.getPlanetId(); //Planet
 		quantity = 1;
-		typeId = pin.getTypeId();
+		typeId = SafeConverter.toInteger(pin.getTypeId());
 	}
 
 	/**

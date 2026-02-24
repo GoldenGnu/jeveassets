@@ -24,12 +24,10 @@ import java.util.Date;
 import java.util.List;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
-import static net.nikr.eve.jeveasset.io.esi.AbstractEsiGetter.DATASOURCE;
 import net.troja.eve.esi.ApiException;
 import net.troja.eve.esi.ApiResponse;
 import net.troja.eve.esi.model.CharacterRolesResponse.RolesEnum;
-import net.troja.eve.esi.model.CharacterStandingsResponse;
-import net.troja.eve.esi.model.CorporationStandingsResponse;
+import net.troja.eve.esi.model.StandingsResponse;
 
 
 public class EsiNpcStandingGetter extends AbstractEsiGetter {
@@ -41,18 +39,18 @@ public class EsiNpcStandingGetter extends AbstractEsiGetter {
 	@Override
 	protected void update() throws ApiException {
 		if (owner.isCorporation()) {
-			List<CorporationStandingsResponse> response = updatePages(DEFAULT_RETRIES, new EsiPagesHandler<CorporationStandingsResponse>() {
+			List<StandingsResponse> response = updatePages(DEFAULT_RETRIES, new EsiPagesHandler<StandingsResponse>() {
 				@Override
-				public ApiResponse<List<CorporationStandingsResponse>> get(Integer page) throws ApiException {
-					return getCorporationApiAuth().getCorporationsCorporationIdStandingsWithHttpInfo((int) owner.getOwnerID(), DATASOURCE, null, page, null);
+				public ApiResponse<List<StandingsResponse>> get(Integer page) throws ApiException {
+					return getCorporationApiAuth().getCorporationStandingsWithHttpInfo(owner.getOwnerID(), COMPATIBILITY_DATE, page, null, null, null);
 				}
 			});
-			owner.setNpcStanding(EsiConverter.toNpcStandingCorporation(response, owner));
+			owner.setNpcStanding(EsiConverter.toNpcStanding(response, owner));
 		} else {
-			List<CharacterStandingsResponse> response = update(DEFAULT_RETRIES, new EsiHandler<List<CharacterStandingsResponse>>() {
+			List<StandingsResponse> response = update(DEFAULT_RETRIES, new EsiHandler<List<StandingsResponse>>() {
 				@Override
-				public ApiResponse<List<CharacterStandingsResponse>> get() throws ApiException {
-					return getCharacterApiAuth().getCharactersCharacterIdStandingsWithHttpInfo((int) owner.getOwnerID(), DATASOURCE, null, null);
+				public ApiResponse<List<StandingsResponse>> get() throws ApiException {
+					return getCharacterApiAuth().getCharacterStandingsWithHttpInfo(owner.getOwnerID(), COMPATIBILITY_DATE, null, null, null);
 				}
 			});
 			owner.setNpcStanding(EsiConverter.toNpcStanding(response, owner));
@@ -70,7 +68,7 @@ public class EsiNpcStandingGetter extends AbstractEsiGetter {
 	}
 
 	@Override
-	protected RolesEnum[] getRequiredRoles() {
+	protected RolesEnum[]  getRequiredRoles() {
 		return null;
 	}
 

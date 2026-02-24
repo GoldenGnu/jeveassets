@@ -44,9 +44,8 @@ import net.troja.eve.esi.model.CharacterIndustryJobsResponse;
 import net.troja.eve.esi.model.CharacterLocationResponse;
 import net.troja.eve.esi.model.CharacterOrdersHistoryResponse;
 import net.troja.eve.esi.model.CharacterOrdersResponse;
-import net.troja.eve.esi.model.CharacterStandingsResponse;
+import net.troja.eve.esi.model.StandingsResponse;
 import net.troja.eve.esi.model.CharacterWalletJournalResponse;
-import net.troja.eve.esi.model.Clone;
 import net.troja.eve.esi.model.CorporationAssetsResponse;
 import net.troja.eve.esi.model.CorporationBlueprintsResponse;
 import net.troja.eve.esi.model.CorporationContainersLogsResponse;
@@ -54,10 +53,11 @@ import net.troja.eve.esi.model.CorporationContractsResponse;
 import net.troja.eve.esi.model.CorporationIndustryJobsResponse;
 import net.troja.eve.esi.model.CorporationOrdersHistoryResponse;
 import net.troja.eve.esi.model.CorporationOrdersResponse;
-import net.troja.eve.esi.model.CorporationStandingsResponse;
 import net.troja.eve.esi.model.CorporationWalletJournalResponse;
-import net.troja.eve.esi.model.MarketOrdersResponse;
-import net.troja.eve.esi.model.MarketStructuresResponse;
+import net.troja.eve.esi.model.JumpClone;
+import net.troja.eve.esi.model.MarketRegionOrdersResponse;
+import net.troja.eve.esi.model.MarketStructureResponse;
+
 
 public class RawConverter {
 
@@ -142,6 +142,14 @@ public class RawConverter {
 		}
 	}
 
+	public static double toDouble(Double value, double nullValue) {
+		if (value != null) {
+			return value;
+		} else {
+			return nullValue;
+		}
+	}
+
 	public static Date toDate(OffsetDateTime dateTime) {
 		if (dateTime == null) {
 			return null;
@@ -171,17 +179,17 @@ public class RawConverter {
 
 	public static long toLocationID(CharacterLocationResponse shipLocation) {
 		if (shipLocation.getStationId() != null) {
-			return RawConverter.toLong(shipLocation.getStationId());
+			return shipLocation.getStationId();
 		} else if (shipLocation.getStructureId() != null) {
 			return shipLocation.getStructureId();
 		} else if (shipLocation.getSolarSystemId() != null) {
-			return RawConverter.toLong(shipLocation.getSolarSystemId());
+			return shipLocation.getSolarSystemId();
 		} else {
 			return 0; //Fallback
 		}
 	}
 
-	public static ItemFlag toFlag(Clone.LocationTypeEnum value) {
+	public static ItemFlag toFlag(JumpClone.LocationTypeEnum value) {
 		return toFlagEnum(value);
 	}
 
@@ -401,7 +409,7 @@ public class RawConverter {
 		return null;
 	}
 
-	public static RawNpcStanding.FromType toNpcStandingFromType(CharacterStandingsResponse.FromTypeEnum value) {
+	public static RawNpcStanding.FromType toNpcStandingFromType(StandingsResponse.FromTypeEnum value) {
 		return toNpcStandingFromTypeEnum(value);
 	}
 
@@ -443,10 +451,6 @@ public class RawConverter {
 			case 12: return GuiShared.get().agentTypeCareerAgent();
 			default: return null;
 		}
-	}
-
-	public static RawNpcStanding.FromType toNpcStandingFromType(CorporationStandingsResponse.FromTypeEnum value) {
-		return toNpcStandingFromTypeEnum(value);
 	}
 
 	private static <E extends Enum<E>> RawNpcStanding.FromType toNpcStandingFromTypeEnum(E value) {
@@ -730,11 +734,11 @@ public class RawConverter {
 		return toMarketOrderRangeEnum(value);
 	}
 
-	public static RawMarketOrder.MarketOrderRange toMarketOrderRange(MarketOrdersResponse.RangeEnum value) {
+	public static RawMarketOrder.MarketOrderRange toMarketOrderRange(MarketRegionOrdersResponse.RangeEnum value) {
 		return toMarketOrderRangeEnum(value);
 	}
 
-	public static RawMarketOrder.MarketOrderRange toMarketOrderRange(MarketStructuresResponse.RangeEnum value) {
+	public static RawMarketOrder.MarketOrderRange toMarketOrderRange(MarketStructureResponse.RangeEnum value) {
 		return toMarketOrderRangeEnum(value);
 	}
 

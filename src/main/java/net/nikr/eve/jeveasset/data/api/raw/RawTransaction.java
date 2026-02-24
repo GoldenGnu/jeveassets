@@ -22,8 +22,10 @@ package net.nikr.eve.jeveasset.data.api.raw;
 
 import java.util.Date;
 import net.nikr.eve.jeveasset.io.shared.RawConverter;
+import net.nikr.eve.jeveasset.io.shared.SafeConverter;
 import net.troja.eve.esi.model.CharacterWalletTransactionsResponse;
 import net.troja.eve.esi.model.CorporationWalletTransactionsResponse;
+
 
 public class RawTransaction {
 
@@ -75,15 +77,15 @@ public class RawTransaction {
 	 * @param accountKey
 	 */
 	public RawTransaction(CharacterWalletTransactionsResponse transaction, Integer accountKey) {
-		clientId = transaction.getClientId();
+		clientId = SafeConverter.toInteger(transaction.getClientId());
 		date = RawConverter.toDate(transaction.getDate());
 		isBuy = transaction.getIsBuy();
 		isPersonal = transaction.getIsPersonal();
 		journalRefId = transaction.getJournalRefId();
 		locationId = transaction.getLocationId();
-		quantity = transaction.getQuantity();
+		quantity = SafeConverter.toInteger(transaction.getQuantity());
 		transactionId = transaction.getTransactionId();
-		typeId = transaction.getTypeId();
+		typeId = SafeConverter.toInteger(transaction.getTypeId());
 		unitPrice = transaction.getUnitPrice();
 		this.accountKey = accountKey;
 	}
@@ -95,15 +97,15 @@ public class RawTransaction {
 	 * @param accountKey
 	 */
 	public RawTransaction(CorporationWalletTransactionsResponse transaction, Integer accountKey) {
-		clientId = transaction.getClientId();
+		clientId = SafeConverter.toInteger(transaction.getClientId());
 		date = RawConverter.toDate(transaction.getDate());
 		isBuy = transaction.getIsBuy();
 		isPersonal = false;
 		journalRefId = transaction.getJournalRefId();
 		locationId = transaction.getLocationId();
-		quantity = transaction.getQuantity();
+		quantity = SafeConverter.toInteger(transaction.getQuantity());
 		transactionId = transaction.getTransactionId();
-		typeId = transaction.getTypeId();
+		typeId = SafeConverter.toInteger(transaction.getTypeId());
 		unitPrice = transaction.getUnitPrice();
 		this.accountKey = accountKey;
 	}

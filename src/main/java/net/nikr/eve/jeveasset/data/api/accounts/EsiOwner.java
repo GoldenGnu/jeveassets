@@ -413,7 +413,7 @@ public class EsiOwner extends AbstractOwner implements OwnerType {
 	}
 
 	private OAuth getOAuth() {
-		return (OAuth) apiClient.getAuthentication("evesso");
+		return (OAuth) apiClient.getAuthentication(ApiClientBuilder.AUTHENTICATION);
 	}
 
 	public synchronized ApiClient getApiClient() {

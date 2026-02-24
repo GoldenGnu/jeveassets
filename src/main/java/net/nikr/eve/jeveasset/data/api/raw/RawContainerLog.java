@@ -23,6 +23,7 @@ package net.nikr.eve.jeveasset.data.api.raw;
 import java.util.Date;
 import net.nikr.eve.jeveasset.data.sde.ItemFlag;
 import net.nikr.eve.jeveasset.io.shared.RawConverter;
+import net.nikr.eve.jeveasset.io.shared.SafeConverter;
 import net.troja.eve.esi.model.CorporationContainersLogsResponse;
 
 
@@ -135,8 +136,8 @@ public class RawContainerLog {
 	public RawContainerLog(CorporationContainersLogsResponse response) {
 		loggedAt = RawConverter.toDate(response.getLoggedAt());
 		containerId = response.getContainerId();
-		containerTypeId = response.getContainerTypeId();
-		characterId = response.getCharacterId();
+		containerTypeId = SafeConverter.toInteger(response.getContainerTypeId());
+		characterId = SafeConverter.toInteger(response.getCharacterId());
 		locationId = response.getLocationId();
 		itemFlag = RawConverter.toFlag(response.getLocationFlag());
 		locationFlag = response.getLocationFlagString();
@@ -144,10 +145,10 @@ public class RawContainerLog {
 		actionEnum = RawConverter.toContainerLogAction(response.getAction());
 		passwordType = response.getPasswordTypeString();
 		passwordTypeEnum = RawConverter.toContainerLogPasswordType(response.getPasswordType());
-		typeId = response.getTypeId();
-		quantity = response.getQuantity();
-		oldConfigBitmask = response.getOldConfigBitmask();
-		newConfigBitmask = response.getNewConfigBitmask();
+		typeId = SafeConverter.toInteger(response.getTypeId());
+		quantity = SafeConverter.toInteger(response.getQuantity());
+		oldConfigBitmask = SafeConverter.toInteger(response.getOldConfigBitmask());
+		newConfigBitmask = SafeConverter.toInteger(response.getNewConfigBitmask());
 	}
 
 	public Date getLoggedAt() {

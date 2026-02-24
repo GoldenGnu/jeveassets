@@ -24,7 +24,6 @@ import java.util.Date;
 import java.util.List;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
-import static net.nikr.eve.jeveasset.io.esi.AbstractEsiGetter.DATASOURCE;
 import net.troja.eve.esi.ApiException;
 import net.troja.eve.esi.ApiResponse;
 import net.troja.eve.esi.model.CharacterOrdersHistoryResponse;
@@ -49,13 +48,13 @@ public class EsiMarketOrdersGetter extends AbstractEsiGetter {
 			List<CorporationOrdersResponse> marketOrders = updatePages(DEFAULT_RETRIES, new EsiPagesHandler<CorporationOrdersResponse>() {
 				@Override
 				public ApiResponse<List<CorporationOrdersResponse>> get(Integer page) throws ApiException {
-					return getMarketApiAuth().getCorporationsCorporationIdOrdersWithHttpInfo((int) owner.getOwnerID(), DATASOURCE, null, page, null);
+					return getMarketApiAuth().getCorporationOrdersWithHttpInfo(owner.getOwnerID(), COMPATIBILITY_DATE, page, null, null, null);
 				}
 			});
 			List<CorporationOrdersHistoryResponse> marketOrdersHistory = updatePages(DEFAULT_RETRIES, new EsiPagesHandler<CorporationOrdersHistoryResponse>() {
 				@Override
 				public ApiResponse<List<CorporationOrdersHistoryResponse>> get(Integer page) throws ApiException {
-					return getMarketApiAuth().getCorporationsCorporationIdOrdersHistoryWithHttpInfo((int) owner.getOwnerID(), DATASOURCE, null, page, null);
+					return getMarketApiAuth().getCorporationOrdersHistoryWithHttpInfo(owner.getOwnerID(), COMPATIBILITY_DATE, page, null, null, null);
 				}
 			});
 			owner.setMarketOrders(EsiConverter.toMarketOrdersCorporation(marketOrders, marketOrdersHistory, owner, saveHistory));
@@ -63,13 +62,13 @@ public class EsiMarketOrdersGetter extends AbstractEsiGetter {
 			List<CharacterOrdersResponse> marketOrders = update(DEFAULT_RETRIES, new EsiHandler<List<CharacterOrdersResponse>>() {
 				@Override
 				public ApiResponse<List<CharacterOrdersResponse>> get() throws ApiException {
-					return getMarketApiAuth().getCharactersCharacterIdOrdersWithHttpInfo((int) owner.getOwnerID(), DATASOURCE, null, null);
+					return getMarketApiAuth().getCharacterOrdersWithHttpInfo(owner.getOwnerID(), COMPATIBILITY_DATE, null, null, null);
 				}
 			});
 			List<CharacterOrdersHistoryResponse> marketOrdersHistory = updatePages(DEFAULT_RETRIES, new EsiPagesHandler<CharacterOrdersHistoryResponse>() {
 				@Override
 				public ApiResponse<List<CharacterOrdersHistoryResponse>> get(Integer page) throws ApiException {
-					return getMarketApiAuth().getCharactersCharacterIdOrdersHistoryWithHttpInfo((int) owner.getOwnerID(), DATASOURCE, null, page, null);
+					return getMarketApiAuth().getCharacterOrdersHistoryWithHttpInfo(owner.getOwnerID(), COMPATIBILITY_DATE, page, null, null, null);
 				}
 			});
 			owner.setMarketOrders(EsiConverter.toMarketOrders(marketOrders, marketOrdersHistory, owner, saveHistory));
