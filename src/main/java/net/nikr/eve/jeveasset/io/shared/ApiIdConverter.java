@@ -71,6 +71,7 @@ import net.troja.eve.esi.model.MoonResponse;
 import net.troja.eve.esi.model.PlanetResponse;
 import net.troja.eve.esi.model.StructureResponse;
 
+
 public final class ApiIdConverter {
 
 	private ApiIdConverter() { }

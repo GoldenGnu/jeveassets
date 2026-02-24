@@ -20,7 +20,9 @@
  */
 package net.nikr.eve.jeveasset.data.api.raw;
 
+import net.nikr.eve.jeveasset.io.shared.SafeConverter;
 import net.troja.eve.esi.model.CorporationWalletsResponse;
+
 
 public class RawAccountBalance {
 
@@ -65,7 +67,7 @@ public class RawAccountBalance {
 	 */
 	public RawAccountBalance(CorporationWalletsResponse response) {
 		this.balance = response.getBalance();
-		this.accountKey = response.getDivision() + 999;
+		this.accountKey = SafeConverter.toInteger(response.getDivision()) + 999;
 	}
 
 	public Double getBalance() {

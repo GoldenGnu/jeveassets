@@ -41,7 +41,7 @@ import net.nikr.eve.jeveasset.io.shared.ConverterTestOptionsGetter;
 import net.nikr.eve.jeveasset.io.shared.ConverterTestUtil;
 import net.troja.eve.esi.model.CharacterAssetsResponse;
 import net.troja.eve.esi.model.CharacterBlueprintsResponse;
-import net.troja.eve.esi.model.CharacterContractsItemsResponse;
+import net.troja.eve.esi.model.ContractItemsResponse;
 import net.troja.eve.esi.model.CharacterContractsResponse;
 import net.troja.eve.esi.model.CharacterIndustryJobsResponse;
 import net.troja.eve.esi.model.CharacterLocationResponse;
@@ -52,7 +52,6 @@ import net.troja.eve.esi.model.CharacterWalletJournalResponse;
 import net.troja.eve.esi.model.CharacterWalletTransactionsResponse;
 import net.troja.eve.esi.model.CorporationAssetsResponse;
 import net.troja.eve.esi.model.CorporationBlueprintsResponse;
-import net.troja.eve.esi.model.CorporationContractsItemsResponse;
 import net.troja.eve.esi.model.CorporationContractsResponse;
 import net.troja.eve.esi.model.CorporationIndustryJobsResponse;
 import net.troja.eve.esi.model.CorporationOrdersHistoryResponse;
@@ -335,33 +334,14 @@ public class EsiConverterTest extends TestUtil {
 
 	@Test
 	public void testToContractItemsOptional() {
-		testToContractItems(CharacterContractsItemsResponse.class);
+		testToContractItems(ContractItemsResponse.class);
 	}
 
 	public void testToContractItems(Class<?> esi) {
 		for (ConverterTestOptions options : ConverterTestOptionsGetter.getConverterOptions()) {
-			CharacterContractsItemsResponse contractsItemsResponse = new CharacterContractsItemsResponse();
+			ContractItemsResponse contractsItemsResponse = new ContractItemsResponse();
 			ConverterTestUtil.setValues(contractsItemsResponse, options, esi);
 			Map<MyContract, List<MyContractItem>> contractItems = EsiConverter.toContractItems(Collections.singletonMap(ConverterTestUtil.getMyContract(false, true, options), Collections.singletonList(contractsItemsResponse)), ConverterTestUtil.getEsiOwner(options), SAVE_HISTORY);
-			ConverterTestUtil.testValues(contractItems.values().iterator().next().get(0), options, esi);
-		}
-	}
-
-	@Test
-	public void testToContractItemsCorporation() {
-		testToContractItemsCorporation(null);
-	}
-
-	@Test
-	public void testToContractItemsCorporationOptional() {
-		testToContractItemsCorporation(CorporationContractsItemsResponse.class);
-	}
-
-	public void testToContractItemsCorporation(Class<?> esi) {
-		for (ConverterTestOptions options : ConverterTestOptionsGetter.getConverterOptions()) {
-			CorporationContractsItemsResponse contractsItemsResponse = new CorporationContractsItemsResponse();
-			ConverterTestUtil.setValues(contractsItemsResponse, options, esi);
-			Map<MyContract, List<MyContractItem>> contractItems = EsiConverter.toContractItemsCorporation(Collections.singletonMap(ConverterTestUtil.getMyContract(false, true, options), Collections.singletonList(contractsItemsResponse)), ConverterTestUtil.getEsiOwner(options), SAVE_HISTORY);
 			ConverterTestUtil.testValues(contractItems.values().iterator().next().get(0), options, esi);
 		}
 	}

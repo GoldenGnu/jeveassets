@@ -55,6 +55,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.TableFormatFactory;
 import net.nikr.eve.jeveasset.i18n.DialoguesAccount;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 import net.nikr.eve.jeveasset.io.local.profile.ProfileDatabase;
+import net.troja.eve.esi.ApiClientBuilder;
 import net.troja.eve.esi.auth.OAuth;
 
 
@@ -389,7 +390,7 @@ public class AccountManagerDialog extends JDialogCentered {
 						for (EsiOwner owner : program.getProfileManager().getEsiOwners()) {
 							if (owner.isInvalid()) {
 								total++;
-								OAuth oAuth = (OAuth) owner.getApiClient().getAuthentication("evesso");
+								OAuth oAuth = (OAuth) owner.getApiClient().getAuthentication(ApiClientBuilder.AUTHENTICATION);
 								String accessToken = oAuth.getAccessToken();
 								if (accessToken != null) {
 									owner.setInvalid(false);

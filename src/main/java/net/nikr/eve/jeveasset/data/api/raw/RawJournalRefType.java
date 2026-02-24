@@ -20,6 +20,7 @@
  */
 package net.nikr.eve.jeveasset.data.api.raw;
 
+
 public enum RawJournalRefType {
 	UNDEFINED(0, "Undefined"),
 	PLAYER_TRADING(1, "Player Trading", RawJournal.ArgName.STATION_NAME, RawJournal.ArgID.STATION_ID),
