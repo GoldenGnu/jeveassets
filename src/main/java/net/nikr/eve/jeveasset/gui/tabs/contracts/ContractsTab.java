@@ -165,6 +165,8 @@ public class ContractsTab extends JMainTabPrimary {
 		eventList.getReadWriteLock().readLock().lock();
 		filterList = new FilterList<>(sortedListColumn);
 		eventList.getReadWriteLock().readLock().unlock();
+		//Statusbar updater
+		filterList.addListEventListener(listener);
 		//Separator
 		separatorList = new SeparatorList<>(filterList, new SeparatorComparator(), 1, Integer.MAX_VALUE);
 		//Table Model
