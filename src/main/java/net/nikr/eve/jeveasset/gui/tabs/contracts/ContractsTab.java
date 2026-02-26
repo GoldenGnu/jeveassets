@@ -168,7 +168,9 @@ public class ContractsTab extends JMainTabPrimary {
 		//Statusbar updater
 		filterList.addListEventListener(listener);
 		//Separator
+		eventList.getReadWriteLock().readLock().lock();
 		separatorList = new SeparatorList<>(filterList, new SeparatorComparator(), 1, Integer.MAX_VALUE);
+		eventList.getReadWriteLock().readLock().unlock();
 		//Table Model
 		tableModel = EventModels.createTableModel(separatorList, tableFormat);
 		//Table
