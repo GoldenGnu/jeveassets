@@ -99,7 +99,7 @@ public class ProfileOwners extends ProfileTable {
 				setAttribute(statement, ++index, owner.getSkillsNextUpdate());
 				setAttribute(statement, ++index, owner.getMiningNextUpdate());
 				setAttribute(statement, ++index, owner.getAccountName());
-				setAttribute(statement, ++index, owner.getRefreshToken());
+				setAttributeOptional(statement, ++index, owner.getRefreshToken());
 				setAttribute(statement, ++index, owner.getScopes());
 				setAttribute(statement, ++index, owner.getStructuresNextUpdate());
 				setAttribute(statement, ++index, owner.getAccountNextUpdate());
