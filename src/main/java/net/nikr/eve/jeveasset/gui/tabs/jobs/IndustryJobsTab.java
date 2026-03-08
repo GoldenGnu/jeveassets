@@ -88,6 +88,17 @@ public class IndustryJobsTab extends JMainTabPrimary {
 		super(program, NAME, TabsJobs.get().industry(), Images.TOOL_INDUSTRY_JOBS.getIcon(), true);
 
 		ListenerClass listener = new ListenerClass();
+
+	//StatusPanels must be initialized before the eventlist
+		jInventionSuccess = StatusPanel.createLabel(TabsJobs.get().inventionSuccess(), Images.JOBS_INVENTION_SUCCESS.getIcon(), AutoNumberFormat.PERCENT);
+		this.addStatusbarLabel(jInventionSuccess);
+
+		jManufactureOutputValue = StatusPanel.createLabel(TabsJobs.get().manufactureJobsValue(), Images.TOOL_VALUES.getIcon(), AutoNumberFormat.ISK);
+		this.addStatusbarLabel(jManufactureOutputValue);
+
+		jCount = StatusPanel.createLabel(TabsJobs.get().count(), Images.EDIT_ADD.getIcon(), AutoNumberFormat.ITEMS);
+		this.addStatusbarLabel(jCount);
+		
 		//Table Format
 		tableFormat = TableFormatFactory.industryJobTableFormat();
 		//Backend
@@ -122,15 +133,6 @@ public class IndustryJobsTab extends JMainTabPrimary {
 		filterControl = new IndustryJobsFilterControl(sortedList);
 		//Menu
 		installTableTool(new JobsTableMenu(), tableFormat, comparatorChooser, tableModel, jTable, filterControl, MyIndustryJob.class);
-
-		jInventionSuccess = StatusPanel.createLabel(TabsJobs.get().inventionSuccess(), Images.JOBS_INVENTION_SUCCESS.getIcon(), AutoNumberFormat.PERCENT);
-		this.addStatusbarLabel(jInventionSuccess);
-
-		jManufactureOutputValue = StatusPanel.createLabel(TabsJobs.get().manufactureJobsValue(), Images.TOOL_VALUES.getIcon(), AutoNumberFormat.ISK);
-		this.addStatusbarLabel(jManufactureOutputValue);
-
-		jCount = StatusPanel.createLabel(TabsJobs.get().count(), Images.EDIT_ADD.getIcon(), AutoNumberFormat.ITEMS);
-		this.addStatusbarLabel(jCount);
 
 		updateTimeLeftColumn = new Timer(1000, new ActionListener() {
 			@Override

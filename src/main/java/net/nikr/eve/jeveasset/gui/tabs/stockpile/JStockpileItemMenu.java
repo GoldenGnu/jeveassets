@@ -58,11 +58,13 @@ public class JStockpileItemMenu extends JMenu {
 		RUNS
 	}
 
+	private final StockpileTab stockpileTab;
 	private Program program;
 
-	public JStockpileItemMenu(final Program program, final List<StockpileItem> edit, final List<StockpileItem> delete, final List<StockpileItem> items) {
+	public JStockpileItemMenu(final StockpileTab stockpileTab, final Program program, final List<StockpileItem> edit, final List<StockpileItem> delete, final List<StockpileItem> items) {
 		super(TabsStockpile.get().stockpile());
 		this.program = program;
+		this.stockpileTab = stockpileTab;
 		this.setIcon(Images.TOOL_STOCKPILE.getIcon());
 
 		ListenerClass listener = new ListenerClass();
@@ -198,7 +200,7 @@ public class JStockpileItemMenu extends JMenu {
 							items.add(stockpileItem);
 						}
 					}
-					program.getStockpileTab().addToStockpile(jMenuItem.getStockpile(), items, true, true);
+					stockpileTab.addToStockpile(jMenuItem.getStockpile(), items, true, true);
 				}
 			} else if (StockpileItemMenuAction.RUNS.name().equals(e.getActionCommand())) { //Runs
 				Object source = e.getSource();
@@ -251,7 +253,7 @@ public class JStockpileItemMenu extends JMenu {
 					JStockpileMenuItem jMenuItem = (JStockpileMenuItem) source;
 					List<StockpileItem> items = jMenuItem.getItems();
 					if (items.size() == 1) {
-						program.getStockpileTab().editItem(items.get(0));
+						stockpileTab.editItem(items.get(0));
 					}
 				}
 			} else if (StockpileItemMenuAction.DELETE_ITEM.name().equals(e.getActionCommand())) { //Delete item
@@ -273,7 +275,7 @@ public class JStockpileItemMenu extends JMenu {
 							}
 							Settings.unlock("Stokcpile (Stockpile Menu)"); //Unlock for Stokcpile (Stockpile Menu)
 							program.saveSettings("Stokcpile (Stockpile Menu)"); //Save Stokcpile (Stockpile Menu)
-							program.getStockpileTab().removeItems(items);
+							stockpileTab.removeItems(items);
 						}
 					}
 				}
@@ -300,7 +302,7 @@ public class JStockpileItemMenu extends JMenu {
 			for (StockpileItem item : entry.getValue()) {
 				entry.getKey().remove(item);
 			}
-			program.getStockpileTab().removeItems(entry.getValue());
+			stockpileTab.removeItems(entry.getValue());
 		}
 		//Change items
 		for (Map.Entry<Stockpile, List<StockpileItem>> entry : update.entrySet()) {
@@ -311,7 +313,7 @@ public class JStockpileItemMenu extends JMenu {
 		Settings.unlock("Stokcpile (Stockpile Menu)"); //Unlock for Stokcpile (Stockpile Menu)
 		//Add changed items
 		for (Map.Entry<Stockpile, List<StockpileItem>> entry : update.entrySet()) {
-			program.getStockpileTab().addToStockpile(entry.getKey(), entry.getValue(), true, false);
+			stockpileTab.addToStockpile(entry.getKey(), entry.getValue(), true, false);
 		}
 		program.saveSettings("Stockpile (Stockpile Menu)"); //Save Stockpile (Stockpile Menu)
 	}

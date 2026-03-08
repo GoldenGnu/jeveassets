@@ -113,6 +113,8 @@ public class Settings {
 		FLAG_ASSETS_CONTRACTS_OWNER_CORP,
 		FLAG_ASSETS_CONTRACTS_OWNER_BOTH,
 		FLAG_CELL_VALUE_CACHE,
+		FLAG_LOAD_TOOLS_BACKGROUND,
+		FLAG_LOAD_TOOLS_STARTUP,
 		FLAG_EVE_GATECAMP_CHECK_SET,
 		FLAG_EVE_GATECAMP_CHECK_ALWAYS_OPEN,
 		FLAG_EVE_GATECAMP_CHECK_NEVER_OPEN,
@@ -331,6 +333,8 @@ public class Settings {
 		flags.put(SettingFlag.FLAG_ASSETS_CONTRACTS_OWNER_CORP, false);
 		flags.put(SettingFlag.FLAG_ASSETS_CONTRACTS_OWNER_BOTH, false);
 		flags.put(SettingFlag.FLAG_CELL_VALUE_CACHE, true);
+		flags.put(SettingFlag.FLAG_LOAD_TOOLS_BACKGROUND, true);
+		flags.put(SettingFlag.FLAG_LOAD_TOOLS_STARTUP, false);
 		flags.put(SettingFlag.FLAG_EVE_GATECAMP_CHECK_SET, false);
 		flags.put(SettingFlag.FLAG_EVE_GATECAMP_CHECK_ALWAYS_OPEN, false);
 		flags.put(SettingFlag.FLAG_EVE_GATECAMP_CHECK_NEVER_OPEN, false);
@@ -1049,6 +1053,22 @@ public class Settings {
 	public void setCellValueCache(final boolean cellValueCache) {
 		flags.put(SettingFlag.FLAG_CELL_VALUE_CACHE, cellValueCache);
 		this.cellValueCache = cellValueCache;
+	}
+
+	public boolean isLoadToolsBackground() {
+		return flags.get(SettingFlag.FLAG_LOAD_TOOLS_BACKGROUND);
+	}
+
+	public void setLoadToolsBackground(final boolean loadToolsBackground) {
+		flags.put(SettingFlag.FLAG_LOAD_TOOLS_BACKGROUND, loadToolsBackground);
+	}
+
+	public boolean isLoadToolsStartup() {
+		return flags.get(SettingFlag.FLAG_LOAD_TOOLS_STARTUP);
+	}
+
+	public void setLoadToolsStartup(final boolean loadToolsStartup) {
+		flags.put(SettingFlag.FLAG_LOAD_TOOLS_STARTUP, loadToolsStartup);
 	}
 
 	public boolean isEveGatecampCheckSet() {

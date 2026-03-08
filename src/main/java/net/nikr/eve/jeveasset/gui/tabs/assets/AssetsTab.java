@@ -70,6 +70,8 @@ import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.TableFormatFactory;
+import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewTab;
+import net.nikr.eve.jeveasset.gui.tabs.tree.TreeTab;
 import net.nikr.eve.jeveasset.i18n.TabsAssets;
 
 
@@ -413,10 +415,13 @@ public class AssetsTab extends JMainTabPrimary implements TagUpdate {
 		@Override
 		public void listChanged(final ListEvent<MyAsset> listChanges) {
 			updateStatusbar();
+			OverviewTab overviewTab = program.getOverviewTab(false);
+			if (overviewTab != null) {
+				overviewTab.updateTable();
+			}
 			if (jTreemap.isSelected()) {
 				updateTreemapData();
 			}
-			program.getOverviewTab().updateTable();
 		}
 
 		@Override
@@ -430,7 +435,10 @@ public class AssetsTab extends JMainTabPrimary implements TagUpdate {
 					Settings.unlock("Reprocess Colors");
 					program.saveSettings("Reprocess Colors");
 					jTable.repaint();
-					program.getTreeTab().updateReprocessColors();
+					TreeTab treeTab = program.getTreeTab(false);
+					if (treeTab != null) {
+						treeTab.updateReprocessColors();
+					}
 				}
 			} else if (e.getActionCommand().equals(AssetsAction.TREEMAP_VIEW.name())) {
 				showTreemap(jTreemap.isSelected());
@@ -452,8 +460,11 @@ public class AssetsTab extends JMainTabPrimary implements TagUpdate {
 
 		@Override
 		protected void updateFilters() {
-			if (program != null && program.getOverviewTab() != null) {
-				program.getOverviewTab().updateFilters();
+			if (program != null) {
+				OverviewTab overviewTab = program.getOverviewTab(false);
+				if (overviewTab != null) {
+					overviewTab.updateFilters();
+				}
 			}
 		}
 

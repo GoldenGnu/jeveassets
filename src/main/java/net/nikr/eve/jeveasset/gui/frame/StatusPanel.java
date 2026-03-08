@@ -263,6 +263,9 @@ public class StatusPanel extends JGroupLayoutPanel {
 				case PRICE_HISTORY:
 					text = TabsPriceHistory.get().updateTitle();
 					break;
+				case TOOLS:
+					text = GuiShared.get().toolsUpdateTitle();
+					break;
 				default:
 					text = "";
 			}
@@ -452,6 +455,6 @@ public class StatusPanel extends JGroupLayoutPanel {
 	}
 
 	public static enum UpdateType {
-		STRUCTURE, PUBLIC_MARKET_ORDERS, PRICE_HISTORY
+		STRUCTURE, PUBLIC_MARKET_ORDERS, PRICE_HISTORY, TOOLS
 	}
 }
