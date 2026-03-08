@@ -5,7 +5,7 @@
 	<groupId>net.nikr</groupId>
 	<artifactId>jeveassets</artifactId>
 	<packaging>jar</packaging>
-	<version>8.1.0-SNAPSHOT</version>
+	<version>8.2.0-SNAPSHOT</version>
 	<name>jeveassets</name>
 	<description>jEveAssets is an out-of-game asset manager for Eve-Online, written in Java</description>
 	<url>https://eve.nikr.net/jeveasset</url>
@@ -91,6 +91,9 @@
 					<source>${project.build.sourceVersion}</source>
 					<target>${project.build.sourceVersion}</target>
 					<encoding>${project.build.sourceEncoding}</encoding>
+				 <compilerArgs>
+				  <arg>-Xlint</arg>
+				 </compilerArgs>
 				</configuration>
 			</plugin>
 			<plugin>
