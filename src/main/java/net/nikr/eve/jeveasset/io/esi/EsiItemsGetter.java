@@ -103,14 +103,14 @@ public class EsiItemsGetter extends AbstractEsiGetter {
 		}
 		//Market Groups
 		MarketGroupResponse marketGroupResponse = null;
-		if (typeResponse.getMarketGroupId() != null) {
-			Long marketGroupID = typeResponse.getMarketGroupId();
+		Long marketGroupID = typeResponse.getMarketGroupId();
+		if (marketGroupID != null) {
 			marketGroupResponse  = MARKET_GROUP_CACHE.get(marketGroupID);
 			if (marketGroupResponse == null) {
 				marketGroupResponse = update(DEFAULT_RETRIES, new EsiHandler<MarketGroupResponse>() {
 					@Override
 					public ApiResponse<MarketGroupResponse> get() throws ApiException {
-						return getMarketApiOpen().getMarketGroupWithHttpInfo(groupID, COMPATIBILITY_DATE, null, null, null);
+						return getMarketApiOpen().getMarketGroupWithHttpInfo(marketGroupID, COMPATIBILITY_DATE, null, null, null);
 					}
 				});
 				MARKET_GROUP_CACHE.put(marketGroupID, marketGroupResponse);
