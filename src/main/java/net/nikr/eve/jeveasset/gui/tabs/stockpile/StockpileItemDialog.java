@@ -116,6 +116,7 @@ public class StockpileItemDialog extends JDialogCentered {
 	private final JLabel jIgnoreMultiplierLabel;
 	private final JCheckBox jIgnoreMultiplier;
 
+	private final StockpileTab stockpileTab;
 	private final List<JComponent> manufacturingComponents = new ArrayList<>();
 	private final List<JComponent> reactionComponents = new ArrayList<>();
 	private final EventList<Item> items = EventListManager.create();
@@ -125,8 +126,9 @@ public class StockpileItemDialog extends JDialogCentered {
 	private BlueprintAddType lastBlueprintAddType = null;
 	private boolean updating = false;
 
-	public StockpileItemDialog(final Program program) {
+	public StockpileItemDialog(final StockpileTab stockpileTab, final Program program) {
 		super(program, TabsStockpile.get().addStockpileItem(), Images.TOOL_STOCKPILE.getImage());
+		this.stockpileTab = stockpileTab;
 
 		ListenerClass listener = new ListenerClass();
 
@@ -621,7 +623,7 @@ public class StockpileItemDialog extends JDialogCentered {
 			if (itemExist()) { //EDIT + UPDATING (Editing to an existing item)
 				StockpileItem existingItem = getExistingItem();
 				existingItem.getStockpile().remove(existingItem);
-				program.getStockpileTab().removeItem(existingItem);
+				stockpileTab.removeItem(existingItem);
 			}
 			stockpileItem.update(getStockpileItem());
 		} else if (itemExist()) { //UPDATING (Adding an existing item)

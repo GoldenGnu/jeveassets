@@ -107,7 +107,7 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 
 			@Override
 			public void open(Program program, MenuData<?> menuData) {
-				OverviewGroup overviewGroup = program.getOverviewTab().getSelectGroup();
+				OverviewGroup overviewGroup = program.getOverviewTab(true).getSelectGroup();
 				if (overviewGroup == null) {
 					return;
 				}
@@ -245,7 +245,7 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 
 			@Override
 			public void open(Program program, MenuData<?> menuData) {
-				OverviewGroup overviewGroup = program.getOverviewTab().getSelectGroup();
+				OverviewGroup overviewGroup = program.getOverviewTab(true).getSelectGroup();
 				if (overviewGroup == null) {
 					return;
 				}
