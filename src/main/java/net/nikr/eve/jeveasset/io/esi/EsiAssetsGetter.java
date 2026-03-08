@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2025 Contributors (see credits.txt)
+ * Copyright 2009-2026 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -30,6 +30,7 @@ import net.troja.eve.esi.model.CharacterAssetsResponse;
 import net.troja.eve.esi.model.CharacterRolesResponse.RolesEnum;
 import net.troja.eve.esi.model.CorporationAssetsResponse;
 
+
 public class EsiAssetsGetter extends AbstractEsiGetter {
 
 	public EsiAssetsGetter(UpdateTask updateTask, EsiOwner owner) {
@@ -42,7 +43,7 @@ public class EsiAssetsGetter extends AbstractEsiGetter {
 			List<CorporationAssetsResponse> responses = updatePages(DEFAULT_RETRIES, new EsiPagesHandler<CorporationAssetsResponse>() {
 				@Override
 				public ApiResponse<List<CorporationAssetsResponse>> get(Integer page) throws ApiException {
-					ApiResponse<List<CorporationAssetsResponse>> apiResponse = getAssetsApiAuth().getCorporationsCorporationIdAssetsWithHttpInfo((int) owner.getOwnerID(), DATASOURCE, null, page, null);
+					ApiResponse<List<CorporationAssetsResponse>> apiResponse = getAssetsApiAuth().getCorporationAssetsWithHttpInfo(owner.getOwnerID(), COMPATIBILITY_DATE, page, null, null, null);
 					Date modified = getHeaderDate(apiResponse.getHeaders(), "last-modified");
 					if (modified != null && (owner.getAssetLastUpdate() == null || modified.after(owner.getAssetLastUpdate()))) {
 						owner.setAssetLastUpdate(modified);
@@ -55,7 +56,7 @@ public class EsiAssetsGetter extends AbstractEsiGetter {
 			List<CharacterAssetsResponse> responses = updatePages(DEFAULT_RETRIES, new EsiPagesHandler<CharacterAssetsResponse>() {
 				@Override
 				public ApiResponse<List<CharacterAssetsResponse>> get(Integer page) throws ApiException {
-					ApiResponse<List<CharacterAssetsResponse>> apiResponse = getAssetsApiAuth().getCharactersCharacterIdAssetsWithHttpInfo((int) owner.getOwnerID(), DATASOURCE, null, page, null);
+					ApiResponse<List<CharacterAssetsResponse>> apiResponse = getAssetsApiAuth().getCharacterAssetsWithHttpInfo(owner.getOwnerID(), COMPATIBILITY_DATE, page, null, null, null);
 					Date modified = getHeaderDate(apiResponse.getHeaders(), "last-modified");
 					if (modified != null && (owner.getAssetLastUpdate() == null || modified.after(owner.getAssetLastUpdate()))) {
 						owner.setAssetLastUpdate(modified);

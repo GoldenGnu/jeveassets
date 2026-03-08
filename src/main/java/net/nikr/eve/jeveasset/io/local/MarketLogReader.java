@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2025 Contributors (see credits.txt)
+ * Copyright 2009-2026 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -57,7 +57,7 @@ import org.supercsv.util.CsvContext;
 
 public class MarketLogReader {
 
-	private static final Logger LOG = LoggerFactory.getLogger(OutbidProcesser.class);
+	private static final Logger LOG = LoggerFactory.getLogger(MarketLogReader.class);
 
 	private static final int RETRIES = 3;
 	private static final DateFormatThreadSafe FILE_DATE_FORMAT = new DateFormatThreadSafe("yyyy.MM.dd hhmmss", true);

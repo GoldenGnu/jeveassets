@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2025 Contributors (see credits.txt)
+ * Copyright 2009-2026 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -163,6 +163,10 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 
 	public long getStockpileID() {
 		return id;
+	}
+
+	public String getGroup() {
+		return Settings.get().getStockpileGroupSettings().getGroup(this);
 	}
 
 	private static long getNewID() {

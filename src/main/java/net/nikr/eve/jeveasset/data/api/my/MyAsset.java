@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2025 Contributors (see credits.txt)
+ * Copyright 2009-2026 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -148,6 +148,9 @@ public class MyAsset extends RawAsset implements Comparable<MyAsset>, InfoItem, 
 						|| getFlag().equals(IndustryActivity.ACTIVITY_MANUFACTURING.toString()) //industry job manufacturing
 						|| getFlag().equals(IndustryActivity.ACTIVITY_REACTIONS.toString()) //industry job reactions
 						|| getFlag().equals(IndustryActivity.ACTIVITY_COPYING.toString()) //industry job copying
+						|| getFlag().equals(General.get().jumpClone()) //jump clone
+						|| getFlag().equals(General.get().activeClone()) //active clone
+						|| getFlagID() == 89 //plugged in implant
 						;
 		if (getQuantity() == null || getQuantity() <= 0) {
 			this.count = 1;
@@ -197,8 +200,39 @@ public class MyAsset extends RawAsset implements Comparable<MyAsset>, InfoItem, 
 		this(new RawAsset(contractItem), contractItem.getItem(), owner, new ArrayList<>());
 	}
 
-	public MyAsset(RawClone clone, Integer impantTypeID, final SimpleOwner owner) {
-		this(new RawAsset(clone, impantTypeID),ApiIdConverter.getItem(impantTypeID), owner, new ArrayList<>());
+	public MyAsset(RawClone clone, Integer impantTypeID, final SimpleOwner owner, List<MyAsset> parents) {
+		this(new RawAsset(clone, impantTypeID), ApiIdConverter.getItem(impantTypeID), owner, parents);
+	}
+
+	public MyAsset(RawClone clone, final SimpleOwner owner) {
+		this(new RawAsset(clone), getJumpCloneItem(clone), owner, new ArrayList<>());
+	}
+
+	private static Item getJumpCloneItem(RawClone clone) {
+		Item omegaClone = ApiIdConverter.getItem(29143); //Clone Grade Omega
+		String name;
+		if (clone.isActive()) {
+			name = General.get().activeClone();
+		} else {
+			name = General.get().jumpClone();
+		}
+		return new Item(0,
+				name,
+				omegaClone.getGroup(),
+				omegaClone.getCategory(),
+				900000,
+				omegaClone.getVolume(),
+				omegaClone.getVolumePackaged(),
+				omegaClone.getCapacity(),
+				omegaClone.getMeta(),
+				omegaClone.getTech(),
+				omegaClone.isMarketGroup(),
+				omegaClone.getPortion(),
+				omegaClone.getProductTypeID(),
+				omegaClone.getProductQuantity(),
+				omegaClone.getSlot(),
+				omegaClone.getChargeSize(),
+				null);
 	}
 
 	public void addAsset(final MyAsset asset) {
@@ -242,7 +276,7 @@ public class MyAsset extends RawAsset implements Comparable<MyAsset>, InfoItem, 
 		}
 	}
 
-	public Integer getFlagID() {
+	public final Integer getFlagID() {
 		if (getItemFlag() != null) {
 			return getItemFlag().getFlagID();
 		} else {

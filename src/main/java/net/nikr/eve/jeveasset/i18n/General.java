@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2025 Contributors (see credits.txt)
+ * Copyright 2009-2026 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -45,6 +45,8 @@ public abstract class General extends Bundle {
 	public abstract String industryJobFlag();
 	public abstract String marketOrderSellFlag();
 	public abstract String marketOrderBuyFlag();
+	public abstract String jumpClone();
+	public abstract String activeClone();
 	public abstract String none();
 	public abstract String all();
 	public abstract String fileLockTitle();

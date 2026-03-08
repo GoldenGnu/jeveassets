@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2025 Contributors (see credits.txt)
+ * Copyright 2009-2026 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -36,18 +36,17 @@ import net.nikr.eve.jeveasset.gui.shared.Formatter;
 import net.nikr.eve.jeveasset.gui.tabs.orders.OutbidProcesser;
 import net.nikr.eve.jeveasset.gui.tabs.orders.OutbidProcesser.OutbidProcesserInput;
 import net.nikr.eve.jeveasset.gui.tabs.orders.OutbidProcesser.OutbidProcesserOutput;
-import static net.nikr.eve.jeveasset.io.esi.AbstractEsiGetter.DATASOURCE;
 import static net.nikr.eve.jeveasset.io.esi.AbstractEsiGetter.DEFAULT_RETRIES;
 import static net.nikr.eve.jeveasset.io.esi.AbstractEsiGetter.getMarketApiOpen;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
-import net.nikr.eve.jeveasset.io.shared.RawConverter;
+import net.nikr.eve.jeveasset.io.shared.SafeConverter;
 import net.troja.eve.esi.ApiException;
 import net.troja.eve.esi.ApiResponse;
 import net.troja.eve.esi.api.MarketApi;
 import net.troja.eve.esi.api.UniverseApi;
 import net.troja.eve.esi.model.CharacterRolesResponse.RolesEnum;
-import net.troja.eve.esi.model.MarketOrdersResponse;
-import net.troja.eve.esi.model.MarketStructuresResponse;
+import net.troja.eve.esi.model.MarketRegionOrdersResponse;
+import net.troja.eve.esi.model.MarketStructureResponse;
 import net.troja.eve.esi.model.StructureResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -78,13 +77,13 @@ public class EsiPublicMarketOrdersGetter extends AbstractEsiGetter {
 		AtomicInteger count = new AtomicInteger(0);
 		//Update public market orders
 		publicMarketOrders = true;
-		List<MarketOrdersResponse> responses = new ArrayList<>();
-		for (Integer k : input.getRegionIDs()) {
+		List<MarketRegionOrdersResponse> responses = new ArrayList<>();
+		for (Integer regionID : input.getRegionIDs()) {
 			try {
-				List<MarketOrdersResponse> response = updatePages(DEFAULT_RETRIES, new EsiPagesHandler<MarketOrdersResponse>() {
+				List<MarketRegionOrdersResponse> response = updatePages(DEFAULT_RETRIES, new EsiPagesHandler<MarketRegionOrdersResponse>() {
 					@Override
-					public ApiResponse<List<MarketOrdersResponse>> get(Integer page) throws ApiException {
-						ApiResponse<List<MarketOrdersResponse>> response = getMarketApiOpen().getMarketsRegionIdOrdersWithHttpInfo("all", k, DATASOURCE, null, page, null);
+					public ApiResponse<List<MarketRegionOrdersResponse>> get(Integer page) throws ApiException {
+						ApiResponse<List<MarketRegionOrdersResponse>> response = getMarketApiOpen().getMarketRegionOrdersWithHttpInfo("all", SafeConverter.toLong(regionID), COMPATIBILITY_DATE, page, null, null, null, null);
 						String header = getHeader(response.getHeaders(), "last-modified");
 						if (header != null) {
 							Date date = Formatter.parseExpireDate(header);
@@ -107,33 +106,33 @@ public class EsiPublicMarketOrdersGetter extends AbstractEsiGetter {
 		}
 		publicMarketOrders = false;
 		Map<Integer, Set<RawPublicMarketOrder>> orders = EsiConverter.toPublicMarketOrders(responses);
-		for (MarketOrdersResponse ordersResponse : responses) {
+		for (MarketRegionOrdersResponse ordersResponse : responses) {
 			//Find leaking market structures
 			if (ordersResponse.getLocationId() > 100000000) {
 				input.getStructureIDs().add(ordersResponse.getLocationId());
 			}
 			//Map known locationID <=> systemID
-			input.getLocationToSystem().put(ordersResponse.getLocationId(), RawConverter.toLong(ordersResponse.getSystemId()));
+			input.getLocationToSystem().put(ordersResponse.getLocationId(), ordersResponse.getSystemId());
 		}
 		//Get public structures
 		input.getStructureIDs().addAll(update(DEFAULT_RETRIES, new EsiHandler<Set<Long>>() {
 			@Override
 			public ApiResponse<Set<Long>> get() throws ApiException {
-				return getUniverseApiOpen().getUniverseStructuresWithHttpInfo(DATASOURCE, "market", null);
+				return getUniverseApiOpen().getStructuresWithHttpInfo(COMPATIBILITY_DATE, "market", null, null, null);
 			}
 		}));
 		//Update orders in structures
 		count.set(0);
 		MarketApi marketApi = input.getMarketApi();
 		if (marketApi != null) {
-			List<MarketStructuresResponse> structuresResponses = updatePagedList(input.getStructureIDs(), new PagedListHandler<Long, MarketStructuresResponse>() {
+			List<MarketStructureResponse> structuresResponses = updatePagedList(input.getStructureIDs(), new PagedListHandler<Long, MarketStructureResponse>() {
 				@Override
-				protected List<MarketStructuresResponse> get(Long k) throws ApiException {
+				protected List<MarketStructureResponse> get(Long structureID) throws ApiException {
 					try {
-						return updatePages(DEFAULT_RETRIES, new EsiPagesHandler<MarketStructuresResponse>() {
+						return updatePages(DEFAULT_RETRIES, new EsiPagesHandler<MarketStructureResponse>() {
 							@Override
-							public ApiResponse<List<MarketStructuresResponse>> get(Integer page) throws ApiException {
-								return marketApi.getMarketsStructuresStructureIdWithHttpInfo(k, DATASOURCE, null, page, null);
+							public ApiResponse<List<MarketStructureResponse>> get(Integer page) throws ApiException {
+								return marketApi.getMarketStructureWithHttpInfo(structureID, COMPATIBILITY_DATE, page, null, null, null);
 							}
 						});
 					} catch (ApiException ex) {
@@ -148,7 +147,7 @@ public class EsiPublicMarketOrdersGetter extends AbstractEsiGetter {
 					}
 				}
 			});
-			for (MarketStructuresResponse response : structuresResponses) {
+			for (MarketStructureResponse response : structuresResponses) {
 				RawPublicMarketOrder marketOrder = new RawPublicMarketOrder(response, getSystemID(input, response.getLocationId()));
 				Set<RawPublicMarketOrder> set = orders.get(marketOrder.getTypeID());
 				if (set == null) {
@@ -218,14 +217,14 @@ public class EsiPublicMarketOrdersGetter extends AbstractEsiGetter {
 		UniverseApi structuresApi = data.getStructuresApi();
 		if (structuresApi != null) {
 			try {
-				StructureResponse response = update(DEFAULT_RETRIES, new AbstractEsiGetter.EsiHandler<StructureResponse>() {
+				StructureResponse response = update(DEFAULT_RETRIES, new EsiHandler<StructureResponse>() {
 					@Override
 					public ApiResponse<StructureResponse> get() throws ApiException {
-						return structuresApi.getUniverseStructuresStructureIdWithHttpInfo(locationID, DATASOURCE, null, null);
+						return structuresApi.getStructureWithHttpInfo(locationID, COMPATIBILITY_DATE, null, null, null);
 					}
 				});
 				data.getCitadels().put(locationID, ApiIdConverter.getCitadel(response, locationID));
-				return RawConverter.toLong(response.getSolarSystemId());
+				return response.getSolarSystemId();
 			} catch (ApiException ex) {
 				handleHeaders(ex);
 				LOG.error(ex.getMessage(), ex);

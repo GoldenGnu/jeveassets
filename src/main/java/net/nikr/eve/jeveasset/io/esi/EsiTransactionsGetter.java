@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2025 Contributors (see credits.txt)
+ * Copyright 2009-2026 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -27,6 +27,7 @@ import java.util.Set;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
+import net.nikr.eve.jeveasset.io.shared.SafeConverter;
 import net.troja.eve.esi.ApiException;
 import net.troja.eve.esi.ApiResponse;
 import net.troja.eve.esi.model.CharacterRolesResponse.RolesEnum;
@@ -57,7 +58,7 @@ public class EsiTransactionsGetter extends AbstractEsiGetter {
 				List<CorporationWalletTransactionsResponse> responses = updateIDs(existing, DEFAULT_RETRIES, new IDsHandler<CorporationWalletTransactionsResponse>() {
 					@Override
 					public ApiResponse<List<CorporationWalletTransactionsResponse>> get(Long fromID) throws ApiException {
-						return getWalletApiAuth().getCorporationsCorporationIdWalletsDivisionTransactionsWithHttpInfo((int) owner.getOwnerID(), division, DATASOURCE, fromID, null, null);
+						return getWalletApiAuth().getCorporationWalletTransactionsWithHttpInfo(owner.getOwnerID(), SafeConverter.toLong(division), COMPATIBILITY_DATE, fromID, null, null, null);
 					}
 
 					@Override
@@ -72,7 +73,7 @@ public class EsiTransactionsGetter extends AbstractEsiGetter {
 			List<CharacterWalletTransactionsResponse> responses = updateIDs(existing, DEFAULT_RETRIES, new IDsHandler<CharacterWalletTransactionsResponse>() {
 				@Override
 				public ApiResponse<List<CharacterWalletTransactionsResponse>> get(Long fromID) throws ApiException {
-					return getWalletApiAuth().getCharactersCharacterIdWalletTransactionsWithHttpInfo((int) owner.getOwnerID(), DATASOURCE, fromID, null, null);
+					return getWalletApiAuth().getCharacterWalletTransactionsWithHttpInfo(owner.getOwnerID(), COMPATIBILITY_DATE, fromID, null, null, null);
 				}
 
 				@Override

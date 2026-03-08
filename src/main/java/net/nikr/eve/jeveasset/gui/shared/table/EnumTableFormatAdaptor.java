@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2025 Contributors (see credits.txt)
+ * Copyright 2009-2026 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -34,6 +34,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import net.nikr.eve.jeveasset.gui.shared.filter.SimpleTableFormat;
 import net.nikr.eve.jeveasset.gui.shared.menu.JFormulaDialog;
 import net.nikr.eve.jeveasset.gui.shared.menu.JFormulaDialog.Formula;
 import net.nikr.eve.jeveasset.gui.shared.table.ColumnManager.IndexColumn;
@@ -44,7 +45,6 @@ import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileTableFormat;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import net.nikr.eve.jeveasset.gui.shared.filter.SimpleTableFormat;
 
 /**
  *

@@ -42,7 +42,9 @@ Contributors:
   Boran Lordsworth
   Ed Thelleres
   Salartarium
+  WildGear
   snipereagle1
+  Ansirane Solette
 
 Retired Testers:
   Varo Jan
@@ -312,7 +314,7 @@ License:
 ________________________________________________________________________________
 _COPYRIGHT______________________________________________________________________
 
-Copyright 2009-2025 Contributors (see above)
+Copyright 2009-2026 Contributors (see above)
 
 jEveAssets is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License

@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2025 Contributors (see credits.txt)
+ * Copyright 2009-2026 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -52,6 +52,7 @@ import net.troja.eve.esi.model.CharacterRolesResponse.RolesEnum;
 import net.troja.eve.esi.model.StructureResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 
 public class EsiStructuresGetter extends AbstractEsiGetter {
 
@@ -113,7 +114,7 @@ public class EsiStructuresGetter extends AbstractEsiGetter {
 			@Override
 			public ApiResponse<StructureResponse> get(Long k) throws ApiException {
 				pause();
-				return getUniverseApiAuth().getUniverseStructuresStructureIdWithHttpInfo(k, DATASOURCE, null, null);
+				return getUniverseApiAuth().getStructureWithHttpInfo(k, COMPATIBILITY_DATE, null, null, null);
 			}
 			@Override
 			protected void handle(ApiException ex, Long k) throws ApiException {

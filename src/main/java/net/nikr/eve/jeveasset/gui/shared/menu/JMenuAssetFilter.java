@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2025 Contributors (see credits.txt)
+ * Copyright 2009-2026 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -163,7 +163,7 @@ public class JMenuAssetFilter<T> extends JAutoMenu<T> {
 			} else if (MenuAssetFilterAction.REGION_FILTER.name().equals(e.getActionCommand())) {
 				addFilters(menuData.getRegionNames(), AssetTableFormat.REGION, CompareType.EQUALS);
 			} else if (MenuAssetFilterAction.OVERVIEW_GROUP_FILTER.name().equals(e.getActionCommand())) {
-				OverviewGroup overviewGroup = program.getOverviewTab().getSelectGroup();
+				OverviewGroup overviewGroup = program.getOverviewTab(true).getSelectGroup();
 				if (overviewGroup == null) {
 					return;
 				}

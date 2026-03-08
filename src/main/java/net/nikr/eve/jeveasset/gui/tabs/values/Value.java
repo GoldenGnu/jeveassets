@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2025 Contributors (see credits.txt)
+ * Copyright 2009-2026 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -87,13 +87,8 @@ public class Value implements Comparable<Value>, LocationType {
 	}
 
 	public void addAssets(AssetValue id, MyAsset asset) {
-		String flag = asset.getFlag();
 		double total = asset.getDynamicPrice() * asset.getCount();
-		if (flag != null && flag.equals("Implant")) {
-			addImplants(total);
-		} else {
-			addAssets(id, total);
-		}
+		addAssets(id, total);
 		setBestAsset(asset);
 		setBestShip(asset);
 		setBestShipFitted(asset);

@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2025 Contributors (see credits.txt)
+ * Copyright 2009-2026 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -58,6 +58,8 @@ public abstract class TabsOverview extends Bundle {
 	public abstract String totalValue();
 	public abstract String totalVolume();
 	public abstract String view();
+	public abstract String treemap();
+	public abstract String treemapToolTip();
 	public abstract String columnName();
 	public abstract String columnSystem();
 	public abstract String columnConstellation();

@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2025 Contributors (see credits.txt)
+ * Copyright 2009-2026 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -27,7 +27,6 @@ import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.data.api.my.MyAsset;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
-import static net.nikr.eve.jeveasset.io.esi.AbstractEsiGetter.DATASOURCE;
 import net.troja.eve.esi.ApiException;
 import net.troja.eve.esi.ApiResponse;
 import net.troja.eve.esi.model.CharacterLocationResponse;
@@ -50,14 +49,14 @@ public class EsiShipGetter extends AbstractEsiGetter {
 		CharacterShipResponse shipType = update(DEFAULT_RETRIES, new EsiHandler<CharacterShipResponse>() {
 			@Override
 			public ApiResponse<CharacterShipResponse> get() throws ApiException {
-				return getLocationApiAuth().getCharactersCharacterIdShipWithHttpInfo((int)owner.getOwnerID(), DATASOURCE, null, null);
+				return getLocationApiAuth().getCharacterShipWithHttpInfo(owner.getOwnerID(), COMPATIBILITY_DATE, null, null, null);
 			}
 		});
 		//Get Location
 		CharacterLocationResponse shipLocation = update(DEFAULT_RETRIES, new EsiHandler<CharacterLocationResponse>() {
 			@Override
 			public ApiResponse<CharacterLocationResponse> get() throws ApiException {
-				return getLocationApiAuth().getCharactersCharacterIdLocationWithHttpInfo((int)owner.getOwnerID(), DATASOURCE, null, null);
+				return getLocationApiAuth().getCharacterLocationWithHttpInfo(owner.getOwnerID(), COMPATIBILITY_DATE, null, null, null);
 			}
 		});
 		//Create assets

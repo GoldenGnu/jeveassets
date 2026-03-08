@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2025 Contributors (see credits.txt)
+ * Copyright 2009-2026 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -49,7 +49,9 @@ public class JContractsTable extends JSeparatorTable {
 
 		if (object instanceof MyContractItem) {
 			MyContractItem item = (MyContractItem) object;
-			if (columnName.equals(ContractsTableFormat.NAME.getColumnName())) {
+			if (!item.getContract().isCourierContract() && item.getTypeID() == 0) {
+				ColorSettings.configCell(component, ColorEntry.GLOBAL_ENTRY_INVALID, isSelected);
+			} else if (columnName.equals(ContractsTableFormat.NAME.getColumnName())) {
 				if (item.getContract().isCourierContract()) {
 					ColorSettings.configCell(component, ColorEntry.CONTRACTS_COURIER, isSelected);
 				} else if (item.isIncluded()) {

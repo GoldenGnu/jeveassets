@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2025 Contributors (see credits.txt)
+ * Copyright 2009-2026 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -89,6 +89,7 @@ public class TreeData extends TableData {
 		flagsNames.put(new Flag(TabsTree.get().locationMarketOrders(), Images.LOC_MARKET.getIcon()), marketOrders);
 		Set<String> clones = new HashSet<>();
 		clones.add(ApiIdConverter.getFlag(89).getFlagName());
+		clones.add(General.get().jumpClone()); 
 		flagsNames.put(new Flag(TabsTree.get().locationClones(), Images.LOC_CLONEBAY.getIcon()), clones);
 
 		MyLocation emptyLocation = new MyLocation(0, "", 0, "", 0, "", 0, "", "");

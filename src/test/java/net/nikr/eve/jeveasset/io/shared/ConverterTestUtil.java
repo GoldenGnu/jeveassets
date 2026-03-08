@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2025 Contributors (see credits.txt)
+ * Copyright 2009-2026 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -46,8 +46,10 @@ import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
 import net.nikr.eve.jeveasset.data.api.my.MyExtraction;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
 import net.nikr.eve.jeveasset.data.api.my.MyJournal;
+import net.nikr.eve.jeveasset.data.api.my.MyLoyaltyPoints;
 import net.nikr.eve.jeveasset.data.api.my.MyMarketOrder;
 import net.nikr.eve.jeveasset.data.api.my.MyMining;
+import net.nikr.eve.jeveasset.data.api.my.MyNpcStanding;
 import net.nikr.eve.jeveasset.data.api.my.MyShip;
 import net.nikr.eve.jeveasset.data.api.my.MySkill;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
@@ -62,9 +64,12 @@ import net.nikr.eve.jeveasset.data.api.raw.RawIndustryJob;
 import net.nikr.eve.jeveasset.data.api.raw.RawJournal;
 import net.nikr.eve.jeveasset.data.api.raw.RawJournal.ContextType;
 import net.nikr.eve.jeveasset.data.api.raw.RawJournalRefType;
+import net.nikr.eve.jeveasset.data.api.raw.RawLoyaltyPoints;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder.Change;
 import net.nikr.eve.jeveasset.data.api.raw.RawMining;
+import net.nikr.eve.jeveasset.data.api.raw.RawNpcStanding;
+import net.nikr.eve.jeveasset.data.api.raw.RawNpcStanding.FromType;
 import net.nikr.eve.jeveasset.data.api.raw.RawSkill;
 import net.nikr.eve.jeveasset.data.api.raw.RawTransaction;
 import net.nikr.eve.jeveasset.data.sde.Item;
@@ -75,6 +80,7 @@ import net.nikr.eve.jeveasset.data.settings.PriceData;
 import net.nikr.eve.jeveasset.data.settings.UserItem;
 import net.nikr.eve.jeveasset.data.settings.tag.Tags;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.Percent;
+import net.nikr.eve.jeveasset.gui.shared.table.containers.TextIcon;
 import net.nikr.eve.jeveasset.gui.tabs.orders.Outbid;
 import net.nikr.eve.jeveasset.io.esi.EsiCallbackURL;
 import net.troja.eve.esi.ApiClient;
@@ -85,6 +91,7 @@ import net.troja.eve.esi.api.ContractsApi;
 import net.troja.eve.esi.api.CorporationApi;
 import net.troja.eve.esi.api.IndustryApi;
 import net.troja.eve.esi.api.LocationApi;
+import net.troja.eve.esi.api.LoyaltyApi;
 import net.troja.eve.esi.api.MarketApi;
 import net.troja.eve.esi.api.PlanetaryInteractionApi;
 import net.troja.eve.esi.api.SkillsApi;
@@ -94,7 +101,6 @@ import net.troja.eve.esi.api.WalletApi;
 import net.troja.eve.esi.auth.SsoScopes;
 import net.troja.eve.esi.model.CharacterAssetsResponse;
 import net.troja.eve.esi.model.CharacterBlueprintsResponse;
-import net.troja.eve.esi.model.CharacterContractsItemsResponse;
 import net.troja.eve.esi.model.CharacterContractsResponse;
 import net.troja.eve.esi.model.CharacterIndustryJobsResponse;
 import net.troja.eve.esi.model.CharacterLocationResponse;
@@ -105,6 +111,7 @@ import net.troja.eve.esi.model.CharacterRolesResponse.RolesEnum;
 import net.troja.eve.esi.model.CharacterShipResponse;
 import net.troja.eve.esi.model.CharacterWalletJournalResponse;
 import net.troja.eve.esi.model.CharacterWalletTransactionsResponse;
+import net.troja.eve.esi.model.ContractItemsResponse;
 import net.troja.eve.esi.model.CorporationAssetsResponse;
 import net.troja.eve.esi.model.CorporationBlueprintsResponse;
 import net.troja.eve.esi.model.CorporationContractsResponse;
@@ -177,6 +184,12 @@ public class ConverterTestUtil {
 
 		//Extractions
 		owner.setExtractions(set(getMyExtraction(owner, setNull, setValues, options)));
+
+		//Loyalty Points
+		owner.setLoyaltyPoints(set(getMyLoyaltyPoints(owner, setNull, setValues, options)));
+
+		//Npc Standing
+		owner.setNpcStanding(set(getMyNpcStanding(owner, setNull, setValues, options)));
 
 		//Wallet Divisions
 		//owner.setWalletDivisions(walletDivisions);
@@ -266,7 +279,7 @@ public class ConverterTestUtil {
 
 	public static RawContractItem getRawContractItem(boolean setNull, ConverterTestOptions options) {
 		RawContractItem rawContractItem = RawContractItem.create();
-		setValues(rawContractItem, options, setNull ? CharacterContractsItemsResponse.class : null);
+		setValues(rawContractItem, options, setNull ? ContractItemsResponse.class : null);
 		return rawContractItem;
 	}
 
@@ -357,6 +370,34 @@ public class ConverterTestUtil {
 		return skill;
 	}
 
+	public static RawLoyaltyPoints getRawLoyaltyPoints(boolean setNull, ConverterTestOptions options) {
+		RawLoyaltyPoints rawLoyaltyPoints = RawLoyaltyPoints.create();
+		setValues(rawLoyaltyPoints, options, setNull ? CharacterMiningResponse.class : null);
+		return rawLoyaltyPoints;
+	}
+
+	public static MyLoyaltyPoints getMyLoyaltyPoints(OwnerType owner, boolean setNull, boolean setValues, ConverterTestOptions options) {
+		MyLoyaltyPoints loyaltyPoints = new MyLoyaltyPoints(getRawLoyaltyPoints(setNull, options), owner);
+		if (setValues) {
+			setValues(loyaltyPoints, options, null, false);
+		}
+		return loyaltyPoints;
+	}
+
+	public static RawNpcStanding getRawNpcStanding(boolean setNull, ConverterTestOptions options) {
+		RawNpcStanding rawNpcStanding = RawNpcStanding.create();
+		setValues(rawNpcStanding, options, setNull ? CharacterMiningResponse.class : null);
+		return rawNpcStanding;
+	}
+
+	public static MyNpcStanding getMyNpcStanding(OwnerType owner, boolean setNull, boolean setValues, ConverterTestOptions options) {
+		MyNpcStanding npcStanding = new MyNpcStanding(getRawNpcStanding(setNull, options), owner);
+		if (setValues) {
+			setValues(npcStanding, options, null, false);
+		}
+		return npcStanding;
+	}
+
 	public static RawMining getRawMining(boolean setNull, ConverterTestOptions options) {
 		RawMining rawMining = RawMining.create();
 		setValues(rawMining, options, setNull ? CharacterMiningResponse.class : null);
@@ -412,7 +453,7 @@ public class ConverterTestUtil {
 		assertEquals(esiOwner.getContracts().size(), 1);
 		Map.Entry<MyContract, List<MyContractItem>> entry = esiOwner.getContracts().entrySet().iterator().next();
 		testValues(entry.getKey(), options, setNull ? CharacterContractsResponse.class : null, false);
-		testValues(entry.getValue().iterator().next(), options, setNull ? CharacterContractsItemsResponse.class : null, false);
+		testValues(entry.getValue().iterator().next(), options, setNull ? ContractItemsResponse.class : null, false);
 
 		//IndustryJobs
 		assertEquals(esiOwner.getIndustryJobs().size(), 1);
@@ -510,12 +551,12 @@ public class ConverterTestUtil {
 			CharacterLocationResponse asset = (CharacterLocationResponse) object;
 			long locationID = options.getLocationID();
 			if (locationID >= 30000000 && locationID <= 32000000) { //System
-				asset.setSolarSystemId((int)locationID);
+				asset.setSolarSystemId(locationID);
 				asset.setStationId(null);
 				asset.setStructureId(null);
 			} else if (locationID >= 60000000 && locationID <= 64000000) { //Station
 				asset.setSolarSystemId(null);
-				asset.setStationId((int)locationID);
+				asset.setStationId(locationID);
 				asset.setStructureId(null);
 			} else { //Other
 				asset.setSolarSystemId(null);
@@ -675,6 +716,9 @@ public class ConverterTestUtil {
 		if (type.equals(SkillsApi.class)) {
 			return true;
 		}
+		if (type.equals(LoyaltyApi.class)) {
+			return true;
+		}
 		if (type.equals(ClonesApi.class)) {
 			return true;
 		}
@@ -801,6 +845,10 @@ public class ConverterTestUtil {
 			return options.getButton();
 		} else if (type.equals(MyBlueprint.class)) {
 			return options.getMyBlueprint();
+		} else if (type.equals(FromType.class)) {
+			return options.getNpcStandingFromType();
+		} else if (type.equals(TextIcon.class)) {
+			return options.getTextIcon();
 		} else {
 			fail("No test value for: " + type.getSimpleName());
 			return null;

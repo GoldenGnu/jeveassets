@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2025 Contributors (see credits.txt)
+ * Copyright 2009-2026 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -40,7 +40,6 @@ public abstract class TabsPriceHistory extends Bundle {
 	public abstract String deleteHistorySet();
 	public abstract String deleteHistorySets(int size);
 	public abstract String edit();
-	public abstract String empty();
 	public abstract String enterName();
 	public abstract String from();
 	public abstract String graphToolTip(Comparable<?> name, String isk, String date);

@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2025 Contributors (see credits.txt)
+ * Copyright 2009-2026 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -40,6 +40,9 @@ public abstract class DialoguesSettings extends Bundle {
 
 	// used in GeneralSettingsPanel
 	public abstract String general();
+	public abstract String loadToolsBackground();
+	public abstract String loadToolsOpen();
+	public abstract String loadToolsStartup();
 	public abstract String enterFilter();
 	public abstract String highlightSelectedRow();
 	public abstract String focusEveOnline();
@@ -71,6 +74,8 @@ public abstract class DialoguesSettings extends Bundle {
 	public abstract String includeBuyOrders();
 	public abstract String includeManufacturing();
 	public abstract String includeCopying();
+	public abstract String includeJumpClones();
+	public abstract String includePluggedInImplants();
 	public abstract String showContainerItemID();
 	public abstract String contractAssetsBoth();
 	public abstract String contractAssetsCharacter();
@@ -127,6 +132,12 @@ public abstract class DialoguesSettings extends Bundle {
 	// used in MiningToolSettingsPanel
 	public abstract String mining();
 	public abstract String miningSaveHistory();
+
+	// used in JumpsSettingsPanel
+	public abstract String jumps();
+	public abstract String eveGatecampCheck();
+	public abstract String eveGatecampCheckOpenOptions();
+	public abstract String eveGatecampCheckRouteOptions();
 
 	// used in ColorSettingsPanel
 	public abstract String chartColors();

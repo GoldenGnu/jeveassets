@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2025 Contributors (see credits.txt)
+ * Copyright 2009-2026 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -52,7 +52,7 @@ public class EsiIndustryJobsGetter extends AbstractEsiGetter {
 			List<CorporationIndustryJobsResponse> completed = updatePages(DEFAULT_RETRIES, new EsiPagesHandler<CorporationIndustryJobsResponse>() {
 				@Override
 				public ApiResponse<List<CorporationIndustryJobsResponse>> get(Integer page) throws ApiException {
-					return getIndustryApiAuth().getCorporationsCorporationIdIndustryJobsWithHttpInfo((int) owner.getOwnerID(), DATASOURCE, null, true, page, null);
+					return getIndustryApiAuth().getCorporationIndustryJobsWithHttpInfo(owner.getOwnerID(), COMPATIBILITY_DATE, true, page, null, null, null);
 				}
 			});
 			industryJobs.addAll(completed);
@@ -60,7 +60,7 @@ public class EsiIndustryJobsGetter extends AbstractEsiGetter {
 			List<CorporationIndustryJobsResponse> incomplated = updatePages(DEFAULT_RETRIES, new EsiPagesHandler<CorporationIndustryJobsResponse>() {
 				@Override
 				public ApiResponse<List<CorporationIndustryJobsResponse>> get(Integer page) throws ApiException {
-					return getIndustryApiAuth().getCorporationsCorporationIdIndustryJobsWithHttpInfo((int) owner.getOwnerID(), DATASOURCE, null, false, page, null);
+					return getIndustryApiAuth().getCorporationIndustryJobsWithHttpInfo(owner.getOwnerID(), COMPATIBILITY_DATE, false, page, null, null, null);
 				}
 			});
 			industryJobs.addAll(incomplated);
@@ -71,8 +71,8 @@ public class EsiIndustryJobsGetter extends AbstractEsiGetter {
 			completed.add(false);
 			Map<Boolean, List<CharacterIndustryJobsResponse>> updateList = updateList(completed, DEFAULT_RETRIES, new ListHandler<Boolean, List<CharacterIndustryJobsResponse>>() {
 				@Override
-				protected ApiResponse<List<CharacterIndustryJobsResponse>> get(Boolean k) throws ApiException {
-					return getIndustryApiAuth().getCharactersCharacterIdIndustryJobsWithHttpInfo((int) owner.getOwnerID(), DATASOURCE, null, k, null);
+				protected ApiResponse<List<CharacterIndustryJobsResponse>> get(Boolean includeCompleted) throws ApiException {
+					return getIndustryApiAuth().getCharacterIndustryJobsWithHttpInfo(owner.getOwnerID(), COMPATIBILITY_DATE, includeCompleted, null, null, null);
 				}
 			});
 			List<CharacterIndustryJobsResponse> industryJobs = new ArrayList<>();

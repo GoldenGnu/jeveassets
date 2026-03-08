@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2025 Contributors (see credits.txt)
+ * Copyright 2009-2026 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -108,6 +108,31 @@ public class ContractsTab extends JMainTabPrimary {
 
 		ListenerClass listener = new ListenerClass();
 
+	//StatusPanels must be initialized before the eventlist
+		jContractCount = StatusPanel.createLabel(TabsContracts.get().contractCount(), Images.INCLUDE_CONTRACTS.getIcon(), AutoNumberFormat.LONG);
+		addStatusbarLabel(jContractCount);
+		
+		jSellingPrice = StatusPanel.createLabel(TabsContracts.get().sellingPrice(), Images.ORDERS_SELL.getIcon(), AutoNumberFormat.ISK);
+		addStatusbarLabel(jSellingPrice);
+
+		jSellingAssets = StatusPanel.createLabel(TabsContracts.get().sellingAssets(), Images.TOOL_VALUES.getIcon(), AutoNumberFormat.ISK);
+		addStatusbarLabel(jSellingAssets);
+
+		jBuying = StatusPanel.createLabel(TabsContracts.get().buying(), Images.ORDERS_BUY.getIcon(), AutoNumberFormat.ISK);
+		addStatusbarLabel(jBuying);
+
+		jSold = StatusPanel.createLabel(TabsContracts.get().sold(), Images.ORDERS_SOLD.getIcon(), AutoNumberFormat.ISK);
+		addStatusbarLabel(jSold);
+
+		jBought = StatusPanel.createLabel(TabsContracts.get().bought(), Images.ORDERS_BOUGHT.getIcon(), AutoNumberFormat.ISK);
+		addStatusbarLabel(jBought);
+
+		jCollateralIssuer = StatusPanel.createLabel(TabsContracts.get().collateralIssuer(), Images.ORDERS_ESCROW.getIcon(), AutoNumberFormat.ISK);
+		addStatusbarLabel(jCollateralIssuer);
+
+		jCollateralAcceptor = StatusPanel.createLabel(TabsContracts.get().collateralAcceptor(), Images.UPDATE_WORKING.getIcon(), AutoNumberFormat.ISK);
+		addStatusbarLabel(jCollateralAcceptor);
+
 		JFixedToolBar jToolBar = new JFixedToolBar();
 
 		jToolBar.addGlue();
@@ -143,7 +168,9 @@ public class ContractsTab extends JMainTabPrimary {
 		//Statusbar updater
 		filterList.addListEventListener(listener);
 		//Separator
+		eventList.getReadWriteLock().readLock().lock();
 		separatorList = new SeparatorList<>(filterList, new SeparatorComparator(), 1, Integer.MAX_VALUE);
+		eventList.getReadWriteLock().readLock().unlock();
 		//Table Model
 		tableModel = EventModels.createTableModel(separatorList, tableFormat);
 		//Table
@@ -153,11 +180,11 @@ public class ContractsTab extends JMainTabPrimary {
 		jTable.setCellSelectionEnabled(true);
 		PaddingTableCellRenderer.install(jTable, 3);
 		//Sorting
-		TableComparatorChooser<MyContractItem> install = TableComparatorChooser.install(jTable, sortedListColumn, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
-		install.addSortActionListener(new ActionListener() {
+		TableComparatorChooser<MyContractItem> comparatorChooser = TableComparatorChooser.install(jTable, sortedListColumn, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
+		comparatorChooser.addSortActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				separatorList.setComparator(new SeparatorComparator(install));
+				separatorList.setComparator(new SeparatorComparator(comparatorChooser));
 			}
 		});
 		//Selection Model
@@ -171,31 +198,7 @@ public class ContractsTab extends JMainTabPrimary {
 		//Table Filter
 		filterControl = new ContractsFilterControl(sortedListSeparator);
 		//Menu
-		installTableTool(new ContractsTableMenu(), tableFormat, tableModel, jTable, filterControl, MyContractItem.class);
-		
-		jContractCount = StatusPanel.createLabel(TabsContracts.get().contractCount(), Images.INCLUDE_CONTRACTS.getIcon(), AutoNumberFormat.LONG);
-		addStatusbarLabel(jContractCount);
-		
-		jSellingPrice = StatusPanel.createLabel(TabsContracts.get().sellingPrice(), Images.ORDERS_SELL.getIcon(), AutoNumberFormat.ISK);
-		addStatusbarLabel(jSellingPrice);
-
-		jSellingAssets = StatusPanel.createLabel(TabsContracts.get().sellingAssets(), Images.TOOL_VALUES.getIcon(), AutoNumberFormat.ISK);
-		addStatusbarLabel(jSellingAssets);
-
-		jBuying = StatusPanel.createLabel(TabsContracts.get().buying(), Images.ORDERS_BUY.getIcon(), AutoNumberFormat.ISK);
-		addStatusbarLabel(jBuying);
-
-		jSold = StatusPanel.createLabel(TabsContracts.get().sold(), Images.ORDERS_SOLD.getIcon(), AutoNumberFormat.ISK);
-		addStatusbarLabel(jSold);
-
-		jBought = StatusPanel.createLabel(TabsContracts.get().bought(), Images.ORDERS_BOUGHT.getIcon(), AutoNumberFormat.ISK);
-		addStatusbarLabel(jBought);
-
-		jCollateralIssuer = StatusPanel.createLabel(TabsContracts.get().collateralIssuer(), Images.ORDERS_ESCROW.getIcon(), AutoNumberFormat.ISK);
-		addStatusbarLabel(jCollateralIssuer);
-
-		jCollateralAcceptor = StatusPanel.createLabel(TabsContracts.get().collateralAcceptor(), Images.UPDATE_WORKING.getIcon(), AutoNumberFormat.ISK);
-		addStatusbarLabel(jCollateralAcceptor);
+		installTableTool(new ContractsTableMenu(), tableFormat, comparatorChooser, tableModel, jTable, filterControl, MyContractItem.class);
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.TRAILING)

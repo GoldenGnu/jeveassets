@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2025 Contributors (see credits.txt)
+ * Copyright 2009-2026 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -65,6 +65,16 @@ public enum MarketTableFormat implements EnumTableColumn<MyMarketOrder> {
 		@Override
 		public Object getColumnValue(final MyMarketOrder from) {
 			return from.getItem().getGroup();
+		}
+	},
+	CATEGORY(String.class) {
+		@Override
+		public String getColumnName() {
+			return TabsOrders.get().columnCategory();
+		}
+		@Override
+		public Object getColumnValue(final MyMarketOrder from) {
+			return from.getItem().getCategory();
 		}
 	},
 	QUANTITY(Integer.class) {
@@ -322,7 +332,7 @@ public enum MarketTableFormat implements EnumTableColumn<MyMarketOrder> {
 		}
 		@Override
 		public Object getColumnValue(final MyMarketOrder from) {
-			return new YesNo(from.isOwned());
+			return YesNo.get(from.isOwned());
 		}
 	},
 	WalletDivision(Integer.class) {

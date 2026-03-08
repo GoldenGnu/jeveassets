@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2025 Contributors (see credits.txt)
+ * Copyright 2009-2026 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -81,6 +81,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.TableFormatFactory;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.HierarchyColumn;
+import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewTab;
 import net.nikr.eve.jeveasset.gui.tabs.tree.TreeTab.AssetTreeExpansionModel.ExpandedState;
 import net.nikr.eve.jeveasset.i18n.TabsAssets;
 import net.nikr.eve.jeveasset.i18n.TabsTree;
@@ -215,8 +216,8 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate {
 		jTable.setRowHeight(22);
 		jTable.addMouseListener(listener);
 		//Sorting
-		TableComparatorChooser<TreeAsset> tableComparatorChooser = TableComparatorChooser.install(jTable, emptySortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
-		tableComparatorChooser.addSortActionListener(new ListenerSorter());
+		TableComparatorChooser<TreeAsset> comparatorChooser = TableComparatorChooser.install(jTable, emptySortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
+		comparatorChooser.addSortActionListener(new ListenerSorter());
 		//Tree
 		TreeTableSupport install = TreeTableSupport.install(jTable, treeList, 0);
 		TreeTableCellEditor editor = new AssetTreeTableCellEditor(install.getDelegateEditor(), treeList, tableModel, INDENT, 6);
@@ -236,7 +237,7 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate {
 		//Table Filter
 		filterControl = new TreeFilterControl();
 		//Menu
-		installTableTool(new TreeTableMenu(), tableFormat, tableModel, jTable, filterControl, TreeAsset.class);
+		installTableTool(new TreeTableMenu(), tableFormat, comparatorChooser, tableModel, jTable, filterControl, TreeAsset.class);
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()
@@ -646,8 +647,11 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate {
 
 		@Override
 		protected void updateFilters() {
-			if (program != null && program.getOverviewTab() != null) {
-				program.getOverviewTab().updateFilters();
+			if (program != null) {
+				OverviewTab overviewTab = program.getOverviewTab(false);
+				if (overviewTab != null) {
+					overviewTab.updateFilters();
+				}
 			}
 		}
 

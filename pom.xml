@@ -5,7 +5,7 @@
 	<groupId>net.nikr</groupId>
 	<artifactId>jeveassets</artifactId>
 	<packaging>jar</packaging>
-	<version>8.0.4-SNAPSHOT</version>
+	<version>8.1.0</version>
 	<name>jeveassets</name>
 	<description>jEveAssets is an out-of-game asset manager for Eve-Online, written in Java</description>
 	<url>https://eve.nikr.net/jeveasset</url>
@@ -91,6 +91,9 @@
 					<source>${project.build.sourceVersion}</source>
 					<target>${project.build.sourceVersion}</target>
 					<encoding>${project.build.sourceEncoding}</encoding>
+				 <compilerArgs>
+				  <arg>-Xlint</arg>
+				 </compilerArgs>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -99,6 +102,7 @@
 				<version>2.5</version>
 				<configuration>
 					<encoding>${project.build.sourceEncoding}</encoding>
+					
 				</configuration>
 			</plugin>
 			<plugin>
@@ -147,15 +151,6 @@
 									<fileset dir="${project.build.directory}" includes="*.jar"/>
 									<fileset dir="${project.build.directory}" includes="*.txt"/>
 									<fileset dir="${project.build.directory}" includes="*jmemory.properties"/>
-								</copy>
-								<copy todir="${project.build.directory}/install/izpack">
-									<fileset dir="tools" includes="izpack-util.jar"/>
-								</copy>
-								<copy todir="${project.build.directory}/install/izpack">
-									<fileset dir="src/main/izpack" includes="ProcessPanel.Spec.xml"/>
-								</copy>
-								<copy todir="${project.build.directory}">
-									<fileset dir="${project.build.directory}/classes" includes="update_version.dat"/>
 								</copy>
 							</target>
 						</configuration>
@@ -334,7 +329,7 @@
 						</goals>
 						<configuration>
 							<fromDir>${project.build.directory}</fromDir>
-							<includes>*.txt,*.jar,*.md5,lib/*,*.dat,*.php,*.properties,.htaccess</includes>
+							<includes>*.txt,*.jar,*.md5,lib/*,*.dat,*.php,*.properties,.htaccess,*.update</includes>
 							<serverId>eve-nikr-net</serverId>
 							<url>sftp://${upload.url}</url>
 							<toDir>${upload.program.file}</toDir>
@@ -380,6 +375,7 @@
 							<autoIncludeDevelopers>true</autoIncludeDevelopers>
 							<finalName>installer</finalName>
 							<baseDir>${project.build.directory}/install</baseDir>
+							<installFile>${project.build.directory}/izpack/install.xml</installFile>
 						</configuration>
 					</execution>
 				</executions>
@@ -437,22 +433,33 @@
 		</extensions>
 		<resources>
 			<resource>
-				<directory>src/main/izpack</directory>
-				<filtering>true</filtering>
-			</resource>
-			<resource>
-				<directory>src/main/resources</directory>
-				<filtering>true</filtering>
-				<includes>
-					<include>**/update_version.dat</include>
-				</includes>
-			</resource>
-			<resource>
 				<directory>src/main/resources</directory>
 				<filtering>false</filtering>
+			</resource>
+			<resource>
+				<directory>tools/izpack</directory>
+				<filtering>false</filtering>
 				<excludes>
-					<exclude>**/update_version.dat</exclude>
+					<exclude>**/install.xml</exclude>
 				</excludes>
+				<targetPath>../install/izpack</targetPath>
+			</resource>
+			<resource>
+				<directory>tools/izpack</directory>
+				<filtering>true</filtering>
+				<includes>
+					<include>**/install.xml</include>
+				</includes>
+				<targetPath>../izpack</targetPath>
+			</resource>
+			<resource>
+				<directory>tools/update</directory>
+				<filtering>true</filtering>
+				<includes>
+					<include>**/github.update</include>
+					<include>**/update_version.dat</include>
+				</includes>
+				<targetPath>..</targetPath>
 			</resource>
 		</resources>
 	</build>
@@ -771,12 +778,12 @@
 		<dependency>
 			<groupId>net.troja.eve</groupId>
 			<artifactId>eve-esi</artifactId>
-			<version>6.0.1</version>
+			<version>7.0.0</version>
 		</dependency>
 		<dependency>
 			<groupId>uk.me.candle</groupId>
 			<artifactId>pricing</artifactId>
-			<version>3.1.1</version>
+			<version>3.1.2</version>
 		</dependency>
 		<dependency>
 			<groupId>uk.me.candle</groupId>

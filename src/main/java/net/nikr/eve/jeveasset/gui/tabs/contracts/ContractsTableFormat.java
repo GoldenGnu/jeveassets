@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2025 Contributors (see credits.txt)
+ * Copyright 2009-2026 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -311,7 +311,7 @@ public enum ContractsTableFormat implements EnumTableColumn<MyContractItem> {
 		}
 		@Override
 		public Object getColumnValue(final MyContractItem from) {
-			return new YesNo(from.getContract().isForCorp());
+			return YesNo.get(from.getContract().isForCorp());
 		}
 	},
 	ISSUER(String.class, true) {
@@ -365,7 +365,7 @@ public enum ContractsTableFormat implements EnumTableColumn<MyContractItem> {
 		}
 		@Override
 		public Object getColumnValue(final MyContractItem from) {
-			return new YesNo(from.getContract().isOwned());
+			return YesNo.get(from.getContract().isOwned());
 		}
 	},
 	START_STATION(String.class, true) {

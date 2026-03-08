@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2025 Contributors (see credits.txt)
+ * Copyright 2009-2026 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -22,8 +22,8 @@ package net.nikr.eve.jeveasset.data.api.raw;
 
 import java.util.ArrayList;
 import java.util.List;
-import net.nikr.eve.jeveasset.io.shared.RawConverter;
-import net.troja.eve.esi.model.Clone;
+import net.nikr.eve.jeveasset.io.shared.SafeConverter;
+import net.troja.eve.esi.model.JumpClone;
 
 
 public class RawClone {
@@ -31,6 +31,7 @@ public class RawClone {
 	private Long jumpCloneId;
 	private Long locationId;
 	private String name;
+	private boolean active;
 
 	public static RawClone create() {
 		return new RawClone();
@@ -43,20 +44,34 @@ public class RawClone {
 		this.jumpCloneId = rawClone.jumpCloneId;
 		this.locationId = rawClone.locationId;
 		this.name = rawClone.name;
+		this.active = rawClone.active;
 	}
 
-	public RawClone(Clone clone) {
-		this.implants = new ArrayList<>(clone.getImplants());
-		this.jumpCloneId = RawConverter.toLong(clone.getJumpCloneId());
+	/**
+	 * Jump Clone
+	 * @param clone 
+	 */
+	public RawClone(JumpClone clone) {
+		this.implants = SafeConverter.toInteger(clone.getImplants());
+		this.jumpCloneId = clone.getJumpCloneId();
 		this.locationId = clone.getLocationId();
 		this.name = clone.getName();
+		this.active = false;
 	}
 
-	public RawClone(List<Integer> implants, Long jumpCloneId, Long locationId) {
-		this.implants = new ArrayList<>(implants);
+
+	/**
+	 * Active Clone
+	 * @param implants
+	 * @param jumpCloneId
+	 * @param locationId 
+	 */
+	public RawClone(List<Long> implants, Long jumpCloneId, Long locationId) {
+		this.implants = SafeConverter.toInteger(implants);
 		this.jumpCloneId = jumpCloneId;
 		this.locationId = locationId;
 		this.name = null;
+		this.active = true;
 	}
 
 	public List<Integer> getImplants() {
@@ -89,5 +104,13 @@ public class RawClone {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public boolean isActive() {
+		return active;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
 	}
 }

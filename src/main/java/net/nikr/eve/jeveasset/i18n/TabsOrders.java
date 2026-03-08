@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2025 Contributors (see credits.txt)
+ * Copyright 2009-2026 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -41,6 +41,7 @@ public abstract class TabsOrders extends Bundle {
 	public abstract String columnOrderType();
 	public abstract String columnName();
 	public abstract String columnGroup();
+	public abstract String columnCategory();
 	public abstract String columnVolumeRemain();
 	public abstract String columnVolumeTotal();
 	public abstract String columnPrice();

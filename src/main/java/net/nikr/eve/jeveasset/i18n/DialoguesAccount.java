@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2025 Contributors (see credits.txt)
+ * Copyright 2009-2026 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -95,6 +95,8 @@ public abstract class DialoguesAccount extends Bundle {
 	public abstract String scopeDivisions();
 	public abstract String scopeSkills();
 	public abstract String scopeMining();
+	public abstract String scopeLoyaltyPoints();
+	public abstract String scopeNpcStanding();
 
 	public abstract String dialogueNameAccountManagement();
 
@@ -152,6 +154,8 @@ public abstract class DialoguesAccount extends Bundle {
 	public abstract String tableFormatOpenWindows();
 	public abstract String tableFormatAutopilot();
 	public abstract String tableFormatSkills();
+	public abstract String tableFormatLoyaltyPoints();
+	public abstract String tableFormatNpcStanding();
 	public abstract String tableFormatMining();
 	public abstract String tableFormatYes();
 	public abstract String tableFormatNo();

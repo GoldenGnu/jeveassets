@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2025 Contributors (see credits.txt)
+ * Copyright 2009-2026 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -40,6 +40,7 @@ import javax.swing.JMenu;
 import javax.swing.JPopupMenu;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JScrollPane;
+import javax.swing.Timer;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
 import net.nikr.eve.jeveasset.data.api.raw.RawIndustryJob.IndustryJobStatus;
@@ -71,6 +72,7 @@ public class IndustryJobsTab extends JMainTabPrimary {
 	private final JStatusLabel jCount;
 	private final JStatusLabel jInventionSuccess;
 	private final JStatusLabel jManufactureOutputValue;
+	private final Timer updateTimeLeftColumn;
 
 	//Table
 	private final EventList<MyIndustryJob> eventList;
@@ -86,6 +88,17 @@ public class IndustryJobsTab extends JMainTabPrimary {
 		super(program, NAME, TabsJobs.get().industry(), Images.TOOL_INDUSTRY_JOBS.getIcon(), true);
 
 		ListenerClass listener = new ListenerClass();
+
+	//StatusPanels must be initialized before the eventlist
+		jInventionSuccess = StatusPanel.createLabel(TabsJobs.get().inventionSuccess(), Images.JOBS_INVENTION_SUCCESS.getIcon(), AutoNumberFormat.PERCENT);
+		this.addStatusbarLabel(jInventionSuccess);
+
+		jManufactureOutputValue = StatusPanel.createLabel(TabsJobs.get().manufactureJobsValue(), Images.TOOL_VALUES.getIcon(), AutoNumberFormat.ISK);
+		this.addStatusbarLabel(jManufactureOutputValue);
+
+		jCount = StatusPanel.createLabel(TabsJobs.get().count(), Images.EDIT_ADD.getIcon(), AutoNumberFormat.ITEMS);
+		this.addStatusbarLabel(jCount);
+		
 		//Table Format
 		tableFormat = TableFormatFactory.industryJobTableFormat();
 		//Backend
@@ -107,7 +120,7 @@ public class IndustryJobsTab extends JMainTabPrimary {
 		jTable.setCellSelectionEnabled(true);
 		PaddingTableCellRenderer.install(jTable, 1);
 		//Sorting
-		TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
+		TableComparatorChooser<MyIndustryJob> comparatorChooser = TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
 		//Selection Model
 		selectionModel = EventModels.createSelectionModel(filterList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
@@ -119,16 +132,22 @@ public class IndustryJobsTab extends JMainTabPrimary {
 		//Table Filter
 		filterControl = new IndustryJobsFilterControl(sortedList);
 		//Menu
-		installTableTool(new JobsTableMenu(), tableFormat, tableModel, jTable, filterControl, MyIndustryJob.class);
+		installTableTool(new JobsTableMenu(), tableFormat, comparatorChooser, tableModel, jTable, filterControl, MyIndustryJob.class);
 
-		jInventionSuccess = StatusPanel.createLabel(TabsJobs.get().inventionSuccess(), Images.JOBS_INVENTION_SUCCESS.getIcon(), AutoNumberFormat.PERCENT);
-		this.addStatusbarLabel(jInventionSuccess);
-
-		jManufactureOutputValue = StatusPanel.createLabel(TabsJobs.get().manufactureJobsValue(), Images.TOOL_VALUES.getIcon(), AutoNumberFormat.ISK);
-		this.addStatusbarLabel(jManufactureOutputValue);
-
-		jCount = StatusPanel.createLabel(TabsJobs.get().count(), Images.EDIT_ADD.getIcon(), AutoNumberFormat.ITEMS);
-		this.addStatusbarLabel(jCount);
+		updateTimeLeftColumn = new Timer(1000, new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				for (int column = 0; column < jTable.getColumnCount(); column++) {
+					String columnName = (String) jTable.getTableHeader().getColumnModel().getColumn(column).getHeaderValue();
+					if (columnName.equals(IndustryJobTableFormat.TIME_LEFT.getColumnName())) {
+						for (int row = 0; row < jTable.getRowCount(); row++) {
+							tableModel.fireTableCellUpdated(row, column);
+						}
+						break;
+					}
+				}
+			}
+		});
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()
@@ -172,6 +191,14 @@ public class IndustryJobsTab extends JMainTabPrimary {
 			return null;
 		}
 		return tableModel.getElementAt(index);
+	}
+
+	public void tabChanged() {
+		if (program.getMainWindow().getSelectedTab().equals(this)) {
+			updateTimeLeftColumn.start();
+		} else {
+			updateTimeLeftColumn.stop();
+		}
 	}
 
 	private class JobsTableMenu implements TableMenu<MyIndustryJob> {

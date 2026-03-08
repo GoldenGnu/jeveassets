@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2025 Contributors (see credits.txt)
+ * Copyright 2009-2026 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -190,7 +190,7 @@ public class MaterialsTab extends JMainTabSecondary {
 		//Scroll
 		jTableScroll = new JScrollPane(jTable);
 		//Menu
-		installTableTool(new MaterialTableMenu(), tableFormat, tableModel, jTable, eventList, Material.class);
+		installTableTool(new MaterialTableMenu(), tableFormat, null, tableModel, jTable, eventList, Material.class);
 
 		exportDialog = new ExportDialog<>(program.getMainWindow().getFrame(), NAME, null, new MaterialsFilterControl(), tableFormat, eventList);
 

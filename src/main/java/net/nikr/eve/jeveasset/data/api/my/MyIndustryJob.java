@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2025 Contributors (see credits.txt)
+ * Copyright 2009-2026 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -20,6 +20,7 @@
  */
 package net.nikr.eve.jeveasset.data.api.my;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -34,6 +35,7 @@ import net.nikr.eve.jeveasset.data.settings.types.EditablePriceType;
 import net.nikr.eve.jeveasset.data.settings.types.EsiType;
 import net.nikr.eve.jeveasset.data.settings.types.ItemType;
 import net.nikr.eve.jeveasset.data.settings.types.OwnersType;
+import net.nikr.eve.jeveasset.gui.shared.table.containers.Duration;
 import net.nikr.eve.jeveasset.i18n.DataModelIndustryJob;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 
@@ -270,6 +272,24 @@ public class MyIndustryJob extends RawIndustryJob implements Comparable<MyIndust
 		}
 	}
 
+	public Duration getTimeLeft() {
+		if (getEndDate() == null) {
+			return Duration.NEVER;
+		}
+		Date now = Settings.getNow();
+		if (now.after(getEndDate())) {
+			return Duration.DONE;
+		}
+		long time = getEndDate().getTime() - now.getTime();
+		if (time <= 1000) { //less than 1 second
+			return new Duration("...");
+		} else if (time < (60 * 1000)) { //less than 1 minute
+			return new Duration(time, false, false, false, true);
+		} else {
+			return new Duration(time, true, true, true, false);
+		}
+	}
+
 	@Override
 	public Integer getTypeID() {
 		return getBlueprintTypeID();
@@ -404,8 +424,8 @@ public class MyIndustryJob extends RawIndustryJob implements Comparable<MyIndust
 		return outputCount;
 	}
 
-	public String getOutputType() {
-		return output.getTypeName();
+	public Item getOutputItem() {
+		return output;
 	}
 
 	public double getOutputVolume() {

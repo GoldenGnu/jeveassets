@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2025 Contributors (see credits.txt)
+ * Copyright 2009-2026 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -73,6 +73,10 @@ public class MainMenu extends JMenuBar {
 		CONTRACTS,
 		SLOTS,
 		SKILLS,
+		SKILLS_OVERVIEW,
+		LOYALTY_POINTS,
+		NPC_STANDING,
+		AGENTS,
 		MINING_ALL,
 		MINING_LOG,
 		MINING_GRAPH,
@@ -106,6 +110,7 @@ public class MainMenu extends JMenuBar {
 		menu = new JMenu(GuiFrame.get().tools());
 		menu.setMnemonic(KeyEvent.VK_T);
 		this.add(menu);
+
 	//ISK
 		submenu = new JMenu(GuiFrame.get().netWorth());
 		submenu.setIcon(Images.TOOL_VALUES.getIcon());
@@ -142,6 +147,7 @@ public class MainMenu extends JMenuBar {
 		menuItem.setActionCommand(MainMenuAction.PRICE_CHANGES.name());
 		menuItem.addActionListener(program);
 		submenu.add(menuItem);
+
 	//Invertory
 		submenu = new JMenu(GuiFrame.get().inventory()); //
 		submenu.setIcon(Images.TOOL_ASSETS.getIcon());
@@ -202,18 +208,19 @@ public class MainMenu extends JMenuBar {
 		menuItem.setActionCommand(MainMenuAction.EXTRACTIONS.name());
 		menuItem.addActionListener(program);
 		submenu.add(menuItem);
+
 	//Business
 		submenu = new JMenu(GuiFrame.get().business());
 		submenu.setIcon(Images.TOOL_JOURNAL.getIcon());
 		menu.add(submenu);
 
- 		menuItem = new JMenuItem(GuiFrame.get().journal());
+		menuItem = new JMenuItem(GuiFrame.get().journal());
 		menuItem.setIcon(Images.TOOL_JOURNAL.getIcon());
 		menuItem.setActionCommand(MainMenuAction.JOURNAL.name());
 		menuItem.addActionListener(program);
 		submenu.add(menuItem);
 
- 		menuItem = new JMenuItem(GuiFrame.get().transaction());
+		menuItem = new JMenuItem(GuiFrame.get().transaction());
 		menuItem.setIcon(Images.TOOL_TRANSACTION.getIcon());
 		menuItem.setActionCommand(MainMenuAction.TRANSACTION.name());
 		menuItem.addActionListener(program);
@@ -246,9 +253,39 @@ public class MainMenu extends JMenuBar {
 		menuItem.setActionCommand(MainMenuAction.SLOTS.name());
 		menuItem.addActionListener(program);
 		submenu.add(menuItem);
+
+	//Owners
+		submenu = new JMenu(GuiFrame.get().owners());
+		submenu.setIcon(Images.MISC_OWNERS.getIcon());
+		menu.add(submenu);
+		
+		menuItem = new JMenuItem(GuiFrame.get().skills());
+		menuItem.setIcon(Images.TOOL_SKILLS.getIcon());
+		menuItem.setActionCommand(MainMenuAction.SKILLS.name());
+		menuItem.addActionListener(program);
+		submenu.add(menuItem);
+
+		menuItem = new JMenuItem(GuiFrame.get().skillsOverview());
+		menuItem.setIcon(Images.TOOL_SKILLS.getIcon());
+		menuItem.setActionCommand(MainMenuAction.SKILLS_OVERVIEW.name());
+		menuItem.addActionListener(program);
+		submenu.add(menuItem);
+
+		menuItem = new JMenuItem(GuiFrame.get().loyaltyPoints());
+		menuItem.setIcon(Images.TOOL_LOYALTY_POINTS.getIcon());
+		menuItem.setActionCommand(MainMenuAction.LOYALTY_POINTS.name());
+		menuItem.addActionListener(program);
+		submenu.add(menuItem);
+
+		menuItem = new JMenuItem(GuiFrame.get().npcStanding());
+		menuItem.setIcon(Images.TOOL_NPC_STANDING.getIcon());
+		menuItem.setActionCommand(MainMenuAction.NPC_STANDING.name());
+		menuItem.addActionListener(program);
+		submenu.add(menuItem);
+
 	//Misc
 		submenu = new JMenu(GuiFrame.get().misc());
-		submenu.setIcon(Images.TOOL_ROUTING.getIcon());
+		submenu.setIcon(Images.MISC_MISC.getIcon());
 		menu.add(submenu);
 
 		menuItem = new JMenuItem(GuiFrame.get().routing());
@@ -275,12 +312,13 @@ public class MainMenu extends JMenuBar {
 		menuItem.addActionListener(program);
 		submenu.add(menuItem);
 
-		menuItem = new JMenuItem(GuiFrame.get().skills());
-		menuItem.setIcon(Images.TOOL_SKILLS.getIcon());
-		menuItem.setActionCommand(MainMenuAction.SKILLS.name());
+		menuItem = new JMenuItem(GuiFrame.get().agents());
+		menuItem.setIcon(Images.TOOL_AGENTS.getIcon());
+		menuItem.setActionCommand(MainMenuAction.AGENTS.name());
 		menuItem.addActionListener(program);
 		submenu.add(menuItem);
 
+	//Lock
 		menu.addSeparator();
 
 		checkBoxMenuItem = new JCheckBoxMenuItem(GuiFrame.get().lock());
@@ -331,7 +369,6 @@ public class MainMenu extends JMenuBar {
 		menuItem.setActionCommand(MainMenuAction.ACCOUNT_MANAGER.name());
 		menuItem.addActionListener(program);
 		menu.add(menuItem);
-
 
 		menuItem = new JMenuItem(GuiFrame.get().profiles());
 		menuItem.setIcon(Images.DIALOG_PROFILES.getIcon());

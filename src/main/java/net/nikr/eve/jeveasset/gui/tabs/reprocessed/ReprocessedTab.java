@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2025 Contributors (see credits.txt)
+ * Copyright 2009-2026 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -54,6 +54,7 @@ import net.nikr.eve.jeveasset.data.settings.types.LocationType;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.TextImport;
 import net.nikr.eve.jeveasset.gui.shared.TextImport.TextImportHandler;
+import net.nikr.eve.jeveasset.gui.shared.components.JAutoCompleteDialog;
 import net.nikr.eve.jeveasset.gui.shared.components.JFixedToolBar;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTabSecondary;
 import net.nikr.eve.jeveasset.gui.shared.components.JTextDialog;
@@ -88,7 +89,7 @@ public class ReprocessedTab extends JMainTabSecondary {
 	private final JSeparatorTable jTable;
 
 	//Dialogs
-	private final JReprocessedAddItemDialog jAddItemDialog;
+	private final JAutoCompleteDialog<Item> jAddItemDialog;
 	private final TextImport<TextImportType> textImport;
 
 	//Table
@@ -121,7 +122,7 @@ public class ReprocessedTab extends JMainTabSecondary {
 				reprocessableItems.add(item);
 			}
 		}
-		jAddItemDialog = new JReprocessedAddItemDialog(program);
+		jAddItemDialog = new JAutoCompleteDialog<>(program, TabsReprocessed.get().addItem(), Images.TOOL_REPROCESSED.getImage(), TabsReprocessed.get().selectItem(), true, JAutoCompleteDialog.ITEM_OPTIONS);
 		jAddItemDialog.updateData(reprocessableItems);
 
 		textImport = new TextImport<>(program, NAME);
@@ -178,12 +179,12 @@ public class ReprocessedTab extends JMainTabSecondary {
 		tableModel = EventModels.createTableModel(separatorList, tableFormat);
 		//Table
 		jTable = new JReprocessedTable(program, tableModel, separatorList);
-		jTable.setSeparatorRenderer(new ReprocessedSeparatorTableCell(program, jTable, separatorList, listener));
-		jTable.setSeparatorEditor(new ReprocessedSeparatorTableCell(program, jTable, separatorList, listener));
+		jTable.setSeparatorRenderer(new ReprocessedSeparatorTableCell(this, jTable, separatorList, listener));
+		jTable.setSeparatorEditor(new ReprocessedSeparatorTableCell(this, jTable, separatorList, listener));
 		jTable.setCellSelectionEnabled(true);
 		PaddingTableCellRenderer.install(jTable, 3);
 		//Sorting
-		TableComparatorChooser.install(jTable, sortedListColumn, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
+		TableComparatorChooser<ReprocessedInterface> comparatorChooser = TableComparatorChooser.install(jTable, sortedListColumn, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
 		//Selection Model
 		selectionModel = EventModels.createSelectionModel(separatorList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
@@ -195,7 +196,7 @@ public class ReprocessedTab extends JMainTabSecondary {
 		//Table Filter
 		filterControl = new ReprocessedFilterControl(sortedListTotal);
 		//Menu
-		installTableTool(new ReprocessedTableMenu(), tableFormat, tableModel, jTable, filterControl, ReprocessedInterface.class);
+		installTableTool(new ReprocessedTableMenu(), tableFormat, comparatorChooser, tableModel, jTable, filterControl, ReprocessedInterface.class);
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.TRAILING)

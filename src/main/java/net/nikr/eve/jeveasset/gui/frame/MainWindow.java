@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2025 Contributors (see credits.txt)
+ * Copyright 2009-2026 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -156,18 +156,46 @@ public class MainWindow {
 						));
 	}
 
+	public void addTab(final MainTabInit mainTabInit) {
+		if (jFrame.isVisible()) {
+			jLockWindow.show(GuiShared.get().updating(), new LockWorkerAdaptor() {
+				@Override
+				public void task() {
+
+				}
+
+				@Override
+				public void hidden() {
+					
+				}
+
+				@Override
+				public void gui() {
+					addTab(mainTabInit.init(), true, false);
+				}
+			});
+		} else {
+			addTab(mainTabInit.init(), true, false);
+		}
+	}
+
 	public void addTab(final JMainTab jMainTab) {
-		addTab(jMainTab, true);
+		addTab(jMainTab, true, true);
 	}
 
 	public void addTab(final JMainTab jMainTab, final boolean focus) {
+		addTab(jMainTab, focus, true);
+	}
+
+	public void addTab(final JMainTab jMainTab, final boolean focus, boolean lockWindow) {
 		if (!tabs.contains(jMainTab)) {
 			LOG.info("Opening tab: " + jMainTab.getTitle());
 			TextManager.installAll(jMainTab.getPanel());
+			jMainTab.loadCurrentSorting();
 			jMainTab.beforeUpdateData();
 			jMainTab.updateData();
 			jMainTab.afterUpdateData();
-			if (jFrame.isVisible()) {
+			if (lockWindow && jFrame.isVisible()) {
 				jLockWindow.show(GuiShared.get().updating(), new LockWorkerAdaptor() {
 					@Override
 					public void task() {
@@ -450,5 +478,11 @@ public class MainWindow {
 		private void updateCloseButton() {
 			jClose.setEnabled(isCloseable(jMainTab));
 		}
+	}
+
+	
+	@FunctionalInterface
+	public static interface MainTabInit {
+		public JMainTab init();
 	}
 }

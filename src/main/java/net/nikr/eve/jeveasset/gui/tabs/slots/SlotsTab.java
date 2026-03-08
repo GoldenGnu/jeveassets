@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2025 Contributors (see credits.txt)
+ * Copyright 2009-2026 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -160,7 +160,7 @@ public class SlotsTab extends JMainTabSecondary {
 		jTable.getTableHeader().setDefaultRenderer(iconHeaderRender);
 		PaddingTableCellRenderer.install(jTable, 3);
 		//Sorting
-		TableComparatorChooser.install(jTable, columnSortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
+		TableComparatorChooser<Slots> comparatorChooser = TableComparatorChooser.install(jTable, columnSortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
 		//Selection Model
 		selectionModel = EventModels.createSelectionModel(filterList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
@@ -172,7 +172,7 @@ public class SlotsTab extends JMainTabSecondary {
 		//Table Filter
 		filterControl = new SlotsFilterControl(totalSortedList);
 		//Menu
-		installTableTool(new SlotsTableMenu(), tableFormat, tableModel, jTable, filterControl, Slots.class);
+		installTableTool(new SlotsTableMenu(), tableFormat, comparatorChooser, tableModel, jTable, filterControl, Slots.class);
 
 		JFixedToolBar jToolBar = new JFixedToolBar();
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2025 Contributors (see credits.txt)
+ * Copyright 2009-2026 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -586,7 +586,7 @@ public enum TreeTableFormat implements EnumTableColumn<TreeAsset> {
 		}
 		@Override
 		public Object getColumnValue(final TreeAsset from) {
-			return new YesNo(from.getLocation().isCitadel());
+			return YesNo.get(from.getLocation().isCitadel());
 		}
 		@Override
 		public boolean isShowDefault() {

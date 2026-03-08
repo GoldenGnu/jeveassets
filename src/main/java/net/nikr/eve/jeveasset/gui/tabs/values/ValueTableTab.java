@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2025 Contributors (see credits.txt)
+ * Copyright 2009-2026 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -88,7 +88,7 @@ public class ValueTableTab extends JMainTabSecondary {
 		jSkillPointsFilters.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				program.getTrackerTab().showSkillPointsFilter();
+				program.getTrackerTab(true).showSkillPointsFilter();
 			}
 		});
 		jToolBar.addButton(jSkillPointsFilters);
@@ -118,7 +118,7 @@ public class ValueTableTab extends JMainTabSecondary {
 		jTable.setColumnSelectionAllowed(true);
 		PaddingTableCellRenderer.install(jTable, 3);
 		//Sorting
-		TableComparatorChooser.install(jTable, columnSortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
+		TableComparatorChooser<Value> comparatorChooser = TableComparatorChooser.install(jTable, columnSortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
 		//Selection Model
 		selectionModel = EventModels.createSelectionModel(filterList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
@@ -130,7 +130,7 @@ public class ValueTableTab extends JMainTabSecondary {
 		//Table Filter
 		filterControl = new ValueFilterControl(totalSortedList);
 		//Menu
-		installTableTool(new ValueTableMenu(), tableFormat, tableModel, jTable, filterControl, Value.class);
+		installTableTool(new ValueTableMenu(), tableFormat, comparatorChooser, tableModel, jTable, filterControl, Value.class);
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()

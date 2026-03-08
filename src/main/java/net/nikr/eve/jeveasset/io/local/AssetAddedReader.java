@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2025 Contributors (see credits.txt)
+ * Copyright 2009-2026 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -43,7 +43,7 @@ import org.slf4j.LoggerFactory;
 
 public class AssetAddedReader extends AbstractBackup {
 
-	private static final Logger LOG = LoggerFactory.getLogger(TrackerDataReader.class);
+	private static final Logger LOG = LoggerFactory.getLogger(AssetAddedReader.class);
 
 	public static void load() {
 		AssetAddedReader reader = new AssetAddedReader();

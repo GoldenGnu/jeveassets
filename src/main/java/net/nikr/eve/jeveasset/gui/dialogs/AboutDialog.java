@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2025 Contributors (see credits.txt)
+ * Copyright 2009-2026 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -58,7 +58,7 @@ public class AboutDialog extends JDialogCentered {
 
 		JEditorPane jProgram = createEditorPane(false,
 				"<div style=\"font-size: 30pt;\"><b>" + Program.PROGRAM_NAME + "</b></div>"
-				+ "Copyright &copy; 2009-2025 Contributors<br>"
+				+ "Copyright &copy; 2009-2026 Contributors<br>"
 				);
 
 		String s = Updater.getPackageMaintainers();
@@ -114,7 +114,9 @@ public class AboutDialog extends JDialogCentered {
 				+ "&nbsp;Boran Lordsworth<br>"
 				+ "&nbsp;Ed Thelleres<br>"
 				+ "&nbsp;Salartarium<br>"
+				+ "&nbsp;WildGear<br>"
 				+ "&nbsp;snipereagle1<br>"
+				+ "&nbsp;Ansirane Solette<br>"
 				+ "<br>"
 				+ "<b>Retired Testers</b><br>"
 				+ "&nbsp;Varo Jan<br>"

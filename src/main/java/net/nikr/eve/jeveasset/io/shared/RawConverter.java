@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2025 Contributors (see credits.txt)
+ * Copyright 2009-2026 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -32,8 +32,10 @@ import net.nikr.eve.jeveasset.data.api.raw.RawIndustryJob;
 import net.nikr.eve.jeveasset.data.api.raw.RawJournal;
 import net.nikr.eve.jeveasset.data.api.raw.RawJournalRefType;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder;
+import net.nikr.eve.jeveasset.data.api.raw.RawNpcStanding;
 import net.nikr.eve.jeveasset.data.sde.ItemFlag;
 import net.nikr.eve.jeveasset.data.sde.StaticData;
+import net.nikr.eve.jeveasset.i18n.GuiShared;
 import net.troja.eve.esi.model.CharacterAssetsResponse;
 import net.troja.eve.esi.model.CharacterBlueprintsResponse;
 import net.troja.eve.esi.model.CharacterContractsResponse;
@@ -41,8 +43,8 @@ import net.troja.eve.esi.model.CharacterIndustryJobsResponse;
 import net.troja.eve.esi.model.CharacterLocationResponse;
 import net.troja.eve.esi.model.CharacterOrdersHistoryResponse;
 import net.troja.eve.esi.model.CharacterOrdersResponse;
+import net.troja.eve.esi.model.StandingsResponse;
 import net.troja.eve.esi.model.CharacterWalletJournalResponse;
-import net.troja.eve.esi.model.Clone;
 import net.troja.eve.esi.model.CorporationAssetsResponse;
 import net.troja.eve.esi.model.CorporationBlueprintsResponse;
 import net.troja.eve.esi.model.CorporationContractsResponse;
@@ -50,8 +52,10 @@ import net.troja.eve.esi.model.CorporationIndustryJobsResponse;
 import net.troja.eve.esi.model.CorporationOrdersHistoryResponse;
 import net.troja.eve.esi.model.CorporationOrdersResponse;
 import net.troja.eve.esi.model.CorporationWalletJournalResponse;
-import net.troja.eve.esi.model.MarketOrdersResponse;
-import net.troja.eve.esi.model.MarketStructuresResponse;
+import net.troja.eve.esi.model.JumpClone;
+import net.troja.eve.esi.model.MarketRegionOrdersResponse;
+import net.troja.eve.esi.model.MarketStructureResponse;
+
 
 public class RawConverter {
 
@@ -136,6 +140,14 @@ public class RawConverter {
 		}
 	}
 
+	public static double toDouble(Double value, double nullValue) {
+		if (value != null) {
+			return value;
+		} else {
+			return nullValue;
+		}
+	}
+
 	public static Date toDate(OffsetDateTime dateTime) {
 		if (dateTime == null) {
 			return null;
@@ -161,17 +173,17 @@ public class RawConverter {
 
 	public static long toLocationID(CharacterLocationResponse shipLocation) {
 		if (shipLocation.getStationId() != null) {
-			return RawConverter.toLong(shipLocation.getStationId());
+			return shipLocation.getStationId();
 		} else if (shipLocation.getStructureId() != null) {
 			return shipLocation.getStructureId();
 		} else if (shipLocation.getSolarSystemId() != null) {
-			return RawConverter.toLong(shipLocation.getSolarSystemId());
+			return shipLocation.getSolarSystemId();
 		} else {
 			return 0; //Fallback
 		}
 	}
 
-	public static ItemFlag toFlag(Clone.LocationTypeEnum value) {
+	public static ItemFlag toFlag(JumpClone.LocationTypeEnum value) {
 		return toFlagEnum(value);
 	}
 
@@ -354,6 +366,79 @@ public class RawConverter {
 		}
 		try {
 			return RawContract.ContractType.valueOf(value.name());
+		} catch (IllegalArgumentException ex) {
+			return null;
+		}
+	}
+
+	public static RawNpcStanding.FromType toNpcStandingFromType(String valueEnum, String valueString) {
+		if (valueEnum != null) {
+			try {
+				return RawNpcStanding.FromType.valueOf(valueEnum);
+			} catch (IllegalArgumentException ex) {
+
+			}
+		}
+		if (valueString != null) {
+			for (RawNpcStanding.FromType value : RawNpcStanding.FromType.values()) {
+				if (value.getValue().equals(valueString)) {
+					return value;
+				}
+			}
+		}
+		return null;
+	}
+
+	public static RawNpcStanding.FromType toNpcStandingFromType(StandingsResponse.FromTypeEnum value) {
+		return toNpcStandingFromTypeEnum(value);
+	}
+
+	public static String toAgentDivision(Integer value) {
+		if (value == null) {
+			return null;
+		}
+		switch (value) {
+			case 18: return GuiShared.get().agentDivisionResearchAndDevelopment();
+			case 22: return GuiShared.get().agentDivisionDistribution();
+			case 23: return GuiShared.get().agentDivisionMining();
+			case 24: return GuiShared.get().agentDivisionSecurity();
+			case 25: return GuiShared.get().agentDivisionIndustrialistEntrepreneur();
+			case 26: return GuiShared.get().agentDivisionExplorer();
+			case 27: return GuiShared.get().agentDivisionIndustrialistProducer();
+			case 28: return GuiShared.get().agentDivisionEnforcer();
+			case 29: return GuiShared.get().agentDivisionSoldierOfFortune();
+			case 37: return GuiShared.get().agentDivisionInterBus();
+			default: return null;
+		}
+	}
+
+	public static String toAgentType(Integer value) {
+		if (value == null) {
+			return null;
+		}
+		switch (value) {
+			case 1: return GuiShared.get().agentTypeNonAgent();
+			case 2: return GuiShared.get().agentTypeBasicAgent();
+			case 3: return GuiShared.get().agentTypeTutorialAgent();
+			case 4: return GuiShared.get().agentTypeResearchAgent();
+			case 5: return GuiShared.get().agentTypeConcordAgent();
+			case 6: return GuiShared.get().agentTypeGenericStorylineMissionAgent();
+			case 7: return GuiShared.get().agentTypeStorylineMissionAgent();
+			case 8: return GuiShared.get().agentTypeEventMissionAgent();
+			case 9: return GuiShared.get().agentTypeFactionalWarfareAgent();
+			case 10: return GuiShared.get().agentTypeEpicArcAgent();
+			case 11: return GuiShared.get().agentTypeAuraAgent();
+			case 12: return GuiShared.get().agentTypeCareerAgent();
+			default: return null;
+		}
+	}
+
+	private static <E extends Enum<E>> RawNpcStanding.FromType toNpcStandingFromTypeEnum(E value) {
+		if (value == null) {
+			return null;
+		}
+		try {
+			return RawNpcStanding.FromType.valueOf(value.name());
 		} catch (IllegalArgumentException ex) {
 			return null;
 		}
@@ -629,11 +714,11 @@ public class RawConverter {
 		return toMarketOrderRangeEnum(value);
 	}
 
-	public static RawMarketOrder.MarketOrderRange toMarketOrderRange(MarketOrdersResponse.RangeEnum value) {
+	public static RawMarketOrder.MarketOrderRange toMarketOrderRange(MarketRegionOrdersResponse.RangeEnum value) {
 		return toMarketOrderRangeEnum(value);
 	}
 
-	public static RawMarketOrder.MarketOrderRange toMarketOrderRange(MarketStructuresResponse.RangeEnum value) {
+	public static RawMarketOrder.MarketOrderRange toMarketOrderRange(MarketStructureResponse.RangeEnum value) {
 		return toMarketOrderRangeEnum(value);
 	}
 

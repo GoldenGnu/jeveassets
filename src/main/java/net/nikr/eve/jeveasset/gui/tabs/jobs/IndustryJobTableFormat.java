@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2025 Contributors (see credits.txt)
+ * Copyright 2009-2026 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -25,6 +25,7 @@ import java.util.Comparator;
 import java.util.Date;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
+import net.nikr.eve.jeveasset.gui.shared.table.containers.Duration;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.YesNo;
 import net.nikr.eve.jeveasset.i18n.TabsJobs;
 
@@ -60,6 +61,16 @@ public enum IndustryJobTableFormat implements EnumTableColumn<MyIndustryJob> {
 			return from.getName();
 		}
 	},
+	GROUP(String.class) {
+		@Override
+		public String getColumnName() {
+			return TabsJobs.get().columnGroup();
+		}
+		@Override
+		public Object getColumnValue(final MyIndustryJob from) {
+			return from.getItem().getGroup();
+		}
+	},
 	OWNER(String.class) {
 		@Override
 		public String getColumnName() {
@@ -91,7 +102,7 @@ public enum IndustryJobTableFormat implements EnumTableColumn<MyIndustryJob> {
 		}
 		@Override
 		public Object getColumnValue(final MyIndustryJob from) {
-			return new YesNo(from.isOwned());
+			return YesNo.get(from.isOwned());
 		}
 	},
 	COMPLETED_CHARACTER(String.class) {
@@ -174,6 +185,16 @@ public enum IndustryJobTableFormat implements EnumTableColumn<MyIndustryJob> {
 			return from.getCompletedDate();
 		}
 	},
+	TIME_LEFT(Duration.class) {
+		@Override
+		public String getColumnName() {
+			return TabsJobs.get().columnTimeLeft();
+		}
+		@Override
+		public Object getColumnValue(final MyIndustryJob from) {
+			return from.getTimeLeft();
+		}
+	},
 	PAUSE_DATE(Date.class) {
 		@Override
 		public String getColumnName() {
@@ -235,7 +256,27 @@ public enum IndustryJobTableFormat implements EnumTableColumn<MyIndustryJob> {
 		}
 		@Override
 		public Object getColumnValue(final MyIndustryJob from) {
-			return from.getOutputType();
+			return from.getOutputItem().getTypeName();
+		}
+	},
+	OUTPUT_GROUP(String.class) {
+		@Override
+		public String getColumnName() {
+			return TabsJobs.get().columnOutputGroup();
+		}
+		@Override
+		public Object getColumnValue(final MyIndustryJob from) {
+			return from.getOutputItem().getGroup();
+		}
+	},
+	OUTPUT_CATEGORY(String.class) {
+		@Override
+		public String getColumnName() {
+			return TabsJobs.get().columnOutputCategory();
+		}
+		@Override
+		public Object getColumnValue(final MyIndustryJob from) {
+			return from.getOutputItem().getCategory();
 		}
 	},
 	BPO(String.class) {

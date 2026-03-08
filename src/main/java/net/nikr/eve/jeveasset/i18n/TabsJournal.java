@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2025 Contributors (see credits.txt)
+ * Copyright 2009-2026 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -48,8 +48,14 @@ public abstract class TabsJournal extends Bundle {
 	public abstract String contextTransactionID();
 	public abstract String contextTypeID();
 	public abstract String contracts();
+	public abstract String chart();
+	public abstract String chartTotal();
+	public abstract String chartTitle();
+	public abstract String close();
 	public abstract String findIn();
 	public abstract String industryJobs();
+	public abstract String noDataFound();
+	public abstract String rattingIncome();
 	public abstract String title();
 	public abstract String total();
 	public abstract String totalNegative();

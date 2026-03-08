@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2025 Contributors (see credits.txt)
+ * Copyright 2009-2026 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -43,6 +43,7 @@ import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.my.MyAsset;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.sde.Item;
+import net.nikr.eve.jeveasset.data.settings.types.CorporationType;
 import net.nikr.eve.jeveasset.data.settings.types.ItemType;
 import net.nikr.eve.jeveasset.data.settings.types.LocationType;
 import net.nikr.eve.jeveasset.data.settings.types.LocationsType;
@@ -51,7 +52,7 @@ import net.nikr.eve.jeveasset.data.settings.types.TagsType;
 import net.nikr.eve.jeveasset.gui.shared.components.JDropDownButton;
 import net.nikr.eve.jeveasset.gui.shared.table.ColumnManager;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
-import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
+import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.gui.tabs.tree.TreeAsset;
 
 
@@ -80,6 +81,7 @@ public class MenuManager<T extends Enum<T> & EnumTableColumn<Q>, Q> {
 	private boolean priceSupported = false;
 	private boolean itemSupported = false;
 	private boolean locationSupported = false;
+	private boolean corporationSupported = false;
 	private boolean jumpsSupported = false;
 	private boolean assets = false;
 	private boolean tree = false;
@@ -187,8 +189,9 @@ public class MenuManager<T extends Enum<T> & EnumTableColumn<Q>, Q> {
 		assets = MyAsset.class.equals(clazz);
 		tree = TreeAsset.class.equals(clazz);
 		transactions = MyTransaction.class.isAssignableFrom(clazz);
-		stockpile = Stockpile.StockpileItem.class.isAssignableFrom(clazz);
+		stockpile = StockpileItem.class.isAssignableFrom(clazz);
 		locationSupported = LocationType.class.isAssignableFrom(clazz) || LocationsType.class.isAssignableFrom(clazz);
+		corporationSupported = CorporationType.class.isAssignableFrom(clazz);
 		jumpsSupported = LocationType.class.isAssignableFrom(clazz);
 		itemSupported = ItemType.class.isAssignableFrom(clazz);
 		tagsSupported = TagsType.class.isAssignableFrom(clazz);
@@ -221,7 +224,7 @@ public class MenuManager<T extends Enum<T> & EnumTableColumn<Q>, Q> {
 			menus.put(MenuEnum.STOCKPILE, new JMenuStockpile<>(program));
 		}
 	//LOOKUP
-		if (itemSupported || locationSupported) {
+		if (itemSupported || locationSupported || corporationSupported) {
 			menus.put(MenuEnum.LOOKUP, new JMenuLookup<>(program));
 		}
 	//EDIT

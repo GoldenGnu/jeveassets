@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2025 Contributors (see credits.txt)
+ * Copyright 2009-2026 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -38,6 +38,7 @@ import java.util.Set;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JOptionPane;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
@@ -66,8 +67,11 @@ import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
 import net.nikr.eve.jeveasset.gui.shared.table.TableFormatFactory;
+import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractsTab;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractsTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJobTableFormat;
+import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJobsTab;
+import net.nikr.eve.jeveasset.gui.tabs.transaction.TransactionTab;
 import net.nikr.eve.jeveasset.gui.tabs.transaction.TransactionTableFormat;
 import net.nikr.eve.jeveasset.i18n.TabsJournal;
 
@@ -80,6 +84,8 @@ public class JournalTab extends JMainTabPrimary implements TagUpdate {
 
 	private final JAutoColumnTable jTable;
 	private final JButton jClearNew;
+	private final JButton jChart;
+	private final JournalChartDialog chartDialog;
 
 	//Table
 	private final JournalFilterControl filterControl;
@@ -96,6 +102,18 @@ public class JournalTab extends JMainTabPrimary implements TagUpdate {
 
 		ListenerClass listener = new ListenerClass();
 
+	//StatusPanels must be initialized before the eventlist
+		//Positive
+		jPositiveTotal = StatusPanel.createLabel(TabsJournal.get().totalPositive(), Images.ORDERS_SELL.getIcon(), JMenuInfo.AutoNumberFormat.ISK);
+		this.addStatusbarLabel(jPositiveTotal);
+
+		jBothTotal = StatusPanel.createLabel(TabsJournal.get().total(), Images.TOOL_TRANSACTION.getIcon(), JMenuInfo.AutoNumberFormat.ISK);
+		this.addStatusbarLabel(jBothTotal);
+
+		//Negative
+		jNegativeTotal = StatusPanel.createLabel(TabsJournal.get().totalNegative(), Images.ORDERS_BUY.getIcon(), JMenuInfo.AutoNumberFormat.ISK);
+		this.addStatusbarLabel(jNegativeTotal);
+
 		JFixedToolBar jToolBar = new JFixedToolBar();
 
 		jClearNew = new JButton(TabsJournal.get().clearNew(), Images.UPDATE_DONE_OK.getIcon());
@@ -109,6 +127,15 @@ public class JournalTab extends JMainTabPrimary implements TagUpdate {
 			}
 		});
 		jToolBar.addButton(jClearNew);
+
+		jChart = new JButton(TabsJournal.get().chart(), Images.TOOL_MINING_GRAPH.getIcon());
+		jChart.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				showChart();
+			}
+		});
+		jToolBar.addButton(jChart);
 
 		//Table Format
 		tableFormat = TableFormatFactory.journalTableFormat();
@@ -130,7 +157,7 @@ public class JournalTab extends JMainTabPrimary implements TagUpdate {
 		jTable.setCellSelectionEnabled(true);
 		PaddingTableCellRenderer.install(jTable, 1);
 		//Sorting
-		TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
+		TableComparatorChooser<MyJournal> comparatorChooser = TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
 		//Selection Model
 		selectionModel = EventModels.createSelectionModel(filterList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
@@ -142,18 +169,8 @@ public class JournalTab extends JMainTabPrimary implements TagUpdate {
 		//Table Filter
 		filterControl = new JournalFilterControl(sortedList);
 		//Menu
-		installTableTool(new JournalTableMenu(), tableFormat, tableModel, jTable, filterControl, MyJournal.class);
-
-		//Positive
-		jPositiveTotal = StatusPanel.createLabel(TabsJournal.get().totalPositive(), Images.ORDERS_SELL.getIcon(), JMenuInfo.AutoNumberFormat.ISK);
-		this.addStatusbarLabel(jPositiveTotal);
-
-		jBothTotal = StatusPanel.createLabel(TabsJournal.get().total(), Images.TOOL_TRANSACTION.getIcon(), JMenuInfo.AutoNumberFormat.ISK);
-		this.addStatusbarLabel(jBothTotal);
-
-		//Negative
-		jNegativeTotal = StatusPanel.createLabel(TabsJournal.get().totalNegative(), Images.ORDERS_BUY.getIcon(), JMenuInfo.AutoNumberFormat.ISK);
-		this.addStatusbarLabel(jNegativeTotal);
+		installTableTool(new JournalTableMenu(), tableFormat, comparatorChooser, tableModel, jTable, filterControl, MyJournal.class);
+		chartDialog = new JournalChartDialog(program);
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()
@@ -167,6 +184,21 @@ public class JournalTab extends JMainTabPrimary implements TagUpdate {
 				.addComponent(jToolBar, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
 				.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
 		);
+	}
+
+	private void showChart() {
+		List<MyJournal> journals = new ArrayList<>();
+		filterList.getReadWriteLock().readLock().lock();
+		try {
+			journals.addAll(filterList);
+		} finally {
+			filterList.getReadWriteLock().readLock().unlock();
+		}
+		if (journals.isEmpty()) {
+			JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsJournal.get().noDataFound(), TabsJournal.get().chartTitle(), JOptionPane.PLAIN_MESSAGE);
+			return;
+		}
+		chartDialog.showChart(journals);
 	}
 
 	@Override
@@ -263,8 +295,9 @@ public class JournalTab extends JMainTabPrimary implements TagUpdate {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					List<Filter> filters = JMenuAssetFilter.getFilters(contractIDs, ContractsTableFormat.CONTRACT_ID, CompareType.EQUALS);
-					program.getContractsTab().addFilters(filters);
-					program.getMainWindow().addTab(program.getContractsTab());
+					ContractsTab contractsTab = program.getContractsTab(true);
+					contractsTab.addFilters(filters);
+					program.getMainWindow().addTab(contractsTab);
 				}
 			});
 			jJournal.add(jContracts);
@@ -275,8 +308,9 @@ public class JournalTab extends JMainTabPrimary implements TagUpdate {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					List<Filter> filters = JMenuAssetFilter.getFilters(industryJobIDs, IndustryJobTableFormat.JOB_ID, CompareType.EQUALS);
-					program.getIndustryJobsTab().addFilters(filters);
-					program.getMainWindow().addTab(program.getIndustryJobsTab());
+					IndustryJobsTab industryJobsTab = program.getIndustryJobsTab(true);
+					industryJobsTab.addFilters(filters);
+					program.getMainWindow().addTab(industryJobsTab);
 				}
 			});
 			jJournal.add(jIndustryJobs);
@@ -287,8 +321,9 @@ public class JournalTab extends JMainTabPrimary implements TagUpdate {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					List<Filter> filters = JMenuAssetFilter.getFilters(transactionIDs, TransactionTableFormat.TRANSACTION_ID, CompareType.EQUALS);
-					program.getTransactionsTab().addFilters(filters);
-					program.getMainWindow().addTab(program.getTransactionsTab());
+					TransactionTab transactionsTab = program.getTransactionsTab(true);
+					transactionsTab.addFilters(filters);
+					program.getMainWindow().addTab(transactionsTab);
 				}
 			});
 			jJournal.add(jTransactions);

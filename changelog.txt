@@ -16,6 +16,55 @@
                   #### #  # #  # #  # #### #### #### #### ####
 
 ________________________________________________________________________________
+_8.1.0__________________________________________________________________________
+
+New Features:
+-Added tree map to the assets and overview tools (by Ansirane Solette)
+-Add journal presets and chart (by Ansirane Solette)
+-Added new loyalty points tool (issue #48)
+-Added new npc standing tool (characters and corporations)
+-Added new skill plans tool with import functionality (by WildGear)
+-Added new agents tool
+-Added shopping list button to the group bar in the table
+-Allow adding multiple filters from the same column at once
+-Save current sorting
+-Added jump clones to assets (issue #39)
+-Added clones group in the location tree
+-Added avoid filters to the jump columns
+-Added eve market browser to the lookup menu
+-Added jita space to the lookup menu
+-Added eveconomy to the lookup menu
+-Added Quantum Anomaly loyalty points store to the lookup menu
+-Added time left column to the industry jobs tool
+-Added option to open eve gatecamp check when setting in-game route
+-Lazy initialization of tools (optional, on by default)
+
+Changed:
+-Use " to escape SQL identifiers (instead of `)
+-Save html and sql text files as UTF-8
+-Removed lazy blacksmith from the lookup menu
+
+Bug Fixes:
+-Refresh token can be null (after character transfers) (issue #570)
+-Workaround for esi contract items rate limit
+-AssetsToolSettingsPanel always trigger full update
+-Repaint filter panel on color scheme changes
+-Mining export never worked
+-Unable to load column filter in the reprocessed and price changes tools
+-Fixed duplicates in skills
+-Routing start system didn't work with stations
+-EditableListModel had bad logic
+-Adding subpiles didn't update the stockpile items
+-Stockpile zero of zero shows red (issue #553)
+-Slots statusbar manufacturing max had the wrong tooltip
+-SQL export should use NULL for null values (issue #558)
+
+Code:
+-Updated eve-esi library to version 7.0.0 (2025-09-30)
+-Updated pricing library to version 3.1.2 (updated janice locations)
+
+
+________________________________________________________________________________
 _8.0.3__________________________________________________________________________
 
 New Features:

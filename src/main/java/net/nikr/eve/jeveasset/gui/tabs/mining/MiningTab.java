@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2025 Contributors (see credits.txt)
+ * Copyright 2009-2026 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -79,6 +79,22 @@ public class MiningTab extends JMainTabPrimary {
 
 		ListenerClass listener = new ListenerClass();
 
+	//StatusPanels must be initialized before the eventlist
+		jVolume = StatusPanel.createLabel(TabsMining.get().totalVolume(), Images.ASSETS_VOLUME.getIcon(), AutoNumberFormat.DOUBLE);
+		this.addStatusbarLabel(jVolume);
+
+		jCount = StatusPanel.createLabel(TabsMining.get().totalCount(), Images.EDIT_ADD.getIcon(), AutoNumberFormat.ITEMS);
+		this.addStatusbarLabel(jCount);
+
+		jAverage = StatusPanel.createLabel(TabsMining.get().average(), Images.ASSETS_AVERAGE.getIcon(), AutoNumberFormat.ISK);
+		this.addStatusbarLabel(jAverage);
+
+		jReprocessed = StatusPanel.createLabel(TabsMining.get().totalReprocessed(), Images.SETTINGS_REPROCESSING.getIcon(), AutoNumberFormat.ISK);
+		this.addStatusbarLabel(jReprocessed);
+
+		jValue = StatusPanel.createLabel(TabsMining.get().totalValue(), Images.TOOL_VALUES.getIcon(), AutoNumberFormat.ISK);
+		this.addStatusbarLabel(jValue);
+
 		//Table Format
 		tableFormat = TableFormatFactory.miningTableFormat();
 		//Backend
@@ -101,7 +117,7 @@ public class MiningTab extends JMainTabPrimary {
 		jTable.setRowSelectionAllowed(true);
 		jTable.setColumnSelectionAllowed(true);
 		//Sorting
-		TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
+		TableComparatorChooser<MyMining> comparatorChooser = TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
 		//Selection Model
 		selectionModel = EventModels.createSelectionModel(filterList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
@@ -114,22 +130,7 @@ public class MiningTab extends JMainTabPrimary {
 		//Table Filter
 		filterControl = new MiningFilterControl(sortedList);
 		//Menu
-		installTableTool(new MiningTableMenu(), tableFormat, tableModel, jTable, filterControl, MyMining.class);
-
-		jVolume = StatusPanel.createLabel(TabsMining.get().totalVolume(), Images.ASSETS_VOLUME.getIcon(), AutoNumberFormat.DOUBLE);
-		this.addStatusbarLabel(jVolume);
-
-		jCount = StatusPanel.createLabel(TabsMining.get().totalCount(), Images.EDIT_ADD.getIcon(), AutoNumberFormat.ITEMS);
-		this.addStatusbarLabel(jCount);
-
-		jAverage = StatusPanel.createLabel(TabsMining.get().average(), Images.ASSETS_AVERAGE.getIcon(), AutoNumberFormat.ISK);
-		this.addStatusbarLabel(jAverage);
-
-		jReprocessed = StatusPanel.createLabel(TabsMining.get().totalReprocessed(), Images.SETTINGS_REPROCESSING.getIcon(), AutoNumberFormat.ISK);
-		this.addStatusbarLabel(jReprocessed);
-
-		jValue = StatusPanel.createLabel(TabsMining.get().totalValue(), Images.TOOL_VALUES.getIcon(), AutoNumberFormat.ISK);
-		this.addStatusbarLabel(jValue);
+		installTableTool(new MiningTableMenu(), tableFormat, comparatorChooser, tableModel, jTable, filterControl, MyMining.class);
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()

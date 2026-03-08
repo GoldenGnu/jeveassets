@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2025 Contributors (see credits.txt)
+ * Copyright 2009-2026 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -24,6 +24,7 @@ import java.util.Date;
 import java.util.List;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
+import net.nikr.eve.jeveasset.io.shared.SafeConverter;
 import net.troja.eve.esi.ApiException;
 import net.troja.eve.esi.ApiResponse;
 import net.troja.eve.esi.model.CharacterRolesResponse.RolesEnum;
@@ -48,7 +49,8 @@ public class EsiJournalGetter extends AbstractEsiGetter {
 				List<CorporationWalletJournalResponse> journals = updatePages(DEFAULT_RETRIES, new EsiPagesHandler<CorporationWalletJournalResponse>() {
 					@Override
 					public ApiResponse<List<CorporationWalletJournalResponse>> get(Integer page) throws ApiException {
-						return getWalletApiAuth().getCorporationsCorporationIdWalletsDivisionJournalWithHttpInfo((int) owner.getOwnerID(), division, DATASOURCE, null, page, null);
+						//((int) , division, DATASOURCE, null, page, null);
+						return getWalletApiAuth().getCorporationWalletJournalWithHttpInfo(owner.getOwnerID(), SafeConverter.toLong(division), COMPATIBILITY_DATE, page, null, null, null);
 					}
 				});
 				int fixedDivision = division + 999;
@@ -58,7 +60,7 @@ public class EsiJournalGetter extends AbstractEsiGetter {
 			List<CharacterWalletJournalResponse> journals = updatePages(DEFAULT_RETRIES, new EsiPagesHandler<CharacterWalletJournalResponse>() {
 				@Override
 				public ApiResponse<List<CharacterWalletJournalResponse>> get(Integer page) throws ApiException {
-					return getWalletApiAuth().getCharactersCharacterIdWalletJournalWithHttpInfo((int) owner.getOwnerID(), DATASOURCE, null, page, null);
+					return getWalletApiAuth().getCharacterWalletJournalWithHttpInfo(owner.getOwnerID(), COMPATIBILITY_DATE, page, null, null, null);
 				}
 			});
 			owner.setJournal(EsiConverter.toJournals(journals, owner, 1000, saveHistory));

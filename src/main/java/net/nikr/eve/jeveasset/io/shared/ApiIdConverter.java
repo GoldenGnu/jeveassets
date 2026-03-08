@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2025 Contributors (see credits.txt)
+ * Copyright 2009-2026 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -41,10 +41,12 @@ import static net.nikr.eve.jeveasset.data.api.raw.RawJournal.ContextType.STATION
 import static net.nikr.eve.jeveasset.data.api.raw.RawJournal.ContextType.STRUCTURE_ID;
 import static net.nikr.eve.jeveasset.data.api.raw.RawJournal.ContextType.SYSTEM_ID;
 import static net.nikr.eve.jeveasset.data.api.raw.RawJournal.ContextType.TYPE_ID;
+import net.nikr.eve.jeveasset.data.sde.Agent;
 import net.nikr.eve.jeveasset.data.sde.IndustryMaterial;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.ItemFlag;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
+import net.nikr.eve.jeveasset.data.sde.NpcCorporation;
 import net.nikr.eve.jeveasset.data.sde.ReprocessedMaterial;
 import net.nikr.eve.jeveasset.data.sde.StaticData;
 import net.nikr.eve.jeveasset.data.settings.Citadel;
@@ -67,6 +69,7 @@ import net.nikr.eve.jeveasset.io.online.CitadelGetter;
 import net.troja.eve.esi.model.MoonResponse;
 import net.troja.eve.esi.model.PlanetResponse;
 import net.troja.eve.esi.model.StructureResponse;
+
 
 public final class ApiIdConverter {
 
@@ -567,6 +570,22 @@ public final class ApiIdConverter {
 		} else {
 			return getOwnerName(Long.valueOf(ownerID));
 		}
+	}
+
+	public static Agent getAgent(final Integer agentID) {
+		Agent agent = StaticData.get().getAgents().get(agentID);
+		if (agent == null) {
+			agent = new Agent(agentID);
+		}
+		return agent;
+	}
+
+	public static NpcCorporation getNpcCorporation(final Integer corporationID) {
+		NpcCorporation npcCorporation = StaticData.get().getNpcCorporations().get(corporationID);
+		if (npcCorporation == null) {
+			npcCorporation = new NpcCorporation(corporationID);
+		}
+		return npcCorporation;
 	}
 
 	public static String getOwnerName(final Long ownerID) {

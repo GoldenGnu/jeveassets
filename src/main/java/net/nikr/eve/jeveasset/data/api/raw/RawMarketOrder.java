@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2025 Contributors (see credits.txt)
+ * Copyright 2009-2026 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -26,10 +26,12 @@ import java.util.Set;
 import java.util.TreeSet;
 import net.nikr.eve.jeveasset.i18n.TabsOrders;
 import net.nikr.eve.jeveasset.io.shared.RawConverter;
+import net.nikr.eve.jeveasset.io.shared.SafeConverter;
 import net.troja.eve.esi.model.CharacterOrdersHistoryResponse;
 import net.troja.eve.esi.model.CharacterOrdersResponse;
 import net.troja.eve.esi.model.CorporationOrdersHistoryResponse;
 import net.troja.eve.esi.model.CorporationOrdersResponse;
+
 
 public class RawMarketOrder {
 
@@ -165,7 +167,7 @@ public class RawMarketOrder {
 	 */
 	public RawMarketOrder(CharacterOrdersResponse marketOrder) {
 		walletDivision = 1;
-		duration = marketOrder.getDuration();
+		duration = SafeConverter.toInteger(marketOrder.getDuration());
 		escrow = RawConverter.toDouble(marketOrder.getEscrow(), 0);
 		isBuyOrder = RawConverter.toBoolean(marketOrder.getIsBuyOrder());
 		isCorp = marketOrder.getIsCorporation();
@@ -177,12 +179,12 @@ public class RawMarketOrder {
 		price = marketOrder.getPrice();
 		range = marketOrder.getRangeString();
 		rangeEnum = RawConverter.toMarketOrderRange(marketOrder.getRange());
-		regionId = marketOrder.getRegionId();
+		regionId = SafeConverter.toInteger(marketOrder.getRegionId());
 		state = MarketOrderState.OPEN.getValue();
 		stateEnum = MarketOrderState.OPEN;
-		typeId = marketOrder.getTypeId();
-		volumeRemain = marketOrder.getVolumeRemain();
-		volumeTotal = marketOrder.getVolumeTotal();
+		typeId = SafeConverter.toInteger(marketOrder.getTypeId());
+		volumeRemain = SafeConverter.toInteger(marketOrder.getVolumeRemain());
+		volumeTotal = SafeConverter.toInteger(marketOrder.getVolumeTotal());
 		changes.add(new Change(this));
 	}
 
@@ -193,7 +195,7 @@ public class RawMarketOrder {
 	 */
 	public RawMarketOrder(CharacterOrdersHistoryResponse marketOrder) {
 		walletDivision = 1;
-		duration = marketOrder.getDuration();
+		duration = SafeConverter.toInteger(marketOrder.getDuration());
 		escrow = RawConverter.toDouble(marketOrder.getEscrow(), 0);
 		isBuyOrder = RawConverter.toBoolean(marketOrder.getIsBuyOrder());
 		isCorp = marketOrder.getIsCorporation();
@@ -205,12 +207,12 @@ public class RawMarketOrder {
 		price = marketOrder.getPrice();
 		range = marketOrder.getRangeString();
 		rangeEnum = RawConverter.toMarketOrderRange(marketOrder.getRange());
-		regionId = marketOrder.getRegionId();
+		regionId = SafeConverter.toInteger(marketOrder.getRegionId());
 		state = marketOrder.getStateString();
 		stateEnum = RawConverter.toMarketOrderState(marketOrder.getState());
-		typeId = marketOrder.getTypeId();
-		volumeRemain = marketOrder.getVolumeRemain();
-		volumeTotal = marketOrder.getVolumeTotal();
+		typeId = SafeConverter.toInteger(marketOrder.getTypeId());
+		volumeRemain = SafeConverter.toInteger(marketOrder.getVolumeRemain());
+		volumeTotal = SafeConverter.toInteger(marketOrder.getVolumeTotal());
 		changes.add(new Change(this));
 	}
 
@@ -220,25 +222,25 @@ public class RawMarketOrder {
 	 * @param marketOrder
 	 */
 	public RawMarketOrder(CorporationOrdersResponse marketOrder) {
-		walletDivision = marketOrder.getWalletDivision();
-		duration = marketOrder.getDuration();
+		walletDivision = SafeConverter.toInteger(marketOrder.getWalletDivision());
+		duration = SafeConverter.toInteger(marketOrder.getDuration());
 		escrow = RawConverter.toDouble(marketOrder.getEscrow(), 0);
 		isBuyOrder = RawConverter.toBoolean(marketOrder.getIsBuyOrder());
 		isCorp = true;
 		issued = RawConverter.toDate(marketOrder.getIssued());
-		issuedBy = marketOrder.getIssuedBy();
+		issuedBy = SafeConverter.toInteger(marketOrder.getIssuedBy());
 		locationId = marketOrder.getLocationId();
 		minVolume = RawConverter.toInteger(marketOrder.getMinVolume(), 0);
 		orderId = marketOrder.getOrderId();
 		price = marketOrder.getPrice();
 		range = marketOrder.getRangeString();
 		rangeEnum = RawConverter.toMarketOrderRange(marketOrder.getRange());
-		regionId = marketOrder.getRegionId();
+		regionId = SafeConverter.toInteger(marketOrder.getRegionId());
 		state = MarketOrderState.OPEN.getValue();
 		stateEnum = MarketOrderState.OPEN;
-		typeId = marketOrder.getTypeId();
-		volumeRemain = marketOrder.getVolumeRemain();
-		volumeTotal = marketOrder.getVolumeTotal();
+		typeId = SafeConverter.toInteger(marketOrder.getTypeId());
+		volumeRemain = SafeConverter.toInteger(marketOrder.getVolumeRemain());
+		volumeTotal = SafeConverter.toInteger(marketOrder.getVolumeTotal());
 		changes.add(new Change(this));
 	}
 
@@ -248,25 +250,25 @@ public class RawMarketOrder {
 	 * @param marketOrder
 	 */
 	public RawMarketOrder(CorporationOrdersHistoryResponse marketOrder) {
-		walletDivision = marketOrder.getWalletDivision();
-		duration = marketOrder.getDuration();
+		walletDivision = SafeConverter.toInteger(marketOrder.getWalletDivision());
+		duration = SafeConverter.toInteger(marketOrder.getDuration());
 		escrow = RawConverter.toDouble(marketOrder.getEscrow(), 0);
 		isBuyOrder = RawConverter.toBoolean(marketOrder.getIsBuyOrder());
 		isCorp = true;
 		issued = RawConverter.toDate(marketOrder.getIssued());
-		issuedBy = marketOrder.getIssuedBy();
+		issuedBy = SafeConverter.toInteger(marketOrder.getIssuedBy());
 		locationId = marketOrder.getLocationId();
 		minVolume = RawConverter.toInteger(marketOrder.getMinVolume(), 0);
 		orderId = marketOrder.getOrderId();
 		price = marketOrder.getPrice();
 		range = marketOrder.getRangeString();
 		rangeEnum = RawConverter.toMarketOrderRange(marketOrder.getRange());
-		regionId = marketOrder.getRegionId();
+		regionId = SafeConverter.toInteger(marketOrder.getRegionId());
 		state = marketOrder.getStateString();
 		stateEnum = RawConverter.toMarketOrderState(marketOrder.getState());
-		typeId = marketOrder.getTypeId();
-		volumeRemain = marketOrder.getVolumeRemain();
-		volumeTotal = marketOrder.getVolumeTotal();
+		typeId = SafeConverter.toInteger(marketOrder.getTypeId());
+		volumeRemain = SafeConverter.toInteger(marketOrder.getVolumeRemain());
+		volumeTotal = SafeConverter.toInteger(marketOrder.getVolumeTotal());
 		changes.add(new Change(this));
 	}
 

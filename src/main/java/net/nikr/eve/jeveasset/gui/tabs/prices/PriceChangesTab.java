@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2025 Contributors (see credits.txt)
+ * Copyright 2009-2026 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -194,7 +194,7 @@ public class PriceChangesTab extends JMainTabSecondary {
 		jTable.setRowSelectionAllowed(true);
 		jTable.setColumnSelectionAllowed(true);
 		//Sorting
-		TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
+		TableComparatorChooser<PriceChange> comparatorChooser = TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
 		//Selection Model
 		selectionModel = EventModels.createSelectionModel(filterList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
@@ -207,7 +207,7 @@ public class PriceChangesTab extends JMainTabSecondary {
 		//Table Filter
 		filterControl = new PriceChangeFilterControl(sortedList);
 		//Menu
-		installTableTool(new PriceChangeTableMenu(), tableFormat, tableModel, jTable, filterControl, PriceChange.class);
+		installTableTool(new PriceChangeTableMenu(), tableFormat, comparatorChooser, tableModel, jTable, filterControl, PriceChange.class);
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()

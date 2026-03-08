@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2025 Contributors (see credits.txt)
+ * Copyright 2009-2026 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -95,54 +95,7 @@ public class TransactionTab extends JMainTabPrimary implements TagUpdate {
 
 		ListenerClass listener = new ListenerClass();
 
-		JFixedToolBar jToolBar = new JFixedToolBar();
-
-		jClearNew = new JButton(TabsTransaction.get().clearNew(), Images.UPDATE_DONE_OK.getIcon());
-		jClearNew.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				Settings.get().getTableChanged().put(NAME, new Date());
-				jTable.repaint();
-				jClearNew.setEnabled(false);
-				program.saveSettings("Table Changed (transaction cleared)");
-			}
-		});
-		jToolBar.addButton(jClearNew);
-
-		//Table Format
-		tableFormat = TableFormatFactory.transactionTableFormat();
-		//Backend
-		eventList = program.getProfileData().getTransactionsEventList();
-		//Sorting (per column)
-		eventList.getReadWriteLock().readLock().lock();
-		SortedList<MyTransaction> sortedList = new SortedList<>(eventList);
-		eventList.getReadWriteLock().readLock().unlock();
-		//Filter
-		eventList.getReadWriteLock().readLock().lock();
-		filterList = new FilterList<>(sortedList);
-		eventList.getReadWriteLock().readLock().unlock();
-		filterList.addListEventListener(listener);
-		//Table Model
-		tableModel = EventModels.createTableModel(filterList, tableFormat);
-		//Table
-		jTable = new JTransactionTable(program, tableModel);
-		jTable.setCellSelectionEnabled(true);
-		PaddingTableCellRenderer.install(jTable, 1);
-		//Sorting
-		TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
-		//Selection Model
-		selectionModel = EventModels.createSelectionModel(filterList);
-		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
-		jTable.setSelectionModel(selectionModel);
-		//Listeners
-		installTable(jTable);
-		//Scroll Panels
-		JScrollPane jTableScroll = new JScrollPane(jTable);
-		//Table Filter
-		filterControl = new TransactionsFilterControl(sortedList);
-		//Menu
-		installTableTool(new TransactionTableMenu(), tableFormat, tableModel, jTable, filterControl, MyTransaction.class);
-
+	//StatusPanels must be initialized before the eventlist
 		//Sell
 		JLabel jSellOrders = StatusPanel.createIcon(Images.ORDERS_SELL.getIcon(), TabsTransaction.get().sellTitle());
 		this.addStatusbarLabel(jSellOrders);
@@ -181,6 +134,54 @@ public class TransactionTab extends JMainTabPrimary implements TagUpdate {
 
 		jBuyOrdersAverage = StatusPanel.createLabel(TabsTransaction.get().buyAvg(), Images.ASSETS_AVERAGE.getIcon(), AutoNumberFormat.ISK);
 		this.addStatusbarLabel(jBuyOrdersAverage);
+
+		JFixedToolBar jToolBar = new JFixedToolBar();
+
+		jClearNew = new JButton(TabsTransaction.get().clearNew(), Images.UPDATE_DONE_OK.getIcon());
+		jClearNew.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Settings.get().getTableChanged().put(NAME, new Date());
+				jTable.repaint();
+				jClearNew.setEnabled(false);
+				program.saveSettings("Table Changed (transaction cleared)");
+			}
+		});
+		jToolBar.addButton(jClearNew);
+
+		//Table Format
+		tableFormat = TableFormatFactory.transactionTableFormat();
+		//Backend
+		eventList = program.getProfileData().getTransactionsEventList();
+		//Sorting (per column)
+		eventList.getReadWriteLock().readLock().lock();
+		SortedList<MyTransaction> sortedList = new SortedList<>(eventList);
+		eventList.getReadWriteLock().readLock().unlock();
+		//Filter
+		eventList.getReadWriteLock().readLock().lock();
+		filterList = new FilterList<>(sortedList);
+		eventList.getReadWriteLock().readLock().unlock();
+		filterList.addListEventListener(listener);
+		//Table Model
+		tableModel = EventModels.createTableModel(filterList, tableFormat);
+		//Table
+		jTable = new JTransactionTable(program, tableModel);
+		jTable.setCellSelectionEnabled(true);
+		PaddingTableCellRenderer.install(jTable, 1);
+		//Sorting
+		TableComparatorChooser<MyTransaction> comparatorChooser = TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
+		//Selection Model
+		selectionModel = EventModels.createSelectionModel(filterList);
+		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
+		jTable.setSelectionModel(selectionModel);
+		//Listeners
+		installTable(jTable);
+		//Scroll Panels
+		JScrollPane jTableScroll = new JScrollPane(jTable);
+		//Table Filter
+		filterControl = new TransactionsFilterControl(sortedList);
+		//Menu
+		installTableTool(new TransactionTableMenu(), tableFormat, comparatorChooser, tableModel, jTable, filterControl, MyTransaction.class);
 
 		layout.setHorizontalGroup(
 				layout.createParallelGroup()

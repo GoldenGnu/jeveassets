@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2025 Contributors (see credits.txt)
+ * Copyright 2009-2026 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -22,14 +22,14 @@ package net.nikr.eve.jeveasset.data.raw;
 
 import net.nikr.eve.jeveasset.TestUtil;
 import net.nikr.eve.jeveasset.data.api.raw.RawClone;
-import net.troja.eve.esi.model.Clone;
+import net.troja.eve.esi.model.JumpClone;
 import org.junit.Test;
 
 
 public class RawCloneTest extends TestUtil {
 
 	@Test
-	public void rawBlueprintTest() {
-		RawUtil.compare(RawClone.class, Clone.class);
+	public void rawCloneTest() {
+		RawUtil.compare(RawClone.class, JumpClone.class);
 	}
 }

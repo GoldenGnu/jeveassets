@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2025 Contributors (see credits.txt)
+ * Copyright 2009-2026 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -76,6 +76,8 @@ public abstract class AbstractGetter<O extends OwnerType> implements Runnable {
 		TRANSACTIONS("Transactions"),
 		SKILLS("Skills"),
 		MANUFACTURING_PRICES("Manufacturing Prices"),
+		LOYALTY_POINTS("Loyalty Points"),
+		NPC_STANDING("NPC Standing"),
 		;
 
 		private final String taskName;

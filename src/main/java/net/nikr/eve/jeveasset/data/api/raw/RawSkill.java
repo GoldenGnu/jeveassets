@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2025 Contributors (see credits.txt)
+ * Copyright 2009-2026 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -20,6 +20,7 @@
  */
 package net.nikr.eve.jeveasset.data.api.raw;
 
+import net.nikr.eve.jeveasset.io.shared.SafeConverter;
 import net.troja.eve.esi.model.Skill;
 
 
@@ -46,10 +47,10 @@ public class RawSkill {
 	}
 
 	public RawSkill(Skill skill) {
-		this.activeSkillLevel = skill.getActiveSkillLevel();
-		this.skillId = skill.getSkillId();
+		this.activeSkillLevel = SafeConverter.toInteger(skill.getActiveSkillLevel());
+		this.skillId = SafeConverter.toInteger(skill.getSkillId());
 		this.skillpointsInSkill = skill.getSkillpointsInSkill();
-		this.trainedSkillLevel = skill.getTrainedSkillLevel();
+		this.trainedSkillLevel = SafeConverter.toInteger(skill.getTrainedSkillLevel());
 	}
 
 	public Integer getActiveSkillLevel() {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2025 Contributors (see credits.txt)
+ * Copyright 2009-2026 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -22,9 +22,10 @@ package net.nikr.eve.jeveasset.data.api.raw;
 
 import net.nikr.eve.jeveasset.data.api.my.MyBlueprint;
 import net.nikr.eve.jeveasset.io.shared.RawConverter;
-import net.troja.eve.esi.model.CharacterContractsItemsResponse;
-import net.troja.eve.esi.model.CorporationContractsItemsResponse;
+import net.nikr.eve.jeveasset.io.shared.SafeConverter;
+import net.troja.eve.esi.model.ContractItemsResponse;
 import net.troja.eve.esi.model.PublicContractsItemsResponse;
+
 
 public class RawContractItem {
 
@@ -67,31 +68,17 @@ public class RawContractItem {
 	}
 
 	/**
-	 * ESI Character
+	 * ESI Character/Corporation
 	 *
 	 * @param contractItem
 	 */
-	public RawContractItem(CharacterContractsItemsResponse contractItem) {
+	public RawContractItem(ContractItemsResponse contractItem) {
 		isIncluded = contractItem.getIsIncluded();
 		isSingleton = contractItem.getIsSingleton();
-		quantity = contractItem.getQuantity();
-		rawQuantity = contractItem.getRawQuantity();
+		quantity = SafeConverter.toInteger(contractItem.getQuantity());
+		rawQuantity = SafeConverter.toInteger(contractItem.getRawQuantity());
 		recordId = contractItem.getRecordId();
-		typeId = contractItem.getTypeId();
-	}
-
-	/**
-	 * ESI Corporation
-	 *
-	 * @param contractItem
-	 */
-	public RawContractItem(CorporationContractsItemsResponse contractItem) {
-		isIncluded = contractItem.getIsIncluded();
-		isSingleton = contractItem.getIsSingleton();
-		quantity = contractItem.getQuantity();
-		rawQuantity = contractItem.getRawQuantity();
-		recordId = contractItem.getRecordId();
-		typeId = contractItem.getTypeId();
+		typeId = SafeConverter.toInteger(contractItem.getTypeId());
 	}
 
 	/**
@@ -102,18 +89,18 @@ public class RawContractItem {
 	public RawContractItem(PublicContractsItemsResponse contractItem) {
 		isIncluded = contractItem.getIsIncluded();
 		isSingleton = false;
-		quantity = contractItem.getQuantity();
+		quantity = SafeConverter.toInteger(contractItem.getQuantity());
 		if (RawConverter.toBoolean(contractItem.getIsBlueprintCopy())) {
 			rawQuantity = -2;
 		} else {
-			rawQuantity = contractItem.getQuantity();
+			rawQuantity = SafeConverter.toInteger(contractItem.getQuantity());
 		}
 		recordId = contractItem.getRecordId();
-		typeId = contractItem.getTypeId();
+		typeId = SafeConverter.toInteger(contractItem.getTypeId());
 		itemId = contractItem.getItemId();
-		runs = contractItem.getRuns();
-		materialEfficiency = contractItem.getMaterialEfficiency();
-		timeEfficiency = contractItem.getTimeEfficiency();
+		runs = SafeConverter.toInteger(contractItem.getRuns());
+		materialEfficiency = SafeConverter.toInteger(contractItem.getMaterialEfficiency());
+		timeEfficiency = SafeConverter.toInteger(contractItem.getTimeEfficiency());
 	}
 
 	public MyBlueprint getBlueprint() {

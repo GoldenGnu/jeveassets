@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2025 Contributors (see credits.txt)
+ * Copyright 2009-2026 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -217,48 +217,7 @@ public class MarketOrdersTab extends JMainTabPrimary {
 		jUpdate.addActionListener(listener);
 		jToolBar.addButton(jUpdate);
 
-		//Table Format
-		tableFormat = TableFormatFactory.marketTableFormat();
-		//Backend
-		eventList = program.getProfileData().getMarketOrdersEventList();
-		//Sorting (per column)
-		eventList.getReadWriteLock().readLock().lock();
-		SortedList<MyMarketOrder> sortedList = new SortedList<>(eventList);
-		eventList.getReadWriteLock().readLock().unlock();
-		//Filter
-		eventList.getReadWriteLock().readLock().lock();
-		filterList = new FilterList<>(sortedList);
-		eventList.getReadWriteLock().readLock().unlock();
-		filterList.addListEventListener(listener);
-		//Table Model
-		tableModel = EventModels.createTableModel(filterList, tableFormat);
-		//Table
-		jTable = new JMarketOrdersTable(program, tableModel);
-		jTable.setCellSelectionEnabled(true);
-		//Padding
-		PaddingTableCellRenderer.install(jTable, 1);
-		//Sorting
-		TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
-		//Selection Model
-		selectionModel = EventModels.createSelectionModel(filterList);
-		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
-		jTable.setSelectionModel(selectionModel);
-		//Market Details
-		MarketDetailsColumn.install(eventList, new MarketDetailsActionListener<MyMarketOrder>() {
-			@Override
-			public void openMarketDetails(MyMarketOrder marketOrder) {
-				openEve(marketOrder);
-			}
-		});
-		//Listeners
-		installTable(jTable);
-		//Scroll Panels
-		JScrollPane jTableScroll = new JScrollPane(jTable);
-		//Table Filter
-		filterControl = new MarketOrdersFilterControl(sortedList);
-		//Menu
-		installTableTool(new OrdersTableMenu(), tableFormat, tableModel, jTable, filterControl, MyMarketOrder.class);
-
+	//StatusPanels must be initialized before the eventlist
 		jSellOrdersTotal = StatusPanel.createLabel(TabsOrders.get().totalSellOrders(), Images.ORDERS_SELL.getIcon(), AutoNumberFormat.ISK);
 		this.addStatusbarLabel(jSellOrdersTotal);
 
@@ -284,6 +243,48 @@ public class MarketOrdersTab extends JMainTabPrimary {
 
 		jLastEsiUpdate = StatusPanel.createLabel(TabsOrders.get().lastEsiUpdateToolTip(), null, null);
 		this.addStatusbarLabel(jLastEsiUpdate);
+
+		//Table Format
+		tableFormat = TableFormatFactory.marketTableFormat();
+		//Backend
+		eventList = program.getProfileData().getMarketOrdersEventList();
+		//Sorting (per column)
+		eventList.getReadWriteLock().readLock().lock();
+		SortedList<MyMarketOrder> sortedList = new SortedList<>(eventList);
+		eventList.getReadWriteLock().readLock().unlock();
+		//Filter
+		eventList.getReadWriteLock().readLock().lock();
+		filterList = new FilterList<>(sortedList);
+		eventList.getReadWriteLock().readLock().unlock();
+		filterList.addListEventListener(listener);
+		//Table Model
+		tableModel = EventModels.createTableModel(filterList, tableFormat);
+		//Table
+		jTable = new JMarketOrdersTable(program, tableModel);
+		jTable.setCellSelectionEnabled(true);
+		//Padding
+		PaddingTableCellRenderer.install(jTable, 1);
+		//Sorting
+		TableComparatorChooser<MyMarketOrder> comparatorChooser = TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
+		//Selection Model
+		selectionModel = EventModels.createSelectionModel(filterList);
+		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
+		jTable.setSelectionModel(selectionModel);
+		//Market Details
+		MarketDetailsColumn.install(eventList, new MarketDetailsActionListener<MyMarketOrder>() {
+			@Override
+			public void openMarketDetails(MyMarketOrder marketOrder) {
+				openEve(marketOrder);
+			}
+		});
+		//Listeners
+		installTable(jTable);
+		//Scroll Panels
+		JScrollPane jTableScroll = new JScrollPane(jTable);
+		//Table Filter
+		filterControl = new MarketOrdersFilterControl(sortedList);
+		//Menu
+		installTableTool(new OrdersTableMenu(), tableFormat, comparatorChooser, tableModel, jTable, filterControl, MyMarketOrder.class);
 
 		updateDates();
 

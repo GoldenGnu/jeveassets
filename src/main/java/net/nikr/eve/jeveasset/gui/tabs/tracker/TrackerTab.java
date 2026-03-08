@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2025 Contributors (see credits.txt)
+ * Copyright 2009-2026 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -110,10 +110,11 @@ import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo.MenuItemValue;
 import net.nikr.eve.jeveasset.gui.tabs.values.AssetValue;
 import net.nikr.eve.jeveasset.gui.tabs.values.DataSetCreator;
 import net.nikr.eve.jeveasset.gui.tabs.values.Value;
+import net.nikr.eve.jeveasset.gui.tabs.values.ValueTableTab;
 import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.i18n.TabsTracker;
 import net.nikr.eve.jeveasset.io.local.SettingsReader;
-import net.nikr.eve.jeveasset.io.local.TrackerDataReader;
+import net.nikr.eve.jeveasset.io.local.TrackerReader;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import net.nikr.eve.jeveasset.io.shared.FileUtil;
 import org.jfree.chart.ChartMouseEvent;
@@ -747,8 +748,9 @@ public class TrackerTab extends JMainTabSecondary {
 				updateButtonIcons();
 			}
 			//Isk
-			if (program.getMainWindow().isOpen(program.getValueTableTab())) {
-				program.getValueTableTab().updateData();
+			ValueTableTab iskTab = program.getIskTab(false);
+			if (iskTab != null && program.getMainWindow().isOpen(iskTab)) {
+				iskTab.updateData();
 			}
 		}
 	}
@@ -1941,7 +1943,7 @@ public class TrackerTab extends JMainTabSecondary {
 					trackerData = SettingsReader.loadTracker(file.getAbsolutePath());
 					break;
 				case "json":
-					trackerData = TrackerDataReader.load(file.getAbsolutePath(), false);
+					trackerData = TrackerReader.load(file.getAbsolutePath(), false);
 					break;
 				default:
 					trackerData = null;

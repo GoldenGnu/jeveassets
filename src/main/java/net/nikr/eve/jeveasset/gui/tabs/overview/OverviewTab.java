@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2025 Contributors (see credits.txt)
+ * Copyright 2009-2026 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -25,15 +25,20 @@ import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.FilterList;
 import ca.odell.glazedlists.ListSelection;
 import ca.odell.glazedlists.SortedList;
+import ca.odell.glazedlists.event.ListEvent;
+import ca.odell.glazedlists.event.ListEventListener;
 import ca.odell.glazedlists.swing.DefaultEventSelectionModel;
 import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import ca.odell.glazedlists.swing.TableComparatorChooser;
+import java.awt.CardLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.swing.ButtonGroup;
 import javax.swing.GroupLayout;
 import javax.swing.JComboBox;
@@ -42,6 +47,7 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JToggleButton;
 import net.nikr.eve.jeveasset.Program;
@@ -54,6 +60,7 @@ import net.nikr.eve.jeveasset.gui.shared.StringComparators;
 import net.nikr.eve.jeveasset.gui.shared.components.JDropDownButton;
 import net.nikr.eve.jeveasset.gui.shared.components.JFixedToolBar;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTabSecondary;
+import net.nikr.eve.jeveasset.gui.shared.components.JTreemap;
 import net.nikr.eve.jeveasset.gui.shared.components.ListComboBoxModel;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
@@ -76,7 +83,8 @@ public class OverviewTab extends JMainTabSecondary {
 
 	public static enum OverviewAction {
 		UPDATE_LIST,
-		LOAD_FILTER
+		LOAD_FILTER,
+		TREEMAP_VIEW
 	}
 
 	public static enum View {
@@ -95,6 +103,7 @@ public class OverviewTab extends JMainTabSecondary {
 	private final JToggleButton jConstellations;
 	private final JToggleButton jRegions;
 	private final JToggleButton jGroups;
+	private final JToggleButton jTreemap;
 	private final JDropDownButton jLoadFilter;
 	private final JComboBox<String> jOwner;
 	private final JStatusLabel jValue;
@@ -117,6 +126,12 @@ public class OverviewTab extends JMainTabSecondary {
 	private final OverviewData overviewData;
 
 	public static final String NAME = "overview"; //Not to be changed!
+	private static final String VIEW_TABLE = "table";
+	private static final String VIEW_TREEMAP = "treemap";
+
+	private final JTreemap jTreemapView;
+	private final JPanel jViewPanel;
+	private final CardLayout viewLayout;
 
 	public OverviewTab(final Program program) {
 		super(program, NAME, TabsOverview.get().overview(), Images.TOOL_OVERVIEW.getIcon(), true);
@@ -167,6 +182,12 @@ public class OverviewTab extends JMainTabSecondary {
 		jGroups.addActionListener(listener);
 		jToolBar.addButtonIcon(jGroups);
 
+		jTreemap = new JToggleButton(TabsOverview.get().treemap(), Images.TOOL_TREE.getIcon());
+		jTreemap.setToolTipText(TabsOverview.get().treemapToolTip());
+		jTreemap.setActionCommand(OverviewAction.TREEMAP_VIEW.name());
+		jTreemap.addActionListener(listener);
+		jToolBar.addButton(jTreemap);
+
 		ButtonGroup group = new ButtonGroup();
 		group.add(jStations);
 		group.add(jPlanets);
@@ -215,12 +236,20 @@ public class OverviewTab extends JMainTabSecondary {
 		eventList.getReadWriteLock().readLock().lock();
 		filterList = new FilterList<>(sortedList);
 		eventList.getReadWriteLock().readLock().unlock();
+		filterList.addListEventListener(new ListEventListener<Overview>() {
+			@Override
+			public void listChanged(ListEvent<Overview> listChanges) {
+				if (jTreemap.isSelected()) {
+					updateTreemapData();
+				}
+			}
+		});
 		//Table Model
 		tableModel = EventModels.createTableModel(filterList, tableFormat);
 		//Table
 		jTable = new JOverviewTable(program, tableModel);
 		//Sorting
-		TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
+		TableComparatorChooser<Overview> comparatorChooser = TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
 		//Selection Model
 		selectionModel = EventModels.createSelectionModel(filterList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
@@ -229,10 +258,21 @@ public class OverviewTab extends JMainTabSecondary {
 		installTable(jTable);
 		//Scroll
 		JScrollPane jTableScroll = new JScrollPane(jTable);
+		jTreemapView = new JTreemap(new JTreemap.SelectionListener() {
+			@Override
+			public void itemSelected(String name) {
+				applyNameFilter(name);
+			}
+		});
+		viewLayout = new CardLayout();
+		jViewPanel = new JPanel(viewLayout);
+		jViewPanel.add(jTableScroll, VIEW_TABLE);
+		jViewPanel.add(jTreemapView, VIEW_TREEMAP);
+		viewLayout.show(jViewPanel, VIEW_TABLE);
 		//Table Filter
 		filterControl = new OverviewTabFilterControl(sortedList);
 		//Menu
-		installTableTool(new OverviewTableMenu(), tableFormat, tableModel, jTable, filterControl, Overview.class);
+		installTableTool(new OverviewTableMenu(), tableFormat, comparatorChooser, tableModel, jTable, filterControl, Overview.class);
 
 		jVolume = StatusPanel.createLabel(TabsOverview.get().totalVolume(), Images.ASSETS_VOLUME.getIcon(), AutoNumberFormat.DOUBLE);
 		this.addStatusbarLabel(jVolume);
@@ -253,13 +293,13 @@ public class OverviewTab extends JMainTabSecondary {
 			layout.createParallelGroup()
 				.addComponent(filterControl.getPanel())
 				.addComponent(jToolBar, jToolBar.getMinimumSize().width, GroupLayout.PREFERRED_SIZE, Integer.MAX_VALUE)
-				.addComponent(jTableScroll, 400, 400, Short.MAX_VALUE)
+				.addComponent(jViewPanel, 400, 400, Short.MAX_VALUE)
 		);
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
 				.addComponent(filterControl.getPanel())
 				.addComponent(jToolBar, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-				.addComponent(jTableScroll, 100, 400, Short.MAX_VALUE)
+				.addComponent(jViewPanel, 100, 400, Short.MAX_VALUE)
 		);
 	}
 
@@ -334,6 +374,70 @@ public class OverviewTab extends JMainTabSecondary {
 		jAverage.setNumber(averageValue);
 		jReprocessed.setNumber(totalReprocessed);
 		jValue.setNumber(totalValue);
+	}
+
+	@Override
+	public void tableDataChanged() {
+		super.tableDataChanged();
+		if (jTreemap.isSelected()) {
+			updateTreemapData();
+		}
+	}
+
+	private void updateTreemapData() {
+		Map<String, Double> nameValues = new HashMap<>();
+		try {
+			filterList.getReadWriteLock().readLock().lock();
+			for (Overview overview : filterList) {
+				String name = overview.getName();
+				if (name == null || name.isEmpty()) {
+					name = "Unknown";
+				}
+				double value = overview.getValue();
+				if (value <= 0) {
+					continue;
+				}
+				nameValues.put(name, nameValues.getOrDefault(name, 0.0) + value);
+			}
+		} finally {
+			filterList.getReadWriteLock().readLock().unlock();
+		}
+		jTreemapView.setItems(nameValues);
+	}
+
+	private void showTreemap(boolean show) {
+		if (show) {
+			updateTreemapData();
+			viewLayout.show(jViewPanel, VIEW_TREEMAP);
+		} else {
+			viewLayout.show(jViewPanel, VIEW_TABLE);
+		}
+	}
+
+	private void applyNameFilter(String name) {
+		if (name == null || name.isEmpty()) {
+			return;
+		}
+		if (jTreemap.isSelected()) {
+			jTreemap.setSelected(false);
+			showTreemap(false);
+		}
+		List<Filter> filters = new ArrayList<>();
+		for (Filter filter : filterControl.getCurrentFilters()) {
+			if (filter == null || filter.isEmpty()) {
+				continue;
+			}
+			if (filter.getColumn() instanceof OverviewTableFormat) {
+				OverviewTableFormat column = (OverviewTableFormat) filter.getColumn();
+				if (column == OverviewTableFormat.NAME) {
+					continue;
+				}
+			}
+			filters.add(filter);
+		}
+		filters.add(new Filter(Filter.LogicType.AND, OverviewTableFormat.NAME, Filter.CompareType.EQUALS, name));
+		filterControl.clearCurrentFilters();
+		filterControl.addFilters(filters);
 	}
 
 	protected View getSelectedView() {
@@ -444,6 +548,9 @@ public class OverviewTab extends JMainTabSecondary {
 		jTable.setGroupedLocations(overviewData.getGroupedLocations());
 		updateStatusbar();
 		program.overviewGroupsChanged();
+		if (jTreemap.isSelected()) {
+			updateTreemapData();
+		}
 
 		jShowing.setText(TabsOverview.get().filterShowing(overviewData.getRowCount(), EventListManager.size(program.getProfileData().getAssetsEventList()), program.getAssetsTab().getCurrentFilterName()));
 		afterUpdateData();
@@ -532,6 +639,8 @@ public class OverviewTab extends JMainTabSecondary {
 						program.getAssetsTab().addFilters(menuItem.getFilters());
 					}
 				}
+			} else if (OverviewAction.TREEMAP_VIEW.name().equals(e.getActionCommand())) {
+				showTreemap(jTreemap.isSelected());
 			}
 		}
 	}

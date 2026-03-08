@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2025 Contributors (see credits.txt)
+ * Copyright 2009-2026 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -23,7 +23,7 @@ package net.nikr.eve.jeveasset.io.esi;
 import java.util.Date;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
-import static net.nikr.eve.jeveasset.io.esi.AbstractEsiGetter.DATASOURCE;
+import net.nikr.eve.jeveasset.io.shared.SafeConverter;
 import net.troja.eve.esi.ApiException;
 import net.troja.eve.esi.ApiResponse;
 import net.troja.eve.esi.model.CharacterRolesResponse.RolesEnum;
@@ -44,12 +44,12 @@ public class EsiSkillGetter extends AbstractEsiGetter {
 		CharacterSkillsResponse response = update(DEFAULT_RETRIES, new EsiHandler<CharacterSkillsResponse>() {
 			@Override
 			public ApiResponse<CharacterSkillsResponse> get() throws ApiException {
-				return getSkillsApiAuth().getCharactersCharacterIdSkillsWithHttpInfo((int)owner.getOwnerID(), DATASOURCE, null, null);
+				return getSkillsApiAuth().getCharacterSkillsWithHttpInfo(owner.getOwnerID(), COMPATIBILITY_DATE, null, null, null);
 			}
 		});
 		owner.setSkills(EsiConverter.toSkills(response.getSkills(), owner));
 		owner.setTotalSkillPoints(response.getTotalSp());
-		owner.setUnallocatedSkillPoints(response.getUnallocatedSp());
+		owner.setUnallocatedSkillPoints(SafeConverter.toInteger(response.getUnallocatedSp()));
 	}
 
 	@Override

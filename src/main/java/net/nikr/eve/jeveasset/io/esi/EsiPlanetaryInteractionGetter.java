@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2025 Contributors (see credits.txt)
+ * Copyright 2009-2026 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -26,15 +26,14 @@ import java.util.List;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.data.settings.Citadel;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
-import static net.nikr.eve.jeveasset.io.esi.AbstractEsiGetter.DATASOURCE;
 import net.nikr.eve.jeveasset.io.online.CitadelGetter;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import net.troja.eve.esi.ApiException;
 import net.troja.eve.esi.ApiResponse;
 import net.troja.eve.esi.model.CharacterPlanetResponse;
+import net.troja.eve.esi.model.PlanetPin;
 import net.troja.eve.esi.model.CharacterPlanetsResponse;
 import net.troja.eve.esi.model.CharacterRolesResponse.RolesEnum;
-import net.troja.eve.esi.model.PlanetPin;
 import net.troja.eve.esi.model.PlanetResponse;
 
 
@@ -53,7 +52,7 @@ public class EsiPlanetaryInteractionGetter extends AbstractEsiGetter {
 		List<CharacterPlanetsResponse> responses = update(DEFAULT_RETRIES, new EsiHandler<List<CharacterPlanetsResponse>>() {
 			@Override
 			public ApiResponse<List<CharacterPlanetsResponse>> get() throws ApiException {
-				return getPlanetaryInteractionApiAuth().getCharactersCharacterIdPlanetsWithHttpInfo((int) owner.getOwnerID(), DATASOURCE, null, null);
+				return getPlanetaryInteractionApiAuth().getCharacterPlanetsWithHttpInfo(owner.getOwnerID(), COMPATIBILITY_DATE, null, null, null);
 			}
 		});
 		List<Citadel> citadels = new ArrayList<>();
@@ -62,7 +61,7 @@ public class EsiPlanetaryInteractionGetter extends AbstractEsiGetter {
 			PlanetResponse planet = update(DEFAULT_RETRIES, new EsiHandler<PlanetResponse>() {
 				@Override
 				public ApiResponse<PlanetResponse> get() throws ApiException {
-					return getUniverseApiOpen().getUniversePlanetsPlanetIdWithHttpInfo(response.getPlanetId(), DATASOURCE, null);
+					return getUniverseApiOpen().getPlanetWithHttpInfo(response.getPlanetId(), COMPATIBILITY_DATE, null, null, null);
 				}
 			});
 			Citadel citadel = ApiIdConverter.getCitadel(planet);
@@ -73,7 +72,7 @@ public class EsiPlanetaryInteractionGetter extends AbstractEsiGetter {
 			CharacterPlanetResponse planetResponse = update(DEFAULT_RETRIES, new EsiHandler<CharacterPlanetResponse>() {
 				@Override
 				public ApiResponse<CharacterPlanetResponse> get() throws ApiException {
-					return getPlanetaryInteractionApiAuth().getCharactersCharacterIdPlanetsPlanetIdWithHttpInfo((int) owner.getOwnerID(), response.getPlanetId(), DATASOURCE, null);
+					return getPlanetaryInteractionApiAuth().getCharacterPlanetWithHttpInfo(owner.getOwnerID(), response.getPlanetId(), COMPATIBILITY_DATE, null, null, null);
 				}
 			});
 			for (PlanetPin pin : planetResponse.getPins()) { //For each pin on planet

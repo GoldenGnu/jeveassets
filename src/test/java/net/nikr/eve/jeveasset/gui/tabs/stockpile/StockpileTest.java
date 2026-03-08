@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2025 Contributors (see credits.txt)
+ * Copyright 2009-2026 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -47,8 +47,8 @@ public class StockpileTest extends TestUtil {
 				null, //JobsDaysMore
 				true, true, true, true, true, true, true, true, true, true, true);
 		Stockpile stockpile = new Stockpile("Name", null, Collections.singletonList(filter), 1, false);
-		StockpileItem item1 = new Stockpile.StockpileItem(stockpile, new Item(0), 0, 0, false);
-		StockpileItem item2 = new Stockpile.StockpileItem(stockpile, new Item(0), 0, 0, false);
+		StockpileItem item1 = new StockpileItem(stockpile, new Item(0), 0, 0, false);
+		StockpileItem item2 = new StockpileItem(stockpile, new Item(0), 0, 0, false);
 		StockpileTotal total1 = new StockpileTotal(stockpile);
 		StockpileTotal total2 = new StockpileTotal(stockpile);
 		assertEquals(item1.compareTo(item2), item2.compareTo(item2), 0);

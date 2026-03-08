@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2025 Contributors (see credits.txt)
+ * Copyright 2009-2026 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -22,6 +22,7 @@ package net.nikr.eve.jeveasset.data.api.raw;
 
 import java.util.Date;
 import net.nikr.eve.jeveasset.io.shared.RawConverter;
+import net.nikr.eve.jeveasset.io.shared.SafeConverter;
 import net.troja.eve.esi.model.CorporationMiningExtractionsResponse;
 
 
@@ -50,7 +51,7 @@ public class RawExtraction {
 	public RawExtraction(CorporationMiningExtractionsResponse response) {
 		this.chunkArrivalTime = RawConverter.toDate(response.getChunkArrivalTime());
 		this.extractionStartTime = RawConverter.toDate(response.getExtractionStartTime());
-		this.moonId = response.getMoonId();
+		this.moonId = SafeConverter.toInteger(response.getMoonId());
 		this.naturalDecayTime = RawConverter.toDate(response.getNaturalDecayTime());
 		this.structureId = response.getStructureId();
 	}

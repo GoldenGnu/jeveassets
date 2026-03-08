@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2025 Contributors (see credits.txt)
+ * Copyright 2009-2026 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -20,6 +20,7 @@
  */
 package net.nikr.eve.jeveasset.io.esi;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -49,6 +50,7 @@ import net.troja.eve.esi.api.CorporationApi;
 import net.troja.eve.esi.api.FactionWarfareApi;
 import net.troja.eve.esi.api.IndustryApi;
 import net.troja.eve.esi.api.LocationApi;
+import net.troja.eve.esi.api.LoyaltyApi;
 import net.troja.eve.esi.api.MarketApi;
 import net.troja.eve.esi.api.PlanetaryInteractionApi;
 import net.troja.eve.esi.api.SkillsApi;
@@ -75,7 +77,7 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner> {
 	private static final IndustryApi INDUSTRY_API = new IndustryApi(PUBLIC_CLIENT);
 	private static final FactionWarfareApi FACTION_WARFARE_API = new FactionWarfareApi(PUBLIC_CLIENT);
 	public static final UserInterfaceApi USER_INTERFACE_API = new UserInterfaceApi(PUBLIC_CLIENT);
-	public static final String DATASOURCE = "tranquility";
+	public static final LocalDate COMPATIBILITY_DATE = UniverseApi.COMPATIBILITY_DATE;
 	protected static final int UNIVERSE_BATCH_SIZE = 100;
 	protected static final int LOCATIONS_BATCH_SIZE = 100;
 	protected static final int DEFAULT_RETRIES = 3;
@@ -108,7 +110,7 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner> {
 			return true;
 		}
 		if (taskType == TaskType.OWNER && owner != null) {
-			OAuth auth = (OAuth) owner.getApiClient().getAuthentication("evesso");
+			OAuth auth = (OAuth) owner.getApiClient().getAuthentication(ApiClientBuilder.AUTHENTICATION);
 			return auth.getJWT() == null; //Force update of old tokens
 		}
 		return false;
@@ -299,7 +301,11 @@ public abstract class AbstractEsiGetter extends AbstractGetter<EsiOwner> {
  	}
 
 	public SkillsApi getSkillsApiAuth() {
-		return owner.getSkillsApi();
+		return owner.getSkillsApiAuth();
+ 	}
+
+	public LoyaltyApi getLoyaltyApiAuth() {
+		return owner.getLoyaltyApiAuth();
  	}
 
 	public UniverseApi getUniverseApiOpen() {

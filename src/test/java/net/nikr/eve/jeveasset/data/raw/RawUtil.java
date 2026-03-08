@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2025 Contributors (see credits.txt)
+ * Copyright 2009-2026 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -229,10 +229,32 @@ public class RawUtil {
 	private static void compareTypes(Map<String, String> raw, Map<String, String> esi) {
 		assertEquals(esi.size(), raw.size());
 		for (Map.Entry<String, String> entry : raw.entrySet()) {
-			assertEquals(entry.getValue(), esi.get(entry.getKey()));
+			String rawType = entry.getValue();
+			String esiType = esi.get(entry.getKey());
+			if (isUnsafe32bit(entry.getKey(), rawType, esiType)) {
+				continue;
+			}
+			assertEquals(rawType, esiType);
 		}
 		for (Map.Entry<String, String> entry : esi.entrySet()) {
-			assertEquals(entry.getValue(), esi.get(entry.getKey()));
+			String rawType = raw.get(entry.getKey());
+			String esiType = entry.getValue();
+			if (isUnsafe32bit(entry.getKey(), rawType, esiType)) {
+				continue;
+			}
+			assertEquals(rawType, esiType);
 		}
+	}
+
+	private static boolean isUnsafe32bit(String key, String rawType, String esiType) {
+		if (rawType.equals("java.lang.Integer") && esiType.equals("java.lang.Long")) {
+			System.out.println(key + " is an 'unsafe' Integer");
+			return true;
+		}
+		if (rawType.equals("java.lang.Float") && esiType.equals("java.lang.Double")) {
+			System.out.println(key + " is an 'unsafe' Float");
+			return true;
+		}
+		return false;
 	}
 }

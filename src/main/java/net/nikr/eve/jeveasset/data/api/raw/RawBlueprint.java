@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2025 Contributors (see credits.txt)
+ * Copyright 2009-2026 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -22,8 +22,10 @@ package net.nikr.eve.jeveasset.data.api.raw;
 
 import net.nikr.eve.jeveasset.data.sde.ItemFlag;
 import net.nikr.eve.jeveasset.io.shared.RawConverter;
+import net.nikr.eve.jeveasset.io.shared.SafeConverter;
 import net.troja.eve.esi.model.CharacterBlueprintsResponse;
 import net.troja.eve.esi.model.CorporationBlueprintsResponse;
+
 
 public class RawBlueprint {
 
@@ -74,11 +76,11 @@ public class RawBlueprint {
 		itemFlag = RawConverter.toFlag(blueprint.getLocationFlag());
 		locationFlag = blueprint.getLocationFlagString();
 		locationId = blueprint.getLocationId();
-		materialEfficiency = blueprint.getMaterialEfficiency();
-		quantity = blueprint.getQuantity();
-		runs = blueprint.getRuns();
-		timeEfficiency = blueprint.getTimeEfficiency();
-		typeId = blueprint.getTypeId();
+		materialEfficiency = SafeConverter.toInteger(blueprint.getMaterialEfficiency());
+		quantity = SafeConverter.toInteger(blueprint.getQuantity());
+		runs = SafeConverter.toInteger(blueprint.getRuns());
+		timeEfficiency = SafeConverter.toInteger(blueprint.getTimeEfficiency());
+		typeId = SafeConverter.toInteger(blueprint.getTypeId());
 	}
 
 	/**
@@ -91,11 +93,11 @@ public class RawBlueprint {
 		itemFlag = RawConverter.toFlag(blueprint.getLocationFlag());
 		locationFlag = blueprint.getLocationFlagString();
 		locationId = blueprint.getLocationId();
-		materialEfficiency = blueprint.getMaterialEfficiency();
-		quantity = blueprint.getQuantity();
-		runs = blueprint.getRuns();
-		timeEfficiency = blueprint.getTimeEfficiency();
-		typeId = blueprint.getTypeId();
+		materialEfficiency = SafeConverter.toInteger(blueprint.getMaterialEfficiency());
+		quantity = SafeConverter.toInteger(blueprint.getQuantity());
+		runs = SafeConverter.toInteger(blueprint.getRuns());
+		timeEfficiency = SafeConverter.toInteger(blueprint.getTimeEfficiency());
+		typeId = SafeConverter.toInteger(blueprint.getTypeId());
 	}
 
 	public Long getItemID() {

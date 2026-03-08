@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2025 Contributors (see credits.txt)
+ * Copyright 2009-2026 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -30,16 +30,20 @@ import ca.odell.glazedlists.event.ListEventListener;
 import ca.odell.glazedlists.swing.DefaultEventSelectionModel;
 import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import ca.odell.glazedlists.swing.TableComparatorChooser;
+import java.awt.CardLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JMenu;
+import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JToggleButton;
@@ -53,6 +57,7 @@ import net.nikr.eve.jeveasset.gui.frame.StatusPanel.JStatusLabel;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JFixedToolBar;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTabPrimary;
+import net.nikr.eve.jeveasset.gui.shared.components.JTreemap;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuColumns;
@@ -65,24 +70,34 @@ import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.TableFormatFactory;
+import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewTab;
+import net.nikr.eve.jeveasset.gui.tabs.tree.TreeTab;
 import net.nikr.eve.jeveasset.i18n.TabsAssets;
 
 
 public class AssetsTab extends JMainTabPrimary implements TagUpdate {
 
 	private enum AssetsAction {
-		REPROCESS_COLORS
+		REPROCESS_COLORS,
+		TREEMAP_VIEW
 	}
 
 	//GUI
 	private final JAssetTable jTable;
 	private final JToggleButton jReprocessColors;
+	private final JToggleButton jTreemap;
 	private final JStatusLabel jValue;
 	private final JStatusLabel jReprocessed;
 	private final JStatusLabel jCount;
 	private final JStatusLabel jAverage;
 	private final JStatusLabel jVolume;
 	private final JButton jClearNew;
+	private final JTreemap jTreemapView;
+	private final JPanel jViewPanel;
+	private final CardLayout viewLayout;
+
+	private static final String VIEW_TABLE = "table";
+	private static final String VIEW_TREEMAP = "treemap";
 
 	//Table
 	private final AssetFilterControl filterControl;
@@ -121,6 +136,12 @@ public class AssetsTab extends JMainTabPrimary implements TagUpdate {
 		jReprocessColors.addActionListener(listener);
 		jToolBar.addButton(jReprocessColors);
 
+		jTreemap = new JToggleButton(TabsAssets.get().treemap(), Images.TOOL_TREE.getIcon());
+		jTreemap.setToolTipText(TabsAssets.get().treemapToolTip());
+		jTreemap.setActionCommand(AssetsAction.TREEMAP_VIEW.name());
+		jTreemap.addActionListener(listener);
+		jToolBar.addButton(jTreemap);
+
 		//Table Format
 		tableFormat = TableFormatFactory.assetTableFormat();
 		//Backend
@@ -144,7 +165,7 @@ public class AssetsTab extends JMainTabPrimary implements TagUpdate {
 		jTable.setRowSelectionAllowed(true);
 		jTable.setColumnSelectionAllowed(true);
 		//Sorting
-		TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
+		TableComparatorChooser<MyAsset> comparatorChooser = TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
 		//Selection Model
 		selectionModel = EventModels.createSelectionModel(filterList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
@@ -157,7 +178,19 @@ public class AssetsTab extends JMainTabPrimary implements TagUpdate {
 		//Table Filter
 		filterControl = new AssetFilterControl(sortedList);
 		//Menu
-		installTableTool(new AssetTableMenu(), tableFormat, tableModel, jTable, filterControl, MyAsset.class);
+		installTableTool(new AssetTableMenu(), tableFormat, comparatorChooser, tableModel, jTable, filterControl, MyAsset.class);
+
+		jTreemapView = new JTreemap(new JTreemap.SelectionListener() {
+			@Override
+			public void itemSelected(String group) {
+				applyGroupFilter(group);
+			}
+		});
+		viewLayout = new CardLayout();
+		jViewPanel = new JPanel(viewLayout);
+		jViewPanel.add(jTableScroll, VIEW_TABLE);
+		jViewPanel.add(jTreemapView, VIEW_TREEMAP);
+		viewLayout.show(jViewPanel, VIEW_TABLE);
 
 		jVolume = StatusPanel.createLabel(TabsAssets.get().totalVolume(), Images.ASSETS_VOLUME.getIcon(), AutoNumberFormat.DOUBLE);
 		this.addStatusbarLabel(jVolume);
@@ -178,13 +211,13 @@ public class AssetsTab extends JMainTabPrimary implements TagUpdate {
 			layout.createParallelGroup()
 				.addComponent(filterControl.getPanel())
 				.addComponent(jToolBar)
-				.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
+				.addComponent(jViewPanel, 0, 0, Short.MAX_VALUE)
 		);
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
 				.addComponent(filterControl.getPanel())
 				.addComponent(jToolBar, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-				.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
+				.addComponent(jViewPanel, 0, 0, Short.MAX_VALUE)
 		);
 	}
 
@@ -280,6 +313,70 @@ public class AssetsTab extends JMainTabPrimary implements TagUpdate {
 	public void updateReprocessColors() {
 		jReprocessColors.setSelected(Settings.get().isReprocessColors());
 	}
+
+	@Override
+	public void tableDataChanged() {
+		super.tableDataChanged();
+		if (jTreemap.isSelected()) {
+			updateTreemapData();
+		}
+	}
+
+	private void updateTreemapData() {
+		Map<String, Double> groupValues = new HashMap<>();
+		try {
+			filterList.getReadWriteLock().readLock().lock();
+			for (MyAsset asset : filterList) {
+				String group = asset.getItem().getGroup();
+				if (group == null || group.isEmpty()) {
+					group = "Unknown";
+				}
+				double value = asset.getValue();
+				if (value <= 0) {
+					continue;
+				}
+				groupValues.put(group, groupValues.getOrDefault(group, 0.0) + value);
+			}
+		} finally {
+			filterList.getReadWriteLock().readLock().unlock();
+		}
+		jTreemapView.setItems(groupValues);
+	}
+
+	private void showTreemap(boolean show) {
+		if (show) {
+			updateTreemapData();
+			viewLayout.show(jViewPanel, VIEW_TREEMAP);
+		} else {
+			viewLayout.show(jViewPanel, VIEW_TABLE);
+		}
+	}
+
+	private void applyGroupFilter(String group) {
+		if (group == null || group.isEmpty()) {
+			return;
+		}
+		if (jTreemap.isSelected()) {
+			jTreemap.setSelected(false);
+			showTreemap(false);
+		}
+		List<Filter> filters = new ArrayList<>();
+		for (Filter filter : filterControl.getCurrentFilters()) {
+			if (filter == null || filter.isEmpty()) {
+				continue;
+			}
+			if (filter.getColumn() instanceof AssetTableFormat) {
+				AssetTableFormat column = (AssetTableFormat) filter.getColumn();
+				if (column == AssetTableFormat.GROUP) {
+					continue;
+				}
+			}
+			filters.add(filter);
+		}
+		filters.add(new Filter(Filter.LogicType.AND, AssetTableFormat.GROUP, Filter.CompareType.EQUALS, group));
+		filterControl.clearCurrentFilters();
+		filterControl.addFilters(filters);
+	}
 	/**
 	 * returns a new list of the filtered assets, thus the list is modifiable.
 	 * @return a list of the filtered assets.
@@ -318,7 +415,13 @@ public class AssetsTab extends JMainTabPrimary implements TagUpdate {
 		@Override
 		public void listChanged(final ListEvent<MyAsset> listChanges) {
 			updateStatusbar();
-			program.getOverviewTab().updateTable();
+			OverviewTab overviewTab = program.getOverviewTab(false);
+			if (overviewTab != null) {
+				overviewTab.updateTable();
+			}
+			if (jTreemap.isSelected()) {
+				updateTreemapData();
+			}
 		}
 
 		@Override
@@ -332,8 +435,13 @@ public class AssetsTab extends JMainTabPrimary implements TagUpdate {
 					Settings.unlock("Reprocess Colors");
 					program.saveSettings("Reprocess Colors");
 					jTable.repaint();
-					program.getTreeTab().updateReprocessColors();
+					TreeTab treeTab = program.getTreeTab(false);
+					if (treeTab != null) {
+						treeTab.updateReprocessColors();
+					}
 				}
+			} else if (e.getActionCommand().equals(AssetsAction.TREEMAP_VIEW.name())) {
+				showTreemap(jTreemap.isSelected());
 			}
 		}
 	}
@@ -352,8 +460,11 @@ public class AssetsTab extends JMainTabPrimary implements TagUpdate {
 
 		@Override
 		protected void updateFilters() {
-			if (program != null && program.getOverviewTab() != null) {
-				program.getOverviewTab().updateFilters();
+			if (program != null) {
+				OverviewTab overviewTab = program.getOverviewTab(false);
+				if (overviewTab != null) {
+					overviewTab.updateFilters();
+				}
 			}
 		}
 

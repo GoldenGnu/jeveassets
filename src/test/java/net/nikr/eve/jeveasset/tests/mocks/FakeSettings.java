@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2025 Contributors (see credits.txt)
+ * Copyright 2009-2026 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -37,6 +37,7 @@ import net.nikr.eve.jeveasset.data.settings.PriceData;
 import net.nikr.eve.jeveasset.data.settings.PriceDataSettings;
 import net.nikr.eve.jeveasset.data.settings.ProxyData;
 import net.nikr.eve.jeveasset.data.settings.ReprocessSettings;
+import net.nikr.eve.jeveasset.data.settings.RouteAvoidSettings;
 import net.nikr.eve.jeveasset.data.settings.RoutingSettings;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.StockpileGroupSettings;
@@ -804,6 +805,26 @@ public abstract class FakeSettings extends Settings {
 	}
 
 	@Override
+	public void setLoadToolsStartup(boolean loadToolsStartup) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+	
+	@Override
+	public boolean isLoadToolsStartup() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public void setLoadToolsBackground(boolean loadToolsBackground) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public boolean isLoadToolsBackground() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
 	public boolean isColumnValueCache() {
 		throw new UnsupportedOperationException("not implemented");
 	}
@@ -820,6 +841,96 @@ public abstract class FakeSettings extends Settings {
 
 	@Override
 	public Map<String, String> getImportSettings() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public boolean setIncludePluggedInImplants(boolean includePluggedInImplants) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public boolean isIncludePluggedInImplants() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public boolean setIncludeJumpClones(boolean includeJumpClones) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public boolean isIncludeJumpClones() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public String getCurrentTableSorting(String toolName) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public Map<String, String> getCurrentTableSorting() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public RouteAvoidSettings getJumpsAvoidSettings() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public Map<String, Map<Integer, Integer>> getSkillPlans() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public void setEveGatecampCheckUnsecure(boolean eveGatecampCheckUnsecure) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public boolean isEveGatecampCheckUnsecure() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public void setEveGatecampCheckSecure(boolean eveGatecampCheckSecure) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public boolean isEveGatecampCheckSecure() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public void setEveGatecampCheckNeverOpen(boolean eveGatecampCheckNeverOpen) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public boolean isEveGatecampCheckNeverOpen() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public void setEveGatecampCheckAlwaysOpen(boolean eveGatecampCheckAlwaysOpen) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public boolean isEveGatecampCheckAlwaysOpen() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public void setEveGatecampCheckSet(boolean eveGatecampCheckSet) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public boolean isEveGatecampCheckSet() {
 		throw new UnsupportedOperationException("not implemented");
 	}
 }
