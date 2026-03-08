@@ -91,6 +91,9 @@
 					<source>${project.build.sourceVersion}</source>
 					<target>${project.build.sourceVersion}</target>
 					<encoding>${project.build.sourceEncoding}</encoding>
+				 <compilerArgs>
+				  <arg>-Xlint</arg>
+				 </compilerArgs>
 				</configuration>
 			</plugin>
 			<plugin>
