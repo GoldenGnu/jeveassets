@@ -95,6 +95,46 @@ public class TransactionTab extends JMainTabPrimary implements TagUpdate {
 
 		ListenerClass listener = new ListenerClass();
 
+	//StatusPanels must be initialized before the eventlist
+		//Sell
+		JLabel jSellOrders = StatusPanel.createIcon(Images.ORDERS_SELL.getIcon(), TabsTransaction.get().sellTitle());
+		this.addStatusbarLabel(jSellOrders);
+
+		jSellOrdersCount = StatusPanel.createLabel(TabsTransaction.get().sellCount(), Images.EDIT_ADD.getIcon(), AutoNumberFormat.ITEMS);
+		this.addStatusbarLabel(jSellOrdersCount);
+
+		jSellOrdersTotal = StatusPanel.createLabel(TabsTransaction.get().sellTotal(), Images.TOOL_VALUES.getIcon(), AutoNumberFormat.ISK);
+		this.addStatusbarLabel(jSellOrdersTotal);
+
+		jSellOrdersAverage = StatusPanel.createLabel(TabsTransaction.get().sellAvg(), Images.ASSETS_AVERAGE.getIcon(), AutoNumberFormat.ISK);
+		this.addStatusbarLabel(jSellOrdersAverage);
+
+		//Both
+		JLabel jBothOrders = StatusPanel.createIcon(Images.TOOL_TRANSACTION.getIcon(), TabsTransaction.get().bothTitle());
+		this.addStatusbarLabel(jBothOrders);
+
+		jBothOrdersCount = StatusPanel.createLabel(TabsTransaction.get().bothCount(), Images.EDIT_ADD.getIcon(), AutoNumberFormat.ITEMS);
+		this.addStatusbarLabel(jBothOrdersCount);
+
+		jBothOrdersTotal = StatusPanel.createLabel(TabsTransaction.get().bothTotal(), Images.TOOL_VALUES.getIcon(), AutoNumberFormat.ISK);
+		this.addStatusbarLabel(jBothOrdersTotal);
+
+		jBothOrdersAverage = StatusPanel.createLabel(TabsTransaction.get().bothAvg(), Images.ASSETS_AVERAGE.getIcon(), AutoNumberFormat.ISK);
+		this.addStatusbarLabel(jBothOrdersAverage);
+
+		//Buy
+		JLabel jBuyOrders = StatusPanel.createIcon(Images.ORDERS_BUY.getIcon(), TabsTransaction.get().buyTitle());
+		this.addStatusbarLabel(jBuyOrders);
+
+		jBuyOrdersCount = StatusPanel.createLabel(TabsTransaction.get().buyCount(), Images.EDIT_ADD.getIcon(), AutoNumberFormat.ITEMS);
+		this.addStatusbarLabel(jBuyOrdersCount);
+
+		jBuyOrdersTotal = StatusPanel.createLabel(TabsTransaction.get().buyTotal(), Images.TOOL_VALUES.getIcon(), AutoNumberFormat.ISK);
+		this.addStatusbarLabel(jBuyOrdersTotal);
+
+		jBuyOrdersAverage = StatusPanel.createLabel(TabsTransaction.get().buyAvg(), Images.ASSETS_AVERAGE.getIcon(), AutoNumberFormat.ISK);
+		this.addStatusbarLabel(jBuyOrdersAverage);
+
 		JFixedToolBar jToolBar = new JFixedToolBar();
 
 		jClearNew = new JButton(TabsTransaction.get().clearNew(), Images.UPDATE_DONE_OK.getIcon());
@@ -142,45 +182,6 @@ public class TransactionTab extends JMainTabPrimary implements TagUpdate {
 		filterControl = new TransactionsFilterControl(sortedList);
 		//Menu
 		installTableTool(new TransactionTableMenu(), tableFormat, comparatorChooser, tableModel, jTable, filterControl, MyTransaction.class);
-
-		//Sell
-		JLabel jSellOrders = StatusPanel.createIcon(Images.ORDERS_SELL.getIcon(), TabsTransaction.get().sellTitle());
-		this.addStatusbarLabel(jSellOrders);
-
-		jSellOrdersCount = StatusPanel.createLabel(TabsTransaction.get().sellCount(), Images.EDIT_ADD.getIcon(), AutoNumberFormat.ITEMS);
-		this.addStatusbarLabel(jSellOrdersCount);
-
-		jSellOrdersTotal = StatusPanel.createLabel(TabsTransaction.get().sellTotal(), Images.TOOL_VALUES.getIcon(), AutoNumberFormat.ISK);
-		this.addStatusbarLabel(jSellOrdersTotal);
-
-		jSellOrdersAverage = StatusPanel.createLabel(TabsTransaction.get().sellAvg(), Images.ASSETS_AVERAGE.getIcon(), AutoNumberFormat.ISK);
-		this.addStatusbarLabel(jSellOrdersAverage);
-
-		//Both
-		JLabel jBothOrders = StatusPanel.createIcon(Images.TOOL_TRANSACTION.getIcon(), TabsTransaction.get().bothTitle());
-		this.addStatusbarLabel(jBothOrders);
-
-		jBothOrdersCount = StatusPanel.createLabel(TabsTransaction.get().bothCount(), Images.EDIT_ADD.getIcon(), AutoNumberFormat.ITEMS);
-		this.addStatusbarLabel(jBothOrdersCount);
-
-		jBothOrdersTotal = StatusPanel.createLabel(TabsTransaction.get().bothTotal(), Images.TOOL_VALUES.getIcon(), AutoNumberFormat.ISK);
-		this.addStatusbarLabel(jBothOrdersTotal);
-
-		jBothOrdersAverage = StatusPanel.createLabel(TabsTransaction.get().bothAvg(), Images.ASSETS_AVERAGE.getIcon(), AutoNumberFormat.ISK);
-		this.addStatusbarLabel(jBothOrdersAverage);
-
-		//Buy
-		JLabel jBuyOrders = StatusPanel.createIcon(Images.ORDERS_BUY.getIcon(), TabsTransaction.get().buyTitle());
-		this.addStatusbarLabel(jBuyOrders);
-
-		jBuyOrdersCount = StatusPanel.createLabel(TabsTransaction.get().buyCount(), Images.EDIT_ADD.getIcon(), AutoNumberFormat.ITEMS);
-		this.addStatusbarLabel(jBuyOrdersCount);
-
-		jBuyOrdersTotal = StatusPanel.createLabel(TabsTransaction.get().buyTotal(), Images.TOOL_VALUES.getIcon(), AutoNumberFormat.ISK);
-		this.addStatusbarLabel(jBuyOrdersTotal);
-
-		jBuyOrdersAverage = StatusPanel.createLabel(TabsTransaction.get().buyAvg(), Images.ASSETS_AVERAGE.getIcon(), AutoNumberFormat.ISK);
-		this.addStatusbarLabel(jBuyOrdersAverage);
 
 		layout.setHorizontalGroup(
 				layout.createParallelGroup()

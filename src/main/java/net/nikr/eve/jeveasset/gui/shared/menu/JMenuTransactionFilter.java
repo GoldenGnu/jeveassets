@@ -37,6 +37,7 @@ import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewGroup;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewLocation;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewTab;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewTab.OverviewTableMenu;
+import net.nikr.eve.jeveasset.gui.tabs.transaction.TransactionTab;
 import net.nikr.eve.jeveasset.gui.tabs.transaction.TransactionTableFormat;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 import net.nikr.eve.jeveasset.i18n.TabsOverview;
@@ -135,8 +136,9 @@ public class JMenuTransactionFilter<T> extends JAutoMenu<T> {
 
 	private void addFilters(Set<String> names, TransactionTableFormat column, CompareType compareType) {
 		List<Filter> filters = JMenuAssetFilter.getFilters(names, column, compareType);
-		program.getTransactionsTab().addFilters(filters);
-		program.getMainWindow().addTab(program.getTransactionsTab());
+		TransactionTab transactionsTab = program.getTransactionsTab(true);
+		transactionsTab.addFilters(filters);
+		program.getMainWindow().addTab(transactionsTab);
 	}
 
 	private class ListenerClass implements ActionListener {
@@ -153,7 +155,7 @@ public class JMenuTransactionFilter<T> extends JAutoMenu<T> {
 			} else if (MenuTransactionFilterAction.REGION_FILTER.name().equals(e.getActionCommand())) {
 				addFilters(menuData.getRegionNames(), TransactionTableFormat.REGION, CompareType.EQUALS);
 			} else if (MenuTransactionFilterAction.OVERVIEW_GROUP_FILTER.name().equals(e.getActionCommand())) {
-				OverviewGroup overviewGroup = program.getOverviewTab().getSelectGroup();
+				OverviewGroup overviewGroup = program.getOverviewTab(true).getSelectGroup();
 				if (overviewGroup == null) {
 					return;
 				}
@@ -175,8 +177,9 @@ public class JMenuTransactionFilter<T> extends JAutoMenu<T> {
 						filters.add(new Filter(LogicType.OR, TransactionTableFormat.REGION, CompareType.EQUALS, location.getName()));
 					}
 				}
-				program.getTransactionsTab().addFilters(filters);
-				program.getMainWindow().addTab(program.getTransactionsTab());
+				TransactionTab transactionsTab = program.getTransactionsTab(true);
+				transactionsTab.addFilters(filters);
+				program.getMainWindow().addTab(transactionsTab);
 			} else if (MenuTransactionFilterAction.ITEM_TYPE_FILTER.name().equals(e.getActionCommand())) {
 				addFilters(menuData.getTypeNames(), TransactionTableFormat.NAME, CompareType.CONTAINS);
 			}
