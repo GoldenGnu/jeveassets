@@ -110,6 +110,7 @@ import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo.MenuItemValue;
 import net.nikr.eve.jeveasset.gui.tabs.values.AssetValue;
 import net.nikr.eve.jeveasset.gui.tabs.values.DataSetCreator;
 import net.nikr.eve.jeveasset.gui.tabs.values.Value;
+import net.nikr.eve.jeveasset.gui.tabs.values.ValueTableTab;
 import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.i18n.TabsTracker;
 import net.nikr.eve.jeveasset.io.local.SettingsReader;
@@ -747,8 +748,9 @@ public class TrackerTab extends JMainTabSecondary {
 				updateButtonIcons();
 			}
 			//Isk
-			if (program.getMainWindow().isOpen(program.getValueTableTab())) {
-				program.getValueTableTab().updateData();
+			ValueTableTab iskTab = program.getIskTab(false);
+			if (iskTab != null && program.getMainWindow().isOpen(iskTab)) {
+				iskTab.updateData();
 			}
 		}
 	}

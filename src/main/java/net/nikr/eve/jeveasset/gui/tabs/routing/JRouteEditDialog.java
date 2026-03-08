@@ -59,14 +59,16 @@ public class JRouteEditDialog extends JDialogCentered {
 	private final JLabel jDelta;
 	private final JLabel jAvoid;
 	private final JLabel jSecurity;
+	private final RoutingTab routingTab;
 	private Map<Long, SolarSystem> systemCache;
 	private Graph<SolarSystem> filteredGraph;
 	private RouteResult routeResult;
 	private RouteResult returnResult;
 	private boolean updating = false;
 
-	public JRouteEditDialog(Program program) {
+	public JRouteEditDialog(RoutingTab routingTab, Program program) {
 		super(program, TabsRouting.get().resultEditTitle());
+		this.routingTab = routingTab;
 
 		jJumps = new JLabel();
 		jDelta = new JLabel();
@@ -219,8 +221,8 @@ public class JRouteEditDialog extends JDialogCentered {
 			Route route = new Route(solarSystem.getLocationID(), solarSystem.getSystem());
 			model.addElement(route);
 		}
-		jAvoid.setText(TabsRouting.get().resultEditAvoid(program.getRoutingTab().getAvoidString()));
-		jSecurity.setText((TabsRouting.get().resultEditSecurity(program.getRoutingTab().getSecurityString())));
+		jAvoid.setText(TabsRouting.get().resultEditAvoid(routingTab.getAvoidString()));
+		jSecurity.setText((TabsRouting.get().resultEditSecurity(routingTab.getSecurityString())));
 		calculateInfo(routeResult.getJumps());
 		updating = false;
 		boolean valid = recalculateRoutes();
@@ -240,18 +242,18 @@ public class JRouteEditDialog extends JDialogCentered {
 			list.add(model.get(i));
 		}
 		try {
-			returnResult = makeRouteResult(program, systemCache, filteredGraph, list, TabsRouting.get().resultEdited(), routeResult.getStations());
+			returnResult = makeRouteResult(routingTab, systemCache, filteredGraph, list, TabsRouting.get().resultEdited(), routeResult.getStations());
 		} catch (DisconnectedGraphException ex) {
 			returnResult = null;
 		}
 		setVisible(false);
 	}
 
-	public static RouteResult makeRouteResult(Program program, Map<Long, SolarSystem> systemCache, Graph<SolarSystem> filteredGraph, List<Route> list, String algorithmName) throws DisconnectedGraphException {
-		return makeRouteResult(program, systemCache, filteredGraph, list, algorithmName, new HashMap<>());
+	public static RouteResult makeRouteResult(RoutingTab routingTab, Map<Long, SolarSystem> systemCache, Graph<SolarSystem> filteredGraph, List<Route> list, String algorithmName) throws DisconnectedGraphException {
+		return makeRouteResult(routingTab, systemCache, filteredGraph, list, algorithmName, new HashMap<>());
 	}
 
-	private static RouteResult makeRouteResult(Program program, Map<Long, SolarSystem> systemCache, Graph<SolarSystem> filteredGraph, List<Route> list, String algorithmName, Map<Long, List<SolarSystem>> stations) throws DisconnectedGraphException {
+	private static RouteResult makeRouteResult(RoutingTab routingTab, Map<Long, SolarSystem> systemCache, Graph<SolarSystem> filteredGraph, List<Route> list, String algorithmName, Map<Long, List<SolarSystem>> stations) throws DisconnectedGraphException {
 		List<List<SolarSystem>> routes = new ArrayList<>();
 		int jumps = 0;
 		Route last = null;
@@ -264,7 +266,7 @@ public class JRouteEditDialog extends JDialogCentered {
 		}
 		jumps = jumps + distanceBetween(systemCache, filteredGraph, last, list.get(0));
 		routes.add(routeBetween(systemCache, filteredGraph, last, list.get(0)));
-		return new RouteResult(routes, stations, routes.size(), algorithmName, 0, jumps, program.getRoutingTab().getAvoidString(), program.getRoutingTab().getSecurityString());
+		return new RouteResult(routes, stations, routes.size(), algorithmName, 0, jumps, routingTab.getAvoidString(), routingTab.getSecurityString());
 	}
 
 	public static class Route implements Serializable {

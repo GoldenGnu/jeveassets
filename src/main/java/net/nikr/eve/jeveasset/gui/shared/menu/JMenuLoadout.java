@@ -31,6 +31,7 @@ import net.nikr.eve.jeveasset.data.api.my.MyAsset;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JSelectionDialog;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.JAutoMenu;
+import net.nikr.eve.jeveasset.gui.tabs.loadout.LoadoutsTab;
 import net.nikr.eve.jeveasset.gui.tabs.tree.TreeAsset;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 
@@ -100,8 +101,9 @@ public class JMenuLoadout<T> extends JAutoMenu<T> {
 				if (ship == null) {
 					return;
 				}
-				program.getMainWindow().addTab(program.getLoadoutsTab(), true);
-				program.getLoadoutsTab().selectShip(ship);
+				LoadoutsTab loadoutsTab = program.getLoadoutsTab(true);
+				program.getMainWindow().addTab(loadoutsTab, true);
+				loadoutsTab.selectShip(ship);
 			}
 		}
 	}

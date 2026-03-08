@@ -137,7 +137,7 @@ public class JMenuJumps<T extends Enum<T> & EnumTableColumn<Q>, Q> extends JAuto
 				columnManager.clearJumpColumns();
 			} else if (MenuJumpsAction.ADD_OTHER.name().equals(e.getActionCommand())) {
 				//Clear tab
-				SolarSystem solarSystem = program.getRoutingTab().getSolarSystem();
+				SolarSystem solarSystem = program.getRoutingTab(true).getSolarSystem();
 				if (solarSystem != null) {
 					MyLocation location = StaticData.get().getLocation(solarSystem.getSystemID());
 					if (location != null) {
