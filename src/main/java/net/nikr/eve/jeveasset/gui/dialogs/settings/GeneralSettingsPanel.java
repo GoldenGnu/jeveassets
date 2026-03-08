@@ -24,12 +24,15 @@ package net.nikr.eve.jeveasset.gui.dialogs.settings;
 import com.sun.jna.Platform;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import javax.swing.ButtonGroup;
 import javax.swing.GroupLayout;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.ToolLoader;
 import net.nikr.eve.jeveasset.data.settings.ExportSettings.DecimalSeparator;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.Settings.TransactionProfitPrice;
@@ -41,6 +44,9 @@ import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 
 public class GeneralSettingsPanel extends JSettingsPanel {
 
+	private final JRadioButton jLoadToolsBackground;
+	private final JRadioButton jLoadToolsOpen;
+	private final JRadioButton jLoadToolsStartup;
 	private final JCheckBox jEnterFilters;
 	private final JCheckBox jHighlightSelectedRow;
 	private final JCheckBox jFocusEveOnline;
@@ -52,6 +58,14 @@ public class GeneralSettingsPanel extends JSettingsPanel {
 
 	public GeneralSettingsPanel(final Program program, final SettingsDialog optionsDialog) {
 		super(program, optionsDialog, DialoguesSettings.get().general(), Images.DIALOG_SETTINGS.getIcon());
+
+		ButtonGroup tools = new ButtonGroup();
+		jLoadToolsBackground = new JRadioButton(DialoguesSettings.get().loadToolsBackground());
+		tools.add(jLoadToolsBackground);
+		jLoadToolsOpen = new JRadioButton(DialoguesSettings.get().loadToolsOpen());
+		tools.add(jLoadToolsOpen);
+		jLoadToolsStartup = new JRadioButton(DialoguesSettings.get().loadToolsStartup());
+		tools.add(jLoadToolsStartup);
 
 		jEnterFilters = new JCheckBox(DialoguesSettings.get().enterFilter());
 
@@ -91,6 +105,9 @@ public class GeneralSettingsPanel extends JSettingsPanel {
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+				.addComponent(jLoadToolsBackground)
+				.addComponent(jLoadToolsOpen)
+				.addComponent(jLoadToolsStartup)
 				.addComponent(jEnterFilters)
 				.addComponent(jHighlightSelectedRow)
 				.addComponent(jFocusEveOnline)
@@ -126,6 +143,10 @@ public class GeneralSettingsPanel extends JSettingsPanel {
 		);
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
+				.addComponent(jLoadToolsBackground, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+				.addComponent(jLoadToolsOpen, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+				.addComponent(jLoadToolsStartup, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+				.addGap(10)
 				.addComponent(jEnterFilters, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				.addComponent(jHighlightSelectedRow, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				.addComponent(jFocusEveOnline, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
@@ -174,6 +195,9 @@ public class GeneralSettingsPanel extends JSettingsPanel {
 						|| transactionProfitPrice != Settings.get().getTransactionProfitPrice()
 						|| transactionProfitMargin != Settings.get().getTransactionProfitMargin();
 		boolean repaint = jHighlightSelectedRow.isSelected() != Settings.get().isHighlightSelectedRows();
+		boolean loadToolsBackground = jLoadToolsBackground.isSelected();
+		Settings.get().setLoadToolsBackground(jLoadToolsBackground.isSelected());
+		Settings.get().setLoadToolsStartup(jLoadToolsStartup.isSelected());
 		Settings.get().setFilterOnEnter(jEnterFilters.isSelected());
 		Settings.get().setHighlightSelectedRows(jHighlightSelectedRow.isSelected());
 		Settings.get().setFocusEveOnlineOnEsiUiCalls(jFocusEveOnline.isSelected());
@@ -181,6 +205,11 @@ public class GeneralSettingsPanel extends JSettingsPanel {
 		Settings.get().setTransactionProfitPrice(transactionProfitPrice);
 		Settings.get().setTransactionProfitMargin(transactionProfitMargin);
 		Settings.get().getCopySettings().setCopyDecimalSeparator(copyDecimalSeparator);
+		if (loadToolsBackground) {
+			ToolLoader.startBackgroundToolLoading(program);
+		} else {
+			ToolLoader.stopBackgroundToolLoading();
+		}
 		if (update) {
 			return UpdateType.FULL_UPDATE;
 		} else if (repaint) {
@@ -192,6 +221,9 @@ public class GeneralSettingsPanel extends JSettingsPanel {
 
 	@Override
 	public void load() {
+		jLoadToolsOpen.setSelected(true);
+		jLoadToolsBackground.setSelected(Settings.get().isLoadToolsBackground());
+		jLoadToolsStartup.setSelected(Settings.get().isLoadToolsStartup());
 		jEnterFilters.setSelected(Settings.get().isFilterOnEnter());
 		jHighlightSelectedRow.setSelected(Settings.get().isHighlightSelectedRows());
 		jFocusEveOnline.setSelected(Settings.get().isFocusEveOnlineOnEsiUiCalls());

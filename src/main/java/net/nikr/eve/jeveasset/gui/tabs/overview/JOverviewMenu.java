@@ -45,12 +45,14 @@ public class JOverviewMenu extends JMenu {
 	}
 
 	private final Program program;
+	private final OverviewTab overviewTab;
 	private final AddToGroup addToGroup = new AddToGroup();
 	private final RemoveFromGroup removeFromGroup = new RemoveFromGroup();
 
 	public JOverviewMenu(Program program, OverviewTab overviewTab, List<Overview> selected) {
 		super(TabsOverview.get().groups());
 		this.program = program;
+		this.overviewTab = overviewTab;
 		this.setIcon(Images.LOC_GROUPS.getIcon());
 
 		ListenerClass listener = new ListenerClass();
@@ -153,32 +155,32 @@ public class JOverviewMenu extends JMenu {
 					Settings.lock("Overview Groups (New)"); //Lock for Overview Groups (New)
 					OverviewGroup overviewGroup = new OverviewGroup(value);
 					Settings.get().getOverviewGroups().put(overviewGroup.getName(), overviewGroup);
-					overviewGroup.addAll(program.getOverviewTab().getSelectedLocations());
-					program.getOverviewTab().updateTable();
+					overviewGroup.addAll(overviewTab.getSelectedLocations());
+					overviewTab.updateTable();
 					Settings.unlock("Overview Groups (New)"); //Unlock for Overview Groups (New)
 					program.saveSettings("Overview Groups (New)"); //Save Overview Groups (New)
 				}
 			}
 			if (OverviewMenu.DELETE.name().equals(e.getActionCommand())) {
-				OverviewGroup overviewGroup = program.getOverviewTab().getSelectGroup();
+				OverviewGroup overviewGroup = overviewTab.getSelectGroup();
 				int value = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), TabsOverview.get().deleteTheGroup(overviewGroup.getName()), TabsOverview.get().deleteGroup(), JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
 				if (value == JOptionPane.OK_OPTION) {
 					Settings.lock("Overview Groups (Delete)"); //Lock for Overview Groups (Delete)
 					Settings.get().getOverviewGroups().remove(overviewGroup.getName());
-					program.getOverviewTab().updateTable();
+					overviewTab.updateTable();
 					Settings.unlock("Overview Groups (Delete)"); //Unlock for Overview Groups (Delete)
 					program.saveSettings("Overview Groups (Delete)"); //Save Overview Groups (Delete)
 				}
 			}
 			if (OverviewMenu.RENAME.name().equals(e.getActionCommand())) {
-				OverviewGroup overviewGroup = program.getOverviewTab().getSelectGroup();
+				OverviewGroup overviewGroup = overviewTab.getSelectGroup();
 				String value = (String) JOptionInput.showInputDialog(program.getMainWindow().getFrame(), TabsOverview.get().groupName(), TabsOverview.get().renameGroup(), JOptionPane.PLAIN_MESSAGE, null, null, overviewGroup.getName());
 				if (value != null) {
 					Settings.lock("Overview Groups (Rename)"); //Lock for Overview Groups (Rename)
 					Settings.get().getOverviewGroups().remove(overviewGroup.getName());
 					overviewGroup.setName(value);
 					Settings.get().getOverviewGroups().put(overviewGroup.getName(), overviewGroup);
-					program.getOverviewTab().updateTable();
+					overviewTab.updateTable();
 					Settings.unlock("Overview Groups (Rename)"); //Unlock for Overview Groups (Rename)
 					program.saveSettings("Overview Groups (Rename)"); //Save Overview Groups (Rename)
 				}
@@ -192,13 +194,13 @@ public class JOverviewMenu extends JMenu {
 		public void actionPerformed(final ActionEvent e) {
 			OverviewGroup overviewGroup = Settings.get().getOverviewGroups().get(e.getActionCommand());
 			if (overviewGroup != null) {
-				List<OverviewLocation> locations = program.getOverviewTab().getSelectedLocations();
+				List<OverviewLocation> locations = overviewTab.getSelectedLocations();
 				if (overviewGroup.getLocations().containsAll(locations)) {
 					overviewGroup.removeAll(locations);
 				} else { //Remove
 					overviewGroup.addAll(locations);
 				}
-				program.getOverviewTab().updateTable();
+				overviewTab.updateTable();
 			}
 		}
 	}
@@ -207,10 +209,10 @@ public class JOverviewMenu extends JMenu {
 
 		@Override
 		public void actionPerformed(final ActionEvent e) {
-			OverviewGroup overviewGroup = program.getOverviewTab().getSelectGroup();
+			OverviewGroup overviewGroup = overviewTab.getSelectGroup();
 			String location = e.getActionCommand();
 			overviewGroup.remove(new OverviewLocation(location));
-			program.getOverviewTab().updateTable();
+			overviewTab.updateTable();
 		}
 	}
 

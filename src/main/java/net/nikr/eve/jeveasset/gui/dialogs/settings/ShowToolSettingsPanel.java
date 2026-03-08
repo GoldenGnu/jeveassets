@@ -49,6 +49,7 @@ import javax.swing.TransferHandler;
 import static javax.swing.TransferHandler.MOVE;
 import javax.swing.TransferHandler.TransferSupport;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.ToolLoader;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
@@ -73,10 +74,8 @@ public class ShowToolSettingsPanel extends JSettingsPanel {
 	public ShowToolSettingsPanel(final Program program, final SettingsDialog settingsDialog) {
 		super(program, settingsDialog, DialoguesSettings.get().show(), Images.EDIT_SHOW.getIcon());
 
-		for (JMainTab jMainTab : program.getMainTabs().values()) {
-			if (jMainTab.isCloseable()) {
-				tools.add(new Tool(jMainTab.getTitle()));
-			}
+		for (String toolTitle : ToolLoader.getToolTitles(program)) {
+			tools.add(new Tool(toolTitle));
 		}
 
 		ButtonGroup buttonGroup = new ButtonGroup();
