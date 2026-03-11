@@ -96,6 +96,22 @@ public class IndustryJobsTab extends JMainTabPrimary {
 
 		ListenerClass listener = new ListenerClass();
 
+		updateTimeLeftColumnSeconds = new Timer(1000, new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				updatedSeconds++;
+				updateTimeLeft();
+				if (updatedSeconds > TIME_LEFT_SECONDS) {
+					startTimeLeft();
+				}
+			}
+		});
+		updateTimeLeftColumnMinutes = new Timer(60 * 1000, new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				updateTimeLeft();
+			}
+		});
 	//StatusPanels must be initialized before the eventlist
 		jInventionSuccess = StatusPanel.createLabel(TabsJobs.get().inventionSuccess(), Images.JOBS_INVENTION_SUCCESS.getIcon(), AutoNumberFormat.PERCENT);
 		this.addStatusbarLabel(jInventionSuccess);
@@ -140,23 +156,6 @@ public class IndustryJobsTab extends JMainTabPrimary {
 		filterControl = new IndustryJobsFilterControl(sortedList);
 		//Menu
 		installTableTool(new JobsTableMenu(), tableFormat, comparatorChooser, tableModel, jTable, filterControl, MyIndustryJob.class);
-
-		updateTimeLeftColumnSeconds = new Timer(1000, new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				updatedSeconds++;
-				updateTimeLeft();
-				if (updatedSeconds > TIME_LEFT_SECONDS) {
-					startTimeLeft();
-				}
-			}
-		});
-		updateTimeLeftColumnMinutes = new Timer(60 * 1000, new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				updateTimeLeft();
-			}
-		});
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()
