@@ -182,7 +182,9 @@ public abstract class DataConverter {
 					for (Integer implantTypeID : clone.getImplants()) {
 						MyAsset implant = new MyAsset(clone, implantTypeID, owner, parents);
 						jumpClone.addAsset(implant);
-						assets.add(implant);
+						if (!includeJumpClones) {
+							assets.add(implant);
+						}
 					}
 				}
 			}
