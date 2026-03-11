@@ -41,6 +41,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.Timer;
+import javax.swing.event.TableModelEvent;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
 import net.nikr.eve.jeveasset.data.api.raw.RawIndustryJob.IndustryJobStatus;
@@ -68,11 +69,17 @@ import net.nikr.eve.jeveasset.io.local.profile.ProfileDatabase;
 
 public class IndustryJobsTab extends JMainTabPrimary {
 
+	private static final int TIME_LEFT_SECONDS = 63;
+	private static final int TIME_LEFT_SECONDS_MS = TIME_LEFT_SECONDS * 1000;
 	private final JAutoColumnTable jTable;
 	private final JStatusLabel jCount;
 	private final JStatusLabel jInventionSuccess;
 	private final JStatusLabel jManufactureOutputValue;
-	private final Timer updateTimeLeftColumn;
+
+	private final Timer updateTimeLeftColumnSeconds;
+	private final Timer updateTimeLeftColumnMinutes;
+	private Timer startTimeLeftColumnSeconds;
+	private int updatedSeconds;
 
 	//Table
 	private final EventList<MyIndustryJob> eventList;
@@ -134,18 +141,20 @@ public class IndustryJobsTab extends JMainTabPrimary {
 		//Menu
 		installTableTool(new JobsTableMenu(), tableFormat, comparatorChooser, tableModel, jTable, filterControl, MyIndustryJob.class);
 
-		updateTimeLeftColumn = new Timer(1000, new ActionListener() {
+		updateTimeLeftColumnSeconds = new Timer(1000, new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				for (int column = 0; column < jTable.getColumnCount(); column++) {
-					String columnName = (String) jTable.getTableHeader().getColumnModel().getColumn(column).getHeaderValue();
-					if (columnName.equals(IndustryJobTableFormat.TIME_LEFT.getColumnName())) {
-						for (int row = 0; row < jTable.getRowCount(); row++) {
-							tableModel.fireTableCellUpdated(row, column);
-						}
-						break;
-					}
+				updatedSeconds++;
+				updateTimeLeft();
+				if (updatedSeconds > TIME_LEFT_SECONDS) {
+					startTimeLeft();
 				}
+			}
+		});
+		updateTimeLeftColumnMinutes = new Timer(60 * 1000, new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				updateTimeLeft();
 			}
 		});
 
@@ -194,10 +203,67 @@ public class IndustryJobsTab extends JMainTabPrimary {
 	}
 
 	public void tabChanged() {
-		if (program.getMainWindow().getSelectedTab().equals(this)) {
-			updateTimeLeftColumn.start();
+		startTimeLeft();
+	}
+
+	private void updateTimeLeft() {
+		for (int column = 0; column < jTable.getColumnCount(); column++) {
+			String columnName = (String) jTable.getTableHeader().getColumnModel().getColumn(column).getHeaderValue();
+			if (columnName.equals(IndustryJobTableFormat.TIME_LEFT.getColumnName())) {
+				tableModel.fireTableChanged(new TableModelEvent(tableModel, 0, jTable.getRowCount() - 1, column));
+				return;
+			}
+		}
+	}
+
+	private void stopTimeLeft() {
+		//Stop
+		if (startTimeLeftColumnSeconds != null) {
+			startTimeLeftColumnSeconds.stop();
+			startTimeLeftColumnSeconds = null;
+		}
+		updateTimeLeftColumnSeconds.stop();
+		updateTimeLeftColumnMinutes.stop();
+	}
+
+	private void startTimeLeft() {
+		stopTimeLeft();
+		if (!program.getMainWindow().getSelectedTab().equals(this)) {
+			return; //No focus
+		}
+		//Find next complete
+		Long duration = null;
+		try {
+			eventList.getReadWriteLock().readLock().lock();
+			for (MyIndustryJob industryJob : eventList) {
+				if (industryJob.getTimeLeft().getDuration()<= 0) {
+					continue; //Already completed
+				}
+				if (duration == null) {
+					duration = industryJob.getTimeLeft().getDuration();
+				} else {
+					duration = Math.min(duration, industryJob.getTimeLeft().getDuration());
+				}
+			}
+		} finally {
+			eventList.getReadWriteLock().readLock().unlock();
+		}
+		if (duration != null && duration < TIME_LEFT_SECONDS_MS) {
+			updatedSeconds = 0;
+			updateTimeLeftColumnSeconds.start();
 		} else {
-			updateTimeLeftColumn.stop();
+			if (duration != null) {
+				startTimeLeftColumnSeconds = new Timer((int) (duration - TIME_LEFT_SECONDS_MS), new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						stopTimeLeft();
+						updatedSeconds = 0;
+						updateTimeLeftColumnSeconds.start();
+					}
+				});
+				startTimeLeftColumnSeconds.start();
+			} //Else: No in-progress industry jobs
+			updateTimeLeftColumnMinutes.start();
 		}
 	}
 
@@ -264,6 +330,7 @@ public class IndustryJobsTab extends JMainTabPrimary {
 	private class ListenerClass implements ListEventListener<MyIndustryJob> {
 		@Override
 		public void listChanged(final ListEvent<MyIndustryJob> listChanges) {
+			startTimeLeft();
 			int inventionCount = 0;
 			long count = 0;
 			double success = 0;
