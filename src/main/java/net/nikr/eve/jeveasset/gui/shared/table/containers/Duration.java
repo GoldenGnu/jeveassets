@@ -55,6 +55,10 @@ public class Duration implements Comparable<Duration> {
 		formatted = Formatter.milliseconds(time, showDays, showHours, showMinutes, showSeconds);
 	}
 
+	public long getDuration() {
+		return duration;
+	}
+
 	@Override
 	public int hashCode() {
 		int hash = 5;
