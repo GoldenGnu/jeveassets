@@ -20,6 +20,7 @@
  */
 package net.nikr.eve.jeveasset.data.settings;
 
+import com.formdev.flatlaf.FlatLaf;
 import java.awt.Color;
 import java.awt.Component;
 import java.util.ArrayList;
@@ -46,6 +47,7 @@ public class ColorSettings {
 		FLAT_LIGHT(DialoguesSettings.get().lookAndFeelFlatLight(), "com.formdev.flatlaf.FlatLightLaf"),
 		FLAT_INTELLIJ(DialoguesSettings.get().lookAndFeelFlatIntelliJ(), "com.formdev.flatlaf.FlatIntelliJLaf"),
 		FLAT_DARK(DialoguesSettings.get().lookAndFeelFlatDark(), "com.formdev.flatlaf.FlatDarkLaf"),
+		FLAT_DARK_DARKER(DialoguesSettings.get().lookAndFeelFlatDarkDarker(), FlatDarkDarker.class.getName()),
 		FLAT_DARCULA(DialoguesSettings.get().lookAndFeelFlatDarcula(), "com.formdev.flatlaf.FlatDarculaLaf"),
 		DARK_NIMBUS(DialoguesSettings.get().lookAndFeelNimbusDark(), DarkNimbus.class.getName()),
 		;
@@ -102,7 +104,15 @@ public class ColorSettings {
 	}
 
 	public boolean isFlatLAF() {
-		return lookAndFeelClass.startsWith("com.formdev.flatlaf");
+		if (lookAndFeelClass.startsWith("com.formdev.flatlaf")) {
+			return true;
+		}
+		try {
+			Class<?> lookAndFeel = Class.forName(lookAndFeelClass);
+			return FlatLaf.class.isAssignableFrom(lookAndFeel);
+		} catch (ClassNotFoundException ex) {
+			return false;
+		}
 	}
 
 	public void setLookAndFeelClass(String lookAndFeelClass) {
