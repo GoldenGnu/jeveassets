@@ -148,6 +148,7 @@ public class StockpileDialog extends JDialogCentered {
 	private final List<OwnerType> owners;
 	private final List<ItemFlag> itemFlags;
 	private final List<String> containers;
+	private boolean initialized = false;
 
 	public StockpileDialog(final Program program) {
 		super(program, TabsStockpile.get().addStockpileTitle(), Images.TOOL_STOCKPILE.getImage());
@@ -451,6 +452,9 @@ public class StockpileDialog extends JDialogCentered {
 
 	private void show() {
 		updated = false;
+		if (!initialized) {
+			updateData();
+		}
 		super.setVisible(true);
 	}
 
@@ -589,6 +593,7 @@ public class StockpileDialog extends JDialogCentered {
 		containers.clear();
 		containers.addAll(containerSet);
 		Collections.sort(containers, StringComparators.CASE_INSENSITIVE);
+		initialized = true;
 	}
 
 	@Override
