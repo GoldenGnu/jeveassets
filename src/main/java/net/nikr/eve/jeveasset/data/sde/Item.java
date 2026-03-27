@@ -86,6 +86,7 @@ public class Item implements Comparable<Item>, ItemType {
 	private final int portion;
 	private final int productTypeID;
 	private final Set<Integer> blueprintTypeIDs = new HashSet<>();
+	private final Set<Integer> formulaTypeIDs = new HashSet<>();
 	private final int productQuantity;
 	private final boolean blueprint;
 	private final boolean formula;
@@ -305,6 +306,22 @@ public class Item implements Comparable<Item>, ItemType {
 
 	public boolean isProduct() {
 		return !blueprintTypeIDs.isEmpty();
+	}
+
+	public Set<Integer> getFormulaTypeIDs() {
+		return formulaTypeIDs;
+	}
+
+	public Integer getFormulaTypeID() {
+		if (formulaTypeIDs.isEmpty()) {
+			return 0;
+		} else {
+			return formulaTypeIDs.iterator().next();
+		}
+	}
+
+	public void addFormulaID(int formulaTypeID) {
+		this.formulaTypeIDs.add(formulaTypeID);
 	}
 
 	public Set<Integer> getBlueprintTypeIDs() {

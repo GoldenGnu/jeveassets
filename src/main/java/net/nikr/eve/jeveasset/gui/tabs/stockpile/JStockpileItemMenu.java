@@ -37,10 +37,9 @@ import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.MenuScroller;
-import static net.nikr.eve.jeveasset.gui.shared.menu.JMenuStockpile.getBlueprintSelect;
-import static net.nikr.eve.jeveasset.gui.shared.menu.JMenuStockpile.getFormulaSelect;
 import static net.nikr.eve.jeveasset.gui.shared.menu.JMenuStockpile.match;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
+import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItemMaterial;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileTotal;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileBpDialog.BpData;
 import net.nikr.eve.jeveasset.i18n.TabsStockpile;
@@ -61,7 +60,7 @@ public class JStockpileItemMenu extends JMenu {
 	private final StockpileTab stockpileTab;
 	private Program program;
 
-	public JStockpileItemMenu(final StockpileTab stockpileTab, final Program program, final List<StockpileItem> edit, final List<StockpileItem> delete, final List<StockpileItem> items) {
+	public JStockpileItemMenu(final StockpileTab stockpileTab, final Program program, final List<StockpileItem> edit,  final List<StockpileItem> blueprint, final List<StockpileItem> delete, final List<StockpileItem> add) {
 		super(TabsStockpile.get().stockpile());
 		this.program = program;
 		this.stockpileTab = stockpileTab;
@@ -74,7 +73,7 @@ public class JStockpileItemMenu extends JMenu {
 
 		JMenu jAddToo = new JMenu(TabsStockpile.get().addToStockpile());
 		jAddToo.setIcon(Images.EDIT_ADD.getIcon());
-		jAddToo.setEnabled(!items.isEmpty());
+		jAddToo.setEnabled(!add.isEmpty());
 		this.add(jAddToo);
 
 		MenuScroller menuScroller = new MenuScroller(jAddToo);
@@ -82,8 +81,8 @@ public class JStockpileItemMenu extends JMenu {
 		menuScroller.setTopFixedCount(2);
 		menuScroller.setInterval(125);
 
-		if (!items.isEmpty()) {
-			jMenuItem = new JStockpileMenuItem(TabsStockpile.get().addToNewStockpile(), Images.EDIT_ADD.getIcon(), items);
+		if (!add.isEmpty()) {
+			jMenuItem = new JStockpileMenuItem(TabsStockpile.get().addToNewStockpile(), Images.EDIT_ADD.getIcon(), add);
 			jMenuItem.setActionCommand(StockpileItemMenuAction.ADD_TO.name());
 			jMenuItem.addActionListener(listener);
 			jAddToo.add(jMenuItem);
@@ -91,7 +90,7 @@ public class JStockpileItemMenu extends JMenu {
 			jAddToo.addSeparator();
 
 			for (Stockpile stockpile : StockpileTab.getShownStockpiles(program)) {
-				jMenuItem = new JStockpileMenuItem(stockpile, Images.TOOL_STOCKPILE.getIcon(), items);
+				jMenuItem = new JStockpileMenuItem(stockpile, Images.TOOL_STOCKPILE.getIcon(), add);
 				jMenuItem.setActionCommand(StockpileItemMenuAction.ADD_TO.name());
 				jMenuItem.addActionListener(listener);
 				jAddToo.add(jMenuItem);
@@ -110,40 +109,28 @@ public class JStockpileItemMenu extends JMenu {
 		jMenuItem.setEnabled(!delete.isEmpty());
 		this.add(jMenuItem);
 
-		boolean blueprint = false;
-		for (Object object : items) {
-			if (object instanceof SeparatorList.Separator || object instanceof StockpileTotal || (!(object instanceof StockpileItem))) {
-				continue;
-			}
-			StockpileItem item = (StockpileItem) object;
-			if (item.isBlueprint()) {
-				blueprint = true;
-				break;
-			}
-		}
-
 		this.addSeparator();
 
 		jMenu = new JMenu(TabsStockpile.get().blueprints());
 		jMenu.setIcon(Images.MISC_BLUEPRINT.getIcon());
 		this.add(jMenu);
 
-		jMenuItem = new JStockpileMenuItem(TabsStockpile.get().original(), Images.MISC_BPO.getIcon(), items);
+		jMenuItem = new JStockpileMenuItem(TabsStockpile.get().original(), Images.MISC_BPO.getIcon(), blueprint);
 		jMenuItem.setActionCommand(StockpileItemMenuAction.ORIGINAL.name());
 		jMenuItem.addActionListener(listener);
-		jMenuItem.setEnabled(blueprint);
+		jMenuItem.setEnabled(!blueprint.isEmpty());
 		jMenu.add(jMenuItem);
 
-		jMenuItem = new JStockpileMenuItem(TabsStockpile.get().copy(), Images.MISC_BPC.getIcon(), items);
+		jMenuItem = new JStockpileMenuItem(TabsStockpile.get().copy(), Images.MISC_BPC.getIcon(), blueprint);
 		jMenuItem.setActionCommand(StockpileItemMenuAction.COPY.name());
 		jMenuItem.addActionListener(listener);
-		jMenuItem.setEnabled(blueprint);
+		jMenuItem.setEnabled(!blueprint.isEmpty());
 		jMenu.add(jMenuItem);
 
-		jMenuItem = new JStockpileMenuItem(TabsStockpile.get().runs(), Images.MISC_RUNS.getIcon(), items);
+		jMenuItem = new JStockpileMenuItem(TabsStockpile.get().runs(), Images.MISC_RUNS.getIcon(), blueprint);
 		jMenuItem.setActionCommand(StockpileItemMenuAction.RUNS.name());
 		jMenuItem.addActionListener(listener);
-		jMenuItem.setEnabled(blueprint);
+		jMenuItem.setEnabled(!blueprint.isEmpty());
 		jMenu.add(jMenuItem);
 	}
 
@@ -162,13 +149,13 @@ public class JStockpileItemMenu extends JMenu {
 						Stockpile stockpile = stockpileItem.getStockpile();
 						Item item = stockpileItem.getItem();
 						if (stockpileItem.isBlueprint() && blueprintSelect == null) {
-							blueprintSelect = getBlueprintSelect(program, true);
+							blueprintSelect = StockpileBpDialog.getBlueprintSelect(program, item, true);
 							if (blueprintSelect == null) {
 								return; //Cancel
 							}
 						}
 						if (item.isFormula() && formulaSelect == null) {
-							formulaSelect = getFormulaSelect(program);
+							formulaSelect = StockpileBpDialog.getFormulaSelect(program, item);
 							if (formulaSelect == null) {
 								return; //Cancel
 							}
@@ -189,6 +176,9 @@ public class JStockpileItemMenu extends JMenu {
 								Item materialItem = ApiIdConverter.getItem(material.getTypeID());
 								items.add(new StockpileItem(stockpile, materialItem, material.getTypeID(), count, false));
 							}
+						} else if (match(item, blueprintSelect, null, TabsStockpile.get().materialsManufacturingEditable())) {
+							//BP Materials
+							items.add(new StockpileItemMaterial(stockpile, item, item.getProductTypeID(), stockpileItem.getCountMinimum(), blueprintSelect));
 						} else if (match(item, null, formulaSelect, TabsStockpile.get().materialsReaction())) {
 							//Reaction Materials
 							for (IndustryMaterial material : item.getReactionMaterials()) {
@@ -197,7 +187,7 @@ public class JStockpileItemMenu extends JMenu {
 								items.add(new StockpileItem(stockpile, materialItem, material.getTypeID(), count, false));
 							}
 						} else { //source or not bluepint/formula
-							items.add(stockpileItem);
+							items.add(stockpileItem.deepCloneNew(stockpile));
 						}
 					}
 					stockpileTab.addToStockpile(jMenuItem.getStockpile(), items, true, true);

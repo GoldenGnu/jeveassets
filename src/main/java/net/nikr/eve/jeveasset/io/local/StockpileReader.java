@@ -38,11 +38,19 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import java.util.zip.InflaterInputStream;
+import net.nikr.eve.jeveasset.data.sde.Item;
+import net.nikr.eve.jeveasset.data.settings.ManufacturingSettings.ManufacturingFacility;
+import net.nikr.eve.jeveasset.data.settings.ManufacturingSettings.ManufacturingRigs;
+import net.nikr.eve.jeveasset.data.settings.ManufacturingSettings.ManufacturingSecurity;
+import net.nikr.eve.jeveasset.data.settings.ManufacturingSettings.ReactionRigs;
+import net.nikr.eve.jeveasset.data.settings.ManufacturingSettings.ReactionSecurity;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
+import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.MaterialTree;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter.StockpileContainer;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter.StockpileFlag;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
+import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItemMaterial;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -85,7 +93,7 @@ public class StockpileReader extends AbstractBackup {
 		}
 	}
 
-		public static class StockpileDeserializerGson implements JsonDeserializer<Stockpile> {
+	public static class StockpileDeserializerGson implements JsonDeserializer<Stockpile> {
 
 		@Override
 		public Stockpile deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
@@ -170,17 +178,151 @@ public class StockpileReader extends AbstractBackup {
 			JsonElement itemsElement = stockpileObject.get("i");
 			for (JsonElement itemElement : itemsElement.getAsJsonArray()) {
 				JsonObject itemObject = itemElement.getAsJsonObject();
-				int itemTypeID = itemObject.get("i").getAsInt();
-				double countMinimum = itemObject.get("m").getAsDouble();
-				boolean runs = itemObject.get("r").getAsBoolean();
-				JsonElement element = itemObject.get("im");
-				boolean ignoreMultiplier = false;
-				if (element != null) {
-					ignoreMultiplier = element.getAsBoolean();
+				StockpileItem stockpileItem = deserializeStockpileItem(itemObject, stockpile);
+				if (stockpileItem != null) {
+					stockpile.add(stockpileItem);
 				}
-				stockpile.add(new StockpileItem(stockpile, ApiIdConverter.getItem(Math.abs(itemTypeID)), itemTypeID, countMinimum, runs, ignoreMultiplier));
 			}
 			return stockpile;
+		}
+
+		private static StockpileItem deserializeStockpileItem(JsonObject itemObject, Stockpile stockpile) {
+			int typeID = itemObject.get("i").getAsInt();
+			double countMinimum = itemObject.get("m").getAsDouble();
+			boolean runs = itemObject.get("r").getAsBoolean();
+			JsonElement ignoreMultiplierElement = itemObject.get("im");
+			boolean ignoreMultiplier = false;
+			if (ignoreMultiplierElement != null) {
+				ignoreMultiplier = ignoreMultiplierElement.getAsBoolean();
+			}
+			JsonElement roundALotElement=  itemObject.get("ral");
+			boolean roundALot = false;
+			if (roundALotElement != null) {
+				roundALot = roundALotElement.getAsBoolean();
+			}
+		//Materials
+			//ProductTypeID
+			Integer productTypeID = null;
+			JsonElement pt = itemObject.get("pt");
+			if (pt != null) {
+				productTypeID = pt.getAsInt();
+			}
+			//Recursive
+			Integer blueprintRecursiveLevel = null;
+			JsonElement mrr = itemObject.get("mbr");
+			if (mrr != null) {
+				blueprintRecursiveLevel = mrr.getAsInt();
+			}
+			//Recursive
+			Integer formulaRecursiveLevel = null;
+			JsonElement mfr = itemObject.get("mfr");
+			if (mfr != null) {
+				formulaRecursiveLevel = mfr.getAsInt();
+			}
+			//Facility
+			ManufacturingFacility manufacturingFacility = null;
+			JsonElement mf = itemObject.get("mf");
+			if (mf != null) {
+				String facility = mf.getAsString();
+				if (facility != null) {
+					try {
+						manufacturingFacility = ManufacturingFacility.valueOf(facility);
+					} catch (IllegalArgumentException ex) {
+						//No problem
+					}
+				}
+			}
+			//ME
+			Integer materialEfficiency = null;
+			JsonElement me = itemObject.get("me");
+			if (me != null) {
+				materialEfficiency = me.getAsInt();
+			}
+			//Rigs
+			ManufacturingRigs manufacturingRigs = null;
+			JsonElement mr = itemObject.get("mr");
+			if (mr != null) {
+				String rigs = mr.getAsString();
+				if (rigs != null) {
+					try {
+						manufacturingRigs = ManufacturingRigs.valueOf(rigs);
+					} catch (IllegalArgumentException ex) {
+						//No problem
+					}
+				}
+			}
+			//Security
+			ManufacturingSecurity manufacturingSecurity = null;
+			JsonElement ms = itemObject.get("ms");
+			if (ms != null) {
+				String security = ms.getAsString();
+				if (security != null) {
+					try {
+						manufacturingSecurity = ManufacturingSecurity.valueOf(security);
+					} catch (IllegalArgumentException ex) {
+						//No problem
+					}
+				}
+			}
+	//Reactions
+			ReactionSecurity reactionSecurity = null;
+			JsonElement rs = itemObject.get("rs");
+			if (rs != null) {
+				String securityReactions = rs.getAsString();
+				if (securityReactions != null) {
+					try {
+						reactionSecurity = ReactionSecurity.valueOf(securityReactions);
+					} catch (IllegalArgumentException ex) {
+						//No problem
+					}
+				}
+			}
+			ReactionRigs reactionRigs = null;
+			JsonElement rr = itemObject.get("rr");
+			if (rr != null) {
+				String rigsReactions = rr.getAsString();
+				if (rigsReactions != null) {
+					try {
+						reactionRigs = ReactionRigs.valueOf(rigsReactions);
+					} catch (IllegalArgumentException ex) {
+						//No problem
+					}
+				}
+			}
+			if (typeID != 0) { //Ignore Total
+				Item item = ApiIdConverter.getItemUpdate(Math.abs(typeID), true);
+				MaterialTree root = new MaterialTree();
+				deserializeMaterials(itemObject, stockpile, root);
+				StockpileItem stockpileItem;
+				if (productTypeID != null && blueprintRecursiveLevel != null && materialEfficiency != null && manufacturingFacility != null && manufacturingRigs != null && manufacturingSecurity != null) {
+				stockpileItem = new StockpileItemMaterial(root, stockpile, item, productTypeID, countMinimum, ignoreMultiplier, roundALot, blueprintRecursiveLevel, materialEfficiency, manufacturingFacility, manufacturingRigs, manufacturingSecurity);
+				} else if (productTypeID != null && formulaRecursiveLevel != null && reactionSecurity != null && reactionRigs != null) {
+					stockpileItem = new StockpileItemMaterial(root, stockpile, item, productTypeID, countMinimum, ignoreMultiplier, roundALot, formulaRecursiveLevel, reactionRigs, reactionSecurity);
+				} else {
+					stockpileItem = new StockpileItem(stockpile, item, typeID, countMinimum, runs, ignoreMultiplier, roundALot);
+				}
+				return stockpileItem;
+			}
+			return null; //Never happens
+		}
+
+		private static void deserializeMaterials(JsonObject itemObject, Stockpile stockpile, MaterialTree parent) {
+			JsonElement itemsElement = itemObject.get("s");
+			if (itemsElement == null) {
+				return;
+			}
+			for (JsonElement itemElement : itemsElement.getAsJsonArray()) {
+				JsonObject matsObject = itemElement.getAsJsonObject();
+				StockpileItem stockpileItem = deserializeStockpileItem(matsObject, stockpile);
+				if (stockpileItem instanceof StockpileItemMaterial) {
+					StockpileItemMaterial itemMaterial = (StockpileItemMaterial) stockpileItem;
+					MaterialTree tree = new MaterialTree(itemMaterial);
+					if (parent != null) {
+						parent.add(tree);
+					}
+					deserializeMaterials(matsObject, stockpile, tree);
+				}
+			}
 		}
 	}
 }

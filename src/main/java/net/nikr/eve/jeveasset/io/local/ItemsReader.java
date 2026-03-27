@@ -65,6 +65,7 @@ public final class ItemsReader extends AbstractXmlReader<Boolean> {
 	private void parseItems(final Element element) throws XmlException {
 		NodeList nodes = element.getElementsByTagName("row");
 		Map<Integer, Integer> blueprints = new HashMap<>();
+		Map<Integer, Integer> formulas = new HashMap<>();
 		for (int i = 0; i < nodes.getLength(); i++) {
 			Element itemElement = (Element) nodes.item(i);
 			Item item = parseItem(itemElement);
@@ -75,11 +76,20 @@ public final class ItemsReader extends AbstractXmlReader<Boolean> {
 			if (item.isBlueprint()) {
 				blueprints.put(item.getTypeID(), item.getProductTypeID());
 			}
+			if (item.isFormula()) {
+				formulas.put(item.getTypeID(), item.getProductTypeID());
+			}
 		}
 		for (Map.Entry<Integer, Integer> entry : blueprints.entrySet()) {
 			Item item = items.get(entry.getValue());
 			if (item != null) {
 				item.addBlueprintID(entry.getKey());
+			}
+		}
+		for (Map.Entry<Integer, Integer> entry : formulas.entrySet()) {
+			Item item = items.get(entry.getValue());
+			if (item != null) {
+				item.addFormulaID(entry.getKey());
 			}
 		}
 	}

@@ -25,6 +25,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import javax.swing.JMenuItem;
@@ -37,6 +38,7 @@ import net.nikr.eve.jeveasset.gui.shared.MenuScroller;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.JAutoMenu;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
+import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItemMaterial;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileBpDialog;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileBpDialog.BpData;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileTab;
@@ -50,8 +52,6 @@ public class JMenuStockpile<T> extends JAutoMenu<T> {
 	private enum MenuStockpileAction {
 		ADD_TO
 	}
-
-	private static StockpileBpDialog stockpileBpDialog = null;
 
 	private final JMenuItem jAddToNew;
 
@@ -129,13 +129,13 @@ public class JMenuStockpile<T> extends JAutoMenu<T> {
 		for (int typeID : typeIDs) {
 			Item item = ApiIdConverter.getItem(Math.abs(typeID));
 			if (item.isBlueprint() && blueprintSelect == null) {
-				blueprintSelect = getBlueprintSelect(program, source);
+				blueprintSelect = StockpileBpDialog.getBlueprintSelect(program, item, source);
 				if (blueprintSelect == null) {
 					return null; //Cancel
 				}
 			}
-			if (item.getItem().isFormula() && formulaSelect == null) {
-				formulaSelect = getFormulaSelect(program);
+			if (item.isFormula() && formulaSelect == null) {
+				formulaSelect = StockpileBpDialog.getFormulaSelect(program, item);
 				if (formulaSelect == null) {
 					return null; //Cancel
 				}
@@ -157,18 +157,18 @@ public class JMenuStockpile<T> extends JAutoMenu<T> {
 		for (int typeID : typeIDs) {
 			Item item = ApiIdConverter.getItem(Math.abs(typeID));
 			if (item.isBlueprint() && blueprintSelect == null) {
-				blueprintSelect = getBlueprintSelect(program, source);
+				blueprintSelect = StockpileBpDialog.getBlueprintSelect(program, item, source);
 				if (blueprintSelect == null) {
 					return null; //Cancel
 				}
 			}
 			if (item.isFormula() && formulaSelect == null) {
-				formulaSelect = getFormulaSelect(program);
+				formulaSelect = StockpileBpDialog.getFormulaSelect(program, item);
 				if (formulaSelect == null) {
 					return null; //Cancel
 				}
 			}
-			if (match(item, blueprintSelect, formulaSelect, TabsStockpile.get().original())) {
+			if (match(item, blueprintSelect, formulaSelect, TabsStockpile.get().original(), TabsStockpile.get().formula())) {
 				//PBO
 				items.add(new StockpileItem(stockpile, item, Math.abs(typeID), total(counts, typeID), false));
 			} else if (match(item, blueprintSelect, null, TabsStockpile.get().copy())) {
@@ -178,19 +178,25 @@ public class JMenuStockpile<T> extends JAutoMenu<T> {
 				//BPC Runs
 				items.add(new StockpileItem(stockpile, item, -Math.abs(typeID), runs(counts, runs, typeID), true));
 			} else if (match(item, blueprintSelect, null, TabsStockpile.get().materialsManufacturing())) {
-				//BP Materials
+				//Manufacturing
 				for (IndustryMaterial material : item.getManufacturingMaterials()) {
 					double count = blueprintSelect.doMath(material.getQuantity(), total(counts, typeID));
 					Item materialItem = ApiIdConverter.getItem(material.getTypeID());
 					items.add(new StockpileItem(stockpile, materialItem, material.getTypeID(), count, false));
 				}
+			} else if (match(item, blueprintSelect, null, TabsStockpile.get().materialsManufacturingEditable())) {
+				//Manufacturing Editable
+				return Collections.singletonList(new StockpileItemMaterial(stockpile, item, item.getProductTypeID(), total(counts, typeID), blueprintSelect));
 			} else if (match(item, null, formulaSelect, TabsStockpile.get().materialsReaction())) {
-				//Reaction Materials
+				//Reaction
 				for (IndustryMaterial material : item.getReactionMaterials()) {
 					Item materialItem = ApiIdConverter.getItem(material.getTypeID());
 					double count = formulaSelect.doMath(material.getQuantity(), total(counts, typeID));
 					items.add(new StockpileItem(stockpile, materialItem, material.getTypeID(), count, false));
 				}
+			} else if (match(item, null, formulaSelect, TabsStockpile.get().materialsReactionEditable())) {
+				//Reaction Editable
+				return Collections.singletonList(new StockpileItemMaterial(stockpile, item, item.getProductTypeID(), total(counts, typeID), formulaSelect));
 			} else { //source or not bluepint/formula
 				//PBO or not BP
 				Double count = counts.get(Math.abs(typeID));
@@ -207,26 +213,14 @@ public class JMenuStockpile<T> extends JAutoMenu<T> {
 		return items;
 	}
 
-	public static BpData getBlueprintSelect(Program program, boolean source) {
-		String[] sources = {TabsStockpile.get().source(), TabsStockpile.get().original(), TabsStockpile.get().copy(), TabsStockpile.get().runs(), TabsStockpile.get().materialsManufacturing()};
-		String[] options = {TabsStockpile.get().original(), TabsStockpile.get().copy(), TabsStockpile.get().runs(), TabsStockpile.get().materialsManufacturing()};
-		if (stockpileBpDialog == null) {
-			stockpileBpDialog = new StockpileBpDialog(program);
+	public static boolean match(Item item, BpData blueprintSelect, BpData formulaSelect, String ... matchs) {
+		for (String match : matchs) {
+			if ((item.isBlueprint() && blueprintSelect != null && blueprintSelect.matches(match))
+			|| (item.isFormula() && formulaSelect != null && formulaSelect.matches(match))) {
+				return true;
+			}
 		}
-		return stockpileBpDialog.show(TabsStockpile.get().addBlueprintTitle(), TabsStockpile.get().addBlueprintMsg(), source ? sources : options);
-	}
-
-	public static BpData getFormulaSelect(Program program) {
-		String[] options = {TabsStockpile.get().original(), TabsStockpile.get().materialsReaction()};
-		if (stockpileBpDialog == null) {
-			stockpileBpDialog = new StockpileBpDialog(program);
-		}
-		return stockpileBpDialog.show(TabsStockpile.get().addFormulaTitle(), TabsStockpile.get().addFormulaMsg(), options);
-	}
-
-	public static boolean match(Item item, BpData blueprintSelect, BpData formulaSelect, String match) {
-		return (item.isBlueprint() && blueprintSelect != null && blueprintSelect.matches(match))
-			|| (item.isFormula() && formulaSelect != null && formulaSelect.matches(match));
+		return false;
 	}
 
 	private static double runs(Map<Integer, Double> counts, Map<Integer, Double> runs, int typeID) {

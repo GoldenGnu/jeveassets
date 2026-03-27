@@ -23,20 +23,107 @@ package net.nikr.eve.jeveasset.io.local;
 import java.io.File;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import net.nikr.eve.jeveasset.TestUtil;
+import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
+import net.nikr.eve.jeveasset.data.settings.ManufacturingSettings.ManufacturingFacility;
+import net.nikr.eve.jeveasset.data.settings.ManufacturingSettings.ManufacturingRigs;
+import net.nikr.eve.jeveasset.data.settings.ManufacturingSettings.ManufacturingSecurity;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter.StockpileContainer;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter.StockpileFlag;
+import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
+import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItemMaterial;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 
 public class StockpileDataReadWriteTest extends TestUtil {
+
+	@Test
+	public void testMaterial() {
+		List<Stockpile> stockpiles = StockpileReader.load("eNrFlE1rg0AQhv9KO2cp-72ut7aEJlC0kEAPIQdNFCxqgppT8L93NNHdew6L4Lw7I-Ozr87ub9BABK8_aZWeyublo7rml7Zsegighoi-EYwpREVadXkAXQHR_gaY6NsrrrPsuNQc2TnS0dnZpq3Mepu1Ml_U3_yy8gSRIoQwKlQA2HZ_CKC4h_MYBhTlBIh3FipF7CbapV9ZL7LOMM0wFhjHh7EbbHfvu00SjwYgBMeARYiTeDWmOtTrzdd6u_rEZeuU2rH0nfzeK5d-QpAGdzUjUc25mJDIM0jkCSRKpRRDMONI4h1HcAfH-HdHWxzu3x1uLI7w7w5nDxxjlF8YJZgzWVJLKv0CSS10-HAHcRj3jhMqi0OVf3fMcHBmK_R_8iyzRUPjfdTt3zO6o_yPusbPhdc_O1UnoA==");
+		testMaterialStockpile(stockpiles);
+	}
+
+	@Test
+	public void testMaterialSave() {
+		Stockpile stockpile = getMaterialStockpile();
+		String saved = StockpileWriter.save(Collections.singletonList(stockpile));
+		List<Stockpile> loaded = StockpileReader.load(saved);
+		testMaterialStockpile(loaded);
+	}
+
+	@Test
+	public void testMaterialDeepClone() {
+		Stockpile stockpile = getMaterialStockpile();
+		testMaterialStockpile(Collections.singletonList(stockpile.deepClone()));
+	}
+
+	private Stockpile getMaterialStockpile() {
+		MyLocation eygfeIshukone = ApiIdConverter.getLocation(60002146);
+		StockpileFilter filter = new StockpileFilter(eygfeIshukone, false, Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), null, null, false, true, false, false, true, false, false, false, false, false, false);
+		Stockpile stockpile = new Stockpile("!Paladin Blueprint", null, Collections.singletonList(filter), 5, false);
+		Item paladinBlueprint = ApiIdConverter.getItem(28660); //
+		StockpileItemMaterial material = new StockpileItemMaterial(
+				stockpile,
+				paladinBlueprint,
+				paladinBlueprint.getProductTypeID(),
+				5, false, false, 2, 10, 3, false,
+				ManufacturingFacility.STATION,
+				ManufacturingRigs.NONE,
+				ManufacturingSecurity.HIGHSEC);
+		stockpile.add(material);
+		return stockpile;
+	}
+
+	private void testMaterialStockpile(List<Stockpile> stockpiles) {
+		assertNotNull(stockpiles);
+		assertEquals(1, stockpiles.size());
+		
+		Stockpile stockpile = stockpiles.get(0);
+		assertEquals("!Paladin Blueprint", stockpile.getName());
+		//Filters
+		assertEquals(1, stockpile.getFilters().size());
+		StockpileFilter stockpileFilter = stockpile.getFilters().get(0);
+		assertEquals(0, stockpileFilter.getContainers().size());
+		assertEquals(0, stockpileFilter.getFlags().size());
+		assertEquals(null, stockpileFilter.getJobsDaysLess());
+		assertEquals(null, stockpileFilter.getJobsDaysMore());
+		assertEquals("Eygfe VII - Moon 9 - Ishukone Corporation Factory", stockpileFilter.getLocation().getLocation());
+		assertEquals(0, stockpileFilter.getOwnerIDs().size());
+
+		assertEquals(1, stockpile.getMaterials().size());
+		Iterator<StockpileItemMaterial> iterator = stockpile.getMaterials().iterator();
+		StockpileItemMaterial itemMaterial = iterator.next();
+		assertEquals("Paladin Blueprint (Mfg)", itemMaterial.getName());
+		assertEquals(2, itemMaterial.getMaterialItems().size());
+		for (StockpileItem itemSub : itemMaterial.getMaterialItems()) {
+			System.out.println(itemSub.getName() + " " + itemSub.getTypeID());
+		}
+		assertEquals(itemMaterial.getMaterials().size(), 9);
+		for (StockpileItemMaterial materialSub : itemMaterial.getMaterials()) {
+			System.out.println(materialSub.getName() + " " + materialSub.getTypeID());
+			if (materialSub.getTypeID() == 996) {
+				for (StockpileItemMaterial apocalypse : materialSub.getMaterials()) {
+					System.out.println(apocalypse.getName() + " " + apocalypse.getTypeID());
+					for (StockpileItem itemSub : materialSub.getMaterialItems()) {
+						System.out.println("      " + itemSub.getName() + " " + itemSub.getTypeID());
+					}
+				}
+			}
+			for (StockpileItem itemSub : materialSub.getMaterialItems()) {
+				System.out.println("    " + itemSub.getName() + " " + itemSub.getTypeID());
+			}
+		}
+	}
 
 	@Test
 	public void testText() {
@@ -317,7 +404,7 @@ public class StockpileDataReadWriteTest extends TestUtil {
 				assertEquals(flagNoSubs, flag.isIncludeSubs());
 			}
 		}
-			//Containers
+		//Containers
 		assertEquals(2, rFilter.getContainers().size());
 		for (StockpileContainer rContainer : rFilter.getContainers()) {
 			if (rContainer.getContainer().equals(containerSubs)) {

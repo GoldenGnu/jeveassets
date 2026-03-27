@@ -47,7 +47,10 @@ import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter.StockpileFlag;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
+import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItemMaterial;
+import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.SubMultiplier;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.SubpileItem;
+import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.SubpileItemMaterial;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.SubpileStock;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.TypeIdentifier;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
@@ -262,6 +265,12 @@ public class StockpileData extends TableData {
 				}
 				updateItem(item, stockpile);
 			}
+			for (StockpileItem item : stockpile.getMaterialsSubpileItems()) {
+				if (item.isTotal()) {
+					continue; //Ignore Total
+				}
+				updateItem(item, stockpile);
+			}
 		}
 		stockpile.updateTotal();
 	}
@@ -275,7 +284,7 @@ public class StockpileData extends TableData {
 			foundItems.put(contract, new ArrayList<>());
 		}
 		//Update subpile claims
-		if (updateClaims && !stockpile.getSubpiles().isEmpty()) {
+		if (updateClaims && (!stockpile.getSubpiles().isEmpty() || !stockpile.getMaterials().isEmpty())) {
 			updateSubpileClaims(stockpile);
 		}
 		//StockpileItem map lookup
@@ -344,7 +353,7 @@ public class StockpileData extends TableData {
 			foundItems.put(asset, new ArrayList<>());
 		}
 		//Update subpile claims
-		if (updateClaims && !stockpile.getSubpiles().isEmpty()) {
+		if (updateClaims && (!stockpile.getSubpiles().isEmpty() || !stockpile.getMaterials().isEmpty())) {
 			updateSubpileClaims(stockpile);
 		}
 		//StockpileItem map lookup
@@ -474,7 +483,13 @@ public class StockpileData extends TableData {
 			if (item.isTotal()) {
 				continue;
 			}
-			typeIDs.add(item.getItemTypeID());
+			typeIDs.add(item.getNeededTypeID());
+		}
+		for (StockpileItem item : stockpile.getMaterialItems()) {
+			if (item.isTotal()) {
+				continue;
+			}
+			typeIDs.add(item.getNeededTypeID());
 		}
 		for (Stockpile subpile : stockpile.getSubpiles().keySet()) {
 			addTypeIDs(typeIDs, subpile);
@@ -482,7 +497,7 @@ public class StockpileData extends TableData {
 	}
 
 	private void updateItem(StockpileItem item, Stockpile stockpile) {
-		final int TYPE_ID = item.getItemTypeID();
+		final int TYPE_ID = item.getNeededTypeID();
 		double price = ApiIdConverter.getPrice(TYPE_ID, item.isBPC());
 		float volume = ApiIdConverter.getVolume(item.getItem(), true);
 		Double transactionAveragePrice = profileData.getTransactionAveragePrice(TYPE_ID);
@@ -532,6 +547,12 @@ public class StockpileData extends TableData {
 					item.updateTransaction(transaction);
 				}
 			}
+		}
+		if (item instanceof StockpileItemMaterial) {
+			((StockpileItemMaterial) item).updateItems();
+		}
+		if (item instanceof SubpileItemMaterial) {
+			((SubpileItemMaterial) item).updateItems();
 		}
 	}
 
@@ -589,10 +610,18 @@ public class StockpileData extends TableData {
 	 * @param parent
 	 */
 	private void updateSubpile(List<StockpileItem> updated, List<StockpileItem> removed, Stockpile parent) {
-		Map<Integer, StockpileItem> parentItems = new HashMap<>();
+		Map<TypeIdentifier, StockpileItem> parentItems = new HashMap<>();
 		for (StockpileItem item : parent.getItems()) {
-			parentItems.put(item.getItemTypeID(), item);
+			parentItems.put(new TypeIdentifier(item.getNeededTypeID(), item.isRuns()), item);
 		}
+		/*
+		for (StockpileItem item : parent.getMaterials()) {
+			parentItems.put(item.getNeededTypeID(), item);
+		}
+		for (StockpileItem item : parent.getMaterialItems()) {
+			parentItems.put(item.getNeededTypeID(), item);
+		}
+		*/
 		//Save old items (for them to be removed)
 		List<SubpileItem> subpileItems = new ArrayList<>(parent.getSubpileItems());
 		//Clear old items
@@ -629,15 +658,28 @@ public class StockpileData extends TableData {
 	}
 
 	private static void updateSubpileClaims(Stockpile topStockpile) {
-		Map<Integer, StockpileItem> parentItems = new HashMap<>();
+		Map<TypeIdentifier, StockpileItem> parentItems = new HashMap<>();
 		for (StockpileItem item : topStockpile.getItems()) {
-			parentItems.put(item.getItemTypeID(), item);
+			parentItems.put(new TypeIdentifier(item.getNeededTypeID(), item.isRuns()), item);
 		}
 		updateSubpileClaims(topStockpile, parentItems);
 	}
 
-	private static void updateSubpileClaims(Stockpile topStockpile, Map<Integer, StockpileItem> topItems) {
+	private static void updateSubpileClaims(Stockpile topStockpile, Map<TypeIdentifier, StockpileItem> topItems) {
+		for (StockpileItemMaterial material : topStockpile.getMaterials()) {
+			add(topItems, topStockpile, material, 0);
+		}
 		updateSubpileClaims(topStockpile, topStockpile, topItems, null, 0, "");
+	}
+
+	private static void add(Map<TypeIdentifier, StockpileItem> parentItems, Stockpile topStockpile, StockpileItemMaterial material, int level) {
+		for (StockpileItem item : material.getMaterialItems()) {
+			SubpileItem sim = new SubpileItem(topStockpile, item, material, 0, topStockpile.getName() + "\r\n");
+			addSubpileItem(parentItems, topStockpile, sim, item, material, level, sim.getPath());
+		}
+		for (StockpileItemMaterial item : material.getMaterials()) {
+			add(parentItems, topStockpile, item, level + 1);
+		}
 	}
 
 	/**
@@ -651,7 +693,7 @@ public class StockpileData extends TableData {
 	 * @param parentLevel
 	 * @param parentPath
 	 */
-	private static void updateSubpileClaims(Stockpile topStockpile, Stockpile parentStockpile, Map<Integer, StockpileItem> topItems, SubpileStock parentStock, int parentLevel, String parentPath) {
+	private static void updateSubpileClaims(Stockpile topStockpile, Stockpile parentStockpile, Map<TypeIdentifier, StockpileItem> topItems, SubpileStock parentStock, int parentLevel, String parentPath) {
 		for (Map.Entry<Stockpile, Double> entry : parentStockpile.getSubpiles().entrySet()) {
 			//For each subpile (stockpile)
 			Stockpile currentStockpile = entry.getKey();
@@ -660,29 +702,56 @@ public class StockpileData extends TableData {
 			int level = parentLevel + 1;
 			SubpileStock subpileStock = new SubpileStock(topStockpile, currentStockpile, parentStockpile, parentStock, value, parentLevel, path);
 			topStockpile.addSubpileStock(subpileStock);
-			for (StockpileItem stockpileItem : currentStockpile.getItems()) {
+			for (StockpileItemMaterial material : currentStockpile.getMaterials()) {
+				//StockpileItemMaterial clone = material.deepCloneMaterialNew(topStockpile);
+				//SubpileItem subpileItem = new SubpileItem(topStockpile, clone, subpileStock, level, path);
+				//addMaterial(topStockpile, subpileStock, clone, level, path);
+
+				StockpileItemMaterial clone = material.deepCloneMaterialNew(topStockpile);
+				clone.updateItems();
+				addMaterial(topItems, topStockpile, subpileStock, material, clone, clone, level, path);
+			}
+			for (StockpileItem stockpileItem : currentStockpile.getStockpileItems()) {
 				//For each StockpileItem
 				if (stockpileItem.isTotal()) {
 					continue; //Ignore Total
 				}
-				StockpileItem parentItem = topItems.get(stockpileItem.getItemTypeID());
 				SubpileItem subpileItem = new SubpileItem(topStockpile, stockpileItem, subpileStock, parentLevel, path);
-				int linkIndex = topStockpile.getSubpileItems().indexOf(subpileItem);
-				if (parentItem != null) { //Add link (Advanced: Item + Link)
-					subpileItem.addItemLink(parentItem, null); //Add link
-				}
-				if (linkIndex >= 0) { //Update item (Advanced: Link + Link = MultiLink)
-					SubpileItem linkItem = topStockpile.getSubpileItems().get(linkIndex);
-					linkItem.addItemLink(stockpileItem, subpileStock);
-					if (level >= linkItem.getLevel()) {
-						linkItem.setPath(path);
-						linkItem.setLevel(level);
-					}
-				} else { //Add new item (Simple)
-					topStockpile.addSubpileItem(subpileItem);
-				}
+				addSubpileItem(topItems, topStockpile, subpileItem, stockpileItem, subpileStock, level, path);
 			}
 			updateSubpileClaims(topStockpile, currentStockpile, topItems, subpileStock, level, path);
+		}
+	}
+
+	private static SubpileItemMaterial addMaterial(Map<TypeIdentifier, StockpileItem> topItems, Stockpile topStockpile, SubpileStock subpileStock, StockpileItemMaterial original, StockpileItemMaterial top, StockpileItemMaterial clone, int level, String path) {
+		SubpileItemMaterial subpileItemMaterial = new SubpileItemMaterial(topStockpile, original, top, clone, subpileStock, level, path);
+		addSubpileItem(topItems, topStockpile, subpileItemMaterial, clone, subpileStock, level, path);
+		for (StockpileItemMaterial material : clone.getMaterials()) {
+			subpileItemMaterial.addMaterial(addMaterial(topItems, topStockpile, subpileStock, original, top, material, level, path));
+		}
+		for (StockpileItem item : clone.getMaterialItems()) {
+			SubpileItemMaterial subpileItem = new SubpileItemMaterial(topStockpile, original, top, item, subpileStock, 0, topStockpile.getName() + "\r\n");
+			subpileItemMaterial.addItem(subpileItem);
+			addSubpileItem(topItems, topStockpile, subpileItem, item, subpileStock, level, subpileItem.getPath());
+		}
+		return subpileItemMaterial;
+	}
+
+	private static void addSubpileItem(Map<TypeIdentifier, StockpileItem> topItems, Stockpile topStockpile, SubpileItem subpileItem, StockpileItem stockpileItem, SubMultiplier subpileStock, int level, String path) {
+		StockpileItem parentItem = topItems.get(new TypeIdentifier(stockpileItem.getNeededTypeID(), stockpileItem.isRuns()));
+		if (parentItem != null) { //Add link (Advanced: Item + Link)
+			subpileItem.addItemLink(parentItem, null); //Add link
+		}
+		int linkIndex = topStockpile.getSubpileItems().indexOf(subpileItem);
+		if (linkIndex >= 0) { //Update item (Advanced: Link + Link = MultiLink)
+			SubpileItem linkItem = topStockpile.getSubpileItems().get(linkIndex);
+			linkItem.addItemLink(stockpileItem, subpileStock);
+			if (level >= linkItem.getLevel()) {
+				linkItem.setPath(path);
+				linkItem.setLevel(level);
+			}
+		} else { //Add new item (Simple)
+			topStockpile.addSubpileItem(subpileItem);
 		}
 	}
 }

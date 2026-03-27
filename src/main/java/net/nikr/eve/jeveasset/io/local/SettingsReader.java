@@ -53,6 +53,8 @@ import net.nikr.eve.jeveasset.data.settings.ManufacturingSettings;
 import net.nikr.eve.jeveasset.data.settings.ManufacturingSettings.ManufacturingFacility;
 import net.nikr.eve.jeveasset.data.settings.ManufacturingSettings.ManufacturingRigs;
 import net.nikr.eve.jeveasset.data.settings.ManufacturingSettings.ManufacturingSecurity;
+import net.nikr.eve.jeveasset.data.settings.ManufacturingSettings.ReactionRigs;
+import net.nikr.eve.jeveasset.data.settings.ManufacturingSettings.ReactionSecurity;
 import net.nikr.eve.jeveasset.data.settings.MarketOrdersSettings;
 import net.nikr.eve.jeveasset.data.settings.PriceDataSettings;
 import net.nikr.eve.jeveasset.data.settings.PriceDataSettings.PriceMode;
@@ -99,10 +101,15 @@ import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewGroup;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewLocation;
 import net.nikr.eve.jeveasset.gui.tabs.routing.SolarSystem;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
+import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.MaterialTree;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter.StockpileContainer;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter.StockpileFlag;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
+import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItemMaterial;
+import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileExtendedTableFormat;
+import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileTab;
+import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerDate;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerNote;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerSkillPointFilter;
@@ -858,19 +865,8 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			NodeList itemNodes = stockpileNode.getElementsByTagName("item");
 			for (int b = 0; b < itemNodes.getLength(); b++) {
 				Element itemNode = (Element) itemNodes.item(b);
-				long id;
-				if (haveAttribute(itemNode, "id")) {
-					id = getLong(itemNode, "id");
-				} else {
-					id = StockpileItem.getNewID();
-				}
-				int typeID = getInt(itemNode, "typeid");
-				boolean runs = getBooleanNotNull(itemNode, "runs", false);
-				boolean ignoreMultiplier = getBooleanNotNull(itemNode, "ignoremultiplier", false);
-				double countMinimum = getDouble(itemNode, "minimum");
-				if (typeID != 0) { //Ignore Total
-					Item item = ApiIdConverter.getItemUpdate(Math.abs(typeID), true);
-					StockpileItem stockpileItem = new StockpileItem(stockpile, item, typeID, countMinimum, runs, ignoreMultiplier, id);
+				StockpileItem stockpileItem = parseStockpileItem(itemNode, stockpile);
+				if (stockpileItem != null) { //Better safe than sorry
 					stockpile.add(stockpileItem);
 				}
 			}
@@ -887,6 +883,110 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		subpileMap.clear();
 		stockpileMap.clear();
 		Collections.sort(stockpiles);
+	}
+
+	private StockpileItem parseStockpileItem(Element itemNode, Stockpile stockpile) throws XmlException {
+		long id;
+		if (haveAttribute(itemNode, "id")) {
+			id = getLong(itemNode, "id");
+		} else {
+			id = StockpileItem.getNewID();
+		}
+		int typeID = getInt(itemNode, "typeid");
+		boolean runs = getBooleanNotNull(itemNode, "runs", false);
+		boolean ignoreMultiplier = getBooleanNotNull(itemNode, "ignoremultiplier", false);
+		boolean roundALot = getBooleanNotNull(itemNode, "roundalot", false);
+		double countMinimum = getDouble(itemNode, "minimum");
+	//Materials
+		//ProductTypeID
+		Integer productTypeID = getIntOptional(itemNode, "producttypeid");
+		//Recursive
+		Integer blueprintRecursiveLevel = getIntOptional(itemNode, "blueprintrecursive");
+		Integer formulaRecursiveLevel = getIntOptional(itemNode, "formularecursive");
+		//Facility
+		String facility = getStringOptional(itemNode, "facility");
+		ManufacturingFacility manufacturingFacility = null;
+		if (facility != null) {
+			try {
+				manufacturingFacility = ManufacturingFacility.valueOf(facility);
+			} catch (IllegalArgumentException ex) {
+				//No problem
+			}
+		}
+		//ME
+		Integer materialEfficiency = getIntOptional(itemNode, "me");
+		//Rigs
+		String rigs = getStringOptional(itemNode, "rigs");
+		ManufacturingRigs manufacturingRigs = null;
+		if (rigs != null) {
+			try {
+				manufacturingRigs = ManufacturingRigs.valueOf(rigs);
+			} catch (IllegalArgumentException ex) {
+				//No problem
+			}
+		}
+		//Security
+		String security = getStringOptional(itemNode, "security");
+		ManufacturingSecurity manufacturingSecurity = null;
+		if (security != null) {
+			try {
+				manufacturingSecurity = ManufacturingSecurity.valueOf(security);
+			} catch (IllegalArgumentException ex) {
+				//No problem
+			}
+		}
+	//Reactions
+		//Security (Reactions)
+		String securityReactions = getStringOptional(itemNode, "securityreactions");
+		ReactionSecurity reactionSecurity = null;
+		if (securityReactions != null) {
+			try {
+				reactionSecurity = ReactionSecurity.valueOf(securityReactions);
+			} catch (IllegalArgumentException ex) {
+				//No problem
+			}
+		}
+		//Rigs (Reactions)
+		String rigsReactions = getStringOptional(itemNode, "rigsreactions");
+		ReactionRigs reactionRigs = null;
+		if (rigsReactions != null) {
+			try {
+				reactionRigs = ReactionRigs.valueOf(rigsReactions);
+			} catch (IllegalArgumentException ex) {
+				//No problem
+			}
+		}
+		if (typeID != 0) { //Ignore Total
+			Item item = ApiIdConverter.getItemUpdate(Math.abs(typeID), true);
+			MaterialTree root = new MaterialTree();
+			parseMaterials(itemNode, stockpile, root);
+			StockpileItem stockpileItem;
+			if (item.isBlueprint() && productTypeID != null && blueprintRecursiveLevel != null && materialEfficiency != null && manufacturingFacility != null && manufacturingRigs != null && manufacturingSecurity != null) {
+				stockpileItem = new StockpileItemMaterial(root, stockpile, item, productTypeID, countMinimum, ignoreMultiplier, roundALot, blueprintRecursiveLevel, materialEfficiency, manufacturingFacility, manufacturingRigs, manufacturingSecurity);
+			} else if (item.isFormula() && productTypeID != null && formulaRecursiveLevel != null && reactionRigs != null && reactionSecurity != null) {
+				stockpileItem = new StockpileItemMaterial(root, stockpile, item, productTypeID, countMinimum, ignoreMultiplier, roundALot, formulaRecursiveLevel, reactionRigs, reactionSecurity);
+			} else {
+				stockpileItem = new StockpileItem(stockpile, item, typeID, countMinimum, runs, ignoreMultiplier, roundALot);
+			}
+			return stockpileItem;
+		}
+		return null; //Never happens
+	}
+
+	private void parseMaterials(Element itemNode, Stockpile stockpile, MaterialTree parent) throws XmlException {
+		NodeList materialNodes = itemNode.getElementsByTagName("material");
+		for (int i = 0; i < materialNodes.getLength(); i++) {
+			Element materialNode = (Element) materialNodes.item(i);
+			StockpileItem stockpileItem = parseStockpileItem(materialNode, stockpile);
+			if (stockpileItem instanceof StockpileItemMaterial) {
+				StockpileItemMaterial itemMaterial = (StockpileItemMaterial) stockpileItem;
+				MaterialTree tree = new MaterialTree(itemMaterial);
+				if (parent != null) {
+					parent.add(tree);
+				}
+				parseMaterials(materialNode, stockpile, tree);
+			}
+		}
 	}
 
 	private void parseManufacturingPriceSettings(Element manufacturingElement, Settings settings) throws XmlException {
