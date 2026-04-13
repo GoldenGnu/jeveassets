@@ -523,7 +523,7 @@ class StockpileShoppingListDialog extends JDialogCentered {
 			this.stockpileItem = stockpileItem;
 			this.contractIDs = contractIDs;
 			this.assetIDs = assetIDs;
-			this.totalNeed = (long)(stockpileItem.getCountMinimumMaxMultiplied() * percent / 100.0);
+			this.totalNeed = (long)(stockpileItem.getCountMinimumMultiplied() * percent / 100.0);
 			this.countMinimum = this.totalNeed;
 		}
 
