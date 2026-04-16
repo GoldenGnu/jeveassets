@@ -366,6 +366,7 @@ public class StatusPanel extends JGroupLayoutPanel {
 		private final AutoNumberFormat format;
 		private String text = null;
 		private Number number = null;
+		private String suffix = null;
 
 		public JStatusLabel(final String toolTip, final Icon icon, AutoNumberFormat format) {
 			this.format = format;
@@ -434,15 +435,26 @@ public class StatusPanel extends JGroupLayoutPanel {
 			updateText();
 		}
 
+		public void setSuffix(String suffix) {
+			this.suffix = suffix;
+			updateText();
+		}
+
 		public void updateText() {
+			final String rendered;
 			if (text != null && number != null && format != null) {
-				super.setText(text + JMenuInfo.format(number, format));
+				rendered = text + JMenuInfo.format(number, format);
 			} else if (text != null) {
-				super.setText(text);
+				rendered = text;
 			} else if (number != null && format != null) {
-				super.setText(JMenuInfo.format(number, format));
+				rendered = JMenuInfo.format(number, format);
 			} else {
-				super.setText("");
+				rendered = "";
+			}
+			if (suffix != null && !suffix.isEmpty() && rendered != null && !rendered.isEmpty()) {
+				super.setText(rendered + " " + suffix);
+			} else {
+				super.setText(rendered);
 			}
 		}
 	}
