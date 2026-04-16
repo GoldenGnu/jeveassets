@@ -47,6 +47,8 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JToggleButton;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.my.MyAsset;
 import net.nikr.eve.jeveasset.data.settings.Settings;
@@ -170,6 +172,14 @@ public class AssetsTab extends JMainTabPrimary implements TagUpdate {
 		selectionModel = EventModels.createSelectionModel(filterList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
+		selectionModel.addListSelectionListener(new ListSelectionListener() {
+			@Override
+			public void valueChanged(ListSelectionEvent e) {
+				if (!e.getValueIsAdjusting()) {
+					updateStatusbar();
+				}
+			}
+		});
 
 		//Listeners
 		installTable(jTable);
@@ -284,29 +294,40 @@ public class AssetsTab extends JMainTabPrimary implements TagUpdate {
 	}
 
 	private void updateStatusbar() {
+		final String selectedSuffix;
+		final List<MyAsset> assets;
+		if (!EventListManager.isEmpty(selectionModel.getSelected())) {
+			assets = EventListManager.safeList(selectionModel.getSelected());
+			selectedSuffix = "(for selected items)";
+		} else {
+			assets = EventListManager.safeList(filterList);
+			selectedSuffix = null;
+		}
+
 		double averageValue = 0;
 		double totalValue = 0;
 		long totalCount = 0;
 		double totalVolume = 0;
 		double totalReprocessed = 0;
-		try {
-			filterList.getReadWriteLock().readLock().lock();
-			for (MyAsset asset : filterList) {
-				totalValue = totalValue + (asset.getDynamicPrice() * asset.getCount());
-				totalCount = totalCount + asset.getCount();
-				totalVolume = totalVolume + asset.getVolumeTotal();
-				totalReprocessed = totalReprocessed + asset.getValueReprocessed();
-			}
-		} finally {
-			filterList.getReadWriteLock().readLock().unlock();
+		for (MyAsset asset : assets) {
+			totalValue = totalValue + (asset.getDynamicPrice() * asset.getCount());
+			totalCount = totalCount + asset.getCount();
+			totalVolume = totalVolume + asset.getVolumeTotal();
+			totalReprocessed = totalReprocessed + asset.getValueReprocessed();
 		}
 		if (totalCount > 0 && totalValue > 0) {
 			averageValue = totalValue / totalCount;
 		}
+
+		jVolume.setSuffix(selectedSuffix);
 		jVolume.setNumber(totalVolume);
+		jCount.setSuffix(selectedSuffix);
 		jCount.setNumber(totalCount);
+		jAverage.setSuffix(selectedSuffix);
 		jAverage.setNumber(averageValue);
+		jReprocessed.setSuffix(selectedSuffix);
 		jReprocessed.setNumber(totalReprocessed);
+		jValue.setSuffix(selectedSuffix);
 		jValue.setNumber(totalValue);
 	}
 
