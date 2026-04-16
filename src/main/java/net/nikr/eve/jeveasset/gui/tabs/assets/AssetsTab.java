@@ -42,6 +42,7 @@ import java.util.Map;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
@@ -93,6 +94,7 @@ public class AssetsTab extends JMainTabPrimary implements TagUpdate {
 	private final JStatusLabel jCount;
 	private final JStatusLabel jAverage;
 	private final JStatusLabel jVolume;
+	private final JLabel jSelectedInfo;
 	private final JButton jClearNew;
 	private final JTreemap jTreemapView;
 	private final JPanel jViewPanel;
@@ -202,6 +204,9 @@ public class AssetsTab extends JMainTabPrimary implements TagUpdate {
 		jViewPanel.add(jTreemapView, VIEW_TREEMAP);
 		viewLayout.show(jViewPanel, VIEW_TABLE);
 
+		jSelectedInfo = new JLabel();
+		this.addStatusbarLabel(jSelectedInfo);
+
 		jVolume = StatusPanel.createLabel(TabsAssets.get().totalVolume(), Images.ASSETS_VOLUME.getIcon(), AutoNumberFormat.DOUBLE);
 		this.addStatusbarLabel(jVolume);
 
@@ -294,14 +299,13 @@ public class AssetsTab extends JMainTabPrimary implements TagUpdate {
 	}
 
 	private void updateStatusbar() {
-		final String selectedSuffix;
 		final List<MyAsset> assets;
 		if (!EventListManager.isEmpty(selectionModel.getSelected())) {
 			assets = EventListManager.safeList(selectionModel.getSelected());
-			selectedSuffix = "(for selected items)";
+			jSelectedInfo.setText("(for selected items)");
 		} else {
 			assets = EventListManager.safeList(filterList);
-			selectedSuffix = null;
+			jSelectedInfo.setText("");
 		}
 
 		double averageValue = 0;
@@ -319,15 +323,10 @@ public class AssetsTab extends JMainTabPrimary implements TagUpdate {
 			averageValue = totalValue / totalCount;
 		}
 
-		jVolume.setSuffix(selectedSuffix);
 		jVolume.setNumber(totalVolume);
-		jCount.setSuffix(selectedSuffix);
 		jCount.setNumber(totalCount);
-		jAverage.setSuffix(selectedSuffix);
 		jAverage.setNumber(averageValue);
-		jReprocessed.setSuffix(selectedSuffix);
 		jReprocessed.setNumber(totalReprocessed);
-		jValue.setSuffix(selectedSuffix);
 		jValue.setNumber(totalValue);
 	}
 
