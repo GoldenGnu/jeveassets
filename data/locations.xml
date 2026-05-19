@@ -70,6 +70,7 @@
     <row c="" ci="0" r="Black Rise" ri="10000069" s="" se="0.0" si="0" sy="" syi="0"/>
     <row c="" ci="0" r="Pochven" ri="10000070" s="" se="0.0" si="0" sy="" syi="0"/>
     <row c="" ci="0" r="Yasna Zakh" ri="10001000" s="" se="0.0" si="0" sy="" syi="0"/>
+    <row c="" ci="0" r="Exordium" ri="10001004" s="" se="0.0" si="0" sy="" syi="0"/>
     <row c="" ci="0" r="A-R00001" ri="11000001" s="" se="0.0" si="0" sy="" syi="0"/>
     <row c="" ci="0" r="A-R00002" ri="11000002" s="" se="0.0" si="0" sy="" syi="0"/>
     <row c="" ci="0" r="A-R00003" ri="11000003" s="" se="0.0" si="0" sy="" syi="0"/>
@@ -904,6 +905,15 @@
     <row c="Krai Svarog" ci="20000788" r="Pochven" ri="10000070" s="" se="0.0" si="0" sy="" syi="0"/>
     <row c="Krai Veles" ci="20000789" r="Pochven" ri="10000070" s="" se="0.0" si="0" sy="" syi="0"/>
     <row c="Duzna Kah" ci="20010000" r="Yasna Zakh" ri="10001000" s="" se="0.0" si="0" sy="" syi="0"/>
+    <row c="Manifest District" ci="20010001" r="Exordium" ri="10001004" s="" se="0.0" si="0" sy="" syi="0"/>
+    <row c="1st Accord District" ci="20010002" r="Exordium" ri="10001004" s="" se="0.0" si="0" sy="" syi="0"/>
+    <row c="2nd Accord District" ci="20010003" r="Exordium" ri="10001004" s="" se="0.0" si="0" sy="" syi="0"/>
+    <row c="3rd Accord District" ci="20010004" r="Exordium" ri="10001004" s="" se="0.0" si="0" sy="" syi="0"/>
+    <row c="4th Accord District" ci="20010005" r="Exordium" ri="10001004" s="" se="0.0" si="0" sy="" syi="0"/>
+    <row c="Federation Free-Zone" ci="20010006" r="Exordium" ri="10001004" s="" se="0.0" si="0" sy="" syi="0"/>
+    <row c="The Crucible" ci="20010007" r="Exordium" ri="10001004" s="" se="0.0" si="0" sy="" syi="0"/>
+    <row c="Strokar" ci="20010008" r="Exordium" ri="10001004" s="" se="0.0" si="0" sy="" syi="0"/>
+    <row c="Haven" ci="20010009" r="Exordium" ri="10001004" s="" se="0.0" si="0" sy="" syi="0"/>
     <row c="A-C00001" ci="21000001" r="A-R00002" ri="11000002" s="" se="0.0" si="0" sy="" syi="0"/>
     <row c="A-C00002" ci="21000002" r="A-R00002" ri="11000002" s="" se="0.0" si="0" sy="" syi="0"/>
     <row c="A-C00003" ci="21000003" r="A-R00002" ri="11000002" s="" se="0.0" si="0" sy="" syi="0"/>
@@ -1421,19 +1431,19 @@
     <row c="Anttanen" ci="20000018" r="The Forge" ri="10000002" s="" se="0.9" si="0" sy="Shihuken" syi="30000130"/>
     <row c="Anttanen" ci="20000018" r="The Forge" ri="10000002" s="" se="0.6" si="0" sy="Nomaa" syi="30000131"/>
     <row c="Ihilakken" ci="20000019" r="The Forge" ri="10000002" s="" se="0.9" si="0" sy="Ansila" syi="30000132"/>
-    <row c="Ihilakken" ci="20000019" r="The Forge" ri="10000002" s="" se="1.0" si="0" sy="Hirtamon" syi="30000133"/>
+    <row c="Ihilakken" ci="20000019" r="The Forge" ri="10000002" s="" se="0.9" si="0" sy="Hirtamon" syi="30000133"/>
     <row c="Ihilakken" ci="20000019" r="The Forge" ri="10000002" s="" se="0.8" si="0" sy="Hykkota" syi="30000134"/>
     <row c="Ihilakken" ci="20000019" r="The Forge" ri="10000002" s="" se="0.7" si="0" sy="Outuni" syi="30000135"/>
     <row c="Ihilakken" ci="20000019" r="The Forge" ri="10000002" s="" se="0.7" si="0" sy="Ohmahailen" syi="30000136"/>
     <row c="Ihilakken" ci="20000019" r="The Forge" ri="10000002" s="" se="0.6" si="0" sy="Eskunen" syi="30000137"/>
-    <row c="Ihilakken" ci="20000019" r="The Forge" ri="10000002" s="" se="1.0" si="0" sy="Ikuchi" syi="30000138"/>
-    <row c="Kimotoro" ci="20000020" r="The Forge" ri="10000002" s="" se="1.0" si="0" sy="Urlen" syi="30000139"/>
+    <row c="Ihilakken" ci="20000019" r="The Forge" ri="10000002" s="" se="0.9" si="0" sy="Ikuchi" syi="30000138"/>
+    <row c="Kimotoro" ci="20000020" r="The Forge" ri="10000002" s="" se="0.9" si="0" sy="Urlen" syi="30000139"/>
     <row c="Kimotoro" ci="20000020" r="The Forge" ri="10000002" s="" se="0.9" si="0" sy="Maurasi" syi="30000140"/>
-    <row c="Kimotoro" ci="20000020" r="The Forge" ri="10000002" s="" se="1.0" si="0" sy="Kisogo" syi="30000141"/>
+    <row c="Kimotoro" ci="20000020" r="The Forge" ri="10000002" s="" se="0.9" si="0" sy="Kisogo" syi="30000141"/>
     <row c="Kimotoro" ci="20000020" r="The Forge" ri="10000002" s="" se="0.9" si="0" sy="Jita" syi="30000142"/>
-    <row c="Kimotoro" ci="20000020" r="The Forge" ri="10000002" s="" se="1.0" si="0" sy="Niyabainen" syi="30000143"/>
-    <row c="Kimotoro" ci="20000020" r="The Forge" ri="10000002" s="" se="1.0" si="0" sy="Perimeter" syi="30000144"/>
-    <row c="Kimotoro" ci="20000020" r="The Forge" ri="10000002" s="" se="1.0" si="0" sy="New Caldari" syi="30000145"/>
+    <row c="Kimotoro" ci="20000020" r="The Forge" ri="10000002" s="" se="0.9" si="0" sy="Niyabainen" syi="30000143"/>
+    <row c="Kimotoro" ci="20000020" r="The Forge" ri="10000002" s="" se="0.9" si="0" sy="Perimeter" syi="30000144"/>
+    <row c="Kimotoro" ci="20000020" r="The Forge" ri="10000002" s="" se="0.9" si="0" sy="New Caldari" syi="30000145"/>
     <row c="Okomon" ci="20000021" r="The Forge" ri="10000002" s="" se="0.7" si="0" sy="Saisio" syi="30000146"/>
     <row c="Okomon" ci="20000021" r="The Forge" ri="10000002" s="" se="0.6" si="0" sy="Abagawa" syi="30000147"/>
     <row c="Okomon" ci="20000021" r="The Forge" ri="10000002" s="" se="0.7" si="0" sy="Jakanerva" syi="30000148"/>
@@ -2680,7 +2690,7 @@
     <row c="Makiriemi" ci="20000203" r="Lonetrek" ri="10000016" s="" se="0.6" si="0" sy="Isanamo" syi="30001389"/>
     <row c="Makiriemi" ci="20000203" r="Lonetrek" ri="10000016" s="" se="0.4" si="0" sy="Pakkonen" syi="30001390"/>
     <row c="Makiriemi" ci="20000203" r="Lonetrek" ri="10000016" s="" se="0.5" si="0" sy="Piekura" syi="30001391"/>
-    <row c="Sela" ci="20000204" r="Lonetrek" ri="10000016" s="" se="1.0" si="0" sy="Amsen" syi="30001392"/>
+    <row c="Sela" ci="20000204" r="Lonetrek" ri="10000016" s="" se="0.9" si="0" sy="Amsen" syi="30001392"/>
     <row c="Sela" ci="20000204" r="Lonetrek" ri="10000016" s="" se="0.9" si="0" sy="Malkalen" syi="30001393"/>
     <row c="Sela" ci="20000204" r="Lonetrek" ri="10000016" s="" se="0.8" si="0" sy="Korama" syi="30001394"/>
     <row c="Sela" ci="20000204" r="Lonetrek" ri="10000016" s="" se="0.8" si="0" sy="Ylandoki" syi="30001395"/>
@@ -2693,9 +2703,9 @@
     <row c="Minnen" ci="20000205" r="Lonetrek" ri="10000016" s="" se="0.4" si="0" sy="Passari" syi="30001402"/>
     <row c="Minnen" ci="20000205" r="Lonetrek" ri="10000016" s="" se="0.7" si="0" sy="Piak" syi="30001403"/>
     <row c="Karnola" ci="20000206" r="Lonetrek" ri="10000016" s="" se="0.9" si="0" sy="Airkio" syi="30001404"/>
-    <row c="Karnola" ci="20000206" r="Lonetrek" ri="10000016" s="" se="1.0" si="0" sy="Kakakela" syi="30001405"/>
+    <row c="Karnola" ci="20000206" r="Lonetrek" ri="10000016" s="" se="0.9" si="0" sy="Kakakela" syi="30001405"/>
     <row c="Karnola" ci="20000206" r="Lonetrek" ri="10000016" s="" se="0.7" si="0" sy="Kamokor" syi="30001406"/>
-    <row c="Karnola" ci="20000206" r="Lonetrek" ri="10000016" s="" se="1.0" si="0" sy="Todaki" syi="30001407"/>
+    <row c="Karnola" ci="20000206" r="Lonetrek" ri="10000016" s="" se="0.9" si="0" sy="Todaki" syi="30001407"/>
     <row c="Karnola" ci="20000206" r="Lonetrek" ri="10000016" s="" se="0.8" si="0" sy="Ruvas" syi="30001408"/>
     <row c="Karnola" ci="20000206" r="Lonetrek" ri="10000016" s="" se="0.6" si="0" sy="Umokka" syi="30001409"/>
     <row c="Kainokai" ci="20000207" r="Lonetrek" ri="10000016" s="" se="0.8" si="0" sy="Kirras" syi="30001410"/>
@@ -2960,7 +2970,7 @@
     <row c="Arvachah" ci="20000247" r="Tash-Murkon" ri="10000020" s="" se="0.7" si="0" sy="Pimebeka" syi="30001669"/>
     <row c="Arvachah" ci="20000247" r="Tash-Murkon" ri="10000020" s="" se="0.8" si="0" sy="Baviasi" syi="30001670"/>
     <row c="Arvachah" ci="20000247" r="Tash-Murkon" ri="10000020" s="" se="0.8" si="0" sy="Tash-Murkon Prime" syi="30001671"/>
-    <row c="Arvachah" ci="20000247" r="Tash-Murkon" ri="10000020" s="" se="1.0" si="0" sy="Emrayur" syi="30001672"/>
+    <row c="Arvachah" ci="20000247" r="Tash-Murkon" ri="10000020" s="" se="0.9" si="0" sy="Emrayur" syi="30001672"/>
     <row c="Arvachah" ci="20000247" r="Tash-Murkon" ri="10000020" s="" se="0.9" si="0" sy="Shesha" syi="30001673"/>
     <row c="Arvachah" ci="20000247" r="Tash-Murkon" ri="10000020" s="" se="0.9" si="0" sy="Hilaban" syi="30001674"/>
     <row c="Mimishia" ci="20000248" r="Tash-Murkon" ri="10000020" s="" se="0.6" si="0" sy="Sacalan" syi="30001675"/>
@@ -3475,9 +3485,9 @@
     <row c="IJE6-J" ci="20000321" r="Immensea" ri="10000025" s="" se="0.0" si="0" sy="DR-427" syi="30002184"/>
     <row c="IJE6-J" ci="20000321" r="Immensea" ri="10000025" s="" se="0.0" si="0" sy="NI-J0B" syi="30002185"/>
     <row c="IJE6-J" ci="20000321" r="Immensea" ri="10000025" s="" se="0.0" si="0" sy="QN-6J2" syi="30002186"/>
-    <row c="Throne Worlds" ci="20000322" r="Domain" ri="10000043" s="" se="1.0" si="0" sy="Amarr" syi="30002187"/>
+    <row c="Throne Worlds" ci="20000322" r="Domain" ri="10000043" s="" se="0.9" si="0" sy="Amarr" syi="30002187"/>
     <row c="Throne Worlds" ci="20000322" r="Domain" ri="10000043" s="" se="0.9" si="0" sy="Boranai" syi="30002188"/>
-    <row c="Throne Worlds" ci="20000322" r="Domain" ri="10000043" s="" se="1.0" si="0" sy="Hedion" syi="30002189"/>
+    <row c="Throne Worlds" ci="20000322" r="Domain" ri="10000043" s="" se="0.9" si="0" sy="Hedion" syi="30002189"/>
     <row c="Throne Worlds" ci="20000322" r="Domain" ri="10000043" s="" se="0.9" si="0" sy="Mabnen" syi="30002190"/>
     <row c="Throne Worlds" ci="20000322" r="Domain" ri="10000043" s="" se="0.8" si="0" sy="Toshabia" syi="30002191"/>
     <row c="Throne Worlds" ci="20000322" r="Domain" ri="10000043" s="" se="0.7" si="0" sy="Irnin" syi="30002192"/>
@@ -3570,7 +3580,7 @@
     <row c="Norgoh" ci="20000334" r="Domain" ri="10000043" s="" se="0.8" si="0" sy="Safizon" syi="30002279"/>
     <row c="Norgoh" ci="20000334" r="Domain" ri="10000043" s="" se="0.9" si="0" sy="Zatsyaki" syi="30002280"/>
     <row c="Norgoh" ci="20000334" r="Domain" ri="10000043" s="" se="0.9" si="0" sy="Eba" syi="30002281"/>
-    <row c="Norgoh" ci="20000334" r="Domain" ri="10000043" s="" se="1.0" si="0" sy="Bhizheba" syi="30002282"/>
+    <row c="Norgoh" ci="20000334" r="Domain" ri="10000043" s="" se="0.9" si="0" sy="Bhizheba" syi="30002282"/>
     <row c="4M6-GJ" ci="20000335" r="Etherium Reach" ri="10000027" s="" se="0.0" si="0" sy="2G-VDP" syi="30002283"/>
     <row c="4M6-GJ" ci="20000335" r="Etherium Reach" ri="10000027" s="" se="0.0" si="0" sy="9F-3CR" syi="30002284"/>
     <row c="4M6-GJ" ci="20000335" r="Etherium Reach" ri="10000027" s="" se="0.0" si="0" sy="J7M-3W" syi="30002285"/>
@@ -3793,26 +3803,26 @@
     <row c="74IL-O" ci="20000366" r="Geminate" ri="10000029" s="" se="0.0" si="0" sy="TDE4-H" syi="30002502"/>
     <row c="74IL-O" ci="20000366" r="Geminate" ri="10000029" s="" se="0.0" si="0" sy="UER-TH" syi="30002503"/>
     <row c="74IL-O" ci="20000366" r="Geminate" ri="10000029" s="" se="0.0" si="0" sy="UG-UWZ" syi="30002504"/>
-    <row c="Ortner" ci="20000367" r="Heimatar" ri="10000030" s="" se="1.0" si="0" sy="Hulm" syi="30002505"/>
+    <row c="Ortner" ci="20000367" r="Heimatar" ri="10000030" s="" se="0.9" si="0" sy="Hulm" syi="30002505"/>
     <row c="Ortner" ci="20000367" r="Heimatar" ri="10000030" s="" se="0.5" si="0" sy="Osoggur" syi="30002506"/>
     <row c="Ortner" ci="20000367" r="Heimatar" ri="10000030" s="" se="0.7" si="0" sy="Abudban" syi="30002507"/>
     <row c="Ortner" ci="20000367" r="Heimatar" ri="10000030" s="" se="0.9" si="0" sy="Trytedald" syi="30002508"/>
     <row c="Ortner" ci="20000367" r="Heimatar" ri="10000030" s="" se="0.8" si="0" sy="Odatrik" syi="30002509"/>
     <row c="Ortner" ci="20000367" r="Heimatar" ri="10000030" s="" se="0.9" si="0" sy="Rens" syi="30002510"/>
-    <row c="Ortner" ci="20000367" r="Heimatar" ri="10000030" s="" se="1.0" si="0" sy="Ameinaka" syi="30002511"/>
+    <row c="Ortner" ci="20000367" r="Heimatar" ri="10000030" s="" se="0.9" si="0" sy="Ameinaka" syi="30002511"/>
     <row c="Huvilma" ci="20000368" r="Heimatar" ri="10000030" s="" se="0.6" si="0" sy="Alakgur" syi="30002512"/>
     <row c="Huvilma" ci="20000368" r="Heimatar" ri="10000030" s="" se="0.5" si="0" sy="Dammalin" syi="30002513"/>
     <row c="Huvilma" ci="20000368" r="Heimatar" ri="10000030" s="" se="0.3" si="0" sy="Bosboger" syi="30002514"/>
     <row c="Huvilma" ci="20000368" r="Heimatar" ri="10000030" s="" se="0.4" si="0" sy="Olfeim" syi="30002515"/>
     <row c="Huvilma" ci="20000368" r="Heimatar" ri="10000030" s="" se="0.3" si="0" sy="Lulm" syi="30002516"/>
     <row c="Huvilma" ci="20000368" r="Heimatar" ri="10000030" s="" se="0.4" si="0" sy="Gulmorogod" syi="30002517"/>
-    <row c="Osta" ci="20000369" r="Heimatar" ri="10000030" s="" se="1.0" si="0" sy="Edmalbrurdus" syi="30002518"/>
+    <row c="Osta" ci="20000369" r="Heimatar" ri="10000030" s="" se="0.9" si="0" sy="Edmalbrurdus" syi="30002518"/>
     <row c="Osta" ci="20000369" r="Heimatar" ri="10000030" s="" se="0.9" si="0" sy="Kronsur" syi="30002519"/>
     <row c="Osta" ci="20000369" r="Heimatar" ri="10000030" s="" se="0.7" si="0" sy="Dumkirinur" syi="30002520"/>
     <row c="Osta" ci="20000369" r="Heimatar" ri="10000030" s="" se="0.8" si="0" sy="Sist" syi="30002521"/>
     <row c="Osta" ci="20000369" r="Heimatar" ri="10000030" s="" se="0.6" si="0" sy="Obrolber" syi="30002522"/>
     <row c="Osta" ci="20000369" r="Heimatar" ri="10000030" s="" se="0.8" si="0" sy="Austraka" syi="30002523"/>
-    <row c="Odengsolf" ci="20000370" r="Heimatar" ri="10000030" s="" se="1.0" si="0" sy="Ivar" syi="30002524"/>
+    <row c="Odengsolf" ci="20000370" r="Heimatar" ri="10000030" s="" se="0.9" si="0" sy="Ivar" syi="30002524"/>
     <row c="Odengsolf" ci="20000370" r="Heimatar" ri="10000030" s="" se="0.9" si="0" sy="Meirakulf" syi="30002525"/>
     <row c="Odengsolf" ci="20000370" r="Heimatar" ri="10000030" s="" se="0.8" si="0" sy="Frarn" syi="30002526"/>
     <row c="Odengsolf" ci="20000370" r="Heimatar" ri="10000030" s="" se="0.8" si="0" sy="Illinfrik" syi="30002527"/>
@@ -3832,10 +3842,10 @@
     <row c="Hed" ci="20000372" r="Heimatar" ri="10000030" s="" se="0.4" si="0" sy="Dal" syi="30002541"/>
     <row c="Hed" ci="20000372" r="Heimatar" ri="10000030" s="" se="0.4" si="0" sy="Auga" syi="30002542"/>
     <row c="Sveipar" ci="20000373" r="Heimatar" ri="10000030" s="" se="0.9" si="0" sy="Eystur" syi="30002543"/>
-    <row c="Sveipar" ci="20000373" r="Heimatar" ri="10000030" s="" se="1.0" si="0" sy="Pator" syi="30002544"/>
+    <row c="Sveipar" ci="20000373" r="Heimatar" ri="10000030" s="" se="0.9" si="0" sy="Pator" syi="30002544"/>
     <row c="Sveipar" ci="20000373" r="Heimatar" ri="10000030" s="" se="0.9" si="0" sy="Lustrevik" syi="30002545"/>
     <row c="Sveipar" ci="20000373" r="Heimatar" ri="10000030" s="" se="0.8" si="0" sy="Isendeldik" syi="30002546"/>
-    <row c="Sveipar" ci="20000373" r="Heimatar" ri="10000030" s="" se="1.0" si="0" sy="Ammold" syi="30002547"/>
+    <row c="Sveipar" ci="20000373" r="Heimatar" ri="10000030" s="" se="0.9" si="0" sy="Ammold" syi="30002547"/>
     <row c="Sveipar" ci="20000373" r="Heimatar" ri="10000030" s="" se="0.5" si="0" sy="Emolgranlan" syi="30002548"/>
     <row c="Akimamur" ci="20000374" r="Heimatar" ri="10000030" s="" se="0.6" si="0" sy="Offugen" syi="30002549"/>
     <row c="Akimamur" ci="20000374" r="Heimatar" ri="10000030" s="" se="0.6" si="0" sy="Roniko" syi="30002550"/>
@@ -3856,12 +3866,12 @@
     <row c="Urtfer" ci="20000376" r="Heimatar" ri="10000030" s="" se="0.8" si="0" sy="Appen" syi="30002565"/>
     <row c="Urtfer" ci="20000376" r="Heimatar" ri="10000030" s="" se="0.8" si="0" sy="Klir" syi="30002566"/>
     <row c="Urtfer" ci="20000376" r="Heimatar" ri="10000030" s="" se="0.7" si="0" sy="Jorus" syi="30002567"/>
-    <row c="Erada" ci="20000377" r="Heimatar" ri="10000030" s="" se="1.0" si="0" sy="Onga" syi="30002568"/>
+    <row c="Erada" ci="20000377" r="Heimatar" ri="10000030" s="" se="0.9" si="0" sy="Onga" syi="30002568"/>
     <row c="Erada" ci="20000377" r="Heimatar" ri="10000030" s="" se="0.9" si="0" sy="Osaumuni" syi="30002569"/>
     <row c="Erada" ci="20000377" r="Heimatar" ri="10000030" s="" se="0.9" si="0" sy="Magiko" syi="30002570"/>
     <row c="Erada" ci="20000377" r="Heimatar" ri="10000030" s="" se="0.9" si="0" sy="Oremmulf" syi="30002571"/>
     <row c="Erada" ci="20000377" r="Heimatar" ri="10000030" s="" se="0.9" si="0" sy="Hurjafren" syi="30002572"/>
-    <row c="Erada" ci="20000377" r="Heimatar" ri="10000030" s="" se="1.0" si="0" sy="Vullat" syi="30002573"/>
+    <row c="Erada" ci="20000377" r="Heimatar" ri="10000030" s="" se="0.9" si="0" sy="Vullat" syi="30002573"/>
     <row c="Benurad" ci="20000378" r="Heimatar" ri="10000030" s="" se="0.3" si="0" sy="Hrondedir" syi="30002574"/>
     <row c="Benurad" ci="20000378" r="Heimatar" ri="10000030" s="" se="0.3" si="0" sy="Sotrenzur" syi="30002575"/>
     <row c="Benurad" ci="20000378" r="Heimatar" ri="10000030" s="" se="0.4" si="0" sy="Hrondmund" syi="30002576"/>
@@ -4003,7 +4013,7 @@
     <row c="Nexus" ci="20000397" r="Sinq Laison" ri="10000032" s="" se="0.8" si="0" sy="Alillere" syi="30002712"/>
     <row c="Nexus" ci="20000397" r="Sinq Laison" ri="10000032" s="" se="0.7" si="0" sy="Abenync" syi="30002713"/>
     <row c="Nexus" ci="20000397" r="Sinq Laison" ri="10000032" s="" se="0.7" si="0" sy="Pozirblant" syi="30002714"/>
-    <row c="Nexus" ci="20000397" r="Sinq Laison" ri="10000032" s="" se="1.0" si="0" sy="Bourynes" syi="30002715"/>
+    <row c="Nexus" ci="20000397" r="Sinq Laison" ri="10000032" s="" se="0.9" si="0" sy="Bourynes" syi="30002715"/>
     <row c="Nexus" ci="20000397" r="Sinq Laison" ri="10000032" s="" se="0.5" si="0" sy="Aurcel" syi="30002716"/>
     <row c="Nexus" ci="20000397" r="Sinq Laison" ri="10000032" s="" se="0.9" si="0" sy="Aymaerne" syi="30002717"/>
     <row c="Aeman" ci="20000398" r="Sinq Laison" ri="10000032" s="" se="0.4" si="0" sy="Rancer" syi="30002718"/>
@@ -4050,7 +4060,7 @@
     <row c="Ieyama" ci="20000404" r="The Citadel" ri="10000033" s="" se="0.4" si="0" sy="Uuna" syi="30002759"/>
     <row c="Ieyama" ci="20000404" r="The Citadel" ri="10000033" s="" se="0.3" si="0" sy="Manjonakko" syi="30002760"/>
     <row c="Caldari Border Zone" ci="20000405" r="The Citadel" ri="10000033" s="" se="0.9" si="0" sy="Kassigainen" syi="30002761"/>
-    <row c="Caldari Border Zone" ci="20000405" r="The Citadel" ri="10000033" s="" se="1.0" si="0" sy="Yashunen" syi="30002762"/>
+    <row c="Caldari Border Zone" ci="20000405" r="The Citadel" ri="10000033" s="" se="0.9" si="0" sy="Yashunen" syi="30002762"/>
     <row c="Caldari Border Zone" ci="20000405" r="The Citadel" ri="10000033" s="" se="0.9" si="0" sy="Tennen" syi="30002763"/>
     <row c="Caldari Border Zone" ci="20000405" r="The Citadel" ri="10000033" s="" se="0.9" si="0" sy="Hatakani" syi="30002764"/>
     <row c="Caldari Border Zone" ci="20000405" r="The Citadel" ri="10000033" s="" se="0.6" si="0" sy="Sivala" syi="30002765"/>
@@ -4314,15 +4324,15 @@
     <row c="Chasnaye" ci="20000442" r="Everyshore" ri="10000037" s="" se="0.4" si="0" sy="Gerper" syi="30003023"/>
     <row c="Ysiette" ci="20000443" r="Everyshore" ri="10000037" s="" se="0.6" si="0" sy="Marosier" syi="30003024"/>
     <row c="Ysiette" ci="20000443" r="Everyshore" ri="10000037" s="" se="0.8" si="0" sy="Lirsautton" syi="30003025"/>
-    <row c="Ysiette" ci="20000443" r="Everyshore" ri="10000037" s="" se="1.0" si="0" sy="Blameston" syi="30003026"/>
+    <row c="Ysiette" ci="20000443" r="Everyshore" ri="10000037" s="" se="0.9" si="0" sy="Blameston" syi="30003026"/>
     <row c="Ysiette" ci="20000443" r="Everyshore" ri="10000037" s="" se="0.6" si="0" sy="Vaurent" syi="30003027"/>
     <row c="Ysiette" ci="20000443" r="Everyshore" ri="10000037" s="" se="0.5" si="0" sy="Aclan" syi="30003028"/>
     <row c="Ysiette" ci="20000443" r="Everyshore" ri="10000037" s="" se="0.6" si="0" sy="Jaschercis" syi="30003029"/>
     <row c="Ysiette" ci="20000443" r="Everyshore" ri="10000037" s="" se="0.7" si="0" sy="Ardallabier" syi="30003030"/>
-    <row c="Odilis" ci="20000444" r="Everyshore" ri="10000037" s="" se="1.0" si="0" sy="Athinard" syi="30003031"/>
-    <row c="Odilis" ci="20000444" r="Everyshore" ri="10000037" s="" se="1.0" si="0" sy="Meves" syi="30003032"/>
+    <row c="Odilis" ci="20000444" r="Everyshore" ri="10000037" s="" se="0.9" si="0" sy="Athinard" syi="30003031"/>
+    <row c="Odilis" ci="20000444" r="Everyshore" ri="10000037" s="" se="0.9" si="0" sy="Meves" syi="30003032"/>
     <row c="Odilis" ci="20000444" r="Everyshore" ri="10000037" s="" se="0.9" si="0" sy="Ethernity" syi="30003033"/>
-    <row c="Odilis" ci="20000444" r="Everyshore" ri="10000037" s="" se="1.0" si="0" sy="Mattere" syi="30003034"/>
+    <row c="Odilis" ci="20000444" r="Everyshore" ri="10000037" s="" se="0.9" si="0" sy="Mattere" syi="30003034"/>
     <row c="Odilis" ci="20000444" r="Everyshore" ri="10000037" s="" se="0.9" si="0" sy="Gicodel" syi="30003035"/>
     <row c="Odilis" ci="20000444" r="Everyshore" ri="10000037" s="" se="0.8" si="0" sy="Frarolle" syi="30003036"/>
     <row c="Odilis" ci="20000444" r="Everyshore" ri="10000037" s="" se="0.7" si="0" sy="Quier" syi="30003037"/>
@@ -4662,16 +4672,16 @@
     <row c="JQV5-9" ci="20000491" r="Syndicate" ri="10000041" s="" se="0.0" si="0" sy="CY-ZLP" syi="30003371"/>
     <row c="JQV5-9" ci="20000491" r="Syndicate" ri="10000041" s="" se="0.0" si="0" sy="U4-Q2V" syi="30003372"/>
     <row c="JQV5-9" ci="20000491" r="Syndicate" ri="10000041" s="" se="0.0" si="0" sy="98Q-8O" syi="30003373"/>
-    <row c="Gedur" ci="20000492" r="Metropolis" ri="10000042" s="" se="1.0" si="0" sy="Arlulf" syi="30003374"/>
+    <row c="Gedur" ci="20000492" r="Metropolis" ri="10000042" s="" se="0.9" si="0" sy="Arlulf" syi="30003374"/>
     <row c="Gedur" ci="20000492" r="Metropolis" ri="10000042" s="" se="0.9" si="0" sy="Brundakur" syi="30003375"/>
     <row c="Gedur" ci="20000492" r="Metropolis" ri="10000042" s="" se="0.9" si="0" sy="Stirht" syi="30003376"/>
     <row c="Gedur" ci="20000492" r="Metropolis" ri="10000042" s="" se="0.9" si="0" sy="Illuin" syi="30003377"/>
     <row c="Gedur" ci="20000492" r="Metropolis" ri="10000042" s="" se="0.8" si="0" sy="Nedegulf" syi="30003378"/>
     <row c="Gedur" ci="20000492" r="Metropolis" ri="10000042" s="" se="0.9" si="0" sy="Aldilur" syi="30003379"/>
-    <row c="Gedur" ci="20000492" r="Metropolis" ri="10000042" s="" se="1.0" si="0" sy="Alf" syi="30003380"/>
+    <row c="Gedur" ci="20000492" r="Metropolis" ri="10000042" s="" se="0.9" si="0" sy="Alf" syi="30003380"/>
     <row c="Lorundio" ci="20000493" r="Metropolis" ri="10000042" s="" se="0.7" si="0" sy="Eust" syi="30003381"/>
     <row c="Lorundio" ci="20000493" r="Metropolis" ri="10000042" s="" se="0.7" si="0" sy="Flost" syi="30003382"/>
-    <row c="Lorundio" ci="20000493" r="Metropolis" ri="10000042" s="" se="1.0" si="0" sy="Todrir" syi="30003383"/>
+    <row c="Lorundio" ci="20000493" r="Metropolis" ri="10000042" s="" se="0.9" si="0" sy="Todrir" syi="30003383"/>
     <row c="Lorundio" ci="20000493" r="Metropolis" ri="10000042" s="" se="0.7" si="0" sy="Asgeir" syi="30003384"/>
     <row c="Lorundio" ci="20000493" r="Metropolis" ri="10000042" s="" se="0.7" si="0" sy="Evuldgenzo" syi="30003385"/>
     <row c="Lorundio" ci="20000493" r="Metropolis" ri="10000042" s="" se="0.6" si="0" sy="Ongund" syi="30003386"/>
@@ -4697,9 +4707,9 @@
     <row c="Stadakorn" ci="20000496" r="Metropolis" ri="10000042" s="" se="0.8" si="0" sy="Situner" syi="30003406"/>
     <row c="Stadakorn" ci="20000496" r="Metropolis" ri="10000042" s="" se="0.9" si="0" sy="Tamekamur" syi="30003407"/>
     <row c="Stadakorn" ci="20000496" r="Metropolis" ri="10000042" s="" se="0.8" si="0" sy="Evettullur" syi="30003408"/>
-    <row c="Meinigefur" ci="20000497" r="Metropolis" ri="10000042" s="" se="1.0" si="0" sy="Leurtmar" syi="30003409"/>
-    <row c="Meinigefur" ci="20000497" r="Metropolis" ri="10000042" s="" se="1.0" si="0" sy="Ryddinjorn" syi="30003410"/>
-    <row c="Meinigefur" ci="20000497" r="Metropolis" ri="10000042" s="" se="1.0" si="0" sy="Arlek" syi="30003411"/>
+    <row c="Meinigefur" ci="20000497" r="Metropolis" ri="10000042" s="" se="0.9" si="0" sy="Leurtmar" syi="30003409"/>
+    <row c="Meinigefur" ci="20000497" r="Metropolis" ri="10000042" s="" se="0.9" si="0" sy="Ryddinjorn" syi="30003410"/>
+    <row c="Meinigefur" ci="20000497" r="Metropolis" ri="10000042" s="" se="0.9" si="0" sy="Arlek" syi="30003411"/>
     <row c="Meinigefur" ci="20000497" r="Metropolis" ri="10000042" s="" se="0.9" si="0" sy="Elgoi" syi="30003412"/>
     <row c="Meinigefur" ci="20000497" r="Metropolis" ri="10000042" s="" se="0.8" si="0" sy="Eram" syi="30003413"/>
     <row c="Meinigefur" ci="20000497" r="Metropolis" ri="10000042" s="" se="0.6" si="0" sy="Yrmori" syi="30003414"/>
@@ -4777,7 +4787,7 @@
     <row c="Kashag" ci="20000508" r="Domain" ri="10000043" s="" se="0.4" si="0" sy="Kheram" syi="30003486"/>
     <row c="Parud" ci="20000509" r="Domain" ri="10000043" s="" se="0.9" si="0" sy="Arbaz" syi="30003487"/>
     <row c="Parud" ci="20000509" r="Domain" ri="10000043" s="" se="0.9" si="0" sy="Penirgman" syi="30003488"/>
-    <row c="Parud" ci="20000509" r="Domain" ri="10000043" s="" se="1.0" si="0" sy="Chaven" syi="30003489"/>
+    <row c="Parud" ci="20000509" r="Domain" ri="10000043" s="" se="0.9" si="0" sy="Chaven" syi="30003489"/>
     <row c="Parud" ci="20000509" r="Domain" ri="10000043" s="" se="0.8" si="0" sy="Khopa" syi="30003490"/>
     <row c="Parud" ci="20000509" r="Domain" ri="10000043" s="" se="0.9" si="0" sy="Ashab" syi="30003491"/>
     <row c="Parud" ci="20000509" r="Domain" ri="10000043" s="" se="0.8" si="0" sy="Orkashu" syi="30003492"/>
@@ -4810,9 +4820,9 @@
     <row c="Chardu" ci="20000513" r="Domain" ri="10000043" s="" se="0.7" si="0" sy="Lahnina" syi="30003519"/>
     <row c="Maddam" ci="20000514" r="Domain" ri="10000043" s="" se="0.9" si="0" sy="Mahrokht" syi="30003520"/>
     <row c="Maddam" ci="20000514" r="Domain" ri="10000043" s="" se="0.7" si="0" sy="Alkabsi" syi="30003521"/>
-    <row c="Maddam" ci="20000514" r="Domain" ri="10000043" s="" se="1.0" si="0" sy="Sarum Prime" syi="30003522"/>
+    <row c="Maddam" ci="20000514" r="Domain" ri="10000043" s="" se="0.9" si="0" sy="Sarum Prime" syi="30003522"/>
     <row c="Maddam" ci="20000514" r="Domain" ri="10000043" s="" se="0.8" si="0" sy="Hama" syi="30003523"/>
-    <row c="Maddam" ci="20000514" r="Domain" ri="10000043" s="" se="1.0" si="0" sy="Irnal" syi="30003524"/>
+    <row c="Maddam" ci="20000514" r="Domain" ri="10000043" s="" se="0.9" si="0" sy="Irnal" syi="30003524"/>
     <row c="Maddam" ci="20000514" r="Domain" ri="10000043" s="" se="0.7" si="0" sy="Bagodan" syi="30003525"/>
     <row c="Maddam" ci="20000514" r="Domain" ri="10000043" s="" se="0.6" si="0" sy="Murzi" syi="30003526"/>
     <row c="Maddam" ci="20000514" r="Domain" ri="10000043" s="" se="0.9" si="0" sy="Chesoh" syi="30003527"/>
@@ -6255,11 +6265,11 @@
     <row c="OY3-DM" ci="20000726" r="Period Basis" ri="10000063" s="" se="0.0" si="0" sy="1E-W5I" syi="30004964"/>
     <row c="OY3-DM" ci="20000726" r="Period Basis" ri="10000063" s="" se="0.0" si="0" sy="Z-M5A1" syi="30004965"/>
     <row c="OY3-DM" ci="20000726" r="Period Basis" ri="10000063" s="" se="0.0" si="0" sy="MVUO-F" syi="30004966"/>
-    <row c="Crux" ci="20000727" r="Essence" ri="10000064" s="" se="1.0" si="0" sy="Luminaire" syi="30004967"/>
+    <row c="Crux" ci="20000727" r="Essence" ri="10000064" s="" se="0.9" si="0" sy="Luminaire" syi="30004967"/>
     <row c="Crux" ci="20000727" r="Essence" ri="10000064" s="" se="0.9" si="0" sy="Mies" syi="30004968"/>
     <row c="Crux" ci="20000727" r="Essence" ri="10000064" s="" se="0.9" si="0" sy="Oursulaert" syi="30004969"/>
     <row c="Crux" ci="20000727" r="Essence" ri="10000064" s="" se="0.9" si="0" sy="Renyn" syi="30004970"/>
-    <row c="Crux" ci="20000727" r="Essence" ri="10000064" s="" se="1.0" si="0" sy="Duripant" syi="30004971"/>
+    <row c="Crux" ci="20000727" r="Essence" ri="10000064" s="" se="0.9" si="0" sy="Duripant" syi="30004971"/>
     <row c="Crux" ci="20000727" r="Essence" ri="10000064" s="" se="0.9" si="0" sy="Algogille" syi="30004972"/>
     <row c="Patrie" ci="20000728" r="Essence" ri="10000064" s="" se="0.6" si="0" sy="Caslemon" syi="30004973"/>
     <row c="Patrie" ci="20000728" r="Essence" ri="10000064" s="" se="0.9" si="0" sy="Jolevier" syi="30004974"/>
@@ -6330,7 +6340,7 @@
     <row c="Gebem" ci="20000737" r="Kor-Azor" ri="10000065" s="" se="0.6" si="0" sy="Leva" syi="30005039"/>
     <row c="Gebem" ci="20000737" r="Kor-Azor" ri="10000065" s="" se="0.6" si="0" sy="Nishah" syi="30005040"/>
     <row c="Gebem" ci="20000737" r="Kor-Azor" ri="10000065" s="" se="0.7" si="0" sy="Masanuh" syi="30005041"/>
-    <row c="Gebem" ci="20000737" r="Kor-Azor" ri="10000065" s="" se="1.0" si="0" sy="Sehmy" syi="30005042"/>
+    <row c="Gebem" ci="20000737" r="Kor-Azor" ri="10000065" s="" se="0.9" si="0" sy="Sehmy" syi="30005042"/>
     <row c="Gebem" ci="20000737" r="Kor-Azor" ri="10000065" s="" se="0.8" si="0" sy="Nakregde" syi="30005043"/>
     <row c="Nimedaz" ci="20000738" r="Kor-Azor" ri="10000065" s="" se="0.8" si="0" sy="Danyana" syi="30005044"/>
     <row c="Nimedaz" ci="20000738" r="Kor-Azor" ri="10000065" s="" se="0.8" si="0" sy="Nahyeen" syi="30005045"/>
@@ -6492,7 +6502,7 @@
     <row c="Sanctum" ci="20000761" r="Genesis" ri="10000067" s="" se="0.8" si="0" sy="Manarq" syi="30005201"/>
     <row c="Sanctum" ci="20000761" r="Genesis" ri="10000067" s="" se="0.7" si="0" sy="Emsar" syi="30005202"/>
     <row c="Sanctum" ci="20000761" r="Genesis" ri="10000067" s="" se="0.9" si="0" sy="Ourapheh" syi="30005203"/>
-    <row c="Sanctum" ci="20000761" r="Genesis" ri="10000067" s="" se="1.0" si="0" sy="Yulai" syi="30005204"/>
+    <row c="Sanctum" ci="20000761" r="Genesis" ri="10000067" s="" se="0.9" si="0" sy="Yulai" syi="30005204"/>
     <row c="Sanctum" ci="20000761" r="Genesis" ri="10000067" s="" se="0.5" si="0" sy="Tarta" syi="30005205"/>
     <row c="Sanctum" ci="20000761" r="Genesis" ri="10000067" s="" se="0.8" si="0" sy="Kemerk" syi="30005206"/>
     <row c="Ashela" ci="20000762" r="Genesis" ri="10000067" s="" se="0.4" si="0" sy="Nardiarang" syi="30005207"/>
@@ -6593,7 +6603,7 @@
     <row c="Anwyns" ci="20000776" r="Verge Vendor" ri="10000068" s="" se="0.9" si="0" sy="Alenia" syi="30005302"/>
     <row c="Anwyns" ci="20000776" r="Verge Vendor" ri="10000068" s="" se="0.9" si="0" sy="Merolles" syi="30005303"/>
     <row c="Anwyns" ci="20000776" r="Verge Vendor" ri="10000068" s="" se="0.9" si="0" sy="Alentene" syi="30005304"/>
-    <row c="Anwyns" ci="20000776" r="Verge Vendor" ri="10000068" s="" se="1.0" si="0" sy="Cistuvaert" syi="30005305"/>
+    <row c="Anwyns" ci="20000776" r="Verge Vendor" ri="10000068" s="" se="0.9" si="0" sy="Cistuvaert" syi="30005305"/>
     <row c="Anwyns" ci="20000776" r="Verge Vendor" ri="10000068" s="" se="0.8" si="0" sy="Vaere" syi="30005306"/>
     <row c="Anwyns" ci="20000776" r="Verge Vendor" ri="10000068" s="" se="0.6" si="0" sy="Aidart" syi="30005307"/>
     <row c="Kiartanne" ci="20000777" r="Verge Vendor" ri="10000068" s="" se="0.5" si="0" sy="Jufvitte" syi="30005308"/>
@@ -6626,23 +6636,23 @@
     <row c="Krai Perun" ci="20000787" r="Pochven" ri="10000070" s="" se="0.0" si="0" sy="Sakenta" syi="30010141"/>
     <row c="Okela" ci="20000201" r="Lonetrek" ri="10000016" s="" se="0.9" si="0" sy="Jouvulen" syi="30011392"/>
     <row c="Karnola" ci="20000206" r="Lonetrek" ri="10000016" s="" se="0.7" si="0" sy="Akiainavas" syi="30011407"/>
-    <row c="Ajah" ci="20000255" r="Tash-Murkon" ri="10000020" s="" se="1.0" si="0" sy="Kerepa" syi="30011672"/>
-    <row c="Ortner" ci="20000367" r="Heimatar" ri="10000030" s="" se="1.0" si="0" sy="Malukker" syi="30012505"/>
+    <row c="Ajah" ci="20000255" r="Tash-Murkon" ri="10000020" s="" se="0.9" si="0" sy="Kerepa" syi="30011672"/>
+    <row c="Ortner" ci="20000367" r="Heimatar" ri="10000030" s="" se="0.9" si="0" sy="Malukker" syi="30012505"/>
     <row c="Sveipar" ci="20000373" r="Heimatar" ri="10000030" s="" se="0.9" si="0" sy="Hadaugago" syi="30012547"/>
     <row c="Coriault" ci="20000389" r="Sinq Laison" ri="10000032" s="" se="0.9" si="0" sy="Odotte" syi="30012715"/>
-    <row c="Gedur" ci="20000492" r="Metropolis" ri="10000042" s="" se="1.0" si="0" sy="Abrat" syi="30013410"/>
+    <row c="Gedur" ci="20000492" r="Metropolis" ri="10000042" s="" se="0.9" si="0" sy="Abrat" syi="30013410"/>
     <row c="Parud" ci="20000509" r="Domain" ri="10000043" s="" se="0.9" si="0" sy="Deepari" syi="30013489"/>
     <row c="Crux" ci="20000727" r="Essence" ri="10000064" s="" se="0.9" si="0" sy="Couster" syi="30014971"/>
     <row c="Trigentia" ci="20000599" r="Kador" ri="10000052" s="" se="0.9" si="0" sy="Akhwa" syi="30015042"/>
     <row c="Anwyns" ci="20000776" r="Verge Vendor" ri="10000068" s="" se="0.9" si="0" sy="Adallier" syi="30015305"/>
     <row c="Krai Veles" ci="20000789" r="Pochven" ri="10000070" s="" se="0.0" si="0" sy="Senda" syi="30020141"/>
     <row c="Koichi" ci="20000199" r="Lonetrek" ri="10000016" s="" se="0.9" si="0" sy="Kappas" syi="30021392"/>
-    <row c="Ihilakken" ci="20000019" r="The Forge" ri="10000002" s="" se="1.0" si="0" sy="Aokannitoh" syi="30021407"/>
+    <row c="Ihilakken" ci="20000019" r="The Forge" ri="10000002" s="" se="0.9" si="0" sy="Aokannitoh" syi="30021407"/>
     <row c="Arvachah" ci="20000247" r="Tash-Murkon" ri="10000020" s="" se="0.9" si="0" sy="Pasha" syi="30021672"/>
-    <row c="Gedur" ci="20000492" r="Metropolis" ri="10000042" s="" se="1.0" si="0" sy="Orgron" syi="30022505"/>
+    <row c="Gedur" ci="20000492" r="Metropolis" ri="10000042" s="" se="0.9" si="0" sy="Orgron" syi="30022505"/>
     <row c="Erada" ci="20000377" r="Heimatar" ri="10000030" s="" se="0.9" si="0" sy="Krilmokenur" syi="30022547"/>
     <row c="Agiesseson" ci="20000396" r="Sinq Laison" ri="10000032" s="" se="0.9" si="0" sy="Oirtlair" syi="30022715"/>
-    <row c="Meinigefur" ci="20000497" r="Metropolis" ri="10000042" s="" se="1.0" si="0" sy="Embod" syi="30023410"/>
+    <row c="Meinigefur" ci="20000497" r="Metropolis" ri="10000042" s="" se="0.9" si="0" sy="Embod" syi="30023410"/>
     <row c="Norgoh" ci="20000334" r="Domain" ri="10000043" s="" se="0.9" si="0" sy="Fora" syi="30023489"/>
     <row c="Eustron" ci="20000735" r="Essence" ri="10000064" s="" se="0.8" si="0" sy="Hecarrin" syi="30024971"/>
     <row c="Nimedaz" ci="20000738" r="Kor-Azor" ri="10000065" s="" se="0.8" si="0" sy="Annad" syi="30025042"/>
@@ -6650,8 +6660,8 @@
     <row c="Anttanen" ci="20000018" r="The Forge" ri="10000002" s="" se="0.9" si="0" sy="Uitra" syi="30030141"/>
     <row c="Krai Perun" ci="20000787" r="Pochven" ri="10000070" s="" se="0.0" si="0" sy="Komo" syi="30031392"/>
     <row c="Okela" ci="20000201" r="Lonetrek" ri="10000016" s="" se="0.9" si="0" sy="Hitanishio" syi="30031407"/>
-    <row c="Ajah" ci="20000255" r="Tash-Murkon" ri="10000020" s="" se="1.0" si="0" sy="Safilbab" syi="30031672"/>
-    <row c="Osta" ci="20000369" r="Heimatar" ri="10000030" s="" se="1.0" si="0" sy="Todeko" syi="30032505"/>
+    <row c="Ajah" ci="20000255" r="Tash-Murkon" ri="10000020" s="" se="0.9" si="0" sy="Safilbab" syi="30031672"/>
+    <row c="Osta" ci="20000369" r="Heimatar" ri="10000030" s="" se="0.9" si="0" sy="Todeko" syi="30032505"/>
     <row c="Erada" ci="20000377" r="Heimatar" ri="10000030" s="" se="0.9" si="0" sy="Larkugei" syi="30032547"/>
     <row c="Agiesseson" ci="20000396" r="Sinq Laison" ri="10000032" s="" se="0.9" si="0" sy="Olelon" syi="30032715"/>
     <row c="Stadakorn" ci="20000496" r="Metropolis" ri="10000042" s="" se="0.9" si="0" sy="Erego" syi="30033410"/>
@@ -6663,10 +6673,10 @@
     <row c="Santenpaa" ci="20000413" r="The Citadel" ri="10000033" s="" se="0.9" si="0" sy="Laah" syi="30041392"/>
     <row c="Okela" ci="20000201" r="Lonetrek" ri="10000016" s="" se="0.9" si="0" sy="Ichinumi" syi="30041407"/>
     <row c="Subhatoub" ci="20000256" r="Tash-Murkon" ri="10000020" s="" se="0.9" si="0" sy="Seitam" syi="30041672"/>
-    <row c="Odengsolf" ci="20000370" r="Heimatar" ri="10000030" s="" se="1.0" si="0" sy="Usteli" syi="30042505"/>
-    <row c="Erada" ci="20000377" r="Heimatar" ri="10000030" s="" se="1.0" si="0" sy="Loguttur" syi="30042547"/>
+    <row c="Odengsolf" ci="20000370" r="Heimatar" ri="10000030" s="" se="0.9" si="0" sy="Usteli" syi="30042505"/>
+    <row c="Erada" ci="20000377" r="Heimatar" ri="10000030" s="" se="0.9" si="0" sy="Loguttur" syi="30042547"/>
     <row c="Ambrye" ci="20000400" r="Sinq Laison" ri="10000032" s="" se="0.9" si="0" sy="Trossere" syi="30042715"/>
-    <row c="Ankard" ci="20000494" r="Metropolis" ri="10000042" s="" se="1.0" si="0" sy="Fildar" syi="30043410"/>
+    <row c="Ankard" ci="20000494" r="Metropolis" ri="10000042" s="" se="0.9" si="0" sy="Fildar" syi="30043410"/>
     <row c="Hoosa" ci="20000512" r="Domain" ri="10000043" s="" se="0.9" si="0" sy="Horir" syi="30043489"/>
     <row c="Thoulde" ci="20000734" r="Essence" ri="10000064" s="" se="0.9" si="0" sy="Mesokel" syi="30044971"/>
     <row c="Gebem" ci="20000737" r="Kor-Azor" ri="10000065" s="" se="0.9" si="0" sy="Conoban" syi="30045042"/>
@@ -6721,6 +6731,59 @@
     <row c="Okakuola" ci="20000782" r="Black Rise" ri="10000069" s="" se="0.2" si="0" sy="Pynekastoh" syi="30045353"/>
     <row c="Okakuola" ci="20000782" r="Black Rise" ri="10000069" s="" se="0.2" si="0" sy="Reitsato" syi="30045354"/>
     <row c="Duzna Kah" ci="20010000" r="Yasna Zakh" ri="10001000" s="" se="0.0" si="0" sy="Zarzakh" syi="30100000"/>
+    <row c="Manifest District" ci="20010001" r="Exordium" ri="10001004" s="" se="1.0" si="0" sy="Manifest" syi="30100032"/>
+    <row c="1st Accord District" ci="20010002" r="Exordium" ri="10001004" s="" se="1.0" si="0" sy="Gallant" syi="30100033"/>
+    <row c="1st Accord District" ci="20010002" r="Exordium" ri="10001004" s="" se="1.0" si="0" sy="Fortitude" syi="30100034"/>
+    <row c="2nd Accord District" ci="20010003" r="Exordium" ri="10001004" s="" se="1.0" si="0" sy="Forte" syi="30100035"/>
+    <row c="3rd Accord District" ci="20010004" r="Exordium" ri="10001004" s="" se="1.0" si="0" sy="Triumph" syi="30100036"/>
+    <row c="4th Accord District" ci="20010005" r="Exordium" ri="10001004" s="" se="1.0" si="0" sy="Decorum" syi="30100037"/>
+    <row c="1st Accord District" ci="20010002" r="Exordium" ri="10001004" s="" se="1.0" si="0" sy="Lustre" syi="30100038"/>
+    <row c="2nd Accord District" ci="20010003" r="Exordium" ri="10001004" s="" se="1.0" si="0" sy="Celerity" syi="30100039"/>
+    <row c="2nd Accord District" ci="20010003" r="Exordium" ri="10001004" s="" se="1.0" si="0" sy="Ratiocinate" syi="30100040"/>
+    <row c="3rd Accord District" ci="20010004" r="Exordium" ri="10001004" s="" se="1.0" si="0" sy="Rigor" syi="30100041"/>
+    <row c="3rd Accord District" ci="20010004" r="Exordium" ri="10001004" s="" se="1.0" si="0" sy="Lenity" syi="30100042"/>
+    <row c="4th Accord District" ci="20010005" r="Exordium" ri="10001004" s="" se="1.0" si="0" sy="Steadfast" syi="30100043"/>
+    <row c="4th Accord District" ci="20010005" r="Exordium" ri="10001004" s="" se="1.0" si="0" sy="Couth" syi="30100044"/>
+    <row c="1st Accord District" ci="20010002" r="Exordium" ri="10001004" s="" se="1.0" si="0" sy="Mettle" syi="30100045"/>
+    <row c="1st Accord District" ci="20010002" r="Exordium" ri="10001004" s="" se="1.0" si="0" sy="Venerate" syi="30100046"/>
+    <row c="1st Accord District" ci="20010002" r="Exordium" ri="10001004" s="" se="1.0" si="0" sy="Repute" syi="30100047"/>
+    <row c="2nd Accord District" ci="20010003" r="Exordium" ri="10001004" s="" se="1.0" si="0" sy="Adroit" syi="30100048"/>
+    <row c="2nd Accord District" ci="20010003" r="Exordium" ri="10001004" s="" se="1.0" si="0" sy="Sagacity" syi="30100049"/>
+    <row c="2nd Accord District" ci="20010003" r="Exordium" ri="10001004" s="" se="1.0" si="0" sy="Erudite" syi="30100050"/>
+    <row c="3rd Accord District" ci="20010004" r="Exordium" ri="10001004" s="" se="1.0" si="0" sy="Solemn" syi="30100051"/>
+    <row c="3rd Accord District" ci="20010004" r="Exordium" ri="10001004" s="" se="1.0" si="0" sy="Tenacity" syi="30100052"/>
+    <row c="3rd Accord District" ci="20010004" r="Exordium" ri="10001004" s="" se="1.0" si="0" sy="Valiance" syi="30100053"/>
+    <row c="4th Accord District" ci="20010005" r="Exordium" ri="10001004" s="" se="1.0" si="0" sy="Chivalric" syi="30100054"/>
+    <row c="4th Accord District" ci="20010005" r="Exordium" ri="10001004" s="" se="1.0" si="0" sy="Equity" syi="30100055"/>
+    <row c="4th Accord District" ci="20010005" r="Exordium" ri="10001004" s="" se="1.0" si="0" sy="Abstention" syi="30100056"/>
+    <row c="Federation Free-Zone" ci="20010006" r="Exordium" ri="10001004" s="" se="1.0" si="0" sy="Tiberis" syi="30100057"/>
+    <row c="Federation Free-Zone" ci="20010006" r="Exordium" ri="10001004" s="" se="1.0" si="0" sy="Rotonos" syi="30100058"/>
+    <row c="Federation Free-Zone" ci="20010006" r="Exordium" ri="10001004" s="" se="1.0" si="0" sy="Ligare" syi="30100059"/>
+    <row c="Federation Free-Zone" ci="20010006" r="Exordium" ri="10001004" s="" se="1.0" si="0" sy="Axiosere" syi="30100060"/>
+    <row c="Federation Free-Zone" ci="20010006" r="Exordium" ri="10001004" s="" se="1.0" si="0" sy="Waison" syi="30100061"/>
+    <row c="Federation Free-Zone" ci="20010006" r="Exordium" ri="10001004" s="" se="1.0" si="0" sy="Maso" syi="30100062"/>
+    <row c="Federation Free-Zone" ci="20010006" r="Exordium" ri="10001004" s="" se="1.0" si="0" sy="Mondaekus" syi="30100063"/>
+    <row c="The Crucible" ci="20010007" r="Exordium" ri="10001004" s="" se="1.0" si="0" sy="Kita-Aino" syi="30100064"/>
+    <row c="The Crucible" ci="20010007" r="Exordium" ri="10001004" s="" se="1.0" si="0" sy="Aldoras" syi="30100065"/>
+    <row c="The Crucible" ci="20010007" r="Exordium" ri="10001004" s="" se="1.0" si="0" sy="Pamirasu" syi="30100066"/>
+    <row c="The Crucible" ci="20010007" r="Exordium" ri="10001004" s="" se="1.0" si="0" sy="Hotak" syi="30100067"/>
+    <row c="The Crucible" ci="20010007" r="Exordium" ri="10001004" s="" se="1.0" si="0" sy="Dyka-hau" syi="30100068"/>
+    <row c="The Crucible" ci="20010007" r="Exordium" ri="10001004" s="" se="1.0" si="0" sy="Urtasvaar" syi="30100069"/>
+    <row c="The Crucible" ci="20010007" r="Exordium" ri="10001004" s="" se="1.0" si="0" sy="Tatrys" syi="30100070"/>
+    <row c="Strokar" ci="20010008" r="Exordium" ri="10001004" s="" se="1.0" si="0" sy="Vatna" syi="30100071"/>
+    <row c="Strokar" ci="20010008" r="Exordium" ri="10001004" s="" se="1.0" si="0" sy="Tungna" syi="30100072"/>
+    <row c="Strokar" ci="20010008" r="Exordium" ri="10001004" s="" se="1.0" si="0" sy="Dranga" syi="30100073"/>
+    <row c="Strokar" ci="20010008" r="Exordium" ri="10001004" s="" se="1.0" si="0" sy="Tindfjalla" syi="30100074"/>
+    <row c="Strokar" ci="20010008" r="Exordium" ri="10001004" s="" se="1.0" si="0" sy="Lang" syi="30100075"/>
+    <row c="Strokar" ci="20010008" r="Exordium" ri="10001004" s="" se="1.0" si="0" sy="Hofs" syi="30100076"/>
+    <row c="Strokar" ci="20010008" r="Exordium" ri="10001004" s="" se="1.0" si="0" sy="Dettisolin" syi="30100077"/>
+    <row c="Haven" ci="20010009" r="Exordium" ri="10001004" s="" se="1.0" si="0" sy="Adaz" syi="30100078"/>
+    <row c="Haven" ci="20010009" r="Exordium" ri="10001004" s="" se="1.0" si="0" sy="Mazor" syi="30100079"/>
+    <row c="Haven" ci="20010009" r="Exordium" ri="10001004" s="" se="1.0" si="0" sy="Kanta" syi="30100080"/>
+    <row c="Haven" ci="20010009" r="Exordium" ri="10001004" s="" se="1.0" si="0" sy="Taikud" syi="30100081"/>
+    <row c="Haven" ci="20010009" r="Exordium" ri="10001004" s="" se="1.0" si="0" sy="Vaejra" syi="30100082"/>
+    <row c="Haven" ci="20010009" r="Exordium" ri="10001004" s="" se="1.0" si="0" sy="Sakizra" syi="30100083"/>
+    <row c="Haven" ci="20010009" r="Exordium" ri="10001004" s="" se="1.0" si="0" sy="Ichorah" syi="30100084"/>
     <row c="K-C00334" ci="21000334" r="K-R00033" ri="11000033" s="" se="0.0" si="0" sy="Sentinel MZ" syi="31000001"/>
     <row c="K-C00334" ci="21000334" r="K-R00033" ri="11000033" s="" se="0.0" si="0" sy="Liberated Barbican" syi="31000002"/>
     <row c="K-C00334" ci="21000334" r="K-R00033" ri="11000033" s="" se="0.0" si="0" sy="Sanctified Vidette" syi="31000003"/>
@@ -9844,10 +9907,10 @@
     <row c="Haurala" ci="20000200" r="Lonetrek" ri="10000016" s="Raussinen X - Moon 3 - Ytiri Storage" se="0.5" si="60000349" sy="Raussinen" syi="30001373"/>
     <row c="Haurala" ci="20000200" r="Lonetrek" ri="10000016" s="Uemisaisen VIII - Moon 10 - Ytiri Storage" se="0.6" si="60000352" sy="Uemisaisen" syi="30001368"/>
     <row c="Krai Perun" ci="20000787" r="Pochven" ri="10000070" s="Kino VII - Moon 13 - Perun Clade Porevitium Vault" se="0.0" si="60000355" sy="Kino" syi="30001372"/>
-    <row c="Kimotoro" ci="20000020" r="The Forge" ri="10000002" s="Perimeter VI - Ytiri Storage" se="1.0" si="60000358" sy="Perimeter" syi="30000144"/>
+    <row c="Kimotoro" ci="20000020" r="The Forge" ri="10000002" s="Perimeter VI - Ytiri Storage" se="0.9" si="60000358" sy="Perimeter" syi="30000144"/>
     <row c="Kimotoro" ci="20000020" r="The Forge" ri="10000002" s="Jita IV - Moon 6 - Ytiri Storage" se="0.9" si="60000361" sy="Jita" syi="30000142"/>
     <row c="Kimotoro" ci="20000020" r="The Forge" ri="10000002" s="Jita V - Moon 14 - Ytiri Storage" se="0.9" si="60000364" sy="Jita" syi="30000142"/>
-    <row c="Kimotoro" ci="20000020" r="The Forge" ri="10000002" s="Urlen VII - Moon 8 - Ytiri Storage" se="1.0" si="60000367" sy="Urlen" syi="30000139"/>
+    <row c="Kimotoro" ci="20000020" r="The Forge" ri="10000002" s="Urlen VII - Moon 8 - Ytiri Storage" se="0.9" si="60000367" sy="Urlen" syi="30000139"/>
     <row c="Okela" ci="20000201" r="Lonetrek" ri="10000016" s="Tunttaras IX - Moon 11 - Ytiri Storage" se="0.9" si="60000370" sy="Tunttaras" syi="30001379"/>
     <row c="Okela" ci="20000201" r="Lonetrek" ri="10000016" s="Iidoken VI - Moon 8 - Ytiri Storage" se="0.8" si="60000373" sy="Iidoken" syi="30001374"/>
     <row c="Okela" ci="20000201" r="Lonetrek" ri="10000016" s="Nourvukaiken VII - Moon 18 - Ytiri Storage" se="0.8" si="60000376" sy="Nourvukaiken" syi="30001376"/>
@@ -9856,10 +9919,10 @@
     <row c="Etsala" ci="20000027" r="The Forge" ri="10000002" s="Vouskiaho IV - Moon 1 - Ytiri Storage" se="0.5" si="60000385" sy="Vouskiaho" syi="30000193"/>
     <row c="Etsala" ci="20000027" r="The Forge" ri="10000002" s="Vouskiaho VI - Moon 14 - Ytiri Storage" se="0.5" si="60000388" sy="Vouskiaho" syi="30000193"/>
     <row c="Krai Perun" ci="20000787" r="Pochven" ri="10000070" s="Otanuomi VI - Moon 9 - The Convocation of Triglav Proving Complex" se="0.0" si="60000391" sy="Otanuomi" syi="30000192"/>
-    <row c="Ihilakken" ci="20000019" r="The Forge" ri="10000002" s="Ikuchi VI - Moon 15 - Ytiri Storage" se="1.0" si="60000394" sy="Ikuchi" syi="30000138"/>
+    <row c="Ihilakken" ci="20000019" r="The Forge" ri="10000002" s="Ikuchi VI - Moon 15 - Ytiri Storage" se="0.9" si="60000394" sy="Ikuchi" syi="30000138"/>
     <row c="Ihilakken" ci="20000019" r="The Forge" ri="10000002" s="Ohmahailen IV - Moon 2 - Ytiri Storage" se="0.7" si="60000397" sy="Ohmahailen" syi="30000136"/>
-    <row c="Ihilakken" ci="20000019" r="The Forge" ri="10000002" s="Hirtamon VI - Moon 6 - Ytiri Storage" se="1.0" si="60000400" sy="Hirtamon" syi="30000133"/>
-    <row c="Ihilakken" ci="20000019" r="The Forge" ri="10000002" s="Ikuchi VI - Moon 6 - Ytiri Storage" se="1.0" si="60000403" sy="Ikuchi" syi="30000138"/>
+    <row c="Ihilakken" ci="20000019" r="The Forge" ri="10000002" s="Hirtamon VI - Moon 6 - Ytiri Storage" se="0.9" si="60000400" sy="Hirtamon" syi="30000133"/>
+    <row c="Ihilakken" ci="20000019" r="The Forge" ri="10000002" s="Ikuchi VI - Moon 6 - Ytiri Storage" se="0.9" si="60000403" sy="Ikuchi" syi="30000138"/>
     <row c="Caldari Border Zone" ci="20000405" r="The Citadel" ri="10000033" s="Iivinen X - Moon 2 - Ytiri Storage" se="0.7" si="60000406" sy="Iivinen" syi="30002766"/>
     <row c="Caldari Border Zone" ci="20000405" r="The Citadel" ri="10000033" s="Hatakani VIII - Moon 17 - Ytiri Storage" se="0.9" si="60000409" sy="Hatakani" syi="30002764"/>
     <row c="Caldari Border Zone" ci="20000405" r="The Citadel" ri="10000033" s="Hatakani VIII - Moon 11 - Ytiri Storage" se="0.9" si="60000412" sy="Hatakani" syi="30002764"/>
@@ -9874,11 +9937,11 @@
     <row c="Tasen" ci="20000411" r="The Citadel" ri="10000033" s="Isikesu IV - Moon 14 - Hyasyoda Corporation Mining Outpost" se="0.7" si="60000439" sy="Isikesu" syi="30002804"/>
     <row c="Tasen" ci="20000411" r="The Citadel" ri="10000033" s="Isikesu IV - Moon 7 - Hyasyoda Corporation Mineral Reserve" se="0.7" si="60000442" sy="Isikesu" syi="30002804"/>
     <row c="Tasen" ci="20000411" r="The Citadel" ri="10000033" s="Kusomonmon VI - Moon 24 - Hyasyoda Corporation Mining Outpost" se="0.8" si="60000445" sy="Kusomonmon" syi="30002802"/>
-    <row c="Kimotoro" ci="20000020" r="The Forge" ri="10000002" s="Urlen VII - Moon 6 - Hyasyoda Corporation Refinery" se="1.0" si="60000448" sy="Urlen" syi="30000139"/>
+    <row c="Kimotoro" ci="20000020" r="The Forge" ri="10000002" s="Urlen VII - Moon 6 - Hyasyoda Corporation Refinery" se="0.9" si="60000448" sy="Urlen" syi="30000139"/>
     <row c="Kimotoro" ci="20000020" r="The Forge" ri="10000002" s="Jita IV - Moon 6 - Hyasyoda Corporation Refinery" se="0.9" si="60000451" sy="Jita" syi="30000142"/>
-    <row c="Kimotoro" ci="20000020" r="The Forge" ri="10000002" s="Niyabainen VIII - Moon 16 - Hyasyoda Corporation Mineral Reserve" se="1.0" si="60000454" sy="Niyabainen" syi="30000143"/>
-    <row c="Kimotoro" ci="20000020" r="The Forge" ri="10000002" s="Niyabainen IX - Moon 21 - Hyasyoda Corporation Mining Outpost" se="1.0" si="60000457" sy="Niyabainen" syi="30000143"/>
-    <row c="Kimotoro" ci="20000020" r="The Forge" ri="10000002" s="Niyabainen IX - Moon 8 - Hyasyoda Corporation Mineral Reserve" se="1.0" si="60000460" sy="Niyabainen" syi="30000143"/>
+    <row c="Kimotoro" ci="20000020" r="The Forge" ri="10000002" s="Niyabainen VIII - Moon 16 - Hyasyoda Corporation Mineral Reserve" se="0.9" si="60000454" sy="Niyabainen" syi="30000143"/>
+    <row c="Kimotoro" ci="20000020" r="The Forge" ri="10000002" s="Niyabainen IX - Moon 21 - Hyasyoda Corporation Mining Outpost" se="0.9" si="60000457" sy="Niyabainen" syi="30000143"/>
+    <row c="Kimotoro" ci="20000020" r="The Forge" ri="10000002" s="Niyabainen IX - Moon 8 - Hyasyoda Corporation Mineral Reserve" se="0.9" si="60000460" sy="Niyabainen" syi="30000143"/>
     <row c="Kimotoro" ci="20000020" r="The Forge" ri="10000002" s="Jita VI - Hyasyoda Corporation Refinery" se="0.9" si="60000463" sy="Jita" syi="30000142"/>
     <row c="Karnola" ci="20000206" r="Lonetrek" ri="10000016" s="Umokka X - Moon 21 - Hyasyoda Corporation Mining Outpost" se="0.6" si="60000466" sy="Umokka" syi="30001409"/>
     <row c="Karnola" ci="20000206" r="Lonetrek" ri="10000016" s="Umokka VI - Moon 2 - Hyasyoda Corporation Mining Outpost" se="0.6" si="60000469" sy="Umokka" syi="30001409"/>
@@ -9952,10 +10015,10 @@
     <row c="Tasen" ci="20000411" r="The Citadel" ri="10000033" s="Anttiri III - Poksu Mineral Group Mineral Reserve" se="0.7" si="60000673" sy="Anttiri" syi="30002805"/>
     <row c="Tasen" ci="20000411" r="The Citadel" ri="10000033" s="Anttiri V - Moon 18 - Poksu Mineral Group Mineral Reserve" se="0.7" si="60000676" sy="Anttiri" syi="30002805"/>
     <row c="Tasen" ci="20000411" r="The Citadel" ri="10000033" s="Suroken X - Moon 1 - Poksu Mineral Group Refinery" se="0.7" si="60000679" sy="Suroken" syi="30002801"/>
-    <row c="Kimotoro" ci="20000020" r="The Forge" ri="10000002" s="New Caldari Prime - Moon 1 - Poksu Mineral Group Mineral Reserve" se="1.0" si="60000682" sy="New Caldari" syi="30000145"/>
-    <row c="Kimotoro" ci="20000020" r="The Forge" ri="10000002" s="Perimeter VII - Poksu Mineral Group Mineral Reserve" se="1.0" si="60000685" sy="Perimeter" syi="30000144"/>
-    <row c="Kimotoro" ci="20000020" r="The Forge" ri="10000002" s="New Caldari I (Matigu) - Poksu Mineral Group Mineral Reserve" se="1.0" si="60000688" sy="New Caldari" syi="30000145"/>
-    <row c="Kimotoro" ci="20000020" r="The Forge" ri="10000002" s="Niyabainen VII - Moon 2 - Poksu Mineral Group Mineral Reserve" se="1.0" si="60000691" sy="Niyabainen" syi="30000143"/>
+    <row c="Kimotoro" ci="20000020" r="The Forge" ri="10000002" s="New Caldari Prime - Moon 1 - Poksu Mineral Group Mineral Reserve" se="0.9" si="60000682" sy="New Caldari" syi="30000145"/>
+    <row c="Kimotoro" ci="20000020" r="The Forge" ri="10000002" s="Perimeter VII - Poksu Mineral Group Mineral Reserve" se="0.9" si="60000685" sy="Perimeter" syi="30000144"/>
+    <row c="Kimotoro" ci="20000020" r="The Forge" ri="10000002" s="New Caldari I (Matigu) - Poksu Mineral Group Mineral Reserve" se="0.9" si="60000688" sy="New Caldari" syi="30000145"/>
+    <row c="Kimotoro" ci="20000020" r="The Forge" ri="10000002" s="Niyabainen VII - Moon 2 - Poksu Mineral Group Mineral Reserve" se="0.9" si="60000691" sy="Niyabainen" syi="30000143"/>
     <row c="Isoma" ci="20000412" r="The Citadel" ri="10000033" s="Tannolen VIII - Moon 14 - Poksu Mineral Group Mining Outpost" se="0.3" si="60000694" sy="Tannolen" syi="30002812"/>
     <row c="Isoma" ci="20000412" r="The Citadel" ri="10000033" s="Oto VIII - Moon 6 - Poksu Mineral Group Mining Outpost" se="0.4" si="60000697" sy="Oto" syi="30002808"/>
     <row c="Isoma" ci="20000412" r="The Citadel" ri="10000033" s="Eranakko III - Moon 6 - Poksu Mineral Group Mineral Reserve" se="0.3" si="60000700" sy="Eranakko" syi="30002810"/>
@@ -10327,8 +10390,8 @@
     <row c="Mivora" ci="20000028" r="The Forge" ri="10000002" s="Otosela V - Moon 13 - Zainou Biotech Production" se="0.2" si="60001798" sy="Otosela" syi="30000196"/>
     <row c="Ihatalo" ci="20000023" r="The Forge" ri="10000002" s="Maila IV - Zainou Biotech Production" se="0.4" si="60001801" sy="Maila" syi="30000162"/>
     <row c="Ihatalo" ci="20000023" r="The Forge" ri="10000002" s="Maila VI - Moon 1 - Zainou Biotech Production" se="0.4" si="60001804" sy="Maila" syi="30000162"/>
-    <row c="Ihilakken" ci="20000019" r="The Forge" ri="10000002" s="Hirtamon VII - Moon 5 - Zainou Biotech Production" se="1.0" si="60001807" sy="Hirtamon" syi="30000133"/>
-    <row c="Ihilakken" ci="20000019" r="The Forge" ri="10000002" s="Hirtamon VII - Moon 6 - Zainou Biotech Production" se="1.0" si="60001810" sy="Hirtamon" syi="30000133"/>
+    <row c="Ihilakken" ci="20000019" r="The Forge" ri="10000002" s="Hirtamon VII - Moon 5 - Zainou Biotech Production" se="0.9" si="60001807" sy="Hirtamon" syi="30000133"/>
+    <row c="Ihilakken" ci="20000019" r="The Forge" ri="10000002" s="Hirtamon VII - Moon 6 - Zainou Biotech Production" se="0.9" si="60001810" sy="Hirtamon" syi="30000133"/>
     <row c="Makiriemi" ci="20000203" r="Lonetrek" ri="10000016" s="Piekura VIII - Moon 15 - Zainou Biotech Production" se="0.5" si="60001813" sy="Piekura" syi="30001391"/>
     <row c="Makiriemi" ci="20000203" r="Lonetrek" ri="10000016" s="Pakkonen IV - Moon 11 - Zainou Biotech Research Center" se="0.4" si="60001816" sy="Pakkonen" syi="30001390"/>
     <row c="Kantanen" ci="20000406" r="The Citadel" ri="10000033" s="Enderailen IV - Zainou Biotech Production" se="0.4" si="60001819" sy="Enderailen" syi="30002769"/>
@@ -10407,8 +10470,8 @@
     <row c="Kaala" ci="20000202" r="Lonetrek" ri="10000016" s="Vellaine V - Moon 4 - Echelon Entertainment Development Studio" se="0.6" si="60002038" sy="Vellaine" syi="30001380"/>
     <row c="Santenpaa" ci="20000413" r="The Citadel" ri="10000033" s="Isenairos VI - Moon 7 - Echelon Entertainment Development Studio" se="0.8" si="60002041" sy="Isenairos" syi="30002815"/>
     <row c="Santenpaa" ci="20000413" r="The Citadel" ri="10000033" s="Saila VII - Moon 15 - Echelon Entertainment Development Studio" se="0.9" si="60002044" sy="Saila" syi="30002816"/>
-    <row c="Ihilakken" ci="20000019" r="The Forge" ri="10000002" s="Hirtamon VII - Moon 2 - Echelon Entertainment Development Studio" se="1.0" si="60002047" sy="Hirtamon" syi="30000133"/>
-    <row c="Ihilakken" ci="20000019" r="The Forge" ri="10000002" s="Hirtamon IV - Moon 1 - Echelon Entertainment Development Studio" se="1.0" si="60002050" sy="Hirtamon" syi="30000133"/>
+    <row c="Ihilakken" ci="20000019" r="The Forge" ri="10000002" s="Hirtamon VII - Moon 2 - Echelon Entertainment Development Studio" se="0.9" si="60002047" sy="Hirtamon" syi="30000133"/>
+    <row c="Ihilakken" ci="20000019" r="The Forge" ri="10000002" s="Hirtamon IV - Moon 1 - Echelon Entertainment Development Studio" se="0.9" si="60002050" sy="Hirtamon" syi="30000133"/>
     <row c="Malariya" ci="20000210" r="Lonetrek" ri="10000016" s="Endatoh V - Echelon Entertainment Development Studio" se="0.6" si="60002053" sy="Endatoh" syi="30001430"/>
     <row c="Malariya" ci="20000210" r="Lonetrek" ri="10000016" s="Uesuro II - Echelon Entertainment Development Studio" se="0.5" si="60002056" sy="Uesuro" syi="30001432"/>
     <row c="Okomon" ci="20000021" r="The Forge" ri="10000002" s="Jakanerva V - Moon 1 - Echelon Entertainment Development Studio" se="0.7" si="60002059" sy="Jakanerva" syi="30000148"/>
@@ -10474,7 +10537,7 @@
     <row c="Etsala" ci="20000027" r="The Forge" ri="10000002" s="Otsela VI - Moon 13 - Ishukone Corporation Factory" se="0.4" si="60002239" sy="Otsela" syi="30000194"/>
     <row c="Krai Perun" ci="20000787" r="Pochven" ri="10000070" s="Otanuomi IV - Moon 4 - Perun Clade Proving Complex" se="0.0" si="60002242" sy="Otanuomi" syi="30000192"/>
     <row c="Karnola" ci="20000206" r="Lonetrek" ri="10000016" s="Airkio VII - Moon 3 - Lai Dai Corporation Factory" se="0.9" si="60002245" sy="Airkio" syi="30001404"/>
-    <row c="Karnola" ci="20000206" r="Lonetrek" ri="10000016" s="Kakakela VI - Moon 5 - Lai Dai Corporation Factory" se="1.0" si="60002248" sy="Kakakela" syi="30001405"/>
+    <row c="Karnola" ci="20000206" r="Lonetrek" ri="10000016" s="Kakakela VI - Moon 5 - Lai Dai Corporation Factory" se="0.9" si="60002248" sy="Kakakela" syi="30001405"/>
     <row c="Karnola" ci="20000206" r="Lonetrek" ri="10000016" s="Kamokor V - Moon 19 - Lai Dai Corporation Factory" se="0.7" si="60002251" sy="Kamokor" syi="30001406"/>
     <row c="Karnola" ci="20000206" r="Lonetrek" ri="10000016" s="Kamokor V - Moon 4 - Lai Dai Corporation Factory" se="0.7" si="60002254" sy="Kamokor" syi="30001406"/>
     <row c="Suon" ci="20000409" r="The Citadel" ri="10000033" s="Irjunen VII - Moon 2 - Lai Dai Corporation Factory" se="0.5" si="60002257" sy="Irjunen" syi="30002792"/>
@@ -10581,7 +10644,7 @@
     <row c="Throne Worlds" ci="20000322" r="Domain" ri="10000043" s="Simbeloud VI - Expert Distribution Warehouse" se="0.9" si="60002560" sy="Simbeloud" syi="30002195"/>
     <row c="Throne Worlds" ci="20000322" r="Domain" ri="10000043" s="Boranai VIII - Expert Distribution Warehouse" se="0.9" si="60002563" sy="Boranai" syi="30002188"/>
     <row c="Throne Worlds" ci="20000322" r="Domain" ri="10000043" s="Simbeloud IX - Moon 1 - Expert Distribution Warehouse" se="0.9" si="60002566" sy="Simbeloud" syi="30002195"/>
-    <row c="Throne Worlds" ci="20000322" r="Domain" ri="10000043" s="Amarr VIII (Oris) - Moon 4 - Expert Distribution Retail Center" se="1.0" si="60002569" sy="Amarr" syi="30002187"/>
+    <row c="Throne Worlds" ci="20000322" r="Domain" ri="10000043" s="Amarr VIII (Oris) - Moon 4 - Expert Distribution Retail Center" se="0.9" si="60002569" sy="Amarr" syi="30002187"/>
     <row c="Panoumid" ci="20000739" r="Kor-Azor" ri="10000065" s="Imih III - Moon 7 - Expert Distribution Warehouse" se="0.6" si="60002572" sy="Imih" syi="30005053"/>
     <row c="Panoumid" ci="20000739" r="Kor-Azor" ri="10000065" s="Nare VII - Moon 19 - Expert Distribution Retail Center" se="0.6" si="60002575" sy="Nare" syi="30005054"/>
     <row c="Panoumid" ci="20000739" r="Kor-Azor" ri="10000065" s="Imih III - Moon 10 - Expert Distribution Warehouse" se="0.6" si="60002578" sy="Imih" syi="30005053"/>
@@ -10612,7 +10675,7 @@
     <row c="Giatole" ci="20000445" r="Everyshore" ri="10000037" s="Colcer I - Expert Distribution Warehouse" se="0.9" si="60002653" sy="Colcer" syi="30003041"/>
     <row c="Giatole" ci="20000445" r="Everyshore" ri="10000037" s="Alachene VII - Moon 1 - Expert Distribution Warehouse" se="0.3" si="60002656" sy="Alachene" syi="30003042"/>
     <row c="Giatole" ci="20000445" r="Everyshore" ri="10000037" s="Bille I - Expert Distribution Retail Center" se="0.5" si="60002659" sy="Bille" syi="30003040"/>
-    <row c="Norgoh" ci="20000334" r="Domain" ri="10000043" s="Bhizheba VIII - Moon 5 - Expert Distribution Warehouse" se="1.0" si="60002662" sy="Bhizheba" syi="30002282"/>
+    <row c="Norgoh" ci="20000334" r="Domain" ri="10000043" s="Bhizheba VIII - Moon 5 - Expert Distribution Warehouse" se="0.9" si="60002662" sy="Bhizheba" syi="30002282"/>
     <row c="Norgoh" ci="20000334" r="Domain" ri="10000043" s="Eba VIII - Moon 4 - Expert Distribution Retail Center" se="0.9" si="60002665" sy="Eba" syi="30002281"/>
     <row c="Norgoh" ci="20000334" r="Domain" ri="10000043" s="Ebtesham VI - Moon 15 - Expert Distribution Warehouse" se="0.7" si="60002668" sy="Ebtesham" syi="30002277"/>
     <row c="Norgoh" ci="20000334" r="Domain" ri="10000043" s="Artoun IX - Moon 1 - Expert Distribution Warehouse" se="0.8" si="60002671" sy="Artoun" syi="30002278"/>
@@ -10657,7 +10720,7 @@
     <row c="Karnola" ci="20000206" r="Lonetrek" ri="10000016" s="Ruvas II - Sukuuvestaa Corporation Production Plant" se="0.8" si="60002788" sy="Ruvas" syi="30001408"/>
     <row c="Karnola" ci="20000206" r="Lonetrek" ri="10000016" s="Umokka X - Moon 15 - Sukuuvestaa Corporation Foundry" se="0.6" si="60002791" sy="Umokka" syi="30001409"/>
     <row c="Karnola" ci="20000206" r="Lonetrek" ri="10000016" s="Umokka VI - Moon 2 - Sukuuvestaa Corporation Foundry" se="0.6" si="60002794" sy="Umokka" syi="30001409"/>
-    <row c="Karnola" ci="20000206" r="Lonetrek" ri="10000016" s="Kakakela V - Moon 2 - Sukuuvestaa Corporation Production Plant" se="1.0" si="60002797" sy="Kakakela" syi="30001405"/>
+    <row c="Karnola" ci="20000206" r="Lonetrek" ri="10000016" s="Kakakela V - Moon 2 - Sukuuvestaa Corporation Production Plant" se="0.9" si="60002797" sy="Kakakela" syi="30001405"/>
     <row c="Karnola" ci="20000206" r="Lonetrek" ri="10000016" s="Kamokor V - Moon 15 - Sukuuvestaa Corporation Factory" se="0.7" si="60002800" sy="Kamokor" syi="30001406"/>
     <row c="Karnola" ci="20000206" r="Lonetrek" ri="10000016" s="Airkio II - Sukuuvestaa Corporation Factory" se="0.9" si="60002803" sy="Airkio" syi="30001404"/>
     <row c="Onirvura" ci="20000022" r="The Forge" ri="10000002" s="Poinen V - Moon 16 - Sukuuvestaa Corporation Warehouse" se="0.6" si="60002806" sy="Poinen" syi="30000153"/>
@@ -10680,10 +10743,10 @@
     <row c="Otsabaira" ci="20000025" r="The Forge" ri="10000002" s="Soshin VIII - Sukuuvestaa Corporation Factory" se="0.6" si="60002857" sy="Soshin" syi="30000175"/>
     <row c="Caldari Border Zone" ci="20000405" r="The Citadel" ri="10000033" s="Sivala VIII - Sukuuvestaa Corporation Warehouse" se="0.6" si="60002860" sy="Sivala" syi="30002765"/>
     <row c="Caldari Border Zone" ci="20000405" r="The Citadel" ri="10000033" s="Iivinen VIII - Moon 13 - Sukuuvestaa Corporation Warehouse" se="0.7" si="60002863" sy="Iivinen" syi="30002766"/>
-    <row c="Caldari Border Zone" ci="20000405" r="The Citadel" ri="10000033" s="Yashunen V - Moon 1 - Sukuuvestaa Corporation Warehouse" se="1.0" si="60002866" sy="Yashunen" syi="30002762"/>
+    <row c="Caldari Border Zone" ci="20000405" r="The Citadel" ri="10000033" s="Yashunen V - Moon 1 - Sukuuvestaa Corporation Warehouse" se="0.9" si="60002866" sy="Yashunen" syi="30002762"/>
     <row c="Caldari Border Zone" ci="20000405" r="The Citadel" ri="10000033" s="Hatakani VII - Moon 18 - Sukuuvestaa Corporation Production Plant" se="0.9" si="60002869" sy="Hatakani" syi="30002764"/>
-    <row c="Caldari Border Zone" ci="20000405" r="The Citadel" ri="10000033" s="Yashunen VII - Sukuuvestaa Corporation Warehouse" se="1.0" si="60002872" sy="Yashunen" syi="30002762"/>
-    <row c="Caldari Border Zone" ci="20000405" r="The Citadel" ri="10000033" s="Yashunen III - Sukuuvestaa Corporation Warehouse" se="1.0" si="60002875" sy="Yashunen" syi="30002762"/>
+    <row c="Caldari Border Zone" ci="20000405" r="The Citadel" ri="10000033" s="Yashunen VII - Sukuuvestaa Corporation Warehouse" se="0.9" si="60002872" sy="Yashunen" syi="30002762"/>
+    <row c="Caldari Border Zone" ci="20000405" r="The Citadel" ri="10000033" s="Yashunen III - Sukuuvestaa Corporation Warehouse" se="0.9" si="60002875" sy="Yashunen" syi="30002762"/>
     <row c="Kaala" ci="20000202" r="Lonetrek" ri="10000016" s="Vaajaita VI - Sukuuvestaa Corporation Warehouse" se="0.5" si="60002878" sy="Vaajaita" syi="30001383"/>
     <row c="Kaala" ci="20000202" r="Lonetrek" ri="10000016" s="Autaris VIII - Moon 4 - Sukuuvestaa Corporation Production Plant" se="0.5" si="60002881" sy="Autaris" syi="30001384"/>
     <row c="Krai Veles" ci="20000789" r="Pochven" ri="10000070" s="Arvasaras II - Moon 1 - Veles Clade Extractive Terminus" se="0.0" si="60002884" sy="Arvasaras" syi="30001381"/>
@@ -10708,9 +10771,9 @@
     <row c="Umamon" ci="20000211" r="Lonetrek" ri="10000016" s="Anin IX - Moon 13 - Caldari Constructions Production Plant" se="0.4" si="60002941" sy="Anin" syi="30001439"/>
     <row c="Umamon" ci="20000211" r="Lonetrek" ri="10000016" s="Tartoken V - Moon 8 - Caldari Constructions Production Plant" se="0.1" si="60002944" sy="Tartoken" syi="30001441"/>
     <row c="Umamon" ci="20000211" r="Lonetrek" ri="10000016" s="Tartoken VI - Caldari Constructions Production Plant" se="0.1" si="60002947" sy="Tartoken" syi="30001441"/>
-    <row c="Kimotoro" ci="20000020" r="The Forge" ri="10000002" s="Niyabainen IX - Moon 9 - Caldari Constructions Warehouse" se="1.0" si="60002950" sy="Niyabainen" syi="30000143"/>
+    <row c="Kimotoro" ci="20000020" r="The Forge" ri="10000002" s="Niyabainen IX - Moon 9 - Caldari Constructions Warehouse" se="0.9" si="60002950" sy="Niyabainen" syi="30000143"/>
     <row c="Kimotoro" ci="20000020" r="The Forge" ri="10000002" s="Jita V - Moon 17 - Caldari Constructions Production Plant" se="0.9" si="60002953" sy="Jita" syi="30000142"/>
-    <row c="Kimotoro" ci="20000020" r="The Forge" ri="10000002" s="Perimeter IX - Caldari Constructions Production Plant" se="1.0" si="60002956" sy="Perimeter" syi="30000144"/>
+    <row c="Kimotoro" ci="20000020" r="The Forge" ri="10000002" s="Perimeter IX - Caldari Constructions Production Plant" se="0.9" si="60002956" sy="Perimeter" syi="30000144"/>
     <row c="Kimotoro" ci="20000020" r="The Forge" ri="10000002" s="Jita IV - Moon 10 - Caldari Constructions Production Plant" se="0.9" si="60002959" sy="Jita" syi="30000142"/>
     <row c="Okela" ci="20000201" r="Lonetrek" ri="10000016" s="Nourvukaiken VII - Moon 4 - Caldari Constructions Production Plant" se="0.8" si="60002962" sy="Nourvukaiken" syi="30001376"/>
     <row c="Okela" ci="20000201" r="Lonetrek" ri="10000016" s="Tsuguwa IV - Moon 13 - Caldari Constructions Warehouse" se="0.8" si="60002965" sy="Tsuguwa" syi="30001375"/>
@@ -10742,9 +10805,9 @@
     <row c="Ihatalo" ci="20000023" r="The Forge" ri="10000002" s="Akora VI - Moon 7 - Expert Housing Production Plant" se="0.3" si="60003043" sy="Akora" syi="30000163"/>
     <row c="Ihatalo" ci="20000023" r="The Forge" ri="10000002" s="Maila VII - Expert Housing Warehouse" se="0.4" si="60003046" sy="Maila" syi="30000162"/>
     <row c="Ihatalo" ci="20000023" r="The Forge" ri="10000002" s="Purjola VII - Expert Housing Production Plant" se="0.5" si="60003049" sy="Purjola" syi="30000161"/>
-    <row c="Kimotoro" ci="20000020" r="The Forge" ri="10000002" s="Niyabainen IX - Moon 4 - Expert Housing Production Plant" se="1.0" si="60003052" sy="Niyabainen" syi="30000143"/>
+    <row c="Kimotoro" ci="20000020" r="The Forge" ri="10000002" s="Niyabainen IX - Moon 4 - Expert Housing Production Plant" se="0.9" si="60003052" sy="Niyabainen" syi="30000143"/>
     <row c="Kimotoro" ci="20000020" r="The Forge" ri="10000002" s="Jita IV - Moon 11 - Expert Housing Production Plant" se="0.9" si="60003055" sy="Jita" syi="30000142"/>
-    <row c="Kimotoro" ci="20000020" r="The Forge" ri="10000002" s="Niyabainen VIII - Moon 6 - Expert Housing Production Plant" se="1.0" si="60003058" sy="Niyabainen" syi="30000143"/>
+    <row c="Kimotoro" ci="20000020" r="The Forge" ri="10000002" s="Niyabainen VIII - Moon 6 - Expert Housing Production Plant" se="0.9" si="60003058" sy="Niyabainen" syi="30000143"/>
     <row c="Ruomo" ci="20000017" r="The Forge" ri="10000002" s="Mitsolen I - Moon 1 - Expert Housing Warehouse" se="0.6" si="60003061" sy="Mitsolen" syi="30000120"/>
     <row c="Ruomo" ci="20000017" r="The Forge" ri="10000002" s="Vaankalen I - Moon 3 - Expert Housing Production Plant" se="0.6" si="60003064" sy="Vaankalen" syi="30000123"/>
     <row c="Ruomo" ci="20000017" r="The Forge" ri="10000002" s="Itamo VII - Moon 5 - Expert Housing Warehouse" se="0.7" si="60003067" sy="Itamo" syi="30000119"/>
@@ -10760,7 +10823,7 @@
     <row c="Isoma" ci="20000412" r="The Citadel" ri="10000033" s="Onatoh VII - Moon 23 - Expert Housing Production Plant" se="0.3" si="60003097" sy="Onatoh" syi="30002811"/>
     <row c="Isoma" ci="20000412" r="The Citadel" ri="10000033" s="Hasmijaala X - Moon 3 - Expert Housing Production Plant" se="0.3" si="60003100" sy="Hasmijaala" syi="30002806"/>
     <row c="Isoma" ci="20000412" r="The Citadel" ri="10000033" s="Eranakko IV - Moon 1 - Expert Housing Foundry" se="0.3" si="60003103" sy="Eranakko" syi="30002810"/>
-    <row c="Ihilakken" ci="20000019" r="The Forge" ri="10000002" s="Hirtamon VIII - Moon 5 - Expert Housing Warehouse" se="1.0" si="60003106" sy="Hirtamon" syi="30000133"/>
+    <row c="Ihilakken" ci="20000019" r="The Forge" ri="10000002" s="Hirtamon VIII - Moon 5 - Expert Housing Warehouse" se="0.9" si="60003106" sy="Hirtamon" syi="30000133"/>
     <row c="Ihilakken" ci="20000019" r="The Forge" ri="10000002" s="Hykkota IV - Moon 7 - Expert Housing Production Plant" se="0.8" si="60003109" sy="Hykkota" syi="30000134"/>
     <row c="Ihilakken" ci="20000019" r="The Forge" ri="10000002" s="Ohmahailen V - Moon 12 - Expert Housing Production Plant" se="0.7" si="60003112" sy="Ohmahailen" syi="30000136"/>
     <row c="Uusasai" ci="20000408" r="The Citadel" ri="10000033" s="Sankkasen VII - Moon 6 - Expert Housing Production Plant" se="0.7" si="60003115" sy="Sankkasen" syi="30002783"/>
@@ -10836,8 +10899,8 @@
     <row c="Sela" ci="20000204" r="Lonetrek" ri="10000016" s="Ylandoki VII - Moon 1 - Modern Finances Depository" se="0.8" si="60003325" sy="Ylandoki" syi="30001395"/>
     <row c="Stion" ci="20000394" r="Sinq Laison" ri="10000032" s="Stegette IV - Moon 10 - Modern Finances Depository" se="0.5" si="60003328" sy="Stegette" syi="30002696"/>
     <row c="Stion" ci="20000394" r="Sinq Laison" ri="10000032" s="Stegette IV - Moon 15 - Modern Finances Depository" se="0.5" si="60003331" sy="Stegette" syi="30002696"/>
-    <row c="Kimotoro" ci="20000020" r="The Forge" ri="10000002" s="New Caldari Prime - Moon 1 - Chief Executive Panel Bureau" se="1.0" si="60003334" sy="New Caldari" syi="30000145"/>
-    <row c="Kimotoro" ci="20000020" r="The Forge" ri="10000002" s="Urlen VI - Chief Executive Panel Bureau" se="1.0" si="60003337" sy="Urlen" syi="30000139"/>
+    <row c="Kimotoro" ci="20000020" r="The Forge" ri="10000002" s="New Caldari Prime - Moon 1 - Chief Executive Panel Bureau" se="0.9" si="60003334" sy="New Caldari" syi="30000145"/>
+    <row c="Kimotoro" ci="20000020" r="The Forge" ri="10000002" s="Urlen VI - Chief Executive Panel Bureau" se="0.9" si="60003337" sy="Urlen" syi="30000139"/>
     <row c="Outartoh" ci="20000407" r="The Citadel" ri="10000033" s="Ono VII - Moon 3 - Chief Executive Panel Treasury" se="0.8" si="60003340" sy="Ono" syi="30002779"/>
     <row c="Outartoh" ci="20000407" r="The Citadel" ri="10000033" s="Tasabeshi IV - Moon 2 - Chief Executive Panel Academy" se="0.8" si="60003343" sy="Tasabeshi" syi="30002778"/>
     <row c="Okkelen" ci="20000024" r="The Forge" ri="10000002" s="Otitoh VII - Moon 3 - Chief Executive Panel Academy" se="0.5" si="60003346" sy="Otitoh" syi="30000171"/>
@@ -10877,7 +10940,7 @@
     <row c="Santenpaa" ci="20000413" r="The Citadel" ri="10000033" s="Isenairos VI - Moon 6 - Mercantile Club Bureau" se="0.8" si="60003448" sy="Isenairos" syi="30002815"/>
     <row c="Santenpaa" ci="20000413" r="The Citadel" ri="10000033" s="Uotila V - Moon 5 - Mercantile Club Bureau" se="0.6" si="60003451" sy="Uotila" syi="30002814"/>
     <row c="Kimotoro" ci="20000020" r="The Forge" ri="10000002" s="Maurasi VIII - Moon 14 - Caldari Business Tribunal" se="0.9" si="60003454" sy="Maurasi" syi="30000140"/>
-    <row c="Kimotoro" ci="20000020" r="The Forge" ri="10000002" s="Niyabainen IX - Moon 10 - Caldari Business Tribunal Accounting" se="1.0" si="60003457" sy="Niyabainen" syi="30000143"/>
+    <row c="Kimotoro" ci="20000020" r="The Forge" ri="10000002" s="Niyabainen IX - Moon 10 - Caldari Business Tribunal Accounting" se="0.9" si="60003457" sy="Niyabainen" syi="30000143"/>
     <row c="Kimotoro" ci="20000020" r="The Forge" ri="10000002" s="Jita IV - Moon 10 - Caldari Business Tribunal Law School" se="0.9" si="60003460" sy="Jita" syi="30000142"/>
     <row c="Kimotoro" ci="20000020" r="The Forge" ri="10000002" s="Jita VII - Moon 2 - Caldari Business Tribunal Law School" se="0.9" si="60003463" sy="Jita" syi="30000142"/>
     <row c="Kimotoro" ci="20000020" r="The Forge" ri="10000002" s="Jita IV - Moon 4 - Caldari Business Tribunal Bureau Offices" se="0.9" si="60003466" sy="Jita" syi="30000142"/>
@@ -10966,7 +11029,7 @@
     <row c="Tartatven" ci="20000351" r="Molden Heath" ri="10000028" s="Heild V - Moon 7 - Caldari Business Tribunal Accounting" se="0.3" si="60003715" sy="Heild" syi="30002390"/>
     <row c="Tartatven" ci="20000351" r="Molden Heath" ri="10000028" s="Heild V - Moon 5 - Caldari Business Tribunal Bureau Offices" se="0.3" si="60003718" sy="Heild" syi="30002390"/>
     <row c="Tartatven" ci="20000351" r="Molden Heath" ri="10000028" s="Aedald VII - Moon 15 - Caldari Business Tribunal Information Center" se="0.3" si="60003721" sy="Aedald" syi="30002393"/>
-    <row c="Kimotoro" ci="20000020" r="The Forge" ri="10000002" s="New Caldari V (Oniteseru) - Moon 2 - House of Records Archives" se="1.0" si="60003724" sy="New Caldari" syi="30000145"/>
+    <row c="Kimotoro" ci="20000020" r="The Forge" ri="10000002" s="New Caldari V (Oniteseru) - Moon 2 - House of Records Archives" se="0.9" si="60003724" sy="New Caldari" syi="30000145"/>
     <row c="Arekin" ci="20000403" r="The Citadel" ri="10000033" s="Oiniken III - Moon 1 - House of Records Information Center" se="0.7" si="60003727" sy="Oiniken" syi="30002750"/>
     <row c="Ihilakken" ci="20000019" r="The Forge" ri="10000002" s="Ansila VIII - Moon 14 - House of Records Bureau Offices" se="0.9" si="60003730" sy="Ansila" syi="30000132"/>
     <row c="Sela" ci="20000204" r="Lonetrek" ri="10000016" s="Korama V - Moon 13 - House of Records Information Center" se="0.8" si="60003733" sy="Korama" syi="30001394"/>
@@ -10976,12 +11039,12 @@
     <row c="Kainokai" ci="20000207" r="Lonetrek" ri="10000016" s="Kirras IX - House of Records Information Center" se="0.8" si="60003745" sy="Kirras" syi="30001410"/>
     <row c="Otawasa" ci="20000410" r="The Citadel" ri="10000033" s="Venilen XII - Moon 1 - House of Records Archives" se="0.6" si="60003748" sy="Venilen" syi="30002798"/>
     <row c="Ruomo" ci="20000017" r="The Forge" ri="10000002" s="Jatate IV - Moon 11 - House of Records Archives" se="0.6" si="60003751" sy="Jatate" syi="30000121"/>
-    <row c="Kimotoro" ci="20000020" r="The Forge" ri="10000002" s="Perimeter II - Moon 1 - Caldari Navy Assembly Plant" se="1.0" si="60003754" sy="Perimeter" syi="30000144"/>
+    <row c="Kimotoro" ci="20000020" r="The Forge" ri="10000002" s="Perimeter II - Moon 1 - Caldari Navy Assembly Plant" se="0.9" si="60003754" sy="Perimeter" syi="30000144"/>
     <row c="Kimotoro" ci="20000020" r="The Forge" ri="10000002" s="Jita IV - Moon 5 - Caldari Navy Assembly Plant" se="0.9" si="60003757" sy="Jita" syi="30000142"/>
     <row c="Kimotoro" ci="20000020" r="The Forge" ri="10000002" s="Jita IV - Moon 4 - Caldari Navy Assembly Plant" se="0.9" si="60003760" sy="Jita" syi="30000142"/>
     <row c="Kimotoro" ci="20000020" r="The Forge" ri="10000002" s="Maurasi IX - Moon 12 - Caldari Navy Assembly Plant" se="0.9" si="60003763" sy="Maurasi" syi="30000140"/>
-    <row c="Kimotoro" ci="20000020" r="The Forge" ri="10000002" s="Niyabainen IX - Moon 19 - Caldari Navy Logistic Support" se="1.0" si="60003766" sy="Niyabainen" syi="30000143"/>
-    <row c="Kimotoro" ci="20000020" r="The Forge" ri="10000002" s="Niyabainen IV - Moon 1 - Caldari Navy Assembly Plant" se="1.0" si="60003769" sy="Niyabainen" syi="30000143"/>
+    <row c="Kimotoro" ci="20000020" r="The Forge" ri="10000002" s="Niyabainen IX - Moon 19 - Caldari Navy Logistic Support" se="0.9" si="60003766" sy="Niyabainen" syi="30000143"/>
+    <row c="Kimotoro" ci="20000020" r="The Forge" ri="10000002" s="Niyabainen IV - Moon 1 - Caldari Navy Assembly Plant" se="0.9" si="60003769" sy="Niyabainen" syi="30000143"/>
     <row c="Santenpaa" ci="20000413" r="The Citadel" ri="10000033" s="Isenairos VI - Moon 9 - Caldari Navy Logistic Support" se="0.8" si="60003772" sy="Isenairos" syi="30002815"/>
     <row c="Santenpaa" ci="20000413" r="The Citadel" ri="10000033" s="Isenairos VI - Caldari Navy Logistic Support" se="0.8" si="60003775" sy="Isenairos" syi="30002815"/>
     <row c="Santenpaa" ci="20000413" r="The Citadel" ri="10000033" s="Oichiya VI - Moon 19 - Caldari Navy Assembly Plant" se="0.8" si="60003778" sy="Oichiya" syi="30002818"/>
@@ -11018,12 +11081,12 @@
     <row c="Minnen" ci="20000205" r="Lonetrek" ri="10000016" s="Nonni IV - Caldari Navy Assembly Plant" se="0.5" si="60003871" sy="Nonni" syi="30001401"/>
     <row c="Minnen" ci="20000205" r="Lonetrek" ri="10000016" s="Nonni V - Caldari Navy Assembly Plant" se="0.5" si="60003874" sy="Nonni" syi="30001401"/>
     <row c="Minnen" ci="20000205" r="Lonetrek" ri="10000016" s="Litiura VIII - Moon 12 - Caldari Navy Logistic Support" se="0.5" si="60003877" sy="Litiura" syi="30001400"/>
-    <row c="Karnola" ci="20000206" r="Lonetrek" ri="10000016" s="Kakakela VII - Moon 16 - Caldari Navy Assembly Plant" se="1.0" si="60003880" sy="Kakakela" syi="30001405"/>
+    <row c="Karnola" ci="20000206" r="Lonetrek" ri="10000016" s="Kakakela VII - Moon 16 - Caldari Navy Assembly Plant" se="0.9" si="60003880" sy="Kakakela" syi="30001405"/>
     <row c="Karnola" ci="20000206" r="Lonetrek" ri="10000016" s="Umokka VII - Moon 5 - Caldari Navy Testing Facilities" se="0.6" si="60003883" sy="Umokka" syi="30001409"/>
     <row c="Karnola" ci="20000206" r="Lonetrek" ri="10000016" s="Umokka X - Moon 4 - Caldari Navy Testing Facilities" se="0.6" si="60003886" sy="Umokka" syi="30001409"/>
-    <row c="Karnola" ci="20000206" r="Lonetrek" ri="10000016" s="Kakakela VII - Caldari Navy Assembly Plant" se="1.0" si="60003889" sy="Kakakela" syi="30001405"/>
-    <row c="Karnola" ci="20000206" r="Lonetrek" ri="10000016" s="Kakakela VI - Moon 18 - Caldari Navy Assembly Plant" se="1.0" si="60003892" sy="Kakakela" syi="30001405"/>
-    <row c="Karnola" ci="20000206" r="Lonetrek" ri="10000016" s="Kakakela VI - Moon 15 - Caldari Navy Assembly Plant" se="1.0" si="60003895" sy="Kakakela" syi="30001405"/>
+    <row c="Karnola" ci="20000206" r="Lonetrek" ri="10000016" s="Kakakela VII - Caldari Navy Assembly Plant" se="0.9" si="60003889" sy="Kakakela" syi="30001405"/>
+    <row c="Karnola" ci="20000206" r="Lonetrek" ri="10000016" s="Kakakela VI - Moon 18 - Caldari Navy Assembly Plant" se="0.9" si="60003892" sy="Kakakela" syi="30001405"/>
+    <row c="Karnola" ci="20000206" r="Lonetrek" ri="10000016" s="Kakakela VI - Moon 15 - Caldari Navy Assembly Plant" se="0.9" si="60003895" sy="Kakakela" syi="30001405"/>
     <row c="Imurukka" ci="20000401" r="The Citadel" ri="10000033" s="Inoue VI - Moon 9 - Caldari Navy Logistic Support" se="0.6" si="60003898" sy="Inoue" syi="30002738"/>
     <row c="Imurukka" ci="20000401" r="The Citadel" ri="10000033" s="Horkkisen XII - Caldari Navy Testing Facilities" se="0.4" si="60003901" sy="Horkkisen" syi="30002741"/>
     <row c="Imurukka" ci="20000401" r="The Citadel" ri="10000033" s="Isaziwa X - Moon 3 - Caldari Navy Assembly Plant" se="0.7" si="60003904" sy="Isaziwa" syi="30002739"/>
@@ -11179,7 +11242,7 @@
     <row c="Suon" ci="20000409" r="The Citadel" ri="10000033" s="Inaro X - Moon 13 - Corporate Police Force Logistic Support" se="0.8" si="60004354" sy="Inaro" syi="30002788"/>
     <row c="Suon" ci="20000409" r="The Citadel" ri="10000033" s="Irjunen II - Corporate Police Force Assembly Plant" se="0.5" si="60004357" sy="Irjunen" syi="30002792"/>
     <row c="Ihilakken" ci="20000019" r="The Forge" ri="10000002" s="Ohmahailen V - Moon 6 - Corporate Police Force Assembly Plant" se="0.7" si="60004360" sy="Ohmahailen" syi="30000136"/>
-    <row c="Ihilakken" ci="20000019" r="The Forge" ri="10000002" s="Hirtamon VI - Moon 18 - Corporate Police Force Assembly Plant" se="1.0" si="60004363" sy="Hirtamon" syi="30000133"/>
+    <row c="Ihilakken" ci="20000019" r="The Forge" ri="10000002" s="Hirtamon VI - Moon 18 - Corporate Police Force Assembly Plant" se="0.9" si="60004363" sy="Hirtamon" syi="30000133"/>
     <row c="Ihilakken" ci="20000019" r="The Forge" ri="10000002" s="Ansila X - Moon 1 - Corporate Police Force Assembly Plant" se="0.9" si="60004366" sy="Ansila" syi="30000132"/>
     <row c="Ihilakken" ci="20000019" r="The Forge" ri="10000002" s="Ohmahailen V - Moon 7 - Corporate Police Force Assembly Plant" se="0.7" si="60004369" sy="Ohmahailen" syi="30000136"/>
     <row c="Orpana" ci="20000029" r="The Forge" ri="10000002" s="Uchoshi IX - Moon 4 - Corporate Police Force Logistic Support" se="0.5" si="60004372" sy="Uchoshi" syi="30000201"/>
@@ -11192,13 +11255,13 @@
     <row c="Imurukka" ci="20000401" r="The Citadel" ri="10000033" s="Isaziwa VIII - Corporate Police Force Logistic Support" se="0.7" si="60004393" sy="Isaziwa" syi="30002739"/>
     <row c="Karnola" ci="20000206" r="Lonetrek" ri="10000016" s="Umokka VII - Corporate Police Force Testing Facilities" se="0.6" si="60004396" sy="Umokka" syi="30001409"/>
     <row c="Karnola" ci="20000206" r="Lonetrek" ri="10000016" s="Ruvas IV - Moon 1 - Corporate Police Force Assembly Plant" se="0.8" si="60004399" sy="Ruvas" syi="30001408"/>
-    <row c="Karnola" ci="20000206" r="Lonetrek" ri="10000016" s="Kakakela VII - Moon 9 - Corporate Police Force Assembly Plant" se="1.0" si="60004402" sy="Kakakela" syi="30001405"/>
-    <row c="Karnola" ci="20000206" r="Lonetrek" ri="10000016" s="Kakakela VII - Moon 13 - Corporate Police Force Assembly Plant" se="1.0" si="60004405" sy="Kakakela" syi="30001405"/>
+    <row c="Karnola" ci="20000206" r="Lonetrek" ri="10000016" s="Kakakela VII - Moon 9 - Corporate Police Force Assembly Plant" se="0.9" si="60004402" sy="Kakakela" syi="30001405"/>
+    <row c="Karnola" ci="20000206" r="Lonetrek" ri="10000016" s="Kakakela VII - Moon 13 - Corporate Police Force Assembly Plant" se="0.9" si="60004405" sy="Kakakela" syi="30001405"/>
     <row c="Otawasa" ci="20000410" r="The Citadel" ri="10000033" s="Hysera II - Corporate Police Force Assembly Plant" se="0.4" si="60004408" sy="Hysera" syi="30002796"/>
     <row c="Otawasa" ci="20000410" r="The Citadel" ri="10000033" s="Yria III - Moon 6 - Corporate Police Force Assembly Plant" se="0.5" si="60004411" sy="Yria" syi="30002794"/>
     <row c="Otawasa" ci="20000410" r="The Citadel" ri="10000033" s="Oshaima VII - Moon 1 - Corporate Police Force Assembly Plant" se="0.5" si="60004414" sy="Oshaima" syi="30002795"/>
     <row c="Otawasa" ci="20000410" r="The Citadel" ri="10000033" s="Oisio VI - Moon 1 - Corporate Police Force Assembly Plant" se="0.5" si="60004417" sy="Oisio" syi="30002799"/>
-    <row c="Karnola" ci="20000206" r="Lonetrek" ri="10000016" s="Todaki VI - Moon 1 - School of Applied Knowledge" se="1.0" si="60004420" sy="Todaki" syi="30001407"/>
+    <row c="Karnola" ci="20000206" r="Lonetrek" ri="10000016" s="Todaki VI - Moon 1 - School of Applied Knowledge" se="0.9" si="60004420" sy="Todaki" syi="30001407"/>
     <row c="Kimotoro" ci="20000020" r="The Forge" ri="10000002" s="Jita IV - Moon 6 - Caldari Provisions School" se="0.9" si="60004423" sy="Jita" syi="30000142"/>
     <row c="Orpana" ci="20000029" r="The Forge" ri="10000002" s="Uchoshi XI - Moon 14 - School of Applied Knowledge" se="0.5" si="60004426" sy="Uchoshi" syi="30000201"/>
     <row c="Malariya" ci="20000210" r="Lonetrek" ri="10000016" s="Uesuro VI - Moon 1 - School of Applied Knowledge" se="0.5" si="60004429" sy="Uesuro" syi="30001432"/>
@@ -11208,7 +11271,7 @@
     <row c="Kantanen" ci="20000406" r="The Citadel" ri="10000033" s="Kulelen V - Moon 4 - School of Applied Knowledge" se="0.5" si="60004441" sy="Kulelen" syi="30002771"/>
     <row c="Aulari" ci="20000026" r="The Forge" ri="10000002" s="Korsiki II - Moon 7 - School of Applied Knowledge" se="0.6" si="60004444" sy="Korsiki" syi="30000181"/>
     <row c="Mito" ci="20000212" r="Lonetrek" ri="10000016" s="Vuorrassi V - Moon 9 - Caldari Provisions School" se="0.5" si="60004447" sy="Vuorrassi" syi="30001443"/>
-    <row c="Sela" ci="20000204" r="Lonetrek" ri="10000016" s="Amsen VI - Moon 1 - Science and Trade Institute School" se="1.0" si="60004450" sy="Amsen" syi="30001392"/>
+    <row c="Sela" ci="20000204" r="Lonetrek" ri="10000016" s="Amsen VI - Moon 1 - Science and Trade Institute School" se="0.9" si="60004450" sy="Amsen" syi="30001392"/>
     <row c="Imurukka" ci="20000401" r="The Citadel" ri="10000033" s="Isaziwa X - Science and Trade Institute School" se="0.7" si="60004453" sy="Isaziwa" syi="30002739"/>
     <row c="Uusasai" ci="20000408" r="The Citadel" ri="10000033" s="Sankkasen VII - Moon 6 - Science and Trade Institute School" se="0.7" si="60004456" sy="Sankkasen" syi="30002783"/>
     <row c="Aulari" ci="20000026" r="The Forge" ri="10000002" s="Osmon IV - Moon 5 - Science and Trade Institute School" se="0.7" si="60004459" sy="Osmon" syi="30000180"/>
@@ -11264,12 +11327,12 @@
     <row c="Sveipar" ci="20000373" r="Heimatar" ri="10000030" s="Lustrevik VII - Moon 9 - Brutor Tribe Academy" se="0.9" si="60004609" sy="Lustrevik" syi="30002545"/>
     <row c="Sveipar" ci="20000373" r="Heimatar" ri="10000030" s="Lustrevik VIII - Moon 9 - Brutor Tribe Bureau" se="0.9" si="60004612" sy="Lustrevik" syi="30002545"/>
     <row c="Odengsolf" ci="20000370" r="Heimatar" ri="10000030" s="Frarn VI - Moon 18 - Brutor Tribe Bureau" se="0.8" si="60004615" sy="Frarn" syi="30002526"/>
-    <row c="Odengsolf" ci="20000370" r="Heimatar" ri="10000030" s="Ivar IX - Moon 4 - Brutor Tribe Bureau" se="1.0" si="60004618" sy="Ivar" syi="30002524"/>
+    <row c="Odengsolf" ci="20000370" r="Heimatar" ri="10000030" s="Ivar IX - Moon 4 - Brutor Tribe Bureau" se="0.9" si="60004618" sy="Ivar" syi="30002524"/>
     <row c="Odengsolf" ci="20000370" r="Heimatar" ri="10000030" s="Balginia II - Brutor Tribe Bureau" se="0.8" si="60004621" sy="Balginia" syi="30002528"/>
     <row c="Gedur" ci="20000492" r="Metropolis" ri="10000042" s="Illuin III - Republic Parliament Bureau" se="0.9" si="60004624" sy="Illuin" syi="30003377"/>
-    <row c="Gedur" ci="20000492" r="Metropolis" ri="10000042" s="Arlulf II - Republic Parliament Bureau" se="1.0" si="60004627" sy="Arlulf" syi="30003374"/>
+    <row c="Gedur" ci="20000492" r="Metropolis" ri="10000042" s="Arlulf II - Republic Parliament Bureau" se="0.9" si="60004627" sy="Arlulf" syi="30003374"/>
     <row c="Gedur" ci="20000492" r="Metropolis" ri="10000042" s="Nedegulf VIII - Moon 5 - Republic Parliament Academy" se="0.8" si="60004630" sy="Nedegulf" syi="30003378"/>
-    <row c="Gedur" ci="20000492" r="Metropolis" ri="10000042" s="Alf II - Moon 1 - Republic Parliament Bureau" se="1.0" si="60004633" sy="Alf" syi="30003380"/>
+    <row c="Gedur" ci="20000492" r="Metropolis" ri="10000042" s="Alf II - Moon 1 - Republic Parliament Bureau" se="0.9" si="60004633" sy="Alf" syi="30003380"/>
     <row c="Stadakorn" ci="20000496" r="Metropolis" ri="10000042" s="Egbonbet VI - Moon 11 - Republic Parliament Bureau" se="0.9" si="60004636" sy="Egbonbet" syi="30003401"/>
     <row c="Stadakorn" ci="20000496" r="Metropolis" ri="10000042" s="Meimungen VI - Republic Parliament Bureau" se="0.9" si="60004639" sy="Meimungen" syi="30003403"/>
     <row c="Stadakorn" ci="20000496" r="Metropolis" ri="10000042" s="Agtver VIII - Moon 2 - Republic Parliament Bureau" se="0.9" si="60004642" sy="Agtver" syi="30003404"/>
@@ -11304,10 +11367,10 @@
     <row c="Eugidi" ci="20000307" r="Metropolis" ri="10000042" s="Avenod VI - Moon 9 - Republic Parliament Academy" se="0.4" si="60004729" sy="Avenod" syi="30002089"/>
     <row c="Erada" ci="20000377" r="Heimatar" ri="10000030" s="Oremmulf V - Moon 4 - Republic Parliament Bureau" se="0.9" si="60004732" sy="Oremmulf" syi="30002571"/>
     <row c="Erada" ci="20000377" r="Heimatar" ri="10000030" s="Osaumuni VIII - Moon 22 - Republic Parliament Bureau" se="0.9" si="60004735" sy="Osaumuni" syi="30002569"/>
-    <row c="Erada" ci="20000377" r="Heimatar" ri="10000030" s="Vullat VII - Moon 9 - Republic Parliament Academy" se="1.0" si="60004738" sy="Vullat" syi="30002573"/>
+    <row c="Erada" ci="20000377" r="Heimatar" ri="10000030" s="Vullat VII - Moon 9 - Republic Parliament Academy" se="0.9" si="60004738" sy="Vullat" syi="30002573"/>
     <row c="Erada" ci="20000377" r="Heimatar" ri="10000030" s="Hurjafren VI - Moon 17 - Republic Parliament Bureau" se="0.9" si="60004741" sy="Hurjafren" syi="30002572"/>
-    <row c="Sveipar" ci="20000373" r="Heimatar" ri="10000030" s="Pator VII (Kulheim) - Moon 1 - Republic Fleet Testing Facilities" se="1.0" si="60004744" sy="Pator" syi="30002544"/>
-    <row c="Sveipar" ci="20000373" r="Heimatar" ri="10000030" s="Pator V (Vakir) - Republic Fleet Logistic Support" se="1.0" si="60004747" sy="Pator" syi="30002544"/>
+    <row c="Sveipar" ci="20000373" r="Heimatar" ri="10000030" s="Pator VII (Kulheim) - Moon 1 - Republic Fleet Testing Facilities" se="0.9" si="60004744" sy="Pator" syi="30002544"/>
+    <row c="Sveipar" ci="20000373" r="Heimatar" ri="10000030" s="Pator V (Vakir) - Republic Fleet Logistic Support" se="0.9" si="60004747" sy="Pator" syi="30002544"/>
     <row c="Sveipar" ci="20000373" r="Heimatar" ri="10000030" s="Isendeldik IX - Moon 6 - Republic Fleet Logistic Support" se="0.8" si="60004750" sy="Isendeldik" syi="30002546"/>
     <row c="Sveipar" ci="20000373" r="Heimatar" ri="10000030" s="Emolgranlan VI - Republic Fleet Assembly Plant" se="0.5" si="60004753" sy="Emolgranlan" syi="30002548"/>
     <row c="Sveipar" ci="20000373" r="Heimatar" ri="10000030" s="Eystur III - Moon 1 - Republic Fleet Assembly Plant" se="0.9" si="60004756" sy="Eystur" syi="30002543"/>
@@ -11366,7 +11429,7 @@
     <row c="Tartatven" ci="20000351" r="Molden Heath" ri="10000028" s="Heild II - Republic Fleet Logistic Support" se="0.3" si="60004915" sy="Heild" syi="30002390"/>
     <row c="Tartatven" ci="20000351" r="Molden Heath" ri="10000028" s="Hrokkur V - Moon 17 - Republic Fleet Assembly Plant" se="0.3" si="60004918" sy="Hrokkur" syi="30002391"/>
     <row c="Tartatven" ci="20000351" r="Molden Heath" ri="10000028" s="Heild VII - Moon 21 - Republic Fleet Assembly Plant" se="0.3" si="60004921" sy="Heild" syi="30002390"/>
-    <row c="Gedur" ci="20000492" r="Metropolis" ri="10000042" s="Arlulf III - Moon 11 - Republic Justice Department Law School" se="1.0" si="60004924" sy="Arlulf" syi="30003374"/>
+    <row c="Gedur" ci="20000492" r="Metropolis" ri="10000042" s="Arlulf III - Moon 11 - Republic Justice Department Law School" se="0.9" si="60004924" sy="Arlulf" syi="30003374"/>
     <row c="Gedur" ci="20000492" r="Metropolis" ri="10000042" s="Stirht VII - Republic Justice Department Accounting" se="0.9" si="60004927" sy="Stirht" syi="30003376"/>
     <row c="Gedur" ci="20000492" r="Metropolis" ri="10000042" s="Brundakur VI - Moon 7 - Republic Justice Department Tribunal" se="0.9" si="60004930" sy="Brundakur" syi="30003375"/>
     <row c="Gedur" ci="20000492" r="Metropolis" ri="10000042" s="Illuin VI - Moon 5 - Republic Justice Department Accounting" se="0.9" si="60004933" sy="Illuin" syi="30003377"/>
@@ -11409,9 +11472,9 @@
     <row c="Ortner" ci="20000367" r="Heimatar" ri="10000030" s="Abudban X - Moon 10 - Urban Management Bureau Offices" se="0.7" si="60005044" sy="Abudban" syi="30002507"/>
     <row c="Ortner" ci="20000367" r="Heimatar" ri="10000030" s="Osoggur VI - Urban Management Information Center" se="0.5" si="60005047" sy="Osoggur" syi="30002506"/>
     <row c="Ortner" ci="20000367" r="Heimatar" ri="10000030" s="Trytedald V - Moon 12 - Urban Management Archives" se="0.9" si="60005050" sy="Trytedald" syi="30002508"/>
-    <row c="Sveipar" ci="20000373" r="Heimatar" ri="10000030" s="Pator III (Huggar) - Moon 2 - Republic Security Services Assembly Plant" se="1.0" si="60005053" sy="Pator" syi="30002544"/>
+    <row c="Sveipar" ci="20000373" r="Heimatar" ri="10000030" s="Pator III (Huggar) - Moon 2 - Republic Security Services Assembly Plant" se="0.9" si="60005053" sy="Pator" syi="30002544"/>
     <row c="Sveipar" ci="20000373" r="Heimatar" ri="10000030" s="Lustrevik VIII - Moon 9 - Republic Security Services Assembly Plant" se="0.9" si="60005056" sy="Lustrevik" syi="30002545"/>
-    <row c="Sveipar" ci="20000373" r="Heimatar" ri="10000030" s="Pator VII (Kulheim) - Republic Security Services Assembly Plant" se="1.0" si="60005059" sy="Pator" syi="30002544"/>
+    <row c="Sveipar" ci="20000373" r="Heimatar" ri="10000030" s="Pator VII (Kulheim) - Republic Security Services Assembly Plant" se="0.9" si="60005059" sy="Pator" syi="30002544"/>
     <row c="Sveipar" ci="20000373" r="Heimatar" ri="10000030" s="Eystur III - Moon 1 - Republic Security Services Assembly Plant" se="0.9" si="60005062" sy="Eystur" syi="30002543"/>
     <row c="Yekti" ci="20000511" r="Domain" ri="10000043" s="Saana III - Moon 6 - Republic Security Services Logistic Support" se="0.6" si="60005065" sy="Saana" syi="30003506"/>
     <row c="Yekti" ci="20000511" r="Domain" ri="10000043" s="Bahromab VIII - Moon 6 - Republic Security Services Assembly Plant" se="0.6" si="60005068" sy="Bahromab" syi="30003502"/>
@@ -11531,7 +11594,7 @@
     <row c="Eugidi" ci="20000307" r="Metropolis" ri="10000042" s="Uisper VI - Moon 5 - Minmatar Mining Corporation Refinery" se="0.4" si="60005410" sy="Uisper" syi="30002083"/>
     <row c="Meinigefur" ci="20000497" r="Metropolis" ri="10000042" s="Aldagolf V - Core Complexion Inc. Warehouse" se="0.6" si="60005413" sy="Aldagolf" syi="30003415"/>
     <row c="Meinigefur" ci="20000497" r="Metropolis" ri="10000042" s="Eram IX - Moon 5 - Core Complexion Inc. Factory" se="0.8" si="60005416" sy="Eram" syi="30003413"/>
-    <row c="Meinigefur" ci="20000497" r="Metropolis" ri="10000042" s="Arlek I - Moon 5 - Core Complexion Inc. Factory" se="1.0" si="60005419" sy="Arlek" syi="30003411"/>
+    <row c="Meinigefur" ci="20000497" r="Metropolis" ri="10000042" s="Arlek I - Moon 5 - Core Complexion Inc. Factory" se="0.9" si="60005419" sy="Arlek" syi="30003411"/>
     <row c="Meinigefur" ci="20000497" r="Metropolis" ri="10000042" s="Yrmori IV - Moon 17 - Core Complexion Inc. Factory" se="0.6" si="60005422" sy="Yrmori" syi="30003414"/>
     <row c="Meinigefur" ci="20000497" r="Metropolis" ri="10000042" s="Elgoi VII - Moon 6 - Core Complexion Inc. Storage" se="0.9" si="60005425" sy="Elgoi" syi="30003412"/>
     <row c="Meinigefur" ci="20000497" r="Metropolis" ri="10000042" s="Elgoi VIII - Moon 18 - Core Complexion Inc. Storage" se="0.9" si="60005428" sy="Elgoi" syi="30003412"/>
@@ -11635,13 +11698,13 @@
     <row c="Meinigefur" ci="20000497" r="Metropolis" ri="10000042" s="Eram V - Moon 2 - Eifyr and Co. Biotech Production" se="0.8" si="60005722" sy="Eram" syi="30003413"/>
     <row c="Ortner" ci="20000367" r="Heimatar" ri="10000030" s="Rens VI - Six Kin Development Warehouse" se="0.9" si="60005725" sy="Rens" syi="30002510"/>
     <row c="Ortner" ci="20000367" r="Heimatar" ri="10000030" s="Abudban VIII - Moon 6 - Six Kin Development Production Plant" se="0.7" si="60005728" sy="Abudban" syi="30002507"/>
-    <row c="Ortner" ci="20000367" r="Heimatar" ri="10000030" s="Ameinaka IX - Moon 21 - Six Kin Development Warehouse" se="1.0" si="60005731" sy="Ameinaka" syi="30002511"/>
+    <row c="Ortner" ci="20000367" r="Heimatar" ri="10000030" s="Ameinaka IX - Moon 21 - Six Kin Development Warehouse" se="0.9" si="60005731" sy="Ameinaka" syi="30002511"/>
     <row c="Sveipar" ci="20000373" r="Heimatar" ri="10000030" s="Lustrevik VIII - Moon 7 - Six Kin Development Warehouse" se="0.9" si="60005734" sy="Lustrevik" syi="30002545"/>
     <row c="Sveipar" ci="20000373" r="Heimatar" ri="10000030" s="Lustrevik VII - Moon 7 - Six Kin Development Warehouse" se="0.9" si="60005737" sy="Lustrevik" syi="30002545"/>
     <row c="Sveipar" ci="20000373" r="Heimatar" ri="10000030" s="Isendeldik VIII - Moon 19 - Six Kin Development Warehouse" se="0.8" si="60005740" sy="Isendeldik" syi="30002546"/>
-    <row c="Erada" ci="20000377" r="Heimatar" ri="10000030" s="Vullat VII - Moon 1 - Six Kin Development Foundry" se="1.0" si="60005743" sy="Vullat" syi="30002573"/>
-    <row c="Erada" ci="20000377" r="Heimatar" ri="10000030" s="Vullat I - Six Kin Development Foundry" se="1.0" si="60005746" sy="Vullat" syi="30002573"/>
-    <row c="Erada" ci="20000377" r="Heimatar" ri="10000030" s="Vullat IX - Moon 2 - Six Kin Development Foundry" se="1.0" si="60005749" sy="Vullat" syi="30002573"/>
+    <row c="Erada" ci="20000377" r="Heimatar" ri="10000030" s="Vullat VII - Moon 1 - Six Kin Development Foundry" se="0.9" si="60005743" sy="Vullat" syi="30002573"/>
+    <row c="Erada" ci="20000377" r="Heimatar" ri="10000030" s="Vullat I - Six Kin Development Foundry" se="0.9" si="60005746" sy="Vullat" syi="30002573"/>
+    <row c="Erada" ci="20000377" r="Heimatar" ri="10000030" s="Vullat IX - Moon 2 - Six Kin Development Foundry" se="0.9" si="60005749" sy="Vullat" syi="30002573"/>
     <row c="Hed" ci="20000372" r="Heimatar" ri="10000030" s="Auga VI - Moon 13 - Six Kin Development Production Plant" se="0.4" si="60005752" sy="Auga" syi="30002542"/>
     <row c="Hed" ci="20000372" r="Heimatar" ri="10000030" s="Vard VI - Moon 14 - Six Kin Development Production Plant" se="0.4" si="60005755" sy="Vard" syi="30002538"/>
     <row c="Hed" ci="20000372" r="Heimatar" ri="10000030" s="Vard III - Six Kin Development Production Plant" se="0.4" si="60005758" sy="Vard" syi="30002538"/>
@@ -11669,7 +11732,7 @@
     <row c="Odilis" ci="20000444" r="Everyshore" ri="10000037" s="Gicodel VII - Freedom Extension Storage" se="0.9" si="60005824" sy="Gicodel" syi="30003035"/>
     <row c="Odilis" ci="20000444" r="Everyshore" ri="10000037" s="Quier III - Moon 14 - Freedom Extension Storage" se="0.7" si="60005827" sy="Quier" syi="30003037"/>
     <row c="Odilis" ci="20000444" r="Everyshore" ri="10000037" s="Quier IV - Moon 3 - Freedom Extension Storage" se="0.7" si="60005830" sy="Quier" syi="30003037"/>
-    <row c="Odilis" ci="20000444" r="Everyshore" ri="10000037" s="Athinard VII - Moon 1 - Freedom Extension Storage" se="1.0" si="60005833" sy="Athinard" syi="30003031"/>
+    <row c="Odilis" ci="20000444" r="Everyshore" ri="10000037" s="Athinard VII - Moon 1 - Freedom Extension Storage" se="0.9" si="60005833" sy="Athinard" syi="30003031"/>
     <row c="Odilis" ci="20000444" r="Everyshore" ri="10000037" s="Quier IV - Moon 7 - Freedom Extension Warehouse" se="0.7" si="60005836" sy="Quier" syi="30003037"/>
     <row c="Odilis" ci="20000444" r="Everyshore" ri="10000037" s="Frarolle XI - Moon 2 - Freedom Extension Warehouse" se="0.8" si="60005839" sy="Frarolle" syi="30003036"/>
     <row c="Akimamur" ci="20000374" r="Heimatar" ri="10000030" s="Eddar VI - Freedom Extension Storage" se="0.6" si="60005842" sy="Eddar" syi="30002552"/>
@@ -11745,7 +11808,7 @@
     <row c="Akimamur" ci="20000374" r="Heimatar" ri="10000030" s="Eddar VIII - Moon 8 - The Leisure Group Development Studio" se="0.6" si="60006052" sy="Eddar" syi="30002552"/>
     <row c="Akimamur" ci="20000374" r="Heimatar" ri="10000030" s="Offugen VII - Moon 15 - The Leisure Group Development Studio" se="0.6" si="60006055" sy="Offugen" syi="30002549"/>
     <row c="Gedur" ci="20000492" r="Metropolis" ri="10000042" s="Illuin VI - Moon 8 - The Leisure Group Development Studio" se="0.9" si="60006058" sy="Illuin" syi="30003377"/>
-    <row c="Gedur" ci="20000492" r="Metropolis" ri="10000042" s="Arlulf III - Moon 5 - The Leisure Group Development Studio" se="1.0" si="60006061" sy="Arlulf" syi="30003374"/>
+    <row c="Gedur" ci="20000492" r="Metropolis" ri="10000042" s="Arlulf III - Moon 5 - The Leisure Group Development Studio" se="0.9" si="60006061" sy="Arlulf" syi="30003374"/>
     <row c="Stadakorn" ci="20000496" r="Metropolis" ri="10000042" s="Tamekamur V - Moon 17 - The Leisure Group Development Studio" se="0.9" si="60006064" sy="Tamekamur" syi="30003407"/>
     <row c="Stadakorn" ci="20000496" r="Metropolis" ri="10000042" s="Datulen V - Moon 14 - The Leisure Group Development Studio" se="0.9" si="60006067" sy="Datulen" syi="30003405"/>
     <row c="Fittakan" ci="20000350" r="Molden Heath" ri="10000028" s="Teonusude IV - Moon 8 - The Leisure Group Development Studio" se="0.6" si="60006070" sy="Teonusude" syi="30002385"/>
@@ -11867,11 +11930,11 @@
     <row c="Maseend" ci="20000517" r="Domain" ri="10000043" s="Ana IX - Moon 19 - Imperial Armaments Factory" se="0.9" si="60006418" sy="Ana" syi="30003552"/>
     <row c="Maseend" ci="20000517" r="Domain" ri="10000043" s="Hamse IX - Moon 13 - Imperial Armaments Factory" se="0.9" si="60006421" sy="Hamse" syi="30003547"/>
     <row c="Ihilakken" ci="20000019" r="The Forge" ri="10000002" s="Ansila X - Imperial Armaments Factory" se="0.9" si="60006424" sy="Ansila" syi="30000132"/>
-    <row c="Ihilakken" ci="20000019" r="The Forge" ri="10000002" s="Ikuchi VI - Moon 15 - Imperial Armaments Warehouse" se="1.0" si="60006427" sy="Ikuchi" syi="30000138"/>
+    <row c="Ihilakken" ci="20000019" r="The Forge" ri="10000002" s="Ikuchi VI - Moon 15 - Imperial Armaments Warehouse" se="0.9" si="60006427" sy="Ikuchi" syi="30000138"/>
     <row c="Ihilakken" ci="20000019" r="The Forge" ri="10000002" s="Outuni IX - Moon 3 - Imperial Armaments Factory" se="0.7" si="60006430" sy="Outuni" syi="30000135"/>
     <row c="Ihilakken" ci="20000019" r="The Forge" ri="10000002" s="Outuni X - Moon 14 - Imperial Armaments Factory" se="0.7" si="60006433" sy="Outuni" syi="30000135"/>
     <row c="Gedur" ci="20000492" r="Metropolis" ri="10000042" s="Stirht VII - Moon 4 - Imperial Armaments Warehouse" se="0.9" si="60006436" sy="Stirht" syi="30003376"/>
-    <row c="Gedur" ci="20000492" r="Metropolis" ri="10000042" s="Alf VI - Imperial Armaments Factory" se="1.0" si="60006439" sy="Alf" syi="30003380"/>
+    <row c="Gedur" ci="20000492" r="Metropolis" ri="10000042" s="Alf VI - Imperial Armaments Factory" se="0.9" si="60006439" sy="Alf" syi="30003380"/>
     <row c="Gedur" ci="20000492" r="Metropolis" ri="10000042" s="Illuin IV - Moon 5 - Imperial Armaments Warehouse" se="0.9" si="60006442" sy="Illuin" syi="30003377"/>
     <row c="Gedur" ci="20000492" r="Metropolis" ri="10000042" s="Illuin V - Moon 5 - Imperial Armaments Factory" se="0.9" si="60006445" sy="Illuin" syi="30003377"/>
     <row c="Jakemhih" ci="20000519" r="Domain" ri="10000043" s="Ziriert VIII - Moon 12 - Imperial Armaments Factory" se="0.1" si="60006448" sy="Ziriert" syi="30003562"/>
@@ -11903,7 +11966,7 @@
     <row c="Ryra" ci="20000434" r="Devoid" ri="10000036" s="Esescama VIII - Moon 3 - Imperial Armaments Warehouse" se="0.6" si="60006526" sy="Esescama" syi="30002964"/>
     <row c="Ryra" ci="20000434" r="Devoid" ri="10000036" s="Thasinaz VII - Moon 12 - Imperial Armaments Warehouse" se="0.6" si="60006529" sy="Thasinaz" syi="30002966"/>
     <row c="Erada" ci="20000377" r="Heimatar" ri="10000030" s="Hurjafren V - Imperial Armaments Factory" se="0.9" si="60006532" sy="Hurjafren" syi="30002572"/>
-    <row c="Erada" ci="20000377" r="Heimatar" ri="10000030" s="Onga VIII - Moon 5 - Imperial Armaments Factory" se="1.0" si="60006535" sy="Onga" syi="30002568"/>
+    <row c="Erada" ci="20000377" r="Heimatar" ri="10000030" s="Onga VIII - Moon 5 - Imperial Armaments Factory" se="0.9" si="60006535" sy="Onga" syi="30002568"/>
     <row c="Erada" ci="20000377" r="Heimatar" ri="10000030" s="Hurjafren IX - Imperial Armaments Factory" se="0.9" si="60006538" sy="Hurjafren" syi="30002572"/>
     <row c="Erada" ci="20000377" r="Heimatar" ri="10000030" s="Oremmulf IX - Moon 2 - Imperial Armaments Warehouse" se="0.9" si="60006541" sy="Oremmulf" syi="30002571"/>
     <row c="Lolbrerie" ci="20000393" r="Sinq Laison" ri="10000032" s="Dodenvale VIII - Moon 3 - Imperial Armaments Factory" se="0.7" si="60006544" sy="Dodenvale" syi="30002685"/>
@@ -12018,9 +12081,9 @@
     <row c="Fislipesnes" ci="20000554" r="Placid" ri="10000048" s="Slays V - Moon 1 - Ducia Foundry Mineral Reserve" se="0.5" si="60006871" sy="Slays" syi="30003798"/>
     <row c="Fislipesnes" ci="20000554" r="Placid" ri="10000048" s="Iges VIII - Moon 1 - Ducia Foundry Refinery" se="0.3" si="60006874" sy="Iges" syi="30003796"/>
     <row c="Fislipesnes" ci="20000554" r="Placid" ri="10000048" s="Uphallant V - Moon 18 - Ducia Foundry Mineral Reserve" se="0.2" si="60006877" sy="Uphallant" syi="30003799"/>
-    <row c="Kimotoro" ci="20000020" r="The Forge" ri="10000002" s="Perimeter II - Moon 1 - Ducia Foundry Mineral Reserve" se="1.0" si="60006880" sy="Perimeter" syi="30000144"/>
-    <row c="Kimotoro" ci="20000020" r="The Forge" ri="10000002" s="Niyabainen VIII - Moon 16 - Ducia Foundry Mining Outpost" se="1.0" si="60006883" sy="Niyabainen" syi="30000143"/>
-    <row c="Kimotoro" ci="20000020" r="The Forge" ri="10000002" s="Niyabainen VII - Moon 11 - Ducia Foundry Mineral Reserve" se="1.0" si="60006886" sy="Niyabainen" syi="30000143"/>
+    <row c="Kimotoro" ci="20000020" r="The Forge" ri="10000002" s="Perimeter II - Moon 1 - Ducia Foundry Mineral Reserve" se="0.9" si="60006880" sy="Perimeter" syi="30000144"/>
+    <row c="Kimotoro" ci="20000020" r="The Forge" ri="10000002" s="Niyabainen VIII - Moon 16 - Ducia Foundry Mining Outpost" se="0.9" si="60006883" sy="Niyabainen" syi="30000143"/>
+    <row c="Kimotoro" ci="20000020" r="The Forge" ri="10000002" s="Niyabainen VII - Moon 11 - Ducia Foundry Mineral Reserve" se="0.9" si="60006886" sy="Niyabainen" syi="30000143"/>
     <row c="Araz" ci="20000603" r="Kador" ri="10000052" s="Chanoun VIII - Moon 11 - Ducia Foundry Mineral Reserve" se="0.5" si="60006889" sy="Chanoun" syi="30004122"/>
     <row c="Araz" ci="20000603" r="Kador" ri="10000052" s="Munory VII - Moon 9 - Ducia Foundry Mining Outpost" se="0.5" si="60006892" sy="Munory" syi="30004129"/>
     <row c="Araz" ci="20000603" r="Kador" ri="10000052" s="Garisas VI - Ducia Foundry Refinery" se="0.5" si="60006895" sy="Garisas" syi="30004123"/>
@@ -12292,7 +12355,7 @@
     <row c="Sosarir" ci="20000327" r="Domain" ri="10000043" s="Ardishapur Prime II - Further Foodstuffs Plantation" se="0.7" si="60007693" sy="Ardishapur Prime" syi="30002231"/>
     <row c="Sosarir" ci="20000327" r="Domain" ri="10000043" s="Shumam VII - Further Foodstuffs Plantation" se="0.7" si="60007696" sy="Shumam" syi="30002235"/>
     <row c="Sosarir" ci="20000327" r="Domain" ri="10000043" s="Vashkah IV - Moon 2 - Further Foodstuffs Food Packaging" se="0.7" si="60007699" sy="Vashkah" syi="30002230"/>
-    <row c="Arvachah" ci="20000247" r="Tash-Murkon" ri="10000020" s="Emrayur III - Moon 1 - Royal Amarr Institute School" se="1.0" si="60007702" sy="Emrayur" syi="30001672"/>
+    <row c="Arvachah" ci="20000247" r="Tash-Murkon" ri="10000020" s="Emrayur III - Moon 1 - Royal Amarr Institute School" se="0.9" si="60007702" sy="Emrayur" syi="30001672"/>
     <row c="Ombil" ci="20000623" r="Aridia" ri="10000054" s="Fihrneh VI - Moon 1 - Royal Amarr Institute School" se="0.1" si="60007705" sy="Fihrneh" syi="30004254"/>
     <row c="Selonat" ci="20000629" r="Aridia" ri="10000054" s="Karan VIII - Royal Amarr Institute School" se="0.1" si="60007708" sy="Karan" syi="30004306"/>
     <row c="Ohvarainen" ci="20000452" r="The Bleak Lands" ri="10000038" s="Komaa V - Royal Amarr Institute School" se="0.6" si="60007711" sy="Komaa" syi="30003092"/>
@@ -12516,7 +12579,7 @@
     <row c="Fabas" ci="20000774" r="Genesis" ri="10000067" s="Nasreri VII - Moon 4 - Amarr Trade Registry Bureau Offices" se="0.5" si="60008365" sy="Nasreri" syi="30005289"/>
     <row c="Norgoh" ci="20000334" r="Domain" ri="10000043" s="Safizon II - Moon 1 - Amarr Navy Assembly Plant" se="0.8" si="60008368" sy="Safizon" syi="30002279"/>
     <row c="Norgoh" ci="20000334" r="Domain" ri="10000043" s="Ebtesham V - Amarr Navy Assembly Plant" se="0.7" si="60008371" sy="Ebtesham" syi="30002277"/>
-    <row c="Norgoh" ci="20000334" r="Domain" ri="10000043" s="Bhizheba IX - Moon 1 - Amarr Navy Logistic Support" se="1.0" si="60008374" sy="Bhizheba" syi="30002282"/>
+    <row c="Norgoh" ci="20000334" r="Domain" ri="10000043" s="Bhizheba IX - Moon 1 - Amarr Navy Logistic Support" se="0.9" si="60008374" sy="Bhizheba" syi="30002282"/>
     <row c="Norgoh" ci="20000334" r="Domain" ri="10000043" s="Ebtesham VI - Moon 2 - Amarr Navy Assembly Plant" se="0.7" si="60008377" sy="Ebtesham" syi="30002277"/>
     <row c="Afinoo" ci="20000620" r="Aridia" ri="10000054" s="Kenahehab VII - Moon 4 - Amarr Navy Assembly Plant" se="0.2" si="60008380" sy="Kenahehab" syi="30004237"/>
     <row c="Afinoo" ci="20000620" r="Aridia" ri="10000054" s="Kenahehab IX - Moon 4 - Amarr Navy Assembly Plant" se="0.2" si="60008383" sy="Kenahehab" syi="30004237"/>
@@ -12554,9 +12617,9 @@
     <row c="Maal" ci="20000627" r="Aridia" ri="10000054" s="Ghekon V - Moon 11 - Amarr Navy Logistic Support" se="0.4" si="60008479" sy="Ghekon" syi="30004288"/>
     <row c="Maal" ci="20000627" r="Aridia" ri="10000054" s="Bapraya XI - Moon 4 - Amarr Navy Logistic Support" se="0.3" si="60008482" sy="Bapraya" syi="30004296"/>
     <row c="Maal" ci="20000627" r="Aridia" ri="10000054" s="Ghekon IV - Moon 8 - Amarr Navy Assembly Plant" se="0.4" si="60008485" sy="Ghekon" syi="30004288"/>
-    <row c="Throne Worlds" ci="20000322" r="Domain" ri="10000043" s="Hedion V - Moon 9 - Court Chamberlain Bureau" se="1.0" si="60008488" sy="Hedion" syi="30002189"/>
+    <row c="Throne Worlds" ci="20000322" r="Domain" ri="10000043" s="Hedion V - Moon 9 - Court Chamberlain Bureau" se="0.9" si="60008488" sy="Hedion" syi="30002189"/>
     <row c="Throne Worlds" ci="20000322" r="Domain" ri="10000043" s="Irnin VIII - Moon 8 - Court Chamberlain Bureau" se="0.7" si="60008491" sy="Irnin" syi="30002192"/>
-    <row c="Throne Worlds" ci="20000322" r="Domain" ri="10000043" s="Amarr VIII (Oris) - Emperor Family Academy" se="1.0" si="60008494" sy="Amarr" syi="30002187"/>
+    <row c="Throne Worlds" ci="20000322" r="Domain" ri="10000043" s="Amarr VIII (Oris) - Emperor Family Academy" se="0.9" si="60008494" sy="Amarr" syi="30002187"/>
     <row c="Throne Worlds" ci="20000322" r="Domain" ri="10000043" s="Kehour VIII - Moon 1 - Emperor Family Bureau" se="0.9" si="60008497" sy="Kehour" syi="30002193"/>
     <row c="Throne Worlds" ci="20000322" r="Domain" ri="10000043" s="Mabnen IV - Moon 1 - Emperor Family Bureau" se="0.9" si="60008500" sy="Mabnen" syi="30002190"/>
     <row c="Throne Worlds" ci="20000322" r="Domain" ri="10000043" s="Toshabia VI - Moon 6 - Emperor Family Bureau" se="0.8" si="60008503" sy="Toshabia" syi="30002191"/>
@@ -12608,7 +12671,7 @@
     <row c="Naloran" ci="20000606" r="Kador" ri="10000052" s="Hikansog VIII - Moon 16 - Kador Family Bureau" se="0.8" si="60008641" sy="Hikansog" syi="30004142"/>
     <row c="Naloran" ci="20000606" r="Kador" ri="10000052" s="Salah III - Kador Family Bureau" se="0.8" si="60008644" sy="Salah" syi="30004146"/>
     <row c="Naloran" ci="20000606" r="Kador" ri="10000052" s="Akhmoh VII - Moon 6 - Kador Family Academy" se="0.8" si="60008647" sy="Akhmoh" syi="30004147"/>
-    <row c="Maddam" ci="20000514" r="Domain" ri="10000043" s="Sarum Prime VI - Moon 7 - Sarum Family Assembly Plant" se="1.0" si="60008650" sy="Sarum Prime" syi="30003522"/>
+    <row c="Maddam" ci="20000514" r="Domain" ri="10000043" s="Sarum Prime VI - Moon 7 - Sarum Family Assembly Plant" se="0.9" si="60008650" sy="Sarum Prime" syi="30003522"/>
     <row c="Maddam" ci="20000514" r="Domain" ri="10000043" s="Bagodan VIII - Moon 6 - Sarum Family Logistic Support" se="0.7" si="60008653" sy="Bagodan" syi="30003525"/>
     <row c="Maddam" ci="20000514" r="Domain" ri="10000043" s="Alkabsi V - Sarum Family Logistic Support" se="0.7" si="60008656" sy="Alkabsi" syi="30003521"/>
     <row c="Hoosa" ci="20000512" r="Domain" ri="10000043" s="Sayartchen V - Moon 2 - Sarum Family Logistic Support" se="0.8" si="60008659" sy="Sayartchen" syi="30003508"/>
@@ -12708,7 +12771,7 @@
     <row c="Parud" ci="20000509" r="Domain" ri="10000043" s="Arbaz VI - Moon 8 - Theology Council Tribunal" se="0.9" si="60008941" sy="Arbaz" syi="30003487"/>
     <row c="Parud" ci="20000509" r="Domain" ri="10000043" s="Penirgman VIII - Moon 2 - Theology Council Tribunal" se="0.9" si="60008944" sy="Penirgman" syi="30003488"/>
     <row c="Parud" ci="20000509" r="Domain" ri="10000043" s="Penirgman V - Moon 1 - Theology Council Tribunal" se="0.9" si="60008947" sy="Penirgman" syi="30003488"/>
-    <row c="Throne Worlds" ci="20000322" r="Domain" ri="10000043" s="Amarr VI (Zorast) - Moon 2 - Theology Council Tribunal" se="1.0" si="60008950" sy="Amarr" syi="30002187"/>
+    <row c="Throne Worlds" ci="20000322" r="Domain" ri="10000043" s="Amarr VI (Zorast) - Moon 2 - Theology Council Tribunal" se="0.9" si="60008950" sy="Amarr" syi="30002187"/>
     <row c="Throne Worlds" ci="20000322" r="Domain" ri="10000043" s="Toshabia VII - Moon 5 - Theology Council Tribunal" se="0.8" si="60008953" sy="Toshabia" syi="30002191"/>
     <row c="Throne Worlds" ci="20000322" r="Domain" ri="10000043" s="Boranai VII - Moon 9 - Theology Council Law School" se="0.9" si="60008956" sy="Boranai" syi="30002188"/>
     <row c="Throne Worlds" ci="20000322" r="Domain" ri="10000043" s="Toshabia I - Theology Council Tribunal" se="0.8" si="60008959" sy="Toshabia" syi="30002191"/>
@@ -12845,7 +12908,7 @@
     <row c="Ysiette" ci="20000443" r="Everyshore" ri="10000037" s="Aclan X - Moon 19 - Federal Freight Storage" se="0.5" si="60009352" sy="Aclan" syi="30003028"/>
     <row c="Ysiette" ci="20000443" r="Everyshore" ri="10000037" s="Jaschercis III - Moon 1 - Federal Freight Storage" se="0.6" si="60009355" sy="Jaschercis" syi="30003029"/>
     <row c="Ysiette" ci="20000443" r="Everyshore" ri="10000037" s="Aclan V - Moon 1 - Federal Freight Storage" se="0.5" si="60009358" sy="Aclan" syi="30003028"/>
-    <row c="Ysiette" ci="20000443" r="Everyshore" ri="10000037" s="Blameston VI - Moon 2 - Federal Freight Storage" se="1.0" si="60009361" sy="Blameston" syi="30003026"/>
+    <row c="Ysiette" ci="20000443" r="Everyshore" ri="10000037" s="Blameston VI - Moon 2 - Federal Freight Storage" se="0.9" si="60009361" sy="Blameston" syi="30003026"/>
     <row c="Jonenor" ci="20000391" r="Sinq Laison" ri="10000032" s="Gallareue I - Federal Freight Storage" se="0.8" si="60009364" sy="Gallareue" syi="30002674"/>
     <row c="Jonenor" ci="20000391" r="Sinq Laison" ri="10000032" s="Inghenges VII - Federal Freight Storage" se="0.7" si="60009367" sy="Inghenges" syi="30002672"/>
     <row c="Jonenor" ci="20000391" r="Sinq Laison" ri="10000032" s="Estene I - Moon 1 - Federal Freight Storage" se="0.8" si="60009370" sy="Estene" syi="30002673"/>
@@ -12959,8 +13022,8 @@
     <row c="Odilis" ci="20000444" r="Everyshore" ri="10000037" s="Quier III - Moon 11 - Astral Mining Inc. Mining Outpost" se="0.7" si="60009694" sy="Quier" syi="30003037"/>
     <row c="Odilis" ci="20000444" r="Everyshore" ri="10000037" s="Frarolle VII - Astral Mining Inc. Mining Outpost" se="0.8" si="60009697" sy="Frarolle" syi="30003036"/>
     <row c="Odilis" ci="20000444" r="Everyshore" ri="10000037" s="Ethernity V - Moon 1 - Astral Mining Inc. Mineral Reserve" se="0.9" si="60009700" sy="Ethernity" syi="30003033"/>
-    <row c="Odilis" ci="20000444" r="Everyshore" ri="10000037" s="Athinard VII - Moon 2 - Astral Mining Inc. Mineral Reserve" se="1.0" si="60009703" sy="Athinard" syi="30003031"/>
-    <row c="Odilis" ci="20000444" r="Everyshore" ri="10000037" s="Mattere V - Moon 12 - Astral Mining Inc. Refinery" se="1.0" si="60009706" sy="Mattere" syi="30003034"/>
+    <row c="Odilis" ci="20000444" r="Everyshore" ri="10000037" s="Athinard VII - Moon 2 - Astral Mining Inc. Mineral Reserve" se="0.9" si="60009703" sy="Athinard" syi="30003031"/>
+    <row c="Odilis" ci="20000444" r="Everyshore" ri="10000037" s="Mattere V - Moon 12 - Astral Mining Inc. Refinery" se="0.9" si="60009706" sy="Mattere" syi="30003034"/>
     <row c="Odilis" ci="20000444" r="Everyshore" ri="10000037" s="Quier III - Moon 7 - Astral Mining Inc. Mining Outpost" se="0.7" si="60009709" sy="Quier" syi="30003037"/>
     <row c="Balrille" ci="20000730" r="Essence" ri="10000064" s="Annages IV - Moon 1 - Astral Mining Inc. Mineral Reserve" se="0.7" si="60009712" sy="Annages" syi="30004989"/>
     <row c="Balrille" ci="20000730" r="Essence" ri="10000064" s="Vitrauze XI - Moon 10 - Astral Mining Inc. Mineral Reserve" se="0.3" si="60009715" sy="Vitrauze" syi="30004991"/>
@@ -13013,7 +13076,7 @@
     <row c="Ysiette" ci="20000443" r="Everyshore" ri="10000037" s="Ardallabier VII - Moon 3 - Quafe Company Warehouse" se="0.7" si="60009856" sy="Ardallabier" syi="30003030"/>
     <row c="Ysiette" ci="20000443" r="Everyshore" ri="10000037" s="Vaurent II - Quafe Company Factory" se="0.6" si="60009859" sy="Vaurent" syi="30003027"/>
     <row c="Ysiette" ci="20000443" r="Everyshore" ri="10000037" s="Marosier VIII - Moon 7 - Quafe Company Retail Center" se="0.6" si="60009862" sy="Marosier" syi="30003024"/>
-    <row c="Ysiette" ci="20000443" r="Everyshore" ri="10000037" s="Blameston IV - Moon 12 - Quafe Company Retail Center" se="1.0" si="60009865" sy="Blameston" syi="30003026"/>
+    <row c="Ysiette" ci="20000443" r="Everyshore" ri="10000037" s="Blameston IV - Moon 12 - Quafe Company Retail Center" se="0.9" si="60009865" sy="Blameston" syi="30003026"/>
     <row c="Hoosa" ci="20000512" r="Domain" ri="10000043" s="Sorzielang VII - Moon 17 - Quafe Company Factory" se="0.8" si="60009868" sy="Sorzielang" syi="30003510"/>
     <row c="Hoosa" ci="20000512" r="Domain" ri="10000043" s="Gosalav VI - Moon 1 - Quafe Company Factory" se="0.7" si="60009871" sy="Gosalav" syi="30003509"/>
     <row c="Hoosa" ci="20000512" r="Domain" ri="10000043" s="Gosalav VII - Moon 1 - Quafe Company Factory" se="0.7" si="60009874" sy="Gosalav" syi="30003509"/>
@@ -13075,7 +13138,7 @@
     <row c="DS-M4Q" ci="20000481" r="Syndicate" ri="10000041" s="KTHT-O VI - Moon 12 - Quafe Company Warehouse" se="0.0" si="60010042" sy="KTHT-O" syi="30003300"/>
     <row c="DS-M4Q" ci="20000481" r="Syndicate" ri="10000041" s="AAS-8R V - Quafe Company Retail Center" se="0.0" si="60010045" sy="AAS-8R" syi="30003293"/>
     <row c="Sveipar" ci="20000373" r="Heimatar" ri="10000030" s="Eystur III - Moon 2 - Quafe Company Factory" se="0.9" si="60010048" sy="Eystur" syi="30002543"/>
-    <row c="Sveipar" ci="20000373" r="Heimatar" ri="10000030" s="Pator V (Vakir) - Moon 1 - Quafe Company Factory" se="1.0" si="60010051" sy="Pator" syi="30002544"/>
+    <row c="Sveipar" ci="20000373" r="Heimatar" ri="10000030" s="Pator V (Vakir) - Moon 1 - Quafe Company Factory" se="0.9" si="60010051" sy="Pator" syi="30002544"/>
     <row c="Sveipar" ci="20000373" r="Heimatar" ri="10000030" s="Lustrevik III - Moon 2 - Quafe Company Warehouse" se="0.9" si="60010054" sy="Lustrevik" syi="30002545"/>
     <row c="Sveipar" ci="20000373" r="Heimatar" ri="10000030" s="Eystur IV - Quafe Company Factory" se="0.9" si="60010057" sy="Eystur" syi="30002543"/>
     <row c="Sveipar" ci="20000373" r="Heimatar" ri="10000030" s="Lustrevik VII - Moon 14 - Quafe Company Warehouse" se="0.9" si="60010060" sy="Lustrevik" syi="30002545"/>
@@ -13155,9 +13218,9 @@
     <row c="Parrosa" ci="20000601" r="Kador" ri="10000052" s="Mandoo III - Moon 5 - CreoDron Factory" se="0.5" si="60010282" sy="Mandoo" syi="30004112"/>
     <row c="Parrosa" ci="20000601" r="Kador" ri="10000052" s="Peyiri XI - Moon 21 - CreoDron Warehouse" se="0.5" si="60010285" sy="Peyiri" syi="30004114"/>
     <row c="Erada" ci="20000377" r="Heimatar" ri="10000030" s="Oremmulf IX - Moon 6 - CreoDron Factory" se="0.9" si="60010288" sy="Oremmulf" syi="30002571"/>
-    <row c="Erada" ci="20000377" r="Heimatar" ri="10000030" s="Onga VI - CreoDron Factory" se="1.0" si="60010291" sy="Onga" syi="30002568"/>
+    <row c="Erada" ci="20000377" r="Heimatar" ri="10000030" s="Onga VI - CreoDron Factory" se="0.9" si="60010291" sy="Onga" syi="30002568"/>
     <row c="Erada" ci="20000377" r="Heimatar" ri="10000030" s="Osaumuni VII - Moon 16 - CreoDron Factory" se="0.9" si="60010294" sy="Osaumuni" syi="30002569"/>
-    <row c="Erada" ci="20000377" r="Heimatar" ri="10000030" s="Onga X - Moon 11 - CreoDron Warehouse" se="1.0" si="60010297" sy="Onga" syi="30002568"/>
+    <row c="Erada" ci="20000377" r="Heimatar" ri="10000030" s="Onga X - Moon 11 - CreoDron Warehouse" se="0.9" si="60010297" sy="Onga" syi="30002568"/>
     <row c="Anwyns" ci="20000776" r="Verge Vendor" ri="10000068" s="Alentene VI - Moon 6 - Roden Shipyards Warehouse" se="0.9" si="60010300" sy="Alentene" syi="30005304"/>
     <row c="Anwyns" ci="20000776" r="Verge Vendor" ri="10000068" s="Alenia V - Moon 4 - Roden Shipyards Factory" se="0.9" si="60010303" sy="Alenia" syi="30005302"/>
     <row c="Anwyns" ci="20000776" r="Verge Vendor" ri="10000068" s="Alenia V - Moon 12 - Roden Shipyards Factory" se="0.9" si="60010306" sy="Alenia" syi="30005302"/>
@@ -13265,7 +13328,7 @@
     <row c="Woenckee" ci="20000775" r="Verge Vendor" ri="10000068" s="Melmaniel VI - Moon 6 - Egonics Inc. Development Studio" se="0.3" si="60010612" sy="Melmaniel" syi="30005296"/>
     <row c="Woenckee" ci="20000775" r="Verge Vendor" ri="10000068" s="Ouelletta V - Moon 1 - Egonics Inc. Development Studio" se="0.4" si="60010615" sy="Ouelletta" syi="30005297"/>
     <row c="Ysiette" ci="20000443" r="Everyshore" ri="10000037" s="Lirsautton X - Moon 1 - Egonics Inc. Development Studio" se="0.8" si="60010618" sy="Lirsautton" syi="30003025"/>
-    <row c="Ysiette" ci="20000443" r="Everyshore" ri="10000037" s="Blameston VI - Moon 10 - Egonics Inc. Development Studio" se="1.0" si="60010621" sy="Blameston" syi="30003026"/>
+    <row c="Ysiette" ci="20000443" r="Everyshore" ri="10000037" s="Blameston VI - Moon 10 - Egonics Inc. Development Studio" se="0.9" si="60010621" sy="Blameston" syi="30003026"/>
     <row c="Aeman" ci="20000398" r="Sinq Laison" ri="10000032" s="Rancer V - Moon 7 - Egonics Inc. Development Studio" se="0.4" si="60010624" sy="Rancer" syi="30002718"/>
     <row c="Aeman" ci="20000398" r="Sinq Laison" ri="10000032" s="Otou V - Moon 7 - Egonics Inc. Development Studio" se="0.3" si="60010627" sy="Otou" syi="30002723"/>
     <row c="Mobrault" ci="20000525" r="Solitude" ri="10000044" s="Ratillose VI - Moon 4 - Egonics Inc. Development Studio" se="0.4" si="60010630" sy="Ratillose" syi="30003602"/>
@@ -13303,9 +13366,9 @@
     <row c="Agiesseson" ci="20000396" r="Sinq Laison" ri="10000032" s="Doussivitte VIII - Moon 20 - Chemal Tech Factory" se="0.8" si="60010726" sy="Doussivitte" syi="30002706"/>
     <row c="Agiesseson" ci="20000396" r="Sinq Laison" ri="10000032" s="Unel IX - Chemal Tech Factory" se="0.9" si="60010729" sy="Unel" syi="30002707"/>
     <row c="Agiesseson" ci="20000396" r="Sinq Laison" ri="10000032" s="Doussivitte VIII - Moon 8 - Chemal Tech Factory" se="0.8" si="60010732" sy="Doussivitte" syi="30002706"/>
-    <row c="Gedur" ci="20000492" r="Metropolis" ri="10000042" s="Alf III - Moon 1 - Chemal Tech Factory" se="1.0" si="60010735" sy="Alf" syi="30003380"/>
+    <row c="Gedur" ci="20000492" r="Metropolis" ri="10000042" s="Alf III - Moon 1 - Chemal Tech Factory" se="0.9" si="60010735" sy="Alf" syi="30003380"/>
     <row c="Gedur" ci="20000492" r="Metropolis" ri="10000042" s="Brundakur VI - Moon 5 - Chemal Tech Factory" se="0.9" si="60010738" sy="Brundakur" syi="30003375"/>
-    <row c="Gedur" ci="20000492" r="Metropolis" ri="10000042" s="Arlulf III - Moon 1 - Chemal Tech Factory" se="1.0" si="60010741" sy="Arlulf" syi="30003374"/>
+    <row c="Gedur" ci="20000492" r="Metropolis" ri="10000042" s="Arlulf III - Moon 1 - Chemal Tech Factory" se="0.9" si="60010741" sy="Arlulf" syi="30003374"/>
     <row c="Abthi" ci="20000439" r="Devoid" ri="10000036" s="Lower Debyl V - Chemal Tech Factory" se="0.6" si="60010744" sy="Lower Debyl" syi="30002996"/>
     <row c="Abthi" ci="20000439" r="Devoid" ri="10000036" s="Lower Debyl VIII - Moon 15 - Chemal Tech Factory" se="0.6" si="60010747" sy="Lower Debyl" syi="30002996"/>
     <row c="Abthi" ci="20000439" r="Devoid" ri="10000036" s="Ehnoum II - Chemal Tech Factory" se="0.6" si="60010750" sy="Ehnoum" syi="30002997"/>
@@ -13360,7 +13423,7 @@
     <row c="Josmaert" ci="20000556" r="Placid" ri="10000048" s="Grispire V - Duvolle Laboratories Factory" se="0.2" si="60010897" sy="Grispire" syi="30003808"/>
     <row c="Josmaert" ci="20000556" r="Placid" ri="10000048" s="Vivanier V - Moon 3 - Duvolle Laboratories Factory" se="0.5" si="60010900" sy="Vivanier" syi="30003810"/>
     <row c="Josmaert" ci="20000556" r="Placid" ri="10000048" s="Pelille V - Moon 14 - Duvolle Laboratories Factory" se="0.2" si="60010903" sy="Pelille" syi="30003806"/>
-    <row c="Crux" ci="20000727" r="Essence" ri="10000064" s="Luminaire III (Astrin) - Moon 1 - Duvolle Laboratories Factory" se="1.0" si="60010906" sy="Luminaire" syi="30004967"/>
+    <row c="Crux" ci="20000727" r="Essence" ri="10000064" s="Luminaire III (Astrin) - Moon 1 - Duvolle Laboratories Factory" se="0.9" si="60010906" sy="Luminaire" syi="30004967"/>
     <row c="Crux" ci="20000727" r="Essence" ri="10000064" s="Oursulaert VII - Moon 3 - Duvolle Laboratories Research Center" se="0.9" si="60010909" sy="Oursulaert" syi="30004969"/>
     <row c="Crux" ci="20000727" r="Essence" ri="10000064" s="Mies VII - Moon 3 - Duvolle Laboratories Factory" se="0.9" si="60010912" sy="Mies" syi="30004968"/>
     <row c="Elose" ci="20000521" r="Solitude" ri="10000044" s="Maire IV - Moon 4 - Duvolle Laboratories Factory" se="0.7" si="60010915" sy="Maire" syi="30003576"/>
@@ -13580,7 +13643,7 @@
     <row c="Ambrye" ci="20000400" r="Sinq Laison" ri="10000032" s="Pucherie VI - Moon 2 - Garoun Investment Bank Vault" se="0.8" si="60011557" sy="Pucherie" syi="30002733"/>
     <row c="Aideron" ci="20000780" r="Verge Vendor" ri="10000068" s="Amoderia VI - Moon 1 - Garoun Investment Bank Depository" se="0.4" si="60011560" sy="Amoderia" syi="30005329"/>
     <row c="Aideron" ci="20000780" r="Verge Vendor" ri="10000068" s="Stou V - Moon 3 - Garoun Investment Bank Depository" se="0.5" si="60011563" sy="Stou" syi="30005333"/>
-    <row c="Nexus" ci="20000397" r="Sinq Laison" ri="10000032" s="Bourynes VII - Moon 2 - University of Caille" se="1.0" si="60011566" sy="Bourynes" syi="30002715"/>
+    <row c="Nexus" ci="20000397" r="Sinq Laison" ri="10000032" s="Bourynes VII - Moon 2 - University of Caille" se="0.9" si="60011566" sy="Bourynes" syi="30002715"/>
     <row c="Giatole" ci="20000445" r="Everyshore" ri="10000037" s="Bille X - Moon 1 - University of Caille" se="0.5" si="60011569" sy="Bille" syi="30003040"/>
     <row c="Beyt" ci="20000560" r="Placid" ri="10000048" s="Osmeden IX - Moon 6 - University of Caille" se="0.7" si="60011572" sy="Osmeden" syi="30003831"/>
     <row c="Anwyns" ci="20000776" r="Verge Vendor" ri="10000068" s="Alenia IV - Moon 3 - Quafe Company School" se="0.9" si="60011575" sy="Alenia" syi="30005302"/>
@@ -13597,9 +13660,9 @@
     <row c="Vieres" ci="20000731" r="Essence" ri="10000064" s="Villore VIII - Moon 2 - Supreme Court Law School" se="0.9" si="60011608" sy="Villore" syi="30004993"/>
     <row c="Vieres" ci="20000731" r="Essence" ri="10000064" s="Parts VI - Supreme Court Tribunal" se="0.4" si="60011611" sy="Parts" syi="30004998"/>
     <row c="Crux" ci="20000727" r="Essence" ri="10000064" s="Algogille IX - Moon 3 - Federal Administration Information Center" se="0.9" si="60011614" sy="Algogille" syi="30004972"/>
-    <row c="Crux" ci="20000727" r="Essence" ri="10000064" s="Luminaire VII (Caldari Prime) - Federal Administration Information Center" se="1.0" si="60011617" sy="Luminaire" syi="30004967"/>
+    <row c="Crux" ci="20000727" r="Essence" ri="10000064" s="Luminaire VII (Caldari Prime) - Federal Administration Information Center" se="0.9" si="60011617" sy="Luminaire" syi="30004967"/>
     <row c="Crux" ci="20000727" r="Essence" ri="10000064" s="Mies V - Moon 17 - Federal Administration Information Center" se="0.9" si="60011620" sy="Mies" syi="30004968"/>
-    <row c="Crux" ci="20000727" r="Essence" ri="10000064" s="Luminaire VII (Caldari Prime) - Moon 4 - Federal Administration Bureau Offices" se="1.0" si="60011623" sy="Luminaire" syi="30004967"/>
+    <row c="Crux" ci="20000727" r="Essence" ri="10000064" s="Luminaire VII (Caldari Prime) - Moon 4 - Federal Administration Bureau Offices" se="0.9" si="60011623" sy="Luminaire" syi="30004967"/>
     <row c="Osnins" ci="20000441" r="Everyshore" ri="10000037" s="Halle VII - Federal Administration Bureau Offices" se="0.7" si="60011626" sy="Halle" syi="30003010"/>
     <row c="Osnins" ci="20000441" r="Everyshore" ri="10000037" s="Mormoen VI - Moon 2 - Federal Administration Archives" se="0.7" si="60011629" sy="Mormoen" syi="30003011"/>
     <row c="Osnins" ci="20000441" r="Everyshore" ri="10000037" s="Jurlesel VI - Moon 20 - Federal Administration Information Center" se="0.6" si="60011632" sy="Jurlesel" syi="30003013"/>
@@ -13641,7 +13704,7 @@
     <row c="Crux" ci="20000727" r="Essence" ri="10000064" s="Oursulaert III - Federation Navy Testing Facilities" se="0.9" si="60011740" sy="Oursulaert" syi="30004969"/>
     <row c="Crux" ci="20000727" r="Essence" ri="10000064" s="Oursulaert IV - Federation Navy Testing Facilities" se="0.9" si="60011743" sy="Oursulaert" syi="30004969"/>
     <row c="Crux" ci="20000727" r="Essence" ri="10000064" s="Mies V - Moon 3 - Federation Navy Assembly Plant" se="0.9" si="60011746" sy="Mies" syi="30004968"/>
-    <row c="Crux" ci="20000727" r="Essence" ri="10000064" s="Luminaire VII (Caldari Prime) - Moon 6 - Federation Navy Assembly Plant" se="1.0" si="60011749" sy="Luminaire" syi="30004967"/>
+    <row c="Crux" ci="20000727" r="Essence" ri="10000064" s="Luminaire VII (Caldari Prime) - Moon 6 - Federation Navy Assembly Plant" se="0.9" si="60011749" sy="Luminaire" syi="30004967"/>
     <row c="Orvanne" ci="20000522" r="Solitude" ri="10000044" s="Niballe V - Moon 1 - Federation Navy Testing Facilities" se="0.6" si="60011752" sy="Niballe" syi="30003580"/>
     <row c="Orvanne" ci="20000522" r="Solitude" ri="10000044" s="Sarline VII - Moon 18 - Federation Navy Assembly Plant" se="0.4" si="60011755" sy="Sarline" syi="30003584"/>
     <row c="Orvanne" ci="20000522" r="Solitude" ri="10000044" s="Aeter VI - Moon 23 - Federation Navy Testing Facilities" se="0.3" si="60011758" sy="Aeter" syi="30003585"/>
@@ -13726,8 +13789,8 @@
     <row c="Osnins" ci="20000441" r="Everyshore" ri="10000037" s="Bereye VI - Federal Intelligence Office Assembly Plant" se="0.9" si="60011995" sy="Bereye" syi="30003014"/>
     <row c="Osnins" ci="20000441" r="Everyshore" ri="10000037" s="Halle VII - Moon 6 - Federal Intelligence Office Assembly Plant" se="0.7" si="60011998" sy="Halle" syi="30003010"/>
     <row c="Osnins" ci="20000441" r="Everyshore" ri="10000037" s="Junsoraert VI - Moon 1 - Federal Intelligence Office Assembly Plant" se="0.5" si="60012001" sy="Junsoraert" syi="30003016"/>
-    <row c="Crux" ci="20000727" r="Essence" ri="10000064" s="Luminaire VII (Caldari Prime) - Moon 1 - Federation Customs Testing Facilities" se="1.0" si="60012004" sy="Luminaire" syi="30004967"/>
-    <row c="Crux" ci="20000727" r="Essence" ri="10000064" s="Luminaire VII (Caldari Prime) - Moon 5 - Federation Customs Assembly Plant" se="1.0" si="60012007" sy="Luminaire" syi="30004967"/>
+    <row c="Crux" ci="20000727" r="Essence" ri="10000064" s="Luminaire VII (Caldari Prime) - Moon 1 - Federation Customs Testing Facilities" se="0.9" si="60012004" sy="Luminaire" syi="30004967"/>
+    <row c="Crux" ci="20000727" r="Essence" ri="10000064" s="Luminaire VII (Caldari Prime) - Moon 5 - Federation Customs Assembly Plant" se="0.9" si="60012007" sy="Luminaire" syi="30004967"/>
     <row c="Crux" ci="20000727" r="Essence" ri="10000064" s="Renyn IX - Federation Customs Assembly Plant" se="0.9" si="60012010" sy="Renyn" syi="30004970"/>
     <row c="Crux" ci="20000727" r="Essence" ri="10000064" s="Oursulaert IX - Federation Customs Testing Facilities" se="0.9" si="60012013" sy="Oursulaert" syi="30004969"/>
     <row c="Alselbosier" ci="20000555" r="Placid" ri="10000048" s="Aunsou II - Moon 1 - Federation Customs Assembly Plant" se="0.2" si="60012016" sy="Aunsou" syi="30003801"/>
@@ -13810,12 +13873,12 @@
     <row c="Phoenix" ci="20000674" r="Fountain" ri="10000058" s="Serpentis Prime II - Archangels Testing Facilities" se="0.0" si="60012247" sy="Serpentis Prime" syi="30004623"/>
     <row c="Phoenix" ci="20000674" r="Fountain" ri="10000058" s="MN5N-X VII - Moon 5 - Archangels Assembly Plant" se="0.0" si="60012250" sy="MN5N-X" syi="30004618"/>
     <row c="Phoenix" ci="20000674" r="Fountain" ri="10000058" s="MN5N-X VIII - Moon 15 - Archangels Assembly Plant" se="0.0" si="60012253" sy="MN5N-X" syi="30004618"/>
-    <row c="Sanctum" ci="20000761" r="Genesis" ri="10000067" s="Yulai IX (Kjarval) - CONCORD Bureau" se="1.0" si="60012256" sy="Yulai" syi="30005204"/>
+    <row c="Sanctum" ci="20000761" r="Genesis" ri="10000067" s="Yulai IX (Kjarval) - CONCORD Bureau" se="0.9" si="60012256" sy="Yulai" syi="30005204"/>
     <row c="Sanctum" ci="20000761" r="Genesis" ri="10000067" s="Tekaima I - Moon 1 - CONCORD Bureau" se="0.6" si="60012259" sy="Tekaima" syi="30005200"/>
     <row c="Sanctum" ci="20000761" r="Genesis" ri="10000067" s="Kemerk V - Moon 10 - CONCORD Bureau" se="0.8" si="60012262" sy="Kemerk" syi="30005206"/>
     <row c="Sanctum" ci="20000761" r="Genesis" ri="10000067" s="Pakhshi IX - Moon 20 - CONCORD Bureau" se="0.8" si="60012265" sy="Pakhshi" syi="30005198"/>
     <row c="Sanctum" ci="20000761" r="Genesis" ri="10000067" s="Tekaima V - Moon 9 - CONCORD Assembly Plant" se="0.6" si="60012268" sy="Tekaima" syi="30005200"/>
-    <row c="Sanctum" ci="20000761" r="Genesis" ri="10000067" s="Yulai VIII - Moon 10 - CONCORD Logistic Support" se="1.0" si="60012271" sy="Yulai" syi="30005204"/>
+    <row c="Sanctum" ci="20000761" r="Genesis" ri="10000067" s="Yulai VIII - Moon 10 - CONCORD Logistic Support" se="0.9" si="60012271" sy="Yulai" syi="30005204"/>
     <row c="Brazinget" ci="20000500" r="Metropolis" ri="10000042" s="Lumegen IV - Moon 2 - CONCORD Academy" se="0.6" si="60012274" sy="Lumegen" syi="30003432"/>
     <row c="Brazinget" ci="20000500" r="Metropolis" ri="10000042" s="Geffur VII - Moon 8 - CONCORD Bureau" se="0.7" si="60012277" sy="Geffur" syi="30003429"/>
     <row c="Brazinget" ci="20000500" r="Metropolis" ri="10000042" s="Tratokard II - Moon 1 - CONCORD Bureau" se="0.6" si="60012280" sy="Tratokard" syi="30003431"/>
@@ -13843,9 +13906,9 @@
     <row c="Gedur" ci="20000492" r="Metropolis" ri="10000042" s="Brundakur IV - Moon 1 - CONCORD Bureau" se="0.9" si="60012346" sy="Brundakur" syi="30003375"/>
     <row c="Gedur" ci="20000492" r="Metropolis" ri="10000042" s="Stirht VII - Moon 14 - CONCORD Bureau" se="0.9" si="60012349" sy="Stirht" syi="30003376"/>
     <row c="Gedur" ci="20000492" r="Metropolis" ri="10000042" s="Nedegulf VII - Moon 4 - CONCORD Academy" se="0.8" si="60012352" sy="Nedegulf" syi="30003378"/>
-    <row c="Gedur" ci="20000492" r="Metropolis" ri="10000042" s="Arlulf III - Moon 10 - CONCORD Bureau" se="1.0" si="60012355" sy="Arlulf" syi="30003374"/>
-    <row c="Gedur" ci="20000492" r="Metropolis" ri="10000042" s="Arlulf VI - Moon 1 - CONCORD Assembly Plant" se="1.0" si="60012358" sy="Arlulf" syi="30003374"/>
-    <row c="Gedur" ci="20000492" r="Metropolis" ri="10000042" s="Arlulf III - Moon 11 - CONCORD Assembly Plant" se="1.0" si="60012361" sy="Arlulf" syi="30003374"/>
+    <row c="Gedur" ci="20000492" r="Metropolis" ri="10000042" s="Arlulf III - Moon 10 - CONCORD Bureau" se="0.9" si="60012355" sy="Arlulf" syi="30003374"/>
+    <row c="Gedur" ci="20000492" r="Metropolis" ri="10000042" s="Arlulf VI - Moon 1 - CONCORD Assembly Plant" se="0.9" si="60012358" sy="Arlulf" syi="30003374"/>
+    <row c="Gedur" ci="20000492" r="Metropolis" ri="10000042" s="Arlulf III - Moon 11 - CONCORD Assembly Plant" se="0.9" si="60012361" sy="Arlulf" syi="30003374"/>
     <row c="Marele" ci="20000447" r="Everyshore" ri="10000037" s="Adeel VIII - Moon 1 - CONCORD Treasury" se="0.4" si="60012364" sy="Adeel" syi="30003059"/>
     <row c="Marele" ci="20000447" r="Everyshore" ri="10000037" s="Olide VI - Moon 10 - CONCORD Bureau" se="0.7" si="60012367" sy="Olide" syi="30003058"/>
     <row c="Marele" ci="20000447" r="Everyshore" ri="10000037" s="Olide VI - Moon 14 - CONCORD Bureau" se="0.7" si="60012370" sy="Olide" syi="30003058"/>
@@ -13895,8 +13958,8 @@
     <row c="Nadire" ci="20000399" r="Sinq Laison" ri="10000032" s="Assiettes IV - Moon 1 - CONCORD Logistic Support" se="0.6" si="60012502" sy="Assiettes" syi="30002724"/>
     <row c="Nadire" ci="20000399" r="Sinq Laison" ri="10000032" s="Raeghoscon VIII - CONCORD Logistic Support" se="0.4" si="60012505" sy="Raeghoscon" syi="30002726"/>
     <row c="Caldari Border Zone" ci="20000405" r="The Citadel" ri="10000033" s="Hatakani VI - Moon 10 - CONCORD Bureau" se="0.9" si="60012508" sy="Hatakani" syi="30002764"/>
-    <row c="Caldari Border Zone" ci="20000405" r="The Citadel" ri="10000033" s="Yashunen VII - CONCORD Bureau" se="1.0" si="60012511" sy="Yashunen" syi="30002762"/>
-    <row c="Caldari Border Zone" ci="20000405" r="The Citadel" ri="10000033" s="Yashunen VII - Moon 2 - CONCORD Bureau" se="1.0" si="60012514" sy="Yashunen" syi="30002762"/>
+    <row c="Caldari Border Zone" ci="20000405" r="The Citadel" ri="10000033" s="Yashunen VII - CONCORD Bureau" se="0.9" si="60012511" sy="Yashunen" syi="30002762"/>
+    <row c="Caldari Border Zone" ci="20000405" r="The Citadel" ri="10000033" s="Yashunen VII - Moon 2 - CONCORD Bureau" se="0.9" si="60012514" sy="Yashunen" syi="30002762"/>
     <row c="Caldari Border Zone" ci="20000405" r="The Citadel" ri="10000033" s="Hatakani VI - CONCORD Bureau" se="0.9" si="60012517" sy="Hatakani" syi="30002764"/>
     <row c="Caldari Border Zone" ci="20000405" r="The Citadel" ri="10000033" s="Iivinen VIII - Moon 10 - CONCORD Assembly Plant" se="0.7" si="60012520" sy="Iivinen" syi="30002766"/>
     <row c="Caldari Border Zone" ci="20000405" r="The Citadel" ri="10000033" s="Tennen VIII - Moon 4 - CONCORD Assembly Plant" se="0.9" si="60012523" sy="Tennen" syi="30002763"/>
@@ -13941,7 +14004,7 @@
     <row c="Aven" ci="20000771" r="Genesis" ri="10000067" s="Olin II - Moon 13 - Sisters of EVE Bureau" se="0.3" si="60012640" sy="Olin" syi="30005272"/>
     <row c="Aven" ci="20000771" r="Genesis" ri="10000067" s="Shapisin I - Sisters of EVE Bureau" se="0.3" si="60012643" sy="Shapisin" syi="30005271"/>
     <row c="Aven" ci="20000771" r="Genesis" ri="10000067" s="Simela IV - Moon 7 - Sisters of EVE Academy" se="0.5" si="60012646" sy="Simela" syi="30005269"/>
-    <row c="Odilis" ci="20000444" r="Everyshore" ri="10000037" s="Athinard IV - Sisters of EVE Bureau" se="1.0" si="60012649" sy="Athinard" syi="30003031"/>
+    <row c="Odilis" ci="20000444" r="Everyshore" ri="10000037" s="Athinard IV - Sisters of EVE Bureau" se="0.9" si="60012649" sy="Athinard" syi="30003031"/>
     <row c="Odilis" ci="20000444" r="Everyshore" ri="10000037" s="Gicodel VII - Moon 14 - Sisters of EVE Bureau" se="0.9" si="60012652" sy="Gicodel" syi="30003035"/>
     <row c="Odilis" ci="20000444" r="Everyshore" ri="10000037" s="Quier IV - Moon 27 - Sisters of EVE Treasury" se="0.7" si="60012655" sy="Quier" syi="30003037"/>
     <row c="Mobrault" ci="20000525" r="Solitude" ri="10000044" s="Pochelympe VII - Moon 2 - Sisters of EVE Bureau" se="0.6" si="60012658" sy="Pochelympe" syi="30003604"/>
@@ -13970,7 +14033,7 @@
     <row c="Ortner" ci="20000367" r="Heimatar" ri="10000030" s="Rens VII - Moon 19 - Sisters of EVE Bureau" se="0.9" si="60012727" sy="Rens" syi="30002510"/>
     <row c="N-K4Q0" ci="20000356" r="Geminate" ri="10000029" s="FDZ4-A VIII - Moon 3 - Society of Conscious Thought School" se="0.0" si="60012730" sy="FDZ4-A" syi="30002423"/>
     <row c="N-K4Q0" ci="20000356" r="Geminate" ri="10000029" s="FDZ4-A IX - Moon 6 - Society of Conscious Thought School" se="0.0" si="60012733" sy="FDZ4-A" syi="30002423"/>
-    <row c="Sanctum" ci="20000761" r="Genesis" ri="10000067" s="Yulai III - Moon 1 - Secure Commerce Commission Depository" se="1.0" si="60012736" sy="Yulai" syi="30005204"/>
+    <row c="Sanctum" ci="20000761" r="Genesis" ri="10000067" s="Yulai III - Moon 1 - Secure Commerce Commission Depository" se="0.9" si="60012736" sy="Yulai" syi="30005204"/>
     <row c="Sanctum" ci="20000761" r="Genesis" ri="10000067" s="Tar III - Secure Commerce Commission Depository" se="0.8" si="60012739" sy="Tar" syi="30005199"/>
     <row c="Tranquility" ci="20000147" r="Curse" ri="10000012" s="H-ADOC VII - Moon 12 - Salvation Angels Warehouse" se="0.0" si="60012742" sy="H-ADOC" syi="30001001"/>
     <row c="Tranquility" ci="20000147" r="Curse" ri="10000012" s="G-G78S VII - Salvation Angels Chemical Refinery" se="0.0" si="60012745" sy="G-G78S" syi="30001002"/>
@@ -14030,9 +14093,9 @@
     <row c="Heaven" ci="20000153" r="Curse" ri="10000012" s="Hemin VII - Moon 15 - Guardian Angels Logistic Support" se="0.0" si="60012907" sy="Hemin" syi="30001044"/>
     <row c="Phoenix" ci="20000674" r="Fountain" ri="10000058" s="YZ-LQL VI - Moon 19 - Guardian Angels Logistic Support" se="0.0" si="60012910" sy="YZ-LQL" syi="30004617"/>
     <row c="Phoenix" ci="20000674" r="Fountain" ri="10000058" s="YZ-LQL VII - Moon 1 - Guardian Angels Assembly Plant" se="0.0" si="60012913" sy="YZ-LQL" syi="30004617"/>
-    <row c="Sanctum" ci="20000761" r="Genesis" ri="10000067" s="Yulai VIII - Moon 12 - DED Logistic Support" se="1.0" si="60012916" sy="Yulai" syi="30005204"/>
+    <row c="Sanctum" ci="20000761" r="Genesis" ri="10000067" s="Yulai VIII - Moon 12 - DED Logistic Support" se="0.9" si="60012916" sy="Yulai" syi="30005204"/>
     <row c="Sanctum" ci="20000761" r="Genesis" ri="10000067" s="Tarta IX - Moon 14 - DED Assembly Plant" se="0.5" si="60012919" sy="Tarta" syi="30005205"/>
-    <row c="Sanctum" ci="20000761" r="Genesis" ri="10000067" s="Yulai X - DED Assembly Plant" se="1.0" si="60012922" sy="Yulai" syi="30005204"/>
+    <row c="Sanctum" ci="20000761" r="Genesis" ri="10000067" s="Yulai X - DED Assembly Plant" se="0.9" si="60012922" sy="Yulai" syi="30005204"/>
     <row c="Ancbeu" ci="20000779" r="Verge Vendor" ri="10000068" s="Sortet VI - Moon 5 - DED Logistic Support" se="0.8" si="60012925" sy="Sortet" syi="30005323"/>
     <row c="Ancbeu" ci="20000779" r="Verge Vendor" ri="10000068" s="Reblier VIII - Moon 7 - DED Logistic Support" se="0.4" si="60012928" sy="Reblier" syi="30005328"/>
     <row c="Ancbeu" ci="20000779" r="Verge Vendor" ri="10000068" s="Scolluzer VI - DED Logistic Support" se="0.8" si="60012931" sy="Scolluzer" syi="30005322"/>
@@ -14123,7 +14186,7 @@
     <row c="Pietanen" ci="20000208" r="Lonetrek" ri="10000016" s="Atai II - Moon 15 - Genolution Biotech Production" se="0.5" si="60013186" sy="Atai" syi="30001419"/>
     <row c="Caldari Border Zone" ci="20000405" r="The Citadel" ri="10000033" s="Iivinen X - Moon 10 - Genolution Biohazard Containment Facility" se="0.7" si="60013189" sy="Iivinen" syi="30002766"/>
     <row c="Caldari Border Zone" ci="20000405" r="The Citadel" ri="10000033" s="Tennen VIII - Moon 11 - Genolution Biotech Production" se="0.9" si="60013192" sy="Tennen" syi="30002763"/>
-    <row c="Caldari Border Zone" ci="20000405" r="The Citadel" ri="10000033" s="Yashunen III - Genolution Biotech Production" se="1.0" si="60013195" sy="Yashunen" syi="30002762"/>
+    <row c="Caldari Border Zone" ci="20000405" r="The Citadel" ri="10000033" s="Yashunen III - Genolution Biotech Production" se="0.9" si="60013195" sy="Yashunen" syi="30002762"/>
     <row c="Caldari Border Zone" ci="20000405" r="The Citadel" ri="10000033" s="Iivinen VIII - Moon 7 - Genolution Biohazard Containment Facility" se="0.7" si="60013198" sy="Iivinen" syi="30002766"/>
     <row c="Umamon" ci="20000211" r="Lonetrek" ri="10000016" s="Tartoken III - Moon 3 - Genolution Biotech Production" se="0.1" si="60013201" sy="Tartoken" syi="30001441"/>
     <row c="Umamon" ci="20000211" r="Lonetrek" ri="10000016" s="Tamo V - Moon 2 - Genolution Biotech Production" se="0.3" si="60013204" sy="Tamo" syi="30001437"/>
@@ -14133,8 +14196,8 @@
     <row c="Josmaert" ci="20000556" r="Placid" ri="10000048" s="Vivanier VI - Moon 5 - Genolution Biotech Production" se="0.5" si="60013216" sy="Vivanier" syi="30003810"/>
     <row c="Josmaert" ci="20000556" r="Placid" ri="10000048" s="Grispire V - Moon 15 - Genolution Biotech Production" se="0.2" si="60013219" sy="Grispire" syi="30003808"/>
     <row c="Josmaert" ci="20000556" r="Placid" ri="10000048" s="Algasienan VI - Moon 4 - Genolution Biotech Production" se="0.7" si="60013222" sy="Algasienan" syi="30003811"/>
-    <row c="Erada" ci="20000377" r="Heimatar" ri="10000030" s="Vullat VIII - Moon 1 - Genolution Biohazard Containment Facility" se="1.0" si="60013225" sy="Vullat" syi="30002573"/>
-    <row c="Erada" ci="20000377" r="Heimatar" ri="10000030" s="Vullat VII - Moon 11 - Genolution Biotech Research Center" se="1.0" si="60013228" sy="Vullat" syi="30002573"/>
+    <row c="Erada" ci="20000377" r="Heimatar" ri="10000030" s="Vullat VIII - Moon 1 - Genolution Biohazard Containment Facility" se="0.9" si="60013225" sy="Vullat" syi="30002573"/>
+    <row c="Erada" ci="20000377" r="Heimatar" ri="10000030" s="Vullat VII - Moon 11 - Genolution Biotech Research Center" se="0.9" si="60013228" sy="Vullat" syi="30002573"/>
     <row c="Erada" ci="20000377" r="Heimatar" ri="10000030" s="Hurjafren VII - Moon 10 - Genolution Biotech Production" se="0.9" si="60013231" sy="Hurjafren" syi="30002572"/>
     <row c="Erada" ci="20000377" r="Heimatar" ri="10000030" s="Oremmulf VII - Moon 11 - Genolution Biohazard Containment Facility" se="0.9" si="60013234" sy="Oremmulf" syi="30002571"/>
     <row c="Essin" ci="20000308" r="Metropolis" ri="10000042" s="Frerstorn VI - Genolution Biotech Production" se="0.3" si="60013237" sy="Frerstorn" syi="30002090"/>
@@ -14176,7 +14239,7 @@
     <row c="Sukanan" ci="20000249" r="Tash-Murkon" ri="10000020" s="Teshkat VI - Impro Factory" se="0.4" si="60013345" sy="Teshkat" syi="30001681"/>
     <row c="Braille" ci="20000520" r="Solitude" ri="10000044" s="Vevelonel VI - Moon 1 - Impro Factory" se="0.1" si="60013348" sy="Vevelonel" syi="30003572"/>
     <row c="Braille" ci="20000520" r="Solitude" ri="10000044" s="Meunvon IV - Moon 3 - Impro Factory" se="0.3" si="60013351" sy="Meunvon" syi="30003568"/>
-    <row c="Sanctum" ci="20000761" r="Genesis" ri="10000067" s="Yulai VIII - Inner Circle Tribunal" se="1.0" si="60013354" sy="Yulai" syi="30005204"/>
+    <row c="Sanctum" ci="20000761" r="Genesis" ri="10000067" s="Yulai VIII - Inner Circle Tribunal" se="0.9" si="60013354" sy="Yulai" syi="30005204"/>
     <row c="Z-6NQ6" ci="20000478" r="Syndicate" ri="10000041" s="X-BV98 VIII - Moon 5 - Intaki Bank Depository" se="0.0" si="60013357" sy="X-BV98" syi="30003274"/>
     <row c="Z-6NQ6" ci="20000478" r="Syndicate" ri="10000041" s="FD-MLJ VII - Moon 2 - Intaki Bank Depository" se="0.0" si="60013360" sy="FD-MLJ" syi="30003276"/>
     <row c="Y4Y7-Q" ci="20000480" r="Syndicate" ri="10000041" s="ZN0-SR V - Moon 7 - Intaki Bank Depository" se="0.0" si="60013363" sy="ZN0-SR" syi="30003289"/>
@@ -14425,7 +14488,7 @@
     <row c="2-M6DE" ci="20000479" r="Syndicate" ri="10000041" s="EZA-FM IV - Moon 16 - Thukker Mix Factory" se="0.0" si="60014092" sy="EZA-FM" syi="30003281"/>
     <row c="Sazdih" ci="20000006" r="Derelik" ri="10000001" s="Uzistoon VII - Moon 2 - Thukker Mix Factory" se="0.4" si="60014095" sy="Uzistoon" syi="30000040"/>
     <row c="Sazdih" ci="20000006" r="Derelik" ri="10000001" s="Bairshir IV - Moon 11 - Thukker Mix Factory" se="0.4" si="60014098" sy="Bairshir" syi="30000041"/>
-    <row c="Meinigefur" ci="20000497" r="Metropolis" ri="10000042" s="Leurtmar III - Thukker Mix Factory" se="1.0" si="60014101" sy="Leurtmar" syi="30003409"/>
+    <row c="Meinigefur" ci="20000497" r="Metropolis" ri="10000042" s="Leurtmar III - Thukker Mix Factory" se="0.9" si="60014101" sy="Leurtmar" syi="30003409"/>
     <row c="Meinigefur" ci="20000497" r="Metropolis" ri="10000042" s="Elgoi VIII - Moon 19 - Thukker Mix Factory" se="0.9" si="60014104" sy="Elgoi" syi="30003412"/>
     <row c="Erada" ci="20000377" r="Heimatar" ri="10000030" s="Hurjafren VII - Moon 25 - Thukker Mix Factory" se="0.9" si="60014107" sy="Hurjafren" syi="30002572"/>
     <row c="Erada" ci="20000377" r="Heimatar" ri="10000030" s="Oremmulf V - Moon 20 - Thukker Mix Warehouse" se="0.9" si="60014110" sy="Oremmulf" syi="30002571"/>
@@ -14591,7 +14654,7 @@
     <row c="Trigentia" ci="20000599" r="Kador" ri="10000052" s="Sonama VII - Moon 16 - X-Sense Chemical Refinery" se="0.8" si="60014590" sy="Sonama" syi="30004099"/>
     <row c="Trigentia" ci="20000599" r="Kador" ri="10000052" s="Sonama VII - Moon 14 - X-Sense Chemical Refinery" se="0.8" si="60014593" sy="Sonama" syi="30004099"/>
     <row c="Trigentia" ci="20000599" r="Kador" ri="10000052" s="Sonama VI - Moon 15 - X-Sense Chemical Refinery" se="0.8" si="60014596" sy="Sonama" syi="30004099"/>
-    <row c="Gebem" ci="20000737" r="Kor-Azor" ri="10000065" s="Sehmy VIII - Moon 2 - Hedion University" se="1.0" si="60014599" sy="Sehmy" syi="30005042"/>
+    <row c="Gebem" ci="20000737" r="Kor-Azor" ri="10000065" s="Sehmy VIII - Moon 2 - Hedion University" se="0.9" si="60014599" sy="Sehmy" syi="30005042"/>
     <row c="Kihkounad" ci="20000772" r="Genesis" ri="10000067" s="Azedi II - Hedion University" se="0.3" si="60014602" sy="Azedi" syi="30005275"/>
     <row c="Ajah" ci="20000255" r="Tash-Murkon" ri="10000020" s="Rumida V - Moon 1 - Hedion University" se="0.9" si="60014605" sy="Rumida" syi="30001724"/>
     <row c="Liela" ci="20000333" r="Domain" ri="10000043" s="Avair X - Hedion University" se="0.4" si="60014608" sy="Avair" syi="30002270"/>
@@ -14601,8 +14664,8 @@
     <row c="Tsemshatel" ci="20000253" r="Tash-Murkon" ri="10000020" s="Moutid II - Moon 14 - Hedion University" se="0.7" si="60014620" sy="Moutid" syi="30001715"/>
     <row c="Tid" ci="20000624" r="Aridia" ri="10000054" s="Nema X - Moon 6 - Hedion University" se="0.3" si="60014623" sy="Nema" syi="30004267"/>
     <row c="Makh" ci="20000769" r="Genesis" ri="10000067" s="Korridi IV - Hedion University" se="0.3" si="60014626" sy="Korridi" syi="30005258"/>
-    <row c="Parud" ci="20000509" r="Domain" ri="10000043" s="Chaven VIII - Moon 1 - Imperial Academy" se="1.0" si="60014629" sy="Chaven" syi="30003489"/>
-    <row c="Maddam" ci="20000514" r="Domain" ri="10000043" s="Sarum Prime III - Moon 2 - Imperial Academy" se="1.0" si="60014632" sy="Sarum Prime" syi="30003522"/>
+    <row c="Parud" ci="20000509" r="Domain" ri="10000043" s="Chaven VIII - Moon 1 - Imperial Academy" se="0.9" si="60014629" sy="Chaven" syi="30003489"/>
+    <row c="Maddam" ci="20000514" r="Domain" ri="10000043" s="Sarum Prime III - Moon 2 - Imperial Academy" se="0.9" si="60014632" sy="Sarum Prime" syi="30003522"/>
     <row c="Sukanan" ci="20000249" r="Tash-Murkon" ri="10000020" s="Ordat V - Moon 1 - Imperial Academy" se="0.3" si="60014635" sy="Ordat" syi="30001685"/>
     <row c="Fua" ci="20000507" r="Domain" ri="10000043" s="Fahruni XI - Imperial Academy" se="0.5" si="60014638" sy="Fahruni" syi="30003473"/>
     <row c="Naloran" ci="20000606" r="Kador" ri="10000052" s="Hikansog VII - Imperial Academy" se="0.8" si="60014641" sy="Hikansog" syi="30004142"/>
@@ -14611,7 +14674,7 @@
     <row c="Kihkounad" ci="20000772" r="Genesis" ri="10000067" s="Azedi V - Moon 1 - Imperial Academy" se="0.3" si="60014650" sy="Azedi" syi="30005275"/>
     <row c="Subhatoub" ci="20000256" r="Tash-Murkon" ri="10000020" s="Tew VII - Imperial Academy" se="0.9" si="60014653" sy="Tew" syi="30001733"/>
     <row c="Ravin" ci="20000741" r="Kor-Azor" ri="10000065" s="Schmaeel VIII - Moon 9 - Imperial Academy" se="0.2" si="60014656" sy="Schmaeel" syi="30005063"/>
-    <row c="Kimotoro" ci="20000020" r="The Forge" ri="10000002" s="Kisogo VII - State War Academy" se="1.0" si="60014659" sy="Kisogo" syi="30000141"/>
+    <row c="Kimotoro" ci="20000020" r="The Forge" ri="10000002" s="Kisogo VII - State War Academy" se="0.9" si="60014659" sy="Kisogo" syi="30000141"/>
     <row c="Makiriemi" ci="20000203" r="Lonetrek" ri="10000016" s="Piekura VIII - Moon 11 - State War Academy" se="0.5" si="60014662" sy="Piekura" syi="30001391"/>
     <row c="Imurukka" ci="20000401" r="The Citadel" ri="10000033" s="Eitu VI - Moon 3 - State War Academy" se="0.5" si="60014665" sy="Eitu" syi="30002740"/>
     <row c="Suon" ci="20000409" r="The Citadel" ri="10000033" s="Irjunen IV - House of Records School" se="0.5" si="60014668" sy="Irjunen" syi="30002792"/>
@@ -14621,7 +14684,7 @@
     <row c="Kainokai" ci="20000207" r="Lonetrek" ri="10000016" s="Autama V - Moon 9 - State War Academy" se="0.8" si="60014680" sy="Autama" syi="30001411"/>
     <row c="Outartoh" ci="20000407" r="The Citadel" ri="10000033" s="Annaro VIII - Moon 4 - State War Academy" se="0.8" si="60014683" sy="Annaro" syi="30002776"/>
     <row c="Okkelen" ci="20000024" r="The Forge" ri="10000002" s="Ishisomo VIII - Moon 11 - State War Academy" se="0.7" si="60014686" sy="Ishisomo" syi="30000165"/>
-    <row c="Crux" ci="20000727" r="Essence" ri="10000064" s="Duripant VII - Moon 6 - Federal Navy Academy" se="1.0" si="60014689" sy="Duripant" syi="30004971"/>
+    <row c="Crux" ci="20000727" r="Essence" ri="10000064" s="Duripant VII - Moon 6 - Federal Navy Academy" se="0.9" si="60014689" sy="Duripant" syi="30004971"/>
     <row c="Lolbrerie" ci="20000393" r="Sinq Laison" ri="10000032" s="Dodenvale VIII - Federal Navy Academy" se="0.7" si="60014692" sy="Dodenvale" syi="30002685"/>
     <row c="Ancbeu" ci="20000779" r="Verge Vendor" ri="10000068" s="Scolluzer VII - Moon 3 - Federal Navy Academy" se="0.8" si="60014695" sy="Scolluzer" syi="30005322"/>
     <row c="Chasnaye" ci="20000442" r="Everyshore" ri="10000037" s="Harerget II - Moon 1 - Federal Navy Academy" se="0.8" si="60014698" sy="Harerget" syi="30003017"/>
@@ -14631,7 +14694,7 @@
     <row c="Balrille" ci="20000730" r="Essence" ri="10000064" s="Vitrauze XI - Moon 2 - Federal Navy Academy" se="0.3" si="60014710" sy="Vitrauze" syi="30004991"/>
     <row c="Arand" ci="20000733" r="Essence" ri="10000064" s="Allebin VI - Federal Navy Academy" se="0.5" si="60014713" sy="Allebin" syi="30005009"/>
     <row c="Aeman" ci="20000398" r="Sinq Laison" ri="10000032" s="Rancer VI - Moon 6 - Federal Navy Academy" se="0.4" si="60014716" sy="Rancer" syi="30002718"/>
-    <row c="Anwyns" ci="20000776" r="Verge Vendor" ri="10000068" s="Cistuvaert V - Moon 12 - Center for Advanced Studies School" se="1.0" si="60014719" sy="Cistuvaert" syi="30005305"/>
+    <row c="Anwyns" ci="20000776" r="Verge Vendor" ri="10000068" s="Cistuvaert V - Moon 12 - Center for Advanced Studies School" se="0.9" si="60014719" sy="Cistuvaert" syi="30005305"/>
     <row c="Ganoure" ci="20000558" r="Placid" ri="10000048" s="Barleguet VII - Moon 6 - Center for Advanced Studies School" se="0.1" si="60014722" sy="Barleguet" syi="30003819"/>
     <row c="Giatole" ci="20000445" r="Everyshore" ri="10000037" s="Leremblompes IV - Moon 11 - Center for Advanced Studies School" se="0.6" si="60014725" sy="Leremblompes" syi="30003039"/>
     <row c="Peccanouette" ci="20000732" r="Essence" ri="10000064" s="Lisbaetanne V - Moon 8 - Center for Advanced Studies School" se="0.4" si="60014728" sy="Lisbaetanne" syi="30005007"/>
@@ -14641,7 +14704,7 @@
     <row c="Disier" ci="20000386" r="Sinq Laison" ri="10000032" s="Balle VII - Moon 17 - Center for Advanced Studies School" se="0.5" si="60014740" sy="Balle" syi="30002634"/>
     <row c="Spaen" ci="20000388" r="Sinq Laison" ri="10000032" s="Ardene VIII - Moon 11 - Center for Advanced Studies School" se="0.6" si="60014743" sy="Ardene" syi="30002648"/>
     <row c="Marele" ci="20000447" r="Everyshore" ri="10000037" s="Olide IV - Moon 4 - Center for Advanced Studies School" se="0.7" si="60014746" sy="Olide" syi="30003058"/>
-    <row c="Sveipar" ci="20000373" r="Heimatar" ri="10000030" s="Ammold V - Republic Military School" se="1.0" si="60014749" sy="Ammold" syi="30002547"/>
+    <row c="Sveipar" ci="20000373" r="Heimatar" ri="10000030" s="Ammold V - Republic Military School" se="0.9" si="60014749" sy="Ammold" syi="30002547"/>
     <row c="Fittakan" ci="20000350" r="Molden Heath" ri="10000028" s="Gelfiven IX - Moon 4 - Native Freshfood School" se="0.6" si="60014752" sy="Gelfiven" syi="30002386"/>
     <row c="Osta" ci="20000369" r="Heimatar" ri="10000030" s="Dumkirinur V - Republic Military School" se="0.7" si="60014755" sy="Dumkirinur" syi="30002520"/>
     <row c="Fribrodi" ci="20000306" r="Metropolis" ri="10000042" s="Dudreda VI - Moon 4 - Republic Military School" se="0.3" si="60014758" sy="Dudreda" syi="30002076"/>
@@ -14651,7 +14714,7 @@
     <row c="Barvigrard" ci="20000302" r="Metropolis" ri="10000042" s="Anher V - Republic Military School" se="0.5" si="60014770" sy="Anher" syi="30002051"/>
     <row c="Wiedadur" ci="20000371" r="Heimatar" ri="10000030" s="Gerbold III - Moon 14 - Republic Military School" se="0.8" si="60014773" sy="Gerbold" syi="30002533"/>
     <row c="Stadakorn" ci="20000496" r="Metropolis" ri="10000042" s="Evettullur VI - Republic Military School" se="0.8" si="60014776" sy="Evettullur" syi="30003408"/>
-    <row c="Ortner" ci="20000367" r="Heimatar" ri="10000030" s="Hulm VIII - Moon 2 - Republic University" se="1.0" si="60014779" sy="Hulm" syi="30002505"/>
+    <row c="Ortner" ci="20000367" r="Heimatar" ri="10000030" s="Hulm VIII - Moon 2 - Republic University" se="0.9" si="60014779" sy="Hulm" syi="30002505"/>
     <row c="Gedur" ci="20000492" r="Metropolis" ri="10000042" s="Illuin V - Moon 13 - Republic University" se="0.9" si="60014782" sy="Illuin" syi="30003377"/>
     <row c="Argeir" ci="20000504" r="Metropolis" ri="10000042" s="Hotrardik VI - Moon 17 - Republic University" se="0.7" si="60014785" sy="Hotrardik" syi="30003456"/>
     <row c="Essin" ci="20000308" r="Metropolis" ri="10000042" s="Sirekur VIII - Moon 1 - Republic University" se="0.3" si="60014788" sy="Sirekur" syi="30002092"/>
@@ -14661,7 +14724,7 @@
     <row c="Eugidi" ci="20000307" r="Metropolis" ri="10000042" s="Floseswin VIII - Moon 7 - Republic University" se="0.4" si="60014800" sy="Floseswin" syi="30002082"/>
     <row c="Inkelm" ci="20000502" r="Metropolis" ri="10000042" s="Earwik VI - Moon 10 - Republic University" se="0.6" si="60014803" sy="Earwik" syi="30003441"/>
     <row c="Ani" ci="20000305" r="Metropolis" ri="10000042" s="Nakugard V - Republic University" se="0.5" si="60014806" sy="Nakugard" syi="30002068"/>
-    <row c="Meinigefur" ci="20000497" r="Metropolis" ri="10000042" s="Ryddinjorn VI - Moon 2 - Pator Tech School" se="1.0" si="60014809" sy="Ryddinjorn" syi="30003410"/>
+    <row c="Meinigefur" ci="20000497" r="Metropolis" ri="10000042" s="Ryddinjorn VI - Moon 2 - Pator Tech School" se="0.9" si="60014809" sy="Ryddinjorn" syi="30003410"/>
     <row c="Argeir" ci="20000504" r="Metropolis" ri="10000042" s="Orduin IX - Moon 12 - Pator Tech School" se="0.8" si="60014812" sy="Orduin" syi="30003453"/>
     <row c="Tartatven" ci="20000351" r="Molden Heath" ri="10000028" s="Heild X - Moon 1 - Pator Tech School" se="0.3" si="60014815" sy="Heild" syi="30002390"/>
     <row c="Aptetter" ci="20000498" r="Metropolis" ri="10000042" s="Aldrat IX - Pator Tech School" se="0.6" si="60014818" sy="Aldrat" syi="30003416"/>
@@ -14750,7 +14813,7 @@
     <row c="9RW5-Z" ci="20000054" r="UUA-F4" ri="10000004" s="Conquerable Station #60014929" se="0.0" si="60014929" sy="Polaris" syi="30000380"/>
     <row c="9RW5-Z" ci="20000054" r="UUA-F4" ri="10000004" s="Conquerable Station #60014930" se="0.0" si="60014930" sy="Polaris" syi="30000380"/>
     <row c="9RW5-Z" ci="20000054" r="UUA-F4" ri="10000004" s="Conquerable Station #60014931" se="0.0" si="60014931" sy="Polaris" syi="30000380"/>
-    <row c="Kimotoro" ci="20000020" r="The Forge" ri="10000002" s="New Caldari II (Matias) - Kaalakiota Corporation Factory" se="1.0" si="60014935" sy="New Caldari" syi="30000145"/>
+    <row c="Kimotoro" ci="20000020" r="The Forge" ri="10000002" s="New Caldari II (Matias) - Kaalakiota Corporation Factory" se="0.9" si="60014935" sy="New Caldari" syi="30000145"/>
     <row c="XPJ1-6" ci="20000688" r="Delve" ri="10000060" s="UHKL-N V - Moon 1 - Blood Raiders Testing Facilities" se="0.0" si="60014940" sy="UHKL-N" syi="30004706"/>
     <row c="XPJ1-6" ci="20000688" r="Delve" ri="10000060" s="Z3V-1W VII - Blood Raiders Assembly Plant" se="0.0" si="60014941" sy="Z3V-1W" syi="30004707"/>
     <row c="XPJ1-6" ci="20000688" r="Delve" ri="10000060" s="KFIE-Z III - Moon 7 - Blood Raiders Assembly Plant" se="0.0" si="60014942" sy="KFIE-Z" syi="30004709"/>
@@ -14765,16 +14828,16 @@
     <row c="6-UCYU" ci="20000690" r="Delve" ri="10000060" s="319-3D IX - Moon 22 - Blood Raiders Logistic Support" se="0.0" si="60014951" sy="319-3D" syi="30004722"/>
     <row c="6-UCYU" ci="20000690" r="Delve" ri="10000060" s="I3Q-II VII - Moon 2 - Blood Raiders Assembly Plant" se="0.0" si="60014952" sy="I3Q-II" syi="30004723"/>
     <row c="Karnola" ci="20000206" r="Lonetrek" ri="10000016" s="Akiainavas III - School of Applied Knowledge" se="0.7" si="60015001" sy="Akiainavas" syi="30011407"/>
-    <row c="Ihilakken" ci="20000019" r="The Forge" ri="10000002" s="Aokannitoh VII - Moon 2 - School of Applied Knowledge" se="1.0" si="60015002" sy="Aokannitoh" syi="30021407"/>
+    <row c="Ihilakken" ci="20000019" r="The Forge" ri="10000002" s="Aokannitoh VII - Moon 2 - School of Applied Knowledge" se="0.9" si="60015002" sy="Aokannitoh" syi="30021407"/>
     <row c="Okela" ci="20000201" r="Lonetrek" ri="10000016" s="Hitanishio VI - Moon 6 - School of Applied Knowledge" se="0.9" si="60015003" sy="Hitanishio" syi="30031407"/>
     <row c="Okela" ci="20000201" r="Lonetrek" ri="10000016" s="Ichinumi VII - School of Applied Knowledge" se="0.9" si="60015004" sy="Ichinumi" syi="30041407"/>
     <row c="Okela" ci="20000201" r="Lonetrek" ri="10000016" s="Jouvulen III - Science and Trade Institute School" se="0.9" si="60015005" sy="Jouvulen" syi="30011392"/>
     <row c="Koichi" ci="20000199" r="Lonetrek" ri="10000016" s="Kappas VIII - Moon 1 - Science and Trade Institute School" se="0.9" si="60015006" sy="Kappas" syi="30021392"/>
     <row c="Krai Perun" ci="20000787" r="Pochven" ri="10000070" s="Komo IX - Perun Clade Proving Complex" se="0.0" si="60015007" sy="Komo" syi="30031392"/>
     <row c="Santenpaa" ci="20000413" r="The Citadel" ri="10000033" s="Laah VIII - Moon 1 - Science and Trade Institute School" se="0.9" si="60015008" sy="Laah" syi="30041392"/>
-    <row c="Ajah" ci="20000255" r="Tash-Murkon" ri="10000020" s="Kerepa I - Royal Amarr Institute School" se="1.0" si="60015009" sy="Kerepa" syi="30011672"/>
+    <row c="Ajah" ci="20000255" r="Tash-Murkon" ri="10000020" s="Kerepa I - Royal Amarr Institute School" se="0.9" si="60015009" sy="Kerepa" syi="30011672"/>
     <row c="Arvachah" ci="20000247" r="Tash-Murkon" ri="10000020" s="Pasha VII - Moon 3 - Royal Amarr Institute School" se="0.9" si="60015010" sy="Pasha" syi="30021672"/>
-    <row c="Ajah" ci="20000255" r="Tash-Murkon" ri="10000020" s="Safilbab VIII - Moon 4 - Royal Amarr Institute School" se="1.0" si="60015011" sy="Safilbab" syi="30031672"/>
+    <row c="Ajah" ci="20000255" r="Tash-Murkon" ri="10000020" s="Safilbab VIII - Moon 4 - Royal Amarr Institute School" se="0.9" si="60015011" sy="Safilbab" syi="30031672"/>
     <row c="Subhatoub" ci="20000256" r="Tash-Murkon" ri="10000020" s="Seitam VI - Royal Amarr Institute School" se="0.9" si="60015012" sy="Seitam" syi="30041672"/>
     <row c="Coriault" ci="20000389" r="Sinq Laison" ri="10000032" s="Odotte III - University of Caille" se="0.9" si="60015013" sy="Odotte" syi="30012715"/>
     <row c="Agiesseson" ci="20000396" r="Sinq Laison" ri="10000032" s="Oirtlair VI - Moon 1 - University of Caille" se="0.9" si="60015014" sy="Oirtlair" syi="30022715"/>
@@ -14803,20 +14866,20 @@
     <row c="Sveipar" ci="20000373" r="Heimatar" ri="10000030" s="Hadaugago II - Moon 1 - Republic Military School" se="0.9" si="60015037" sy="Hadaugago" syi="30012547"/>
     <row c="Erada" ci="20000377" r="Heimatar" ri="10000030" s="Krilmokenur VII - Moon 8 - Republic Military School" se="0.9" si="60015038" sy="Krilmokenur" syi="30022547"/>
     <row c="Erada" ci="20000377" r="Heimatar" ri="10000030" s="Larkugei IX - Republic Military School" se="0.9" si="60015039" sy="Larkugei" syi="30032547"/>
-    <row c="Erada" ci="20000377" r="Heimatar" ri="10000030" s="Loguttur I - Republic Military School" se="1.0" si="60015040" sy="Loguttur" syi="30042547"/>
-    <row c="Ortner" ci="20000367" r="Heimatar" ri="10000030" s="Malukker I - Republic University" se="1.0" si="60015041" sy="Malukker" syi="30012505"/>
-    <row c="Gedur" ci="20000492" r="Metropolis" ri="10000042" s="Orgron VI - Moon 1 - Republic University" se="1.0" si="60015042" sy="Orgron" syi="30022505"/>
-    <row c="Osta" ci="20000369" r="Heimatar" ri="10000030" s="Todeko VII - Republic University" se="1.0" si="60015043" sy="Todeko" syi="30032505"/>
-    <row c="Odengsolf" ci="20000370" r="Heimatar" ri="10000030" s="Usteli V - Republic University" se="1.0" si="60015044" sy="Usteli" syi="30042505"/>
-    <row c="Gedur" ci="20000492" r="Metropolis" ri="10000042" s="Abrat III - Pator Tech School" se="1.0" si="60015045" sy="Abrat" syi="30013410"/>
-    <row c="Meinigefur" ci="20000497" r="Metropolis" ri="10000042" s="Embod IV - Moon 10 - Pator Tech School" se="1.0" si="60015046" sy="Embod" syi="30023410"/>
+    <row c="Erada" ci="20000377" r="Heimatar" ri="10000030" s="Loguttur I - Republic Military School" se="0.9" si="60015040" sy="Loguttur" syi="30042547"/>
+    <row c="Ortner" ci="20000367" r="Heimatar" ri="10000030" s="Malukker I - Republic University" se="0.9" si="60015041" sy="Malukker" syi="30012505"/>
+    <row c="Gedur" ci="20000492" r="Metropolis" ri="10000042" s="Orgron VI - Moon 1 - Republic University" se="0.9" si="60015042" sy="Orgron" syi="30022505"/>
+    <row c="Osta" ci="20000369" r="Heimatar" ri="10000030" s="Todeko VII - Republic University" se="0.9" si="60015043" sy="Todeko" syi="30032505"/>
+    <row c="Odengsolf" ci="20000370" r="Heimatar" ri="10000030" s="Usteli V - Republic University" se="0.9" si="60015044" sy="Usteli" syi="30042505"/>
+    <row c="Gedur" ci="20000492" r="Metropolis" ri="10000042" s="Abrat III - Pator Tech School" se="0.9" si="60015045" sy="Abrat" syi="30013410"/>
+    <row c="Meinigefur" ci="20000497" r="Metropolis" ri="10000042" s="Embod IV - Moon 10 - Pator Tech School" se="0.9" si="60015046" sy="Embod" syi="30023410"/>
     <row c="Stadakorn" ci="20000496" r="Metropolis" ri="10000042" s="Erego VII - Moon 20 - Pator Tech School" se="0.9" si="60015047" sy="Erego" syi="30033410"/>
-    <row c="Ankard" ci="20000494" r="Metropolis" ri="10000042" s="Fildar V - Pator Tech School" se="1.0" si="60015048" sy="Fildar" syi="30043410"/>
+    <row c="Ankard" ci="20000494" r="Metropolis" ri="10000042" s="Fildar V - Pator Tech School" se="0.9" si="60015048" sy="Fildar" syi="30043410"/>
     <row c="Thoulde" ci="20000734" r="Essence" ri="10000064" s="Synchelle I - Federal Navy Academy" se="0.9" si="60015049" sy="Synchelle" syi="30005015"/>
-    <row c="Maddam" ci="20000514" r="Domain" ri="10000043" s="Irnal I - Imperial Academy" se="1.0" si="60015050" sy="Irnal" syi="30003524"/>
+    <row c="Maddam" ci="20000514" r="Domain" ri="10000043" s="Irnal I - Imperial Academy" se="0.9" si="60015050" sy="Irnal" syi="30003524"/>
     <row c="Ajah" ci="20000255" r="Tash-Murkon" ri="10000020" s="Marthia I - Royal Amarr Institute School" se="0.9" si="60015051" sy="Marthia" syi="30001722"/>
     <row c="Ankard" ci="20000494" r="Metropolis" ri="10000042" s="Olbra I - Pator Tech School" se="0.9" si="60015052" sy="Olbra" syi="30003388"/>
-    <row c="Osta" ci="20000369" r="Heimatar" ri="10000030" s="Edmalbrurdus I - Republic University" se="1.0" si="60015053" sy="Edmalbrurdus" syi="30002518"/>
+    <row c="Osta" ci="20000369" r="Heimatar" ri="10000030" s="Edmalbrurdus I - Republic University" se="0.9" si="60015053" sy="Edmalbrurdus" syi="30002518"/>
     <row c="Jayai" ci="20000436" r="Devoid" ri="10000036" s="Asghed III - 24th Imperial Crusade Logistic Support" se="0.4" si="60015054" sy="Asghed" syi="30002978"/>
     <row c="Jayai" ci="20000436" r="Devoid" ri="10000036" s="Halmah IV - 24th Imperial Crusade Assembly Plant" se="0.4" si="60015055" sy="Halmah" syi="30002981"/>
     <row c="Jayai" ci="20000436" r="Devoid" ri="10000036" s="Tararan IV - 24th Imperial Crusade Logistic Support" se="0.3" si="60015056" sy="Tararan" syi="30002979"/>
@@ -14915,23 +14978,23 @@
     <row c="G-C00324" ci="21000324" r="G-R00031" ri="11000031" s="Thera XII - The Sanctuary Surveillance Observatory" se="0.0" si="60015149" sy="Thera" syi="31000005"/>
     <row c="G-C00324" ci="21000324" r="G-R00031" ri="11000031" s="Thera XIII - The Sanctuary Applied Gravitation Laboratory" se="0.0" si="60015150" sy="Thera" syi="31000005"/>
     <row c="G-C00324" ci="21000324" r="G-R00031" ri="11000031" s="Thera XIV - The Sanctuary Fullerene Loom" se="0.0" si="60015151" sy="Thera" syi="31000005"/>
-    <row c="Sveipar" ci="20000373" r="Heimatar" ri="10000030" s="Pator IV (Matar) - Thukker Council Halls of Liberation" se="1.0" si="60015152" sy="Pator" syi="30002544"/>
-    <row c="Nexus" ci="20000397" r="Sinq Laison" ri="10000032" s="Bourynes VII - AIR Laboratories" se="1.0" si="60015153" sy="Bourynes" syi="30002715"/>
-    <row c="Parud" ci="20000509" r="Domain" ri="10000043" s="Chaven VIII - AIR Laboratories" se="1.0" si="60015154" sy="Chaven" syi="30003489"/>
-    <row c="Gebem" ci="20000737" r="Kor-Azor" ri="10000065" s="Sehmy VIII - AIR Laboratories" se="1.0" si="60015155" sy="Sehmy" syi="30005042"/>
-    <row c="Arvachah" ci="20000247" r="Tash-Murkon" ri="10000020" s="Emrayur III - AIR Laboratories" se="1.0" si="60015156" sy="Emrayur" syi="30001672"/>
-    <row c="Kimotoro" ci="20000020" r="The Forge" ri="10000002" s="Kisogo VII - AIR Laboratories" se="1.0" si="60015157" sy="Kisogo" syi="30000141"/>
-    <row c="Karnola" ci="20000206" r="Lonetrek" ri="10000016" s="Todaki VI - AIR Laboratories" se="1.0" si="60015158" sy="Todaki" syi="30001407"/>
-    <row c="Sela" ci="20000204" r="Lonetrek" ri="10000016" s="Amsen VI - AIR Laboratories" se="1.0" si="60015159" sy="Amsen" syi="30001392"/>
-    <row c="Crux" ci="20000727" r="Essence" ri="10000064" s="Duripant VII - AIR Laboratories" se="1.0" si="60015160" sy="Duripant" syi="30004971"/>
-    <row c="Anwyns" ci="20000776" r="Verge Vendor" ri="10000068" s="Cistuvaert V - AIR Laboratories" se="1.0" si="60015161" sy="Cistuvaert" syi="30005305"/>
-    <row c="Sveipar" ci="20000373" r="Heimatar" ri="10000030" s="Ammold V - AIR Laboratories" se="1.0" si="60015162" sy="Ammold" syi="30002547"/>
-    <row c="Meinigefur" ci="20000497" r="Metropolis" ri="10000042" s="Ryddinjorn VI - AIR Laboratories" se="1.0" si="60015163" sy="Ryddinjorn" syi="30003410"/>
-    <row c="Ortner" ci="20000367" r="Heimatar" ri="10000030" s="Hulm VIII - AIR Laboratories" se="1.0" si="60015164" sy="Hulm" syi="30002505"/>
+    <row c="Sveipar" ci="20000373" r="Heimatar" ri="10000030" s="Pator IV (Matar) - Thukker Council Halls of Liberation" se="0.9" si="60015152" sy="Pator" syi="30002544"/>
+    <row c="Nexus" ci="20000397" r="Sinq Laison" ri="10000032" s="Bourynes VII - AIR Laboratories" se="0.9" si="60015153" sy="Bourynes" syi="30002715"/>
+    <row c="Parud" ci="20000509" r="Domain" ri="10000043" s="Chaven VIII - AIR Laboratories" se="0.9" si="60015154" sy="Chaven" syi="30003489"/>
+    <row c="Gebem" ci="20000737" r="Kor-Azor" ri="10000065" s="Sehmy VIII - AIR Laboratories" se="0.9" si="60015155" sy="Sehmy" syi="30005042"/>
+    <row c="Arvachah" ci="20000247" r="Tash-Murkon" ri="10000020" s="Emrayur III - AIR Laboratories" se="0.9" si="60015156" sy="Emrayur" syi="30001672"/>
+    <row c="Kimotoro" ci="20000020" r="The Forge" ri="10000002" s="Kisogo VII - AIR Laboratories" se="0.9" si="60015157" sy="Kisogo" syi="30000141"/>
+    <row c="Karnola" ci="20000206" r="Lonetrek" ri="10000016" s="Todaki VI - AIR Laboratories" se="0.9" si="60015158" sy="Todaki" syi="30001407"/>
+    <row c="Sela" ci="20000204" r="Lonetrek" ri="10000016" s="Amsen VI - AIR Laboratories" se="0.9" si="60015159" sy="Amsen" syi="30001392"/>
+    <row c="Crux" ci="20000727" r="Essence" ri="10000064" s="Duripant VII - AIR Laboratories" se="0.9" si="60015160" sy="Duripant" syi="30004971"/>
+    <row c="Anwyns" ci="20000776" r="Verge Vendor" ri="10000068" s="Cistuvaert V - AIR Laboratories" se="0.9" si="60015161" sy="Cistuvaert" syi="30005305"/>
+    <row c="Sveipar" ci="20000373" r="Heimatar" ri="10000030" s="Ammold V - AIR Laboratories" se="0.9" si="60015162" sy="Ammold" syi="30002547"/>
+    <row c="Meinigefur" ci="20000497" r="Metropolis" ri="10000042" s="Ryddinjorn VI - AIR Laboratories" se="0.9" si="60015163" sy="Ryddinjorn" syi="30003410"/>
+    <row c="Ortner" ci="20000367" r="Heimatar" ri="10000030" s="Hulm VIII - AIR Laboratories" se="0.9" si="60015164" sy="Hulm" syi="30002505"/>
     <row c="Algintal" ci="20000392" r="Sinq Laison" ri="10000032" s="Parchanier IV - President Bureau" se="0.9" si="60015165" sy="Parchanier" syi="30002676"/>
     <row c="Osnins" ci="20000441" r="Everyshore" ri="10000037" s="Bereye III - Supreme Court Tribunal" se="0.9" si="60015166" sy="Bereye" syi="30003014"/>
     <row c="Sanctum" ci="20000761" r="Genesis" ri="10000067" s="Ourapheh V - Paragon Fulfillment Center" se="0.9" si="60015167" sy="Ourapheh" syi="30005203"/>
-    <row c="Throne Worlds" ci="20000322" r="Domain" ri="10000043" s="Amarr VII (Nemantizor) - Paragon Fulfillment Center" se="1.0" si="60015168" sy="Amarr" syi="30002187"/>
+    <row c="Throne Worlds" ci="20000322" r="Domain" ri="10000043" s="Amarr VII (Nemantizor) - Paragon Fulfillment Center" se="0.9" si="60015168" sy="Amarr" syi="30002187"/>
     <row c="Kimotoro" ci="20000020" r="The Forge" ri="10000002" s="Jita VI - Paragon Fulfillment Center" se="0.9" si="60015169" sy="Jita" syi="30000142"/>
     <row c="Coriault" ci="20000389" r="Sinq Laison" ri="10000032" s="Dodixie V - Paragon Fulfillment Center" se="0.9" si="60015170" sy="Dodixie" syi="30002659"/>
     <row c="Barvigrard" ci="20000302" r="Metropolis" ri="10000042" s="Hek IX - Paragon Fulfillment Center" se="0.8" si="60015171" sy="Hek" syi="30002053"/>
@@ -14951,6 +15014,62 @@
     <row c="Kisana" ci="20000435" r="Devoid" ri="10000036" s="Mehatoor III - Amarr Navy Anchorage" se="0.7" si="60015185" sy="Mehatoor" syi="30002974"/>
     <row c="Tiat" ci="20000303" r="Metropolis" ri="10000042" s="Amo III - Republic Fleet Anchorage" se="0.5" si="60015186" sy="Amo" syi="30002055"/>
     <row c="Duzna Kah" ci="20010000" r="Yasna Zakh" ri="10001000" s="Zarzakh - Deathless Custodians - The Fulcrum" se="0.0" si="60015187" sy="Zarzakh" syi="30100000"/>
+    <row c="1st Accord District" ci="20010002" r="Exordium" ri="10001004" s="Mettle IV - AIR Laboratories" se="1.0" si="60015198" sy="Mettle" syi="30100045"/>
+    <row c="1st Accord District" ci="20010002" r="Exordium" ri="10001004" s="Repute IV - AIR Laboratories" se="1.0" si="60015199" sy="Repute" syi="30100047"/>
+    <row c="1st Accord District" ci="20010002" r="Exordium" ri="10001004" s="Venerate VIII - AIR Laboratories" se="1.0" si="60015200" sy="Venerate" syi="30100046"/>
+    <row c="2nd Accord District" ci="20010003" r="Exordium" ri="10001004" s="Sagacity VII - AIR Laboratories" se="1.0" si="60015201" sy="Sagacity" syi="30100049"/>
+    <row c="2nd Accord District" ci="20010003" r="Exordium" ri="10001004" s="Adroit V - AIR Laboratories" se="1.0" si="60015202" sy="Adroit" syi="30100048"/>
+    <row c="2nd Accord District" ci="20010003" r="Exordium" ri="10001004" s="Erudite III - AIR Laboratories" se="1.0" si="60015203" sy="Erudite" syi="30100050"/>
+    <row c="3rd Accord District" ci="20010004" r="Exordium" ri="10001004" s="Tenacity VI - AIR Laboratories" se="1.0" si="60015204" sy="Tenacity" syi="30100052"/>
+    <row c="3rd Accord District" ci="20010004" r="Exordium" ri="10001004" s="Solemn V - AIR Laboratories" se="1.0" si="60015205" sy="Solemn" syi="30100051"/>
+    <row c="3rd Accord District" ci="20010004" r="Exordium" ri="10001004" s="Valiance IV - AIR Laboratories" se="1.0" si="60015206" sy="Valiance" syi="30100053"/>
+    <row c="4th Accord District" ci="20010005" r="Exordium" ri="10001004" s="Chivalric II - AIR Laboratories" se="1.0" si="60015207" sy="Chivalric" syi="30100054"/>
+    <row c="4th Accord District" ci="20010005" r="Exordium" ri="10001004" s="Equity V - AIR Laboratories" se="1.0" si="60015208" sy="Equity" syi="30100055"/>
+    <row c="4th Accord District" ci="20010005" r="Exordium" ri="10001004" s="Abstention V - AIR Laboratories" se="1.0" si="60015209" sy="Abstention" syi="30100056"/>
+    <row c="Haven" ci="20010009" r="Exordium" ri="10001004" s="Mazor V - Hedion University" se="1.0" si="60015210" sy="Mazor" syi="30100079"/>
+    <row c="Haven" ci="20010009" r="Exordium" ri="10001004" s="Kanta IV - Royal Amarr Institute" se="1.0" si="60015211" sy="Kanta" syi="30100080"/>
+    <row c="Strokar" ci="20010008" r="Exordium" ri="10001004" s="Tungna IV - Moon 1 - Pator Tech School" se="1.0" si="60015212" sy="Tungna" syi="30100072"/>
+    <row c="Strokar" ci="20010008" r="Exordium" ri="10001004" s="Dranga III - Republic University" se="1.0" si="60015213" sy="Dranga" syi="30100073"/>
+    <row c="Federation Free-Zone" ci="20010006" r="Exordium" ri="10001004" s="Ligare V - University of Caille" se="1.0" si="60015214" sy="Ligare" syi="30100059"/>
+    <row c="Federation Free-Zone" ci="20010006" r="Exordium" ri="10001004" s="Rotonos IV - Moon 2 - Center for Advanced Studies" se="1.0" si="60015215" sy="Rotonos" syi="30100058"/>
+    <row c="The Crucible" ci="20010007" r="Exordium" ri="10001004" s="Pamirasu VI - School of Applied Knowledge" se="1.0" si="60015216" sy="Pamirasu" syi="30100066"/>
+    <row c="The Crucible" ci="20010007" r="Exordium" ri="10001004" s="Aldoras VI - Science and Trade Institute" se="1.0" si="60015217" sy="Aldoras" syi="30100065"/>
+    <row c="The Crucible" ci="20010007" r="Exordium" ri="10001004" s="Hotak III - Moon 1 - Caldari Navy Logistic Support" se="1.0" si="60015218" sy="Hotak" syi="30100067"/>
+    <row c="The Crucible" ci="20010007" r="Exordium" ri="10001004" s="Hotak IX - Deep Core Mining Inc. Mining Outpost" se="1.0" si="60015219" sy="Hotak" syi="30100067"/>
+    <row c="The Crucible" ci="20010007" r="Exordium" ri="10001004" s="Kita-Aino V - Moon 8 - Chief Executive Panel Bureau" se="1.0" si="60015220" sy="Kita-Aino" syi="30100064"/>
+    <row c="The Crucible" ci="20010007" r="Exordium" ri="10001004" s="Tatrys II - House of Records Information Center" se="1.0" si="60015221" sy="Tatrys" syi="30100070"/>
+    <row c="The Crucible" ci="20010007" r="Exordium" ri="10001004" s="Tatrys V - Moon 3 - State Protectorate Logistic Support" se="1.0" si="60015222" sy="Tatrys" syi="30100070"/>
+    <row c="Federation Free-Zone" ci="20010006" r="Exordium" ri="10001004" s="Axiosere V - Moon 1 - Federation Navy Logistic Support" se="1.0" si="60015223" sy="Axiosere" syi="30100060"/>
+    <row c="Federation Free-Zone" ci="20010006" r="Exordium" ri="10001004" s="Axiosere VII - Astral Mining Inc. Mining Outpost" se="1.0" si="60015224" sy="Axiosere" syi="30100060"/>
+    <row c="Federation Free-Zone" ci="20010006" r="Exordium" ri="10001004" s="Tiberis VII - Moon 1 - President Bureau" se="1.0" si="60015225" sy="Tiberis" syi="30100057"/>
+    <row c="Federation Free-Zone" ci="20010006" r="Exordium" ri="10001004" s="Mondaekus IV - Moon 1 - Federal Defense Union Logistic Support" se="1.0" si="60015226" sy="Mondaekus" syi="30100063"/>
+    <row c="Federation Free-Zone" ci="20010006" r="Exordium" ri="10001004" s="Mondaekus VIII - Federal Intelligence Office Testing Facilities" se="1.0" si="60015227" sy="Mondaekus" syi="30100063"/>
+    <row c="Haven" ci="20010009" r="Exordium" ri="10001004" s="Ichorah IV - 24th Imperial Crusade Logistic Support" se="1.0" si="60015228" sy="Ichorah" syi="30100084"/>
+    <row c="Haven" ci="20010009" r="Exordium" ri="10001004" s="Ichorah VII - Moon 1 - Ministry of Internal Order Testing Facilities" se="1.0" si="60015229" sy="Ichorah" syi="30100084"/>
+    <row c="Haven" ci="20010009" r="Exordium" ri="10001004" s="Adaz V - Emperor Family Bureau" se="1.0" si="60015230" sy="Adaz" syi="30100078"/>
+    <row c="Haven" ci="20010009" r="Exordium" ri="10001004" s="Taikud IV - Amarr Navy Logistic Support" se="1.0" si="60015231" sy="Taikud" syi="30100081"/>
+    <row c="Haven" ci="20010009" r="Exordium" ri="10001004" s="Taikud XI - Moon 1 - HZO Refinery Mining Outpost" se="1.0" si="60015232" sy="Taikud" syi="30100081"/>
+    <row c="Strokar" ci="20010008" r="Exordium" ri="10001004" s="Vatna III - Republic Parliament Bureau" se="1.0" si="60015233" sy="Vatna" syi="30100071"/>
+    <row c="Strokar" ci="20010008" r="Exordium" ri="10001004" s="Tindfjalla V - Republic Fleet Logistic Support" se="1.0" si="60015234" sy="Tindfjalla" syi="30100074"/>
+    <row c="Strokar" ci="20010008" r="Exordium" ri="10001004" s="Tindfjalla IV - Minmatar Mining Corporation Mining Outpost" se="1.0" si="60015235" sy="Tindfjalla" syi="30100074"/>
+    <row c="Strokar" ci="20010008" r="Exordium" ri="10001004" s="Dettisolin II - Tribal Liberation Force Logistic Support" se="1.0" si="60015236" sy="Dettisolin" syi="30100077"/>
+    <row c="Strokar" ci="20010008" r="Exordium" ri="10001004" s="Dettisolin VII - Moon 2 - Republic Security Services Logistic Support" se="1.0" si="60015237" sy="Dettisolin" syi="30100077"/>
+    <row c="3rd Accord District" ci="20010004" r="Exordium" ri="10001004" s="Rigor V - Native Freshfood Warehouse" se="1.0" si="60015238" sy="Rigor" syi="30100041"/>
+    <row c="4th Accord District" ci="20010005" r="Exordium" ri="10001004" s="Steadfast IV - Moon 1 - Nurtura Warehouse" se="1.0" si="60015240" sy="Steadfast" syi="30100043"/>
+    <row c="4th Accord District" ci="20010005" r="Exordium" ri="10001004" s="Couth III - Moon 1 - Inner Zone Shipping Storage" se="1.0" si="60015241" sy="Couth" syi="30100044"/>
+    <row c="4th Accord District" ci="20010005" r="Exordium" ri="10001004" s="Couth VIII - Moon 4 - CONCORD Assembly Plant" se="1.0" si="60015242" sy="Couth" syi="30100044"/>
+    <row c="3rd Accord District" ci="20010004" r="Exordium" ri="10001004" s="Lenity V - Genolution Biotech Research Center" se="1.0" si="60015243" sy="Lenity" syi="30100042"/>
+    <row c="2nd Accord District" ci="20010003" r="Exordium" ri="10001004" s="Celerity V - Moon 1 - Mercantile Club Bureau" se="1.0" si="60015244" sy="Celerity" syi="30100039"/>
+    <row c="2nd Accord District" ci="20010003" r="Exordium" ri="10001004" s="Ratiocinate IX - Inner Circle Bureau" se="1.0" si="60015245" sy="Ratiocinate" syi="30100040"/>
+    <row c="1st Accord District" ci="20010002" r="Exordium" ri="10001004" s="Lustre VI - Sisters of EVE Bureau" se="1.0" si="60015246" sy="Lustre" syi="30100038"/>
+    <row c="1st Accord District" ci="20010002" r="Exordium" ri="10001004" s="Fortitude III - Poteque Pharmaceuticals Biotech Production" se="1.0" si="60015247" sy="Fortitude" syi="30100034"/>
+    <row c="2nd Accord District" ci="20010003" r="Exordium" ri="10001004" s="Forte V - Moon 2 - DED Assembly Plant" se="1.0" si="60015248" sy="Forte" syi="30100035"/>
+    <row c="Manifest District" ci="20010001" r="Exordium" ri="10001004" s="Manifest V - AIR Laboratories Trade Center" se="1.0" si="60015249" sy="Manifest" syi="30100032"/>
+    <row c="Manifest District" ci="20010001" r="Exordium" ri="10001004" s="Manifest IV - Moon 5 - Paragon Fulfillment Center" se="1.0" si="60015251" sy="Manifest" syi="30100032"/>
+    <row c="Manifest District" ci="20010001" r="Exordium" ri="10001004" s="Manifest VI - CONCORD Bureau" se="1.0" si="60015252" sy="Manifest" syi="30100032"/>
+    <row c="Kimotoro" ci="20000020" r="The Forge" ri="10000002" s="Jita II - Sebiestor Tribe Trade Embassy" se="0.9" si="60015260" sy="Jita" syi="30000142"/>
+    <row c="Kimotoro" ci="20000020" r="The Forge" ri="10000002" s="Jita III - Moon 1 - Tash-Murkon Family Trade Embassy" se="0.9" si="60015261" sy="Jita" syi="30000142"/>
+    <row c="Kimotoro" ci="20000020" r="The Forge" ri="10000002" s="Jita VIII - Quafe Company Trade Embassy" se="0.9" si="60015262" sy="Jita" syi="30000142"/>
     <row c="9RW5-Z" ci="20000054" r="UUA-F4" ri="10000004" s="Conquerable Station #61000001" se="0.0" si="61000001" sy="RU-97T" syi="30000377"/>
     <row c="RHG-4O" ci="20000653" r="Feythabolis" ri="10000056" s="Conquerable Station #61000002" se="0.0" si="61000002" sy="5P-AIP" syi="30004477"/>
     <row c="JSZ-X6" ci="20000456" r="Esoteria" ri="10000039" s="Conquerable Station #61000003" se="0.0" si="61000003" sy="16P-PX" syi="30003122"/>
