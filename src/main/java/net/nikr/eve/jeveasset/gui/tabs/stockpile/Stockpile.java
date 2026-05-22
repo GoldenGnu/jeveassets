@@ -94,7 +94,6 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 	private final List<Stockpile> subpileLinks = new ArrayList<>();
 	private final List<SubpileItem> subpileAll = new ArrayList<>();
 	private final List<SubpileItem> subpileItems = new ArrayList<>();
-	private final List<SubpileItemMaterial> materialsSubpileItems = new ArrayList<>();
 	private final List<SubpileStock> subpileStocks = new ArrayList<>();
 	private double percentFull;
 	private double multiplier;
@@ -218,10 +217,6 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 		return subpileAll;
 	}
 
-	public List<SubpileItemMaterial> getMaterialsSubpileItems() {
-		return materialsSubpileItems;
-	}
-
 	public List<SubpileStock> getSubpileStocks() {
 		return subpileStocks;
 	}
@@ -243,9 +238,6 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 	public void addSubpileItem(SubpileItem subpileItem) {
 		subpileAll.add(subpileItem);
 		subpileItems.add(subpileItem);
-		if (subpileItem instanceof SubpileItemMaterial) {
-			materialsSubpileItems.add((SubpileItemMaterial) subpileItem);
-		}
 	}
 
 	public void addSubpileStock(SubpileStock subpileStock) {
@@ -604,9 +596,6 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 	public void updateMaterials() {
 		for (StockpileItemMaterial material : getMaterials()) {
 			material.updateItems();
-		}
-		for (SubpileItemMaterial subpileItem : materialsSubpileItems) {
-			subpileItem.updateItems();
 		}
 		for (Stockpile stockpile : subpileLinks) {
 			stockpile.updateMaterials();
@@ -1857,13 +1846,13 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 		public StockpileItem deepCloneNew(final Stockpile stockpile) {
 			int blueprint = calcRecursiveLevel(this.blueprintRecursiveLevel);
 			int formula = calcRecursiveLevel(this.formulaRecursiveLevel);
-			return new StockpileItemMaterial(stockpile, null, this, getCountMinimum(), blueprint, formula, 0);
+			return new StockpileItemMaterial(stockpile, null, this, getCountMinimumUnmodified(), blueprint, formula, 0);
 		}
 
 		public StockpileItemMaterial deepCloneMaterialNew(final Stockpile stockpile) {
 			int blueprint = calcRecursiveLevel(this.blueprintRecursiveLevel);
 			int formula = calcRecursiveLevel(this.formulaRecursiveLevel);
-			return new StockpileItemMaterial(stockpile, null, this, 1, blueprint, formula, 0);
+			return new StockpileItemMaterial(stockpile, null, this, getCountMinimumUnmodified(), blueprint, formula, 0);
 		}
 
 		private int findRecursiveLevel(StockpileItemMaterial material, int level) {
@@ -2268,80 +2257,14 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 				}
 			}
 		}
-	}
 
-	private static void updateCount(int typeID, double countNeeded, double countTotal, Map<TypeIdentifier, StockpileItem> itemTypes) {
-		StockpileItem stockpileItem = itemTypes.get(new TypeIdentifier(typeID, false, true));
-		if (stockpileItem == null) {
-			stockpileItem = itemTypes.get(new TypeIdentifier(typeID, false, false));
-		}
-		stockpileItem.setCountMinimum(countTotal);
-		stockpileItem.updateItemMultiplier(countNeeded);
-	}
-
-	public static class SubpileItemMaterial extends SubpileItem {
-
-		private final Map<Integer, StockpileItem> itemTypes = new HashMap<>();
-		private final Set<SubpileItemMaterial> subpileMaterials = new HashSet<>();
-		private final SubMultiplier stock;
-		private final StockpileItemMaterial topItemMaterial;
-		private final StockpileItemMaterial parentItemMaterial;
-		private final StockpileItem parentItem;
-		private final StockpileItemMaterial originalItemMaterial;
-
-		public SubpileItemMaterial(Stockpile stockpile, StockpileItemMaterial originalItemMaterial, StockpileItemMaterial topItemMaterial, StockpileItemMaterial parentItemMaterial, SubMultiplier subpileStock, int level, String path) {
-			super(stockpile, ApiIdConverter.getItem(parentItemMaterial.getProductTypeID()), parentItemMaterial.getProductTypeID(), parentItemMaterial, subpileStock, level, path);
-			this.originalItemMaterial = originalItemMaterial;
-			this.topItemMaterial = topItemMaterial;
-			this.parentItemMaterial = parentItemMaterial;
-			this.parentItem = parentItemMaterial;
-			this.stock = subpileStock;
-			//addItemLink(originalItemMaterial, stock);
-		}
-
-		public SubpileItemMaterial(Stockpile stockpile, StockpileItemMaterial originalItemMaterial, StockpileItemMaterial topItemMaterial, StockpileItem stockpileItem, SubMultiplier subpileStock, int level, String path) {
-			super(stockpile, ApiIdConverter.getItem(stockpileItem.getTypeID()), stockpileItem.getTypeID(), stockpileItem, subpileStock, level, path);
-			this.originalItemMaterial = originalItemMaterial;
-			this.topItemMaterial = topItemMaterial;
-			this.parentItemMaterial = null;
-			this.parentItem = stockpileItem;
-			this.stock = subpileStock;
-			addItemLink(originalItemMaterial, stock);
-		}
-
-		public void addItem(SubpileItemMaterial item) {
-			itemTypes.put(item.getTypeID(), item);
-		}
-
-		public void addMaterial(SubpileItemMaterial item) {
-			itemTypes.put(item.getNeededTypeID(), item);
-			subpileMaterials.add(item);
-		}
-
-		@Override
-		public void setCountMinimum(double countMinimum) {
-			super.setCountMinimum(countMinimum);
-			//updateItems();
-		}
-
-		void updateItems() {
-			/*
-			System.out.println("--- " + getName() + "  ---");
-			System.out.println("	SUBPILE Now: " + getCountNow() + " Min: " + getCountMinimum() + " Need: " + getCountNeeded());
-			System.out.println("	ITEM Now: " + parentItem.getCountNow() + " Min: " + parentItem.getCountMinimum() + " Need: " + parentItem.getCountNeeded());
-			*/
-			parentItem.updateCountNow(this);
-			/*
-			System.out.println("	SUBPILE Now: " + getCountNow() + " Min: " + getCountMinimum() + " Need: " + getCountNeeded());
-			System.out.println("	ITEM Now: " + parentItem.getCountNow() + " Min: " + parentItem.getCountMinimum() + " Need: " + parentItem.getCountNeeded());
-			System.out.println("--- ---");
-			*/
-			if (topItemMaterial == null || topItemMaterial.isSubMaterial()) {
-				return;
+		private static void updateCount(int typeID, double countNeeded, double countTotal, Map<TypeIdentifier, StockpileItem> itemTypes) {
+			StockpileItem stockpileItem = itemTypes.get(new TypeIdentifier(typeID, false, true));
+			if (stockpileItem == null) {
+				stockpileItem = itemTypes.get(new TypeIdentifier(typeID, false, false));
 			}
-			topItemMaterial.setCountMinimum(stock.getSubMultiplier() * originalItemMaterial.getCountMinimumUnmodified());
-			//topItemMaterial.setCountMinimum(stock.getSubMultiplier());
-			topItemMaterial.updateItems();
+			stockpileItem.setCountMinimum(countTotal);
+			stockpileItem.updateItemMultiplier(countNeeded);
 		}
 	}
 

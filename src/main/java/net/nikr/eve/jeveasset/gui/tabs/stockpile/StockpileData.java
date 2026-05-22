@@ -50,7 +50,6 @@ import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItemMaterial;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.SubMultiplier;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.SubpileItem;
-import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.SubpileItemMaterial;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.SubpileStock;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.TypeIdentifier;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
@@ -260,12 +259,6 @@ public class StockpileData extends TableData {
 		stockpile.reset();
 		if (!stockpile.isEmpty()) {
 			for (StockpileItem item : stockpile.getItems()) {
-				if (item.isTotal()) {
-					continue; //Ignore Total
-				}
-				updateItem(item, stockpile);
-			}
-			for (StockpileItem item : stockpile.getMaterialsSubpileItems()) {
 				if (item.isTotal()) {
 					continue; //Ignore Total
 				}
@@ -551,9 +544,6 @@ public class StockpileData extends TableData {
 		if (item instanceof StockpileItemMaterial) {
 			((StockpileItemMaterial) item).updateItems();
 		}
-		if (item instanceof SubpileItemMaterial) {
-			((SubpileItemMaterial) item).updateItems();
-		}
 	}
 
 	private <E> Map<Integer, Set<E>> get(Map<Stockpile, Map<Integer, Set<E>>> map, Stockpile key) {
@@ -675,7 +665,7 @@ public class StockpileData extends TableData {
 	private static void add(Map<TypeIdentifier, StockpileItem> parentItems, Stockpile topStockpile, StockpileItemMaterial material, int level) {
 		for (StockpileItem item : material.getMaterialItems()) {
 			SubpileItem sim = new SubpileItem(topStockpile, item, material, 0, topStockpile.getName() + "\r\n");
-			addSubpileItem(parentItems, topStockpile, sim, item, material, level, sim.getPath());
+			addSubpileItem(parentItems, topStockpile, sim, item, material, level, sim.getPath(), false);
 		}
 		for (StockpileItemMaterial item : material.getMaterials()) {
 			add(parentItems, topStockpile, item, level + 1);
@@ -702,43 +692,41 @@ public class StockpileData extends TableData {
 			int level = parentLevel + 1;
 			SubpileStock subpileStock = new SubpileStock(topStockpile, currentStockpile, parentStockpile, parentStock, value, parentLevel, path);
 			topStockpile.addSubpileStock(subpileStock);
-			for (StockpileItemMaterial material : currentStockpile.getMaterials()) {
-				//StockpileItemMaterial clone = material.deepCloneMaterialNew(topStockpile);
-				//SubpileItem subpileItem = new SubpileItem(topStockpile, clone, subpileStock, level, path);
-				//addMaterial(topStockpile, subpileStock, clone, level, path);
-
-				StockpileItemMaterial clone = material.deepCloneMaterialNew(topStockpile);
-				clone.updateItems();
-				addMaterial(topItems, topStockpile, subpileStock, material, clone, clone, level, path);
-			}
+			addMaterial(topStockpile, currentStockpile, topItems, subpileStock, parentLevel, parentPath, currentStockpile.getMaterials());
 			for (StockpileItem stockpileItem : currentStockpile.getStockpileItems()) {
 				//For each StockpileItem
 				if (stockpileItem.isTotal()) {
 					continue; //Ignore Total
 				}
 				SubpileItem subpileItem = new SubpileItem(topStockpile, stockpileItem, subpileStock, parentLevel, path);
-				addSubpileItem(topItems, topStockpile, subpileItem, stockpileItem, subpileStock, level, path);
+				addSubpileItem(topItems, topStockpile, subpileItem, stockpileItem, subpileStock, level, path, false);
 			}
 			updateSubpileClaims(topStockpile, currentStockpile, topItems, subpileStock, level, path);
 		}
 	}
 
-	private static SubpileItemMaterial addMaterial(Map<TypeIdentifier, StockpileItem> topItems, Stockpile topStockpile, SubpileStock subpileStock, StockpileItemMaterial original, StockpileItemMaterial top, StockpileItemMaterial clone, int level, String path) {
-		SubpileItemMaterial subpileItemMaterial = new SubpileItemMaterial(topStockpile, original, top, clone, subpileStock, level, path);
-		addSubpileItem(topItems, topStockpile, subpileItemMaterial, clone, subpileStock, level, path);
-		for (StockpileItemMaterial material : clone.getMaterials()) {
-			subpileItemMaterial.addMaterial(addMaterial(topItems, topStockpile, subpileStock, original, top, material, level, path));
+	private static void addMaterial(Stockpile topStockpile, Stockpile currentStockpile, Map<TypeIdentifier, StockpileItem> topItems, SubpileStock subpileStock, int parentLevel, String parentPath, Set<StockpileItemMaterial> materials) {
+		int level = parentLevel + 1;
+		String path = parentPath + currentStockpile.getName() + "\r\n";
+		for (StockpileItemMaterial stockpileItemMaterial : materials) {
+			if (stockpileItemMaterial.isTotal()) {
+				continue; //Ignore Total
+			}
+			SubpileItem subpileItemMaterial = new SubpileItem(topStockpile, stockpileItemMaterial, subpileStock, parentLevel, path);
+			addSubpileItem(topItems, topStockpile, subpileItemMaterial, stockpileItemMaterial, subpileStock, level, path, false);
+			addMaterial(topStockpile, currentStockpile, topItems, subpileStock, level, path, stockpileItemMaterial.getMaterials());
+			for (StockpileItem stockpileItem : stockpileItemMaterial.getMaterialItems()) {
+				if (stockpileItem.isTotal()) {
+				continue; //Ignore Total
+			}
+				SubpileItem subpileItem = new SubpileItem(topStockpile, stockpileItem, subpileStock, parentLevel, path);
+				addSubpileItem(topItems, topStockpile, subpileItem, stockpileItem, subpileStock, level, path, false);
+			}
 		}
-		for (StockpileItem item : clone.getMaterialItems()) {
-			SubpileItemMaterial subpileItem = new SubpileItemMaterial(topStockpile, original, top, item, subpileStock, 0, topStockpile.getName() + "\r\n");
-			subpileItemMaterial.addItem(subpileItem);
-			addSubpileItem(topItems, topStockpile, subpileItem, item, subpileStock, level, subpileItem.getPath());
-		}
-		return subpileItemMaterial;
 	}
 
-	private static void addSubpileItem(Map<TypeIdentifier, StockpileItem> topItems, Stockpile topStockpile, SubpileItem subpileItem, StockpileItem stockpileItem, SubMultiplier subpileStock, int level, String path) {
-		StockpileItem parentItem = topItems.get(new TypeIdentifier(stockpileItem.getNeededTypeID(), stockpileItem.isRuns()));
+	private static void addSubpileItem(Map<TypeIdentifier, StockpileItem> topItems, Stockpile topStockpile, SubpileItem subpileItem, StockpileItem stockpileItem, SubMultiplier subpileStock, int level, String path, boolean manufactoring) {
+		StockpileItem parentItem = topItems.get(new TypeIdentifier(stockpileItem.getNeededTypeID(), stockpileItem.isRuns(), manufactoring));
 		if (parentItem != null) { //Add link (Advanced: Item + Link)
 			subpileItem.addItemLink(parentItem, null); //Add link
 		}
