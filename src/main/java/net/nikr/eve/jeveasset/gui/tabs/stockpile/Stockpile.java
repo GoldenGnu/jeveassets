@@ -2246,7 +2246,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 			if (blueprintSettings.getItem().isFormula()) {
 				//Reaction Materials
 				for (IndustryMaterial material : blueprintSettings.getItem().getReactionMaterials()) {
-					if (material.getTypeID() != updateItem.getTypeID()) {
+					if (material.getTypeID() != updateItem.getNeededTypeID()) {
 						continue;
 					}
 					return getReactionQuantityNeeded(blueprintSettings, blueprintCount, material);
@@ -2254,7 +2254,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 			} else {
 				 //Manufacturing Materials
 				for (IndustryMaterial material : blueprintSettings.getItem().getManufacturingMaterials()) {
-					if (material.getTypeID() != updateItem.getTypeID()) {
+					if (material.getTypeID() != updateItem.getNeededTypeID()) {
 						continue;
 					}
 					return getManufacturingQuantityNeeded(blueprintSettings, blueprintCount, material);
@@ -2883,7 +2883,8 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 		}
 
 		private String getMaterialLinkKey(StockpileItem key) {
-			return key.getStockpile().getName() + "\r\n" +  key.getTypeID() + "\r\n" + key.isBPC()  + "\r\n" + key.isBPC() + "\r\n" + key.getID();
+			//return key.getStockpile().getName() + "\r\n" +  key.getTypeID() + "\r\n" + key.isBPC()  + "\r\n" + key.isBPC() + "\r\n" + key.getID();
+			return key.getStockpile().getName() + "\r\n" +  key.getNeededTypeID() + "\r\n" + key.isBPC()  + "\r\n" + key.isBPC() + "\r\n" + key.getID();
 		}
 
 		public final void add(StockpileItem key, SubpileItem subpileItem) {
