@@ -1299,6 +1299,11 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 			this.getStockpile().updateTotal();
 		}
 
+		public void updateCountMinimum(double countMinimum) {
+			this.countMinimum = countMinimum;
+			this.getStockpile().updateTotal();
+		}
+
 		public void addCountMinimum(final double countMinimum) {
 			this.countMinimum = this.countMinimum + countMinimum;
 			this.getStockpile().updateTotal();
@@ -2069,6 +2074,17 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 		}
 
 		@Override
+		public void updateCountMinimum(double countMinimum) {
+			super.updateCountMinimum(countMinimum);
+		}
+
+		@Override
+		public void updateItemMultiplier(double count) {
+			super.updateItemMultiplier(count);
+			updateItems();
+		}
+
+		@Override
 		public int getNeededTypeID() {
 			return productTypeID;
 		}
@@ -2227,6 +2243,15 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 			}
 		}
 
+		private static void updateCount(int typeID, double countNeeded, double countTotal, Map<TypeIdentifier, StockpileItem> itemTypes) {
+			StockpileItem stockpileItem = itemTypes.get(new TypeIdentifier(typeID, false, true));
+			if (stockpileItem == null) {
+				stockpileItem = itemTypes.get(new TypeIdentifier(typeID, false, false));
+			}
+			stockpileItem.updateCountMinimum(countTotal);
+			stockpileItem.updateItemMultiplier(countNeeded);
+		}
+
 		public static double getCountMinimum(StockpileItemMaterial blueprintSettings, StockpileItem updateItem) {
 			if (blueprintSettings.getItem().isFormula()) {
 				//Reaction Materials
@@ -2267,15 +2292,6 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 				}
 			}
 			return 1;
-		}
-
-		private static void updateCount(int typeID, double countNeeded, double countTotal, Map<TypeIdentifier, StockpileItem> itemTypes) {
-			StockpileItem stockpileItem = itemTypes.get(new TypeIdentifier(typeID, false, true));
-			if (stockpileItem == null) {
-				stockpileItem = itemTypes.get(new TypeIdentifier(typeID, false, false));
-			}
-			stockpileItem.setCountMinimum(countTotal);
-			stockpileItem.updateItemMultiplier(countNeeded);
 		}
 
 		private static double getReactionQuantityTotal(StockpileItemMaterial blueprintSettings, IndustryMaterial material) {
