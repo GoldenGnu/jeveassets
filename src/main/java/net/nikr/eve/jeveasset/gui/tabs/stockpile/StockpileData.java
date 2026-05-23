@@ -717,9 +717,9 @@ public class StockpileData extends TableData {
 			addMaterial(topStockpile, currentStockpile, topItems, subpileStock, level, path, stockpileItemMaterial.getMaterials());
 			for (StockpileItem stockpileItem : stockpileItemMaterial.getMaterialItems()) {
 				if (stockpileItem.isTotal()) {
-				continue; //Ignore Total
-			}
-				SubpileItem subpileItem = new SubpileItem(topStockpile, stockpileItem, subpileStock, parentLevel, path);
+					continue; //Ignore Total
+				}
+				SubpileItem subpileItem = new SubpileItem(topStockpile, stockpileItem, stockpileItemMaterial, subpileItemMaterial, subpileStock, parentLevel, path);
 				addSubpileItem(topItems, topStockpile, subpileItem, stockpileItem, subpileStock, level, path, false);
 			}
 		}
@@ -734,6 +734,7 @@ public class StockpileData extends TableData {
 		if (linkIndex >= 0) { //Update item (Advanced: Link + Link = MultiLink)
 			SubpileItem linkItem = topStockpile.getSubpileItems().get(linkIndex);
 			linkItem.addItemLink(stockpileItem, subpileStock);
+			linkItem.add(subpileItem);
 			if (level >= linkItem.getLevel()) {
 				linkItem.setPath(path);
 				linkItem.setLevel(level);

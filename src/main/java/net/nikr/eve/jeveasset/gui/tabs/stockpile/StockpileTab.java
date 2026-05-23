@@ -801,9 +801,11 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 			if (item instanceof StockpileItemMaterial) {
 				StockpileItemMaterial materialItem = (StockpileItemMaterial) item;
 				innerRemove(remove, materialItem);
+			} else {
+				stockpiles.add(item.getStockpile());
 			}
-			stockpiles.add(item.getStockpile());
 		}
+		System.out.println("remove: " + remove.size());
 		for (Stockpile stockpile : stockpiles) {
 			if (stockpile.isMatchAll()) { //Less items == may match now...
 				updateStockpile(stockpile);
@@ -827,8 +829,8 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 	}
 
 	private void innerRemove(List<StockpileItem> remove, StockpileItemMaterial materialItem) {
-		remove.add(materialItem);
 		for (StockpileItemMaterial item : materialItem.getMaterials()) {
+			remove.add(item);
 			innerRemove(remove, item);
 		}
 	}

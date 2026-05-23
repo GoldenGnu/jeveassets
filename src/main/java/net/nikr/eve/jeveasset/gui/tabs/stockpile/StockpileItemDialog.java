@@ -814,6 +814,7 @@ public class StockpileItemDialog extends JDialogCentered {
 				if (itemExist()) { //EDIT + UPDATING (Editing to an existing item)
 					System.out.println("EXITING");
 					StockpileItem existingItem = getExistingItem();
+					System.out.println("existingItem: " + existingItem.getName());
 					existingItem.getStockpile().remove(existingItem);
 					stockpileTab.removeItem(existingItem);
 				}
@@ -1026,7 +1027,7 @@ public class StockpileItemDialog extends JDialogCentered {
 								jRigs.setSelectedIndex(0);
 								Integer[] recursiveLevelBlueprints = getRecursiveLevelBlueprints();
 								Boolean recursiveBlueprint = null;
-								if (exitingItem instanceof StockpileItemMaterial ) {
+								if (exitingItem instanceof StockpileItemMaterial) {
 									StockpileItemMaterial materialItem = (StockpileItemMaterial) exitingItem;
 									if (materialItem.isSubMaterial()) {
 										recursiveBlueprint = !materialItem.getMaterials().isEmpty(); //Edit Sub Item: Have sub blueprints
