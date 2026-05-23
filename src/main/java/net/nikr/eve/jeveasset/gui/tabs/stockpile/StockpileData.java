@@ -692,7 +692,7 @@ public class StockpileData extends TableData {
 			int level = parentLevel + 1;
 			SubpileStock subpileStock = new SubpileStock(topStockpile, currentStockpile, parentStockpile, parentStock, value, parentLevel, path);
 			topStockpile.addSubpileStock(subpileStock);
-			addMaterial(topStockpile, currentStockpile, topItems, subpileStock, parentLevel, parentPath, currentStockpile.getMaterials());
+			addMaterial(topStockpile, currentStockpile, null, null, topItems, subpileStock, parentLevel, parentPath, currentStockpile.getMaterials());
 			for (StockpileItem stockpileItem : currentStockpile.getStockpileItems()) {
 				//For each StockpileItem
 				if (stockpileItem.isTotal()) {
@@ -705,14 +705,14 @@ public class StockpileData extends TableData {
 		}
 	}
 
-	private static void addMaterial(Stockpile topStockpile, Stockpile currentStockpile, Map<TypeIdentifier, StockpileItem> topItems, SubpileStock subpileStock, int parentLevel, String parentPath, Set<StockpileItemMaterial> materials) {
+	private static void addMaterial(Stockpile topStockpile, Stockpile currentStockpile, StockpileItemMaterial parentMaterial, SubpileItem parentSubpile, Map<TypeIdentifier, StockpileItem> topItems, SubpileStock subpileStock, int parentLevel, String parentPath, Set<StockpileItemMaterial> materials) {
 		int level = parentLevel + 1;
 		for (StockpileItemMaterial stockpileItemMaterial : materials) {
 			if (stockpileItemMaterial.isTotal()) {
 				continue; //Ignore Total
 			}
 			String path = parentPath + stockpileItemMaterial.getName() + "\r\n";
-			SubpileItem subpileItemMaterial = new SubpileItem(topStockpile, stockpileItemMaterial, subpileStock, parentLevel, path);
+			SubpileItem subpileItemMaterial = new SubpileItem(topStockpile, stockpileItemMaterial, parentMaterial, parentSubpile, subpileStock, parentLevel, path);
 			addSubpileItem(topItems, topStockpile, subpileItemMaterial, stockpileItemMaterial, subpileStock, level, path, false);
 			for (StockpileItem stockpileItem : stockpileItemMaterial.getMaterialItems()) {
 				if (stockpileItem.isTotal()) {
@@ -721,7 +721,7 @@ public class StockpileData extends TableData {
 				SubpileItem subpileItem = new SubpileItem(topStockpile, stockpileItem, stockpileItemMaterial, subpileItemMaterial, subpileStock, parentLevel, path);
 				addSubpileItem(topItems, topStockpile, subpileItem, stockpileItem, subpileStock, level, path, false);
 			}
-			addMaterial(topStockpile, currentStockpile, topItems, subpileStock, level, path, stockpileItemMaterial.getMaterials());
+			addMaterial(topStockpile, currentStockpile, stockpileItemMaterial, subpileItemMaterial, topItems, subpileStock, level, path, stockpileItemMaterial.getMaterials());
 			
 		}
 	}

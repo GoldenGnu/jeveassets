@@ -2784,7 +2784,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 	public static class SubpileItem extends StockpileItem {
 
 		private final List<SubpileItemLink> itemLinks = new ArrayList<>();
-		private final Map<StockpileItem, MaterialLink> materialLinks = new HashMap<>();
+		private final Map<String, MaterialLink> materialLinks = new HashMap<>();
 		private final StockpileItemMaterial blueprintSettings;
 		private final SubpileItem blueprintCount;
 		private final boolean mfg;
@@ -2797,8 +2797,8 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 			this(stockpile, parentItem.getItem(), parentItem.getNeededTypeID(), parentItem, null, null, false, subpileStock, level, path);
 		}
 
-		public SubpileItem(Stockpile stockpile, StockpileItemMaterial parentItem, SubMultiplier subpileStock, int level, String path) {
-			this(stockpile, parentItem.getItem(), parentItem.getNeededTypeID(), parentItem, null, null, true, subpileStock, level, path);
+		public SubpileItem(Stockpile stockpile, StockpileItemMaterial parentItem, StockpileItemMaterial parentMaterial, SubpileItem subpileMaterial, SubMultiplier subpileStock, int level, String path) {
+			this(stockpile, parentItem.getItem(), parentItem.getNeededTypeID(), parentItem, parentMaterial, subpileMaterial, true, subpileStock, level, path);
 			setLevel(parentItem.getLevel());
 			updateText();
 		}
@@ -2879,11 +2879,16 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 
 		public void clearItemLinks() {
 			itemLinks.clear();
+			materialLinks.clear();
+		}
+
+		private String getMaterialLinkKey(StockpileItem key) {
+			return key.getStockpile().getName() + "\r\n" +  key.getTypeID() + "\r\n" + key.isBPC()  + "\r\n" + key.isBPC() + "\r\n" + key.getID();
 		}
 
 		public final void add(StockpileItem key, SubpileItem subpileItem) {
 			if (subpileItem.blueprintSettings != null) {
-				MaterialLink put = materialLinks.put(key, new MaterialLink(subpileItem.blueprintSettings, subpileItem.blueprintCount));
+				MaterialLink put = materialLinks.put(getMaterialLinkKey(key), new MaterialLink(subpileItem.blueprintSettings, subpileItem.blueprintCount));
 				if (put != null){
 					System.out.println("OVERWRITE!!!!!---------------------");
 				}
@@ -2917,7 +2922,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 			for (SubpileItemLink link : itemLinks) {
 				SubMultiplier stock = link.getSubpileStock();
 				StockpileItem item =  link.getStockpileItem();
-				MaterialLink materialLink = materialLinks.get(item);
+				MaterialLink materialLink = materialLinks.get(getMaterialLinkKey(item));
 				double countUpdate;
 				if (materialLink != null) {
 					countUpdate = UpdateMaterial.getCountNeeded(materialLink.getBlueprintSettings(), materialLink.getBlueprintCount(), item);
@@ -2939,7 +2944,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 			for (SubpileItemLink link : itemLinks) {
 				SubMultiplier stock = link.getSubpileStock();
 				StockpileItem item =  link.getStockpileItem();
-				MaterialLink materialLink = materialLinks.get(item);
+				MaterialLink materialLink = materialLinks.get(getMaterialLinkKey(item));
 				double countUpdate;
 				if (materialLink != null) {
 					countUpdate = UpdateMaterial.getCountNeeded(materialLink.getBlueprintSettings(), materialLink.getBlueprintCount(), item);
