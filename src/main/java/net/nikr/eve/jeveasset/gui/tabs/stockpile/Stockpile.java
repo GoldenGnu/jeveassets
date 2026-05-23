@@ -1911,7 +1911,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 			for (IndustryMaterial material : allMaterials) {
 				Item materialItem = ApiIdConverter.getItem(material.getTypeID());
 				if (blueprintRecursiveLevel > level  && materialItem.getBlueprintTypeID() != 0) {
-					double count = getManufacturingQuantityTotal(this, material);
+					double count = UpdateMaterial.getManufacturingQuantityTotal(this, material);
 					MaterialTree dot = null;
 					if (tree != null) {
 						dot = tree.get(material.getTypeID());
@@ -1926,7 +1926,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 					materials.add(stockpileItemMaterial);
 					itemTypes.put(new TypeIdentifier(material.getTypeID(), false, true), stockpileItemMaterial);
 				} else if (formulaRecursiveLevel > level  && materialItem.getFormulaTypeID() != 0) {
-					double count = getReactionQuantityTotal(this, material);
+					double count = UpdateMaterial.getReactionQuantityTotal(this, material);
 					MaterialTree dot = null;
 					if (tree != null) {
 						dot = tree.get(material.getTypeID());
@@ -1941,12 +1941,12 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 					materials.add(stockpileItemMaterial);
 					itemTypes.put(new TypeIdentifier(material.getTypeID(), false, true), stockpileItemMaterial);
 				} else if (getItem().isFormula()) {
-					double count = getReactionQuantityTotal(this, material);
+					double count = UpdateMaterial.getReactionQuantityTotal(this, material);
 					StockpileItem stockpileItem = new StockpileItem(getStockpile(), materialItem, material.getTypeID(), count, false, isIgnoreMultiplier(), isRoundALot(), this);
 					itemTypes.put(new TypeIdentifier(material.getTypeID()), stockpileItem);
 					items.add(stockpileItem);
 				} else if (getItem().isBlueprint()) {
-					double count = getManufacturingQuantityTotal(this, material);
+					double count = UpdateMaterial.getManufacturingQuantityTotal(this, material);
 					StockpileItem stockpileItem = new StockpileItem(getStockpile(), materialItem, material.getTypeID(), count, false, isIgnoreMultiplier(), isRoundALot(), this);
 					itemTypes.put(new TypeIdentifier(material.getTypeID()), stockpileItem);
 					items.add(stockpileItem);
@@ -1959,32 +1959,12 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 			UpdateMaterial.updateItems(this, this, itemTypes);
 		}
 
-		private double getReactionQuantityTotal(StockpileItemMaterial blueprintSettings, IndustryMaterial material) {
-			double runs = getTotalRuns(blueprintSettings);
-			return getReactionQuantity(material, runs);
-		}
-
-		private double getManufacturingQuantityTotal(StockpileItemMaterial blueprintSettings, IndustryMaterial material) {
-			double runs = getTotalRuns(blueprintSettings);
-			return getManufacturingQuantity(blueprintSettings, material, runs);
-		}
-
-		private double getReactionQuantityNeeded(StockpileItemMaterial blueprintSettings, StockpileItem blueprintCount, IndustryMaterial material) {
-			double runs = getNeededRuns(blueprintSettings, blueprintCount);
-			return getReactionQuantity(material, runs);
-		}
-
-		private double getManufacturingQuantityNeeded(StockpileItemMaterial blueprintSettings, StockpileItem blueprintCount, IndustryMaterial material) {
-			double runs = getNeededRuns(blueprintSettings, blueprintCount);
-			return getManufacturingQuantity(blueprintSettings, material, runs);
-		}
-
 		private double getReactionQuantity(IndustryMaterial material, double maxRuns) {
 			return ApiIdConverter.getReactionQuantity(material.getQuantity(), rigsReactions, securityReactions, maxRuns, false);
 		}
 
-		private double getManufacturingQuantity(StockpileItem blueprintSettings, IndustryMaterial material, double maxRuns) {
-			if (blueprintSettings.isRoundALot()) {
+		private double getManufacturingQuantity(IndustryMaterial material, double maxRuns) {
+			if (isRoundALot()) {
 				double total = 0;
 				for (int i = 0; i < maxRuns; i++) {
 					total += ApiIdConverter.getManufacturingQuantity(material.getQuantity(), materialEfficiency, facility, rigs, security,  1, true);
@@ -1993,28 +1973,6 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 			} else {
 				return ApiIdConverter.getManufacturingQuantity(material.getQuantity(), materialEfficiency, facility, rigs, security, maxRuns, false);
 			}
-		}
-
-		private double getTotalRuns(StockpileItemMaterial blueprintSettings) {
-			double runs = blueprintSettings.getCountMinimumUnmodified();
-			return getMinimumRuns(blueprintSettings, runs);
-		}
-
-		private static double getNeededRuns(StockpileItemMaterial blueprintSettings, StockpileItem blueprintCount) {
-			double runs = Math.abs(Math.min(blueprintCount.getCountNow() - blueprintCount.getCountMinimumMultipliedDouble(), 0.0));
-			return getMinimumRuns(blueprintSettings, runs) / blueprintSettings.getMultipliedDouble();
-		}
-
-		private static double getMinimumRuns(StockpileItemMaterial blueprintSettings, double runs) {
-			double productQuantity = blueprintSettings.getItem().getProductQuantity();
-			if (productQuantity < 1) {
-				productQuantity = 1;
-			}
-			if (runs == 0) {
-				return 0;
-			}
-			runs = Math.ceil(runs / productQuantity) * productQuantity; //Minimum amount of runs
-			return runs / productQuantity ;
 		}
 
 		@Override
@@ -2111,6 +2069,10 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 
 		public void setLevel(int level) {
 			this.level = level;
+		}
+
+		public int getLevel() {
+			return level;
 		}
 
 		public Set<StockpileItem> getMaterialItems() {
@@ -2245,15 +2207,15 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 			if (blueprintSettings.getItem().isFormula()) {
 				//Reaction Materials
 				for (IndustryMaterial material : blueprintSettings.getItem().getReactionMaterials()) {
-					double countTotal = blueprintSettings.getReactionQuantityTotal(blueprintSettings, material);
-					double countNeeded = blueprintSettings.getReactionQuantityNeeded(blueprintSettings, blueprintCount, material);
+					double countTotal = getReactionQuantityTotal(blueprintSettings, material);
+					double countNeeded = getReactionQuantityNeeded(blueprintSettings, blueprintCount, material);
 					updateCount(material.getTypeID(), countNeeded, countTotal, itemTypes);
 				}
 			} else {
 				 //Manufacturing Materials
 				for (IndustryMaterial material : blueprintSettings.getItem().getManufacturingMaterials()) {
-					double countTotal = blueprintSettings.getManufacturingQuantityTotal(blueprintSettings, material);
-					double countNeeded = blueprintSettings.getManufacturingQuantityNeeded(blueprintSettings, blueprintCount, material);
+					double countTotal = getManufacturingQuantityTotal(blueprintSettings, material);
+					double countNeeded = getManufacturingQuantityNeeded(blueprintSettings, blueprintCount, material);
 					updateCount(material.getTypeID(), countNeeded, countTotal, itemTypes);
 				}
 			}
@@ -2266,7 +2228,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 					if (material.getTypeID() != updateItem.getTypeID()) {
 						continue;
 					}
-					return blueprintSettings.getReactionQuantityTotal(blueprintSettings, material);
+					return getReactionQuantityTotal(blueprintSettings, material);
 				}
 			} else {
 				 //Manufacturing Materials
@@ -2274,20 +2236,20 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 					if (material.getTypeID() != updateItem.getTypeID()) {
 						continue;
 					}
-					return blueprintSettings.getManufacturingQuantityTotal(blueprintSettings, material);
+					return getManufacturingQuantityTotal(blueprintSettings, material);
 				}
 			}
 			return -1;
 		}
 
-		public static double getItemMultiplier(StockpileItemMaterial blueprintSettings, StockpileItem blueprintCount, StockpileItem updateItem) {
+		public static double getCountNeeded(StockpileItemMaterial blueprintSettings, StockpileItem blueprintCount, StockpileItem updateItem) {
 			if (blueprintSettings.getItem().isFormula()) {
 				//Reaction Materials
 				for (IndustryMaterial material : blueprintSettings.getItem().getReactionMaterials()) {
 					if (material.getTypeID() != updateItem.getTypeID()) {
 						continue;
 					}
-					return blueprintSettings.getReactionQuantityNeeded(blueprintSettings, blueprintCount, material);
+					return getReactionQuantityNeeded(blueprintSettings, blueprintCount, material);
 				}
 			} else {
 				 //Manufacturing Materials
@@ -2295,7 +2257,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 					if (material.getTypeID() != updateItem.getTypeID()) {
 						continue;
 					}
-					return blueprintSettings.getManufacturingQuantityNeeded(blueprintSettings, blueprintCount, material);
+					return getManufacturingQuantityNeeded(blueprintSettings, blueprintCount, material);
 				}
 			}
 			return 1;
@@ -2309,6 +2271,49 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 			stockpileItem.setCountMinimum(countTotal);
 			stockpileItem.updateItemMultiplier(countNeeded);
 		}
+
+		private static double getReactionQuantityTotal(StockpileItemMaterial blueprintSettings, IndustryMaterial material) {
+			double runs = getTotalRuns(blueprintSettings);
+			return blueprintSettings.getReactionQuantity(material, runs);
+		}
+
+		private static double getManufacturingQuantityTotal(StockpileItemMaterial blueprintSettings, IndustryMaterial material) {
+			double runs = getTotalRuns(blueprintSettings);
+			return blueprintSettings.getManufacturingQuantity(material, runs);
+		}
+
+		private static double getReactionQuantityNeeded(StockpileItemMaterial blueprintSettings, StockpileItem blueprintCount, IndustryMaterial material) {
+			double runs = getNeededRuns(blueprintSettings, blueprintCount);
+			return blueprintSettings.getReactionQuantity(material, runs);
+		}
+
+		private static double getManufacturingQuantityNeeded(StockpileItemMaterial blueprintSettings, StockpileItem blueprintCount, IndustryMaterial material) {
+			double runs = getNeededRuns(blueprintSettings, blueprintCount);
+			return blueprintSettings.getManufacturingQuantity(material, runs);
+		}
+
+		private static double getTotalRuns(StockpileItemMaterial blueprintSettings) {
+			double runs = blueprintSettings.getCountMinimumUnmodified();
+			return getMinimumRuns(blueprintSettings, runs);
+		}
+
+		private static double getNeededRuns(StockpileItemMaterial blueprintSettings, StockpileItem blueprintCount) {
+			double runs = Math.abs(Math.min(blueprintCount.getCountNow() - blueprintCount.getCountMinimumMultipliedDouble(), 0.0));
+			return getMinimumRuns(blueprintSettings, runs) / blueprintCount.getMultipliedDouble();
+		}
+
+		private static double getMinimumRuns(StockpileItemMaterial blueprintSettings, double runs) {
+			double productQuantity = blueprintSettings.getItem().getProductQuantity();
+			if (productQuantity < 1) {
+				productQuantity = 1;
+			}
+			if (runs == 0) {
+				return 0;
+			}
+			runs = Math.ceil(runs / productQuantity) * productQuantity; //Minimum amount of runs
+			return runs / productQuantity ;
+		}
+
 	}
 
 	public static class StockpileTotal extends StockpileItem {
@@ -2779,9 +2784,10 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 	public static class SubpileItem extends StockpileItem {
 
 		private final List<SubpileItemLink> itemLinks = new ArrayList<>();
-		private final List<MaterialLink> materialLinks = new ArrayList<>();
-		private final StockpileItemMaterial parentMaterial;
-		private final SubpileItem subpileMaterial;
+		private final Map<StockpileItem, MaterialLink> materialLinks = new HashMap<>();
+		private final StockpileItemMaterial blueprintSettings;
+		private final SubpileItem blueprintCount;
+		private final boolean mfg;
 		private String path;
 		private String name = "";
 		private String space = "";
@@ -2793,29 +2799,33 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 
 		public SubpileItem(Stockpile stockpile, StockpileItemMaterial parentItem, SubMultiplier subpileStock, int level, String path) {
 			this(stockpile, parentItem.getItem(), parentItem.getNeededTypeID(), parentItem, null, null, true, subpileStock, level, path);
+			setLevel(parentItem.getLevel());
+			updateText();
 		}
 
 		public SubpileItem(Stockpile stockpile, StockpileItem parentItem, StockpileItemMaterial parentMaterial, SubpileItem subpileMaterial, SubMultiplier subpileStock, int level, String path) {
 			this(stockpile, parentItem.getItem(), parentItem.getNeededTypeID(), parentItem, parentMaterial, subpileMaterial, false, subpileStock, level, path);
 		}
 
-		private SubpileItem(Stockpile stockpile, Item item, int typeID, StockpileItem parentItem, StockpileItemMaterial parentMaterial, SubpileItem subpileMaterial, boolean skipShoppingList, SubMultiplier subpileStock, int level, String path) {
-			super(stockpile, item, typeID, parentItem.getCountMinimumUnmodified(), parentItem.isRuns(), false, false, skipShoppingList);
-			this.parentMaterial = parentMaterial;
-			this.subpileMaterial = subpileMaterial;
-			if (parentMaterial != null) {
-				materialLinks.add(new MaterialLink(parentMaterial, subpileMaterial));
-			}
+		private SubpileItem(Stockpile stockpile, Item item, int typeID, StockpileItem parentItem, StockpileItemMaterial parentMaterial, SubpileItem subpileMaterial, boolean mfg, SubMultiplier subpileStock, int level, String path) {
+			super(stockpile, item, typeID, parentItem.getCountMinimumUnmodified(), parentItem.isRuns(), false, false, mfg);
+			this.blueprintSettings = parentMaterial;
+			this.blueprintCount = subpileMaterial;
+			this.mfg = mfg;
 			itemLinks.add(new SubpileItemLink(parentItem, subpileStock));
 			setLevel(level);
 			this.path = path;
 			updateText();
+			if (parentMaterial != null) {
+				add(parentItem, this);
+			}
 		}
 
 		protected SubpileItem(Stockpile stockpile, int level, String path) {
 			super(stockpile, new Item(0, "!"+0, "Stockpile", "", 0, 0, 0, 0, 0, "", false, 0, 0, 1, "", "", null), 0, 0.0, false);
-			this.parentMaterial = null;
-			this.subpileMaterial = null;
+			this.blueprintSettings = null;
+			this.blueprintCount = null;
+			this.mfg = false;
 			setLevel(level);
 			this.path = path;
 			updateText();
@@ -2855,7 +2865,11 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 		}
 
 		public String getOrder() {
-			return "1";
+			if (mfg) {
+				return "1" + path;
+			} else {
+				return "2";
+			}
 		}
 
 		public void addItemLink(StockpileItem parentItem, SubMultiplier subpileStock) {
@@ -2867,14 +2881,17 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 			itemLinks.clear();
 		}
 
-		public void add(SubpileItem subpileItem) {
-			if (subpileItem.parentMaterial != null) {
-				materialLinks.add(new MaterialLink(subpileItem.parentMaterial, subpileItem.subpileMaterial));
+		public final void add(StockpileItem key, SubpileItem subpileItem) {
+			if (subpileItem.blueprintSettings != null) {
+				MaterialLink put = materialLinks.put(key, new MaterialLink(subpileItem.blueprintSettings, subpileItem.blueprintCount));
+				if (put != null){
+					System.out.println("OVERWRITE!!!!!---------------------");
+				}
 			}
 			if (!materialLinks.isEmpty()) {
 				double countMinimum = 0;
-				for (MaterialLink materialLink : materialLinks) {
-					countMinimum += UpdateMaterial.getCountMinimum(materialLink.getParentMaterial(), this);
+				for (MaterialLink materialLink : materialLinks.values()) {
+					countMinimum += UpdateMaterial.getCountMinimum(materialLink.getBlueprintSettings(), this);
 				}
 				super.setCountMinimum(countMinimum);
 			}
@@ -2887,31 +2904,33 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 
 		@Override
 		public String getName() {
-			return "Total: " + name;
+			if (mfg) {
+				return "Total: " + space + name;
+			} else {
+				return "Total: " + name;
+			}
 		}
 		
 		@Override
 		public double getCountMinimum() {
-			if (!materialLinks.isEmpty()) {
-				double countMinimum = 0;
-				for (MaterialLink materialLink : materialLinks) {
-					countMinimum += UpdateMaterial.getItemMultiplier(materialLink.getParentMaterial(), materialLink.getSubpileMaterial(), this);
+			double countMinimum = 0;
+			for (SubpileItemLink link : itemLinks) {
+				SubMultiplier stock = link.getSubpileStock();
+				StockpileItem item =  link.getStockpileItem();
+				MaterialLink materialLink = materialLinks.get(item);
+				double countUpdate;
+				if (materialLink != null) {
+					countUpdate = UpdateMaterial.getCountNeeded(materialLink.getBlueprintSettings(), materialLink.getBlueprintCount(), item);
+				} else {
+					countUpdate = item.getCountMinimum();
 				}
-				return countMinimum;
-			} else {
-				double countMinimum = 0;
-				for (SubpileItemLink link : itemLinks) {
-					SubMultiplier stock = link.getSubpileStock();
-					StockpileItem item =  link.getStockpileItem();
-					
-					if (item.isIgnoreMultiplier() || stock == null) {
-						countMinimum = countMinimum + item.getCountMinimum();
-					} else {
-						countMinimum = countMinimum + (item.getCountMinimum() * stock.getSubMultiplier());
-					}
+				if (item.isIgnoreMultiplier() || stock == null) {
+					countMinimum = countMinimum + countUpdate;
+				} else {
+					countMinimum = countMinimum + (countUpdate * stock.getSubMultiplier());
 				}
-				return countMinimum;
 			}
+			return countMinimum;
 		}
 
 		@Override
@@ -2920,12 +2939,19 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 			for (SubpileItemLink link : itemLinks) {
 				SubMultiplier stock = link.getSubpileStock();
 				StockpileItem item =  link.getStockpileItem();
-				if (item.isIgnoreMultiplier()) {
-					countMinimum = countMinimum + item.getCountMinimum();
-				} else if (stock != null) {
-					countMinimum = countMinimum + (item.getCountMinimum() * stock.getSubMultiplier() * getStockpile().getMultiplier());
+				MaterialLink materialLink = materialLinks.get(item);
+				double countUpdate;
+				if (materialLink != null) {
+					countUpdate = UpdateMaterial.getCountNeeded(materialLink.getBlueprintSettings(), materialLink.getBlueprintCount(), item);
 				} else {
-					countMinimum = countMinimum + (item.getCountMinimum() * getStockpile().getMultiplier());
+					countUpdate = item.getCountMinimum();
+				}
+				if (item.isIgnoreMultiplier()) {
+					countMinimum = countMinimum + countUpdate;
+				} else if (stock != null) {
+					countMinimum = countMinimum + (countUpdate * stock.getSubMultiplier() * getStockpile().getMultiplier());
+				} else {
+					countMinimum = countMinimum + (countUpdate * getStockpile().getMultiplier());
 				}
 			}
 			return (long) Math.ceil(countMinimum);
@@ -2950,20 +2976,20 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 		}
 
 		private static class MaterialLink {
-			private final StockpileItemMaterial parentMaterial;
-			private final SubpileItem subpileMaterial;
+			private final StockpileItemMaterial blueprintSettings;
+			private final SubpileItem blueprintCount;
 
-			public MaterialLink(StockpileItemMaterial parentMaterial, SubpileItem subpileMaterial) {
-				this.parentMaterial = parentMaterial;
-				this.subpileMaterial = subpileMaterial;
+			public MaterialLink(StockpileItemMaterial blueprintSettings, SubpileItem blueprintCount) {
+				this.blueprintSettings = blueprintSettings;
+				this.blueprintCount = blueprintCount;
 			}
 
-			public StockpileItemMaterial getParentMaterial() {
-				return parentMaterial;
+			public StockpileItemMaterial getBlueprintSettings() {
+				return blueprintSettings;
 			}
 
-			public SubpileItem getSubpileMaterial() {
-				return subpileMaterial;
+			public SubpileItem getBlueprintCount() {
+				return blueprintCount;
 			}
 		}
 	}

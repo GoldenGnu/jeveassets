@@ -707,14 +707,13 @@ public class StockpileData extends TableData {
 
 	private static void addMaterial(Stockpile topStockpile, Stockpile currentStockpile, Map<TypeIdentifier, StockpileItem> topItems, SubpileStock subpileStock, int parentLevel, String parentPath, Set<StockpileItemMaterial> materials) {
 		int level = parentLevel + 1;
-		String path = parentPath + currentStockpile.getName() + "\r\n";
 		for (StockpileItemMaterial stockpileItemMaterial : materials) {
 			if (stockpileItemMaterial.isTotal()) {
 				continue; //Ignore Total
 			}
+			String path = parentPath + stockpileItemMaterial.getName() + "\r\n";
 			SubpileItem subpileItemMaterial = new SubpileItem(topStockpile, stockpileItemMaterial, subpileStock, parentLevel, path);
 			addSubpileItem(topItems, topStockpile, subpileItemMaterial, stockpileItemMaterial, subpileStock, level, path, false);
-			addMaterial(topStockpile, currentStockpile, topItems, subpileStock, level, path, stockpileItemMaterial.getMaterials());
 			for (StockpileItem stockpileItem : stockpileItemMaterial.getMaterialItems()) {
 				if (stockpileItem.isTotal()) {
 					continue; //Ignore Total
@@ -722,6 +721,8 @@ public class StockpileData extends TableData {
 				SubpileItem subpileItem = new SubpileItem(topStockpile, stockpileItem, stockpileItemMaterial, subpileItemMaterial, subpileStock, parentLevel, path);
 				addSubpileItem(topItems, topStockpile, subpileItem, stockpileItem, subpileStock, level, path, false);
 			}
+			addMaterial(topStockpile, currentStockpile, topItems, subpileStock, level, path, stockpileItemMaterial.getMaterials());
+			
 		}
 	}
 
@@ -734,7 +735,7 @@ public class StockpileData extends TableData {
 		if (linkIndex >= 0) { //Update item (Advanced: Link + Link = MultiLink)
 			SubpileItem linkItem = topStockpile.getSubpileItems().get(linkIndex);
 			linkItem.addItemLink(stockpileItem, subpileStock);
-			linkItem.add(subpileItem);
+			linkItem.add(stockpileItem, subpileItem);
 			if (level >= linkItem.getLevel()) {
 				linkItem.setPath(path);
 				linkItem.setLevel(level);
