@@ -370,7 +370,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 
 	private boolean addMaterial(StockpileItemMaterial materialItem) {
 		boolean b = itemsAll.add(materialItem);
-		b = materialItems.addAll(materialItem.getMaterialItems()) && b;
+		materialItems.addAll(materialItem.getMaterialItems());
 		for (StockpileItemMaterial stockpileItem : materialItem.getMaterials()) {
 			b = addMaterial(stockpileItem) && b;
 		}
@@ -1680,6 +1680,16 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 			return this.isMaterial() == other.isMaterial();
 		}
 
+		public boolean isSameType(StockpileItem other) {
+			if (this.typeID != other.typeID) {
+				return false;
+			}
+			if (this.runs != other.runs) {
+				return false;
+			}
+			return this.isMaterial() == other.isMaterial();
+		}
+
 		@Override
 		public int compareTo(final StockpileItem item) {
 			//Compare groups
@@ -1965,11 +1975,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 
 		private double getManufacturingQuantity(IndustryMaterial material, double maxRuns) {
 			if (isRoundALot()) {
-				double total = 0;
-				for (int i = 0; i < maxRuns; i++) {
-					total += ApiIdConverter.getManufacturingQuantity(material.getQuantity(), materialEfficiency, facility, rigs, security,  1, true);
-				}
-				return total;
+				return ApiIdConverter.getManufacturingQuantity(material.getQuantity(), materialEfficiency, facility, rigs, security,  1, true) * maxRuns;
 			} else {
 				return ApiIdConverter.getManufacturingQuantity(material.getQuantity(), materialEfficiency, facility, rigs, security, maxRuns, false);
 			}
@@ -2893,13 +2899,6 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 				if (put != null){
 					System.out.println("OVERWRITE!!!!!---------------------");
 				}
-			}
-			if (!materialLinks.isEmpty()) {
-				double countMinimum = 0;
-				for (MaterialLink materialLink : materialLinks.values()) {
-					countMinimum += UpdateMaterial.getCountMinimum(materialLink.getBlueprintSettings(), this);
-				}
-				super.setCountMinimum(countMinimum);
 			}
 		}
 

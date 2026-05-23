@@ -818,7 +818,7 @@ public class StockpileItemDialog extends JDialogCentered {
 					existingItem.getStockpile().remove(existingItem);
 					stockpileTab.removeItem(existingItem);
 				}
-				if (item.getClass().equals(stockpileItem.getClass())) {
+				if (item.getClass().equals(stockpileItem.getClass()) && item.isSameType(stockpileItem)) {
 					System.out.println("UPDATE");
 					stockpileItem.update(item);
 				} else { //New class, remove old item
