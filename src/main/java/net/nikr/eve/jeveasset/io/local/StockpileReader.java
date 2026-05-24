@@ -107,6 +107,10 @@ public class StockpileReader extends AbstractBackup {
 			} else if (stockpileObject.has("cma")) {
 				matchAll = stockpileObject.get("cma").getAsBoolean();
 			}
+			String group = null;
+			if (stockpileObject.has("gr")) {
+				group = stockpileObject.get("gr").getAsString();
+			}
 
 			//Filters
 			List<StockpileFilter> filters = new ArrayList<>();
@@ -172,7 +176,7 @@ public class StockpileReader extends AbstractBackup {
 			}
 
 			//Create Stockile (then add items)
-			Stockpile stockpile = new Stockpile(name, null, filters, multiplier, matchAll);
+			Stockpile stockpile = new Stockpile(name, null, filters, multiplier, matchAll, group);
 
 			//Items
 			JsonElement itemsElement = stockpileObject.get("i");

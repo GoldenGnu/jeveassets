@@ -1306,7 +1306,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 					for (StockpileItem item : items) {
 						stockpile.add(item);
 					}
-					addSettingStockpile(stockpile, true); //Add imported stockpile to Settings
+					addSettingStockpile(stockpile, true, false); //Add (Template)
 					Settings.unlock("Stockpile (Import Items Template)");
 					program.saveSettings("Stockpile (Import Items Template)");
 					//Update UI
@@ -1431,7 +1431,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 				public boolean action(Stockpile value, OptionEnum xmlOptions) {
 					if (xmlOptions == ImportOptions.KEEP) {
 						Settings.lock("Stockpile (Import New)");
-						addSettingStockpile(value, true); //Add
+						addSettingStockpile(value, true, true); //Add (Keep)
 						Settings.unlock("Stockpile (Import New)");
 						//Update UI
 						addStockpile(value);
@@ -1454,7 +1454,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 						removeStockpile(removeStockpile); //Remove old stockpile from the UI
 						Settings.get().getStockpiles().remove(removeStockpile); //Remove old stockpile from the Settings
 						//Add
-						addSettingStockpile(value, true); //Add imported stockpile to Settings
+						addSettingStockpile(value, true, true); //Add (Overwrite)
 						Settings.unlock("Stockpile (Import Overwrite)");
 						//Update UI
 						addStockpile(value); //Add imported stockpile to Settings
@@ -1511,8 +1511,13 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		return shown;
 	}
 
-	public static void addSettingStockpile(Stockpile stockpile, boolean sort) {
+	public static void addSettingStockpile(Stockpile stockpile, boolean sort, boolean group) {
 		Settings.get().getStockpiles().add(stockpile);
+		//Adding imported group
+		if (group) {
+			Settings.get().getStockpileGroupSettings().setGroup(stockpile, stockpile.getImportedGroup());
+			StockpileSeparatorTableCell.updateGroups();
+		}
 		if (sort) {
 			sortSettingStockpile();
 		}
@@ -1777,7 +1782,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 						Settings.get().getStockpiles().remove(stockpile);
 						//Remove Group
 						Settings.get().getStockpileGroupSettings().removeGroup(stockpile);
-						StockpileSeparatorTableCell.updateGroups(this);
+						StockpileSeparatorTableCell.updateGroups();
 						//Remove subpile links
 						for (Stockpile parentStockpile : stockpile.getSubpiles().keySet()) {
 							parentStockpile.removeSubpileLink(stockpile);
@@ -1812,7 +1817,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 				//Remove Groups
 				removeGroupNoUpdate(stockpiles);
 				//Update Table Cell
-				StockpileSeparatorTableCell.updateGroups(this);
+				StockpileSeparatorTableCell.updateGroups();
 				Settings.lock("Stockpile (Delete Stockpile)");
 				for (Stockpile stockpile : stockpiles) {
 					//Remove stockpile
@@ -1865,7 +1870,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 				removed.removeAll(newStockpiles);
 				updateGroups(group, removed, added);
 				//Update Table Cell
-				StockpileSeparatorTableCell.updateGroups(this);
+				StockpileSeparatorTableCell.updateGroups();
 				//Save Settings
 				program.saveSettings("Stockpile (Stockpile Edit Groups)");
 			} else if (StockpileCellAction.GROUP_RENAME.name().equals(e.getActionCommand())) {
@@ -1887,7 +1892,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 				//Update
 				setGroup(newGroup, stockpiles);
 				//Update Table Cell
-				StockpileSeparatorTableCell.updateGroups(this);
+				StockpileSeparatorTableCell.updateGroups();
 				//Save Settings
 				program.saveSettings("Stockpile (Stockpile Rename Group)");
 				//Restore expanded
@@ -1950,7 +1955,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 				}
 				setGroup(group, stockpile); //Change or add group
 				//Update Table Cell
-				StockpileSeparatorTableCell.updateGroups(this);
+				StockpileSeparatorTableCell.updateGroups();
 				//Save Settings
 				program.saveSettings("Stockpile (Stockpile New Group)");
 			} else if (StockpileCellAction.GROUP_CHANGE_ADD.name().equals(e.getActionCommand())) {
@@ -1972,7 +1977,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 					setGroup(newGroup, stockpile); //Change or add group
 				}
 				//Update Table Cell
-				StockpileSeparatorTableCell.updateGroups(this);
+				StockpileSeparatorTableCell.updateGroups();
 				//Save Settings
 				program.saveSettings("Stockpile (Stockpile Add Group)");
 			} else if (StockpileCellAction.SUBPILES.name().equals(e.getActionCommand())) {

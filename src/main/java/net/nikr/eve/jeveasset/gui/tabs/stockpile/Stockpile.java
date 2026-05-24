@@ -81,6 +81,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 	private static final AtomicLong TS = new AtomicLong();
 	private final long id;
 	private String name;
+	private String importedGroup;
 	private String ownerName;
 	private String flagName;
 	private String locationName;
@@ -144,6 +145,10 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 	}
 
 	public Stockpile(final String name, final Long id, final List<StockpileFilter> filters, double multiplier, boolean matchAll) {
+		this(name, id, filters, multiplier, matchAll, null);
+	}
+
+	public Stockpile(final String name, final Long id, final List<StockpileFilter> filters, double multiplier, boolean matchAll, String importedGroup) {
 		this.name = name;
 		this.filters = filters;
 		this.multiplier = multiplier;
@@ -154,6 +159,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 			this.id = id;
 		}
 		itemsAll.add(totalItem);
+		this.importedGroup = importedGroup;
 		updateDynamicValues();
 	}
 
@@ -185,6 +191,15 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 
 	public String getGroup() {
 		return Settings.get().getStockpileGroupSettings().getGroup(this);
+	}
+
+	/**
+	 * Holds the stockpile group on import (until added to settings)
+	 * Use `getGroup` to get the group when not working on an imported stockpile
+	 * @return 
+	 */
+	public String getImportedGroup() {
+		return importedGroup;
 	}
 
 	private static long getNewID() {

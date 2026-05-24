@@ -24,7 +24,6 @@ package net.nikr.eve.jeveasset.io.local;
 import java.io.File;
 import java.net.Proxy;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -103,7 +102,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 			return false;
 		}
 
-		writeStockpiles(xmldoc, stockpiles, new HashMap<>(), true);
+		writeStockpiles(xmldoc, stockpiles, true);
 		try {
 			writeXmlFile(xmldoc, filename, false);
 		} catch (XmlException ex) {
@@ -153,7 +152,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 
 		writeAssetSettings(xmldoc, settings);
 		writeStockpileGroups(xmldoc, settings);
-		writeStockpiles(xmldoc, settings.getStockpiles(), settings.getStockpileGroupSettings().getStockpileGroups(), false);
+		writeStockpiles(xmldoc, settings.getStockpiles(), false);
 		writeOverviewGroups(xmldoc, settings.getOverviewGroups());
 		writeReprocessSettings(xmldoc, settings.getReprocessSettings());
 		writeWindow(xmldoc, settings);
@@ -657,7 +656,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 	 * -!- `!´ IMPORTANT `!´ -!-
 	 * StockpileDataWriter and StockpileDataReader needs to be updated too - on any changes!!!
 	 */
-	private void writeStockpiles(final Document xmldoc, final List<Stockpile> stockpiles, Map<Stockpile, String> groups, boolean export) {
+	private void writeStockpiles(final Document xmldoc, final List<Stockpile> stockpiles, boolean export) {
 		Element parentNode = xmldoc.createElementNS(null, "stockpiles");
 		xmldoc.getDocumentElement().appendChild(parentNode);
 		for (Stockpile stockpile : stockpiles) {
@@ -668,7 +667,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 				setAttribute(stockpileNode, "id", stockpile.getStockpileID());
 			}
 			setAttribute(stockpileNode, "multiplier", stockpile.getMultiplier());
-			String group = groups.get(stockpile);
+			String group = stockpile.getGroup();
 			if (group != null && !group.isEmpty()) {
 				setAttribute(stockpileNode, "stockpilegroup", group);
 			}

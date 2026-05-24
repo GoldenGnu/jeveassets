@@ -92,6 +92,10 @@ public class StockpileWriter extends AbstractBackup {
 			stockpileObject.addProperty("n", stockpile.getName());
 			stockpileObject.addProperty("m", stockpile.getMultiplier());
 			stockpileObject.addProperty("ma", stockpile.isMatchAll());
+			String group = stockpile.getGroup();
+			if (group != null && !group.isEmpty()) {
+				stockpileObject.addProperty("gr", group);
+			}
 
 			//Filters
 			JsonArray filtersObject = new JsonArray();

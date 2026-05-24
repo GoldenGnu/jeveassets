@@ -622,10 +622,10 @@ public class StockpileDialog extends JDialogCentered {
 			Settings.get().getStockpileGroupSettings().setGroup(stockpile, group);
 		} else if (cloneStockpile != null) { //Clone
 			cloneStockpile.update(getStockpile());
-			StockpileTab.addSettingStockpile(cloneStockpile, false); //Add Clone
+			StockpileTab.addSettingStockpile(cloneStockpile, false, false); //Add (Clone)
 		} else { //Add
 			stockpile = getStockpile();
-			StockpileTab.addSettingStockpile(stockpile, false); //Add
+			StockpileTab.addSettingStockpile(stockpile, false, false); //Add (New)
 		}
 		StockpileTab.sortSettingStockpile();
 		updated = true;

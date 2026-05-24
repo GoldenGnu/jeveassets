@@ -107,9 +107,6 @@ import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter.Stock
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter.StockpileFlag;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItemMaterial;
-import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileExtendedTableFormat;
-import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileTab;
-import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerDate;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerNote;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerSkillPointFilter;
@@ -854,7 +851,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 				matchAll = getBooleanNotNull(stockpileNode, "matchall", false);
 			}
 
-			Stockpile stockpile = new Stockpile(name, stockpileID, filters, multiplier, matchAll);
+			Stockpile stockpile = new Stockpile(name, stockpileID, filters, multiplier, matchAll, group);
 			if (stockpileGroupSettings != null) {
 				stockpileGroupSettings.setGroup(stockpile, group);
 			}
