@@ -388,6 +388,7 @@ public class StockpileSeparatorTableCell extends SeparatorTableCell<StockpileIte
 				.addComponent(jInfoPanel)
 		);
 		StockpileSeparatorTableCell.groupActionListener = actionListener;
+		updateGroups();
 	}
 
 	public static void updateGroups() {
