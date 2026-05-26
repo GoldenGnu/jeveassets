@@ -2920,16 +2920,12 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 		}
 
 		private String getMaterialLinkKey(StockpileItem key) {
-			//return key.getStockpile().getName() + "\r\n" +  key.getTypeID() + "\r\n" + key.isBPC()  + "\r\n" + key.isBPC() + "\r\n" + key.getID();
 			return key.getStockpile().getName() + "\r\n" +  key.getNeededTypeID() + "\r\n" + key.isBPC()  + "\r\n" + key.isBPC() + "\r\n" + key.getID();
 		}
 
 		public final void add(StockpileItem key, SubpileItem subpileItem) {
 			if (subpileItem.blueprintSettings != null) {
-				MaterialLink put = materialLinks.put(getMaterialLinkKey(key), new MaterialLink(subpileItem.blueprintSettings, subpileItem.blueprintCount));
-				if (put != null){
-					System.out.println("OVERWRITE!!!!!---------------------");
-				}
+				materialLinks.put(getMaterialLinkKey(key), new MaterialLink(subpileItem.blueprintSettings, subpileItem.blueprintCount));
 			}
 		}
 
@@ -2961,9 +2957,9 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 					countUpdate = item.getCountMinimum();
 				}
 				if (item.isIgnoreMultiplier() || stock == null) {
-					countMinimum = countMinimum + countUpdate;
+					countMinimum += Math.ceil(countUpdate);
 				} else {
-					countMinimum = countMinimum + (countUpdate * stock.getSubMultiplier());
+					countMinimum += Math.ceil(countUpdate * stock.getSubMultiplier());
 				}
 			}
 			return countMinimum;
@@ -2983,11 +2979,11 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 					countUpdate = item.getCountMinimum();
 				}
 				if (item.isIgnoreMultiplier()) {
-					countMinimum = countMinimum + countUpdate;
+					countMinimum += Math.ceil(countUpdate);
 				} else if (stock != null) {
-					countMinimum = countMinimum + (countUpdate * stock.getSubMultiplier() * getStockpile().getMultiplier());
+					countMinimum += Math.ceil(countUpdate * stock.getSubMultiplier() * getStockpile().getMultiplier());
 				} else {
-					countMinimum = countMinimum + (countUpdate * getStockpile().getMultiplier());
+					countMinimum += Math.ceil(countUpdate * getStockpile().getMultiplier());
 				}
 			}
 			return (long) Math.ceil(countMinimum);
