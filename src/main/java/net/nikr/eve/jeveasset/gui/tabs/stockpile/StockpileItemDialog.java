@@ -812,17 +812,13 @@ public class StockpileItemDialog extends JDialogCentered {
 				StockpileItem item = stockpileItems.get(0);
 				stockpileItems = null;
 				if (itemExist()) { //EDIT + UPDATING (Editing to an existing item)
-					System.out.println("EXITING");
 					StockpileItem existingItem = getExistingItem();
-					System.out.println("existingItem: " + existingItem.getName());
 					existingItem.getStockpile().remove(existingItem);
 					stockpileTab.removeItem(existingItem);
 				}
 				if (item.getClass().equals(stockpileItem.getClass()) && item.isSameType(stockpileItem)) {
-					System.out.println("UPDATE");
 					stockpileItem.update(item);
 				} else { //New class, remove old item
-					System.out.println("EDIT NEW");
 					stockpileItem.getStockpile().remove(stockpileItem);
 					stockpileTab.removeItem(stockpileItem);
 					stockpileItem = item;
@@ -832,7 +828,6 @@ public class StockpileItemDialog extends JDialogCentered {
 		//	stockpileItem = getExistingItem();
 		//	stockpileItem.update(getStockpileItem());
 		} else { //ADD
-			System.out.println("ADD");
 			stockpileItems = getStockpileItems();
 			if (stockpileItems != null) {
 				for (StockpileItem item : stockpileItems) {
@@ -841,7 +836,6 @@ public class StockpileItemDialog extends JDialogCentered {
 							if (!current.equals(item)) {
 								continue;
 							}
-							System.out.println("ADD MERGE");
 							current.setCountMinimum(item.getCountMinimum() + current.getCountMinimum());
 							break;
 						}

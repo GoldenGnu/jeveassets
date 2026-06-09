@@ -653,7 +653,6 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 					}
 				}
 				if (toItem != null) { //Update existing (add counts)
-					System.out.println("Update existing");
 					if (merge) {
 						save = true;
 						Settings.lock("Stockpile (addTo - Merge)"); //Lock for Stockpile (addTo - Merge)
@@ -661,7 +660,6 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 						Settings.unlock("Stockpile (addTo - Merge)"); //Unlock for Stockpile (addTo - Merge)
 					}
 				} else { //Add new
-					System.out.println("Add new");
 					save = true;
 					Settings.lock("Stockpile (addTo - New)"); //Lock for Stockpile (addTo - New)
 					StockpileItem item = fromItem.deepClone(stockpile);
@@ -804,7 +802,6 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 			}
 			stockpiles.add(item.getStockpile());
 		}
-		System.out.println("remove: " + remove.size());
 		for (Stockpile stockpile : stockpiles) {
 			if (stockpile.isMatchAll()) { //Less items == may match now...
 				updateStockpile(stockpile);
@@ -812,7 +809,6 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 			updateSubpile(stockpile);
 			stockpile.updateTotal();
 		}
-		System.out.println("remove: " + remove.size());
 		//Lock Table
 		beforeUpdateData();
 		//Update list
