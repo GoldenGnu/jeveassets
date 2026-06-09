@@ -2104,6 +2104,14 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 			return productTypeID;
 		}
 
+		@Override
+		public void setTags(Tags tags) { }
+
+		@Override
+		public Tags getTags() {
+			return null;
+		}
+
 		public void setLevel(int level) {
 			this.level = level;
 		}
