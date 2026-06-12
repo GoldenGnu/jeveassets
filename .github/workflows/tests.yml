@@ -12,14 +12,14 @@ jobs:
     name: ${{ matrix.os }} (Java ${{ matrix.java }})
     steps:
     - name: Checkout
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
     - name: Cache
       uses: actions/cache@v4
       with:
         path: ~/.m2/repository
-        key: ${{ matrix.os }}-maven-${{ hashFiles('**/pom.xml') }}
+        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
         restore-keys: |
-          ${{ matrix.os }}-maven-
+          ${{ runner.os }}-maven-
     - name: JDK
       uses: actions/setup-java@v2
       with:
