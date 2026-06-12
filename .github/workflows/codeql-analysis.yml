@@ -24,12 +24,12 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v6
     - name: Cache
-      uses: actions/cache@v5
+      uses: actions/cache@v4
       with:
         path: ~/.m2/repository
-        key: ${{ matrix.os }}-maven-${{ hashFiles('**/pom.xml') }}
+        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
         restore-keys: |
-          ${{ matrix.os }}-maven-
+          ${{ runner.os }}-maven-
     # Initializes the CodeQL tools for scanning.
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v3
