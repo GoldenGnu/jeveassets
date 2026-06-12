@@ -155,7 +155,11 @@ public class AboutDialog extends JDialogCentered {
 				+ "&nbsp;<a href=\"https://github.com/uklimaschewski/EvalEx\">EvalEx</a> (formula columns)<br>"
 				+ "&nbsp;<a href=\"https://picocli.info\">Picocli</a> (CLI)<br>"
 				+ "<br>"
-				+ "<center><a href=\"https://cultofthepartyparrot.com/\"><img border=\"0\" src=\"" + getPartyParrot() +"\" /></a><br></center>"
+				+ "<center>"
+				+ "<a href=\"https://www.amnesty.org/en/what-we-do/discrimination/lgbti-rights/\"><img border=\"0\" src=\"" + getRainbow() +"\" /></a>"
+				+ "&nbsp;&nbsp;&nbsp;&nbsp;"
+				+ "<a href=\"https://cultofthepartyparrot.com/\"><img border=\"0\" src=\"" + getPartyParrot() +"\" /></a><br>"
+				+ "</center>"
 				);
 
 		JScrollPane jInfoScroll = new JScrollPane(jInfo, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
@@ -193,6 +197,14 @@ public class AboutDialog extends JDialogCentered {
 
 	private String getPartyParrot() {
 		URL url = Images.class.getResource(Images.MISC_PARTYPARROT.getFilename());
+		if (url != null) {
+			return url.toString();
+		}
+		return "";
+	}
+
+	private String getRainbow() {
+		URL url = Images.class.getResource(Images.MISC_RAINBOW.getFilename());
 		if (url != null) {
 			return url.toString();
 		}
