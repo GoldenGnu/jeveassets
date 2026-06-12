@@ -203,6 +203,7 @@ public enum Images {
 	MISC_PARTNER ("misc_partner.png"),
 	MISC_PARTYPARROT ("misc_partyparrot.gif"),
 	MISC_MATERIALS ("misc_materials.png"),
+	MISC_RAINBOW ("misc_rainbow.png"),
 	MISC_ORE ("misc_ore.png"),
 	MISC_COMMODITY ("misc_commodity.png"),
 	MISC_PI ("misc_pi.png"),
