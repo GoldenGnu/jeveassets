@@ -5,6 +5,7 @@ on:
   schedule:
     # Daily @ 8:44
     - cron:  '44 8 * * *'
+      timezone: "Europe/Copenhagen"
 
 jobs:
   build:
