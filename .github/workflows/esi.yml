@@ -3,9 +3,8 @@ name: Esi
 on:
   push:
   schedule:
-    # Daily @ 8:44
-    - cron:  "44 8 * * *"
-      timezone: "Europe/Berlin"
+    # Daily @ 8:44 UTC
+    - cron:  '44 8 * * *'
 
 jobs:
   build:
