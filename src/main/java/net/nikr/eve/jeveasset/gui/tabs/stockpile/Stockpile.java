@@ -2225,7 +2225,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 		public String getName() {
 			StringBuilder builder = new StringBuilder();
 			for (int i = 0; i < level; i++) {
-				builder.append("  ");
+				builder.append("    ");
 			}
 			return builder.toString() + super.getName();
 		}
