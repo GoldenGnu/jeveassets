@@ -175,14 +175,16 @@ public abstract class TabsStockpile extends Bundle {
 	public abstract String matchAllTip();
 	public abstract String matchExclude();
 	public abstract String matchInclude();
+	public abstract String materialsFacilityOverwrite();
 	public abstract String materialsManufacturing();
 	public abstract String materialsManufacturingEditable();
+	public abstract String materialsOverwrite();
 	public abstract String materialsReaction();
 	public abstract String materialsReactionEditable();
-	public abstract String materialsRecursiveFacility();
 	public abstract String materialsRecursiveLevel();
 	public abstract String materialsRecursiveMe();
-	public abstract String materialsRecursiveOverwrite();
+	public abstract String materialsRoundPerRuns();
+	public abstract String materialsRoundPerRunsOverwrite();
 	public abstract String me();
 	public abstract String multiple();
 	public abstract String multiplier();
@@ -206,7 +208,6 @@ public abstract class TabsStockpile extends Bundle {
 	public abstract String region();
 	public abstract String remove();
 	public abstract String renameStockpileTitle();
-	public abstract String roundPerRuns();
 	public abstract String runs();
 	public abstract String selectFits();
 	public abstract String selectGroup();

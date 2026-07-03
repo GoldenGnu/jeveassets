@@ -187,16 +187,16 @@ public class StockpileBpDialog extends JDialogCentered {
 		jFormulaRecursiveLevel = new JComboBox<>();
 		reactionEditComponents.add(jFormulaRecursiveLevel);
 
-	//Ignore Multiplier
-		JLabel jIgnoreMultiplierLabel = new JLabel(TabsStockpile.get().multiplier());
-		jIgnoreMultiplier = new JCheckBox(TabsStockpile.get().multiplierIgnore());
-
-	//Ignore Multiplier
-		JLabel jRoundALotLabel = new JLabel(TabsStockpile.get().roundPerRuns());
-		manufacturingComponents.add(jRoundALotLabel);
+	//Round per Run
+		JLabel jRoundPerRunsLabel = new JLabel(TabsStockpile.get().materialsRoundPerRuns());
+		manufacturingComponents.add(jRoundPerRunsLabel);
 		roundPerRunsModel = new SpinnerNumberModel(0, 0, null, 1);
 		jRoundPerRuns = new JSpinner(roundPerRunsModel);
 		manufacturingComponents.add(jRoundPerRuns);
+
+	//Ignore Multiplier
+		JLabel jIgnoreMultiplierLabel = new JLabel(TabsStockpile.get().multiplier());
+		jIgnoreMultiplier = new JCheckBox(TabsStockpile.get().multiplierIgnore());
 
 		jOK = new JButton(TabsStockpile.get().ok());
 		jOK.setActionCommand(StockpileBpAction.OK.name());
@@ -223,7 +223,7 @@ public class StockpileBpDialog extends JDialogCentered {
 							.addComponent(jSecurityReactionsLabel)
 							.addComponent(jFormulaRecursiveLevelLabel)
 							.addComponent(jIgnoreMultiplierLabel)
-							.addComponent(jRoundALotLabel)
+							.addComponent(jRoundPerRunsLabel)
 						)
 						.addGroup(layout.createParallelGroup()
 							.addComponent(jMe)
@@ -287,7 +287,7 @@ public class StockpileBpDialog extends JDialogCentered {
 					.addComponent(jFormulaRecursiveLevel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				)
 				.addGroup(layout.createParallelGroup()
-					.addComponent(jRoundALotLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jRoundPerRunsLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jRoundPerRuns, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				)
 				.addGroup(layout.createParallelGroup()

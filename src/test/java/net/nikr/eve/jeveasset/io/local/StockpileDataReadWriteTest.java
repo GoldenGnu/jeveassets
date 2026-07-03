@@ -81,7 +81,7 @@ public class StockpileDataReadWriteTest extends TestUtil {
 				stockpile,
 				paladinBlueprint,
 				paladinBlueprint.getProductTypeID(),
-				5, false, ROUND, 2, 10, 3, false,
+				5, false, ROUND, false, 2, 10, 3, false,
 				FACILITY,
 				RIGS,
 				SECURITY);
