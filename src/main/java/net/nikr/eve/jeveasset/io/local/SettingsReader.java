@@ -892,11 +892,12 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		int typeID = getInt(itemNode, "typeid");
 		boolean runs = getBooleanNotNull(itemNode, "runs", false);
 		boolean ignoreMultiplier = getBooleanNotNull(itemNode, "ignoremultiplier", false);
-		boolean roundALot = getBooleanNotNull(itemNode, "roundalot", false);
 		double countMinimum = getDouble(itemNode, "minimum");
 	//Materials
 		//ProductTypeID
 		Integer productTypeID = getIntOptional(itemNode, "producttypeid");
+		//Round per Run
+		int roundPerRuns = getIntNotNull(itemNode, "roundperruns", 0);
 		//Recursive
 		Integer blueprintRecursiveLevel = getIntOptional(itemNode, "blueprintrecursive");
 		Integer formulaRecursiveLevel = getIntOptional(itemNode, "formularecursive");
@@ -959,11 +960,11 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			parseMaterials(itemNode, stockpile, root);
 			StockpileItem stockpileItem;
 			if (item.isBlueprint() && productTypeID != null && blueprintRecursiveLevel != null && materialEfficiency != null && manufacturingFacility != null && manufacturingRigs != null && manufacturingSecurity != null) {
-				stockpileItem = new StockpileItemMaterial(root, stockpile, item, productTypeID, countMinimum, ignoreMultiplier, roundALot, blueprintRecursiveLevel, materialEfficiency, manufacturingFacility, manufacturingRigs, manufacturingSecurity);
+				stockpileItem = new StockpileItemMaterial(root, stockpile, item, productTypeID, countMinimum, ignoreMultiplier, roundPerRuns, blueprintRecursiveLevel, materialEfficiency, manufacturingFacility, manufacturingRigs, manufacturingSecurity);
 			} else if (item.isFormula() && productTypeID != null && formulaRecursiveLevel != null && reactionRigs != null && reactionSecurity != null) {
-				stockpileItem = new StockpileItemMaterial(root, stockpile, item, productTypeID, countMinimum, ignoreMultiplier, roundALot, formulaRecursiveLevel, reactionRigs, reactionSecurity);
+				stockpileItem = new StockpileItemMaterial(root, stockpile, item, productTypeID, countMinimum, ignoreMultiplier, roundPerRuns, formulaRecursiveLevel, reactionRigs, reactionSecurity);
 			} else {
-				stockpileItem = new StockpileItem(stockpile, item, typeID, countMinimum, runs, ignoreMultiplier, roundALot);
+				stockpileItem = new StockpileItem(stockpile, item, typeID, countMinimum, runs, ignoreMultiplier);
 			}
 			return stockpileItem;
 		}

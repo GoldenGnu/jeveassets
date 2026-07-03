@@ -47,9 +47,14 @@ import org.junit.Test;
 
 public class StockpileDataReadWriteTest extends TestUtil {
 
+	private final static ManufacturingFacility FACILITY = ManufacturingFacility.ENGINEERING_COMPLEX_MEDIUM;
+	private final static ManufacturingRigs RIGS = ManufacturingRigs.T1;
+	private final static ManufacturingSecurity SECURITY = ManufacturingSecurity.NULLSEC;
+	private final static int ROUND = 100;
+
 	@Test
 	public void testMaterial() {
-		List<Stockpile> stockpiles = StockpileReader.load("eNrFlE1rg0AQhv9KO2cp-72ut7aEJlC0kEAPIQdNFCxqgppT8L93NNHdew6L4Lw7I-Ozr87ub9BABK8_aZWeyublo7rml7Zsegighoi-EYwpREVadXkAXQHR_gaY6NsrrrPsuNQc2TnS0dnZpq3Mepu1Ml_U3_yy8gSRIoQwKlQA2HZ_CKC4h_MYBhTlBIh3FipF7CbapV9ZL7LOMM0wFhjHh7EbbHfvu00SjwYgBMeARYiTeDWmOtTrzdd6u_rEZeuU2rH0nfzeK5d-QpAGdzUjUc25mJDIM0jkCSRKpRRDMONI4h1HcAfH-HdHWxzu3x1uLI7w7w5nDxxjlF8YJZgzWVJLKv0CSS10-HAHcRj3jhMqi0OVf3fMcHBmK_R_8iyzRUPjfdTt3zO6o_yPusbPhdc_O1UnoA==");
+		List<Stockpile> stockpiles = StockpileReader.load("eNq9lVtrwjAYhv_Klutu5Jyml3NFBO1kmzAoIu200OEJW6_E_74vrT3caHYxQ6Hfm2OfvEm-xie0RQF6nCbrZJlvH17Wx9X-kG9L5KENCsgzhpigIEvWxcpDRYaC-ISgojwcoZym321bTxY92dPprqvuZFp2tZ1cteqn-Vi-RIHEGFPCpYdg2njuoawOOxPOIPIKEN7UlxJXi6BmEYd2vnzTyn1Z9RMa2vfQg2AzIgVFIWYQn4gR4FAYDUdRGL6PouFi8DaZjsOvxSR8Hc0mximgZRBgAPokpqIAFc3G449wAMWigSKKcV1BMS5uYhEiGP0HLIKvcp29honx2iglsQ1KcCdQWsvuAF7lkfzOFvW2TihBRM1E9U0qobjynbgETJRVTFLYkHzpCon8ZeuMSfrORPPeCa-ZlObWW6fc3Dri60t68i1Irk6TscmvTxMlNpu4dsUk8CVhcq2tVMyZUzWVENSaMpk7q5p_i6bWPK7ufvng-QV3WT4C");
 		testMaterialStockpile(stockpiles);
 	}
 
@@ -76,10 +81,10 @@ public class StockpileDataReadWriteTest extends TestUtil {
 				stockpile,
 				paladinBlueprint,
 				paladinBlueprint.getProductTypeID(),
-				5, false, false, 2, 10, 3, false,
-				ManufacturingFacility.STATION,
-				ManufacturingRigs.NONE,
-				ManufacturingSecurity.HIGHSEC);
+				5, false, ROUND, 2, 10, 3, false,
+				FACILITY,
+				RIGS,
+				SECURITY);
 		stockpile.add(material);
 		return stockpile;
 	}
@@ -99,12 +104,21 @@ public class StockpileDataReadWriteTest extends TestUtil {
 		assertEquals(null, stockpileFilter.getJobsDaysMore());
 		assertEquals("Eygfe VII - Moon 9 - Ishukone Corporation Factory", stockpileFilter.getLocation().getLocation());
 		assertEquals(0, stockpileFilter.getOwnerIDs().size());
-
+		//Materials
 		assertEquals(1, stockpile.getMaterials().size());
 		Iterator<StockpileItemMaterial> iterator = stockpile.getMaterials().iterator();
 		StockpileItemMaterial itemMaterial = iterator.next();
 		assertEquals("Paladin Blueprint (Mfg)", itemMaterial.getName());
 		assertEquals(2, itemMaterial.getMaterialItems().size());
+		assertEquals(ROUND, itemMaterial.getRoundPerRuns());
+		assertEquals(2, itemMaterial.getBlueprintRecursiveLevel());
+		assertEquals(FACILITY, itemMaterial.getFacility());
+		assertEquals(-1, itemMaterial.getFormulaRecursiveLevel());
+		assertEquals(3, (int)itemMaterial.getME());
+		assertEquals(RIGS, itemMaterial.getRigs());
+		assertEquals(SECURITY, itemMaterial.getSecurity());
+		assertEquals(null, itemMaterial.getRigsReactions());
+		assertEquals(null, itemMaterial.getSecurityReactions());
 		for (StockpileItem itemSub : itemMaterial.getMaterialItems()) {
 			System.out.println(itemSub.getName() + " " + itemSub.getTypeID());
 		}

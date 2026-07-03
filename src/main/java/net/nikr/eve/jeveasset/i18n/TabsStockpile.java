@@ -206,7 +206,7 @@ public abstract class TabsStockpile extends Bundle {
 	public abstract String region();
 	public abstract String remove();
 	public abstract String renameStockpileTitle();
-	public abstract String roundALot();
+	public abstract String roundPerRuns();
 	public abstract String runs();
 	public abstract String selectFits();
 	public abstract String selectGroup();

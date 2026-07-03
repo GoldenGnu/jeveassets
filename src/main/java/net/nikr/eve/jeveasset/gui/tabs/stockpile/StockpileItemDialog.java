@@ -39,7 +39,9 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JSpinner;
 import javax.swing.JTextField;
+import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingUtilities;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
@@ -129,7 +131,8 @@ public class StockpileItemDialog extends JDialogCentered {
 	private final JLabel jIgnoreMultiplierLabel;
 	private final JCheckBox jIgnoreMultiplier;
 	private final JLabel jRoundALotLabel;
-	private final JCheckBox jRoundALot;
+	private final SpinnerNumberModel roundPerRunsModel;
+	private final JSpinner jRoundPerRuns;
 
 	private final StockpileTab stockpileTab;
 	private final List<JComponent> manufacturingComponents = new ArrayList<>();
@@ -290,8 +293,9 @@ public class StockpileItemDialog extends JDialogCentered {
 		jIgnoreMultiplier = new JCheckBox(TabsStockpile.get().multiplierIgnore());
 
 	//Round a lot
-		jRoundALotLabel = new JLabel(TabsStockpile.get().roundALot());
-		jRoundALot = new JCheckBox(TabsStockpile.get().roundALot());
+		jRoundALotLabel = new JLabel(TabsStockpile.get().roundPerRuns());
+		roundPerRunsModel = new SpinnerNumberModel(0, 0, null, 1);
+		jRoundPerRuns = new JSpinner(roundPerRunsModel);
 
 	//Count Minimum
 		jCountMinimumLabel = new JLabel(TabsStockpile.get().countMinimum());
@@ -346,7 +350,7 @@ public class StockpileItemDialog extends JDialogCentered {
 						.addComponent(jRecursiveLevel, WIDTH, WIDTH, WIDTH)
 						.addComponent(jMaterialEfficiencyOverwrite, WIDTH, WIDTH, WIDTH)
 						.addComponent(jIgnoreMultiplier, WIDTH, WIDTH, WIDTH)
-						.addComponent(jRoundALot, WIDTH, WIDTH, WIDTH)
+						.addComponent(jRoundPerRuns, WIDTH, WIDTH, WIDTH)
 						.addComponent(jCountMinimum, WIDTH, WIDTH, WIDTH)
 					)
 				)
@@ -408,7 +412,7 @@ public class StockpileItemDialog extends JDialogCentered {
 				)
 				.addGroup(layout.createParallelGroup()
 					.addComponent(jRoundALotLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					.addComponent(jRoundALot, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jRoundPerRuns, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				)
 				.addGroup(layout.createParallelGroup()
 					.addComponent(jCountMinimumLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
@@ -435,7 +439,7 @@ public class StockpileItemDialog extends JDialogCentered {
 			jIgnoreMultiplierLabel.setVisible(false);
 			jIgnoreMultiplier.setVisible(false);
 			jRoundALotLabel.setVisible(false);
-			jRoundALot.setVisible(false);
+			jRoundPerRuns.setVisible(false);
 			jCountMinimumLabel.setVisible(true);
 			jCountMinimum.setVisible(true);
 		} else if (editStockpileItem.isSubMaterial()) {
@@ -448,7 +452,7 @@ public class StockpileItemDialog extends JDialogCentered {
 			jIgnoreMultiplierLabel.setVisible(false);
 			jIgnoreMultiplier.setVisible(false);
 			jRoundALotLabel.setVisible(false);
-			jRoundALot.setVisible(false);
+			jRoundPerRuns.setVisible(false);
 			jCountMinimumLabel.setVisible(false);
 			jCountMinimum.setVisible(false);
 		} else {
@@ -460,7 +464,7 @@ public class StockpileItemDialog extends JDialogCentered {
 			jIgnoreMultiplierLabel.setVisible(true);
 			jIgnoreMultiplier.setVisible(true);
 			jRoundALotLabel.setVisible(true);
-			jRoundALot.setVisible(true);
+			jRoundPerRuns.setVisible(true);
 			jCountMinimumLabel.setVisible(true);
 			jCountMinimum.setVisible(true);
 		}
@@ -478,6 +482,7 @@ public class StockpileItemDialog extends JDialogCentered {
 				jBlueprintType.setSelectedItem(BlueprintAddType.REACTION_MATERIALS_EDITABLE);
 			}
 			StockpileItemMaterial materialItem = (StockpileItemMaterial) editStockpileItem;
+			roundPerRunsModel.setValue(materialItem.getRoundPerRuns());
 			int recursiveLevel;
 			if (materialItem.getItem().isFormula()) {
 				recursiveLevel = materialItem.getFormulaRecursiveLevel();
@@ -507,7 +512,6 @@ public class StockpileItemDialog extends JDialogCentered {
 			jBlueprintType.setSelectedItem(BlueprintAddType.RUNS);
 		}
 		jIgnoreMultiplier.setSelected(editStockpileItem.isIgnoreMultiplier());
-		jRoundALot.setSelected(editStockpileItem.isRoundALot());
 		jBlueprintType.setEnabled(item.isBlueprint());
 		jCountMinimum.setText(String.valueOf(editStockpileItem.getCountMinimum()));
 		show();
@@ -558,8 +562,8 @@ public class StockpileItemDialog extends JDialogCentered {
 		jIgnoreMultiplier.setVisible(true);
 		jIgnoreMultiplier.setSelected(false);
 		jRoundALotLabel.setVisible(true);
-		jRoundALot.setVisible(true);
-		jRoundALot.setSelected(false);
+		jRoundPerRuns.setVisible(true);
+		roundPerRunsModel.setValue(0);
 		jMaterialEfficiencyOverwrite.setModel(new DefaultComboBoxModel<>(MaterialEfficiencyOverwrite.ADD));
 		jMaterialEfficiencyOverwrite.setSelectedIndex(0);
 		jMaterialEfficiencyOverwrite.setEnabled(false);
@@ -604,8 +608,8 @@ public class StockpileItemDialog extends JDialogCentered {
 			typeID = item.getTypeID();
 		}
 		boolean ignoreMultiplier = jIgnoreMultiplier.isSelected();
-		boolean roundALotLabel = jRoundALot.isSelected();
 		if (jBlueprintType.isEnabled()) {
+			int roundPerRuns = roundPerRunsModel.getNumber().intValue();
 			BlueprintAddType blueprintAddType = jBlueprintType.getItemAt(jBlueprintType.getSelectedIndex());
 			Integer me = jMaterialEfficiency.getItemAt(jMaterialEfficiency.getSelectedIndex());
 			ManufacturingFacility facility = jFacility.getItemAt(jFacility.getSelectedIndex());
@@ -633,27 +637,27 @@ public class StockpileItemDialog extends JDialogCentered {
 				for (IndustryMaterial material : item.getManufacturingMaterials()) {
 					Item materialItem = ApiIdConverter.getItem(material.getTypeID());
 					double count = ApiIdConverter.getManufacturingQuantity(material.getQuantity(), me, facility, rigs, security, countMinimum, false);
-					itemsMaterial.add(new StockpileItem(getStockpile(), materialItem, material.getTypeID(), count, false, ignoreMultiplier, roundALotLabel));
+					itemsMaterial.add(new StockpileItem(getStockpile(), materialItem, material.getTypeID(), count, false, ignoreMultiplier));
 				} 
 				return itemsMaterial;
 			} else if (blueprintAddType == BlueprintAddType.MANUFACTURING_MATERIALS_EDITABLE) {
 				//Manufacturing Materials Editable
-				return Collections.singletonList(new StockpileItemMaterial(getStockpile(), item, item.getProductTypeID(), countMinimum, ignoreMultiplier, roundALotLabel, recursiveLevel, meOverwrite.getME(), me, facilityOverwrite, facility, rigs, security));
+				return Collections.singletonList(new StockpileItemMaterial(getStockpile(), item, item.getProductTypeID(), countMinimum, ignoreMultiplier, roundPerRuns, recursiveLevel, meOverwrite.getME(), me, facilityOverwrite, facility, rigs, security));
 			} else if (blueprintAddType == BlueprintAddType.REACTION_MATERIALS_ONCE) {
 				//Reaction Materials
 				List<StockpileItem> itemsMaterial = new ArrayList<>();
 				for (IndustryMaterial material : item.getReactionMaterials()) {
 					Item materialItem = ApiIdConverter.getItem(material.getTypeID());
 					double count = ApiIdConverter.getReactionQuantity(material.getQuantity(), rigsReactions, securityReactions, countMinimum, false);
-					itemsMaterial.add(new StockpileItem(getStockpile(), materialItem, material.getTypeID(), count, false, ignoreMultiplier, roundALotLabel));
+					itemsMaterial.add(new StockpileItem(getStockpile(), materialItem, material.getTypeID(), count, false, ignoreMultiplier));
 				}
 				return itemsMaterial;
 			} else if (blueprintAddType == BlueprintAddType.REACTION_MATERIALS_EDITABLE) {
 				//Reaction Materials Editable
-				return Collections.singletonList(new StockpileItemMaterial(getStockpile(), item, item.getProductTypeID(), countMinimum, ignoreMultiplier, roundALotLabel, recursiveLevel, facilityOverwrite, rigsReactions, securityReactions));
+				return Collections.singletonList(new StockpileItemMaterial(getStockpile(), item, item.getProductTypeID(), countMinimum, ignoreMultiplier, roundPerRuns, recursiveLevel, facilityOverwrite, rigsReactions, securityReactions));
 			}
 		}
-		return Collections.singletonList(new StockpileItem(getStockpile(), item, typeID, countMinimum, runs, ignoreMultiplier, roundALotLabel));
+		return Collections.singletonList(new StockpileItem(getStockpile(), item, typeID, countMinimum, runs, ignoreMultiplier));
 	}
 
 	private boolean itemExist() {
@@ -775,7 +779,10 @@ public class StockpileItemDialog extends JDialogCentered {
 					updating = true;
 					jCountMinimum.setText(String.valueOf(item.getCountMinimum()));
 					jIgnoreMultiplier.setSelected(item.isIgnoreMultiplier());
-					jRoundALot.setSelected(item.isRoundALot());
+					if (item instanceof StockpileItemMaterial) {
+						StockpileItemMaterial material = (StockpileItemMaterial) item;
+						roundPerRunsModel.setValue(material.getRoundPerRuns());
+					}
 					updating = oldUpdateValue;
 				}
 			});

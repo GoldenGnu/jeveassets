@@ -667,7 +667,6 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 		private BigDecimal itemMultiplier;
 		private boolean runs;
 		private boolean ignoreMultiplier;
-		private boolean roundALot;
 		private boolean skipShoppingList;
 		private StockpileItemMaterial material = null;
 		
@@ -702,36 +701,30 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 					stockpileItem.countMinimum,
 					stockpileItem.runs,
 					stockpileItem.ignoreMultiplier,
-					stockpileItem.roundALot,
-					stockpileItem.skipShoppingList
-					);
+					stockpileItem.skipShoppingList);
 		}
 
 		public StockpileItem(final Stockpile stockpile, final Item item, final int typeID, final double countMinimum, final boolean runs) {
-			this(stockpile, item, typeID, countMinimum, runs, false, false, false, null, getNewID());
+			this(stockpile, item, typeID, countMinimum, runs, false, false, null, getNewID());
 		}
 
-		public StockpileItem(final Stockpile stockpile, final Item item, final int typeID, final double countMinimum, final boolean runs, boolean ignoreMultiplier, boolean roundALot) {
-			this(stockpile, item, typeID, countMinimum, runs, ignoreMultiplier, roundALot, false, null, getNewID());
+		public StockpileItem(final Stockpile stockpile, final Item item, final int typeID, final double countMinimum, final boolean runs, boolean ignoreMultiplier) {
+			this(stockpile, item, typeID, countMinimum, runs, ignoreMultiplier, false, null, getNewID());
 		}
 
-		public StockpileItem(final Stockpile stockpile, final Item item, final int typeID, final double countMinimum, final boolean runs, boolean ignoreMultiplier, boolean roundALot, boolean skipShoppingList) {
-			this(stockpile, item, typeID, countMinimum, runs, ignoreMultiplier, roundALot, skipShoppingList, null, getNewID());
+		public StockpileItem(final Stockpile stockpile, final Item item, final int typeID, final double countMinimum, final boolean runs, boolean ignoreMultiplier, boolean skipShoppingList) {
+			this(stockpile, item, typeID, countMinimum, runs, ignoreMultiplier, skipShoppingList, null, getNewID());
 		}
 
-		public StockpileItem(final Stockpile stockpile, final Item item, final int typeID, final double countMinimum, final boolean runs, boolean ignoreMultiplier, boolean roundALot, StockpileItemMaterial material) {
-			this(stockpile, item, typeID, countMinimum, runs, ignoreMultiplier, roundALot, false, material, getNewID());
+		public StockpileItem(final Stockpile stockpile, final Item item, final int typeID, final double countMinimum, final boolean runs, boolean ignoreMultiplier, StockpileItemMaterial material) {
+			this(stockpile, item, typeID, countMinimum, runs, ignoreMultiplier, false, material, getNewID());
 		}
 
-		public StockpileItem(final Stockpile stockpile, final Item item, final int typeID, final double countMinimum, final boolean runs, boolean ignoreMultiplier, boolean roundALot, final long id) {
-			this(stockpile, item, typeID, countMinimum, runs, ignoreMultiplier, roundALot, false, null, getNewID());
+		public StockpileItem(final Stockpile stockpile, final Item item, final int typeID, final double countMinimum, final boolean runs, boolean ignoreMultiplier, StockpileItemMaterial material, final long id) {
+			this(stockpile, item, typeID, countMinimum, runs, ignoreMultiplier, false, material, id);
 		}
 
-		public StockpileItem(final Stockpile stockpile, final Item item, final int typeID, final double countMinimum, final boolean runs, boolean ignoreMultiplier, boolean roundALot, StockpileItemMaterial material, final long id) {
-			this(stockpile, item, typeID, countMinimum, runs, ignoreMultiplier, roundALot, false, material, id);
-		}
-
-		public StockpileItem(final Stockpile stockpile, final Item item, final int typeID, final double countMinimum, final boolean runs, boolean ignoreMultiplier, boolean roundALot, boolean skipShoppingList, StockpileItemMaterial material, final long id) {
+		public StockpileItem(final Stockpile stockpile, final Item item, final int typeID, final double countMinimum, final boolean runs, boolean ignoreMultiplier, boolean skipShoppingList, StockpileItemMaterial material, final long id) {
 			this.stockpile = stockpile;
 			this.item = item;
 			this.typeID = typeID;
@@ -739,7 +732,6 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 			this.itemMultiplier = BigDecimal.valueOf(-1);
 			this.runs = runs;
 			this.ignoreMultiplier = ignoreMultiplier;
-			this.roundALot = roundALot;
 			this.skipShoppingList = skipShoppingList;
 			this.material = material;
 			this.id = id;
@@ -754,7 +746,6 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 			this.itemMultiplier = stockpileItem.itemMultiplier;
 			this.runs = stockpileItem.runs;
 			this.ignoreMultiplier = stockpileItem.ignoreMultiplier;
-			this.roundALot = stockpileItem.roundALot;
 			this.skipShoppingList = stockpileItem.skipShoppingList;
 			this.type = new TypeIdentifier(typeID, runs);
 		}
@@ -805,14 +796,6 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 
 		public void setIgnoreMultiplier(boolean ignoreMultiplier) {
 			this.ignoreMultiplier = ignoreMultiplier;
-		}
-
-		public boolean isRoundALot() {
-			return roundALot;
-		}
-
-		public void setRoundALot(boolean roundALot) {
-			this.roundALot = roundALot;
 		}
 
 		public boolean isSkipShoppingList() {
@@ -1439,8 +1422,6 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 			} else if (stockpile != null) {
 				if (!round) {
 					return stockpile.getMultiplier() * countMinimum;
-				} else if (isRoundALot() && !isSubMaterial()) {
-					return Math.ceil(stockpile.getMultiplier() * Math.ceil(countMinimum));
 				} else {
 					return Math.ceil(stockpile.getMultiplier() * countMinimum);
 				}
@@ -1728,6 +1709,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 		private final Set<StockpileItemMaterial> materials = new HashSet<>();
 		private final Set<StockpileItem> items = new HashSet<>();
 		private int productTypeID;
+		private int roundPerRuns;
 		private int blueprintRecursiveLevel;
 		private int formulaRecursiveLevel;
 		private int level;
@@ -1744,31 +1726,32 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 		/*
 		 * StockpileItemDialog Reaction
 		 */
-		public StockpileItemMaterial(Stockpile stockpile, Item item, final int productTypeID, double countMinimum, boolean ignoreMultiplier, boolean roundALot, int formulaRecursiveLevel, boolean facilityOverwrite, ReactionRigs rigsReactions, ReactionSecurity securityReactions) {
-			this(null, stockpile, item, productTypeID, countMinimum, ignoreMultiplier, roundALot, null, getNewID(), formulaRecursiveLevel, 0, facilityOverwrite, rigsReactions, securityReactions);
+		public StockpileItemMaterial(Stockpile stockpile, Item item, final int productTypeID, double countMinimum, boolean ignoreMultiplier, int roundPerRuns, int formulaRecursiveLevel, boolean facilityOverwrite, ReactionRigs rigsReactions, ReactionSecurity securityReactions) {
+			this(null, stockpile, item, productTypeID, countMinimum, ignoreMultiplier, roundPerRuns, null, getNewID(), formulaRecursiveLevel, 0, facilityOverwrite, rigsReactions, securityReactions);
 
 		}
 
 		/*
 		 * StockpileReader/SettingsReader Reaction
 		 */
-		public StockpileItemMaterial(MaterialTree tree, Stockpile stockpile, Item item, final int productTypeID, double countMinimum, boolean ignoreMultiplier, boolean roundALot, int formulaRecursiveLevel, ReactionRigs rigsReactions, ReactionSecurity securityReactions) {
-			this(tree, stockpile, item, productTypeID, countMinimum, ignoreMultiplier, roundALot, null, getNewID(), formulaRecursiveLevel, 0, false, rigsReactions, securityReactions);
+		public StockpileItemMaterial(MaterialTree tree, Stockpile stockpile, Item item, final int productTypeID, double countMinimum, boolean ignoreMultiplier, int roundPerRuns, int formulaRecursiveLevel, ReactionRigs rigsReactions, ReactionSecurity securityReactions) {
+			this(tree, stockpile, item, productTypeID, countMinimum, ignoreMultiplier, roundPerRuns, null, getNewID(), formulaRecursiveLevel, 0, false, rigsReactions, securityReactions);
 		}
 
 		/*
 		 * StockpileItemMaterial Reaction
 		 */
-		public StockpileItemMaterial(Stockpile stockpile, Item item, int productTypeID, double countMinimum, boolean ignoreMultiplier, boolean roundALot, long id, StockpileItemMaterial material, int formulaRecursiveLevel, int level, boolean facilityOverwrite, ReactionRigs rigsReactions, ReactionSecurity securityReactions) {
-			this(null, stockpile, item, productTypeID, countMinimum, ignoreMultiplier, roundALot, getNewID(), material, -1, formulaRecursiveLevel, level, null, null, facilityOverwrite, null, null, null, rigsReactions, securityReactions);
+		public StockpileItemMaterial(Stockpile stockpile, Item item, int productTypeID, double countMinimum, boolean ignoreMultiplier, int roundPerRuns, long id, StockpileItemMaterial material, int formulaRecursiveLevel, int level, boolean facilityOverwrite, ReactionRigs rigsReactions, ReactionSecurity securityReactions) {
+			this(null, stockpile, item, productTypeID, countMinimum, ignoreMultiplier, roundPerRuns, getNewID(), material, -1, formulaRecursiveLevel, level, null, null, facilityOverwrite, null, null, null, rigsReactions, securityReactions);
 		}
 
 		/*
 		 * SettingsReader Reaction
 		 */
-		public StockpileItemMaterial(MaterialTree tree, Stockpile stockpile, Item item, final int productTypeID, double countMinimum, boolean ignoreMultiplier, boolean roundALot, StockpileItemMaterial material, long id, int formulaRecursiveLevel, int level, boolean facilityOverwrite, ReactionRigs rigsReactions, ReactionSecurity securityReactions) {
-			super(stockpile, item, item.getTypeID(), countMinimum, false, ignoreMultiplier, roundALot, material, id);
+		public StockpileItemMaterial(MaterialTree tree, Stockpile stockpile, Item item, final int productTypeID, double countMinimum, boolean ignoreMultiplier, int roundPerRuns, StockpileItemMaterial material, long id, int formulaRecursiveLevel, int level, boolean facilityOverwrite, ReactionRigs rigsReactions, ReactionSecurity securityReactions) {
+			super(stockpile, item, item.getTypeID(), countMinimum, false, ignoreMultiplier, material, id);
 			this.productTypeID = productTypeID;
+			this.roundPerRuns = roundPerRuns;
 			this.blueprintRecursiveLevel = -1;
 			this.formulaRecursiveLevel = formulaRecursiveLevel;
 			this.level = level;
@@ -1782,28 +1765,28 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 		 * StockpileBpDialog/JStockpileItemMenu - Blueprint/Reaction
 		 */
 		public StockpileItemMaterial(Stockpile stockpile, Item item, int productTypeID, double countMinimum, BpData bpData) {
-			this(null, stockpile, item, productTypeID, countMinimum, bpData.isIgnoreMultiplier(), bpData.isRoundALot(), getNewID(), null, bpData.getBlueprintRecursiveLevel(), bpData.getFormulaRecursiveLevel(), 0, bpData.getMaterialEfficiencyOverwrite(), bpData.getMe(), false, bpData.getFacility(), bpData.getRigs(), bpData.getSecurity(), bpData.getRigsReactions(), bpData.getSecurityReactions());
+			this(null, stockpile, item, productTypeID, countMinimum, bpData.isIgnoreMultiplier(), bpData.getRoundPerRuns(), getNewID(), null, bpData.getBlueprintRecursiveLevel(), bpData.getFormulaRecursiveLevel(), 0, bpData.getMaterialEfficiencyOverwrite(), bpData.getMe(), false, bpData.getFacility(), bpData.getRigs(), bpData.getSecurity(), bpData.getRigsReactions(), bpData.getSecurityReactions());
 		}
 
 		/*
 		 * StockpileItemDialog Blueprint
 		 */
-		public StockpileItemMaterial(Stockpile stockpile, Item item, int productTypeID, double countMinimum, boolean ignoreMultiplier, boolean roundALot, int blueprintRecursiveLevel, Integer materialEfficiencyOverwrite, Integer materialEfficiency, boolean facilityOverwrite, ManufacturingFacility facility, ManufacturingRigs rigs, ManufacturingSecurity security) {
-			this(null, stockpile, item, productTypeID, countMinimum, ignoreMultiplier, roundALot, getNewID(), null, blueprintRecursiveLevel, -1, 0, materialEfficiencyOverwrite, materialEfficiency, facilityOverwrite, facility, rigs, security, null, null);
+		public StockpileItemMaterial(Stockpile stockpile, Item item, int productTypeID, double countMinimum, boolean ignoreMultiplier, int roundPerRuns, int blueprintRecursiveLevel, Integer materialEfficiencyOverwrite, Integer materialEfficiency, boolean facilityOverwrite, ManufacturingFacility facility, ManufacturingRigs rigs, ManufacturingSecurity security) {
+			this(null, stockpile, item, productTypeID, countMinimum, ignoreMultiplier, roundPerRuns, getNewID(), null, blueprintRecursiveLevel, -1, 0, materialEfficiencyOverwrite, materialEfficiency, facilityOverwrite, facility, rigs, security, null, null);
 		}
 
 		/*
 		 * StockpileReader/SettingsReader Blueprint
 		 */
-		public StockpileItemMaterial(MaterialTree tree, Stockpile stockpile, Item item, int productTypeID, double countMinimum, boolean ignoreMultiplier, boolean roundALot, int blueprintRecursiveLevel, Integer materialEfficiency, ManufacturingFacility facility, ManufacturingRigs rigs, ManufacturingSecurity security) {
-			this(tree, stockpile, item, productTypeID, countMinimum, ignoreMultiplier, roundALot, getNewID(), null, blueprintRecursiveLevel, -1, 0, null, materialEfficiency, false, facility, rigs, security, null, null);
+		public StockpileItemMaterial(MaterialTree tree, Stockpile stockpile, Item item, int productTypeID, double countMinimum, boolean ignoreMultiplier, int roundPerRuns, int blueprintRecursiveLevel, Integer materialEfficiency, ManufacturingFacility facility, ManufacturingRigs rigs, ManufacturingSecurity security) {
+			this(tree, stockpile, item, productTypeID, countMinimum, ignoreMultiplier, roundPerRuns, getNewID(), null, blueprintRecursiveLevel, -1, 0, null, materialEfficiency, false, facility, rigs, security, null, null);
 		}
 
 		/*
 		 * StockpileItemMaterial Blueprint
 		 */
-		public StockpileItemMaterial(Stockpile stockpile, Item item, int productTypeID, double countMinimum, boolean ignoreMultiplier, boolean roundALot, long id, StockpileItemMaterial material, int blueprintRecursiveLevel, int level, Integer materialEfficiencyOverwrite, Integer materialEfficiency, boolean facilityOverwrite, ManufacturingFacility facility, ManufacturingRigs rigs, ManufacturingSecurity security) {
-			this(null, stockpile, item, productTypeID, countMinimum, ignoreMultiplier, roundALot, getNewID(), material, blueprintRecursiveLevel, -1, level, null, materialEfficiency, facilityOverwrite, facility, rigs, security, null, null);
+		public StockpileItemMaterial(Stockpile stockpile, Item item, int productTypeID, double countMinimum, boolean ignoreMultiplier, int roundPerRuns, long id, StockpileItemMaterial material, int blueprintRecursiveLevel, int level, Integer materialEfficiencyOverwrite, Integer materialEfficiency, boolean facilityOverwrite, ManufacturingFacility facility, ManufacturingRigs rigs, ManufacturingSecurity security) {
+			this(null, stockpile, item, productTypeID, countMinimum, ignoreMultiplier, roundPerRuns, getNewID(), material, blueprintRecursiveLevel, -1, level, null, materialEfficiency, facilityOverwrite, facility, rigs, security, null, null);
 		}
 
 		/*
@@ -1815,7 +1798,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 					dot.itemMaterial.getProductTypeID(),
 					dot.itemMaterial.getCountMinimum(),
 					dot.itemMaterial.isIgnoreMultiplier(),
-					dot.itemMaterial.isRoundALot(),
+					dot.itemMaterial.getRoundPerRuns(),
 					dot.itemMaterial.getID(),
 					parent,
 					dot.itemMaterial.blueprintRecursiveLevel,
@@ -1834,9 +1817,10 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 		/*
 		 * StockpileItemMaterial
 		 */
-		public StockpileItemMaterial(MaterialTree tree, Stockpile stockpile, Item item, int productTypeID, double countMinimum, boolean ignoreMultiplier, boolean roundALot, long id, StockpileItemMaterial material, int blueprintRecursiveLevel, int formulaRecursiveLevel, int level, Integer materialEfficiencyOverwrite, Integer materialEfficiency, boolean facilityOverwrite, ManufacturingFacility facility, ManufacturingRigs rigs, ManufacturingSecurity security, ReactionRigs rigsReactions, ReactionSecurity securityReactions) {
-			super(stockpile, item, item.getTypeID(), countMinimum, false, ignoreMultiplier, roundALot, material, id);
+		public StockpileItemMaterial(MaterialTree tree, Stockpile stockpile, Item item, int productTypeID, double countMinimum, boolean ignoreMultiplier, int roundPerRuns, long id, StockpileItemMaterial material, int blueprintRecursiveLevel, int formulaRecursiveLevel, int level, Integer materialEfficiencyOverwrite, Integer materialEfficiency, boolean facilityOverwrite, ManufacturingFacility facility, ManufacturingRigs rigs, ManufacturingSecurity security, ReactionRigs rigsReactions, ReactionSecurity securityReactions) {
+			super(stockpile, item, item.getTypeID(), countMinimum, false, ignoreMultiplier, material, id);
 			this.productTypeID = productTypeID;
+			this.roundPerRuns = roundPerRuns;
 			this.blueprintRecursiveLevel = blueprintRecursiveLevel;
 			this.formulaRecursiveLevel = formulaRecursiveLevel;
 			this.materialEfficiencyOverwrite = materialEfficiencyOverwrite;
@@ -1851,10 +1835,11 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 			createItems(tree, materialEfficiencyOverwrite, facilityOverwrite);
 		}
 
-		private StockpileItemMaterial(Stockpile stockpile, StockpileItemMaterial parent, StockpileItemMaterial clone, double count, Integer blueprintRecursiveLevel, Integer formulaRecursiveLevel, Integer level) {
+		private StockpileItemMaterial(Stockpile stockpile, StockpileItemMaterial parent, StockpileItemMaterial clone, Integer blueprintRecursiveLevel, Integer formulaRecursiveLevel, Integer level) {
 			super(stockpile, clone);
 			setMaterial(parent); //Can be null
 			this.productTypeID = clone.productTypeID;
+			this.roundPerRuns = clone.roundPerRuns;
 			if (blueprintRecursiveLevel != null) {
 				this.blueprintRecursiveLevel = blueprintRecursiveLevel;
 			} else {
@@ -1882,7 +1867,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 
 		@Override
 		public StockpileItem deepClone(final Stockpile stockpile) {
-			StockpileItemMaterial stockpileItemMaterial = new StockpileItemMaterial(stockpile, getMaterial(), this, getCountMinimum(), null, null, null);
+			StockpileItemMaterial stockpileItemMaterial = new StockpileItemMaterial(stockpile, getMaterial(), this, null, null, null);
 			return stockpileItemMaterial;
 		}
 
@@ -1890,7 +1875,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 		public StockpileItem deepCloneNew(final Stockpile stockpile) {
 			int blueprint = calcRecursiveLevel(this.blueprintRecursiveLevel);
 			int formula = calcRecursiveLevel(this.formulaRecursiveLevel);
-			return new StockpileItemMaterial(stockpile, null, this, getCountMinimumUnmodified(), blueprint, formula, 0);
+			return new StockpileItemMaterial(stockpile, null, this, blueprint, formula, 0);
 		}
 
 		private int findRecursiveLevel(StockpileItemMaterial material, int level) {
@@ -1917,7 +1902,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 				final TypeIdentifier identifier = entry.getKey();
 				//final Integer typeID = entry.getKey();
 				if (item instanceof StockpileItemMaterial) {
-					StockpileItemMaterial sub = new StockpileItemMaterial(stockpile, this, (StockpileItemMaterial) item, item.getCountMinimum(), blueprintRecursiveLevel, formulaRecursiveLevel, level == null ? null : level + 1);
+					StockpileItemMaterial sub = new StockpileItemMaterial(stockpile, this, (StockpileItemMaterial) item, blueprintRecursiveLevel, formulaRecursiveLevel, level == null ? null : level + 1);
 					sub.setMaterial(this);
 					itemTypes.put(identifier, sub);
 					materials.add(sub);
@@ -1951,7 +1936,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 						stockpileItemMaterial = new StockpileItemMaterial(dot, this, level + 1);
 					} else {
 						Item blueprintItem = ApiIdConverter.getItem(materialItem.getBlueprintTypeID());
-						stockpileItemMaterial = new StockpileItemMaterial(getStockpile(), blueprintItem, material.getTypeID(), count, isIgnoreMultiplier(), isRoundALot(), getNewID(), this, blueprintRecursiveLevel, level + 1, materialEfficiencyOverwrite, materialEfficiencyOverwrite, facilityOverwrite, facility, rigs, security);
+						stockpileItemMaterial = new StockpileItemMaterial(getStockpile(), blueprintItem, material.getTypeID(), count, isIgnoreMultiplier(), getRoundPerRuns(), getNewID(), this, blueprintRecursiveLevel, level + 1, materialEfficiencyOverwrite, materialEfficiencyOverwrite, facilityOverwrite, facility, rigs, security);
 					}
 					materials.add(stockpileItemMaterial);
 					itemTypes.put(new TypeIdentifier(material.getTypeID(), false, true), stockpileItemMaterial);
@@ -1966,18 +1951,18 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 						stockpileItemMaterial = new StockpileItemMaterial(dot, this, level + 1);
 					} else {
 						Item formulaItem = ApiIdConverter.getItem(materialItem.getFormulaTypeID());
-						stockpileItemMaterial = new StockpileItemMaterial(getStockpile(), formulaItem, material.getTypeID(), count, isIgnoreMultiplier(), isRoundALot(), getNewID(), this, formulaRecursiveLevel, level + 1, facilityOverwrite, rigsReactions, securityReactions);
+						stockpileItemMaterial = new StockpileItemMaterial(getStockpile(), formulaItem, material.getTypeID(), count, isIgnoreMultiplier(), getRoundPerRuns(), getNewID(), this, formulaRecursiveLevel, level + 1, facilityOverwrite, rigsReactions, securityReactions);
 					}
 					materials.add(stockpileItemMaterial);
 					itemTypes.put(new TypeIdentifier(material.getTypeID(), false, true), stockpileItemMaterial);
 				} else if (getItem().isFormula()) {
 					double count = UpdateMaterial.getReactionQuantityTotal(this, material);
-					StockpileItem stockpileItem = new StockpileItem(getStockpile(), materialItem, material.getTypeID(), count, false, isIgnoreMultiplier(), isRoundALot(), this);
+					StockpileItem stockpileItem = new StockpileItem(getStockpile(), materialItem, material.getTypeID(), count, false, isIgnoreMultiplier(), this);
 					itemTypes.put(new TypeIdentifier(material.getTypeID()), stockpileItem);
 					items.add(stockpileItem);
 				} else if (getItem().isBlueprint()) {
 					double count = UpdateMaterial.getManufacturingQuantityTotal(this, material);
-					StockpileItem stockpileItem = new StockpileItem(getStockpile(), materialItem, material.getTypeID(), count, false, isIgnoreMultiplier(), isRoundALot(), this);
+					StockpileItem stockpileItem = new StockpileItem(getStockpile(), materialItem, material.getTypeID(), count, false, isIgnoreMultiplier(), this);
 					itemTypes.put(new TypeIdentifier(material.getTypeID()), stockpileItem);
 					items.add(stockpileItem);
 				}
@@ -1994,8 +1979,18 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 		}
 
 		private double getManufacturingQuantity(IndustryMaterial material, double maxRuns) {
-			if (isRoundALot()) {
-				return ApiIdConverter.getManufacturingQuantity(material.getQuantity(), materialEfficiency, facility, rigs, security,  1, true) * maxRuns;
+			if (isRoundPerRuns()) {
+				double interval = getRoundPerRuns();
+				double quantity = ApiIdConverter.getManufacturingQuantity(material.getQuantity(), materialEfficiency, facility, rigs, security, 1, false);
+
+				long fullBlocks = (long) (maxRuns / interval);
+				double leftoverRuns = maxRuns % interval;
+
+				double total = fullBlocks * Math.ceil(interval * quantity);
+
+				total += leftoverRuns * quantity;
+
+				return Math.ceil(total);
 			} else {
 				return ApiIdConverter.getManufacturingQuantity(material.getQuantity(), materialEfficiency, facility, rigs, security, maxRuns, false);
 			}
@@ -2018,6 +2013,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 		private void update(StockpileItemMaterial to, StockpileItemMaterial from, StockpileItemMaterial fromTop) {
 			to.updateSuper(from);
 			to.productTypeID = from.productTypeID;
+			to.roundPerRuns = from.roundPerRuns;
 			to.blueprintRecursiveLevel = fromTop.blueprintRecursiveLevel;
 			to.formulaRecursiveLevel = fromTop.formulaRecursiveLevel;
 			to.materialEfficiencyOverwrite = fromTop.materialEfficiencyOverwrite;
@@ -2080,6 +2076,18 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 
 		public int getProductTypeID() {
 			return productTypeID;
+		}
+
+		public boolean isRoundPerRuns() {
+			return roundPerRuns > 0;
+		}
+
+		public int getRoundPerRuns() {
+			return roundPerRuns;
+		}
+
+		public void setRoundPerRuns(int roundPerRuns) {
+			this.roundPerRuns = roundPerRuns;
 		}
 
 		@Override
@@ -2386,7 +2394,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 		private double volumeNeeded = 0;
 
 		public StockpileTotal(final Stockpile stockpile) {
-			super(stockpile, new Item(0), 0, 0, false, false, false, null, 0);
+			super(stockpile, new Item(0), 0, 0, false, false, null, 0);
 		}
 
 		private void reset() {
@@ -2853,7 +2861,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 		}
 
 		private SubpileItem(Stockpile stockpile, Item item, int typeID, StockpileItem parentItem, StockpileItemMaterial parentMaterial, SubpileItem subpileMaterial, boolean mfg, SubMultiplier subpileStock, int level, String path) {
-			super(stockpile, item, typeID, parentItem.getCountMinimumUnmodified(), parentItem.isRuns(), false, false, mfg);
+			super(stockpile, item, typeID, parentItem.getCountMinimumUnmodified(), parentItem.isRuns(), false, mfg);
 			this.blueprintSettings = parentMaterial;
 			this.blueprintCount = subpileMaterial;
 			this.mfg = mfg;

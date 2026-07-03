@@ -167,12 +167,15 @@ public class StockpileWriter extends AbstractBackup {
 		item.addProperty("m", stockpileItem.getCountMinimum());
 		item.addProperty("r", stockpileItem.isRuns());
 		item.addProperty("im", stockpileItem.isIgnoreMultiplier());
-		
 		if (stockpileItem.isMaterial() && stockpileItem instanceof StockpileItemMaterial) {
 			StockpileItemMaterial materialItem = (StockpileItemMaterial) stockpileItem;
+			//ProductTypeID
+			item.addProperty("pt", materialItem.getProductTypeID());
+			//Round per run
+			item.addProperty("rpr", materialItem.getRoundPerRuns());
 			//Blueprint Recursive Level
 			item.addProperty("mbr", materialItem.getBlueprintRecursiveLevel());
-			// Formula Recursive Level
+			//Formula Recursive Level
 			item.addProperty("mfr", materialItem.getFormulaRecursiveLevel());
 			//Facility
 			ManufacturingFacility facility = materialItem.getFacility();
@@ -204,7 +207,7 @@ public class StockpileWriter extends AbstractBackup {
 			if (securityReactions != null) {
 				item.addProperty("rs", securityReactions.name());
 			}
-			item.addProperty("pt", materialItem.getProductTypeID());
+			//Materials
 			if (!materialItem.getMaterials().isEmpty()) {
 				JsonArray items = new JsonArray();
 				item.add("s", items);

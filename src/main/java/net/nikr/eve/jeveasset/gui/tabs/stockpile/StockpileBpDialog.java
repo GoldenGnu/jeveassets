@@ -32,6 +32,8 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JSpinner;
+import javax.swing.SpinnerNumberModel;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.settings.ManufacturingSettings.ManufacturingFacility;
@@ -71,7 +73,8 @@ public class StockpileBpDialog extends JDialogCentered {
 	private final JComboBox<ReactionSecurity> jSecurityReactions;
 	private final JComboBox<Integer> jFormulaRecursiveLevel;
 	private final JCheckBox jIgnoreMultiplier;
-	private final JCheckBox jRoundALot;
+	private final SpinnerNumberModel roundPerRunsModel;
+	private final JSpinner jRoundPerRuns;
 
 	private final List<JComponent> manufacturingComponents = new ArrayList<>();
 	private final List<JComponent> manufacturingEditComponents = new ArrayList<>();
@@ -189,8 +192,11 @@ public class StockpileBpDialog extends JDialogCentered {
 		jIgnoreMultiplier = new JCheckBox(TabsStockpile.get().multiplierIgnore());
 
 	//Ignore Multiplier
-		JLabel jRoundALotLabel = new JLabel(TabsStockpile.get().roundALot());
-		jRoundALot = new JCheckBox(TabsStockpile.get().roundALot());
+		JLabel jRoundALotLabel = new JLabel(TabsStockpile.get().roundPerRuns());
+		manufacturingComponents.add(jRoundALotLabel);
+		roundPerRunsModel = new SpinnerNumberModel(0, 0, null, 1);
+		jRoundPerRuns = new JSpinner(roundPerRunsModel);
+		manufacturingComponents.add(jRoundPerRuns);
 
 		jOK = new JButton(TabsStockpile.get().ok());
 		jOK.setActionCommand(StockpileBpAction.OK.name());
@@ -230,7 +236,7 @@ public class StockpileBpDialog extends JDialogCentered {
 							.addComponent(jSecurityReactions)
 							.addComponent(jFormulaRecursiveLevel)
 							.addComponent(jIgnoreMultiplier)
-							.addComponent(jRoundALot)
+							.addComponent(jRoundPerRuns)
 						)
 					)
 				)
@@ -281,12 +287,12 @@ public class StockpileBpDialog extends JDialogCentered {
 					.addComponent(jFormulaRecursiveLevel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				)
 				.addGroup(layout.createParallelGroup()
-					.addComponent(jIgnoreMultiplierLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					.addComponent(jIgnoreMultiplier, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jRoundALotLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jRoundPerRuns, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				)
 				.addGroup(layout.createParallelGroup()
-					.addComponent(jRoundALotLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					.addComponent(jRoundALot, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jIgnoreMultiplierLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jIgnoreMultiplier, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				)
 				.addGroup(layout.createParallelGroup()
 					.addComponent(jOK, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
@@ -376,8 +382,8 @@ public class StockpileBpDialog extends JDialogCentered {
 			}
 			MaterialEfficiencyOverwrite meOverwrite = jMaterialEfficiencyOverwrite.getItemAt(jMaterialEfficiencyOverwrite.getSelectedIndex());
 			boolean ignoreMultiplier = jIgnoreMultiplier.isSelected();
-			boolean roundALot = jRoundALot.isSelected();
-			returnValue = new BpData(type, ignoreMultiplier, roundALot, blueprintRecursiveLevel, formulaRecursiveLevel, meOverwrite.getME(), me, facility, rigs, security, rigsReactions, securityReactions);
+			int roundPerRuns = roundPerRunsModel.getNumber().intValue();
+			returnValue = new BpData(type, ignoreMultiplier, roundPerRuns, blueprintRecursiveLevel, formulaRecursiveLevel, meOverwrite.getME(), me, facility, rigs, security, rigsReactions, securityReactions);
 		} else {
 			returnValue = new BpData(type);
 		}
@@ -434,7 +440,7 @@ public class StockpileBpDialog extends JDialogCentered {
 
 		private final String type;
 		private final boolean ignoreMultiplier;
-		private final boolean roundALot;
+		private final Integer roundPerRuns;
 		private final Integer blueprintRecursiveLevel;
 		private final Integer formulaRecursiveLevel;
 		private final Integer me;
@@ -444,14 +450,11 @@ public class StockpileBpDialog extends JDialogCentered {
 		private final ManufacturingSecurity security;
 		private final ReactionRigs rigsReactions;
 		private final ReactionSecurity securityReactions;
-		
-		
-		
 
 		public BpData(String type) {
 			this.type = type;
 			this.ignoreMultiplier = false;
-			this.roundALot = false;
+			this.roundPerRuns = null;
 			this.blueprintRecursiveLevel = null;
 			this.formulaRecursiveLevel = null;
 			this.materialEfficiencyOverwrite = null;
@@ -463,7 +466,7 @@ public class StockpileBpDialog extends JDialogCentered {
 			this.securityReactions = null;
 		}
 
-		public BpData(String type, boolean ignoreMultiplier, boolean roundALot, Integer blueprintRecursiveLevel, int formulaRecursiveLevel, Integer materialEfficiencyOverwrite, Integer me, ManufacturingFacility facility, ManufacturingRigs rigs, ManufacturingSecurity security, ReactionRigs rigsReactions, ReactionSecurity securityReactions) {
+		public BpData(String type, boolean ignoreMultiplier, Integer roundPerRuns, Integer blueprintRecursiveLevel, int formulaRecursiveLevel, Integer materialEfficiencyOverwrite, Integer me, ManufacturingFacility facility, ManufacturingRigs rigs, ManufacturingSecurity security, ReactionRigs rigsReactions, ReactionSecurity securityReactions) {
 			this.type = type;
 			this.me = me;
 			this.facility = facility;
@@ -472,7 +475,7 @@ public class StockpileBpDialog extends JDialogCentered {
 			this.materialEfficiencyOverwrite = materialEfficiencyOverwrite;
 			this.blueprintRecursiveLevel = blueprintRecursiveLevel;
 			this.formulaRecursiveLevel = formulaRecursiveLevel;
-			this.roundALot = roundALot;
+			this.roundPerRuns = roundPerRuns;
 			this.ignoreMultiplier = ignoreMultiplier;
 			this.rigsReactions = rigsReactions;
 			this.securityReactions = securityReactions;
@@ -518,8 +521,8 @@ public class StockpileBpDialog extends JDialogCentered {
 			return ignoreMultiplier;
 		}
 
-		public boolean isRoundALot() {
-			return roundALot;
+		public Integer getRoundPerRuns() {
+			return roundPerRuns;
 		}
 
 		public boolean matches(String value) {

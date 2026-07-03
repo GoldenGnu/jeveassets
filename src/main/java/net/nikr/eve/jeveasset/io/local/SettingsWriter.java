@@ -736,9 +736,9 @@ public class SettingsWriter extends AbstractXmlWriter {
 		setAttribute(itemNode, "minimum", item.getCountMinimum());
 		setAttribute(itemNode, "runs", item.isRuns());
 		setAttribute(itemNode, "ignoremultiplier", item.isIgnoreMultiplier());
-		setAttribute(itemNode, "roundalot", item.isRoundALot());
 		if (item.isMaterial() && item instanceof StockpileItemMaterial) {
 			StockpileItemMaterial materialItem = (StockpileItemMaterial) item;
+			setAttribute(itemNode, "roundperruns", materialItem.getRoundPerRuns());
 			setAttributeOptional(itemNode, "blueprintrecursive", materialItem.getBlueprintRecursiveLevel());
 			setAttributeOptional(itemNode, "formularecursive", materialItem.getFormulaRecursiveLevel());
 			setAttributeOptional(itemNode, "facility", materialItem.getFacility());

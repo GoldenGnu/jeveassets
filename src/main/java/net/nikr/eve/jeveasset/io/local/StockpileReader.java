@@ -199,11 +199,6 @@ public class StockpileReader extends AbstractBackup {
 			if (ignoreMultiplierElement != null) {
 				ignoreMultiplier = ignoreMultiplierElement.getAsBoolean();
 			}
-			JsonElement roundALotElement=  itemObject.get("ral");
-			boolean roundALot = false;
-			if (roundALotElement != null) {
-				roundALot = roundALotElement.getAsBoolean();
-			}
 		//Materials
 			//ProductTypeID
 			Integer productTypeID = null;
@@ -211,13 +206,19 @@ public class StockpileReader extends AbstractBackup {
 			if (pt != null) {
 				productTypeID = pt.getAsInt();
 			}
-			//Recursive
+			//Round per Run
+			JsonElement roundPerRunsElement =  itemObject.get("rpr");
+			int roundPerRuns = 0;
+			if (roundPerRunsElement != null) {
+				roundPerRuns = roundPerRunsElement.getAsInt();
+			}
+			//Blueprint Recursive Level
 			Integer blueprintRecursiveLevel = null;
 			JsonElement mrr = itemObject.get("mbr");
 			if (mrr != null) {
 				blueprintRecursiveLevel = mrr.getAsInt();
 			}
-			//Recursive
+			//Formula Recursive Level
 			Integer formulaRecursiveLevel = null;
 			JsonElement mfr = itemObject.get("mfr");
 			if (mfr != null) {
@@ -269,18 +270,7 @@ public class StockpileReader extends AbstractBackup {
 				}
 			}
 	//Reactions
-			ReactionSecurity reactionSecurity = null;
-			JsonElement rs = itemObject.get("rs");
-			if (rs != null) {
-				String securityReactions = rs.getAsString();
-				if (securityReactions != null) {
-					try {
-						reactionSecurity = ReactionSecurity.valueOf(securityReactions);
-					} catch (IllegalArgumentException ex) {
-						//No problem
-					}
-				}
-			}
+			//Rigs (Reaction)
 			ReactionRigs reactionRigs = null;
 			JsonElement rr = itemObject.get("rr");
 			if (rr != null) {
@@ -293,17 +283,31 @@ public class StockpileReader extends AbstractBackup {
 					}
 				}
 			}
+			//Security (Reactions)
+			ReactionSecurity reactionSecurity = null;
+			JsonElement rs = itemObject.get("rs");
+			if (rs != null) {
+				String securityReactions = rs.getAsString();
+				if (securityReactions != null) {
+					try {
+						reactionSecurity = ReactionSecurity.valueOf(securityReactions);
+					} catch (IllegalArgumentException ex) {
+						//No problem
+					}
+				}
+			}
+			
 			if (typeID != 0) { //Ignore Total
 				Item item = ApiIdConverter.getItemUpdate(Math.abs(typeID), true);
 				MaterialTree root = new MaterialTree();
 				deserializeMaterials(itemObject, stockpile, root);
 				StockpileItem stockpileItem;
 				if (productTypeID != null && blueprintRecursiveLevel != null && materialEfficiency != null && manufacturingFacility != null && manufacturingRigs != null && manufacturingSecurity != null) {
-				stockpileItem = new StockpileItemMaterial(root, stockpile, item, productTypeID, countMinimum, ignoreMultiplier, roundALot, blueprintRecursiveLevel, materialEfficiency, manufacturingFacility, manufacturingRigs, manufacturingSecurity);
+				stockpileItem = new StockpileItemMaterial(root, stockpile, item, productTypeID, countMinimum, ignoreMultiplier, roundPerRuns, blueprintRecursiveLevel, materialEfficiency, manufacturingFacility, manufacturingRigs, manufacturingSecurity);
 				} else if (productTypeID != null && formulaRecursiveLevel != null && reactionSecurity != null && reactionRigs != null) {
-					stockpileItem = new StockpileItemMaterial(root, stockpile, item, productTypeID, countMinimum, ignoreMultiplier, roundALot, formulaRecursiveLevel, reactionRigs, reactionSecurity);
+					stockpileItem = new StockpileItemMaterial(root, stockpile, item, productTypeID, countMinimum, ignoreMultiplier, roundPerRuns, formulaRecursiveLevel, reactionRigs, reactionSecurity);
 				} else {
-					stockpileItem = new StockpileItem(stockpile, item, typeID, countMinimum, runs, ignoreMultiplier, roundALot);
+					stockpileItem = new StockpileItem(stockpile, item, typeID, countMinimum, runs, ignoreMultiplier);
 				}
 				return stockpileItem;
 			}
