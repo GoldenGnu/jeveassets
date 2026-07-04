@@ -251,23 +251,7 @@ public class JStockpileItemMenu extends JMenu {
 				if (source instanceof JStockpileMenuItem) {
 					JStockpileMenuItem jMenuItem = (JStockpileMenuItem) source;
 					List<StockpileItem> items = jMenuItem.getItems();
-					if (!items.isEmpty()) {
-						int value;
-						if (items.size() == 1) {
-							value = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), items.get(0).getName(), TabsStockpile.get().deleteItemTitle(), JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
-						} else {
-							value = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), TabsStockpile.get().deleteItems(items.size()), TabsStockpile.get().deleteItemTitle(), JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
-						}
-						if (value == JOptionPane.OK_OPTION) {
-							Settings.lock("Stokcpile (Stockpile Menu)"); //Lock for Stokcpile (Stockpile Menu)
-							for (StockpileItem item : items) {
-								item.getStockpile().remove(item);
-							}
-							Settings.unlock("Stokcpile (Stockpile Menu)"); //Unlock for Stokcpile (Stockpile Menu)
-							program.saveSettings("Stokcpile (Stockpile Menu)"); //Save Stokcpile (Stockpile Menu)
-							stockpileTab.removeItems(items);
-						}
-					}
+					stockpileTab.deleteItems(items);
 				}
 			}
 		}

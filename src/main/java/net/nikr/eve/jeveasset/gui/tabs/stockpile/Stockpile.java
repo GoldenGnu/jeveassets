@@ -59,10 +59,10 @@ import net.nikr.eve.jeveasset.data.settings.tag.Tags;
 import net.nikr.eve.jeveasset.data.settings.types.BlueprintType;
 import net.nikr.eve.jeveasset.data.settings.types.ItemType;
 import net.nikr.eve.jeveasset.data.settings.types.LocationsType;
-import net.nikr.eve.jeveasset.data.settings.types.MarketDetailType;
 import net.nikr.eve.jeveasset.data.settings.types.OwnersType;
 import net.nikr.eve.jeveasset.data.settings.types.PriceType;
 import net.nikr.eve.jeveasset.data.settings.types.TagsType;
+import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.CopyHandler.CopySeparator;
 import net.nikr.eve.jeveasset.gui.shared.components.JButtonComparable;
 import net.nikr.eve.jeveasset.gui.shared.components.JButtonNull;
@@ -655,7 +655,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 		return this.getName().compareToIgnoreCase(o.getName());
 	}
 
-	public static class StockpileItem implements Comparable<StockpileItem>, LocationsType, ItemType, BlueprintType, PriceType, CopySeparator, TagsType, OwnersType, MarketDetailType {
+	public static class StockpileItem implements Comparable<StockpileItem>, LocationsType, ItemType, BlueprintType, PriceType, CopySeparator, TagsType, OwnersType {
 		private static final AtomicLong TS = new AtomicLong();
 		//Constructor
 		private final long id;
@@ -669,9 +669,11 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 		private boolean ignoreMultiplier;
 		private boolean skipShoppingList;
 		private StockpileItemMaterial material = null;
-		
+
 		//soft init
-		protected JButton jButton;
+		protected JButton jMarketDetailsButton;
+		protected JButton jEdit;
+		protected JButton jDelete;
 
 		//Updated values
 		private double price = 0.0;
@@ -774,12 +776,25 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 			return material != null;
 		}
 
-		@Override
-		public JButton getButton() {
-			if (jButton == null) { //Soft init
-				jButton = new JButtonComparable(TabsStockpile.get().eveUiOpen());
+		public JButton getMarketDetailsButton() {
+			if (jMarketDetailsButton == null) { //Soft init
+				jMarketDetailsButton = new JButtonComparable(TabsStockpile.get().eveUiOpen());
 			}
-			return jButton;
+			return jMarketDetailsButton;
+		}
+
+		public JButton getEditButton() {
+			if (jEdit == null) { //Soft init
+				jEdit = new JButtonComparable(Images.EDIT_EDIT.getIcon());
+			}
+			return jEdit;
+		}
+
+		public JButton getDeleteButton() {
+			if (jDelete == null) { //Soft init
+				jDelete = new JButtonComparable(Images.EDIT_DELETE.getIcon());
+			}
+			return jDelete;
 		}
 
 		private void updateTags() {
@@ -1665,7 +1680,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 			if (obj == null) {
 				return false;
 			}
-			if (!obj.getClass().isAssignableFrom(getClass())) {
+			if (getClass() != obj.getClass()) {
 				return false;
 			}
 			final StockpileItem other = (StockpileItem) obj;
@@ -2083,6 +2098,18 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 			return getIDs(this);
 		}
 
+		@Override
+		public JButton getDeleteButton() {
+			if (jDelete == null) { //Soft init
+				if (!isSubMaterial()) {
+					return super.getDeleteButton();
+				} else {
+					jDelete = new JButtonNull();
+				}
+			}
+			return jDelete;
+		}
+
 		public int getProductTypeID() {
 			return productTypeID;
 		}
@@ -2470,11 +2497,27 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 		}
 
 		@Override
-		public JButton getButton() {
-			if (jButton == null) { //Soft init
-				jButton = new JButtonNull();
+		public JButton getMarketDetailsButton() {
+			if (jMarketDetailsButton == null) { //Soft init
+				jMarketDetailsButton = new JButtonNull();
 			}
-			return jButton;
+			return jMarketDetailsButton;
+		}
+
+		@Override
+		public JButton getEditButton() {
+			if (jEdit == null) { //Soft init
+				jEdit = new JButtonNull();
+			}
+			return jEdit;
+		}
+
+		@Override
+		public JButton getDeleteButton() {
+			if (jDelete == null) { //Soft init
+				jDelete = new JButtonNull();
+			}
+			return jDelete;
 		}
 
 		@Override
@@ -2934,6 +2977,22 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 			}
 		}
 
+		@Override
+		public JButton getEditButton() {
+			if (jEdit == null) { //Soft init
+				jEdit = new JButtonNull();
+			}
+			return jEdit;
+		}
+
+		@Override
+		public JButton getDeleteButton() {
+			if (jDelete == null) { //Soft init
+				jDelete = new JButtonNull();
+			}
+			return jDelete;
+		}
+
 		public void addItemLink(StockpileItem parentItem, SubMultiplier subpileStock) {
 			itemLinks.add(new SubpileItemLink(parentItem, subpileStock));
 			updateText();
@@ -3067,11 +3126,11 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 		}
 
 		@Override
-		public JButton getButton() {
-			if (jButton == null) { //Soft init
-				jButton = new JButtonNull();
+		public JButton getMarketDetailsButton() {
+			if (jMarketDetailsButton == null) { //Soft init
+				jMarketDetailsButton = new JButtonNull();
 			}
-			return jButton;
+			return jMarketDetailsButton;
 		}
 
 		@Override

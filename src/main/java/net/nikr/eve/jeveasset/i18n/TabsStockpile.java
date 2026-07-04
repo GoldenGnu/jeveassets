@@ -237,6 +237,8 @@ public abstract class TabsStockpile extends Bundle {
 	public abstract String totalToHaul();
 	public abstract String universe();
 	public abstract String columnName();
+	public abstract String columnEdit();
+	public abstract String columnDelete();
 	public abstract String columnGroup();
 	public abstract String columnCategory();
 	public abstract String columnSlot();

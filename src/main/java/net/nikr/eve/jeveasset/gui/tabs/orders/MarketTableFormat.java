@@ -164,7 +164,7 @@ public enum MarketTableFormat implements EnumTableColumn<MyMarketOrder> {
 		}
 		@Override
 		public Object getColumnValue(final MyMarketOrder from) {
-			return from.getButton();
+			return from.getMarketDetailsButton();
 		}
 	},
 	BROKERS_FEE(Double.class) {

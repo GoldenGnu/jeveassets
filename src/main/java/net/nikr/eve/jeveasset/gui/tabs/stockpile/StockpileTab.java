@@ -74,8 +74,8 @@ import net.nikr.eve.jeveasset.gui.frame.StatusPanel.JStatusLabel;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.InstantToolTip;
 import net.nikr.eve.jeveasset.gui.shared.JOptionInput;
-import net.nikr.eve.jeveasset.gui.shared.MarketDetailsColumn;
-import net.nikr.eve.jeveasset.gui.shared.MarketDetailsColumn.MarketDetailsActionListener;
+import net.nikr.eve.jeveasset.gui.shared.TableColumnButton;
+import net.nikr.eve.jeveasset.gui.shared.TableColumnButton.ButtonActionListener;
 import net.nikr.eve.jeveasset.gui.shared.TextImport;
 import net.nikr.eve.jeveasset.gui.shared.TextImport.TextImportHandler;
 import net.nikr.eve.jeveasset.gui.shared.components.JAutoCompleteDialog;
@@ -502,14 +502,41 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
 		//Market Details
-		MarketDetailsColumn.install(eventList, new MarketDetailsActionListener<StockpileItem>() {
+		TableColumnButton.install(eventList, new ButtonActionListener<StockpileItem>() {
 			@Override
-			public void openMarketDetails(StockpileItem stockpileItem) {
+			public void buttonClicked(StockpileItem item) {
 				if (!jOwners.isEnabled()) {
 					return;
 				}
 				EsiOwner esiOwner = jOwners.getItemAt(jOwners.getSelectedIndex());
-				JMenuUI.openMarketDetails(program, esiOwner, stockpileItem.getTypeID(), false);
+				JMenuUI.openMarketDetails(program, esiOwner, item.getTypeID(), false);
+			}
+
+			@Override
+			public JButton getButton(StockpileItem item) {
+				return item.getMarketDetailsButton();
+			}
+		});
+		TableColumnButton.install(eventList, new ButtonActionListener<StockpileItem>() {
+			@Override
+			public void buttonClicked(StockpileItem item) {
+				editItem(item);
+			}
+
+			@Override
+			public JButton getButton(StockpileItem item) {
+				return item.getEditButton();
+			}
+		});
+		TableColumnButton.install(eventList, new ButtonActionListener<StockpileItem>() {
+			@Override
+			public void buttonClicked(StockpileItem item) {
+				deleteItem(item);
+			}
+
+			@Override
+			public JButton getButton(StockpileItem item) {
+				return item.getDeleteButton();
 			}
 		});
 		//Listeners
@@ -786,6 +813,32 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 			return;
 		}
 		addToStockpile(stockpileItems.get(0).getStockpile(), stockpileItems, false, true);
+	}
+
+	protected void deleteItem(StockpileItem item) {
+		deleteItems(Collections.singletonList(item));
+	}
+
+	protected void deleteItems(List<StockpileItem> items) {
+		if (items.isEmpty()) {
+			return;
+		}
+		int value;
+		if (items.size() == 1) {
+			value = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), items.get(0).getName(), TabsStockpile.get().deleteItemTitle(), JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+		} else {
+			value = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), TabsStockpile.get().deleteItems(items.size()), TabsStockpile.get().deleteItemTitle(), JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+		}
+		if (value != JOptionPane.OK_OPTION) {
+			return;
+		}
+		Settings.lock("Stokcpile (Stockpile Menu)"); //Lock for Stokcpile (Stockpile Menu)
+		for (StockpileItem item : items) {
+			item.getStockpile().remove(item);
+		}
+		Settings.unlock("Stokcpile (Stockpile Menu)"); //Unlock for Stokcpile (Stockpile Menu)
+		program.saveSettings("Stokcpile (Stockpile Menu)"); //Save Stokcpile (Stockpile Menu)
+		removeItems(items);
 	}
 
 	protected void removeItem(StockpileItem item) {

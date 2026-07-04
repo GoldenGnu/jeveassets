@@ -42,6 +42,40 @@ public enum StockpileTableFormat implements EnumTableColumn<StockpileItem> {
 			return from.getName();
 		}
 	},
+	EDIT(Component.class) {
+		@Override
+		public String getColumnName() {
+			return TabsStockpile.get().columnEdit();
+		}
+		@Override
+		public Object getColumnValue(final StockpileItem from) {
+			return from.getEditButton();
+		}
+		@Override
+		public boolean isColumnEditable(Object baseObject) {
+			if (baseObject instanceof StockpileTotal || baseObject instanceof SubpileStock) {
+				return false;
+			}
+			return true;
+		}
+	},
+	DELETE(Component.class) {
+		@Override
+		public String getColumnName() {
+			return TabsStockpile.get().columnDelete();
+		}
+		@Override
+		public Object getColumnValue(final StockpileItem from) {
+			return from.getDeleteButton();
+		}
+		@Override
+		public boolean isColumnEditable(Object baseObject) {
+			if (baseObject instanceof StockpileTotal || baseObject instanceof SubpileStock) {
+				return false;
+			}
+			return true;
+		}
+	},
 	TAGS(Tags.class) {
 		@Override
 		public String getColumnName() {
@@ -345,7 +379,7 @@ public enum StockpileTableFormat implements EnumTableColumn<StockpileItem> {
 		}
 		@Override
 		public Object getColumnValue(final StockpileItem from) {
-			return from.getButton();
+			return from.getMarketDetailsButton();
 		}
 	},
 	VALUE_NOW(Double.class) {
