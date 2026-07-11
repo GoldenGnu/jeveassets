@@ -785,14 +785,14 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 
 		public JButton getEditButton() {
 			if (jEdit == null) { //Soft init
-				jEdit = new JButtonComparable(Images.EDIT_EDIT.getIcon());
+				jEdit = new JButtonComparable(Images.EDIT_EDIT_WHITE.getIcon());
 			}
 			return jEdit;
 		}
 
 		public JButton getDeleteButton() {
 			if (jDelete == null) { //Soft init
-				jDelete = new JButtonComparable(Images.EDIT_DELETE.getIcon());
+				jDelete = new JButtonComparable(Images.EDIT_DELETE_WHITE.getIcon());
 			}
 			return jDelete;
 		}
