@@ -3021,9 +3021,9 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 		@Override
 		public String getName() {
 			if (mfg) {
-				return "Total: " + space + name;
+				return "∑  " + space + name;
 			} else {
-				return "Total: " + name;
+				return "∑  " + name;
 			}
 		}
 		
