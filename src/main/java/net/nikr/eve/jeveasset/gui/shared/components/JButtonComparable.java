@@ -23,6 +23,7 @@ package net.nikr.eve.jeveasset.gui.shared.components;
 import com.formdev.flatlaf.ui.FlatButtonBorder;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Insets;
 import java.util.Objects;
 import javax.swing.Icon;
 import javax.swing.JButton;
@@ -47,6 +48,7 @@ public class JButtonComparable extends JButton implements Comparable<Component> 
 
 	public JButtonComparable(String text, Icon icon) {
 		super(text, icon);
+		setMargin(new Insets(0, 0, 0, 0));
 		updateBorder();
 		lock();
 	}

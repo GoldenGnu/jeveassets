@@ -39,6 +39,7 @@ import net.nikr.eve.jeveasset.gui.shared.InstantToolTip;
 import net.nikr.eve.jeveasset.gui.shared.table.JSeparatorTable;
 import net.nikr.eve.jeveasset.gui.shared.table.TableCellRenderers.TargetCellRenderer;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
+import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItemMaterial;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileTotal;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.SubpileItem;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.SubpileStock;
@@ -136,7 +137,7 @@ public class JStockpileTable extends JSeparatorTable {
 					component.setForeground(component.getBackground());
 					return component;
 				}
-			} else if (object instanceof SubpileItem) { //Total
+			} else if (object instanceof SubpileItem) { //Subpile Item
 				if (!stockpileItem.isEditable() && columnName.equals(StockpileTableFormat.COUNT_MINIMUM.getColumnName())) {
 					ColorSettings.configCell(component, ColorEntry.GLOBAL_GRAND_TOTAL, isSelected);
 				} else if (columnName.equals(StockpileTableFormat.TAGS.getColumnName())) {
@@ -144,6 +145,15 @@ public class JStockpileTable extends JSeparatorTable {
 				}
 			} else if (object instanceof StockpileTotal) { //Total
 				ColorSettings.configCell(component, ColorEntry.GLOBAL_GRAND_TOTAL, isSelected);
+			} else if (object instanceof StockpileItemMaterial) { //Material
+				if (columnName.equals(StockpileTableFormat.COUNT_MINIMUM.getColumnName())) {
+					if (!stockpileItem.isEditable()) {
+						ColorSettings.configCell(component, ColorEntry.GLOBAL_GRAND_TOTAL, isSelected);
+						return component;
+					}
+				} else if (columnName.equals(StockpileTableFormat.TAGS.getColumnName())) {
+					ColorSettings.configCell(component, ColorEntry.GLOBAL_GRAND_TOTAL, isSelected);
+				}
 			}
 			if (columnName.equals(StockpileTableFormat.NAME.getColumnName())) {
 				if (Settings.get().isStockpileHalfColors()) {

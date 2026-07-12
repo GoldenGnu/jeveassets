@@ -26,12 +26,11 @@ import ca.odell.glazedlists.event.ListEventListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JButton;
-import net.nikr.eve.jeveasset.data.settings.types.MarketDetailType;
 import net.nikr.eve.jeveasset.gui.shared.components.JButtonNull;
 
 
-public class MarketDetailsColumn {
-	public static <E extends MarketDetailType> void install(EventList<E> eventList, MarketDetailsActionListener<E> marketDetailsActionListener) {
+public class TableColumnButton {
+	public static <E> void install(EventList<E> eventList, ButtonActionListener<E> buttonActionListener) {
 		eventList.addListEventListener(new ListEventListener<E>() {
 			@Override @SuppressWarnings("deprecation")
 			public void listChanged(ListEvent<E> listChanges) {
@@ -40,8 +39,8 @@ public class MarketDetailsColumn {
 					while(listChanges.next()) {
 						switch (listChanges.getType()) {
 							case ListEvent.DELETE:
-								E oldMarketDetails = listChanges.getOldValue();
-								JButton jOldButton = oldMarketDetails.getButton();
+								E oldItem = listChanges.getOldValue();
+								JButton jOldButton = buttonActionListener.getButton(oldItem);
 								//check null button
 								if (jOldButton == null || jOldButton instanceof JButtonNull) {
 									continue;
@@ -57,8 +56,8 @@ public class MarketDetailsColumn {
 								if (index < 0 || index >= eventList.size()) {
 									continue;
 								}
-								E newMarketDetails = eventList.get(index);
-								JButton jNewButton = newMarketDetails.getButton();
+								E newItem = eventList.get(index);
+								JButton jNewButton = buttonActionListener.getButton(newItem);
 								//check null button
 								if (jNewButton == null || jNewButton instanceof JButtonNull) {
 									continue;
@@ -71,7 +70,7 @@ public class MarketDetailsColumn {
 								jNewButton.addActionListener(new ActionListener() {
 									@Override
 									public void actionPerformed(ActionEvent e) {
-										marketDetailsActionListener.openMarketDetails(newMarketDetails);
+										buttonActionListener.buttonClicked(newItem);
 									}
 								});
 								break;
@@ -84,7 +83,8 @@ public class MarketDetailsColumn {
 		});
 	}
 
-	public static interface MarketDetailsActionListener<E extends MarketDetailType> {
-		public void openMarketDetails(E marketDetails);
+	public static interface ButtonActionListener<E> {
+		public void buttonClicked(E item);
+		public JButton getButton(E item);
 	}
 }

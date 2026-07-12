@@ -24,7 +24,6 @@ package net.nikr.eve.jeveasset.io.local;
 import java.io.File;
 import java.net.Proxy;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -64,6 +63,7 @@ import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter.StockpileContainer;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter.StockpileFlag;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
+import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItemMaterial;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerDate;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerNote;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerSkillPointFilter;
@@ -102,7 +102,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 			return false;
 		}
 
-		writeStockpiles(xmldoc, stockpiles, new HashMap<>(), true);
+		writeStockpiles(xmldoc, stockpiles, true);
 		try {
 			writeXmlFile(xmldoc, filename, false);
 		} catch (XmlException ex) {
@@ -152,7 +152,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 
 		writeAssetSettings(xmldoc, settings);
 		writeStockpileGroups(xmldoc, settings);
-		writeStockpiles(xmldoc, settings.getStockpiles(), settings.getStockpileGroupSettings().getStockpileGroups(), false);
+		writeStockpiles(xmldoc, settings.getStockpiles(), false);
 		writeOverviewGroups(xmldoc, settings.getOverviewGroups());
 		writeReprocessSettings(xmldoc, settings.getReprocessSettings());
 		writeWindow(xmldoc, settings);
@@ -656,7 +656,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 	 * -!- `!´ IMPORTANT `!´ -!-
 	 * StockpileDataWriter and StockpileDataReader needs to be updated too - on any changes!!!
 	 */
-	private void writeStockpiles(final Document xmldoc, final List<Stockpile> stockpiles, Map<Stockpile, String> groups, boolean export) {
+	private void writeStockpiles(final Document xmldoc, final List<Stockpile> stockpiles, boolean export) {
 		Element parentNode = xmldoc.createElementNS(null, "stockpiles");
 		xmldoc.getDocumentElement().appendChild(parentNode);
 		for (Stockpile stockpile : stockpiles) {
@@ -667,25 +667,18 @@ public class SettingsWriter extends AbstractXmlWriter {
 				setAttribute(stockpileNode, "id", stockpile.getStockpileID());
 			}
 			setAttribute(stockpileNode, "multiplier", stockpile.getMultiplier());
-			String group = groups.get(stockpile);
+			String group = stockpile.getGroup();
 			if (group != null && !group.isEmpty()) {
 				setAttribute(stockpileNode, "stockpilegroup", group);
 			}
 			setAttribute(stockpileNode, "matchall", stockpile.isMatchAll());
 			//ITEMS
 			for (StockpileItem item : stockpile.getItems()) {
-				if (item.isTotal()) {
+				if (item.isTotal() || item.isSubMaterial()) {
 					continue; //Ignore Total
 				}
 				Element itemNode = xmldoc.createElementNS(null, "item");
-				if (!export) { //Risk of collision, better to generate a new one on import
-					setAttribute(itemNode, "id", item.getID());
-				}
-				setAttribute(itemNode, "typeid", item.getItemTypeID());
-				setAttribute(itemNode, "minimum", item.getCountMinimum());
-				setAttribute(itemNode, "runs", item.isRuns());
-				setAttribute(itemNode, "ignoremultiplier", item.isIgnoreMultiplier());
-				stockpileNode.appendChild(itemNode);
+				writeStockpileItem(xmldoc, stockpileNode, itemNode, item, export);
 			}
 			//SUBPILES
 			for (Map.Entry<Stockpile, Double> entry : stockpile.getSubpiles().entrySet()) {
@@ -733,6 +726,40 @@ public class SettingsWriter extends AbstractXmlWriter {
 			}
 			parentNode.appendChild(stockpileNode);
 		}
+	}
+
+	private void writeStockpileItem(final Document xmldoc, Element parentNode, Element itemNode, StockpileItem item, boolean export) {
+		if (!export) { //Risk of collision, better to generate a new one on import
+			setAttribute(itemNode, "id", item.getID());
+		}
+		setAttribute(itemNode, "typeid", item.getSaveTypeID());
+		setAttribute(itemNode, "minimum", item.getCountMinimum());
+		setAttribute(itemNode, "runs", item.isRuns());
+		setAttribute(itemNode, "ignoremultiplier", item.isIgnoreMultiplier());
+		if (item.isMaterial() && item instanceof StockpileItemMaterial) {
+			StockpileItemMaterial materialItem = (StockpileItemMaterial) item;
+			setAttribute(itemNode, "roundperruns", materialItem.getRoundPerRuns());
+			setAttributeOptional(itemNode, "blueprintrecursive", materialItem.getBlueprintRecursiveLevel());
+			setAttributeOptional(itemNode, "formularecursive", materialItem.getFormulaRecursiveLevel());
+			setAttributeOptional(itemNode, "facility", materialItem.getFacility());
+			setAttributeOptional(itemNode, "me", materialItem.getME());
+			setAttributeOptional(itemNode, "rigs", materialItem.getRigs());
+			setAttributeOptional(itemNode, "rigsreactions", materialItem.getRigsReactions());
+			setAttributeOptional(itemNode, "security", materialItem.getSecurity());
+			setAttributeOptional(itemNode, "securityreactions", materialItem.getSecurityReactions());
+			setAttributeOptional(itemNode, "producttypeid", materialItem.getProductTypeID());
+			for (Map.Entry<Integer, Long> entry : materialItem.getIDs().entrySet()) {
+				Element idNode = xmldoc.createElementNS(null, "id");
+				setAttribute(idNode, "typeid", entry.getKey());
+				setAttribute(idNode, "id", entry.getValue());
+				itemNode.appendChild(idNode);
+			}
+			for (StockpileItemMaterial subItem : materialItem.getMaterials()) {
+				Element materialsNode = xmldoc.createElementNS(null, "material");
+				writeStockpileItem(xmldoc, itemNode, materialsNode, subItem, export);
+			}
+		}
+		parentNode.appendChild(itemNode);
 	}
 
 	private void writeOverviewGroups(final Document xmldoc, final Map<String, OverviewGroup> overviewGroups) {

@@ -75,6 +75,8 @@ public class StockpileSeparatorTableCell extends SeparatorTableCell<StockpileIte
 	}
 
 	private final static List<JCheckBoxMenuItem> jGroupMenuItems = new ArrayList<>();
+	private static ActionListener groupActionListener;
+	
 	private final JPanel jGroupPanel;
 	private final JLabel jGroup;
 	private final JMenu jGroupMenu;
@@ -385,10 +387,11 @@ public class StockpileSeparatorTableCell extends SeparatorTableCell<StockpileIte
 				.addComponent(jGroupPanel)
 				.addComponent(jInfoPanel)
 		);
-		updateGroups(actionListener);
+		StockpileSeparatorTableCell.groupActionListener = actionListener;
+		updateGroups();
 	}
 
-	public static void updateGroups(ActionListener actionListener) {
+	public static void updateGroups() {
 		Set<String> groups = Settings.get().getStockpileGroupSettings().getGroups();
 		jGroupMenuItems.clear();
 
@@ -398,7 +401,7 @@ public class StockpileSeparatorTableCell extends SeparatorTableCell<StockpileIte
 			}
 			JCheckBoxMenuItem jMenuItem = new JCheckBoxMenuItem(g);
 			jMenuItem.setActionCommand(StockpileCellAction.GROUP_CHANGE_ADD.name());
-			jMenuItem.addActionListener(actionListener);
+			jMenuItem.addActionListener(groupActionListener);
 			jGroupMenuItems.add(jMenuItem);
 		}
 	}

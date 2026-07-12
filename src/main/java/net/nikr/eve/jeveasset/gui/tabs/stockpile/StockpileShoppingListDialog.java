@@ -256,7 +256,6 @@ class StockpileShoppingListDialog extends JDialogCentered {
 							assetsIDs.add(asset.getItemID());
 						}
 					}
-					
 				}
 			}
 			for (SubpileStock stockpileItem : stockpile.getSubpileStocks()) {
@@ -265,6 +264,9 @@ class StockpileShoppingListDialog extends JDialogCentered {
 				subpiles.put(key, value + stockpileItem.getSubMultiplier());
 			}
 			for (StockpileItem stockpileItem : stockpile.getClaims()) {
+				if (stockpileItem.isSkipShoppingList()) {
+					continue;
+				}
 				TypeIdentifier type = stockpileItem.getType();
 				if (!type.isEmpty()) { //Ignore Total
 					List<StockClaim> claimList = claims.get(type);
@@ -400,11 +402,11 @@ class StockpileShoppingListDialog extends JDialogCentered {
 				//Missing value (will add zero if nothing is needed)
 				missingValue = missingValue + (stockClaim.getCountMinimum() * stockClaim.getDynamicPrice());
 				//Required count
-				requiredCount = requiredCount + stockClaim.getTotalNeed();
+				requiredCount = requiredCount + stockClaim.getTotalRequired();
 				//Required volume
-				requiredVolume = requiredVolume + (stockClaim.getTotalNeed() * stockClaim.getVolume());
+				requiredVolume = requiredVolume + (stockClaim.getTotalRequired() * stockClaim.getVolume());
 				//Required value
-				requiredValue = requiredValue + (stockClaim.getTotalNeed() * stockClaim.getDynamicPrice());
+				requiredValue = requiredValue + (stockClaim.getTotalRequired() * stockClaim.getDynamicPrice());
 			}
 			for (ShoppingListData data : outputData.values()) {
 				data.printMissing(missingCount, item, bpc, bpo, runs);
@@ -515,7 +517,7 @@ class StockpileShoppingListDialog extends JDialogCentered {
 		private final StockpileItem stockpileItem;
 		private final Set<Integer> contractIDs;
 		private final Set<Long> assetIDs;
-		private final long totalNeed;
+		private final long required;
 		private long countMinimum;
 		private long available = 0;
 
@@ -523,12 +525,12 @@ class StockpileShoppingListDialog extends JDialogCentered {
 			this.stockpileItem = stockpileItem;
 			this.contractIDs = contractIDs;
 			this.assetIDs = assetIDs;
-			this.totalNeed = (long)(stockpileItem.getCountMinimumMultiplied() * percent / 100.0);
-			this.countMinimum = this.totalNeed;
+			this.required = (long)(stockpileItem.getCountMinimumUnmodifiedMultiplied() * percent / 100.0);;
+			this.countMinimum = (long)(stockpileItem.getCountMinimumMultiplied() * percent / 100.0);
 		}
 
 		public double getPercentFull() {
-			return (totalNeed - countMinimum) * 100.0 / totalNeed ;
+			return (required - countMinimum) * 100.0 / required ;
 		}
 
 		public double getVolume() {
@@ -543,8 +545,8 @@ class StockpileShoppingListDialog extends JDialogCentered {
 			return stockpileItem.matches(object);
 		}
 
-		public long getTotalNeed() {
-			return totalNeed;
+		public long getTotalRequired() {
+			return required;
 		}
 
 		public long getCountMinimum() {
