@@ -85,8 +85,7 @@ import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.CopyHandler;
 import net.nikr.eve.jeveasset.gui.shared.Formatter;
 import net.nikr.eve.jeveasset.gui.shared.InstantToolTip;
-import net.nikr.eve.jeveasset.gui.shared.MarketDetailsColumn;
-import net.nikr.eve.jeveasset.gui.shared.MarketDetailsColumn.MarketDetailsActionListener;
+import net.nikr.eve.jeveasset.gui.shared.TableColumnButton;
 import net.nikr.eve.jeveasset.gui.shared.Updatable;
 import net.nikr.eve.jeveasset.gui.shared.components.JFixedToolBar;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTabPrimary;
@@ -271,10 +270,15 @@ public class MarketOrdersTab extends JMainTabPrimary {
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
 		//Market Details
-		MarketDetailsColumn.install(eventList, new MarketDetailsActionListener<MyMarketOrder>() {
+		TableColumnButton.install(eventList, new TableColumnButton.ButtonActionListener<MyMarketOrder>() {
 			@Override
-			public void openMarketDetails(MyMarketOrder marketOrder) {
-				openEve(marketOrder);
+			public void buttonClicked(MyMarketOrder item) {
+				openEve(item);
+			}
+
+			@Override
+			public JButton getButton(MyMarketOrder item) {
+				return item.getMarketDetailsButton();
 			}
 		});
 		//Listeners

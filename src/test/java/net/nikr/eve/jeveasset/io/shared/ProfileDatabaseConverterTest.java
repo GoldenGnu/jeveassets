@@ -294,7 +294,7 @@ public class ProfileDatabaseConverterTest extends TestUtil {
 							&& "owner".equals(fieldName))
 						|| (MyMarketOrder.class.equals(oldClazz)
 							&& ("owner".equals(fieldName)
-							|| "jButton".equals(fieldName)))
+							|| "jMarketDetailsButton".equals(fieldName)))
 						|| (Profile.class.equals(oldClazz)
 							&& "stockpileIDs".equals(fieldName))
 						|| (MyContractItem.class.equals(oldClazz)
