@@ -34,11 +34,17 @@ import java.util.Base64;
 import java.util.List;
 import java.util.zip.Deflater;
 import java.util.zip.DeflaterOutputStream;
+import net.nikr.eve.jeveasset.data.settings.ManufacturingSettings.ManufacturingFacility;
+import net.nikr.eve.jeveasset.data.settings.ManufacturingSettings.ManufacturingRigs;
+import net.nikr.eve.jeveasset.data.settings.ManufacturingSettings.ManufacturingSecurity;
+import net.nikr.eve.jeveasset.data.settings.ManufacturingSettings.ReactionRigs;
+import net.nikr.eve.jeveasset.data.settings.ManufacturingSettings.ReactionSecurity;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter.StockpileContainer;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter.StockpileFlag;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
+import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItemMaterial;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -86,6 +92,10 @@ public class StockpileWriter extends AbstractBackup {
 			stockpileObject.addProperty("n", stockpile.getName());
 			stockpileObject.addProperty("m", stockpile.getMultiplier());
 			stockpileObject.addProperty("ma", stockpile.isMatchAll());
+			String group = stockpile.getGroup();
+			if (group != null && !group.isEmpty()) {
+				stockpileObject.addProperty("gr", group);
+			}
 
 			//Filters
 			JsonArray filtersObject = new JsonArray();
@@ -141,19 +151,80 @@ public class StockpileWriter extends AbstractBackup {
 			JsonArray items = new JsonArray();
 			stockpileObject.add("i", items);
 			for (StockpileItem stockpileItem : stockpile.getItems()) {
-				if (stockpileItem.isTotal()) {
+				if (stockpileItem.isTotal() || stockpileItem.isSubMaterial()) {
 					continue; //Ignore Total
 				}
-				JsonObject item = new JsonObject();
-				item.addProperty("i", stockpileItem.getItemTypeID());
-				item.addProperty("m", stockpileItem.getCountMinimum());
-				item.addProperty("r", stockpileItem.isRuns());
-				item.addProperty("im", stockpileItem.isIgnoreMultiplier());
+				JsonObject item = serializeStockpileItem(stockpileItem);
 				items.add(item);
 			}
-
 			return stockpileObject;
 		}
 	}
 
+	private static JsonObject serializeStockpileItem(StockpileItem stockpileItem) {
+		JsonObject item = new JsonObject();
+		item.addProperty("i", stockpileItem.getSaveTypeID());
+		item.addProperty("m", stockpileItem.getCountMinimum());
+		item.addProperty("r", stockpileItem.isRuns());
+		item.addProperty("im", stockpileItem.isIgnoreMultiplier());
+		if (stockpileItem.isMaterial() && stockpileItem instanceof StockpileItemMaterial) {
+			StockpileItemMaterial materialItem = (StockpileItemMaterial) stockpileItem;
+			//ProductTypeID
+			item.addProperty("pt", materialItem.getProductTypeID());
+			//Round per run
+			item.addProperty("rpr", materialItem.getRoundPerRuns());
+			//Blueprint Recursive Level
+			item.addProperty("mbr", materialItem.getBlueprintRecursiveLevel());
+			//Formula Recursive Level
+			item.addProperty("mfr", materialItem.getFormulaRecursiveLevel());
+			//Facility
+			ManufacturingFacility facility = materialItem.getFacility();
+			if (facility != null) {
+				item.addProperty("mf", facility.name());
+			}
+			//ME
+			Integer me = materialItem.getME();
+			if (me != null) {
+				item.addProperty("me", me);
+			}
+			//Rigs
+			ManufacturingRigs rigs = materialItem.getRigs();
+			if (rigs != null) {
+				item.addProperty("mr", rigs.name());
+			}
+			//Security
+			ManufacturingSecurity security = materialItem.getSecurity();
+			if (security != null) {
+				item.addProperty("ms", security.name());
+			}
+			//Rigs (Reaction)
+			ReactionRigs rigsReactions = materialItem.getRigsReactions();
+			if (rigsReactions != null) {
+				item.addProperty("rr", rigsReactions.name());
+			}
+			//Security (Reaction)
+			ReactionSecurity securityReactions = materialItem.getSecurityReactions();
+			if (securityReactions != null) {
+				item.addProperty("rs", securityReactions.name());
+			}
+			//Materials
+			if (!materialItem.getMaterials().isEmpty()) {
+				JsonArray items = new JsonArray();
+				item.add("s", items);
+				for (StockpileItemMaterial subMaterial : materialItem.getMaterials()) {
+					JsonObject subItem = serializeStockpileItem(subMaterial);
+					items.add(subItem);
+				}
+			}
+			/*
+			for (Map.Entry<Integer, Long> entry : materialItem.getIDs().entrySet()) {
+				Element idNode = xmldoc.createElementNS(null, "id");
+				setAttribute(idNode, "typeid", entry.getKey());
+				setAttribute(idNode, "id", entry.getValue());
+				itemNode.appendChild(idNode);
+			}
+			 */
+		}
+		return item;
+	}
 }

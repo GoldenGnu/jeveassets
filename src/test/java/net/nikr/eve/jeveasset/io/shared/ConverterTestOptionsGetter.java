@@ -50,6 +50,7 @@ import net.nikr.eve.jeveasset.data.settings.PriceData;
 import net.nikr.eve.jeveasset.data.settings.UserItem;
 import net.nikr.eve.jeveasset.data.settings.tag.Tags;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.UserPriceSettingsPanel.UserPrice;
+import net.nikr.eve.jeveasset.gui.shared.components.JButtonComparable;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.Percent;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.TextIcon;
 import net.nikr.eve.jeveasset.gui.tabs.orders.Outbid;
@@ -132,7 +133,7 @@ public class ConverterTestOptionsGetter {
 		private static final Percent[] PERCENT = {Percent.create(5.1)};
 		private static final UserPrice[] USER_ITEM = {new UserPrice(DOUBLE[0], INTEGER[0], STRING[0])};
 		private static final MyShip MY_SHIP = new MyShip(LONG[0], INTEGER[0], 60003466L);
-		private static final JButton BUTTON = new JButton();
+		private static final JButton BUTTON = new JButtonComparable();
 		private static final MyBlueprint BLUEPRINT = new MyBlueprint(INTEGER[0], INTEGER[0], INTEGER[0]);
 
 		//LocationType

@@ -39,14 +39,13 @@ import net.nikr.eve.jeveasset.data.settings.types.EditablePriceType;
 import net.nikr.eve.jeveasset.data.settings.types.EsiType;
 import net.nikr.eve.jeveasset.data.settings.types.ItemType;
 import net.nikr.eve.jeveasset.data.settings.types.LastTransactionType;
-import net.nikr.eve.jeveasset.data.settings.types.MarketDetailType;
 import net.nikr.eve.jeveasset.data.settings.types.OwnersType;
 import net.nikr.eve.jeveasset.gui.shared.components.JButtonComparable;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.Percent;
 import net.nikr.eve.jeveasset.gui.tabs.orders.Outbid;
 import net.nikr.eve.jeveasset.i18n.TabsOrders;
 
-public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarketOrder>, EditableLocationType, ItemType, BlueprintType, EditablePriceType, OwnersType, LastTransactionType, MarketDetailType, EsiType {
+public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarketOrder>, EditableLocationType, ItemType, BlueprintType, EditablePriceType, OwnersType, LastTransactionType, EsiType {
 
 	private final Item item;
 	private final OwnerType owner;
@@ -64,7 +63,7 @@ public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarket
 	private boolean esi = true;
 	private boolean owned;
 	//soft init
-	private JButton jButton;
+	private JButton jMarketDetailsButton;
 
 	public MyMarketOrder(final RawMarketOrder rawMarketOrder, final Item item, final OwnerType owner) {
 		super(rawMarketOrder);
@@ -394,12 +393,11 @@ public class MyMarketOrder extends RawMarketOrder implements Comparable<MyMarket
 		return priceData.getSellMin();
 	}
 
-	@Override
-	public JButton getButton() {
-		if (jButton == null) {
-			jButton = new JButtonComparable(TabsOrders.get().eveUiOpen());
+	public JButton getMarketDetailsButton() {
+		if (jMarketDetailsButton == null) {
+			jMarketDetailsButton = new JButtonComparable(TabsOrders.get().eveUiOpen());
 		}
-		return jButton;
+		return jMarketDetailsButton;
 	}
 
 	@Override
