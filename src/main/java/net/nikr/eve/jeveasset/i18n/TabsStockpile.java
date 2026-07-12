@@ -207,6 +207,7 @@ public abstract class TabsStockpile extends Bundle {
 	public abstract String planet();
 	public abstract String region();
 	public abstract String remove();
+	public abstract String removeSubpileTitle();
 	public abstract String renameStockpileTitle();
 	public abstract String runs();
 	public abstract String selectFits();

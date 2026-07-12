@@ -531,7 +531,11 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		TableColumnButton.install(eventList, new ButtonActionListener<StockpileItem>() {
 			@Override
 			public void buttonClicked(StockpileItem item) {
-				deleteItem(item);
+				if (item instanceof SubpileStock) {
+					removeSubpile((SubpileStock) item);
+				} else {
+					deleteItem(item);
+				}
 			}
 
 			@Override
@@ -813,6 +817,21 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 			return;
 		}
 		addToStockpile(stockpileItems.get(0).getStockpile(), stockpileItems, false, true);
+	}
+
+	protected void removeSubpile(SubpileStock item) {
+		int value = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), item.getSubpileName(), TabsStockpile.get().removeSubpileTitle(), JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+		if (value != JOptionPane.OK_OPTION) {
+			return;
+		}
+		Settings.lock("Stockpile (Remove Subpile)");
+		//Remove Subpile
+		item.remove();
+		Settings.unlock("Stockpile (Remove Subpile)");
+		Stockpile stockpile = item.getStockpile();
+		updateStockpile(stockpile);
+		updateSubpile(stockpile);
+		program.saveSettings("Stockpile (Removed subpile)");
 	}
 
 	protected void deleteItem(StockpileItem item) {

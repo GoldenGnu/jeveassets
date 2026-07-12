@@ -3112,17 +3112,34 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 
 	public static class SubpileStock extends SubpileItem implements SubMultiplier {
 
-		private final Stockpile originalStockpile;
-		private final Stockpile originalParentStockpile;
+		private final Stockpile subpile;
+		private final Stockpile parent;
 		private final SubpileStock parentStock;
 		private double subMultiplier;
 
-		public SubpileStock(Stockpile stockpile, Stockpile originalStockpile, Stockpile originalParentStockpile, SubpileStock parentStock, double subMultiplier, int level, String path) {
+		public SubpileStock(Stockpile stockpile, Stockpile subpile, Stockpile parent, SubpileStock parentStock, double subMultiplier, int level, String path) {
 			super(stockpile, level, path);
-			this.originalStockpile = originalStockpile;
-			this.originalParentStockpile = originalParentStockpile;
+			this.subpile = subpile;
+			this.parent = parent;
 			this.parentStock = parentStock;
 			this.subMultiplier = subMultiplier;
+		}
+
+		@Override
+		public JButton getDeleteButton() {
+			if (jDelete == null) { //Soft init
+				jDelete = new JButtonComparable(Images.EDIT_DELETE_WHITE.getIcon());
+			}
+			return jDelete;
+		}
+
+		public void remove() {
+			getStockpile().getSubpiles().remove(subpile);
+			subpile.removeSubpileLink(getStockpile());
+		}
+
+		public String getSubpileName() {
+			return subpile.getName();
 		}
 
 		@Override
@@ -3140,12 +3157,12 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 
 		@Override
 		public String getName() {
-			return super.getSpace() + originalStockpile.getName();
+			return super.getSpace() + subpile.getName();
 		}
 
 		@Override
 		public double getSubMultiplier() {
-			Double value = originalParentStockpile.getSubpiles().get(originalStockpile);
+			Double value = parent.getSubpiles().get(subpile);
 			if (value != null && parentStock != null) {
 				return value * parentStock.getSubMultiplier();
 			} else if (value != null) {
@@ -3168,7 +3185,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 		@Override
 		public void setCountMinimum(double subMultiplier) {
 			this.subMultiplier = subMultiplier;
-			getStockpile().getSubpiles().put(originalStockpile, subMultiplier);
+			getStockpile().getSubpiles().put(subpile, subMultiplier);
 			getStockpile().updateTotal();
 		}
 

@@ -70,7 +70,7 @@ public enum StockpileTableFormat implements EnumTableColumn<StockpileItem> {
 		}
 		@Override
 		public boolean isColumnEditable(Object baseObject) {
-			if (baseObject instanceof StockpileTotal || baseObject instanceof SubpileStock) {
+			if (baseObject instanceof StockpileTotal) {
 				return false;
 			}
 			return true;

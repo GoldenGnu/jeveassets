@@ -677,23 +677,23 @@ public class StockpileData extends TableData {
 	 * Do all the subpile calculations
 	 * (this where the magic happens, 100% certified unreadable code! As required for all critical parts of this software)
 	 * @param topStockpile
-	 * @param parentStockpile
+	 * @param parent
 	 * @param topItems
 	 * @param parentStock
 	 * @param parentLevel
 	 * @param parentPath
 	 */
-	private static void updateSubpileClaims(Stockpile topStockpile, Stockpile parentStockpile, Map<TypeIdentifier, StockpileItem> topItems, SubpileStock parentStock, int parentLevel, String parentPath) {
-		for (Map.Entry<Stockpile, Double> entry : parentStockpile.getSubpiles().entrySet()) {
+	private static void updateSubpileClaims(Stockpile topStockpile, Stockpile parent, Map<TypeIdentifier, StockpileItem> topItems, SubpileStock parentStock, int parentLevel, String parentPath) {
+		for (Map.Entry<Stockpile, Double> entry : parent.getSubpiles().entrySet()) {
 			//For each subpile (stockpile)
-			Stockpile currentStockpile = entry.getKey();
+			Stockpile subpile = entry.getKey();
 			Double value = entry.getValue();
-			String path = parentPath + currentStockpile.getName() + "\r\n";
+			String path = parentPath + subpile.getName() + "\r\n";
 			int level = parentLevel + 1;
-			SubpileStock subpileStock = new SubpileStock(topStockpile, currentStockpile, parentStockpile, parentStock, value, parentLevel, path);
+			SubpileStock subpileStock = new SubpileStock(topStockpile, subpile, parent, parentStock, value, parentLevel, path);
 			topStockpile.addSubpileStock(subpileStock);
-			addMaterial(topStockpile, currentStockpile, null, null, topItems, subpileStock, parentLevel, parentPath, currentStockpile.getMaterials());
-			for (StockpileItem stockpileItem : currentStockpile.getStockpileItems()) {
+			addMaterial(topStockpile, subpile, null, null, topItems, subpileStock, parentLevel, parentPath, subpile.getMaterials());
+			for (StockpileItem stockpileItem : subpile.getStockpileItems()) {
 				//For each StockpileItem
 				if (stockpileItem.isTotal()) {
 					continue; //Ignore Total
@@ -701,7 +701,7 @@ public class StockpileData extends TableData {
 				SubpileItem subpileItem = new SubpileItem(topStockpile, stockpileItem, subpileStock, parentLevel, path);
 				addSubpileItem(topItems, topStockpile, subpileItem, stockpileItem, subpileStock, level, path, false);
 			}
-			updateSubpileClaims(topStockpile, currentStockpile, topItems, subpileStock, level, path);
+			updateSubpileClaims(topStockpile, subpile, topItems, subpileStock, level, path);
 		}
 	}
 
