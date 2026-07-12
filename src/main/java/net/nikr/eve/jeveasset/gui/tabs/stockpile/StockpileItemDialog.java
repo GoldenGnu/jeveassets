@@ -453,8 +453,6 @@ public class StockpileItemDialog extends JDialogCentered {
 			jBlueprintType.setVisible(false);
 			jIgnoreMultiplierLabel.setVisible(false);
 			jIgnoreMultiplier.setVisible(false);
-			jRoundPerRunsLabel.setVisible(false);
-			jRoundPerRuns.setVisible(false);
 			jCountMinimumLabel.setVisible(true);
 			jCountMinimum.setVisible(true);
 		} else if (editStockpileItem.isSubMaterial()) {
@@ -466,8 +464,6 @@ public class StockpileItemDialog extends JDialogCentered {
 			jBlueprintType.setVisible(false);
 			jIgnoreMultiplierLabel.setVisible(false);
 			jIgnoreMultiplier.setVisible(false);
-			jRoundPerRunsLabel.setVisible(true);
-			jRoundPerRuns.setVisible(true);
 			jCountMinimumLabel.setVisible(false);
 			jCountMinimum.setVisible(false);
 		} else {
@@ -478,8 +474,6 @@ public class StockpileItemDialog extends JDialogCentered {
 			jBlueprintType.setVisible(true);
 			jIgnoreMultiplierLabel.setVisible(true);
 			jIgnoreMultiplier.setVisible(true);
-			jRoundPerRunsLabel.setVisible(true);
-			jRoundPerRuns.setVisible(true);
 			jCountMinimumLabel.setVisible(true);
 			jCountMinimum.setVisible(true);
 		}
