@@ -55,7 +55,6 @@ public class SettingsOwnerNames extends TableMap<Long, String> {
 		try (PreparedStatement statement = connection.prepareStatement(sql);
 				ResultSet rs = statement.executeQuery();) {
 			while (rs.next()) {
-				
 				map.put(getLong(rs, "id"), getString(rs, "name"));
 			}
 		}
