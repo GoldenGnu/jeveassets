@@ -123,15 +123,15 @@ public class ExportTableData {
 	 * @param exportSettings
 	 * @return
 	 */
-	private static <Q> boolean export(EventList<Q> eventList, ColumnCache<Q> columnCache, final SimpleTableFormat<Q> tableFormat, String toolName, Map<String, View> views, Map<String, List<Filter>> filters, Map<String, List<Filter>> defaultFilters, List<Filter> currentFilters, ExportSettings exportSettings) {
+	private static <Q> boolean export(EventList<Q> eventList, ColumnCache<Q> columnCache, final SimpleTableFormat<Q> tableFormat, String toolName, Map<String, View> views, Map<String, FilterSettings> filters, Map<String, List<Filter>> defaultFilters, List<Filter> currentFilters, ExportSettings exportSettings) {
 		//Filter
-		final List<Filter> filter;
+		final FilterSettings filter;
 		switch (exportSettings.getFilterSelection()) {
 			case NONE:
-				filter = new ArrayList<>();
+				filter = FilterSettings.EMPTY;
 				break;
 			case CURRENT:
-				filter = currentFilters;
+				filter = FilterSettings.get(currentFilters);
 				break;
 			case SAVED:
 				String filterName = exportSettings.getFilterName();
@@ -139,11 +139,11 @@ public class ExportTableData {
 					LOG.error(toolName + " -> Filter name is null");
 					return false;
 				}
-				List<Filter> f = filters.get(filterName);
+				FilterSettings f = filters.get(filterName);
 				if (f != null) {
 					filter = f;
 				} else {
-					filter = defaultFilters.get(filterName);
+					filter = FilterSettings.get(defaultFilters.get(filterName));
 					if (filter == null) {
 						LOG.error(toolName + " -> No such filter: " + filterName);
 						return false;

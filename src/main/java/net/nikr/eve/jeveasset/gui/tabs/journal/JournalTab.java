@@ -57,6 +57,7 @@ import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.CompareType;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterMatcher;
+import net.nikr.eve.jeveasset.gui.shared.filter.FilterSettings;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuAssetFilter;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuColumns;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
@@ -373,6 +374,11 @@ public class JournalTab extends JMainTabPrimary implements TagUpdate {
 					exportEventList,
 					filterList
 					);
+		}
+
+		@Override
+		public void loadFilter(FilterSettings filterSettings) {
+			setFilter(filterSettings);
 		}
 
 		@Override

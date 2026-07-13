@@ -48,6 +48,7 @@ import net.nikr.eve.jeveasset.data.settings.tag.Tag;
 import net.nikr.eve.jeveasset.data.settings.tag.TagID;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.SoundsSettingsPanel.SoundOption;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
+import net.nikr.eve.jeveasset.gui.shared.filter.FilterSettings;
 import net.nikr.eve.jeveasset.gui.shared.menu.JFormulaDialog.Formula;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuJumps.Jump;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.ResizeMode;
@@ -455,18 +456,21 @@ public class SettingsWriter extends AbstractXmlWriter {
 	 * @param xmldoc Settings document to write to.
 	 * @param tableFilters Saved filters to be written to the document zero to many for each table.
 	 */
-	private void writeTableFilters(final Document xmldoc, final Map<String, Map<String, List<Filter>>> tableFilters) {
+	private void writeTableFilters(final Document xmldoc, final Map<String, Map<String, FilterSettings>> tableFilters) {
 		Element tableFiltersNode = xmldoc.createElementNS(null, "tablefilters");
 		xmldoc.getDocumentElement().appendChild(tableFiltersNode);
-		for (Map.Entry<String, Map<String, List<Filter>>> entry : tableFilters.entrySet()) {
+		for (Map.Entry<String, Map<String, FilterSettings>> entry : tableFilters.entrySet()) {
 			Element tableNode = xmldoc.createElementNS(null, "table");
 			setAttribute(tableNode, "name", entry.getKey());
 			tableFiltersNode.appendChild(tableNode);
-			for (Map.Entry<String, List<Filter>> filters : entry.getValue().entrySet()) {
+			for (Map.Entry<String, FilterSettings> filters : entry.getValue().entrySet()) {
 				Element filterNode = xmldoc.createElementNS(null, "filter");
+				FilterSettings filterSettings = filters.getValue();
 				setAttribute(filterNode, "name", filters.getKey());
+				setAttribute(filterNode, "sort", filterSettings.getSort());
+				writeViewColumns(xmldoc, filterNode, filterSettings.getColumns());
 				tableNode.appendChild(filterNode);
-				writeFilters(xmldoc, filterNode, filters);
+				writeFilters(xmldoc, filterNode, filterSettings.getFilters());
 			}
 		}
 	}
@@ -488,7 +492,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 			Element filterNode = xmldoc.createElementNS(null, "filter");
 			setAttribute(filterNode, "show", tableFiltersShow.getOrDefault(filters.getKey(), true));
 			tableNode.appendChild(filterNode);
-			writeFilters(xmldoc, filterNode, filters);
+			writeFilters(xmldoc, filterNode, filters.getValue());
 		}
 	}
 
@@ -516,8 +520,8 @@ public class SettingsWriter extends AbstractXmlWriter {
 	 * @param parentNode Node of the xml document to write the filter to.
 	 * @param filters Filter to be written to the document row by row.
 	 */
-	private void writeFilters(final Document xmldoc, final Element parentNode, final Map.Entry<String, List<Filter>> filters) {
-		for (Filter filter : filters.getValue()) {
+	private void writeFilters(final Document xmldoc, final Element parentNode, final List<Filter> filters) {
+		for (Filter filter : filters) {
 			Element rowNode = xmldoc.createElementNS(null, "row");
 			setAttribute(rowNode, "group", filter.getGroup());
 			setAttribute(rowNode, "text", filter.getText());
@@ -583,13 +587,20 @@ public class SettingsWriter extends AbstractXmlWriter {
 				Element viewNode = xmldoc.createElementNS(null, "view");
 				setAttribute(viewNode, "name", view.getName());
 				viewToolNode.appendChild(viewNode);
-				for (SimpleColumn column : view.getColumns()) {
-					Element viewColumnNode = xmldoc.createElementNS(null, "viewcolumn");
-					setAttribute(viewColumnNode, "name", column.getEnumName());
-					setAttribute(viewColumnNode, "shown", column.isShown());
-					viewNode.appendChild(viewColumnNode);
-				}
+				writeViewColumns(xmldoc, viewNode, view.getColumns());
 			}
+		}
+	}
+
+	private void writeViewColumns(final Document xmldoc, Element parentNode, List<SimpleColumn> columns) {
+		if (columns == null || columns.isEmpty()) {
+			return;
+		}
+		for (SimpleColumn column : columns) {
+			Element viewColumnNode = xmldoc.createElementNS(null, "viewcolumn");
+			setAttribute(viewColumnNode, "name", column.getEnumName());
+			setAttribute(viewColumnNode, "shown", column.isShown());
+			parentNode.appendChild(viewColumnNode);
 		}
 	}
 

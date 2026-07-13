@@ -46,6 +46,7 @@ import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JFixedToolBar;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTabSecondary;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
+import net.nikr.eve.jeveasset.gui.shared.filter.FilterSettings;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuColumns;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
@@ -223,6 +224,11 @@ public class ValueTableTab extends JMainTabSecondary {
 					exportEventList,
 					filterList
 					);
+		}
+
+		@Override
+		public void loadFilter(FilterSettings filterSettings) {
+			setFilter(filterSettings);
 		}
 
 		@Override

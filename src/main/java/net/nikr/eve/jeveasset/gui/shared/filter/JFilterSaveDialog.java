@@ -33,8 +33,10 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -48,7 +50,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.EventModels.StringFilterator;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 
-public class FilterSave extends JDialogCentered {
+public class JFilterSaveDialog extends JDialogCentered {
 
 	private enum FilterSaveAction {
 		SAVE, CANCEL
@@ -57,11 +59,13 @@ public class FilterSave extends JDialogCentered {
 	private final EventList<String> filters;
 	private final List<String> defaultFilters = new ArrayList<>();
 	private final JComboBox<String> jName;
+	private final JCheckBox jSort;
+	private final JCheckBox jColumns;
 	private final JButton jSave;
 
-	private String returnString;
+	private FilterSave returnValue;
 
-	public FilterSave(final Window window) {
+	public JFilterSaveDialog(final Window window) {
 		super(null, GuiShared.get().saveFilter(), window);
 
 		ListenerClass listener = new ListenerClass();
@@ -72,6 +76,13 @@ public class FilterSave extends JDialogCentered {
 		filters = EventListManager.create();
 		AutoCompleteSupport<String> nameAutoComplete = AutoCompleteSupport.install(jName, EventModels.createSwingThreadProxyList(filters), new StringFilterator());
 		nameAutoComplete.setFilterMode(TextMatcherEditor.CONTAINS);
+
+		jSort = new JCheckBox(GuiShared.get().saveFilterSort());
+		jSort.setToolTipText(GuiShared.get().saveFilterSortToolTip());
+
+		jColumns = new JCheckBox(GuiShared.get().saveFilterColumns());
+		jColumns.setToolTipText(GuiShared.get().saveFilterColumnsToolTip());
+
 		jSave = new JButton(GuiShared.get().save());
 		jSave.setActionCommand(FilterSaveAction.SAVE.name());
 		jSave.addActionListener(listener);
@@ -85,6 +96,8 @@ public class FilterSave extends JDialogCentered {
 				.addComponent(jText)
 				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
 					.addComponent(jName, 220, 220, 220)
+					.addComponent(jSort, 220, 220, 220)
+					.addComponent(jColumns, 220, 220, 220)
 					.addGroup(layout.createSequentialGroup()
 						.addComponent(jSave, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
 						.addComponent(jCancel, Program.getButtonsWidth(), Program.getButtonsWidth(), Program.getButtonsWidth())
@@ -95,6 +108,9 @@ public class FilterSave extends JDialogCentered {
 			layout.createSequentialGroup()
 				.addComponent(jText, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				.addComponent(jName, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+				.addComponent(jSort, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+				.addComponent(jColumns, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+				.addGap(15)
 				.addGroup(layout.createParallelGroup()
 					.addComponent(jSave, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jCancel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
@@ -102,9 +118,13 @@ public class FilterSave extends JDialogCentered {
 		);
 	}
 
-	String show(final List<String> filters, final List<String> defaultFilters) {
-		returnString = null;
+	FilterSave show(final List<String> filters, final List<String> defaultFilters, boolean sort, boolean view) {
+		returnValue = null;
 		Collections.sort(filters, StringComparators.CASE_INSENSITIVE);
+		jSort.setSelected(false);
+		jSort.setVisible(sort);
+		jColumns.setSelected(false);
+		jColumns.setVisible(view);
 		try {
 			this.filters.getReadWriteLock().writeLock().lock();
 			this.filters.clear();
@@ -115,7 +135,7 @@ public class FilterSave extends JDialogCentered {
 		this.defaultFilters.clear();
 		this.defaultFilters.addAll(defaultFilters);
 		this.setVisible(true);
-		return returnString;
+		return returnValue;
 	}
 
 	private boolean validate() {
@@ -164,7 +184,10 @@ public class FilterSave extends JDialogCentered {
 	@Override
 	protected void save() {
 		if (validate()) {
-			returnString = (String) jName.getSelectedItem();
+			String name = (String) jName.getSelectedItem();
+			boolean sort = jSort.isSelected();
+			boolean view = jColumns.isSelected();
+			returnValue = new FilterSave(name, sort, view);
 			setVisible(false);
 		}
 		//XXX - Workaround for strange bug:
@@ -197,6 +220,53 @@ public class FilterSave extends JDialogCentered {
 			if (FilterSaveAction.CANCEL.name().equals(e.getActionCommand())) {
 				setVisible(false);
 			}
+		}
+	}
+
+	public static class FilterSave {
+
+		private final String name;
+		private final boolean sort;
+		private final boolean columns;
+
+		public FilterSave(String name, boolean sort, boolean columns) {
+			this.name = name;
+			this.sort = sort;
+			this.columns = columns;
+		}
+
+		public String getName() {
+			return name;
+		}
+
+		public boolean isSort() {
+			return sort;
+		}
+
+		public boolean isColumns() {
+			return columns;
+		}
+
+		@Override
+		public int hashCode() {
+			int hash = 7;
+			hash = 41 * hash + Objects.hashCode(this.name);
+			return hash;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj) {
+				return true;
+			}
+			if (obj == null) {
+				return false;
+			}
+			if (getClass() != obj.getClass()) {
+				return false;
+			}
+			final FilterSave other = (FilterSave) obj;
+			return Objects.equals(this.name, other.name);
 		}
 	}
 }

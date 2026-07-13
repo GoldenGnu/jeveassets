@@ -43,6 +43,7 @@ import net.nikr.eve.jeveasset.data.settings.tag.Tags;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.SoundsSettingsPanel.SoundOption;
 import net.nikr.eve.jeveasset.gui.shared.StringComparators;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
+import net.nikr.eve.jeveasset.gui.shared.filter.FilterSettings;
 import net.nikr.eve.jeveasset.gui.shared.menu.JFormulaDialog.Formula;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuJumps.Jump;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.ResizeMode;
@@ -254,7 +255,7 @@ public class Settings {
 //Table settings
 	//Filters					Saved by ExportFilterControl.saveSettings()
 	//Lock OK
-	private final Map<String, Map<String, List<Filter>>> tableFilters = new HashMap<>();
+	private final Map<String, Map<String, FilterSettings>> tableFilters = new HashMap<>();
 	//Columns					Saved by EnumTableFormatAdaptor.getMenu() - Reset
 	//									 EditColumnsDialog.save() - Edit Columns
 	//									 JAutoColumnTable.ListenerClass.mouseReleased() - Moved
@@ -626,11 +627,11 @@ public class Settings {
 		return owners;
 	}
 
-	public Map<String, Map<String, List<Filter>>> getTableFilters() {
+	public Map<String, Map<String, FilterSettings>> getTableFilters() {
 		return tableFilters;
 	}
 
-	public Map<String, List<Filter>> getTableFilters(final String key) {
+	public Map<String, FilterSettings> getTableFilters(final String key) {
 		if (!tableFilters.containsKey(key)) {
 			tableFilters.put(key, new HashMap<>());
 		}
