@@ -85,6 +85,7 @@ import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.AllColumn;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.CompareType;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.LogicType;
+import net.nikr.eve.jeveasset.gui.shared.filter.FilterSettings;
 import net.nikr.eve.jeveasset.gui.shared.menu.JFormulaDialog.Formula;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuJumps.Jump;
 import net.nikr.eve.jeveasset.gui.shared.table.ColumnManager.FormulaColumn;
@@ -1561,17 +1562,24 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			for (int b = 0; b < viewNodeList.getLength(); b++) {
 				Element viewNode = (Element) viewNodeList.item(b);
 				String viewName = getString(viewNode, "name");
+				List<SimpleColumn> columns = parseViewColumns(viewNode);
 				View view = new View(viewName);
+				view.setColumns(columns);
 				views.put(view.getName(), view);
-				NodeList viewColumnList = viewNode.getElementsByTagName("viewcolumn");
-				for (int c = 0; c < viewColumnList.getLength(); c++) {
-					Element viewColumnNode = (Element) viewColumnList.item(c);
-					String name = getString(viewColumnNode, "name");
-					boolean shown = getBoolean(viewColumnNode, "shown");
-					view.getColumns().add(new SimpleColumn(name, shown));
-				}
 			}
 		}
+	}
+
+	private List<SimpleColumn> parseViewColumns(Element parentNode) throws XmlException {
+		NodeList columnList = parentNode.getElementsByTagName("viewcolumn");
+		List<SimpleColumn> columns = new ArrayList<>();
+		for (int c = 0; c < columnList.getLength(); c++) {
+			Element viewColumnNode = (Element) columnList.item(c);
+			String name = getString(viewColumnNode, "name");
+			boolean shown = getBoolean(viewColumnNode, "shown");
+			columns.add(new SimpleColumn(name, shown));
+		}
+		return columns;
 	}
 
 	private void parseTableFormulas(final Element element, final Settings settings) throws XmlException {
@@ -1631,18 +1639,20 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			Element tableNode = (Element) tableNodeList.item(a);
 			String tableName = getString(tableNode, "name");
 			NodeList filterNodeList = tableNode.getElementsByTagName("filter");
-			Map<String, List<Filter>> filters = new HashMap<>();
+			Map<String, FilterSettings> filterMap = new HashMap<>();
 			for (int b = 0; b < filterNodeList.getLength(); b++) {
 				Element filterNode = (Element) filterNodeList.item(b);
 				String filterName = getString(filterNode, "name");
-				List<Filter> filter = parseFilters(filterNode, tableName, settings);
-				if (!filter.isEmpty()) {
-					filters.put(filterName, filter);
+				String filterSort = getStringOptional(filterNode, "sort");
+				List<SimpleColumn> columns = parseViewColumns(filterNode);
+				List<Filter> filters = parseFilters(filterNode, tableName, settings);
+				if (!filters.isEmpty()) {
+					filterMap.put(filterName, new FilterSettings(filters, filterSort, columns));
 				} else {
 					LOG.warn(filterName + " filter removed (Empty)");
 				}
 			}
-			settings.getTableFilters().put(tableName, filters);
+			settings.getTableFilters().put(tableName, filterMap);
 		}
 	}
 
@@ -1777,7 +1787,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 				Filter filter = new Filter(logic, column, compare, text);
 				filters.add(filter);
 			}
-			settings.getTableFilters(AssetsTab.NAME).put(filterName, filters);
+			settings.getTableFilters(AssetsTab.NAME).put(filterName, FilterSettings.get(filters));
 		}
 	}
 

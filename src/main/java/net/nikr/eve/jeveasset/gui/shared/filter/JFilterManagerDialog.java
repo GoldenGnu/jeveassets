@@ -28,19 +28,20 @@ import javax.swing.JOptionPane;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.shared.components.JManagerDialog;
 import net.nikr.eve.jeveasset.gui.shared.components.JTextDialog;
+import net.nikr.eve.jeveasset.gui.shared.filter.JFilterSaveDialog.FilterSave;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 public class JFilterManagerDialog<E> extends JManagerDialog {
 
-	private final Map<String, List<Filter>> filters;
+	private final Map<String, FilterSettings> filters;
 	private final Map<String, List<Filter>> defaultFilters;
 	private final List<EnumTableColumn<E>> columns;
 	private final FilterGui<E> gui;
 	private final JTextDialog jTextDialog;
 	private final FilterExport filterExport;
 
-	JFilterManagerDialog(final JFrame jFrame, final String toolName, final FilterGui<E> gui, List<EnumTableColumn<E>> columns, final Map<String, List<Filter>> filters, final Map<String, List<Filter>> defaultFilters) {
+	JFilterManagerDialog(final JFrame jFrame, final String toolName, final FilterGui<E> gui, List<EnumTableColumn<E>> columns, final Map<String, FilterSettings> filters, final Map<String, List<Filter>> defaultFilters) {
 		super(null, jFrame, GuiShared.get().filterManager(), true, false, false, true, true);
 		this.gui = gui;
 		this.columns = columns;
@@ -52,8 +53,7 @@ public class JFilterManagerDialog<E> extends JManagerDialog {
 
 	@Override
 	protected void load(final String name) {
-		List<Filter> filter = filters.get(name);
-		gui.setFilters(filter);
+		gui.loadFilter(name, false);
 		this.setVisible(false);
 	}
 
@@ -68,13 +68,13 @@ public class JFilterManagerDialog<E> extends JManagerDialog {
 		Settings.lock("Filter (Merge)"); //Lock for Filter (Merge)
 		List<Filter> filter = new ArrayList<>();
 		for (String mergeName : list) {
-			for (Filter currentFilter : filters.get(mergeName)) {
+			for (Filter currentFilter : filters.get(mergeName).getFilters()) {
 				if (!filter.contains(currentFilter)) {
 					filter.add(currentFilter);
 				}
 			}
 		}
-		filters.put(name, filter);
+		filters.put(name, FilterSettings.get(filter));
 		updateFilters();
 		Settings.unlock("Filter (Merge)"); //Unlock for Filter (Merge)
 		gui.saveSettings("Filter (Merge)"); //Save Filter (Merge)
@@ -87,7 +87,7 @@ public class JFilterManagerDialog<E> extends JManagerDialog {
 
 	@Override
 	protected void rename(final String name, final String oldName) {
-		List<Filter> filter = filters.get(oldName);
+		FilterSettings filter = filters.get(oldName);
 		Settings.lock("Filter (Rename)"); //Lock for Filter (Rename)
 		filters.remove(oldName); //Remove renamed filter (with old name)
 		filters.remove(name); //Remove overwritten filter
@@ -112,7 +112,7 @@ public class JFilterManagerDialog<E> extends JManagerDialog {
 	protected void export(List<String> list) {
 		StringBuilder builder = new StringBuilder();
 		for (String filterName : list) {
-			filterExport.exportFilter(builder, filterName, filters.get(filterName));
+			filterExport.exportFilter(builder, filterName, filters.get(filterName).getFilters());
 		}
 		jTextDialog.exportText(builder.toString());
 	}
@@ -149,13 +149,13 @@ public class JFilterManagerDialog<E> extends JManagerDialog {
 		if (filterList.isEmpty() || filterName == null || filterName.isEmpty()) {
 			return false;
 		}
-		List<Filter> filter = filters.get(filterName);
+		FilterSettings filter = filters.get(filterName);
 		if (filter != null) { //Filter already exist
 			filterName = gui.getFilterName(); //get new name
 		}
 		if (filterName != null && !filterName.isEmpty()) {
 			Settings.lock("Filter (Import)"); //Lock for Filter (Merge)
-			filters.put(filterName, filterList);
+			filters.put(filterName, FilterSettings.get(filterList));
 			Settings.unlock("Filter (Import)"); //Lock for Filter (Merge)
 			return true;
 		}

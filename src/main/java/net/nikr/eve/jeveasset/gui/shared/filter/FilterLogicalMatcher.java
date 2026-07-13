@@ -39,8 +39,8 @@ public class FilterLogicalMatcher<E> implements Matcher<E> {
 		}
 	}
 
-	public FilterLogicalMatcher(final SimpleTableFormat<E> tableFormat, ColumnCache<E> columnCache, final List<Filter> filters) {
-		for (Filter filter : filters) {
+	public FilterLogicalMatcher(final SimpleTableFormat<E> tableFormat, ColumnCache<E> columnCache, final FilterSettings filterSettings) {
+		for (Filter filter : filterSettings.getFilters()) {
 			FilterMatcher<E> matcher = new FilterMatcher<>(tableFormat, columnCache, filter);
 			addMatcher(matcher);
 		}

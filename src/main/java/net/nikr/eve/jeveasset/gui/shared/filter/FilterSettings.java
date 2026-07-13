@@ -18,22 +18,41 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  */
-
 package net.nikr.eve.jeveasset.gui.shared.filter;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
+import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.SimpleColumn;
 
 
-public interface SimpleFilterControl<E> {
+public class FilterSettings  {
 
-	public void saveSettings(final String msg);
+	public static final FilterSettings EMPTY = new FilterSettings(new ArrayList<>(), null, null);
+	
+	private final List<Filter> filters;
+	private final String sort;
+	private final List<SimpleColumn> columns;
 
-	public default Map<String, FilterSettings> getAllFilters() {
-		return new HashMap<>();
+	public FilterSettings(List<Filter> filters, String sort, List<SimpleColumn> columns) {
+		this.filters = filters;
+		this.sort = sort;
+		this.columns = columns;
 	}
 
-	public default boolean isFiltersEmpty() {
-		return true;
+	public static FilterSettings get(List<Filter> filters) {
+		return new FilterSettings(filters, null, null);
+	}
+
+	
+	public List<Filter> getFilters() {
+		return filters;
+	}
+
+	public String getSort() {
+		return sort;
+	}
+
+	public List<SimpleColumn> getColumns() {
+		return columns;
 	}
 }

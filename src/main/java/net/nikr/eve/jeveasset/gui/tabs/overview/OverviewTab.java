@@ -64,6 +64,7 @@ import net.nikr.eve.jeveasset.gui.shared.components.JTreemap;
 import net.nikr.eve.jeveasset.gui.shared.components.ListComboBoxModel;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
+import net.nikr.eve.jeveasset.gui.shared.filter.FilterSettings;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuColumns;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo.AutoNumberFormat;
@@ -481,7 +482,7 @@ public class OverviewTab extends JMainTabSecondary {
 		}
 
 		for (String filterName : filterNames) {
-			List<Filter> filters = Settings.get().getTableFilters(AssetsTab.NAME).get(filterName);
+			List<Filter> filters = Settings.get().getTableFilters(AssetsTab.NAME).get(filterName).getFilters();
 			jMenuItem = new FilterMenuItem(filterName, filters);
 			jMenuItem.setActionCommand(OverviewAction.LOAD_FILTER.name());
 			jMenuItem.addActionListener(listener);
@@ -669,6 +670,11 @@ public class OverviewTab extends JMainTabSecondary {
 					exportEventList,
 					filterList
 					);
+		}
+
+		@Override
+		public void loadFilter(FilterSettings filterSettings) {
+			setFilter(filterSettings);
 		}
 
 		@Override
