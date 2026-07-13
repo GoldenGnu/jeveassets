@@ -89,6 +89,7 @@ import net.nikr.eve.jeveasset.gui.shared.components.JOptionsDialog.OptionEnum;
 import net.nikr.eve.jeveasset.gui.shared.components.JTextDialog;
 import net.nikr.eve.jeveasset.gui.shared.components.JTextDialog.TextReturn;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
+import net.nikr.eve.jeveasset.gui.shared.filter.FilterSettings;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuColumns;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo.AutoNumberFormat;
@@ -2130,6 +2131,11 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		protected void beforeFilter() {
 			enableGroupFirstUpdate();
 			jTable.saveExpandedState();
+		}
+
+		@Override
+		public void loadFilter(FilterSettings filterSettings) {
+			setFilter(filterSettings);
 		}
 
 		@Override

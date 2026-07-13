@@ -40,7 +40,7 @@ import net.nikr.eve.jeveasset.data.settings.UserItem;
 import net.nikr.eve.jeveasset.data.settings.tag.Tag;
 import net.nikr.eve.jeveasset.data.settings.tag.TagID;
 import net.nikr.eve.jeveasset.data.settings.tag.Tags;
-import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
+import net.nikr.eve.jeveasset.gui.shared.filter.FilterSettings;
 import net.nikr.eve.jeveasset.gui.shared.menu.JFormulaDialog.Formula;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuJumps.Jump;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
@@ -219,13 +219,13 @@ public class BackwardCompatibilitySettings extends FakeSettings implements Setti
 	}
 
 	@Override
-	public Map<String, Map<String, List<Filter>>> getTableFilters() {
+	public Map<String, Map<String, FilterSettings>> getTableFilters() {
 		ok.put(Function.GET_TABLE_FILTERS, true);
 		return new HashMap<>();
 	}
 
 	@Override
-	public Map<String, List<Filter>> getTableFilters(final String key) {
+	public Map<String, FilterSettings> getTableFilters(final String key) {
 		ok.put(Function.GET_TABLE_FILTERS_KEY, true);
 		return new HashMap<>();
 	}

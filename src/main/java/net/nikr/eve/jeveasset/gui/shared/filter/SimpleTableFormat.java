@@ -22,12 +22,14 @@ package net.nikr.eve.jeveasset.gui.shared.filter;
 
 import java.util.List;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
+import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.SimpleColumn;
 
 
 public interface SimpleTableFormat<E> {
 	public Object getColumnValue(E item, String column);
 	public List<EnumTableColumn<E>> getAllColumns();
 	public List<EnumTableColumn<E>> getShownColumns();
+	public List<SimpleColumn> getColumns();
 	public EnumTableColumn<E> valueOf(String column) throws IllegalArgumentException;
 	public void addColumn(EnumTableColumn<E> column);
 }
