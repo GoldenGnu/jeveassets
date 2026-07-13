@@ -592,8 +592,8 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			names.put(ownerID, ownerName);
 			nextUpdates.put(ownerID, date);
 		}
-		SQLiteSettings.setOwners(names);
-		SQLiteSettings.setOwnerNextUpdate(nextUpdates);
+		SQLiteSettings.migrateOwners(names);
+		SQLiteSettings.migrateOwnerNextUpdate(nextUpdates);
 	}
 
 	private Map<String, List<Value>> parseTrackerData(final Element element) throws XmlException {
@@ -1033,7 +1033,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			double price = getDouble(priceNode, "price");
 			manufacturingPrices.put(typeID, price);
 		}
-		SQLiteSettings.setManufacturingPrices(manufacturingPrices);
+		SQLiteSettings.migrateManufacturingPrices(manufacturingPrices);
 
 		Map<Integer, Float> manufacturingSystems = new HashMap<>();
 		NodeList systemNodes = manufacturingElement.getElementsByTagName("system");
@@ -1043,7 +1043,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			float index = getFloat(systemNode, "index");
 			manufacturingSystems.put(systemID, index);
 		}
-		SQLiteSettings.setManufacturingSystemIndex(manufacturingSystems);
+		SQLiteSettings.migrateManufacturingSystemIndex(manufacturingSystems);
 	}
 
 	private void parsePriceHistorySettings(Element priceHistoryElement, Settings settings) throws XmlException {
@@ -1406,7 +1406,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			long itemId = getLong(currentNode, "itemid");
 			data.put(itemId, name);
 		}
-		SQLiteSettings.setEveNames(data);
+		SQLiteSettings.migrateEveNames(data);
 	}
 
 	private void parsePriceDataSettings(final Element element, final Settings settings) throws XmlException {

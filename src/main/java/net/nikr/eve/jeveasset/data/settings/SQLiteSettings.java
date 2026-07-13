@@ -36,6 +36,7 @@ public class SQLiteSettings {
 	private static SettingsEveNames settingsEveNames;
 	private static SettingsOwnerNames settingsOwnerNames;
 	private static SettingsOwnersNextUpdate ownerNextUpdate;
+	private static boolean save = false;
 
 	public static void load() {
 		if (settingsManufacturingPrices == null) {
@@ -55,8 +56,17 @@ public class SQLiteSettings {
 		}
 	}
 
+	public static boolean isSave() {
+		return save;
+	}
+
 	public static synchronized void setManufacturingSystemIndex(Map<Integer, Float> manufacturingSystems) {
 		settingsManufacturingSystems.set(manufacturingSystems);
+	}
+
+	public static synchronized void migrateManufacturingSystemIndex(Map<Integer, Float> manufacturingSystems) {
+		settingsManufacturingSystems.set(manufacturingSystems);
+		save = true;
 	}
 
 	public static synchronized Float getManufacturingSystemIndex(long systemID) {
@@ -73,6 +83,11 @@ public class SQLiteSettings {
 
 	public static synchronized void setManufacturingPrices(Map<Integer, Double> data) {
 		settingsManufacturingPrices.set(data);
+	}
+
+	public static synchronized void migrateManufacturingPrices(Map<Integer, Double> data) {
+		settingsManufacturingPrices.set(data);
+		save = true;
 	}
 	
 	public static synchronized Double getManufacturingPrice(Integer typeID) {
@@ -91,6 +106,11 @@ public class SQLiteSettings {
 		settingsEveNames.set(data);
 	}
 
+	public static synchronized void migrateEveNames(Map<Long, String> data) {
+		settingsEveNames.set(data);
+		save = true;
+	}
+
 	public static synchronized void removeEveName(Long itemID) {
 		settingsEveNames.delete(itemID);
 	}
@@ -107,8 +127,18 @@ public class SQLiteSettings {
 		settingsOwnerNames.set(names);
 	}
 
+	public static synchronized void migrateOwners(Map<Long, String> names) {
+		settingsOwnerNames.set(names);
+		save = true;
+	}
+
 	public static synchronized void setOwnerNextUpdate(Map<Long, Date> dates) {
 		ownerNextUpdate.set(dates);
+	}
+
+	public static synchronized void migrateOwnerNextUpdate(Map<Long, Date> dates) {
+		ownerNextUpdate.set(dates);
+		save = true;
 	}
 
 	public static synchronized Date getOwnerNextUpdate(Long ownerID) {

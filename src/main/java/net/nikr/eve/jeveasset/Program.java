@@ -288,6 +288,9 @@ public class Program implements ActionListener {
 		if (Settings.get().isLoadToolsBackground()) {
 			ToolLoader.startBackgroundToolLoading(this);
 		}
+		if (SQLiteSettings.isSave()) {
+			saveSettings("Settings SQL Migration");
+		}
 		LOG.info("Startup Done");
 		if (CliOptions.get().isDebug()) {
 			LOG.info("Show Debug Warning");
