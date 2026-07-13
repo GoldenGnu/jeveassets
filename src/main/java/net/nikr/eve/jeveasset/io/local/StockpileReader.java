@@ -191,6 +191,7 @@ public class StockpileReader extends AbstractBackup {
 		}
 
 		private static StockpileItem deserializeStockpileItem(JsonObject itemObject, Stockpile stockpile) {
+			long id = StockpileItem.getNewID(); //Import - always new ID
 			int typeID = itemObject.get("i").getAsInt();
 			double countMinimum = itemObject.get("m").getAsDouble();
 			boolean runs = itemObject.get("r").getAsBoolean();
@@ -307,7 +308,7 @@ public class StockpileReader extends AbstractBackup {
 				} else if (productTypeID != null && formulaRecursiveLevel != null && reactionSecurity != null && reactionRigs != null) {
 					stockpileItem = new StockpileItemMaterial(root, stockpile, item, productTypeID, countMinimum, ignoreMultiplier, roundPerRuns, formulaRecursiveLevel, reactionRigs, reactionSecurity);
 				} else {
-					stockpileItem = new StockpileItem(stockpile, item, typeID, countMinimum, runs, ignoreMultiplier);
+					stockpileItem = new StockpileItem(stockpile, item, typeID, countMinimum, runs, ignoreMultiplier, id);
 				}
 				return stockpileItem;
 			}
