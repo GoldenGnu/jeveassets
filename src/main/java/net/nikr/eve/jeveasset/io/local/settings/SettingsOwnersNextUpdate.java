@@ -35,7 +35,7 @@ import net.nikr.eve.jeveasset.io.local.sqlite.SQLiteTable;
 public class SettingsOwnersNextUpdate extends TableMap<Long, Date> {
 
 	public SettingsOwnersNextUpdate() {
-		super(TableMap.Tables.OWNER_NAMES);
+		super(TableMap.Tables.OWNERS_NEXT_UPDATE);
 	}
 
 	@Override
