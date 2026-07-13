@@ -481,6 +481,7 @@ public class SettingsTest extends TestUtil {
 		test(settings, Function.SET_WINDOW_LOCATION);
 		test(settings, Function.SET_WINDOW_MAXIMIZED);
 		test(settings, Function.SET_WINDOW_SIZE);
+		test(settings, Function.ADD_SAVES);
 		test(settings);
 	}
 
@@ -503,6 +504,7 @@ public class SettingsTest extends TestUtil {
 		test(settings, Function.SET_WINDOW_LOCATION);
 		test(settings, Function.SET_WINDOW_MAXIMIZED);
 		test(settings, Function.SET_WINDOW_SIZE);
+		test(settings, Function.ADD_SAVES);
 		test(settings);
 	}
 
@@ -525,6 +527,7 @@ public class SettingsTest extends TestUtil {
 		test(settings, Function.SET_WINDOW_LOCATION);
 		test(settings, Function.SET_WINDOW_MAXIMIZED);
 		test(settings, Function.SET_WINDOW_SIZE);
+		test(settings, Function.ADD_SAVES);
 		test(settings);
 	}
 
@@ -550,6 +553,7 @@ public class SettingsTest extends TestUtil {
 		test(settings, Function.SET_WINDOW_LOCATION);
 		test(settings, Function.SET_WINDOW_MAXIMIZED);
 		test(settings, Function.SET_WINDOW_SIZE);
+		test(settings, Function.ADD_SAVES);
 		test(settings);
 	}
 
@@ -573,6 +577,7 @@ public class SettingsTest extends TestUtil {
 		test(settings, Function.SET_WINDOW_LOCATION);
 		test(settings, Function.SET_WINDOW_MAXIMIZED);
 		test(settings, Function.SET_WINDOW_SIZE);
+		test(settings, Function.ADD_SAVES);
 		test(settings);
 	}
 
@@ -596,6 +601,7 @@ public class SettingsTest extends TestUtil {
 		test(settings, Function.SET_WINDOW_LOCATION);
 		test(settings, Function.SET_WINDOW_MAXIMIZED);
 		test(settings, Function.SET_WINDOW_SIZE);
+		test(settings, Function.ADD_SAVES);
 		test(settings);
 	}
 
@@ -621,6 +627,7 @@ public class SettingsTest extends TestUtil {
 		test(settings, Function.SET_WINDOW_LOCATION);
 		test(settings, Function.SET_WINDOW_MAXIMIZED);
 		test(settings, Function.SET_WINDOW_SIZE);
+		test(settings, Function.ADD_SAVES);
 		test(settings);
 	}
 
@@ -645,6 +652,7 @@ public class SettingsTest extends TestUtil {
 		test(settings, Function.SET_WINDOW_LOCATION);
 		test(settings, Function.SET_WINDOW_MAXIMIZED);
 		test(settings, Function.SET_WINDOW_SIZE);
+		test(settings, Function.ADD_SAVES);
 		test(settings);
 	}
 
@@ -669,6 +677,7 @@ public class SettingsTest extends TestUtil {
 		test(settings, Function.SET_WINDOW_LOCATION);
 		test(settings, Function.SET_WINDOW_MAXIMIZED);
 		test(settings, Function.SET_WINDOW_SIZE);
+		test(settings, Function.ADD_SAVES);
 		test(settings);
 	}
 
@@ -697,6 +706,7 @@ public class SettingsTest extends TestUtil {
 		test(settings, Function.SET_WINDOW_SIZE);
 		test(settings, Function.SET_TRANSACTION_PROFIT_PRICE);
 		test(settings, Function.SET_TRANSACTION_PROFIT_MARGIN);
+		test(settings, Function.ADD_SAVES);
 		test(settings);
 	}
 
@@ -727,6 +737,8 @@ public class SettingsTest extends TestUtil {
 		test(settings, Function.SET_WINDOW_SIZE);
 		test(settings, Function.SET_TRANSACTION_PROFIT_PRICE);
 		test(settings, Function.SET_TRANSACTION_PROFIT_MARGIN);
+		test(settings, Function.ADD_SAVES);
+		test(settings, Function.ADD_SAVE);
 		test(settings);
 	}
 
@@ -757,6 +769,8 @@ public class SettingsTest extends TestUtil {
 		test(settings, Function.SET_WINDOW_SIZE);
 		test(settings, Function.SET_TRANSACTION_PROFIT_PRICE);
 		test(settings, Function.SET_TRANSACTION_PROFIT_MARGIN);
+		test(settings, Function.ADD_SAVES);
+		test(settings, Function.ADD_SAVE);
 		test(settings);
 	}
 
@@ -791,6 +805,8 @@ public class SettingsTest extends TestUtil {
 		test(settings, Function.SET_WINDOW_SIZE);
 		test(settings, Function.SET_TRANSACTION_PROFIT_PRICE);
 		test(settings, Function.SET_TRANSACTION_PROFIT_MARGIN);
+		test(settings, Function.ADD_SAVES);
+		test(settings, Function.ADD_SAVE);
 		test(settings);
 	}
 
