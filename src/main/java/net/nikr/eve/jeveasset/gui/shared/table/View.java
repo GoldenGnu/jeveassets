@@ -28,7 +28,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.SimpleColu
 
 public class View implements Comparable<View> {
 	private String name;
-	private List<SimpleColumn> columns = new ArrayList<SimpleColumn>();
+	private List<SimpleColumn> columns = new ArrayList<>();
 
 	public View(String name) {
 		this.name = name;

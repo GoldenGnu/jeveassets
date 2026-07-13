@@ -48,6 +48,7 @@ import net.nikr.eve.jeveasset.data.settings.tag.TagID;
 import net.nikr.eve.jeveasset.data.settings.tag.Tags;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.SoundsSettingsPanel.SoundOption;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
+import net.nikr.eve.jeveasset.gui.shared.filter.FilterSettings;
 import net.nikr.eve.jeveasset.gui.shared.menu.JFormulaDialog;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuJumps;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.ResizeMode;
@@ -215,12 +216,12 @@ public abstract class FakeSettings extends Settings {
 	}
 
 	@Override
-	public Map<String, Map<String, List<Filter>>> getTableFilters() {
+	public Map<String, Map<String, FilterSettings>> getTableFilters() {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
 	@Override
-	public Map<String, List<Filter>> getTableFilters(final String key) {
+	public Map<String, FilterSettings> getTableFilters(final String key) {
 		throw new UnsupportedOperationException("not implemented");
 	}
 

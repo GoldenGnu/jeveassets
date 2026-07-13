@@ -58,7 +58,7 @@ public abstract class FilterControl<E> implements ColumnCache<E>, SimpleFilterCo
 	private final EventList<E> exportEventList;
 	private final List<SettingsUpdateListener> settingsUpdateListenerList = new ArrayList<>();
 	private final FilterList<E> filterList;
-	private final Map<String, List<Filter>> filters;
+	private final Map<String, FilterSettings> filters;
 	private final Map<String, List<Filter>> defaultFilters;
 	private final FilterGui<E> gui;
 	private final Map<E, String> cache;
@@ -115,6 +115,8 @@ public abstract class FilterControl<E> implements ColumnCache<E>, SimpleFilterCo
 		gui = new FilterGui<>(jFrame, this, tableFormat);
 		cache = new HashMap<>();
 	}
+
+	public abstract void loadFilter(FilterSettings filterSettings);
 
 	public void clearCache() {
 		cache.clear();
@@ -272,15 +274,18 @@ public abstract class FilterControl<E> implements ColumnCache<E>, SimpleFilterCo
 		return filterList;
 	}
 
-	Map<String, List<Filter>> getFilters() {
+	Map<String, FilterSettings> getFilters() {
 		return filters;
 	}
 
 	@Override
-	public Map<String, List<Filter>> getAllFilters() {
+	public Map<String, FilterSettings> getAllFilters() {
 		//Need to be updated each time something has changed....
-		Map<String, List<Filter>> allFilters = new HashMap<>();
-		allFilters.putAll(defaultFilters);
+		Map<String, FilterSettings> allFilters = new HashMap<>();
+		for (Map.Entry<String, List<Filter>> entry : defaultFilters.entrySet()) {
+			allFilters.put(entry.getKey(), FilterSettings.get(entry.getValue()));
+		}
+		
 		allFilters.putAll(filters);
 		return allFilters;
 	}

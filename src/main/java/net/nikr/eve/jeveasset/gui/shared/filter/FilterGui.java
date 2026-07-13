@@ -45,6 +45,8 @@ import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.StringComparators;
 import net.nikr.eve.jeveasset.gui.shared.components.JDropDownButton;
 import net.nikr.eve.jeveasset.gui.shared.components.JFixedToolBar;
+import net.nikr.eve.jeveasset.gui.shared.filter.JFilterSaveDialog.FilterSave;
+import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.SimpleColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 import net.nikr.eve.jeveasset.io.shared.DesktopUtil;
@@ -81,7 +83,7 @@ class FilterGui<E> {
 	private final SimpleTableFormat<E> tableFormat;
 
 	private final List<FilterPanel<E>> filterPanels = new ArrayList<>();
-	private final FilterSave filterSave;
+	private final JFilterSaveDialog jFilterSaveDialog;
 	private final JFilterManagerDialog<E> jFilterManagerDialog;
 
 	private final ExportDialog<E> exportDialog;
@@ -203,7 +205,7 @@ class FilterGui<E> {
 		updateFilters();
 		add();
 
-		filterSave = new FilterSave(jFrame);
+		jFilterSaveDialog = new JFilterSaveDialog(jFrame);
 		jFilterManagerDialog = new JFilterManagerDialog<>(jFrame, filterControl.getName(), this, tableFormat.getAllColumns(), filterControl.getFilters(), filterControl.getDefaultFilters());
 	}
 
@@ -262,9 +264,9 @@ class FilterGui<E> {
 			return GuiShared.get().filterEmpty();
 		}
 		List<Filter> filters = getFilters();
-		if (filterControl.getAllFilters().containsValue(filters)) {
-			for (Map.Entry<String, List<Filter>> entry : filterControl.getAllFilters().entrySet()) {
-				if (entry.getValue().equals(filters)) {
+		if (filterControl.getAllFilters().containsValue(FilterSettings.get(filters))) {
+			for (Map.Entry<String, FilterSettings> entry : filterControl.getAllFilters().entrySet()) {
+				if (entry.getValue().getFilters().equals(filters)) {
 					return entry.getKey();
 				}
 			}
@@ -425,16 +427,17 @@ class FilterGui<E> {
 		refilter();
 	}
 
-	private void loadFilter(final String filterName, final boolean add) {
+	protected void loadFilter(final String filterName, final boolean add) {
 		if (filterName == null) {
 			return;
 		}
 		if (filterControl.getAllFilters().containsKey(filterName)) {
-			List<Filter> filters = filterControl.getAllFilters().get(filterName);
+			FilterSettings filterSettings = filterControl.getAllFilters().get(filterName);
+			filterControl.loadFilter(filterSettings);
 			if (add) {
-				addFilters(filters);
+				addFilters(filterSettings.getFilters());
 			} else {
-				setFilters(filters);
+				setFilters(filterSettings.getFilters());
 			}
 		}
 	}
@@ -537,7 +540,11 @@ class FilterGui<E> {
 	}
 
 	protected String getFilterName() {
-		return filterSave.show(new ArrayList<>(filterControl.getFilters().keySet()), new ArrayList<>(filterControl.getDefaultFilters().keySet()));
+		FilterSave filterSave = jFilterSaveDialog.show(new ArrayList<>(filterControl.getFilters().keySet()), new ArrayList<>(filterControl.getDefaultFilters().keySet()), false, false);
+		if (filterSave != null) {
+			return filterSave.getName();
+		}
+		return null;
 	}
 
 	/**
@@ -569,10 +576,18 @@ class FilterGui<E> {
 				if (isFiltersEmpty()) {
 					JOptionPane.showMessageDialog(jFrame, GuiShared.get().nothingToSave(), GuiShared.get().saveFilter(), JOptionPane.PLAIN_MESSAGE);
 				} else {
-					String name = filterSave.show(new ArrayList<>(filterControl.getFilters().keySet()), new ArrayList<>(filterControl.getDefaultFilters().keySet()));
-					if (name != null && !name.isEmpty()) {
+					FilterSave filterSave = jFilterSaveDialog.show(new ArrayList<>(filterControl.getFilters().keySet()), new ArrayList<>(filterControl.getDefaultFilters().keySet()), true, true);
+					if (filterSave != null && !filterSave.getName().isEmpty()) {
 						Settings.lock("Filter (New)"); //Lock for Filter (New)
-						filterControl.getFilters().put(name, getFilters());
+						String sort = null;
+						if (filterSave.isSort()) {
+							sort = Settings.get().getCurrentTableSorting().get(filterControl.getName());
+						}
+						List<SimpleColumn> columns = null;
+						if (filterSave.isColumns()) {
+							columns = tableFormat.getColumns();
+						}
+						filterControl.getFilters().put(filterSave.getName(), new FilterSettings(getFilters(), sort, columns));
 						Settings.unlock("Filter (New)"); //Unlock for Filter (New)
 						saveSettings("Filter (New)"); //Save Filter (New)
 						updateFilters();

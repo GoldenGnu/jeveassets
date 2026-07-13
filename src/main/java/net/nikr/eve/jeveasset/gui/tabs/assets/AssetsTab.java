@@ -60,6 +60,7 @@ import net.nikr.eve.jeveasset.gui.shared.components.JMainTabPrimary;
 import net.nikr.eve.jeveasset.gui.shared.components.JTreemap;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
+import net.nikr.eve.jeveasset.gui.shared.filter.FilterSettings;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuColumns;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo.AutoNumberFormat;
@@ -466,6 +467,11 @@ public class AssetsTab extends JMainTabPrimary implements TagUpdate {
 					overviewTab.updateFilters();
 				}
 			}
+		}
+
+		@Override
+		public void loadFilter(FilterSettings filterSettings) {
+			setFilter(filterSettings);
 		}
 
 		@Override

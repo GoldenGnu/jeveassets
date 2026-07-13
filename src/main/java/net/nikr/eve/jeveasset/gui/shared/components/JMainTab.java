@@ -46,11 +46,13 @@ import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.SettingsUpdateListener;
 import net.nikr.eve.jeveasset.data.settings.types.LocationType;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
+import net.nikr.eve.jeveasset.gui.shared.filter.FilterSettings;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
 import net.nikr.eve.jeveasset.gui.shared.table.ColumnManager;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
+import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.SimpleColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 import net.nikr.eve.jeveasset.gui.shared.table.JSeparatorTable;
 
@@ -65,6 +67,7 @@ public abstract class JMainTab {
 	protected JPanel jPanel;
 	protected GroupLayout layout;
 	private JAutoColumnTable jTable;
+	private EnumTableFormatAdaptor<?, ?> tableFormat;
 	private DefaultEventSelectionModel<?> eventSelectionModel;
 	private DefaultEventTableModel<?> eventTableModel;
 	private FilterControl<?> filterControl;
@@ -104,6 +107,7 @@ public abstract class JMainTab {
 	private <T extends Enum<T> & EnumTableColumn<Q>, Q> void installTableTool(final TableMenu<Q> tableMenu, EnumTableFormatAdaptor<T, Q> tableFormat, TableComparatorChooser<Q> comparatorChooser, DefaultEventTableModel<Q> tableModel, JAutoColumnTable jTable, EventList<Q> eventList, FilterControl<Q> filterControl, final Class<Q> clazz) {
 		this.clazz = clazz;
 		this.comparatorChooser = comparatorChooser; //Can be null
+		this.tableFormat = tableFormat;
 		MenuManager.install(program, tableMenu, jTable, new ColumnManager<>(program, toolName, tableFormat, tableModel, jTable, eventList, filterControl), clazz);
 		if(filterControl != null && toolName != null && !toolName.isEmpty()) {
 			filterControl.clearCurrentFilters();
@@ -129,6 +133,25 @@ public abstract class JMainTab {
 		}
 	}
 
+	public void setFilter(FilterSettings filterSettings) {
+		setColumns(filterSettings.getColumns(), false);
+		setSorting(filterSettings.getSort(), true);
+	}
+
+	private void setColumns(List<SimpleColumn> columns, boolean save) {
+		if (columns == null || columns.isEmpty() || tableFormat == null || eventTableModel == null || jTable == null) {
+			return;
+		}
+		tableFormat.setColumns(columns);
+		eventTableModel.fireTableStructureChanged();
+		jTable.autoResizeColumns();
+		program.updateTableMenu();
+		if (save) {
+			program.saveSettings("View (Load)"); //Save Columns (Changed - Load View)
+		}
+	}
+
+
 	/**
 	 * Restore sorting from settings
 	 */
@@ -142,19 +165,21 @@ public abstract class JMainTab {
 	 * @param save Save settings
 	 */
 	private void setSorting(String sorting, boolean save) {
-		if (comparatorChooser != null && sorting != null && !sorting.isEmpty()) { //Load sorting
-			try {
-				sortLock = true;
-				comparatorChooser.fromString(sorting);
-			} finally {
-				sortLock = false;
-			}
-			if (save) {
-				Settings.lock("Set Sorting");
-				Settings.get().getCurrentTableSorting().put(toolName, comparatorChooser.toString());
-				Settings.unlock("SetSorting");
-				program.saveSettings("Set Sorting");
-			}
+		if (comparatorChooser == null || sorting == null || sorting.isEmpty()) {
+			return;
+		}
+		//Load sorting
+		try {
+			sortLock = true;
+			comparatorChooser.fromString(sorting);
+		} finally {
+			sortLock = false;
+		}
+		if (save) {
+			Settings.lock("Set Sorting");
+			Settings.get().getCurrentTableSorting().put(toolName, comparatorChooser.toString());
+			Settings.unlock("SetSorting");
+			program.saveSettings("Set Sorting");
 		}
 	}
 
@@ -204,17 +229,14 @@ public abstract class JMainTab {
 
 	public final void saveSettings() {
 		//Save Settings
-		if (eventTableModel != null && jTable != null && toolName != null) {
-			TableFormat<?> tableFormat = eventTableModel.getTableFormat();
-			if (tableFormat instanceof EnumTableFormatAdaptor) {
-				EnumTableFormatAdaptor<?, ?> formatAdaptor = (EnumTableFormatAdaptor<?, ?>) tableFormat;
-				Settings.get().getTableColumns().put(toolName, formatAdaptor.getColumns());
-				Settings.get().getTableResize().put(toolName, formatAdaptor.getResizeMode());
-				Settings.get().getTableColumnsWidth().put(toolName, jTable.getColumnsWidth());
-				if(filterControl != null) {
-					Settings.get().getCurrentTableFilters().put(toolName, filterControl.getCurrentFilters());
-				}
-			}
+		if (tableFormat == null || eventTableModel == null || jTable == null || toolName == null) {
+			return;
+		}
+		Settings.get().getTableColumns().put(toolName, tableFormat.getColumns());
+		Settings.get().getTableResize().put(toolName, tableFormat.getResizeMode());
+		Settings.get().getTableColumnsWidth().put(toolName, jTable.getColumnsWidth());
+		if(filterControl != null) {
+			Settings.get().getCurrentTableFilters().put(toolName, filterControl.getCurrentFilters());
 		}
 	}
 
@@ -350,16 +372,13 @@ public abstract class JMainTab {
 		this.jTable = jTable;
 
 		//Load Settings
-		if (eventTableModel != null && toolName != null) {
-			TableFormat<?> tableFormat = eventTableModel.getTableFormat();
-			if (tableFormat instanceof EnumTableFormatAdaptor) {
-				EnumTableFormatAdaptor<?, ?> formatAdaptor = (EnumTableFormatAdaptor<?, ?>) tableFormat;
-				formatAdaptor.setColumns(Settings.get().getTableColumns().get(toolName));
-				formatAdaptor.setResizeMode(Settings.get().getTableResize().get(toolName));
-				jTable.setColumnsWidth(Settings.get().getTableColumnsWidth().get(toolName));
-				eventTableModel.fireTableStructureChanged();
-			}
+		if (eventTableModel == null || toolName == null) {
+			return;
 		}
+		tableFormat.setColumns(Settings.get().getTableColumns().get(toolName));
+		tableFormat.setResizeMode(Settings.get().getTableResize().get(toolName));
+		jTable.setColumnsWidth(Settings.get().getTableColumnsWidth().get(toolName));
+		eventTableModel.fireTableStructureChanged();
 	}
 
 	/***

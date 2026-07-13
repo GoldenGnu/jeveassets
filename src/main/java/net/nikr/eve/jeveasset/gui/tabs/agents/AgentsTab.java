@@ -44,6 +44,7 @@ import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTabPrimary;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
+import net.nikr.eve.jeveasset.gui.shared.filter.FilterSettings;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuColumns;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
@@ -201,6 +202,11 @@ public class AgentsTab extends JMainTabPrimary implements TagUpdate {
 					exportEventList,
 					filterList
 					);
+		}
+
+		@Override
+		public void loadFilter(FilterSettings filterSettings) {
+			setFilter(filterSettings);
 		}
 
 		@Override
