@@ -290,6 +290,8 @@ public class Settings {
 	private final Map<SoundOption, Sound> soundSettings = new EnumMap<>(SoundOption.class);
 //Manufacturing
 	private final ManufacturingSettings manufacturingSettings = new ManufacturingSettings();
+//Save after load
+	private boolean save = false;
 
 	protected Settings() {
 		//Settings
@@ -495,6 +497,14 @@ public class Settings {
 		} finally {
 			LOCK.unlock("Save Settings");
 		}
+	}
+
+	public boolean isSave() {
+		return save;
+	}
+
+	public void setSave(boolean save) {
+		this.save = save;
 	}
 
 	public TrackerSettings getTrackerSettings() {

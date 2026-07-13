@@ -294,6 +294,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		Element manufacturingElement = getNodeOptional(element, "manufacturing");
 		if (manufacturingElement != null) {
 			parseManufacturingPriceSettings(manufacturingElement, settings);
+			settings.setSave(true);
 		}
 
 		//Price History
@@ -360,6 +361,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		Element ownersElement = getNodeOptional(element, "owners");
 		if (ownersElement != null) {
 			parseOwners(ownersElement, settings);
+			settings.setSave(true);
 		}
 
 		//Tracker Data
@@ -451,6 +453,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		Element eveNameElement = getNodeOptional(element, "evenames");
 		if (eveNameElement != null) {
 			parseEveNames(eveNameElement, settings);
+			settings.setSave(true);
 		}
 
 		//PriceDataSettings
@@ -592,8 +595,8 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			names.put(ownerID, ownerName);
 			nextUpdates.put(ownerID, date);
 		}
-		SQLiteSettings.migrateOwners(names);
-		SQLiteSettings.migrateOwnerNextUpdate(nextUpdates);
+		SQLiteSettings.setOwners(names);
+		SQLiteSettings.setOwnerNextUpdate(nextUpdates);
 	}
 
 	private Map<String, List<Value>> parseTrackerData(final Element element) throws XmlException {
@@ -1033,7 +1036,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			double price = getDouble(priceNode, "price");
 			manufacturingPrices.put(typeID, price);
 		}
-		SQLiteSettings.migrateManufacturingPrices(manufacturingPrices);
+		SQLiteSettings.setManufacturingPrices(manufacturingPrices);
 
 		Map<Integer, Float> manufacturingSystems = new HashMap<>();
 		NodeList systemNodes = manufacturingElement.getElementsByTagName("system");
@@ -1043,7 +1046,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			float index = getFloat(systemNode, "index");
 			manufacturingSystems.put(systemID, index);
 		}
-		SQLiteSettings.migrateManufacturingSystemIndex(manufacturingSystems);
+		SQLiteSettings.setManufacturingSystemIndex(manufacturingSystems);
 	}
 
 	private void parsePriceHistorySettings(Element priceHistoryElement, Settings settings) throws XmlException {
@@ -1406,7 +1409,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			long itemId = getLong(currentNode, "itemid");
 			data.put(itemId, name);
 		}
-		SQLiteSettings.migrateEveNames(data);
+		SQLiteSettings.setEveNames(data);
 	}
 
 	private void parsePriceDataSettings(final Element element, final Settings settings) throws XmlException {
