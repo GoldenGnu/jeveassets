@@ -269,7 +269,7 @@ public class JStockpileItemMenu extends JMenu {
 				list.add(stockpileItem);
 			}
 		}
-		Settings.lock("Stokcpile (Stockpile Menu)"); //Lock for Stokcpile (Stockpile Menu)
+		Settings.lock("Stockpile (Stockpile Menu)"); //Lock for Stockpile (Stockpile Menu)
 		//Remove items that will be changed
 		for (Map.Entry<Stockpile, List<StockpileItem>> entry : update.entrySet()) {
 			for (StockpileItem item : entry.getValue()) {
@@ -283,12 +283,12 @@ public class JStockpileItemMenu extends JMenu {
 				item.update(blueprintTypeChange.getUpdatedItem(item));
 			}
 		}
-		Settings.unlock("Stokcpile (Stockpile Menu)"); //Unlock for Stokcpile (Stockpile Menu)
+		Settings.unlock("Stockpile (Stockpile Menu)"); //Unlock for Stockpile (Stockpile Menu)
 		//Add changed items
 		for (Map.Entry<Stockpile, List<StockpileItem>> entry : update.entrySet()) {
 			stockpileTab.addToStockpile(entry.getKey(), entry.getValue(), true, false);
 		}
-		program.saveSettings("Stockpile (Stockpile Menu)"); //Save Stockpile (Stockpile Menu)
+		program.saveStockpiles("Stockpile (Stockpile Menu)"); //Save Stockpile (Stockpile Menu)
 	}
 
 	private interface ChangeBlueprintType {

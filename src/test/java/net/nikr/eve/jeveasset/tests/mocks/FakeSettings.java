@@ -914,4 +914,24 @@ public abstract class FakeSettings extends Settings {
 	public boolean isEveGatecampCheckSet() {
 		throw new UnsupportedOperationException("not implemented");
 	}
+
+	@Override
+	public void addSave(Save... saves) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public void addSave(Save save) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public boolean isSave() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public Set<Save> getSave() {
+		throw new UnsupportedOperationException("not implemented");
+	}
 }

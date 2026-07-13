@@ -52,6 +52,7 @@ public class FileUtil extends FileUtilSimple {
 	private static final String PATH_PRICE_HISTORY_DATABASE = "data" + File.separator + "pricehistory.db";
 	private static final String PATH_TRACKER_DATA = "data" + File.separator + "tracker.json";
 	private static final String PATH_SETTINGS = "data" + File.separator + "settings.xml";
+	private static final String PATH_STOCKPILES = "data" + File.separator + "stockpiles.xml";
 	private static final String PATH_AGENTS = "data" + File.separator + "agents.xml";
 	private static final String PATH_NPC_CORPORATION = "data" + File.separator + "npccorporation.xml";
 	private static final String PATH_ITEMS = "data" + File.separator + "items.xml";
@@ -329,6 +330,10 @@ public class FileUtil extends FileUtilSimple {
 
 	public static String getPathSettings() {
 		return getUserFile(PATH_SETTINGS);
+	}
+
+	public static String getPathStockpiles() {
+		return getUserFile(PATH_STOCKPILES);
 	}
 
 	public static String getPathTrackerData() {
