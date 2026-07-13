@@ -714,6 +714,10 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 			this(stockpile, item, typeID, countMinimum, runs, ignoreMultiplier, false, null, getNewID());
 		}
 
+		public StockpileItem(final Stockpile stockpile, final Item item, final int typeID, final double countMinimum, final boolean runs, boolean ignoreMultiplier, final long id) {
+			this(stockpile, item, typeID, countMinimum, runs, ignoreMultiplier, false, null, id);
+		}
+
 		public StockpileItem(final Stockpile stockpile, final Item item, final int typeID, final double countMinimum, final boolean runs, boolean ignoreMultiplier, boolean skipShoppingList) {
 			this(stockpile, item, typeID, countMinimum, runs, ignoreMultiplier, skipShoppingList, null, getNewID());
 		}
