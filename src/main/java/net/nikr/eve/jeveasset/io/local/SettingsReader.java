@@ -965,7 +965,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			} else if (item.isFormula() && productTypeID != null && formulaRecursiveLevel != null && reactionRigs != null && reactionSecurity != null) {
 				stockpileItem = new StockpileItemMaterial(root, stockpile, item, productTypeID, countMinimum, ignoreMultiplier, roundPerRuns, formulaRecursiveLevel, reactionRigs, reactionSecurity);
 			} else {
-				stockpileItem = new StockpileItem(stockpile, item, typeID, countMinimum, runs, ignoreMultiplier);
+				stockpileItem = new StockpileItem(stockpile, item, typeID, countMinimum, runs, ignoreMultiplier, id);
 			}
 			return stockpileItem;
 		}
