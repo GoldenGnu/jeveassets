@@ -375,8 +375,13 @@ public abstract class JMainTab {
 		if (eventTableModel == null || toolName == null) {
 			return;
 		}
-		tableFormat.setColumns(Settings.get().getTableColumns().get(toolName));
-		tableFormat.setResizeMode(Settings.get().getTableResize().get(toolName));
+		TableFormat<?> enumTableFormat = eventTableModel.getTableFormat();
+		if (!(enumTableFormat instanceof EnumTableFormatAdaptor)) {
+			return;
+		}
+		EnumTableFormatAdaptor<?, ?> formatAdaptor = (EnumTableFormatAdaptor<?, ?>) enumTableFormat;
+		formatAdaptor.setColumns(Settings.get().getTableColumns().get(toolName));
+		formatAdaptor.setResizeMode(Settings.get().getTableResize().get(toolName));
 		jTable.setColumnsWidth(Settings.get().getTableColumnsWidth().get(toolName));
 		eventTableModel.fireTableStructureChanged();
 	}
