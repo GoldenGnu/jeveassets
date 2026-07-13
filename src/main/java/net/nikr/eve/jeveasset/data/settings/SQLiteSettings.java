@@ -31,41 +31,23 @@ import net.nikr.eve.jeveasset.io.local.settings.SettingsOwnersNextUpdate;
 
 public class SQLiteSettings {
 
-	private static SettingsManufacturingPrices settingsManufacturingPrices;
-	private static SettingsManufacturingSystems settingsManufacturingSystems;
-	private static SettingsEveNames settingsEveNames;
-	private static SettingsOwnerNames settingsOwnerNames;
-	private static SettingsOwnersNextUpdate ownerNextUpdate;
+	private static final SettingsManufacturingPrices MANUFACTURING_PRICES = new SettingsManufacturingPrices();
+	private static final SettingsManufacturingSystems MANUFACTURING_SYSTEMS = new SettingsManufacturingSystems();
+	private static final SettingsEveNames EVE_NAMES = new SettingsEveNames();
+	private static final SettingsOwnerNames OWNER_NAMES = new SettingsOwnerNames();
+	private static final SettingsOwnersNextUpdate OWNER_NEXT_UPDATE = new SettingsOwnersNextUpdate();
 	private static boolean save = false;
-
-	public static void load() {
-		if (settingsManufacturingPrices == null) {
-			settingsManufacturingPrices = new SettingsManufacturingPrices();
-		}
-		if (settingsManufacturingSystems == null) {
-			settingsManufacturingSystems = new SettingsManufacturingSystems();
-		}
-		if (settingsEveNames == null) {
-			settingsEveNames = new SettingsEveNames();
-		}
-		if (settingsOwnerNames == null) {
-			settingsOwnerNames = new SettingsOwnerNames();
-		}
-		if (ownerNextUpdate == null) {
-			ownerNextUpdate = new SettingsOwnersNextUpdate();
-		}
-	}
 
 	public static boolean isSave() {
 		return save;
 	}
 
 	public static synchronized void setManufacturingSystemIndex(Map<Integer, Float> manufacturingSystems) {
-		settingsManufacturingSystems.set(manufacturingSystems);
+		MANUFACTURING_SYSTEMS.set(manufacturingSystems);
 	}
 
 	public static synchronized void migrateManufacturingSystemIndex(Map<Integer, Float> manufacturingSystems) {
-		settingsManufacturingSystems.set(manufacturingSystems);
+		MANUFACTURING_SYSTEMS.set(manufacturingSystems);
 		save = true;
 	}
 
@@ -74,74 +56,74 @@ public class SQLiteSettings {
 	}
 
 	public static synchronized Float getManufacturingSystemIndex(int systemID) {
-		return settingsManufacturingSystems.get(systemID);
+		return MANUFACTURING_SYSTEMS.get(systemID);
 	}
 
 	public static synchronized boolean isManufacturingSystemIndexsEmpty() {
-		return settingsManufacturingSystems.isEmpty();
+		return MANUFACTURING_SYSTEMS.isEmpty();
 	}
 
 	public static synchronized void setManufacturingPrices(Map<Integer, Double> data) {
-		settingsManufacturingPrices.set(data);
+		MANUFACTURING_PRICES.set(data);
 	}
 
 	public static synchronized void migrateManufacturingPrices(Map<Integer, Double> data) {
-		settingsManufacturingPrices.set(data);
+		MANUFACTURING_PRICES.set(data);
 		save = true;
 	}
 	
 	public static synchronized Double getManufacturingPrice(Integer typeID) {
-		return settingsManufacturingPrices.get(typeID);
+		return MANUFACTURING_PRICES.get(typeID);
 	}
 
 	public static synchronized String getEveName(Long itemID) {
-		return settingsEveNames.get(itemID);
+		return EVE_NAMES.get(itemID);
 	}
 
 	public static synchronized void putEveName(Long itemId, String name) {
-		settingsEveNames.put(itemId, name);
+		EVE_NAMES.put(itemId, name);
 	}
 
 	public static synchronized void setEveNames(Map<Long, String> data) {
-		settingsEveNames.set(data);
+		EVE_NAMES.set(data);
 	}
 
 	public static synchronized void migrateEveNames(Map<Long, String> data) {
-		settingsEveNames.set(data);
+		EVE_NAMES.set(data);
 		save = true;
 	}
 
 	public static synchronized void removeEveName(Long itemID) {
-		settingsEveNames.delete(itemID);
+		EVE_NAMES.delete(itemID);
 	}
 
 	public static synchronized String getOwner(Long ownerID) {
-		return settingsOwnerNames.get(ownerID);
+		return OWNER_NAMES.get(ownerID);
 	}
 
 	public static synchronized void clearOwners() {
-		settingsOwnerNames.deleteAll();
+		OWNER_NAMES.deleteAll();
 	}
 
 	public static synchronized void setOwners(Map<Long, String> names) {
-		settingsOwnerNames.set(names);
+		OWNER_NAMES.set(names);
 	}
 
 	public static synchronized void migrateOwners(Map<Long, String> names) {
-		settingsOwnerNames.set(names);
+		OWNER_NAMES.set(names);
 		save = true;
 	}
 
 	public static synchronized void setOwnerNextUpdate(Map<Long, Date> dates) {
-		ownerNextUpdate.set(dates);
+		OWNER_NEXT_UPDATE.set(dates);
 	}
 
 	public static synchronized void migrateOwnerNextUpdate(Map<Long, Date> dates) {
-		ownerNextUpdate.set(dates);
+		OWNER_NEXT_UPDATE.set(dates);
 		save = true;
 	}
 
 	public static synchronized Date getOwnerNextUpdate(Long ownerID) {
-		return ownerNextUpdate.get(ownerID);
+		return OWNER_NEXT_UPDATE.get(ownerID);
 	}
 }

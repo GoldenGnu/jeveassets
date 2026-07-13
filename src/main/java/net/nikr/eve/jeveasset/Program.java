@@ -334,7 +334,6 @@ public class Program implements ActionListener {
 		FileUtil.autoImportFileUtil();
 		TempDirs.fixTempDir();
 		StaticData.load();
-		SQLiteSettings.load();
 		Settings.load();
 		TrackerData.load();
 		AddedData.load();
