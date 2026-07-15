@@ -26,8 +26,10 @@ import java.awt.Point;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.EnumMap;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -71,6 +73,7 @@ import net.nikr.eve.jeveasset.i18n.TabsOrders;
 import net.nikr.eve.jeveasset.i18n.TabsTransaction;
 import net.nikr.eve.jeveasset.io.local.SettingsReader;
 import net.nikr.eve.jeveasset.io.local.SettingsWriter;
+import net.nikr.eve.jeveasset.io.local.StockpileXmlWriter;
 import net.nikr.eve.jeveasset.io.shared.FileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -78,6 +81,10 @@ import org.slf4j.LoggerFactory;
 public class Settings {
 
 	private static final Logger LOG = LoggerFactory.getLogger(Settings.class);
+
+	public static enum Save {
+		SETTINGS, STOCKPILE
+	}
 
 	public static enum SettingFlag {
 		FLAG_IGNORE_SECURE_CONTAINERS,
@@ -157,17 +164,14 @@ public class Settings {
 		protected abstract String getText();
 	}
 
-	private static final SettingsLock LOCK = new SettingsLock();
+	private static final SaveLock SETTINGS_LOCK = new SaveLock("Settings");
+	private static final SaveLock STOCKPILE_LOCK = new SaveLock("Stockpile");
 	private static Settings settings;
 	private static boolean testMode = false;
 
 //External
 	//Price						Saved by PriceDataGetter.process() in pricedata.dat (on api update)
 	private Map<Integer, PriceData> priceDatas = new HashMap<>(); //TypeID : int
-//API Data
-	//Api id to owner name		Saved by TaskDialog.update() (on API update)
-	private final Map<Long, Date> ownersNextUpdate = new HashMap<>();
-	private final Map<Long, String> owners = new HashMap<>();
 //!! - Values
 	//OK - Custom Price			Saved by JUserListPanel.edit()/delete() + SettingsDialog.save()
 	//Lock OK
@@ -175,9 +179,6 @@ public class Settings {
 	//OK - Custom Item Name		Saved by JUserListPanel.edit()/delete() + SettingsDialog.save()
 	//Lock OK
 	private Map<Long, UserItem<Long, String>> userNames = new HashMap<>(); //ItemID : long
-	//Eve Item Name				Saved by TaskDialog.update() (on API update)
-	//Lock ???
-	private Map<Long, String> eveNames = new HashMap<>();
 //!! - Stockpile				Saved by StockpileTab.removeItems() / addStockpile() / removeStockpile()
 	//							Could be more selective...
 	//Lock FAIL!!!
@@ -297,6 +298,8 @@ public class Settings {
 	private final Map<SoundOption, Sound> soundSettings = new EnumMap<>(SoundOption.class);
 //Manufacturing
 	private final ManufacturingSettings manufacturingSettings = new ManufacturingSettings();
+//Save after load
+	private final Set<Save> save = EnumSet.noneOf(Save.class);
 
 	protected Settings() {
 		//Settings
@@ -409,28 +412,20 @@ public class Settings {
 		return testMode;
 	}
 
+	public static SaveLock getSettingsLock() {
+		return SETTINGS_LOCK;
+	}
+
+	public static SaveLock getStockpileLock() {
+		return STOCKPILE_LOCK;
+	}
+
 	public static void lock(String msg) {
-		LOCK.lock(msg);
+		SETTINGS_LOCK.lock(msg);
 	}
 
 	public static void unlock(String msg) {
-		LOCK.unlock(msg);
-	}
-
-	public static boolean ignoreSave() {
-		return LOCK.ignoreSave();
-	}
-
-	public static void waitForEmptySaveQueue() {
-		LOCK.waitForEmptySaveQueue();
-	}
-
-	public static void saveStart() {
-		LOCK.saveStart();
-	}
-
-	public static void saveEnd() {
-		LOCK.saveEnd();
+		SETTINGS_LOCK.unlock(msg);
 	}
 
 	public synchronized static void load() {
@@ -496,12 +491,37 @@ public class Settings {
 	}
 
 	public static void saveSettings() {
-		LOCK.lock("Save Settings");
+		SETTINGS_LOCK.lock("Save Settings");
 		try {
 			SettingsWriter.save(settings, FileUtil.getPathSettings());
 		} finally {
-			LOCK.unlock("Save Settings");
+			SETTINGS_LOCK.unlock("Save Settings");
 		}
+	}
+
+	public static void saveStockpiles() {
+		STOCKPILE_LOCK.lock("Save Stockpiles");
+		try {
+			StockpileXmlWriter.save(settings.getStockpiles());
+		} finally {
+			STOCKPILE_LOCK.unlock("Save Stockpiles");
+		}
+	}
+
+	public Set<Save> getSave() {
+		return save;
+	}
+
+	public boolean isSave() {
+		return !save.isEmpty();
+	}
+
+	public void addSave(Save save) {
+		this.save.add(save);
+	}
+
+	public void addSave(Save ... saves) {
+		this.save.addAll(Arrays.asList(saves));
 	}
 
 	public TrackerSettings getTrackerSettings() {
@@ -538,14 +558,6 @@ public class Settings {
 
 	public void setPriceData(final Map<Integer, PriceData> priceData) {
 		this.priceDatas = priceData;
-	}
-
-	public Map<Long, String> getEveNames() {
-		return eveNames;
-	}
-
-	public void setEveNames(Map<Long, String> eveNames) {
-		this.eveNames = eveNames;
 	}
 
 	public Map<Integer, PriceData> getPriceData() {
@@ -617,14 +629,6 @@ public class Settings {
 
 	public void setProxyData(ProxyData proxyData) {
 		this.proxyData = proxyData;
-	}
-
-	public Map<Long, Date> getOwnersNextUpdate() {
-		return ownersNextUpdate;
-	}
-
-	public Map<Long, String> getOwners() {
-		return owners;
 	}
 
 	public Map<String, Map<String, FilterSettings>> getTableFilters() {
@@ -1265,10 +1269,16 @@ public class Settings {
 		return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
 	}
 
-	private static class SettingsLock {
+	public static class SaveLock {
 
+		private final SaveQueue settingsQueue = new SaveQueue();
+		private final String name;
 		private boolean locked = false;
-		private final SettingsQueue settingsQueue = new SettingsQueue();
+
+		public SaveLock(String name) {
+			this.name = name;
+		}
+
 
 		public boolean ignoreSave() {
 			return settingsQueue.ignoreSave();
@@ -1295,17 +1305,17 @@ public class Settings {
 				}
 			}
 			locked = true;
-			LOG.debug("Settings Locked: " + msg);
+			LOG.debug(name + " Locked: " + msg);
 		}
 
 		public synchronized void unlock(String msg) {
 			locked = false;
-			LOG.debug("Settings Unlocked: " + msg);
+			LOG.debug(name + " Unlocked: " + msg);
 			notify();
 		}
 	}
 
-	private static class SettingsQueue {
+	private static class SaveQueue {
 
 		private short savesQueue = 0;
 

@@ -65,6 +65,7 @@ import net.nikr.eve.jeveasset.data.settings.AddedData;
 import net.nikr.eve.jeveasset.data.settings.LogManager;
 import net.nikr.eve.jeveasset.data.settings.PriceHistoryDatabase;
 import net.nikr.eve.jeveasset.data.settings.Settings;
+import net.nikr.eve.jeveasset.data.settings.Settings.Save;
 import net.nikr.eve.jeveasset.data.settings.TempDirs;
 import net.nikr.eve.jeveasset.data.settings.TrackerData;
 import net.nikr.eve.jeveasset.data.settings.tag.TagUpdate;
@@ -290,6 +291,18 @@ public class Program implements ActionListener {
 		ToolLoader.init(this);
 		if (Settings.get().isLoadToolsBackground()) {
 			ToolLoader.startBackgroundToolLoading(this);
+		}
+		if (Settings.get().isSave()) {
+			for (Save save : Settings.get().getSave()){
+				switch (save) {
+					case STOCKPILE:
+						saveStockpiles("Stockpile Migration");
+						break;
+					case SETTINGS:
+						saveSettings("Settings Migration");
+						break;
+				}
+			}
 		}
 		LOG.info("Startup Done");
 		if (CliOptions.get().isDebug()) {
@@ -698,8 +711,8 @@ public class Program implements ActionListener {
 	 * @param msg Who is saving what?
 	 */
 	public void saveSettings(final String msg) {
-		if (!CliOptions.get().isLazySave() && !Settings.ignoreSave()) {
-			Settings.saveStart();
+		if (!CliOptions.get().isLazySave() && !Settings.getSettingsLock().ignoreSave()) {
+			Settings.getSettingsLock().saveStart();
 			Thread thread = new SaveSettings(msg, this);
 			thread.start();
 		}
@@ -716,12 +729,25 @@ public class Program implements ActionListener {
 		Settings.saveSettings();
 	}
 
+	public void saveStockpiles(final String msg) {
+		if (!CliOptions.get().isLazySave() && !Settings.getStockpileLock().ignoreSave()) {
+			Settings.getStockpileLock().saveStart();
+			SaveStockpile thread = new SaveStockpile(msg, this);
+			thread.start();
+		}
+	}
+
+	private void doSaveStockpile(final String msg) {
+		LOG.info("Saving Stockpiles: " + msg);
+		Settings.saveStockpiles();
+	}
+
 	public void saveSettingsAndProfile() {
 		if (CliOptions.get().isLazySave()) {
 			doSaveSettings("API Update");
 		} else {
 			saveSettings("API Update");
-			Settings.waitForEmptySaveQueue();
+			Settings.getSettingsLock().waitForEmptySaveQueue();
 		}
 		profileManager.saveProfile();
 	}
@@ -764,7 +790,8 @@ public class Program implements ActionListener {
 			doSaveSettings("Exit");
 		} else {
 			LOG.info("Waiting for save queue to finish...");
-			Settings.waitForEmptySaveQueue();
+			Settings.getSettingsLock().waitForEmptySaveQueue();
+			Settings.getStockpileLock().waitForEmptySaveQueue();
 		}
 		TrackerData.waitForEmptySaveQueue();
 	}
@@ -1333,13 +1360,66 @@ public class Program implements ActionListener {
 		public void run() {
 			long before = System.currentTimeMillis();
 
-			program.doSaveSettings(msg);
-
-			Settings.saveEnd();
+			try {
+				program.doSaveSettings(msg);
+			} finally {
+				Settings.getSettingsLock().saveEnd();
+			}
 
 			long after = System.currentTimeMillis();
 
 			LOG.debug("Settings saved in: " + (after - before) + "ms");
+		}
+
+		@Override
+		public int hashCode() {
+			int hash = 7;
+			hash = 67 * hash + this.id;
+			return hash;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (obj == null) {
+				return false;
+			}
+			if (getClass() != obj.getClass()) {
+				return false;
+			}
+			final SaveSettings other = (SaveSettings) obj;
+			return this.id == other.id;
+		}
+	}
+
+	private static class SaveStockpile extends Thread {
+
+		private static int counter = 0;
+
+		private final String msg;
+		private final Program program;
+		private final int id;
+
+		public SaveStockpile(String msg, Program program) {
+			super("Save Stockpile " + counter++ + ": " + msg);
+			this.msg = msg;
+			this.program = program;
+			this.id = counter;
+		}
+
+		@Override
+		public void run() {
+			
+			long before = System.currentTimeMillis();
+
+			try {
+				program.doSaveStockpile(msg);
+			} finally {
+				Settings.getStockpileLock().saveEnd();
+			}
+
+			long after = System.currentTimeMillis();
+
+			LOG.debug("Stockpiles saved in: " + (after - before) + "ms");
 		}
 
 		@Override

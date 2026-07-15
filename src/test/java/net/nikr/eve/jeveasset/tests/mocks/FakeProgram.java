@@ -425,4 +425,9 @@ public abstract class FakeProgram extends Program {
 	public LogTab getLogTab(boolean init) {
 		throw new UnsupportedOperationException("Not implemented");
 	}
+
+	@Override
+	public void saveStockpiles(String msg) {
+		throw new UnsupportedOperationException("Not implemented");
+	}
 }
