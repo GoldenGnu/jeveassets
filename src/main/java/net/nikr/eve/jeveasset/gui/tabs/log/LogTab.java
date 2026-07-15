@@ -40,11 +40,13 @@ import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.settings.LogManager;
+import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.types.LocationType;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JFixedToolBar;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTabSecondary;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
+import net.nikr.eve.jeveasset.gui.shared.filter.FilterSettings;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuColumns;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager;
@@ -52,6 +54,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
+import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer.TablePaddingControl;
 import net.nikr.eve.jeveasset.gui.shared.table.TableFormatFactory;
 import net.nikr.eve.jeveasset.i18n.TabsLog;
 
@@ -106,10 +109,11 @@ public class LogTab extends JMainTabSecondary {
 		jTable = new JLogTable(program, tableModel, separatorList);
 		jTable.setSeparatorRenderer(new LogSeparatorTableCell(jTable, separatorList));
 		jTable.setSeparatorEditor(new LogSeparatorTableCell(jTable, separatorList));
-		PaddingTableCellRenderer.install(jTable, 3);
 		jTable.setCellSelectionEnabled(true);
 		jTable.setRowSelectionAllowed(true);
 		jTable.setColumnSelectionAllowed(true);
+		//Padding
+		TablePaddingControl tablePaddingControl = PaddingTableCellRenderer.install(jTable, Settings.get().getTablePadding(NAME, 3));
 		//Sorting
 		TableComparatorChooser<AssetLogSource> comparatorChooser = TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
 		//Selection Model
@@ -124,7 +128,7 @@ public class LogTab extends JMainTabSecondary {
 		//Table Filter
 		filterControl = new LogFilterControl(sortedList);
 		//Menu
-		installTableTool(new LogTableMenu(), tableFormat, comparatorChooser, tableModel, jTable, filterControl, AssetLogSource.class);
+		installTableTool(new LogTableMenu(tablePaddingControl), tableFormat, comparatorChooser, tableModel, jTable, filterControl, AssetLogSource.class);
 
 		JFixedToolBar jToolBar = new JFixedToolBar();
 
@@ -196,6 +200,13 @@ public class LogTab extends JMainTabSecondary {
 	}
 
 	private class LogTableMenu implements MenuManager.TableMenu<AssetLogSource> {
+
+		private final TablePaddingControl tablePaddingControl;
+
+		public LogTableMenu(TablePaddingControl tablePaddingControl) {
+			this.tablePaddingControl = tablePaddingControl;
+		}
+
 		@Override
 		public MenuData<AssetLogSource> getMenuData() {
 			return new MenuData<>(selectionModel.getSelected());
@@ -208,7 +219,7 @@ public class LogTab extends JMainTabSecondary {
 
 		@Override
 		public JMenu getColumnMenu() {
-			return new JMenuColumns<>(program, tableFormat, tableModel, jTable, NAME);
+			return new JMenuColumns<>(program, tableFormat, tableModel, jTable, tablePaddingControl, NAME);
 		}
 
 		@Override
@@ -231,9 +242,16 @@ public class LogTab extends JMainTabSecondary {
 		}
 
 		@Override
+		public void loadFilter(FilterSettings filterSettings) {
+			setFilter(filterSettings);
+		}
+
+		@Override
 		public void saveSettings(final String msg) {
 			program.saveSettings("Log Table: " + msg); //Save Asset Filters and Export Settings
 		}
+
+		
 	}
 
 }
