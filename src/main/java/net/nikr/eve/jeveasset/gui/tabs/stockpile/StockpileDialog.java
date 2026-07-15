@@ -630,7 +630,7 @@ public class StockpileDialog extends JDialogCentered {
 		StockpileTab.sortSettingStockpile();
 		updated = true;
 		Settings.unlock("Stockpile (Stockpile dialog)"); //Unlock for Stockpile (Stockpile dialog)
-		program.saveSettings("Stockpile (Stockpile dialog)"); //Save Stockpile (Stockpile dialog)
+		program.saveStockpiles("Stockpile (Stockpile dialog)"); //Save Stockpile (Stockpile dialog)
 		this.setVisible(false);
 	}
 

@@ -21,10 +21,7 @@
 package net.nikr.eve.jeveasset.data.settings;
 
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
-import static net.nikr.eve.jeveasset.data.settings.Settings.getNow;
 import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 
 
@@ -250,9 +247,7 @@ public class ManufacturingSettings {
 		}
 	}
 
-	private Map<Integer, Double> prices = new HashMap<>(); //Adjusted Prices
-	private Map<Integer, Float> systems = new HashMap<>(); //System Indexs
-	private Date nextUpdate = getNow();
+	private Date nextUpdate = Settings.getNow();
 	//Defaults
 	private int systemID = 30000142; //Jita for now
 	private int materialEfficiency = 0;
@@ -261,28 +256,12 @@ public class ManufacturingSettings {
 	private ManufacturingSecurity security = ManufacturingSecurity.getDefault();
 	private double tax = 0;
 
-	public Map<Integer, Double> getPrices() {
-		return prices;
-	}
-
-	public void setPrices(Map<Integer, Double> prices) {
-		this.prices = prices;
-	}
-
-	public Map<Integer, Float> getSystems() {
-		return systems;
-	}
-
-	public void setSystems(Map<Integer, Float> systems) {
-		this.systems = systems;
-	}
-
 	public Date getNextUpdate() {
 		return nextUpdate;
 	}
 
 	public boolean isSystemsNeedsUpdating() {
-		return systems.isEmpty() 
+		return SQLiteSettings.isManufacturingSystemIndexsEmpty() 
 				|| Settings.getNow().after(new Date(nextUpdate.getTime() + TimeUnit.HOURS.toMillis(23))); //Last updated 1 day ago
 	}
 

@@ -40,14 +40,15 @@ import net.nikr.eve.jeveasset.data.settings.PriceDataSettings.PriceMode;
 import net.nikr.eve.jeveasset.gui.shared.Formatter.DateFormatThreadSafe;
 import net.nikr.eve.jeveasset.gui.tabs.prices.PriceChangesTab.PriceChange;
 import net.nikr.eve.jeveasset.gui.tabs.prices.PriceHistoryTab.PriceHistoryData;
-import net.nikr.eve.jeveasset.io.local.profile.ProfileTable.Rows;
+import net.nikr.eve.jeveasset.io.local.sqlite.SQLiteTable;
+import net.nikr.eve.jeveasset.io.local.sqlite.SQLiteTable.Rows;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import net.nikr.eve.jeveasset.io.shared.FileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-public class PriceHistoryDatabase {
+public class PriceHistoryDatabase extends SQLiteTable {
 
 	private static final Logger LOG = LoggerFactory.getLogger(PriceHistoryDatabase.class);
 
@@ -207,9 +208,9 @@ public class PriceHistoryDatabase {
 			Rows rows = new Rows(statement, insert.size());
 			connection.setAutoCommit(false);
 			for (PriceHistoryData killboardData : insert) {
-				statement.setInt(1, killboardData.getTypeID());
-				statement.setString(2, killboardData.getDateString());
-				statement.setDouble(3, killboardData.getPrice());
+				setAttribute(statement, 1, killboardData.getTypeID());
+				setAttribute(statement, 2, killboardData.getDateString());
+				setAttribute(statement, 3, killboardData.getPrice());
 				rows.addRow();
 			}
 			connection.commit();
@@ -229,7 +230,7 @@ public class PriceHistoryDatabase {
 			Rows rows = new Rows(statement, insert.size());
 			connection.setAutoCommit(false);
 			for (Integer typeID : insert) {
-				statement.setInt(1, typeID);
+				setAttribute(statement, 1, typeID);
 				rows.addRow();
 			}
 			connection.commit();
@@ -271,18 +272,18 @@ public class PriceHistoryDatabase {
 			Rows rows = new Rows(statement, insert.size());
 			connection.setAutoCommit(false);
 			for (Map.Entry<Integer, PriceData> entry : insert.entrySet()) {
-				statement.setInt(1, entry.getKey());
-				statement.setString(2, date);
-				statement.setDouble(3, entry.getValue().getSellMax());
-				statement.setDouble(4, entry.getValue().getSellAvg());
-				statement.setDouble(5, entry.getValue().getSellMedian());
-				statement.setDouble(6, entry.getValue().getSellPercentile());
-				statement.setDouble(7, entry.getValue().getSellMin());
-				statement.setDouble(8, entry.getValue().getBuyMax());
-				statement.setDouble(9, entry.getValue().getBuyPercentile());
-				statement.setDouble(10, entry.getValue().getBuyAvg());
-				statement.setDouble(11, entry.getValue().getBuyMedian());
-				statement.setDouble(12, entry.getValue().getBuyMin());
+				setAttribute(statement, 1, entry.getKey());
+				setAttribute(statement, 2, date);
+				setAttribute(statement, 3, entry.getValue().getSellMax());
+				setAttribute(statement, 4, entry.getValue().getSellAvg());
+				setAttribute(statement, 5, entry.getValue().getSellMedian());
+				setAttribute(statement, 6, entry.getValue().getSellPercentile());
+				setAttribute(statement, 7, entry.getValue().getSellMin());
+				setAttribute(statement, 8, entry.getValue().getBuyMax());
+				setAttribute(statement, 9, entry.getValue().getBuyPercentile());
+				setAttribute(statement, 10, entry.getValue().getBuyAvg());
+				setAttribute(statement, 11, entry.getValue().getBuyMedian());
+				setAttribute(statement, 12, entry.getValue().getBuyMin());
 				rows.addRow();
 			}
 			connection.commit();
@@ -313,9 +314,9 @@ public class PriceHistoryDatabase {
 				PreparedStatement statement = connection.prepareStatement(sql);
 				ResultSet rs = statement.executeQuery();) {
 			while (rs.next()) {
-				int typeID = rs.getInt("typeid");
-				String date = rs.getString("date");
-				double price = rs.getDouble("price");
+				int typeID = getInt(rs, "typeid");
+				String date = getString(rs, "date");
+				double price = getDouble(rs, "price");
 				try {
 					Item item = ApiIdConverter.getItem(typeID);
 					data.get(item).add(new PriceHistoryData(typeID, item, date, price));
@@ -349,19 +350,19 @@ public class PriceHistoryDatabase {
 				PreparedStatement statement = connection.prepareStatement(sql);
 				ResultSet rs = statement.executeQuery();) {
 			while (rs.next()) {
-				int typeID = rs.getInt("typeid");
-				String date = rs.getString("date");
+				int typeID = getInt(rs, "typeid");
+				String date = getString(rs, "date");
 				PriceData priceData = new PriceData();
-				priceData.setSellMax(rs.getDouble("sellmax"));
-				priceData.setSellAvg(rs.getDouble("sellavg"));
-				priceData.setSellMedian(rs.getDouble("sellmedian"));
-				priceData.setSellPercentile(rs.getDouble("sellpercentile"));
-				priceData.setSellMin(rs.getDouble("sellmin"));
-				priceData.setBuyMax(rs.getDouble("buymax"));
-				priceData.setBuyPercentile(rs.getDouble("buypercentile"));
-				priceData.setBuyAvg(rs.getDouble("buyavg"));
-				priceData.setBuyMedian(rs.getDouble("buymedian"));
-				priceData.setBuyMin(rs.getDouble("buymin"));
+				priceData.setSellMax(getDouble(rs, "sellmax"));
+				priceData.setSellAvg(getDouble(rs, "sellavg"));
+				priceData.setSellMedian(getDouble(rs, "sellmedian"));
+				priceData.setSellPercentile(getDouble(rs, "sellpercentile"));
+				priceData.setSellMin(getDouble(rs, "sellmin"));
+				priceData.setBuyMax(getDouble(rs, "buymax"));
+				priceData.setBuyPercentile(getDouble(rs, "buypercentile"));
+				priceData.setBuyAvg(getDouble(rs, "buyavg"));
+				priceData.setBuyMedian(getDouble(rs, "buymedian"));
+				priceData.setBuyMin(getDouble(rs, "buymin"));
 				try {
 					Item item = ApiIdConverter.getItem(typeID);
 					data.get(item).add(new PriceHistoryData(typeID, item, date, PriceMode.getDefaultPrice(priceData, priceMode)));
@@ -396,7 +397,7 @@ public class PriceHistoryDatabase {
 				PreparedStatement statement = connection.prepareStatement(sql);
 				ResultSet rs = statement.executeQuery();) {
 			while (rs.next()) {
-				String date = rs.getString("date");
+				String date = getString(rs, "date");
 				data.add(date);
 			}
 		} catch (SQLException ex) {
@@ -434,19 +435,19 @@ public class PriceHistoryDatabase {
 				PreparedStatement statement = connection.prepareStatement(sql);
 				ResultSet rs = statement.executeQuery();) {
 			while (rs.next()) {
-				int typeID = rs.getInt("typeid");
-				String date = rs.getString("date");
+				int typeID = getInt(rs, "typeid");
+				String date = getString(rs, "date");
 				PriceData priceData = new PriceData();
-				priceData.setSellMax(rs.getDouble("sellmax"));
-				priceData.setSellAvg(rs.getDouble("sellavg"));
-				priceData.setSellMedian(rs.getDouble("sellmedian"));
-				priceData.setSellPercentile(rs.getDouble("sellpercentile"));
-				priceData.setSellMin(rs.getDouble("sellmin"));
-				priceData.setBuyMax(rs.getDouble("buymax"));
-				priceData.setBuyPercentile(rs.getDouble("buypercentile"));
-				priceData.setBuyAvg(rs.getDouble("buyavg"));
-				priceData.setBuyMedian(rs.getDouble("buymedian"));
-				priceData.setBuyMin(rs.getDouble("buymin"));
+				priceData.setSellMax(getDouble(rs, "sellmax"));
+				priceData.setSellAvg(getDouble(rs, "sellavg"));
+				priceData.setSellMedian(getDouble(rs, "sellmedian"));
+				priceData.setSellPercentile(getDouble(rs, "sellpercentile"));
+				priceData.setSellMin(getDouble(rs, "sellmin"));
+				priceData.setBuyMax(getDouble(rs, "buymax"));
+				priceData.setBuyPercentile(getDouble(rs, "buypercentile"));
+				priceData.setBuyAvg(getDouble(rs, "buyavg"));
+				priceData.setBuyMedian(getDouble(rs, "buymedian"));
+				priceData.setBuyMin(getDouble(rs, "buymin"));
 				PriceChange priceChange = data.get(typeID);
 				double price = PriceMode.getDefaultPrice(priceData, priceMode);
 				if (priceChange == null) {
@@ -483,10 +484,10 @@ public class PriceHistoryDatabase {
 		try (Connection connection = DriverManager.getConnection(getConnectionUrl());
 				PreparedStatement statement = connection.prepareStatement(sql);
 				) {
-				statement.setString(1, getZKillboardDate());
+				setAttribute(statement, 1, getZKillboardDate());
 				ResultSet rs = statement.executeQuery();
 			while (rs.next()) {
-				typeIDs.add(rs.getInt("typeid"));
+				typeIDs.add(getInt(rs, "typeid"));
 			}
 		} catch (SQLException ex) {
 			LOG.error(ex.getMessage(), ex);
@@ -502,7 +503,7 @@ public class PriceHistoryDatabase {
 				ResultSet rs = statement.executeQuery();
 				) {
 			while (rs.next()) {
-				typeIDs.add(rs.getInt("typeid"));
+				typeIDs.add(getInt(rs, "typeid"));
 			}
 		} catch (SQLException ex) {
 			LOG.error(ex.getMessage(), ex);

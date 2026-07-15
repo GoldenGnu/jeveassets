@@ -41,6 +41,7 @@ import net.nikr.eve.jeveasset.data.settings.ManufacturingSettings;
 import net.nikr.eve.jeveasset.data.settings.ManufacturingSettings.ManufacturingFacility;
 import net.nikr.eve.jeveasset.data.settings.ManufacturingSettings.ManufacturingRigs;
 import net.nikr.eve.jeveasset.data.settings.ManufacturingSettings.ManufacturingSecurity;
+import net.nikr.eve.jeveasset.data.settings.SQLiteSettings;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formatter;
@@ -268,7 +269,7 @@ public class ManufacturingSettingsPanel extends JSettingsPanel {
 
 		@Override
 		public String toString() {
-			Float index = Settings.get().getManufacturingSettings().getSystems().get((int) location.getLocationID());
+			Float index = SQLiteSettings.getManufacturingSystemIndex(location.getLocationID());
 			if (index != null) {
 				return location.getLocation() + " (" + Formatter.floatFormat(index * 100) + "%)";
 			} else {

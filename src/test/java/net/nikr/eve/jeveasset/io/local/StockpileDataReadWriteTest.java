@@ -161,8 +161,8 @@ public class StockpileDataReadWriteTest extends TestUtil {
 			public List<Stockpile> saveAndLoad(List<Stockpile> stockpiles) {
 				String filename = "stockpile_test_" + i + ".xml";
 				i++;
-				SettingsWriter.saveStockpiles(stockpiles, filename);
-				List<Stockpile> rStockpile = SettingsReader.loadStockpile(filename);
+				StockpileXmlWriter.exportStockpiles(stockpiles, filename);
+				List<Stockpile> rStockpile = StockpileXmlReader.importStockpile(filename);
 				File file = new File(filename);
 				assertTrue(file.exists());
 				assertTrue(file.delete());
@@ -234,7 +234,7 @@ public class StockpileDataReadWriteTest extends TestUtil {
 					} catch (URISyntaxException ex) {
 						throw new RuntimeException(ex);
 					}
-					return SettingsReader.loadStockpile(filename);
+					return StockpileXmlReader.importStockpile(filename);
 				}
 			}, b);
 		}
@@ -265,7 +265,7 @@ public class StockpileDataReadWriteTest extends TestUtil {
 					} catch (URISyntaxException ex) {
 						throw new RuntimeException(ex);
 					}
-					return SettingsReader.loadStockpile(filename);
+					return StockpileXmlReader.importStockpile(filename);
 				}
 			}, b);
 		}

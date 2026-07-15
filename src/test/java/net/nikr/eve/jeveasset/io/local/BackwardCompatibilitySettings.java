@@ -57,7 +57,6 @@ public class BackwardCompatibilitySettings extends FakeSettings implements Setti
 		GET_EXPORT_SETTINGS,
 		GET_FLAGS,
 		GET_OVERVIEW_GROUPS,
-		GET_OWNERS,
 		GET_PRICE_DATA_SETTINGS,
 		GET_STOCKPILES,
 		GET_TABLE_COLUMNS,
@@ -84,6 +83,8 @@ public class BackwardCompatibilitySettings extends FakeSettings implements Setti
 		SET_WINDOW_LOCATION,
 		SET_WINDOW_MAXIMIZED,
 		SET_WINDOW_SIZE,
+		ADD_SAVE,
+		ADD_SAVES,
 	}
 
 	private final String settingsPath;
@@ -176,17 +177,6 @@ public class BackwardCompatibilitySettings extends FakeSettings implements Setti
 	@Override
 	public Map<String, OverviewGroup> getOverviewGroups() {
 		ok.put(Function.GET_OVERVIEW_GROUPS, true);
-		return new HashMap<>();
-	}
-
-	@Override
-	public Map<Long, String> getOwners() {
-		ok.put(Function.GET_OWNERS, true);
-		return new HashMap<>();
-	}
-
-	@Override
-	public Map<Long, Date> getOwnersNextUpdate() {
 		return new HashMap<>();
 	}
 
@@ -331,6 +321,16 @@ public class BackwardCompatibilitySettings extends FakeSettings implements Setti
 	public List<Jump> getTableJumps(String toolName) {
 		ok.put(Function.GET_TABLE_JUMPS, true);
 		return new ArrayList<>();
+	}
+
+	@Override
+	public void addSave(Save save) {
+		ok.put(Function.ADD_SAVE, true);
+	}
+
+	@Override
+	public void addSave(Save... saves) {
+		ok.put(Function.ADD_SAVES, true);
 	}
 
 	@Override
