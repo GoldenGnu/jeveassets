@@ -65,6 +65,7 @@ import net.nikr.eve.jeveasset.data.settings.Settings.Save;
 import net.nikr.eve.jeveasset.data.settings.Settings.SettingFlag;
 import net.nikr.eve.jeveasset.data.settings.Settings.SettingsFactory;
 import net.nikr.eve.jeveasset.data.settings.Settings.TransactionProfitPrice;
+import net.nikr.eve.jeveasset.data.settings.TablePadding;
 import net.nikr.eve.jeveasset.data.settings.TrackerData;
 import net.nikr.eve.jeveasset.data.settings.TrackerSettings;
 import net.nikr.eve.jeveasset.data.settings.TrackerSettings.DisplayType;
@@ -483,9 +484,15 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		}
 
 		//Table Columns
-		Element tablecolumnsElement = getNodeOptional(element, "tablecolumns");
-		if (tablecolumnsElement != null) {
-			parseTableColumns(tablecolumnsElement, settings);
+		Element tableColumnsElement = getNodeOptional(element, "tablecolumns");
+		if (tableColumnsElement != null) {
+			parseTableColumns(tableColumnsElement, settings);
+		}
+
+		//Table Padding
+		Element tablePaddingElement = getNodeOptional(element, "tablepadding");
+		if (tablePaddingElement != null) {
+			parseTablePadding(tablePaddingElement, settings);
 		}
 
 		//Table Columns Width
@@ -1226,6 +1233,19 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 				columns.add(new SimpleColumn(name, shown));
 			}
 			settings.getTableColumns().put(tableName, columns);
+		}
+	}
+
+	private void parseTablePadding(final Element element, final Settings settings) throws XmlException {
+		NodeList tableNodeList = element.getElementsByTagName("table");
+		for (int a = 0; a < tableNodeList.getLength(); a++) {
+			Element tableNode = (Element) tableNodeList.item(a);
+			String tableName = getString(tableNode, "name");
+			int top = getInt(tableNode, "top");
+			int left = getInt(tableNode, "left");
+			int bottom = getInt(tableNode, "bottom");
+			int right = getInt(tableNode, "right");
+			settings.getTablePaddings().put(tableName, new TablePadding(top, left, bottom, right));
 		}
 	}
 

@@ -75,6 +75,8 @@ import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
+import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
+import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer.TablePaddingControl;
 import net.nikr.eve.jeveasset.gui.shared.table.TableFormatFactory;
 import net.nikr.eve.jeveasset.gui.tabs.assets.AssetsTab;
 import net.nikr.eve.jeveasset.i18n.TabsOverview;
@@ -249,6 +251,8 @@ public class OverviewTab extends JMainTabSecondary {
 		tableModel = EventModels.createTableModel(filterList, tableFormat);
 		//Table
 		jTable = new JOverviewTable(program, tableModel);
+		//Padding
+		TablePaddingControl tablePaddingControl = PaddingTableCellRenderer.install(jTable, Settings.get().getTablePadding(NAME, 0));
 		//Sorting
 		TableComparatorChooser<Overview> comparatorChooser = TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
 		//Selection Model
@@ -273,7 +277,7 @@ public class OverviewTab extends JMainTabSecondary {
 		//Table Filter
 		filterControl = new OverviewTabFilterControl(sortedList);
 		//Menu
-		installTableTool(new OverviewTableMenu(), tableFormat, comparatorChooser, tableModel, jTable, filterControl, Overview.class);
+		installTableTool(new OverviewTableMenu(tablePaddingControl), tableFormat, comparatorChooser, tableModel, jTable, filterControl, Overview.class);
 
 		jVolume = StatusPanel.createLabel(TabsOverview.get().totalVolume(), Images.ASSETS_VOLUME.getIcon(), AutoNumberFormat.DOUBLE);
 		this.addStatusbarLabel(jVolume);
@@ -594,6 +598,12 @@ public class OverviewTab extends JMainTabSecondary {
 
 	public class OverviewTableMenu implements TableMenu<Overview> {
 
+		private final TablePaddingControl tablePaddingControl;
+
+		public OverviewTableMenu(TablePaddingControl tablePaddingControl) {
+			this.tablePaddingControl = tablePaddingControl;
+		}
+
 		public OverviewTab getOverviewTab() {
 			return OverviewTab.this;
 		}
@@ -610,7 +620,7 @@ public class OverviewTab extends JMainTabSecondary {
 
 		@Override
 		public JMenu getColumnMenu() {
-			return new JMenuColumns<>(program, tableFormat, tableModel, jTable, NAME, false);
+			return new JMenuColumns<>(program, tableFormat, tableModel, jTable, tablePaddingControl, NAME, false);
 		}
 
 		@Override

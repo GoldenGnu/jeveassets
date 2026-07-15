@@ -45,6 +45,7 @@ import javax.swing.event.TableModelEvent;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.my.MyIndustryJob;
 import net.nikr.eve.jeveasset.data.api.raw.RawIndustryJob.IndustryJobStatus;
+import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.types.LocationType;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel.JStatusLabel;
@@ -63,6 +64,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
+import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer.TablePaddingControl;
 import net.nikr.eve.jeveasset.gui.shared.table.TableFormatFactory;
 import net.nikr.eve.jeveasset.i18n.TabsJobs;
 import net.nikr.eve.jeveasset.io.local.profile.ProfileDatabase;
@@ -142,7 +144,8 @@ public class IndustryJobsTab extends JMainTabPrimary {
 		//Table
 		jTable = new JIndustryJobsTable(program, tableModel);
 		jTable.setCellSelectionEnabled(true);
-		PaddingTableCellRenderer.install(jTable, 1);
+		//Padding
+		TablePaddingControl tablePaddingControl = PaddingTableCellRenderer.install(jTable, Settings.get().getTablePadding(NAME, 1));
 		//Sorting
 		TableComparatorChooser<MyIndustryJob> comparatorChooser = TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
 		//Selection Model
@@ -156,7 +159,7 @@ public class IndustryJobsTab extends JMainTabPrimary {
 		//Table Filter
 		filterControl = new IndustryJobsFilterControl(sortedList);
 		//Menu
-		installTableTool(new JobsTableMenu(), tableFormat, comparatorChooser, tableModel, jTable, filterControl, MyIndustryJob.class);
+		installTableTool(new JobsTableMenu(tablePaddingControl), tableFormat, comparatorChooser, tableModel, jTable, filterControl, MyIndustryJob.class);
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()
@@ -268,6 +271,13 @@ public class IndustryJobsTab extends JMainTabPrimary {
 	}
 
 	private class JobsTableMenu implements TableMenu<MyIndustryJob> {
+
+		private final TablePaddingControl tablePaddingControl;
+
+		public JobsTableMenu(TablePaddingControl tablePaddingControl) {
+			this.tablePaddingControl = tablePaddingControl;
+		}
+
 		@Override
 		public MenuData<MyIndustryJob> getMenuData() {
 			return new MenuData<>(selectionModel.getSelected());
@@ -280,7 +290,7 @@ public class IndustryJobsTab extends JMainTabPrimary {
 
 		@Override
 		public JMenu getColumnMenu() {
-			return new JMenuColumns<>(program, tableFormat, tableModel, jTable, NAME);
+			return new JMenuColumns<>(program, tableFormat, tableModel, jTable, tablePaddingControl, NAME);
 		}
 
 		@Override

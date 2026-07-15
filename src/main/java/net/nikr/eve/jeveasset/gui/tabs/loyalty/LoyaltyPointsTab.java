@@ -37,6 +37,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.my.MyLoyaltyPoints;
+import net.nikr.eve.jeveasset.data.settings.TablePadding;
 import net.nikr.eve.jeveasset.data.settings.tag.TagUpdate;
 import net.nikr.eve.jeveasset.data.settings.types.LocationType;
 import net.nikr.eve.jeveasset.gui.images.Images;
@@ -96,7 +97,8 @@ public class LoyaltyPointsTab extends JMainTabPrimary implements TagUpdate {
 		jTable.setRowSelectionAllowed(true);
 		jTable.setColumnSelectionAllowed(true);
 		jTable.setRowHeight(MyLoyaltyPoints.IMAGE_SIZE.getSize());
-		PaddingTableCellRenderer.install(jTable, 0, 5, 0, 5);
+		//Padding
+		PaddingTableCellRenderer.install(jTable, new TablePadding(0, 5, 0, 5));
 		//Sorting
 		TableComparatorChooser<MyLoyaltyPoints> comparatorChooser = TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
 		//Selection Model
@@ -163,6 +165,7 @@ public class LoyaltyPointsTab extends JMainTabPrimary implements TagUpdate {
 	}
 
 	private class LoyaltyPointsTableMenu implements TableMenu<MyLoyaltyPoints> {
+
 		@Override
 		public MenuData<MyLoyaltyPoints> getMenuData() {
 			return new MenuData<>(selectionModel.getSelected());
@@ -175,7 +178,7 @@ public class LoyaltyPointsTab extends JMainTabPrimary implements TagUpdate {
 
 		@Override
 		public JMenu getColumnMenu() {
-			return new JMenuColumns<>(program, tableFormat, tableModel, jTable, NAME);
+			return new JMenuColumns<>(program, tableFormat, tableModel, jTable, null, NAME);
 		}
 
 		@Override

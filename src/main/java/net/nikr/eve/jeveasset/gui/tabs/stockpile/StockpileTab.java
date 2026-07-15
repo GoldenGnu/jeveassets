@@ -105,6 +105,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.JSeparatorTable;
 import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
+import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer.TablePaddingControl;
 import net.nikr.eve.jeveasset.gui.shared.table.TableFormatFactory;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItemMaterial;
@@ -495,7 +496,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		jTable.setSeparatorEditor(new StockpileSeparatorTableCell(this, program, jTable, separatorList, listener));
 		jTable.setCellSelectionEnabled(true);
 		//Padding
-		PaddingTableCellRenderer.install(jTable, 3);
+		TablePaddingControl tablePaddingControl = PaddingTableCellRenderer.install(jTable, Settings.get().getTablePadding(NAME, 3));
 		//Sorting
 		TableComparatorChooser<StockpileItem> comparatorChooser = TableComparatorChooser.install(jTable, sortedListColumn, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
 		//Selection Model
@@ -554,7 +555,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		filterControl.addExportOption(jExportText);
 		filterControl.setManualLink(new HelpLink("https://wiki.jeveassets.org/manual/stockpile", GuiShared.get().helpStockpile()), getIcon());
 		//Menu
-		installTableTool(new StockpileTableMenu(), tableFormat, comparatorChooser, tableModel, jTable, filterControl, StockpileItem.class);
+		installTableTool(new StockpileTableMenu(tablePaddingControl), tableFormat, comparatorChooser, tableModel, jTable, filterControl, StockpileItem.class);
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
@@ -1634,6 +1635,13 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 	}
 
 	private class StockpileTableMenu implements TableMenu<StockpileItem> {
+
+		private final TablePaddingControl tablePaddingControl;
+
+		public StockpileTableMenu(TablePaddingControl tablePaddingControl) {
+			this.tablePaddingControl = tablePaddingControl;
+		}
+
 		@Override
 		public MenuData<StockpileItem> getMenuData() {
 			return new MenuData<>(selectionModel.getSelected());
@@ -1646,7 +1654,7 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 
 		@Override
 		public JMenu getColumnMenu() {
-			return new JMenuColumns<>(program, tableFormat, tableModel, jTable, NAME);
+			return new JMenuColumns<>(program, tableFormat, tableModel, jTable, tablePaddingControl, NAME);
 		}
 
 		@Override

@@ -38,6 +38,7 @@ import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.sde.Agent;
 import net.nikr.eve.jeveasset.data.sde.StaticData;
+import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.tag.TagUpdate;
 import net.nikr.eve.jeveasset.data.settings.types.LocationType;
 import net.nikr.eve.jeveasset.gui.images.Images;
@@ -52,6 +53,8 @@ import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
+import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
+import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer.TablePaddingControl;
 import net.nikr.eve.jeveasset.gui.shared.table.TableFormatFactory;
 import net.nikr.eve.jeveasset.i18n.TabsAgents;
 
@@ -96,6 +99,8 @@ public class AgentsTab extends JMainTabPrimary implements TagUpdate {
 		jTable.setCellSelectionEnabled(true);
 		jTable.setRowSelectionAllowed(true);
 		jTable.setColumnSelectionAllowed(true);
+		//Padding
+		TablePaddingControl tablePaddingControl = PaddingTableCellRenderer.install(jTable, Settings.get().getTablePadding(NAME, 0));
 		//Sorting
 		TableComparatorChooser<Agent> comparatorChooser = TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
 		//Selection Model
@@ -110,7 +115,7 @@ public class AgentsTab extends JMainTabPrimary implements TagUpdate {
 		//Table Filter
 		filterControl = new AgentsFilterControl(sortedList);
 		//Menu
-		installTableTool(new AgentsTableMenu(), tableFormat, comparatorChooser, tableModel, jTable, filterControl, Agent.class);
+		installTableTool(new AgentsTableMenu(tablePaddingControl), tableFormat, comparatorChooser, tableModel, jTable, filterControl, Agent.class);
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()
@@ -170,6 +175,13 @@ public class AgentsTab extends JMainTabPrimary implements TagUpdate {
 	}
 
 	private class AgentsTableMenu implements TableMenu<Agent> {
+
+		private final TablePaddingControl tablePaddingControl;
+
+		public AgentsTableMenu(TablePaddingControl tablePaddingControl) {
+			this.tablePaddingControl = tablePaddingControl;
+		}
+
 		@Override
 		public MenuData<Agent> getMenuData() {
 			return new MenuData<>(selectionModel.getSelected());
@@ -182,7 +194,7 @@ public class AgentsTab extends JMainTabPrimary implements TagUpdate {
 
 		@Override
 		public JMenu getColumnMenu() {
-			return new JMenuColumns<>(program, tableFormat, tableModel, jTable, NAME);
+			return new JMenuColumns<>(program, tableFormat, tableModel, jTable, tablePaddingControl, NAME);
 		}
 
 		@Override

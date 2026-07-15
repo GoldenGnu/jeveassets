@@ -48,6 +48,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.my.MyAsset;
+import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.types.LocationType;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.StringComparators;
@@ -69,6 +70,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.JSeparatorTable;
 import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
+import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer.TablePaddingControl;
 import net.nikr.eve.jeveasset.gui.shared.table.TableFormatFactory;
 import net.nikr.eve.jeveasset.gui.tabs.loadout.Loadout.LoadoutMatcher;
 import net.nikr.eve.jeveasset.i18n.General;
@@ -216,7 +218,8 @@ public class LoadoutsTab extends JMainTabSecondary {
 		jTable = new JSeparatorTable(program, tableModel, separatorList);
 		jTable.setSeparatorRenderer(new LoadoutSeparatorTableCell(jTable, separatorList));
 		jTable.setSeparatorEditor(new LoadoutSeparatorTableCell(jTable, separatorList));
-		PaddingTableCellRenderer.install(jTable, 3);
+		//Padding
+		TablePaddingControl tablePaddingControl = PaddingTableCellRenderer.install(jTable, Settings.get().getTablePadding(NAME, 3));
 		//Selection Model
 		selectionModel = EventModels.createSelectionModel(separatorList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
@@ -226,7 +229,7 @@ public class LoadoutsTab extends JMainTabSecondary {
 		//Scroll
 		JScrollPane jTableScroll = new JScrollPane(jTable);
 		//Menu
-		installTableTool(new LoadoutTableMenu(), tableFormat, null, tableModel, jTable, eventList, Loadout.class);
+		installTableTool(new LoadoutTableMenu(tablePaddingControl), tableFormat, null, tableModel, jTable, eventList, Loadout.class);
 
 		exportDialog = new ExportDialog<>(program.getMainWindow().getFrame(), NAME, null, new LoadoutsFilterControl(), tableFormat, filterList);
 
@@ -493,6 +496,13 @@ public class LoadoutsTab extends JMainTabSecondary {
 	}
 
 	private class LoadoutTableMenu implements TableMenu<Loadout> {
+
+		private final TablePaddingControl tablePaddingControl;
+
+		public LoadoutTableMenu(TablePaddingControl tablePaddingControl) {
+			this.tablePaddingControl = tablePaddingControl;
+		}
+
 		@Override
 		public MenuData<Loadout> getMenuData() {
 			return new MenuData<>(selectionModel.getSelected());
@@ -505,7 +515,7 @@ public class LoadoutsTab extends JMainTabSecondary {
 
 		@Override
 		public JMenu getColumnMenu() {
-			return new JMenuColumns<>(program, tableFormat, tableModel, jTable, NAME, false);
+			return new JMenuColumns<>(program, tableFormat, tableModel, jTable, tablePaddingControl, NAME, false);
 		}
 
 		@Override

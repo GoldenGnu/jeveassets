@@ -42,6 +42,7 @@ import net.nikr.eve.jeveasset.data.settings.RouteResult;
 import net.nikr.eve.jeveasset.data.settings.RoutingSettings;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.Settings.SettingFlag;
+import net.nikr.eve.jeveasset.data.settings.TablePadding;
 import net.nikr.eve.jeveasset.data.settings.TrackerData;
 import net.nikr.eve.jeveasset.data.settings.UserItem;
 import net.nikr.eve.jeveasset.data.settings.tag.Tag;
@@ -134,6 +135,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 		writeCurrentTableFilters(xmldoc, settings.getCurrentTableFilters(), settings.getCurrentTableFiltersShown());
 		writeCurrentSorting(xmldoc, settings.getCurrentTableSorting());
 		writeTableColumns(xmldoc, settings.getTableColumns());
+		writeTablePadding(xmldoc, settings.getTablePaddings());
 		writeTableColumnsWidth(xmldoc, settings.getTableColumnsWidth());
 		writeTableResize(xmldoc, settings.getTableResize());
 		writeTableViews(xmldoc, settings.getTableViews());
@@ -487,6 +489,21 @@ public class SettingsWriter extends AbstractXmlWriter {
 				setAttribute(columnNode, "shown", column.isShown());
 				tableNode.appendChild(columnNode);
 			}
+		}
+	}
+
+	private void writeTablePadding(final Document xmldoc, final Map<String, TablePadding> tablePaddings) {
+		Element tableColumnsNode = xmldoc.createElementNS(null, "tablepadding");
+		xmldoc.getDocumentElement().appendChild(tableColumnsNode);
+		for (Map.Entry<String, TablePadding> entry : tablePaddings.entrySet()) {
+			Element tableNode = xmldoc.createElementNS(null, "table");
+			TablePadding tablePadding = entry.getValue();
+			setAttribute(tableNode, "name", entry.getKey());
+			setAttribute(tableNode, "top", tablePadding.getTop());
+			setAttribute(tableNode, "left", tablePadding.getLeft());
+			setAttribute(tableNode, "bottom", tablePadding.getBottom());
+			setAttribute(tableNode, "right", tablePadding.getRight());
+			tableColumnsNode.appendChild(tableNode);
 		}
 	}
 
