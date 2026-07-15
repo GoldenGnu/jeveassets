@@ -51173,7 +51173,7 @@
         <material id="36" portionsize="1" quantity="2200"/>
         <material id="38" portionsize="1" quantity="880"/>
     </row>
-    <row category="Asteroid" group="Crokite" id="28393" marketgroup="true" meta="0" name="Batch Compressed Crokite IV-Grade" pi="false" portion="1" price="8021400" product="0" tech="Tech I" volume="7.81">
+    <row category="Asteroid" group="Crokite" id="28393" marketgroup="true" meta="0" name="Batch Compressed Crokite II-Grade" pi="false" portion="1" price="8021400" product="0" tech="Tech I" volume="7.81">
         <material id="35" portionsize="1" quantity="840"/>
         <material id="36" portionsize="1" quantity="2100"/>
         <material id="38" portionsize="1" quantity="840"/>
@@ -102765,7 +102765,7 @@
         <material id="36" portionsize="1" quantity="2046"/>
         <material id="37" portionsize="1" quantity="352"/>
     </row>
-    <row category="Drone" group="Combat Drone" id="60766" marketgroup="true" meta="5" name="Aralez" pi="false" portion="1" price="81536" product="0" tech="Faction" volume="10.0">
+    <row category="Drone" group="Combat Drone" id="60766" marketgroup="true" meta="8" name="Aralez" pi="false" portion="1" price="100000" product="0" tech="Faction" volume="20.0">
         <material id="34" portionsize="1" quantity="2631"/>
         <material id="35" portionsize="1" quantity="542"/>
         <material id="36" portionsize="1" quantity="113"/>
@@ -102782,7 +102782,8 @@
         <mfg id="34" q="1"/>
     </row>
     <row category="Blueprint" group="Combat Drone Blueprint" id="60769" marketgroup="true" meta="0" name="Aralez Blueprint" pi="false" portion="1" price="1600000" product="60766" tech="Tech I" volume="0.01">
-        <mfg id="34" q="1"/>
+        <mfg id="2446" q="1"/>
+        <mfg id="21638" q="1"/>
     </row>
     <row category="Asteroid" group="AIR Ore Asteroid Resources" id="60771" marketgroup="true" meta="0" name="Nephrite" pi="false" portion="333" price="250" product="0" tech="Tech I" volume="0.1"/>
     <row category="Commodity" group="Commodities" id="60784" marketgroup="false" meta="0" name="Dramiel Black Box" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
@@ -112278,7 +112279,7 @@
         <mfg id="85402" q="240"/>
     </row>
     <row category="Blueprint" group="Mutaplasmid Blueprint" id="86036" marketgroup="false" meta="0" name="Glorified Unstable Medium Ancillary Shield Booster Mutaplasmid Blueprint" pi="false" portion="1" price="0" product="85541" tech="Tech I" volume="0.1">
-        <mfg id="47783" q="1"/>
+        <mfg id="47835" q="1"/>
         <mfg id="85398" q="240"/>
         <mfg id="85402" q="240"/>
     </row>
@@ -115213,7 +115214,7 @@
     <row category="SKINs" group="Permanent SKIN" id="91166" marketgroup="true" meta="0" name="Odysseus Yoiul Star SKIN" pi="false" portion="1" price="0" product="0" tech="Premium" volume="0.01"/>
     <row category="SKINs" group="Permanent SKIN" id="91167" marketgroup="true" meta="0" name="Odysseus Crystal Blast SKIN" pi="false" portion="1" price="0" product="0" tech="Premium" volume="0.01"/>
     <row category="SKINs" group="Permanent SKIN" id="91168" marketgroup="true" meta="0" name="Odysseus Deathglow Remnant SKIN" pi="false" portion="1" price="0" product="0" tech="Premium" volume="0.01"/>
-    <row category="SKINs" group="Permanent SKIN" id="91169" marketgroup="true" meta="0" name="Odysseus Arkombine Arisen SKIN" pi="false" portion="1" price="0" product="0" tech="Premium" volume="0.01"/>
+    <row category="SKINs" group="Permanent SKIN" id="91169" marketgroup="true" meta="0" name="Odysseus Arkombine Arisen SKIN" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.01"/>
     <row category="SKINs" group="Permanent SKIN" id="91170" marketgroup="true" meta="0" name="Odysseus Friendship League SKIN" pi="false" portion="1" price="0" product="0" tech="Premium" volume="0.01"/>
     <row category="SKINs" group="Permanent SKIN" id="91171" marketgroup="true" meta="0" name="Odysseus SOE Gold Cell SKIN" pi="false" portion="1" price="0" product="0" tech="Premium" volume="0.01"/>
     <row category="SKINs" group="Permanent SKIN" id="91172" marketgroup="true" meta="0" name="Odysseus SOE Fire Cell SKIN" pi="false" portion="1" price="0" product="0" tech="Premium" volume="0.01"/>
@@ -116353,10 +116354,10 @@
     <row category="Commodity" group="Miscellaneous" id="93610" marketgroup="true" meta="0" name="State Military Stockpile Supply Package" pi="false" portion="1" price="100000" product="0" tech="Tech I" volume="0.01"/>
     <row category="Commodity" group="Miscellaneous" id="93611" marketgroup="true" meta="0" name="Federal Strategic Materiel Supply Package" pi="false" portion="1" price="100000" product="0" tech="Tech I" volume="0.01"/>
     <row category="Commodity" group="Miscellaneous" id="93612" marketgroup="true" meta="0" name="Republic Fleet Ordnance Supply Package" pi="false" portion="1" price="100000" product="0" tech="Tech I" volume="0.01"/>
-    <row category="Special Edition Assets" group="Special Edition Commodities" id="93640" marketgroup="false" meta="0" name="Supplies: Golgothan Fields" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="10.0"/>
-    <row category="Special Edition Assets" group="Special Edition Commodities" id="93641" marketgroup="false" meta="0" name="Supplies: Caldari Prime Breakout" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="10.0"/>
-    <row category="Special Edition Assets" group="Special Edition Commodities" id="93642" marketgroup="false" meta="0" name="Supplies: Intaki Liberation" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="10.0"/>
-    <row category="Special Edition Assets" group="Special Edition Commodities" id="93643" marketgroup="false" meta="0" name="Supplies: Battle of Pator" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="10.0"/>
+    <row category="Special Edition Assets" group="Special Edition Commodities" id="93640" marketgroup="false" meta="0" name="Supplies: Golgothan Fields" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="3000.0"/>
+    <row category="Special Edition Assets" group="Special Edition Commodities" id="93641" marketgroup="false" meta="0" name="Supplies: Caldari Prime Breakout" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="3000.0"/>
+    <row category="Special Edition Assets" group="Special Edition Commodities" id="93642" marketgroup="false" meta="0" name="Supplies: Intaki Liberation" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="3000.0"/>
+    <row category="Special Edition Assets" group="Special Edition Commodities" id="93643" marketgroup="false" meta="0" name="Supplies: Battle of Pator" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="3000.0"/>
     <row category="Special Edition Assets" group="Special Edition Commodities" id="93645" marketgroup="true" meta="0" name="Capsuleer Day XXIII Fireworks Package" pi="false" portion="1" price="0" product="0" tech="Limited Time" volume="4.0"/>
     <row category="SKINs" group="Permanent SKIN" id="93655" marketgroup="true" meta="0" name="Armageddon Navy Issue Penumbral Shadows SKIN" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.01"/>
     <row category="SKINs" group="Permanent SKIN" id="93656" marketgroup="true" meta="0" name="Prophecy Navy Issue Penumbral Shadows SKIN" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.01"/>
@@ -116800,4 +116801,119 @@
     <row category="SKINs" group="Permanent SKIN" id="95298" marketgroup="true" meta="0" name="Naga State Regulator SKIN" pi="false" portion="1" price="0" product="0" tech="Premium" volume="0.01"/>
     <row category="SKINs" group="Permanent SKIN" id="95299" marketgroup="true" meta="0" name="Talwar Fleet Issue Stark Strategist SKIN" pi="false" portion="1" price="0" product="0" tech="Premium" volume="0.01"/>
     <row category="SKINs" group="Permanent SKIN" id="95300" marketgroup="true" meta="0" name="Tornado Stark Strategist SKIN" pi="false" portion="1" price="0" product="0" tech="Premium" volume="0.01"/>
+    <row capacity="27500.0" category="Celestial" group="Wreck" id="95388" marketgroup="false" meta="0" name="Target Wreck" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="27500.0"/>
+    <row category="Asteroid" group="Pyroxeres" id="95395" marketgroup="true" meta="0" name="Pyroxeres 0-Grade" pi="false" portion="100" price="11632" product="0" tech="Tech I" volume="0.3">
+        <material id="35" portionsize="100" quantity="45"/>
+        <material id="36" portionsize="100" quantity="15"/>
+    </row>
+    <row category="Personalization" group="Ship SKIN Design Element" id="95396" marketgroup="true" meta="0" name="Defiant Latten Metallic - Limited" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
+    <row category="Personalization" group="Ship SKIN Design Element" id="95397" marketgroup="true" meta="0" name="Defiant Latten Metallic - Unlimited" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
+    <row category="Personalization" group="Ship SKIN Design Element" id="95398" marketgroup="true" meta="0" name="Radiant Aureate Metallic - Limited" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
+    <row category="Personalization" group="Ship SKIN Design Element" id="95399" marketgroup="true" meta="0" name="Radiant Aureate Metallic - Unlimited" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
+    <row category="Personalization" group="Ship SKIN Design Element" id="95400" marketgroup="true" meta="0" name="Defiant Latten Matte - Limited" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
+    <row category="Personalization" group="Ship SKIN Design Element" id="95401" marketgroup="true" meta="0" name="Defiant Latten Matte - Unlimited" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
+    <row category="Personalization" group="Ship SKIN Design Element" id="95402" marketgroup="true" meta="0" name="Avalon Aqua Gloss - Limited" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
+    <row category="Personalization" group="Ship SKIN Design Element" id="95403" marketgroup="true" meta="0" name="Avalon Aqua Gloss - Unlimited" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
+    <row category="Personalization" group="Ship SKIN Design Element" id="95404" marketgroup="true" meta="0" name="Harmonic Alloy Metallic - Limited" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
+    <row category="Personalization" group="Ship SKIN Design Element" id="95405" marketgroup="true" meta="0" name="Harmonic Alloy Metallic - Unlimited" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
+    <row category="Personalization" group="Ship SKIN Design Element" id="95406" marketgroup="true" meta="0" name="Avalon Aqua Matte - Limited" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
+    <row category="Personalization" group="Ship SKIN Design Element" id="95407" marketgroup="true" meta="0" name="Avalon Aqua Matte - Unlimited" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
+    <row category="Personalization" group="Ship SKIN Design Element" id="95408" marketgroup="true" meta="0" name="Arkombine Dawn Satin - Limited" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
+    <row category="Personalization" group="Ship SKIN Design Element" id="95409" marketgroup="true" meta="0" name="Arkombine Dawn Satin - Unlimited" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
+    <row category="Personalization" group="Ship SKIN Design Element" id="95410" marketgroup="true" meta="0" name="Resonant Turf Gloss - Limited" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
+    <row category="Personalization" group="Ship SKIN Design Element" id="95411" marketgroup="true" meta="0" name="Resonant Turf Gloss - Unlimited" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
+    <row category="Personalization" group="Ship SKIN Design Element" id="95412" marketgroup="true" meta="0" name="Harmonius Bridge - Limited" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
+    <row category="Personalization" group="Ship SKIN Design Element" id="95413" marketgroup="true" meta="0" name="Harmonius Bridge - Unlimited" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
+    <row category="Module" group="Damage Control" id="95414" marketgroup="true" meta="8" name="Breach Control" pi="false" portion="1" price="0" product="0" slot="Low" tech="Faction" volume="5.0">
+        <material id="34" portionsize="1" quantity="478"/>
+        <material id="35" portionsize="1" quantity="1"/>
+        <material id="36" portionsize="1" quantity="24"/>
+        <material id="38" portionsize="1" quantity="1"/>
+    </row>
+    <row category="Personalization" group="Ship SKIN Design Element" id="95415" marketgroup="true" meta="0" name="Rebel Cross - Limited" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
+    <row category="Personalization" group="Ship SKIN Design Element" id="95416" marketgroup="true" meta="0" name="Rebel Cross - Unlimited" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
+    <row category="Personalization" group="Ship SKIN Design Element" id="95417" marketgroup="true" meta="0" name="Remnant Honor - Limited" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
+    <row category="Personalization" group="Ship SKIN Design Element" id="95418" marketgroup="true" meta="0" name="Remnant Honor - Unlimited" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
+    <row category="Personalization" group="Ship Emblems" id="95444" marketgroup="false" meta="0" name="Shapash Alliance Emblem" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.0"/>
+    <row category="Personalization" group="Ship Emblems" id="95445" marketgroup="false" meta="0" name="Defiant Latten Matte - Limited" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.0"/>
+    <row category="Personalization" group="Ship Emblems" id="95446" marketgroup="false" meta="0" name="Cybele Alliance Emblem" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.0"/>
+    <row category="Expert Systems" group="Standard Expert Systems" id="95452" marketgroup="true" meta="0" name="Gallente Pilot" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="1.0"/>
+    <row category="Apparel" group="Portrait Backgrounds" id="95458" marketgroup="true" meta="0" name="Operation Avalon Background" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
+    <row category="Special Edition Assets" group="Special Edition Commodities" id="95463" marketgroup="false" meta="0" name="Federation Day Celebration Crate" pi="false" portion="1" price="0" product="0" tech="Limited Time" volume="4.0"/>
+    <row category="SKINs" group="Permanent SKIN" id="95473" marketgroup="true" meta="0" name="Talos Pride of the Federation SKIN" pi="false" portion="1" price="0" product="0" tech="Premium" volume="0.01"/>
+    <row category="SKINs" group="Permanent SKIN" id="95474" marketgroup="true" meta="0" name="Hyperion Pride of the Federation SKIN" pi="false" portion="1" price="0" product="0" tech="Premium" volume="0.01"/>
+    <row category="SKINs" group="Permanent SKIN" id="95475" marketgroup="true" meta="0" name="Moros Pride of the Federation SKIN" pi="false" portion="1" price="0" product="0" tech="Premium" volume="0.01"/>
+    <row category="SKINs" group="Permanent SKIN" id="95476" marketgroup="true" meta="0" name="Ninazu Pride of the Federation SKIN" pi="false" portion="1" price="0" product="0" tech="Premium" volume="0.01"/>
+    <row category="SKINs" group="Permanent SKIN" id="95477" marketgroup="true" meta="0" name="Keres Pride of the Federation SKIN" pi="false" portion="1" price="0" product="0" tech="Premium" volume="0.01"/>
+    <row category="SKINs" group="Permanent SKIN" id="95478" marketgroup="true" meta="0" name="Arazu Pride of the Federation SKIN" pi="false" portion="1" price="0" product="0" tech="Premium" volume="0.01"/>
+    <row category="SKINs" group="Permanent SKIN" id="95479" marketgroup="true" meta="0" name="Kronos Pride of the Federation SKIN" pi="false" portion="1" price="0" product="0" tech="Premium" volume="0.01"/>
+    <row category="SKINs" group="Permanent SKIN" id="95480" marketgroup="true" meta="0" name="Hecate Pride of the Federation SKIN" pi="false" portion="1" price="0" product="0" tech="Premium" volume="0.01"/>
+    <row category="SKINs" group="Permanent SKIN" id="95481" marketgroup="true" meta="0" name="Imicus Navy Issue Pride of the Federation SKIN" pi="false" portion="1" price="0" product="0" tech="Premium" volume="0.01"/>
+    <row category="SKINs" group="Permanent SKIN" id="95482" marketgroup="true" meta="0" name="Maulus Pride of the Federation SKIN" pi="false" portion="1" price="0" product="0" tech="Premium" volume="0.01"/>
+    <row category="Personalization" group="Ship Emblems" id="95484" marketgroup="false" meta="0" name="Cybele Corporation Emblem" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.0"/>
+    <row category="Apparel" group="Portrait Backgrounds" id="95501" marketgroup="true" meta="0" name="Soaring Federation Background" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
+    <row category="SKINs" group="Permanent SKIN" id="95525" marketgroup="true" meta="0" name="Dragoon Navy Issue Forever Creative SKIN" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.01"/>
+    <row category="SKINs" group="Permanent SKIN" id="95526" marketgroup="true" meta="0" name="Corax Navy Issue Forever Creative SKIN" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.01"/>
+    <row category="SKINs" group="Permanent SKIN" id="95527" marketgroup="true" meta="0" name="Talwar Fleet Issue Forever Creative SKIN" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.01"/>
+    <row category="SKINs" group="Permanent SKIN" id="95528" marketgroup="true" meta="0" name="Algos Navy Issue Forever Creative SKIN" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.01"/>
+    <row category="Implant" group="Cyber Scanning" id="95529" marketgroup="true" meta="0" name="Poteque 'Prospector' Salvaging SV-906" pi="false" portion="1" price="200000" product="0" tech="Tech I" volume="1.0">
+        <material id="38" portionsize="1" quantity="2"/>
+        <material id="39" portionsize="1" quantity="2"/>
+        <material id="40" portionsize="1" quantity="2"/>
+    </row>
+    <row category="Blueprint" group="Implant Blueprints" id="95530" marketgroup="false" meta="0" name="Poteque 'Prospector' Salvaging SV-906 Blueprint" pi="false" portion="1" price="0" product="95529" tech="Tech I" volume="0.01">
+        <mfg id="27198" q="1"/>
+    </row>
+    <row category="Implant" group="Booster" id="95532" marketgroup="true" meta="3" name="Cavalry Clash Booster" pi="false" portion="1" price="0" product="0" tech="Limited Time" volume="1.0"/>
+    <row category="Implant" group="Booster" id="95533" marketgroup="true" meta="5" name="Astrograph Clash Booster" pi="false" portion="1" price="0" product="0" tech="Limited Time" volume="1.0"/>
+    <row category="Implant" group="Booster" id="95534" marketgroup="true" meta="5" name="SITREP Clash Booster" pi="false" portion="1" price="0" product="0" tech="Limited Time" volume="1.0"/>
+    <row capacity="27500.0" category="Celestial" group="Wreck" id="95535" marketgroup="false" meta="0" name="Upwell Wreck" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="27500.0"/>
+    <row capacity="785000.0" category="Celestial" group="Wreck" id="95536" marketgroup="false" meta="0" name="Upwell Avalanche Wreck" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="785000.0"/>
+    <row category="Implant" group="Booster" id="95537" marketgroup="true" meta="0" name="Coherence Volatile Booster" pi="false" portion="1" price="0" product="0" tech="Limited Time" volume="1.0"/>
+    <row category="Implant" group="Booster" id="95538" marketgroup="true" meta="0" name="Upcycle Volatile Booster" pi="false" portion="1" price="0" product="0" tech="Limited Time" volume="1.0"/>
+    <row category="Implant" group="Booster" id="95539" marketgroup="true" meta="0" name="Requisition Volatile Booster" pi="false" portion="1" price="0" product="0" tech="Limited Time" volume="1.0"/>
+    <row category="Implant" group="Booster" id="95540" marketgroup="true" meta="0" name="Zero-In Volatile Booster" pi="false" portion="1" price="0" product="0" tech="Limited Time" volume="1.0"/>
+    <row category="Implant" group="Booster" id="95541" marketgroup="true" meta="0" name="Soaring Volatile Booster" pi="false" portion="1" price="0" product="0" tech="Limited Time" volume="1.0"/>
+    <row category="Implant" group="Booster" id="95542" marketgroup="true" meta="0" name="Hallowed Volatile Booster" pi="false" portion="1" price="0" product="0" tech="Limited Time" volume="1.0"/>
+    <row category="Implant" group="Booster" id="95543" marketgroup="true" meta="0" name="Tenacious Volatile Booster" pi="false" portion="1" price="0" product="0" tech="Limited Time" volume="1.0"/>
+    <row capacity="27500.0" category="Celestial" group="Wreck" id="95550" marketgroup="false" meta="0" name="AEGIS Battlecruiser Wreck" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="27500.0"/>
+    <row capacity="27500.0" category="Celestial" group="Wreck" id="95551" marketgroup="false" meta="0" name="AEGIS Battleship Wreck" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="27500.0"/>
+    <row capacity="27500.0" category="Celestial" group="Wreck" id="95552" marketgroup="false" meta="0" name="AEGIS Frigate Wreck" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="27500.0"/>
+    <row capacity="27500.0" category="Celestial" group="Wreck" id="95553" marketgroup="false" meta="0" name="AEGIS Cruiser Wreck" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="27500.0"/>
+    <row capacity="27500.0" category="Celestial" group="Wreck" id="95554" marketgroup="false" meta="0" name="Flotilla Aeon Wreckage" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="27500.0"/>
+    <row capacity="27500.0" category="Celestial" group="Wreck" id="95555" marketgroup="false" meta="0" name="AEGIS Destroyer Wreck" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="27500.0"/>
+    <row category="Module" group="Inertial Stabilizer" id="95556" marketgroup="true" meta="11" name="Lorharyth's Modified Inertial Stabilizer" pi="false" portion="1" price="0" product="0" slot="Low" tech="Officer" volume="5.0">
+        <material id="34" portionsize="1" quantity="1786"/>
+        <material id="35" portionsize="1" quantity="304"/>
+        <material id="36" portionsize="1" quantity="1"/>
+    </row>
+    <row category="Special Edition Assets" group="Special Edition Commodities" id="95557" marketgroup="false" meta="0" name="Arkombine Arisen SKIN Crate" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="1.0"/>
+    <row capacity="27500.0" category="Celestial" group="Wreck" id="95626" marketgroup="false" meta="0" name="AEGIS Squall Wreck" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="27500.0"/>
+    <row category="Expert Systems" group="Standard Expert Systems" id="95633" marketgroup="false" meta="0" name="Minmatar Pilot" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="1.0"/>
+    <row category="Special Edition Assets" group="Special Edition Commodities" id="95640" marketgroup="true" meta="0" name="Vanguard Resonant Cypher" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
+    <row category="Special Edition Assets" group="Special Edition Commodities" id="95647" marketgroup="true" meta="0" name="Operation Avalon Booster Crate" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="1.0"/>
+    <row category="SKINs" group="Permanent SKIN" id="95648" marketgroup="false" meta="0" name="Cenotaph Arkombine Arisen SKIN" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.01"/>
+    <row category="SKINs" group="Permanent SKIN" id="95649" marketgroup="false" meta="0" name="Probe Arkombine Arisen SKIN" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.01"/>
+    <row category="SKINs" group="Permanent SKIN" id="95650" marketgroup="false" meta="0" name="Talwar Fleet Issue Arkombine Arisen SKIN" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.01"/>
+    <row category="SKINs" group="Permanent SKIN" id="95651" marketgroup="false" meta="0" name="Corax Navy Issue Arkombine Arisen SKIN" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.01"/>
+    <row category="SKINs" group="Permanent SKIN" id="95652" marketgroup="false" meta="0" name="Caracal Arkombine Arisen SKIN" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.01"/>
+    <row category="SKINs" group="Permanent SKIN" id="95653" marketgroup="false" meta="0" name="Dragoon Navy Issue Arkombine Arisen SKIN" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.01"/>
+    <row category="SKINs" group="Permanent SKIN" id="95654" marketgroup="true" meta="0" name="Aeon Arkombine Arisen SKIN" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.01"/>
+    <row category="SKINs" group="Permanent SKIN" id="95655" marketgroup="false" meta="0" name="Salvation Arkombine Arisen SKIN" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.01"/>
+    <row category="SKINs" group="Permanent SKIN" id="95656" marketgroup="false" meta="0" name="Algos Navy Issue Arkombine Arisen SKIN" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.01"/>
+    <row category="Special Edition Assets" group="Special Edition Commodities" id="95657" marketgroup="false" meta="0" name="Liberation Day Celebration Crate" pi="false" portion="1" price="0" product="0" tech="Limited Time" volume="4.0"/>
+    <row category="Apparel" group="Portrait Backgrounds" id="95672" marketgroup="true" meta="0" name="Liberated Matar Background" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
+    <row category="Apparel" group="Portrait Backgrounds" id="95673" marketgroup="true" meta="0" name="Foundation Wisdom Background" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
+    <row category="Apparel" group="Portrait Backgrounds" id="95674" marketgroup="true" meta="0" name="Union Contemplation Background" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
+    <row category="Special Edition Assets" group="Special Edition Commodities" id="95716" marketgroup="true" meta="0" name="Ranking Vanguard Resonant Cypher" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
+    <row category="SKINs" group="Permanent SKIN" id="95720" marketgroup="true" meta="0" name="Loki Hrada-Oki Offender SKIN" pi="false" portion="1" price="0" product="0" tech="Premium" volume="0.01"/>
+    <row category="SKINs" group="Permanent SKIN" id="95721" marketgroup="true" meta="0" name="Bifrost Hrada-Oki Offender SKIN" pi="false" portion="1" price="0" product="0" tech="Premium" volume="0.01"/>
+    <row category="SKINs" group="Permanent SKIN" id="95722" marketgroup="true" meta="0" name="Stiletto Hrada-Oki Offender SKIN" pi="false" portion="1" price="0" product="0" tech="Premium" volume="0.01"/>
+    <row category="SKINs" group="Permanent SKIN" id="95723" marketgroup="true" meta="0" name="Prowler Hrada-Oki Offender SKIN" pi="false" portion="1" price="0" product="0" tech="Premium" volume="0.01"/>
+    <row category="SKINs" group="Permanent SKIN" id="95724" marketgroup="true" meta="0" name="Claymore Hrada-Oki Offender SKIN" pi="false" portion="1" price="0" product="0" tech="Premium" volume="0.01"/>
+    <row category="SKINs" group="Permanent SKIN" id="95725" marketgroup="true" meta="0" name="Tempest Fleet Issue Hrada-Oki Offender SKIN" pi="false" portion="1" price="0" product="0" tech="Premium" volume="0.01"/>
+    <row category="SKINs" group="Permanent SKIN" id="95726" marketgroup="true" meta="0" name="Ymir Hrada-Oki Offender SKIN" pi="false" portion="1" price="0" product="0" tech="Premium" volume="0.01"/>
+    <row category="SKINs" group="Permanent SKIN" id="95727" marketgroup="true" meta="0" name="Nomad Hrada-Oki Offender SKIN" pi="false" portion="1" price="0" product="0" tech="Premium" volume="0.01"/>
+    <row category="Expert Systems" group="Standard Expert Systems" id="95744" marketgroup="false" meta="0" name="Amarr Pilot" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="1.0"/>
+    <row category="Special Edition Assets" group="Special Edition Commodities" id="95747" marketgroup="false" meta="0" name="Foundation Day Celebration Crate" pi="false" portion="1" price="0" product="0" tech="Limited Time" volume="4.0"/>
 </rows>
