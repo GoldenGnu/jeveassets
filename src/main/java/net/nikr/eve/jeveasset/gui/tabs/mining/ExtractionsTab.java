@@ -35,6 +35,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.my.MyExtraction;
+import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.types.LocationType;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTabPrimary;
@@ -46,6 +47,8 @@ import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
+import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
+import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer.TablePaddingControl;
 import net.nikr.eve.jeveasset.gui.shared.table.TableFormatFactory;
 import net.nikr.eve.jeveasset.i18n.TabsMining;
 
@@ -86,6 +89,8 @@ public class ExtractionsTab extends JMainTabPrimary {
 		jTable.setCellSelectionEnabled(true);
 		jTable.setRowSelectionAllowed(true);
 		jTable.setColumnSelectionAllowed(true);
+		//Padding
+		TablePaddingControl tablePaddingControl = PaddingTableCellRenderer.install(jTable, Settings.get().getTablePadding(NAME, 0));
 		//Sorting
 		TableComparatorChooser<MyExtraction> comparatorChooser = TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
 		//Selection Model
@@ -100,7 +105,7 @@ public class ExtractionsTab extends JMainTabPrimary {
 		//Table Filter
 		filterControl = new ExtractionFilterControl(sortedList);
 		//Menu
-		installTableTool(new ExtractionTableMenu(), tableFormat, comparatorChooser, tableModel, jTable, filterControl, MyExtraction.class);
+		installTableTool(new ExtractionTableMenu(tablePaddingControl), tableFormat, comparatorChooser, tableModel, jTable, filterControl, MyExtraction.class);
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()
@@ -126,6 +131,13 @@ public class ExtractionsTab extends JMainTabPrimary {
 	}
 
 	private class ExtractionTableMenu implements TableMenu<MyExtraction> {
+
+		private final TablePaddingControl tablePaddingControl;
+
+		public ExtractionTableMenu(TablePaddingControl tablePaddingControl) {
+			this.tablePaddingControl = tablePaddingControl;
+		}
+
 		@Override
 		public MenuData<MyExtraction> getMenuData() {
 			return new MenuData<>(selectionModel.getSelected());
@@ -138,7 +150,7 @@ public class ExtractionsTab extends JMainTabPrimary {
 
 		@Override
 		public JMenu getColumnMenu() {
-			return new JMenuColumns<>(program, tableFormat, tableModel, jTable, NAME);
+			return new JMenuColumns<>(program, tableFormat, tableModel, jTable, tablePaddingControl, NAME);
 		}
 
 		@Override

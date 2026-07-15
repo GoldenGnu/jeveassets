@@ -70,6 +70,8 @@ import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
+import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
+import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer.TablePaddingControl;
 import net.nikr.eve.jeveasset.gui.shared.table.TableFormatFactory;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewTab;
 import net.nikr.eve.jeveasset.gui.tabs.tree.TreeTab;
@@ -165,6 +167,8 @@ public class AssetsTab extends JMainTabPrimary implements TagUpdate {
 		jTable.setCellSelectionEnabled(true);
 		jTable.setRowSelectionAllowed(true);
 		jTable.setColumnSelectionAllowed(true);
+		//Padding
+		TablePaddingControl tablePaddingControl = PaddingTableCellRenderer.install(jTable, Settings.get().getTablePadding(NAME, 0));
 		//Sorting
 		TableComparatorChooser<MyAsset> comparatorChooser = TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
 		//Selection Model
@@ -179,7 +183,7 @@ public class AssetsTab extends JMainTabPrimary implements TagUpdate {
 		//Table Filter
 		filterControl = new AssetFilterControl(sortedList);
 		//Menu
-		installTableTool(new AssetTableMenu(), tableFormat, comparatorChooser, tableModel, jTable, filterControl, MyAsset.class);
+		installTableTool(new AssetTableMenu(tablePaddingControl), tableFormat, comparatorChooser, tableModel, jTable, filterControl, MyAsset.class);
 
 		jTreemapView = new JTreemap(new JTreemap.SelectionListener() {
 			@Override
@@ -387,6 +391,13 @@ public class AssetsTab extends JMainTabPrimary implements TagUpdate {
 	}
 
 	private class AssetTableMenu implements TableMenu<MyAsset> {
+
+		private final TablePaddingControl tablePaddingControl;
+
+		public AssetTableMenu(TablePaddingControl tablePaddingControl) {
+			this.tablePaddingControl = tablePaddingControl;
+		}
+
 		@Override
 		public MenuData<MyAsset> getMenuData() {
 			return new AssetMenuData<>(selectionModel.getSelected());
@@ -399,7 +410,7 @@ public class AssetsTab extends JMainTabPrimary implements TagUpdate {
 
 		@Override
 		public JMenu getColumnMenu() {
-			return new JMenuColumns<>(program, tableFormat, tableModel, jTable, NAME);
+			return new JMenuColumns<>(program, tableFormat, tableModel, jTable, tablePaddingControl, NAME);
 		}
 
 		@Override

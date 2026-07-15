@@ -305,6 +305,9 @@ public abstract class GuiShared extends Bundle {
 	public abstract String tableColumnsReset();
 	public abstract String tableColumnsTip();
 	public abstract String tableColumnsTitle();
+	public abstract String tablePadding();
+	public abstract String tablePaddingSize(int i);
+	public abstract String tablePaddingSizeDefault(int i);
 	public abstract String tableResizeText();
 	public abstract String tableResizeWindow();
 	public abstract String tableResizeNone();

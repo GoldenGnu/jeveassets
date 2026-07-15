@@ -31,6 +31,7 @@ import javax.swing.JRadioButtonMenuItem;
 import javax.swing.table.AbstractTableModel;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.settings.Settings;
+import net.nikr.eve.jeveasset.data.settings.TablePadding;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JAutoCompleteDialog;
 import net.nikr.eve.jeveasset.gui.shared.table.JEditColumnsDialog;
@@ -40,20 +41,23 @@ import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.ResizeMode
 import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 import net.nikr.eve.jeveasset.gui.shared.table.View;
 import net.nikr.eve.jeveasset.gui.shared.table.JViewManagerDialog;
+import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer.TablePaddingControl;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 
 public class JMenuColumns<T extends Enum<T> & EnumTableColumn<Q>, Q> extends JMenu {
 
+	private static final int PADDING_SIZES = 4;
+
 	private JEditColumnsDialog<T, Q> jEditColumnsDialog;
 	private JAutoCompleteDialog<View> jViewSaveDialog;
 	private JViewManagerDialog jViewManagerDialog;
 
-	public JMenuColumns(final Program program, EnumTableFormatAdaptor<T, Q> tableFormatAdaptor, final AbstractTableModel tableModel, final JAutoColumnTable jTable, final String name) {
-		this(program, tableFormatAdaptor, tableModel, jTable, name, true);
+	public JMenuColumns(final Program program, EnumTableFormatAdaptor<T, Q> tableFormatAdaptor, final AbstractTableModel tableModel, final JAutoColumnTable jTable, final TablePaddingControl tablePaddingControl, final String name) {
+		this(program, tableFormatAdaptor, tableModel, jTable, tablePaddingControl, name, true);
 	}
 
-	public JMenuColumns(final Program program, EnumTableFormatAdaptor<T, Q> tableFormatAdaptor, final AbstractTableModel tableModel, final JAutoColumnTable jTable, final String name, final boolean editable) {
+	public JMenuColumns(final Program program, EnumTableFormatAdaptor<T, Q> tableFormatAdaptor, final AbstractTableModel tableModel, final JAutoColumnTable jTable, final TablePaddingControl tablePaddingControl, final String name, final boolean editable) {
 		super(GuiShared.get().tableSettings());
 		JMenuItem jMenuItem;
 		setIcon(Images.TABLE_COLUMN_SHOW.getIcon());
@@ -170,6 +174,42 @@ public class JMenuColumns<T extends Enum<T> & EnumTableColumn<Q>, Q> extends JMe
 				});
 			buttonGroup.add(jRadioButton);
 			add(jRadioButton);
+		}
+
+		if (tablePaddingControl != null) {
+			addSeparator();
+
+			JMenu jPadding = new JMenu(GuiShared.get().tablePadding());
+			jPadding.setIcon(Images.TABLE_COLUMN_RESIZE.getIcon());
+			add(jPadding);
+
+			ButtonGroup paddingButtonGroup = new ButtonGroup();
+			for (int i = 0; i <= PADDING_SIZES; i++) {
+				final int size = i;
+				TablePadding defaultTablePadding = Settings.get().getDefaultTablePaddings().getOrDefault(name, new TablePadding(0));
+				if (size == defaultTablePadding.getTop()) {
+					jRadioButton = new JRadioButtonMenuItem(GuiShared.get().tablePaddingSizeDefault(size), Images.TABLE_COLUMN_RESIZE.getIcon());
+				} else {
+					jRadioButton = new JRadioButtonMenuItem(GuiShared.get().tablePaddingSize(size), Images.TABLE_COLUMN_RESIZE.getIcon());
+				}
+				jRadioButton.setSelected(i == tablePaddingControl.getSize());
+					jRadioButton.addActionListener(new ActionListener() {
+						@Override
+						public void actionPerformed(final ActionEvent e) {
+							jTable.lock();
+							TablePadding tablePadding = new TablePadding(size);
+							boolean update = tablePaddingControl.updateBorder(tablePadding);
+							if (update) {
+								jTable.resetCellWidthCache();
+								Settings.get().getTablePaddings().put(name, tablePadding);
+							}
+							jTable.unlock();
+							program.saveSettings("Changed Table Padding"); //Save Resize Mode
+						}
+					});
+				paddingButtonGroup.add(jRadioButton);
+				jPadding.add(jRadioButton);
+			}
 		}
 	}
 }

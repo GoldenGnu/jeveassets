@@ -267,6 +267,8 @@ public class Settings {
 	private final Map<String, Boolean> currentTableFiltersShown = new HashMap<>();
 	private final Map<String, String> currentTableSorting = new HashMap<>();
 	private final Map<String, List<SimpleColumn>> tableColumns = new HashMap<>();
+	private final Map<String, TablePadding> tablePaddings = new HashMap<>();
+	private final Map<String, TablePadding> defaultTablePaddings = new HashMap<>();
 	//Column Width				Saved by JAutoColumnTable.saveColumnsWidth()
 	//Lock OK
 	private final Map<String, Map<String, Integer>> tableColumnsWidth = new HashMap<>();
@@ -704,6 +706,27 @@ public class Settings {
 
 	public Map<String, List<SimpleColumn>> getTableColumns() {
 		return tableColumns;
+	}
+
+	public Map<String, TablePadding> getTablePaddings() {
+		return tablePaddings;
+	}
+
+	public Map<String, TablePadding> getDefaultTablePaddings() {
+		return defaultTablePaddings;
+	}
+
+	public TablePadding getTablePadding(String name, int defaultPadding) {
+		return getTablePadding(name, new TablePadding(defaultPadding));
+	}
+
+	public TablePadding getTablePadding(String name, int defaultTopPadding, int defaultLeftPadding, int defaultBottomPadding, int defaultRightPadding) {
+		return getTablePadding(name, new TablePadding(defaultTopPadding, defaultLeftPadding, defaultBottomPadding, defaultRightPadding));
+	}
+
+	public TablePadding getTablePadding(String name, TablePadding defaultTablePadding) {
+		defaultTablePaddings.put(name, defaultTablePadding);
+		return tablePaddings.getOrDefault(name, defaultTablePadding);
 	}
 
 	public Map<String, Map<String, Integer>> getTableColumnsWidth() {

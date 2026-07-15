@@ -68,6 +68,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.JSeparatorTable;
 import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
+import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer.TablePaddingControl;
 import net.nikr.eve.jeveasset.gui.shared.table.TableFormatFactory;
 import net.nikr.eve.jeveasset.gui.tabs.reprocessed.ReprocessedSeparatorTableCell.ReprocessedCellAction;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
@@ -183,7 +184,8 @@ public class ReprocessedTab extends JMainTabSecondary {
 		jTable.setSeparatorRenderer(new ReprocessedSeparatorTableCell(this, jTable, separatorList, listener));
 		jTable.setSeparatorEditor(new ReprocessedSeparatorTableCell(this, jTable, separatorList, listener));
 		jTable.setCellSelectionEnabled(true);
-		PaddingTableCellRenderer.install(jTable, 3);
+		//Padding
+		TablePaddingControl tablePaddingControl = PaddingTableCellRenderer.install(jTable, Settings.get().getTablePadding(NAME, 3));
 		//Sorting
 		TableComparatorChooser<ReprocessedInterface> comparatorChooser = TableComparatorChooser.install(jTable, sortedListColumn, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
 		//Selection Model
@@ -197,7 +199,7 @@ public class ReprocessedTab extends JMainTabSecondary {
 		//Table Filter
 		filterControl = new ReprocessedFilterControl(sortedListTotal);
 		//Menu
-		installTableTool(new ReprocessedTableMenu(), tableFormat, comparatorChooser, tableModel, jTable, filterControl, ReprocessedInterface.class);
+		installTableTool(new ReprocessedTableMenu(tablePaddingControl), tableFormat, comparatorChooser, tableModel, jTable, filterControl, ReprocessedInterface.class);
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
@@ -334,6 +336,13 @@ public class ReprocessedTab extends JMainTabSecondary {
 	}
 
 	private class ReprocessedTableMenu implements TableMenu<ReprocessedInterface> {
+
+		private final TablePaddingControl tablePaddingControl;
+
+		public ReprocessedTableMenu(TablePaddingControl tablePaddingControl) {
+			this.tablePaddingControl = tablePaddingControl;
+		}
+
 		@Override
 		public MenuData<ReprocessedInterface> getMenuData() {
 			return new MenuData<>(selectionModel.getSelected());
@@ -346,7 +355,7 @@ public class ReprocessedTab extends JMainTabSecondary {
 
 		@Override
 		public JMenu getColumnMenu() {
-			return new JMenuColumns<>(program, tableFormat, tableModel, jTable, NAME);
+			return new JMenuColumns<>(program, tableFormat, tableModel, jTable, tablePaddingControl, NAME);
 		}
 
 		@Override

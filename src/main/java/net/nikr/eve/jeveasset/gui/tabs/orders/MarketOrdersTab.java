@@ -102,6 +102,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
+import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer.TablePaddingControl;
 import net.nikr.eve.jeveasset.gui.shared.table.TableFormatFactory;
 import net.nikr.eve.jeveasset.gui.tabs.orders.OutbidProcesser.OutbidProcesserInput;
 import net.nikr.eve.jeveasset.gui.tabs.orders.OutbidProcesser.OutbidProcesserOutput;
@@ -263,7 +264,7 @@ public class MarketOrdersTab extends JMainTabPrimary {
 		jTable = new JMarketOrdersTable(program, tableModel);
 		jTable.setCellSelectionEnabled(true);
 		//Padding
-		PaddingTableCellRenderer.install(jTable, 1);
+		TablePaddingControl tablePaddingControl = PaddingTableCellRenderer.install(jTable, Settings.get().getTablePadding(NAME, 1));
 		//Sorting
 		TableComparatorChooser<MyMarketOrder> comparatorChooser = TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
 		//Selection Model
@@ -289,7 +290,7 @@ public class MarketOrdersTab extends JMainTabPrimary {
 		//Table Filter
 		filterControl = new MarketOrdersFilterControl(sortedList);
 		//Menu
-		installTableTool(new OrdersTableMenu(), tableFormat, comparatorChooser, tableModel, jTable, filterControl, MyMarketOrder.class);
+		installTableTool(new OrdersTableMenu(tablePaddingControl), tableFormat, comparatorChooser, tableModel, jTable, filterControl, MyMarketOrder.class);
 
 		updateDates();
 
@@ -610,6 +611,12 @@ public class MarketOrdersTab extends JMainTabPrimary {
 
 	private class OrdersTableMenu implements TableMenu<MyMarketOrder> {
 
+		private final TablePaddingControl tablePaddingControl;
+
+		public OrdersTableMenu(TablePaddingControl tablePaddingControl) {
+			this.tablePaddingControl = tablePaddingControl;
+		}
+
 		@Override
 		public MenuData<MyMarketOrder> getMenuData() {
 			return new MenuData<>(selectionModel.getSelected());
@@ -622,7 +629,7 @@ public class MarketOrdersTab extends JMainTabPrimary {
 
 		@Override
 		public JMenu getColumnMenu() {
-			return new JMenuColumns<>(program, tableFormat, tableModel, jTable, NAME);
+			return new JMenuColumns<>(program, tableFormat, tableModel, jTable, tablePaddingControl, NAME);
 		}
 
 		@Override
