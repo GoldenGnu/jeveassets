@@ -36,6 +36,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.my.MySkill;
+import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.types.LocationType;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTabPrimary;
@@ -47,6 +48,8 @@ import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
+import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
+import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer.TablePaddingControl;
 import net.nikr.eve.jeveasset.gui.shared.table.TableFormatFactory;
 import net.nikr.eve.jeveasset.i18n.TabsSkills;
 
@@ -89,6 +92,8 @@ public class SkillsTab extends JMainTabPrimary {
 		jTable.setCellSelectionEnabled(true);
 		jTable.setRowSelectionAllowed(true);
 		jTable.setColumnSelectionAllowed(true);
+		//Padding
+		TablePaddingControl tablePaddingControl = PaddingTableCellRenderer.install(jTable, Settings.get().getTablePadding(NAME, 0));
 		//Sorting
 		TableComparatorChooser<MySkill> comparatorChooser = TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
 		//Selection Model
@@ -103,7 +108,7 @@ public class SkillsTab extends JMainTabPrimary {
 		//Table Filter
 		filterControl = new SkillsFilterControl(sortedList);
 		//Menu
-		installTableTool(new SkillsTableMenu(), tableFormat, comparatorChooser, tableModel, jTable, filterControl, MySkill.class);
+		installTableTool(new SkillsTableMenu(tablePaddingControl), tableFormat, comparatorChooser, tableModel, jTable, filterControl, MySkill.class);
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()
@@ -129,6 +134,13 @@ public class SkillsTab extends JMainTabPrimary {
 	}
 
 	private class SkillsTableMenu implements TableMenu<MySkill> {
+
+		private final TablePaddingControl tablePaddingControl;
+
+		public SkillsTableMenu(TablePaddingControl tablePaddingControl) {
+			this.tablePaddingControl = tablePaddingControl;
+		}
+
 		@Override
 		public MenuData<MySkill> getMenuData() {
 			return new MenuData<>(selectionModel.getSelected());
@@ -141,7 +153,7 @@ public class SkillsTab extends JMainTabPrimary {
 
 		@Override
 		public JMenu getColumnMenu() {
-			return new JMenuColumns<>(program, tableFormat, tableModel, jTable, NAME);
+			return new JMenuColumns<>(program, tableFormat, tableModel, jTable, tablePaddingControl, NAME);
 		}
 
 		@Override

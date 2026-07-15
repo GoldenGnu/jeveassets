@@ -80,6 +80,8 @@ import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
+import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
+import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer.TablePaddingControl;
 import net.nikr.eve.jeveasset.gui.shared.table.TableFormatFactory;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.HierarchyColumn;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewTab;
@@ -216,6 +218,8 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate {
 		jTable.disableColumnResizeCache(TreeTableFormat.NAME);
 		jTable.setRowHeight(22);
 		jTable.addMouseListener(listener);
+		//Padding
+		TablePaddingControl tablePaddingControl = PaddingTableCellRenderer.install(jTable, Settings.get().getTablePadding(NAME, 0));
 		//Sorting
 		TableComparatorChooser<TreeAsset> comparatorChooser = TableComparatorChooser.install(jTable, emptySortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
 		comparatorChooser.addSortActionListener(new ListenerSorter());
@@ -238,7 +242,7 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate {
 		//Table Filter
 		filterControl = new TreeFilterControl();
 		//Menu
-		installTableTool(new TreeTableMenu(), tableFormat, comparatorChooser, tableModel, jTable, filterControl, TreeAsset.class);
+		installTableTool(new TreeTableMenu(tablePaddingControl), tableFormat, comparatorChooser, tableModel, jTable, filterControl, TreeAsset.class);
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()
@@ -403,6 +407,13 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate {
 	}
 
 	private class TreeTableMenu implements TableMenu<TreeAsset> {
+
+		private final TablePaddingControl tablePaddingControl;
+
+		public TreeTableMenu(TablePaddingControl tablePaddingControl) {
+			this.tablePaddingControl = tablePaddingControl;
+		}
+
 		@Override
 		public MenuData<TreeAsset> getMenuData() {
 			return new AssetMenuData<>(selectionModel.getSelected());
@@ -415,7 +426,7 @@ public class TreeTab extends JMainTabSecondary implements TagUpdate {
 
 		@Override
 		public JMenu getColumnMenu() {
-			return new JMenuColumns<>(program, tableFormat, tableModel, jTable, NAME);
+			return new JMenuColumns<>(program, tableFormat, tableModel, jTable, tablePaddingControl, NAME);
 		}
 
 		@Override

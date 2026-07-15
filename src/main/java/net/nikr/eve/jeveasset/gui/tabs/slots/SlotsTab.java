@@ -58,6 +58,7 @@ import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.types.LocationType;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel.JStatusLabel;
@@ -76,6 +77,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
+import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer.TablePaddingControl;
 import net.nikr.eve.jeveasset.gui.shared.table.TableFormatFactory;
 import net.nikr.eve.jeveasset.i18n.TabsSlots;
 
@@ -159,7 +161,8 @@ public class SlotsTab extends JMainTabSecondary {
 		jTable.setColumnSelectionAllowed(true);
 		iconHeaderRender = new IconHeaderRender(jTable);
 		jTable.getTableHeader().setDefaultRenderer(iconHeaderRender);
-		PaddingTableCellRenderer.install(jTable, 3);
+		//Padding
+		TablePaddingControl tablePaddingControl = PaddingTableCellRenderer.install(jTable, Settings.get().getTablePadding(NAME, 3));
 		//Sorting
 		TableComparatorChooser<Slots> comparatorChooser = TableComparatorChooser.install(jTable, columnSortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
 		//Selection Model
@@ -173,7 +176,7 @@ public class SlotsTab extends JMainTabSecondary {
 		//Table Filter
 		filterControl = new SlotsFilterControl(totalSortedList);
 		//Menu
-		installTableTool(new SlotsTableMenu(), tableFormat, comparatorChooser, tableModel, jTable, filterControl, Slots.class);
+		installTableTool(new SlotsTableMenu(tablePaddingControl), tableFormat, comparatorChooser, tableModel, jTable, filterControl, Slots.class);
 
 		JFixedToolBar jToolBar = new JFixedToolBar();
 
@@ -320,6 +323,13 @@ public class SlotsTab extends JMainTabSecondary {
 	}
 
 	private class SlotsTableMenu implements TableMenu<Slots> {
+
+		private final TablePaddingControl tablePaddingControl;
+
+		public SlotsTableMenu(TablePaddingControl tablePaddingControl) {
+			this.tablePaddingControl = tablePaddingControl;
+		}
+
 		@Override
 		public MenuData<Slots> getMenuData() {
 			return new MenuData<>(selectionModel.getSelected());
@@ -332,7 +342,7 @@ public class SlotsTab extends JMainTabSecondary {
 
 		@Override
 		public JMenu getColumnMenu() {
-			return new JMenuColumns<>(program, tableFormat, tableModel, jTable, NAME);
+			return new JMenuColumns<>(program, tableFormat, tableModel, jTable, tablePaddingControl, NAME);
 		}
 
 		@Override
