@@ -41,6 +41,7 @@ import net.nikr.eve.jeveasset.data.settings.RouteAvoidSettings;
 import net.nikr.eve.jeveasset.data.settings.RoutingSettings;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.StockpileGroupSettings;
+import net.nikr.eve.jeveasset.data.settings.TablePadding;
 import net.nikr.eve.jeveasset.data.settings.TrackerSettings;
 import net.nikr.eve.jeveasset.data.settings.UserItem;
 import net.nikr.eve.jeveasset.data.settings.tag.Tag;
@@ -932,6 +933,31 @@ public abstract class FakeSettings extends Settings {
 
 	@Override
 	public Set<Save> getSave() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public TablePadding getTablePadding(String name, TablePadding defaultTablePadding) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public TablePadding getTablePadding(String name, int defaultTopPadding, int defaultLeftPadding, int defaultBottomPadding, int defaultRightPadding) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public TablePadding getTablePadding(String name, int defaultPadding) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public Map<String, TablePadding> getDefaultTablePaddings() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public Map<String, TablePadding> getTablePaddings() {
 		throw new UnsupportedOperationException("not implemented");
 	}
 }
