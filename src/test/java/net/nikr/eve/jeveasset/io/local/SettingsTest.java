@@ -481,6 +481,7 @@ public class SettingsTest extends TestUtil {
 		test(settings, Function.SET_WINDOW_LOCATION);
 		test(settings, Function.SET_WINDOW_MAXIMIZED);
 		test(settings, Function.SET_WINDOW_SIZE);
+		test(settings, Function.ADD_SAVES);
 		test(settings);
 	}
 
@@ -503,6 +504,7 @@ public class SettingsTest extends TestUtil {
 		test(settings, Function.SET_WINDOW_LOCATION);
 		test(settings, Function.SET_WINDOW_MAXIMIZED);
 		test(settings, Function.SET_WINDOW_SIZE);
+		test(settings, Function.ADD_SAVES);
 		test(settings);
 	}
 
@@ -525,6 +527,7 @@ public class SettingsTest extends TestUtil {
 		test(settings, Function.SET_WINDOW_LOCATION);
 		test(settings, Function.SET_WINDOW_MAXIMIZED);
 		test(settings, Function.SET_WINDOW_SIZE);
+		test(settings, Function.ADD_SAVES);
 		test(settings);
 	}
 
@@ -550,6 +553,7 @@ public class SettingsTest extends TestUtil {
 		test(settings, Function.SET_WINDOW_LOCATION);
 		test(settings, Function.SET_WINDOW_MAXIMIZED);
 		test(settings, Function.SET_WINDOW_SIZE);
+		test(settings, Function.ADD_SAVES);
 		test(settings);
 	}
 
@@ -573,6 +577,7 @@ public class SettingsTest extends TestUtil {
 		test(settings, Function.SET_WINDOW_LOCATION);
 		test(settings, Function.SET_WINDOW_MAXIMIZED);
 		test(settings, Function.SET_WINDOW_SIZE);
+		test(settings, Function.ADD_SAVES);
 		test(settings);
 	}
 
@@ -596,6 +601,7 @@ public class SettingsTest extends TestUtil {
 		test(settings, Function.SET_WINDOW_LOCATION);
 		test(settings, Function.SET_WINDOW_MAXIMIZED);
 		test(settings, Function.SET_WINDOW_SIZE);
+		test(settings, Function.ADD_SAVES);
 		test(settings);
 	}
 
@@ -621,6 +627,7 @@ public class SettingsTest extends TestUtil {
 		test(settings, Function.SET_WINDOW_LOCATION);
 		test(settings, Function.SET_WINDOW_MAXIMIZED);
 		test(settings, Function.SET_WINDOW_SIZE);
+		test(settings, Function.ADD_SAVES);
 		test(settings);
 	}
 
@@ -645,6 +652,7 @@ public class SettingsTest extends TestUtil {
 		test(settings, Function.SET_WINDOW_LOCATION);
 		test(settings, Function.SET_WINDOW_MAXIMIZED);
 		test(settings, Function.SET_WINDOW_SIZE);
+		test(settings, Function.ADD_SAVES);
 		test(settings);
 	}
 
@@ -669,6 +677,7 @@ public class SettingsTest extends TestUtil {
 		test(settings, Function.SET_WINDOW_LOCATION);
 		test(settings, Function.SET_WINDOW_MAXIMIZED);
 		test(settings, Function.SET_WINDOW_SIZE);
+		test(settings, Function.ADD_SAVES);
 		test(settings);
 	}
 
@@ -697,6 +706,7 @@ public class SettingsTest extends TestUtil {
 		test(settings, Function.SET_WINDOW_SIZE);
 		test(settings, Function.SET_TRANSACTION_PROFIT_PRICE);
 		test(settings, Function.SET_TRANSACTION_PROFIT_MARGIN);
+		test(settings, Function.ADD_SAVES);
 		test(settings);
 	}
 
@@ -708,7 +718,6 @@ public class SettingsTest extends TestUtil {
 		test(settings, Function.GET_EXPORT_SETTINGS);
 		test(settings, Function.GET_FLAGS);
 		test(settings, Function.GET_OVERVIEW_GROUPS);
-		test(settings, Function.GET_OWNERS);
 		test(settings, Function.GET_PRICE_DATA_SETTINGS);
 		test(settings, Function.GET_STOCKPILES);
 		test(settings, Function.GET_TABLE_COLUMNS);
@@ -728,6 +737,8 @@ public class SettingsTest extends TestUtil {
 		test(settings, Function.SET_WINDOW_SIZE);
 		test(settings, Function.SET_TRANSACTION_PROFIT_PRICE);
 		test(settings, Function.SET_TRANSACTION_PROFIT_MARGIN);
+		test(settings, Function.ADD_SAVES);
+		test(settings, Function.ADD_SAVE);
 		test(settings);
 	}
 
@@ -739,7 +750,6 @@ public class SettingsTest extends TestUtil {
 		test(settings, Function.GET_EXPORT_SETTINGS);
 		test(settings, Function.GET_FLAGS);
 		test(settings, Function.GET_OVERVIEW_GROUPS);
-		test(settings, Function.GET_OWNERS);
 		test(settings, Function.GET_PRICE_DATA_SETTINGS);
 		test(settings, Function.GET_STOCKPILES);
 		test(settings, Function.GET_TABLE_COLUMNS);
@@ -759,6 +769,8 @@ public class SettingsTest extends TestUtil {
 		test(settings, Function.SET_WINDOW_SIZE);
 		test(settings, Function.SET_TRANSACTION_PROFIT_PRICE);
 		test(settings, Function.SET_TRANSACTION_PROFIT_MARGIN);
+		test(settings, Function.ADD_SAVES);
+		test(settings, Function.ADD_SAVE);
 		test(settings);
 	}
 
@@ -770,7 +782,6 @@ public class SettingsTest extends TestUtil {
 		test(settings, Function.GET_EXPORT_SETTINGS);
 		test(settings, Function.GET_FLAGS);
 		test(settings, Function.GET_OVERVIEW_GROUPS);
-		test(settings, Function.GET_OWNERS);
 		test(settings, Function.GET_PRICE_DATA_SETTINGS);
 		test(settings, Function.GET_STOCKPILES);
 		test(settings, Function.GET_TABLE_COLUMNS);
@@ -794,6 +805,8 @@ public class SettingsTest extends TestUtil {
 		test(settings, Function.SET_WINDOW_SIZE);
 		test(settings, Function.SET_TRANSACTION_PROFIT_PRICE);
 		test(settings, Function.SET_TRANSACTION_PROFIT_MARGIN);
+		test(settings, Function.ADD_SAVES);
+		test(settings, Function.ADD_SAVE);
 		test(settings);
 	}
 
@@ -811,7 +824,6 @@ public class SettingsTest extends TestUtil {
 		testFail(settings, Function.GET_EXPORT_SETTINGS);
 		testFail(settings, Function.GET_FLAGS);
 		testFail(settings, Function.GET_OVERVIEW_GROUPS);
-		testFail(settings, Function.GET_OWNERS);
 		testFail(settings, Function.GET_PRICE_DATA_SETTINGS);
 		testFail(settings, Function.GET_STOCKPILES);
 		testFail(settings, Function.GET_TABLE_COLUMNS);

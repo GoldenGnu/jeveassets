@@ -27,7 +27,7 @@ import java.util.Set;
 import net.nikr.eve.jeveasset.TestUtil;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.data.api.accounts.OwnerType;
-import net.nikr.eve.jeveasset.data.settings.Settings;
+import net.nikr.eve.jeveasset.data.settings.SQLiteSettings;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -50,14 +50,14 @@ public class EsiNameGetterOnlineTest extends TestUtil {
 			owners.add(esiOwner);
 		}
 
-		Settings.get().getOwners().clear();
+		SQLiteSettings.clearOwners();
 
 		EsiNameGetter esiNameGetter = new EsiNameGetter(null, owners);
 		esiNameGetter.run();
 
 		for (Long id : ids) {
-			Assert.assertNotNull(id + " not set", Settings.get().getOwners().get(id));
-			Assert.assertFalse(id + " is empty", Settings.get().getOwners().get(id).isEmpty());
+			Assert.assertNotNull(id + " not set", SQLiteSettings.getOwner(id));
+			Assert.assertFalse(id + " is empty", SQLiteSettings.getOwner(id).isEmpty());
 		}
 	}
 }
