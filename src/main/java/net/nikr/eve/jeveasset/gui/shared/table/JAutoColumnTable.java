@@ -98,7 +98,7 @@ public class JAutoColumnTable extends JTable {
 	private ResizeMode resizeMode = null;
 	private boolean loadingWidth = false;
 	private final Map<String, Integer> columnsWidth = new HashMap<>();
-	private final Map<Object, Integer> rowsWidth = new HashMap<>();
+	private final Map<Object, Integer> cellWidth = new HashMap<>();
 	protected Program program;
 	private boolean autoResizeLock = false;
 	private final Set<String> disableColumnResizeCache = new HashSet<>();
@@ -357,6 +357,11 @@ public class JAutoColumnTable extends JTable {
 		}
 	}
 
+	public void resetCellWidthCache() {
+		cellWidth.clear();
+		columnsWidth.clear();
+	}
+
 	private void resizeColumnsText() {
 		size = 0;
 		if (resizeMode != ResizeMode.TEXT) {
@@ -440,7 +445,7 @@ public class JAutoColumnTable extends JTable {
 			}
 			Integer savedWidth;
 			if (useCache) {
-				savedWidth = rowsWidth.get(cellValue);
+				savedWidth = cellWidth.get(cellValue);
 			} else {
 				savedWidth = null;
 			}
@@ -457,7 +462,7 @@ public class JAutoColumnTable extends JTable {
 				component = renderer.getTableCellRendererComponent(jTable, jTable.getValueAt(rowIndex, columnIndex), false, false, rowIndex, columnIndex);
 				int width = component.getPreferredSize().width;
 				if (useCache) {
-					rowsWidth.put(cellValue, width);
+					cellWidth.put(cellValue, width);
 				}
 				maxWidth = Math.max(maxWidth, width);
 			}
@@ -492,7 +497,7 @@ public class JAutoColumnTable extends JTable {
 		private boolean columnResized = false;
 		private int from = 0;
 		private int to = 0;
-		private int rowsLastTime = 0;
+		private int rowsLastTime = getRowCount();
 		private int rowsCount = 0;
 
 		@Override
