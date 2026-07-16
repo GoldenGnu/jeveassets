@@ -497,7 +497,7 @@ public class JAutoColumnTable extends JTable {
 		private boolean columnResized = false;
 		private int from = 0;
 		private int to = 0;
-		private int rowsLastTime = 0;
+		private int rowsLastTime = getRowCount();
 		private int rowsCount = 0;
 
 		@Override
