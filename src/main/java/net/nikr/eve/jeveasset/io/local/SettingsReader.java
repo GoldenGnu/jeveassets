@@ -252,8 +252,10 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		//Manufacturing Prices
 		Element manufacturingElement = getNodeOptional(element, "manufacturing");
 		if (manufacturingElement != null) {
-			parseManufacturingPriceSettings(manufacturingElement, settings);
-			settings.addSave(Save.SETTINGS); //Moved SQLite
+			boolean save = parseManufacturingPriceSettings(manufacturingElement, settings);
+			if (save) {
+				settings.addSave(Save.SETTINGS); //Manufacturing prices and system index moved SQLite
+			}
 		}
 
 		//Price History
@@ -319,7 +321,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		//Owners
 		Element ownersElement = getNodeOptional(element, "owners");
 		if (ownersElement != null) {
-			parseOwners(ownersElement, settings);
+			parseOwners(ownersElement);
 			settings.addSave(Save.SETTINGS); //Moved SQLite
 		}
 
@@ -417,7 +419,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		//Eve Item Names
 		Element eveNameElement = getNodeOptional(element, "evenames");
 		if (eveNameElement != null) {
-			parseEveNames(eveNameElement, settings);
+			parseEveNames(eveNameElement);
 			settings.addSave(Save.SETTINGS); //Moved SQLite
 		}
 
@@ -544,7 +546,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		}
 	}
 
-	private void parseOwners(final Element element, final Settings settings) throws XmlException {
+	private void parseOwners(final Element element) throws XmlException {
 		long ONE_DAY = 1000 * 60 * 60 * 24;
 		NodeList ownerNodeList = element.getElementsByTagName("owner");
 		int count = 1;
@@ -566,7 +568,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			names.put(ownerID, ownerName);
 			nextUpdates.put(ownerID, date);
 		}
-		SQLiteSettings.setOwners(names);
+		SQLiteSettings.addOwners(names);
 		SQLiteSettings.setOwnerNextUpdate(nextUpdates);
 	}
 
@@ -705,7 +707,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		settings.setStockpileColorGroup3(group3);
 	}
 
-	private void parseManufacturingPriceSettings(Element manufacturingElement, Settings settings) throws XmlException {
+	private boolean parseManufacturingPriceSettings(Element manufacturingElement, Settings settings) throws XmlException {
 		ManufacturingSettings manufacturingSettings = settings.getManufacturingSettings();
 		Date nextUpdate = getDate(manufacturingElement, "nextupdate");
 		ManufacturingFacility facility;
@@ -756,6 +758,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			manufacturingSystems.put(systemID, index);
 		}
 		SQLiteSettings.setManufacturingSystemIndex(manufacturingSystems);
+		return !manufacturingPrices.isEmpty() || !manufacturingSystems.isEmpty();
 	}
 
 	private void parsePriceHistorySettings(Element priceHistoryElement, Settings settings) throws XmlException {
@@ -1109,7 +1112,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		}
 	}
 
-	private void parseEveNames(final Element element, final Settings settings) throws XmlException {
+	private void parseEveNames(final Element element) throws XmlException {
 		Map<Long, String> data = new HashMap<>();
 		NodeList eveNameNodes = element.getElementsByTagName("evename");
 		for (int i = 0; i < eveNameNodes.getLength(); i++) {
@@ -1118,7 +1121,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			long itemId = getLong(currentNode, "itemid");
 			data.put(itemId, name);
 		}
-		SQLiteSettings.setEveNames(data);
+		SQLiteSettings.addEveNames(data);
 	}
 
 	private void parsePriceDataSettings(final Element element, final Settings settings) throws XmlException {

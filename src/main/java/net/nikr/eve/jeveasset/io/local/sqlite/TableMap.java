@@ -82,12 +82,16 @@ public abstract class TableMap<K,V> extends SQLiteTable {
 	
 	private void load() {
 		try {
-			if (!tableExist(getConnection(), table.getTableName())) {
-				createTable(getConnection());
-			}
+			create();
 			data = select(getConnection());
 		} catch (SQLException ex) {
 			logError(ex);
+		}
+	}
+
+	private void create() throws SQLException {
+		if (!tableExist(getConnection(), table.getTableName())) {
+			createTable(getConnection());
 		}
 	}
 
@@ -105,13 +109,27 @@ public abstract class TableMap<K,V> extends SQLiteTable {
 		}
 		try {
 			this.data = data;
+			deleteAll();
+			create();
 			insert(getConnection(), data);
 		} catch (SQLException ex) {
 			logError(ex);
 		}
 	}
 
-	public void put(K key, V value) {
+	public void add(Map<K,V> data) {
+		if (data == null || data.isEmpty()) {
+			return;
+		}
+		try {
+			this.data.putAll(data);
+			insert(getConnection(), data);
+		} catch (SQLException ex) {
+			logError(ex);
+		}
+	}
+
+	public void add(K key, V value) {
 		if (key == null || value == null) {
 			return;
 		}
