@@ -7558,17 +7558,17 @@
         <material id="39" portionsize="1" quantity="2"/>
         <material id="40" portionsize="1" quantity="2"/>
     </row>
-    <row category="Implant" group="Cyber Missile" id="3149" marketgroup="true" meta="0" name="Hardwiring - Zainou 'Sharpshooter' ZMX11" pi="false" portion="1" price="200000" product="0" tech="Tech I" volume="1.0">
+    <row category="Implant" group="Cyber Missile" id="3149" marketgroup="true" meta="0" name="Zainou 'Snapshot' XL Torpedoes XT-602" pi="false" portion="1" price="200000" product="0" tech="Tech I" volume="1.0">
         <material id="38" portionsize="1" quantity="1"/>
         <material id="39" portionsize="1" quantity="1"/>
         <material id="40" portionsize="1" quantity="1"/>
     </row>
-    <row category="Implant" group="Cyber Missile" id="3150" marketgroup="true" meta="0" name="Hardwiring - Zainou 'Sharpshooter' ZMX110" pi="false" portion="1" price="200000" product="0" tech="Tech I" volume="1.0">
+    <row category="Implant" group="Cyber Missile" id="3150" marketgroup="true" meta="0" name="Zainou 'Snapshot' XL Torpedoes XT-604" pi="false" portion="1" price="200000" product="0" tech="Tech I" volume="1.0">
         <material id="38" portionsize="1" quantity="1"/>
         <material id="39" portionsize="1" quantity="1"/>
         <material id="40" portionsize="1" quantity="1"/>
     </row>
-    <row category="Implant" group="Cyber Missile" id="3151" marketgroup="true" meta="0" name="Hardwiring - Zainou 'Sharpshooter' ZMX1100" pi="false" portion="1" price="200000" product="0" tech="Tech I" volume="1.0">
+    <row category="Implant" group="Cyber Missile" id="3151" marketgroup="true" meta="0" name="Zainou 'Snapshot' XL Torpedoes XT-606" pi="false" portion="1" price="200000" product="0" tech="Tech I" volume="1.0">
         <material id="38" portionsize="1" quantity="1"/>
         <material id="39" portionsize="1" quantity="1"/>
         <material id="40" portionsize="1" quantity="1"/>
@@ -47229,9 +47229,21 @@
     </row>
     <row capacity="27500.0" category="Celestial" group="Wreck" id="27202" marketgroup="false" meta="0" name="Convoy Wreck" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="27500.0"/>
     <row category="Commodity" group="Livestock" id="27203" marketgroup="false" meta="0" name="Production Assistant" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="3.0"/>
-    <row category="Implant" group="Cyber Missile" id="27204" marketgroup="false" meta="0" name="Hardwiring - Zainou 'Sharpshooter' ZMX100" pi="false" portion="1" price="200000" product="0" tech="Tech I" volume="1.0"/>
-    <row category="Implant" group="Cyber Missile" id="27205" marketgroup="false" meta="0" name="Hardwiring - Zainou 'Sharpshooter' ZMX1000" pi="false" portion="1" price="200000" product="0" tech="Tech I" volume="1.0"/>
-    <row category="Implant" group="Cyber Missile" id="27206" marketgroup="false" meta="0" name="Hardwiring - Zainou 'Sharpshooter' ZMX10" pi="false" portion="1" price="200000" product="0" tech="Tech I" volume="1.0"/>
+    <row category="Implant" group="Cyber Missile" id="27204" marketgroup="true" meta="0" name="Zainou 'Snapshot' XL Torpedoes XT-603" pi="false" portion="1" price="200000" product="0" tech="Tech I" volume="1.0">
+        <material id="38" portionsize="1" quantity="1"/>
+        <material id="39" portionsize="1" quantity="1"/>
+        <material id="40" portionsize="1" quantity="1"/>
+    </row>
+    <row category="Implant" group="Cyber Missile" id="27205" marketgroup="true" meta="0" name="Zainou 'Snapshot' XL Torpedoes XT-605" pi="false" portion="1" price="200000" product="0" tech="Tech I" volume="1.0">
+        <material id="38" portionsize="1" quantity="1"/>
+        <material id="39" portionsize="1" quantity="1"/>
+        <material id="40" portionsize="1" quantity="1"/>
+    </row>
+    <row category="Implant" group="Cyber Missile" id="27206" marketgroup="true" meta="0" name="Zainou 'Snapshot' XL Torpedoes XT-601" pi="false" portion="1" price="200000" product="0" tech="Tech I" volume="1.0">
+        <material id="38" portionsize="1" quantity="1"/>
+        <material id="39" portionsize="1" quantity="1"/>
+        <material id="40" portionsize="1" quantity="1"/>
+    </row>
     <row category="Implant" group="Cyber Engineering" id="27223" marketgroup="false" meta="0" name="Inherent Implants 'Sergeant' XE4" pi="false" portion="1" price="200000" product="0" tech="Tech I" volume="1.0"/>
     <row category="Implant" group="Cyber Electronic Systems" id="27224" marketgroup="true" meta="0" name="Zainou 'Gypsy' Target Painting TG-903" pi="false" portion="1" price="200000" product="0" tech="Tech I" volume="1.0">
         <material id="38" portionsize="1" quantity="2"/>
@@ -104280,7 +104292,7 @@
         <material id="40" portionsize="200" quantity="1"/>
         <material id="16275" portionsize="200" quantity="1"/>
     </row>
-    <row category="Blueprint" group="Structure Area Denial Ammo Blueprint" id="63196" marketgroup="true" meta="0" name="Standup Flak Round Blueprint" pi="false" portion="1" price="5000000" product="63195" productquantity="200" tech="Tech I" volume="0.01">
+    <row category="Blueprint" group="Structure Area Denial Ammo Blueprint" id="63196" marketgroup="true" meta="0" name="Standup Flak Round I Blueprint" pi="false" portion="1" price="5000000" product="63195" productquantity="200" tech="Tech I" volume="0.01">
         <mfg id="40" q="200"/>
         <mfg id="16275" q="200"/>
         <mfg id="35" q="40000"/>
