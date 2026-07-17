@@ -65,12 +65,12 @@ public class SQLiteSettings {
 		return EVE_NAMES.get(itemID);
 	}
 
-	public static synchronized void putEveName(Long itemId, String name) {
-		EVE_NAMES.put(itemId, name);
+	public static synchronized void addEveName(Long itemId, String name) {
+		EVE_NAMES.add(itemId, name);
 	}
 
-	public static synchronized void setEveNames(Map<Long, String> data) {
-		EVE_NAMES.set(data);
+	public static synchronized void addEveNames(Map<Long, String> data) {
+		EVE_NAMES.add(data);
 	}
 
 	public static synchronized void removeEveName(Long itemID) {
@@ -85,8 +85,8 @@ public class SQLiteSettings {
 		OWNER_NAMES.deleteAll();
 	}
 
-	public static synchronized void setOwners(Map<Long, String> names) {
-		OWNER_NAMES.set(names);
+	public static synchronized void addOwners(Map<Long, String> names) {
+		OWNER_NAMES.add(names);
 	}
 
 	public static synchronized void setOwnerNextUpdate(Map<Long, Date> dates) {

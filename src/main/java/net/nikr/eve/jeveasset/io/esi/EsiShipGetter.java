@@ -93,7 +93,7 @@ public class EsiShipGetter extends AbstractEsiGetter {
 			//Remove active ship children from root
 			owner.removeAssets(activeShipChildren);
 			//Save ship name
-			SQLiteSettings.putEveName(shipType.getShipItemId(), shipType.getShipName());
+			SQLiteSettings.addEveName(shipType.getShipItemId(), shipType.getShipName());
 		}
 		//Active Ship - Must be after getEveNames is updated
 		owner.setActiveShip(EsiConverter.toActiveShip(shipType, shipLocation));
