@@ -82,7 +82,7 @@ public class EsiNameGetter extends AbstractEsiGetter {
 			for (NamesResponse lookup : entry.getValue()) {
 				names.put((long) lookup.getId(), lookup.getName());
 			}
-			SQLiteSettings.setOwners(names);
+			SQLiteSettings.addOwners(names);
 			retries.removeAll(entry.getKey());
 		}
 		Map<Set<Long>, List<NamesResponse>> retryResponses = updateList(splitSet(retries, 1), DEFAULT_RETRIES, new ListHandler<Set<Long>, List<NamesResponse>>() {
@@ -115,7 +115,7 @@ public class EsiNameGetter extends AbstractEsiGetter {
 				dates.put((long)lookup.getId(), date);
 			}
 		}
-		SQLiteSettings.setOwners(names);
+		SQLiteSettings.addOwners(names);
 		SQLiteSettings.setOwnerNextUpdate(dates);
 	}
 

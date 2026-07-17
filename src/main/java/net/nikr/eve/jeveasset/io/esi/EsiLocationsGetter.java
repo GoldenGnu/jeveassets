@@ -63,7 +63,7 @@ public class EsiLocationsGetter extends AbstractEsiGetter {
 						final long itemID = response.getItemId();
 						final String eveName = response.getName();
 						if (!eveName.isEmpty()) { //Set name
-							SQLiteSettings.putEveName(itemID, eveName);
+							SQLiteSettings.addEveName(itemID, eveName);
 							MyAsset asset = iDs.get(itemID);
 							if (asset.getItem().getCategory().equals(Item.CATEGORY_STRUCTURE)) {
 								CitadelGetter.set(new Citadel(asset.getItemID(), eveName, asset.getLocationID(), false, true, CitadelSource.ESI_LOCATIONS));
@@ -91,7 +91,7 @@ public class EsiLocationsGetter extends AbstractEsiGetter {
 						final long itemID = response.getItemId();
 						final String eveName = response.getName();
 						if (!eveName.isEmpty()) { //Set name
-							SQLiteSettings.putEveName(itemID, eveName);
+							SQLiteSettings.addEveName(itemID, eveName);
 							MyAsset asset = iDs.get(itemID);
 							if (asset.getItem().getCategory().equals(Item.CATEGORY_STRUCTURE)) {
 								CitadelGetter.set(new Citadel(asset.getItemID(), eveName, asset.getLocationID(), false, true, CitadelSource.ESI_LOCATIONS));
