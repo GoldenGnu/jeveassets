@@ -153,10 +153,12 @@ public class MyNpcStanding extends RawNpcStanding implements Comparable<MyNpcSta
 
 	public void setFactionName(String factionName) {
 		this.factionName = factionName;
+		this.factionTextIcon = null;
 	}
 
 	public void setCorporationName(String corporationName) {
 		this.corporationName = corporationName;
+		this.corporationTextIcon = null;
 	}
 
 	public void updateSkills() {
