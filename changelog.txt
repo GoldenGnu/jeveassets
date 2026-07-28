@@ -16,6 +16,25 @@
                   #### #  # #  # #  # #### #### #### #### ####
 
 ________________________________________________________________________________
+_8.2.0__________________________________________________________________________
+
+New Features:
+-Stockpile blueprint materials
+-Added edit and delete buttons to stockpile items in the table
+-Save sorting and columns with filters
+-Added option to change table padding for most tools
+
+Changed:
+-Use the '∑' icon for stockpile totals
+
+Bug Fixes:
+-Import/export stockpile didn't include groups
+-Table auto column resize did not work reliably
+
+Code:
+-Moved voluminous settings to sql and stockpiles to a separate file
+
+________________________________________________________________________________
 _8.1.2__________________________________________________________________________
 
 Bug Fixes:
