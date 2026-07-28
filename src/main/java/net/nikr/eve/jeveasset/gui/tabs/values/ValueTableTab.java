@@ -46,6 +46,7 @@ import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JFixedToolBar;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTabSecondary;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
+import net.nikr.eve.jeveasset.gui.shared.filter.FilterSettings;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuColumns;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
@@ -54,6 +55,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
+import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer.TablePaddingControl;
 import net.nikr.eve.jeveasset.gui.shared.table.TableFormatFactory;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerSkillPointFilter;
 import net.nikr.eve.jeveasset.i18n.TabsValues;
@@ -116,7 +118,8 @@ public class ValueTableTab extends JMainTabSecondary {
 		jTable.setCellSelectionEnabled(true);
 		jTable.setRowSelectionAllowed(true);
 		jTable.setColumnSelectionAllowed(true);
-		PaddingTableCellRenderer.install(jTable, 3);
+		//Padding
+		TablePaddingControl tablePaddingControl = PaddingTableCellRenderer.install(jTable, Settings.get().getTablePadding(NAME, 3));
 		//Sorting
 		TableComparatorChooser<Value> comparatorChooser = TableComparatorChooser.install(jTable, columnSortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
 		//Selection Model
@@ -130,7 +133,7 @@ public class ValueTableTab extends JMainTabSecondary {
 		//Table Filter
 		filterControl = new ValueFilterControl(totalSortedList);
 		//Menu
-		installTableTool(new ValueTableMenu(), tableFormat, comparatorChooser, tableModel, jTable, filterControl, Value.class);
+		installTableTool(new ValueTableMenu(tablePaddingControl), tableFormat, comparatorChooser, tableModel, jTable, filterControl, Value.class);
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()
@@ -191,6 +194,13 @@ public class ValueTableTab extends JMainTabSecondary {
 	}
 
 	private class ValueTableMenu implements TableMenu<Value> {
+
+		private final TablePaddingControl tablePaddingControl;
+
+		public ValueTableMenu(TablePaddingControl tablePaddingControl) {
+			this.tablePaddingControl = tablePaddingControl;
+		}
+
 		@Override
 		public MenuData<Value> getMenuData() {
 			return new MenuData<>(selectionModel.getSelected());
@@ -203,7 +213,7 @@ public class ValueTableTab extends JMainTabSecondary {
 
 		@Override
 		public JMenu getColumnMenu() {
-			return new JMenuColumns<>(program, tableFormat, tableModel, jTable, NAME);
+			return new JMenuColumns<>(program, tableFormat, tableModel, jTable, tablePaddingControl, NAME);
 		}
 
 		@Override
@@ -223,6 +233,11 @@ public class ValueTableTab extends JMainTabSecondary {
 					exportEventList,
 					filterList
 					);
+		}
+
+		@Override
+		public void loadFilter(FilterSettings filterSettings) {
+			setFilter(filterSettings);
 		}
 
 		@Override

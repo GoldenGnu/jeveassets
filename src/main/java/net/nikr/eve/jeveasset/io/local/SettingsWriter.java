@@ -24,7 +24,6 @@ package net.nikr.eve.jeveasset.io.local;
 import java.io.File;
 import java.net.Proxy;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -43,12 +42,14 @@ import net.nikr.eve.jeveasset.data.settings.RouteResult;
 import net.nikr.eve.jeveasset.data.settings.RoutingSettings;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.Settings.SettingFlag;
+import net.nikr.eve.jeveasset.data.settings.TablePadding;
 import net.nikr.eve.jeveasset.data.settings.TrackerData;
 import net.nikr.eve.jeveasset.data.settings.UserItem;
 import net.nikr.eve.jeveasset.data.settings.tag.Tag;
 import net.nikr.eve.jeveasset.data.settings.tag.TagID;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.SoundsSettingsPanel.SoundOption;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
+import net.nikr.eve.jeveasset.gui.shared.filter.FilterSettings;
 import net.nikr.eve.jeveasset.gui.shared.menu.JFormulaDialog.Formula;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuJumps.Jump;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.ResizeMode;
@@ -59,11 +60,6 @@ import net.nikr.eve.jeveasset.gui.tabs.orders.Outbid;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewGroup;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewLocation;
 import net.nikr.eve.jeveasset.gui.tabs.routing.SolarSystem;
-import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
-import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter;
-import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter.StockpileContainer;
-import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter.StockpileFlag;
-import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerDate;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerNote;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerSkillPointFilter;
@@ -86,31 +82,6 @@ public class SettingsWriter extends AbstractXmlWriter {
 		}
 		SettingsWriter writer = new SettingsWriter();
 		return writer.write(settings, filename);
-	}
-
-	public static boolean saveStockpiles(final List<Stockpile> stockpiles, final String filename) {
-		SettingsWriter writer = new SettingsWriter();
-		return writer.writeStockpiles(stockpiles, filename);
-	}
-
-	private boolean writeStockpiles(final List<Stockpile> stockpiles, final String filename) {
-		Document xmldoc;
-		try {
-			xmldoc = getXmlDocument("settings");
-		} catch (XmlException ex) {
-			LOG.error("Stockpile not saved " + ex.getMessage(), ex);
-			return false;
-		}
-
-		writeStockpiles(xmldoc, stockpiles, new HashMap<>(), true);
-		try {
-			writeXmlFile(xmldoc, filename, false);
-		} catch (XmlException ex) {
-			LOG.error("Stockpile not saved " + ex.getMessage(), ex);
-			return false;
-		}
-		LOG.info("Stockpile saved");
-		return true;
 	}
 
 	public static boolean saveRoutes(final Map<String, RouteResult> routes, final String filename) {
@@ -152,7 +123,6 @@ public class SettingsWriter extends AbstractXmlWriter {
 
 		writeAssetSettings(xmldoc, settings);
 		writeStockpileGroups(xmldoc, settings);
-		writeStockpiles(xmldoc, settings.getStockpiles(), settings.getStockpileGroupSettings().getStockpileGroups(), false);
 		writeOverviewGroups(xmldoc, settings.getOverviewGroups());
 		writeReprocessSettings(xmldoc, settings.getReprocessSettings());
 		writeWindow(xmldoc, settings);
@@ -161,11 +131,11 @@ public class SettingsWriter extends AbstractXmlWriter {
 		writeFlags(xmldoc, settings.getFlags());
 		writeUserPrices(xmldoc, settings.getUserPrices());
 		writeUserItemNames(xmldoc, settings.getUserItemNames());
-		writeEveNames(xmldoc, settings.getEveNames());
 		writeTableFilters(xmldoc, settings.getTableFilters());
 		writeCurrentTableFilters(xmldoc, settings.getCurrentTableFilters(), settings.getCurrentTableFiltersShown());
 		writeCurrentSorting(xmldoc, settings.getCurrentTableSorting());
 		writeTableColumns(xmldoc, settings.getTableColumns());
+		writeTablePadding(xmldoc, settings.getTablePaddings());
 		writeTableColumnsWidth(xmldoc, settings.getTableColumnsWidth());
 		writeTableResize(xmldoc, settings.getTableResize());
 		writeTableViews(xmldoc, settings.getTableViews());
@@ -178,7 +148,6 @@ public class SettingsWriter extends AbstractXmlWriter {
 		writeTrackerNotes(xmldoc, settings.getTrackerSettings().getNotes());
 		writeTrackerFilters(xmldoc, settings.getTrackerSettings().getFilters(), settings.getTrackerSettings().isSelectNew(), settings.getTrackerSettings().getSkillPointFilters());
 		writeTrackerSettings(xmldoc, settings);
-		writeOwners(xmldoc, settings.getOwners(), settings.getOwnersNextUpdate());
 		writeTags(xmldoc, settings.getTags());
 		writeRoutingSettings(xmldoc, settings.getRoutingSettings());
 		writeJumpsSettings(xmldoc, settings.getJumpsAvoidSettings());
@@ -225,19 +194,6 @@ public class SettingsWriter extends AbstractXmlWriter {
 		setAttributeOptional(manufacturingNode, "systemid", settings.getSystemID());
 		setAttributeOptional(manufacturingNode, "me", settings.getMaterialEfficiency());
 		setAttributeOptional(manufacturingNode, "tax", settings.getTax());
-		xmldoc.getDocumentElement().appendChild(manufacturingNode);
-		for (Map.Entry<Integer, Double> entry : settings.getPrices().entrySet()) {
-			Element priceNode = xmldoc.createElementNS(null, "price");
-			setAttribute(priceNode, "typeid", entry.getKey());
-			setAttributeOptional(priceNode, "price", entry.getValue());
-			manufacturingNode.appendChild(priceNode);
-		}
-		for (Map.Entry<Integer, Float> entry : settings.getSystems().entrySet()) {
-			Element systemNode = xmldoc.createElementNS(null, "system");
-			setAttribute(systemNode, "systemid", entry.getKey());
-			setAttributeOptional(systemNode, "index", entry.getValue());
-			manufacturingNode.appendChild(systemNode);
-		}
 	}
 
 	private void writePriceHistorySettings(Document xmldoc, Settings settings) {
@@ -393,18 +349,6 @@ public class SettingsWriter extends AbstractXmlWriter {
 		}
 	}
 
-	private void writeOwners(final Document xmldoc, final Map<Long, String> owners, final Map<Long, Date> ownersNextUpdate) {
-		Element trackerDataNode = xmldoc.createElementNS(null, "owners");
-		xmldoc.getDocumentElement().appendChild(trackerDataNode);
-		for (Map.Entry<Long, String> entry : owners.entrySet()) {
-			Element ownerNode = xmldoc.createElementNS(null, "owner");
-			setAttribute(ownerNode, "name", entry.getValue());
-			setAttribute(ownerNode, "id", entry.getKey());
-			setAttributeOptional(ownerNode, "date", ownersNextUpdate.get(entry.getKey()));
-			trackerDataNode.appendChild(ownerNode);
-		}
-	}
-
 	private void writeTrackerFilters(final Document xmldoc, final Map<String, Boolean> trackerFilters, boolean selectNew, Map<String, TrackerSkillPointFilter> trackerSkillPointFilters) {
 		Element trackerDataNode = xmldoc.createElementNS(null, "trackerfilters");
 		xmldoc.getDocumentElement().appendChild(trackerDataNode);
@@ -455,18 +399,21 @@ public class SettingsWriter extends AbstractXmlWriter {
 	 * @param xmldoc Settings document to write to.
 	 * @param tableFilters Saved filters to be written to the document zero to many for each table.
 	 */
-	private void writeTableFilters(final Document xmldoc, final Map<String, Map<String, List<Filter>>> tableFilters) {
+	private void writeTableFilters(final Document xmldoc, final Map<String, Map<String, FilterSettings>> tableFilters) {
 		Element tableFiltersNode = xmldoc.createElementNS(null, "tablefilters");
 		xmldoc.getDocumentElement().appendChild(tableFiltersNode);
-		for (Map.Entry<String, Map<String, List<Filter>>> entry : tableFilters.entrySet()) {
+		for (Map.Entry<String, Map<String, FilterSettings>> entry : tableFilters.entrySet()) {
 			Element tableNode = xmldoc.createElementNS(null, "table");
 			setAttribute(tableNode, "name", entry.getKey());
 			tableFiltersNode.appendChild(tableNode);
-			for (Map.Entry<String, List<Filter>> filters : entry.getValue().entrySet()) {
+			for (Map.Entry<String, FilterSettings> filters : entry.getValue().entrySet()) {
 				Element filterNode = xmldoc.createElementNS(null, "filter");
+				FilterSettings filterSettings = filters.getValue();
 				setAttribute(filterNode, "name", filters.getKey());
+				setAttribute(filterNode, "sort", filterSettings.getSort());
+				writeViewColumns(xmldoc, filterNode, filterSettings.getColumns());
 				tableNode.appendChild(filterNode);
-				writeFilters(xmldoc, filterNode, filters);
+				writeFilters(xmldoc, filterNode, filterSettings.getFilters());
 			}
 		}
 	}
@@ -488,7 +435,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 			Element filterNode = xmldoc.createElementNS(null, "filter");
 			setAttribute(filterNode, "show", tableFiltersShow.getOrDefault(filters.getKey(), true));
 			tableNode.appendChild(filterNode);
-			writeFilters(xmldoc, filterNode, filters);
+			writeFilters(xmldoc, filterNode, filters.getValue());
 		}
 	}
 
@@ -516,8 +463,8 @@ public class SettingsWriter extends AbstractXmlWriter {
 	 * @param parentNode Node of the xml document to write the filter to.
 	 * @param filters Filter to be written to the document row by row.
 	 */
-	private void writeFilters(final Document xmldoc, final Element parentNode, final Map.Entry<String, List<Filter>> filters) {
-		for (Filter filter : filters.getValue()) {
+	private void writeFilters(final Document xmldoc, final Element parentNode, final List<Filter> filters) {
+		for (Filter filter : filters) {
 			Element rowNode = xmldoc.createElementNS(null, "row");
 			setAttribute(rowNode, "group", filter.getGroup());
 			setAttribute(rowNode, "text", filter.getText());
@@ -542,6 +489,21 @@ public class SettingsWriter extends AbstractXmlWriter {
 				setAttribute(columnNode, "shown", column.isShown());
 				tableNode.appendChild(columnNode);
 			}
+		}
+	}
+
+	private void writeTablePadding(final Document xmldoc, final Map<String, TablePadding> tablePaddings) {
+		Element tableColumnsNode = xmldoc.createElementNS(null, "tablepadding");
+		xmldoc.getDocumentElement().appendChild(tableColumnsNode);
+		for (Map.Entry<String, TablePadding> entry : tablePaddings.entrySet()) {
+			Element tableNode = xmldoc.createElementNS(null, "table");
+			TablePadding tablePadding = entry.getValue();
+			setAttribute(tableNode, "name", entry.getKey());
+			setAttribute(tableNode, "top", tablePadding.getTop());
+			setAttribute(tableNode, "left", tablePadding.getLeft());
+			setAttribute(tableNode, "bottom", tablePadding.getBottom());
+			setAttribute(tableNode, "right", tablePadding.getRight());
+			tableColumnsNode.appendChild(tableNode);
 		}
 	}
 
@@ -583,13 +545,20 @@ public class SettingsWriter extends AbstractXmlWriter {
 				Element viewNode = xmldoc.createElementNS(null, "view");
 				setAttribute(viewNode, "name", view.getName());
 				viewToolNode.appendChild(viewNode);
-				for (SimpleColumn column : view.getColumns()) {
-					Element viewColumnNode = xmldoc.createElementNS(null, "viewcolumn");
-					setAttribute(viewColumnNode, "name", column.getEnumName());
-					setAttribute(viewColumnNode, "shown", column.isShown());
-					viewNode.appendChild(viewColumnNode);
-				}
+				writeViewColumns(xmldoc, viewNode, view.getColumns());
 			}
+		}
+	}
+
+	private void writeViewColumns(final Document xmldoc, Element parentNode, List<SimpleColumn> columns) {
+		if (columns == null || columns.isEmpty()) {
+			return;
+		}
+		for (SimpleColumn column : columns) {
+			Element viewColumnNode = xmldoc.createElementNS(null, "viewcolumn");
+			setAttribute(viewColumnNode, "name", column.getEnumName());
+			setAttribute(viewColumnNode, "shown", column.isShown());
+			parentNode.appendChild(viewColumnNode);
 		}
 	}
 
@@ -652,89 +621,6 @@ public class SettingsWriter extends AbstractXmlWriter {
 		setAttribute(parentNode, "stockpilegroup3", settings.getStockpileColorGroup3());
 	}
 
-	/**
-	 * -!- `!´ IMPORTANT `!´ -!-
-	 * StockpileDataWriter and StockpileDataReader needs to be updated too - on any changes!!!
-	 */
-	private void writeStockpiles(final Document xmldoc, final List<Stockpile> stockpiles, Map<Stockpile, String> groups, boolean export) {
-		Element parentNode = xmldoc.createElementNS(null, "stockpiles");
-		xmldoc.getDocumentElement().appendChild(parentNode);
-		for (Stockpile stockpile : stockpiles) {
-			//STOCKPILE
-			Element stockpileNode = xmldoc.createElementNS(null, "stockpile");
-			setAttribute(stockpileNode, "name", stockpile.getName());
-			if (!export) { //Risk of collision, better to generate a new one on import
-				setAttribute(stockpileNode, "id", stockpile.getStockpileID());
-			}
-			setAttribute(stockpileNode, "multiplier", stockpile.getMultiplier());
-			String group = groups.get(stockpile);
-			if (group != null && !group.isEmpty()) {
-				setAttribute(stockpileNode, "stockpilegroup", group);
-			}
-			setAttribute(stockpileNode, "matchall", stockpile.isMatchAll());
-			//ITEMS
-			for (StockpileItem item : stockpile.getItems()) {
-				if (item.isTotal()) {
-					continue; //Ignore Total
-				}
-				Element itemNode = xmldoc.createElementNS(null, "item");
-				if (!export) { //Risk of collision, better to generate a new one on import
-					setAttribute(itemNode, "id", item.getID());
-				}
-				setAttribute(itemNode, "typeid", item.getItemTypeID());
-				setAttribute(itemNode, "minimum", item.getCountMinimum());
-				setAttribute(itemNode, "runs", item.isRuns());
-				setAttribute(itemNode, "ignoremultiplier", item.isIgnoreMultiplier());
-				stockpileNode.appendChild(itemNode);
-			}
-			//SUBPILES
-			for (Map.Entry<Stockpile, Double> entry : stockpile.getSubpiles().entrySet()) {
-				Element subpileNode = xmldoc.createElementNS(null, "subpile");
-				subpileNode.setAttributeNS(null, "name", entry.getKey().getName());
-				subpileNode.setAttributeNS(null, "minimum", String.valueOf(entry.getValue()));
-				stockpileNode.appendChild(subpileNode);
-			}
-			//FILTERS
-			for (StockpileFilter filter : stockpile.getFilters()) {
-				Element filterNode = xmldoc.createElementNS(null, "stockpilefilter");
-				setAttribute(filterNode, "locationid", filter.getLocation().getLocationID());
-				setAttribute(filterNode, "sellingcontracts", filter.isSellingContracts());
-				setAttribute(filterNode, "soldcontracts", filter.isSoldContracts());
-				setAttribute(filterNode, "buyingcontracts", filter.isBuyingContracts());
-				setAttribute(filterNode, "boughtcontracts", filter.isBoughtContracts());
-				setAttribute(filterNode, "exclude", filter.isExclude());
-				setAttributeOptional(filterNode, "singleton", filter.isSingleton());
-				setAttributeOptional(filterNode, "jobsdaysless", filter.getJobsDaysLess());
-				setAttributeOptional(filterNode, "jobsdaysmore", filter.getJobsDaysMore());
-				setAttribute(filterNode, "inventory", filter.isAssets());
-				setAttribute(filterNode, "sellorders", filter.isSellOrders());
-				setAttribute(filterNode, "buyorders", filter.isBuyOrders());
-				setAttribute(filterNode, "buytransactions", filter.isBuyTransactions());
-				setAttribute(filterNode, "selltransactions", filter.isSellTransactions());
-				setAttribute(filterNode, "jobs", filter.isJobs());
-				stockpileNode.appendChild(filterNode);
-				for (Long ownerID : filter.getOwnerIDs()) {
-					Element ownerNode = xmldoc.createElementNS(null, "owner");
-					setAttribute(ownerNode, "ownerid", ownerID);
-					filterNode.appendChild(ownerNode);
-				}
-				for (StockpileContainer container : filter.getContainers()) {
-					Element containerNode = xmldoc.createElementNS(null, "container");
-					setAttribute(containerNode, "container", container.getContainer());
-					setAttribute(containerNode, "includecontainer", container.isIncludeSubs());
-					filterNode.appendChild(containerNode);
-				}
-				for (StockpileFlag flag : filter.getFlags()) {
-					Element flagNode = xmldoc.createElementNS(null, "flag");
-					setAttribute(flagNode, "flagid", flag.getFlagID());
-					setAttribute(flagNode, "includecontainer", flag.isIncludeSubs());
-					filterNode.appendChild(flagNode);
-				}
-			}
-			parentNode.appendChild(stockpileNode);
-		}
-	}
-
 	private void writeOverviewGroups(final Document xmldoc, final Map<String, OverviewGroup> overviewGroups) {
 		Element parentNode = xmldoc.createElementNS(null, "overview");
 		xmldoc.getDocumentElement().appendChild(parentNode);
@@ -761,17 +647,6 @@ public class SettingsWriter extends AbstractXmlWriter {
 			setAttribute(node, "name", userItemName.getValue());
 			setAttribute(node, "typename", userItemName.getName());
 			setAttribute(node, "itemid", userItemName.getKey());
-			parentNode.appendChild(node);
-		}
-	}
-
-	private void writeEveNames(final Document xmldoc, final Map<Long, String> eveNames) {
-		Element parentNode = xmldoc.createElementNS(null, "evenames");
-		xmldoc.getDocumentElement().appendChild(parentNode);
-		for (Map.Entry<Long, String> entry : eveNames.entrySet()) {
-			Element node = xmldoc.createElementNS(null, "evename");
-			setAttribute(node, "name", entry.getValue());
-			setAttribute(node, "itemid", entry.getKey());
 			parentNode.appendChild(node);
 		}
 	}

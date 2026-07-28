@@ -305,6 +305,9 @@ public abstract class GuiShared extends Bundle {
 	public abstract String tableColumnsReset();
 	public abstract String tableColumnsTip();
 	public abstract String tableColumnsTitle();
+	public abstract String tablePadding();
+	public abstract String tablePaddingSize(int i);
+	public abstract String tablePaddingSizeDefault(int i);
 	public abstract String tableResizeText();
 	public abstract String tableResizeWindow();
 	public abstract String tableResizeNone();
@@ -373,6 +376,10 @@ public abstract class GuiShared extends Bundle {
 	//Filters
 	public abstract String saveFilter();
 	public abstract String saveFilterToolTip();
+	public abstract String saveFilterSort();
+	public abstract String saveFilterSortToolTip();
+	public abstract String saveFilterColumns();
+	public abstract String saveFilterColumnsToolTip();
 	public abstract String enterFilterName();
 	public abstract String save();
 	public abstract String cancel();

@@ -34,6 +34,7 @@ import net.nikr.eve.jeveasset.gui.shared.Formatter;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.AllColumn;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.CompareType;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
+import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.SimpleColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.Percent;
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;
@@ -953,5 +954,10 @@ public class FilterMatcherTest extends TestUtil {
 
 		@Override
 		public void addColumn(EnumTableColumn<Item> column) { }
+
+		@Override
+		public List<SimpleColumn> getColumns() {
+			return null; //Only used by the GUI
+		}
 	}
 }

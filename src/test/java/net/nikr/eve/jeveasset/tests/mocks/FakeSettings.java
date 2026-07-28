@@ -41,6 +41,7 @@ import net.nikr.eve.jeveasset.data.settings.RouteAvoidSettings;
 import net.nikr.eve.jeveasset.data.settings.RoutingSettings;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.StockpileGroupSettings;
+import net.nikr.eve.jeveasset.data.settings.TablePadding;
 import net.nikr.eve.jeveasset.data.settings.TrackerSettings;
 import net.nikr.eve.jeveasset.data.settings.UserItem;
 import net.nikr.eve.jeveasset.data.settings.tag.Tag;
@@ -48,6 +49,7 @@ import net.nikr.eve.jeveasset.data.settings.tag.TagID;
 import net.nikr.eve.jeveasset.data.settings.tag.Tags;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.SoundsSettingsPanel.SoundOption;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
+import net.nikr.eve.jeveasset.gui.shared.filter.FilterSettings;
 import net.nikr.eve.jeveasset.gui.shared.menu.JFormulaDialog;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuJumps;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.ResizeMode;
@@ -215,12 +217,12 @@ public abstract class FakeSettings extends Settings {
 	}
 
 	@Override
-	public Map<String, Map<String, List<Filter>>> getTableFilters() {
+	public Map<String, Map<String, FilterSettings>> getTableFilters() {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
 	@Override
-	public Map<String, List<Filter>> getTableFilters(final String key) {
+	public Map<String, FilterSettings> getTableFilters(final String key) {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
@@ -315,11 +317,6 @@ public abstract class FakeSettings extends Settings {
 	}
 
 	@Override
-	public Map<Long, String> getOwners() {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
 	public Map<Integer, PriceData> getPriceData() {
 		throw new UnsupportedOperationException("not implemented");
 	}
@@ -401,16 +398,6 @@ public abstract class FakeSettings extends Settings {
 
 	@Override
 	public boolean isTransactionHistory() {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
-	public void setEveNames(Map<Long, String> eveNames) {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
-	public Map<Long, String> getEveNames() {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
@@ -611,11 +598,6 @@ public abstract class FakeSettings extends Settings {
 
 	@Override
 	public Map<Long, String> getFactionWarfareSystemOwners() {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
-	public Map<Long, Date> getOwnersNextUpdate() {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
@@ -931,6 +913,51 @@ public abstract class FakeSettings extends Settings {
 
 	@Override
 	public boolean isEveGatecampCheckSet() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public void addSave(Save... saves) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public void addSave(Save save) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public boolean isSave() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public Set<Save> getSave() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public TablePadding getTablePadding(String name, TablePadding defaultTablePadding) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public TablePadding getTablePadding(String name, int defaultTopPadding, int defaultLeftPadding, int defaultBottomPadding, int defaultRightPadding) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public TablePadding getTablePadding(String name, int defaultPadding) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public Map<String, TablePadding> getDefaultTablePaddings() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public Map<String, TablePadding> getTablePaddings() {
 		throw new UnsupportedOperationException("not implemented");
 	}
 }

@@ -51,6 +51,7 @@ import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.my.MyContract;
 import net.nikr.eve.jeveasset.data.api.my.MyContractItem;
 import net.nikr.eve.jeveasset.data.api.raw.RawContract.ContractStatus;
+import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.types.LocationType;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel.JStatusLabel;
@@ -59,6 +60,7 @@ import net.nikr.eve.jeveasset.gui.shared.components.JFixedToolBar;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTabPrimary;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
+import net.nikr.eve.jeveasset.gui.shared.filter.FilterSettings;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuColumns;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo.AutoNumberFormat;
@@ -70,6 +72,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.JSeparatorTable;
 import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
+import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer.TablePaddingControl;
 import net.nikr.eve.jeveasset.gui.shared.table.TableFormatFactory;
 import net.nikr.eve.jeveasset.i18n.TabsContracts;
 import net.nikr.eve.jeveasset.io.local.profile.ProfileDatabase;
@@ -178,7 +181,8 @@ public class ContractsTab extends JMainTabPrimary {
 		jTable.setSeparatorRenderer(new ContractsSeparatorTableCell(jTable, separatorList, listener));
 		jTable.setSeparatorEditor(new ContractsSeparatorTableCell(jTable, separatorList, listener));
 		jTable.setCellSelectionEnabled(true);
-		PaddingTableCellRenderer.install(jTable, 3);
+		//Padding
+		TablePaddingControl tablePaddingControl = PaddingTableCellRenderer.install(jTable, Settings.get().getTablePadding(NAME, 3));
 		//Sorting
 		TableComparatorChooser<MyContractItem> comparatorChooser = TableComparatorChooser.install(jTable, sortedListColumn, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
 		comparatorChooser.addSortActionListener(new ActionListener() {
@@ -198,7 +202,7 @@ public class ContractsTab extends JMainTabPrimary {
 		//Table Filter
 		filterControl = new ContractsFilterControl(sortedListSeparator);
 		//Menu
-		installTableTool(new ContractsTableMenu(), tableFormat, comparatorChooser, tableModel, jTable, filterControl, MyContractItem.class);
+		installTableTool(new ContractsTableMenu(tablePaddingControl), tableFormat, comparatorChooser, tableModel, jTable, filterControl, MyContractItem.class);
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
@@ -252,6 +256,12 @@ public class ContractsTab extends JMainTabPrimary {
 
 	private class ContractsTableMenu implements TableMenu<MyContractItem> {
 
+		private final TablePaddingControl tablePaddingControl;
+
+		public ContractsTableMenu(TablePaddingControl tablePaddingControl) {
+			this.tablePaddingControl = tablePaddingControl;
+		}
+
 		@Override
 		public MenuData<MyContractItem> getMenuData() {
 			return new ContractMenuData(selectionModel.getSelected());
@@ -264,7 +274,7 @@ public class ContractsTab extends JMainTabPrimary {
 
 		@Override
 		public JMenu getColumnMenu() {
-			return new JMenuColumns<>(program, tableFormat, tableModel, jTable, NAME);
+			return new JMenuColumns<>(program, tableFormat, tableModel, jTable, tablePaddingControl, NAME);
 		}
 
 		@Override
@@ -469,6 +479,11 @@ public class ContractsTab extends JMainTabPrimary {
 		@Override
 		protected void beforeFilter() {
 			jTable.saveExpandedState();
+		}
+
+		@Override
+		public void loadFilter(FilterSettings filterSettings) {
+			setFilter(filterSettings);
 		}
 
 		@Override

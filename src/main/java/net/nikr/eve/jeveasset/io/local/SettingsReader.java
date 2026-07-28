@@ -28,7 +28,6 @@ import java.io.File;
 import java.net.Proxy;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -38,7 +37,6 @@ import java.util.Set;
 import java.util.TreeMap;
 import net.nikr.eve.jeveasset.ToolLoader.ToolTab;
 import net.nikr.eve.jeveasset.data.api.raw.RawMarketOrder.MarketOrderRange;
-import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.MyLocation;
 import net.nikr.eve.jeveasset.data.settings.AddedData;
 import net.nikr.eve.jeveasset.data.settings.ColorEntry;
@@ -61,11 +59,13 @@ import net.nikr.eve.jeveasset.data.settings.ProxyData;
 import net.nikr.eve.jeveasset.data.settings.ReprocessSettings;
 import net.nikr.eve.jeveasset.data.settings.RouteAvoidSettings;
 import net.nikr.eve.jeveasset.data.settings.RouteResult;
+import net.nikr.eve.jeveasset.data.settings.SQLiteSettings;
 import net.nikr.eve.jeveasset.data.settings.Settings;
+import net.nikr.eve.jeveasset.data.settings.Settings.Save;
 import net.nikr.eve.jeveasset.data.settings.Settings.SettingFlag;
 import net.nikr.eve.jeveasset.data.settings.Settings.SettingsFactory;
 import net.nikr.eve.jeveasset.data.settings.Settings.TransactionProfitPrice;
-import net.nikr.eve.jeveasset.data.settings.StockpileGroupSettings;
+import net.nikr.eve.jeveasset.data.settings.TablePadding;
 import net.nikr.eve.jeveasset.data.settings.TrackerData;
 import net.nikr.eve.jeveasset.data.settings.TrackerSettings;
 import net.nikr.eve.jeveasset.data.settings.TrackerSettings.DisplayType;
@@ -82,6 +82,7 @@ import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.AllColumn;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.CompareType;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.LogicType;
+import net.nikr.eve.jeveasset.gui.shared.filter.FilterSettings;
 import net.nikr.eve.jeveasset.gui.shared.menu.JFormulaDialog.Formula;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuJumps.Jump;
 import net.nikr.eve.jeveasset.gui.shared.table.ColumnManager.FormulaColumn;
@@ -99,16 +100,11 @@ import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewGroup;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewLocation;
 import net.nikr.eve.jeveasset.gui.tabs.routing.SolarSystem;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
-import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter;
-import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter.StockpileContainer;
-import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter.StockpileFlag;
-import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerDate;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerNote;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerSkillPointFilter;
 import net.nikr.eve.jeveasset.gui.tabs.values.AssetValue;
 import net.nikr.eve.jeveasset.gui.tabs.values.Value;
-import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.io.local.update.Update;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import net.nikr.eve.jeveasset.io.shared.FileUtil;
@@ -126,12 +122,11 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 	private static final Logger LOG = LoggerFactory.getLogger(SettingsReader.class);
 
 	private enum ReaderType {
-		SETTINGS, STOCKPILE, TRACKER, ROUTES
+		SETTINGS, TRACKER, ROUTES
 	}
 
 	private Settings settings;
 	private SettingsFactory settingsFactory;
-	private List<Stockpile> stockpilesList;
 	private Map<String, List<Value>> trackerDataMap;
 	private Map<String, RouteResult> routes;
 	private final ReaderType readerType;
@@ -171,25 +166,12 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		return settings;
 	}
 
-	private List<Stockpile> getStockpiles() {
-		return stockpilesList;
-	}
-
 	private Map<String, List<Value>> getTrackerDataMap() {
 		return trackerDataMap;
 	}
 
 	private Map<String, RouteResult> getRoutes() {
 		return routes;
-	}
-
-	public static List<Stockpile> loadStockpile(final String filename) {
-		SettingsReader reader = new SettingsReader(ReaderType.STOCKPILE);
-		if (reader.read(filename, filename, XmlType.IMPORT)) {
-			return reader.getStockpiles();
-		} else {
-			return null;
-		}
 	}
 
 	public static Map<String, List<Value>> loadTracker(final String filename) {
@@ -215,9 +197,6 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		switch (readerType) {
 			case SETTINGS:
 				settings = loadSettings(element, settingsFactory.create());
-				break;
-			case STOCKPILE:
-				stockpilesList = loadStockpile(element);
 				break;
 			case TRACKER:
 				trackerDataMap = loadTracker(element);
@@ -252,20 +231,6 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		return null;
 	}
 
-	private List<Stockpile> loadStockpile(final Element element) throws XmlException {
-		if (!element.getNodeName().equals("settings")) {
-			throw new XmlException("Wrong root element name.");
-		}
-		//Stockpiles
-		List<Stockpile> stockpiles = new ArrayList<>();
-		NodeList stockpilesNodes = element.getElementsByTagName("stockpiles");
-		if (stockpilesNodes.getLength() == 1) {
-			Element stockpilesElement = (Element) stockpilesNodes.item(0);
-			parseStockpiles(stockpilesElement, stockpiles, null);
-		}
-		return stockpiles;
-	}
-
 	private Map<String, RouteResult> loadRoutes(final Element element) throws XmlException {
 		if (!element.getNodeName().equals("settings")) {
 			throw new XmlException("Wrong root element name.");
@@ -287,7 +252,10 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		//Manufacturing Prices
 		Element manufacturingElement = getNodeOptional(element, "manufacturing");
 		if (manufacturingElement != null) {
-			parseManufacturingPriceSettings(manufacturingElement, settings);
+			boolean save = parseManufacturingPriceSettings(manufacturingElement, settings);
+			if (save) {
+				settings.addSave(Save.SETTINGS); //Manufacturing prices and system index moved SQLite
+			}
 		}
 
 		//Price History
@@ -353,7 +321,8 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		//Owners
 		Element ownersElement = getNodeOptional(element, "owners");
 		if (ownersElement != null) {
-			parseOwners(ownersElement, settings);
+			parseOwners(ownersElement);
+			settings.addSave(Save.SETTINGS); //Moved SQLite
 		}
 
 		//Tracker Data
@@ -384,7 +353,13 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		//Stockpiles
 		Element stockpilesElement = getNodeOptional(element, "stockpiles");
 		if (stockpilesElement != null) {
-			parseStockpiles(stockpilesElement, settings.getStockpiles(), settings.getStockpileGroupSettings());
+			StockpileXmlReader.parseStockpiles(stockpilesElement, settings.getStockpiles(), settings.getStockpileGroupSettings());
+			settings.addSave(Save.STOCKPILE, Save.SETTINGS);//Moved stockpile.xml
+		} else {
+			List<Stockpile> stockpiles = StockpileXmlReader.load(settings.getStockpileGroupSettings());
+			if (stockpiles != null) {
+				settings.getStockpiles().addAll(stockpiles);
+			}
 		}
 
 		//Stockpile Groups
@@ -444,7 +419,8 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		//Eve Item Names
 		Element eveNameElement = getNodeOptional(element, "evenames");
 		if (eveNameElement != null) {
-			parseEveNames(eveNameElement, settings);
+			parseEveNames(eveNameElement);
+			settings.addSave(Save.SETTINGS); //Moved SQLite
 		}
 
 		//PriceDataSettings
@@ -510,9 +486,15 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		}
 
 		//Table Columns
-		Element tablecolumnsElement = getNodeOptional(element, "tablecolumns");
-		if (tablecolumnsElement != null) {
-			parseTableColumns(tablecolumnsElement, settings);
+		Element tableColumnsElement = getNodeOptional(element, "tablecolumns");
+		if (tableColumnsElement != null) {
+			parseTableColumns(tableColumnsElement, settings);
+		}
+
+		//Table Padding
+		Element tablePaddingElement = getNodeOptional(element, "tablepadding");
+		if (tablePaddingElement != null) {
+			parseTablePadding(tablePaddingElement, settings);
 		}
 
 		//Table Columns Width
@@ -564,10 +546,12 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		}
 	}
 
-	private void parseOwners(final Element element, final Settings settings) throws XmlException {
+	private void parseOwners(final Element element) throws XmlException {
 		long ONE_DAY = 1000 * 60 * 60 * 24;
 		NodeList ownerNodeList = element.getElementsByTagName("owner");
 		int count = 1;
+		Map<Long, String> names = new HashMap<>();
+		Map<Long, Date> nextUpdates = new HashMap<>();
 		for (int i = 0; i < ownerNodeList.getLength(); i++) {
 			//Read Owner
 			Element ownerNode = (Element) ownerNodeList.item(i);
@@ -581,9 +565,11 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 					count = 1;
 				}
 			}
-			settings.getOwners().put(ownerID, ownerName);
-			settings.getOwnersNextUpdate().put(ownerID, date);
+			names.put(ownerID, ownerName);
+			nextUpdates.put(ownerID, date);
 		}
+		SQLiteSettings.addOwners(names);
+		SQLiteSettings.setOwnerNextUpdate(nextUpdates);
 	}
 
 	private Map<String, List<Value>> parseTrackerData(final Element element) throws XmlException {
@@ -721,175 +707,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		settings.setStockpileColorGroup3(group3);
 	}
 
-	/**
-	 * -!- `!´ IMPORTANT `!´ -!-
-	 * StockpileDataWriter and StockpileDataReader needs to be updated too - on any changes!!!
-	 */
-	private void parseStockpiles(final Element stockpilesElement, final List<Stockpile> stockpiles, StockpileGroupSettings stockpileGroupSettings) throws XmlException {
-		NodeList stockpileNodes = stockpilesElement.getElementsByTagName("stockpile");
-		Map<String, Stockpile> stockpileMap = new HashMap<>();
-		Map<Stockpile, Map<String, Double>> subpileMap = new HashMap<>();
-		for (int a = 0; a < stockpileNodes.getLength(); a++) {
-			Element stockpileNode = (Element) stockpileNodes.item(a);
-			String name = getString(stockpileNode, "name");
-			Long stockpileID = getLongOptional(stockpileNode, "id"); //If null > get new id
-		//LEGACY
-			//Owners
-			List<Long> ownerIDs = new ArrayList<>();
-			if (haveAttribute(stockpileNode, "characterid")) {
-				long ownerID = getLong(stockpileNode, "characterid");
-				if (ownerID > 0) {
-					ownerIDs.add(ownerID);
-				}
-			}
-			//Containers
-			List<StockpileContainer> containers = new ArrayList<>();
-			if (haveAttribute(stockpileNode, "container")) {
-				String container = getString(stockpileNode, "container");
-				if (!container.equals(General.get().all())) {
-					containers.add(new StockpileContainer(container, false));
-				}
-			}
-			//Flags
-			List<StockpileFlag> flags = new ArrayList<>();
-			if (haveAttribute(stockpileNode, "flagid")) {
-				int flagID = getInt(stockpileNode, "flagid");
-				if (flagID > 0) {
-					flags.add(new StockpileFlag(flagID, true));
-				}
-			}
-			//Locations
-			MyLocation location = null;
-			if (haveAttribute(stockpileNode, "locationid")) {
-				long locationID = getLong(stockpileNode, "locationid");
-				location = ApiIdConverter.getLocation(locationID);
-			}
-			boolean exclude = false;
-			//Include
-			Boolean inventory = getBooleanOptional(stockpileNode, "inventory");
-			Boolean sellOrders = getBooleanOptional(stockpileNode, "sellorders");
-			Boolean buyOrders = getBooleanOptional(stockpileNode, "buyorders");
-			Boolean jobs = getBooleanOptional(stockpileNode, "jobs");
-			List<StockpileFilter> filters = new ArrayList<>();
-			if (inventory != null && sellOrders != null && buyOrders != null && jobs != null) {
-				StockpileFilter filter = new StockpileFilter(location, exclude, flags, containers, ownerIDs, null, null, null, inventory, sellOrders, buyOrders, jobs, false, false, false, false, false, false);
-				filters.add(filter);
-			}
-		//NEW
-			NodeList filterNodes = stockpileNode.getElementsByTagName("stockpilefilter");
-			for (int b = 0; b < filterNodes.getLength(); b++) {
-				Element filterNode = (Element) filterNodes.item(b);
-				//Include
-				boolean filterExclude = getBooleanNotNull(filterNode, "exclude", false);
-				Boolean filterSingleton = getBooleanOptional(filterNode, "singleton");
-				Integer filterJobsDaysLess = getIntOptional(filterNode, "jobsdaysless");
-				Integer filterJobsDaysMore = getIntOptional(filterNode, "jobsdaysmore");
-				boolean filterSellingContracts = getBooleanNotNull(filterNode, "sellingcontracts", false);
-				boolean filterSoldBuy = getBooleanNotNull(filterNode, "soldcontracts", false);
-				boolean filterBuyingContracts = getBooleanNotNull(filterNode, "buyingcontracts", false);
-				boolean filterBoughtContracts = getBooleanNotNull(filterNode, "boughtcontracts", false);
-				boolean filterInventory = getBoolean(filterNode, "inventory");
-				boolean filterSellOrders = getBoolean(filterNode, "sellorders");
-				boolean filterBuyOrders = getBoolean(filterNode, "buyorders");
-				boolean filterBuyTransactions = getBooleanNotNull(filterNode, "buytransactions", false);
-				boolean filterSellTransactions = getBooleanNotNull(filterNode, "selltransactions", false);
-				boolean filterJobs = getBoolean(filterNode, "jobs");
-				//Location
-				long locationID = getLong(filterNode, "locationid");
-				location = ApiIdConverter.getLocation(locationID);
-				//Owners
-				List<Long> filterOwnerIDs = new ArrayList<>();
-				NodeList ownerNodes = filterNode.getElementsByTagName("owner");
-				for (int c = 0; c < ownerNodes.getLength(); c++) {
-					Element ownerNode = (Element) ownerNodes.item(c);
-					long filterOwnerID = getLong(ownerNode, "ownerid");
-					filterOwnerIDs.add(filterOwnerID);
-				}
-				//Containers
-				List<StockpileContainer> filterContainers = new ArrayList<>();
-				NodeList containerNodes = filterNode.getElementsByTagName("container");
-				for (int c = 0; c < containerNodes.getLength(); c++) {
-					Element containerNode = (Element) containerNodes.item(c);
-					String filterContainer = getString(containerNode, "container");
-					boolean filterIncludeSubs = getBooleanNotNull(containerNode, "includecontainer", false);
-					filterContainers.add(new StockpileContainer(filterContainer, filterIncludeSubs));
-				}
-				//Flags
-				List<StockpileFlag> filterFlags = new ArrayList<>();
-				NodeList flagNodes = filterNode.getElementsByTagName("flag");
-				for (int c = 0; c < flagNodes.getLength(); c++) {
-					Element flagNode = (Element) flagNodes.item(c);
-					int filterFlagID = getInt(flagNode, "flagid");
-					boolean filterIncludeSubs = getBooleanNotNull(flagNode, "includecontainer", true);
-					filterFlags.add(new StockpileFlag(filterFlagID, filterIncludeSubs));
-				}
-				StockpileFilter stockpileFilter = new StockpileFilter(location, filterExclude, filterFlags, filterContainers, filterOwnerIDs, filterJobsDaysLess, filterJobsDaysMore, filterSingleton, filterInventory, filterSellOrders, filterBuyOrders, filterJobs, filterBuyTransactions, filterSellTransactions, filterSellingContracts, filterSoldBuy, filterBuyingContracts, filterBoughtContracts);
-				filters.add(stockpileFilter);
-			}
-		//SUBPILES
-			NodeList subpileNodes = stockpileNode.getElementsByTagName("subpile");
-			Map<String, Double> subpileNames = new HashMap<>();
-			for (int b = 0; b < subpileNodes.getLength(); b++) {
-				Element subpileNode = (Element) subpileNodes.item(b);
-				String subpileName = getString(subpileNode, "name");
-				double minimum = getDouble(subpileNode, "minimum");
-				subpileNames.put(subpileName, minimum);
-			}
-		//MULTIPLIER
-			double multiplier = getDoubleNotNull(stockpileNode, "multiplier", 1);
-		//GROUP
-			String group = getStringOptional(stockpileNode, "stockpilegroup"); //Null is handled by settings
-		//MATCH ALL
-			boolean matchAll;
-			if (haveAttribute(stockpileNode, "contractsmatchall")) {
-				matchAll = getBoolean(stockpileNode, "contractsmatchall");
-			} else {
-				matchAll = getBooleanNotNull(stockpileNode, "matchall", false);
-			}
-
-			Stockpile stockpile = new Stockpile(name, stockpileID, filters, multiplier, matchAll);
-			if (stockpileGroupSettings != null) {
-				stockpileGroupSettings.setGroup(stockpile, group);
-			}
-			stockpiles.add(stockpile);
-			subpileMap.put(stockpile, subpileNames);
-			stockpileMap.put(name, stockpile);
-		//ITEMS
-			NodeList itemNodes = stockpileNode.getElementsByTagName("item");
-			for (int b = 0; b < itemNodes.getLength(); b++) {
-				Element itemNode = (Element) itemNodes.item(b);
-				long id;
-				if (haveAttribute(itemNode, "id")) {
-					id = getLong(itemNode, "id");
-				} else {
-					id = StockpileItem.getNewID();
-				}
-				int typeID = getInt(itemNode, "typeid");
-				boolean runs = getBooleanNotNull(itemNode, "runs", false);
-				boolean ignoreMultiplier = getBooleanNotNull(itemNode, "ignoremultiplier", false);
-				double countMinimum = getDouble(itemNode, "minimum");
-				if (typeID != 0) { //Ignore Total
-					Item item = ApiIdConverter.getItemUpdate(Math.abs(typeID), true);
-					StockpileItem stockpileItem = new StockpileItem(stockpile, item, typeID, countMinimum, runs, ignoreMultiplier, id);
-					stockpile.add(stockpileItem);
-				}
-			}
-		}
-		for (Map.Entry<Stockpile, Map<String, Double>> entry : subpileMap.entrySet()) {
-			for (Map.Entry<String, Double> entry1 : entry.getValue().entrySet()) {
-				Stockpile stockpile = stockpileMap.get(entry1.getKey());
-				if (stockpile != null) {
-					entry.getKey().getSubpiles().put(stockpile, entry1.getValue());
-					stockpile.addSubpileLink(entry.getKey());
-				}
-			}
-		}
-		subpileMap.clear();
-		stockpileMap.clear();
-		Collections.sort(stockpiles);
-	}
-
-	private void parseManufacturingPriceSettings(Element manufacturingElement, Settings settings) throws XmlException {
+	private boolean parseManufacturingPriceSettings(Element manufacturingElement, Settings settings) throws XmlException {
 		ManufacturingSettings manufacturingSettings = settings.getManufacturingSettings();
 		Date nextUpdate = getDate(manufacturingElement, "nextupdate");
 		ManufacturingFacility facility;
@@ -929,7 +747,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			double price = getDouble(priceNode, "price");
 			manufacturingPrices.put(typeID, price);
 		}
-		manufacturingSettings.setPrices(manufacturingPrices);
+		SQLiteSettings.setManufacturingPrices(manufacturingPrices);
 
 		Map<Integer, Float> manufacturingSystems = new HashMap<>();
 		NodeList systemNodes = manufacturingElement.getElementsByTagName("system");
@@ -939,8 +757,8 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			float index = getFloat(systemNode, "index");
 			manufacturingSystems.put(systemID, index);
 		}
-
-		manufacturingSettings.setSystems(manufacturingSystems);
+		SQLiteSettings.setManufacturingSystemIndex(manufacturingSystems);
+		return !manufacturingPrices.isEmpty() || !manufacturingSystems.isEmpty();
 	}
 
 	private void parsePriceHistorySettings(Element priceHistoryElement, Settings settings) throws XmlException {
@@ -1294,14 +1112,16 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		}
 	}
 
-	private void parseEveNames(final Element element, final Settings settings) throws XmlException {
+	private void parseEveNames(final Element element) throws XmlException {
+		Map<Long, String> data = new HashMap<>();
 		NodeList eveNameNodes = element.getElementsByTagName("evename");
 		for (int i = 0; i < eveNameNodes.getLength(); i++) {
 			Element currentNode = (Element) eveNameNodes.item(i);
 			String name = getString(currentNode, "name");
 			long itemId = getLong(currentNode, "itemid");
-			settings.getEveNames().put(itemId, name);
+			data.put(itemId, name);
 		}
+		SQLiteSettings.addEveNames(data);
 	}
 
 	private void parsePriceDataSettings(final Element element, final Settings settings) throws XmlException {
@@ -1419,6 +1239,19 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 		}
 	}
 
+	private void parseTablePadding(final Element element, final Settings settings) throws XmlException {
+		NodeList tableNodeList = element.getElementsByTagName("table");
+		for (int a = 0; a < tableNodeList.getLength(); a++) {
+			Element tableNode = (Element) tableNodeList.item(a);
+			String tableName = getString(tableNode, "name");
+			int top = getInt(tableNode, "top");
+			int left = getInt(tableNode, "left");
+			int bottom = getInt(tableNode, "bottom");
+			int right = getInt(tableNode, "right");
+			settings.getTablePaddings().put(tableName, new TablePadding(top, left, bottom, right));
+		}
+	}
+
 	private void parseTableColumnsWidth(final Element element, final Settings settings) throws XmlException {
 		NodeList tableNodeList = element.getElementsByTagName("table");
 		for (int a = 0; a < tableNodeList.getLength(); a++) {
@@ -1457,17 +1290,24 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			for (int b = 0; b < viewNodeList.getLength(); b++) {
 				Element viewNode = (Element) viewNodeList.item(b);
 				String viewName = getString(viewNode, "name");
+				List<SimpleColumn> columns = parseViewColumns(viewNode);
 				View view = new View(viewName);
+				view.setColumns(columns);
 				views.put(view.getName(), view);
-				NodeList viewColumnList = viewNode.getElementsByTagName("viewcolumn");
-				for (int c = 0; c < viewColumnList.getLength(); c++) {
-					Element viewColumnNode = (Element) viewColumnList.item(c);
-					String name = getString(viewColumnNode, "name");
-					boolean shown = getBoolean(viewColumnNode, "shown");
-					view.getColumns().add(new SimpleColumn(name, shown));
-				}
 			}
 		}
+	}
+
+	private List<SimpleColumn> parseViewColumns(Element parentNode) throws XmlException {
+		NodeList columnList = parentNode.getElementsByTagName("viewcolumn");
+		List<SimpleColumn> columns = new ArrayList<>();
+		for (int c = 0; c < columnList.getLength(); c++) {
+			Element viewColumnNode = (Element) columnList.item(c);
+			String name = getString(viewColumnNode, "name");
+			boolean shown = getBoolean(viewColumnNode, "shown");
+			columns.add(new SimpleColumn(name, shown));
+		}
+		return columns;
 	}
 
 	private void parseTableFormulas(final Element element, final Settings settings) throws XmlException {
@@ -1527,18 +1367,20 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			Element tableNode = (Element) tableNodeList.item(a);
 			String tableName = getString(tableNode, "name");
 			NodeList filterNodeList = tableNode.getElementsByTagName("filter");
-			Map<String, List<Filter>> filters = new HashMap<>();
+			Map<String, FilterSettings> filterMap = new HashMap<>();
 			for (int b = 0; b < filterNodeList.getLength(); b++) {
 				Element filterNode = (Element) filterNodeList.item(b);
 				String filterName = getString(filterNode, "name");
-				List<Filter> filter = parseFilters(filterNode, tableName, settings);
-				if (!filter.isEmpty()) {
-					filters.put(filterName, filter);
+				String filterSort = getStringOptional(filterNode, "sort");
+				List<SimpleColumn> columns = parseViewColumns(filterNode);
+				List<Filter> filters = parseFilters(filterNode, tableName, settings);
+				if (!filters.isEmpty()) {
+					filterMap.put(filterName, new FilterSettings(filters, filterSort, columns));
 				} else {
 					LOG.warn(filterName + " filter removed (Empty)");
 				}
 			}
-			settings.getTableFilters().put(tableName, filters);
+			settings.getTableFilters().put(tableName, filterMap);
 		}
 	}
 
@@ -1673,7 +1515,7 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 				Filter filter = new Filter(logic, column, compare, text);
 				filters.add(filter);
 			}
-			settings.getTableFilters(AssetsTab.NAME).put(filterName, filters);
+			settings.getTableFilters(AssetsTab.NAME).put(filterName, FilterSettings.get(filters));
 		}
 	}
 

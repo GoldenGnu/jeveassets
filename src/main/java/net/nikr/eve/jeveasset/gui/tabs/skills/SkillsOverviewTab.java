@@ -65,6 +65,7 @@ import net.nikr.eve.jeveasset.gui.shared.components.JFixedToolBar;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTabSecondary;
 import net.nikr.eve.jeveasset.gui.shared.components.JTextDialog;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
+import net.nikr.eve.jeveasset.gui.shared.filter.FilterSettings;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuColumns;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
@@ -73,6 +74,8 @@ import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
+import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
+import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer.TablePaddingControl;
 import net.nikr.eve.jeveasset.gui.shared.table.TableFormatFactory;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.Percent;
 import net.nikr.eve.jeveasset.i18n.TabsSkills;
@@ -238,6 +241,8 @@ public class SkillsOverviewTab extends JMainTabSecondary {
 		jTable.setCellSelectionEnabled(true);
 		jTable.setRowSelectionAllowed(true);
 		jTable.setColumnSelectionAllowed(true);
+		//Padding
+		TablePaddingControl tablePaddingControl = PaddingTableCellRenderer.install(jTable, Settings.get().getTablePadding(NAME, 0));
 		//Sorting
 		TableComparatorChooser<SkillsOverview> comparatorChooser = TableComparatorChooser.install(jTable, sortedColumns, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
 		//Selection Model
@@ -252,7 +257,7 @@ public class SkillsOverviewTab extends JMainTabSecondary {
 		//Table Filter
 		filterControl = new SkillsOverviewFilterControl(sorted);
 		//Menu
-		installTableTool(new SkillsOverviewTableMenu(), tableFormat, comparatorChooser, tableModel, jTable, eventList, SkillsOverview.class);
+		installTableTool(new SkillsOverviewTableMenu(tablePaddingControl), tableFormat, comparatorChooser, tableModel, jTable, eventList, SkillsOverview.class);
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()
@@ -582,6 +587,12 @@ public class SkillsOverviewTab extends JMainTabSecondary {
 
 	private class SkillsOverviewTableMenu implements TableMenu<SkillsOverview> {
 
+		private final TablePaddingControl tablePaddingControl;
+
+		public SkillsOverviewTableMenu(TablePaddingControl tablePaddingControl) {
+			this.tablePaddingControl = tablePaddingControl;
+		}
+
 		@Override
 		public MenuData<SkillsOverview> getMenuData() {
 			return new MenuData<>(selectionModel.getSelected());
@@ -594,7 +605,7 @@ public class SkillsOverviewTab extends JMainTabSecondary {
 
 		@Override
 		public JMenu getColumnMenu() {
-			return new JMenuColumns<>(program, tableFormat, tableModel, jTable, NAME);
+			return new JMenuColumns<>(program, tableFormat, tableModel, jTable, tablePaddingControl, NAME);
 		}
 
 		@Override
@@ -608,6 +619,11 @@ public class SkillsOverviewTab extends JMainTabSecondary {
 
 		public SkillsOverviewFilterControl(EventList<SkillsOverview> exportEventList) {
 			super(program.getMainWindow().getFrame(), NAME, tableFormat, eventList, exportEventList, filterList);
+		}
+
+		@Override
+		public void loadFilter(FilterSettings filterSettings) {
+			setFilter(filterSettings);
 		}
 
 		@Override

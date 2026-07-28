@@ -37,10 +37,12 @@ import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.sde.Item;
 import net.nikr.eve.jeveasset.data.sde.StaticData;
+import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.types.LocationType;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTabPrimary;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
+import net.nikr.eve.jeveasset.gui.shared.filter.FilterSettings;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuColumns;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
@@ -48,6 +50,8 @@ import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
+import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
+import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer.TablePaddingControl;
 import net.nikr.eve.jeveasset.gui.shared.table.TableFormatFactory;
 import net.nikr.eve.jeveasset.i18n.TabsItems;
 
@@ -87,6 +91,8 @@ public class ItemsTab extends JMainTabPrimary {
 		//Table
 		jTable = new JAutoColumnTable(program, tableModel);
 		jTable.setCellSelectionEnabled(true);
+		//Padding
+		TablePaddingControl tablePaddingControl = PaddingTableCellRenderer.install(jTable, Settings.get().getTablePadding(NAME, 0));
 		//Sorting
 		TableComparatorChooser<Item> comparatorChooser = TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
 		//Selection Model
@@ -100,7 +106,7 @@ public class ItemsTab extends JMainTabPrimary {
 		//Table Filter
 		filterControl = new ItemsFilterControl(sortedList);
 		//Menu
-		installTableTool(new ItemTableMenu(), tableFormat, comparatorChooser, tableModel, jTable, filterControl, Item.class);
+		installTableTool(new ItemTableMenu(tablePaddingControl), tableFormat, comparatorChooser, tableModel, jTable, filterControl, Item.class);
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()
@@ -138,6 +144,13 @@ public class ItemsTab extends JMainTabPrimary {
 	}
 
 	private class ItemTableMenu implements TableMenu<Item> {
+
+		private final TablePaddingControl tablePaddingControl;
+
+		public ItemTableMenu(TablePaddingControl tablePaddingControl) {
+			this.tablePaddingControl = tablePaddingControl;
+		}
+
 		@Override
 		public MenuData<Item> getMenuData() {
 			return new MenuData<>(selectionModel.getSelected());
@@ -150,7 +163,7 @@ public class ItemsTab extends JMainTabPrimary {
 
 		@Override
 		public JMenu getColumnMenu() {
-			return new JMenuColumns<>(program, tableFormat, tableModel, jTable, NAME);
+			return new JMenuColumns<>(program, tableFormat, tableModel, jTable, tablePaddingControl, NAME);
 		}
 
 		@Override
@@ -170,6 +183,11 @@ public class ItemsTab extends JMainTabPrimary {
 					exportEventList,
 					filterList
 					);
+		}
+
+		@Override
+		public void loadFilter(FilterSettings filterSettings) {
+			setFilter(filterSettings);
 		}
 
 		@Override

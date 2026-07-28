@@ -57,6 +57,7 @@ import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.CompareType;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterMatcher;
+import net.nikr.eve.jeveasset.gui.shared.filter.FilterSettings;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuAssetFilter;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuColumns;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
@@ -66,6 +67,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
+import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer.TablePaddingControl;
 import net.nikr.eve.jeveasset.gui.shared.table.TableFormatFactory;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractsTab;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractsTableFormat;
@@ -155,7 +157,8 @@ public class JournalTab extends JMainTabPrimary implements TagUpdate {
 		//Table
 		jTable = new JJournalTable(program, tableModel);
 		jTable.setCellSelectionEnabled(true);
-		PaddingTableCellRenderer.install(jTable, 1);
+		//Padding
+		TablePaddingControl tablePaddingControl = PaddingTableCellRenderer.install(jTable, Settings.get().getTablePadding(NAME, 1));
 		//Sorting
 		TableComparatorChooser<MyJournal> comparatorChooser = TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
 		//Selection Model
@@ -169,7 +172,7 @@ public class JournalTab extends JMainTabPrimary implements TagUpdate {
 		//Table Filter
 		filterControl = new JournalFilterControl(sortedList);
 		//Menu
-		installTableTool(new JournalTableMenu(), tableFormat, comparatorChooser, tableModel, jTable, filterControl, MyJournal.class);
+		installTableTool(new JournalTableMenu(tablePaddingControl), tableFormat, comparatorChooser, tableModel, jTable, filterControl, MyJournal.class);
 		chartDialog = new JournalChartDialog(program);
 
 		layout.setHorizontalGroup(
@@ -245,6 +248,13 @@ public class JournalTab extends JMainTabPrimary implements TagUpdate {
 	}
 
 	private class JournalTableMenu implements TableMenu<MyJournal> {
+
+		private final TablePaddingControl tablePaddingControl;
+
+		public JournalTableMenu(TablePaddingControl tablePaddingControl) {
+			this.tablePaddingControl = tablePaddingControl;
+		}
+
 		@Override
 		public JMenu getFilterMenu() {
 			return filterControl.getMenu(jTable, selectionModel.getSelected());
@@ -252,7 +262,7 @@ public class JournalTab extends JMainTabPrimary implements TagUpdate {
 
 		@Override
 		public JMenu getColumnMenu() {
-			return new JMenuColumns<>(program, tableFormat, tableModel, jTable, NAME);
+			return new JMenuColumns<>(program, tableFormat, tableModel, jTable, tablePaddingControl, NAME);
 		}
 
 		@Override
@@ -373,6 +383,11 @@ public class JournalTab extends JMainTabPrimary implements TagUpdate {
 					exportEventList,
 					filterList
 					);
+		}
+
+		@Override
+		public void loadFilter(FilterSettings filterSettings) {
+			setFilter(filterSettings);
 		}
 
 		@Override

@@ -54,6 +54,7 @@ import net.nikr.eve.jeveasset.gui.shared.components.JFixedToolBar;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTabPrimary;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
+import net.nikr.eve.jeveasset.gui.shared.filter.FilterSettings;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuColumns;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo.AutoNumberFormat;
@@ -63,6 +64,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
+import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer.TablePaddingControl;
 import net.nikr.eve.jeveasset.gui.shared.table.TableFormatFactory;
 import net.nikr.eve.jeveasset.i18n.TabsTransaction;
 
@@ -167,7 +169,8 @@ public class TransactionTab extends JMainTabPrimary implements TagUpdate {
 		//Table
 		jTable = new JTransactionTable(program, tableModel);
 		jTable.setCellSelectionEnabled(true);
-		PaddingTableCellRenderer.install(jTable, 1);
+		//Padding
+		TablePaddingControl tablePaddingControl = PaddingTableCellRenderer.install(jTable, Settings.get().getTablePadding(NAME, 1));
 		//Sorting
 		TableComparatorChooser<MyTransaction> comparatorChooser = TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
 		//Selection Model
@@ -181,7 +184,7 @@ public class TransactionTab extends JMainTabPrimary implements TagUpdate {
 		//Table Filter
 		filterControl = new TransactionsFilterControl(sortedList);
 		//Menu
-		installTableTool(new TransactionTableMenu(), tableFormat, comparatorChooser, tableModel, jTable, filterControl, MyTransaction.class);
+		installTableTool(new TransactionTableMenu(tablePaddingControl), tableFormat, comparatorChooser, tableModel, jTable, filterControl, MyTransaction.class);
 
 		layout.setHorizontalGroup(
 				layout.createParallelGroup()
@@ -251,6 +254,12 @@ public class TransactionTab extends JMainTabPrimary implements TagUpdate {
 
 	private class TransactionTableMenu implements TableMenu<MyTransaction> {
 
+		private final TablePaddingControl tablePaddingControl;
+
+		public TransactionTableMenu(TablePaddingControl tablePaddingControl) {
+			this.tablePaddingControl = tablePaddingControl;
+		}
+
 		@Override
 		public JMenu getFilterMenu() {
 			return filterControl.getMenu(jTable, selectionModel.getSelected());
@@ -258,7 +267,7 @@ public class TransactionTab extends JMainTabPrimary implements TagUpdate {
 
 		@Override
 		public JMenu getColumnMenu() {
-			return new JMenuColumns<>(program, tableFormat, tableModel, jTable, NAME);
+			return new JMenuColumns<>(program, tableFormat, tableModel, jTable, tablePaddingControl, NAME);
 		}
 
 		@Override
@@ -333,6 +342,11 @@ public class TransactionTab extends JMainTabPrimary implements TagUpdate {
 					exportEventList,
 					filterList
 					);
+		}
+
+		@Override
+		public void loadFilter(FilterSettings filterSettings) {
+			setFilter(filterSettings);
 		}
 
 		@Override

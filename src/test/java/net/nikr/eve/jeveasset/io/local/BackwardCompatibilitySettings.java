@@ -40,7 +40,7 @@ import net.nikr.eve.jeveasset.data.settings.UserItem;
 import net.nikr.eve.jeveasset.data.settings.tag.Tag;
 import net.nikr.eve.jeveasset.data.settings.tag.TagID;
 import net.nikr.eve.jeveasset.data.settings.tag.Tags;
-import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
+import net.nikr.eve.jeveasset.gui.shared.filter.FilterSettings;
 import net.nikr.eve.jeveasset.gui.shared.menu.JFormulaDialog.Formula;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuJumps.Jump;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
@@ -57,7 +57,6 @@ public class BackwardCompatibilitySettings extends FakeSettings implements Setti
 		GET_EXPORT_SETTINGS,
 		GET_FLAGS,
 		GET_OVERVIEW_GROUPS,
-		GET_OWNERS,
 		GET_PRICE_DATA_SETTINGS,
 		GET_STOCKPILES,
 		GET_TABLE_COLUMNS,
@@ -84,6 +83,8 @@ public class BackwardCompatibilitySettings extends FakeSettings implements Setti
 		SET_WINDOW_LOCATION,
 		SET_WINDOW_MAXIMIZED,
 		SET_WINDOW_SIZE,
+		ADD_SAVE,
+		ADD_SAVES,
 	}
 
 	private final String settingsPath;
@@ -180,17 +181,6 @@ public class BackwardCompatibilitySettings extends FakeSettings implements Setti
 	}
 
 	@Override
-	public Map<Long, String> getOwners() {
-		ok.put(Function.GET_OWNERS, true);
-		return new HashMap<>();
-	}
-
-	@Override
-	public Map<Long, Date> getOwnersNextUpdate() {
-		return new HashMap<>();
-	}
-
-	@Override
 	public PriceDataSettings getPriceDataSettings() {
 		ok.put(Function.GET_PRICE_DATA_SETTINGS, true);
 		return new PriceDataSettings();
@@ -219,13 +209,13 @@ public class BackwardCompatibilitySettings extends FakeSettings implements Setti
 	}
 
 	@Override
-	public Map<String, Map<String, List<Filter>>> getTableFilters() {
+	public Map<String, Map<String, FilterSettings>> getTableFilters() {
 		ok.put(Function.GET_TABLE_FILTERS, true);
 		return new HashMap<>();
 	}
 
 	@Override
-	public Map<String, List<Filter>> getTableFilters(final String key) {
+	public Map<String, FilterSettings> getTableFilters(final String key) {
 		ok.put(Function.GET_TABLE_FILTERS_KEY, true);
 		return new HashMap<>();
 	}
@@ -331,6 +321,16 @@ public class BackwardCompatibilitySettings extends FakeSettings implements Setti
 	public List<Jump> getTableJumps(String toolName) {
 		ok.put(Function.GET_TABLE_JUMPS, true);
 		return new ArrayList<>();
+	}
+
+	@Override
+	public void addSave(Save save) {
+		ok.put(Function.ADD_SAVE, true);
+	}
+
+	@Override
+	public void addSave(Save... saves) {
+		ok.put(Function.ADD_SAVES, true);
 	}
 
 	@Override

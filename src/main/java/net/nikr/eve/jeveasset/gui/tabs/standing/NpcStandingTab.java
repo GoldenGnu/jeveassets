@@ -37,12 +37,14 @@ import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.api.my.MyNpcStanding;
+import net.nikr.eve.jeveasset.data.settings.TablePadding;
 import net.nikr.eve.jeveasset.data.settings.tag.TagUpdate;
 import net.nikr.eve.jeveasset.data.settings.types.LocationType;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTabPrimary;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
+import net.nikr.eve.jeveasset.gui.shared.filter.FilterSettings;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuColumns;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
@@ -95,7 +97,8 @@ public class NpcStandingTab extends JMainTabPrimary implements TagUpdate {
 		jTable.setRowSelectionAllowed(true);
 		jTable.setColumnSelectionAllowed(true);
 		jTable.setRowHeight(MyNpcStanding.IMAGE_SIZE.getSize());
-		PaddingTableCellRenderer.install(jTable, 0, 5, 0, 5);
+		//Padding
+		PaddingTableCellRenderer.install(jTable, new TablePadding(0, 5, 0, 5));
 		//Sorting
 		TableComparatorChooser<MyNpcStanding> comparatorChooser = TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
 		//Selection Model
@@ -162,6 +165,7 @@ public class NpcStandingTab extends JMainTabPrimary implements TagUpdate {
 	}
 
 	private class NpcStandingTableMenu implements TableMenu<MyNpcStanding> {
+
 		@Override
 		public MenuData<MyNpcStanding> getMenuData() {
 			return new MenuData<>(selectionModel.getSelected());
@@ -174,7 +178,7 @@ public class NpcStandingTab extends JMainTabPrimary implements TagUpdate {
 
 		@Override
 		public JMenu getColumnMenu() {
-			return new JMenuColumns<>(program, tableFormat, tableModel, jTable, NAME);
+			return new JMenuColumns<>(program, tableFormat, tableModel, jTable, null, NAME);
 		}
 
 		@Override
@@ -194,6 +198,11 @@ public class NpcStandingTab extends JMainTabPrimary implements TagUpdate {
 					exportEventList,
 					filterList
 					);
+		}
+
+		@Override
+		public void loadFilter(FilterSettings filterSettings) {
+			setFilter(filterSettings);
 		}
 
 		@Override

@@ -69,6 +69,7 @@ import net.nikr.eve.jeveasset.gui.shared.components.JDateChooser;
 import net.nikr.eve.jeveasset.gui.shared.components.JFixedToolBar;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTabSecondary;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
+import net.nikr.eve.jeveasset.gui.shared.filter.FilterSettings;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuColumns;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
@@ -76,6 +77,8 @@ import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
+import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
+import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer.TablePaddingControl;
 import net.nikr.eve.jeveasset.gui.shared.table.TableFormatFactory;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.Percent;
 import net.nikr.eve.jeveasset.i18n.TabsPriceChanges;
@@ -193,6 +196,8 @@ public class PriceChangesTab extends JMainTabSecondary {
 		jTable.setCellSelectionEnabled(true);
 		jTable.setRowSelectionAllowed(true);
 		jTable.setColumnSelectionAllowed(true);
+		//Padding
+		TablePaddingControl tablePaddingControl = PaddingTableCellRenderer.install(jTable, Settings.get().getTablePadding(NAME, 0));
 		//Sorting
 		TableComparatorChooser<PriceChange> comparatorChooser = TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
 		//Selection Model
@@ -207,7 +212,7 @@ public class PriceChangesTab extends JMainTabSecondary {
 		//Table Filter
 		filterControl = new PriceChangeFilterControl(sortedList);
 		//Menu
-		installTableTool(new PriceChangeTableMenu(), tableFormat, comparatorChooser, tableModel, jTable, filterControl, PriceChange.class);
+		installTableTool(new PriceChangeTableMenu(tablePaddingControl), tableFormat, comparatorChooser, tableModel, jTable, filterControl, PriceChange.class);
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()
@@ -316,6 +321,13 @@ public class PriceChangesTab extends JMainTabSecondary {
 	}
 
 	private class PriceChangeTableMenu implements TableMenu<PriceChange> {
+
+		private final TablePaddingControl tablePaddingControl;
+
+		public PriceChangeTableMenu(TablePaddingControl tablePaddingControl) {
+			this.tablePaddingControl = tablePaddingControl;
+		}
+
 		@Override
 		public MenuData<PriceChange> getMenuData() {
 			return new MenuData<>(selectionModel.getSelected());
@@ -328,7 +340,7 @@ public class PriceChangesTab extends JMainTabSecondary {
 
 		@Override
 		public JMenu getColumnMenu() {
-			return new JMenuColumns<>(program, tableFormat, tableModel, jTable, NAME);
+			return new JMenuColumns<>(program, tableFormat, tableModel, jTable, tablePaddingControl, NAME);
 		}
 
 		@Override
@@ -378,6 +390,11 @@ public class PriceChangesTab extends JMainTabSecondary {
 					exportEventList,
 					filterList
 					);
+		}
+
+		@Override
+		public void loadFilter(FilterSettings filterSettings) {
+			setFilter(filterSettings);
 		}
 
 		@Override

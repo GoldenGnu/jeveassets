@@ -64,6 +64,7 @@ import net.nikr.eve.jeveasset.gui.shared.components.JTreemap;
 import net.nikr.eve.jeveasset.gui.shared.components.ListComboBoxModel;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
+import net.nikr.eve.jeveasset.gui.shared.filter.FilterSettings;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuColumns;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo.AutoNumberFormat;
@@ -74,6 +75,8 @@ import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
+import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
+import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer.TablePaddingControl;
 import net.nikr.eve.jeveasset.gui.shared.table.TableFormatFactory;
 import net.nikr.eve.jeveasset.gui.tabs.assets.AssetsTab;
 import net.nikr.eve.jeveasset.i18n.TabsOverview;
@@ -248,6 +251,8 @@ public class OverviewTab extends JMainTabSecondary {
 		tableModel = EventModels.createTableModel(filterList, tableFormat);
 		//Table
 		jTable = new JOverviewTable(program, tableModel);
+		//Padding
+		TablePaddingControl tablePaddingControl = PaddingTableCellRenderer.install(jTable, Settings.get().getTablePadding(NAME, 0));
 		//Sorting
 		TableComparatorChooser<Overview> comparatorChooser = TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
 		//Selection Model
@@ -272,7 +277,7 @@ public class OverviewTab extends JMainTabSecondary {
 		//Table Filter
 		filterControl = new OverviewTabFilterControl(sortedList);
 		//Menu
-		installTableTool(new OverviewTableMenu(), tableFormat, comparatorChooser, tableModel, jTable, filterControl, Overview.class);
+		installTableTool(new OverviewTableMenu(tablePaddingControl), tableFormat, comparatorChooser, tableModel, jTable, filterControl, Overview.class);
 
 		jVolume = StatusPanel.createLabel(TabsOverview.get().totalVolume(), Images.ASSETS_VOLUME.getIcon(), AutoNumberFormat.DOUBLE);
 		this.addStatusbarLabel(jVolume);
@@ -481,7 +486,7 @@ public class OverviewTab extends JMainTabSecondary {
 		}
 
 		for (String filterName : filterNames) {
-			List<Filter> filters = Settings.get().getTableFilters(AssetsTab.NAME).get(filterName);
+			List<Filter> filters = Settings.get().getTableFilters(AssetsTab.NAME).get(filterName).getFilters();
 			jMenuItem = new FilterMenuItem(filterName, filters);
 			jMenuItem.setActionCommand(OverviewAction.LOAD_FILTER.name());
 			jMenuItem.addActionListener(listener);
@@ -593,6 +598,12 @@ public class OverviewTab extends JMainTabSecondary {
 
 	public class OverviewTableMenu implements TableMenu<Overview> {
 
+		private final TablePaddingControl tablePaddingControl;
+
+		public OverviewTableMenu(TablePaddingControl tablePaddingControl) {
+			this.tablePaddingControl = tablePaddingControl;
+		}
+
 		public OverviewTab getOverviewTab() {
 			return OverviewTab.this;
 		}
@@ -609,7 +620,7 @@ public class OverviewTab extends JMainTabSecondary {
 
 		@Override
 		public JMenu getColumnMenu() {
-			return new JMenuColumns<>(program, tableFormat, tableModel, jTable, NAME, false);
+			return new JMenuColumns<>(program, tableFormat, tableModel, jTable, tablePaddingControl, NAME, false);
 		}
 
 		@Override
@@ -669,6 +680,11 @@ public class OverviewTab extends JMainTabSecondary {
 					exportEventList,
 					filterList
 					);
+		}
+
+		@Override
+		public void loadFilter(FilterSettings filterSettings) {
+			setFilter(filterSettings);
 		}
 
 		@Override

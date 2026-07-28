@@ -23,7 +23,6 @@ package net.nikr.eve.jeveasset;
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.FilterList;
 import ca.odell.glazedlists.matchers.Matcher;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -40,8 +39,8 @@ import net.nikr.eve.jeveasset.data.settings.ExportSettings;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.shared.StringComparators;
 import net.nikr.eve.jeveasset.gui.shared.filter.ExportTableData;
-import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterLogicalMatcher;
+import net.nikr.eve.jeveasset.gui.shared.filter.FilterSettings;
 import net.nikr.eve.jeveasset.gui.shared.filter.SimpleTableFormat;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
@@ -328,11 +327,11 @@ public class CliExport {
 		String owner = ""; //ToDo: Owner is not settable (yet?)
 		String filterName = exportSettings.getFilterName();
 		//Assets Filter
-		List<Filter> filter;
+		FilterSettings filter;
 		if (filterName == null) {
-			filter = new ArrayList<>();
+			filter = FilterSettings.EMPTY;
 		} else if (filterName.isEmpty()) {
-			filter = Settings.get().getCurrentTableFilters(ExportTool.ASSETS.getToolName());
+			filter = FilterSettings.get(Settings.get().getCurrentTableFilters(ExportTool.ASSETS.getToolName()));
 		} else {
 			filter = Settings.get().getTableFilters(ExportTool.ASSETS.getToolName()).get(filterName);
 			if (filter == null) {

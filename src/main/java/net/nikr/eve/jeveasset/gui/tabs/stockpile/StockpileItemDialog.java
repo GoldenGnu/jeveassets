@@ -39,7 +39,9 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JSpinner;
 import javax.swing.JTextField;
+import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingUtilities;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
@@ -62,6 +64,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.EventListManager;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels.ItemFilterator;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
+import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItemMaterial;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.SubpileStock;
 import net.nikr.eve.jeveasset.i18n.TabsStockpile;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
@@ -75,21 +78,26 @@ public class StockpileItemDialog extends JDialogCentered {
 		TYPE_CHANGE
 	}
 
+	private static final int WIDTH = 320;
+
 	public static enum BlueprintAddType {
 		NONE(TabsStockpile.get().none()),
 		BPO(TabsStockpile.get().original()),
+		FORMULA(TabsStockpile.get().formula()),
 		BPC(TabsStockpile.get().copy()),
 		RUNS(TabsStockpile.get().runs()),
-		MANUFACTURING_MATERIALS(TabsStockpile.get().materialsManufacturing()),
-		REACTION_MATERIALS(TabsStockpile.get().materialsReaction()),
+		MANUFACTURING_MATERIALS_ONCE(TabsStockpile.get().materialsManufacturing()),
+		MANUFACTURING_MATERIALS_EDITABLE(TabsStockpile.get().materialsManufacturingEditable()),
+		REACTION_MATERIALS_ONCE(TabsStockpile.get().materialsReaction()),
+		REACTION_MATERIALS_EDITABLE(TabsStockpile.get().materialsReactionEditable()),
 		;
 		final String name;
 
 		public static BlueprintAddType[] EMPTY = {NONE};
-		public static BlueprintAddType[] EDIT_BLUEPRINT = {BPO, BPC, RUNS};
-		public static BlueprintAddType[] EDIT_FORMULA = {BPO};
-		public static BlueprintAddType[] ADD_BLUEPRINT = {BPO, BPC, RUNS, MANUFACTURING_MATERIALS};
-		public static BlueprintAddType[] ADD_FORMULA = {BPO, REACTION_MATERIALS};
+		public static BlueprintAddType[] ADD_BLUEPRINT = {BPO, BPC, RUNS, MANUFACTURING_MATERIALS_ONCE, MANUFACTURING_MATERIALS_EDITABLE};
+		public static BlueprintAddType[] EDIT_BLUEPRINT = {BPO, BPC, RUNS, MANUFACTURING_MATERIALS_EDITABLE};
+		public static BlueprintAddType[] ADD_FORMULA = {FORMULA, REACTION_MATERIALS_ONCE, REACTION_MATERIALS_EDITABLE};
+		public static BlueprintAddType[] EDIT_FORMULA = {FORMULA, REACTION_MATERIALS_EDITABLE};
 
 		private BlueprintAddType(String name) {
 			this.name = name;
@@ -104,21 +112,35 @@ public class StockpileItemDialog extends JDialogCentered {
 	private final JButton jOK;
 	private final JComboBox<Item> jItems;
 	private final JLabel jSubpile;
-	private JTextField jCountMinimum;
+	private final JLabel jCountMinimumLabel;
+	private final JTextField jCountMinimum;
 	private final JLabel jBlueprintTypeLabel;
 	private final JComboBox<BlueprintAddType> jBlueprintType;
-	private final JComboBox<Integer> jMe;
+	private final JComboBox<Integer> jMaterialEfficiency;
 	private final JComboBox<ManufacturingFacility> jFacility;
 	private final JComboBox<ManufacturingRigs> jRigs;
-	private final JComboBox<ReactionRigs> jRigsReactions;
 	private final JComboBox<ManufacturingSecurity> jSecurity;
+	private final JComboBox<ReactionRigs> jRigsReactions;
 	private final JComboBox<ReactionSecurity> jSecurityReactions;
+	private final JLabel jFacilityOverwriteLabel;
+	private final JCheckBox jFacilityOverwrite;
+	private final JLabel jRecursiveLevelLabel;
+	private final JComboBox<Integer> jRecursiveLevel;
+	private final JLabel jMaterialEfficiencyOverwriteLabel;
+	private final JComboBox<MaterialEfficiencyOverwrite> jMaterialEfficiencyOverwrite;
 	private final JLabel jIgnoreMultiplierLabel;
 	private final JCheckBox jIgnoreMultiplier;
+	private final JLabel jRoundPerRunsOverwriteLabel;
+	private final JCheckBox jRoundPerRunsOverwrite;
+	private final JLabel jRoundPerRunsLabel;
+	private final SpinnerNumberModel roundPerRunsModel;
+	private final JSpinner jRoundPerRuns;
 
 	private final StockpileTab stockpileTab;
 	private final List<JComponent> manufacturingComponents = new ArrayList<>();
+	private final List<JComponent> manufacturingEditComponents = new ArrayList<>();
 	private final List<JComponent> reactionComponents = new ArrayList<>();
+	private final List<JComponent> reactionEditComponents = new ArrayList<>();
 	private final EventList<Item> items = EventListManager.create();
 	private Stockpile stockpile;
 	private StockpileItem stockpileItem;
@@ -133,41 +155,36 @@ public class StockpileItemDialog extends JDialogCentered {
 		ListenerClass listener = new ListenerClass();
 
 		JLabel jItemsLabel = new JLabel(TabsStockpile.get().item());
+	//Items
 		jItems = new JComboBox<>();
 		AutoCompleteSupport<Item> itemAutoComplete = AutoCompleteSupport.install(jItems, EventModels.createSwingThreadProxyList(items), new ItemFilterator());
 		itemAutoComplete.setStrict(true);
 		jItems.addItemListener(listener); //Must be added after AutoCompleteSupport
 
+	//Subpile
 		jSubpile = new JLabel();
 
-		JLabel jCountMinimumLabel = new JLabel(TabsStockpile.get().countMinimum());
-		jCountMinimum = new JTextField();
-		jCountMinimum.addFocusListener(new FocusAdapter() {
-			@Override
-			public void focusGained(final FocusEvent e) {
-				jCountMinimum.selectAll();
-			}
-		});
-		jCountMinimum.addCaretListener(listener);
-
-		jIgnoreMultiplierLabel = new JLabel(TabsStockpile.get().multiplier());
-		jIgnoreMultiplier = new JCheckBox(TabsStockpile.get().multiplierIgnore());
-
+	//Blueprint Type
 		jBlueprintTypeLabel = new JLabel(TabsStockpile.get().blueprintType());
+
 		jBlueprintType = new JComboBox<>(BlueprintAddType.values());
 		jBlueprintType.setActionCommand(StockpileItemAction.TYPE_CHANGE.name());
 		jBlueprintType.addActionListener(listener);
 
+	//ME
 		JLabel jMeLabel = new JLabel(TabsStockpile.get().blueprintMe());
 		manufacturingComponents.add(jMeLabel);
-		Integer[] me = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-		jMe = new JComboBox<>(me);
-		jMe.setPrototypeDisplayValue(10);
-		jMe.setMaximumRowCount(me.length);
-		manufacturingComponents.add(jMe);
 
+		Integer[] me = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+		jMaterialEfficiency = new JComboBox<>(me);
+		jMaterialEfficiency.setPrototypeDisplayValue(10);
+		jMaterialEfficiency.setMaximumRowCount(me.length);
+		manufacturingComponents.add(jMaterialEfficiency);
+
+	//Facility
 		JLabel jFacilityLabel = new JLabel(TabsStockpile.get().blueprintFacility());
 		manufacturingComponents.add(jFacilityLabel);
+
 		jFacility = new JComboBox<>(ManufacturingSettings.ManufacturingFacility.values());
 		jFacility.addActionListener(new ActionListener() {
 			@Override
@@ -183,6 +200,7 @@ public class StockpileItemDialog extends JDialogCentered {
 		});
 		manufacturingComponents.add(jFacility);
 
+	//Rigs
 		JLabel jRigsLabel = new JLabel(TabsStockpile.get().blueprintRigs());
 		manufacturingComponents.add(jRigsLabel);
 		jRigs = new JComboBox<>(ManufacturingRigs.values());
@@ -200,6 +218,19 @@ public class StockpileItemDialog extends JDialogCentered {
 		});
 		manufacturingComponents.add(jRigs);
 
+	//Security
+		JLabel jSecurityLabel = new JLabel(TabsStockpile.get().blueprintSecurity());
+		manufacturingComponents.add(jSecurityLabel);
+		jSecurity = new JComboBox<>(ManufacturingSecurity.values());
+		manufacturingComponents.add(jSecurity);
+
+	//Security Reactions
+		JLabel jSecurityReactionsLabel = new JLabel(TabsStockpile.get().blueprintSecurity());
+		reactionComponents.add(jSecurityReactionsLabel);
+		jSecurityReactions = new JComboBox<>(ReactionSecurity.values());
+		reactionComponents.add(jSecurityReactions);
+
+	//Rigs Reactions
 		JLabel jRigsReactionsLabel = new JLabel(TabsStockpile.get().blueprintRigs());
 		reactionComponents.add(jRigsReactionsLabel);
 		jRigsReactions = new JComboBox<>(ReactionRigs.values());
@@ -217,17 +248,74 @@ public class StockpileItemDialog extends JDialogCentered {
 		});
 		reactionComponents.add(jRigsReactions);
 
+	//Overwrite Facility
+		jFacilityOverwriteLabel = new JLabel(TabsStockpile.get().materialsOverwrite());
+		manufacturingEditComponents.add(jFacilityOverwriteLabel);
+		reactionEditComponents.add(jFacilityOverwriteLabel);
+		jFacilityOverwrite = new JCheckBox(TabsStockpile.get().materialsFacilityOverwrite());
+		manufacturingEditComponents.add(jFacilityOverwrite);
+		reactionEditComponents.add(jFacilityOverwrite);
 
-		JLabel jSecurityLabel = new JLabel(TabsStockpile.get().blueprintSecurity());
-		manufacturingComponents.add(jSecurityLabel);
-		jSecurity = new JComboBox<>(ManufacturingSecurity.values());
-		manufacturingComponents.add(jSecurity);
+	//Recursive Level
+		jRecursiveLevelLabel = new JLabel(TabsStockpile.get().materialsRecursiveLevel());
+		manufacturingEditComponents.add(jRecursiveLevelLabel);
+		reactionEditComponents.add(jRecursiveLevelLabel);
+		jRecursiveLevel = new JComboBox<>();
+		jRecursiveLevel.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Integer level = jRecursiveLevel.getItemAt(jRecursiveLevel.getSelectedIndex());
+				jFacilityOverwrite.setEnabled(level > 0 && stockpileItem != null); //Recursive & Edit
+				jFacilityOverwrite.setSelected(stockpileItem == null); //Add = true Else false
+				jRoundPerRunsOverwrite.setEnabled(level > 0 && stockpileItem != null); //Recursive & Edit
+				jRoundPerRunsOverwrite.setSelected(stockpileItem == null); //Add = true Else false
+				jMaterialEfficiencyOverwrite.setEnabled(level > 0);
+				if (level < 1) {
+					jMaterialEfficiencyOverwrite.setSelectedIndex(0);
+				}
+			}
+		});
+		manufacturingEditComponents.add(jRecursiveLevel);
+		reactionEditComponents.add(jRecursiveLevel);
 
-		JLabel jSecurityReactionsLabel = new JLabel(TabsStockpile.get().blueprintSecurity());
-		reactionComponents.add(jSecurityReactionsLabel);
-		jSecurityReactions = new JComboBox<>(ReactionSecurity.values());
-		reactionComponents.add(jSecurityReactions);
+	//Material ME
+		jMaterialEfficiencyOverwriteLabel = new JLabel(TabsStockpile.get().materialsRecursiveMe());
+		manufacturingEditComponents.add(jMaterialEfficiencyOverwriteLabel);
+		jMaterialEfficiencyOverwrite = new JComboBox<>();
+		jMaterialEfficiencyOverwrite.setPrototypeDisplayValue(MaterialEfficiencyOverwrite.KEEP);
+		jMaterialEfficiencyOverwrite.setMaximumRowCount(MaterialEfficiencyOverwrite.EDIT.length);
+		manufacturingEditComponents.add(jMaterialEfficiencyOverwrite);
 
+	//Round per Runs
+		jRoundPerRunsOverwriteLabel = new JLabel(TabsStockpile.get().materialsOverwrite());
+		manufacturingEditComponents.add(jRoundPerRunsOverwriteLabel);
+		reactionEditComponents.add(jRoundPerRunsOverwriteLabel);
+		jRoundPerRunsOverwrite = new JCheckBox(TabsStockpile.get().materialsRoundPerRunsOverwrite());
+		manufacturingEditComponents.add(jRoundPerRunsOverwrite);
+		reactionEditComponents.add(jRoundPerRunsOverwrite);
+
+		jRoundPerRunsLabel = new JLabel(TabsStockpile.get().materialsRoundPerRuns());
+		manufacturingEditComponents.add(jRoundPerRunsLabel);
+		reactionEditComponents.add(jRoundPerRunsLabel);
+		roundPerRunsModel = new SpinnerNumberModel(0, 0, null, 1);
+		jRoundPerRuns = new JSpinner(roundPerRunsModel);
+		manufacturingEditComponents.add(jRoundPerRuns);
+		reactionEditComponents.add(jRoundPerRuns);
+
+	//Ignore Multiplier
+		jIgnoreMultiplierLabel = new JLabel(TabsStockpile.get().multiplier());
+		jIgnoreMultiplier = new JCheckBox(TabsStockpile.get().multiplierIgnore());
+
+	//Count Minimum
+		jCountMinimumLabel = new JLabel(TabsStockpile.get().countMinimum());
+		jCountMinimum = new JTextField();
+		jCountMinimum.addFocusListener(new FocusAdapter() {
+			@Override
+			public void focusGained(final FocusEvent e) {
+				jCountMinimum.selectAll();
+			}
+		});
+		jCountMinimum.addCaretListener(listener);
 
 		jOK = new JButton(TabsStockpile.get().ok());
 		jOK.setActionCommand(StockpileItemAction.OK.name());
@@ -247,24 +335,34 @@ public class StockpileItemDialog extends JDialogCentered {
 						.addComponent(jMeLabel)
 						.addComponent(jFacilityLabel)
 						.addComponent(jRigsLabel)
-						.addComponent(jRigsReactionsLabel)
 						.addComponent(jSecurityLabel)
+						.addComponent(jRigsReactionsLabel)
 						.addComponent(jSecurityReactionsLabel)
+						.addComponent(jFacilityOverwriteLabel)
+						.addComponent(jRecursiveLevelLabel)
+						.addComponent(jMaterialEfficiencyOverwriteLabel)
 						.addComponent(jIgnoreMultiplierLabel)
+						.addComponent(jRoundPerRunsOverwriteLabel)
+						.addComponent(jRoundPerRunsLabel)
 						.addComponent(jCountMinimumLabel)
 					)
 					.addGroup(layout.createParallelGroup()
-						.addComponent(jItems, 300, 300, 300)
-						.addComponent(jSubpile, 300, 300, 300)
-						.addComponent(jBlueprintType, 300, 300, 300)
-						.addComponent(jMe, 300, 300, 300)
-						.addComponent(jFacility, 300, 300, 300)
-						.addComponent(jRigs, 300, 300, 300)
-						.addComponent(jRigsReactions, 300, 300, 300)
-						.addComponent(jSecurity, 300, 300, 300)
-						.addComponent(jSecurityReactions, 300, 300, 300)
-						.addComponent(jIgnoreMultiplier, 300, 300, 300)
-						.addComponent(jCountMinimum, 300, 300, 300)
+						.addComponent(jItems, WIDTH, WIDTH, WIDTH)
+						.addComponent(jSubpile, WIDTH, WIDTH, WIDTH)
+						.addComponent(jBlueprintType, WIDTH, WIDTH, WIDTH)
+						.addComponent(jMaterialEfficiency, WIDTH, WIDTH, WIDTH)
+						.addComponent(jFacility, WIDTH, WIDTH, WIDTH)
+						.addComponent(jRigs, WIDTH, WIDTH, WIDTH)
+						.addComponent(jSecurity, WIDTH, WIDTH, WIDTH)
+						.addComponent(jRigsReactions, WIDTH, WIDTH, WIDTH)
+						.addComponent(jSecurityReactions, WIDTH, WIDTH, WIDTH)
+						.addComponent(jFacilityOverwrite, WIDTH, WIDTH, WIDTH)
+						.addComponent(jRecursiveLevel, WIDTH, WIDTH, WIDTH)
+						.addComponent(jMaterialEfficiencyOverwrite, WIDTH, WIDTH, WIDTH)
+						.addComponent(jIgnoreMultiplier, WIDTH, WIDTH, WIDTH)
+						.addComponent(jRoundPerRunsOverwrite, WIDTH, WIDTH, WIDTH)
+						.addComponent(jRoundPerRuns, WIDTH, WIDTH, WIDTH)
+						.addComponent(jCountMinimum, WIDTH, WIDTH, WIDTH)
 					)
 				)
 				.addGroup(layout.createSequentialGroup()
@@ -284,8 +382,12 @@ public class StockpileItemDialog extends JDialogCentered {
 					.addComponent(jBlueprintType, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				)
 				.addGroup(layout.createParallelGroup()
+					.addComponent(jFacilityOverwriteLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jFacilityOverwrite, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+				)
+				.addGroup(layout.createParallelGroup()
 					.addComponent(jMeLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-					.addComponent(jMe, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jMaterialEfficiency, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				)
 				.addGroup(layout.createParallelGroup()
 					.addComponent(jFacilityLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
@@ -296,16 +398,32 @@ public class StockpileItemDialog extends JDialogCentered {
 					.addComponent(jRigs, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				)
 				.addGroup(layout.createParallelGroup()
-						.addComponent(jRigsReactionsLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-						.addComponent(jRigsReactions, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-				)
-				.addGroup(layout.createParallelGroup()
 					.addComponent(jSecurityLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 					.addComponent(jSecurity, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				)
 				.addGroup(layout.createParallelGroup()
-						.addComponent(jSecurityReactionsLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
-						.addComponent(jSecurityReactions, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jRigsReactionsLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jRigsReactions, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+				)
+				.addGroup(layout.createParallelGroup()
+					.addComponent(jSecurityReactionsLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jSecurityReactions, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+				)
+				.addGroup(layout.createParallelGroup()
+					.addComponent(jRecursiveLevelLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jRecursiveLevel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+				)
+				.addGroup(layout.createParallelGroup()
+					.addComponent(jMaterialEfficiencyOverwriteLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jMaterialEfficiencyOverwrite, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+				)
+				.addGroup(layout.createParallelGroup()
+					.addComponent(jRoundPerRunsOverwriteLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jRoundPerRunsOverwrite, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+				)
+				.addGroup(layout.createParallelGroup()
+					.addComponent(jRoundPerRunsLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
+					.addComponent(jRoundPerRuns, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
 				)
 				.addGroup(layout.createParallelGroup()
 					.addComponent(jIgnoreMultiplierLabel, Program.getButtonsHeight(), Program.getButtonsHeight(), Program.getButtonsHeight())
@@ -322,27 +440,42 @@ public class StockpileItemDialog extends JDialogCentered {
 		);
 	}
 
-	protected StockpileItem showEdit(final StockpileItem editStockpileItem) {
+	protected List<StockpileItem> showEdit(final StockpileItem editStockpileItem) {
 		updateData();
 		this.stockpileItem = editStockpileItem;
 		this.getDialog().setTitle(TabsStockpile.get().editStockpileItem());
 		Item item = ApiIdConverter.getItem(editStockpileItem.getTypeID());
 		if (editStockpileItem instanceof SubpileStock) {
+			jItems.setVisible(false);
 			jSubpile.setText(editStockpileItem.getName());
 			jSubpile.setVisible(true);
 			jBlueprintTypeLabel.setVisible(false);
 			jBlueprintType.setVisible(false);
 			jIgnoreMultiplierLabel.setVisible(false);
 			jIgnoreMultiplier.setVisible(false);
+			jCountMinimumLabel.setVisible(true);
+			jCountMinimum.setVisible(true);
+		} else if (editStockpileItem.isSubMaterial()) {
 			jItems.setVisible(false);
+			jItems.setSelectedItem(item);
+			jSubpile.setText(editStockpileItem.getName());
+			jSubpile.setVisible(true);
+			jBlueprintTypeLabel.setVisible(false);
+			jBlueprintType.setVisible(false);
+			jIgnoreMultiplierLabel.setVisible(false);
+			jIgnoreMultiplier.setVisible(false);
+			jCountMinimumLabel.setVisible(false);
+			jCountMinimum.setVisible(false);
 		} else {
+			jItems.setVisible(true);
 			jItems.setSelectedItem(item);
 			jSubpile.setVisible(false);
 			jBlueprintTypeLabel.setVisible(true);
 			jBlueprintType.setVisible(true);
 			jIgnoreMultiplierLabel.setVisible(true);
 			jIgnoreMultiplier.setVisible(true);
-			jItems.setVisible(true);
+			jCountMinimumLabel.setVisible(true);
+			jCountMinimum.setVisible(true);
 		}
 		if (item.isBlueprint()) {
 			jBlueprintType.setModel(new DefaultComboBoxModel<>(BlueprintAddType.EDIT_BLUEPRINT));
@@ -351,17 +484,49 @@ public class StockpileItemDialog extends JDialogCentered {
 		} else {
 			jBlueprintType.setModel(new DefaultComboBoxModel<>(BlueprintAddType.EMPTY));
 		}
-		if (editStockpileItem.isBPO()) {
+		if (stockpileItem instanceof StockpileItemMaterial) {
+			if (item.isBlueprint()) {
+				jBlueprintType.setSelectedItem(BlueprintAddType.MANUFACTURING_MATERIALS_EDITABLE);
+			} else {
+				jBlueprintType.setSelectedItem(BlueprintAddType.REACTION_MATERIALS_EDITABLE);
+			}
+			StockpileItemMaterial materialItem = (StockpileItemMaterial) editStockpileItem;
+			roundPerRunsModel.setValue(materialItem.getRoundPerRuns());
+			int recursiveLevel;
+			if (materialItem.getItem().isFormula()) {
+				recursiveLevel = materialItem.getFormulaRecursiveLevel();
+				jRigsReactions.setSelectedItem(materialItem.getRigsReactions());
+				jSecurityReactions.setSelectedItem(materialItem.getSecurityReactions());
+			} else {
+				recursiveLevel = materialItem.getBlueprintRecursiveLevel();
+				jMaterialEfficiency.setSelectedItem(materialItem.getME());
+				jFacility.setSelectedItem(materialItem.getFacility());
+				jRigs.setSelectedItem(materialItem.getRigs());
+				jSecurity.setSelectedItem(materialItem.getSecurity());
+				jMaterialEfficiencyOverwrite.setModel(new DefaultComboBoxModel<>(MaterialEfficiencyOverwrite.EDIT));
+				jMaterialEfficiencyOverwrite.setSelectedIndex(0);
+				jMaterialEfficiencyOverwrite.setEnabled(!materialItem.getMaterials().isEmpty());
+			}
+			jFacilityOverwrite.setSelected(false);
+			jFacilityOverwrite.setEnabled(!materialItem.getMaterials().isEmpty());
+			jRoundPerRunsOverwrite.setSelected(false);
+			jRoundPerRunsOverwrite.setEnabled(!materialItem.getMaterials().isEmpty());
+			jRecursiveLevel.setSelectedItem(recursiveLevel);
+			
+		} else if (editStockpileItem.getItem().isFormula()) {
+			jBlueprintType.setSelectedItem(BlueprintAddType.FORMULA);
+		} else if (editStockpileItem.isBPO()) {
 			jBlueprintType.setSelectedItem(BlueprintAddType.BPO);
 		} else if (editStockpileItem.isBPC()) {
 			jBlueprintType.setSelectedItem(BlueprintAddType.BPC);
 		} else if (editStockpileItem.isRuns()) {
 			jBlueprintType.setSelectedItem(BlueprintAddType.RUNS);
 		}
+		jIgnoreMultiplier.setSelected(editStockpileItem.isIgnoreMultiplier());
 		jBlueprintType.setEnabled(item.isBlueprint());
 		jCountMinimum.setText(String.valueOf(editStockpileItem.getCountMinimum()));
 		show();
-		return stockpileItem;
+		return getReturn();
 	}
 
 	protected List<StockpileItem> showAdd(final Stockpile addStockpile) {
@@ -370,6 +535,10 @@ public class StockpileItemDialog extends JDialogCentered {
 		this.getDialog().setTitle(TabsStockpile.get().addStockpileItem());
 		jBlueprintType.setModel(new DefaultComboBoxModel<>(BlueprintAddType.EMPTY));
 		show();
+		return getReturn();
+	}
+
+	private List<StockpileItem> getReturn() {
 		if (stockpileItems != null) {
 			return stockpileItems;
 		} else if (stockpileItem != null) {
@@ -382,7 +551,7 @@ public class StockpileItemDialog extends JDialogCentered {
 	private void updateData() {
 		stockpile = null;
 		stockpileItem = null;
-		this.stockpileItems = null;
+		stockpileItems = null;
 		List<Item> itemsList = new ArrayList<>(StaticData.get().getItems().values());
 		Collections.sort(itemsList);
 		try {
@@ -395,7 +564,21 @@ public class StockpileItemDialog extends JDialogCentered {
 		jSubpile.setVisible(false);
 		jItems.setVisible(true);
 		jItems.setSelectedIndex(0);
+		jBlueprintTypeLabel.setVisible(true);
+		jBlueprintType.setVisible(true);
+		jCountMinimumLabel.setVisible(true);
+		jCountMinimum.setVisible(true);
 		jCountMinimum.setText("");
+		jFacilityOverwrite.setSelected(true);
+		jFacilityOverwrite.setEnabled(false);
+		jRoundPerRunsOverwrite.setSelected(true);
+		jRoundPerRunsOverwrite.setEnabled(false);
+		roundPerRunsModel.setValue(0);
+		jMaterialEfficiencyOverwrite.setModel(new DefaultComboBoxModel<>(MaterialEfficiencyOverwrite.ADD));
+		jMaterialEfficiencyOverwrite.setSelectedIndex(0);
+		jMaterialEfficiencyOverwrite.setEnabled(false);
+		jIgnoreMultiplierLabel.setVisible(true);
+		jIgnoreMultiplier.setVisible(true);
 		jIgnoreMultiplier.setSelected(false);
 	}
 
@@ -416,6 +599,10 @@ public class StockpileItemDialog extends JDialogCentered {
 	}
 
 	private StockpileItem getStockpileItem() {
+		return getStockpileItems().get(0);
+	}
+
+	private List<StockpileItem> getStockpileItems() {
 		Item item = (Item) jItems.getSelectedItem();
 		double countMinimum;
 		try {
@@ -432,43 +619,57 @@ public class StockpileItemDialog extends JDialogCentered {
 			typeID = item.getTypeID();
 		}
 		boolean ignoreMultiplier = jIgnoreMultiplier.isSelected();
-		return new StockpileItem(getStockpile(), item, typeID, countMinimum, runs, ignoreMultiplier);
-	}
-
-	private List<StockpileItem> getStockpileItems() {
-		List<StockpileItem> itemsMaterial = new ArrayList<>();
-		Item item = (Item) jItems.getSelectedItem();
-		double countMinimum;
-		try {
-			countMinimum = Double.parseDouble(jCountMinimum.getText());
-		} catch (NumberFormatException ex) {
-			countMinimum = 0;
-		}
-		boolean ignoreMultiplier = jIgnoreMultiplier.isSelected();
-		Integer me = jMe.getItemAt(jMe.getSelectedIndex());
-		ManufacturingFacility facility = jFacility.getItemAt(jFacility.getSelectedIndex());
-		ManufacturingRigs rigs = jRigs.getItemAt(jRigs.getSelectedIndex());
-		ReactionRigs rigsReactions = jRigsReactions.getItemAt(jRigsReactions.getSelectedIndex());
-		ManufacturingSecurity security = jSecurity.getItemAt(jSecurity.getSelectedIndex());
-		ReactionSecurity securityReactions = jSecurityReactions.getItemAt(jSecurityReactions.getSelectedIndex());
-		if (jBlueprintType.isEnabled() && jBlueprintType.getItemAt(jBlueprintType.getSelectedIndex()) == BlueprintAddType.MANUFACTURING_MATERIALS) {
-			 //Manufacturing Materials
-			for (IndustryMaterial material : item.getManufacturingMaterials()) {
-				Item materialItem = ApiIdConverter.getItem(material.getTypeID());
-				double count = ApiIdConverter.getManufacturingQuantity(material.getQuantity(), me, facility, rigs, security, countMinimum, false);
-				itemsMaterial.add(new StockpileItem(getStockpile(), materialItem, material.getTypeID(), count, false, ignoreMultiplier));
+		if (jBlueprintType.isEnabled()) {
+			int roundPerRuns = roundPerRunsModel.getNumber().intValue();
+			BlueprintAddType blueprintAddType = jBlueprintType.getItemAt(jBlueprintType.getSelectedIndex());
+			Integer me = jMaterialEfficiency.getItemAt(jMaterialEfficiency.getSelectedIndex());
+			ManufacturingFacility facility = jFacility.getItemAt(jFacility.getSelectedIndex());
+			ManufacturingRigs rigs = jRigs.getItemAt(jRigs.getSelectedIndex());
+			ReactionRigs rigsReactions = jRigsReactions.getItemAt(jRigsReactions.getSelectedIndex());
+			ManufacturingSecurity security = jSecurity.getItemAt(jSecurity.getSelectedIndex());
+			ReactionSecurity securityReactions = jSecurityReactions.getItemAt(jSecurityReactions.getSelectedIndex());
+			Integer recursiveLevel = jRecursiveLevel.getItemAt(jRecursiveLevel.getSelectedIndex());
+			if (stockpileItem instanceof StockpileItemMaterial && stockpileItem.isSubMaterial()) {
+				StockpileItemMaterial material = (StockpileItemMaterial) stockpileItem;
+				if (material.getItem().isFormula()) {
+					recursiveLevel = material.getFormulaRecursiveLevel();
+				} else if (stockpileItem.getItem().isBlueprint()) {
+					recursiveLevel = material.getBlueprintRecursiveLevel();
+				}
 			}
-		} else if (jBlueprintType.isEnabled() && jBlueprintType.getItemAt(jBlueprintType.getSelectedIndex()) == BlueprintAddType.REACTION_MATERIALS) {
-			//Reaction Materials
-			for (IndustryMaterial material : item.getReactionMaterials()) {
-				Item materialItem = ApiIdConverter.getItem(material.getTypeID());
-				double count = ApiIdConverter.getReactionQuantity(material.getQuantity(), rigsReactions, securityReactions, countMinimum, false);
-				itemsMaterial.add(new StockpileItem(getStockpile(), materialItem, material.getTypeID(), count, false, ignoreMultiplier));
+			if (recursiveLevel == null) {
+				recursiveLevel = 0;
 			}
-		} else {
-			return null;
+			boolean facilityOverwrite = jFacilityOverwrite.isSelected();
+			boolean roundPerRunsOverwrite = jRoundPerRunsOverwrite.isSelected();
+			MaterialEfficiencyOverwrite meOverwrite = jMaterialEfficiencyOverwrite.getItemAt(jMaterialEfficiencyOverwrite.getSelectedIndex());
+			if (blueprintAddType == BlueprintAddType.MANUFACTURING_MATERIALS_ONCE) {
+				//Manufacturing Materials
+				List<StockpileItem> itemsMaterial = new ArrayList<>();
+				for (IndustryMaterial material : item.getManufacturingMaterials()) {
+					Item materialItem = ApiIdConverter.getItem(material.getTypeID());
+					double count = ApiIdConverter.getManufacturingQuantity(material.getQuantity(), me, facility, rigs, security, countMinimum, false);
+					itemsMaterial.add(new StockpileItem(getStockpile(), materialItem, material.getTypeID(), count, false, ignoreMultiplier));
+				} 
+				return itemsMaterial;
+			} else if (blueprintAddType == BlueprintAddType.MANUFACTURING_MATERIALS_EDITABLE) {
+				//Manufacturing Materials Editable
+				return Collections.singletonList(new StockpileItemMaterial(getStockpile(), item, item.getProductTypeID(), countMinimum, ignoreMultiplier, roundPerRuns, roundPerRunsOverwrite, recursiveLevel, meOverwrite.getME(), me, facilityOverwrite, facility, rigs, security));
+			} else if (blueprintAddType == BlueprintAddType.REACTION_MATERIALS_ONCE) {
+				//Reaction Materials
+				List<StockpileItem> itemsMaterial = new ArrayList<>();
+				for (IndustryMaterial material : item.getReactionMaterials()) {
+					Item materialItem = ApiIdConverter.getItem(material.getTypeID());
+					double count = ApiIdConverter.getReactionQuantity(material.getQuantity(), rigsReactions, securityReactions, countMinimum, false);
+					itemsMaterial.add(new StockpileItem(getStockpile(), materialItem, material.getTypeID(), count, false, ignoreMultiplier));
+				}
+				return itemsMaterial;
+			} else if (blueprintAddType == BlueprintAddType.REACTION_MATERIALS_EDITABLE) {
+				//Reaction Materials Editable
+				return Collections.singletonList(new StockpileItemMaterial(getStockpile(), item, item.getProductTypeID(), countMinimum, ignoreMultiplier, roundPerRuns, roundPerRunsOverwrite, recursiveLevel, facilityOverwrite, rigsReactions, securityReactions));
+			}
 		}
-		return itemsMaterial;
+		return Collections.singletonList(new StockpileItem(getStockpile(), item, typeID, countMinimum, runs, ignoreMultiplier));
 	}
 
 	private boolean itemExist() {
@@ -488,16 +689,17 @@ public class StockpileItemDialog extends JDialogCentered {
 		if (existing == null) {
 			return null;
 		}
-		boolean materials = jBlueprintType.isEnabled() &&
-				(jBlueprintType.getItemAt(jBlueprintType.getSelectedIndex()) == BlueprintAddType.MANUFACTURING_MATERIALS
-				|| jBlueprintType.getItemAt(jBlueprintType.getSelectedIndex()) == BlueprintAddType.REACTION_MATERIALS);
-		if (materials) { //Never exists
+		BlueprintAddType blueprintAddType = jBlueprintType.getItemAt(jBlueprintType.getSelectedIndex());
+		boolean materialsAdd = jBlueprintType.isEnabled() 
+				&& (blueprintAddType == BlueprintAddType.MANUFACTURING_MATERIALS_ONCE || blueprintAddType == BlueprintAddType.REACTION_MATERIALS_ONCE);
+		if (materialsAdd) {//Not editable
 			return null;
 		}
-		boolean runs = jBlueprintType.isEnabled() && jBlueprintType.getItemAt(jBlueprintType.getSelectedIndex()) == BlueprintAddType.RUNS;
-		boolean copy = runs || (jBlueprintType.isEnabled() && jBlueprintType.getItemAt(jBlueprintType.getSelectedIndex()) == BlueprintAddType.BPC);
+		boolean materialsEdit = jBlueprintType.isEnabled() && (blueprintAddType == BlueprintAddType.MANUFACTURING_MATERIALS_EDITABLE || blueprintAddType == BlueprintAddType.REACTION_MATERIALS_EDITABLE);
+		boolean runs = jBlueprintType.isEnabled() && blueprintAddType == BlueprintAddType.RUNS;
+		boolean copy = runs || (jBlueprintType.isEnabled() && blueprintAddType == BlueprintAddType.BPC);
 		for (StockpileItem item : existing.getItems()) {
-			if (item.getTypeID() == typeItem.getTypeID() && copy == item.isBPC() && runs == item.isRuns()) {
+			if (item.getTypeID() == typeItem.getTypeID() && copy == item.isBPC() && runs == item.isRuns() && materialsEdit == item.isMaterial()) {
 				return item;
 			}
 		}
@@ -548,13 +750,13 @@ public class StockpileItemDialog extends JDialogCentered {
 		} else {
 			Item item = (Item) jItems.getSelectedItem();
 			BlueprintAddType oldValue = jBlueprintType.getItemAt(jBlueprintType.getSelectedIndex());
-			if (stockpileItem != null) { //Can not add Materials
+			if (stockpileItem != null) {
 				if (item.isBlueprint()) {
 					jBlueprintType.setModel(new DefaultComboBoxModel<>(BlueprintAddType.EDIT_BLUEPRINT));
 					jBlueprintType.setEnabled(true);
 				} else if (item.isFormula()) {
 					jBlueprintType.setModel(new DefaultComboBoxModel<>(BlueprintAddType.EDIT_FORMULA));
-					jBlueprintType.setEnabled(false);
+					jBlueprintType.setEnabled(true);
 				} else {
 					jBlueprintType.setModel(new DefaultComboBoxModel<>(BlueprintAddType.EMPTY));
 					jBlueprintType.setEnabled(false);
@@ -566,10 +768,10 @@ public class StockpileItemDialog extends JDialogCentered {
 				jBlueprintType.setModel(new DefaultComboBoxModel<>(BlueprintAddType.ADD_FORMULA));
 				jBlueprintType.setEnabled(true);
 			} else if (item.isBlueprint()) {
-				jBlueprintType.setModel(new DefaultComboBoxModel<>(BlueprintAddType.EDIT_BLUEPRINT));
+				jBlueprintType.setModel(new DefaultComboBoxModel<>(BlueprintAddType.ADD_BLUEPRINT));
 				jBlueprintType.setEnabled(true);
 			} else if (item.isFormula()) {
-				jBlueprintType.setModel(new DefaultComboBoxModel<>(BlueprintAddType.EDIT_FORMULA));
+				jBlueprintType.setModel(new DefaultComboBoxModel<>(BlueprintAddType.ADD_FORMULA));
 				jBlueprintType.setEnabled(true);
 			} else {
 				jBlueprintType.setModel(new DefaultComboBoxModel<>(BlueprintAddType.EMPTY));
@@ -589,6 +791,10 @@ public class StockpileItemDialog extends JDialogCentered {
 					updating = true;
 					jCountMinimum.setText(String.valueOf(item.getCountMinimum()));
 					jIgnoreMultiplier.setSelected(item.isIgnoreMultiplier());
+					if (item instanceof StockpileItemMaterial) {
+						StockpileItemMaterial material = (StockpileItemMaterial) item;
+						roundPerRunsModel.setValue(material.getRoundPerRuns());
+					}
 					updating = oldUpdateValue;
 				}
 			});
@@ -620,22 +826,33 @@ public class StockpileItemDialog extends JDialogCentered {
 			StockpileItem editItem = getStockpileItem();
 			subpileStock.setCountMinimum(editItem.getCountMinimum());
 		} else if (stockpileItem != null) { //EDIT
-			if (itemExist()) { //EDIT + UPDATING (Editing to an existing item)
-				StockpileItem existingItem = getExistingItem();
-				existingItem.getStockpile().remove(existingItem);
-				stockpileTab.removeItem(existingItem);
+			stockpileItems = getStockpileItems();
+			if (stockpileItems != null && stockpileItems.size() == 1) {
+				StockpileItem item = stockpileItems.get(0);
+				stockpileItems = null;
+				if (itemExist()) { //EDIT + UPDATING (Editing to an existing item)
+					StockpileItem existingItem = getExistingItem();
+					existingItem.getStockpile().remove(existingItem);
+					stockpileTab.removeItem(existingItem);
+				}
+				if (item.getClass().equals(stockpileItem.getClass()) && item.isSameType(stockpileItem)) {
+					stockpileItem.update(item);
+				} else { //New class, remove old item
+					stockpileItem.getStockpile().remove(stockpileItem);
+					stockpileTab.removeItem(stockpileItem);
+					stockpileItem = item;
+				}
 			}
-			stockpileItem.update(getStockpileItem());
-		} else if (itemExist()) { //UPDATING (Adding an existing item)
-			stockpileItem = getExistingItem();
-			stockpileItem.update(getStockpileItem());
+		//} else if (itemExist()) { //UPDATING (Adding an existing item)
+		//	stockpileItem = getExistingItem();
+		//	stockpileItem.update(getStockpileItem());
 		} else { //ADD
 			stockpileItems = getStockpileItems();
 			if (stockpileItems != null) {
 				for (StockpileItem item : stockpileItems) {
 					if (!stockpile.add(item)) { //ADD MERGE (Only used by manufacturing materials)
 						for (StockpileItem current : stockpile.getItems()) {
-							if (!current.getTypeID().equals(item.getTypeID())) {
+							if (!current.equals(item)) {
 								continue;
 							}
 							current.setCountMinimum(item.getCountMinimum() + current.getCountMinimum());
@@ -649,9 +866,116 @@ public class StockpileItemDialog extends JDialogCentered {
 			}
 		}
 		Settings.unlock("Stockpile (Items Dialog)"); //Unlock for Stockpile (Items Dialog)
-		program.saveSettings("Stockpile (Items Dialog)");
+		program.saveStockpiles("Stockpile (Items Dialog)");
 		super.setVisible(false);
 	}
+
+	private Integer[] getRecursiveLevelBlueprints() {
+		Item item = (Item) jItems.getSelectedItem();
+		return getRecursiveLevelBlueprints(item);
+	}
+
+	private Integer[] getRecursiveLevelFormulas() {
+		Item item = (Item) jItems.getSelectedItem();
+		return getRecursiveLevelFormulas(item);
+	}
+
+	public static Integer[] getRecursiveLevelBlueprints(Item item) {
+		int maxLevel = getRecursiveLevelBlueprints(item, 0);
+		Integer[] levels = new Integer[maxLevel + 1];
+		for (int i = 0; i <= maxLevel; i++) {
+			levels[i] = i;
+		}
+		return levels;
+	}
+	public static Integer[] getRecursiveLevelFormulas(Item item) {
+		int maxLevel = getRecursiveLevelFormulas(item, 0);
+		Integer[] levels = new Integer[maxLevel + 1];
+		for (int i = 0; i <= maxLevel; i++) {
+			levels[i] = i;
+		}
+		return levels;
+	}
+
+	private static int getRecursiveLevelBlueprints(Item item, int level) {
+		int returnLevel = level;
+		for (IndustryMaterial material : item.getManufacturingMaterials()) {
+			Item materialItem = ApiIdConverter.getItem(material.getTypeID());
+			if (materialItem.getBlueprintTypeID() > 0) {
+				Item blueprintItem = ApiIdConverter.getItem(materialItem.getBlueprintTypeID());
+				returnLevel = Math.max(returnLevel, getRecursiveLevelBlueprints(blueprintItem, level + 1));
+			}
+		}
+		return returnLevel;
+	}
+
+	private static int getRecursiveLevelFormulas(Item item, int level) {
+		int returnLevel = level;
+		for (IndustryMaterial material : item.getReactionMaterials()) {
+			Item materialItem = ApiIdConverter.getItem(material.getTypeID());
+			if (materialItem.getFormulaTypeID() > 0) {
+				Item formulaItem = ApiIdConverter.getItem(materialItem.getFormulaTypeID());
+				returnLevel = Math.max(returnLevel, getRecursiveLevelFormulas(formulaItem, level + 1));
+			}
+		}
+		return returnLevel;
+	}
+
+	public static class MaterialEfficiencyOverwrite {
+		public static final MaterialEfficiencyOverwrite KEEP = new MaterialEfficiencyOverwrite("Don't change");
+		public static final MaterialEfficiencyOverwrite MAX = new MaterialEfficiencyOverwrite(10);
+		public static final MaterialEfficiencyOverwrite[] EDIT = {
+			KEEP,
+			new MaterialEfficiencyOverwrite(0),
+			new MaterialEfficiencyOverwrite(1),
+			new MaterialEfficiencyOverwrite(2),
+			new MaterialEfficiencyOverwrite(3),
+			new MaterialEfficiencyOverwrite(4),
+			new MaterialEfficiencyOverwrite(5),
+			new MaterialEfficiencyOverwrite(6),
+			new MaterialEfficiencyOverwrite(7),
+			new MaterialEfficiencyOverwrite(8),
+			new MaterialEfficiencyOverwrite(9),
+			MAX
+		};
+		public static final MaterialEfficiencyOverwrite[] ADD = {
+			new MaterialEfficiencyOverwrite(0),
+			new MaterialEfficiencyOverwrite(1),
+			new MaterialEfficiencyOverwrite(2),
+			new MaterialEfficiencyOverwrite(3),
+			new MaterialEfficiencyOverwrite(4),
+			new MaterialEfficiencyOverwrite(5),
+			new MaterialEfficiencyOverwrite(6),
+			new MaterialEfficiencyOverwrite(7),
+			new MaterialEfficiencyOverwrite(8),
+			new MaterialEfficiencyOverwrite(9),
+			MAX
+		};
+		final Integer me;
+		final String value;
+
+		public MaterialEfficiencyOverwrite(int me) {
+			this.me = me;
+			this.value = String.valueOf(me);
+		}
+
+		public MaterialEfficiencyOverwrite(String value) {
+			this.me = null;
+			this.value = value;
+		}
+
+		public Integer getME() {
+			return me;
+		}
+
+		@Override
+		public String toString() {
+			return value;
+		}
+
+		
+	}
+
 
 	private class ListenerClass implements ActionListener, CaretListener, ItemListener {
 		@Override
@@ -669,40 +993,119 @@ public class StockpileItemDialog extends JDialogCentered {
 						for (JComponent jComponent : manufacturingComponents) {
 							jComponent.setVisible(false);
 						}
+						for (JComponent jComponent : manufacturingEditComponents) {
+							jComponent.setVisible(false);
+						}
 						for (JComponent jComponent : reactionComponents) {
+							jComponent.setVisible(false);
+						}
+						for (JComponent jComponent : reactionEditComponents) {
 							jComponent.setVisible(false);
 						}
 					} else {
 						switch (lastBlueprintAddType) {
-							case MANUFACTURING_MATERIALS:
+							case MANUFACTURING_MATERIALS_ONCE:
+							case MANUFACTURING_MATERIALS_EDITABLE:
 								for (JComponent jComponent : manufacturingComponents) {
 									jComponent.setVisible(false);
 								}
+								for (JComponent jComponent : manufacturingEditComponents) {
+									jComponent.setVisible(false);
+								}
 								break;
-							case REACTION_MATERIALS:
+							case REACTION_MATERIALS_ONCE:
+							case REACTION_MATERIALS_EDITABLE:
 								for (JComponent jComponent : reactionComponents) {
+									jComponent.setVisible(false);
+								}
+								for (JComponent jComponent : reactionEditComponents) {
 									jComponent.setVisible(false);
 								}
 								break;
 						}
 					}
 					if (jBlueprintType.isEnabled()) {
+						StockpileItem exitingItem = getExistingItem();
 						switch (currentBlueprintAddType) {
-							case MANUFACTURING_MATERIALS:
+							case MANUFACTURING_MATERIALS_ONCE:
+							case MANUFACTURING_MATERIALS_EDITABLE:
 								for (JComponent jComponent : manufacturingComponents) {
 									jComponent.setVisible(true);
 								}
-								jMe.setSelectedIndex(0);
+								boolean blueprintEditable = currentBlueprintAddType == BlueprintAddType.MANUFACTURING_MATERIALS_EDITABLE;
+								for (JComponent jComponent : manufacturingEditComponents) {
+									jComponent.setVisible(blueprintEditable);
+								}
+								jMaterialEfficiency.setSelectedIndex(0);
 								jFacility.setSelectedIndex(0);
 								jRigs.setSelectedIndex(0);
+								if (!blueprintEditable) {
+									break;
+								}
+								Integer[] recursiveLevelBlueprints = getRecursiveLevelBlueprints();
+								Boolean recursiveBlueprint = null;
+								if (exitingItem instanceof StockpileItemMaterial) {
+									StockpileItemMaterial materialItem = (StockpileItemMaterial) exitingItem;
+									if (materialItem.isSubMaterial()) {
+										recursiveBlueprint = !materialItem.getMaterials().isEmpty(); //Edit Sub Item: Have sub blueprints
+										//Can't edit recursive level on subs
+										jRecursiveLevelLabel.setVisible(false);
+										jRecursiveLevel.setVisible(false);
+									}
+								}
+								if (recursiveBlueprint == null) {
+									recursiveBlueprint = recursiveLevelBlueprints.length > 1; //Add/Edit: Have sub blueprints
+									jRecursiveLevelLabel.setVisible(recursiveBlueprint);
+									jRecursiveLevel.setVisible(recursiveBlueprint);
+								}
+								jFacilityOverwriteLabel.setVisible(blueprintEditable && recursiveBlueprint);
+								jFacilityOverwrite.setVisible(recursiveBlueprint);
+								jRoundPerRunsOverwriteLabel.setVisible(recursiveBlueprint);
+								jRoundPerRunsOverwrite.setVisible(recursiveBlueprint);
+								jRecursiveLevel.setModel(new DefaultComboBoxModel<>(recursiveLevelBlueprints));
+								jRecursiveLevel.setSelectedIndex(0);
+								jMaterialEfficiencyOverwriteLabel.setVisible(recursiveBlueprint);
+								jMaterialEfficiencyOverwrite.setVisible(recursiveBlueprint);
+								jMaterialEfficiencyOverwrite.setSelectedIndex(0);
+								jMaterialEfficiencyOverwrite.setEnabled(false);
 								break;
-							case REACTION_MATERIALS:
+							case REACTION_MATERIALS_ONCE:
+							case REACTION_MATERIALS_EDITABLE:
 								for (JComponent jComponent : reactionComponents) {
 									jComponent.setVisible(true);
-									jComponent.setEnabled(true);
+								}
+								boolean reactionEditable = currentBlueprintAddType == BlueprintAddType.REACTION_MATERIALS_EDITABLE;
+								for (JComponent jComponent : reactionEditComponents) {
+									jComponent.setVisible(reactionEditable);
 								}
 								jRigsReactions.setSelectedIndex(0);
 								jRigsReactions.setEnabled(true);
+								if (!reactionEditable) {
+									break;
+								}
+								Integer[] recursiveLevelFormulas = getRecursiveLevelFormulas(); //Eveything
+								Boolean recursiveFormula = null;
+								if (exitingItem instanceof StockpileItemMaterial ) {
+									StockpileItemMaterial materialItem = (StockpileItemMaterial) exitingItem;
+									if (materialItem.isSubMaterial()) {
+										recursiveFormula = !materialItem.getMaterials().isEmpty(); //Edit Sub Item: Have sub blueprints
+										//Can't edit recursive level on subs
+										jRecursiveLevelLabel.setVisible(false);
+										jRecursiveLevel.setVisible(false);
+									}
+								}
+								if (recursiveFormula == null) {
+									recursiveFormula = recursiveLevelFormulas.length > 1; //Add/Edit: Have sub blueprints
+									jRecursiveLevelLabel.setVisible(recursiveFormula);
+									jRecursiveLevel.setVisible(recursiveFormula);
+								}
+								jFacilityOverwriteLabel.setVisible(recursiveFormula);
+								jFacilityOverwrite.setVisible(recursiveFormula);
+								jRoundPerRunsOverwriteLabel.setVisible(recursiveFormula);
+								jRoundPerRunsOverwrite.setVisible(recursiveFormula);
+								jRecursiveLevel.setVisible(recursiveFormula);
+								jRecursiveLevel.setModel(new DefaultComboBoxModel<>(recursiveLevelFormulas));
+								jRecursiveLevel.setSelectedIndex(0);
 								break;
 						}
 					}

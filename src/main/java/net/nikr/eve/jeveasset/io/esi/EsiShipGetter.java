@@ -25,7 +25,7 @@ import java.util.Date;
 import java.util.List;
 import net.nikr.eve.jeveasset.data.api.accounts.EsiOwner;
 import net.nikr.eve.jeveasset.data.api.my.MyAsset;
-import net.nikr.eve.jeveasset.data.settings.Settings;
+import net.nikr.eve.jeveasset.data.settings.SQLiteSettings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.troja.eve.esi.ApiException;
 import net.troja.eve.esi.ApiResponse;
@@ -93,12 +93,7 @@ public class EsiShipGetter extends AbstractEsiGetter {
 			//Remove active ship children from root
 			owner.removeAssets(activeShipChildren);
 			//Save ship name
-			try {
-				Settings.lock("Active Ship Name");
-				Settings.get().getEveNames().put(shipType.getShipItemId(), shipType.getShipName());
-			} finally {
-				Settings.unlock("Active Ship Name");
-			}
+			SQLiteSettings.addEveName(shipType.getShipItemId(), shipType.getShipName());
 		}
 		//Active Ship - Must be after getEveNames is updated
 		owner.setActiveShip(EsiConverter.toActiveShip(shipType, shipLocation));

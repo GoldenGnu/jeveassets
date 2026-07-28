@@ -21,6 +21,7 @@
 package net.nikr.eve.jeveasset.io.esi;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -35,6 +36,7 @@ import net.nikr.eve.jeveasset.data.api.my.MyMining;
 import net.nikr.eve.jeveasset.data.api.my.MyNpcStanding;
 import net.nikr.eve.jeveasset.data.api.my.MyTransaction;
 import net.nikr.eve.jeveasset.data.api.raw.RawJournal.ContextType;
+import net.nikr.eve.jeveasset.data.settings.SQLiteSettings;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.gui.shared.Updatable;
@@ -76,9 +78,11 @@ public class EsiNameGetter extends AbstractEsiGetter {
 
 		Set<Long> retries = new HashSet<>(ids);
 		for (Map.Entry<Set<Long>, List<NamesResponse>> entry : responses.entrySet()) {
+			Map<Long, String> names = new HashMap<>();
 			for (NamesResponse lookup : entry.getValue()) {
-				Settings.get().getOwners().put((long)lookup.getId(), lookup.getName());
+				names.put((long) lookup.getId(), lookup.getName());
 			}
+			SQLiteSettings.addOwners(names);
 			retries.removeAll(entry.getKey());
 		}
 		Map<Set<Long>, List<NamesResponse>> retryResponses = updateList(splitSet(retries, 1), DEFAULT_RETRIES, new ListHandler<Set<Long>, List<NamesResponse>>() {
@@ -97,17 +101,22 @@ public class EsiNameGetter extends AbstractEsiGetter {
 			}
 		});
 		int count = 30;
+		Map<Long, String> names = new HashMap<>();
+		Map<Long, Date> dates = new HashMap<>();
 		for (Map.Entry<Set<Long>, List<NamesResponse>> entry : retryResponses.entrySet()) {
+			
 			for (NamesResponse lookup : entry.getValue()) {
-				Settings.get().getOwners().put((long)lookup.getId(), lookup.getName());
+				names.put((long) lookup.getId(), lookup.getName());
 				Date date = new Date(System.currentTimeMillis() + (ONE_DAY * count));
 				count--;
 				if (count < 1) {
 					count = 30;
 				}
-				Settings.get().getOwnersNextUpdate().put(lookup.getId(), date);
+				dates.put((long)lookup.getId(), date);
 			}
 		}
+		SQLiteSettings.addOwners(names);
+		SQLiteSettings.setOwnerNextUpdate(dates);
 	}
 
 	private Set<Long> getOwnerIDs(List<OwnerType> ownerTypes) {
@@ -167,7 +176,7 @@ public class EsiNameGetter extends AbstractEsiGetter {
 			return;
 		}
 		//Next Update
-		Date nextUpdate = Settings.get().getOwnersNextUpdate().get(number.longValue());
+		Date nextUpdate = SQLiteSettings.getOwnerNextUpdate(number.longValue());
 		if (nextUpdate != null && !Updatable.isUpdatable(nextUpdate)) {
 			return;
 		}

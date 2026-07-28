@@ -22,7 +22,6 @@
 package net.nikr.eve.jeveasset.gui.shared.filter;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 
@@ -30,7 +29,7 @@ public interface SimpleFilterControl<E> {
 
 	public void saveSettings(final String msg);
 
-	public default Map<String, List<Filter>> getAllFilters() {
+	public default Map<String, FilterSettings> getAllFilters() {
 		return new HashMap<>();
 	}
 

@@ -85,12 +85,12 @@ import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.CopyHandler;
 import net.nikr.eve.jeveasset.gui.shared.Formatter;
 import net.nikr.eve.jeveasset.gui.shared.InstantToolTip;
-import net.nikr.eve.jeveasset.gui.shared.MarketDetailsColumn;
-import net.nikr.eve.jeveasset.gui.shared.MarketDetailsColumn.MarketDetailsActionListener;
+import net.nikr.eve.jeveasset.gui.shared.TableColumnButton;
 import net.nikr.eve.jeveasset.gui.shared.Updatable;
 import net.nikr.eve.jeveasset.gui.shared.components.JFixedToolBar;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTabPrimary;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
+import net.nikr.eve.jeveasset.gui.shared.filter.FilterSettings;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuColumns;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo.AutoNumberFormat;
@@ -102,6 +102,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
+import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer.TablePaddingControl;
 import net.nikr.eve.jeveasset.gui.shared.table.TableFormatFactory;
 import net.nikr.eve.jeveasset.gui.tabs.orders.OutbidProcesser.OutbidProcesserInput;
 import net.nikr.eve.jeveasset.gui.tabs.orders.OutbidProcesser.OutbidProcesserOutput;
@@ -263,7 +264,7 @@ public class MarketOrdersTab extends JMainTabPrimary {
 		jTable = new JMarketOrdersTable(program, tableModel);
 		jTable.setCellSelectionEnabled(true);
 		//Padding
-		PaddingTableCellRenderer.install(jTable, 1);
+		TablePaddingControl tablePaddingControl = PaddingTableCellRenderer.install(jTable, Settings.get().getTablePadding(NAME, 1));
 		//Sorting
 		TableComparatorChooser<MyMarketOrder> comparatorChooser = TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
 		//Selection Model
@@ -271,10 +272,15 @@ public class MarketOrdersTab extends JMainTabPrimary {
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
 		//Market Details
-		MarketDetailsColumn.install(eventList, new MarketDetailsActionListener<MyMarketOrder>() {
+		TableColumnButton.install(eventList, new TableColumnButton.ButtonActionListener<MyMarketOrder>() {
 			@Override
-			public void openMarketDetails(MyMarketOrder marketOrder) {
-				openEve(marketOrder);
+			public void buttonClicked(MyMarketOrder item) {
+				openEve(item);
+			}
+
+			@Override
+			public JButton getButton(MyMarketOrder item) {
+				return item.getMarketDetailsButton();
 			}
 		});
 		//Listeners
@@ -284,7 +290,7 @@ public class MarketOrdersTab extends JMainTabPrimary {
 		//Table Filter
 		filterControl = new MarketOrdersFilterControl(sortedList);
 		//Menu
-		installTableTool(new OrdersTableMenu(), tableFormat, comparatorChooser, tableModel, jTable, filterControl, MyMarketOrder.class);
+		installTableTool(new OrdersTableMenu(tablePaddingControl), tableFormat, comparatorChooser, tableModel, jTable, filterControl, MyMarketOrder.class);
 
 		updateDates();
 
@@ -605,6 +611,12 @@ public class MarketOrdersTab extends JMainTabPrimary {
 
 	private class OrdersTableMenu implements TableMenu<MyMarketOrder> {
 
+		private final TablePaddingControl tablePaddingControl;
+
+		public OrdersTableMenu(TablePaddingControl tablePaddingControl) {
+			this.tablePaddingControl = tablePaddingControl;
+		}
+
 		@Override
 		public MenuData<MyMarketOrder> getMenuData() {
 			return new MenuData<>(selectionModel.getSelected());
@@ -617,7 +629,7 @@ public class MarketOrdersTab extends JMainTabPrimary {
 
 		@Override
 		public JMenu getColumnMenu() {
-			return new JMenuColumns<>(program, tableFormat, tableModel, jTable, NAME);
+			return new JMenuColumns<>(program, tableFormat, tableModel, jTable, tablePaddingControl, NAME);
 		}
 
 		@Override
@@ -715,6 +727,11 @@ public class MarketOrdersTab extends JMainTabPrimary {
 					exportEventList,
 					filterList
 					);
+		}
+
+		@Override
+		public void loadFilter(FilterSettings filterSettings) {
+			setFilter(filterSettings);
 		}
 
 		@Override
