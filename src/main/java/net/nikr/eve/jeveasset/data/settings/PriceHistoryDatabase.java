@@ -55,6 +55,7 @@ public class PriceHistoryDatabase extends SQLiteTable {
 	public static final String ZKILLBOARD_TABLE = "zkillboard";
 	public static final String ZBLACKLIST_TABLE = "zblacklist";
 	public static final String PRICEDATA_TABLE = "pricedata";
+	public static final String COUNT_TABLE = "countdata";
 
 	public static final DateFormatThreadSafe DATE = new DateFormatThreadSafe("yyyy-MM-dd", true);
 
@@ -79,6 +80,9 @@ public class PriceHistoryDatabase extends SQLiteTable {
 		}
 		if (!tablePriceDataExist()) { //New database: Empty
 			createPriceDataTable();
+		}
+		if (!tableCountExist()) { //New database: Empty
+			createCountDataTable();
 		}
 	}
 
@@ -148,6 +152,15 @@ public class PriceHistoryDatabase extends SQLiteTable {
 	}
 
 	/**
+	 * Add data to database.
+	 * Handles duplicates
+	 * @param data
+	 */
+	public static void setCountData(Map<Integer, Long> data) {
+		getInstance().insertCountData(data);
+	}
+
+	/**
 	 * Get all data in database.
 	 * @param typeIDs
 	 * @return
@@ -176,7 +189,9 @@ public class PriceHistoryDatabase extends SQLiteTable {
 	 * @return
 	 */
 	public static Set<PriceChange> getPriceChanges(Map<Integer, Long> typeIDs, boolean ownedOnly, PriceMode priceMode, Date from, Date to) {
-		return getInstance().selectPriceChanges(typeIDs, ownedOnly, priceMode, from, to);
+		Map<Integer, Long> fromCount = getInstance().selectCounts(from);
+		Map<Integer, Long> toCount = getInstance().selectCounts(to);
+		return getInstance().selectPriceChanges(typeIDs, fromCount, toCount, ownedOnly, priceMode, from, to);
 	}
 
 	/**
@@ -284,6 +299,29 @@ public class PriceHistoryDatabase extends SQLiteTable {
 				setAttribute(statement, 10, entry.getValue().getBuyAvg());
 				setAttribute(statement, 11, entry.getValue().getBuyMedian());
 				setAttribute(statement, 12, entry.getValue().getBuyMin());
+				rows.addRow();
+			}
+			connection.commit();
+			connection.setAutoCommit(true);
+		} catch (SQLException ex) {
+			LOG.error(ex.getMessage(), ex);
+		}
+	}
+
+	private void insertCountData(Map<Integer, Long> insert) {
+		if (insert == null || insert.isEmpty()) {
+			return;
+		}
+		String date = DATE.format(new Date()); //Todays date
+		String sql = "INSERT OR REPLACE INTO " + COUNT_TABLE + " (typeid,date,count) VALUES(?,?,?)";
+		try (Connection connection = DriverManager.getConnection(getConnectionUrl());
+				PreparedStatement statement = connection.prepareStatement(sql)) {
+			Rows rows = new Rows(statement, insert.size());
+			connection.setAutoCommit(false);
+			for (Map.Entry<Integer, Long> entry : insert.entrySet()) {
+				setAttribute(statement, 1, entry.getKey());
+				setAttribute(statement, 2, date);
+				setAttribute(statement, 3, entry.getValue());
 				rows.addRow();
 			}
 			connection.commit();
@@ -406,7 +444,7 @@ public class PriceHistoryDatabase extends SQLiteTable {
 		return data;
 	}
 
-	private Set<PriceChange> selectPriceChanges(Map<Integer, Long> typeIDs, boolean ownedOnly, PriceMode priceMode, Date from, Date to) {
+	private Set<PriceChange> selectPriceChanges(Map<Integer, Long> typeIDs, Map<Integer, Long> fromCount, Map<Integer, Long> toCount, boolean ownedOnly, PriceMode priceMode, Date from, Date to) {
 		String fromString = DATE.format(from);
 		String toString = DATE.format(to);
 		Map<Integer, PriceChange> data = new HashMap<>();
@@ -457,8 +495,10 @@ public class PriceHistoryDatabase extends SQLiteTable {
 				}
 				if (date.equals(fromString)) {
 					priceChange.setPriceFrom(price);
+					priceChange.setCountFrom(fromCount.get(typeID));
 				} else if (date.equals(toString)) {
 					priceChange.setPriceTo(price);
+					priceChange.setCountTo(toCount.get(typeID));
 				} else {
 					LOG.warn("Date is don't equals to or from???");
 				}
@@ -467,6 +507,25 @@ public class PriceHistoryDatabase extends SQLiteTable {
 			LOG.error(ex.getMessage(), ex);
 		}
 		return new HashSet<>(data.values());
+	}
+
+	private Map<Integer, Long> selectCounts(Date date) {
+		String dateString = DATE.format(date);
+		String sql = "SELECT * FROM " + COUNT_TABLE + " WHERE date = ?";
+		Map<Integer, Long> map = new HashMap<>();
+		try (Connection connection = DriverManager.getConnection(getConnectionUrl());
+				PreparedStatement statement = connection.prepareStatement(sql)) {
+			setAttribute(statement, 1, dateString);
+			ResultSet rs = statement.executeQuery();
+			while (rs.next()) {
+				int typeID = getInt(rs, "typeid");
+				long count = getLong(rs, "count");
+				map.put(typeID, count);
+			}
+		} catch (SQLException ex) {
+			LOG.error(ex.getMessage(), ex);
+		}
+		return map;
 	}
 
 	public static String getZKillboardDate() {
@@ -562,6 +621,21 @@ public class PriceHistoryDatabase extends SQLiteTable {
 		}
 	}
 
+	private void createCountDataTable() {
+		String sql = "CREATE TABLE IF NOT EXISTS " + COUNT_TABLE + " (\n"
+				+ "	typeid INTEGER,\n"
+				+ "	date TEXT,\n"
+				+ "	count INTEGER,\n"
+				+ "	UNIQUE(typeid, date)\n"
+				+ ");";
+		try (Connection connection = DriverManager.getConnection(getConnectionUrl());
+				Statement statement = connection.createStatement()) {
+			statement.execute(sql);
+		} catch (SQLException ex) {
+			LOG.error(ex.getMessage(), ex);
+		}
+	}
+
 	private boolean tableZKillboardExist() {
 		return tableExist(ZKILLBOARD_TABLE);
 	}
@@ -574,14 +648,13 @@ public class PriceHistoryDatabase extends SQLiteTable {
 		return tableExist(PRICEDATA_TABLE);
 	}
 
+	private boolean tableCountExist() {
+		return tableExist(COUNT_TABLE);
+	}
+
 	public static boolean tableExist(String tableName) {
-		String sql = "SELECT name FROM sqlite_master WHERE type='table' AND name='" + tableName + "'";
-		try (Connection connection = DriverManager.getConnection(getConnectionUrl());
-				Statement statement = connection.createStatement();
-				ResultSet rs = statement.executeQuery(sql)) {
-			while (rs.next()) {
-				return true;
-			}
+		try (Connection connection = DriverManager.getConnection(getConnectionUrl())) {
+			SQLiteTable.tableExist(connection, tableName);
 		} catch (SQLException ex) {
 			LOG.error(ex.getMessage(), ex);
 		}

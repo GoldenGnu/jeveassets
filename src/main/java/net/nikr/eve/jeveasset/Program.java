@@ -1159,6 +1159,10 @@ public class Program implements ActionListener {
 		});
 	}
 
+	public void setPriceHistoryCount() {
+		PriceHistoryDatabase.setCountData(profileData.getAssetCounts());
+	}
+
 	public static boolean isDevBuild() {
 		return PROGRAM_DEV_BUILD;
 	}

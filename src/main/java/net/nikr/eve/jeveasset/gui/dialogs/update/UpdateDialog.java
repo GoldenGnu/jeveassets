@@ -616,6 +616,10 @@ public class UpdateDialog extends JDialogCentered {
 							program.updateEventLists();
 							//Create value tracker point
 							program.createTrackerDataPoint();
+							//Update Price History Count
+							if (jPriceDataAll.isSelected() || jPriceDataNew.isSelected()) {
+								program.setPriceHistoryCount();
+							}
 							//Save settings after updating (if we crash later)
 							program.saveSettingsAndProfile(); //Save updated id<->name data
 							//Resume structure update

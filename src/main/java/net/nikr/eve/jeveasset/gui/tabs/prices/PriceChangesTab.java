@@ -427,23 +427,41 @@ public class PriceChangesTab extends JMainTabSecondary {
 
 		private final int typeID;
 		private final Item item;
-		private final Long count;
+		private final Long countNow;
+		private Long countFrom;
+		private Long countTo;
 		private double priceFrom;
 		private double priceTo;
 		
 
-		public PriceChange(int typeID, Item item, Long count) {
+		public PriceChange(int typeID, Item item, Long countNow) {
 			this.typeID = typeID;
 			this.item = item;
-			this.count = count;
+			this.countNow = countNow;
 		}
 
 		public int getTypeID() {
 			return typeID;
 		}
 
-		public Long getCount() {
-			return count;
+		public Long getCountNow() {
+			return countNow;
+		}
+
+		public Long getCountFrom() {
+			return countFrom;
+		}
+
+		public void setCountFrom(Long countFrom) {
+			this.countFrom = countFrom;
+		}
+
+		public Long getCountTo() {
+			return countTo;
+		}
+
+		public void setCountTo(Long countTo) {
+			this.countTo = countTo;
 		}
 
 		public double getPriceFrom() {
@@ -462,11 +480,21 @@ public class PriceChangesTab extends JMainTabSecondary {
 			this.priceTo = priceTo;
 		}
 
-		public double getChange() {
-			return getPriceTo() - getPriceFrom();
+		public Double getValueTo() {
+			if (getCountTo() == null) {
+				return null;
+			}
+			return getCountTo() * getPriceTo();
 		}
 
-		public Percent getChangePercent() {
+		public Double getValueFrom() {
+			if (getCountFrom() == null) {
+				return null;
+			}
+			return getCountFrom()* getPriceFrom();
+		}
+
+		public Percent getPriceChangePercent() {
 			if (getPriceFrom() > 0 && getPriceTo() > 0) {
 				return Percent.create(getPriceTo() / getPriceFrom());
 			} else if (getPriceFrom() == 0 && getPriceTo() == 0) {
@@ -478,8 +506,54 @@ public class PriceChangesTab extends JMainTabSecondary {
 			}
 		}
 
-		public double getTotal() {
-			return getPriceTo() * getItemCount() - getPriceFrom() * getItemCount();
+		public double getPriceChange() {
+			return getPriceTo() - getPriceFrom();
+		}
+
+		public Percent getCountChangePercent() {
+			if (getCountFrom() == null || getCountTo() == null) {
+				return null;
+			}
+			if (getCountFrom() > 0 && getCountTo() > 0) {
+				return Percent.create(getCountTo() / getCountFrom());
+			} else if (getCountFrom() == 0 && getCountTo() == 0) {
+				return Percent.create(0);
+			} else if (getCountFrom() == 0 && getCountTo() > 0) {
+				return Percent.create(1);
+			} else {
+				return null;
+			}
+		}
+
+		public Long getCountChange() {
+			if (getCountFrom() == null || getCountTo() == null) {
+				return null;
+			}
+			return getCountTo() - getCountFrom();
+		}
+
+		public Double getValueChange() {
+			if (getCountFrom() == null || getCountTo() == null) {
+				return null;
+			}
+			return getPriceTo() * getCountTo() - getPriceFrom() * getCountFrom();
+		}
+
+		public Percent getValueChangePercent() {
+			if (getCountFrom() == null || getCountTo() == null) {
+				return null;
+			}
+			double fromValue =  getCountFrom() * getPriceFrom() ;
+			double toValue =  getCountTo() * getPriceTo();
+			if (fromValue > 0 && toValue> 0) {
+				return Percent.create(toValue / fromValue);
+			} else if (fromValue == 0 && toValue == 0) {
+				return Percent.create(0);
+			} else if (fromValue == 0 && toValue > 0) {
+				return Percent.create(1);
+			} else {
+				return null;
+			}
 		}
 
 		@Override
@@ -489,7 +563,7 @@ public class PriceChangesTab extends JMainTabSecondary {
 
 		@Override
 		public long getItemCount() {
-			return count;
+			return countNow == null ? 0L : countNow;
 		}
 
 		@Override

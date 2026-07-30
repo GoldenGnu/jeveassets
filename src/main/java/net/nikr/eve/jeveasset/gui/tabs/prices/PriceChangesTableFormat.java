@@ -62,15 +62,29 @@ public enum PriceChangesTableFormat implements EnumTableColumn<PriceChange> {
 	COUNT(Long.class) {
 		@Override
 		public String getColumnName() {
-			return TabsPriceChanges.get().columnCount();
+			return TabsPriceChanges.get().columnCountNow();
 		}
 		@Override
 		public String getColumnToolTip() {
-			return TabsPriceChanges.get().columnCountToolTip();
+			return TabsPriceChanges.get().columnCountNowToolTip();
 		}
 		@Override
 		public Object getColumnValue(final PriceChange from) {
-			return from.getItemCount();
+			return from.getCountNow();
+		}
+	},
+	COUNT_FROM(Long.class) {
+		@Override
+		public String getColumnName() {
+			return TabsPriceChanges.get().columnCountFrom();
+		}
+		@Override
+		public String getColumnToolTip() {
+			return TabsPriceChanges.get().columnCountFromToolTip();
+		}
+		@Override
+		public Object getColumnValue(final PriceChange from) {
+			return from.getCountFrom();
 		}
 	},
 	PRICE_FROM(Double.class) {
@@ -83,6 +97,34 @@ public enum PriceChangesTableFormat implements EnumTableColumn<PriceChange> {
 			return from.getPriceFrom();
 		}
 	},
+	VALUE_FROM(Double.class) {
+		@Override
+		public String getColumnName() {
+			return TabsPriceChanges.get().columnValueFrom();
+		}
+		@Override
+		public String getColumnToolTip() {
+			return TabsPriceChanges.get().columnValueFromToolTip();
+		}
+		@Override
+		public Object getColumnValue(final PriceChange from) {
+			return from.getValueFrom();
+		}
+	},
+	COUNT_TO(Long.class) {
+		@Override
+		public String getColumnName() {
+			return TabsPriceChanges.get().columnCountTo();
+		}
+		@Override
+		public String getColumnToolTip() {
+			return TabsPriceChanges.get().columnCountToToolTip();
+		}
+		@Override
+		public Object getColumnValue(final PriceChange from) {
+			return from.getCountTo();
+		}
+	},
 	PRICE_TO(Double.class) {
 		@Override
 		public String getColumnName() {
@@ -93,47 +135,99 @@ public enum PriceChangesTableFormat implements EnumTableColumn<PriceChange> {
 			return from.getPriceTo();
 		}
 	},
+	VALUE_TO(Double.class) {
+		@Override
+		public String getColumnName() {
+			return TabsPriceChanges.get().columnValueTo();
+		}
+		@Override
+		public String getColumnToolTip() {
+			return TabsPriceChanges.get().columnValueToToolTip();
+		}
+		@Override
+		public Object getColumnValue(final PriceChange from) {
+			return from.getValueTo();
+		}
+	},
 	PRICE_CHANGE_PERCENT(Percent.class) {
 		@Override
 		public String getColumnName() {
-			return TabsPriceChanges.get().columnChangePercent();
+			return TabsPriceChanges.get().columnPriceChangePercent();
 		}
 		@Override
 		public String getColumnToolTip() {
-			return TabsPriceChanges.get().columnChangePercentToolTip();
+			return TabsPriceChanges.get().columnPriceChangePercentToolTip();
 		}
 		@Override
 		public Object getColumnValue(final PriceChange from) {
-			return from.getChangePercent();
+			return from.getPriceChangePercent();
 		}
 	},
+
 	PRICE_CHANGE(Double.class) {
 		@Override
 		public String getColumnName() {
-			return TabsPriceChanges.get().columnChange();
-		}
-		@Override
-		public String getColumnToolTip() {
-			return TabsPriceChanges.get().columnChangeToolTip();
+			return TabsPriceChanges.get().columnPriceChange();
 		}
 		@Override
 		public Object getColumnValue(final PriceChange from) {
-			return from.getChange();
+			return from.getPriceChange();
 		}
 	},
-	PRICE_TOTAL(Double.class) {
+	COUNT_CHANGE_PERCENT(Long.class) {
 		@Override
 		public String getColumnName() {
-			return TabsPriceChanges.get().columnTotal();
+			return TabsPriceChanges.get().columnCountChangePercent();
 		}
-
 		@Override
 		public String getColumnToolTip() {
-			return TabsPriceChanges.get().columnTotalToolTip();
+			return TabsPriceChanges.get().columnCountChangePercentToolTip();
 		}
 		@Override
 		public Object getColumnValue(final PriceChange from) {
-			return from.getTotal();
+			return from.getCountChangePercent();
+		}
+	},
+	COUNT_CHANGE(Long.class) {
+		@Override
+		public String getColumnName() {
+			return TabsPriceChanges.get().columnCountChange();
+		}
+		@Override
+		public String getColumnToolTip() {
+			return TabsPriceChanges.get().columnCountChangeToolTip();
+		}
+		@Override
+		public Object getColumnValue(final PriceChange from) {
+			return from.getCountChange();
+		}
+	},
+	VALUE_CHANGE_PERCENT(Double.class) {
+		@Override
+		public String getColumnName() {
+			return TabsPriceChanges.get().columnValueChangePercent();
+		}
+		@Override
+		public String getColumnToolTip() {
+			return TabsPriceChanges.get().columnValueChangePercentToolTip();
+		}
+		@Override
+		public Object getColumnValue(final PriceChange from) {
+			return from.getValueChangePercent();
+		}
+	},
+	VALUE_CHANGE(Double.class) {
+		@Override
+		public String getColumnName() {
+			return TabsPriceChanges.get().columnValueChange();
+		}
+		@Override
+		public String getColumnToolTip() {
+			return TabsPriceChanges.get().columnValueChangeToolTip();
+		}
+		@Override
+		public Object getColumnValue(final PriceChange from) {
+			return from.getValueChange();
 		}
 	},
 	;

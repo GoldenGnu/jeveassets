@@ -42,15 +42,28 @@ public abstract class TabsPriceChanges extends Bundle {
 	public abstract String columnName();
 	public abstract String columnGroup();
 	public abstract String columnCategory();
-	public abstract String columnCount();
-	public abstract String columnCountToolTip();
+	public abstract String columnCountNow();
+	public abstract String columnCountNowToolTip();
+	public abstract String columnCountFrom();
+	public abstract String columnCountFromToolTip();
 	public abstract String columnPriceFrom();
+	public abstract String columnValueFrom();
+	public abstract String columnValueFromToolTip();
+	public abstract String columnCountTo();
+	public abstract String columnCountToToolTip();
 	public abstract String columnPriceTo();
-	public abstract String columnChangePercent();
-	public abstract String columnChangePercentToolTip();
-	public abstract String columnChange();
-	public abstract String columnChangeToolTip();
-	public abstract String columnTotal();
-	public abstract String columnTotalToolTip();
+	public abstract String columnValueTo();
+	public abstract String columnValueToToolTip();
+	public abstract String columnPriceChangePercent();
+	public abstract String columnPriceChangePercentToolTip();
+	public abstract String columnPriceChange();
+	public abstract String columnCountChange();
+	public abstract String columnCountChangeToolTip();
+	public abstract String columnCountChangePercent();
+	public abstract String columnCountChangePercentToolTip();
+	public abstract String columnValueChange();
+	public abstract String columnValueChangeToolTip();
+	public abstract String columnValueChangePercent();
+	public abstract String columnValueChangePercentToolTip();
 
 }

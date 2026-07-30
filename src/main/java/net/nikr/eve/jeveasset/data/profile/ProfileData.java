@@ -110,6 +110,7 @@ public class ProfileData {
 	private final List<MyAccountBalance> accountBalanceList = new ArrayList<>();
 	private final List<MyContract> contractList = new ArrayList<>();
 	private final Map<String, Long> skillPointsTotal = new HashMap<>();
+	private final Map<Integer, Long> assetCounts = new HashMap<>(); //TypeID : int
 	private Map<Integer, List<MyAsset>> uniqueAssetsDuplicates = null; //TypeID : int
 	private Map<Integer, MarketPriceData> transactionSellPriceData; //TypeID : int
 	private Map<Integer, MarketPriceData> transactionBuyPriceData; //TypeID : int
@@ -124,6 +125,10 @@ public class ProfileData {
 		this.profileManager = profileManager;
 		RouteFinder.load();
 		SplashUpdater.setSubProgress(100);
+	}
+
+	public Map<Integer, Long> getAssetCounts() {
+		return assetCounts;
 	}
 
 	public Set<Integer> getPriceTypeIDs() {
@@ -788,6 +793,18 @@ public class ProfileData {
 			}
 		});
 		AddedData.getAssets().commitQueue();
+		
+		assetCounts.clear();
+		for (List<MyAsset> uniqueAssets : uniqueAssetsDuplicates.values()) {
+			if (uniqueAssets.isEmpty()) {
+				continue;
+			}
+			MyAsset asset = uniqueAssets.get(0);
+			if (asset.isBPC()) {
+				continue;
+			}
+			assetCounts.put(asset.getTypeID(), asset.getTypeCount());
+		}
 
 		//Update Locations
 		List<EditableLocationType> editableLocationTypes = new ArrayList<>();
