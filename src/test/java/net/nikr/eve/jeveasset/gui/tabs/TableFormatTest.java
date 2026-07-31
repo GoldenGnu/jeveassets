@@ -209,6 +209,10 @@ public class TableFormatTest extends TestUtil {
 			//Price Change
 			test(PriceChangesTableFormat.class);
 			PriceChange priceChange = new PriceChange(INTEGER_VALUE, item, LONG_VALUE);
+			priceChange.setCountFrom(LONG_VALUE);
+			priceChange.setPriceFrom(DOUBLE_VALUE);
+			priceChange.setCountTo(LONG_VALUE);
+			priceChange.setPriceTo(DOUBLE_VALUE);
 			for (PriceChangesTableFormat tableFormat : PriceChangesTableFormat.values()) {
 				test(tableFormat, tableFormat.getType(), tableFormat.getColumnValue(priceChange));
 			}

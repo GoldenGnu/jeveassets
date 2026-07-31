@@ -174,7 +174,7 @@ public enum PriceChangesTableFormat implements EnumTableColumn<PriceChange> {
 			return from.getPriceChange();
 		}
 	},
-	COUNT_CHANGE_PERCENT(Long.class) {
+	COUNT_CHANGE_PERCENT(Percent.class) {
 		@Override
 		public String getColumnName() {
 			return TabsPriceChanges.get().columnCountChangePercent();
@@ -202,7 +202,7 @@ public enum PriceChangesTableFormat implements EnumTableColumn<PriceChange> {
 			return from.getCountChange();
 		}
 	},
-	VALUE_CHANGE_PERCENT(Double.class) {
+	VALUE_CHANGE_PERCENT(Percent.class) {
 		@Override
 		public String getColumnName() {
 			return TabsPriceChanges.get().columnValueChangePercent();
