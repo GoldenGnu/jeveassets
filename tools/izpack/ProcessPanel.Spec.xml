@@ -4,7 +4,9 @@
     <executeclass name="net.nikr.izpack.RunJava">
         <arg>javaw</arg>
         <arg>-jar</arg>
-        <arg>$INSTALL_PATH/jeveassets.jar</arg>
+        <arg>$INSTALL_PATH/$jarfile</arg>
+		<arg>$portableArg</arg>
+		<arg>$lazysaveArg</arg>
     </executeclass>
   </job>
   <job name="run" final="true">
@@ -12,7 +14,9 @@
     <executeclass name="net.nikr.izpack.RunJava">
         <arg>java</arg>
         <arg>-jar</arg>
-        <arg>$INSTALL_PATH/jeveassets.jar</arg>
+        <arg>$INSTALL_PATH/$jarfile</arg>
+		<arg>$portableArg</arg>
+		<arg>$lazysaveArg</arg>
     </executeclass>
   </job>
   <job name="run" final="true">
@@ -20,7 +24,42 @@
     <executeclass name="net.nikr.izpack.RunJava">
         <arg>java</arg>
         <arg>-jar</arg>
-        <arg>$INSTALL_PATH/jeveassets.jar</arg>
+        <arg>$INSTALL_PATH/$jarfile</arg>
+        <arg>$portableArg</arg>
+		<arg>$lazysaveArg</arg>
     </executeclass>
   </job>
+  <!-- jmemory.jar -->
+  <!--
+  <job name="run" final="true" condition="isJMemory">
+	<os family="windows" />
+    <executeclass name="net.nikr.izpack.RunJava">
+        <arg>javaw</arg>
+        <arg>-jar</arg>
+        <arg>$INSTALL_PATH/jmemory.jar</arg>
+		<arg>$portableArg</arg>
+		<arg>$lazysaveArg</arg>
+    </executeclass>
+  </job>
+  <job name="run" final="true" condition="isJMemory">
+	<os family="unix" />
+    <executeclass name="net.nikr.izpack.RunJava">
+        <arg>java</arg>
+        <arg>-jar</arg>
+        <arg>$INSTALL_PATH/jmemory.jar</arg>
+		<arg>$portableArg</arg>
+		<arg>$lazysaveArg</arg>
+    </executeclass>
+  </job>
+  <job name="run" final="true" condition="isJMemory">
+	<os family="mac" />
+    <executeclass name="net.nikr.izpack.RunJava">
+        <arg>java</arg>
+        <arg>-jar</arg>
+        <arg>$INSTALL_PATH/jmemory.jar</arg>
+		<arg>$portableArg</arg>
+		<arg>$lazysaveArg</arg>
+    </executeclass>
+  </job>
+	-->
 </processing>

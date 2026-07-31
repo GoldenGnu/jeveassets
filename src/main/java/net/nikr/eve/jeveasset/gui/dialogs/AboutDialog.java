@@ -31,6 +31,7 @@ import javax.swing.JComponent;
 import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
+import net.nikr.eve.jeveasset.CliOptions;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.settings.Colors;
 import net.nikr.eve.jeveasset.gui.images.Images;
@@ -76,7 +77,11 @@ public class AboutDialog extends JDialogCentered {
 
 		JEditorPane jInfo = createEditorPane(
 				"<b>Version</b><br>"
-				+ "&nbsp;" + Program.PROGRAM_VERSION + "<br>"
+				+ "&nbsp;" + Program.PROGRAM_VERSION
+				+ (CliOptions.get().isPortable() ? "&nbsp;&nbsp;{Portable}" : "")
+				+ (CliOptions.get().isJmemory() ? "&nbsp;&nbsp;{jMemory}" : "")
+				+ (CliOptions.get().isLazySave()? "&nbsp;&nbsp;{LazySave}" : "")
+				+ "<br>"
 				+ "<br>"
 				+ "<b>Data</b><br>"
 				+ "&nbsp;" + program.getProgramDataVersion() + "<br>"

@@ -16,6 +16,15 @@
 
 	<dynamicvariables>
 		<variable name="runOnExit" value="${SYSTEM[runOnExit]}"/>
+		<variable name="jmemory" value="${SYSTEM[jmemory]}"/>
+		<variable name="portable" value="${SYSTEM[portable]}"/>
+		<variable name="lazysave" value="${SYSTEM[lazysave]}"/>
+		<variable name="jarfile" value="jmemory.jar" condition="isJMemory" />
+		<variable name="jarfile" value="jeveassets.jar" condition="!isJMemory" />
+		<variable name="portableArg" value="-p" condition="isPortable" />
+		<variable name="portableArg" value="" condition="!isPortable" />
+		<variable name="lazysaveArg" value="-z" condition="isLazysave" />
+		<variable name="lazysaveArg" value="" condition="!isLazysave" />
 	</dynamicvariables>
 
 	<resources>
@@ -27,6 +36,18 @@
 	<conditions>
 		<condition type="variable" id="isRunOnExit">
 			<name>runOnExit</name>
+			<value>true</value>
+		</condition>
+		<condition type="variable" id="isJMemory">
+			<name>jmemory</name>
+			<value>true</value>
+		</condition>
+		<condition type="variable" id="isPortable">
+			<name>portable</name>
+			<value>true</value>
+		</condition>
+		<condition type="variable" id="isLazysave">
+			<name>lazysave</name>
 			<value>true</value>
 		</condition>
 	</conditions>
