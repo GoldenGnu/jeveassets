@@ -152,11 +152,11 @@ public enum PriceChangesTableFormat implements EnumTableColumn<PriceChange> {
 	PRICE_CHANGE_PERCENT(Percent.class) {
 		@Override
 		public String getColumnName() {
-			return TabsPriceChanges.get().columnPriceChangePercent();
+			return TabsPriceChanges.get().columnPriceDifferencePercent();
 		}
 		@Override
 		public String getColumnToolTip() {
-			return TabsPriceChanges.get().columnPriceChangePercentToolTip();
+			return TabsPriceChanges.get().columnPriceDifferencePercentToolTip();
 		}
 		@Override
 		public Object getColumnValue(final PriceChange from) {
@@ -167,7 +167,7 @@ public enum PriceChangesTableFormat implements EnumTableColumn<PriceChange> {
 	PRICE_CHANGE(Double.class) {
 		@Override
 		public String getColumnName() {
-			return TabsPriceChanges.get().columnPriceChange();
+			return TabsPriceChanges.get().columnPriceDifference();
 		}
 		@Override
 		public Object getColumnValue(final PriceChange from) {
@@ -177,11 +177,11 @@ public enum PriceChangesTableFormat implements EnumTableColumn<PriceChange> {
 	COUNT_CHANGE_PERCENT(Percent.class) {
 		@Override
 		public String getColumnName() {
-			return TabsPriceChanges.get().columnCountChangePercent();
+			return TabsPriceChanges.get().columnCountDifferencePercent();
 		}
 		@Override
 		public String getColumnToolTip() {
-			return TabsPriceChanges.get().columnCountChangePercentToolTip();
+			return TabsPriceChanges.get().columnCountDifferencePercentToolTip();
 		}
 		@Override
 		public Object getColumnValue(final PriceChange from) {
@@ -191,11 +191,11 @@ public enum PriceChangesTableFormat implements EnumTableColumn<PriceChange> {
 	COUNT_CHANGE(Long.class) {
 		@Override
 		public String getColumnName() {
-			return TabsPriceChanges.get().columnCountChange();
+			return TabsPriceChanges.get().columnCountDifference();
 		}
 		@Override
 		public String getColumnToolTip() {
-			return TabsPriceChanges.get().columnCountChangeToolTip();
+			return TabsPriceChanges.get().columnCountDifferenceToolTip();
 		}
 		@Override
 		public Object getColumnValue(final PriceChange from) {
@@ -205,11 +205,11 @@ public enum PriceChangesTableFormat implements EnumTableColumn<PriceChange> {
 	VALUE_CHANGE_PERCENT(Percent.class) {
 		@Override
 		public String getColumnName() {
-			return TabsPriceChanges.get().columnValueChangePercent();
+			return TabsPriceChanges.get().columnValueDifferencePercent();
 		}
 		@Override
 		public String getColumnToolTip() {
-			return TabsPriceChanges.get().columnValueChangePercentToolTip();
+			return TabsPriceChanges.get().columnValueDifferencePercentToolTip();
 		}
 		@Override
 		public Object getColumnValue(final PriceChange from) {
@@ -219,11 +219,11 @@ public enum PriceChangesTableFormat implements EnumTableColumn<PriceChange> {
 	VALUE_CHANGE(Double.class) {
 		@Override
 		public String getColumnName() {
-			return TabsPriceChanges.get().columnValueChange();
+			return TabsPriceChanges.get().columnValueDifference();
 		}
 		@Override
 		public String getColumnToolTip() {
-			return TabsPriceChanges.get().columnValueChangeToolTip();
+			return TabsPriceChanges.get().columnValueDifferenceToolTip();
 		}
 		@Override
 		public Object getColumnValue(final PriceChange from) {
