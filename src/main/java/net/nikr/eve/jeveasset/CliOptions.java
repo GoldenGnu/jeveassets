@@ -27,7 +27,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.nikr.eve.jeveasset.CliExport.ExportTool;
 import net.nikr.eve.jeveasset.data.settings.ExportSettings;
@@ -48,11 +47,13 @@ import picocli.CommandLine.PicocliException;
 
 @Command(sortOptions = false,
 		synopsisHeading = "",
-		customSynopsis = "Usage: java [-Djava.awt.headless=true] -jar jeveassets.jar [-h] [-v] [-p] [-z] [-u] [-e [OPTIONS]]",
+		customSynopsis = "Usage: java [\"-Djava.awt.headless=true\"] -jar jeveassets.jar [-h] [-v] [-p] [-z] [[-u] [-e [OPTIONS]] | -r]",
 		description="%n  -Djava.awt.headless=true   Run without a GUI%n"
 				+ "                             Java parameter (must be specified before -jar)"
 		)
 public class CliOptions {
+
+	private static final int EXIT_USAGE = 64;
 
 	private static final Logger LOG = Logger.getLogger(CliOptions.class.getName());
 
@@ -99,10 +100,10 @@ public class CliOptions {
 	public static CommandLine set(final String[] args) {
 		CommandLine cmd = new CommandLine(CLI_OPTIONS);
 		try {
-			cmd.parseArgs(args);
-		} catch (PicocliException ex) {
-			LOG.log(Level.SEVERE, ex.getMessage(), ex);
-			System.exit(-1);
+			cmd = CLI_OPTIONS.parse(args);
+		} catch (PicocliException ignored) {
+			LOG.severe("Invalid command line options");
+			System.exit(EXIT_USAGE);
 		}
 		if (CLI_OPTIONS.help) {
 			cmd.setUsageHelpWidth(110);
@@ -113,6 +114,15 @@ public class CliOptions {
 		if (CLI_OPTIONS.version) {
 			System.out.println(Program.PROGRAM_NAME + " " + Program.PROGRAM_VERSION);
 			System.exit(0);
+		}
+		return cmd;
+	}
+
+	CommandLine parse(final String[] args) {
+		CommandLine cmd = new CommandLine(this);
+		cmd.parseArgs(args);
+		if (isRefresh() && isExport()) {
+			throw new CommandLine.ParameterException(cmd, "Refresh can not be combined with export options");
 		}
 		return cmd;
 	}
@@ -128,12 +138,14 @@ public class CliOptions {
 			+ "    This may cause you to lose data if jEveAssets exit unexpectedly" + END_GROUP)
 	boolean lazySave;
 
-	@ArgGroup(exclusive = false, heading = "Update Options:%n")
+	@ArgGroup(exclusive = true, heading = "Update Options:%n")
 	UpdateOptions updateOptions;
 
 	static class UpdateOptions {
 		@Option(names = { "-u", "-update"}, required = true, description = "Update Data%nUpdate all profiles and accounts%nAll data with cache expired will be updated" + END_GROUP)
 		boolean update;
+		@Option(names = { "-r", "-refresh"}, required = true, description = "Refresh ESI authorization%nRefresh all profiles and accounts%nNo ESI data will be updated%nThe GUI must be closed" + END_GROUP)
+		boolean refresh;
 	}
 
 	@ArgGroup(exclusive = false, heading = "Export Options:%n")
@@ -627,8 +639,15 @@ public class CliOptions {
 		return updateOptions.update;
 	}
 
+	public boolean isRefresh() {
+		if (updateOptions == null) {
+			return false;
+		}
+		return updateOptions.refresh;
+	}
+
 	public boolean isCLI() {
-		return isUpdate() || isExport();
+		return isUpdate() || isRefresh() || isExport();
 	}
 
 	public boolean isExport() {
