@@ -287,7 +287,7 @@ public class JMenuLookup<T> extends JAutoMenu<T> {
 			public Set<String> getLinks(MenuData<?> menuData) {
 				Set<String> urls = new HashSet<>();
 				for (MyLocation location : menuData.getSystemLocations()) {
-					urls.add("https://evemissioneer.com/s/" + location.getLocationID());
+					urls.add("https://evemissioneer.com/system/" + location.getLocationID());
 				}
 				return urls;
 			}
