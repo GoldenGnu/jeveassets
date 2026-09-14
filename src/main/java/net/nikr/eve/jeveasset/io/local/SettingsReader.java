@@ -359,6 +359,9 @@ public final class SettingsReader extends AbstractXmlReader<Boolean> {
 			List<Stockpile> stockpiles = StockpileXmlReader.load(settings.getStockpileGroupSettings());
 			if (stockpiles != null) {
 				settings.getStockpiles().addAll(stockpiles);
+				if (StockpileXmlReader.isSaveStockpiles()) {
+					settings.addSave(Save.STOCKPILE); //Save missing stockpile item IDs
+				}
 			}
 		}
 
