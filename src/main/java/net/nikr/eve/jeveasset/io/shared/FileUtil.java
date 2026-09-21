@@ -200,6 +200,7 @@ public class FileUtil extends FileUtilSimple {
 			Path profilesFrom = Paths.get(getPathProfilesDirectory());
 			Path itemsUpdatesFrom = Paths.get(getPathItemsUpdates());
 			Path settingsDatabaseFrom = Paths.get(getPathSettingsDatabase());
+			Path stockpilesFrom = Paths.get(getPathStockpiles());
 			CliOptions.get().setPortable(true);
 			Path settingsTo = Paths.get(getPathSettings());
 			Path trackerTo = Paths.get(getPathTrackerData());
@@ -212,6 +213,7 @@ public class FileUtil extends FileUtilSimple {
 			Path profilesTo = Paths.get(getPathProfilesDirectory());
 			Path itemsUpdatesTo = Paths.get(getPathItemsUpdates());
 			Path settingsDatabaseTo = Paths.get(getPathSettingsDatabase());
+			Path stockpilesTo = Paths.get(getPathStockpiles());
 			if (Files.exists(settingsFrom) && !Files.exists(settingsTo)) {
 				LOG.info("Importing settings");
 				try {
@@ -297,6 +299,15 @@ public class FileUtil extends FileUtilSimple {
 				LOG.info("Importing settings database");
 				try {
 					Files.copy(settingsDatabaseFrom, settingsDatabaseTo);
+					LOG.info("	OK");
+				} catch (IOException ex) {
+					LOG.info("	FAILED");
+				}
+			}
+			if (Files.exists(stockpilesFrom) && !Files.exists(stockpilesTo)) {
+				LOG.info("Importing stockpiles");
+				try {
+					Files.copy(stockpilesFrom, stockpilesTo);
 					LOG.info("	OK");
 				} catch (IOException ex) {
 					LOG.info("	FAILED");

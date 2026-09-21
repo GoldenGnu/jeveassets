@@ -1151,6 +1151,29 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 			//Unlcok Table
 			afterUpdateData();
 		}
+		//Collapse/expand as needed
+		try {
+			separatorList.getReadWriteLock().writeLock().lock();
+			for (int i = 0; i < separatorList.size(); i++) {
+				Object object = separatorList.get(i);
+				if (object instanceof SeparatorList.Separator<?>) {
+					SeparatorList.Separator<?> separator = (SeparatorList.Separator<?>) object;
+					StockpileItem currentItem = (StockpileItem) separator.first();
+					String stockpileGroup = currentItem.getGroup();
+					boolean isExpanded = separator.getLimit() > 0;
+					boolean shouldExpand = Settings.get().getStockpileGroupSettings().isGroupExpanded(stockpileGroup);
+					if (isExpanded != shouldExpand) {
+						if (shouldExpand) {
+							separator.setLimit(Integer.MAX_VALUE);
+						} else {
+							separator.setLimit(0);
+						}
+					}
+				}
+			}
+		} finally {
+			separatorList.getReadWriteLock().writeLock().unlock();
+		}
 	}
 
 	private void loadGroupStockpileExpandedState() {
