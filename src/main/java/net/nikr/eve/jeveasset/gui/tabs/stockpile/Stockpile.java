@@ -3038,19 +3038,18 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 				SubMultiplier stock = link.getSubpileStock();
 				StockpileItem item =  link.getStockpileItem();
 				MaterialLink materialLink = materialLinks.get(getMaterialLinkKey(item));
-				double countUpdate;
-				if (materialLink != null) {
-					countUpdate = UpdateMaterial.getCountNeeded(materialLink.getBlueprintSettings(), materialLink.getBlueprintCount(), item);
+				if (materialLink != null) { //Already multiplied
+					countMinimum += UpdateMaterial.getCountNeeded(materialLink.getBlueprintSettings(), materialLink.getBlueprintCount(), item);
 				} else {
-					countUpdate = item.getCountMinimum();
+					if (item.isIgnoreMultiplier() || stock == null) {
+						countMinimum += item.getCountMinimum();
+					} else {
+						countMinimum += item.getCountMinimum() * stock.getSubMultiplier();
+					}
 				}
-				if (item.isIgnoreMultiplier() || stock == null) {
-					countMinimum += Math.ceil(countUpdate);
-				} else {
-					countMinimum += Math.ceil(countUpdate * stock.getSubMultiplier());
-				}
+				
 			}
-			return countMinimum;
+			return Math.ceil(countMinimum);
 		}
 
 		@Override
@@ -3060,19 +3059,18 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 				SubMultiplier stock = link.getSubpileStock();
 				StockpileItem item =  link.getStockpileItem();
 				MaterialLink materialLink = materialLinks.get(getMaterialLinkKey(item));
-				double countUpdate;
-				if (materialLink != null) {
-					countUpdate = UpdateMaterial.getCountNeeded(materialLink.getBlueprintSettings(), materialLink.getBlueprintCount(), item);
+				if (materialLink != null) { //Already multiplied
+					countMinimum += UpdateMaterial.getCountNeeded(materialLink.getBlueprintSettings(), materialLink.getBlueprintCount(), item);
 				} else {
-					countUpdate = item.getCountMinimum();
+					if (item.isIgnoreMultiplier()) {
+						countMinimum += Math.ceil(item.getCountMinimum());
+					} else if (stock != null) {
+						countMinimum += Math.ceil(item.getCountMinimum() * stock.getSubMultiplier() * getStockpile().getMultiplier());
+					} else {
+						countMinimum += Math.ceil(item.getCountMinimum() * getStockpile().getMultiplier());
+					}
 				}
-				if (item.isIgnoreMultiplier()) {
-					countMinimum += Math.ceil(countUpdate);
-				} else if (stock != null) {
-					countMinimum += Math.ceil(countUpdate * stock.getSubMultiplier() * getStockpile().getMultiplier());
-				} else {
-					countMinimum += Math.ceil(countUpdate * getStockpile().getMultiplier());
-				}
+				
 			}
 			return (long) Math.ceil(countMinimum);
 		}

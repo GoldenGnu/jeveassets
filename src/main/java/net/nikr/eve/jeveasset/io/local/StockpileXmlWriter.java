@@ -44,12 +44,12 @@ public class StockpileXmlWriter extends AbstractXmlWriter {
 
 	public static boolean save(final List<Stockpile> stockpiles) {
 		StockpileXmlWriter writer = new StockpileXmlWriter();
-		return writer.writeStockpiles(stockpiles, FileUtil.getPathStockpiles(), true);
+		return writer.writeStockpiles(stockpiles, FileUtil.getPathStockpiles(), false);
 	}
 
 	public static boolean exportStockpiles(final List<Stockpile> stockpiles, String filename) {
 		StockpileXmlWriter writer = new StockpileXmlWriter();
-		return writer.writeStockpiles(stockpiles, filename, false);
+		return writer.writeStockpiles(stockpiles, filename, true);
 	}
 
 	private boolean writeStockpiles(final List<Stockpile> stockpiles, final String filename, final boolean export) {
@@ -60,7 +60,6 @@ public class StockpileXmlWriter extends AbstractXmlWriter {
 			LOG.error("Stockpile not saved " + ex.getMessage(), ex);
 			return false;
 		}
-
 		writeStockpiles(xmldoc, stockpiles, export);
 		try {
 			writeXmlFile(xmldoc, filename, !export);

@@ -50,12 +50,16 @@ import org.w3c.dom.NodeList;
 
 public final class StockpileXmlReader extends AbstractXmlReader<List<Stockpile>> {
 
-	public static final int SETTINGS_VERSION = 1;
-
 	private final StockpileGroupSettings stockpileGroupSettings;
+	private static boolean SAVE_STOCKPILES = false;
 
 	private StockpileXmlReader(StockpileGroupSettings stockpileGroupSettings) {
+		SAVE_STOCKPILES = false;
 		this.stockpileGroupSettings = stockpileGroupSettings;
+	}
+
+	public static boolean isSaveStockpiles() {
+		return SAVE_STOCKPILES;
 	}
 
 	public static List<Stockpile> load(StockpileGroupSettings stockpileGroupSettings) {
@@ -256,10 +260,12 @@ public final class StockpileXmlReader extends AbstractXmlReader<List<Stockpile>>
 
 	private static StockpileItem parseStockpileItem(Element itemNode, Stockpile stockpile) throws XmlException {
 		long id;
+		boolean missingID = false;
 		if (haveAttribute(itemNode, "id")) {
 			id = getLong(itemNode, "id");
 		} else {
 			id = StockpileItem.getNewID();
+			missingID = true;
 		}
 		int typeID = getInt(itemNode, "typeid");
 		boolean runs = getBooleanNotNull(itemNode, "runs", false);
@@ -337,6 +343,9 @@ public final class StockpileXmlReader extends AbstractXmlReader<List<Stockpile>>
 				stockpileItem = new StockpileItemMaterial(root, stockpile, item, productTypeID, countMinimum, ignoreMultiplier, roundPerRuns, formulaRecursiveLevel, reactionRigs, reactionSecurity);
 			} else {
 				stockpileItem = new StockpileItem(stockpile, item, typeID, countMinimum, runs, ignoreMultiplier, id);
+				if (missingID) {
+					SAVE_STOCKPILES = true;
+				}
 			}
 			return stockpileItem;
 		}
