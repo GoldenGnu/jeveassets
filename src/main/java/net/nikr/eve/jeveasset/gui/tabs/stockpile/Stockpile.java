@@ -3038,7 +3038,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 				SubMultiplier stock = link.getSubpileStock();
 				StockpileItem item =  link.getStockpileItem();
 				MaterialLink materialLink = materialLinks.get(getMaterialLinkKey(item));
-				if (materialLink != null) { //Already muliplied
+				if (materialLink != null) { //Already multiplied
 					countMinimum += UpdateMaterial.getCountNeeded(materialLink.getBlueprintSettings(), materialLink.getBlueprintCount(), item);
 				} else {
 					if (item.isIgnoreMultiplier() || stock == null) {
@@ -3059,7 +3059,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 				SubMultiplier stock = link.getSubpileStock();
 				StockpileItem item =  link.getStockpileItem();
 				MaterialLink materialLink = materialLinks.get(getMaterialLinkKey(item));
-				if (materialLink != null) { //Already muliplied
+				if (materialLink != null) { //Already multiplied
 					countMinimum += UpdateMaterial.getCountNeeded(materialLink.getBlueprintSettings(), materialLink.getBlueprintCount(), item);
 				} else {
 					if (item.isIgnoreMultiplier()) {
