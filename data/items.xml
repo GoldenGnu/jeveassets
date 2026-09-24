@@ -103126,7 +103126,7 @@
     <row category="Commodity" group="Peculiar Materials" id="62045" marketgroup="true" meta="0" name="Strange Matter Component X-71" pi="false" portion="1" price="200" product="0" tech="Tech I" volume="0.01"/>
     <row category="Special Edition Assets" group="Special Edition Commodities" id="62046" marketgroup="true" meta="0" name="Scale Model of a Blue Box" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
     <row category="Special Edition Assets" group="Special Edition Commodities" id="62047" marketgroup="true" meta="0" name="Inactive Sonic Multitool" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
-    <row category="Special Edition Assets" group="Special Edition Commodities" id="62048" marketgroup="true" meta="0" name="Bag of Gelatinized Confectionary" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
+    <row category="Special Edition Assets" group="Special Edition Commodities" id="62048" marketgroup="true" meta="0" name="Bag of Gelatinized Confectionery" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
     <row category="Special Edition Assets" group="Special Edition Commodities" id="62049" marketgroup="true" meta="0" name="Chronologically Curious Blue Diary" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
     <row category="Special Edition Assets" group="Special Edition Commodities" id="62050" marketgroup="true" meta="0" name="Fragment Inscribed with Odd Circular Text" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
     <row category="Special Edition Assets" group="Special Edition Commodities" id="62051" marketgroup="true" meta="0" name="Snow Globe with Peculiar Architecture" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
@@ -113308,7 +113308,7 @@
         <material id="11537" portionsize="1" quantity="999"/>
         <material id="52310" portionsize="1" quantity="666"/>
         <material id="52311" portionsize="1" quantity="666"/>
-        <material id="52312" portionsize="1" quantity="6666"/>
+        <material id="52312" portionsize="1" quantity="4800"/>
         <material id="52313" portionsize="1" quantity="6666"/>
         <material id="52314" portionsize="1" quantity="666"/>
         <material id="81066" portionsize="1" quantity="66666"/>
@@ -113324,7 +113324,7 @@
         <mfg id="52314" q="666"/>
         <mfg id="11399" q="999"/>
         <mfg id="11537" q="999"/>
-        <mfg id="52312" q="6666"/>
+        <mfg id="52312" q="4800"/>
         <mfg id="52313" q="6666"/>
         <mfg id="81067" q="6666"/>
         <mfg id="81066" q="66666"/>
@@ -115534,15 +115534,15 @@
     <row category="Implant" group="Booster" id="92030" marketgroup="false" meta="3" name="Expired Federation Damage Booster II" pi="false" portion="1" price="0" product="0" tech="Limited Time" volume="1.0"/>
     <row category="Implant" group="Booster" id="92031" marketgroup="false" meta="5" name="Expired Federation Damage Booster III" pi="false" portion="1" price="0" product="0" tech="Limited Time" volume="1.0"/>
     <row category="Implant" group="Booster" id="92032" marketgroup="false" meta="6" name="Expired Federation Damage Booster IV" pi="false" portion="1" price="0" product="0" tech="Limited Time" volume="1.0"/>
-    <row category="Drone" group="Combat Drone" id="92033" marketgroup="true" meta="6" name="Orbweaver SW-300-I" pi="false" portion="1" price="0" product="0" tech="Faction" volume="5.0"/>
-    <row category="Drone" group="Combat Drone" id="92034" marketgroup="true" meta="6" name="Huntsman SW-600-I" pi="false" portion="1" price="0" product="0" tech="Faction" volume="10.0"/>
-    <row category="Drone" group="Combat Drone" id="92035" marketgroup="true" meta="6" name="Arabellata SW-900-I" pi="false" portion="1" price="0" product="0" tech="Faction" volume="25.0"/>
-    <row category="Drone" group="Combat Drone" id="92036" marketgroup="true" meta="6" name="Tick EV-300-I" pi="false" portion="1" price="0" product="0" tech="Faction" volume="5.0"/>
-    <row category="Drone" group="Combat Drone" id="92037" marketgroup="true" meta="6" name="Mosquito EV-600-I" pi="false" portion="1" price="0" product="0" tech="Faction" volume="10.0"/>
-    <row category="Drone" group="Combat Drone" id="92038" marketgroup="true" meta="6" name="Tabanida EV-900-I" pi="false" portion="1" price="0" product="0" tech="Faction" volume="25.0"/>
-    <row category="Drone" group="Combat Drone" id="92039" marketgroup="true" meta="6" name="Inshore EC-300-I" pi="false" portion="1" price="0" product="0" tech="Faction" volume="5.0"/>
-    <row category="Drone" group="Combat Drone" id="92040" marketgroup="true" meta="6" name="Nertic EC-600-I" pi="false" portion="1" price="0" product="0" tech="Faction" volume="10.0"/>
-    <row category="Drone" group="Combat Drone" id="92041" marketgroup="true" meta="6" name="Humboldt EC-900-I" pi="false" portion="1" price="0" product="0" tech="Faction" volume="25.0"/>
+    <row category="Drone" group="Hybrid Drone" id="92033" marketgroup="true" meta="6" name="Orbweaver SW-300-I" pi="false" portion="1" price="0" product="0" tech="Faction" volume="5.0"/>
+    <row category="Drone" group="Hybrid Drone" id="92034" marketgroup="true" meta="6" name="Huntsman SW-600-I" pi="false" portion="1" price="0" product="0" tech="Faction" volume="10.0"/>
+    <row category="Drone" group="Hybrid Drone" id="92035" marketgroup="true" meta="6" name="Arabellata SW-900-I" pi="false" portion="1" price="0" product="0" tech="Faction" volume="25.0"/>
+    <row category="Drone" group="Hybrid Drone" id="92036" marketgroup="true" meta="6" name="Tick EV-300-I" pi="false" portion="1" price="0" product="0" tech="Faction" volume="5.0"/>
+    <row category="Drone" group="Hybrid Drone" id="92037" marketgroup="true" meta="6" name="Mosquito EV-600-I" pi="false" portion="1" price="0" product="0" tech="Faction" volume="10.0"/>
+    <row category="Drone" group="Hybrid Drone" id="92038" marketgroup="true" meta="6" name="Tabanida EV-900-I" pi="false" portion="1" price="0" product="0" tech="Faction" volume="25.0"/>
+    <row category="Drone" group="Hybrid Drone" id="92039" marketgroup="true" meta="6" name="Inshore EC-300-I" pi="false" portion="1" price="0" product="0" tech="Faction" volume="5.0"/>
+    <row category="Drone" group="Hybrid Drone" id="92040" marketgroup="true" meta="6" name="Nertic EC-600-I" pi="false" portion="1" price="0" product="0" tech="Faction" volume="10.0"/>
+    <row category="Drone" group="Hybrid Drone" id="92041" marketgroup="true" meta="6" name="Humboldt EC-900-I" pi="false" portion="1" price="0" product="0" tech="Faction" volume="25.0"/>
     <row category="Special Edition Assets" group="Special Edition Commodities" id="92092" marketgroup="true" meta="0" name="Gallente Election Y128 SKINs Crate" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="1.0"/>
     <row capacity="135.0" category="Entity" group="FW Amarr Empire Frigate" id="92116" marketgroup="false" meta="0" name="Imperial Impairor" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="28600.0"/>
     <row capacity="135.0" category="Entity" group="FW Amarr Empire Frigate" id="92117" marketgroup="false" meta="0" name="Imperial Executioner" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="28600.0"/>
@@ -115785,15 +115785,15 @@
         <material id="16681" portionsize="1" quantity="33"/>
         <material id="16682" portionsize="1" quantity="17"/>
     </row>
-    <row category="Drone" group="Combat Drone" id="92461" marketgroup="true" meta="6" name="Skimmer TP-300-I" pi="false" portion="1" price="0" product="0" tech="Faction" volume="5.0"/>
-    <row category="Drone" group="Combat Drone" id="92462" marketgroup="true" meta="6" name="Darter TP-600-I" pi="false" portion="1" price="0" product="0" tech="Faction" volume="10.0"/>
-    <row category="Drone" group="Combat Drone" id="92463" marketgroup="true" meta="6" name="Meganeura TP-900-I" pi="false" portion="1" price="0" product="0" tech="Faction" volume="25.0"/>
-    <row category="Drone" group="Combat Drone" id="92464" marketgroup="true" meta="6" name="Stigmella SD-300-I" pi="false" portion="1" price="0" product="0" tech="Faction" volume="5.0"/>
-    <row category="Drone" group="Combat Drone" id="92465" marketgroup="true" meta="6" name="Luna SD-600-I" pi="false" portion="1" price="0" product="0" tech="Faction" volume="10.0"/>
-    <row category="Drone" group="Combat Drone" id="92466" marketgroup="true" meta="6" name="Atlas SD-900-I" pi="false" portion="1" price="0" product="0" tech="Faction" volume="25.0"/>
-    <row category="Drone" group="Combat Drone" id="92467" marketgroup="true" meta="6" name="Stellate TD-300-I" pi="false" portion="1" price="0" product="0" tech="Faction" volume="5.0"/>
-    <row category="Drone" group="Combat Drone" id="92468" marketgroup="true" meta="6" name="Immaculate TD-600-I" pi="false" portion="1" price="0" product="0" tech="Faction" volume="10.0"/>
-    <row category="Drone" group="Combat Drone" id="92469" marketgroup="true" meta="6" name="Torafugu TD-900-I" pi="false" portion="1" price="0" product="0" tech="Faction" volume="25.0"/>
+    <row category="Drone" group="Hybrid Drone" id="92461" marketgroup="true" meta="6" name="Skimmer TP-300-I" pi="false" portion="1" price="0" product="0" tech="Faction" volume="5.0"/>
+    <row category="Drone" group="Hybrid Drone" id="92462" marketgroup="true" meta="6" name="Darter TP-600-I" pi="false" portion="1" price="0" product="0" tech="Faction" volume="10.0"/>
+    <row category="Drone" group="Hybrid Drone" id="92463" marketgroup="true" meta="6" name="Meganeura TP-900-I" pi="false" portion="1" price="0" product="0" tech="Faction" volume="25.0"/>
+    <row category="Drone" group="Hybrid Drone" id="92464" marketgroup="true" meta="6" name="Stigmella SD-300-I" pi="false" portion="1" price="0" product="0" tech="Faction" volume="5.0"/>
+    <row category="Drone" group="Hybrid Drone" id="92465" marketgroup="true" meta="6" name="Luna SD-600-I" pi="false" portion="1" price="0" product="0" tech="Faction" volume="10.0"/>
+    <row category="Drone" group="Hybrid Drone" id="92466" marketgroup="true" meta="6" name="Atlas SD-900-I" pi="false" portion="1" price="0" product="0" tech="Faction" volume="25.0"/>
+    <row category="Drone" group="Hybrid Drone" id="92467" marketgroup="true" meta="6" name="Stellate TD-300-I" pi="false" portion="1" price="0" product="0" tech="Faction" volume="5.0"/>
+    <row category="Drone" group="Hybrid Drone" id="92468" marketgroup="true" meta="6" name="Immaculate TD-600-I" pi="false" portion="1" price="0" product="0" tech="Faction" volume="10.0"/>
+    <row category="Drone" group="Hybrid Drone" id="92469" marketgroup="true" meta="6" name="Torafugu TD-900-I" pi="false" portion="1" price="0" product="0" tech="Faction" volume="25.0"/>
     <row capacity="135.0" category="Entity" group="FW Gallente Federation Frigate" id="92472" marketgroup="false" meta="0" name="Federation Taranis" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="28600.0"/>
     <row capacity="135.0" category="Entity" group="FW Amarr Empire Frigate" id="92473" marketgroup="false" meta="0" name="Imperial Crusader" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="28600.0"/>
     <row capacity="135.0" category="Entity" group="FW Caldari State Frigate" id="92474" marketgroup="false" meta="0" name="State Crow" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="28600.0"/>
@@ -116994,9 +116994,9 @@
     <row category="Personalization" group="Ship SKIN Design Element" id="96607" marketgroup="true" meta="0" name="Circle - Unlimited" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
     <row category="Personalization" group="Ship SKIN Design Element" id="96608" marketgroup="true" meta="0" name="Circle - Limited" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
     <row category="Personalization" group="Ship SKIN Design Element" id="96609" marketgroup="true" meta="0" name="Circle Outline - Unlimited" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
-    <row category="Personalization" group="Ship SKIN Design Element" id="96610" marketgroup="false" meta="0" name="Circle Outline - Limited" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
+    <row category="Personalization" group="Ship SKIN Design Element" id="96610" marketgroup="true" meta="0" name="Circle Outline - Limited" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
     <row category="Personalization" group="Ship SKIN Design Element" id="96611" marketgroup="true" meta="0" name="Circle Hole - Unlimited" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
-    <row category="Personalization" group="Ship SKIN Design Element" id="96612" marketgroup="false" meta="0" name="Circle Hole - Limited" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
+    <row category="Personalization" group="Ship SKIN Design Element" id="96612" marketgroup="true" meta="0" name="Circle Hole - Limited" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
     <row category="Personalization" group="Ship SKIN Design Element" id="96613" marketgroup="true" meta="0" name="Square - Unlimited" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
     <row category="Personalization" group="Ship SKIN Design Element" id="96614" marketgroup="true" meta="0" name="Square - Limited" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
     <row category="Personalization" group="Ship SKIN Design Element" id="96615" marketgroup="true" meta="0" name="Circle Outline Thin - Unlimited" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
@@ -117004,7 +117004,7 @@
     <row category="Personalization" group="Ship SKIN Design Element" id="96617" marketgroup="true" meta="0" name="Square Outline - Unlimited" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
     <row category="Personalization" group="Ship SKIN Design Element" id="96618" marketgroup="true" meta="0" name="Square Outline - Limited" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
     <row category="Personalization" group="Ship SKIN Design Element" id="96619" marketgroup="true" meta="0" name="Triangle - Unlimited" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
-    <row category="Personalization" group="Ship SKIN Design Element" id="96620" marketgroup="false" meta="0" name="Triangle - Limited" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
+    <row category="Personalization" group="Ship SKIN Design Element" id="96620" marketgroup="true" meta="0" name="Triangle - Limited" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
     <row category="Personalization" group="Ship SKIN Design Element" id="96621" marketgroup="true" meta="0" name="Triangle Hole - Unlimited" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
     <row category="Personalization" group="Ship SKIN Design Element" id="96622" marketgroup="true" meta="0" name="Triangle Hole - Limited" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
     <row category="Personalization" group="Ship SKIN Design Element" id="96623" marketgroup="true" meta="0" name="Triangle Outline - Unlimited" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
@@ -117054,7 +117054,7 @@
     <row category="Personalization" group="Ship SKIN Design Element" id="96670" marketgroup="true" meta="0" name="Tetrahedron - Unlimited" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
     <row category="Personalization" group="Ship SKIN Design Element" id="96671" marketgroup="true" meta="0" name="Tetrahedron - Limited" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
     <row category="Personalization" group="Ship SKIN Design Element" id="96672" marketgroup="true" meta="0" name="Half Arch - Unlimited" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
-    <row category="Personalization" group="Ship SKIN Design Element" id="96675" marketgroup="false" meta="0" name="Half Arch - Limited" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
+    <row category="Personalization" group="Ship SKIN Design Element" id="96675" marketgroup="true" meta="0" name="Half Arch - Limited" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
     <row category="Personalization" group="Ship SKIN Design Element" id="96680" marketgroup="true" meta="0" name="Bridged Squares - Unlimited" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
     <row category="Personalization" group="Ship SKIN Design Element" id="96681" marketgroup="true" meta="0" name="Bridged Squares - Limited" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
     <row category="Personalization" group="Ship SKIN Design Element" id="96682" marketgroup="true" meta="0" name="Concentric Diamonds - Unlimited" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
@@ -117100,4 +117100,20 @@
     <row category="SKINs" group="Permanent SKIN" id="97198" marketgroup="true" meta="0" name="Rorqual Nautgripur Industrial Input SKIN" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.01"/>
     <row category="SKINs" group="Permanent SKIN" id="97199" marketgroup="true" meta="0" name="Orca Nautgripur Industrial Input SKIN" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.01"/>
     <row category="SKINs" group="Permanent SKIN" id="97200" marketgroup="true" meta="0" name="Bowhead Nautgripur Industrial Input SKIN" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.01"/>
+    <row capacity="1.0" category="Module" charges="1" group="Drone Tracking Modules" id="97242" marketgroup="false" meta="5" name="Mutated Omnidirectional Tracking Link" pi="false" portion="1" price="0" product="0" slot="Medium" tech="Abyssal" volume="5.0"/>
+    <row category="Module" group="Drone Navigation Computer" id="97243" marketgroup="false" meta="5" name="Mutated Drone Navigation Computer" pi="false" portion="1" price="0" product="0" slot="Medium" tech="Abyssal" volume="25.0"/>
+    <row category="Module" group="Drone Tracking Enhancer" id="97244" marketgroup="false" meta="5" name="Mutated Omnidirectional Tracking Enhancer" pi="false" portion="1" price="0" product="0" slot="Low" tech="Abyssal" volume="5.0"/>
+    <row category="Module" group="Drone Control Range Module" id="97245" marketgroup="false" meta="5" name="Mutated Drone Link Augmentor" pi="false" portion="1" price="0" product="0" slot="High" tech="Abyssal" volume="25.0"/>
+    <row category="Commodity" group="Mutaplasmids" id="97246" marketgroup="true" meta="0" name="Radical Omnidirectional Tracking Enhancer Mutaplasmid" pi="false" portion="1" price="1000" product="0" tech="Tech I" volume="1.0"/>
+    <row category="Commodity" group="Mutaplasmids" id="97247" marketgroup="true" meta="0" name="Radical Drone Link Augmentor Mutaplasmid" pi="false" portion="1" price="1000" product="0" tech="Tech I" volume="1.0"/>
+    <row category="Commodity" group="Mutaplasmids" id="97248" marketgroup="true" meta="0" name="Radical Omnidirectional Tracking Link Mutaplasmid" pi="false" portion="1" price="1000" product="0" tech="Tech I" volume="1.0"/>
+    <row category="Commodity" group="Mutaplasmids" id="97249" marketgroup="true" meta="0" name="Radical Drone Navigation Computer Mutaplasmid" pi="false" portion="1" price="1000" product="0" tech="Tech I" volume="1.0"/>
+    <row category="Skill" group="Drones" id="97263" marketgroup="true" meta="0" name="Hybrid Drone Specialization" pi="false" portion="1" price="90000000" product="0" tech="Tech I" volume="0.01"/>
+    <row category="Special Edition Assets" group="Special Edition Commodities" id="97314" marketgroup="true" meta="0" name="YC128 Shifting-Spacetime Crate" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="4.0"/>
+    <row category="Expert Systems" group="Standard Expert Systems" id="97348" marketgroup="false" meta="0" name="Wormhole Pilot" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="1.0"/>
+    <row category="Expert Systems" group="Standard Expert Systems" id="97406" marketgroup="false" meta="0" name="Insurgent" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="1.0"/>
+    <row capacity="375.0" category="Entity" group="FW Amarr Empire Frigate" id="97468" marketgroup="false" meta="0" name="Renouncer Retribution" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.0"/>
+    <row capacity="375.0" category="Entity" group="FW Caldari State Frigate" id="97469" marketgroup="false" meta="0" name="Detainer Harpy" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.0"/>
+    <row capacity="375.0" category="Entity" group="FW Gallente Federation Frigate" id="97470" marketgroup="false" meta="0" name="Inspector Enyo" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.0"/>
+    <row capacity="375.0" category="Entity" group="FW Minmatar Republic Frigate" id="97471" marketgroup="false" meta="0" name="Keeper Wolf" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.0"/>
 </rows>
