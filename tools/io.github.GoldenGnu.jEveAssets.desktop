@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Terminal=false
+Name=jEveAssets
+Exec=java -jar /opt/jEveAssets/jeveassets.jar
+Comment=Asset manager for EVE Online
+Icon=io.github.GoldenGnu.jEveAssets
+Categories=Game;
