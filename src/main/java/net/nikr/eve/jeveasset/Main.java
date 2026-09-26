@@ -130,15 +130,19 @@ public final class Main {
 			Program.init();
 		}
 		int exitCode = 0;
-		//Update
-		if (CliOptions.get().isUpdate()) {
-			CliUpdate update = new CliUpdate();
-			exitCode = update.update();
-		}
-		//Export
-		if (CliOptions.get().isExport()) {
-			CliExport cliExport = new CliExport();
-			exitCode = cliExport.export();
+		if (CliOptions.get().isRefresh()) {
+			exitCode = new CliRefresh().refresh();
+		} else {
+			//Update
+			if (CliOptions.get().isUpdate()) {
+				CliUpdate update = new CliUpdate();
+				exitCode = update.update();
+			}
+			//Export
+			if (CliOptions.get().isExport()) {
+				CliExport cliExport = new CliExport();
+				exitCode = cliExport.export();
+			}
 		}
 		if (CliOptions.get().isCLI()) {
 			System.exit(exitCode);
