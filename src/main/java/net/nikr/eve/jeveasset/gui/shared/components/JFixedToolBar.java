@@ -62,7 +62,7 @@ public class JFixedToolBar extends JToolBar {
 	}
 
 	public void addGlue(int width) {
-		add(new Box.Filler(new Dimension(width, 0), new Dimension(width, 0), new Dimension(Short.MAX_VALUE, Short.MAX_VALUE)));
+		add(new Box.Filler(new Dimension(width, 0), new Dimension(width, 0), new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE)));
 	}
 
 	public void add(JCheckBox jCheckBox) {
