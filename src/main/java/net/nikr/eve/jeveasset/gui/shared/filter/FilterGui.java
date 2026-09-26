@@ -39,6 +39,8 @@ import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import net.nikr.eve.jeveasset.data.settings.ColorEntry;
+import net.nikr.eve.jeveasset.data.settings.ColorSettings;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.data.settings.SettingsUpdateListener;
 import net.nikr.eve.jeveasset.gui.images.Images;
@@ -256,7 +258,17 @@ class FilterGui<E> {
 	}
 
 	protected void updateShowing() {
-		jShowing.setText(GuiShared.get().filterShowing(EventListManager.size(filterControl.getFilterList()), EventListManager.size(filterControl.getEventList()), getCurrentFilterName()));
+		int filterListSize = EventListManager.size(filterControl.getFilterList());
+		int eventListSize = EventListManager.size(filterControl.getEventList());
+		jShowing.setText(GuiShared.get().filterShowing(filterListSize, eventListSize, getCurrentFilterName()));
+		if (filterListSize == 0 && eventListSize > 0) {
+			ColorSettings.config(jShowing, ColorEntry.GLOBAL_ENTRY_INVALID);
+		} else {
+			ColorSettings.config(jShowing, null);
+		}
+		jShowing.setMaximumSize(jShowing.getPreferredSize()); 
+		jToolBar.revalidate();
+		jToolBar.repaint();
 	}
 
 	protected String getCurrentFilterName() {
