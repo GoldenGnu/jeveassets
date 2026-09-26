@@ -43,6 +43,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.Matchers.closeTo;
 import org.junit.AfterClass;
+import static org.junit.Assert.assertNull;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -336,7 +337,7 @@ public class EveRefGetterOnlineTest extends TestUtil {
 		
 		EveRefActivity manufacturing = blueprint.getManufacturing();
 		assertEquals(10, manufacturing.getMaterials().size());
-		assertEquals((Integer)8000000, manufacturing.getMaterials().get("34").getQuantity());
+		assertEquals((Integer)5200000, manufacturing.getMaterials().get("34").getQuantity());
 		assertEquals((Integer)34, manufacturing.getMaterials().get("34").getTypeID());
 		assertEquals(1, manufacturing.getProducts().size());
 		assertEquals((Integer)1, manufacturing.getProducts().get("645").getQuantity());
@@ -360,7 +361,7 @@ public class EveRefGetterOnlineTest extends TestUtil {
 		assertEquals(8, type.getDescription().size());
 		assertNotNull(type.getDescription().get("en"));
 		assertNotNull(type.getDogmaAttributes());
-		assertEquals(92, type.getDogmaAttributes().size());
+		assertEquals(95, type.getDogmaAttributes().size());
 		assertNotNull(type.getDogmaAttributes().get("3"));
 		assertEquals((Long)3L, type.getDogmaAttributes().get("3").getAttributeID());
 		assertEquals((Double)0.0, type.getDogmaAttributes().get("3").getValue(), DELTA);
@@ -386,12 +387,11 @@ public class EveRefGetterOnlineTest extends TestUtil {
 		assertEquals(true, type.isPublished());
 		assertEquals((Long)8L, type.getRaceID());
 		assertEquals((Double)250.0, type.getRadius());
-		assertEquals("gallentebase", type.getSofFactionName());
+		assertNull(type.getSofFactionName());
 		//assertEquals((Long)0L, type.getSofMaterialSetID());
 		assertEquals((Long)20072L, type.getSoundID());
 		assertNotNull(type.getTraits());
-		assertNotNull(type.getTraits().getMiscBonuses());
-		assertEquals(0, type.getTraits().getMiscBonuses().size());
+		assertNull(type.getTraits().getMiscBonuses());
 		/*
 		assertNotNull(type.getTraits().getMiscBonuses().get(MAP_VALUE));
 		assertEquals(DOUBLE_VALUE, type.getTraits().getMiscBonuses().get(MAP_VALUE).getBonus(), DELTA);
@@ -450,7 +450,7 @@ public class EveRefGetterOnlineTest extends TestUtil {
 		assertEquals(7, type.getTypeMaterials().size());
 		assertNotNull(type.getTypeMaterials().get("34"));
 		assertEquals((Integer)34, type.getTypeMaterials().get("34").getMaterialTypeID());
-		assertEquals((Integer)8000000, type.getTypeMaterials().get("34").getQuantity());
+		assertEquals((Integer)5200000, type.getTypeMaterials().get("34").getQuantity());
 		//assertEquals(ARRAY_LENGTH, type.getCanFitTypes().size());
 		//assertEquals(LONG_VALUE, type.getCanFitTypes().get(0));
 		//assertEquals(ARRAY_LENGTH, type.getCanBeFittedWithTypes().size());
