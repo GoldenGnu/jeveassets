@@ -26075,7 +26075,7 @@
         <mfg id="11486" q="1"/>
     </row>
     <row category="Commodity" group="Miscellaneous" id="16041" marketgroup="false" meta="0" name="Colossal Sealed Cargo Containers" pi="false" portion="1" price="100" product="0" tech="Tech I" volume="1000.0"/>
-    <row category="Commodity" group="Miscellaneous" id="16042" marketgroup="false" meta="0" name="Medium Sized Sealed Cargo Containers" pi="false" portion="1" price="100" product="0" tech="Tech I" volume="50.0"/>
+    <row category="Commodity" group="Miscellaneous" id="16042" marketgroup="false" meta="0" name="Medium Sized Sealed Cargo Container" pi="false" portion="1" price="100" product="0" tech="Tech I" volume="50.0"/>
     <row category="Commodity" group="Miscellaneous" id="16043" marketgroup="false" meta="0" name="Giant Sealed Cargo Containers" pi="false" portion="1" price="100" product="0" tech="Tech I" volume="500.0"/>
     <row category="Commodity" group="Miscellaneous" id="16044" marketgroup="false" meta="0" name="Small Sealed Cargo Containers" pi="false" portion="1" price="100" product="0" tech="Tech I" volume="10.0"/>
     <row category="Commodity" group="Miscellaneous" id="16045" marketgroup="false" meta="0" name="Large Sealed Cargo Containers" pi="false" portion="1" price="100" product="0" tech="Tech I" volume="100.0"/>
@@ -117116,4 +117116,9 @@
     <row capacity="375.0" category="Entity" group="FW Caldari State Frigate" id="97469" marketgroup="false" meta="0" name="Detainer Harpy" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.0"/>
     <row capacity="375.0" category="Entity" group="FW Gallente Federation Frigate" id="97470" marketgroup="false" meta="0" name="Inspector Enyo" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.0"/>
     <row capacity="375.0" category="Entity" group="FW Minmatar Republic Frigate" id="97471" marketgroup="false" meta="0" name="Keeper Wolf" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.0"/>
+    <row category="SKINs" group="Permanent SKIN" id="97617" marketgroup="true" meta="0" name="Crucifier Medical Enforcement Taskforce SKIN" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.01"/>
+    <row category="SKINs" group="Permanent SKIN" id="97618" marketgroup="true" meta="0" name="Griffin Medical Enforcement Taskforce SKIN" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.01"/>
+    <row category="SKINs" group="Permanent SKIN" id="97619" marketgroup="true" meta="0" name="Maulus Medical Enforcement Taskforce SKIN" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.01"/>
+    <row category="SKINs" group="Permanent SKIN" id="97620" marketgroup="true" meta="0" name="Vigil Medical Enforcement Taskforce SKIN" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.01"/>
+    <row category="SKINs" group="Permanent SKIN" id="97621" marketgroup="true" meta="0" name="Pioneer Medical Enforcement Taskforce SKIN" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.01"/>
 </rows>
