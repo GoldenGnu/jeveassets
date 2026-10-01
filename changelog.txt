@@ -16,6 +16,18 @@
                   #### #  # #  # #  # #### #### #### #### ####
 
 ________________________________________________________________________________
+_8.2.1__________________________________________________________________________
+
+New Features:
+-Highlight shown label when everything is filtered out
+
+Bug Fixes:
+-Manufacturing subpile had wrong math (Issue #592)
+-Fixed EVEMissioneer system lookup links
+-Adding stockpiles to collapsed groups didn't work correctly (Issue #591)
+-Tags didn't work in the stockpile tool
+
+________________________________________________________________________________
 _8.2.0__________________________________________________________________________
 
 New Features:
