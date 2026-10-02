@@ -2391,7 +2391,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 		}
 
 		private static double getNeededRuns(StockpileItemMaterial blueprintSettings, StockpileItem blueprintCount) {
-			double runs = Math.abs(Math.min(blueprintCount.getCountNow() - blueprintCount.getCountMinimumMultipliedDouble(), 0.0));
+			double runs = Math.abs(Math.min(blueprintCount.getCountNow() - blueprintCount.getCountMinimumUnmodifiedMultipliedDouble(), 0.0));
 			return getMinimumRuns(blueprintSettings, runs) / blueprintCount.getMultipliedDouble();
 		}
 
@@ -3038,16 +3038,17 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 				SubMultiplier stock = link.getSubpileStock();
 				StockpileItem item =  link.getStockpileItem();
 				MaterialLink materialLink = materialLinks.get(getMaterialLinkKey(item));
-				if (materialLink != null) { //Already multiplied
-					countMinimum += UpdateMaterial.getCountNeeded(materialLink.getBlueprintSettings(), materialLink.getBlueprintCount(), item);
+				double countNeeded;
+				if (materialLink != null) {
+					countNeeded = UpdateMaterial.getCountNeeded(materialLink.getBlueprintSettings(), materialLink.getBlueprintCount(), item);
 				} else {
-					if (item.isIgnoreMultiplier() || stock == null) {
-						countMinimum += item.getCountMinimum();
-					} else {
-						countMinimum += item.getCountMinimum() * stock.getSubMultiplier();
-					}
+					countNeeded = item.getCountMinimum();
 				}
-				
+				if (item.isIgnoreMultiplier() || stock == null) {
+					countMinimum += countNeeded;
+				} else {
+					countMinimum += countNeeded * stock.getSubMultiplier();
+				}
 			}
 			return Math.ceil(countMinimum);
 		}
@@ -3059,18 +3060,19 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 				SubMultiplier stock = link.getSubpileStock();
 				StockpileItem item =  link.getStockpileItem();
 				MaterialLink materialLink = materialLinks.get(getMaterialLinkKey(item));
-				if (materialLink != null) { //Already multiplied
-					countMinimum += UpdateMaterial.getCountNeeded(materialLink.getBlueprintSettings(), materialLink.getBlueprintCount(), item);
+				double countNeeded;
+				if (materialLink != null) {
+					countNeeded = UpdateMaterial.getCountNeeded(materialLink.getBlueprintSettings(), materialLink.getBlueprintCount(), item);
 				} else {
-					if (item.isIgnoreMultiplier()) {
-						countMinimum += Math.ceil(item.getCountMinimum());
-					} else if (stock != null) {
-						countMinimum += Math.ceil(item.getCountMinimum() * stock.getSubMultiplier() * getStockpile().getMultiplier());
-					} else {
-						countMinimum += Math.ceil(item.getCountMinimum() * getStockpile().getMultiplier());
-					}
+					countNeeded = item.getCountMinimum();
 				}
-				
+				if (item.isIgnoreMultiplier()) {
+					countMinimum += countNeeded;
+				} else if (stock != null) {
+					countMinimum += countNeeded * stock.getSubMultiplier() * getStockpile().getMultiplier();
+				} else {
+					countMinimum += countNeeded * getStockpile().getMultiplier();
+				}
 			}
 			return (long) Math.ceil(countMinimum);
 		}
