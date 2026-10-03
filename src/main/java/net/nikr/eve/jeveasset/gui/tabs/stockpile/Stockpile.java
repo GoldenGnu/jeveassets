@@ -92,6 +92,9 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 	private final StockpileTotal totalItem = new StockpileTotal(this);
 	private final Set<StockpileItemMaterial> materials = new HashSet<>();
 	private final Set<StockpileItem> materialItems = new HashSet<>();
+	/**
+	 * Stockpiles are mutable on name, so this needs to be updated on name changes
+	 */
 	private final Map<Stockpile, Double> subpiles = new HashMap<>();
 	private final List<Stockpile> subpileLinks = new ArrayList<>();
 	private final List<SubpileItem> subpileAll = new ArrayList<>();
@@ -164,13 +167,28 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 	}
 
 	final void update(final Stockpile stockpile) {
-		this.name = stockpile.getName();
+		setName(stockpile.getName());
 		this.ownerName = stockpile.getOwnerName();
 		this.filters = stockpile.getFilters();
 		this.flagName = stockpile.getFlagName();
 		this.multiplier = stockpile.getMultiplier();
 		this.matchAll = stockpile.isMatchAll();
 		updateDynamicValues();
+		
+	}
+
+	private void setName(String name) {
+		//Remove subpile links (with the old name)
+		Map<Stockpile, Double> subpileValues = new HashMap<>();
+		for (Stockpile s : subpileLinks) {
+			Double value = s.getSubpiles().remove(this);
+			subpileValues.put(s, value);
+		}
+		this.name = name;
+		//Add subpile links (with the new name)
+		for (Map.Entry<Stockpile, Double> entry : subpileValues.entrySet()) {
+			entry.getKey().getSubpiles().put(this, entry.getValue());
+		}
 	}
 
 	final void updateDynamicValues() {
