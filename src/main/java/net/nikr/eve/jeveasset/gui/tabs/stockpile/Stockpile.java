@@ -2897,6 +2897,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 		private final StockpileItemMaterial blueprintSettings;
 		private final SubpileItem blueprintCount;
 		private final boolean mfg;
+		private final StockpileItem parentItem;
 		private String path;
 		private String name = "";
 		private String space = "";
@@ -2918,6 +2919,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 
 		private SubpileItem(Stockpile stockpile, Item item, int typeID, StockpileItem parentItem, StockpileItemMaterial parentMaterial, SubpileItem subpileMaterial, boolean mfg, SubMultiplier subpileStock, int level, String path) {
 			super(stockpile, item, typeID, parentItem.getCountMinimumUnmodified(), parentItem.isRuns(), false, mfg);
+			this.parentItem = parentItem;
 			this.blueprintSettings = parentMaterial;
 			this.blueprintCount = subpileMaterial;
 			this.mfg = mfg;
@@ -2932,6 +2934,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 
 		protected SubpileItem(Stockpile stockpile, int level, String path) {
 			super(stockpile, new Item(0, "!"+0, "Stockpile", "", 0, 0, 0, 0, 0, "", false, 0, 0, 1, "", "", null), 0, 0.0, false);
+			this.parentItem = null;
 			this.blueprintSettings = null;
 			this.blueprintCount = null;
 			this.mfg = false;
@@ -3030,7 +3033,16 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 				return "∑  " + name;
 			}
 		}
-		
+
+		@Override
+		public double getCountMinimumUnmodified() {
+			if (parentItem != null) {
+				return parentItem.getCountMinimumUnmodified();
+			} else {
+				return 0.0;
+			}
+		}
+
 		@Override
 		public double getCountMinimum() {
 			double countMinimum = 0;
