@@ -83,7 +83,7 @@ public class EsiPublicMarketOrdersGetter extends AbstractEsiGetter {
 				List<MarketRegionOrdersResponse> response = updatePages(DEFAULT_RETRIES, new EsiPagesHandler<MarketRegionOrdersResponse>() {
 					@Override
 					public ApiResponse<List<MarketRegionOrdersResponse>> get(Integer page) throws ApiException {
-						ApiResponse<List<MarketRegionOrdersResponse>> response = getMarketApiOpen().getMarketRegionOrdersWithHttpInfo("all", SafeConverter.toLong(regionID), COMPATIBILITY_DATE, page, null, null, null, null);
+						ApiResponse<List<MarketRegionOrdersResponse>> response = getMarketApiOpen().getMarketRegionOrdersWithHttpInfo("all", SafeConverter.toLong(regionID), COMPATIBILITY_DATE, page, null, null, null, null, null);
 						String header = getHeader(response.getHeaders(), "last-modified");
 						if (header != null) {
 							Date date = Formatter.parseExpireDate(header);
@@ -118,7 +118,7 @@ public class EsiPublicMarketOrdersGetter extends AbstractEsiGetter {
 		input.getStructureIDs().addAll(update(DEFAULT_RETRIES, new EsiHandler<Set<Long>>() {
 			@Override
 			public ApiResponse<Set<Long>> get() throws ApiException {
-				return getUniverseApiOpen().getStructuresWithHttpInfo(COMPATIBILITY_DATE, "market", null, null, null);
+				return getUniverseApiOpen().getStructuresWithHttpInfo(COMPATIBILITY_DATE, "market", null, null, null, null);
 			}
 		}));
 		//Update orders in structures
@@ -132,7 +132,7 @@ public class EsiPublicMarketOrdersGetter extends AbstractEsiGetter {
 						return updatePages(DEFAULT_RETRIES, new EsiPagesHandler<MarketStructureResponse>() {
 							@Override
 							public ApiResponse<List<MarketStructureResponse>> get(Integer page) throws ApiException {
-								return marketApi.getMarketStructureWithHttpInfo(structureID, COMPATIBILITY_DATE, page, null, null, null);
+								return marketApi.getMarketStructureWithHttpInfo(structureID, COMPATIBILITY_DATE, page, null, null, null, null);
 							}
 						});
 					} catch (ApiException ex) {
@@ -220,7 +220,7 @@ public class EsiPublicMarketOrdersGetter extends AbstractEsiGetter {
 				StructureResponse response = update(DEFAULT_RETRIES, new EsiHandler<StructureResponse>() {
 					@Override
 					public ApiResponse<StructureResponse> get() throws ApiException {
-						return structuresApi.getStructureWithHttpInfo(locationID, COMPATIBILITY_DATE, null, null, null);
+						return structuresApi.getStructureWithHttpInfo(locationID, COMPATIBILITY_DATE, null, null, null, null);
 					}
 				});
 				data.getCitadels().put(locationID, ApiIdConverter.getCitadel(response, locationID));

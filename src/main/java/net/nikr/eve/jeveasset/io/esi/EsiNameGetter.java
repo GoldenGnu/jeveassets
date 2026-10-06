@@ -65,7 +65,7 @@ public class EsiNameGetter extends AbstractEsiGetter {
 			@Override
 			public ApiResponse<List<NamesResponse>> get(Set<Long> t) throws ApiException {
 				try {
-					return getUniverseApiOpen().postNamesWithHttpInfo(COMPATIBILITY_DATE, t, null, null, null);
+					return getUniverseApiOpen().postNamesWithHttpInfo(COMPATIBILITY_DATE, t, null, null, null, null);
 				} catch (ApiException ex) {
 					if (ex.getCode() == 404 && ex.getResponseBody().toLowerCase().contains("ensure all ids are valid before resolving")) {
 						handleHeaders(ex);
@@ -90,7 +90,7 @@ public class EsiNameGetter extends AbstractEsiGetter {
 			@Override
 			public ApiResponse<List<NamesResponse>> get(Set<Long> t) throws ApiException {
 				try {
-					return getUniverseApiOpen().postNamesWithHttpInfo(COMPATIBILITY_DATE, t, null, null, null);
+					return getUniverseApiOpen().postNamesWithHttpInfo(COMPATIBILITY_DATE, t, null, null, null, null);
 				} catch (ApiException ex) {
 					if (ex.getCode() == 404 && ex.getResponseBody().toLowerCase().contains("ensure all ids are valid before resolving")) {
 						handleHeaders(ex);

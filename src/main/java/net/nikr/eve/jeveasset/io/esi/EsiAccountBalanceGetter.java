@@ -42,7 +42,7 @@ public class EsiAccountBalanceGetter extends AbstractEsiGetter {
 			List<CorporationWalletsResponse> response = update(DEFAULT_RETRIES, new EsiHandler<List<CorporationWalletsResponse>>() {
 				@Override
 				public ApiResponse<List<CorporationWalletsResponse>> get() throws ApiException {//(, DATASOURCE, null, null);
-					ApiResponse<List<CorporationWalletsResponse>> apiResponse = getWalletApiAuth().getCorporationWalletsWithHttpInfo(owner.getOwnerID(), COMPATIBILITY_DATE, null, null, null);
+					ApiResponse<List<CorporationWalletsResponse>> apiResponse = getWalletApiAuth().getCorporationWalletsWithHttpInfo(owner.getOwnerID(), COMPATIBILITY_DATE, null, null, null, null);
 					Date modified = getHeaderDate(apiResponse.getHeaders(), "last-modified");
 					if (modified != null && (owner.getBalanceLastUpdate() == null || modified.after(owner.getBalanceLastUpdate()))) {
 						owner.setBalanceLastUpdate(modified);
@@ -55,7 +55,7 @@ public class EsiAccountBalanceGetter extends AbstractEsiGetter {
 			Double response = update(DEFAULT_RETRIES, new EsiHandler<Double>() {
 				@Override
 				public ApiResponse<Double> get() throws ApiException {
-					ApiResponse<Double> apiResponse = getWalletApiAuth().getCharacterWalletWithHttpInfo(owner.getOwnerID(), COMPATIBILITY_DATE, null, null, null);
+					ApiResponse<Double> apiResponse = getWalletApiAuth().getCharacterWalletWithHttpInfo(owner.getOwnerID(), COMPATIBILITY_DATE, null, null, null, null);
 					Date modified = getHeaderDate(apiResponse.getHeaders(), "last-modified");
 					if (modified != null && (owner.getBalanceLastUpdate() == null || modified.after(owner.getBalanceLastUpdate()))) {
 						owner.setBalanceLastUpdate(modified);

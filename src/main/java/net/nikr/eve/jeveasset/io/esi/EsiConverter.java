@@ -68,21 +68,21 @@ import net.troja.eve.esi.model.CharacterBlueprintsResponse;
 import net.troja.eve.esi.model.CharacterClonesResponse;
 import net.troja.eve.esi.model.CharacterContractsResponse;
 import net.troja.eve.esi.model.CharacterIndustryJobsResponse;
-import net.troja.eve.esi.model.CharacterLocationResponse;
 import net.troja.eve.esi.model.CharacterLoyaltyPointsResponse;
 import net.troja.eve.esi.model.CharacterMiningResponse;
 import net.troja.eve.esi.model.CharacterOrdersHistoryResponse;
 import net.troja.eve.esi.model.CharacterOrdersResponse;
 import net.troja.eve.esi.model.CharacterPlanetsResponse;
-import net.troja.eve.esi.model.CharacterShipResponse;
 import net.troja.eve.esi.model.StandingsResponse;
 import net.troja.eve.esi.model.CharacterWalletJournalResponse;
 import net.troja.eve.esi.model.CharacterWalletTransactionsResponse;
+import net.troja.eve.esi.model.CharactersLocation;
+import net.troja.eve.esi.model.CharactersShip;
+import net.troja.eve.esi.model.CharactersSkillsSkill;
 import net.troja.eve.esi.model.CorporationAssetsResponse;
 import net.troja.eve.esi.model.CorporationBlueprintsResponse;
 import net.troja.eve.esi.model.CorporationContainersLogsResponse;
 import net.troja.eve.esi.model.PlanetPin;
-import net.troja.eve.esi.model.Skill;
 import net.troja.eve.esi.model.ContractItemsResponse;
 import net.troja.eve.esi.model.CorporationContractsResponse;
 import net.troja.eve.esi.model.CorporationIndustryJobsResponse;
@@ -118,7 +118,7 @@ public class EsiConverter extends DataConverter {
 		return convertRawAccountBalance(rawAccountBalances, owner);
 	}
 
-	public static MyShip toActiveShip(CharacterShipResponse shipType, CharacterLocationResponse shipLocation) {
+	public static MyShip toActiveShip(CharactersShip shipType, CharactersLocation shipLocation) {
 		return new MyShip(shipType, shipLocation);
 	}
 
@@ -140,7 +140,7 @@ public class EsiConverter extends DataConverter {
 		return convertRawAssets(rawAssets, owner);
 	}
 
-	public static MyAsset toAssetsShip(CharacterShipResponse shipType, CharacterLocationResponse shipLocation, OwnerType owner) {
+	public static MyAsset toAssetsShip(CharactersShip shipType, CharactersLocation shipLocation, OwnerType owner) {
 		return toMyAsset(new RawAsset(shipType, shipLocation), owner, new ArrayList<>());
 	}
 
@@ -336,9 +336,9 @@ public class EsiConverter extends DataConverter {
 		return marketOrders;
 	}
 
-	public static List<MySkill> toSkills(List<Skill> responses, OwnerType owner) {
+	public static List<MySkill> toSkills(List<CharactersSkillsSkill> responses, OwnerType owner) {
 		List<RawSkill> skills = new ArrayList<>();
-		for (Skill response : responses) {
+		for (CharactersSkillsSkill response : responses) {
 			skills.add(new RawSkill(response));
 			ApiIdConverter.updateItem(SafeConverter.toInteger(response.getSkillId()));
 		}

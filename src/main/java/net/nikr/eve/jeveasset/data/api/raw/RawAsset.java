@@ -31,10 +31,10 @@ import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import net.nikr.eve.jeveasset.io.shared.RawConverter;
 import net.nikr.eve.jeveasset.io.shared.SafeConverter;
 import net.troja.eve.esi.model.CharacterAssetsResponse;
-import net.troja.eve.esi.model.CharacterLocationResponse;
+import net.troja.eve.esi.model.CharactersLocation;
 import net.troja.eve.esi.model.PlanetPin;
 import net.troja.eve.esi.model.CharacterPlanetsResponse;
-import net.troja.eve.esi.model.CharacterShipResponse;
+import net.troja.eve.esi.model.CharactersShip;
 import net.troja.eve.esi.model.CorporationAssetsResponse;
 import net.troja.eve.esi.model.PinContent;
 
@@ -268,7 +268,7 @@ public class RawAsset {
 	 * @param shipType
 	 * @param shipLocation
 	 */
-	public RawAsset(CharacterShipResponse shipType, CharacterLocationResponse shipLocation) {
+	public RawAsset(CharactersShip shipType, CharactersLocation shipLocation) {
 		isSingleton = true; //Unpacked
 		itemId = shipType.getShipItemId();
 		itemFlag = ApiIdConverter.getFlag(0); //None

@@ -58,7 +58,7 @@ public class EsiTransactionsGetter extends AbstractEsiGetter {
 				List<CorporationWalletTransactionsResponse> responses = updateIDs(existing, DEFAULT_RETRIES, new IDsHandler<CorporationWalletTransactionsResponse>() {
 					@Override
 					public ApiResponse<List<CorporationWalletTransactionsResponse>> get(Long fromID) throws ApiException {
-						return getWalletApiAuth().getCorporationWalletTransactionsWithHttpInfo(owner.getOwnerID(), SafeConverter.toLong(division), COMPATIBILITY_DATE, fromID, null, null, null);
+						return getWalletApiAuth().getCorporationWalletTransactionsWithHttpInfo(owner.getOwnerID(), SafeConverter.toLong(division), COMPATIBILITY_DATE, fromID, null, null, null, null);
 					}
 
 					@Override
@@ -73,7 +73,7 @@ public class EsiTransactionsGetter extends AbstractEsiGetter {
 			List<CharacterWalletTransactionsResponse> responses = updateIDs(existing, DEFAULT_RETRIES, new IDsHandler<CharacterWalletTransactionsResponse>() {
 				@Override
 				public ApiResponse<List<CharacterWalletTransactionsResponse>> get(Long fromID) throws ApiException {
-					return getWalletApiAuth().getCharacterWalletTransactionsWithHttpInfo(owner.getOwnerID(), COMPATIBILITY_DATE, fromID, null, null, null);
+					return getWalletApiAuth().getCharacterWalletTransactionsWithHttpInfo(owner.getOwnerID(), COMPATIBILITY_DATE, fromID, null, null, null, null);
 				}
 
 				@Override

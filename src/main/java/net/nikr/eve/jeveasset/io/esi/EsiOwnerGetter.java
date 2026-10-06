@@ -81,7 +81,7 @@ public class EsiOwnerGetter extends AbstractEsiGetter implements AccountAdder{
 		List<CharacterAffiliationResponse> affiliationResponse = update(DEFAULT_RETRIES, new EsiHandler<List<CharacterAffiliationResponse>>() {
 			@Override
 			public ApiResponse<List<CharacterAffiliationResponse>> get() throws ApiException {
-				return getCharacterApiOpen().postCharactersAffiliationWithHttpInfo(COMPATIBILITY_DATE, Collections.singleton(characterID), null, null, null);
+				return getCharacterApiOpen().postCharactersAffiliationWithHttpInfo(COMPATIBILITY_DATE, Collections.singleton(characterID), null, null, null, null);
 			}
 		});
 		if (affiliationResponse.isEmpty()) {
@@ -98,7 +98,7 @@ public class EsiOwnerGetter extends AbstractEsiGetter implements AccountAdder{
 			@Override
 			public ApiResponse<List<NamesResponse>> get() throws ApiException {
 				//UniverseNamesWithHttpInfo(, DATASOURCE);
-				return getUniverseApiOpen().postNamesWithHttpInfo(COMPATIBILITY_DATE, ids, null, null, null);
+				return getUniverseApiOpen().postNamesWithHttpInfo(COMPATIBILITY_DATE, ids, null, null, null, null);
 			}
 		});
 		String characterName = null;
@@ -122,7 +122,7 @@ public class EsiOwnerGetter extends AbstractEsiGetter implements AccountAdder{
 			CharacterRolesResponse characterRolesResponse = update(DEFAULT_RETRIES, new EsiHandler<CharacterRolesResponse>() {
 				@Override
 				public ApiResponse<CharacterRolesResponse> get() throws ApiException {
-					return getCharacterApiAuth().getCharacterRolesWithHttpInfo(characterID, COMPATIBILITY_DATE, null, null, null);
+					return getCharacterApiAuth().getCharacterRolesWithHttpInfo(characterID, COMPATIBILITY_DATE, null, null, null, null);
 				}
 			});
 			roles.addAll(characterRolesResponse.getRoles());
