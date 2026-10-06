@@ -21,7 +21,7 @@
 package net.nikr.eve.jeveasset.data.api.raw;
 
 import net.nikr.eve.jeveasset.io.shared.SafeConverter;
-import net.troja.eve.esi.model.Skill;
+import net.troja.eve.esi.model.CharactersSkillsSkill;
 
 
 public class RawSkill {
@@ -46,7 +46,7 @@ public class RawSkill {
 		this.trainedSkillLevel = skill.getTrainedSkillLevel();
 	}
 
-	public RawSkill(Skill skill) {
+	public RawSkill(CharactersSkillsSkill skill) {
 		this.activeSkillLevel = SafeConverter.toInteger(skill.getActiveSkillLevel());
 		this.skillId = SafeConverter.toInteger(skill.getSkillId());
 		this.skillpointsInSkill = skill.getSkillpointsInSkill();

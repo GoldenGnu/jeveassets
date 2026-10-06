@@ -52,7 +52,7 @@ public class EsiLocationsGetter extends AbstractEsiGetter {
 			Map<Set<Long>, List<AssetsNamesResponse>> responses = updateList(splitSet(iDs.keySet(), LOCATIONS_BATCH_SIZE), DEFAULT_RETRIES, new ListHandler<Set<Long>, List<AssetsNamesResponse>>() {
 				@Override
 				public ApiResponse<List<AssetsNamesResponse>> get(Set<Long> t) throws ApiException {
-					return getAssetsApiAuth().postCorporationAssetsNamesWithHttpInfo(owner.getOwnerID(), COMPATIBILITY_DATE, t, null, null, null);
+					return getAssetsApiAuth().postCorporationAssetsNamesWithHttpInfo(owner.getOwnerID(), COMPATIBILITY_DATE, t, null, null, null, null);
 				}
 			});
 
@@ -81,7 +81,7 @@ public class EsiLocationsGetter extends AbstractEsiGetter {
 				@Override
 				public ApiResponse<List<AssetsNamesResponse>> get(Set<Long> t) throws ApiException {
 					//((int) , t, DATASOURCE, null);
-					return getAssetsApiAuth().postCharacterAssetsNamesWithHttpInfo(owner.getOwnerID(), COMPATIBILITY_DATE, t, null, null, null);
+					return getAssetsApiAuth().postCharacterAssetsNamesWithHttpInfo(owner.getOwnerID(), COMPATIBILITY_DATE, t, null, null, null, null);
 				}
 			});
 			try {

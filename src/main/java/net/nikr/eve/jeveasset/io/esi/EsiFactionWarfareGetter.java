@@ -44,13 +44,13 @@ public class EsiFactionWarfareGetter extends AbstractEsiGetter {
 		List<FactionWarfareSystemsResponse> factionWarfareSystems = update(DEFAULT_RETRIES, new EsiHandler<List<FactionWarfareSystemsResponse>>() {
 			@Override
 			public ApiResponse<List<FactionWarfareSystemsResponse>> get() throws ApiException {
-				return getFactionWarfareApiOpen().getFactionWarfareSystemsWithHttpInfo(COMPATIBILITY_DATE, null, null, null);
+				return getFactionWarfareApiOpen().getFactionWarfareSystemsWithHttpInfo(COMPATIBILITY_DATE, null, null, null, null);
 			}
 		});
 		List<FactionsResponse> factions = update(DEFAULT_RETRIES, new EsiHandler<List<FactionsResponse>>() {
 			@Override
 			public ApiResponse<List<FactionsResponse>> get() throws ApiException {
-				return getUniverseApiOpen().getFactionsWithHttpInfo(COMPATIBILITY_DATE, null, null, null);
+				return getUniverseApiOpen().getFactionsWithHttpInfo(COMPATIBILITY_DATE, null, null, null, null);
 			}
 		});
 		Map<Long, String> factionNames = new HashMap<>();

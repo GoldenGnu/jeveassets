@@ -44,12 +44,12 @@ import net.troja.eve.esi.model.CharacterBlueprintsResponse;
 import net.troja.eve.esi.model.ContractItemsResponse;
 import net.troja.eve.esi.model.CharacterContractsResponse;
 import net.troja.eve.esi.model.CharacterIndustryJobsResponse;
-import net.troja.eve.esi.model.CharacterLocationResponse;
 import net.troja.eve.esi.model.CharacterOrdersHistoryResponse;
 import net.troja.eve.esi.model.CharacterOrdersResponse;
-import net.troja.eve.esi.model.CharacterShipResponse;
 import net.troja.eve.esi.model.CharacterWalletJournalResponse;
 import net.troja.eve.esi.model.CharacterWalletTransactionsResponse;
+import net.troja.eve.esi.model.CharactersLocation;
+import net.troja.eve.esi.model.CharactersShip;
 import net.troja.eve.esi.model.CorporationAssetsResponse;
 import net.troja.eve.esi.model.CorporationBlueprintsResponse;
 import net.troja.eve.esi.model.CorporationContractsResponse;
@@ -469,14 +469,14 @@ public class EsiConverterTest extends TestUtil {
 
 	@Test
 	public void testToAssetsShipOptional() {
-		testToAssetsShip(CharacterShipResponse.class, CharacterLocationResponse.class);
+		testToAssetsShip(CharactersShip.class, CharactersLocation.class);
 	}
 
 	public void testToAssetsShip(Class<?> esiShip, Class<?> esiLocation) {
 		for (ConverterTestOptions options : ConverterTestOptionsGetter.getConverterOptions()) {
-			CharacterShipResponse shipType = new CharacterShipResponse();
+			CharactersShip shipType = new CharactersShip();
 			ConverterTestUtil.setValues(shipType, options, esiShip);
-			CharacterLocationResponse shipLocation = new CharacterLocationResponse();
+			CharactersLocation shipLocation = new CharactersLocation();
 			ConverterTestUtil.setValues(shipLocation, options, esiLocation);
 			MyAsset asset = EsiConverter.toAssetsShip(shipType, shipLocation, ConverterTestUtil.getEsiOwner(options));
 			asset.setQuantity(options.getInteger()); //Always 1 -> set to 5 to pass test
