@@ -27,10 +27,9 @@ import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.io.shared.RawConverter;
 import net.troja.eve.esi.ApiException;
 import net.troja.eve.esi.ApiResponse;
-import net.troja.eve.esi.api.FittingsApi;
 import net.troja.eve.esi.model.CharacterClonesResponse;
-import net.troja.eve.esi.model.CharacterLocationResponse;
 import net.troja.eve.esi.model.CharacterRolesResponse.RolesEnum;
+import net.troja.eve.esi.model.CharactersLocation;
 
 
 public class EsiClonesGetter extends AbstractEsiGetter {
@@ -48,21 +47,21 @@ public class EsiClonesGetter extends AbstractEsiGetter {
 		CharacterClonesResponse jumpClonesResponse = update(DEFAULT_RETRIES, new EsiHandler<CharacterClonesResponse>() {
 			@Override
 			public ApiResponse<CharacterClonesResponse> get() throws ApiException {
-				return getClonesApiAuth().getCharacterClonesWithHttpInfo(owner.getOwnerID(), COMPATIBILITY_DATE, null, null, null);
+				return getClonesApiAuth().getCharacterClonesWithHttpInfo(owner.getOwnerID(), COMPATIBILITY_DATE, null, null, null, null);
 			}
 		});
 		//Get Active Clone
 		List<Long> activeCloneImplants = update(DEFAULT_RETRIES, new EsiHandler<List<Long>>() {
 			@Override
 			public ApiResponse<List<Long>> get() throws ApiException {
-				return getClonesApiAuth().getCharacterImplantsWithHttpInfo(owner.getOwnerID(), COMPATIBILITY_DATE, null, null, null);
+				return getClonesApiAuth().getCharacterImplantsWithHttpInfo(owner.getOwnerID(), COMPATIBILITY_DATE, null, null, null, null);
 			}
 		});
 		//Get Location
-		CharacterLocationResponse characterLocation = update(DEFAULT_RETRIES, new EsiHandler<CharacterLocationResponse>() {
+		CharactersLocation characterLocation = update(DEFAULT_RETRIES, new EsiHandler<CharactersLocation>() {
 			@Override
-			public ApiResponse<CharacterLocationResponse> get() throws ApiException {
-				return getLocationApiAuth().getCharacterLocationWithHttpInfo(owner.getOwnerID(), COMPATIBILITY_DATE, null, null, null);
+			public ApiResponse<CharactersLocation> get() throws ApiException {
+				return getLocationApiAuth().getCharacterLocationWithHttpInfo(owner.getOwnerID(), COMPATIBILITY_DATE, null, null, null, null);
 			}
 		});
 		Long activeCloneLocationID = RawConverter.toLocationID(characterLocation);

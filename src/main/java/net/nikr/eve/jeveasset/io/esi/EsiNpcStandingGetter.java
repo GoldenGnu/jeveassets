@@ -42,7 +42,7 @@ public class EsiNpcStandingGetter extends AbstractEsiGetter {
 			List<StandingsResponse> response = updatePages(DEFAULT_RETRIES, new EsiPagesHandler<StandingsResponse>() {
 				@Override
 				public ApiResponse<List<StandingsResponse>> get(Integer page) throws ApiException {
-					return getCorporationApiAuth().getCorporationStandingsWithHttpInfo(owner.getOwnerID(), COMPATIBILITY_DATE, page, null, null, null);
+					return getCorporationApiAuth().getCorporationStandingsWithHttpInfo(owner.getOwnerID(), COMPATIBILITY_DATE, page, null, null, null, null);
 				}
 			});
 			owner.setNpcStanding(EsiConverter.toNpcStanding(response, owner));
@@ -50,7 +50,7 @@ public class EsiNpcStandingGetter extends AbstractEsiGetter {
 			List<StandingsResponse> response = update(DEFAULT_RETRIES, new EsiHandler<List<StandingsResponse>>() {
 				@Override
 				public ApiResponse<List<StandingsResponse>> get() throws ApiException {
-					return getCharacterApiAuth().getCharacterStandingsWithHttpInfo(owner.getOwnerID(), COMPATIBILITY_DATE, null, null, null);
+					return getCharacterApiAuth().getCharacterStandingsWithHttpInfo(owner.getOwnerID(), COMPATIBILITY_DATE, null, null, null, null);
 				}
 			});
 			owner.setNpcStanding(EsiConverter.toNpcStanding(response, owner));

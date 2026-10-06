@@ -206,7 +206,7 @@ public class JMenuUI <T> extends MenuManager.JAutoMenu<T> {
 		getLockWindow().show(GuiShared.get().updating(), new EsiUpdate(owner) {
 			@Override
 			protected void updateESI() throws Throwable {
-				getApi().postUiAutopilotWaypoint(addToBeginning, clearOtherWaypoints, locationID, AbstractEsiGetter.COMPATIBILITY_DATE, null, null, null);
+				getApi().postUiAutopilotWaypoint(addToBeginning, clearOtherWaypoints, locationID, AbstractEsiGetter.COMPATIBILITY_DATE, null, null, null, null);
 			}
 			@Override
 			protected void ok() {
@@ -296,7 +296,7 @@ public class JMenuUI <T> extends MenuManager.JAutoMenu<T> {
 				getLockWindow().show(GuiShared.get().updating(), new EsiUpdate(esiOwner) {
 					@Override
 					protected void updateESI() throws Throwable {
-						getApi().postUiOpenwindowInformation(owner.getID(), AbstractEsiGetter.COMPATIBILITY_DATE, null, null, null);
+						getApi().postUiOpenwindowInformation(owner.getID(), AbstractEsiGetter.COMPATIBILITY_DATE, null, null, null, null);
 					}
 					@Override
 					protected void ok() {
@@ -316,7 +316,7 @@ public class JMenuUI <T> extends MenuManager.JAutoMenu<T> {
 				getLockWindow().show(GuiShared.get().updating(), new EsiUpdate(owner) {
 					@Override
 					protected void updateESI() throws Throwable {
-						getApi().postUiOpenwindowContract(SafeConverter.toLong(contract.getContractID()), AbstractEsiGetter.COMPATIBILITY_DATE, null, null, null);
+						getApi().postUiOpenwindowContract(SafeConverter.toLong(contract.getContractID()), AbstractEsiGetter.COMPATIBILITY_DATE, null, null, null, null);
 					}
 					@Override
 					protected void ok() {
@@ -338,7 +338,7 @@ public class JMenuUI <T> extends MenuManager.JAutoMenu<T> {
 		getLockWindow(program).show(GuiShared.get().updating(), new EsiUpdate(owner) {
 			@Override
 			protected void updateESI() throws Throwable {
-				getApi().postUiOpenwindowMarketdetails(SafeConverter.toLong(typeID), AbstractEsiGetter.COMPATIBILITY_DATE, null, null, null);
+				getApi().postUiOpenwindowMarketdetails(SafeConverter.toLong(typeID), AbstractEsiGetter.COMPATIBILITY_DATE, null, null, null, null);
 			}
 			@Override
 			protected void ok() {

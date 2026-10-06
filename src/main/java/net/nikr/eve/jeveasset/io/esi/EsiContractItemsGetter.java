@@ -85,7 +85,7 @@ public class EsiContractItemsGetter extends AbstractEsiGetter {
 					Map<MyContract, List<ContractItemsResponse>> response = updateList(list, DEFAULT_RETRIES, new ListHandler<MyContract, List<ContractItemsResponse>>() {
 						@Override
 						public ApiResponse<List<ContractItemsResponse>> get(MyContract t) throws ApiException {
-							return getContractsApiAuth().getCorporationContractItemsWithHttpInfo(SafeConverter.toLong(t.getContractID()), owner.getOwnerID(), COMPATIBILITY_DATE, null, null, null);
+							return getContractsApiAuth().getCorporationContractItemsWithHttpInfo(SafeConverter.toLong(t.getContractID()), owner.getOwnerID(), COMPATIBILITY_DATE, null, null, null, null);
 						}
 					});
 					responses.putAll(response);
@@ -106,7 +106,7 @@ public class EsiContractItemsGetter extends AbstractEsiGetter {
 				@Override
 				public ApiResponse<List<ContractItemsResponse>> get(MyContract t) throws ApiException {
 					//((int) , , DATASOURCE, null, null);
-					ApiResponse<List<ContractItemsResponse>> response = getContractsApiAuth().getCharacterContractItemsWithHttpInfo(owner.getOwnerID(), SafeConverter.toLong(t.getContractID()), COMPATIBILITY_DATE, null, null, null);
+					ApiResponse<List<ContractItemsResponse>> response = getContractsApiAuth().getCharacterContractItemsWithHttpInfo(owner.getOwnerID(), SafeConverter.toLong(t.getContractID()), COMPATIBILITY_DATE, null, null, null, null);
 					PROGRESS.getAndAdd(1);
 					setProgress(SIZE.get(), PROGRESS.get(), 0, 100);
 					return response;
@@ -121,7 +121,7 @@ public class EsiContractItemsGetter extends AbstractEsiGetter {
 				return updatePages(DEFAULT_RETRIES, new EsiPagesHandler<PublicContractsItemsResponse>() {
 					@Override
 					public ApiResponse<List<PublicContractsItemsResponse>> get(Integer page) throws ApiException {
-						ApiResponse<List<PublicContractsItemsResponse>> response = getContractsApiOpen().getPublicContractsItemsContractIdWithHttpInfo(SafeConverter.toLong(contract.getContractID()), COMPATIBILITY_DATE, page, null, null, null);
+						ApiResponse<List<PublicContractsItemsResponse>> response = getContractsApiOpen().getPublicContractsItemsContractIdWithHttpInfo(SafeConverter.toLong(contract.getContractID()), COMPATIBILITY_DATE, page, null, null, null, null);
 						PROGRESS.getAndAdd(1);
 						setProgress(SIZE.get(), PROGRESS.get(), 0, 100);
 						return response;
