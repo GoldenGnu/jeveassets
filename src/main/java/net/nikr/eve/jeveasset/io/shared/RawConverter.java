@@ -40,11 +40,11 @@ import net.troja.eve.esi.model.CharacterAssetsResponse;
 import net.troja.eve.esi.model.CharacterBlueprintsResponse;
 import net.troja.eve.esi.model.CharacterContractsResponse;
 import net.troja.eve.esi.model.CharacterIndustryJobsResponse;
-import net.troja.eve.esi.model.CharacterLocationResponse;
 import net.troja.eve.esi.model.CharacterOrdersHistoryResponse;
 import net.troja.eve.esi.model.CharacterOrdersResponse;
 import net.troja.eve.esi.model.StandingsResponse;
 import net.troja.eve.esi.model.CharacterWalletJournalResponse;
+import net.troja.eve.esi.model.CharactersLocation;
 import net.troja.eve.esi.model.CorporationAssetsResponse;
 import net.troja.eve.esi.model.CorporationBlueprintsResponse;
 import net.troja.eve.esi.model.CorporationContractsResponse;
@@ -171,7 +171,7 @@ public class RawConverter {
 		}
 	}
 
-	public static long toLocationID(CharacterLocationResponse shipLocation) {
+	public static long toLocationID(CharactersLocation shipLocation) {
 		if (shipLocation.getStationId() != null) {
 			return shipLocation.getStationId();
 		} else if (shipLocation.getStructureId() != null) {
@@ -954,6 +954,7 @@ public class RawConverter {
 		INFRASTRUCTUREHANGAR("ColonyResourcesHold", 185),
 		MOONMATERIALBAY("MoonMaterialBay", 186),
 		CAPSULEERDELIVERIES("CapsuleerDeliveries", 187),
+		EXPEDITIONHOLD("ExpeditionHold", 188),
 		;
 
 		private final String value;

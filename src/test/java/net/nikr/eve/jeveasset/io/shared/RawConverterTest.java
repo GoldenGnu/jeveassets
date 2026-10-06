@@ -320,6 +320,7 @@ public class RawConverterTest extends TestUtil {
 		}
 		for (CharacterWalletJournalResponse.RefTypeEnum refType : CharacterWalletJournalResponse.RefTypeEnum.values()) {
 			RawJournalRefType type = RawConverter.toJournalRefType(null, refType.toString());
+			assertNotNull(type);
 			if (type == RawJournalRefType.KILL_RIGHT && refType == CharacterWalletJournalResponse.RefTypeEnum.KILL_RIGHT_FEE) {
 				continue;
 			}
@@ -333,6 +334,7 @@ public class RawConverterTest extends TestUtil {
 		}
 		for (CorporationWalletJournalResponse.RefTypeEnum refType : CorporationWalletJournalResponse.RefTypeEnum.values()) {
 			RawJournalRefType type = RawConverter.toJournalRefType(null, refType.toString());
+			assertNotNull(type);
 			if (type == RawJournalRefType.KILL_RIGHT && refType == CorporationWalletJournalResponse.RefTypeEnum.KILL_RIGHT_FEE) {
 				continue;
 			}
@@ -348,7 +350,7 @@ public class RawConverterTest extends TestUtil {
 
 	@Test
 	public void testToJournalRefType_CharacterWalletJournalResponseRefTypeEnum() {
-		assertEquals(155, CharacterWalletJournalResponse.RefTypeEnum.values().length);
+		assertEquals(162, CharacterWalletJournalResponse.RefTypeEnum.values().length);
 		int undefined = 0;
 		for (CharacterWalletJournalResponse.RefTypeEnum refType : CharacterWalletJournalResponse.RefTypeEnum.values()) {
 			RawJournalRefType rawJournalRefType = RawConverter.toJournalRefType(refType);
@@ -362,7 +364,7 @@ public class RawConverterTest extends TestUtil {
 
 	@Test
 	public void testToJournalRefType_CorporationWalletJournalResponseRefTypeEnum() {
-		assertEquals(155, CorporationWalletJournalResponse.RefTypeEnum.values().length);
+		assertEquals(162, CorporationWalletJournalResponse.RefTypeEnum.values().length);
 		int undefined = 0;
 		for (CorporationWalletJournalResponse.RefTypeEnum refType : CorporationWalletJournalResponse.RefTypeEnum.values()) {
 			RawJournalRefType rawJournalRefType = RawConverter.toJournalRefType(refType);

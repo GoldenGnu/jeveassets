@@ -74,7 +74,7 @@ public class EsiItemsGetter extends AbstractEsiGetter {
 		TypeResponse typeResponse = update(DEFAULT_RETRIES, new EsiHandler<TypeResponse>() {
 			@Override
 			public ApiResponse<TypeResponse> get() throws ApiException {
-				return getUniverseApiOpen().getTypeWithHttpInfo((long) typeID, COMPATIBILITY_DATE, null, null, null);
+				return getUniverseApiOpen().getTypeWithHttpInfo((long) typeID, COMPATIBILITY_DATE, null, null, null, null);
 			}
 		});
 		//Groups
@@ -84,7 +84,7 @@ public class EsiItemsGetter extends AbstractEsiGetter {
 			groupResponse = update(DEFAULT_RETRIES, new EsiHandler<GroupResponse>() {
 				@Override
 				public ApiResponse<GroupResponse> get() throws ApiException {
-					return getUniverseApiOpen().getGroupWithHttpInfo(groupID, COMPATIBILITY_DATE, null, null, null);
+					return getUniverseApiOpen().getGroupWithHttpInfo(groupID, COMPATIBILITY_DATE, null, null, null, null);
 				}
 			});
 			GROUPS_CACHE.put(groupID, groupResponse);
@@ -96,7 +96,7 @@ public class EsiItemsGetter extends AbstractEsiGetter {
 			categoryResponse = update(DEFAULT_RETRIES, new EsiHandler<CategoryResponse>() {
 				@Override
 				public ApiResponse<CategoryResponse> get() throws ApiException {
-					return getUniverseApiOpen().getCategoryWithHttpInfo(categoryID, COMPATIBILITY_DATE, null, null, null);
+					return getUniverseApiOpen().getCategoryWithHttpInfo(categoryID, COMPATIBILITY_DATE, null, null, null, null);
 				}
 			});
 			CATEGORY_CACHE.put(categoryID, categoryResponse);
@@ -110,7 +110,7 @@ public class EsiItemsGetter extends AbstractEsiGetter {
 				marketGroupResponse = update(DEFAULT_RETRIES, new EsiHandler<MarketGroupResponse>() {
 					@Override
 					public ApiResponse<MarketGroupResponse> get() throws ApiException {
-						return getMarketApiOpen().getMarketGroupWithHttpInfo(marketGroupID, COMPATIBILITY_DATE, null, null, null);
+						return getMarketApiOpen().getMarketGroupWithHttpInfo(marketGroupID, COMPATIBILITY_DATE, null, null, null, null);
 					}
 				});
 				MARKET_GROUP_CACHE.put(marketGroupID, marketGroupResponse);

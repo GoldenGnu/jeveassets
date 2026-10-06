@@ -29,6 +29,6 @@ public class ItemFlagsTest extends TestUtil {
 
 	@Test
 	public void testItemFlags() {
-		assertEquals(141, StaticData.get().getItemFlags().size());
+		assertEquals(142, StaticData.get().getItemFlags().size());
 	}
 }
