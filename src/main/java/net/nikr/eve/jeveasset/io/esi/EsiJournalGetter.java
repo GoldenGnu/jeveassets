@@ -50,7 +50,7 @@ public class EsiJournalGetter extends AbstractEsiGetter {
 					@Override
 					public ApiResponse<List<CorporationWalletJournalResponse>> get(Integer page) throws ApiException {
 						//((int) , division, DATASOURCE, null, page, null);
-						return getWalletApiAuth().getCorporationWalletJournalWithHttpInfo(owner.getOwnerID(), SafeConverter.toLong(division), COMPATIBILITY_DATE, page, null, null, null);
+						return getWalletApiAuth().getCorporationWalletJournalWithHttpInfo(owner.getOwnerID(), SafeConverter.toLong(division), COMPATIBILITY_DATE, page, null, null, null, null);
 					}
 				});
 				int fixedDivision = division + 999;
@@ -60,7 +60,7 @@ public class EsiJournalGetter extends AbstractEsiGetter {
 			List<CharacterWalletJournalResponse> journals = updatePages(DEFAULT_RETRIES, new EsiPagesHandler<CharacterWalletJournalResponse>() {
 				@Override
 				public ApiResponse<List<CharacterWalletJournalResponse>> get(Integer page) throws ApiException {
-					return getWalletApiAuth().getCharacterWalletJournalWithHttpInfo(owner.getOwnerID(), COMPATIBILITY_DATE, page, null, null, null);
+					return getWalletApiAuth().getCharacterWalletJournalWithHttpInfo(owner.getOwnerID(), COMPATIBILITY_DATE, page, null, null, null, null);
 				}
 			});
 			owner.setJournal(EsiConverter.toJournals(journals, owner, 1000, saveHistory));

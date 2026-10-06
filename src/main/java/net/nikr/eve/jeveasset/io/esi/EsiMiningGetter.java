@@ -60,7 +60,7 @@ public class EsiMiningGetter extends AbstractEsiGetter {
 			List<CorporationMiningExtractionsResponse> extractions = updatePages(DEFAULT_RETRIES, new EsiPagesHandler<CorporationMiningExtractionsResponse>() {
 				@Override
 				public ApiResponse<List<CorporationMiningExtractionsResponse>> get(Integer page) throws ApiException {
-					return getIndustryApiAuth().getCorporationMiningExtractionsWithHttpInfo(owner.getOwnerID(), COMPATIBILITY_DATE, page, null, null, null);
+					return getIndustryApiAuth().getCorporationMiningExtractionsWithHttpInfo(owner.getOwnerID(), COMPATIBILITY_DATE, page, null, null, null, null);
 				}
 			});
 			//Moon Locations
@@ -76,7 +76,7 @@ public class EsiMiningGetter extends AbstractEsiGetter {
 				@Override
 				protected ApiResponse<MoonResponse> get(Long planetID) throws ApiException {
 					//MoonsMoonIdWithHttpInfo(, DATASOURCE, null);
-					return getUniverseApiOpen().getMoonWithHttpInfo(planetID, COMPATIBILITY_DATE, null, null, null);
+					return getUniverseApiOpen().getMoonWithHttpInfo(planetID, COMPATIBILITY_DATE, null, null, null, null);
 				}
 			});
 			List<Citadel> citadels = new ArrayList<>();
@@ -92,7 +92,7 @@ public class EsiMiningGetter extends AbstractEsiGetter {
 			List<CorporationMiningObserversResponse> observers = updatePages(DEFAULT_RETRIES, new EsiPagesHandler<CorporationMiningObserversResponse>() {
 				@Override
 				public ApiResponse<List<CorporationMiningObserversResponse>> get(Integer page) throws ApiException {
-					return getIndustryApiAuth().getCorporationMiningObserversWithHttpInfo(owner.getOwnerID(), COMPATIBILITY_DATE, page, null, null, null);
+					return getIndustryApiAuth().getCorporationMiningObserversWithHttpInfo(owner.getOwnerID(), COMPATIBILITY_DATE, page, null, null, null, null);
 				}
 			});
 			Map<CorporationMiningObserversResponse, List<CorporationMiningObserverResponse>> miningObservers = updatePagedMap(observers, new PagedListHandler<CorporationMiningObserversResponse, CorporationMiningObserverResponse>() {
@@ -101,7 +101,7 @@ public class EsiMiningGetter extends AbstractEsiGetter {
 					return updatePages(DEFAULT_RETRIES, new EsiPagesHandler<CorporationMiningObserverResponse>() {
 						@Override
 						public ApiResponse<List<CorporationMiningObserverResponse>> get(Integer page) throws ApiException {
-							return getIndustryApiAuth().getCorporationMiningObserverWithHttpInfo(owner.getOwnerID(), observer.getObserverId(), COMPATIBILITY_DATE, page, null, null, null);
+							return getIndustryApiAuth().getCorporationMiningObserverWithHttpInfo(owner.getOwnerID(), observer.getObserverId(), COMPATIBILITY_DATE, page, null, null, null, null);
 						}
 					});
 				}
@@ -111,7 +111,7 @@ public class EsiMiningGetter extends AbstractEsiGetter {
 			List<CharacterMiningResponse> responses = updatePages(DEFAULT_RETRIES, new EsiPagesHandler<CharacterMiningResponse>() {
 				@Override
 				public ApiResponse<List<CharacterMiningResponse>> get(Integer page) throws ApiException {
-					return getIndustryApiAuth().getCharacterMiningWithHttpInfo(owner.getOwnerID(), COMPATIBILITY_DATE, page, null, null, null);
+					return getIndustryApiAuth().getCharacterMiningWithHttpInfo(owner.getOwnerID(), COMPATIBILITY_DATE, page, null, null, null, null);
 				}
 			});
 			owner.setMining(EsiConverter.toMining(responses, owner, saveHistory));

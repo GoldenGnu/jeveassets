@@ -22,7 +22,7 @@ package net.nikr.eve.jeveasset.data.raw;
 
 import net.nikr.eve.jeveasset.TestUtil;
 import net.nikr.eve.jeveasset.data.api.raw.RawSkill;
-import net.troja.eve.esi.model.Skill;
+import net.troja.eve.esi.model.CharactersSkillsSkill;
 import org.junit.Test;
 
 
@@ -30,7 +30,7 @@ public class RawSkillTest extends TestUtil {
 
 	@Test
 	public void rawSkillTest() {
-		RawUtil.compare(RawSkill.class, Skill.class);
+		RawUtil.compare(RawSkill.class, CharactersSkillsSkill.class);
 	}
 
 }
