@@ -672,39 +672,41 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		if (stockpile == null) { //new stockpile
 			stockpile = stockpileDialog.showAdd();
 		}
-		if (stockpile != null) { //Add items
-			removeStockpile(stockpile);
-			boolean save = false;
-			for (StockpileItem fromItem : items) {
-				//Clone item
-				StockpileItem toItem = null;
-				//Search for existing
-				for (StockpileItem item : stockpile.getItems()) {
-					if (item.getNeededTypeID() == fromItem.getNeededTypeID() && item.isRuns() == fromItem.isRuns() && item.isMaterial() == fromItem.isMaterial()) {
-						toItem = item;
-						break;
-					}
-				}
-				if (toItem != null) { //Update existing (add counts)
-					if (merge) {
-						save = true;
-						Settings.lock("Stockpile (addTo - Merge)"); //Lock for Stockpile (addTo - Merge)
-						toItem.addCountMinimum(fromItem.getCountMinimum());
-						Settings.unlock("Stockpile (addTo - Merge)"); //Unlock for Stockpile (addTo - Merge)
-					}
-				} else { //Add new
-					save = true;
-					Settings.lock("Stockpile (addTo - New)"); //Lock for Stockpile (addTo - New)
-					StockpileItem item = fromItem.deepClone(stockpile);
-					stockpile.add(item);
-					Settings.unlock("Stockpile (addTo - New)"); //Unlock for Stockpile (addTo - New)
-				}
-			}
-			if (save && saveOnChange) {
-				program.saveStockpiles("Stockpile (addTo)"); //Save Stockpile (Merge);
-			}
-			addStockpile(stockpile);
+		if (stockpile == null) {
+			return stockpile;
 		}
+		//Add items
+		removeStockpile(stockpile);
+		boolean save = false;
+		for (StockpileItem fromItem : items) {
+			//Clone item
+			StockpileItem toItem = null;
+			//Search for existing
+			for (StockpileItem item : stockpile.getItems()) {
+				if (item.getNeededTypeID() == fromItem.getNeededTypeID() && item.isRuns() == fromItem.isRuns() && item.isMaterial() == fromItem.isMaterial()) {
+					toItem = item;
+					break;
+				}
+			}
+			if (toItem != null) { //Update existing (add counts)
+				if (merge) {
+					save = true;
+					Settings.lock("Stockpile (addTo - Merge)"); //Lock for Stockpile (addTo - Merge)
+					toItem.addCountMinimum(fromItem.getCountMinimum());
+					Settings.unlock("Stockpile (addTo - Merge)"); //Unlock for Stockpile (addTo - Merge)
+				}
+			} else { //Add new
+				save = true;
+				Settings.lock("Stockpile (addTo - New)"); //Lock for Stockpile (addTo - New)
+				StockpileItem item = fromItem.deepClone(stockpile);
+				stockpile.add(item);
+				Settings.unlock("Stockpile (addTo - New)"); //Unlock for Stockpile (addTo - New)
+			}
+		}
+		if (save && saveOnChange) {
+			program.saveStockpiles("Stockpile (addTo)"); //Save Stockpile (Merge);
+		}
+		addStockpile(stockpile);
 		return stockpile;
 	}
 
@@ -802,15 +804,16 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		} catch (NumberFormatException ex) {
 			multiplier = 1;
 		}
-		if (multiplier != stockpile.getMultiplier()) {
-			stockpile.setMultiplier(multiplier);
-			stockpile.updateTotal();
-			stockpile.updateMaterials();
-			program.saveStockpiles("Stockpile: Multiplier changed");
-			beforeUpdateData();
-			tableModel.fireTableDataChanged();
-			afterUpdateData();
+		if (multiplier == stockpile.getMultiplier()) {
+			return;
 		}
+		stockpile.setMultiplier(multiplier);
+		stockpile.updateTotal();
+		stockpile.updateMaterials();
+		program.saveStockpiles("Stockpile: Multiplier changed");
+		beforeUpdateData();
+		tableModel.fireTableDataChanged();
+		afterUpdateData();
 	}
 
 	protected void editItem(StockpileItem item) {
@@ -1453,14 +1456,15 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 	private void importXml() {
 		jFileChooser.setSelectedFile(new File(""));
 		int value = jFileChooser.showOpenDialog(program.getMainWindow().getFrame());
-		if (value == JCustomFileChooser.APPROVE_OPTION) {
-			List<Stockpile> stockpiles = StockpileXmlReader.importStockpile(jFileChooser.getSelectedFile().getAbsolutePath());
-			if (stockpiles != null) {
-				importStockpiles(stockpiles);
-			} else {
-				JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsStockpile.get().importXmlFailedMsg(), TabsStockpile.get().importFailedTitle(), JOptionPane.WARNING_MESSAGE);
-			}
+		if (value != JCustomFileChooser.APPROVE_OPTION) {
+			return;
 		}
+		List<Stockpile> stockpiles = StockpileXmlReader.importStockpile(jFileChooser.getSelectedFile().getAbsolutePath());
+		if (stockpiles == null) {
+			JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsStockpile.get().importXmlFailedMsg(), TabsStockpile.get().importFailedTitle(), JOptionPane.WARNING_MESSAGE);
+			return;
+		}
+		importStockpiles(stockpiles);
 	}
 
 	private void importXmlText() {
@@ -1471,11 +1475,11 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 			return; //Cancel
 		}
 		List<Stockpile> stockpiles = StockpileReader.load(importText);
-		if (stockpiles != null) {
-			importStockpiles(stockpiles);
-		} else {
+		if (stockpiles == null) {
 			JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsStockpile.get().importTextFailedMsg(), TabsStockpile.get().importFailedTitle(), JOptionPane.WARNING_MESSAGE);
+			return;
 		}
+		importStockpiles(stockpiles);
 	}
 
 	private void importStockpiles(List<Stockpile> stockpiles) {
@@ -1618,25 +1622,29 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 
 	private void exportXml() {
 		List<Stockpile> stockpiles = stockpileSelectionDialog.show(getShownStockpiles(), Settings.get().getStockpiles(), TabsStockpile.get().showHidden(), false);
-		if (stockpiles != null) {
-			jFileChooser.setSelectedFile(new File(""));
-			int value = jFileChooser.showSaveDialog(program.getMainWindow().getFrame());
-			if (value == JCustomFileChooser.APPROVE_OPTION) {
-				StockpileXmlWriter.exportStockpiles(stockpiles, jFileChooser.getSelectedFile().getAbsolutePath());
-			}
+		if (stockpiles == null) {
+			return;
 		}
+		jFileChooser.setSelectedFile(new File(""));
+		int value = jFileChooser.showSaveDialog(program.getMainWindow().getFrame());
+		if (value != JCustomFileChooser.APPROVE_OPTION) {
+			return;
+		}
+		StockpileXmlWriter.exportStockpiles(stockpiles, jFileChooser.getSelectedFile().getAbsolutePath());
 	}
 
 	private void exportText() {
 		List<Stockpile> stockpiles = stockpileSelectionDialog.show(getShownStockpiles(), Settings.get().getStockpiles(), TabsStockpile.get().showHidden(), false);
-		if (stockpiles != null) {
-			String json = StockpileWriter.save(stockpiles);
-			if (json != null) {
-				jTextDialog.setLineWrap(true);
-				jTextDialog.exportText(json);
-				jTextDialog.setLineWrap(false);
-			}
+		if (stockpiles == null) {
+			return;
 		}
+		String json = StockpileWriter.save(stockpiles);
+		if (json == null) {
+			return;
+		}
+		jTextDialog.setLineWrap(true);
+		jTextDialog.exportText(json);
+		jTextDialog.setLineWrap(false);
 	}
 
 	private Stockpile getSelectedStockpile() {
@@ -1761,14 +1769,16 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 		public void actionPerformed(final ActionEvent e) {
 			if (StockpileCellAction.SHOPPING_LIST_SINGLE.name().equals(e.getActionCommand())) { //Shopping list single
 				Stockpile stockpile = getSelectedStockpile();
-				if (stockpile != null) {
-					stockpileShoppingListDialog.show(stockpile);
+				if (stockpile == null) {
+					return;
 				}
+				stockpileShoppingListDialog.show(stockpile);
 			} else if (StockpileAction.SHOPPING_LIST_MULTI.name().equals(e.getActionCommand())) { //Shopping list multi
 				List<Stockpile> stockpiles = stockpileSelectionDialog.show(getShownStockpiles(), Settings.get().getStockpiles(), TabsStockpile.get().showHidden(), false);
-				if (stockpiles != null) {
-					stockpileShoppingListDialog.show(stockpiles);
+				if (stockpiles == null) {
+					return;
 				}
+				stockpileShoppingListDialog.show(stockpiles);
 			} else if (StockpileAction.SHOW_HIDE.name().equals(e.getActionCommand())) { //Shopping list multi
 				List<Stockpile> selected = new ArrayList<>();
 				Set<Long> all = new HashSet<>();
@@ -1839,28 +1849,33 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 				exportText();
 			} else if (StockpileAction.ADD_STOCKPILE.name().equals(e.getActionCommand())) { //Add stockpile
 				Stockpile stockpile = stockpileDialog.showAdd();
-				if (stockpile != null) {
-					addStockpile(stockpile);
-					scrollToSctockpile(stockpile);
+				if (stockpile == null) {
+					return;
 				}
+				addStockpile(stockpile);
+				scrollToSctockpile(stockpile);
 			} else if (StockpileCellAction.EDIT_STOCKPILE.name().equals(e.getActionCommand())) { //Edit stockpile
 				Stockpile stockpile = getSelectedStockpile();
-				if (stockpile != null) {
-					boolean updated = stockpileDialog.showEdit(stockpile);
-					if (updated) {
-						//To tricker resort
-						removeStockpile(stockpile);
-						addStockpile(stockpile);
-					}
+				if (stockpile == null) {
+					return;
 				}
+				boolean updated = stockpileDialog.showEdit(stockpile);
+				if (!updated) {
+					return;
+				}
+				//To tricker resort
+				removeStockpile(stockpile);
+				addStockpile(stockpile);
 			} else if (StockpileCellAction.CLONE_STOCKPILE.name().equals(e.getActionCommand())) { //Clone stockpile
 				Stockpile stockpile = getSelectedStockpile();
-				if (stockpile != null) {
-					Stockpile cloneStockpile = stockpileDialog.showClone(stockpile);
-					if (cloneStockpile != null) {
-						addStockpile(cloneStockpile);
-					}
+				if (stockpile == null) {
+					return;
 				}
+				Stockpile cloneStockpile = stockpileDialog.showClone(stockpile);
+				if (cloneStockpile == null) {
+					return;
+				}
+				addStockpile(cloneStockpile);
 			} else if (StockpileCellAction.HIDE_STOCKPILE.name().equals(e.getActionCommand())) { //Hide stockpile
 				Stockpile stockpile = getSelectedStockpile();
 				if (stockpile == null) {
@@ -1870,31 +1885,33 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 				removeItems(stockpile.getItems());
 			} else if (StockpileCellAction.DELETE_STOCKPILE.name().equals(e.getActionCommand())) { //Delete stockpile
 				Stockpile stockpile = getSelectedStockpile();
-				if (stockpile != null) {
-					int value = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), stockpile.getName(), TabsStockpile.get().deleteStockpileTitle(), JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
-					if (value == JOptionPane.OK_OPTION) {
-						Settings.lock("Stockpile (Delete Stockpile)");
-						//Remove stockpile
-						Settings.get().getStockpiles().remove(stockpile);
-						//Remove Group
-						Settings.get().getStockpileGroupSettings().removeGroup(stockpile);
-						StockpileSeparatorTableCell.updateGroups();
-						//Remove subpile links
-						for (Stockpile parentStockpile : stockpile.getSubpiles().keySet()) {
-							parentStockpile.removeSubpileLink(stockpile);
-						}
-						stockpile.getSubpiles().clear(); //Remove all Subpiles
-						updateSubpile(stockpile); //Remove SubpileItems from Table
-						//Remove deleted stockpile from all subpiles
-						for (Stockpile parentStockpile : stockpile.getSubpileLinks()) {
-							parentStockpile.getSubpiles().remove(stockpile);
-							updateSubpile(parentStockpile);
-						}
-						Settings.unlock("Stockpile (Delete Stockpile)");
-						program.saveStockpiles("Stockpile (Delete Stockpile)");
-						removeStockpile(stockpile);
-					}
+				if (stockpile == null) {
+					return;
 				}
+				int value = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), stockpile.getName(), TabsStockpile.get().deleteStockpileTitle(), JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+				if (value != JOptionPane.OK_OPTION) {
+					return;
+				}
+				Settings.lock("Stockpile (Delete Stockpile)");
+				//Remove stockpile
+				Settings.get().getStockpiles().remove(stockpile);
+				//Remove Group
+				Settings.get().getStockpileGroupSettings().removeGroup(stockpile);
+				StockpileSeparatorTableCell.updateGroups();
+				//Remove subpile links
+				for (Stockpile parentStockpile : stockpile.getSubpiles().keySet()) {
+					parentStockpile.removeSubpileLink(stockpile);
+				}
+				stockpile.getSubpiles().clear(); //Remove all Subpiles
+				updateSubpile(stockpile); //Remove SubpileItems from Table
+				//Remove deleted stockpile from all subpiles
+				for (Stockpile parentStockpile : stockpile.getSubpileLinks()) {
+					parentStockpile.getSubpiles().remove(stockpile);
+					updateSubpile(parentStockpile);
+				}
+				Settings.unlock("Stockpile (Delete Stockpile)");
+				program.saveStockpiles("Stockpile (Delete Stockpile)");
+				removeStockpile(stockpile);
 			} else if (StockpileAction.DELETE_STOCKPILE_MULTI.name().equals(e.getActionCommand())) { //Delete stockpiles
 				List<Stockpile> stockpiles = stockpileSelectionDialog.show(getShownStockpiles(), Settings.get().getStockpiles(), TabsStockpile.get().showHidden(), false);
 				if (stockpiles == null || stockpiles.isEmpty()) {
@@ -1937,13 +1954,14 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 				
 			} else if (StockpileCellAction.ADD_ITEM.name().equals(e.getActionCommand())) { //Add item
 				Stockpile stockpile = getSelectedStockpile();
-				if (stockpile != null) {
-					List<StockpileItem> stockpileItems = stockpileItemDialog.showAdd(stockpile);
-					if (stockpileItems == null || stockpileItems.isEmpty()) { //Edit/Add/Update existing or cancel
-						return;
-					}
-					addToStockpile(stockpile, stockpileItems, false, true);
+				if (stockpile == null) {
+					return;
 				}
+				List<StockpileItem> stockpileItems = stockpileItemDialog.showAdd(stockpile);
+				if (stockpileItems == null || stockpileItems.isEmpty()) { //Edit/Add/Update existing or cancel
+					return;
+				}
+				addToStockpile(stockpile, stockpileItems, false, true);
 			} else if (StockpileAction.COLLAPSE_GROUPS.name().equals(e.getActionCommand())) {
 				expandGroups(false, MATCH_ALL_GROUPS);
 			} else if (StockpileAction.EXPAND_GROUPS.name().equals(e.getActionCommand())) {
@@ -2078,39 +2096,40 @@ public class StockpileTab extends JMainTabSecondary implements TagUpdate {
 				program.saveStockpiles("Stockpile (Stockpile Add Group)");
 			} else if (StockpileCellAction.SUBPILES.name().equals(e.getActionCommand())) {
 				Stockpile stockpile = getSelectedStockpile();
-				if (stockpile != null) {
-					List<Stockpile> listData = new ArrayList<>();
-					listData.clear();
-					listData.addAll(Settings.get().getStockpiles());
-					listData.remove(stockpile); //Remove self
-					remove(listData, stockpile, stockpile.getSubpileLinks()); //Remove interlinked
-					Collections.sort(listData);
-
-					List<Stockpile> stockpiles = stockpileSelectionDialog.show(listData, stockpile.getSubpiles().keySet(), true);
-					if (stockpiles == null) {
-						return;
-					}
-					Settings.lock("Stockpile (Updated Subpiles)");
-					//Remove old Links
-					for (Stockpile parentStockpile : stockpile.getSubpiles().keySet()) {
-						parentStockpile.removeSubpileLink(stockpile);
-					}
-					Map<Stockpile, Double> old = new HashMap<>(stockpile.getSubpiles()); //Copy
-					stockpile.getSubpiles().clear();
-					for (Stockpile parentStockpile : stockpiles) {
-						Double value = old.get(parentStockpile);
-						if (value != null) {
-							stockpile.getSubpiles().put(parentStockpile, value);
-						} else {
-							stockpile.getSubpiles().put(parentStockpile, 1.0);
-						}
-						parentStockpile.addSubpileLink(stockpile);
-					}
-					Settings.unlock("Stockpile (Updated Subpiles)");
-					updateStockpile(stockpile);
-					updateSubpile(stockpile);
-					program.saveStockpiles("Stockpile (Updated subpiles)");
+				if (stockpile == null) {
+					return;
 				}
+				List<Stockpile> listData = new ArrayList<>();
+				listData.clear();
+				listData.addAll(Settings.get().getStockpiles());
+				listData.remove(stockpile); //Remove self
+				remove(listData, stockpile, stockpile.getSubpileLinks()); //Remove interlinked
+				Collections.sort(listData);
+
+				List<Stockpile> stockpiles = stockpileSelectionDialog.show(listData, stockpile.getSubpiles().keySet(), true);
+				if (stockpiles == null) {
+					return;
+				}
+				Settings.lock("Stockpile (Updated Subpiles)");
+				//Remove old Links
+				for (Stockpile parentStockpile : stockpile.getSubpiles().keySet()) {
+					parentStockpile.removeSubpileLink(stockpile);
+				}
+				Map<Stockpile, Double> old = new HashMap<>(stockpile.getSubpiles()); //Copy
+				stockpile.getSubpiles().clear();
+				for (Stockpile parentStockpile : stockpiles) {
+					Double value = old.get(parentStockpile);
+					if (value != null) {
+						stockpile.getSubpiles().put(parentStockpile, value);
+					} else {
+						stockpile.getSubpiles().put(parentStockpile, 1.0);
+					}
+					parentStockpile.addSubpileLink(stockpile);
+				}
+				Settings.unlock("Stockpile (Updated Subpiles)");
+				updateStockpile(stockpile);
+				updateSubpile(stockpile);
+				program.saveStockpiles("Stockpile (Updated subpiles)");
 			}
 		}
 
