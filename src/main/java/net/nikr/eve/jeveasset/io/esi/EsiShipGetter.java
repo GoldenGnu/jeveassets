@@ -29,9 +29,9 @@ import net.nikr.eve.jeveasset.data.settings.SQLiteSettings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.troja.eve.esi.ApiException;
 import net.troja.eve.esi.ApiResponse;
-import net.troja.eve.esi.model.CharacterLocationResponse;
 import net.troja.eve.esi.model.CharacterRolesResponse.RolesEnum;
-import net.troja.eve.esi.model.CharacterShipResponse;
+import net.troja.eve.esi.model.CharactersLocation;
+import net.troja.eve.esi.model.CharactersShip;
 
 
 public class EsiShipGetter extends AbstractEsiGetter {
@@ -46,17 +46,17 @@ public class EsiShipGetter extends AbstractEsiGetter {
 			return; //Character Endpoint
 		}
 		//Get Ship
-		CharacterShipResponse shipType = update(DEFAULT_RETRIES, new EsiHandler<CharacterShipResponse>() {
+		CharactersShip shipType = update(DEFAULT_RETRIES, new EsiHandler<CharactersShip>() {
 			@Override
-			public ApiResponse<CharacterShipResponse> get() throws ApiException {
-				return getLocationApiAuth().getCharacterShipWithHttpInfo(owner.getOwnerID(), COMPATIBILITY_DATE, null, null, null);
+			public ApiResponse<CharactersShip> get() throws ApiException {
+				return getLocationApiAuth().getCharacterShipWithHttpInfo(owner.getOwnerID(), COMPATIBILITY_DATE, null, null, null, null);
 			}
 		});
 		//Get Location
-		CharacterLocationResponse shipLocation = update(DEFAULT_RETRIES, new EsiHandler<CharacterLocationResponse>() {
+		CharactersLocation shipLocation = update(DEFAULT_RETRIES, new EsiHandler<CharactersLocation>() {
 			@Override
-			public ApiResponse<CharacterLocationResponse> get() throws ApiException {
-				return getLocationApiAuth().getCharacterLocationWithHttpInfo(owner.getOwnerID(), COMPATIBILITY_DATE, null, null, null);
+			public ApiResponse<CharactersLocation> get() throws ApiException {
+				return getLocationApiAuth().getCharacterLocationWithHttpInfo(owner.getOwnerID(), COMPATIBILITY_DATE, null, null, null, null);
 			}
 		});
 		//Create assets

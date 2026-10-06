@@ -689,16 +689,16 @@ public class StockpileData extends TableData {
 			Stockpile subpile = entry.getKey();
 			Double value = entry.getValue();
 			String path = parentPath + subpile.getName() + "\r\n";
-			int level = parentLevel + 1;
 			SubpileStock subpileStock = new SubpileStock(topStockpile, subpile, parent, parentStock, value, parentLevel, path);
 			topStockpile.addSubpileStock(subpileStock);
 			addMaterial(topStockpile, subpile, null, null, topItems, subpileStock, parentLevel, parentPath, subpile.getMaterials());
+			int level = parentLevel + 1;
 			for (StockpileItem stockpileItem : subpile.getStockpileItems()) {
 				//For each StockpileItem
 				if (stockpileItem.isTotal()) {
 					continue; //Ignore Total
 				}
-				SubpileItem subpileItem = new SubpileItem(topStockpile, stockpileItem, subpileStock, parentLevel, path);
+				SubpileItem subpileItem = new SubpileItem(topStockpile, stockpileItem, subpileStock, level, path);
 				addSubpileItem(topItems, topStockpile, subpileItem, stockpileItem, subpileStock, level, path, false);
 			}
 			updateSubpileClaims(topStockpile, subpile, topItems, subpileStock, level, path);
@@ -706,20 +706,21 @@ public class StockpileData extends TableData {
 	}
 
 	private static void addMaterial(Stockpile topStockpile, Stockpile currentStockpile, StockpileItemMaterial parentMaterial, SubpileItem parentSubpile, Map<TypeIdentifier, StockpileItem> topItems, SubpileStock subpileStock, int parentLevel, String parentPath, Set<StockpileItemMaterial> materials) {
-		int level = parentLevel + 1;
 		for (StockpileItemMaterial stockpileItemMaterial : materials) {
 			if (stockpileItemMaterial.isTotal()) {
 				continue; //Ignore Total
 			}
 			String path = parentPath + stockpileItemMaterial.getName() + "\r\n";
 			SubpileItem subpileItemMaterial = new SubpileItem(topStockpile, stockpileItemMaterial, parentMaterial, parentSubpile, subpileStock, parentLevel, path);
-			addSubpileItem(topItems, topStockpile, subpileItemMaterial, stockpileItemMaterial, subpileStock, level, path, false);
+			addSubpileItem(topItems, topStockpile, subpileItemMaterial, stockpileItemMaterial, subpileStock, parentLevel, path, false);
+			int level = parentLevel + 1;
 			for (StockpileItem stockpileItem : stockpileItemMaterial.getMaterialItems()) {
+				String subpath = path + stockpileItem.getName() + "\r\n";
 				if (stockpileItem.isTotal()) {
 					continue; //Ignore Total
 				}
-				SubpileItem subpileItem = new SubpileItem(topStockpile, stockpileItem, stockpileItemMaterial, subpileItemMaterial, subpileStock, parentLevel, path);
-				addSubpileItem(topItems, topStockpile, subpileItem, stockpileItem, subpileStock, level, path, false);
+				SubpileItem subpileItem = new SubpileItem(topStockpile, stockpileItem, stockpileItemMaterial, subpileItemMaterial, subpileStock, level, subpath);
+				addSubpileItem(topItems, topStockpile, subpileItem, stockpileItem, subpileStock, level, subpath, false);
 			}
 			addMaterial(topStockpile, currentStockpile, stockpileItemMaterial, subpileItemMaterial, topItems, subpileStock, level, path, stockpileItemMaterial.getMaterials());
 			

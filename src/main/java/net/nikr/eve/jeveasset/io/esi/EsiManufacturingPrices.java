@@ -54,7 +54,7 @@ public class EsiManufacturingPrices extends AbstractEsiGetter {
 		List<MarketPricesResponse> priceResponses = update(DEFAULT_RETRIES, new EsiHandler<List<MarketPricesResponse>>() {
 			@Override
 			public ApiResponse<List<MarketPricesResponse>> get() throws ApiException {
-				return getMarketApiOpen().getMarketPricesWithHttpInfo(COMPATIBILITY_DATE, null, null, null);
+				return getMarketApiOpen().getMarketPricesWithHttpInfo(COMPATIBILITY_DATE, null, null, null, null);
 			}
 		});
 		Map<Integer, MarketPricesResponse> prices = new HashMap<>();
@@ -76,7 +76,7 @@ public class EsiManufacturingPrices extends AbstractEsiGetter {
 		List<IndustrySystemsResponse> systemResponses = update(DEFAULT_RETRIES, new EsiHandler<List<IndustrySystemsResponse>>() {
 			@Override
 			public ApiResponse<List<IndustrySystemsResponse>> get() throws ApiException {
-				return getIndustryApiOpen().getIndustrySystemsWithHttpInfo(COMPATIBILITY_DATE, null, null, null);
+				return getIndustryApiOpen().getIndustrySystemsWithHttpInfo(COMPATIBILITY_DATE, null, null, null, null);
 			}
 		});
 		Map<Integer, Float> manufacturingSystems = new HashMap<>();

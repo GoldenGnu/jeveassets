@@ -114,7 +114,7 @@ public class EsiStructuresGetter extends AbstractEsiGetter {
 			@Override
 			public ApiResponse<StructureResponse> get(Long k) throws ApiException {
 				pause();
-				return getUniverseApiAuth().getStructureWithHttpInfo(k, COMPATIBILITY_DATE, null, null, null);
+				return getUniverseApiAuth().getStructureWithHttpInfo(k, COMPATIBILITY_DATE, null, null, null, null);
 			}
 			@Override
 			protected void handle(ApiException ex, Long k) throws ApiException {

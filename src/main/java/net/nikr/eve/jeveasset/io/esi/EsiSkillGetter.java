@@ -27,7 +27,7 @@ import net.nikr.eve.jeveasset.io.shared.SafeConverter;
 import net.troja.eve.esi.ApiException;
 import net.troja.eve.esi.ApiResponse;
 import net.troja.eve.esi.model.CharacterRolesResponse.RolesEnum;
-import net.troja.eve.esi.model.CharacterSkillsResponse;
+import net.troja.eve.esi.model.CharactersSkills;
 
 
 public class EsiSkillGetter extends AbstractEsiGetter {
@@ -41,10 +41,10 @@ public class EsiSkillGetter extends AbstractEsiGetter {
 		if (owner.isCorporation()) {
 			return; //Character Endpoint
 		}
-		CharacterSkillsResponse response = update(DEFAULT_RETRIES, new EsiHandler<CharacterSkillsResponse>() {
+		CharactersSkills response = update(DEFAULT_RETRIES, new EsiHandler<CharactersSkills>() {
 			@Override
-			public ApiResponse<CharacterSkillsResponse> get() throws ApiException {
-				return getSkillsApiAuth().getCharacterSkillsWithHttpInfo(owner.getOwnerID(), COMPATIBILITY_DATE, null, null, null);
+			public ApiResponse<CharactersSkills> get() throws ApiException {
+				return getSkillsApiAuth().getCharacterSkillsWithHttpInfo(owner.getOwnerID(), COMPATIBILITY_DATE, null, null, null, null);
 			}
 		});
 		owner.setSkills(EsiConverter.toSkills(response.getSkills(), owner));

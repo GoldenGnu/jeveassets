@@ -43,7 +43,7 @@ public class EsiDivisionsGetter extends AbstractEsiGetter {
 		CorporationDivisionsResponse response = update(DEFAULT_RETRIES, new EsiHandler<CorporationDivisionsResponse>() {
 			@Override
 			public ApiResponse<CorporationDivisionsResponse> get() throws ApiException {
-				return getCorporationApiAuth().getCorporationDivisionsWithHttpInfo(owner.getOwnerID(), COMPATIBILITY_DATE, null, null, null);
+				return getCorporationApiAuth().getCorporationDivisionsWithHttpInfo(owner.getOwnerID(), COMPATIBILITY_DATE, null, null, null, null);
 			}
 		});
 		owner.setAssetDivisions(EsiConverter.toAssetDivisions(response.getHangar()));

@@ -27,8 +27,8 @@ import net.nikr.eve.jeveasset.data.settings.types.LocationType;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import net.nikr.eve.jeveasset.io.shared.RawConverter;
 import net.nikr.eve.jeveasset.io.shared.SafeConverter;
-import net.troja.eve.esi.model.CharacterLocationResponse;
-import net.troja.eve.esi.model.CharacterShipResponse;
+import net.troja.eve.esi.model.CharactersLocation;
+import net.troja.eve.esi.model.CharactersShip;
 
 
 public class MyShip implements Comparable<MyShip>, LocationType {
@@ -43,7 +43,7 @@ public class MyShip implements Comparable<MyShip>, LocationType {
 	private final String typeName;
 	private final String eveName;
 
-	public MyShip(final CharacterShipResponse shipType, final CharacterLocationResponse response) {
+	public MyShip(final CharactersShip shipType, final CharactersLocation response) {
 		this(shipType.getShipItemId(), SafeConverter.toInteger(shipType.getShipTypeId()), RawConverter.toLocationID(response));
 	}
 

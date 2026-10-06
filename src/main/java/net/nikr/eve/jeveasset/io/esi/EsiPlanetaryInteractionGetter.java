@@ -52,7 +52,7 @@ public class EsiPlanetaryInteractionGetter extends AbstractEsiGetter {
 		List<CharacterPlanetsResponse> responses = update(DEFAULT_RETRIES, new EsiHandler<List<CharacterPlanetsResponse>>() {
 			@Override
 			public ApiResponse<List<CharacterPlanetsResponse>> get() throws ApiException {
-				return getPlanetaryInteractionApiAuth().getCharacterPlanetsWithHttpInfo(owner.getOwnerID(), COMPATIBILITY_DATE, null, null, null);
+				return getPlanetaryInteractionApiAuth().getCharacterPlanetsWithHttpInfo(owner.getOwnerID(), COMPATIBILITY_DATE, null, null, null, null);
 			}
 		});
 		List<Citadel> citadels = new ArrayList<>();
@@ -61,7 +61,7 @@ public class EsiPlanetaryInteractionGetter extends AbstractEsiGetter {
 			PlanetResponse planet = update(DEFAULT_RETRIES, new EsiHandler<PlanetResponse>() {
 				@Override
 				public ApiResponse<PlanetResponse> get() throws ApiException {
-					return getUniverseApiOpen().getPlanetWithHttpInfo(response.getPlanetId(), COMPATIBILITY_DATE, null, null, null);
+					return getUniverseApiOpen().getPlanetWithHttpInfo(response.getPlanetId(), COMPATIBILITY_DATE, null, null, null, null);
 				}
 			});
 			Citadel citadel = ApiIdConverter.getCitadel(planet);
@@ -72,7 +72,7 @@ public class EsiPlanetaryInteractionGetter extends AbstractEsiGetter {
 			CharacterPlanetResponse planetResponse = update(DEFAULT_RETRIES, new EsiHandler<CharacterPlanetResponse>() {
 				@Override
 				public ApiResponse<CharacterPlanetResponse> get() throws ApiException {
-					return getPlanetaryInteractionApiAuth().getCharacterPlanetWithHttpInfo(owner.getOwnerID(), response.getPlanetId(), COMPATIBILITY_DATE, null, null, null);
+					return getPlanetaryInteractionApiAuth().getCharacterPlanetWithHttpInfo(owner.getOwnerID(), response.getPlanetId(), COMPATIBILITY_DATE, null, null, null, null);
 				}
 			});
 			for (PlanetPin pin : planetResponse.getPins()) { //For each pin on planet

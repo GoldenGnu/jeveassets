@@ -46,7 +46,7 @@ public class EsiContractsGetter extends AbstractEsiGetter {
 			List<CorporationContractsResponse> contracts = updatePages(DEFAULT_RETRIES, new EsiPagesHandler<CorporationContractsResponse>() {
 				@Override
 				public ApiResponse<List<CorporationContractsResponse>> get(Integer page) throws ApiException {
-					return getContractsApiAuth().getCorporationContractsWithHttpInfo(owner.getOwnerID(), COMPATIBILITY_DATE, page, null, null, null);
+					return getContractsApiAuth().getCorporationContractsWithHttpInfo(owner.getOwnerID(), COMPATIBILITY_DATE, page, null, null, null, null);
 				}
 			});
 			owner.setContracts(EsiConverter.toContractsCorporation(contracts, owner, saveHistory));
@@ -54,7 +54,7 @@ public class EsiContractsGetter extends AbstractEsiGetter {
 			List<CharacterContractsResponse> contracts = updatePages(DEFAULT_RETRIES, new EsiPagesHandler<CharacterContractsResponse>() {
 				@Override
 				public ApiResponse<List<CharacterContractsResponse>> get(Integer page) throws ApiException {
-					return getContractsApiAuth().getCharacterContractsWithHttpInfo(owner.getOwnerID(), COMPATIBILITY_DATE, page, null, null, null);
+					return getContractsApiAuth().getCharacterContractsWithHttpInfo(owner.getOwnerID(), COMPATIBILITY_DATE, page, null, null, null, null);
 				}
 			});
 			owner.setContracts(EsiConverter.toContracts(contracts, owner, saveHistory));

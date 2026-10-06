@@ -41,7 +41,7 @@ public class EsiLoyaltyPointsGetter extends AbstractEsiGetter {
 		List<CharacterLoyaltyPointsResponse> response = update(DEFAULT_RETRIES, new EsiHandler<List<CharacterLoyaltyPointsResponse>>() {
 			@Override
 			public ApiResponse<List<CharacterLoyaltyPointsResponse>> get() throws ApiException {
-				return getLoyaltyApiAuth().getCharacterLoyaltyPointsWithHttpInfo(owner.getOwnerID(), COMPATIBILITY_DATE, null, null, null);
+				return getLoyaltyApiAuth().getCharacterLoyaltyPointsWithHttpInfo(owner.getOwnerID(), COMPATIBILITY_DATE, null, null, null, null);
 			}
 		});
 		owner.setLoyaltyPoints(EsiConverter.toLoyaltyPoints(response, owner));
