@@ -113808,7 +113808,6 @@
     </row>
     <row category="Blueprint" group="Siege Module Blueprint" id="88267" marketgroup="false" meta="0" name="Strategos' Modified Siege Module Blueprint" pi="false" portion="1" price="0" product="88266" tech="Officer" volume="0.01">
         <mfg id="20280" q="1"/>
-        <mfg id="88087" q="150000"/>
     </row>
     <row category="Blueprint" group="Special Edition Commodity Blueprints" id="88268" marketgroup="false" meta="0" name="Narrowband Emission Amplifier Blueprint" pi="false" portion="1" price="0" product="88172" tech="Tech I" volume="0.01">
         <mfg id="88087" q="50000"/>
@@ -114703,21 +114702,21 @@
     <row category="Personalization" group="Ship SKIN Design Element" id="89954" marketgroup="true" meta="0" name="Visceral Catharsis - Limited" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
     <row category="Personalization" group="Ship SKIN Design Element" id="89955" marketgroup="true" meta="0" name="Arterial Trace - Limited" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
     <row category="Accessories" group="Services" id="89956" marketgroup="false" meta="0" name="Pilot's Body Resculpt Certificate (Untradeable)" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.01"/>
-    <row category="SKINs" group="Permanent SKIN" id="90008" marketgroup="false" meta="0" name="Molok Deathglow Remnant SKIN" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.01"/>
-    <row category="SKINs" group="Permanent SKIN" id="90009" marketgroup="false" meta="0" name="Ashimmu Deathglow Remnant SKIN" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.01"/>
-    <row category="SKINs" group="Permanent SKIN" id="90010" marketgroup="false" meta="0" name="Zealot Deathglow Remnant SKIN" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.01"/>
-    <row category="SKINs" group="Permanent SKIN" id="90011" marketgroup="false" meta="0" name="Redeemer Deathglow Remnant SKIN" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.01"/>
-    <row category="SKINs" group="Permanent SKIN" id="90012" marketgroup="false" meta="0" name="Retribution Deathglow Remnant SKIN" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.01"/>
+    <row category="SKINs" group="Permanent SKIN" id="90008" marketgroup="true" meta="0" name="Molok Deathglow Remnant SKIN" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.01"/>
+    <row category="SKINs" group="Permanent SKIN" id="90009" marketgroup="true" meta="0" name="Ashimmu Deathglow Remnant SKIN" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.01"/>
+    <row category="SKINs" group="Permanent SKIN" id="90010" marketgroup="true" meta="0" name="Zealot Deathglow Remnant SKIN" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.01"/>
+    <row category="SKINs" group="Permanent SKIN" id="90011" marketgroup="true" meta="0" name="Redeemer Deathglow Remnant SKIN" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.01"/>
+    <row category="SKINs" group="Permanent SKIN" id="90012" marketgroup="true" meta="0" name="Retribution Deathglow Remnant SKIN" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.01"/>
     <row category="SKINs" group="Permanent SKIN" id="90013" marketgroup="true" meta="0" name="Cerberus Deathglow Remnant SKIN" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.01"/>
-    <row category="SKINs" group="Permanent SKIN" id="90014" marketgroup="false" meta="0" name="Golem Deathglow Remnant SKIN" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.01"/>
-    <row category="SKINs" group="Permanent SKIN" id="90015" marketgroup="false" meta="0" name="Hawk Deathglow Remnant SKIN" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.01"/>
-    <row category="SKINs" group="Permanent SKIN" id="90016" marketgroup="false" meta="0" name="Ishtar Deathglow Remnant SKIN" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.01"/>
+    <row category="SKINs" group="Permanent SKIN" id="90014" marketgroup="true" meta="0" name="Golem Deathglow Remnant SKIN" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.01"/>
+    <row category="SKINs" group="Permanent SKIN" id="90015" marketgroup="true" meta="0" name="Hawk Deathglow Remnant SKIN" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.01"/>
+    <row category="SKINs" group="Permanent SKIN" id="90016" marketgroup="true" meta="0" name="Ishtar Deathglow Remnant SKIN" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.01"/>
     <row category="SKINs" group="Permanent SKIN" id="90017" marketgroup="true" meta="0" name="Kronos Deathglow Remnant SKIN" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.01"/>
-    <row category="SKINs" group="Permanent SKIN" id="90018" marketgroup="false" meta="0" name="Ishkur Deathglow Remnant SKIN" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.01"/>
-    <row category="SKINs" group="Permanent SKIN" id="90019" marketgroup="false" meta="0" name="Muninn Deathglow Remnant SKIN" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.01"/>
-    <row category="SKINs" group="Permanent SKIN" id="90020" marketgroup="false" meta="0" name="Vargur Deathglow Remnant SKIN" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.01"/>
-    <row category="SKINs" group="Permanent SKIN" id="90021" marketgroup="false" meta="0" name="Jaguar Deathglow Remnant SKIN" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.01"/>
-    <row category="SKINs" group="Permanent SKIN" id="90022" marketgroup="false" meta="0" name="Babaroga Deathglow Remnant SKIN" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.01"/>
+    <row category="SKINs" group="Permanent SKIN" id="90018" marketgroup="true" meta="0" name="Ishkur Deathglow Remnant SKIN" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.01"/>
+    <row category="SKINs" group="Permanent SKIN" id="90019" marketgroup="true" meta="0" name="Muninn Deathglow Remnant SKIN" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.01"/>
+    <row category="SKINs" group="Permanent SKIN" id="90020" marketgroup="true" meta="0" name="Vargur Deathglow Remnant SKIN" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.01"/>
+    <row category="SKINs" group="Permanent SKIN" id="90021" marketgroup="true" meta="0" name="Jaguar Deathglow Remnant SKIN" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.01"/>
+    <row category="SKINs" group="Permanent SKIN" id="90022" marketgroup="true" meta="0" name="Babaroga Deathglow Remnant SKIN" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.01"/>
     <row category="Deployable" group="Mobile Phase Anchor" id="90037" marketgroup="true" meta="1" name="Mobile Phase Anchor" pi="false" portion="1" price="5000000" product="0" tech="Tech I" volume="50.0">
         <material id="34" portionsize="1" quantity="19993"/>
         <material id="35" portionsize="1" quantity="4241"/>
@@ -114796,8 +114795,8 @@
     <row category="Module" group="Ship Modifiers" id="90064" marketgroup="false" meta="0" name="Skua Sharpshooter Mode" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="5.0"/>
     <row category="Module" group="Ship Modifiers" id="90065" marketgroup="false" meta="0" name="Anhinga Tertiary Mode" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="5.0"/>
     <row category="Commodity" group="Limited Rarities" id="90072" marketgroup="true" meta="0" name="Cybernetic Neural Lattice" pi="false" portion="1" price="100000" product="0" tech="Tech I" volume="0.1"/>
-    <row category="Commodity" group="Acceleration Gate Keys" id="90117" marketgroup="false" meta="0" name="Tetrimon Base Shortcut Keypass" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
-    <row category="Commodity" group="Acceleration Gate Keys" id="90118" marketgroup="false" meta="0" name="Crimson Gauntlet Shortcut Keypass" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
+    <row category="Commodity" group="Acceleration Gate Keys" id="90117" marketgroup="false" meta="0" name="Expired Tetrimon Base Shortcut Keypass" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
+    <row category="Commodity" group="Acceleration Gate Keys" id="90118" marketgroup="false" meta="0" name="Expired Crimson Gauntlet Shortcut Keypass" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
     <row category="SKINs" group="Permanent SKIN" id="90120" marketgroup="true" meta="0" name="Heron Cold Wind's Call SKIN" pi="false" portion="1" price="0" product="0" tech="Premium" volume="0.01"/>
     <row category="SKINs" group="Permanent SKIN" id="90121" marketgroup="true" meta="0" name="Buzzard Cold Wind's Call SKIN" pi="false" portion="1" price="0" product="0" tech="Premium" volume="0.01"/>
     <row category="SKINs" group="Permanent SKIN" id="90122" marketgroup="true" meta="0" name="Stork Cold Wind's Call SKIN" pi="false" portion="1" price="0" product="0" tech="Premium" volume="0.01"/>
@@ -114807,7 +114806,7 @@
     <row category="SKINs" group="Permanent SKIN" id="90126" marketgroup="true" meta="0" name="Phoenix Navy Issue Cold Wind's Call SKIN" pi="false" portion="1" price="0" product="0" tech="Premium" volume="0.01"/>
     <row category="Special Edition Assets" group="Special Edition Commodities" id="90134" marketgroup="true" meta="0" name="Historic Crimson Harvest SKIN Crate" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="1.0"/>
     <row category="Special Edition Assets" group="Special Edition Commodities" id="90135" marketgroup="true" meta="0" name="Crimson Harvest SKINR Crate" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="1.0"/>
-    <row category="Special Edition Assets" group="Special Edition Commodities" id="90136" marketgroup="true" meta="0" name="Crimson Harvest Cerebral Accelerator Crate" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="1.0"/>
+    <row category="Special Edition Assets" group="Special Edition Commodities" id="90136" marketgroup="false" meta="0" name="Expired Crimson Harvest Cerebral Accelerator Crate" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="1.0"/>
     <row category="Special Edition Assets" group="Special Edition Commodities" id="90137" marketgroup="true" meta="0" name="Historic Crimson Harvest Trinket Crate" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="1.0"/>
     <row category="Personalization" group="Ship SKIN Design Element" id="90140" marketgroup="true" meta="0" name="Astrometer's Song - Limited" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
     <row category="Personalization" group="Ship SKIN Design Element" id="90141" marketgroup="true" meta="0" name="Luminous Flow - Limited" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
@@ -116928,7 +116927,30 @@
     <row category="SKINs" group="Permanent SKIN" id="95725" marketgroup="true" meta="0" name="Tempest Fleet Issue Hrada-Oki Offender SKIN" pi="false" portion="1" price="0" product="0" tech="Premium" volume="0.01"/>
     <row category="SKINs" group="Permanent SKIN" id="95726" marketgroup="true" meta="0" name="Ymir Hrada-Oki Offender SKIN" pi="false" portion="1" price="0" product="0" tech="Premium" volume="0.01"/>
     <row category="SKINs" group="Permanent SKIN" id="95727" marketgroup="true" meta="0" name="Nomad Hrada-Oki Offender SKIN" pi="false" portion="1" price="0" product="0" tech="Premium" volume="0.01"/>
+    <row capacity="500.0" category="Ship" group="Attack Battlecruiser" id="95741" marketgroup="true" meta="0" name="Akoman" packagedvolume="15000.0" pi="false" portion="1" price="52500000" product="0" tech="Faction" volume="234000.0">
+        <material id="34" portionsize="1" quantity="4368000"/>
+        <material id="35" portionsize="1" quantity="1560000"/>
+        <material id="36" portionsize="1" quantity="280800"/>
+        <material id="37" portionsize="1" quantity="31200"/>
+        <material id="38" portionsize="1" quantity="12480"/>
+        <material id="39" portionsize="1" quantity="3120"/>
+        <material id="40" portionsize="1" quantity="624"/>
+    </row>
+    <row category="Blueprint" group="Battlecruiser Blueprint" id="95742" marketgroup="false" meta="0" name="Akoman Blueprint" pi="false" portion="1" price="625000000" product="95741" tech="Tech I" volume="0.01">
+        <mfg id="57486" q="78"/>
+        <mfg id="83468" q="100"/>
+        <mfg id="57478" q="156"/>
+        <mfg id="40" q="624"/>
+        <mfg id="39" q="3120"/>
+        <mfg id="38" q="12480"/>
+        <mfg id="37" q="31200"/>
+        <mfg id="36" q="280800"/>
+        <mfg id="35" q="1560000"/>
+        <mfg id="34" q="4368000"/>
+    </row>
     <row category="Expert Systems" group="Standard Expert Systems" id="95744" marketgroup="false" meta="0" name="Amarr Pilot" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="1.0"/>
+    <row category="Personalization" group="Ship Emblems" id="95745" marketgroup="false" meta="0" name="Akoman Alliance Emblem" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.0"/>
+    <row category="Personalization" group="Ship Emblems" id="95746" marketgroup="false" meta="0" name="Akoman Corporation Emblem" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.0"/>
     <row category="Special Edition Assets" group="Special Edition Commodities" id="95747" marketgroup="false" meta="0" name="Foundation Day Celebration Crate" pi="false" portion="1" price="0" product="0" tech="Limited Time" volume="4.0"/>
     <row category="Personalization" group="Ship SKIN Design Element" id="95813" marketgroup="true" meta="0" name="Fabricated 100 - Limited" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
     <row capacity="135.0" category="Entity" group="FW Minmatar Republic Battlecruiser" id="95900" marketgroup="false" meta="0" name="♦ Hurricane" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="28600.0"/>
@@ -116981,6 +117003,7 @@
     <row category="SKINs" group="Permanent SKIN" id="96320" marketgroup="true" meta="0" name="Coercer Sanguinary Savant SKIN" pi="false" portion="1" price="0" product="0" tech="Premium" volume="0.01"/>
     <row category="SKINs" group="Permanent SKIN" id="96321" marketgroup="true" meta="0" name="Salvation Sanguinary Savant SKIN" pi="false" portion="1" price="0" product="0" tech="Premium" volume="0.01"/>
     <row category="Expert Systems" group="Standard Expert Systems" id="96325" marketgroup="false" meta="0" name="Caldari Pilot" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="1.0"/>
+    <row category="Special Edition Assets" group="Special Edition Commodities" id="96326" marketgroup="true" meta="0" name="Captured Bioadaptive Cache" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="1.0"/>
     <row category="SKINs" group="Permanent SKIN" id="96327" marketgroup="true" meta="0" name="Caldari Shuttle Cold Wind's Call SKIN" pi="false" portion="1" price="0" product="0" tech="Premium" volume="0.01"/>
     <row category="SKINs" group="Permanent SKIN" id="96328" marketgroup="true" meta="0" name="Heron Navy Issue Cold Wind's Call SKIN" pi="false" portion="1" price="0" product="0" tech="Premium" volume="0.01"/>
     <row category="SKINs" group="Permanent SKIN" id="96329" marketgroup="true" meta="0" name="Corax Navy Issue Cold Wind's Call SKIN" pi="false" portion="1" price="0" product="0" tech="Premium" volume="0.01"/>
@@ -116991,6 +117014,59 @@
     <row category="SKINs" group="Permanent SKIN" id="96334" marketgroup="true" meta="0" name="Minokawa Cold Wind's Call SKIN" pi="false" portion="1" price="0" product="0" tech="Premium" volume="0.01"/>
     <row category="SKINs" group="Permanent SKIN" id="96335" marketgroup="true" meta="0" name="Simurgh Cold Wind's Call SKIN" pi="false" portion="1" price="0" product="0" tech="Premium" volume="0.01"/>
     <row category="Special Edition Assets" group="Special Edition Commodities" id="96336" marketgroup="false" meta="0" name="Union Day Celebration Crate" pi="false" portion="1" price="0" product="0" tech="Limited Time" volume="4.0"/>
+    <row category="Implant" group="Booster" id="96542" marketgroup="true" meta="0" name="Basic 'Radiance' Cerebral Accelerator" pi="false" portion="1" price="32768" product="0" tech="Limited Time" volume="1.0">
+        <material id="48927" portionsize="1" quantity="1"/>
+    </row>
+    <row category="Implant" group="Booster" id="96543" marketgroup="true" meta="0" name="Potent 'Radiance' Cerebral Accelerator" pi="false" portion="1" price="32768" product="0" tech="Limited Time" volume="1.0">
+        <material id="48927" portionsize="1" quantity="1"/>
+    </row>
+    <row category="Implant" group="Booster" id="96544" marketgroup="true" meta="0" name="Extended 'Radiance' Cerebral Accelerator" pi="false" portion="1" price="32768" product="0" tech="Limited Time" volume="1.0">
+        <material id="48927" portionsize="1" quantity="1"/>
+    </row>
+    <row category="Implant" group="Booster" id="96545" marketgroup="true" meta="6" name="Harvest Anti-Disruptor Booster IV" pi="false" portion="1" price="0" product="0" tech="Limited Time" volume="1.0"/>
+    <row category="Implant" group="Booster" id="96546" marketgroup="true" meta="0" name="Harvest Anti-Disruptor Booster I" pi="false" portion="1" price="0" product="0" tech="Limited Time" volume="1.0"/>
+    <row category="Implant" group="Booster" id="96547" marketgroup="true" meta="0" name="Harvest Anti-Disruptor Booster II" pi="false" portion="1" price="0" product="0" tech="Limited Time" volume="1.0"/>
+    <row category="Implant" group="Booster" id="96548" marketgroup="true" meta="5" name="Harvest Anti-Disruptor Booster III" pi="false" portion="1" price="0" product="0" tech="Limited Time" volume="1.0"/>
+    <row category="Implant" group="Booster" id="96549" marketgroup="true" meta="0" name="Harvest Nosferatu Booster I" pi="false" portion="1" price="0" product="0" tech="Limited Time" volume="1.0"/>
+    <row category="Implant" group="Booster" id="96550" marketgroup="true" meta="3" name="Harvest Nosferatu Booster II" pi="false" portion="1" price="0" product="0" tech="Limited Time" volume="1.0"/>
+    <row category="Implant" group="Booster" id="96551" marketgroup="true" meta="5" name="Harvest Nosferatu Booster III" pi="false" portion="1" price="0" product="0" tech="Limited Time" volume="1.0"/>
+    <row category="Implant" group="Booster" id="96552" marketgroup="true" meta="6" name="Harvest Nosferatu Booster IV" pi="false" portion="1" price="0" product="0" tech="Limited Time" volume="1.0"/>
+    <row category="Implant" group="Booster" id="96553" marketgroup="true" meta="0" name="Harvest Webifier Booster I" pi="false" portion="1" price="0" product="0" tech="Limited Time" volume="1.0"/>
+    <row category="Implant" group="Booster" id="96554" marketgroup="true" meta="3" name="Harvest Webifier Booster II" pi="false" portion="1" price="0" product="0" tech="Limited Time" volume="1.0"/>
+    <row category="Implant" group="Booster" id="96555" marketgroup="true" meta="5" name="Harvest Webifier Booster III" pi="false" portion="1" price="0" product="0" tech="Limited Time" volume="1.0"/>
+    <row category="Implant" group="Booster" id="96556" marketgroup="true" meta="6" name="Harvest Webifier Booster IV" pi="false" portion="1" price="0" product="0" tech="Limited Time" volume="1.0"/>
+    <row category="Implant" group="Booster" id="96557" marketgroup="true" meta="0" name="Harvest Damage Booster I" pi="false" portion="1" price="0" product="0" tech="Limited Time" volume="1.0"/>
+    <row category="Implant" group="Booster" id="96558" marketgroup="true" meta="3" name="Harvest Damage Booster II" pi="false" portion="1" price="0" product="0" tech="Limited Time" volume="1.0"/>
+    <row category="Implant" group="Booster" id="96560" marketgroup="true" meta="5" name="Harvest Damage Booster III" pi="false" portion="1" price="0" product="0" tech="Limited Time" volume="1.0"/>
+    <row category="Implant" group="Booster" id="96561" marketgroup="true" meta="6" name="Harvest Damage Booster IV" pi="false" portion="1" price="0" product="0" tech="Limited Time" volume="1.0"/>
+    <row category="Implant" group="Booster" id="96562" marketgroup="true" meta="0" name="Tetrimon Anti-Drain Booster I" pi="false" portion="1" price="0" product="0" tech="Limited Time" volume="1.0"/>
+    <row category="Implant" group="Booster" id="96563" marketgroup="true" meta="3" name="Tetrimon Anti-Drain Booster II" pi="false" portion="1" price="0" product="0" tech="Limited Time" volume="1.0"/>
+    <row category="Implant" group="Booster" id="96565" marketgroup="true" meta="5" name="Tetrimon Anti-Drain Booster III" pi="false" portion="1" price="0" product="0" tech="Limited Time" volume="1.0"/>
+    <row category="Implant" group="Booster" id="96566" marketgroup="true" meta="6" name="Tetrimon Anti-Drain Booster IV" pi="false" portion="1" price="0" product="0" tech="Limited Time" volume="1.0"/>
+    <row category="Implant" group="Booster" id="96567" marketgroup="true" meta="0" name="Tetrimon Capacitor Booster I" pi="false" portion="1" price="0" product="0" tech="Limited Time" volume="1.0"/>
+    <row category="Implant" group="Booster" id="96568" marketgroup="true" meta="3" name="Tetrimon Capacitor Booster II" pi="false" portion="1" price="0" product="0" tech="Limited Time" volume="1.0"/>
+    <row category="Implant" group="Booster" id="96569" marketgroup="true" meta="5" name="Tetrimon Capacitor Booster III" pi="false" portion="1" price="0" product="0" tech="Limited Time" volume="1.0"/>
+    <row category="Implant" group="Booster" id="96570" marketgroup="true" meta="6" name="Tetrimon Capacitor Booster IV" pi="false" portion="1" price="0" product="0" tech="Limited Time" volume="1.0"/>
+    <row category="Implant" group="Booster" id="96571" marketgroup="true" meta="0" name="Tetrimon Resistance Booster I" pi="false" portion="1" price="0" product="0" tech="Limited Time" volume="1.0"/>
+    <row category="Implant" group="Booster" id="96572" marketgroup="true" meta="3" name="Tetrimon Resistance Booster II" pi="false" portion="1" price="0" product="0" tech="Limited Time" volume="1.0"/>
+    <row category="Implant" group="Booster" id="96573" marketgroup="true" meta="5" name="Tetrimon Resistance Booster III" pi="false" portion="1" price="0" product="0" tech="Limited Time" volume="1.0"/>
+    <row category="Implant" group="Booster" id="96574" marketgroup="true" meta="6" name="Tetrimon Resistance Booster IV" pi="false" portion="1" price="0" product="0" tech="Limited Time" volume="1.0"/>
+    <row category="Implant" group="Booster" id="96575" marketgroup="true" meta="0" name="Tetrimon Precision Booster I" pi="false" portion="1" price="0" product="0" tech="Limited Time" volume="1.0"/>
+    <row category="Implant" group="Booster" id="96576" marketgroup="true" meta="3" name="Tetrimon Precision Booster II" pi="false" portion="1" price="0" product="0" tech="Limited Time" volume="1.0"/>
+    <row category="Implant" group="Booster" id="96577" marketgroup="true" meta="5" name="Tetrimon Precision Booster III" pi="false" portion="1" price="0" product="0" tech="Limited Time" volume="1.0"/>
+    <row category="Implant" group="Booster" id="96578" marketgroup="true" meta="6" name="Tetrimon Precision Booster IV" pi="false" portion="1" price="0" product="0" tech="Limited Time" volume="1.0"/>
+    <row category="Implant" group="Booster" id="96581" marketgroup="true" meta="0" name="Chemal Tech Turret Booster I" pi="false" portion="1" price="0" product="0" tech="Limited Time" volume="1.0"/>
+    <row category="Implant" group="Booster" id="96582" marketgroup="true" meta="3" name="Chemal Tech Turret Booster II" pi="false" portion="1" price="0" product="0" tech="Limited Time" volume="1.0"/>
+    <row category="Implant" group="Booster" id="96583" marketgroup="true" meta="5" name="Chemal Tech Turret Booster III" pi="false" portion="1" price="0" product="0" tech="Limited Time" volume="1.0"/>
+    <row category="Implant" group="Booster" id="96584" marketgroup="true" meta="0" name="Chemal Tech Mining Booster I" pi="false" portion="1" price="0" product="0" tech="Limited Time" volume="1.0"/>
+    <row category="Implant" group="Booster" id="96585" marketgroup="true" meta="3" name="Chemal Tech Mining Booster II" pi="false" portion="1" price="0" product="0" tech="Limited Time" volume="1.0"/>
+    <row category="Implant" group="Booster" id="96586" marketgroup="true" meta="5" name="Chemal Tech Mining Booster III" pi="false" portion="1" price="0" product="0" tech="Limited Time" volume="1.0"/>
+    <row category="Implant" group="Booster" id="96588" marketgroup="true" meta="0" name="Chemal Tech Exploration Booster I" pi="false" portion="1" price="0" product="0" tech="Limited Time" volume="1.0"/>
+    <row category="Implant" group="Booster" id="96589" marketgroup="true" meta="3" name="Chemal Tech Exploration Booster II" pi="false" portion="1" price="0" product="0" tech="Limited Time" volume="1.0"/>
+    <row category="Implant" group="Booster" id="96590" marketgroup="true" meta="5" name="Chemal Tech Exploration Booster III" pi="false" portion="1" price="0" product="0" tech="Limited Time" volume="1.0"/>
+    <row category="Implant" group="Booster" id="96591" marketgroup="true" meta="0" name="Chemal Tech Repair Booster I" pi="false" portion="1" price="0" product="0" tech="Limited Time" volume="1.0"/>
+    <row category="Implant" group="Booster" id="96592" marketgroup="true" meta="3" name="Chemal Tech Repair Booster II" pi="false" portion="1" price="0" product="0" tech="Limited Time" volume="1.0"/>
+    <row category="Implant" group="Booster" id="96593" marketgroup="true" meta="5" name="Chemal Tech Repair Booster III" pi="false" portion="1" price="0" product="0" tech="Limited Time" volume="1.0"/>
     <row category="Personalization" group="Ship SKIN Design Element" id="96607" marketgroup="true" meta="0" name="Circle - Unlimited" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
     <row category="Personalization" group="Ship SKIN Design Element" id="96608" marketgroup="true" meta="0" name="Circle - Limited" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
     <row category="Personalization" group="Ship SKIN Design Element" id="96609" marketgroup="true" meta="0" name="Circle Outline - Unlimited" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
@@ -117077,6 +117153,8 @@
     <row category="Personalization" group="Ship SKIN Design Element" id="96770" marketgroup="true" meta="0" name="Highlit Canary Metallic - Limited" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
     <row category="Personalization" group="Ship SKIN Design Element" id="96771" marketgroup="true" meta="0" name="Highlit Ferrous Metallic - Unlimited" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
     <row category="Personalization" group="Ship SKIN Design Element" id="96772" marketgroup="true" meta="0" name="Highlit Ferrous Metallic - Limited" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
+    <row category="Special Edition Assets" group="Special Edition Commodities" id="96789" marketgroup="true" meta="0" name="Mutated Blood Sample" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.01"/>
+    <row category="Special Edition Assets" group="Special Edition Commodities" id="96790" marketgroup="true" meta="0" name="Sobornost Blood Sample" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
     <row category="Personalization" group="Ship SKIN Design Element" id="96791" marketgroup="true" meta="0" name="Highlit Alloy Metallic - Unlimited" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
     <row category="Personalization" group="Ship SKIN Design Element" id="96792" marketgroup="true" meta="0" name="Highlit Alloy Metallic - Limited" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
     <row category="Personalization" group="Ship SKIN Design Element" id="96793" marketgroup="true" meta="0" name="Highlit Plate Metallic - Unlimited" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
@@ -117089,17 +117167,53 @@
     <row category="Personalization" group="Ship SKIN Design Element" id="96800" marketgroup="true" meta="0" name="Creamy Alloy Metallic - Limited" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
     <row category="Personalization" group="Ship SKIN Design Element" id="96801" marketgroup="true" meta="0" name="Creamy Plate Metallic - Unlimited" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
     <row category="Personalization" group="Ship SKIN Design Element" id="96802" marketgroup="true" meta="0" name="Creamy Plate Metallic - Limited" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
+    <row category="Personalization" group="Ship SKIN Design Element" id="96803" marketgroup="true" meta="0" name="Hexfold Terror - Limited" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
     <row category="Personalization" group="Ship SKIN Design Element" id="96804" marketgroup="true" meta="0" name="Marine Shallows Metallic - Unlimited" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
+    <row category="Personalization" group="Ship SKIN Design Element" id="96805" marketgroup="true" meta="0" name="Hexfold Terror - Unlimited" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
     <row category="Personalization" group="Ship SKIN Design Element" id="96806" marketgroup="true" meta="0" name="Marine Shallows Metallic - Limited" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
     <row category="Personalization" group="Ship SKIN Design Element" id="96807" marketgroup="true" meta="0" name="Marine Ferrous Metallic - Unlimited" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
     <row category="Personalization" group="Ship SKIN Design Element" id="96808" marketgroup="true" meta="0" name="Marine Ferrous Metallic - Limited" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
     <row category="Personalization" group="Ship SKIN Design Element" id="96809" marketgroup="true" meta="0" name="Marine Alloy Metallic - Unlimited" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
+    <row category="Personalization" group="Ship SKIN Design Element" id="96810" marketgroup="true" meta="0" name="Triglavian Collective - Limited" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
     <row category="Personalization" group="Ship SKIN Design Element" id="96811" marketgroup="true" meta="0" name="Marine Alloy Metallic - Limited" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
+    <row category="Personalization" group="Ship SKIN Design Element" id="96812" marketgroup="true" meta="0" name="Triglavian Collective - Unlimited" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
     <row category="Personalization" group="Ship SKIN Design Element" id="96813" marketgroup="true" meta="0" name="Marine Plate Metallic - Unlimited" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
     <row category="Personalization" group="Ship SKIN Design Element" id="96814" marketgroup="true" meta="0" name="Marine Plate Metallic - Limited" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
+    <row category="Personalization" group="Ship SKIN Design Element" id="96815" marketgroup="true" meta="0" name="Overflowing Harvest - Limited" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
+    <row category="Personalization" group="Ship SKIN Design Element" id="96816" marketgroup="true" meta="0" name="Overflowing Harvest - Unlimited" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
+    <row category="Personalization" group="Ship SKIN Design Element" id="96817" marketgroup="true" meta="0" name="Trinary Complex - Limited" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
+    <row category="Personalization" group="Ship SKIN Design Element" id="96818" marketgroup="true" meta="0" name="Trinary Complex - Unlimited" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
+    <row category="Personalization" group="Ship SKIN Design Element" id="96820" marketgroup="true" meta="0" name="Ascendant Clades - Limited" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
+    <row category="Personalization" group="Ship SKIN Design Element" id="96821" marketgroup="true" meta="0" name="Ascendant Clades - Unlimited" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
+    <row category="Personalization" group="Ship SKIN Design Element" id="96822" marketgroup="true" meta="0" name="Trinary Echo - Limited" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
+    <row category="Personalization" group="Ship SKIN Design Element" id="96823" marketgroup="true" meta="0" name="Trinary Echo - Unlimited" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
+    <row category="Personalization" group="Ship SKIN Design Element" id="96824" marketgroup="true" meta="0" name="Savant's Ruin - Limited" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
+    <row category="Personalization" group="Ship SKIN Design Element" id="96825" marketgroup="true" meta="0" name="Savant's Ruin - Unlimited" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
+    <row category="Personalization" group="Ship SKIN Design Element" id="96826" marketgroup="true" meta="0" name="Bleak Stigmata - Limited" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
+    <row category="Personalization" group="Ship SKIN Design Element" id="96827" marketgroup="true" meta="0" name="Bleak Stigmata - Unlimited" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
+    <row category="Personalization" group="Ship SKIN Design Element" id="96828" marketgroup="true" meta="0" name="Liminal Sanguine Gloss - Limited" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
+    <row category="Personalization" group="Ship SKIN Design Element" id="96829" marketgroup="true" meta="0" name="Liminal Sanguine Gloss - Unlimited" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
+    <row category="Personalization" group="Ship SKIN Design Element" id="96830" marketgroup="true" meta="0" name="Shadowy Totality Matte - Limited" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
+    <row category="Personalization" group="Ship SKIN Design Element" id="96831" marketgroup="true" meta="0" name="Shadowy Totality Matte - Unlimited" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
+    <row category="Personalization" group="Ship SKIN Design Element" id="96832" marketgroup="true" meta="0" name="Ecru Marrow Satin - Limited" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
+    <row category="Personalization" group="Ship SKIN Design Element" id="96833" marketgroup="true" meta="0" name="Ecru Marrow Satin - Unlimited" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
+    <row category="Personalization" group="Ship SKIN Design Element" id="96834" marketgroup="true" meta="0" name="Ossified Beige Matte - Limited" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
+    <row category="Personalization" group="Ship SKIN Design Element" id="96835" marketgroup="true" meta="0" name="Ossified Beige Matte - Unlimited" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
+    <row category="Personalization" group="Ship SKIN Design Element" id="96836" marketgroup="true" meta="0" name="Ossified Beige Gloss - Limited" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
+    <row category="Personalization" group="Ship SKIN Design Element" id="96838" marketgroup="true" meta="0" name="Ossified Beige Gloss - Unlimited" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
+    <row category="Personalization" group="Ship SKIN Design Element" id="96839" marketgroup="true" meta="0" name="Proven Chrome Metallic - Limited" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
+    <row category="Personalization" group="Ship SKIN Design Element" id="96840" marketgroup="true" meta="0" name="Proven Chrome Metallic - Unlimited" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
+    <row category="Personalization" group="Ship SKIN Design Element" id="96841" marketgroup="true" meta="0" name="Clotted Bronze Metallic - Limited" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
+    <row category="Personalization" group="Ship SKIN Design Element" id="96842" marketgroup="true" meta="0" name="Clotted Bronze Metallic - Unlimited" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
+    <row category="Personalization" group="Ship SKIN Design Element" id="96843" marketgroup="true" meta="0" name="Entropic Rose Metallic - Limited" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
+    <row category="Personalization" group="Ship SKIN Design Element" id="96844" marketgroup="true" meta="0" name="Entropic Rose Metallic - Unlimited" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
+    <row category="Apparel" group="Portrait Backgrounds" id="96845" marketgroup="true" meta="0" name="Star of Pochven Background" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
     <row category="SKINs" group="Permanent SKIN" id="97198" marketgroup="true" meta="0" name="Rorqual Nautgripur Industrial Input SKIN" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.01"/>
     <row category="SKINs" group="Permanent SKIN" id="97199" marketgroup="true" meta="0" name="Orca Nautgripur Industrial Input SKIN" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.01"/>
     <row category="SKINs" group="Permanent SKIN" id="97200" marketgroup="true" meta="0" name="Bowhead Nautgripur Industrial Input SKIN" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.01"/>
+    <row category="Special Edition Assets" group="Special Edition Commodities" id="97206" marketgroup="true" meta="0" name="Crimson Harvest Cerebral Accelerator Crate" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="1.0"/>
+    <row category="Commodity" group="Acceleration Gate Keys" id="97207" marketgroup="true" meta="0" name="Crimson Gauntlet Shortcut Keypass" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
+    <row category="Commodity" group="Acceleration Gate Keys" id="97208" marketgroup="true" meta="0" name="Tetrimon Base Shortcut Keypass" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
     <row capacity="1.0" category="Module" charges="1" group="Drone Tracking Modules" id="97242" marketgroup="false" meta="5" name="Mutated Omnidirectional Tracking Link" pi="false" portion="1" price="0" product="0" slot="Medium" tech="Abyssal" volume="5.0"/>
     <row category="Module" group="Drone Navigation Computer" id="97243" marketgroup="false" meta="5" name="Mutated Drone Navigation Computer" pi="false" portion="1" price="0" product="0" slot="Medium" tech="Abyssal" volume="25.0"/>
     <row category="Module" group="Drone Tracking Enhancer" id="97244" marketgroup="false" meta="5" name="Mutated Omnidirectional Tracking Enhancer" pi="false" portion="1" price="0" product="0" slot="Low" tech="Abyssal" volume="5.0"/>
@@ -117109,16 +117223,205 @@
     <row category="Commodity" group="Mutaplasmids" id="97248" marketgroup="true" meta="0" name="Radical Omnidirectional Tracking Link Mutaplasmid" pi="false" portion="1" price="1000" product="0" tech="Tech I" volume="1.0"/>
     <row category="Commodity" group="Mutaplasmids" id="97249" marketgroup="true" meta="0" name="Radical Drone Navigation Computer Mutaplasmid" pi="false" portion="1" price="1000" product="0" tech="Tech I" volume="1.0"/>
     <row category="Skill" group="Drones" id="97263" marketgroup="true" meta="0" name="Hybrid Drone Specialization" pi="false" portion="1" price="90000000" product="0" tech="Tech I" volume="0.01"/>
+    <row category="Commodity" group="Acceleration Gate Keys" id="97265" marketgroup="true" meta="0" name="Criterion Cipher" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
     <row category="Special Edition Assets" group="Special Edition Commodities" id="97314" marketgroup="true" meta="0" name="YC128 Shifting-Spacetime Crate" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="4.0"/>
+    <row category="Celestial" group="Effect Beacon" id="97315" marketgroup="false" meta="0" name="Criterion Restrictions Beacon" pi="false" portion="250" price="0" product="0" tech="Tech I" volume="20.0"/>
     <row category="Expert Systems" group="Standard Expert Systems" id="97348" marketgroup="false" meta="0" name="Wormhole Pilot" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="1.0"/>
     <row category="Expert Systems" group="Standard Expert Systems" id="97406" marketgroup="false" meta="0" name="Insurgent" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="1.0"/>
+    <row category="SKINs" group="Permanent SKIN" id="97421" marketgroup="true" meta="0" name="Damavik Blood Raiders Crimson Mark SKIN" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.01"/>
+    <row category="SKINs" group="Permanent SKIN" id="97422" marketgroup="true" meta="0" name="Vedmak Blood Raiders Crimson Mark SKIN" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.01"/>
+    <row category="SKINs" group="Permanent SKIN" id="97423" marketgroup="true" meta="0" name="Drekavac Blood Raiders Crimson Mark SKIN" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.01"/>
+    <row category="SKINs" group="Permanent SKIN" id="97424" marketgroup="false" meta="0" name="Leshak Blood Raiders Crimson Mark SKIN" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.01"/>
+    <row category="SKINs" group="Permanent SKIN" id="97425" marketgroup="false" meta="0" name="Nergal Blood Raiders Crimson Mark SKIN" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.01"/>
+    <row category="SKINs" group="Permanent SKIN" id="97426" marketgroup="false" meta="0" name="Kikimora Blood Raiders Crimson Mark SKIN" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.01"/>
+    <row category="SKINs" group="Permanent SKIN" id="97427" marketgroup="false" meta="0" name="Ikitursa Blood Raiders Crimson Mark SKIN" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.01"/>
+    <row category="SKINs" group="Permanent SKIN" id="97428" marketgroup="false" meta="0" name="Zarmazd Blood Raiders Crimson Mark SKIN" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.01"/>
+    <row category="SKINs" group="Permanent SKIN" id="97429" marketgroup="true" meta="0" name="Rodiva Blood Raiders Crimson Mark SKIN" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.01"/>
+    <row category="SKINs" group="Permanent SKIN" id="97430" marketgroup="true" meta="0" name="Nergal Tetrimon Crimson Mark SKIN" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.01"/>
+    <row category="SKINs" group="Permanent SKIN" id="97431" marketgroup="false" meta="0" name="Leshak Tetrimon Crimson Mark SKIN" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.01"/>
+    <row category="SKINs" group="Permanent SKIN" id="97432" marketgroup="false" meta="0" name="Damavik Tetrimon Crimson Mark SKIN" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.01"/>
+    <row category="SKINs" group="Permanent SKIN" id="97433" marketgroup="true" meta="0" name="Babaroga Tetrimon Crimson Mark SKIN" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.01"/>
+    <row category="SKINs" group="Permanent SKIN" id="97434" marketgroup="true" meta="0" name="Zirnitra Tetrimon Crimson Mark SKIN" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.01"/>
+    <row category="SKINs" group="Permanent SKIN" id="97435" marketgroup="true" meta="0" name="Drekavac Tetrimon Crimson Mark SKIN" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.01"/>
+    <row category="SKINs" group="Permanent SKIN" id="97436" marketgroup="true" meta="0" name="Kikimora Tetrimon Crimson Mark SKIN" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.01"/>
+    <row category="SKINs" group="Permanent SKIN" id="97437" marketgroup="true" meta="0" name="Ikitursa Tetrimon Crimson Mark SKIN" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.01"/>
+    <row category="SKINs" group="Permanent SKIN" id="97438" marketgroup="false" meta="0" name="Draugur Tetrimon Crimson Mark SKIN" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.01"/>
+    <row category="SKINs" group="Permanent SKIN" id="97439" marketgroup="false" meta="0" name="Rodiva Tetrimon Crimson Mark SKIN" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.01"/>
+    <row category="SKINs" group="Permanent SKIN" id="97440" marketgroup="false" meta="0" name="Vedmak Tetrimon Crimson Mark SKIN" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.01"/>
+    <row category="SKINs" group="Permanent SKIN" id="97441" marketgroup="true" meta="0" name="Zarmazd Tetrimon Crimson Mark SKIN" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.01"/>
     <row capacity="375.0" category="Entity" group="FW Amarr Empire Frigate" id="97468" marketgroup="false" meta="0" name="Renouncer Retribution" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.0"/>
     <row capacity="375.0" category="Entity" group="FW Caldari State Frigate" id="97469" marketgroup="false" meta="0" name="Detainer Harpy" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.0"/>
     <row capacity="375.0" category="Entity" group="FW Gallente Federation Frigate" id="97470" marketgroup="false" meta="0" name="Inspector Enyo" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.0"/>
     <row capacity="375.0" category="Entity" group="FW Minmatar Republic Frigate" id="97471" marketgroup="false" meta="0" name="Keeper Wolf" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.0"/>
+    <row category="Special Edition Assets" group="Special Edition Commodities" id="97516" marketgroup="true" meta="0" name="Akoman Blueprint Crate" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="1.0"/>
     <row category="SKINs" group="Permanent SKIN" id="97617" marketgroup="true" meta="0" name="Crucifier Medical Enforcement Taskforce SKIN" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.01"/>
     <row category="SKINs" group="Permanent SKIN" id="97618" marketgroup="true" meta="0" name="Griffin Medical Enforcement Taskforce SKIN" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.01"/>
     <row category="SKINs" group="Permanent SKIN" id="97619" marketgroup="true" meta="0" name="Maulus Medical Enforcement Taskforce SKIN" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.01"/>
     <row category="SKINs" group="Permanent SKIN" id="97620" marketgroup="true" meta="0" name="Vigil Medical Enforcement Taskforce SKIN" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.01"/>
     <row category="SKINs" group="Permanent SKIN" id="97621" marketgroup="true" meta="0" name="Pioneer Medical Enforcement Taskforce SKIN" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.01"/>
+    <row category="Commodity" group="Mutaplasmids" id="97638" marketgroup="true" meta="0" name="Decayed Capital Remote Armor Repairer Mutaplasmid" pi="false" portion="1" price="1000" product="0" tech="Tech I" volume="1.0"/>
+    <row category="Commodity" group="Mutaplasmids" id="97639" marketgroup="true" meta="0" name="Unstable Capital Remote Armor Repairer Mutaplasmid" pi="false" portion="1" price="1000" product="0" tech="Tech I" volume="1.0"/>
+    <row category="Commodity" group="Mutaplasmids" id="97640" marketgroup="true" meta="0" name="Gravid Capital Remote Armor Repairer Mutaplasmid" pi="false" portion="1" price="1000" product="0" tech="Tech I" volume="1.0"/>
+    <row category="Commodity" group="Mutaplasmids" id="97641" marketgroup="true" meta="0" name="Glorified Decayed Capital Remote Armor Repairer Mutaplasmid" pi="false" portion="1" price="1000" product="0" tech="Abyssal" volume="1.0"/>
+    <row category="Commodity" group="Mutaplasmids" id="97642" marketgroup="true" meta="0" name="Glorified Unstable Capital Remote Armor Repairer Mutaplasmid" pi="false" portion="1" price="1000" product="0" tech="Abyssal" volume="1.0"/>
+    <row category="Commodity" group="Mutaplasmids" id="97643" marketgroup="true" meta="0" name="Glorified Gravid Capital Remote Armor Repairer Mutaplasmid" pi="false" portion="1" price="1000" product="0" tech="Abyssal" volume="1.0"/>
+    <row category="Module" group="Remote Armor Repairer" id="97648" marketgroup="false" meta="0" name="Capital Abyssal Remote Armor Repairer" pi="false" portion="1" price="0" product="0" slot="High" tech="Abyssal" volume="4000.0"/>
+    <row category="Special Edition Assets" group="Special Edition Commodities" id="97649" marketgroup="false" meta="0" name="Totality Day Celebration Crate" pi="false" portion="1" price="0" product="0" tech="Limited Time" volume="4.0"/>
+    <row category="Commodity" group="Mutaplasmids" id="97650" marketgroup="true" meta="0" name="Decayed Large Remote Armor Repairer Mutaplasmid" pi="false" portion="1" price="1000" product="0" tech="Tech I" volume="1.0"/>
+    <row category="Commodity" group="Mutaplasmids" id="97651" marketgroup="true" meta="0" name="Unstable Large Remote Armor Repairer Mutaplasmid" pi="false" portion="1" price="1000" product="0" tech="Tech I" volume="1.0"/>
+    <row category="Commodity" group="Mutaplasmids" id="97652" marketgroup="true" meta="0" name="Gravid Large Remote Armor Repairer Mutaplasmid" pi="false" portion="1" price="1000" product="0" tech="Tech I" volume="1.0"/>
+    <row category="Commodity" group="Mutaplasmids" id="97653" marketgroup="true" meta="0" name="Glorified Decayed Large Remote Armor Repairer Mutaplasmid" pi="false" portion="1" price="1000" product="0" tech="Abyssal" volume="1.0"/>
+    <row category="Commodity" group="Mutaplasmids" id="97654" marketgroup="true" meta="0" name="Glorified Unstable Large Remote Armor Repairer Mutaplasmid" pi="false" portion="1" price="1000" product="0" tech="Abyssal" volume="1.0"/>
+    <row category="Commodity" group="Mutaplasmids" id="97655" marketgroup="true" meta="0" name="Glorified Gravid Large Remote Armor Repairer Mutaplasmid" pi="false" portion="1" price="1000" product="0" tech="Abyssal" volume="1.0"/>
+    <row category="Module" group="Remote Armor Repairer" id="97657" marketgroup="false" meta="0" name="Large Abyssal Remote Armor Repairer" pi="false" portion="1" price="0" product="0" slot="High" tech="Abyssal" volume="25.0"/>
+    <row category="Expert Systems" group="Standard Expert Systems" id="97659" marketgroup="false" meta="0" name="Triglavian Pilot" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="1.0"/>
+    <row category="Commodity" group="Mutaplasmids" id="97661" marketgroup="true" meta="0" name="Decayed Medium Remote Armor Repairer Mutaplasmid" pi="false" portion="1" price="1000" product="0" tech="Tech I" volume="1.0"/>
+    <row category="Commodity" group="Mutaplasmids" id="97662" marketgroup="true" meta="0" name="Unstable Medium Remote Armor Repairer Mutaplasmid" pi="false" portion="1" price="1000" product="0" tech="Tech I" volume="1.0"/>
+    <row category="Commodity" group="Mutaplasmids" id="97663" marketgroup="true" meta="0" name="Gravid Medium Remote Armor Repairer Mutaplasmid" pi="false" portion="1" price="1000" product="0" tech="Tech I" volume="1.0"/>
+    <row category="Commodity" group="Mutaplasmids" id="97665" marketgroup="true" meta="0" name="Glorified Decayed Medium Remote Armor Repairer Mutaplasmid" pi="false" portion="1" price="1000" product="0" tech="Abyssal" volume="1.0"/>
+    <row category="Commodity" group="Mutaplasmids" id="97666" marketgroup="true" meta="0" name="Glorified Unstable Medium Remote Armor Repairer Mutaplasmid" pi="false" portion="1" price="1000" product="0" tech="Abyssal" volume="1.0"/>
+    <row category="Commodity" group="Mutaplasmids" id="97667" marketgroup="true" meta="0" name="Glorified Gravid Medium Remote Armor Repairer Mutaplasmid" pi="false" portion="1" price="1000" product="0" tech="Abyssal" volume="1.0"/>
+    <row category="Module" group="Remote Armor Repairer" id="97668" marketgroup="false" meta="0" name="Medium Abyssal Remote Armor Repairer" pi="false" portion="1" price="0" product="0" slot="High" tech="Abyssal" volume="10.0"/>
+    <row category="Commodity" group="Mutaplasmids" id="97669" marketgroup="true" meta="0" name="Decayed Small Remote Armor Repairer Mutaplasmid" pi="false" portion="1" price="1000" product="0" tech="Tech I" volume="1.0"/>
+    <row category="Commodity" group="Mutaplasmids" id="97670" marketgroup="true" meta="0" name="Unstable Small Remote Armor Repairer Mutaplasmid" pi="false" portion="1" price="1000" product="0" tech="Tech I" volume="1.0"/>
+    <row category="Commodity" group="Mutaplasmids" id="97671" marketgroup="true" meta="0" name="Gravid Small Remote Armor Repairer Mutaplasmid" pi="false" portion="1" price="1000" product="0" tech="Tech I" volume="1.0"/>
+    <row category="Commodity" group="Mutaplasmids" id="97672" marketgroup="true" meta="0" name="Glorified Decayed Small Remote Armor Repairer Mutaplasmid" pi="false" portion="1" price="1000" product="0" tech="Abyssal" volume="1.0"/>
+    <row category="Commodity" group="Mutaplasmids" id="97673" marketgroup="true" meta="0" name="Glorified Unstable Small Remote Armor Repairer Mutaplasmid" pi="false" portion="1" price="1000" product="0" tech="Abyssal" volume="1.0"/>
+    <row category="Commodity" group="Mutaplasmids" id="97674" marketgroup="true" meta="0" name="Glorified Gravid Small Remote Armor Repairer Mutaplasmid" pi="false" portion="1" price="1000" product="0" tech="Abyssal" volume="1.0"/>
+    <row category="Module" group="Remote Armor Repairer" id="97675" marketgroup="false" meta="0" name="Small Abyssal Remote Armor Repairer" pi="false" portion="1" price="0" product="0" slot="High" tech="Abyssal" volume="5.0"/>
+    <row category="Blueprint" group="Mutaplasmid Blueprint" id="97676" marketgroup="false" meta="0" name="Glorified Decayed Capital Remote Armor Repairer Mutaplasmid Blueprint" pi="false" portion="1" price="0" product="97641" tech="Tech I" volume="0.1">
+        <mfg id="97638" q="1"/>
+        <mfg id="85390" q="250"/>
+        <mfg id="85400" q="250"/>
+    </row>
+    <row category="Blueprint" group="Mutaplasmid Blueprint" id="97677" marketgroup="false" meta="0" name="Glorified Gravid Capital Remote Armor Repairer Mutaplasmid Blueprint" pi="false" portion="1" price="0" product="97643" tech="Tech I" volume="0.1">
+        <mfg id="97640" q="1"/>
+        <mfg id="85390" q="500"/>
+        <mfg id="85400" q="500"/>
+    </row>
+    <row category="Blueprint" group="Mutaplasmid Blueprint" id="97678" marketgroup="false" meta="0" name="Glorified Unstable Capital Remote Armor Repairer Mutaplasmid Blueprint" pi="false" portion="1" price="0" product="97642" tech="Tech I" volume="0.1">
+        <mfg id="97639" q="1"/>
+        <mfg id="85390" q="1000"/>
+        <mfg id="85400" q="1000"/>
+    </row>
+    <row category="Blueprint" group="Mutaplasmid Blueprint" id="97679" marketgroup="false" meta="0" name="Glorified Decayed Large Remote Armor Repairer Mutaplasmid Blueprint" pi="false" portion="1" price="0" product="97653" tech="Tech I" volume="0.1">
+        <mfg id="97650" q="1"/>
+        <mfg id="85390" q="125"/>
+        <mfg id="85399" q="125"/>
+    </row>
+    <row category="Blueprint" group="Mutaplasmid Blueprint" id="97680" marketgroup="false" meta="0" name="Glorified Gravid Large Remote Armor Repairer Mutaplasmid Blueprint" pi="false" portion="1" price="0" product="97655" tech="Tech I" volume="0.1">
+        <mfg id="97652" q="1"/>
+        <mfg id="85390" q="250"/>
+        <mfg id="85399" q="250"/>
+    </row>
+    <row category="Blueprint" group="Mutaplasmid Blueprint" id="97681" marketgroup="false" meta="0" name="Glorified Unstable Large Remote Armor Repairer Mutaplasmid Blueprint" pi="false" portion="1" price="0" product="97654" tech="Tech I" volume="0.1">
+        <mfg id="97651" q="1"/>
+        <mfg id="85390" q="500"/>
+        <mfg id="85399" q="500"/>
+    </row>
+    <row category="Blueprint" group="Mutaplasmid Blueprint" id="97682" marketgroup="false" meta="0" name="Glorified Decayed Medium Remote Armor Repairer Mutaplasmid Blueprint" pi="false" portion="1" price="0" product="97665" tech="Tech I" volume="0.1">
+        <mfg id="97661" q="1"/>
+        <mfg id="85390" q="60"/>
+        <mfg id="85398" q="60"/>
+    </row>
+    <row category="Blueprint" group="Mutaplasmid Blueprint" id="97683" marketgroup="false" meta="0" name="Glorified Unstable Medium Remote Armor Repairer Mutaplasmid Blueprint" pi="false" portion="1" price="0" product="97666" tech="Tech I" volume="0.1">
+        <mfg id="97662" q="1"/>
+        <mfg id="85390" q="240"/>
+        <mfg id="85398" q="240"/>
+    </row>
+    <row category="Blueprint" group="Mutaplasmid Blueprint" id="97684" marketgroup="false" meta="0" name="Glorified Gravid Medium Remote Armor Repairer Mutaplasmid Blueprint" pi="false" portion="1" price="0" product="97667" tech="Tech I" volume="0.1">
+        <mfg id="97663" q="1"/>
+        <mfg id="85390" q="120"/>
+        <mfg id="85398" q="120"/>
+    </row>
+    <row category="Blueprint" group="Mutaplasmid Blueprint" id="97685" marketgroup="false" meta="0" name="Glorified Decayed Small Remote Armor Repairer Mutaplasmid Blueprint" pi="false" portion="1" price="0" product="97672" tech="Tech I" volume="0.1">
+        <mfg id="97669" q="1"/>
+        <mfg id="85390" q="25"/>
+        <mfg id="85397" q="25"/>
+    </row>
+    <row category="Blueprint" group="Mutaplasmid Blueprint" id="97686" marketgroup="false" meta="0" name="Glorified Gravid Small Remote Armor Repairer Mutaplasmid Blueprint" pi="false" portion="1" price="0" product="97674" tech="Tech I" volume="0.1">
+        <mfg id="97671" q="1"/>
+        <mfg id="85390" q="50"/>
+        <mfg id="85397" q="50"/>
+    </row>
+    <row category="Blueprint" group="Mutaplasmid Blueprint" id="97687" marketgroup="false" meta="0" name="Glorified Unstable Small Remote Armor Repairer Mutaplasmid Blueprint" pi="false" portion="1" price="0" product="97673" tech="Tech I" volume="0.1">
+        <mfg id="97670" q="1"/>
+        <mfg id="85390" q="100"/>
+        <mfg id="85397" q="100"/>
+    </row>
+    <row category="Module" group="Energy Nosferatu" id="97710" marketgroup="true" meta="11" name="Sarikusa's Capital Energy Nosferatu" packagedvolume="1000.0" pi="false" portion="1" price="0" product="0" slot="High" tech="Officer" volume="4000.0">
+        <material id="34" portionsize="1" quantity="1561988"/>
+        <material id="35" portionsize="1" quantity="290003"/>
+        <material id="36" portionsize="1" quantity="39184"/>
+        <material id="37" portionsize="1" quantity="56066"/>
+        <material id="40" portionsize="1" quantity="5117"/>
+        <material id="9838" portionsize="1" quantity="1100"/>
+        <material id="11399" portionsize="1" quantity="450"/>
+        <material id="11539" portionsize="1" quantity="700"/>
+        <material id="11554" portionsize="1" quantity="980"/>
+    </row>
+    <row category="Module" group="Energy Neutralizer" id="97711" marketgroup="true" meta="11" name="Horm's Capital Energy Neutralizer" packagedvolume="1000.0" pi="false" portion="1" price="0" product="0" slot="High" tech="Officer" volume="4000.0">
+        <material id="34" portionsize="1" quantity="133740"/>
+        <material id="35" portionsize="1" quantity="44580"/>
+        <material id="36" portionsize="1" quantity="32692"/>
+        <material id="37" portionsize="1" quantity="17832"/>
+        <material id="39" portionsize="1" quantity="17000"/>
+        <material id="40" portionsize="1" quantity="3360"/>
+        <material id="9838" portionsize="1" quantity="800"/>
+        <material id="11399" portionsize="1" quantity="500"/>
+        <material id="11539" portionsize="1" quantity="660"/>
+        <material id="11554" portionsize="1" quantity="1000"/>
+    </row>
+    <row capacity="5.0" category="Module" charges="4" group="Precursor Weapon" id="97712" marketgroup="true" meta="5" name="Zorya's Ultratidal Entropic Disintegrator" pi="false" portion="1" price="0" product="0" slot="High" tech="Officer" volume="1600.0">
+        <material id="34" portionsize="1" quantity="2452300"/>
+        <material id="35" portionsize="1" quantity="808817"/>
+        <material id="36" portionsize="1" quantity="296600"/>
+        <material id="37" portionsize="1" quantity="48300"/>
+        <material id="38" portionsize="1" quantity="13807"/>
+        <material id="39" portionsize="1" quantity="4946"/>
+        <material id="40" portionsize="1" quantity="2100"/>
+        <material id="9848" portionsize="1" quantity="690"/>
+        <material id="11399" portionsize="1" quantity="1500"/>
+        <material id="11689" portionsize="1" quantity="66"/>
+    </row>
+    <row category="Blueprint" group="Stasis Web Blueprint" id="97714" marketgroup="false" meta="0" name="Dark Blood Stasis Webifier Blueprint" pi="false" portion="1" price="0" product="14262" tech="Faction" volume="0.01">
+        <mfg id="526" q="1"/>
+        <mfg id="34" q="862"/>
+        <mfg id="35" q="792"/>
+        <mfg id="36" q="529"/>
+    </row>
+    <row category="Blueprint" group="Armor Repair Unit Blueprint" id="97715" marketgroup="false" meta="0" name="Dark Blood Large Armor Repairer Blueprint" pi="false" portion="1" price="0" product="13957" tech="Faction" volume="0.01">
+        <mfg id="3538" q="1"/>
+        <mfg id="34" q="4662"/>
+        <mfg id="35" q="1857"/>
+        <mfg id="36" q="1027"/>
+        <mfg id="37" q="44"/>
+        <mfg id="38" q="51"/>
+    </row>
+    <row category="Blueprint" group="Energy Nosferatu Blueprint" id="97716" marketgroup="false" meta="0" name="Sarikusa's Capital Energy Nosferatu Blueprint" pi="false" portion="1" price="0" product="97710" tech="Officer" volume="0.01">
+        <mfg id="40665" q="1"/>
+    </row>
+    <row category="Blueprint" group="Energy Neutralizer Blueprint" id="97717" marketgroup="false" meta="0" name="Horm's Capital Energy Neutralizer Blueprint" pi="false" portion="1" price="0" product="97711" tech="Officer" volume="0.01">
+        <mfg id="40659" q="1"/>
+    </row>
+    <row category="Blueprint" group="Precursor Weapon Blueprint" id="97718" marketgroup="false" meta="0" name="Zorya's Ultratidal Entropic Disintegrator Blueprint" pi="false" portion="1" price="0" product="97712" tech="Officer" volume="0.01">
+        <mfg id="52915" q="1"/>
+    </row>
+    <row category="Special Edition Assets" group="Special Edition Commodities" id="97719" marketgroup="true" meta="0" name="Sarikusa's Capital Energy Nosferatu Blueprint Crate" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="1.0"/>
+    <row category="Special Edition Assets" group="Special Edition Commodities" id="97720" marketgroup="true" meta="0" name="Horm's Capital Energy Neutralizer Blueprint Crate" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="1.0"/>
+    <row category="Special Edition Assets" group="Special Edition Commodities" id="97721" marketgroup="true" meta="0" name="Zorya's Ultratidal Entropic Disintegrator Blueprint Crate" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="1.0"/>
+    <row category="Special Edition Assets" group="Special Edition Commodities" id="97722" marketgroup="true" meta="0" name="Mobile Sanguine Harvester Blueprint Crate" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="1.0"/>
+    <row category="Special Edition Assets" group="Special Edition Commodities" id="97723" marketgroup="true" meta="0" name="Strategos' Modified Siege Module Blueprint Crate" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="1.0"/>
+    <row category="Special Edition Assets" group="Special Edition Commodities" id="97724" marketgroup="true" meta="0" name="Consortium Small Tractor Beam Blueprint Crate" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="1.0"/>
+    <row category="Special Edition Assets" group="Special Edition Commodities" id="97725" marketgroup="true" meta="0" name="Consortium Capital Tractor Beam Blueprint Crate" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="1.0"/>
+    <row category="Special Edition Assets" group="Special Edition Commodities" id="97726" marketgroup="true" meta="0" name="Medium Consortium Vorton Projector Blueprint Crate" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="1.0"/>
+    <row category="Special Edition Assets" group="Special Edition Commodities" id="97727" marketgroup="true" meta="0" name="Consortium Vorton Tuning System Blueprint Crate" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="1.0"/>
+    <row category="Special Edition Assets" group="Special Edition Commodities" id="97728" marketgroup="true" meta="0" name="Large Consortium Vorton Projector Blueprint Crate" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="1.0"/>
+    <row category="Special Edition Assets" group="Special Edition Commodities" id="97729" marketgroup="true" meta="0" name="Small Consortium Vorton Projector Blueprint Crate" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="1.0"/>
+    <row category="Special Edition Assets" group="Special Edition Commodities" id="97730" marketgroup="true" meta="0" name="Dark Blood Stasis Webifier Blueprint Crate" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="1.0"/>
+    <row category="Special Edition Assets" group="Special Edition Commodities" id="97731" marketgroup="true" meta="0" name="Dark Blood Large Armor Repairer Blueprint Crate" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="1.0"/>
+    <row category="Special Edition Assets" group="Special Edition Commodities" id="97732" marketgroup="true" meta="0" name="Imperial Navy Heat Sink Blueprint Crate" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="1.0"/>
+    <row category="Special Edition Assets" group="Special Edition Commodities" id="97733" marketgroup="true" meta="0" name="Imperial Navy Multispectrum Energized Membrane Blueprint Crate" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="1.0"/>
+    <row category="Apparel" group="Portrait Backgrounds" id="97897" marketgroup="true" meta="0" name="Blood Raider Background" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
+    <row category="Apparel" group="Portrait Backgrounds" id="97898" marketgroup="true" meta="0" name="Triglavian Background" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
 </rows>
