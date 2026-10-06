@@ -249,7 +249,7 @@ public class EsiDeprecationOnlineTest extends TestUtil {
 	public void esiContainersLogsGetterCorporation() {
 		CorporationApi api = new CorporationApi();
 		try {
-			ApiResponse<List<CorporationContainersLogsResponse>> apiResponse = api.getCorporationContainersLogsWithHttpInfo(1L, COMPATIBILITY_DATE, null, null, null, null);
+			ApiResponse<List<CorporationContainersLogsResponse>> apiResponse = api.getCorporationContainersLogsWithHttpInfo(1L, COMPATIBILITY_DATE, null, null, null, null, null);
 			validate(apiResponse.getHeaders());
 		} catch (ApiException ex) {
 			validate(ex.getResponseHeaders());

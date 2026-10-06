@@ -44,7 +44,7 @@ public class EsiContainerLogsGetter extends AbstractEsiGetter {
 		List<CorporationContainersLogsResponse> response = updatePages(DEFAULT_RETRIES, new EsiPagesHandler<CorporationContainersLogsResponse>() {
 			@Override
 			public ApiResponse<List<CorporationContainersLogsResponse>> get(Integer page) throws ApiException {
-				return getCorporationApiAuth().getCorporationContainersLogsWithHttpInfo(owner.getOwnerID(), COMPATIBILITY_DATE, page, null, null, null);
+				return getCorporationApiAuth().getCorporationContainersLogsWithHttpInfo(owner.getOwnerID(), COMPATIBILITY_DATE, page, null, null, null, null);
 			}
 		});
 		owner.setContainerLogs(EsiConverter.toContainersLogCorporation(response));
