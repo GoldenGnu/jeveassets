@@ -2039,8 +2039,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 			long fullBlocks = (long) (maxRuns / interval);
 			double leftoverRuns = maxRuns % interval;
 
-			//double total = fullBlocks * Math.ceil(interval * quantity);
-			double total = fullBlocks * interval * quantity;
+			double total = fullBlocks * Math.ceil(interval * quantity);
 
 			total += leftoverRuns * quantity;
 
@@ -2422,15 +2421,15 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 
 		private static double getTotalRuns(StockpileItemMaterial blueprintSettings, StockpileItem blueprintTarget) {
 			double runs = blueprintTarget.getCountMinimumUnmodified();
-			return getMinimumRuns(blueprintSettings, runs);
+			return getMinimumRuns(blueprintSettings, runs, false);
 		}
 
 		private static double getNeededRuns(StockpileItemMaterial blueprintSettings, StockpileItem blueprintTarget, long blueprintCountNow) {
 			double runs = Math.abs(Math.min(blueprintCountNow - blueprintTarget.getCountMinimumUnmodifiedMultipliedDouble(), 0.0));
-			return getMinimumRuns(blueprintSettings, runs) / blueprintTarget.getMultipliedDouble();
+			return getMinimumRuns(blueprintSettings, runs, true) / blueprintTarget.getMultipliedDouble();
 		}
 
-		private static double getMinimumRuns(StockpileItemMaterial blueprintSettings, double runs) {
+		private static double getMinimumRuns(StockpileItemMaterial blueprintSettings, double runs, boolean round) {
 			double productQuantity = blueprintSettings.getItem().getProductQuantity();
 			if (productQuantity < 1) {
 				productQuantity = 1;
@@ -2438,7 +2437,9 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 			if (runs == 0) {
 				return 0;
 			}
-			//runs = Math.ceil(runs / productQuantity) * productQuantity; //Minimum amount of runs
+			if (round) {
+				runs = Math.ceil(runs / productQuantity) * productQuantity; //Minimum amount of runs
+			}
 			return runs / productQuantity ;
 		}
 
