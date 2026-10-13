@@ -2017,25 +2017,34 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 		}
 
 		private double getReactionQuantity(IndustryMaterial material, double maxRuns) {
-			return ApiIdConverter.getReactionQuantity(material.getQuantity(), rigsReactions, securityReactions, maxRuns, false);
+			if (isRoundPerRuns()) {
+				double quantity = ApiIdConverter.getReactionQuantity(material.getQuantity(), rigsReactions, securityReactions, 1, false);
+				return roundPerRun(maxRuns, quantity);
+			} else {
+				return ApiIdConverter.getReactionQuantity(material.getQuantity(), rigsReactions, securityReactions, maxRuns, false);
+			}
 		}
 
 		private double getManufacturingQuantity(IndustryMaterial material, double maxRuns) {
 			if (isRoundPerRuns()) {
-				double interval = getRoundPerRuns();
-				double quantity = ApiIdConverter.getManufacturingQuantity(material.getQuantity(), materialEfficiency, facility, rigs, security, 1, false);
-
-				long fullBlocks = (long) (maxRuns / interval);
-				double leftoverRuns = maxRuns % interval;
-
-				double total = fullBlocks * Math.ceil(interval * quantity);
-
-				total += leftoverRuns * quantity;
-
-				return Math.ceil(total);
+				double quantity = ApiIdConverter.getManufacturingQuantity(material.getQuantity(), materialEfficiency, facility, rigs, security, 1, false);;
+				return roundPerRun(maxRuns, quantity);
 			} else {
 				return ApiIdConverter.getManufacturingQuantity(material.getQuantity(), materialEfficiency, facility, rigs, security, maxRuns, false);
 			}
+		}
+
+		private double roundPerRun(double maxRuns, double quantity) {
+			double interval = getRoundPerRuns();
+			long fullBlocks = (long) (maxRuns / interval);
+			double leftoverRuns = maxRuns % interval;
+
+			//double total = fullBlocks * Math.ceil(interval * quantity);
+			double total = fullBlocks * interval * quantity;
+
+			total += leftoverRuns * quantity;
+
+			return total;
 		}
 
 		@Override
@@ -2429,7 +2438,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationsType, OwnersTy
 			if (runs == 0) {
 				return 0;
 			}
-			runs = Math.ceil(runs / productQuantity) * productQuantity; //Minimum amount of runs
+			//runs = Math.ceil(runs / productQuantity) * productQuantity; //Minimum amount of runs
 			return runs / productQuantity ;
 		}
 
