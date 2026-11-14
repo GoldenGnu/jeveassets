@@ -143,10 +143,10 @@
     <row cc="true" corporation="Guristas Production" corporationid="1000141" faction="Guristas Pirates" factionid="500010"/>
     <row c="true" corporation="Impro" corporationid="1000142" faction="The Society of Conscious Thought" factionid="500017"/>
     <row c="true" corporation="Inner Circle" corporationid="1000143" faction="CONCORD Assembly" factionid="500006"/>
-    <row c="true" corporation="Intaki Bank" corporationid="1000144" faction="The Syndicate" factionid="500009"/>
-    <row c="true" corporation="Intaki Commerce" corporationid="1000145" faction="The Syndicate" factionid="500009"/>
-    <row c="true" corporation="Intaki Space Police" corporationid="1000146" faction="The Syndicate" factionid="500009"/>
-    <row c="true" corporation="Intaki Syndicate" corporationid="1000147" faction="The Syndicate" factionid="500009"/>
+    <row c="true" corporation="Syndicate Bank" corporationid="1000144" faction="Caldari State" factionid="500001"/>
+    <row c="true" corporation="Syndicate Commerce" corporationid="1000145" faction="Caldari State" factionid="500001"/>
+    <row c="true" corporation="Syndicate Space Police" corporationid="1000146" faction="Caldari State" factionid="500001"/>
+    <row c="true" corporation="State Syndicate" corporationid="1000147" faction="Caldari State" factionid="500001"/>
     <row c="true" corporation="InterBus" corporationid="1000148" faction="EverMore" factionid="500013"/>
     <row c="true" corporation="Jove Navy" corporationid="1000149" faction="Jove Empire" factionid="500005"/>
     <row c="true" corporation="Jovian Directorate" corporationid="1000150" faction="Jove Empire" factionid="500005"/>
