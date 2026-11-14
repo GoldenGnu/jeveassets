@@ -46,10 +46,12 @@ public class EsiItemsGetter extends AbstractEsiGetter {
 	/**
 	 * Change ESI_ITEM_VERSION to force items_updates.xml items to be updated again.
 	 * ChangeLog
+	 * 1.2.1:
+	 * Added tech level Academy and Aberrant
 	 * 1.2.0:
 	 * Updated with EveRef type and blueprint data
 	 */
-	public final static String ESI_ITEM_VERSION = "1.2.0";
+	public final static String ESI_ITEM_VERSION = "1.2.1";
 	public final static String ESI_ITEM_EMPTY = "EMPTY";
 
 	private final static Map<Long, GroupResponse> GROUPS_CACHE = new HashMap<>();
@@ -227,7 +229,7 @@ public class EsiItemsGetter extends AbstractEsiGetter {
 			case 3: return "Storyline";
 			case 4: return "Faction";
 			case 5: return "Officer";
-			case 6: return "Deadspace";
+			case 6: return "Deadspace"; //Modules found in deadspace.
 			/*
 			//No longer in use
 			case 7: return "Frigates";
@@ -240,11 +242,13 @@ public class EsiItemsGetter extends AbstractEsiGetter {
 			*/
 			case 14: return "Tech III";
 			case 15: return "Abyssal";
-			case 17: return "Premium";
-			case 19: return "Limited Time";
+			case 17: return "Premium"; //This item is only available through the New Eden Store or exclusive offers.
+			case 19: return "Limited Time"; //This item is only available for a limited time.
 			case 52: return "Faction"; //Structure Faction
 			case 53: return "Tech II"; //Structure Tech II
 			case 54: return "Tech I"; //Structure Tech I
+			case 62: return "Academy"; //Available through AIR Academy Ships within Exordium
+			case 63: return "Aberrant"; //This module has been altered and now has a new active effect.
 			default: return "Tech I";
 		}
 	}
