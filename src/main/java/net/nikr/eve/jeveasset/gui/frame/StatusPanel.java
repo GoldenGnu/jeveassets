@@ -38,7 +38,6 @@ import javax.swing.Timer;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.settings.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
-import net.nikr.eve.jeveasset.gui.shared.ColorUtil;
 import net.nikr.eve.jeveasset.gui.shared.CopyHandler;
 import net.nikr.eve.jeveasset.gui.shared.Formatter;
 import net.nikr.eve.jeveasset.gui.shared.components.JFixedToolBar;
@@ -374,11 +373,6 @@ public class StatusPanel extends JGroupLayoutPanel {
 
 		private void init(final String toolTip, final Icon icon) {
 			setIcon(icon);
-			if (ColorUtil.isBrightColor(getBackground())) { //Light background color
-				setForeground(getBackground().darker().darker().darker());
-			} else { //Dark background color
-				setForeground(getBackground().brighter().brighter());
-			}
 			setIconTextGap(3);
 			setToolTipText(GuiShared.get().clickToCopyWrap(toolTip));
 			setHorizontalAlignment(JLabel.LEFT);
