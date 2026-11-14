@@ -430,4 +430,14 @@ public abstract class FakeProgram extends Program {
 	public void saveStockpiles(String msg) {
 		throw new UnsupportedOperationException("Not implemented");
 	}
+
+	@Override
+	public void saveStockpiles(String msg, boolean force) {
+		throw new UnsupportedOperationException("Not implemented");
+	}
+
+	@Override
+	public void saveSettings(String msg, boolean force) {
+		throw new UnsupportedOperationException("Not implemented");
+	}
 }
