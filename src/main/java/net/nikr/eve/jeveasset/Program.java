@@ -292,10 +292,10 @@ public class Program implements ActionListener {
 			for (Save save : Settings.get().getSave()){
 				switch (save) {
 					case STOCKPILE:
-						saveStockpiles("Stockpile Migration");
+						saveStockpiles("Stockpile Migration", true);
 						break;
 					case SETTINGS:
-						saveSettings("Settings Migration");
+						saveSettings("Settings Migration", true);
 						break;
 				}
 			}
@@ -692,17 +692,30 @@ public class Program implements ActionListener {
 	}
 
 	/**
-	 * Save Settings ASAP
+	 * Save Settings ASAP (in a new thread).
 	 * @param msg Who is saving what?
 	 */
 	public void saveSettings(final String msg) {
-		if (!CliOptions.get().isLazySave() && !Settings.getSettingsLock().ignoreSave()) {
+		saveSettings(msg, false);
+	}
+
+	/**
+	 * Save Settings ASAP (in a new thread).
+	 * @param msg Who is saving what?
+	 * @param force Save even if -lazysave is on
+	 */
+	public void saveSettings(final String msg, boolean force) {
+		if ((!CliOptions.get().isLazySave() || force) && !Settings.getSettingsLock().ignoreSave()) {
 			Settings.getSettingsLock().saveStart();
 			Thread thread = new SaveSettings(msg, this);
 			thread.start();
 		}
 	}
 
+	/**
+	 * Save Settings now (in this thread)
+	 * @param msg Who is saving what?
+	 */
 	private void doSaveSettings(final String msg) {
 		LOG.info("Saving Settings: " + msg);
 		Settings.lock("Table (Column/Width/Resize) and Window Settings"); //Lock for Table (Column/Width/Resize) and Window Settings
@@ -714,19 +727,43 @@ public class Program implements ActionListener {
 		Settings.saveSettings();
 	}
 
+	/**
+	 * Save Stockpiles ASAP (in a new thread).
+	 * @param msg Who is saving what?
+	 */
+	
 	public void saveStockpiles(final String msg) {
-		if (!CliOptions.get().isLazySave() && !Settings.getStockpileLock().ignoreSave()) {
+		saveStockpiles(msg, false);
+	}
+
+	/**
+	 * Save Stockpiles ASAP (in a new thread).
+	 * @param msg Who is saving what?
+	 * @param force Save even if -lazysave is on
+	 */
+	public void saveStockpiles(final String msg, boolean force) {
+		if ((!CliOptions.get().isLazySave() || force) && !Settings.getStockpileLock().ignoreSave()) {
 			Settings.getStockpileLock().saveStart();
 			SaveStockpile thread = new SaveStockpile(msg, this);
 			thread.start();
 		}
 	}
 
+	/**
+	 * Save Stockpiles now (in this thread)
+	 * @param msg Who is saving what?
+	 */
 	private void doSaveStockpile(final String msg) {
 		LOG.info("Saving Stockpiles: " + msg);
 		Settings.saveStockpiles();
 	}
 
+	/**
+	 * Save Settings and Profile now (in this thread)
+	 * Notes:
+	 * - Save even if -lazysave is on
+	 * - Does not save stockpiles
+	 */
 	public void saveSettingsAndProfile() {
 		if (CliOptions.get().isLazySave()) {
 			doSaveSettings("API Update");
@@ -773,6 +810,7 @@ public class Program implements ActionListener {
 	private void saveExit() {
 		if (CliOptions.get().isLazySave()) {
 			doSaveSettings("Exit");
+			doSaveStockpile("Exit");
 		} else {
 			LOG.info("Waiting for save queue to finish...");
 			Settings.getSettingsLock().waitForEmptySaveQueue();
