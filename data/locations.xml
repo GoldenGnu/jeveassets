@@ -4258,7 +4258,7 @@
     <row c="Semou" ci="20000433" r="Devoid" ri="10000036" s="" se="0.3" si="0" sy="Tzvi" syi="30002957"/>
     <row c="Semou" ci="20000433" r="Devoid" ri="10000036" s="" se="0.3" si="0" sy="Raa" syi="30002958"/>
     <row c="Semou" ci="20000433" r="Devoid" ri="10000036" s="" se="0.3" si="0" sy="Sifilar" syi="30002959"/>
-    <row c="Semou" ci="20000433" r="Devoid" ri="10000036" s="" se="0.2" si="0" sy="Arzad" syi="30002960"/>
+    <row c="Semou" ci="20000433" r="Devoid" ri="10000036" s="" se="0.2" si="0" sy="Starkman" syi="30002960"/>
     <row c="Semou" ci="20000433" r="Devoid" ri="10000036" s="" se="0.2" si="0" sy="Oyeman" syi="30002961"/>
     <row c="Semou" ci="20000433" r="Devoid" ri="10000036" s="" se="0.2" si="0" sy="Ezzara" syi="30002962"/>
     <row c="Ryra" ci="20000434" r="Devoid" ri="10000036" s="" se="0.6" si="0" sy="Odin" syi="30002963"/>
@@ -14240,72 +14240,72 @@
     <row c="Braille" ci="20000520" r="Solitude" ri="10000044" s="Vevelonel VI - Moon 1 - Impro Factory" se="0.1" si="60013348" sy="Vevelonel" syi="30003572"/>
     <row c="Braille" ci="20000520" r="Solitude" ri="10000044" s="Meunvon IV - Moon 3 - Impro Factory" se="0.3" si="60013351" sy="Meunvon" syi="30003568"/>
     <row c="Sanctum" ci="20000761" r="Genesis" ri="10000067" s="Yulai VIII - Inner Circle Tribunal" se="0.9" si="60013354" sy="Yulai" syi="30005204"/>
-    <row c="Z-6NQ6" ci="20000478" r="Syndicate" ri="10000041" s="X-BV98 VIII - Moon 5 - Intaki Bank Depository" se="0.0" si="60013357" sy="X-BV98" syi="30003274"/>
-    <row c="Z-6NQ6" ci="20000478" r="Syndicate" ri="10000041" s="FD-MLJ VII - Moon 2 - Intaki Bank Depository" se="0.0" si="60013360" sy="FD-MLJ" syi="30003276"/>
-    <row c="Y4Y7-Q" ci="20000480" r="Syndicate" ri="10000041" s="ZN0-SR V - Moon 7 - Intaki Bank Depository" se="0.0" si="60013363" sy="ZN0-SR" syi="30003289"/>
-    <row c="Y4Y7-Q" ci="20000480" r="Syndicate" ri="10000041" s="ZN0-SR III - Intaki Bank Depository" se="0.0" si="60013366" sy="ZN0-SR" syi="30003289"/>
-    <row c="YFN-UN" ci="20000484" r="Syndicate" ri="10000041" s="TXW-EI I - Intaki Bank Depository" se="0.0" si="60013369" sy="TXW-EI" syi="30003323"/>
-    <row c="YFN-UN" ci="20000484" r="Syndicate" ri="10000041" s="TXW-EI IX - Moon 2 - Intaki Bank Depository" se="0.0" si="60013372" sy="TXW-EI" syi="30003323"/>
-    <row c="59H-0G" ci="20000487" r="Syndicate" ri="10000041" s="KLYN-8 II - Moon 14 - Intaki Bank Depository" se="0.0" si="60013375" sy="KLYN-8" syi="30003344"/>
-    <row c="59H-0G" ci="20000487" r="Syndicate" ri="10000041" s="D85-VD VII - Intaki Bank Vault" se="0.0" si="60013378" sy="D85-VD" syi="30003345"/>
-    <row c="Z-6NQ6" ci="20000478" r="Syndicate" ri="10000041" s="F67E-Q VIII - Moon 2 - Intaki Commerce Trading Post" se="0.0" si="60013381" sy="F67E-Q" syi="30003269"/>
-    <row c="Z-6NQ6" ci="20000478" r="Syndicate" ri="10000041" s="X-M2LR VI - Moon 8 - Intaki Commerce Warehouse" se="0.0" si="60013384" sy="X-M2LR" syi="30003278"/>
-    <row c="Y4Y7-Q" ci="20000480" r="Syndicate" ri="10000041" s="PC9-AY III - Intaki Commerce Trading Post" se="0.0" si="60013387" sy="PC9-AY" syi="30003286"/>
-    <row c="Y4Y7-Q" ci="20000480" r="Syndicate" ri="10000041" s="PC9-AY VIII - Moon 7 - Intaki Commerce Warehouse" se="0.0" si="60013390" sy="PC9-AY" syi="30003286"/>
-    <row c="MK7-AO" ci="20000483" r="Syndicate" ri="10000041" s="DP34-U V - Moon 1 - Intaki Commerce Trading Post" se="0.0" si="60013393" sy="DP34-U" syi="30003314"/>
-    <row c="MK7-AO" ci="20000483" r="Syndicate" ri="10000041" s="MXYS-8 II - Intaki Commerce Warehouse" se="0.0" si="60013396" sy="MXYS-8" syi="30003318"/>
-    <row c="JQV5-9" ci="20000491" r="Syndicate" ri="10000041" s="ZV-72W IX - Moon 1 - Intaki Commerce Trading Post" se="0.0" si="60013399" sy="ZV-72W" syi="30003369"/>
-    <row c="JQV5-9" ci="20000491" r="Syndicate" ri="10000041" s="98Q-8O VII - Moon 16 - Intaki Commerce Trading Post" se="0.0" si="60013402" sy="98Q-8O" syi="30003373"/>
-    <row c="Z-6NQ6" ci="20000478" r="Syndicate" ri="10000041" s="Poitot VI - Moon 17 - Intaki Space Police Assembly Plant" se="0.0" si="60013405" sy="Poitot" syi="30003271"/>
-    <row c="Z-6NQ6" ci="20000478" r="Syndicate" ri="10000041" s="FD-MLJ VII - Moon 4 - Intaki Space Police Assembly Plant" se="0.0" si="60013408" sy="FD-MLJ" syi="30003276"/>
-    <row c="MK7-AO" ci="20000483" r="Syndicate" ri="10000041" s="IIRH-G VIII - Intaki Space Police Logistic Support" se="0.0" si="60013411" sy="IIRH-G" syi="30003311"/>
-    <row c="MK7-AO" ci="20000483" r="Syndicate" ri="10000041" s="I0AB-R VI - Intaki Space Police Assembly Plant" se="0.0" si="60013414" sy="I0AB-R" syi="30003317"/>
-    <row c="Y4Y7-Q" ci="20000480" r="Syndicate" ri="10000041" s="T22-QI VI - Moon 9 - Intaki Space Police Testing Facilities" se="0.0" si="60013417" sy="T22-QI" syi="30003287"/>
-    <row c="Y4Y7-Q" ci="20000480" r="Syndicate" ri="10000041" s="ZN0-SR VI - Moon 4 - Intaki Space Police Assembly Plant" se="0.0" si="60013420" sy="ZN0-SR" syi="30003289"/>
-    <row c="QS-FVH" ci="20000488" r="Syndicate" ri="10000041" s="RLL-9R IX - Intaki Space Police Assembly Plant" se="0.0" si="60013423" sy="RLL-9R" syi="30003353"/>
-    <row c="QS-FVH" ci="20000488" r="Syndicate" ri="10000041" s="57-YRU IV - Moon 9 - Intaki Space Police Logistic Support" se="0.0" si="60013426" sy="57-YRU" syi="30003350"/>
-    <row c="6-V49K" ci="20000489" r="Syndicate" ri="10000041" s="EF-F36 III - Moon 1 - Intaki Space Police Logistic Support" se="0.0" si="60013429" sy="EF-F36" syi="30003355"/>
-    <row c="6-V49K" ci="20000489" r="Syndicate" ri="10000041" s="GRNJ-3 III - Intaki Space Police Testing Facilities" se="0.0" si="60013432" sy="GRNJ-3" syi="30003360"/>
-    <row c="GN-ACS" ci="20000486" r="Syndicate" ri="10000041" s="9GYL-O V - Moon 13 - Intaki Space Police Assembly Plant" se="0.0" si="60013435" sy="9GYL-O" syi="30003338"/>
-    <row c="GN-ACS" ci="20000486" r="Syndicate" ri="10000041" s="VLGD-R V - Moon 3 - Intaki Space Police Logistic Support" se="0.0" si="60013438" sy="VLGD-R" syi="30003339"/>
-    <row c="DS-M4Q" ci="20000481" r="Syndicate" ri="10000041" s="V4-L0X IV - Moon 1 - Intaki Space Police Assembly Plant" se="0.0" si="60013441" sy="V4-L0X" syi="30003294"/>
-    <row c="DS-M4Q" ci="20000481" r="Syndicate" ri="10000041" s="1-NKVT X - Intaki Space Police Logistic Support" se="0.0" si="60013444" sy="1-NKVT" syi="30003297"/>
-    <row c="JQV5-9" ci="20000491" r="Syndicate" ri="10000041" s="S-U8A4 V - Intaki Space Police Logistic Support" se="0.0" si="60013447" sy="S-U8A4" syi="30003368"/>
-    <row c="JQV5-9" ci="20000491" r="Syndicate" ri="10000041" s="98Q-8O V - Moon 8 - Intaki Space Police Assembly Plant" se="0.0" si="60013450" sy="98Q-8O" syi="30003373"/>
-    <row c="59H-0G" ci="20000487" r="Syndicate" ri="10000041" s="Y-W6GF VIII - Moon 17 - Intaki Space Police Logistic Support" se="0.0" si="60013453" sy="Y-W6GF" syi="30003342"/>
-    <row c="59H-0G" ci="20000487" r="Syndicate" ri="10000041" s="KFR-ZE VII - Moon 6 - Intaki Space Police Assembly Plant" se="0.0" si="60013456" sy="KFR-ZE" syi="30003343"/>
-    <row c="49A-BZ" ci="20000485" r="Syndicate" ri="10000041" s="0LTQ-C V - Moon 18 - Intaki Space Police Assembly Plant" se="0.0" si="60013459" sy="0LTQ-C" syi="30003330"/>
-    <row c="49A-BZ" ci="20000485" r="Syndicate" ri="10000041" s="BMNV-P XI - Moon 11 - Intaki Space Police Assembly Plant" se="0.0" si="60013462" sy="BMNV-P" syi="30003327"/>
-    <row c="Z-6NQ6" ci="20000478" r="Syndicate" ri="10000041" s="Poitot V - Moon 14 - Intaki Syndicate Bureau" se="0.0" si="60013465" sy="Poitot" syi="30003271"/>
-    <row c="Z-6NQ6" ci="20000478" r="Syndicate" ri="10000041" s="2X-PQG III - Moon 17 - Intaki Syndicate Academy" se="0.0" si="60013468" sy="2X-PQG" syi="30003275"/>
-    <row c="Z-6NQ6" ci="20000478" r="Syndicate" ri="10000041" s="K5-JRD VIII - Moon 2 - Intaki Syndicate Bureau" se="0.0" si="60013471" sy="K5-JRD" syi="30003279"/>
-    <row c="GN-ACS" ci="20000486" r="Syndicate" ri="10000041" s="9GYL-O VI - Moon 16 - Intaki Syndicate Bureau" se="0.0" si="60013474" sy="9GYL-O" syi="30003338"/>
-    <row c="GN-ACS" ci="20000486" r="Syndicate" ri="10000041" s="VLGD-R III - Moon 2 - Intaki Syndicate Academy" se="0.0" si="60013477" sy="VLGD-R" syi="30003339"/>
-    <row c="GN-ACS" ci="20000486" r="Syndicate" ri="10000041" s="9GYL-O V - Moon 9 - Intaki Syndicate Bureau" se="0.0" si="60013480" sy="9GYL-O" syi="30003338"/>
-    <row c="49A-BZ" ci="20000485" r="Syndicate" ri="10000041" s="RF-GGF V - Intaki Syndicate Academy" se="0.0" si="60013483" sy="RF-GGF" syi="30003333"/>
-    <row c="49A-BZ" ci="20000485" r="Syndicate" ri="10000041" s="A-SJ8X VII - Moon 1 - Intaki Syndicate Bureau" se="0.0" si="60013486" sy="A-SJ8X" syi="30003335"/>
-    <row c="49A-BZ" ci="20000485" r="Syndicate" ri="10000041" s="31-MLU X - Moon 8 - Intaki Syndicate Bureau" se="0.0" si="60013489" sy="31-MLU" syi="30003329"/>
-    <row c="TA-A7V" ci="20000482" r="Syndicate" ri="10000041" s="A-ZLHX VII - Moon 2 - Intaki Syndicate Bureau" se="0.0" si="60013492" sy="A-ZLHX" syi="30003305"/>
-    <row c="TA-A7V" ci="20000482" r="Syndicate" ri="10000041" s="A-ZLHX XI - Moon 1 - Intaki Syndicate Bureau" se="0.0" si="60013495" sy="A-ZLHX" syi="30003305"/>
-    <row c="TA-A7V" ci="20000482" r="Syndicate" ri="10000041" s="Y9G-KS VI - Moon 14 - Intaki Syndicate Bureau" se="0.0" si="60013498" sy="Y9G-KS" syi="30003307"/>
-    <row c="SKX-PL" ci="20000490" r="Syndicate" ri="10000041" s="CIS-7X VII - Intaki Syndicate Bureau" se="0.0" si="60013501" sy="CIS-7X" syi="30003363"/>
-    <row c="SKX-PL" ci="20000490" r="Syndicate" ri="10000041" s="VSIG-K VIII - Moon 1 - Intaki Syndicate Bureau" se="0.0" si="60013504" sy="VSIG-K" syi="30003361"/>
-    <row c="SKX-PL" ci="20000490" r="Syndicate" ri="10000041" s="CIS-7X IX - Moon 6 - Intaki Syndicate Bureau" se="0.0" si="60013507" sy="CIS-7X" syi="30003363"/>
-    <row c="59H-0G" ci="20000487" r="Syndicate" ri="10000041" s="Y-W6GF IX - Moon 3 - Intaki Syndicate Bureau" se="0.0" si="60013510" sy="Y-W6GF" syi="30003342"/>
-    <row c="59H-0G" ci="20000487" r="Syndicate" ri="10000041" s="KLYN-8 IV - Moon 21 - Intaki Syndicate Bureau" se="0.0" si="60013513" sy="KLYN-8" syi="30003344"/>
-    <row c="59H-0G" ci="20000487" r="Syndicate" ri="10000041" s="KLYN-8 IV - Moon 14 - Intaki Syndicate Academy" se="0.0" si="60013516" sy="KLYN-8" syi="30003344"/>
-    <row c="Y4Y7-Q" ci="20000480" r="Syndicate" ri="10000041" s="T22-QI VI - Moon 12 - Intaki Syndicate Academy" se="0.0" si="60013519" sy="T22-QI" syi="30003287"/>
-    <row c="Y4Y7-Q" ci="20000480" r="Syndicate" ri="10000041" s="T22-QI VI - Moon 6 - Intaki Syndicate Academy" se="0.0" si="60013522" sy="T22-QI" syi="30003287"/>
-    <row c="Y4Y7-Q" ci="20000480" r="Syndicate" ri="10000041" s="T22-QI V - Moon 14 - Intaki Syndicate Academy" se="0.0" si="60013525" sy="T22-QI" syi="30003287"/>
-    <row c="YFN-UN" ci="20000484" r="Syndicate" ri="10000041" s="3MOG-V X - Moon 2 - Intaki Syndicate Bureau" se="0.0" si="60013528" sy="3MOG-V" syi="30003324"/>
-    <row c="YFN-UN" ci="20000484" r="Syndicate" ri="10000041" s="3KNK-A IX - Moon 12 - Intaki Syndicate Bureau" se="0.0" si="60013531" sy="3KNK-A" syi="30003322"/>
-    <row c="YFN-UN" ci="20000484" r="Syndicate" ri="10000041" s="5-FGQI V - Moon 13 - Intaki Syndicate Academy" se="0.0" si="60013534" sy="5-FGQI" syi="30003321"/>
-    <row c="MK7-AO" ci="20000483" r="Syndicate" ri="10000041" s="I0AB-R VI - Moon 2 - Intaki Syndicate Bureau" se="0.0" si="60013537" sy="I0AB-R" syi="30003317"/>
-    <row c="MK7-AO" ci="20000483" r="Syndicate" ri="10000041" s="35-RK9 IX - Moon 4 - Intaki Syndicate Bureau" se="0.0" si="60013540" sy="35-RK9" syi="30003312"/>
-    <row c="MK7-AO" ci="20000483" r="Syndicate" ri="10000041" s="MXYS-8 IV - Moon 1 - Intaki Syndicate Treasury" se="0.0" si="60013543" sy="MXYS-8" syi="30003318"/>
-    <row c="2-M6DE" ci="20000479" r="Syndicate" ri="10000041" s="M2-CF1 X - Moon 3 - Intaki Syndicate Bureau" se="0.0" si="60013546" sy="M2-CF1" syi="30003284"/>
-    <row c="2-M6DE" ci="20000479" r="Syndicate" ri="10000041" s="6-CZ49 VI - Moon 6 - Intaki Syndicate Bureau" se="0.0" si="60013549" sy="6-CZ49" syi="30003280"/>
-    <row c="2-M6DE" ci="20000479" r="Syndicate" ri="10000041" s="EZA-FM IV - Intaki Syndicate Bureau" se="0.0" si="60013552" sy="EZA-FM" syi="30003281"/>
+    <row c="Z-6NQ6" ci="20000478" r="Syndicate" ri="10000041" s="X-BV98 VIII - Moon 5 - Syndicate Bank Depository" se="0.0" si="60013357" sy="X-BV98" syi="30003274"/>
+    <row c="Z-6NQ6" ci="20000478" r="Syndicate" ri="10000041" s="FD-MLJ VII - Moon 2 - Syndicate Bank Depository" se="0.0" si="60013360" sy="FD-MLJ" syi="30003276"/>
+    <row c="Y4Y7-Q" ci="20000480" r="Syndicate" ri="10000041" s="ZN0-SR V - Moon 7 - Syndicate Bank Depository" se="0.0" si="60013363" sy="ZN0-SR" syi="30003289"/>
+    <row c="Y4Y7-Q" ci="20000480" r="Syndicate" ri="10000041" s="ZN0-SR III - Syndicate Bank Depository" se="0.0" si="60013366" sy="ZN0-SR" syi="30003289"/>
+    <row c="YFN-UN" ci="20000484" r="Syndicate" ri="10000041" s="TXW-EI I - Syndicate Bank Depository" se="0.0" si="60013369" sy="TXW-EI" syi="30003323"/>
+    <row c="YFN-UN" ci="20000484" r="Syndicate" ri="10000041" s="TXW-EI IX - Moon 2 - Syndicate Bank Depository" se="0.0" si="60013372" sy="TXW-EI" syi="30003323"/>
+    <row c="59H-0G" ci="20000487" r="Syndicate" ri="10000041" s="KLYN-8 II - Moon 14 - Syndicate Bank Depository" se="0.0" si="60013375" sy="KLYN-8" syi="30003344"/>
+    <row c="59H-0G" ci="20000487" r="Syndicate" ri="10000041" s="D85-VD VII - Syndicate Bank Vault" se="0.0" si="60013378" sy="D85-VD" syi="30003345"/>
+    <row c="Z-6NQ6" ci="20000478" r="Syndicate" ri="10000041" s="F67E-Q VIII - Moon 2 - Syndicate Commerce Trading Post" se="0.0" si="60013381" sy="F67E-Q" syi="30003269"/>
+    <row c="Z-6NQ6" ci="20000478" r="Syndicate" ri="10000041" s="X-M2LR VI - Moon 8 - Syndicate Commerce Warehouse" se="0.0" si="60013384" sy="X-M2LR" syi="30003278"/>
+    <row c="Y4Y7-Q" ci="20000480" r="Syndicate" ri="10000041" s="PC9-AY III - Syndicate Commerce Trading Post" se="0.0" si="60013387" sy="PC9-AY" syi="30003286"/>
+    <row c="Y4Y7-Q" ci="20000480" r="Syndicate" ri="10000041" s="PC9-AY VIII - Moon 7 - Syndicate Commerce Warehouse" se="0.0" si="60013390" sy="PC9-AY" syi="30003286"/>
+    <row c="MK7-AO" ci="20000483" r="Syndicate" ri="10000041" s="DP34-U V - Moon 1 - Syndicate Commerce Trading Post" se="0.0" si="60013393" sy="DP34-U" syi="30003314"/>
+    <row c="MK7-AO" ci="20000483" r="Syndicate" ri="10000041" s="MXYS-8 II - Syndicate Commerce Warehouse" se="0.0" si="60013396" sy="MXYS-8" syi="30003318"/>
+    <row c="JQV5-9" ci="20000491" r="Syndicate" ri="10000041" s="ZV-72W IX - Moon 1 - Syndicate Commerce Trading Post" se="0.0" si="60013399" sy="ZV-72W" syi="30003369"/>
+    <row c="JQV5-9" ci="20000491" r="Syndicate" ri="10000041" s="98Q-8O VII - Moon 16 - Syndicate Commerce Trading Post" se="0.0" si="60013402" sy="98Q-8O" syi="30003373"/>
+    <row c="Z-6NQ6" ci="20000478" r="Syndicate" ri="10000041" s="Poitot VI - Moon 17 - Syndicate Space Police Assembly Plant" se="0.0" si="60013405" sy="Poitot" syi="30003271"/>
+    <row c="Z-6NQ6" ci="20000478" r="Syndicate" ri="10000041" s="FD-MLJ VII - Moon 4 - Syndicate Space Police Assembly Plant" se="0.0" si="60013408" sy="FD-MLJ" syi="30003276"/>
+    <row c="MK7-AO" ci="20000483" r="Syndicate" ri="10000041" s="IIRH-G VIII - Syndicate Space Police Logistic Support" se="0.0" si="60013411" sy="IIRH-G" syi="30003311"/>
+    <row c="MK7-AO" ci="20000483" r="Syndicate" ri="10000041" s="I0AB-R VI - Syndicate Space Police Assembly Plant" se="0.0" si="60013414" sy="I0AB-R" syi="30003317"/>
+    <row c="Y4Y7-Q" ci="20000480" r="Syndicate" ri="10000041" s="T22-QI VI - Moon 9 - Syndicate Space Police Testing Facilities" se="0.0" si="60013417" sy="T22-QI" syi="30003287"/>
+    <row c="Y4Y7-Q" ci="20000480" r="Syndicate" ri="10000041" s="ZN0-SR VI - Moon 4 - Syndicate Space Police Assembly Plant" se="0.0" si="60013420" sy="ZN0-SR" syi="30003289"/>
+    <row c="QS-FVH" ci="20000488" r="Syndicate" ri="10000041" s="RLL-9R IX - Syndicate Space Police Assembly Plant" se="0.0" si="60013423" sy="RLL-9R" syi="30003353"/>
+    <row c="QS-FVH" ci="20000488" r="Syndicate" ri="10000041" s="57-YRU IV - Moon 9 - Syndicate Space Police Logistic Support" se="0.0" si="60013426" sy="57-YRU" syi="30003350"/>
+    <row c="6-V49K" ci="20000489" r="Syndicate" ri="10000041" s="EF-F36 III - Moon 1 - Syndicate Space Police Logistic Support" se="0.0" si="60013429" sy="EF-F36" syi="30003355"/>
+    <row c="6-V49K" ci="20000489" r="Syndicate" ri="10000041" s="GRNJ-3 III - Syndicate Space Police Testing Facilities" se="0.0" si="60013432" sy="GRNJ-3" syi="30003360"/>
+    <row c="GN-ACS" ci="20000486" r="Syndicate" ri="10000041" s="9GYL-O V - Moon 13 - Syndicate Space Police Assembly Plant" se="0.0" si="60013435" sy="9GYL-O" syi="30003338"/>
+    <row c="GN-ACS" ci="20000486" r="Syndicate" ri="10000041" s="VLGD-R V - Moon 3 - Syndicate Space Police Logistic Support" se="0.0" si="60013438" sy="VLGD-R" syi="30003339"/>
+    <row c="DS-M4Q" ci="20000481" r="Syndicate" ri="10000041" s="V4-L0X IV - Moon 1 - Syndicate Space Police Assembly Plant" se="0.0" si="60013441" sy="V4-L0X" syi="30003294"/>
+    <row c="DS-M4Q" ci="20000481" r="Syndicate" ri="10000041" s="1-NKVT X - Syndicate Space Police Logistic Support" se="0.0" si="60013444" sy="1-NKVT" syi="30003297"/>
+    <row c="JQV5-9" ci="20000491" r="Syndicate" ri="10000041" s="S-U8A4 V - Syndicate Space Police Logistic Support" se="0.0" si="60013447" sy="S-U8A4" syi="30003368"/>
+    <row c="JQV5-9" ci="20000491" r="Syndicate" ri="10000041" s="98Q-8O V - Moon 8 - Syndicate Space Police Assembly Plant" se="0.0" si="60013450" sy="98Q-8O" syi="30003373"/>
+    <row c="59H-0G" ci="20000487" r="Syndicate" ri="10000041" s="Y-W6GF VIII - Moon 17 - Syndicate Space Police Logistic Support" se="0.0" si="60013453" sy="Y-W6GF" syi="30003342"/>
+    <row c="59H-0G" ci="20000487" r="Syndicate" ri="10000041" s="KFR-ZE VII - Moon 6 - Syndicate Space Police Assembly Plant" se="0.0" si="60013456" sy="KFR-ZE" syi="30003343"/>
+    <row c="49A-BZ" ci="20000485" r="Syndicate" ri="10000041" s="0LTQ-C V - Moon 18 - Syndicate Space Police Assembly Plant" se="0.0" si="60013459" sy="0LTQ-C" syi="30003330"/>
+    <row c="49A-BZ" ci="20000485" r="Syndicate" ri="10000041" s="BMNV-P XI - Moon 11 - Syndicate Space Police Assembly Plant" se="0.0" si="60013462" sy="BMNV-P" syi="30003327"/>
+    <row c="Z-6NQ6" ci="20000478" r="Syndicate" ri="10000041" s="Poitot V - Moon 14 - State Syndicate Bureau" se="0.0" si="60013465" sy="Poitot" syi="30003271"/>
+    <row c="Z-6NQ6" ci="20000478" r="Syndicate" ri="10000041" s="2X-PQG III - Moon 17 - State Syndicate Academy" se="0.0" si="60013468" sy="2X-PQG" syi="30003275"/>
+    <row c="Z-6NQ6" ci="20000478" r="Syndicate" ri="10000041" s="K5-JRD VIII - Moon 2 - State Syndicate Bureau" se="0.0" si="60013471" sy="K5-JRD" syi="30003279"/>
+    <row c="GN-ACS" ci="20000486" r="Syndicate" ri="10000041" s="9GYL-O VI - Moon 16 - State Syndicate Bureau" se="0.0" si="60013474" sy="9GYL-O" syi="30003338"/>
+    <row c="GN-ACS" ci="20000486" r="Syndicate" ri="10000041" s="VLGD-R III - Moon 2 - State Syndicate Academy" se="0.0" si="60013477" sy="VLGD-R" syi="30003339"/>
+    <row c="GN-ACS" ci="20000486" r="Syndicate" ri="10000041" s="9GYL-O V - Moon 9 - State Syndicate Bureau" se="0.0" si="60013480" sy="9GYL-O" syi="30003338"/>
+    <row c="49A-BZ" ci="20000485" r="Syndicate" ri="10000041" s="RF-GGF V - State Syndicate Academy" se="0.0" si="60013483" sy="RF-GGF" syi="30003333"/>
+    <row c="49A-BZ" ci="20000485" r="Syndicate" ri="10000041" s="A-SJ8X VII - Moon 1 - State Syndicate Bureau" se="0.0" si="60013486" sy="A-SJ8X" syi="30003335"/>
+    <row c="49A-BZ" ci="20000485" r="Syndicate" ri="10000041" s="31-MLU X - Moon 8 - State Syndicate Bureau" se="0.0" si="60013489" sy="31-MLU" syi="30003329"/>
+    <row c="TA-A7V" ci="20000482" r="Syndicate" ri="10000041" s="A-ZLHX VII - Moon 2 - State Syndicate Bureau" se="0.0" si="60013492" sy="A-ZLHX" syi="30003305"/>
+    <row c="TA-A7V" ci="20000482" r="Syndicate" ri="10000041" s="A-ZLHX XI - Moon 1 - State Syndicate Bureau" se="0.0" si="60013495" sy="A-ZLHX" syi="30003305"/>
+    <row c="TA-A7V" ci="20000482" r="Syndicate" ri="10000041" s="Y9G-KS VI - Moon 14 - State Syndicate Bureau" se="0.0" si="60013498" sy="Y9G-KS" syi="30003307"/>
+    <row c="SKX-PL" ci="20000490" r="Syndicate" ri="10000041" s="CIS-7X VII - State Syndicate Bureau" se="0.0" si="60013501" sy="CIS-7X" syi="30003363"/>
+    <row c="SKX-PL" ci="20000490" r="Syndicate" ri="10000041" s="VSIG-K VIII - Moon 1 - State Syndicate Bureau" se="0.0" si="60013504" sy="VSIG-K" syi="30003361"/>
+    <row c="SKX-PL" ci="20000490" r="Syndicate" ri="10000041" s="CIS-7X IX - Moon 6 - State Syndicate Bureau" se="0.0" si="60013507" sy="CIS-7X" syi="30003363"/>
+    <row c="59H-0G" ci="20000487" r="Syndicate" ri="10000041" s="Y-W6GF IX - Moon 3 - State Syndicate Bureau" se="0.0" si="60013510" sy="Y-W6GF" syi="30003342"/>
+    <row c="59H-0G" ci="20000487" r="Syndicate" ri="10000041" s="KLYN-8 IV - Moon 21 - State Syndicate Bureau" se="0.0" si="60013513" sy="KLYN-8" syi="30003344"/>
+    <row c="59H-0G" ci="20000487" r="Syndicate" ri="10000041" s="KLYN-8 IV - Moon 14 - State Syndicate Academy" se="0.0" si="60013516" sy="KLYN-8" syi="30003344"/>
+    <row c="Y4Y7-Q" ci="20000480" r="Syndicate" ri="10000041" s="T22-QI VI - Moon 12 - State Syndicate Academy" se="0.0" si="60013519" sy="T22-QI" syi="30003287"/>
+    <row c="Y4Y7-Q" ci="20000480" r="Syndicate" ri="10000041" s="T22-QI VI - Moon 6 - State Syndicate Academy" se="0.0" si="60013522" sy="T22-QI" syi="30003287"/>
+    <row c="Y4Y7-Q" ci="20000480" r="Syndicate" ri="10000041" s="T22-QI V - Moon 14 - State Syndicate Academy" se="0.0" si="60013525" sy="T22-QI" syi="30003287"/>
+    <row c="YFN-UN" ci="20000484" r="Syndicate" ri="10000041" s="3MOG-V X - Moon 2 - State Syndicate Bureau" se="0.0" si="60013528" sy="3MOG-V" syi="30003324"/>
+    <row c="YFN-UN" ci="20000484" r="Syndicate" ri="10000041" s="3KNK-A IX - Moon 12 - State Syndicate Bureau" se="0.0" si="60013531" sy="3KNK-A" syi="30003322"/>
+    <row c="YFN-UN" ci="20000484" r="Syndicate" ri="10000041" s="5-FGQI V - Moon 13 - State Syndicate Academy" se="0.0" si="60013534" sy="5-FGQI" syi="30003321"/>
+    <row c="MK7-AO" ci="20000483" r="Syndicate" ri="10000041" s="I0AB-R VI - Moon 2 - State Syndicate Bureau" se="0.0" si="60013537" sy="I0AB-R" syi="30003317"/>
+    <row c="MK7-AO" ci="20000483" r="Syndicate" ri="10000041" s="35-RK9 IX - Moon 4 - State Syndicate Bureau" se="0.0" si="60013540" sy="35-RK9" syi="30003312"/>
+    <row c="MK7-AO" ci="20000483" r="Syndicate" ri="10000041" s="MXYS-8 IV - Moon 1 - State Syndicate Treasury" se="0.0" si="60013543" sy="MXYS-8" syi="30003318"/>
+    <row c="2-M6DE" ci="20000479" r="Syndicate" ri="10000041" s="M2-CF1 X - Moon 3 - State Syndicate Bureau" se="0.0" si="60013546" sy="M2-CF1" syi="30003284"/>
+    <row c="2-M6DE" ci="20000479" r="Syndicate" ri="10000041" s="6-CZ49 VI - Moon 6 - State Syndicate Bureau" se="0.0" si="60013549" sy="6-CZ49" syi="30003280"/>
+    <row c="2-M6DE" ci="20000479" r="Syndicate" ri="10000041" s="EZA-FM IV - State Syndicate Bureau" se="0.0" si="60013552" sy="EZA-FM" syi="30003281"/>
     <row c="I4-DK8" ci="20000218" r="J7HZ-F" ri="10000017" s="54-VNO XI - Moon 2 - Jove Navy Testing Facilities" se="0.0" si="60013555" sy="54-VNO" syi="30001480"/>
     <row c="I4-DK8" ci="20000218" r="J7HZ-F" ri="10000017" s="54-VNO V - Moon 2 - Jove Navy Assembly Plant" se="0.0" si="60013558" sy="54-VNO" syi="30001480"/>
     <row c="I4-DK8" ci="20000218" r="J7HZ-F" ri="10000017" s="54-VNO X - Jove Navy Assembly Plant" se="0.0" si="60013561" sy="54-VNO" syi="30001480"/>
@@ -14883,7 +14883,7 @@
     <row c="Jayai" ci="20000436" r="Devoid" ri="10000036" s="Asghed III - 24th Imperial Crusade Logistic Support" se="0.4" si="60015054" sy="Asghed" syi="30002978"/>
     <row c="Jayai" ci="20000436" r="Devoid" ri="10000036" s="Halmah IV - 24th Imperial Crusade Assembly Plant" se="0.4" si="60015055" sy="Halmah" syi="30002981"/>
     <row c="Jayai" ci="20000436" r="Devoid" ri="10000036" s="Tararan IV - 24th Imperial Crusade Logistic Support" se="0.3" si="60015056" sy="Tararan" syi="30002979"/>
-    <row c="Semou" ci="20000433" r="Devoid" ri="10000036" s="Arzad VIII - 24th Imperial Crusade Logistic Support" se="0.2" si="60015057" sy="Arzad" syi="30002960"/>
+    <row c="Semou" ci="20000433" r="Devoid" ri="10000036" s="Starkman VIII - 24th Imperial Crusade Logistic Support" se="0.2" si="60015057" sy="Starkman" syi="30002960"/>
     <row c="Semou" ci="20000433" r="Devoid" ri="10000036" s="Tzvi VI - 24th Imperial Crusade Logistic Support" se="0.3" si="60015058" sy="Tzvi" syi="30002957"/>
     <row c="Sasen" ci="20000448" r="The Bleak Lands" ri="10000038" s="Huola VI - 24th Imperial Crusade Logistic Support" se="0.4" si="60015059" sy="Huola" syi="30003067"/>
     <row c="Sasen" ci="20000448" r="The Bleak Lands" ri="10000038" s="Kamela V - 24th Imperial Crusade Logistic Support" se="0.4" si="60015060" sy="Kamela" syi="30003069"/>
@@ -15070,6 +15070,7 @@
     <row c="Kimotoro" ci="20000020" r="The Forge" ri="10000002" s="Jita II - Sebiestor Tribe Trade Embassy" se="0.9" si="60015260" sy="Jita" syi="30000142"/>
     <row c="Kimotoro" ci="20000020" r="The Forge" ri="10000002" s="Jita III - Moon 1 - Tash-Murkon Family Trade Embassy" se="0.9" si="60015261" sy="Jita" syi="30000142"/>
     <row c="Kimotoro" ci="20000020" r="The Forge" ri="10000002" s="Jita VIII - Quafe Company Trade Embassy" se="0.9" si="60015262" sy="Jita" syi="30000142"/>
+    <row c="Semou" ci="20000433" r="Devoid" ri="10000036" s="Starkman Prime - Starkmanir Council Hall of Restoration" se="0.2" si="60015266" sy="Starkman" syi="30002960"/>
     <row c="9RW5-Z" ci="20000054" r="UUA-F4" ri="10000004" s="Conquerable Station #61000001" se="0.0" si="61000001" sy="RU-97T" syi="30000377"/>
     <row c="RHG-4O" ci="20000653" r="Feythabolis" ri="10000056" s="Conquerable Station #61000002" se="0.0" si="61000002" sy="5P-AIP" syi="30004477"/>
     <row c="JSZ-X6" ci="20000456" r="Esoteria" ri="10000039" s="Conquerable Station #61000003" se="0.0" si="61000003" sy="16P-PX" syi="30003122"/>
