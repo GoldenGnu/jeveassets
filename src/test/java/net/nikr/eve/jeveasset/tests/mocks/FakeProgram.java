@@ -426,7 +426,17 @@ public abstract class FakeProgram extends Program {
 	}
 
 	@Override
-	public void setPriceHistoryCount() {
+	public void saveStockpiles(String msg, boolean force) {
 		throw new UnsupportedOperationException("Not implemented");
+	}
+
+	@Override
+	public void saveSettings(String msg, boolean force) {
+		throw new UnsupportedOperationException("Not implemented");
+	}
+
+	@Override
+	public void setPriceHistoryCount() {
+			throw new UnsupportedOperationException("Not implemented");
 	}
 }
