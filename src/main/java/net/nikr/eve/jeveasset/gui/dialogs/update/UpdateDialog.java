@@ -72,6 +72,7 @@ import net.nikr.eve.jeveasset.io.esi.EsiPlanetaryInteractionGetter;
 import net.nikr.eve.jeveasset.io.esi.EsiShipGetter;
 import net.nikr.eve.jeveasset.io.esi.EsiSkillGetter;
 import net.nikr.eve.jeveasset.io.esi.EsiNpcStandingGetter;
+import net.nikr.eve.jeveasset.io.esi.EsiStructuresGetter;
 import net.nikr.eve.jeveasset.io.esi.EsiTransactionsGetter;
 import net.nikr.eve.jeveasset.io.online.EveImageGetter;
 import net.nikr.eve.jeveasset.io.online.PriceDataGetter;
@@ -803,6 +804,20 @@ public class UpdateDialog extends JDialogCentered {
 			//char/corp/alliance images
 			updates.add(new EveImageGetter(this, profileManager.getOwnerTypes()));
 			ThreadWoker.start(this, updates);
+			//Structure names (third-party citadels referenced by assets/contracts/jobs/orders).
+			//Run sequentially, like StructureUpdateDialog's own manual pass: EsiStructuresGetter
+			//shares a process-static ID/DONE set across owners that is not thread-safe, so these
+			//instances cannot go into the ThreadWoker batch above. Each owner still self-gates on
+			//its own getStructuresNextUpdate() cache TTL, so a due-but-fresh owner is a cheap no-op.
+			if (assets) {
+				EsiStructuresGetter.createIDsFromOwners(profileManager.getOwnerTypes(), false);
+				for (EsiOwner esiOwner : profileManager.getEsiOwners()) {
+					if (esiOwner.isCorporation() || !esiOwner.isStructures()) {
+						continue; //Corporations don't get structures; skip owners without the scope
+					}
+					new EsiStructuresGetter(this, esiOwner, false).run();
+				}
+			}
 		}
 	}
 
