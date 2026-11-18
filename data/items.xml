@@ -117510,42 +117510,42 @@
     <row category="Asteroid" group="Raspite" id="96286" marketgroup="true" meta="0" name="Raspite Z-Grade" pi="false" portion="100" price="23" product="0" tech="Tech I" volume="1.0">
         <material id="36" portionsize="100" quantity="75"/>
         <material id="38" portionsize="100" quantity="25"/>
-        <material id="97512" portionsize="100" quantity="25"/>
+        <material id="97512" portionsize="100" quantity="225"/>
     </row>
     <row category="Asteroid" group="Polycrase" id="96288" marketgroup="true" meta="0" name="Polycrase Z-Grade" pi="false" portion="100" price="23" product="0" tech="Tech I" volume="1.0">
         <material id="36" portionsize="100" quantity="75"/>
         <material id="38" portionsize="100" quantity="25"/>
-        <material id="97513" portionsize="100" quantity="25"/>
+        <material id="97513" portionsize="100" quantity="225"/>
     </row>
     <row category="Asteroid" group="Moissanite" id="96289" marketgroup="true" meta="0" name="Moissanite Z-Grade" pi="false" portion="100" price="23" product="0" tech="Tech I" volume="1.0">
         <material id="36" portionsize="100" quantity="75"/>
         <material id="38" portionsize="100" quantity="25"/>
-        <material id="97514" portionsize="100" quantity="25"/>
+        <material id="97514" portionsize="100" quantity="225"/>
     </row>
     <row category="Asteroid" group="Kangite" id="96290" marketgroup="true" meta="0" name="Kangite Z-Grade" pi="false" portion="100" price="23" product="0" tech="Tech I" volume="1.0">
         <material id="36" portionsize="100" quantity="75"/>
         <material id="38" portionsize="100" quantity="25"/>
-        <material id="97515" portionsize="100" quantity="25"/>
+        <material id="97515" portionsize="100" quantity="225"/>
     </row>
     <row category="Asteroid" group="Raspite" id="96291" marketgroup="true" meta="0" name="Compressed Raspite Z-Grade" pi="false" portion="100" price="23" product="0" tech="Tech I" volume="0.01">
         <material id="36" portionsize="100" quantity="75"/>
         <material id="38" portionsize="100" quantity="25"/>
-        <material id="97512" portionsize="100" quantity="25"/>
+        <material id="97512" portionsize="100" quantity="225"/>
     </row>
     <row category="Asteroid" group="Polycrase" id="96292" marketgroup="true" meta="0" name="Compressed Polycrase Z-Grade" pi="false" portion="100" price="23" product="0" tech="Tech I" volume="0.01">
         <material id="36" portionsize="100" quantity="75"/>
         <material id="38" portionsize="100" quantity="25"/>
-        <material id="97513" portionsize="100" quantity="25"/>
+        <material id="97513" portionsize="100" quantity="225"/>
     </row>
     <row category="Asteroid" group="Moissanite" id="96293" marketgroup="true" meta="0" name="Compressed Moissanite Z-Grade" pi="false" portion="100" price="23" product="0" tech="Tech I" volume="0.01">
         <material id="36" portionsize="100" quantity="75"/>
         <material id="38" portionsize="100" quantity="25"/>
-        <material id="97514" portionsize="100" quantity="25"/>
+        <material id="97514" portionsize="100" quantity="225"/>
     </row>
     <row category="Asteroid" group="Kangite" id="96294" marketgroup="true" meta="0" name="Compressed Kangite Z-Grade" pi="false" portion="100" price="23" product="0" tech="Tech I" volume="0.01">
         <material id="36" portionsize="100" quantity="75"/>
         <material id="38" portionsize="100" quantity="25"/>
-        <material id="97515" portionsize="100" quantity="25"/>
+        <material id="97515" portionsize="100" quantity="225"/>
     </row>
     <row category="Celestial" group="Item Trader" id="96299" marketgroup="false" meta="0" name="Into the Light Trader" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.0"/>
     <row capacity="3310.0" category="Entity" group="FW Amarr Empire General" id="96302" marketgroup="false" meta="0" name="xer Qosh's Salvation" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="28600.0"/>
@@ -118035,66 +118035,66 @@
     <row capacity="375.0" category="Entity" group="FW Gallente Federation Frigate" id="97470" marketgroup="false" meta="0" name="Inspector Enyo" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.0"/>
     <row capacity="375.0" category="Entity" group="FW Minmatar Republic Frigate" id="97471" marketgroup="false" meta="0" name="Keeper Wolf" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.0"/>
     <row capacity="1.0" category="Module" charges="1" group="Energy Weapon" id="97509" marketgroup="false" meta="0" name="Academy Small Focused Pulse Laser" pi="false" portion="1" price="0" product="0" slot="High" tech="Academy" volume="5.0"/>
-    <row category="Material" group="Mineral" id="97512" marketgroup="true" meta="0" name="Aberrant Raspite" pi="false" portion="1" price="10000" product="0" tech="Tech I" volume="0.01"/>
-    <row category="Material" group="Mineral" id="97513" marketgroup="true" meta="0" name="Aberrant Polycrase" pi="false" portion="1" price="10000" product="0" tech="Tech I" volume="0.01"/>
-    <row category="Material" group="Mineral" id="97514" marketgroup="true" meta="0" name="Aberrant Moissanite" pi="false" portion="1" price="10000" product="0" tech="Tech I" volume="0.01"/>
-    <row category="Material" group="Mineral" id="97515" marketgroup="true" meta="0" name="Aberrant Kangite" pi="false" portion="1" price="10000" product="0" tech="Tech I" volume="0.01"/>
+    <row category="Material" group="Mineral" id="97512" marketgroup="true" meta="0" name="Aberrant Raspite" pi="false" portion="1" price="10000" product="0" tech="Tech I" volume="0.001"/>
+    <row category="Material" group="Mineral" id="97513" marketgroup="true" meta="0" name="Aberrant Polycrase" pi="false" portion="1" price="10000" product="0" tech="Tech I" volume="0.001"/>
+    <row category="Material" group="Mineral" id="97514" marketgroup="true" meta="0" name="Aberrant Moissanite" pi="false" portion="1" price="10000" product="0" tech="Tech I" volume="0.001"/>
+    <row category="Material" group="Mineral" id="97515" marketgroup="true" meta="0" name="Aberrant Kangite" pi="false" portion="1" price="10000" product="0" tech="Tech I" volume="0.001"/>
     <row category="Special Edition Assets" group="Special Edition Commodities" id="97516" marketgroup="true" meta="0" name="Akoman Blueprint Crate" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="1.0"/>
     <row category="Commodity" group="Miscellaneous" id="97537" marketgroup="false" meta="0" name="Drifter Containment Crystal (Amarr)" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
     <row category="Commodity" group="Miscellaneous" id="97541" marketgroup="false" meta="0" name="Drifter Containment Crystal (Caldari)" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
     <row category="Commodity" group="Miscellaneous" id="97542" marketgroup="false" meta="0" name="Drifter Containment Crystal (Gallente)" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
     <row category="Commodity" group="Miscellaneous" id="97543" marketgroup="false" meta="0" name="Drifter Containment Crystal (Minmatar)" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
-    <row category="Special Edition Assets" group="Special Edition Commodities" id="97544" marketgroup="true" meta="0" name="Thermoelectric Flux Log" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
-    <row category="Special Edition Assets" group="Special Edition Commodities" id="97545" marketgroup="true" meta="0" name="Shield Failover Report" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
-    <row category="Special Edition Assets" group="Special Edition Commodities" id="97546" marketgroup="true" meta="0" name="Rogue Anoikis Telemetry" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
-    <row category="Special Edition Assets" group="Special Edition Commodities" id="97547" marketgroup="true" meta="0" name="Stereo-Collapse Signal" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
-    <row category="Special Edition Assets" group="Special Edition Commodities" id="97548" marketgroup="true" meta="0" name="Republic Strategic Intel" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
-    <row category="Special Edition Assets" group="Special Edition Commodities" id="97549" marketgroup="true" meta="0" name="Federation Strategic Intel" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
-    <row category="Special Edition Assets" group="Special Edition Commodities" id="97550" marketgroup="true" meta="0" name="State Strategic Intel" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
-    <row category="Special Edition Assets" group="Special Edition Commodities" id="97551" marketgroup="true" meta="0" name="Imperial Strategic Intel" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
-    <row category="Special Edition Assets" group="Special Edition Commodities" id="97552" marketgroup="true" meta="0" name="Hyperspherical Housing" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
-    <row category="Special Edition Assets" group="Special Edition Commodities" id="97553" marketgroup="true" meta="0" name="Hyper-Field Projector" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
-    <row category="Special Edition Assets" group="Special Edition Commodities" id="97554" marketgroup="true" meta="0" name="Pulse-Mimic Circuitry" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
-    <row category="Special Edition Assets" group="Special Edition Commodities" id="97555" marketgroup="true" meta="0" name="Hyper-Step Connector" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.1"/>
+    <row category="Special Edition Assets" group="Special Edition Commodities" id="97544" marketgroup="true" meta="0" name="Thermoelectric Flux Log" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.01"/>
+    <row category="Special Edition Assets" group="Special Edition Commodities" id="97545" marketgroup="true" meta="0" name="Shield Failover Report" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.01"/>
+    <row category="Special Edition Assets" group="Special Edition Commodities" id="97546" marketgroup="true" meta="0" name="Rogue Anoikis Telemetry" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.01"/>
+    <row category="Special Edition Assets" group="Special Edition Commodities" id="97547" marketgroup="true" meta="0" name="Stereo-Collapse Signal" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.01"/>
+    <row category="Special Edition Assets" group="Special Edition Commodities" id="97548" marketgroup="true" meta="0" name="Republic Strategic Intel" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.01"/>
+    <row category="Special Edition Assets" group="Special Edition Commodities" id="97549" marketgroup="true" meta="0" name="Federation Strategic Intel" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.01"/>
+    <row category="Special Edition Assets" group="Special Edition Commodities" id="97550" marketgroup="true" meta="0" name="State Strategic Intel" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.01"/>
+    <row category="Special Edition Assets" group="Special Edition Commodities" id="97551" marketgroup="true" meta="0" name="Imperial Strategic Intel" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.01"/>
+    <row category="Special Edition Assets" group="Special Edition Commodities" id="97552" marketgroup="true" meta="0" name="Hyperspherical Housing" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.01"/>
+    <row category="Special Edition Assets" group="Special Edition Commodities" id="97553" marketgroup="true" meta="0" name="Hyper-Field Projector" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.01"/>
+    <row category="Special Edition Assets" group="Special Edition Commodities" id="97554" marketgroup="true" meta="0" name="Pulse-Mimic Circuitry" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.01"/>
+    <row category="Special Edition Assets" group="Special Edition Commodities" id="97555" marketgroup="true" meta="0" name="Hyper-Step Connector" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.01"/>
     <row category="Asteroid" group="Raspite" id="97559" marketgroup="true" meta="0" name="Raspite X-Grade" pi="false" portion="100" price="23" product="0" tech="Tech I" volume="1.0">
         <material id="34" portionsize="100" quantity="1000"/>
         <material id="35" portionsize="100" quantity="750"/>
-        <material id="97512" portionsize="100" quantity="10"/>
+        <material id="97512" portionsize="100" quantity="90"/>
     </row>
     <row category="Asteroid" group="Polycrase" id="97560" marketgroup="true" meta="0" name="Polycrase X-Grade" pi="false" portion="100" price="23" product="0" tech="Tech I" volume="1.0">
         <material id="34" portionsize="100" quantity="1000"/>
         <material id="35" portionsize="100" quantity="750"/>
-        <material id="97513" portionsize="100" quantity="10"/>
+        <material id="97513" portionsize="100" quantity="90"/>
     </row>
     <row category="Asteroid" group="Moissanite" id="97561" marketgroup="true" meta="0" name="Moissanite X-Grade" pi="false" portion="100" price="23" product="0" tech="Tech I" volume="1.0">
         <material id="34" portionsize="100" quantity="1000"/>
         <material id="35" portionsize="100" quantity="750"/>
-        <material id="97514" portionsize="100" quantity="10"/>
+        <material id="97514" portionsize="100" quantity="90"/>
     </row>
     <row category="Asteroid" group="Kangite" id="97562" marketgroup="true" meta="0" name="Kangite X-Grade" pi="false" portion="100" price="23" product="0" tech="Tech I" volume="1.0">
         <material id="34" portionsize="100" quantity="1000"/>
         <material id="35" portionsize="100" quantity="750"/>
-        <material id="97515" portionsize="100" quantity="10"/>
+        <material id="97515" portionsize="100" quantity="90"/>
     </row>
     <row category="Asteroid" group="Raspite" id="97564" marketgroup="true" meta="0" name="Compressed Raspite X-Grade" pi="false" portion="100" price="23" product="0" tech="Tech I" volume="0.01">
         <material id="34" portionsize="100" quantity="1000"/>
         <material id="35" portionsize="100" quantity="750"/>
-        <material id="97512" portionsize="100" quantity="10"/>
+        <material id="97512" portionsize="100" quantity="90"/>
     </row>
     <row category="Asteroid" group="Polycrase" id="97566" marketgroup="true" meta="0" name="Compressed Polycrase X-Grade" pi="false" portion="100" price="23" product="0" tech="Tech I" volume="0.01">
         <material id="34" portionsize="100" quantity="1000"/>
         <material id="35" portionsize="100" quantity="750"/>
-        <material id="97513" portionsize="100" quantity="10"/>
+        <material id="97513" portionsize="100" quantity="90"/>
     </row>
     <row category="Asteroid" group="Moissanite" id="97569" marketgroup="true" meta="0" name="Compressed Moissanite X-Grade" pi="false" portion="100" price="23" product="0" tech="Tech I" volume="0.01">
         <material id="34" portionsize="100" quantity="1000"/>
         <material id="35" portionsize="100" quantity="750"/>
-        <material id="97514" portionsize="100" quantity="10"/>
+        <material id="97514" portionsize="100" quantity="90"/>
     </row>
     <row category="Asteroid" group="Kangite" id="97570" marketgroup="true" meta="0" name="Compressed Kangite X-Grade" pi="false" portion="100" price="23" product="0" tech="Tech I" volume="0.01">
         <material id="34" portionsize="100" quantity="1000"/>
         <material id="35" portionsize="100" quantity="750"/>
-        <material id="97515" portionsize="100" quantity="10"/>
+        <material id="97515" portionsize="100" quantity="90"/>
     </row>
     <row category="SKINs" group="Permanent SKIN" id="97617" marketgroup="true" meta="0" name="Crucifier Medical Enforcement Taskforce SKIN" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.01"/>
     <row category="SKINs" group="Permanent SKIN" id="97618" marketgroup="true" meta="0" name="Griffin Medical Enforcement Taskforce SKIN" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.01"/>
@@ -118381,7 +118381,7 @@
         <material id="39" portionsize="1" quantity="2"/>
         <material id="40" portionsize="1" quantity="2"/>
     </row>
-    <row category="Module" group="Stasis Web" id="97955" marketgroup="true" meta="8" name="Imperial Navy Stasis Webifier" pi="false" portion="1" price="0" product="0" slot="Medium" tech="Faction" volume="5.0">
+    <row category="Module" group="Stasis Web" id="97955" marketgroup="true" meta="8" name="Compact Imperial Navy Stasis Webifier" pi="false" portion="1" price="0" product="0" slot="Medium" tech="Faction" volume="5.0">
         <material id="34" portionsize="1" quantity="776"/>
         <material id="35" portionsize="1" quantity="713"/>
         <material id="36" portionsize="1" quantity="476"/>
@@ -118438,7 +118438,7 @@
         <mfg id="36" q="334"/>
         <mfg id="34" q="502"/>
     </row>
-    <row category="Blueprint" group="Stasis Web Blueprint" id="97995" marketgroup="false" meta="0" name="Imperial Navy Stasis Webifier Blueprint" pi="false" portion="1" price="0" product="97955" tech="Faction" volume="0.01">
+    <row category="Blueprint" group="Stasis Web Blueprint" id="97995" marketgroup="false" meta="0" name="Compact Imperial Navy Stasis Webifier Blueprint" pi="false" portion="1" price="0" product="97955" tech="Faction" volume="0.01">
         <mfg id="36" q="529"/>
         <mfg id="35" q="792"/>
         <mfg id="34" q="862"/>
@@ -118589,4 +118589,14 @@
     <row category="SKINs" group="Permanent SKIN" id="98651" marketgroup="true" meta="0" name="Naga Navy Issue State Regulator SKIN" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.01"/>
     <row category="SKINs" group="Permanent SKIN" id="98652" marketgroup="true" meta="0" name="Talos Navy Issue Presidential Agent SKIN" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.01"/>
     <row category="SKINs" group="Permanent SKIN" id="98653" marketgroup="true" meta="0" name="Tornado Fleet Issue Stark Strategist SKIN" pi="false" portion="1" price="0" product="0" tech="Tech I" volume="0.01"/>
+    <row category="Module" group="Stasis Web" id="98845" marketgroup="true" meta="8" name="Imperial Navy Stasis Webifier" pi="false" portion="1" price="0" product="0" slot="Medium" tech="Faction" volume="5.0">
+        <material id="34" portionsize="1" quantity="776"/>
+        <material id="35" portionsize="1" quantity="713"/>
+        <material id="36" portionsize="1" quantity="476"/>
+    </row>
+    <row category="Blueprint" group="Stasis Web Blueprint" id="98846" marketgroup="false" meta="0" name="Imperial Navy Stasis Webifier Blueprint" pi="false" portion="1" price="0" product="98845" tech="Faction" volume="0.01">
+        <mfg id="36" q="529"/>
+        <mfg id="35" q="792"/>
+        <mfg id="34" q="862"/>
+    </row>
 </rows>
