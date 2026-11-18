@@ -27,6 +27,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -204,6 +206,41 @@ public class ProfileDatabase {
 
 	public static boolean save(Profile profile, Table table) {
 		return save(profile, Collections.singleton(table));
+	}
+
+	public static boolean preflight(Profile profile, Table table) {
+		String connectionUrl = getConnectionUrl(profile.getSQLiteFilename());
+		waitForUpdates();
+		try (Connection connection = DriverManager.getConnection(connectionUrl);) {
+			try {
+				connection.setAutoCommit(false);
+				boolean full = table.isEmpty(connection);
+				if (table == Table.OWNERS && !full && !ownersCountMatches(connection, profile)) {
+					connection.rollback();
+					connection.setAutoCommit(true);
+					return false;
+				}
+				table.create(connection);
+				table.updateTable(connection);
+				table.insert(connection, profile.getEsiOwners(), full);
+				connection.rollback();
+				connection.setAutoCommit(true);
+				return true;
+			} catch (SQLException ex) {
+				connection.rollback();
+				return false;
+			}
+		} catch (SQLException ex) {
+			return false;
+		}
+	}
+
+	private static boolean ownersCountMatches(Connection connection, Profile profile) throws SQLException {
+		String sql = "SELECT COUNT(*) FROM owners";
+		try (PreparedStatement statement = connection.prepareStatement(sql);
+				ResultSet result = statement.executeQuery();) {
+			return result.next() && result.getInt(1) == profile.getEsiOwners().size();
+		}
 	}
 
 	private static boolean save(Profile profile, Table[] tables) {

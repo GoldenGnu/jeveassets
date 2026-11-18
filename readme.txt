@@ -29,6 +29,18 @@ Link:
   https://wiki.jeveassets.org/faq
 
 ________________________________________________________________________________
+_COMMAND LINE___________________________________________________________________
+
+Refresh all stored ESI authorizations without updating ESI data:
+
+  java "-Djava.awt.headless=true" -jar jeveassets.jar -r
+
+Use -refresh for the long option. The command uses all profiles belonging to
+the current operating-system user. No other jEveAssets instance can be running.
+Exit status: 0 success, 1 profile or authorization failure, 2 local data
+preparation or save failure, and 64 invalid options.
+
+________________________________________________________________________________
 _CONTACT________________________________________________________________________
 
 www:

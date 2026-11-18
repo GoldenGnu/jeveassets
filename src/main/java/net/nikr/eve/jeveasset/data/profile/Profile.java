@@ -22,6 +22,9 @@
 package net.nikr.eve.jeveasset.data.profile;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 import net.nikr.eve.jeveasset.Program;
@@ -79,20 +82,45 @@ public class Profile implements Comparable<Profile> {
 	}
 
 	public void saveTable(Table table) {
+		saveTableChecked(table);
+	}
+
+	public boolean saveTableChecked(Table table) {
 		if (type == ProfileType.XML) {
-			save(); //Full save
+			return saveChecked(); //Full save
 		} else {
-			ProfileDatabase.save(this, table);
+			return ProfileDatabase.save(this, table);
 		}
 	}
 
 	public void save() {
+		saveChecked();
+	}
+
+	public boolean saveChecked() {
 		boolean save = ProfileDatabase.save(this);
-		if (save && type == ProfileType.XML) {
-			type = ProfileType.SQLITE; //Migrated to SQLite
+		if (!save) {
+			return false;
+		}
+		if (type == ProfileType.XML) {
 			File file = new File(getXmlFilename());
 			File backup = new File(getBackupXmlFilename());
-			file.renameTo(backup);
+			try {
+				Files.move(file.toPath(), backup.toPath(), StandardCopyOption.REPLACE_EXISTING);
+			} catch (IOException ex) {
+				LOG.warn("Failed to migrate profile: {}", getName());
+				return false;
+			}
+			type = ProfileType.SQLITE; //Migrated to SQLite
+		}
+		return true;
+	}
+
+	public boolean preflightTable(Table table) {
+		if (type == ProfileType.XML) {
+			return saveChecked(); //Migrate before remote changes can happen
+		} else {
+			return ProfileDatabase.preflight(this, table);
 		}
 	}
 
